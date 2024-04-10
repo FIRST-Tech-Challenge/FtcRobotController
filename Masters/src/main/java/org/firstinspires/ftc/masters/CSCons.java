@@ -32,15 +32,18 @@ public class CSCons {
     public static double outtakeAngleTransfer=1;
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
-    public static double outtakeMovementBackDrop =0.4;
-    public static double outtakeMovementTransfer = .72;
+    public static double outtakeMovementBackDrop =0;
+    public static double outtakeMovementTransfer =0.5;
 
-    public static double wristOuttakeAngleFolder =0.05;
-    public static double wristOuttakeAngleTransfer =0.96;
-    public static double wristOuttakeMovementTransfer=0.32;
+    public static double wristOuttakeAngleBackdrop =0.05;
+    public static double wristOuttakeAngleTransfer =1;
+    public static double wristOuttakeMovementTransfer=0.49;
 
-    public static double wristOuttakePickup=0.25;
-    public static double wristOuttakeMovementBackdrop =0.68;
+    public static double wristOuttakeMovementGround = 1;
+
+    public static double wristOuttakePickup=0.42;
+    public static double wristOuttakeAnglePickup=0.95;
+    public static double wristOuttakeMovementBackdrop =0.81;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -83,7 +86,7 @@ public class CSCons {
 
     public static double wristCenter = 0.5;
 
-    public static double tagX = 63;
+    public static double tagBackboardX = 63;
     public static double tag1Y = 42;
     public static double tag2Y = 35.5;
     public static double tag3Y = 29;
@@ -91,23 +94,26 @@ public class CSCons {
     public static double tag5Y = -35.5;
     public static double tag6Y = -42;
 
-    public static double tag7X= -72;
+    public static double tagAudienceX = -72;
     public static double tag9Y= 36;
     public static double tag10Y= 41.5;
     public static double tag7Y = -41.5;
     public static double tag8Y = -36;
 
-    public static double cameraOffsetX= 3;
-    public static double cameraOffsetY = 10;
+    public static double cameraOffsetY= 0;
+    public static double cameraOffsetX = -9;
+    public static double cameraFrontOffsetY= -6;
+    public static double cameraFrontOffsetX=9;
 
 
+    public static double intakeGround = 0.38; //for autonomous, purple pixel
     public static double intakeBottom = 0.32;
     public static double intake2 =0.29;
     public static double intake3 =0.27;
     public static double intake4 =0.25;
     public static double intake5 =0.23;
     public static double intakeAboveTop =0.2;
-    public static double intakeInit =0;
+    public static double intakeInit =0.05;
 
     public static double speed =-1;
 
@@ -115,10 +121,10 @@ public class CSCons {
     public enum OuttakePosition{
         BOTTOM (-10),
         LOW_AUTO(105),
-        AUTO(900),
-        LOW(1400),
-        MID(2400),
-        HIGH(3400);
+        AUTO(400),
+        LOW(800),
+        MID(1500),
+        HIGH(2400);
 
         private int target;
 
@@ -155,6 +161,20 @@ public class CSCons {
 
     public enum IntakeDirection {
         ON, OFF, BACKWARD
+    }
+
+    public enum OuttakeWrist{
+        flatRight (CSCons.wristFlatRight), angleRight(CSCons.wristAngleRight), verticalDown(CSCons.wristVerticalDown),
+        vertical(CSCons.wristVertical), angleLeft(CSCons.wristAngleLeft), flatLeft(CSCons.wristFlatLeft);
+
+        double position= -1;
+        private OuttakeWrist(double position){
+            this.position= position;
+        }
+
+        public double getPosition(){
+            return position;
+        }
     }
 
 /**

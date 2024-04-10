@@ -18,29 +18,26 @@ import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibra
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class PropFindRightProcessor implements VisionProcessor, CameraStreamSource {
+public class YellowPixelProcessor implements VisionProcessor, CameraStreamSource {
 
-    public  Rect interestMid = new Rect(35, 185, 32, 50);
-    public  Rect interestRight = new Rect(320, 260, 32, 50);
+    public final Rect interestLeft = new Rect(210, 15, 70, 30);
+    public final Rect interestRight = new Rect(360, 15, 70, 30);
 
-    private final Scalar upper = new Scalar(0,50,0); // lower bounds for masking
+    private final Scalar upper = new Scalar(0,75,0); // lower bounds for masking
     private final Scalar lower = new Scalar(255,255,255); // upper bounds for masking
     private TextPaint textPaint = null;
     private Paint linePaint = null;
 
-
     public enum pos {
         LEFT,
-        MID,
         RIGHT,
     }
 
-    public PropFindRightProcessor.pos position = PropFindRightProcessor.pos.LEFT;
+    public YellowPixelProcessor.pos position = YellowPixelProcessor.pos.LEFT;
 
     Telemetry telemetry;
     TelemetryPacket packet;
@@ -51,13 +48,13 @@ public class PropFindRightProcessor implements VisionProcessor, CameraStreamSour
     Mat S = new Mat();
     Mat V = new Mat();
 
-    Mat region_h_mid = new Mat();
-    Mat region_s_mid = new Mat();
+    Mat region_h_left = new Mat();
+    Mat region_s_left = new Mat();
     Mat region_h_right = new Mat();
     Mat region_s_right = new Mat();
 
-    int avg_h_mid = 0;
-    int avg_s_mid = 0;
+    int avg_h_left = 0;
+    int avg_s_left = 0;
     int avg_h_right = 0;
     int avg_s_right = 0;
 
@@ -73,7 +70,7 @@ public class PropFindRightProcessor implements VisionProcessor, CameraStreamSour
     }
 
 
-    public PropFindRightProcessor(Telemetry telemetry, TelemetryPacket packet) {
+    public YellowPixelProcessor(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
         this.packet = packet;
 
@@ -116,29 +113,24 @@ public class PropFindRightProcessor implements VisionProcessor, CameraStreamSour
 
         inputToHSV(input);
 
-        region_h_mid = H.submat(interestMid);
-        region_s_mid = S.submat(interestMid);
+        region_h_left = H.submat(interestLeft);
+        region_s_left = S.submat(interestLeft);
         region_h_right = H.submat(interestRight);
         region_s_right = S.submat(interestRight);
 
-        avg_h_mid = (int) Core.mean(region_h_mid).val[0];
-        avg_s_mid = (int) Core.mean(region_s_mid).val[0];
+        avg_h_left = (int) Core.mean(region_h_left).val[0];
+        avg_s_left = (int) Core.mean(region_s_left).val[0];
         avg_h_right = (int) Core.mean(region_h_right).val[0];
         avg_s_right = (int) Core.mean(region_s_right).val[0];
 
-        if (avg_s_mid <5) {
-            position = PropFindRightProcessor.pos.MID;
-        } else if (avg_s_right <5) {
-            position = PropFindRightProcessor.pos.RIGHT;
+        if (avg_s_left < avg_s_right) {
+            position = pos.LEFT;
         } else {
-            position = PropFindRightProcessor.pos.LEFT;
+            position = pos.RIGHT;
         }
 
         telemetry.addData("position", position);
         telemetry.update();
-
-        Imgproc.rectangle(input, new Point(interestMid.x, interestMid.y), new Point(interestMid.x + interestMid.width, interestMid.y+ interestMid.height), new Scalar(0,255,0),1 );
-        Imgproc.rectangle(input, new Point(interestRight.x, interestRight.y), new Point(interestRight.x + interestRight.width, interestRight.y+ interestRight.height), new Scalar(0,255,0),1 );
 
         return input;
     }

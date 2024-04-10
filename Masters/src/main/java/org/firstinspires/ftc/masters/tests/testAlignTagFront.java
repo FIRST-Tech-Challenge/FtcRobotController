@@ -39,15 +39,15 @@ public class testAlignTagFront extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap, telemetry);
 
         // -----------------------------------------------------------------------------------------
-            // AprilTag Configuration
-            // -----------------------------------------------------------------------------------------
+        // AprilTag Configuration
+        // -----------------------------------------------------------------------------------------
 
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                //.setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
+//                .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
 
@@ -97,6 +97,7 @@ public class testAlignTagFront extends LinearOpMode {
 
         while (opModeIsActive()) {
             currentDetections = aprilTag.getDetections();
+            telemetry.addData("current size", currentDetections.size());
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
                     telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));

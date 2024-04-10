@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.masters.drive;
 
-import static org.firstinspires.ftc.masters.CSCons.clawArmTransfer;
-import static org.firstinspires.ftc.masters.CSCons.clawClosed;
-import static org.firstinspires.ftc.masters.CSCons.clawOpen;
-import static org.firstinspires.ftc.masters.CSCons.clawTransfer;
-import static org.firstinspires.ftc.masters.CSCons.openHook;
-import static org.firstinspires.ftc.masters.CSCons.openMicroHook;
+import static org.firstinspires.ftc.masters.CSCons.servo1Down;
+import static org.firstinspires.ftc.masters.CSCons.servo1Up;
+import static org.firstinspires.ftc.masters.CSCons.servo2Down;
+import static org.firstinspires.ftc.masters.CSCons.servo2Up;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
@@ -17,6 +15,8 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToI
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
+
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 
@@ -39,28 +39,30 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.masters.PropFindLeftProcessor;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
+import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -76,10 +78,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 //    public static double ALIGN_SPEED = .3;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.5, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.6, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 58.0/60.0;
+    public static double LATERAL_MULTIPLIER = 60/58.5;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -97,22 +99,20 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     //private Encoder leftEncoder, rightEncoder, middleEncoder;
     private List<DcMotorEx> motors;
-    DcMotor intakeSlides = null;
+
     DcMotor backSlides = null;
     DcMotor otherBackSlides;
-
     Servo planeRaise;
-    Servo clawServo;
-    Servo clawArm;
-    Servo clawAngle;
-    Servo cameraTurning;
-    Servo outtakeHook;
+    DcMotor intake = null;
+    Servo intakeHeight = null;
+
+    public DigitalChannel frontBreakBeam, backBreakBeam;
+    public boolean pixelBack, pixelFront;
     Servo outtakeRotation;
     Servo outtakeMovement;
-    Servo microHook;
+    private Servo wristServo;
+    private Servo outtakeServo1, outtakeServo2;
 
-    TouchSensor touchSensor;
-    RevColorSensorV3 colorSensor;
 
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -121,7 +121,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncVels = new ArrayList<>();
 
     PIDController controller;
-    PIDController icontroller;
 
     public static double p = 0.01, i = 0, d = 0.0001;
     public static double f = 0.05;
@@ -136,6 +135,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     protected AprilTagProcessor aprilTag;
     protected PropFindRightProcessor propFindProcessor;
     protected VisionPortal myVisionPortal;
+    private WebcamName frontWebcam, backWebcam;
     TelemetryPacket packet = new TelemetryPacket();
 
 
@@ -205,28 +205,32 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-
-        intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
         backSlides = hardwareMap.dcMotor.get("backSlides");
         otherBackSlides = hardwareMap.dcMotor.get("otherBackSlides");
 
         planeRaise = hardwareMap.servo.get("planeRaise");
-        clawServo = hardwareMap.servo.get("clawServo");
-        clawArm = hardwareMap.servo.get("clawArm");
-        clawAngle = hardwareMap.servo.get("clawAngle");
+        wristServo = hardwareMap.servo.get("wrist");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
-        outtakeHook = hardwareMap.servo.get("outtakeHook");
-        microHook = hardwareMap.servo.get("microHook");
+
+        outtakeServo1 = hardwareMap.servo.get("outtakeHook");
+        outtakeServo2 = hardwareMap.servo.get("microHook");
+
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
-        touchSensor = hardwareMap.touchSensor.get("touchBucket");
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        intakeHeight = hardwareMap.servo.get("intakeServo");
+
+        frontBreakBeam = hardwareMap.digitalChannel.get("breakBeam2");
+        frontBreakBeam.setMode(DigitalChannel.Mode.INPUT);
+        backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
+        backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
-        icontroller = new PIDController(ip, ii, iid);
-        icontroller.setPID(ip, ii, iid);
+
+
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -260,16 +264,13 @@ public class SampleMecanumDrive extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
-        intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         otherBackSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        intakeSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-        intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         otherBackSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -282,6 +283,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+//                .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
     }
@@ -294,10 +296,20 @@ public class SampleMecanumDrive extends MecanumDrive {
         propFindProcessor = new PropFindLeftProcessor(telemetry,packet);
     }
 
-    public void initializeVisionPortal(PropFindRightProcessor propFindProcessor){
+
+
+    public void initializeVisionPortal(){
+
+        frontWebcam = hardwareMap.get(WebcamName.class, "frontWebcam");
+        backWebcam = hardwareMap.get(WebcamName.class, "backWebcam");
+
+        CameraName switchableCamera = ClassFactory.getInstance()
+                .getCameraManager().nameForSwitchableCamera(frontWebcam, backWebcam);
+
         if (USE_WEBCAM) {
             myVisionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "backWebcam"))
+                    .setCamera(switchableCamera)
+                    .setCameraResolution(new Size(640, 360))
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
         } else {
@@ -306,6 +318,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
         }
+
+
     }
 
     public VisionPortal getMyVisionPortal() {
@@ -320,80 +334,145 @@ public class SampleMecanumDrive extends MecanumDrive {
         return propFindProcessor;
     }
 
+    public void activateFrontCamera (){
+
+        myVisionPortal.getCameraState();
+        myVisionPortal.setActiveCamera(frontWebcam);
+    }
+
+    public  void activateBackCamera(){
+        myVisionPortal.setActiveCamera(backWebcam);
+    }
+
+    public void enableAprilTag(){
+        myVisionPortal.setProcessorEnabled(aprilTag, true);
+        myVisionPortal.setProcessorEnabled(propFindProcessor, false);
+    }
+
+    public void enablePropProcessor(){
+        myVisionPortal.setProcessorEnabled(propFindProcessor, true);
+        myVisionPortal.setProcessorEnabled(aprilTag, false);
+    }
+
     public void openClaw(){
-        clawServo.setPosition(clawOpen);
+        ;
     }
 
     public void transferClaw(){
-        clawServo.setPosition(clawTransfer);
+
     }
 
     public void closeClaw(){
-        clawServo.setPosition(clawClosed);
+
     }
 
     public void haltSlides() {
-        intakeSlides.setTargetPosition(0);
-        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intakeSlides.setPower(.5);
+
+    }
+
+    public void startIntake(){
+        intake.setPower(CSCons.speed);
+    }
+
+    public void revertIntake(){
+        intake.setPower(-CSCons.speed);
+    }
+
+    public void  stopIntake(){
+        intake.setPower(0);
+    }
+
+    public void dropIntake(){
+        intakeHeight.setPosition(CSCons.intakeGround);
+    }
+
+    public void raiseIntake(){
+        intakeHeight.setPosition(CSCons.intakeInit);
     }
 
     public void intakeToGround() {
-        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-        clawArm.setPosition(CSCons.clawArmGround);
+//        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+//        clawArm.setPosition(CSCons.clawArmGround);
     }
 
+    public void intakeOverStack(){
+        intakeHeight.setPosition(CSCons.intakeAboveTop);
+    }
 
     public void intakeToTopStack() {
-        clawAngle.setPosition(CSCons.clawAngleFourToFive);
-        clawArm.setPosition(CSCons.clawArm5);
+        intakeHeight.setPosition(CSCons.intake5);
     }
 
     //pick up pixel 3 and 4
     public void intakeToPosition3(){
-        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-        clawArm.setPosition(CSCons.clawArm3);
+//        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+//        clawArm.setPosition(CSCons.clawArm3);
     }
 
 
 
     public void intakeToTransfer() {
-        clawAngle.setPosition(CSCons.clawAngleTransfer);
-        clawArm.setPosition(clawArmTransfer);
+//        clawAngle.setPosition(CSCons.clawAngleTransfer);
+//        clawArm.setPosition(clawArmTransfer);
     }
 
     public void closeHook(){
-        microHook.setPosition(CSCons.closeMicroHook);
-        outtakeHook.setPosition(CSCons.closeHook);
+//        microHook.setPosition(CSCons.closeMicroHook);
+//        outtakeHook.setPosition(CSCons.closeHook);
     }
-     public void closeSmallHook(){
-        microHook.setPosition(CSCons.closeMicroHook);
-     }
+//     public void closeSmallHook(){
+//        microHook.setPosition(CSCons.closeMicroHook);
+//     }
 
-     public void openLargeHook(){
-        outtakeHook.setPosition(openHook);
-     }
+//     public void openLargeHook(){
+//        outtakeHook.setPosition(openHook);
+//     }
 
      public void openSmallHook(){
-        microHook.setPosition(openMicroHook);
+//        microHook.setPosition(openMicroHook);
      }
 
     public void outtakeToBackdrop() {
-        outtakeHook.setPosition(CSCons.closeHook);
-        outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
-        outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
     }
 
     public void outtakeToTransfer() {
-        outtakeHook.setPosition(CSCons.openHook);
-        outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+//        outtakeHook.setPosition(CSCons.openHook);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+        wristServo.setPosition(CSCons.wristVertical);
+    }
+
+    public void outtakeToPickup(){
+        outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
     }
 
     public void dropPixel() {
-        outtakeHook.setPosition(CSCons.openHook);
-        microHook.setPosition(CSCons.openMicroHook);
+//        outtakeHook.setPosition(CSCons.openHook);
+//        microHook.setPosition(CSCons.openMicroHook);
     }
+
+    public void closeFingers(){
+        outtakeServo1.setPosition(servo1Down);
+        outtakeServo2.setPosition(servo2Down);
+    }
+
+    public void openFingers(){
+        outtakeServo1.setPosition(servo1Up);
+        outtakeServo2.setPosition(servo2Up);
+    }
+
+    public void openFrontFinger(){
+        outtakeServo1.setPosition(servo1Up);
+    }
+
+    public void openBackFinger(){
+        outtakeServo2.setPosition(servo2Up);
+    }
+
+
 
     public  Pose2d aprilTagCoarsePosEstimate(List<AprilTagDetection> currentDetections) {
         for (AprilTagDetection detection : currentDetections) {
@@ -409,38 +488,91 @@ public class SampleMecanumDrive extends MecanumDrive {
                 double yOffset =  Math.abs(detection.ftcPose.range * Math.cos(Math.toRadians(theta)));
 
                 if (detection.ftcPose.x<0){
+
                     yOffset= -yOffset;
                 }
+
                 if (telemetry!=null) {
                     telemetry.addData("Xoffset", xOffset);
                     telemetry.addData("Yoffset", yOffset);
                 }
-                Pose2d cameraPosition;
+                Pose2d cameraPosition = null;
 
-                if (detection.id==1) {
-                    cameraPosition = new Pose2d(CSCons.tagX - xOffset, CSCons.tag1Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id==2){
-                    cameraPosition = new Pose2d(CSCons.tagX - xOffset, CSCons.tag2Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id ==3){
-                    cameraPosition = new Pose2d(CSCons.tagX - xOffset, CSCons.tag3Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id ==4){
-                    cameraPosition =  new Pose2d(CSCons.tagX - xOffset, CSCons.tag4Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id == 5){
-                    cameraPosition =  new Pose2d(CSCons.tagX - xOffset, CSCons.tag5Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else cameraPosition =  new Pose2d(CSCons.tagX - xOffset, CSCons.tag6Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-               // return new Pose2d(72 - 29.25 - Math.abs(detection.ftcPose.range * Math.sin(Math.toRadians(theta))), 72  - 7.5  - Math.abs(detection.ftcPose.range * Math.cos(Math.toRadians(theta))), Math.toRadians(detection.ftcPose.yaw));
-             //   return new Pose2d(72 - 7.5 - detection.ftcPose.y, 72 - 29.25 + detection.ftcPose.x,detection.ftcPose.yaw);
+                double cameraXOffset = CSCons.cameraOffsetX;
+                double cameraYOffset = CSCons.cameraOffsetY;
+
+                switch(detection.id){
+                    case 1:
+
+                        cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag1Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                    break;
+                    case 2:
+
+                        cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag2Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 3:
+                        cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag3Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 4:
+                        cameraPosition =  new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag4Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+
+                    case 5:
+                        cameraPosition =  new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag5Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 6:
+                        cameraPosition =  new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag6Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 7:
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag7Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        cameraXOffset= CSCons.cameraFrontOffsetX;
+                        cameraYOffset= CSCons.cameraFrontOffsetY;
+                        break;
+                    case 8:
+                        continue;
+                        //cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag8Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                       // break;
+                    case 9:
+                        continue;
+                        //cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag9Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                       // break;
+                    case 10:
+                        cameraXOffset= CSCons.cameraFrontOffsetX;
+                        cameraYOffset= CSCons.cameraFrontOffsetY;
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag10Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+
+                }
+
 
                 Pose2d robotPosition;
-                double xOffsetRobot = CSCons.cameraOffsetX*Math.cos(Math.toRadians (180+detection.ftcPose.yaw));
-                double yOffsetRobot = CSCons.cameraOffsetX*Math.sin(Math.toRadians (180+detection.ftcPose.yaw));
+                double xOffsetRobot=0;
+                double yOffsetRobot=0;
+
+                if (detection.id==10 || detection.id==7) {
+                    xOffsetRobot = Math.abs(cameraXOffset * Math.cos(Math.toRadians(detection.ftcPose.yaw)));
+                    yOffsetRobot = cameraYOffset * Math.sin(Math.toRadians(90 + detection.ftcPose.yaw));
+                } else {
+
+                    xOffsetRobot = - Math.abs(CSCons.cameraOffsetX * Math.cos(Math.toRadians(180 + detection.ftcPose.yaw)));
+                    yOffsetRobot = CSCons.cameraOffsetX * Math.sin(Math.toRadians(180 + detection.ftcPose.yaw));
+                }
+
+
 
                 if (telemetry!=null){
                     telemetry.addData("robot x offset", xOffsetRobot);
                     telemetry.addData("robot y offset", yOffsetRobot);
+                    telemetry.addData("camera x", cameraPosition.getX());
+                    telemetry.addData("camera y", cameraPosition.getY());
+                    telemetry.addData("tag id", detection.id);
                 }
+                if (cameraPosition!=null) {
 
-                robotPosition = new Pose2d(cameraPosition.getX()+xOffsetRobot, cameraPosition.getY()+yOffsetRobot, Math.toRadians(180+detection.ftcPose.yaw));
+                    robotPosition = new Pose2d(cameraPosition.getX() + xOffsetRobot, cameraPosition.getY() + yOffsetRobot, Math.toRadians(180 + detection.ftcPose.yaw));
+                } else {
+                    robotPosition = getPoseEstimate();
+                }
 
                 return robotPosition;
 
@@ -715,8 +847,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         double liftPower = pid + ff;
 
-//        liftPower= Math.min(0.5, liftPower);
-
         if (telemetry!=null) {
             telemetry.addData("liftPower", liftPower);
         }
@@ -724,31 +854,64 @@ public class SampleMecanumDrive extends MecanumDrive {
         otherBackSlides.setPower(liftPower);
     }
 
-    public void intakeSlidesMove(int itarget) {
-
-
-        int islidePos = intakeSlides.getCurrentPosition();
-        double ipid = icontroller.calculate(islidePos, itarget);
-        double iff = Math.cos(Math.toRadians(itarget / iticks_in_degree)) * iif;
-
-        double iliftPower = ipid + iff;
-
-        iliftPower= Math.min(0.8, iliftPower);
-
-        intakeSlides.setPower(iliftPower);
-
-    }
+//    public void intakeSlidesMove(int itarget) {
+//
+//
+//        int islidePos = intakeSlides.getCurrentPosition();
+//        double ipid = icontroller.calculate(islidePos, itarget);
+//        double iff = Math.cos(Math.toRadians(itarget / iticks_in_degree)) * iif;
+//
+//        double iliftPower = ipid + iff;
+//
+//        iliftPower= Math.min(0.8, iliftPower);
+//
+//        intakeSlides.setPower(iliftPower);
+//
+//    }
 
     public DcMotor getBackSlides(){
         return backSlides;
     }
 
-    public DcMotor getIntakeSlides() {
-        return intakeSlides;
+//    public DcMotor getIntakeSlides() {
+////        return intakeSlides;
+//    }
+
+//    public RevColorSensorV3 getColorSensor(){
+//        return colorSensor;
+//    }
+
+    public void setWristServoPosition(CSCons.OuttakeWrist outtakeWristPosition){
+        if (outtakeWristPosition == CSCons.OuttakeWrist.angleLeft) {
+            wristServo.setPosition(CSCons.wristAngleLeft);
+        }
+        if (outtakeWristPosition == CSCons.OuttakeWrist.angleRight) {
+            wristServo.setPosition(CSCons.wristAngleRight);
+        }
+        if (outtakeWristPosition == CSCons.OuttakeWrist.vertical) {
+            wristServo.setPosition(CSCons.wristVertical);
+        }
+        if (outtakeWristPosition == CSCons.OuttakeWrist.flatLeft) {
+            wristServo.setPosition(CSCons.wristFlatLeft);
+        }
+        if (outtakeWristPosition == CSCons.OuttakeWrist.flatRight) {
+            wristServo.setPosition(CSCons.wristFlatRight);
+        }
+        if (outtakeWristPosition == CSCons.OuttakeWrist.verticalDown) {
+            wristServo.setPosition(CSCons.wristVerticalDown);
+        }
     }
 
-    public RevColorSensorV3 getColorSensor(){
-        return colorSensor;
+    public void setOuttakeToTransfer(){
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        wristServo.setPosition(CSCons.wristVertical);
+    }
+
+    public void setOuttakeToGround(){
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementGround);
+
     }
 
 

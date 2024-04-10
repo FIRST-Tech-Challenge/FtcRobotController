@@ -14,9 +14,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -345,7 +343,7 @@ public class teleopOuttakeTest extends LinearOpMode {
                     }
 
                     if (backSlides.getCurrentPosition()>2000){
-                        outtakeRotation.setPosition(CSCons.wristOuttakeAngleFolder);
+                        outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
                         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
                     }
 
@@ -576,6 +574,7 @@ public class teleopOuttakeTest extends LinearOpMode {
                                 outtakeServo2.setPosition(servo2Up);
                             } else {
                                 outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+                                outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
                                 pickupElapsedTime = new ElapsedTime();
 
                             }
@@ -786,7 +785,7 @@ public class teleopOuttakeTest extends LinearOpMode {
                     case MoveToDrop:
                         if (backSlides.getCurrentPosition() > 100) {
                             outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
-                            outtakeRotationTarget = CSCons.wristOuttakeAngleFolder + angleRotationAdjustment;
+                            outtakeRotationTarget = CSCons.wristOuttakeAngleBackdrop + angleRotationAdjustment;
                             outtakeRotation.setPosition(outtakeRotationTarget);
                         }
                         if (backSlides.getCurrentPosition() > backSlidePos.getTarget() - 100) {
