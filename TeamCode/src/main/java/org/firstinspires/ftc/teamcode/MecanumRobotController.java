@@ -9,6 +9,7 @@
 //      P: Parameters, the list of parameters and explanations of them.
 
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
@@ -22,7 +23,7 @@ public class MecanumRobotController {
     public static final double COUNTS_PER_INCH = 30.59;
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final double HEADING_CORRECTION_POWER = 0.02;
-    public static final double MAX_CORRECTION_ERROR = 0.5;
+    public static final double MAX_CORRECTION_ERROR = 1.0;
 
     private final DcMotor backLeft;
     private final DcMotor backRight;
@@ -30,16 +31,22 @@ public class MecanumRobotController {
     private final DcMotor frontRight;
     private final IMU gyro;
 
+    private LinearOpMode robot;
     private double wantedHeading;
     private double currentForward;
     private double currentStrafe;
     private double currentTurn;
 
+    public MecanumRobotController(DcMotor backLeft, DcMotor backRight,
+                                  DcMotor frontLeft, DcMotor frontRight,
+                                  IMU gyro) {
+        this(backLeft, backRight, frontLeft, frontRight, gyro, null);
+    }
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
     public MecanumRobotController(DcMotor backLeft, DcMotor backRight,
                                   DcMotor frontLeft, DcMotor frontRight,
-                                  IMU gyro) {
+                                  IMU gyro, LinearOpMode robot) {
         this.backLeft = backLeft;
         this.backRight = backRight;
         this.frontLeft = frontLeft;
@@ -47,6 +54,7 @@ public class MecanumRobotController {
 
         this.gyro = gyro;
         this.wantedHeading = 0;
+        this.robot = robot;
     }
 
     // Behavior: Moves the robot using a given forward, strafe, and turn power.
@@ -83,6 +91,8 @@ public class MecanumRobotController {
 
     // TODO: Find exact values for distance and implement it in COUNTS_PER_INCH to make this method precise.
     // Behavior: Drives the robot a given distance in a given direction without turning it.
+    // Exceptions:
+    //      - Throws RuntimeException when a LinearOpMode object is not provided.
     // Params:
     //      - double distance: The distance to drive the robot in inches.
     //      - double direction: The direction, in degrees, that the robot will drive in. This is
@@ -92,7 +102,10 @@ public class MecanumRobotController {
     //                                or the field. If its field centric, the robot will always
     //                                move the same direction for the same inputted direction,
     //                                no matter what direction the robot is facing.
-    public void distanceDrive(double distance, double direction, double speed, boolean isFieldCentric) {
+    public void distanceDrive(double distance, double direction, double speed, boolean isFieldCentric) throws RuntimeException {
+        if (robot == null) {
+            throw new RuntimeException("Tried to run distanceDrive but LinearOpMode object not given!");
+        }
         double currentHeading = getAngleImuDegrees();
         // This still needs testing.
         double forward;
@@ -108,10 +121,10 @@ public class MecanumRobotController {
         int forwardCounts = (int)(forward * distance * COUNTS_PER_INCH);
         int strafeCounts = (int)(strafe * distance * COUNTS_PER_INCH);
 
-        int backLeftTarget = backLeft.getCurrentPosition() + forwardCounts + strafeCounts;
-        int backRightTarget = backRight.getCurrentPosition() + forwardCounts + strafeCounts;
-        int frontLeftTarget = frontLeft.getCurrentPosition() + forwardCounts - strafeCounts;
-        int frontRightTarget = frontRight.getCurrentPosition() + forwardCounts - strafeCounts;
+        int backLeftTarget = backLeft.getCurrentPosition() - forwardCounts + strafeCounts;
+        int backRightTarget = backRight.getCurrentPosition() - forwardCounts + strafeCounts;
+        int frontLeftTarget = frontLeft.getCurrentPosition() - forwardCounts - strafeCounts;
+        int frontRightTarget = frontRight.getCurrentPosition() - forwardCounts - strafeCounts;
 
         backLeft.setTargetPosition(backLeftTarget);
         backRight.setTargetPosition(backRightTarget);
@@ -126,12 +139,19 @@ public class MecanumRobotController {
         // Concerned about what happens if this is still going when OpMode deactivates.
         // Needs troubleshooting probably. Don't know if I can call isOpModeActive() either so idk
         // how that works.
-        while (backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy()) {
+        while ((backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy()) && robot.opModeIsActive()) {
             move(speed, 0.0, 0.0, HEADING_CORRECTION_POWER);
+            sendTelemetry(robot.telemetry);
+            robot.telemetry.addData("BackLeftTarget", "BackLeftTarget: " + backLeftTarget);
+            robot.telemetry.addData("BackRightTarget", "BackRightTarget: " + backRightTarget);
+            robot.telemetry.addData("FrontLeftTarget", "FrontLeftTarget: " + frontLeftTarget);
+            robot.telemetry.addData("FrontRightTarget", "FrontRightTarget: " + frontRightTarget);
+            robot.telemetry.addData("ForwardCounts", "ForwardCounts: " + forwardCounts);
+            robot.telemetry.addData("StrafeCounts", "StrafeCounts: " + strafeCounts);
         }
 
         // Stop movement and switch modes
-        move(0, 0, 0, HEADING_CORRECTION_POWER);
+        move(0, 0, 0, 0);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -141,7 +161,7 @@ public class MecanumRobotController {
     // Behavior: Overloaded method of distanceDrive. This sets the default of isFieldCentric.
     //                          based on the direction the robot was initialized in.
     //      - double speed: The speed at which the robot will move.
-    public void distanceDrive(double distance, double direction, double speed) {
+    public void distanceDrive(double distance, double direction, double speed) throws RuntimeException {
         distanceDrive(distance, direction, speed, DEFAULT_FIELD_CENTRIC);
     }
 

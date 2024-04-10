@@ -27,6 +27,6 @@ public class MecanumAutoFrontLeft extends LinearOpMode {
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
         gyro.resetYaw();
-        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
+        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro, this);
     }
 }
