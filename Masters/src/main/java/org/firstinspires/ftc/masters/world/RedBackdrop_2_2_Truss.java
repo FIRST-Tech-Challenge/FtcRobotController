@@ -96,7 +96,7 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
 
         retrievePropPos();
 
-        propPos= PropFindRightProcessor.pos.LEFT;
+
         TrajectorySequence nextPath= null;
 
 //TO DO: go park

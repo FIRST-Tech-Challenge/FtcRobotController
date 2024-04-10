@@ -16,6 +16,8 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 
+import android.util.Size;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -281,10 +283,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         propFindProcessor = new PropFindLeftProcessor(telemetry,packet);
     }
 
-    public void initializeVisionPortal(PropFindRightProcessor propFindProcessor){
+    public void initializeVisionPortal(){
         if (USE_WEBCAM) {
             myVisionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"))
+                    .setCameraResolution(new Size(640, 360))
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
         } else {
@@ -394,6 +397,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        outtakeHook.setPosition(CSCons.openHook);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+        wristServo.setPosition(CSCons.wristVertical);
     }
 
     public void outtakeToPickup(){

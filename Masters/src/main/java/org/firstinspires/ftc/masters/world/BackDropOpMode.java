@@ -70,7 +70,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap, telemetry);
         drive.initializeAprilTagProcessing();
         initializeProp();
-        drive.initializeVisionPortal(drive.getPropFindProcessor());
+        drive.initializeVisionPortal();
 
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -119,9 +119,10 @@ public abstract class BackDropOpMode extends LinearOpMode {
             if (purpleDepositTime ==null){
                 drive.raiseIntake();
                 outtakeWristPosition = CSCons.OuttakeWrist.flatRight;
+                drive.outtakeToBackdrop();
                 purpleDepositTime = new ElapsedTime();
             } else if (purpleDepositTime.milliseconds()>100) {
-                outtakeTarget = CSCons.OuttakePosition.AUTO.getTarget();
+
                 switch(propPos){
                     case RIGHT:
                         drive.followTrajectorySequenceAsync(rightYellow);
@@ -133,6 +134,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
                         drive.followTrajectorySequenceAsync(midYellow);
                         break;
                 }
+                outtakeTarget = CSCons.OuttakePosition.AUTO.getTarget();
                 currentState=State.BACKDROP_DEPOSIT_PATH;
             }
         }
@@ -160,11 +162,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
             }
         } else {
 
-            if (drive.getBackSlides().getCurrentPosition() > outtakeTarget - 200) {
-                drive.outtakeToBackdrop();
+            if (drive.getBackSlides().getCurrentPosition() > outtakeTarget - 150) {
                 drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
-            } else if (drive.getBackSlides().getCurrentPosition() > 10) {
-                drive.outtakeToBackdrop();
             }
         }
 

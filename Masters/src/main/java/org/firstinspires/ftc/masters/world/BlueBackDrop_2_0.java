@@ -14,8 +14,6 @@ import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
 public class BlueBackDrop_2_0 extends BackDropOpMode {
 
 
-
-
     Vector2d yellowLeftPos = new Vector2d();
     Vector2d yellowMidPos = new Vector2d();
     Vector2d yellowRightPos = new Vector2d();
@@ -24,7 +22,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindRightProcessing();
+        drive.initializePropFindLeftProcessing();
     }
 
     @Override
@@ -103,8 +101,6 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
         drive.dropIntake();
 
         retrievePropPos();
-
-        propPos= PropFindRightProcessor.pos.LEFT;
 
 
 //TO DO: go park

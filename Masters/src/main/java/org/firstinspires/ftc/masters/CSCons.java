@@ -32,17 +32,17 @@ public class CSCons {
     public static double outtakeAngleTransfer=1;
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
-    public static double outtakeMovementBackDrop =0.4;
-    public static double outtakeMovementTransfer = .72;
+    public static double outtakeMovementBackDrop =0;
+    public static double outtakeMovementTransfer =0.5;
 
     public static double wristOuttakeAngleBackdrop =0.05;
-    public static double wristOuttakeAngleTransfer =0.96;
-    public static double wristOuttakeMovementTransfer=0.12;
+    public static double wristOuttakeAngleTransfer =1;
+    public static double wristOuttakeMovementTransfer=0.49;
 
     public static double wristOuttakeMovementGround = 1;
 
-    public static double wristOuttakePickup=0.02;
-    public static double wristOuttakeMovementBackdrop =0.85;
+    public static double wristOuttakePickup=0.42;
+    public static double wristOuttakeMovementBackdrop =0.84;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -119,9 +119,9 @@ public class CSCons {
         BOTTOM (-10),
         LOW_AUTO(105),
         AUTO(400),
-        LOW(1400),
-        MID(2400),
-        HIGH(3400);
+        LOW(800),
+        MID(1500),
+        HIGH(2400);
 
         private int target;
 

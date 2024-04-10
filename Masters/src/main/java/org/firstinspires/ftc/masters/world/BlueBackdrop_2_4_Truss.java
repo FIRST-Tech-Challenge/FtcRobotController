@@ -22,7 +22,7 @@ public class BlueBackdrop_2_4_Truss extends BackDropOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindRightProcessing();
+        drive.initializePropFindLeftProcessing();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class BlueBackdrop_2_4_Truss extends BackDropOpMode {
 
         retrievePropPos();
 
-        propPos= PropFindRightProcessor.pos.LEFT;
+
         TrajectorySequence nextPath=null;
 
 //TO DO: go park

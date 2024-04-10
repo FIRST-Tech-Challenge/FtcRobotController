@@ -23,8 +23,9 @@ public class RedFarSide_2_1 extends FarSideOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindRightProcessing();
+        drive.initializePropFindLeftProcessing();
     }
+
     @Override
     public void runOpMode() throws InterruptedException {
 

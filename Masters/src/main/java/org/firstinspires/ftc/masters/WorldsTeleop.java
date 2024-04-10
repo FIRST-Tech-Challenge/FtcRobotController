@@ -273,8 +273,10 @@ public class WorldsTeleop extends LinearOpMode {
                     }
 
                     if (gamepad2.right_bumper) { //up
-                        backSlidePos = OuttakePosition.MID;
+                        backSlidePos = OuttakePosition.HIGH;
+
                         target = backSlidePos.getTarget();
+                        intakeHeight.setPosition(CSCons.intakeInit);
                     }
 
                     if (backSlides.getCurrentPosition() > 2000) {

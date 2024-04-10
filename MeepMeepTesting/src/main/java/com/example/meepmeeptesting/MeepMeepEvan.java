@@ -74,7 +74,7 @@ public class MeepMeepEvan {
                                         .waitSeconds(0.5)
 
                                         .setTangent(Math.toRadians(90))
-                                        .splineToLinearHeading(new Pose2d(48, 34, Math.toRadians(180)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(50, 34, Math.toRadians(180)), Math.toRadians(0))
                                         .waitSeconds(0.5)
 
 //                                //2+2
@@ -734,7 +734,7 @@ public class MeepMeepEvan {
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(RedBackdropTrussC)
+                .addEntity(BlueBackdropTrussC)
                 .start();
     }
 }

@@ -72,7 +72,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap, telemetry);
         drive.initializeAprilTagProcessing();
         initializeProp();
-        drive.initializeVisionPortal(drive.getPropFindProcessor());
+        drive.initializeVisionPortal();
 
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -119,11 +119,10 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected void purpleDeposit(){
         if (purpleDepositTime.milliseconds()>500){
-            outtakeTarget= CSCons.OuttakePosition.LOW_AUTO.getTarget();
-        }
-        if (drive.getBackSlides().getCurrentPosition()>50){
             drive.setOuttakeToGround();
+
         }
+
         if (!drive.isBusy()){
             if (liftTime==null) {
                 drive.openFrontFinger();

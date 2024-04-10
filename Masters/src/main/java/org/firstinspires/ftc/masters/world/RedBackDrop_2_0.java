@@ -99,7 +99,7 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
         retrievePropPos();
 
-        propPos= PropFindRightProcessor.pos.LEFT;
+
 
 
 //TO DO: go park
