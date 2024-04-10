@@ -41,8 +41,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name="Mecanum Driver", group="TeleOp")
 public class MecanumDriver extends OpMode {
-    MecanumRobotController robotController;
-    private ElapsedTime runtime = new ElapsedTime();
+    private MecanumRobotController robotController;
+    private final ElapsedTime runtime = new ElapsedTime();
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
@@ -80,10 +80,7 @@ public class MecanumDriver extends OpMode {
         robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
-//        telemetry.addData("Forward", "Forward: " + forward);
-//        telemetry.addData("Strafe", "Strafe: " + strafe);
-//        telemetry.addData("Turn", "Turn: " + turn);
-//        telemetry.addData("Heading", "Heading: " + currentHeading);
+        robotController.sendTelemetry(telemetry);
     }
 
     @Override

@@ -12,6 +12,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
@@ -28,7 +29,11 @@ public class MecanumRobotController {
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
     private final IMU gyro;
+
     private double wantedHeading;
+    private double currentForward;
+    private double currentStrafe;
+    private double currentTurn;
 
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
@@ -59,6 +64,12 @@ public class MecanumRobotController {
         } else {
             wantedHeading = getAngleImuDegrees();
         }
+
+        // Set fields so the robot knows what its forward, strafe, and turn is.
+        currentForward = forward;
+        currentStrafe = strafe;
+        currentTurn = turn;
+
         double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
         double backRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
         double frontLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
@@ -175,6 +186,8 @@ public class MecanumRobotController {
         wantedHeading = angle;
         while (Math.abs(getAngleImuDegrees() - wantedHeading) > MAX_CORRECTION_ERROR)
             move(0, 0, 0, speed);
+        // Stop the robot
+        move(0, 0, 0, 0);
     }
 
     // Behavior: Normalizes a given degree value to the range (-180, 180]
@@ -194,4 +207,21 @@ public class MecanumRobotController {
         return normalize(
                 gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
     }
+
+    // Behavior: Sends various information to the telemetry to be read. The information sent is
+    //           the strafe movement of the robot, the forward movement of the robot, the turn
+    //           movement of the robot, the wanted heading of the robot, and the current heading
+    //           of the robot.
+    // Params:
+    //      - Telemetry telemetry: The telemetry to send the information to.
+    public void sendTelemetry(Telemetry telemetry) {
+        telemetry.addData("Forward", currentForward);
+        telemetry.addData("Strafe", currentStrafe);
+        telemetry.addData("Turn", currentTurn);
+        telemetry.addData("Current Heading", getAngleImuDegrees());
+        telemetry.addData("Wanted Heading", wantedHeading);
+
+        telemetry.update();
+    }
+
 }
