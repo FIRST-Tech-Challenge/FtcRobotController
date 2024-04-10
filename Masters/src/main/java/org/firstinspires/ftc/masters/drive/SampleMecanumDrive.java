@@ -42,6 +42,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -52,6 +53,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.masters.PropFindLeftProcessor;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -59,6 +62,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilde
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -102,7 +106,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     DcMotor intake = null;
     Servo intakeHeight = null;
 
-
+    public DigitalChannel frontBreakBeam, backBreakBeam;
+    public boolean pixelBack, pixelFront;
     Servo outtakeRotation;
     Servo outtakeMovement;
     private Servo wristServo;
@@ -116,7 +121,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncVels = new ArrayList<>();
 
     PIDController controller;
-    PIDController icontroller;
 
     public static double p = 0.01, i = 0, d = 0.0001;
     public static double f = 0.05;
@@ -131,6 +135,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     protected AprilTagProcessor aprilTag;
     protected PropFindRightProcessor propFindProcessor;
     protected VisionPortal myVisionPortal;
+    private WebcamName frontWebcam, backWebcam;
     TelemetryPacket packet = new TelemetryPacket();
 
 
@@ -216,8 +221,15 @@ public class SampleMecanumDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
 
+        frontBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
+        frontBreakBeam.setMode(DigitalChannel.Mode.INPUT);
+        backBreakBeam = hardwareMap.digitalChannel.get("breakBeam2");
+        backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
+
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
+
+
 
 
         for (DcMotorEx motor : motors) {
@@ -271,6 +283,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
     }
@@ -283,10 +296,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         propFindProcessor = new PropFindLeftProcessor(telemetry,packet);
     }
 
+
+
     public void initializeVisionPortal(){
+
+        frontWebcam = hardwareMap.get(WebcamName.class, "frontWebcam");
+        backWebcam = hardwareMap.get(WebcamName.class, "backWebcam");
+
+        CameraName switchableCamera = ClassFactory.getInstance()
+                .getCameraManager().nameForSwitchableCamera(frontWebcam, backWebcam);
+
         if (USE_WEBCAM) {
             myVisionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"))
+                    .setCamera(switchableCamera)
                     .setCameraResolution(new Size(640, 360))
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
@@ -308,6 +330,24 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public PropFindRightProcessor getPropFindProcessor() {
         return propFindProcessor;
+    }
+
+    public void activateFrontCamera (){
+        myVisionPortal.setActiveCamera(frontWebcam);
+    }
+
+    public  void activateBackCamera(){
+        myVisionPortal.setActiveCamera(backWebcam);
+    }
+
+    public void enableAprilTag(){
+        myVisionPortal.setProcessorEnabled(aprilTag, true);
+        myVisionPortal.setProcessorEnabled(propFindProcessor, false);
+    }
+
+    public void enablePropProcessor(){
+        myVisionPortal.setProcessorEnabled(propFindProcessor, true);
+        myVisionPortal.setProcessorEnabled(aprilTag, false);
     }
 
     public void openClaw(){
@@ -449,21 +489,43 @@ public class SampleMecanumDrive extends MecanumDrive {
                     telemetry.addData("Xoffset", xOffset);
                     telemetry.addData("Yoffset", yOffset);
                 }
-                Pose2d cameraPosition;
+                Pose2d cameraPosition = null;
 
-                if (detection.id==1) {
-                    cameraPosition = new Pose2d(CSCons.tagX - xOffset, CSCons.tag1Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id==2){
-                    cameraPosition = new Pose2d(CSCons.tagX - xOffset, CSCons.tag2Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id ==3){
-                    cameraPosition = new Pose2d(CSCons.tagX - xOffset, CSCons.tag3Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id ==4){
-                    cameraPosition =  new Pose2d(CSCons.tagX - xOffset, CSCons.tag4Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else if (detection.id == 5){
-                    cameraPosition =  new Pose2d(CSCons.tagX - xOffset, CSCons.tag5Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                } else cameraPosition =  new Pose2d(CSCons.tagX - xOffset, CSCons.tag6Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-               // return new Pose2d(72 - 29.25 - Math.abs(detection.ftcPose.range * Math.sin(Math.toRadians(theta))), 72  - 7.5  - Math.abs(detection.ftcPose.range * Math.cos(Math.toRadians(theta))), Math.toRadians(detection.ftcPose.yaw));
-             //   return new Pose2d(72 - 7.5 - detection.ftcPose.y, 72 - 29.25 + detection.ftcPose.x,detection.ftcPose.yaw);
+                switch(detection.id){
+                    case 1:
+                        cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag1Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                    break;
+                    case 2:
+                        cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag2Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 3:
+                        cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag3Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 4:
+                        cameraPosition =  new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag4Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+
+                    case 5:
+                        cameraPosition =  new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag5Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 6:
+                        cameraPosition =  new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag6Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 7:
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag7Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 8:
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag8Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 9:
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag9Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+                    case 10:
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag10Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        break;
+
+                }
+
 
                 Pose2d robotPosition;
                 double xOffsetRobot = CSCons.cameraOffsetX*Math.cos(Math.toRadians (180+detection.ftcPose.yaw));
@@ -473,8 +535,12 @@ public class SampleMecanumDrive extends MecanumDrive {
                     telemetry.addData("robot x offset", xOffsetRobot);
                     telemetry.addData("robot y offset", yOffsetRobot);
                 }
+                if (cameraPosition!=null) {
 
-                robotPosition = new Pose2d(cameraPosition.getX()+xOffsetRobot, cameraPosition.getY()+yOffsetRobot, Math.toRadians(180+detection.ftcPose.yaw));
+                    robotPosition = new Pose2d(cameraPosition.getX() + xOffsetRobot, cameraPosition.getY() + yOffsetRobot, Math.toRadians(180 + detection.ftcPose.yaw));
+                } else {
+                    robotPosition = getPoseEstimate();
+                }
 
                 return robotPosition;
 

@@ -73,6 +73,10 @@ public abstract class FarSideOpMode extends LinearOpMode {
         drive.initializeAprilTagProcessing();
         initializeProp();
         drive.initializeVisionPortal();
+        drive.activateFrontCamera();
+        drive.enablePropProcessor();
+        drive.pixelBack =  drive.backBreakBeam.getState();
+        drive.pixelFront = drive.frontBreakBeam.getState();
 
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -100,6 +104,8 @@ public abstract class FarSideOpMode extends LinearOpMode {
             propPos = drive.getPropFindProcessor().position;
             telemetry.addData("Position", propPos);
         }
+        drive.activateBackCamera();
+        drive.enableAprilTag();
     }
 
     protected void purpleDepositPath(){
@@ -161,24 +167,19 @@ public abstract class FarSideOpMode extends LinearOpMode {
             if(pickupElapsedTime==null) {
                 drive.intakeToTopStack();
                 pickupElapsedTime = new ElapsedTime();
-            } else if (pickupElapsedTime.milliseconds()>1000){
+            }
+            if (has2Pixels() ){
+                pickupElapsedTime = new ElapsedTime();
+            }
+
+           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
                 drive.stopIntake();
                 drive.raiseIntake();
                 drive.outtakeToPickup();
                 pickupElapsedTime = new ElapsedTime();
                 currentState = State.BACKDROP_DEPOSIT_PATH;
                 drive.followTrajectorySequenceAsync(nextPath);
-//                switch (propPos){
-//                    case LEFT:
-//                        drive.followTrajectorySequenceAsync(stackToLeftYellow);
-//                        break;
-//                    case RIGHT:
-//                        drive.followTrajectorySequenceAsync(stackToRightYellow);
-//                        break;
-//                    case MID:
-//                        drive.followTrajectorySequenceAsync(stackToMidYellow);
-//                        break;
-//                }
+
             }
         }
     }
@@ -247,5 +248,11 @@ public abstract class FarSideOpMode extends LinearOpMode {
             drive.outtakeToTransfer();
         }
     }
+
+    protected boolean has2Pixels(){
+        return drive.frontBreakBeam.getState() && drive.backBreakBeam.getState();
+    }
+
+
 
 }

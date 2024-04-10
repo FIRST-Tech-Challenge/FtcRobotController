@@ -118,6 +118,7 @@ public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
 //TO DO: go park
 
         while (opModeIsActive() && !isStopRequested()) {
+            telemetry.update();
             drive.update();
             drive.backSlidesMove(outtakeTarget);
 

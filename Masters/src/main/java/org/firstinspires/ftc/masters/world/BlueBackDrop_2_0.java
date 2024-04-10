@@ -106,6 +106,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 //TO DO: go park
 
         while (opModeIsActive() && !isStopRequested()) {
+            telemetry.update();
             drive.update();
             drive.backSlidesMove(outtakeTarget);
 

@@ -85,7 +85,7 @@ public class CSCons {
 
     public static double wristCenter = 0.5;
 
-    public static double tagX = 63;
+    public static double tagBackboardX = 63;
     public static double tag1Y = 42;
     public static double tag2Y = 35.5;
     public static double tag3Y = 29;
@@ -93,7 +93,7 @@ public class CSCons {
     public static double tag5Y = -35.5;
     public static double tag6Y = -42;
 
-    public static double tag7X= -72;
+    public static double tagAudienceX = -72;
     public static double tag9Y= 36;
     public static double tag10Y= 41.5;
     public static double tag7Y = -41.5;

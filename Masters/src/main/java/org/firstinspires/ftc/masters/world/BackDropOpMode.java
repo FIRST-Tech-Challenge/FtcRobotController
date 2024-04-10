@@ -11,6 +11,7 @@ import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.Date;
@@ -71,6 +72,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
         drive.initializeAprilTagProcessing();
         initializeProp();
         drive.initializeVisionPortal();
+        drive.activateFrontCamera();
+        drive.enablePropProcessor();
 
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -98,6 +101,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
             propPos = drive.getPropFindProcessor().position;
             telemetry.addData("Position", propPos);
         }
+        drive.activateBackCamera();
+        drive.enableAprilTag();
     }
 
     protected void purpleDepositPathState(){
@@ -168,6 +173,9 @@ public abstract class BackDropOpMode extends LinearOpMode {
         }
 
         if (!drive.isBusy()){
+            drive.activateFrontCamera();
+            drive.enableAprilTag();
+
             drive.openFingers();
             if (depositTime==null){
                 depositTime= new ElapsedTime();
@@ -192,18 +200,39 @@ public abstract class BackDropOpMode extends LinearOpMode {
             drive.startIntake();
         }
         if (!drive.isBusy()){
-            if(dropTime==null) {
-                drive.intakeToTopStack();
-                dropTime = new ElapsedTime();
-            } else if (dropTime.milliseconds()>500){
-                drive.stopIntake();
-                drive.outtakeToPickup();
-                pickupElapsedTime = new ElapsedTime();
-                currentState = State.BACKDROP_DEPOSIT_PATH;
+            List<AprilTagDetection> currentDetections = drive.getAprilTag().getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.metadata != null) {
+                    telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                } else {
+                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                }
+            }   // end for() loop
+            telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
+            drive.aprilTagCoarsePosEstimate(currentDetections);
 
-                drive.followTrajectorySequenceAsync(toBackBoard);
 
-            }
+//            if(pickupElapsedTime==null) {
+//                drive.intakeToTopStack();
+//                pickupElapsedTime = new ElapsedTime();
+//            }
+//            if (has2Pixels() ){
+//                pickupElapsedTime = new ElapsedTime();
+//            }
+//
+//            if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
+//                drive.stopIntake();
+//                drive.raiseIntake();
+//                drive.outtakeToPickup();
+//                pickupElapsedTime = new ElapsedTime();
+//                currentState = BackDropOpMode.State.BACKDROP_DEPOSIT_PATH;
+//                drive.followTrajectorySequenceAsync(toBackBoard);
+//
+//            }
         }
     }
 
@@ -214,6 +243,10 @@ public abstract class BackDropOpMode extends LinearOpMode {
             outtakeTarget = 0;
             drive.outtakeToTransfer();
         }
+    }
+
+    protected boolean has2Pixels(){
+        return drive.frontBreakBeam.getState() && drive.backBreakBeam.getState();
     }
 
 
