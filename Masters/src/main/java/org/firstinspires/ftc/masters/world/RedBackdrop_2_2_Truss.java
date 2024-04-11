@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
+import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
 import org.firstinspires.ftc.masters.world.paths.RedBackDropPath;
 
 @Config
@@ -145,4 +146,9 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
 
         }
     }
+
+    public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
+        return RedBackDropPath.toStackWing(drive, robotPosition);
+    }
+
 }
