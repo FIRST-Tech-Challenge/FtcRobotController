@@ -129,4 +129,8 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
         }
     }
+
+    public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
+        return BlueBackDropPath.toStackWing(drive, robotPosition);
+    }
 }

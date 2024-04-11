@@ -98,7 +98,15 @@ public class BlueBackDropPath {
 
         return drive.trajectorySequenceBuilder(startPose)
 
-                .lineToLinearHeading(new Pose2d(-62, 34, Math.toRadians(180)),drive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), drive.getAccelerationConstraint(MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(-61, 34, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL))
+                .build();
+    }
+
+    public static TrajectorySequence toStackGate(SampleMecanumDrive drive, Pose2d startPose) {
+
+        return drive.trajectorySequenceBuilder(startPose)
+
+                .lineToLinearHeading(new Pose2d(-61, 10, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL))
                 .build();
     }
 

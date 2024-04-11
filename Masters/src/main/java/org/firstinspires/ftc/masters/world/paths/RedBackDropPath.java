@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.masters.world.paths;
 
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
@@ -85,6 +89,14 @@ public class RedBackDropPath {
                 .splineToLinearHeading(new Pose2d(44, -60, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
+    }
+
+    public static TrajectorySequence toStackWing(SampleMecanumDrive drive, Pose2d startPose) {
+
+        return drive.trajectorySequenceBuilder(startPose)
+
+                .lineToLinearHeading(new Pose2d(-61, -34, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL))
+                .build();
     }
 
 

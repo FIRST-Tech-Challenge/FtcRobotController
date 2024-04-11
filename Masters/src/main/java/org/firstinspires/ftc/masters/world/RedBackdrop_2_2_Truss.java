@@ -79,9 +79,6 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
         toBackBoard = RedBackDropPath.fromStackToBoardTruss(drive, toStackFromMid.end());
 
         park = RedBackDropPath.park(drive, toBackBoard.end());
-        
-
-
 
         drive.raiseIntake();
         drive.closeFingers();
@@ -105,7 +102,7 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
 
-            switch (currentState) {
+            switch (currentState){
                 case PURPLE_DEPOSIT_PATH:
                     purpleDepositPathState();
                     break;
@@ -134,7 +131,10 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
                     break;
                 case TO_STACK:
                     toStack();
-
+                    break;
+                case TO_STACK_TAG:
+                    toStackTag();
+                    break;
                 case PARK:
                     park();
                     break;

@@ -160,9 +160,10 @@ public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
                     break;
 
             }
-
-
-
         }
+    }
+
+    public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
+        return BlueBackDropPath.toStackWing(drive, robotPosition);
     }
 }
