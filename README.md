@@ -9,7 +9,8 @@ click under "Repository template," and select "chsRobotix/TemplateRobotControlle
 "{starting year}-{ending year}{season name}."
 
 # Updating repositories created with this template
-Open up the terminal and type `git remote add template https://github.com/chsRobotix/TemplateRobotController.git`. Then type `git pull template`.
+Open up the terminal and type `git remote add template https://github.com/chsRobotix/TemplateRobotController.git`. Then type `git pull --allow-unrelated-histories
+ template`. By default Git prevents you from pulling from an unrelated repository but `--alow-unrelated-histories` overrides it. 
 
 # Updating with FTC's FtcRobotController
 Keep this fork up to date with FTC's official [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController.git).
