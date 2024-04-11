@@ -79,3 +79,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Ignore RobotLibrary since the main branch is not supposed to be using it
+RobotLibrary/
