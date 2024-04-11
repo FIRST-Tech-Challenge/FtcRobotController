@@ -256,8 +256,8 @@ public class MecanumRobotController {
 
     // Behavior: Sends various information to the telemetry to be read. The information sent is
     //           the strafe movement of the robot, the forward movement of the robot, the turn
-    //           movement of the robot, the wanted heading of the robot, and the current heading
-    //           of the robot.
+    //           movement of the robot, the wanted heading of the robot, the current heading
+    //           of the robot, and the current runtime.
     // Params:
     //      - Telemetry telemetry: The telemetry to send the information to.
     public void sendTelemetry(Telemetry telemetry) {
