@@ -12,6 +12,9 @@ public class MecanumWheels extends WheelSystem {
     // How much power the wheels run with (0.0 - 1.0)
     private double wheelPower = 1.0;
 
+    
+    private double wheelGearRatio = 0.0;
+
     public MecanumWheels(DcMotor frontLeftWheel, DcMotor frontRightWheel, DcMotor backLeftWheel, DcMotor backRightWheel) {
         this.frontLeftWheel = frontLeftWheel;
         this.frontRightWheel = frontRightWheel;
