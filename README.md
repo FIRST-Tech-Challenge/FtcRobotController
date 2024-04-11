@@ -8,11 +8,15 @@ The repository is configured to be a repository template, so to use it, simply c
 click under "Repository template," and select "chsRobotix/TemplateRobotController." It is suggested to name it in the format of
 "{starting year}-{ending year}{season name}."
 
-# Syncing with FTC's FtcRobotController
+# Updating repositories created with this template
+Open up the terminal and type `git remote add template https://github.com/chsRobotix/TemplateRobotController.git`. Then type `git pull template`.
+
+# Updating with FTC's FtcRobotController
 Keep this fork up to date with FTC's official [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController.git).
 To do that, go to the GitHub page for [this repository](https://github.com/chsRobotix/TemplateRobotController.git) and click on "Sync fork."
 Alternatively, you can type `git remote add-url upstream https://github.com/FIRST-Tech-Challenge/FtcRobotController.git ` into the terminal to save the FtcRobotController as
 "upstream." Then type `git pull upstream` to pull from the upstream.
+
 
 # Contents
 In [our team's code](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/), there is an [Autonomous](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous.java) and a [TeleOp](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp.java). The directory also contains a submodule([CoyotesRobot](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CoyotesRobot)), which allows for the template and library to be modified independently of each other. 
