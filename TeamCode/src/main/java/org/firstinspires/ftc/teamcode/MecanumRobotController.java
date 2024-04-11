@@ -264,8 +264,11 @@ public class MecanumRobotController {
         telemetry.addData("Forward", currentForward);
         telemetry.addData("Strafe", currentStrafe);
         telemetry.addData("Turn", currentTurn);
+        telemetry.addData("", "");
         telemetry.addData("Current Heading", getAngleImuDegrees());
         telemetry.addData("Wanted Heading", wantedHeading);
+        telemetry.addData("", "");
+        telemetry.addData("Runtime", runtime.seconds());
 
         telemetry.update();
     }
