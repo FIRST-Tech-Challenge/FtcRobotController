@@ -22,7 +22,8 @@ public class MecanumRobotController {
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
     // Need to find this.
-    public static final double COUNTS_PER_INCH = 30.59;
+    public static final double FORWARD_COUNTS_PER_INCH = 42.59;
+    public static final double STRAFE_COUNTS_PER_INCH = 51.0;
     public static final double HEADING_CORRECTION_POWER = 0.02;
     public static final double MAX_CORRECTION_ERROR = 2.0;
 
@@ -109,7 +110,7 @@ public class MecanumRobotController {
     //      - double strafe: The strafe power for the robot.
     //      - double turn: The turn power fo the robot.
     //      - double headingCorrectionPower: The speed of heading correction.
-    public void move(double forward, double strafe, double turn, double headingCorrectionPower) {
+    private void move(double forward, double strafe, double turn, double headingCorrectionPower) {
         move(forward, strafe, turn, headingCorrectionPower, DEFAULT_SEND_TELEMETRY);
     }
 
@@ -143,8 +144,8 @@ public class MecanumRobotController {
             strafe = Math.sin(direction * (Math.PI / 180));
         }
 
-        int forwardCounts = (int)(forward * distance * COUNTS_PER_INCH);
-        int strafeCounts = (int)(strafe * distance * COUNTS_PER_INCH);
+        int forwardCounts = (int)(forward * distance * FORWARD_COUNTS_PER_INCH);
+        int strafeCounts = (int)(strafe * distance * STRAFE_COUNTS_PER_INCH);
 
         int backLeftTarget = backLeft.getCurrentPosition() - forwardCounts + strafeCounts;
         int backRightTarget = backRight.getCurrentPosition() - forwardCounts + strafeCounts;
