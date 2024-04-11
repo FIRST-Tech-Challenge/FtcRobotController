@@ -569,6 +569,10 @@ public class SampleMecanumDrive extends MecanumDrive {
                 }
                 if (cameraPosition!=null) {
 
+                    if (detection.id==7 || detection.id==10){
+                        robotPosition = new Pose2d(cameraPosition.getX() + xOffsetRobot, cameraPosition.getY() + yOffsetRobot, Math.toRadians(180 - detection.ftcPose.yaw));
+
+                    } else
                     robotPosition = new Pose2d(cameraPosition.getX() + xOffsetRobot, cameraPosition.getY() + yOffsetRobot, Math.toRadians(180 + detection.ftcPose.yaw));
                 } else {
                     robotPosition = getPoseEstimate();
