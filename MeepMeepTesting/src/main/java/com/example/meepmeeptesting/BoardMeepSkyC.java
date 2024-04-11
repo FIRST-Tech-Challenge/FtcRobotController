@@ -16,12 +16,15 @@ public class BoardMeepSkyC {
                 .setDimensions(15, 17)
 
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-38, 55), Math.toRadians(270)))
-                                        .strafeLeft(10)
-                                        .lineToSplineHeading(new Pose2d(-38, 8, Math.toRadians(270)))
-                                        .splineToLinearHeading(new Pose2d(-40, 6, Math.toRadians(180)), Math.toRadians(180))
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(16, 61.2), Math.toRadians(270)))
+                                .setTangent(Math.toRadians(-40))
+                                .splineToLinearHeading(new Pose2d(10, 30, Math.toRadians(180)), Math.toRadians(-70))
+                                .waitSeconds(0.5)
 
-                                        .build()
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(48, 29, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+                                .build()
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
