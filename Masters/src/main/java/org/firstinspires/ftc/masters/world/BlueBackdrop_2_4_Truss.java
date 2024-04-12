@@ -154,14 +154,19 @@ public class BlueBackdrop_2_4_Truss extends BackDropOpMode {
                     break;
                 case TO_STACK:
                     toStack();
+                    break;
+                case TO_STACK_TAG:
+                    toStackTag();
+                    break;
                 case PARK:
                     park();
                     break;
 
             }
-
-
-
         }
+    }
+
+    public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
+        return BlueBackDropPath.toStackWing(drive, robotPosition);
     }
 }

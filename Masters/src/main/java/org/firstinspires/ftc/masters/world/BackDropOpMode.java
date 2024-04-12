@@ -52,6 +52,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
     protected ElapsedTime depositTime = null;
     protected ElapsedTime dropTime = null;
     protected ElapsedTime pickupElapsedTime= null;
+    protected ElapsedTime aprilTagWait =null;
 
     protected CSCons.OuttakeWrist outtakeWristPosition = CSCons.OuttakeWrist.vertical;
 
@@ -228,38 +229,29 @@ public abstract class BackDropOpMode extends LinearOpMode {
 
         if (!drive.isBusy()){
             List<AprilTagDetection> currentDetections = drive.getAprilTag().getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                if (detection.metadata != null) {
-                    telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-                } else {
-                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-                }
-            }   // end for() loop
+            // end for() loop
             telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
              Pose2d robotPosition =drive.aprilTagCoarsePosEstimate(currentDetections);
              while (robotPosition.epsilonEquals(drive.getPoseEstimate())){
                  currentDetections = drive.getAprilTag().getDetections();
-                 for (AprilTagDetection detection : currentDetections) {
-                     if (detection.metadata != null) {
-                         telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                         telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                         telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                         telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-                     } else {
-                         telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                         telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-                     }
-                 }   // end for() loop
+//                 for (AprilTagDetection detection : currentDetections) {
+//                     if (detection.metadata != null) {
+//                         telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+//                         telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+//                         telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+//                         telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+//                     } else {
+//                         telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+//                         telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+//                     }
+//                 }   // end for() loop
                  telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
                  robotPosition =drive.aprilTagCoarsePosEstimate(currentDetections);
              }
             currentState= State.TO_STACK_TAG;
+             drive.startIntake();
             drive.setPoseEstimate(robotPosition);
-            drive.followTrajectorySequenceAsync(BlueBackDropPath.toStackWing(drive, robotPosition));
+            drive.followTrajectorySequenceAsync(getStackWingTrajectory(robotPosition));
 
 
 
@@ -274,19 +266,19 @@ public abstract class BackDropOpMode extends LinearOpMode {
                 pickupElapsedTime = new ElapsedTime();
                 drive.getMyVisionPortal().getActiveCamera().close();
             }
-            //            if (has2Pixels() ){
-//                pickupElapsedTime = new ElapsedTime();
-//            }
+            if (has2Pixels() ){
+                pickupElapsedTime = new ElapsedTime();
+            }
 //
-//            if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
-//                drive.stopIntake();
-//                drive.raiseIntake();
-//                drive.outtakeToPickup();
-//                pickupElapsedTime = new ElapsedTime();
-//                currentState = BackDropOpMode.State.BACKDROP_DEPOSIT_PATH;
-//                drive.followTrajectorySequenceAsync(toBackBoard);
-//
-//            }
+            if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
+                drive.stopIntake();
+                drive.raiseIntake();
+                drive.outtakeToPickup();
+                pickupElapsedTime = new ElapsedTime();
+                currentState = BackDropOpMode.State.BACKDROP_DEPOSIT_PATH;
+                drive.followTrajectorySequenceAsync(toBackBoard);
+
+            }
         }
     }
 
@@ -301,6 +293,9 @@ public abstract class BackDropOpMode extends LinearOpMode {
     protected boolean has2Pixels(){
         return !drive.frontBreakBeam.getState() && !drive.backBreakBeam.getState();
     }
+
+    abstract public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition);
+
 
 
 }
