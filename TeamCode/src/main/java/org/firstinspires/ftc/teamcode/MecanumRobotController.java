@@ -24,8 +24,11 @@ public class MecanumRobotController {
     // Need to find this.
     public static final double FORWARD_COUNTS_PER_INCH = 42.59;
     public static final double STRAFE_COUNTS_PER_INCH = 51.0;
-    public static final double HEADING_CORRECTION_POWER = 0.02;
+    public static final double HEADING_CORRECTION_POWER = 1.0;
     public static final double MAX_CORRECTION_ERROR = 2.0;
+    public static final double Kp = 0.05;
+    public static final double Kd = 0.0005;
+    public static final double Ki = 0.000005;
 
     private final DcMotor backLeft;
     private final DcMotor backRight;
@@ -39,6 +42,10 @@ public class MecanumRobotController {
     private double currentForward;
     private double currentStrafe;
     private double currentTurn;
+
+    private double integralSum;
+    private double lastError;
+    private final ElapsedTime PIDTimer;
 
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
@@ -55,6 +62,9 @@ public class MecanumRobotController {
         this.wantedHeading = getAngleImuDegrees();
 
         this.runtime = new ElapsedTime();
+        this.runtime.reset();
+
+        this.PIDTimer = new ElapsedTime();
         this.runtime.reset();
     }
 
@@ -75,14 +85,20 @@ public class MecanumRobotController {
     //      - boolean isTelemetry: Whether or not this method will send telemetry.
     private void move(double forward, double strafe, double turn, double headingCorrectionPower,
                       boolean isTelemetry) {
-        if (turn == 0) {
-            double currentHeading = getAngleImuDegrees();
-            double headingCorrection = currentHeading - wantedHeading;
-            headingCorrection = normalize(headingCorrection);
-            turn = headingCorrectionPower * headingCorrection;
-        } else {
-            wantedHeading = getAngleImuDegrees();
-        }
+        wantedHeading -= turn * 3;
+        wantedHeading = normalize(wantedHeading);
+
+        double currentHeading = getAngleImuDegrees();
+        double error = normalize(wantedHeading - currentHeading);
+        double derivative = (error - lastError) / PIDTimer.seconds();
+        integralSum += error * runtime.seconds();
+
+        double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
+        headingCorrection = normalize(headingCorrection);
+        lastError = error;
+        PIDTimer.reset();
+
+        turn = headingCorrectionPower * headingCorrection;
 
         // Set fields so the robot knows what its current forward, strafe, and turn is in other methods.
         currentForward = forward;
@@ -301,5 +317,8 @@ public class MecanumRobotController {
         while (robot.opModeIsActive() && (runtime.seconds() - startTime) < time) {
             move(0, 0, 0, HEADING_CORRECTION_POWER);
         }
+
+        // Stop the robot
+        move(0, 0, 0, 0);
     }
 }
