@@ -2,6 +2,8 @@
  */
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.vision.apriltag.AprilTagProcessor.THREADS_DEFAULT;
+
 import android.os.Environment;
 import android.util.Size;
 
@@ -16,6 +18,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -35,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * TeleOp Servo Test Program
  */
 @TeleOp(name="Teleop-Skunkworks", group="7592")
-@Disabled
+//@Disabled
 public class TeleopSkunkworks extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  //
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  //
@@ -55,7 +59,15 @@ public class TeleopSkunkworks extends LinearOpMode {
     double    elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
+    HardwareMinibot robot = new HardwareMinibot();
+    protected CenterstageSuperPipeline pipelineBack;
+
+    // AprilTag variables
+    protected AprilTagProcessor aprilTag;
+    protected AprilTagProcessorImplCallback aprilTagCallback;
+    protected AprilTagDetection detectionData = null;     // Used to hold the data for a detected AprilTag
+    FieldCoordinate robotGlobalCoordinateCorrectedPosition = new FieldCoordinate(0.0, 0.0, 0.0);
+    protected VisionPortal visionPortalBack;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,6 +77,23 @@ public class TeleopSkunkworks extends LinearOpMode {
 
         // Initialize robot hardware
         robot.init(hardwareMap,false);
+
+//        aprilTag = new AprilTagProcessor.Builder()
+//                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+//                .setLensIntrinsics(904.214,904.214,696.3,362.796)
+//                .build();
+        aprilTag = new AprilTagProcessorImplCallback(904.214, 904.214, 696.3, 362.796,
+                DistanceUnit.INCH, AngleUnit.DEGREES, AprilTagGameDatabase.getCenterStageTagLibrary(),
+                false, false, true, true,
+                AprilTagProcessor.TagFamily.TAG_36h11, THREADS_DEFAULT, false,
+                robotGlobalCoordinateCorrectedPosition, telemetry);
+        visionPortalBack = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(aprilTag)
+                .setCameraResolution(new Size(1280, 800))
+                .build();
+        //Ensure the camera is in automatic exposure control
+        setWebcamAutoExposure();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -83,32 +112,6 @@ public class TeleopSkunkworks extends LinearOpMode {
             robot.readBulkData();
 
             //================ Update telemetry with current state ================
-            telemetry.addData("Press buttons to toggle LEDs", " " );
-
-            //================ CROSS SWITCHES WHICH SERVO WE'RE CONTROLLING ================
-            if( gamepad1_cross_now && !gamepad1_cross_last)
-            {
-                robot.setDetectedPixels(1);
-            } // cross
-            if( gamepad1_circle_now && !gamepad1_circle_last)
-            {
-                robot.setDetectedPixels(2);
-            } // circle
-            if( gamepad1_triangle_now && !gamepad1_triangle_last)
-            {
-                robot.setDetectedPixels(0);
-            } // triangle
-            if( gamepad1_square_now && !gamepad1_square_last)
-            {
-            } // square
-
-            telemetry.addData("Push Servo Position", robot.getPushServoAngle());
-            telemetry.addData("Wrist Servo Position", robot.getWristServoAngle());
-            telemetry.addData("Finger Servo1 Position", robot.getFingerServo1Angle());
-            telemetry.addData("Finger Servo2 Position", robot.getFingerServo2Angle());
-            telemetry.addData("Backdrop Range", "%.1f CM", robot.getBackdropRange());
-            telemetry.addData("Status LEDs","Left LEDs %s %s", robot.lPixelRed.getState(), robot.lPixelGreen.getState());
-            telemetry.addData("Status LEDs","Pixel2 LEDs %s %s", robot.rPixelRed.getState(), robot.rPixelGreen.getState());
 
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
@@ -117,6 +120,9 @@ public class TeleopSkunkworks extends LinearOpMode {
             elapsedHz    =  1000.0 / elapsedTime;
 
             // Update telemetry data
+            telemetry.addData("Corrected Global X Position", robotGlobalCoordinateCorrectedPosition.getX());
+            telemetry.addData("Corrected Global Y Position", robotGlobalCoordinateCorrectedPosition.getY());
+            telemetry.addData("Corrected Global Angle", Math.toDegrees(robotGlobalCoordinateCorrectedPosition.getAngleRadians()));
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
@@ -125,6 +131,34 @@ public class TeleopSkunkworks extends LinearOpMode {
         } // opModeIsActive
 
     } // runOpMode
+
+    protected void setWebcamAutoExposure() {
+        // Wait for the camera to be open, then use the controls
+        if (visionPortalBack == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls to auto unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortalBack.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Auto) {
+                exposureControl.setMode(ExposureControl.Mode.Auto);
+                sleep(50);
+            }
+        }
+    } // setWebcamAutoExposure
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {

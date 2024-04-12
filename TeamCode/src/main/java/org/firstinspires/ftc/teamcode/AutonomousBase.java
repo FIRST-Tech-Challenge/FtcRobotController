@@ -28,7 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
+//  HardwarePixelbot robot = new HardwarePixelbot(telemetry);
+    HardwareMinibot robot = new HardwareMinibot();
 
     static final int     DRIVE_TO             = 1;       // ACCURACY: tighter tolerances, and slows then stops at final position
     static final int     DRIVE_THRU           = 2;       // SPEED: looser tolerances, and leave motors running (ready for next command)
@@ -379,6 +380,34 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
     } // setWebcamManualExposure
 
+    protected void setWebcamAutoExposure() {
+        // Wait for the camera to be open, then use the controls
+        if (visionPortalBack == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls to auto unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortalBack.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Auto) {
+                exposureControl.setMode(ExposureControl.Mode.Auto);
+                sleep(50);
+            }
+        }
+    } // setWebcamAutoExposure
+
     /*---------------------------------------------------------------------------------*/
     protected boolean updateBackdropAprilTags() {
         // Allow robot to settle and april tag processor to see april tag
@@ -583,37 +612,37 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void autoGrabPixelsInBin() {
-        robot.startPixelGrab();
-        while(opModeIsActive() && (robot.pixelGrabState != HardwarePixelbot.PixelGrabActivity.IDLE)) {
-            performEveryLoop();
-            robot.processPixelGrab();
-        }
+//        robot.startPixelGrab();
+//        while(opModeIsActive() && (robot.pixelGrabState != HardwarePixelbot.PixelGrabActivity.IDLE)) {
+//            performEveryLoop();
+//            robot.processPixelGrab();
+//      }
     } // autoGrabPixelsInBin
 
     /*---------------------------------------------------------------------------------*/
     void autoReleaseBothPixels() {
-        robot.startPixelScoreAuto();
-        while(opModeIsActive() && (robot.pixelScoreAutoState != HardwarePixelbot.PixelScoreAutoActivity.IDLE)) {
-            performEveryLoop();
-            robot.processPixelScoreAuto();
-        }
+//        robot.startPixelScoreAuto();
+//        while(opModeIsActive() && (robot.pixelScoreAutoState != HardwarePixelbot.PixelScoreAutoActivity.IDLE)) {
+//            performEveryLoop();
+//            robot.processPixelScoreAuto();
+//        }
     } // autoReleaseBothPixels
 
     /*---------------------------------------------------------------------------------*/
     void autoRaiseViperSlide( int targetEncoderCount ) {   // Ex: robot.VIPER_EXTEND_LOW
         // Initiate the automatic movement to the desired lift height
-        robot.startViperSlideExtension( targetEncoderCount );
-        while(opModeIsActive() && (robot.viperMotorBusy == true)) {
-            performEveryLoop();
-            robot.processViperSlideExtension();
-        }
+//        robot.startViperSlideExtension( targetEncoderCount );
+//        while(opModeIsActive() && (robot.viperMotorBusy == true)) {
+//            performEveryLoop();
+//            robot.processViperSlideExtension();
+//        }
     } // autoRaiseViperSlide
 
     void scoreYellowPixel() {
-        autoGrabPixelsInBin();
-        autoRaiseViperSlide(robot.VIPER_EXTEND_AUTO);
-        autoReleaseBothPixels();
-        autoRaiseViperSlide(robot.VIPER_EXTEND_ZERO);
+//        autoGrabPixelsInBin();
+//        autoRaiseViperSlide(robot.VIPER_EXTEND_AUTO);
+//        autoReleaseBothPixels();
+//        autoRaiseViperSlide(robot.VIPER_EXTEND_ZERO);
     }
     /*---------------------------------------------------------------------------------*/
     void distanceFromFront( int desiredDistance, int distanceTolerance ) {   // centimeters
@@ -621,7 +650,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // NOTE: sonar ranges only update every 50 msec (no matter how much faster we loop
         // than that.  That implies fast control loops will have multiple cycles that use
         // the same range value before a new/different "most recent" ultrasonic range occurs.
-        robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_FIRST_PING );
+//      robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_FIRST_PING );
         // Wait 50 msec (DEFAULT_SONAR_PROPAGATION_DELAY_MS)
         sleep( 50 );
         // Begin the control loop.  We use a for() loop to avoid looping forever.  Be
@@ -632,7 +661,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             // Handle background tasks
             performEveryLoop();
             // Query the current distance
-            int currDistance = robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_MOST_RECENT );
+            int currDistance = 0; // robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_MOST_RECENT );
             // Compute the range error
             int rangeErr = currDistance - desiredDistance;
             telemetry.addData("Sonar Range (F)", "Set: %d  Range: %d Err: %d", desiredDistance, currDistance, rangeErr);
@@ -1568,7 +1597,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
         robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
 
-        synchronized(robotGlobalCoordinateCorrectedPosition.lock) {
+        synchronized(AprilTagProcessorImplCallback.positionLock) {
             robotGlobalCoordinateCorrectedPosition.setAngleRadians(robotGlobalCoordinateCorrectedPosition.getAngleRadians() + changeInRobotOrientation);
             robotGlobalCoordinateCorrectedPosition.setAngleRadians(AngleWrapRadians(robotGlobalCoordinateCorrectedPosition.getAngleRadians()));   // Keep between -PI and +PI
             robotGlobalCoordinateCorrectedPosition.setX(robotGlobalCoordinateCorrectedPosition.getX() + (p * Math.sin(robotGlobalCoordinateCorrectedPosition.getAngleRadians()) + n * Math.cos(robotGlobalCoordinateCorrectedPosition.getAngleRadians())));
@@ -1592,7 +1621,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     // Sets odometry corrected position values
     public void setCorrectedGlobalCoordinatePosition(double robotRadians,
                                             double robotGlobalX, double robotGlobalY){
-        synchronized(robotGlobalCoordinateCorrectedPosition.lock) {
+        synchronized(AprilTagProcessorImplCallback.positionLock) {
             robotGlobalCoordinateCorrectedPosition.setLocation(robotGlobalX, robotGlobalY, robotRadians);
         }
     } // setCorrectedGlobalCoordinatePosition

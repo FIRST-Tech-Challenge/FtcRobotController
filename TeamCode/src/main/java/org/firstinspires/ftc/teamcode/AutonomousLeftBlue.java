@@ -207,12 +207,12 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
             // Lower the collector so the boot wheels don't touch the collector crossbar
-            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
+//            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
             // Start the collector in ejecting-mode
-            robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
+//            robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
             // Back straight up for 0.85 sec to drop purple pixel on the spike mark line
             timeDriveStraight( -0.20, 850 );
-            robot.collectorMotor.setPower(0.0);
+//            robot.collectorMotor.setPower(0.0);
         }
 
         // Drive toward backdrop in preparation to score the yellow pixel
@@ -282,7 +282,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
                 case 1:
                 default: desiredDistanceCM = 15.0; break; // LEFT
             } // switch
-            currentDistanceCM = robot.getBackdropRange();
+            currentDistanceCM = 6; // robot.getBackdropRange();
             driveOffsetInches = (desiredDistanceCM -currentDistanceCM)/2.54;
 //          telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
 //          telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);

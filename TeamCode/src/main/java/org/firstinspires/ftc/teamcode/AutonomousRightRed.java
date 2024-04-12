@@ -70,8 +70,8 @@ public class AutonomousRightRed extends AutonomousBase {
                 .addProcessors(pipelineBack, aprilTag)
                 .setCameraResolution(new Size(1280, 800))
                 .build();
-        //
- //     setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur (screws with Prop hue-detection!!)
+        //Ensure the camera is in automatic exposure control
+        setWebcamAutoExposure();
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         parkLocation = PARK_LEFT;  // red-right normally parks on the left
@@ -116,7 +116,7 @@ public class AutonomousRightRed extends AutonomousBase {
         telemetry.addData("Program", "Complete");
         telemetry.update();
 
-        visionPortalBack.close();
+//      visionPortalBack.close();
     } /* runOpMode() */
 
     /*--------------------------------------------------------------------------------------------*/
@@ -201,12 +201,12 @@ public class AutonomousRightRed extends AutonomousBase {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
             // Lower the collector so the boot wheels don't touch the collector crossbar
-            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
+//            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
             // Start the collector in ejecting-mode
-            robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
+//            robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
             // Back straight up for 0.85 sec to drop purple pixel on the spike mark line
             timeDriveStraight( -0.20, 850 );
-            robot.collectorMotor.setPower(0.0);
+//            robot.collectorMotor.setPower(0.0);
         }
 
         // Drive toward backdrop in preparation to score the yellow pixel
@@ -276,7 +276,7 @@ public class AutonomousRightRed extends AutonomousBase {
                 case 3:
                 default: desiredDistanceCM = 15.0; break; // RIGHT
             } // switch
-            currentDistanceCM = robot.getBackdropRange();
+            currentDistanceCM = 6; // robot.getBackdropRange();
             driveOffsetInches = (desiredDistanceCM -currentDistanceCM)/2.54;
 //          telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
 //          telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);

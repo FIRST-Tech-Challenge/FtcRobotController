@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 public class FieldCoordinate {
-    public static Object lock = new Object();
-    protected static double xCoordinate;
-    protected static double yCoordinate;
-    protected static double angleRadians;
+    protected double xCoordinate;
+    protected double yCoordinate;
+    protected double angleRadians;
     public FieldCoordinate(double x, double y, double angleRad) {
         xCoordinate = x;
         yCoordinate = y;

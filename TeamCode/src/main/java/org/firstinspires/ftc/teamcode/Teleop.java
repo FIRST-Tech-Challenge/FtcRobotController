@@ -174,6 +174,7 @@ public abstract class Teleop extends LinearOpMode {
             ProcessPixelBinFeedback();
             ProcessFingerControls();
             ProcessLiftControls();
+//          ProcessDroneControls();
             ProcessHangControls();
             robot.processPixelGrab();
             robot.processPixelScore();
@@ -539,6 +540,15 @@ public abstract class Teleop extends LinearOpMode {
         } // manual_lift_control
 
     }  // ProcessLiftControls
+	
+    /*---------------------------------------------------------------------------------*/
+    void ProcessDroneControls() {
+
+        // gamepad1 left and right trigger deploys drone
+        if ((gamepad1.right_trigger > 0.5) && (gamepad1.left_trigger > 0.5)) {
+//          robot.droneServo.setPosition(0.65);
+        }
+    } // ProcessDroneControls
 
     /*---------------------------------------------------------------------------------*/
     void ProcessHangControls() {

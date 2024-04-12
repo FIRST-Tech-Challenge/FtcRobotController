@@ -52,7 +52,7 @@ public class TeleopServoTest extends LinearOpMode {
     boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
 
     int    selectedServo = 0;  // 0=col, 1=push, 2=wrist, 3=finger1, 4=finger2
-    double collPos, pushPos, wristPos, finger1Pos, finger2Pos;
+    double collPos, pushPos, wristPos, finger1Pos, finger2Pos, dronePos;
     double stepSize = 0.01;
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
@@ -75,6 +75,7 @@ public class TeleopServoTest extends LinearOpMode {
         wristPos = robot.WRIST_SERVO_INIT;
         finger1Pos = robot.FINGER1_SERVO_DROP;
         finger2Pos = robot.FINGER2_SERVO_DROP;
+        dronePos   = 0.5;
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -94,7 +95,7 @@ public class TeleopServoTest extends LinearOpMode {
 
             //================ Update telemetry with current state ================
             telemetry.addData("Use CROSS to toggle between servos", " " );
-            switch( selectedServo ) { // 0=col, 1=push, 2=wrist, 3=finger1, 4=finger2
+            switch( selectedServo ) { // 0=col, 1=push, 2=wrist, 3=finger1, 4=finger2 5=drone
                 case 0 :
                     telemetry.addData("SELECTED:", "CollectorServo" );
                     telemetry.addData("value", "%.3f", collPos);
@@ -119,6 +120,11 @@ public class TeleopServoTest extends LinearOpMode {
                     telemetry.addData("value", "%.3f", finger2Pos );
                     telemetry.addData("Finger Servo2 Angle", "%.1f",robot.getFingerServo2Angle());
                     break;
+                case 5 :
+                    telemetry.addData("SELECTED:", "DroneServo" );
+                    telemetry.addData("value", "%.3f", dronePos );
+ //                 telemetry.addData("Drone Servo Pos", "%.1f",robot.droneServo.getPosition() );
+                    break;
                 default :
                     selectedServo = 0;
                     break;
@@ -129,7 +135,7 @@ public class TeleopServoTest extends LinearOpMode {
             if( gamepad1_cross_now && !gamepad1_cross_last)
             {
                 selectedServo += 1;
-                if( selectedServo > 4 ) selectedServo = 0;
+                if( selectedServo > 5 ) selectedServo = 0;
             } // cross
 
             //================ LEFT BUMPER DECREASES SERVO POSITION ================
@@ -165,6 +171,12 @@ public class TeleopServoTest extends LinearOpMode {
                         if( finger2Pos < 0.0 ) finger2Pos = 0.0;
                         if( finger2Pos > 1.0 ) finger2Pos = 1.0;
                         robot.fingerServo2.setPosition(finger2Pos);
+                        break;
+                    case 5 :
+                        dronePos -= stepSize;
+                        if( dronePos < 0.0 ) dronePos = 0.0;
+                        if( dronePos > 1.0 ) dronePos = 1.0;
+//                      robot.droneServo.setPosition(dronePos);
                         break;
                     default :
                         break;
@@ -204,6 +216,12 @@ public class TeleopServoTest extends LinearOpMode {
                         if( finger2Pos < 0.0 ) finger2Pos = 0.0;
                         if( finger2Pos > 1.0 ) finger2Pos = 1.0;
                         robot.fingerServo2.setPosition(finger2Pos);
+                        break;
+                    case 5 :
+                        dronePos += stepSize;
+                        if( dronePos < 0.0 ) dronePos = 0.0;
+                        if( dronePos > 1.0 ) dronePos = 1.0;
+//                      robot.droneServo.setPosition(dronePos);
                         break;
                     default :
                         break;

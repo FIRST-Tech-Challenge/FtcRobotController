@@ -71,15 +71,15 @@ public class AutonomousRescore extends AutonomousBase {
         aprilTag = new AprilTagProcessorImplCallback(904.214, 904.214, 696.3, 362.796,
                 DistanceUnit.INCH, AngleUnit.DEGREES, AprilTagGameDatabase.getCenterStageTagLibrary(),
                 false, false, true, true,
-                AprilTagProcessor.TagFamily.TAG_36h11, THREADS_DEFAULT,
-                robotGlobalCoordinateCorrectedPosition);
+                AprilTagProcessor.TagFamily.TAG_36h11, THREADS_DEFAULT, false,
+                robotGlobalCoordinateCorrectedPosition, telemetry);
         visionPortalBack = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessors(pipelineBack, aprilTag)
                 .setCameraResolution(new Size(1280, 800))
                 .build();
-        //
- //     setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur (screws with Prop hue-detection!!)
+        //Ensure the camera is in automatic exposure control
+        setWebcamAutoExposure();
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         parkLocation = PARK_LEFT;  // red-right normally parks on the left
@@ -173,7 +173,7 @@ public class AutonomousRescore extends AutonomousBase {
                 case 3:
                 default: desiredDistanceCM = 14.0; break; // RIGHT
             } // switch
-            currentDistanceCM = robot.getBackdropRange();
+            currentDistanceCM = 6; // robot.getBackdropRange();
             driveOffsetInches = (desiredDistanceCM -currentDistanceCM)/2.54;
 //          telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
 //          telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);

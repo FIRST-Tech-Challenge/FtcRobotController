@@ -81,6 +81,19 @@ public class HardwareMinibot
     // The math above assumes motor encoders.  For REV odometry pods, the counts per inch is different
     protected double COUNTS_PER_INCH2      = 1738.4;  // 8192 counts-per-rev / (1.5" omni wheel * PI)
 
+    //====== ODOMETRY ENCODERS (encoder values only!) =====
+    protected DcMotorEx rightOdometer      = null;
+    public int          rightOdometerCount = 0;       // current encoder count
+    public int          rightOdometerPrev  = 0;       // previous encoder count
+
+    protected DcMotorEx leftOdometer       = null;
+    public int          leftOdometerCount  = 0;       // current encoder count
+    public int          leftOdometerPrev   = 0;       // previous encoder count
+
+    protected DcMotorEx strafeOdometer      = null;
+    public int          strafeOdometerCount = 0;      // current encoder count
+    public int          strafeOdometerPrev  = 0;      // previous encoder count
+
     //Ultrasonic sensors
     private MaxSonarI2CXL sonarRangeF = null;
 
