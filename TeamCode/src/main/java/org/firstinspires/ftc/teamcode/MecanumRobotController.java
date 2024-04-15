@@ -2,7 +2,7 @@
 // so you can just instantiate this and use it in other files. Some examples include driving,
 // getting the current heading, and moving any other motors on the robot.
 
-// Remember to comment with B.E.R.P.:
+// Remember to comment with B.E.R.P:
 //      B: Behavior, what the method does.
 //      E: Exceptions, what exceptions the method throws.
 //      R: Return, what the method returns.
