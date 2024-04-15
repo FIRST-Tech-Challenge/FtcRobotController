@@ -22,7 +22,7 @@ public class BlueFarSide_2_3_gate extends FarSideOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindLeftProcessing();
+        drive.initializePropFindRightProcessing();
     }
 
     @Override

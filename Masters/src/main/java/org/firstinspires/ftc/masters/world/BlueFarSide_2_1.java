@@ -22,7 +22,7 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindLeftProcessing();
+        drive.initializePropFindRightProcessing();
     }
 
     @Override
@@ -109,7 +109,7 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
-
+            telemetry.update();
 
             switch (currentState){
                 case PURPLE_DEPOSIT_PATH:
