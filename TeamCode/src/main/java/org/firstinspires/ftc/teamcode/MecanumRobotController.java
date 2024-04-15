@@ -42,10 +42,13 @@ public class MecanumRobotController {
     private double currentForward;
     private double currentStrafe;
     private double currentTurn;
+    private double currentAngularVelocity;
+    private double lastHeading;
 
     private double integralSum;
     private double lastError;
     private final ElapsedTime PIDTimer;
+    private final ElapsedTime AngularVelocityTimer;
 
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
@@ -65,6 +68,7 @@ public class MecanumRobotController {
         this.runtime.reset();
 
         this.PIDTimer = new ElapsedTime();
+        this.AngularVelocityTimer = new ElapsedTime();
         this.runtime.reset();
     }
 
@@ -85,34 +89,38 @@ public class MecanumRobotController {
     //      - boolean isTelemetry: Whether or not this method will send telemetry.
     private void move(double forward, double strafe, double turn, double headingCorrectionPower,
                       boolean isTelemetry) {
-        wantedHeading -= turn * 3;
-        wantedHeading = normalize(wantedHeading);
-
         double currentHeading = getAngleImuDegrees();
-        double error = normalize(wantedHeading - currentHeading);
-        double derivative = (error - lastError) / PIDTimer.seconds();
-        integralSum += error * runtime.seconds();
+        currentAngularVelocity = Math.abs(normalize(currentHeading - lastHeading) / Math.max(AngularVelocityTimer.seconds(), 1));
+        AngularVelocityTimer.reset();
+        if (currentAngularVelocity > 4 || turn != 0) {
+            wantedHeading = currentHeading;
+        } else {
+            double error = normalize(wantedHeading - currentHeading);
+            double derivative = (error - lastError) / PIDTimer.seconds();
+            integralSum += error * runtime.seconds();
 
-        double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
-        headingCorrection = normalize(headingCorrection);
-        lastError = error;
-        PIDTimer.reset();
+            double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
+            headingCorrection = normalize(headingCorrection);
+            lastError = error;
+            PIDTimer.reset();
 
-        turn = headingCorrectionPower * headingCorrection;
+            turn = headingCorrectionPower * headingCorrection;
+        }
 
         // Set fields so the robot knows what its current forward, strafe, and turn is in other methods.
         currentForward = forward;
         currentStrafe = strafe;
         currentTurn = turn;
+        lastHeading = currentHeading;
 
         if (isTelemetry && robot != null) {
             sendTelemetry();
         }
 
-        double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
-        double backRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
-        double frontLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
-        double frontRightPower = Range.clip((forward - strafe + turn) / 3, -1.0, 1.0);
+        double backLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
+        double backRightPower = Range.clip((forward - strafe + turn) / 3, -1.0, 1.0);
+        double frontLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
+        double frontRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
 
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
@@ -286,6 +294,7 @@ public class MecanumRobotController {
         telemetry.addData("Wanted Heading", wantedHeading);
         telemetry.addData("", "");
         telemetry.addData("Runtime", runtime.seconds());
+        telemetry.addData("Angular Velocity", currentAngularVelocity);
 
         telemetry.update();
     }
