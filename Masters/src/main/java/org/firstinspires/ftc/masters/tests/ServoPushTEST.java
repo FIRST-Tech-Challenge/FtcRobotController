@@ -46,10 +46,10 @@ public class ServoPushTEST extends LinearOpMode {
 
         while (opModeIsActive()){
             if (gamepad1.a){
-                push.setPosition(0);
+                push.setPosition(0.1);
             }
             if (gamepad1.b){
-                push.setPosition(1);
+                push.setPosition(0.58);
             }
         }
 

@@ -17,5 +17,12 @@ public class WIBRATE extends LinearOpMode {
             }
         }
     }
-
+    /*
+         -=\`\
+     |\ ____\_\__
+   -=\c`""""""" "`)
+jgs   `~~~~~/ /~~`
+        -==/ /
+          '-'
+*/
 }

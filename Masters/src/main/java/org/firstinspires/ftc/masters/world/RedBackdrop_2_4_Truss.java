@@ -20,14 +20,14 @@ public class RedBackdrop_2_4_Truss extends BackDropOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindLeftProcessing();
+        drive.initializePropFindRightProcessing();
     }
     @Override
     public void runOpMode() throws InterruptedException {
 
         initAuto();
 
-        Pose2d startPose = new Pose2d(new Vector2d(16, 61.2), Math.toRadians(270)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(16, -61.2), Math.toRadians(90)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
         drive.setWristServoPosition(outtakeWristPosition);
 
@@ -144,5 +144,9 @@ public class RedBackdrop_2_4_Truss extends BackDropOpMode {
 
 
         }
+    }
+
+    public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
+        return RedBackDropPath.toStackWing(drive, robotPosition);
     }
 }

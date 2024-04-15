@@ -76,13 +76,13 @@ public class BlueBackDropPath {
     }
 
     public static TrajectorySequence fromStackToBoardTruss(SampleMecanumDrive drive, Pose2d startPose) {
-        return drive.trajectorySequenceBuilder(startPose)
+        return drive.trajectorySequenceBuilder(new Pose2d(-61, 34, Math.toRadians(180)))
                 .setTangent(Math.toRadians(40))
-                .splineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(20, 60, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-45, 61, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(25, 58, Math.toRadians(180)), Math.toRadians(0))
 
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 38, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(44, 35, Math.toRadians(135)), Math.toRadians(0))
                 .build();
     }
 
@@ -98,7 +98,7 @@ public class BlueBackDropPath {
 
         return drive.trajectorySequenceBuilder(startPose)
 
-                .lineToLinearHeading(new Pose2d(-61, 34, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(-61.1, 35, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL))
                 .build();
     }
 

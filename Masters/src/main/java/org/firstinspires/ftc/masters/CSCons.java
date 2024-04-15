@@ -37,13 +37,13 @@ public class CSCons {
 
     public static double wristOuttakeAngleBackdrop =0.05;
     public static double wristOuttakeAngleTransfer =1;
-    public static double wristOuttakeMovementTransfer=0.49;
+    public static double wristOuttakeMovementTransfer=0.53;
 
-    public static double wristOuttakeMovementGround = 1;
+    public static double wristOuttakeMovementGround = 0.99;
 
-    public static double wristOuttakePickup=0.42;
+    public static double wristOuttakePickup=0.46;
     public static double wristOuttakeAnglePickup=0.95;
-    public static double wristOuttakeMovementBackdrop =0.81;
+    public static double wristOuttakeMovementBackdrop =0.89;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;

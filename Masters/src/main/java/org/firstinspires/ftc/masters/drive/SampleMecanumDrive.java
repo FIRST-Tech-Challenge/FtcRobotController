@@ -353,6 +353,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         myVisionPortal.setProcessorEnabled(aprilTag, false);
     }
 
+    public void stopPropProcessor(){
+        myVisionPortal.setProcessorEnabled(propFindProcessor, false);
+    }
+
     public void openClaw(){
         ;
     }
@@ -402,10 +406,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         intakeHeight.setPosition(CSCons.intake5);
     }
 
+    public void intakeToPosition4(){
+        intakeHeight.setPosition(CSCons.intake4);
+    }
     //pick up pixel 3 and 4
     public void intakeToPosition3(){
-//        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-//        clawArm.setPosition(CSCons.clawArm3);
+;
     }
 
 

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.Date;
@@ -73,11 +74,22 @@ public abstract class FarSideOpMode extends LinearOpMode {
         drive.initializeAprilTagProcessing();
         initializeProp();
         drive.initializeVisionPortal();
-        drive.activateFrontCamera();
-        drive.enablePropProcessor();
-        drive.pixelBack =  drive.backBreakBeam.getState();
-        drive.pixelFront = drive.frontBreakBeam.getState();
 
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        VisionPortal visionPortal = drive.getMyVisionPortal();
+        while(time<2000 && opModeIsActive()){
+//        while(visionPortal.getCameraState()!= VisionPortal.CameraState.CAMERA_DEVICE_READY
+//                 && opModeIsActive()){
+            time = new Date().getTime() - startTime;
+            telemetry.addData("camera state", visionPortal.getCameraState());
+            telemetry.update();
+        }
+
+
+//        drive.activateFrontCamera();
+        drive.enablePropProcessor();
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -124,19 +136,27 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected void purpleDeposit(){
-        if (purpleDepositTime.milliseconds()>500){
+        if (purpleDepositTime.milliseconds()>300){
             drive.setOuttakeToGround();
-
         }
 
+
         if (!drive.isBusy()){
-            if (liftTime==null) {
+            if (depositTime==null){
+                depositTime= new ElapsedTime();
+                drive.setOuttakeToGround();
+            }
+
+
+            if (liftTime==null && depositTime!=null && depositTime.milliseconds()>300) {
+
                 drive.openFrontFinger();
                 liftTime = new ElapsedTime();
-            } else {
+                drive.setOuttakeToTransfer();
+            } else if (liftTime!=null && liftTime.milliseconds()>200){
                 liftTime=null;
                 outtakeTarget = 0;
-                drive.setOuttakeToTransfer();
+
                 drive.intakeOverStack();
                 drive.startIntake();
                 currentState= State.TO_STACK;
