@@ -243,6 +243,11 @@ public class WorldsTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            if (has2Pixels()) {
+                gamepad2.rumble(1);
+                gamepad1.rumble(1);
+            }
+
             if (gamepad1.right_bumper) {
                 driveMode = DriveMode.END_GAME;
             }
@@ -729,6 +734,10 @@ public class WorldsTeleop extends LinearOpMode {
         if (outtakeWristPosition == OuttakeWrist.verticalDown) {
             wristServo.setPosition(CSCons.wristVerticalDown);
         }
+    }
+
+    protected boolean has2Pixels(){
+        return !frontBreakBeam.getState() && !backBreakBeam.getState();
     }
 
 
