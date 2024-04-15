@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
+import org.firstinspires.ftc.masters.world.paths.RedBackDropPath;
 
 @Config
 @Autonomous(name = "Red Backdrop 2 + 0", group = "competition")
@@ -20,25 +21,25 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindLeftProcessing();
+        drive.initializePropFindRightProcessing();
     }
     @Override
     public void runOpMode() throws InterruptedException {
 
         initAuto();
 
-        Pose2d startPose = new Pose2d(new Vector2d(16, 61.2), Math.toRadians(270)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(16, -61.2), Math.toRadians(90)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
         drive.setWristServoPosition(outtakeWristPosition);
 
         //PURPLE PIXEL
 
-        rightPurple = BlueBackDropPath.getRightPurple(drive, startPose);
+        rightPurple = RedBackDropPath.getRightPurple(drive, startPose);
 
 
-        leftPurple = BlueBackDropPath.getLeftPurple(drive, startPose);
+        leftPurple = RedBackDropPath.getLeftPurple(drive, startPose);
 
-        middlePurple = BlueBackDropPath.getMidPurple(drive, startPose);
+        middlePurple = RedBackDropPath.getMidPurple(drive, startPose);
 
 
         TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
@@ -61,13 +62,13 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
         //YELLOW PIXELS
 
-        leftYellow = BlueBackDropPath.getLeftYellow(drive, leftPurple.end());
+        leftYellow = RedBackDropPath.getLeftYellow(drive, leftPurple.end());
 
 
-        midYellow = BlueBackDropPath.getMidYellow(drive, middlePurple.end());
+        midYellow = RedBackDropPath.getMidYellow(drive, middlePurple.end());
 
 
-        rightYellow = BlueBackDropPath.getRightYellow(drive, rightPurple.end());
+        rightYellow = RedBackDropPath.getRightYellow(drive, rightPurple.end());
 
 
         //OTHER PATHS
@@ -127,5 +128,8 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
 
         }
+    }
+    public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
+        return RedBackDropPath.toStackWing(drive, robotPosition);
     }
 }
