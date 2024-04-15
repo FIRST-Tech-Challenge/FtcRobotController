@@ -29,6 +29,8 @@ public class PropFindRightProcessor implements VisionProcessor, CameraStreamSour
     public  Rect interestRight = new Rect(320, 260, 32, 50);
 
     private final Scalar upper = new Scalar(0,50,0); // lower bounds for masking
+    // if to much black is detected, raise middle scaler
+    // if to little lower it, try 70 first2
     private final Scalar lower = new Scalar(255,255,255); // upper bounds for masking
     private TextPaint textPaint = null;
     private Paint linePaint = null;
