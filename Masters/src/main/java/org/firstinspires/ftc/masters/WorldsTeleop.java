@@ -78,6 +78,7 @@ public class WorldsTeleop extends LinearOpMode {
 
     Servo outtakeRotation;
     Servo outtakeMovement;
+    Servo outtakeMovementRight;
 
     Servo transferServo;
 
@@ -178,6 +179,7 @@ public class WorldsTeleop extends LinearOpMode {
 
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
+        outtakeMovementRight = hardwareMap.servo.get("backSlideServoRight");
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
@@ -188,6 +190,7 @@ public class WorldsTeleop extends LinearOpMode {
         backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
 
         transferServo = hardwareMap.servo.get("transfer");
+
 
 
         // Set the drive motor direction:
@@ -224,6 +227,7 @@ public class WorldsTeleop extends LinearOpMode {
         otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
 
         hookPosition = HookPosition.OPEN;
@@ -348,6 +352,7 @@ public class WorldsTeleop extends LinearOpMode {
                     if (backSlides.getCurrentPosition() > 2000) {
                         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
                         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+                        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementBackdrop);
                     }
 
                     break;
@@ -456,6 +461,7 @@ public class WorldsTeleop extends LinearOpMode {
 
                             if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // if press x and hook is closed, open hook
                                 outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakePickup);
                                 outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
                                 pickupElapsedTime = new ElapsedTime();
 
@@ -465,6 +471,7 @@ public class WorldsTeleop extends LinearOpMode {
                                 outtakeServo1.setPosition(servo1Up);
                                 outtakeServo2.setPosition(servo2Up);
                                 outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
                                 outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
                             }
 
@@ -649,6 +656,7 @@ public class WorldsTeleop extends LinearOpMode {
                         case MoveToDrop:
                             if (backSlides.getCurrentPosition() > 100) {
                                 outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementBackdrop);
                                 outtakeRotationTarget = CSCons.wristOuttakeAngleBackdrop;
                                 outtakeRotation.setPosition(outtakeRotationTarget);
                             }
@@ -765,6 +773,7 @@ public class WorldsTeleop extends LinearOpMode {
     protected void setOuttakeToTransfer(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeWristPosition = OuttakeWrist.vertical;
         wristServo.setPosition(CSCons.wristVertical);
     }
@@ -772,6 +781,7 @@ public class WorldsTeleop extends LinearOpMode {
     protected void setOuttakeToPickup(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
         outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakePickup);
         outtakeWristPosition = OuttakeWrist.vertical;
         wristServo.setPosition(CSCons.wristVertical);
     }
@@ -800,7 +810,5 @@ public class WorldsTeleop extends LinearOpMode {
     protected boolean has2Pixels(){
         return !frontBreakBeam.getState() && !backBreakBeam.getState();
     }
-
-
 
 }
