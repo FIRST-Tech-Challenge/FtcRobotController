@@ -117,8 +117,8 @@ public class CSCons {
 
     public static double speed =-1;
 
-    public static double transferUp = 0.58;
-    public static double transferPush = 0.1;
+    public static double transferUp = 0.1;
+    public static double transferPush = 0.58;
 
 
     public enum OuttakePosition{

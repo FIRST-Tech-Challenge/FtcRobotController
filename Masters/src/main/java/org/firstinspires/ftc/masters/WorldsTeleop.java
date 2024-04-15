@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.masters.CSCons.servo1Down;
 import static org.firstinspires.ftc.masters.CSCons.servo1Up;
 import static org.firstinspires.ftc.masters.CSCons.servo2Down;
 import static org.firstinspires.ftc.masters.CSCons.servo2Up;
+import static org.firstinspires.ftc.masters.CSCons.transferUp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -239,6 +240,7 @@ public class WorldsTeleop extends LinearOpMode {
         outtakeWristPosition = OuttakeWrist.vertical;
         wristServo.setPosition(CSCons.wristVertical);
         intakeHeight.setPosition(CSCons.intakeInit);
+        transferServo.setPosition(CSCons.transferUp);
         target = backSlidePos.getTarget();
 
         currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
@@ -479,6 +481,7 @@ public class WorldsTeleop extends LinearOpMode {
                             backSlidePos = OuttakePosition.LOW;
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
+                            transferServo.setPosition(transferUp);
                             currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
 
                         }
@@ -486,6 +489,7 @@ public class WorldsTeleop extends LinearOpMode {
                             backSlidePos = OuttakePosition.MID;
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
+                            transferServo.setPosition(transferUp);
                             currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
                         }
 
