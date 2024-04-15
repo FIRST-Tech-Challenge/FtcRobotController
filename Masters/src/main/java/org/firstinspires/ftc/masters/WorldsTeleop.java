@@ -27,9 +27,27 @@ import org.firstinspires.ftc.masters.CSCons.OuttakeState;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
+
 @Config
 @TeleOp(name = "World Teleop", group = "competition")
 public class WorldsTeleop extends LinearOpMode {
+
+    public enum TransferStatus {
+        WAITING_FOR_PIXELS (100),
+        MOVE_ARM (100),
+        MOVE_OUTTAKE(100),
+        CLOSE_FINGERS (100);
+
+        private int waitTime;
+        private TransferStatus(int waitTime){
+            this.waitTime = waitTime;
+        }
+
+        public int getWaitTime() {
+            return waitTime;
+        }
+    }
 
     static int target = 0;
     OuttakePosition backSlidePos = OuttakePosition.BOTTOM;
@@ -61,6 +79,8 @@ public class WorldsTeleop extends LinearOpMode {
     Servo outtakeRotation;
     Servo outtakeMovement;
 
+    Servo transferServo;
+
     private Servo wristServo;
     private Servo outtakeServo1, outtakeServo2;
     private OuttakeWrist outtakeWristPosition;
@@ -70,6 +90,8 @@ public class WorldsTeleop extends LinearOpMode {
     int numberOfPixelsInRamp= 0;
 
     double outtakeRotationTarget;
+
+    TransferStatus currentTransferStatus;
 
 
     private enum OuttakeWrist{
@@ -165,6 +187,8 @@ public class WorldsTeleop extends LinearOpMode {
         backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
         backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
 
+        transferServo = hardwareMap.servo.get("transfer");
+
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -217,6 +241,8 @@ public class WorldsTeleop extends LinearOpMode {
         intakeHeight.setPosition(CSCons.intakeInit);
         target = backSlidePos.getTarget();
 
+        currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
+
 
         ElapsedTime intakeElapsedTime = null, outtakeElapsedTime = null, pickupElapsedTime = null;
 
@@ -236,6 +262,8 @@ public class WorldsTeleop extends LinearOpMode {
 //        ElapsedTime stackElapsedTime = new ElapsedTime();
         ElapsedTime closeClawElapsedTime = null;
 
+        ElapsedTime transferElapsedTime = null;
+
         double[] clawStack = {CSCons.clawArmGround, CSCons.clawArm2, CSCons.clawArm3, CSCons.clawArm4, CSCons.clawArm5};
         int stackPosition = 0;
         boolean wristButtonPressed = false;
@@ -243,9 +271,33 @@ public class WorldsTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            backSlidesMove(target);
+
             if (has2Pixels()) {
-                gamepad2.rumble(1);
-                gamepad1.rumble(1);
+                if (currentTransferStatus== TransferStatus.WAITING_FOR_PIXELS){
+                    gamepad1.rumble(1);
+                    currentTransferStatus = TransferStatus.MOVE_ARM;
+                    transferElapsedTime= new ElapsedTime();
+                    transferServo.setPosition(CSCons.transferPush);
+                }
+                if (currentTransferStatus== TransferStatus.MOVE_ARM){
+                    if (transferElapsedTime!=null && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()){
+                        currentTransferStatus = TransferStatus.MOVE_OUTTAKE;
+                        setOuttakeToPickup();
+                        transferElapsedTime = new ElapsedTime();
+                    }
+                }
+                if (currentTransferStatus == TransferStatus.MOVE_OUTTAKE && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()){
+                    outtakeServo1.setPosition(servo1Down);
+                    outtakeServo2.setPosition(servo2Down);
+                    currentTransferStatus = TransferStatus.CLOSE_FINGERS;
+                    transferElapsedTime = new ElapsedTime();
+                }
+
+                if (currentTransferStatus == TransferStatus.CLOSE_FINGERS && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()) {
+                    gamepad2.rumble(1);
+                }
+
             }
 
             if (gamepad1.right_bumper) {
@@ -304,7 +356,7 @@ public class WorldsTeleop extends LinearOpMode {
                     break;
             }
 
-            backSlidesMove(target);
+
             //intakeSlidesMove(intakeSlideTarget);
 
             if (driveMode != DriveMode.END_GAME) {
@@ -427,12 +479,14 @@ public class WorldsTeleop extends LinearOpMode {
                             backSlidePos = OuttakePosition.LOW;
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
+                            currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
 
                         }
                         if (gamepad2.right_trigger > 0.5) {
                             backSlidePos = OuttakePosition.MID;
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
+                            currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
                         }
 
                             if (gamepad2.dpad_left && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
@@ -711,6 +765,13 @@ public class WorldsTeleop extends LinearOpMode {
     protected void setOuttakeToTransfer(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeWristPosition = OuttakeWrist.vertical;
+        wristServo.setPosition(CSCons.wristVertical);
+    }
+
+    protected void setOuttakeToPickup(){
+        outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
+        outtakeMovement.setPosition(CSCons.wristOuttakePickup);
         outtakeWristPosition = OuttakeWrist.vertical;
         wristServo.setPosition(CSCons.wristVertical);
     }

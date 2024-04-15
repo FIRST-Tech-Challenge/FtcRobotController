@@ -112,6 +112,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     Servo outtakeMovement;
     private Servo wristServo;
     private Servo outtakeServo1, outtakeServo2;
+    private Servo transferServo;
 
 
     private IMU imu;
@@ -127,18 +128,16 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private final double ticks_in_degrees = 384.5 / 180;
 
-    public final double iticks_in_degree = 384.5 / 180;
-
-    public static double ip = 0.01, ii = 0, iid = 0.00;
-    public static double iif = 0.05;
+//    public final double iticks_in_degree = 384.5 / 180;
+//
+//    public static double ip = 0.01, ii = 0, iid = 0.00;
+//    public static double iif = 0.05;
 
     protected AprilTagProcessor aprilTag;
     protected PropFindRightProcessor propFindProcessor;
     protected VisionPortal myVisionPortal;
     private WebcamName frontWebcam, backWebcam;
     TelemetryPacket packet = new TelemetryPacket();
-
-
 
     Telemetry telemetry;
     HardwareMap hardwareMap;
@@ -226,10 +225,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
         backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
 
+        transferServo = hardwareMap.servo.get("transfer");
+
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
-
-
 
 
         for (DcMotorEx motor : motors) {
@@ -915,8 +914,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void setOuttakeToGround(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementGround);
-
     }
+
+
 
 
 }
