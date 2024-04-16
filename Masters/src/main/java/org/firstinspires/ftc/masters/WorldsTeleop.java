@@ -283,7 +283,7 @@ public class WorldsTeleop extends LinearOpMode {
 
             if (has2Pixels()) {
                 if (currentTransferStatus== TransferStatus.WAITING_FOR_PIXELS){
-                    gamepad1.rumble(1);
+                    gamepad1.rumble(5000);
                     currentTransferStatus = TransferStatus.MOVE_ARM;
                     transferElapsedTime= new ElapsedTime();
                     transferServo.setPosition(transferUp);
@@ -305,7 +305,8 @@ public class WorldsTeleop extends LinearOpMode {
 
                 if (currentTransferStatus == TransferStatus.CLOSE_FINGERS && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()) {
                     transferServo.setPosition(transferUp);
-                    gamepad2.rumble(1);
+                    gamepad2.rumble(5000);
+                    transferElapsedTime = new ElapsedTime();
 
                 }
 

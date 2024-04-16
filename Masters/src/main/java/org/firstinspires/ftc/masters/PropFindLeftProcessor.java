@@ -27,7 +27,7 @@ public class PropFindLeftProcessor extends PropFindRightProcessor {
 
     public PropFindLeftProcessor(Telemetry telemetry, TelemetryPacket packet) {
         super(telemetry, packet);
-        interestMid = new Rect(220, 180, 32, 50);
-        interestRight = new Rect(540, 230, 32, 50);
+        interestMid = new Rect(220, 215, 32, 50);
+        interestRight = new Rect(540, 265, 32, 50);
     }
 }

@@ -470,6 +470,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         outtakeServo2.setPosition(servo2Down);
     }
 
+    public void closeFrontFingers(){
+        outtakeServo1.setPosition(servo1Down);
+    }
+
     public void openFingers(){
         outtakeServo1.setPosition(servo1Up);
         outtakeServo2.setPosition(servo2Up);
@@ -925,10 +929,24 @@ public class SampleMecanumDrive extends MecanumDrive {
         wristServo.setPosition(CSCons.wristVertical);
     }
 
+    public void liftOuttake(){
+        outtakeMovement.setPosition(0.7);
+        outtakeMovementRight.setPosition(0.7);
+        outtakeRotation.setPosition(0.8);
+    }
+
     public void setOuttakeToGround(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementGround);
         outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementGround);
+    }
+
+    public void pushPixels(){
+        transferServo.setPosition(CSCons.transferPush);
+    }
+
+    public void raiseTransferArm(){
+        transferServo.setPosition(CSCons.transferUp);
     }
 
 

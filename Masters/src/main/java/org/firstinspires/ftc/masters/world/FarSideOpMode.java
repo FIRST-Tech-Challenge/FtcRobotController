@@ -61,7 +61,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
     protected TrajectorySequence rightPurpleToStack, leftPurpleToStack, midPurpleToStack;
     protected TrajectorySequence stackToRightYellow, stackToLeftYellow,stackToMidYellow;
     protected TrajectorySequence toStackCycleGateLeft, toStackCycleGateRight, toStackCycleGateMid, toBackboardCycleGate, toStackCycleTruss, goBackboardCycleGate;
-    protected TrajectorySequence park;
+    protected TrajectorySequence park, parkFromLeft, parkFromMid, parkFromRight;
 
     protected State currentState;
     protected int outtakeTarget = 0;
@@ -98,7 +98,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
         }
 
         drive.raiseIntake();
-        drive.closeFingers();
+        drive.closeFrontFingers();
 
     }
 
@@ -116,7 +116,6 @@ public abstract class FarSideOpMode extends LinearOpMode {
             propPos = drive.getPropFindProcessor().position;
             telemetry.addData("Position", propPos);
         }
-        drive.activateBackCamera();
         drive.enableAprilTag();
     }
 
@@ -136,9 +135,6 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected void purpleDeposit(){
-        if (purpleDepositTime.milliseconds()>300){
-            drive.setOuttakeToGround();
-        }
 
 
         if (!drive.isBusy()){
@@ -147,15 +143,15 @@ public abstract class FarSideOpMode extends LinearOpMode {
                 drive.setOuttakeToGround();
             }
 
-
-            if (liftTime==null && depositTime!=null && depositTime.milliseconds()>300) {
+            if (liftTime==null && depositTime!=null && depositTime.milliseconds()>1000) {
 
                 drive.openFrontFinger();
                 liftTime = new ElapsedTime();
-                drive.setOuttakeToTransfer();
+
             } else if (liftTime!=null && liftTime.milliseconds()>200){
                 liftTime=null;
                 outtakeTarget = 0;
+                drive.setOuttakeToTransfer();
 
                 drive.intakeOverStack();
                 drive.startIntake();
@@ -174,7 +170,8 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
             }
 
-
+        } else {
+            drive.liftOuttake();
         }
 
     }
@@ -189,13 +186,17 @@ public abstract class FarSideOpMode extends LinearOpMode {
                 pickupElapsedTime = new ElapsedTime();
             }
             if (has2Pixels() ){
+                telemetry.addData("has 2 pixels", "true");
                 pickupElapsedTime = new ElapsedTime();
             }
 
-           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
-                drive.stopIntake();
+           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>2000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
+
+               drive.pushPixels();
+
+              // drive.stopIntake();
                 drive.raiseIntake();
-                drive.outtakeToPickup();
+              //  drive.outtakeToPickup();
                 pickupElapsedTime = new ElapsedTime();
                 currentState = State.BACKDROP_DEPOSIT_PATH;
                 drive.followTrajectorySequenceAsync(nextPath);
@@ -205,9 +206,18 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected void backdropDepositPath(State nextState, TrajectorySequence nextPath){
+        if (pickupElapsedTime!=null && pickupElapsedTime.milliseconds()>100){
+            drive.outtakeToPickup();
+            drive.revertIntake();
+        }
+
         if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>250){
             drive.closeFingers();
             drive.revertIntake();
+
+        }
+        if (pickupElapsedTime!=null && pickupElapsedTime.milliseconds()>1000){
+            drive.stopIntake();
             pickupElapsedTime =null;
         }
         if (drive.getPoseEstimate().getX()>25){
@@ -219,7 +229,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
             } else if (drive.getBackSlides().getCurrentPosition()>10){
                 drive.outtakeToBackdrop();
             }
-            drive.stopIntake();
+
         }
 
         if (!drive.isBusy()){
@@ -229,7 +239,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
             } else if (depositTime.milliseconds()>100){
 
                 if (nextState == State.PARK){
-                    drive.followTrajectorySequenceAsync(park);
+                    drive.followTrajectorySequenceAsync(nextPath);
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
                     outtakeTarget=0;
