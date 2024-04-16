@@ -48,6 +48,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         END
     }
 
+    protected ElapsedTime outtakeFlipTime = null;
     protected ElapsedTime purpleDepositTime = null;
     protected ElapsedTime depositTime = null;
     protected ElapsedTime dropTime = null;
@@ -138,7 +139,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         } else {
             drive.followTrajectorySequenceAsync(middlePurple);
         }
-
+        outtakeFlipTime = new ElapsedTime();
         currentState = State.PURPLE_DEPOSIT;
     }
 
@@ -147,6 +148,9 @@ public abstract class BackDropOpMode extends LinearOpMode {
 //            drive.activateBackCamera();
 //            switched=true;
 //        }
+        if (outtakeFlipTime.milliseconds()>700) {
+            drive.outtakeToBackdrop();
+        }
 
         if (!drive.isBusy()){
             if (purpleDepositTime ==null){

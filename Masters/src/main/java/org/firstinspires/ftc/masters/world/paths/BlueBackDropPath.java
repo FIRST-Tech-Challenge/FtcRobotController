@@ -25,7 +25,7 @@ public class BlueBackDropPath {
     public static TrajectorySequence getLeftPurple(SampleMecanumDrive drive, Pose2d startPose) {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(-40))
-                .splineToLinearHeading(new Pose2d(35, 25, Math.toRadians(180)), Math.toRadians(-70))
+                .splineToLinearHeading(new Pose2d(34, 25, Math.toRadians(180)), Math.toRadians(-70))
 
                 .build();
     }
@@ -68,21 +68,21 @@ public class BlueBackDropPath {
     public static TrajectorySequence toStackTruss(SampleMecanumDrive drive, Pose2d startPose) {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(10, 62, Math.toRadians(180)), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-35, 62, Math.toRadians(180)), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-45, 30, Math.toRadians(180)), Math.toRadians(-140))
+                .splineToLinearHeading(new Pose2d(10, 61, Math.toRadians(181)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-31, 61, Math.toRadians(181)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-44, 33.5, Math.toRadians(180)), Math.toRadians(-140))
                 .build();
 
     }
 
     public static TrajectorySequence fromStackToBoardTruss(SampleMecanumDrive drive, Pose2d startPose) {
-        return drive.trajectorySequenceBuilder(new Pose2d(-61, 34, Math.toRadians(180)))
+        return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(40))
-                .splineToLinearHeading(new Pose2d(-45, 61, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(25, 58, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-50, 60.5, Math.toRadians(179)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(25, 60.5, Math.toRadians(179)), Math.toRadians(0))
 
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(44, 35, Math.toRadians(135)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, 55, Math.toRadians(150)), Math.toRadians(0))
                 .build();
     }
 
@@ -98,7 +98,7 @@ public class BlueBackDropPath {
 
         return drive.trajectorySequenceBuilder(startPose)
 
-                .lineToLinearHeading(new Pose2d(-61.1, 35, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(-60.1, 35, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL))
                 .build();
     }
 

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.masters.CSCons.servo1Down;
 import static org.firstinspires.ftc.masters.CSCons.servo1Up;
 import static org.firstinspires.ftc.masters.CSCons.servo2Down;
 import static org.firstinspires.ftc.masters.CSCons.servo2Up;
+import static org.firstinspires.ftc.masters.CSCons.transferPush;
 import static org.firstinspires.ftc.masters.CSCons.transferUp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -38,7 +39,7 @@ public class WorldsTeleop extends LinearOpMode {
         WAITING_FOR_PIXELS (100),
         MOVE_ARM (100),
         MOVE_OUTTAKE(100),
-        CLOSE_FINGERS (100);
+        CLOSE_FINGERS (500);
 
         private int waitTime;
         private TransferStatus(int waitTime){
@@ -115,6 +116,7 @@ public class WorldsTeleop extends LinearOpMode {
 
     private CSCons.IntakeDirection intakeDirection = CSCons.IntakeDirection.OFF;
     private HookPosition hookPosition = HookPosition.OPEN;
+
 
 
 
@@ -284,10 +286,11 @@ public class WorldsTeleop extends LinearOpMode {
                     gamepad1.rumble(1);
                     currentTransferStatus = TransferStatus.MOVE_ARM;
                     transferElapsedTime= new ElapsedTime();
-                    transferServo.setPosition(CSCons.transferPush);
+                    transferServo.setPosition(transferUp);
                 }
                 if (currentTransferStatus== TransferStatus.MOVE_ARM){
                     if (transferElapsedTime!=null && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()){
+                        transferServo.setPosition(transferPush);
                         currentTransferStatus = TransferStatus.MOVE_OUTTAKE;
                         setOuttakeToPickup();
                         transferElapsedTime = new ElapsedTime();
@@ -301,10 +304,15 @@ public class WorldsTeleop extends LinearOpMode {
                 }
 
                 if (currentTransferStatus == TransferStatus.CLOSE_FINGERS && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()) {
+                    transferServo.setPosition(transferUp);
                     gamepad2.rumble(1);
+
                 }
 
-            }
+            } else {
+
+                currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
+        }
 
             if (gamepad1.right_bumper) {
                 driveMode = DriveMode.END_GAME;
@@ -472,6 +480,10 @@ public class WorldsTeleop extends LinearOpMode {
 
                                 outtakeServo1.setPosition(servo1Up);
                                 outtakeServo2.setPosition(servo2Up);
+
+                                outtakeMovement.setPosition(CSCons.wristOuttakeMovementM);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementM);
+
                                 outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
                                 outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
                                 outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
@@ -489,7 +501,6 @@ public class WorldsTeleop extends LinearOpMode {
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
                             transferServo.setPosition(transferUp);
-                            currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
 
                         }
                         if (gamepad2.right_trigger > 0.5) {
@@ -497,7 +508,6 @@ public class WorldsTeleop extends LinearOpMode {
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
                             transferServo.setPosition(transferUp);
-                            currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
                         }
 
                             if (gamepad2.dpad_left && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
@@ -639,6 +649,7 @@ public class WorldsTeleop extends LinearOpMode {
                                 liftOuttakeFingers();
                             }
                             if (gamepad2.right_stick_y<-0.2){
+
                                 outtakeServo1.setPosition(servo1Down);
                                 outtakeServo2.setPosition(servo2Down);
                             }
