@@ -10,8 +10,8 @@ public class RedFarSidePath {
     public static TrajectorySequence getRightPurple(SampleMecanumDrive drive, Pose2d startPose) {
 
             return drive.trajectorySequenceBuilder(startPose)
-                    .setTangent(Math.toRadians(-50))
-                    .splineToLinearHeading(new Pose2d(-47, -15, Math.toRadians(90)), Math.toRadians(-110-180))
+                    .setTangent(Math.toRadians(130))
+                    .splineToLinearHeading(new Pose2d(-47, -15, Math.toRadians(180)), Math.toRadians(-110-180))
                     .build();
     }
     public static TrajectorySequence getLeftPurple (SampleMecanumDrive drive,  Pose2d startPose){

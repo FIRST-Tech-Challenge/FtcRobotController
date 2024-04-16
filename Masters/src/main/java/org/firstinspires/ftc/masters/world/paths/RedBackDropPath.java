@@ -30,7 +30,7 @@ public class RedBackDropPath {
     public static TrajectorySequence getMidPurple(SampleMecanumDrive drive,  Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(-90-180))
-                .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(180)), Math.toRadians(-90-180))
+                .splineToLinearHeading(new Pose2d(16, -24, Math.toRadians(180)), Math.toRadians(-90-180))
 
 
                 .build();
@@ -58,7 +58,7 @@ public class RedBackDropPath {
 
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -29, Math.toRadians(90)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -29, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 

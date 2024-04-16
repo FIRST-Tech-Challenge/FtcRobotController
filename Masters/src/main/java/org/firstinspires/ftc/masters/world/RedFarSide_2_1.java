@@ -23,6 +23,7 @@ public class RedFarSide_2_1 extends FarSideOpMode {
 
     @Override
     protected void initializeProp(){
+
         drive.initializePropFindLeftProcessing();
     }
 
@@ -105,7 +106,6 @@ public class RedFarSide_2_1 extends FarSideOpMode {
 
         retrievePropPos();
 
-        propPos= PropFindRightProcessor.pos.RIGHT;
         TrajectorySequence nextPath= null;
 
         while (opModeIsActive() && !isStopRequested()) {
