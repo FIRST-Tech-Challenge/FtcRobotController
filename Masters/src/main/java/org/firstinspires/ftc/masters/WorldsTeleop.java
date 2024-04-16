@@ -510,32 +510,34 @@ public class WorldsTeleop extends LinearOpMode {
                             transferServo.setPosition(transferUp);
                         }
 
-                            if (gamepad2.dpad_left && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
-                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
-                                    outtakeWristPosition = OuttakeWrist.flatRight;
-                                } else {
+                            if (gamepad2.dpad_left ) {
+//                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
+//                                    outtakeWristPosition = OuttakeWrist.flatRight;
+//                                } else {
                                     outtakeWristPosition = OuttakeWrist.angleLeft;
-                                }
-                                wristButtonPressed = true;
-                                buttonPushedTime= new ElapsedTime();
-                            } else if (gamepad2.dpad_up && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
+//                                }
+//                                wristButtonPressed = true;
+//                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_up ) {
                                 outtakeWristPosition = OuttakeWrist.vertical;
-                                wristButtonPressed = true;
-                                buttonPushedTime= new ElapsedTime();
-                            } else if (gamepad2.dpad_right && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
-                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
-                                    outtakeWristPosition = OuttakeWrist.flatLeft;
-                                } else {
+//                                wristButtonPressed = true;
+//                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_right ) {
+//                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
+//                                    outtakeWristPosition = OuttakeWrist.flatLeft;
+//                                } else {
                                     outtakeWristPosition = OuttakeWrist.angleRight;
-                                }
-                                wristButtonPressed = true;
-                                buttonPushedTime = new ElapsedTime();
-                            } else if (gamepad2.dpad_down && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
+                                //}
+//                                wristButtonPressed = true;
+//                                buttonPushedTime = new ElapsedTime();
+                            } else if (gamepad2.dpad_down ) {
                                 outtakeWristPosition = OuttakeWrist.verticalDown;
-                                wristButtonPressed = true;
-                                buttonPushedTime = new ElapsedTime();
-                            } else {
-                                wristButtonPressed = false;
+//                                wristButtonPressed = true;
+//                                buttonPushedTime = new ElapsedTime();
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x<-0.1){
+                                outtakeWristPosition = OuttakeWrist.flatRight;
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x>0.1){
+                                outtakeWristPosition= OuttakeWrist.flatLeft;
                             }
 
 
@@ -552,28 +554,34 @@ public class WorldsTeleop extends LinearOpMode {
                             break;
                         case ReadyToDrop:
 
-                            if (gamepad2.dpad_left && !wristButtonPressed) {
-                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
-                                    outtakeWristPosition = OuttakeWrist.flatLeft;
-                                } else {
-                                    outtakeWristPosition = OuttakeWrist.angleLeft;
-                                }
-                                wristButtonPressed = true;
-                            } else if (gamepad2.dpad_up && !wristButtonPressed) {
+                            if (gamepad2.dpad_left ) {
+//                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
+//                                    outtakeWristPosition = OuttakeWrist.flatRight;
+//                                } else {
+                                outtakeWristPosition = OuttakeWrist.angleLeft;
+//                                }
+//                                wristButtonPressed = true;
+//                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_up ) {
                                 outtakeWristPosition = OuttakeWrist.vertical;
-                                wristButtonPressed = true;
-                            } else if (gamepad2.dpad_right && !wristButtonPressed) {
-                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
-                                    outtakeWristPosition = OuttakeWrist.flatRight;
-                                } else {
-                                    outtakeWristPosition = OuttakeWrist.angleRight;
-                                }
-                                wristButtonPressed = true;
-                            } else if (gamepad2.dpad_down && !wristButtonPressed) {
+//                                wristButtonPressed = true;
+//                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_right ) {
+//                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
+//                                    outtakeWristPosition = OuttakeWrist.flatLeft;
+//                                } else {
+                                outtakeWristPosition = OuttakeWrist.angleRight;
+                                //}
+//                                wristButtonPressed = true;
+//                                buttonPushedTime = new ElapsedTime();
+                            } else if (gamepad2.dpad_down ) {
                                 outtakeWristPosition = OuttakeWrist.verticalDown;
-                                wristButtonPressed = true;
-                            } else {
-                                wristButtonPressed = false;
+//                                wristButtonPressed = true;
+//                                buttonPushedTime = new ElapsedTime();
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x<-0.1){
+                                outtakeWristPosition = OuttakeWrist.flatRight;
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x>0.1){
+                                outtakeWristPosition= OuttakeWrist.flatLeft;
                             }
 
                            setWristServoPosition();

@@ -65,29 +65,27 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
         //YELLOW PIXELS
 
         leftYellow = BlueBackDropPath.getLeftYellow(drive, leftPurple.end());
-
-
         midYellow = BlueBackDropPath.getMidYellow(drive, middlePurple.end());
-
-
         rightYellow = BlueBackDropPath.getRightYellow(drive, rightPurple.end());
 
-
+        parkFromLeft = BlueBackDropPath.park(drive, leftYellow.end());
+        parkFromRight =BlueBackDropPath.park(drive, rightYellow.end());
+        parkFromMid = BlueBackDropPath.park(drive, midYellow.end());
 
 
         //OTHER PATHS
-
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
-                .forward(5)
-
-                .build();
-
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-
-                .build();
+//
+//        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
+//                .forward(5)
+//
+//                .build();
+//
+//
+//        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                .build();
 
 
 
@@ -120,9 +118,16 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
                     purpleDepositState();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    backdropDepositPath(State.PARK,park);
+                    if (propPos== PropFindRightProcessor.pos.LEFT){
+                        backdropDepositPath(State.PARK, parkFromLeft);
+                    } else if (propPos== PropFindRightProcessor.pos.RIGHT){
+                        backdropDepositPath(State.PARK, parkFromRight);
+                    } else if (propPos== PropFindRightProcessor.pos.MID) {
+                        backdropDepositPath(State.PARK, parkFromMid);
+                    }
                     break;
                 case PARK:
+                    park();
                     break;
 
             }

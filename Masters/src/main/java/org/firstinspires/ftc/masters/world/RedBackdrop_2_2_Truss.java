@@ -36,7 +36,6 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
 
         rightPurple = RedBackDropPath.getRightPurple(drive, startPose);
 
-
         leftPurple = RedBackDropPath.getLeftPurple(drive, startPose);
 
         middlePurple = RedBackDropPath.getMidPurple(drive, startPose);

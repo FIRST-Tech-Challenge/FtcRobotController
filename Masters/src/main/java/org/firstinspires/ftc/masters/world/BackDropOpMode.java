@@ -66,6 +66,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
     protected TrajectorySequence rightYellow, leftYellow, midYellow;
     protected TrajectorySequence toStackFromRight, toStackFromLeft, toStackFromMid;
     protected TrajectorySequence toBackBoard;
+    protected TrajectorySequence parkFromLeft, parkFromRight, parkFromMid;
     protected TrajectorySequence park;
 
     protected State currentState;
@@ -217,7 +218,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
             } else if (depositTime.milliseconds()>100){
                 dropTime = new ElapsedTime();
                 if (nextState == State.PARK){
-                    drive.followTrajectorySequenceAsync(park);
+                    drive.followTrajectorySequenceAsync(nextPath);
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
                     drive.followTrajectorySequenceAsync(nextPath);
