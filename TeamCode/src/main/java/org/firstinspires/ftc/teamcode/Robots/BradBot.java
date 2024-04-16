@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Components.Twrist;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.Wrist;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.secret.PPUI;
 import org.firstinspires.ftc.teamcode.roadrunner.secret.Waypoint;
@@ -110,7 +111,7 @@ public class BradBot extends BasicRobot {
       launcher = new Launcher();
       lift = new Lift();
       //    preloader = new Preloader();
-      roadrun = new SampleMecanumDrive(p_op.hardwareMap);
+      roadrun = new SampleMecanumDrive(p_op.hardwareMap, Tracker.TrackType.ROADRUN_IMU_LEFT);
       twrist = new Twrist();
       ultras = new Ultrasonics();
       wrist = new Wrist();
@@ -120,7 +121,7 @@ public class BradBot extends BasicRobot {
       voltage = voltageSensor.getVoltage();
       brokenFollowing = false;
 
-      MAX_ACCEL*=voltage / 14;
+      MAX_ACCEL*=voltage / 15;
       kV *= 12.89/voltage;
       // 12.4,12.2
       update();
@@ -333,9 +334,13 @@ public class BradBot extends BasicRobot {
   public void grabAuto() {
     if (queuer.queue(
         true,
-        Claw.clawStates.GRAB.getState()
-            && Arm.ArmTargetStates.HOVER.getState()
-            && !Intake.IntakeStates.INTAKING.getState())) {
+        /*(Claw.clawStates.GRAB.getState()
+        && Arm.ArmTargetStates.HOVER.getState()
+        && GRAB.getState()
+        && !Intake.IntakeStates.INTAKING.getState())||*/ lift.getCurrentPosition() > 30
+            && !Intake.IntakeStates.INTAKING.getState()
+            && Claw.clawStates.GRAB.getState()
+            && HOVER.getState())) {
       if ((pixels == 2 || !Intake.IntakeStates.INTAKING.getState())
           && !GRAB.state
           && !Claw.clawStates.GRAB.getState()) {
@@ -411,7 +416,8 @@ public class BradBot extends BasicRobot {
         arm.flipTo(HOVER, -.04, false);
         lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
         claw.moveOne(false);
-        claw.moveTwo(false);
+          claw.moveTwo(false);
+          Claw.clawStates.CLOSE.setStateTrue();
         LOGGER.log("buh");
       }
       //      lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
@@ -425,7 +431,7 @@ public class BradBot extends BasicRobot {
         ((pixels == 1
                 && time - intake.getStartIntakeTime() > 0.4
                 && magazine.solidTwoPixels()
-                && abs(intake.getVelocity()) < 1350)
+                && abs(intake.getVelocity()) < 1400)
             || pixels == 2 && intaked
             || Intake.IntakeStates.REVERSING.getState()))) {
       LOGGER.log(String.valueOf(intake.getVelocity()));
@@ -499,7 +505,7 @@ public class BradBot extends BasicRobot {
   public void drop() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
       //      if (!queuer.isExecuted()) {
-      if (currentPose.getX() > 45.5) {
+      if (currentPose.getX() > 47) {
         claw.moveTwo(false);
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();
@@ -513,7 +519,7 @@ public class BradBot extends BasicRobot {
   public void drop2() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
       //      if (!queuer.isExecuted()) {
-      if (currentPose.getX()  > 47) {
+      if (currentPose.getX()  > 49) {
         claw.moveTwo(false);
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();

@@ -40,9 +40,9 @@ public class TwoWheelTrackingLocalizerLeft extends RFTwoTrackingWheelLocalizer {
     public static final double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static final double PARALLEL_X = 0; // X is the up and down direction
-    public static final double PARALLEL_Y = 12.93 / 2; // Y is the strafe direction
+    public static final double PARALLEL_Y = 12.5 / 2; // Y is the strafe direction
 
-    public static final double PERPENDICULAR_X = 0;
+    public static final double PERPENDICULAR_X = -5.8;
     public static final double PERPENDICULAR_Y = 0;
 
     // Parallel/Perpendicular to the forward axis
