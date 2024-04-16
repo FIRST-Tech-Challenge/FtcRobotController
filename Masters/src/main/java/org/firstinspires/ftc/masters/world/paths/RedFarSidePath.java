@@ -24,8 +24,8 @@ public class RedFarSidePath {
 
     public static TrajectorySequence getMidPurple(SampleMecanumDrive drive,  Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
-                .setTangent(Math.toRadians(-50))
-                .splineToLinearHeading(new Pose2d(-45, -14, Math.toRadians(-120-180)), Math.toRadians(-110-180))
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-45, -15, Math.toRadians(130)), Math.toRadians(90))
 
                 .build();
     }
@@ -48,7 +48,7 @@ public class RedFarSidePath {
     public static TrajectorySequence getMidPurpleToStack(SampleMecanumDrive drive, Pose2d startPose) {
 
         return drive.trajectorySequenceBuilder(startPose)
-                .setTangent(Math.toRadians(-140))
+                .setTangent(Math.toRadians(90))
                 .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
                 .build();
     }
