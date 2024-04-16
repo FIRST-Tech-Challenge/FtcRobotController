@@ -27,9 +27,9 @@ public class RR24 {
         robot = new BradBot(op, false,isLogi);
         Pose2d startPose = new Pose2d(17,-64.5,toRadians(-90));
         Vector2d[] droppos = new Vector2d[3];
-        droppos[0] = new Vector2d(46.4, -29);
-        droppos[1] = new Vector2d(46.4, -35.25);
-        droppos[2] = new Vector2d(46.4, -38.5);
+        droppos[0] = new Vector2d(49.4, -37); //+3x, -8y
+        droppos[1] = new Vector2d(49.4, -38.25); //+3x, -3y
+        droppos[2] = new Vector2d(49.4, -38.5); //+3x
         robot.roadrun.setPoseEstimate(startPose);
 
         spikey[0] = robot.roadrun.trajectorySequenceBuilder(startPose)
@@ -41,7 +41,7 @@ public class RR24 {
                 .lineToLinearHeading(new Pose2d(16.5, -36.5, toRadians(-91))).build();
 
         spikey[2] = robot.roadrun.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(25.5,-40, toRadians(1890))).build();
+                .lineToLinearHeading(new Pose2d(25.5,-40, toRadians(180))).build();
 
         if (!isLogi) {
             droppy[0] = robot.roadrun.trajectorySequenceBuilder(spikey[0].end())
@@ -101,7 +101,8 @@ public class RR24 {
     }
     public void waitForStart(){
         while (!op.isStarted() || op.isStopRequested()) {
-            bark = robot.getSpikePos();
+//            bark = robot.getSpikePos();
+            bark = 1;
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
             robot.update();

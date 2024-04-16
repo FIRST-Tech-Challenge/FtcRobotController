@@ -50,11 +50,11 @@ public class RRMAX {
         if (!isLogi) {
 
 
+
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
                     .lineToLinearHeading(new Pose2d(44.2, -36.5, toRadians(-180)))
 //                    .addTemporalMarker(robot::done)
                     .build();
-
         } else{
 
 
