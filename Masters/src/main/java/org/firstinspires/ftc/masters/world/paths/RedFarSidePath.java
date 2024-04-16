@@ -96,4 +96,11 @@ public class RedFarSidePath {
                 .build();
     }
 
+    public static TrajectorySequence park(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(44, -15, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+    }
+
 }
