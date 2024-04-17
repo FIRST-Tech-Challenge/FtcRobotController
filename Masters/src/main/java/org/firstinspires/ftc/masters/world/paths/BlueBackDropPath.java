@@ -44,7 +44,7 @@ public class BlueBackDropPath {
 
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, 29, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, 27.5, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -52,7 +52,7 @@ public class BlueBackDropPath {
 
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(50, 34, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, 32, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 

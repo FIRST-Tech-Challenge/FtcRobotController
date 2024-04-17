@@ -101,8 +101,6 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
 
         currentState = State.PURPLE_DEPOSIT_PATH;
 
-        drive.dropIntake();
-
         retrievePropPos();
 
         TrajectorySequence nextPath=null;

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.RedFarSidePath;
@@ -142,5 +143,14 @@ public class RedFarSide_2_1 extends FarSideOpMode {
 
 
         }
+    }
+
+    @Override
+    public CSCons.OuttakeWrist getOuttakeWristPosition(PropFindRightProcessor.pos propPos){
+        if (propPos== PropFindRightProcessor.pos.LEFT){
+            return CSCons.OuttakeWrist.flatRight;
+        } else
+            return CSCons.OuttakeWrist.flatLeft;
+
     }
 }

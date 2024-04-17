@@ -671,12 +671,12 @@ public class MeepMeepEvan {
 
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(16, -61.2), Math.toRadians(90)))
-                                        .setTangent(Math.toRadians(-90-180))
-                                        .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(-90-180)), Math.toRadians(-90-180))
+                                        .setTangent(Math.toRadians((90)))
+                                        .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(90)), Math.toRadians(90))
                                         .waitSeconds(0.5)
 
                                         .setTangent(Math.toRadians(-90))
-                                        .splineToLinearHeading(new Pose2d(50, -34, Math.toRadians(0)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(50, -32, Math.toRadians(180)), Math.toRadians(0))
                                         .waitSeconds(0.5)
 
 //                                        //2+2
@@ -885,7 +885,7 @@ public class MeepMeepEvan {
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(RedBFarSideGateR)
+                .addEntity(RedBackdropTrussC)
                 .start();
     }
 }

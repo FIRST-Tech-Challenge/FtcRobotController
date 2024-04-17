@@ -156,7 +156,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
         if (!drive.isBusy()){
             if (purpleDepositTime ==null){
                 drive.raiseIntake();
-                outtakeWristPosition = CSCons.OuttakeWrist.flatRight;
+                outtakeWristPosition = getOuttakeWristPosition();
+
                 drive.outtakeToBackdrop();
                 purpleDepositTime = new ElapsedTime();
             } else if (purpleDepositTime.milliseconds()>100) {
@@ -195,7 +196,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
                 drive.closeFingers();
                 if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
                     drive.outtakeToBackdrop();
-                    drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
+                    drive.setWristServoPosition(getOuttakeWristPosition());
                 } else if (drive.getBackSlides().getCurrentPosition()>10){
                     drive.outtakeToBackdrop();
                 }
@@ -204,7 +205,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         } else {
 
             if (drive.getBackSlides().getCurrentPosition() > outtakeTarget - 150) {
-                drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
+                drive.setWristServoPosition(getOuttakeWristPosition());
             }
         }
 
@@ -301,6 +302,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
 
     abstract public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition);
 
-
+    public CSCons.OuttakeWrist getOuttakeWristPosition(){
+        return CSCons.OuttakeWrist.flatRight;
+    }
 
 }

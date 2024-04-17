@@ -523,7 +523,7 @@ public class WorldsTeleop extends LinearOpMode {
 //                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
 //                                    outtakeWristPosition = OuttakeWrist.flatRight;
 //                                } else {
-                                    outtakeWristPosition = OuttakeWrist.angleLeft;
+                                    outtakeWristPosition = OuttakeWrist.angleRight;
 //                                }
 //                                wristButtonPressed = true;
 //                                buttonPushedTime= new ElapsedTime();
@@ -535,7 +535,7 @@ public class WorldsTeleop extends LinearOpMode {
 //                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
 //                                    outtakeWristPosition = OuttakeWrist.flatLeft;
 //                                } else {
-                                    outtakeWristPosition = OuttakeWrist.angleRight;
+                                    outtakeWristPosition = OuttakeWrist.angleLeft;
                                 //}
 //                                wristButtonPressed = true;
 //                                buttonPushedTime = new ElapsedTime();
@@ -564,13 +564,13 @@ public class WorldsTeleop extends LinearOpMode {
                         case ReadyToDrop:
 
                             if (gamepad2.dpad_left ) {
-                                outtakeWristPosition = OuttakeWrist.angleLeft;
+                                outtakeWristPosition = OuttakeWrist.angleRight;
 
                             } else if (gamepad2.dpad_up ) {
                                 outtakeWristPosition = OuttakeWrist.vertical;
                             } else if (gamepad2.dpad_right ) {
 
-                                outtakeWristPosition = OuttakeWrist.angleRight;
+                                outtakeWristPosition = OuttakeWrist.angleLeft;
 
                             } else if (gamepad2.dpad_down ) {
                                 outtakeWristPosition = OuttakeWrist.verticalDown;

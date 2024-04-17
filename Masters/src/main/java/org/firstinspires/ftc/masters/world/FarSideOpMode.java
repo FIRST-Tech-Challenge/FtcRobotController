@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.masters.PropFindLeftProcessor;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -208,11 +209,13 @@ public abstract class FarSideOpMode extends LinearOpMode {
         if (pickupElapsedTime!=null && pickupElapsedTime.milliseconds()>100){
             drive.outtakeToPickup();
             drive.revertIntake();
+
         }
 
         if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>250){
             drive.closeFingers();
             drive.revertIntake();
+            drive.raiseTransferArm();
 
         }
         if (pickupElapsedTime!=null && pickupElapsedTime.milliseconds()>1000){
@@ -224,7 +227,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
             drive.closeFingers();
             if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
                 drive.outtakeToBackdrop();
-                drive.setWristServoPosition(CSCons.OuttakeWrist.flatLeft);
+                drive.setWristServoPosition(getOuttakeWristPosition(propPos));
             } else if (drive.getBackSlides().getCurrentPosition()>10){
                 drive.outtakeToBackdrop();
             }
@@ -280,6 +283,13 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected boolean has2Pixels(){
         return drive.frontBreakBeam.getState() && drive.backBreakBeam.getState();
+    }
+
+    public CSCons.OuttakeWrist getOuttakeWristPosition(PropFindRightProcessor.pos propPos){
+        if (propPos== PropFindRightProcessor.pos.RIGHT){
+            return CSCons.OuttakeWrist.flatLeft;
+        } else
+        return CSCons.OuttakeWrist.flatRight;
     }
 
 

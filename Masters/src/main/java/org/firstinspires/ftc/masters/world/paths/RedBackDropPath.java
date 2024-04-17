@@ -14,24 +14,22 @@ public class RedBackDropPath {
     public static TrajectorySequence getRightPurple(SampleMecanumDrive drive, Pose2d startPose) {
 
         return drive.trajectorySequenceBuilder(startPose)
-                .setTangent(Math.toRadians(-40-180))
-                .splineToLinearHeading(new Pose2d(35, -29, Math.toRadians(180)), Math.toRadians(-70-180))
+                .setTangent(Math.toRadians(-220))
+                .splineToLinearHeading(new Pose2d(33, -27, Math.toRadians(180)), Math.toRadians(-250))
                 .build();
     }
     public static TrajectorySequence getLeftPurple (SampleMecanumDrive drive,  Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(-220))
-                .splineToLinearHeading(new Pose2d(12, -30, Math.toRadians(180)), Math.toRadians(-70-180))
-
+                .splineToLinearHeading(new Pose2d(10, -30, Math.toRadians(180)), Math.toRadians(-70-180))
 
                 .build();
     }
 
     public static TrajectorySequence getMidPurple(SampleMecanumDrive drive,  Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
-                .setTangent(Math.toRadians(-90-180))
-                .splineToLinearHeading(new Pose2d(16, -24, Math.toRadians(180)), Math.toRadians(-90-180))
-
+                .setTangent(Math.toRadians((90)))
+                .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(90)), Math.toRadians(90))
 
                 .build();
     }
@@ -49,8 +47,8 @@ public class RedBackDropPath {
     public static TrajectorySequence getMidYellow(SampleMecanumDrive drive, Pose2d startPose) {
 
         return drive.trajectorySequenceBuilder(startPose)
-                .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(50, -34, Math.toRadians(180)), Math.toRadians(0))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(50, -32, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 

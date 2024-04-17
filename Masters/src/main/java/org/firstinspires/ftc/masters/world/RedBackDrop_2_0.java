@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
@@ -127,5 +128,10 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
     }
     public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
         return RedBackDropPath.toStackWing(drive, robotPosition);
+    }
+
+    @Override
+    public CSCons.OuttakeWrist getOuttakeWristPosition(){
+        return CSCons.OuttakeWrist.flatLeft;
     }
 }
