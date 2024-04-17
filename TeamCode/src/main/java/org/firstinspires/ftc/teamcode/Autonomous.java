@@ -14,7 +14,7 @@ public class redNearAutonomous extends LinearOpMode {
     public void runOpMode() {
         robot.init();
 
-        // wait until the player press the start button
+        // Wait until the player press the start button
         waitForStart();
     }
 } 

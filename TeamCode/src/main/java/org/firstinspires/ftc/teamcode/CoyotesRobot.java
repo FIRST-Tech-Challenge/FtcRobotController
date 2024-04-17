@@ -46,12 +46,12 @@ public class CoyotesRobot {
     public void autoSleep(DcMotor... motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
-        // does nothing if it isn't a LinearOpMode
+        // Does nothing if it isn't a LinearOpMode
         if (linearOp == null) {
             return;
         }
 
-        // while any of the motors are still running
+        // While any of the motors are still running
         while (Arrays.stream(motors).anyMatch(motor -> motor.isBusy())) {
             linearOp.sleep(1);
         }
