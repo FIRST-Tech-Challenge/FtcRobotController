@@ -289,8 +289,10 @@ public class WorldsTeleop extends LinearOpMode {
                     transferServo.setPosition(transferUp);
                 }
                 if (currentTransferStatus== TransferStatus.MOVE_ARM){
+
                     if (transferElapsedTime!=null && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()){
                         transferServo.setPosition(transferPush);
+
                         currentTransferStatus = TransferStatus.MOVE_OUTTAKE;
                         setOuttakeToPickup();
                         transferElapsedTime = new ElapsedTime();

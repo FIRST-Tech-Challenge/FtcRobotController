@@ -87,7 +87,6 @@ public abstract class FarSideOpMode extends LinearOpMode {
             telemetry.update();
         }
 
-
 //        drive.activateFrontCamera();
         drive.enablePropProcessor();
 
