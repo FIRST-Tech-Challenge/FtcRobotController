@@ -3,14 +3,12 @@ This repository is a template for our FtcRobotControllers.
 It is a fork of FTC's official [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController.git).
 Please feel free to modify this template as necessary. 
 
-# Creating repositories wth this template
-The repository is configured to be a repository template, so to use it, simply create a new repository under chsRobotix,
-click under "Repository template," and select "chsRobotix/TemplateRobotController." It is suggested to name it in the format of
-"{starting year}-{ending year}{season name}."
-
-# Updating repositories created with this template
-Open up the terminal and type `git remote add template https://github.com/chsRobotix/TemplateRobotController.git`. Then type `git pull --allow-unrelated-histories
- template`. By default Git prevents you from pulling from an unrelated repository but `--alow-unrelated-histories` overrides it. 
+# Creating templates using this template
+To create new repositories using this one, create a fork. That way when you update the template, you can also pull changes into the forks.
+[!Warning]
+> Before you pull changes from this template ensure that the new changes would not break the current code.
+It is not recommended to push commits from the fork to the upstream. 
+It is suggested to name the new repo in the format of"{starting year}-{ending year}{season name}."
 
 # Updating with FTC's FtcRobotController
 Keep this fork up to date with FTC's official [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController.git).
@@ -20,7 +18,7 @@ Alternatively, you can type `git remote add-url upstream https://github.com/FIRS
 
 
 # Contents
-In [our team's code](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/), there is an [Autonomous](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomous.java) and a [TeleOp](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TeleOp.java). The directory also contains a submodule([CoyotesRobot](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CoyotesRobot)), which allows for the template and library to be modified independently of each other. 
+Our team's code is in [./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/)
 
 ## Autonomous
 Runs the robot's autonomous program. It declares and and instantiates a CoyotesRobot.
@@ -29,4 +27,7 @@ Runs the robot's autonomous program. It declares and and instantiates a CoyotesR
 Runs the robot's teleop program. It declares and and instantiates a CoyotesRobot.
 
 ## CoyotesRobot
-CoyotesRobot contains classes and methods for controlling the robot.
+CoyotesRobot is a class of methods and properties for initializing and controlling the robot.
+
+## MeccanumDrive
+It contains code for controlling a system of four meccanum wheels. 
