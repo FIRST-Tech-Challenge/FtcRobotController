@@ -96,6 +96,8 @@ public class WorldsTeleop extends LinearOpMode {
 
     TransferStatus currentTransferStatus;
 
+    ElapsedTime liftFingers = new ElapsedTime();
+
 
     private enum OuttakeWrist{
         flatRight (CSCons.wristFlatRight), angleRight(CSCons.wristAngleRight), verticalDown(CSCons.wristVerticalDown),
@@ -281,7 +283,7 @@ public class WorldsTeleop extends LinearOpMode {
 
             backSlidesMove(target);
 
-            if (has2Pixels()) {
+            if (has2Pixels() && outtakeState!=OuttakeState.ReadyToDrop) {
                 if (currentTransferStatus== TransferStatus.WAITING_FOR_PIXELS){
                     gamepad1.rumble(5000);
                     currentTransferStatus = TransferStatus.MOVE_ARM;
@@ -301,6 +303,10 @@ public class WorldsTeleop extends LinearOpMode {
                     outtakeServo2.setPosition(servo2Down);
                     currentTransferStatus = TransferStatus.CLOSE_FINGERS;
                     transferElapsedTime = new ElapsedTime();
+                    intakeDirection = CSCons.IntakeDirection.BACKWARD;
+                    intake.setPower(-CSCons.speed);
+                    intakeHeight.setPosition(CSCons.intakeAboveTop);
+
                 }
 
                 if (currentTransferStatus == TransferStatus.CLOSE_FINGERS && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()) {
@@ -556,29 +562,17 @@ public class WorldsTeleop extends LinearOpMode {
                         case ReadyToDrop:
 
                             if (gamepad2.dpad_left ) {
-//                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
-//                                    outtakeWristPosition = OuttakeWrist.flatRight;
-//                                } else {
                                 outtakeWristPosition = OuttakeWrist.angleLeft;
-//                                }
-//                                wristButtonPressed = true;
-//                                buttonPushedTime= new ElapsedTime();
+
                             } else if (gamepad2.dpad_up ) {
                                 outtakeWristPosition = OuttakeWrist.vertical;
-//                                wristButtonPressed = true;
-//                                buttonPushedTime= new ElapsedTime();
                             } else if (gamepad2.dpad_right ) {
-//                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
-//                                    outtakeWristPosition = OuttakeWrist.flatLeft;
-//                                } else {
+
                                 outtakeWristPosition = OuttakeWrist.angleRight;
-                                //}
-//                                wristButtonPressed = true;
-//                                buttonPushedTime = new ElapsedTime();
+
                             } else if (gamepad2.dpad_down ) {
                                 outtakeWristPosition = OuttakeWrist.verticalDown;
-//                                wristButtonPressed = true;
-//                                buttonPushedTime = new ElapsedTime();
+
                             } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x<-0.1){
                                 outtakeWristPosition = OuttakeWrist.flatRight;
                             } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x>0.1){
@@ -586,7 +580,6 @@ public class WorldsTeleop extends LinearOpMode {
                             }
 
                            setWristServoPosition();
-
 
                             if(gamepad2.y){
                                 if (outtakeWristPosition== OuttakeWrist.vertical){
@@ -656,9 +649,9 @@ public class WorldsTeleop extends LinearOpMode {
 
                             if (gamepad2.right_stick_y>0.2){
                                 liftOuttakeFingers();
+                                liftFingers= new ElapsedTime();
                             }
-                            if (gamepad2.right_stick_y<-0.2){
-
+                            if (gamepad2.right_stick_y<-0.2  && liftFingers.milliseconds()>200){
                                 outtakeServo1.setPosition(servo1Down);
                                 outtakeServo2.setPosition(servo2Down);
                             }
