@@ -8,7 +8,7 @@ To create new repositories using this one, create a fork. That way when you upda
 > [!Warning]
 > Before you pull changes from this template into a fork, ensure that the new changes would not break the current code.
 
-It is not recommended to push commits from the fork to the upstream. 
+Do not push commits from the fork to the upstream.
 It is suggested to name the new repo in the format of"{starting year}-{ending year}{season name}."
 
 # Updating with FTC's FtcRobotController
