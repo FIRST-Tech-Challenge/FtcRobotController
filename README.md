@@ -21,16 +21,6 @@ Alternatively, you can type `git remote add-url upstream https://github.com/FIRS
 "upstream." Then type `git pull upstream` to pull from the upstream.
 
 # Contents
-Our team's code is in [./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/)
-
-## Autonomous
-Runs the robot's autonomous program. It declares and and instantiates a CoyotesRobot.
-
-## TeleOp
-Runs the robot's teleop program. It declares and and instantiates a CoyotesRobot.
-
-## CoyotesRobot
-CoyotesRobot is a class of methods and properties for initializing and controlling the robot.
-
-## MeccanumDrive
-It contains code for controlling a system of four meccanum wheels. 
+Our team's code is in [./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/).
+It contains an autonomous, teleop, and various helper classes to ease the process of programming the robot. 
+For more details, look at the [README.md](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/README.)
