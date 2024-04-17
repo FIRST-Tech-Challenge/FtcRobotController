@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "TeleOp")
-public class drivercontrol extends OpMode {
+public class TeleOp extends OpMode {
     private CoyotesRobot robot;
 
     @Override
