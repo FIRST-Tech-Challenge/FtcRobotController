@@ -5,7 +5,7 @@ Please feel free to modify this template as necessary.
 
 # Creating templates using this template
 To create new repositories using this one, create a fork. That way when you update the template, you can also pull changes into the forks.
-[!Warning]
+> [!Warning]
 > Before you pull changes from this template ensure that the new changes would not break the current code.
 It is not recommended to push commits from the fork to the upstream. 
 It is suggested to name the new repo in the format of"{starting year}-{ending year}{season name}."
