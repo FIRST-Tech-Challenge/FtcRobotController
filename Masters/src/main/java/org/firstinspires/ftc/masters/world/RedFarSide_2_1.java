@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
+import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
 import org.firstinspires.ftc.masters.world.paths.RedFarSidePath;
 
 @Config
@@ -59,6 +60,10 @@ public class RedFarSide_2_1 extends FarSideOpMode {
 
         stackToLeftYellow = RedFarSidePath.getStackToLeftYellow(drive, leftPurpleToStack.end());
 
+        parkFromMid = RedFarSidePath.park(drive, stackToMidYellow.end());
+        parkFromLeft = RedFarSidePath.park(drive, stackToLeftYellow.end());
+        parkFromRight = RedFarSidePath.park(drive, stackToRightYellow.end());
+
 
 
 
@@ -103,8 +108,6 @@ public class RedFarSide_2_1 extends FarSideOpMode {
 
         currentState = State.PURPLE_DEPOSIT_PATH;
 
-        drive.dropIntake();
-
         retrievePropPos();
 
         TrajectorySequence nextPath= null;
@@ -136,7 +139,20 @@ public class RedFarSide_2_1 extends FarSideOpMode {
                     toStack(nextPath);
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    backdropDepositPath(State.PARK, park);
+                    switch (propPos){
+                        case LEFT:
+                            backdropDepositPath(State.PARK, parkFromLeft);
+                            break;
+                        case RIGHT:
+                            backdropDepositPath(State.PARK, parkFromRight);
+                            break;
+                        case MID:
+                            backdropDepositPath(State.PARK, parkFromMid);
+                            break;
+                    }
+                    break;
+                case PARK:
+                    park();
                     break;
 
             }

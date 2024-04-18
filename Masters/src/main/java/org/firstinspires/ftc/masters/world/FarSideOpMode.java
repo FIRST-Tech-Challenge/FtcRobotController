@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.masters.world;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -285,6 +287,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
         return drive.frontBreakBeam.getState() && drive.backBreakBeam.getState();
     }
 
+    @SuppressLint("SuspiciousIndentation")
     public CSCons.OuttakeWrist getOuttakeWristPosition(PropFindRightProcessor.pos propPos){
         if (propPos== PropFindRightProcessor.pos.RIGHT){
             return CSCons.OuttakeWrist.flatLeft;
