@@ -11,7 +11,7 @@ public class MecanumDrive extends DriveSystem {
 
     private double wheelGearRatio = 0.0;
 
-    public MecanumDrive(DcMotor frontLeftWheel, DcMotor frontRightWheel, DcMotor backLeftWheel, DcMotor backRightWheel) {
+    public MeccanumDrive(DcMotor frontLeftWheel, DcMotor frontRightWheel, DcMotor backLeftWheel, DcMotor backRightWheel) {
         this.frontLeftWheel = frontLeftWheel;
         this.frontRightWheel = frontRightWheel;
         this.backLeftWheel = backLeftWheel;
