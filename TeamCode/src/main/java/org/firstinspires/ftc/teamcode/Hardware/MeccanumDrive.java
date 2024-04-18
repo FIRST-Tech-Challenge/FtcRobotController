@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.*;
 
-public class MecanumWheels extends WheelSystem {
+public class MecanumDrive extends WheelSystem {
     /* The DcMotors powering the wheels */
     private DcMotor frontLeftWheel;
     private DcMotor frontRightWheel;
@@ -14,7 +14,7 @@ public class MecanumWheels extends WheelSystem {
 
     private double wheelGearRatio = 0.0;
 
-    public MecanumWheels(DcMotor frontLeftWheel, DcMotor frontRightWheel, DcMotor backLeftWheel, DcMotor backRightWheel) {
+    public MecanumDrive(DcMotor frontLeftWheel, DcMotor frontRightWheel, DcMotor backLeftWheel, DcMotor backRightWheel) {
         this.frontLeftWheel = frontLeftWheel;
         this.frontRightWheel = frontRightWheel;
         this.backLeftWheel = backLeftWheel;
