@@ -1,16 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.*;
 
-public class MecanumDrive extends WheelSystem {
+public class MecanumDrive extends DriveSystem {
     /* The DcMotors powering the wheels */
     private DcMotor frontLeftWheel;
     private DcMotor frontRightWheel;
     private DcMotor backLeftWheel;
     private DcMotor backRightWheel;
-
-    // How much power the wheels run with (0.0 - 1.0)
-    private double wheelPower = 1.0;
 
     private double wheelGearRatio = 0.0;
 
@@ -22,7 +19,7 @@ public class MecanumDrive extends WheelSystem {
 
         /*
          * Set the directions of the motors
-         * The righ and left motors are reveresed of each other 
+         * The right and left motors are reveresed of each other 
          */
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);

@@ -10,16 +10,23 @@ public class CoyotesRobot {
     // Will automatically sleep by default
     private boolean autoSleepEnabled;
 
+    private DriveSystem driveSystem;
+
     public Hardware(OpMode opMode) {
         this.opMode = opMode;
 
         autoSleepEnabled = true;
+
+        init();
+
+        driveSystem = new DriveSystem();
     }
 
     /**
      * Initializes all the robot's hardware(motors, servos, sensors, etc.)
      */
     public void init() {
+
     }
 
     /**
