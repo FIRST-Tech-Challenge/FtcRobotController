@@ -16,6 +16,7 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 
+import android.annotation.SuppressLint;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -81,7 +82,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.6, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 60/58.5;
+    public static double LATERAL_MULTIPLIER = 1.03;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -110,8 +111,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     public boolean pixelBack, pixelFront;
     Servo outtakeRotation;
     Servo outtakeMovement;
+    Servo outtakeMovementRight;
     private Servo wristServo;
     private Servo outtakeServo1, outtakeServo2;
+    private Servo transferServo;
 
 
     private IMU imu;
@@ -127,18 +130,16 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private final double ticks_in_degrees = 384.5 / 180;
 
-    public final double iticks_in_degree = 384.5 / 180;
-
-    public static double ip = 0.01, ii = 0, iid = 0.00;
-    public static double iif = 0.05;
+//    public final double iticks_in_degree = 384.5 / 180;
+//
+//    public static double ip = 0.01, ii = 0, iid = 0.00;
+//    public static double iif = 0.05;
 
     protected AprilTagProcessor aprilTag;
     protected PropFindRightProcessor propFindProcessor;
     protected VisionPortal myVisionPortal;
     private WebcamName frontWebcam, backWebcam;
     TelemetryPacket packet = new TelemetryPacket();
-
-
 
     Telemetry telemetry;
     HardwareMap hardwareMap;
@@ -217,6 +218,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
+        outtakeMovementRight = hardwareMap.servo.get("backSlideServoRight");
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
@@ -226,10 +228,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
         backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
 
+        transferServo = hardwareMap.servo.get("transfer");
+
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
-
-
 
 
         for (DcMotorEx motor : motors) {
@@ -440,18 +442,21 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void outtakeToBackdrop() {
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementBackdrop);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
     }
 
     public void outtakeToTransfer() {
 //        outtakeHook.setPosition(CSCons.openHook);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
         wristServo.setPosition(CSCons.wristVertical);
     }
 
     public void outtakeToPickup(){
         outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakePickup);
         outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
     }
 
@@ -463,6 +468,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void closeFingers(){
         outtakeServo1.setPosition(servo1Down);
         outtakeServo2.setPosition(servo2Down);
+    }
+
+    public void closeFrontFingers(){
+        outtakeServo1.setPosition(servo1Down);
     }
 
     public void openFingers(){
@@ -480,6 +489,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
 
+    @SuppressLint("SuspiciousIndentation")
     public  Pose2d aprilTagCoarsePosEstimate(List<AprilTagDetection> currentDetections) {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) { // 72 - 7.5, 72 - 29.25: left blue april tag
@@ -915,14 +925,31 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void setOuttakeToTransfer(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
         wristServo.setPosition(CSCons.wristVertical);
+    }
+
+    public void liftOuttake(){
+        outtakeMovement.setPosition(0.7);
+        outtakeMovementRight.setPosition(0.7);
+        outtakeRotation.setPosition(0.8);
     }
 
     public void setOuttakeToGround(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementGround);
-
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementGround);
     }
+
+    public void pushPixels(){
+        transferServo.setPosition(CSCons.transferPush);
+    }
+
+    public void raiseTransferArm(){
+        transferServo.setPosition(CSCons.transferUp);
+    }
+
+
 
 
 }

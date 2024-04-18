@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.masters.CSCons.servo1Down;
 import static org.firstinspires.ftc.masters.CSCons.servo1Up;
 import static org.firstinspires.ftc.masters.CSCons.servo2Down;
 import static org.firstinspires.ftc.masters.CSCons.servo2Up;
+import static org.firstinspires.ftc.masters.CSCons.transferPush;
+import static org.firstinspires.ftc.masters.CSCons.transferUp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -27,9 +29,28 @@ import org.firstinspires.ftc.masters.CSCons.OuttakeState;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
+
 @Config
 @TeleOp(name = "World Teleop", group = "competition")
 public class WorldsTeleop extends LinearOpMode {
+
+    public enum TransferStatus {
+        WAITING_FOR_PIXELS (100),
+        MOVE_ARM (100),
+        MOVE_OUTTAKE(100),
+        CLOSE_FINGERS (500),
+        DONE(0);
+
+        private int waitTime;
+        private TransferStatus(int waitTime){
+            this.waitTime = waitTime;
+        }
+
+        public int getWaitTime() {
+            return waitTime;
+        }
+    }
 
     static int target = 0;
     OuttakePosition backSlidePos = OuttakePosition.BOTTOM;
@@ -60,6 +81,9 @@ public class WorldsTeleop extends LinearOpMode {
 
     Servo outtakeRotation;
     Servo outtakeMovement;
+    Servo outtakeMovementRight;
+
+    Servo transferServo;
 
     private Servo wristServo;
     private Servo outtakeServo1, outtakeServo2;
@@ -70,6 +94,10 @@ public class WorldsTeleop extends LinearOpMode {
     int numberOfPixelsInRamp= 0;
 
     double outtakeRotationTarget;
+
+    TransferStatus currentTransferStatus;
+
+    ElapsedTime liftFingers = new ElapsedTime();
 
 
     private enum OuttakeWrist{
@@ -91,6 +119,7 @@ public class WorldsTeleop extends LinearOpMode {
 
     private CSCons.IntakeDirection intakeDirection = CSCons.IntakeDirection.OFF;
     private HookPosition hookPosition = HookPosition.OPEN;
+
 
 
 
@@ -156,6 +185,7 @@ public class WorldsTeleop extends LinearOpMode {
 
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
+        outtakeMovementRight = hardwareMap.servo.get("backSlideServoRight");
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
@@ -164,6 +194,9 @@ public class WorldsTeleop extends LinearOpMode {
         frontBreakBeam.setMode(DigitalChannel.Mode.INPUT);
         backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
         backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
+
+        transferServo = hardwareMap.servo.get("transfer");
+
 
 
         // Set the drive motor direction:
@@ -200,6 +233,7 @@ public class WorldsTeleop extends LinearOpMode {
         otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
 
         hookPosition = HookPosition.OPEN;
@@ -215,7 +249,10 @@ public class WorldsTeleop extends LinearOpMode {
         outtakeWristPosition = OuttakeWrist.vertical;
         wristServo.setPosition(CSCons.wristVertical);
         intakeHeight.setPosition(CSCons.intakeInit);
+        transferServo.setPosition(CSCons.transferUp);
         target = backSlidePos.getTarget();
+
+        currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
 
 
         ElapsedTime intakeElapsedTime = null, outtakeElapsedTime = null, pickupElapsedTime = null;
@@ -236,6 +273,8 @@ public class WorldsTeleop extends LinearOpMode {
 //        ElapsedTime stackElapsedTime = new ElapsedTime();
         ElapsedTime closeClawElapsedTime = null;
 
+        ElapsedTime transferElapsedTime = null;
+
         double[] clawStack = {CSCons.clawArmGround, CSCons.clawArm2, CSCons.clawArm3, CSCons.clawArm4, CSCons.clawArm5};
         int stackPosition = 0;
         boolean wristButtonPressed = false;
@@ -243,10 +282,50 @@ public class WorldsTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            if (has2Pixels()) {
-                gamepad2.rumble(1);
-                gamepad1.rumble(1);
-            }
+            backSlidesMove(target);
+
+            if (has2Pixels() && outtakeState!=OuttakeState.ReadyToDrop) {
+                if (currentTransferStatus== TransferStatus.WAITING_FOR_PIXELS){
+                    gamepad1.rumble(5000);
+                    currentTransferStatus = TransferStatus.MOVE_ARM;
+                    transferElapsedTime= new ElapsedTime();
+                    transferServo.setPosition(transferUp);
+                }
+                if (currentTransferStatus== TransferStatus.MOVE_ARM){
+
+                    if (transferElapsedTime!=null && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()){
+                        transferServo.setPosition(transferPush);
+
+                        currentTransferStatus = TransferStatus.MOVE_OUTTAKE;
+                        setOuttakeToPickup();
+                        transferElapsedTime = new ElapsedTime();
+                    }
+                }
+                if (currentTransferStatus == TransferStatus.MOVE_OUTTAKE && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()){
+                    outtakeServo1.setPosition(servo1Down);
+                    outtakeServo2.setPosition(servo2Down);
+                    currentTransferStatus = TransferStatus.CLOSE_FINGERS;
+                    transferElapsedTime = new ElapsedTime();
+                    stackPosition = 5;
+
+                    intakeHeight.setPosition(CSCons.intakeAboveTop);
+
+                }
+
+                if (currentTransferStatus == TransferStatus.CLOSE_FINGERS && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()) {
+                    transferServo.setPosition(transferUp);
+                    intakeDirection = CSCons.IntakeDirection.BACKWARD;
+                    intake.setPower(-CSCons.speed);
+                    gamepad2.rumble(5000);
+                    transferElapsedTime = new ElapsedTime();
+                    currentTransferStatus=TransferStatus.DONE;
+
+                }
+
+            } else {
+
+                currentTransferStatus = TransferStatus.WAITING_FOR_PIXELS;
+        }
 
             if (gamepad1.right_bumper) {
                 driveMode = DriveMode.END_GAME;
@@ -296,6 +375,7 @@ public class WorldsTeleop extends LinearOpMode {
                     if (backSlides.getCurrentPosition() > 2000) {
                         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
                         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+                        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementBackdrop);
                     }
 
                     break;
@@ -304,7 +384,7 @@ public class WorldsTeleop extends LinearOpMode {
                     break;
             }
 
-            backSlidesMove(target);
+
             //intakeSlidesMove(intakeSlideTarget);
 
             if (driveMode != DriveMode.END_GAME) {
@@ -338,6 +418,8 @@ public class WorldsTeleop extends LinearOpMode {
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.ON) {
                         intakeDirection = CSCons.IntakeDirection.BACKWARD;
                         intake.setPower(-CSCons.speed);
+                        stackPosition=5;
+                        intakeHeight.setPosition(CSCons.intakeAboveTop);
                     } else {
                         intakeDirection = CSCons.IntakeDirection.OFF;
                         intake.setPower(0);
@@ -404,6 +486,7 @@ public class WorldsTeleop extends LinearOpMode {
 
                             if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // if press x and hook is closed, open hook
                                 outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakePickup);
                                 outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
                                 pickupElapsedTime = new ElapsedTime();
 
@@ -412,7 +495,12 @@ public class WorldsTeleop extends LinearOpMode {
 
                                 outtakeServo1.setPosition(servo1Up);
                                 outtakeServo2.setPosition(servo2Up);
+
+                                outtakeMovement.setPosition(CSCons.wristOuttakeMovementM);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementM);
+
                                 outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
                                 outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
                             }
 
@@ -427,40 +515,44 @@ public class WorldsTeleop extends LinearOpMode {
                             backSlidePos = OuttakePosition.LOW;
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
+                            transferServo.setPosition(transferUp);
 
                         }
                         if (gamepad2.right_trigger > 0.5) {
                             backSlidePos = OuttakePosition.MID;
                             outtakeElapsedTime = closeHook();
                             outtakeState = OuttakeState.ClosingHook;
+                            transferServo.setPosition(transferUp);
                         }
 
-                            if (gamepad2.dpad_left && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
-                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
-                                    outtakeWristPosition = OuttakeWrist.flatRight;
-                                } else {
-                                    outtakeWristPosition = OuttakeWrist.angleLeft;
-                                }
-                                wristButtonPressed = true;
-                                buttonPushedTime= new ElapsedTime();
-                            } else if (gamepad2.dpad_up && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
-                                outtakeWristPosition = OuttakeWrist.vertical;
-                                wristButtonPressed = true;
-                                buttonPushedTime= new ElapsedTime();
-                            } else if (gamepad2.dpad_right && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
-                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
-                                    outtakeWristPosition = OuttakeWrist.flatLeft;
-                                } else {
+                            if (gamepad2.dpad_left ) {
+//                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
+//                                    outtakeWristPosition = OuttakeWrist.flatRight;
+//                                } else {
                                     outtakeWristPosition = OuttakeWrist.angleRight;
-                                }
-                                wristButtonPressed = true;
-                                buttonPushedTime = new ElapsedTime();
-                            } else if (gamepad2.dpad_down && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
+//                                }
+//                                wristButtonPressed = true;
+//                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_up ) {
+                                outtakeWristPosition = OuttakeWrist.vertical;
+//                                wristButtonPressed = true;
+//                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_right ) {
+//                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
+//                                    outtakeWristPosition = OuttakeWrist.flatLeft;
+//                                } else {
+                                    outtakeWristPosition = OuttakeWrist.angleLeft;
+                                //}
+//                                wristButtonPressed = true;
+//                                buttonPushedTime = new ElapsedTime();
+                            } else if (gamepad2.dpad_down ) {
                                 outtakeWristPosition = OuttakeWrist.verticalDown;
-                                wristButtonPressed = true;
-                                buttonPushedTime = new ElapsedTime();
-                            } else {
-                                wristButtonPressed = false;
+//                                wristButtonPressed = true;
+//                                buttonPushedTime = new ElapsedTime();
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x<-0.1){
+                                outtakeWristPosition = OuttakeWrist.flatRight;
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x>0.1){
+                                outtakeWristPosition= OuttakeWrist.flatLeft;
                             }
 
 
@@ -477,32 +569,25 @@ public class WorldsTeleop extends LinearOpMode {
                             break;
                         case ReadyToDrop:
 
-                            if (gamepad2.dpad_left && !wristButtonPressed) {
-                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
-                                    outtakeWristPosition = OuttakeWrist.flatLeft;
-                                } else {
-                                    outtakeWristPosition = OuttakeWrist.angleLeft;
-                                }
-                                wristButtonPressed = true;
-                            } else if (gamepad2.dpad_up && !wristButtonPressed) {
+                            if (gamepad2.dpad_left ) {
+                                outtakeWristPosition = OuttakeWrist.angleRight;
+
+                            } else if (gamepad2.dpad_up ) {
                                 outtakeWristPosition = OuttakeWrist.vertical;
-                                wristButtonPressed = true;
-                            } else if (gamepad2.dpad_right && !wristButtonPressed) {
-                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
-                                    outtakeWristPosition = OuttakeWrist.flatRight;
-                                } else {
-                                    outtakeWristPosition = OuttakeWrist.angleRight;
-                                }
-                                wristButtonPressed = true;
-                            } else if (gamepad2.dpad_down && !wristButtonPressed) {
+                            } else if (gamepad2.dpad_right ) {
+
+                                outtakeWristPosition = OuttakeWrist.angleLeft;
+
+                            } else if (gamepad2.dpad_down ) {
                                 outtakeWristPosition = OuttakeWrist.verticalDown;
-                                wristButtonPressed = true;
-                            } else {
-                                wristButtonPressed = false;
+
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x<-0.1){
+                                outtakeWristPosition = OuttakeWrist.flatRight;
+                            } else if (gamepad2.touchpad && gamepad2.touchpad_finger_1_x>0.1){
+                                outtakeWristPosition= OuttakeWrist.flatLeft;
                             }
 
                            setWristServoPosition();
-
 
                             if(gamepad2.y){
                                 if (outtakeWristPosition== OuttakeWrist.vertical){
@@ -572,8 +657,9 @@ public class WorldsTeleop extends LinearOpMode {
 
                             if (gamepad2.right_stick_y>0.2){
                                 liftOuttakeFingers();
+                                liftFingers= new ElapsedTime();
                             }
-                            if (gamepad2.right_stick_y<-0.2){
+                            if (gamepad2.right_stick_y<-0.2  && liftFingers.milliseconds()>200){
                                 outtakeServo1.setPosition(servo1Down);
                                 outtakeServo2.setPosition(servo2Down);
                             }
@@ -595,6 +681,7 @@ public class WorldsTeleop extends LinearOpMode {
                         case MoveToDrop:
                             if (backSlides.getCurrentPosition() > 100) {
                                 outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+                                outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementBackdrop);
                                 outtakeRotationTarget = CSCons.wristOuttakeAngleBackdrop;
                                 outtakeRotation.setPosition(outtakeRotationTarget);
                             }
@@ -711,6 +798,15 @@ public class WorldsTeleop extends LinearOpMode {
     protected void setOuttakeToTransfer(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeWristPosition = OuttakeWrist.vertical;
+        wristServo.setPosition(CSCons.wristVertical);
+    }
+
+    protected void setOuttakeToPickup(){
+        outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
+        outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakePickup);
         outtakeWristPosition = OuttakeWrist.vertical;
         wristServo.setPosition(CSCons.wristVertical);
     }
@@ -739,7 +835,5 @@ public class WorldsTeleop extends LinearOpMode {
     protected boolean has2Pixels(){
         return !frontBreakBeam.getState() && !backBreakBeam.getState();
     }
-
-
 
 }

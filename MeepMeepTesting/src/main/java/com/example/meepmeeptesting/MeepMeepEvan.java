@@ -398,27 +398,9 @@ public class MeepMeepEvan {
 
                                 //2+3
 
+//
                                 .setTangent(Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .waitSeconds(0.5)
-
-                                .setTangent(Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
-                                .waitSeconds(0.5)
-
-                                //2+5
-
-                                .setTangent(Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .waitSeconds(0.5)
-
-                                .setTangent(Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
-                                .waitSeconds(0.5)
+                                .splineToLinearHeading(new Pose2d(44, 15, Math.toRadians(180)), Math.toRadians(0))
 
 
 
@@ -447,29 +429,30 @@ public class MeepMeepEvan {
 
                                 //2+3
 
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(180))
+//                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+//                                .waitSeconds(0.5)
+//
+//                                .setTangent(Math.toRadians(0))
+//                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
+//                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+//                                .waitSeconds(0.5)
+//
+//                                //2+5
+//
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(180))
+//                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+//                                .waitSeconds(0.5)
+//
+//                                .setTangent(Math.toRadians(0))
+//                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
+//                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+//                                .waitSeconds(0.5)
+
                                 .setTangent(Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .waitSeconds(0.5)
-
-                                .setTangent(Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
-                                .waitSeconds(0.5)
-
-                                //2+5
-
-                                .setTangent(Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                                .waitSeconds(0.5)
-
-                                .setTangent(Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
-                                .waitSeconds(0.5)
-
-
+                                .splineToLinearHeading(new Pose2d(44, 15, Math.toRadians(180)), Math.toRadians(0))
 
 
                                 .build()
@@ -688,12 +671,12 @@ public class MeepMeepEvan {
 
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(16, -61.2), Math.toRadians(90)))
-                                        .setTangent(Math.toRadians(-90-180))
-                                        .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(-90-180)), Math.toRadians(-90-180))
+                                        .setTangent(Math.toRadians((90)))
+                                        .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(90)), Math.toRadians(90))
                                         .waitSeconds(0.5)
 
                                         .setTangent(Math.toRadians(-90))
-                                        .splineToLinearHeading(new Pose2d(50, -34, Math.toRadians(0)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(50, -32, Math.toRadians(180)), Math.toRadians(0))
                                         .waitSeconds(0.5)
 
 //                                        //2+2
@@ -734,10 +717,228 @@ public class MeepMeepEvan {
                                         .build()
                 );
 
+        RoadRunnerBotEntity RedBackdropTrussCOpposite = new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.5)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(16, -61.2), Math.toRadians(90)))
+                                        .setTangent(Math.toRadians((90)))
+                                        .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(90)), Math.toRadians(90))
+                                        .waitSeconds(0.5)
+
+                                        .setTangent(Math.toRadians(-90))
+                                        .splineToLinearHeading(new Pose2d(50, -32, Math.toRadians(180)), Math.toRadians(0))
+                                        .waitSeconds(0.5)
+
+//                                        //2+2
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(10, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-58, 35.2, Math.toRadians(180)), Math.toRadians(-140))
+//                                        .waitSeconds(0.5)
+//
+//                                        .setTangent(Math.toRadians(40))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(20, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        .setTangent(Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(48, 38, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        //2+4
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(10, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-58, 35.2, Math.toRadians(180)), Math.toRadians(-140))
+//                                        .waitSeconds(0.5)
+//
+//                                        .setTangent(Math.toRadians(40))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(20, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        .setTangent(Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(48, 38, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        //Park
+//
+                                        .setTangent(Math.toRadians(180))
+                                        .splineToLinearHeading(new Pose2d(50, -10, Math.toRadians(180)), Math.toRadians(0))
+
+                                        .build()
+                );
+
+
+        RoadRunnerBotEntity RedBFarSideGateC = new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.5)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-39, -61.2), Math.toRadians(90)))
+                                        .setTangent(Math.toRadians(90))
+                                .splineToLinearHeading(new Pose2d(-45, -15, Math.toRadians(130)), Math.toRadians(90))
+                                        .waitSeconds(0.5)
+
+                                        .setTangent(Math.toRadians(90))
+                                        .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
+
+                                        .setTangent(Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(20, -11.5, Math.toRadians(180)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(47, -34, Math.toRadians(180)), Math.toRadians(0))
+
+                                        .setTangent(Math.toRadians(180))
+                                        .splineToLinearHeading(new Pose2d(44, -15, Math.toRadians(180)), Math.toRadians(0))
+
+//                                        //2+2
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(10, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-58, 35.2, Math.toRadians(180)), Math.toRadians(-140))
+//                                        .waitSeconds(0.5)
+//
+//                                        .setTangent(Math.toRadians(40))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(20, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        .setTangent(Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(48, 38, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        //2+4
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(10, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-58, 35.2, Math.toRadians(180)), Math.toRadians(-140))
+//                                        .waitSeconds(0.5)
+//
+//                                        .setTangent(Math.toRadians(40))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(20, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        .setTangent(Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(48, 38, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        //Park
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(44, 60, Math.toRadians(180)), Math.toRadians(0))
+
+                                        .build()
+                );
+
+        RoadRunnerBotEntity RedBFarSideGateL = new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.5)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-39, -61.2), Math.toRadians(90)))
+                                        .setTangent(Math.toRadians(90))
+                                        .splineToLinearHeading(new Pose2d(-47, -15, Math.toRadians(90)), Math.toRadians(90))
+                                        .waitSeconds(0.5)
+
+                                        .setTangent(Math.toRadians(90))
+                                        .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
+
+                                        .setTangent(Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(47, -31, Math.toRadians(180)), Math.toRadians(0))
+
+                                        .setTangent(Math.toRadians(180))
+                                        .splineToLinearHeading(new Pose2d(44, -15, Math.toRadians(180)), Math.toRadians(0))
+
+//                                        //2+2
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(10, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-58, 35.2, Math.toRadians(180)), Math.toRadians(-140))
+//                                        .waitSeconds(0.5)
+//
+//                                        .setTangent(Math.toRadians(40))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(20, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        .setTangent(Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(48, 38, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        //2+4
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(10, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(-58, 35.2, Math.toRadians(180)), Math.toRadians(-140))
+//                                        .waitSeconds(0.5)
+//
+//                                        .setTangent(Math.toRadians(40))
+//                                        .splineToLinearHeading(new Pose2d(-30, 58, Math.toRadians(180)), Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(20, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        .setTangent(Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(48, 38, Math.toRadians(180)), Math.toRadians(0))
+//
+//                                        //Park
+//
+//                                        .setTangent(Math.toRadians(180))
+//                                        .splineToLinearHeading(new Pose2d(44, 60, Math.toRadians(180)), Math.toRadians(0))
+
+                                        .build()
+                );
+
+        RoadRunnerBotEntity RedBFarSideGateR = new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.5)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-39, -61.2), Math.toRadians(90)))
+                                        .setTangent(Math.toRadians(150))
+                                        .splineToLinearHeading(new Pose2d(-35, -35, Math.toRadians(-180)), Math.toRadians(30))
+                                        .waitSeconds(0.5)
+
+                                        .setTangent(Math.toRadians(90))
+                                        .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                                        .waitSeconds(0.5)
+
+                                        .setTangent(Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(47, -38, Math.toRadians(180)), Math.toRadians(0))
+                                        .waitSeconds(0.5)
+
+                                        //2+3
+
+                                        .setTangent(Math.toRadians(180))
+                                        .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                                        .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                                        .waitSeconds(0.5)
+
+                                        .setTangent(Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(47, -28, Math.toRadians(180)), Math.toRadians(0))
+                                        .waitSeconds(0.5)
+
+                                        //2+5
+
+                                        .setTangent(Math.toRadians(180))
+                                        .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                                        .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                                        .waitSeconds(0.5)
+
+                                        .setTangent(Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(47, -28, Math.toRadians(180)), Math.toRadians(0))
+                                        .waitSeconds(0.5)
+
+
+
+
+                                        .build()
+                );
+
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(BlueBackdropTrussL)
+                .addEntity(RedBackdropTrussCOpposite)
                 .start();
     }
 }

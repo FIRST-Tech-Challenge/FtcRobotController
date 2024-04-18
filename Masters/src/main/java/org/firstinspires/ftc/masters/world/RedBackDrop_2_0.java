@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
@@ -35,10 +36,7 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
         //PURPLE PIXEL
 
         rightPurple = RedBackDropPath.getRightPurple(drive, startPose);
-
-
         leftPurple = RedBackDropPath.getLeftPurple(drive, startPose);
-
         middlePurple = RedBackDropPath.getMidPurple(drive, startPose);
 
 
@@ -63,33 +61,27 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
         //YELLOW PIXELS
 
         leftYellow = RedBackDropPath.getLeftYellow(drive, leftPurple.end());
-
-
         midYellow = RedBackDropPath.getMidYellow(drive, middlePurple.end());
-
-
         rightYellow = RedBackDropPath.getRightYellow(drive, rightPurple.end());
-
 
         //OTHER PATHS
 
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
-                .forward(5)
+        parkFromLeft = RedBackDropPath.park(drive, leftYellow.end());
+        parkFromRight =RedBackDropPath.park(drive, rightYellow.end());
+        parkFromMid = RedBackDropPath.park(drive, midYellow.end());
 
-                .build();
-
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-
-                .build();
-
-
+//        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
+//                .forward(5)
+//                .build();
+//
+//
+//        TrajectorySequence park = drive.trajectorySequenceBuilder(backAway.end())
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
+//                .build();
 
         drive.raiseIntake();
         drive.closeFingers();
-
 
         propPos = drive.getPropFindProcessor().position;
 
@@ -117,7 +109,14 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
                     purpleDepositState();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    backdropDepositPath(State.PARK, park);
+                    if (propPos== PropFindRightProcessor.pos.LEFT){
+                        backdropDepositPath(State.PARK, parkFromLeft);
+                    } else if (propPos== PropFindRightProcessor.pos.RIGHT){
+                        backdropDepositPath(State.PARK, parkFromRight);
+                    } else if (propPos== PropFindRightProcessor.pos.MID) {
+                        backdropDepositPath(State.PARK, parkFromMid);
+                    }
+
                     break;
                 case PARK:
                     park();
@@ -125,11 +124,14 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
             }
 
-
-
         }
     }
     public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
         return RedBackDropPath.toStackWing(drive, robotPosition);
+    }
+
+    @Override
+    public CSCons.OuttakeWrist getOuttakeWristPosition(){
+        return CSCons.OuttakeWrist.flatLeft;
     }
 }

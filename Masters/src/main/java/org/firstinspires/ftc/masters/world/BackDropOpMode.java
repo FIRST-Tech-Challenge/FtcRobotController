@@ -48,6 +48,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         END
     }
 
+    protected ElapsedTime outtakeFlipTime = null;
     protected ElapsedTime purpleDepositTime = null;
     protected ElapsedTime depositTime = null;
     protected ElapsedTime dropTime = null;
@@ -65,6 +66,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
     protected TrajectorySequence rightYellow, leftYellow, midYellow;
     protected TrajectorySequence toStackFromRight, toStackFromLeft, toStackFromMid;
     protected TrajectorySequence toBackBoard;
+    protected TrajectorySequence parkFromLeft, parkFromRight, parkFromMid;
     protected TrajectorySequence park;
 
     protected State currentState;
@@ -138,7 +140,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         } else {
             drive.followTrajectorySequenceAsync(middlePurple);
         }
-
+        outtakeFlipTime = new ElapsedTime();
         currentState = State.PURPLE_DEPOSIT;
     }
 
@@ -147,11 +149,15 @@ public abstract class BackDropOpMode extends LinearOpMode {
 //            drive.activateBackCamera();
 //            switched=true;
 //        }
+        if (outtakeFlipTime.milliseconds()>700) {
+            drive.outtakeToBackdrop();
+        }
 
         if (!drive.isBusy()){
             if (purpleDepositTime ==null){
                 drive.raiseIntake();
-                outtakeWristPosition = CSCons.OuttakeWrist.flatRight;
+                outtakeWristPosition = getOuttakeWristPosition();
+
                 drive.outtakeToBackdrop();
                 purpleDepositTime = new ElapsedTime();
             } else if (purpleDepositTime.milliseconds()>100) {
@@ -189,8 +195,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
                 outtakeTarget = CSCons.OuttakePosition.LOW.getTarget();
                 drive.closeFingers();
                 if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
-
-                    drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
+                    drive.outtakeToBackdrop();
+                    drive.setWristServoPosition(getOuttakeWristPosition());
                 } else if (drive.getBackSlides().getCurrentPosition()>10){
                     drive.outtakeToBackdrop();
                 }
@@ -199,7 +205,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         } else {
 
             if (drive.getBackSlides().getCurrentPosition() > outtakeTarget - 150) {
-                drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
+                drive.setWristServoPosition(getOuttakeWristPosition());
             }
         }
 
@@ -213,10 +219,9 @@ public abstract class BackDropOpMode extends LinearOpMode {
             } else if (depositTime.milliseconds()>100){
                 dropTime = new ElapsedTime();
                 if (nextState == State.PARK){
-//                    drive.followTrajectorySequenceAsync(park);
+                    drive.followTrajectorySequenceAsync(nextPath);
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
-
                     drive.followTrajectorySequenceAsync(nextPath);
                 }
                 cycleCount++;
@@ -297,6 +302,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
 
     abstract public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition);
 
-
+    public CSCons.OuttakeWrist getOuttakeWristPosition(){
+        return CSCons.OuttakeWrist.flatRight;
+    }
 
 }

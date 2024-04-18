@@ -35,15 +35,18 @@ public class CSCons {
     public static double outtakeMovementBackDrop =0;
     public static double outtakeMovementTransfer =0.5;
 
-    public static double wristOuttakeAngleBackdrop =0.05;
+    public static double wristAngleInit= 0.9;
+    public static double wristOuttakeAngleBackdrop =0.04;
     public static double wristOuttakeAngleTransfer =1;
-    public static double wristOuttakeMovementTransfer=0.53;
+    public static double wristOuttakeMovementTransfer=0.44;
 
-    public static double wristOuttakeMovementGround = 0.99;
+    public static double wristOuttakeMovementM=0.6;
 
-    public static double wristOuttakePickup=0.46;
+    public static double wristOuttakeMovementGround = 0.89;
+
+    public static double wristOuttakePickup=0.37;
     public static double wristOuttakeAnglePickup=0.95;
-    public static double wristOuttakeMovementBackdrop =0.89;
+    public static double wristOuttakeMovementBackdrop =0.82;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -113,15 +116,18 @@ public class CSCons {
     public static double intake4 =0.25;
     public static double intake5 =0.23;
     public static double intakeAboveTop =0.2;
-    public static double intakeInit =0.05;
+    public static double intakeInit =0.02;
 
     public static double speed =-1;
+
+    public static double transferUp = 0.1;
+    public static double transferPush = 0.58;
 
 
     public enum OuttakePosition{
         BOTTOM (-10),
         LOW_AUTO(105),
-        AUTO(400),
+        AUTO(600),
         LOW(800),
         MID(1500),
         HIGH(2400);

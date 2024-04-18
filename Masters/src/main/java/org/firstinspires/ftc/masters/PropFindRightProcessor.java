@@ -25,7 +25,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class PropFindRightProcessor implements VisionProcessor, CameraStreamSource {
 
-    public  Rect interestMid = new Rect(35, 185, 32, 50);
+    public  Rect interestMid = new Rect(75, 200, 32, 50);
     public  Rect interestRight = new Rect(320, 260, 32, 50);
 
     private final Scalar upper = new Scalar(0,50,0); // lower bounds for masking
