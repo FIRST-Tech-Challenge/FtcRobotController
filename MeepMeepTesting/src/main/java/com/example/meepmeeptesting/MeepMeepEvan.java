@@ -935,10 +935,59 @@ public class MeepMeepEvan {
                                         .build()
                 );
 
+        RoadRunnerBotEntity RedBackdropOuttakeL= new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.5)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(16, -61.2), Math.toRadians(90)))
+                                .setTangent(Math.toRadians(120))
+                                .splineToLinearHeading(new Pose2d(13, -35, Math.toRadians(-180)), Math.toRadians(30))
+                                .waitSeconds(0.5)
+
+
+                                .setTangent(Math.toRadians(0))
+
+                                .splineToLinearHeading(new Pose2d(47, -38, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+
+
+
+
+
+                                .build()
+                );
+
+        RoadRunnerBotEntity RedBackdropOuttakeM= new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.5)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(16, -61.2), Math.toRadians(90)))
+                                .setTangent(Math.toRadians(90))
+                                .splineToLinearHeading(new Pose2d(21, -15, Math.toRadians(0)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+
+                                .setTangent(Math.toRadians(0))
+
+                                .splineToLinearHeading(new Pose2d(47, -38, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+
+
+
+
+
+                                .build()
+                );
+
+
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(RedBFarSideGateR )
+                .addEntity(RedBackdropOuttakeM )
                 .start();
     }
 }
