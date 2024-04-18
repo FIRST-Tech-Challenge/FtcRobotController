@@ -11,7 +11,6 @@ public class TeleOp extends OpMode {
     @Override
     public void init() {
         robot = new CoyotesRobot(this);
-        robot.init();
     }
 
     @Override
