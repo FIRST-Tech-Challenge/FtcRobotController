@@ -10,6 +10,8 @@ public class CoyotesRobot {
     // Will automatically sleep by default
     private boolean autoSleepEnabled;
 
+    private MeccanumDrive meccanumDrive;
+
     public Hardware(OpMode opMode) {
         this.opMode = opMode;
 
