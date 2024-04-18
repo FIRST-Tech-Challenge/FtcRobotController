@@ -89,7 +89,7 @@ import java.util.concurrent.TimeUnit;
 public class CyDogsAprilTags
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 8.25; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -108,7 +108,7 @@ public class CyDogsAprilTags
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static final int DESIRED_TAG_ID = 1;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
@@ -170,7 +170,7 @@ public class CyDogsAprilTags
                 // Look to see if we have size info on this tag.
                 if (detection.metadata != null) {
                     //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == targetAprilTag)) {
                         // Yes, we want to use this tag.
                         targetFound = true;
                         desiredTag = detection;
@@ -210,8 +210,10 @@ public class CyDogsAprilTags
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
                 myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                // need to add code here, if close enough, break from loop
             } else {
-
+                myOpMode.telemetry.addLine("Could not find april tag");
+                break;
                 // don't move, couldn't find april tag
             }
             myOpMode.telemetry.update();
@@ -249,7 +251,7 @@ public class CyDogsAprilTags
             leftBackPower /= max;
             rightBackPower /= max;
         }
-
+        myOpMode.telemetry.addLine("Trying to move inside moveRobot function");
         // Send powers to the wheels.
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
@@ -324,4 +326,72 @@ public class CyDogsAprilTags
             myOpMode.sleep(20);
         }
     }
+
+
+    public AprilTagDetection FindAprilTag(int targetTagID){
+
+            targetFound = false;
+            targetAprilTag = targetTagID;
+            desiredTag  = null;
+
+            // Step through the list of detected tags and look for a matching tag
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == targetAprilTag)) {
+                        // Yes, we want to use this tag.
+                        targetFound = true;
+                        desiredTag = detection;
+                        break;  // don't look any further.
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        myOpMode.telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                    }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    myOpMode.telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                }
+            }
+
+            // Tell the driver what we see, and what to do.
+            if (targetFound) {
+            //    myOpMode.telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
+                myOpMode.telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+                myOpMode.telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+                myOpMode.telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+                myOpMode.telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+            } else {
+                myOpMode.telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+            }
+            return desiredTag;
+        }
+
+        public void DriveToTag(AprilTagDetection detectedTag){
+            if (detectedTag != null) {
+
+                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                double  rangeError      = (detectedTag.ftcPose.range - DESIRED_DISTANCE);
+                double  headingError    = detectedTag.ftcPose.bearing;
+                double  yawError        = detectedTag.ftcPose.yaw;
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move.
+                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                // need to add code here, if close enough, break from loop
+            } else {
+                myOpMode.telemetry.addLine("Could not find april tag");
+                // don't move, couldn't find april tag
+            }
+            myOpMode.telemetry.update();
+
+            // Apply desired axes motions to the drivetrain.
+            moveRobot(drive, strafe, turn);
+            myOpMode.sleep(10);
+
+        }
 }
