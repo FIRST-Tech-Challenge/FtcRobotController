@@ -47,7 +47,7 @@ public class MecanumDriver extends OpMode {
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
-    public final boolean isFieldCentric = false;
+    public final boolean isFieldCentric = true;
 
     @Override
     public void init() {
@@ -63,6 +63,7 @@ public class MecanumDriver extends OpMode {
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
         gyro.resetYaw();
+
         robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
     }
 

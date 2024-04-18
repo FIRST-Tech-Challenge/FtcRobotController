@@ -21,11 +21,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MecanumRobotController {
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
-    // Need to find this.
-    public static final double FORWARD_COUNTS_PER_INCH = 42.59;
-    public static final double STRAFE_COUNTS_PER_INCH = 51.0;
+    public static final double FORWARD_COUNTS_PER_INCH = 43.59;
+    public static final double STRAFE_COUNTS_PER_INCH = 52.197;
     public static final double HEADING_CORRECTION_POWER = 1.0;
     public static final double MAX_CORRECTION_ERROR = 2.0;
+    public static final double TURN_SPEED_RAMP = 4.0;
+    public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
     public static final double Kp = 0.05;
     public static final double Kd = 0.0005;
     public static final double Ki = 0.000005;
@@ -37,6 +38,8 @@ public class MecanumRobotController {
     private final IMU gyro;
     private final LinearOpMode robot;
     private final ElapsedTime runtime;
+    private final ElapsedTime PIDTimer;
+    private final ElapsedTime angularVelocityTimer;
 
     private double wantedHeading;
     private double currentForward;
@@ -44,11 +47,9 @@ public class MecanumRobotController {
     private double currentTurn;
     private double currentAngularVelocity;
     private double lastHeading;
-
     private double integralSum;
     private double lastError;
-    private final ElapsedTime PIDTimer;
-    private final ElapsedTime AngularVelocityTimer;
+    private double turnStartedTime;
 
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
@@ -68,8 +69,10 @@ public class MecanumRobotController {
         this.runtime.reset();
 
         this.PIDTimer = new ElapsedTime();
-        this.AngularVelocityTimer = new ElapsedTime();
-        this.runtime.reset();
+        this.PIDTimer.reset();
+
+        this.angularVelocityTimer = new ElapsedTime();
+        this.angularVelocityTimer.reset();
     }
 
     // Overloaded constructor to create the robot controller without a LinearOpMode.
@@ -90,9 +93,29 @@ public class MecanumRobotController {
     private void move(double forward, double strafe, double turn, double headingCorrectionPower,
                       boolean isTelemetry) {
         double currentHeading = getAngleImuDegrees();
-        currentAngularVelocity = Math.abs(normalize(currentHeading - lastHeading) / Math.max(AngularVelocityTimer.seconds(), 1));
-        AngularVelocityTimer.reset();
-        if (currentAngularVelocity > 4 || turn != 0) {
+
+        // Calculate angular velocity in degrees per second.
+        currentAngularVelocity = Math.abs(normalize(currentHeading - lastHeading) / angularVelocityTimer.seconds());
+        angularVelocityTimer.reset();
+
+        // Make it so that at the start of the turn its slower.
+        if (turn != 0) {
+            if (turnStartedTime == 0) {
+                turnStartedTime = runtime.seconds();
+            }
+        } else {
+            turnStartedTime = 0;
+        }
+        double turnTime = runtime.seconds() - turnStartedTime;
+        if (turn != 0 && TURN_SPEED_RAMP * turnTime < Math.PI/2) {
+            turn *= Math.sin(TURN_SPEED_RAMP * turnTime);
+        }
+
+        // The wanted heading is not only set when the controller turn input is put in, but also
+        // when the robot turns fast. This ensures that the robot doesn't set back as much after
+        // stopping, and if it gets hit by something super fast, it doesn't try to correct its
+        // heading back into that object.
+        if ((robot == null && currentAngularVelocity > MIN_VELOCITY_TO_SMOOTH_TURN) || turn != 0) {
             wantedHeading = currentHeading;
         } else {
             double error = normalize(wantedHeading - currentHeading);
@@ -168,8 +191,11 @@ public class MecanumRobotController {
             strafe = Math.sin(direction * (Math.PI / 180));
         }
 
-        int forwardCounts = (int)(forward * distance * FORWARD_COUNTS_PER_INCH);
-        int strafeCounts = (int)(strafe * distance * STRAFE_COUNTS_PER_INCH);
+        double moveCountMult = FORWARD_COUNTS_PER_INCH + (STRAFE_COUNTS_PER_INCH - FORWARD_COUNTS_PER_INCH) *
+                (Math.abs(Math.sin((direction) * (Math.PI / 180))));
+
+        int forwardCounts = (int)(forward * distance * moveCountMult);
+        int strafeCounts = (int)(strafe * distance * moveCountMult);
 
         int backLeftTarget = backLeft.getCurrentPosition() - forwardCounts + strafeCounts;
         int backRightTarget = backRight.getCurrentPosition() - forwardCounts + strafeCounts;
@@ -187,10 +213,17 @@ public class MecanumRobotController {
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double correctionPower = HEADING_CORRECTION_POWER;
-        if (Math.abs(direction - currentHeading) < 90) correctionPower *= -1;
+        // if (Math.abs(direction - currentHeading) < 90) correctionPower *= -1;
 
         while ((backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy())
                 && robot.opModeIsActive()) {
+            double distanceToDestination = (Math.abs(backLeftTarget - backLeft.getCurrentPosition()) +
+                                        Math.abs(backRightTarget - backRight.getCurrentPosition()) +
+                                        Math.abs(frontLeftTarget - frontLeft.getCurrentPosition()) +
+                                        Math.abs(frontRightTarget - frontRight.getCurrentPosition())) / 4.0;
+            robot.telemetry.addData("Current Action", "Distance Driving");
+            robot.telemetry.addData("Distance To Target", distanceToDestination / moveCountMult);
+            robot.telemetry.addData("", "");
             move(speed, 0.0, 0.0, correctionPower);
         }
 
@@ -229,7 +262,7 @@ public class MecanumRobotController {
         if (isFieldCentric) {
             forward = ((forwardPower * Math.cos(currentHeading * (Math.PI / 180))) +
                     (strafePower * Math.sin(currentHeading * (Math.PI / 180))));
-            strafe = ((forwardPower * Math.sin(currentHeading * (Math.PI / 180))) -
+            strafe = -((forwardPower * Math.sin(currentHeading * (Math.PI / 180))) -
                     (strafePower * Math.cos(currentHeading * (Math.PI / 180))));
         } else {
             forward = forwardPower;
@@ -255,6 +288,9 @@ public class MecanumRobotController {
     public void turnTo(double angle, double speed) {
         wantedHeading = angle;
         while (Math.abs(getAngleImuDegrees() - wantedHeading) > MAX_CORRECTION_ERROR && robot.opModeIsActive()) {
+            robot.telemetry.addData("Current Action", "Turning To Angle");
+            robot.telemetry.addData("Degrees to destination", wantedHeading - getAngleImuDegrees());
+            robot.telemetry.addData("", "");
             move(0, 0, 0, speed);
         }
         // Stop the robot
@@ -265,7 +301,7 @@ public class MecanumRobotController {
     // Returns: The normalized degrees as a double.
     // Params:
     //      - double degrees: The degrees to be normalized.
-    public static double normalize(double degrees) {
+    private static double normalize(double degrees) {
         double normalizedAngle = degrees;
         while (normalizedAngle > 180) normalizedAngle -= 360;
         while (normalizedAngle <= -180) normalizedAngle += 360;
@@ -274,7 +310,7 @@ public class MecanumRobotController {
 
     // Behavior: Get the current IMU heading in degrees.
     // Returns: The current robots angle in degrees on the range (-180, 180]
-    public double getAngleImuDegrees() {
+    private double getAngleImuDegrees() {
         return normalize(
                 gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
     }
@@ -289,12 +325,12 @@ public class MecanumRobotController {
         telemetry.addData("Forward", currentForward);
         telemetry.addData("Strafe", currentStrafe);
         telemetry.addData("Turn", currentTurn);
+        telemetry.addData("Angular Velocity", currentAngularVelocity);
         telemetry.addData("", "");
         telemetry.addData("Current Heading", getAngleImuDegrees());
         telemetry.addData("Wanted Heading", wantedHeading);
         telemetry.addData("", "");
         telemetry.addData("Runtime", runtime.seconds());
-        telemetry.addData("Angular Velocity", currentAngularVelocity);
 
         telemetry.update();
     }

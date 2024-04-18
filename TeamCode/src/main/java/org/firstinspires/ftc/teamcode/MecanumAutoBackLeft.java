@@ -7,17 +7,17 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 @Autonomous(name="Mecanum Auto Back Left", group="Robot")
 public class MecanumAutoBackLeft extends LinearOpMode {
-    public static final double DRIVE_SPEED = 2.3;
-    public static final double TURN_SPEED = 0.05;
+    public static final double DRIVE_SPEED = 1.3;
+    public static final double TURN_SPEED = 1.0;
     private MecanumRobotController robotController;
     @Override
     public void runOpMode() {
         // Initialize
         initialize();
         waitForStart();
-        robotController.turnTo(45, TURN_SPEED);
+        // robotController.turnTo(45, TURN_SPEED);
         robotController.sleep(1);
-        robotController.distanceDrive(72, 0, DRIVE_SPEED);
+        robotController.distanceDrive(72, 90, DRIVE_SPEED);
         robotController.sleep(10);
     }
 
