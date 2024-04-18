@@ -12,8 +12,8 @@ import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
 import org.firstinspires.ftc.masters.world.paths.RedBackDropPath;
 
 @Config
-@Autonomous(name = "Red Backdrop 2 + 2 Truss", group = "competition")
-public class RedBackdrop_2_2_Truss extends BackDropOpMode {
+@Autonomous(name = "Red Backdrop 2 + 0 Opposite", group = "competition")
+public class RedBackDrop_2_0_Park_Opposite extends BackDropOpMode {
     Vector2d yellowLeftPos = new Vector2d();
     Vector2d yellowMidPos = new Vector2d();
     Vector2d yellowRightPos = new Vector2d();
@@ -36,9 +36,7 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
         //PURPLE PIXEL
 
         rightPurple = RedBackDropPath.getRightPurple(drive, startPose);
-
         leftPurple = RedBackDropPath.getLeftPurple(drive, startPose);
-
         middlePurple = RedBackDropPath.getMidPurple(drive, startPose);
 
 
@@ -63,39 +61,39 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
         //YELLOW PIXELS
 
         leftYellow = RedBackDropPath.getLeftYellow(drive, leftPurple.end());
-
-
         midYellow = RedBackDropPath.getMidYellow(drive, middlePurple.end());
-
-
         rightYellow = RedBackDropPath.getRightYellow(drive, rightPurple.end());
-
 
         //OTHER PATHS
 
-        toStackFromMid= RedBackDropPath.toStackTruss(drive, midYellow.end());
-        toStackFromRight= RedBackDropPath.toStackTruss(drive, rightYellow.end());
-        toStackFromLeft = RedBackDropPath.toStackTruss(drive, leftYellow.end());
+        parkFromLeft = RedBackDropPath.parkOpposite(drive, leftYellow.end());
+        parkFromRight =RedBackDropPath.parkOpposite(drive, rightYellow.end());
+        parkFromMid = RedBackDropPath.parkOpposite(drive, midYellow.end());
 
-        toBackBoard = RedBackDropPath.fromStackToBoardTruss(drive, toStackFromMid.end());
-
-        park = RedBackDropPath.park(drive, toBackBoard.end());
+//        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
+//                .forward(5)
+//                .build();
+//
+//
+//        TrajectorySequence park = drive.trajectorySequenceBuilder(backAway.end())
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
+//                .build();
 
         drive.raiseIntake();
         drive.closeFingers();
-
 
         propPos = drive.getPropFindProcessor().position;
 
         waitForStart();
 
-        currentState = State.PURPLE_DEPOSIT_PATH;
+        currentState = BackDropOpMode.State.PURPLE_DEPOSIT_PATH;
         drive.dropIntake();
 
         retrievePropPos();
 
 
-        TrajectorySequence nextPath= null;
+
 
 //TO DO: go park
 
@@ -111,30 +109,14 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
                     purpleDepositState();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    if (cycleCount == 0){
-                        switch (propPos) {
-                            case RIGHT:
-                                nextPath = toStackFromRight;
-                                break;
-                            case LEFT:
-                                nextPath = toStackFromLeft;
-                                break;
-                            case MID:
-                                drive.followTrajectorySequenceAsync(toStackFromMid);
-                                break;
-                        }
-                        backdropDepositPath(State.TO_STACK, nextPath);
-
-                    } else {
-                        backdropDepositPath(State.PARK , park);
+                    if (propPos== PropFindRightProcessor.pos.LEFT){
+                        backdropDepositPath(State.PARK, parkFromLeft);
+                    } else if (propPos== PropFindRightProcessor.pos.RIGHT){
+                        backdropDepositPath(State.PARK, parkFromRight);
+                    } else if (propPos== PropFindRightProcessor.pos.MID) {
+                        backdropDepositPath(State.PARK, parkFromMid);
                     }
 
-                    break;
-                case TO_STACK:
-                    toStack();
-                    break;
-                case TO_STACK_TAG:
-                    toStackTag();
                     break;
                 case PARK:
                     park();
@@ -142,11 +124,8 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
 
             }
 
-
-
         }
     }
-
     public TrajectorySequence getStackWingTrajectory(Pose2d robotPosition){
         return RedBackDropPath.toStackWing(drive, robotPosition);
     }
@@ -155,5 +134,4 @@ public class RedBackdrop_2_2_Truss extends BackDropOpMode {
     public CSCons.OuttakeWrist getOuttakeWristPosition(){
         return CSCons.OuttakeWrist.flatLeft;
     }
-
 }

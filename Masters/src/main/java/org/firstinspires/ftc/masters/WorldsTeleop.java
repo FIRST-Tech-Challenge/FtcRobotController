@@ -39,7 +39,8 @@ public class WorldsTeleop extends LinearOpMode {
         WAITING_FOR_PIXELS (100),
         MOVE_ARM (100),
         MOVE_OUTTAKE(100),
-        CLOSE_FINGERS (500);
+        CLOSE_FINGERS (500),
+        DONE(0);
 
         private int waitTime;
         private TransferStatus(int waitTime){
@@ -305,16 +306,19 @@ public class WorldsTeleop extends LinearOpMode {
                     outtakeServo2.setPosition(servo2Down);
                     currentTransferStatus = TransferStatus.CLOSE_FINGERS;
                     transferElapsedTime = new ElapsedTime();
-                    intakeDirection = CSCons.IntakeDirection.BACKWARD;
-                    intake.setPower(-CSCons.speed);
+                    stackPosition = 5;
+
                     intakeHeight.setPosition(CSCons.intakeAboveTop);
 
                 }
 
                 if (currentTransferStatus == TransferStatus.CLOSE_FINGERS && transferElapsedTime.milliseconds()>currentTransferStatus.getWaitTime()) {
                     transferServo.setPosition(transferUp);
+                    intakeDirection = CSCons.IntakeDirection.BACKWARD;
+                    intake.setPower(-CSCons.speed);
                     gamepad2.rumble(5000);
                     transferElapsedTime = new ElapsedTime();
+                    currentTransferStatus=TransferStatus.DONE;
 
                 }
 
@@ -414,6 +418,8 @@ public class WorldsTeleop extends LinearOpMode {
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.ON) {
                         intakeDirection = CSCons.IntakeDirection.BACKWARD;
                         intake.setPower(-CSCons.speed);
+                        stackPosition=5;
+                        intakeHeight.setPosition(CSCons.intakeAboveTop);
                     } else {
                         intakeDirection = CSCons.IntakeDirection.OFF;
                         intake.setPower(0);

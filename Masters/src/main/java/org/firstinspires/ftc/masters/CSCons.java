@@ -116,7 +116,7 @@ public class CSCons {
     public static double intake4 =0.25;
     public static double intake5 =0.23;
     public static double intakeAboveTop =0.2;
-    public static double intakeInit =0.05;
+    public static double intakeInit =0.02;
 
     public static double speed =-1;
 
