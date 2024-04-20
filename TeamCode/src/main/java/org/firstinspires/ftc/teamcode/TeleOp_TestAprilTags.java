@@ -94,7 +94,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
         initializeWheels();
         // Wait for the game to start (driver presses PLAY)
         newAprilTags = new CyDogsAprilTags(this);
-        newAprilTags.Initialize();
+        newAprilTags.Initialize(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
         AprilTagDetection detectedTag;
 
         telemetry.addData("Status", "Initialized");
@@ -170,9 +170,9 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
         rightBackDrive.setPower(rightBackPower);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+      //  telemetry.addData("Status", "Run Time: " + runtime.toString());
+       // telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+       // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
 
     }
 
@@ -206,11 +206,13 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
 
             lookingForTagNumber-=1;
             telemetry.addData("Looking for April Tag:",lookingForTagNumber);
+            sleep(300);
         }
         if(gamepad1.b)
         {
             telemetry.addLine("Driving to tag!");
             newAprilTags.DriveToTag(detectedTag);
+           // sleep(300);
         }
         if(gamepad1.x)
         {
@@ -221,6 +223,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
 
             lookingForTagNumber+=1;
             telemetry.addData("Looking for April Tag:",lookingForTagNumber);
+            sleep(300);
         }
     }
 

@@ -73,8 +73,11 @@ public class TeleOp_TestJava extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private CyDogsSparky mySparky;
     @Override
     public void runOpMode() {
+
+        mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 300);
 
 
         initializeWheels();
@@ -185,6 +188,7 @@ public class TeleOp_TestJava extends LinearOpMode {
         if(gamepad1.a)
         {
             telemetry.addLine("Driver A/cross is pushed");
+
         }
         if(gamepad1.b)
         {

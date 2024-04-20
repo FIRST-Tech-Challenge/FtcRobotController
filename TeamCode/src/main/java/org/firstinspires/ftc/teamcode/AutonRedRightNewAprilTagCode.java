@@ -29,7 +29,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
  //       mySparky.initializeAprilTags();
 
         CyDogsAprilTags newAprilTags = new CyDogsAprilTags(this);
-        newAprilTags.Initialize();
+     //   newAprilTags.Initialize();
 
         // Ask the initialization questions
         parkingSpot = mySparky.askParkingSpot();
@@ -88,7 +88,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
 
         //    mySparky.AdjustToAprilTag(mySpikeLocation,"RedRight");
-            newAprilTags.DriveToAprilTag(mySparky.getAprilTagTarget(mySpikeLocation, mySparky.myAlliance));
+            newAprilTags.FindAndDriveToAprilTag(mySparky.getAprilTagTarget(mySpikeLocation, mySparky.myAlliance));
             mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.MoveStraight(-50,.5,300);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);

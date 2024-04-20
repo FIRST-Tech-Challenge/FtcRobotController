@@ -197,9 +197,9 @@ public class CyDogsSparky extends CyDogsChassis{
         myOpMode.sleep(2000);
         openFingers();
         myOpMode.sleep(400);
-
-
     }
+
+
     public void returnArmFromScoring(){
         raiseArmToScore(ArmMedium);
         myOpMode.sleep(1700);

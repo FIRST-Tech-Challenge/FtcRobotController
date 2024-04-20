@@ -126,8 +126,12 @@ public class CyDogsAprilTags
     public CyDogsAprilTags(LinearOpMode currentOpMode){
         myOpMode = currentOpMode;
     }
-    public void Initialize() {
+    public void Initialize(DcMotor LFD, DcMotor RFD, DcMotor LBD, DcMotor RBD) {
 
+        leftFrontDrive = LFD;
+        leftBackDrive = LBD;
+        rightFrontDrive = RFD;
+        rightBackDrive = RBD;
 
         // Initialize the Apriltag Detection process
         initAprilTag();
@@ -135,10 +139,10 @@ public class CyDogsAprilTags
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
         // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "FrontLeftWheel");
-        rightFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "FrontRightWheel");
-        leftBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "BackLeftWheel");
-        rightBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "BackRightWheel");
+     //   leftFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "FrontLeftWheel");
+     //   rightFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "FrontRightWheel");
+     //   leftBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "BackLeftWheel");
+     //   rightBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "BackRightWheel");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -157,7 +161,7 @@ public class CyDogsAprilTags
         myOpMode.telemetry.update();
     }
 
-    public void DriveToAprilTag(int targetTagID){
+    public void FindAndDriveToAprilTag(int targetTagID){
         while (myOpMode.opModeIsActive())
         {
             targetFound = false;
@@ -216,7 +220,7 @@ public class CyDogsAprilTags
                 break;
                 // don't move, couldn't find april tag
             }
-            myOpMode.telemetry.update();
+            //myOpMode.telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
             moveRobot(drive, strafe, turn);
@@ -387,7 +391,7 @@ public class CyDogsAprilTags
                 myOpMode.telemetry.addLine("Could not find april tag");
                 // don't move, couldn't find april tag
             }
-            myOpMode.telemetry.update();
+           // myOpMode.telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
             moveRobot(drive, strafe, turn);
