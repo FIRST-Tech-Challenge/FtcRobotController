@@ -81,17 +81,7 @@ public class Robot {
     private double teleOpTuneValueTrayAngle;
     double slideStartingPosition;
     boolean isLong;
-    private double forwardRadius;
-    private double mecanumRadius;
-    private double deltaForward;
-    private double deltaMecanum;
-    private double forward;
-    private final double backDistanceToMid = 69.85;
-    private double prevRightDistance = 0;
-    private double prevLeftDistance;
 
-    private double prevBackDistance;
-    private double deltaAngleDegrees;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
@@ -109,20 +99,6 @@ public class Robot {
     double TICKS_PER_REV = 2000;
     double CM_PER_TICK = 2.0 * Math.PI * DEAD_WHEEL_RADIUS / TICKS_PER_REV;
 
-    double yCoordinate = 0;
-
-    double xCoordinate = 0;
-    double theta = 0;
-    final double TRACK_WIDTH = 304.8;
-    final double TICKS_TO_MM = 13.2625995;
-
-    final double rightTrackWidth = -0.5 * TRACK_WIDTH;
-    final double leftTrackWidth = 0.5 * TRACK_WIDTH;
-
-    double prevX = 0;
-    double prevY = 0;
-    double prevRightTicks = 0;
-    double prevLeftTicks = 0;
 
 
     //CONSTRUCTOR
@@ -169,110 +145,6 @@ public class Robot {
         }
     }
 
-    public void odometryAluminumCobblersProbably() {
-
-        double rightDistance;
-        double leftDistance;
-        double distanceMiddle;
-        double deltaX;
-        double deltaY;
-        double deltaAngle;
-        double initialAngle = 0;
-        double angleCoordinate;
-        double currentAngle = 0;
-
-        rightDistance = rightEncoder.getCurrentPosition() / TICKS_TO_MM;
-        leftDistance = leftEncoder.getCurrentPosition() / TICKS_TO_MM;
-        distanceMiddle = (leftDistance + rightDistance)/2;
-
-        theta = (rightDistance - leftDistance)/ TRACK_WIDTH;
-        deltaAngle = theta/2;
-        deltaAngleDegrees = Math.toDegrees(deltaAngle);
-
-        deltaX = distanceMiddle * Math.cos(initialAngle + deltaAngle);
-        deltaY = distanceMiddle * Math.sin(initialAngle + deltaAngle);
-
-        xCoordinate = prevX + deltaX;
-        yCoordinate = prevY + deltaY;
-        angleCoordinate = currentAngle + deltaAngle;
-
-
-        telemetry.addData("theta", theta);
-        telemetry.addData("delta y", deltaY);
-        telemetry.addData("delta x", deltaX);
-
-        telemetry.addData("x coordinate", xCoordinate);
-        telemetry.addData("y coordinate", yCoordinate);
-        telemetry.addData("angle", angleCoordinate);
-    }
-
-    public void odometryCluelessProbably () {
-        double deltaRightDistance;
-        double deltaLeftDistance;
-        double distanceMiddle;
-        double deltaX;
-        double deltaY;
-        double deltaTheta;
-        double deltaRightTicks;
-        double deltaLeftTicks;
-        double rightTicks = -rightEncoder.getCurrentPosition();
-        double leftTicks = -leftEncoder.getCurrentPosition();
-        double radius;
-
-
-        deltaRightTicks = rightTicks - prevRightTicks;
-        deltaLeftTicks = leftTicks - prevLeftTicks;
-
-        prevRightTicks = rightTicks;
-        prevLeftTicks = leftTicks;
-
-        deltaRightDistance = deltaRightTicks / TICKS_TO_MM;
-        deltaLeftDistance = deltaLeftTicks / TICKS_TO_MM;
-        distanceMiddle = (deltaLeftDistance + deltaRightDistance) / 2;
-
-//        telemetry.addData("distance middle", distanceMiddle);
-//        telemetry.addData("delta right", deltaRightDistance);
-//        telemetry.addData("delta left", deltaLeftDistance);
-
-        //deltaTheta = Math.asin((deltaRightDistance - deltaLeftDistance) / Math.sqrt(Math.pow(deltaRightDistance - deltaLeftDistance, 2) + Math.pow(TRACK_WIDTH, 2)));
-        deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
-        theta = theta + deltaTheta;
-
-
-        if (deltaTheta == 0) {
-            return;
-        }
-
-
-        telemetry.addData("delta theta", deltaTheta);//0????
-
-        double angleX = deltaTheta / 2;
-
-        //deltaX = Math.cos(angleX) * distanceMiddle;
-        //deltaY = Math.sin(angleX) * distanceMiddle;
-        radius = distanceMiddle/deltaTheta;
-        deltaX = radius * Math.sin(deltaTheta);
-        deltaY = radius * (1-Math.cos(deltaTheta));
-
-
-        xCoordinate = prevX + deltaX * Math.cos(theta) - deltaY * Math.sin(theta);
-        yCoordinate = prevY + deltaY * Math.cos(theta) + deltaX * Math.sin(theta);
-
-        telemetry.addData("theta", theta);//-0.1438548
-        telemetry.addData("prev x", prevX);//NaN
-        telemetry.addData("prev y", prevY);//NaN
-
-        prevX = xCoordinate;
-        prevY = yCoordinate;
-
-        telemetry.addData("delta y", deltaY);
-        telemetry.addData("delta x", deltaX);
-
-        telemetry.addData("x coordinate", xCoordinate);
-        telemetry.addData("y coordinate", yCoordinate);
-        telemetry.update();
-
-    }
 
     public void moveLinearSlideByTicksBlocking(double targetDistanceInTicks) {
 

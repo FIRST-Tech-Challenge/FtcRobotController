@@ -3,12 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Navigation.Odometry;
+
 @TeleOp
 public class TestTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
         Robot robot = new Robot(hardwareMap, this, telemetry, false, false, false);
+        Odometry odometry = new Odometry(robot.backEncoder, robot.rightEncoder, robot.leftEncoder, robot.opMode,
+                telemetry, 0, 0, 0);
         //robot.initForTeleOp();
         robot.setUpDrivetrainMotors();
         int TRIGGER_PRESSED = 0; // TODO: test
@@ -88,7 +92,7 @@ public class TestTeleOp extends LinearOpMode {
                 bRightPowerPrev = bRightPower;
             }
 
-            robot.odometryCluelessProbably();
+            odometry.updatePosition();
 
         }
     }
