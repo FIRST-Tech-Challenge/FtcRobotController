@@ -84,8 +84,12 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private int lookingForTagNumber = 1;
-    AprilTagDetection detectedTag = null;
+    private AprilTagDetection detectedTag = null;
     CyDogsAprilTags newAprilTags;
+    double tagRange = 100;
+    double tagBearing = 100;
+    double tagYaw = 100;
+    double desiredRange = 8.25;
     @Override
     public void runOpMode() {
 
@@ -95,7 +99,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         newAprilTags = new CyDogsAprilTags(this);
         newAprilTags.Initialize(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
-        AprilTagDetection detectedTag;
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -109,6 +113,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
             manageDriverButtons();
             manageDriverCrossPad();
             manageDriverTriggersAndBumpers();
+
             detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
             telemetry.update();
         }
@@ -210,12 +215,28 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
         }
         if(gamepad1.b)
         {
-            telemetry.addLine("Driving to tag!");
-            newAprilTags.DriveToTag(detectedTag);
-           // sleep(300);
+            if(detectedTag!=null) {
+                telemetry.addData("Driving to tag!", detectedTag.id);
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+        //        while (tagRange > desiredRange
+         //               || !(tagBearing > -5 && tagBearing < 5)
+         //               || !(tagYaw > -5 && tagYaw < 5)) {
+                    while (tagRange > desiredRange) {
+                    newAprilTags.DriveToTag(detectedTag);
+                    detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+                    if(detectedTag==null){break;}
+                    tagRange = detectedTag.ftcPose.range;
+                    tagBearing = detectedTag.ftcPose.bearing;
+                    tagYaw = detectedTag.ftcPose.yaw;
+                }
+                // sleep(300);
+            }
         }
         if(gamepad1.x)
         {
+
         //    telemetry.addLine("Searching for tags!");
         }
         if(gamepad1.y)

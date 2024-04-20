@@ -209,14 +209,25 @@ public class CyDogsAprilTags
                 double  yawError        = desiredTag.ftcPose.yaw;
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+            //    drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            //    turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+             //   strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                // original was +, -
+                // try #1 is -,+
+                    drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                    turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                    strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
                 myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                myOpMode.telemetry.update();
+                myOpMode.sleep(5000);
                 // need to add code here, if close enough, break from loop
             } else {
+
                 myOpMode.telemetry.addLine("Could not find april tag");
+                myOpMode.telemetry.update();
+                myOpMode.sleep(5000);
                 break;
                 // don't move, couldn't find april tag
             }
@@ -239,11 +250,14 @@ public class CyDogsAprilTags
      */
     public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
-        double leftFrontPower    =  x -y -yaw;
-        double rightFrontPower   =  x +y +yaw;
-        double leftBackPower     =  x +y -yaw;
-        double rightBackPower    =  x -y +yaw;
-
+        //double leftFrontPower    =  x -y -yaw;
+       // double rightFrontPower   =  x +y +yaw;
+     //   double leftBackPower     =  x +y -yaw;
+   //     double rightBackPower    =  x -y +yaw;
+        double leftFrontPower    =  x -y +yaw;
+        double rightFrontPower   =  x +y -yaw;
+        double leftBackPower     =  x +y +yaw;
+        double rightBackPower    =  x -y -yaw;
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
@@ -255,12 +269,27 @@ public class CyDogsAprilTags
             leftBackPower /= max;
             rightBackPower /= max;
         }
+        if(max < 0.2){
+            leftFrontPower *= 2.5;
+            rightFrontPower *= 2.5;
+            leftBackPower *= 2.5;
+            rightBackPower *= 2.5;
+        }
+        if(max < 0.1){
+            leftFrontPower *= 4;
+            rightFrontPower *= 4;
+            leftBackPower *= 4;
+            rightBackPower *= 4;
+        }
         myOpMode.telemetry.addLine("Trying to move inside moveRobot function");
+        myOpMode.telemetry.update();
+      //  myOpMode.sleep(2000);
         // Send powers to the wheels.
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
+       // myOpMode.sleep(3000);
     }
 
     /**
