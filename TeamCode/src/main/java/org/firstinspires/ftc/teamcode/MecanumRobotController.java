@@ -22,7 +22,7 @@ public class MecanumRobotController {
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
     public static final double FORWARD_COUNTS_PER_INCH = 43.59;
-    public static final double STRAFE_COUNTS_PER_INCH = 52.197;
+    public static final double STRAFE_COUNTS_PER_INCH = 51.29;
     public static final double HEADING_CORRECTION_POWER = 1.0;
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
@@ -213,7 +213,7 @@ public class MecanumRobotController {
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double correctionPower = HEADING_CORRECTION_POWER;
-        // if (Math.abs(direction - currentHeading) < 90) correctionPower *= -1;
+        // if (Math.abs(direction - currentHeading) > 90) correctionPower *= -1;
 
         while ((backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy())
                 && robot.opModeIsActive()) {
