@@ -8,6 +8,9 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import org.apache.commons.math3.linear.DecompositionSolver
 import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVelocity
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset
 
 /**
  * Localizer based on two unpowered tracking omni wheels and an orientation sensor.
@@ -19,10 +22,11 @@ abstract class RFTwoTrackingWheelLocalizer(
 ) : Localizer {
     private var _poseEstimate = Pose2d()
     override var poseEstimate: Pose2d
-        get() = _poseEstimate
+        get() = currentPose
         set(value) {
-            lastHeading = value.heading
-            _poseEstimate = value
+            poseHeadOffset = value.heading-currentPose.heading
+            currentPose = value
+
         }
     override var poseVelocity: Pose2d? = null
     private var lastWheelPositions = emptyList<Double>()
@@ -72,15 +76,19 @@ abstract class RFTwoTrackingWheelLocalizer(
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
                 .map { it.first - it.second }
-            val headingDelta = Angle.normDelta(heading - lastHeading)
+            val headingDelta = Angle.normDelta(heading - currentPose.heading)
             val robotPoseDelta = calculatePoseDelta(wheelDeltas, headingDelta)
-            _poseEstimate = Kinematics.relativeOdometryUpdate(_poseEstimate, robotPoseDelta)
+            currentPose = Kinematics.relativeOdometryUpdate(currentPose, robotPoseDelta)
+
         }
 
         val wheelVelocities = getWheelVelocities()
         val headingVelocity = getHeadingVelocity()
         if (wheelVelocities != null && headingVelocity != null) {
-            poseVelocity = calculatePoseDelta(wheelVelocities, headingVelocity)
+            currentPOVVelocity = calculatePoseDelta(wheelVelocities, headingVelocity)
+            poseVelocity = currentPOVVelocity
+            PoseStorage.currentVelocity = Pose2d(currentPOVVelocity.vec().rotated(currentPose.heading),
+                currentPOVVelocity.heading)
         }
 
         lastWheelPositions = wheelPositions

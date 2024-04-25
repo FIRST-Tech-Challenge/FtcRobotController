@@ -199,6 +199,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear.setDirection(DcMotor.Direction.FORWARD);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+
+
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+        imu.resetYaw();
+
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         } else if (trackType == Tracker.TrackType.ROADRUN_IMU_LEFT) {
@@ -208,12 +216,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
-
-//        imu = hardwareMap.get(IMU.class, "imu");
-//
-//        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-//                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-//        imu.resetYaw();
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
@@ -487,7 +489,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)+poseHeadOffset;
     }
 
     @Override

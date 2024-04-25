@@ -21,7 +21,7 @@ public class Magazine {
   private RFColorSensor colorSensor1, colorSensor2;
 
   public static int pixels = 0;
-  double twoPixelTime = 0.0;
+  public static double twoPixelTime = 0.0;
   double dist1=100,dist2=100;
 
   public Magazine() {
@@ -71,10 +71,10 @@ public class Magazine {
     dist1 = colorSensor1.getDist();
     dist2 = colorSensor2.getDist();
     pixels=0;
-    if (dist1 < 1.6) {
+    if (dist1 < 4) {
       MagStates.FRONT.setState(true);
       pixels++;
-    } else if (dist1 > 1.6) {
+    } else if (dist1 > 4) {
       MagStates.FRONT.setState(false);
     }
     if (dist2 < 0.9) {
@@ -83,8 +83,12 @@ public class Magazine {
     } else if (dist2 > 0.9) {
       MagStates.BACK.setState(false);
     }
-    if(pixels<1){
+
+    if(pixels!=1 && dist2>1){
       twoPixelTime = BasicRobot.time;
+    }
+    if(dist2<1.3&&pixels==0){
+      pixels=1;
     }
     LOGGER.log("front | back dist: " + dist1 + " | " + dist2);
     LOGGER.log(

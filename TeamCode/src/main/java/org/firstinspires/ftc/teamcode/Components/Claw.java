@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 public class Claw extends RFServo {
   public static double GRAB_POS = 0.28,
       CLOSE_POS = 0.45,
-      FLIP_TIME = 0.6, GRAB2=0.7, CLOSE2 = 0.5;
+      FLIP_TIME = 0.1, GRAB2=0.7, CLOSE2 = 0.5;
   private double lastTime = 0;
   private Servo servo2;
   public Claw() {
@@ -107,10 +107,10 @@ public class Claw extends RFServo {
           LOGGER.log("GRABBING claw");
           lastTime = time;
         }
-        clawTargetStates.GRAB.setStateTrue();
       }
     }
-    }
+    clawTargetStates.GRAB.setStateTrue();
+  }
   public void moveOne(boolean grab) {
     if (grab) {
       super.setPosition(GRAB_POS);

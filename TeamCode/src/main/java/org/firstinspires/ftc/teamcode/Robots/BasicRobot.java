@@ -29,12 +29,13 @@ public class BasicRobot{
     public Queuer queuer;
     public static boolean isTeleop;
     public static FtcDashboard dashboard;
-    public static double time= 0.0;
+    public static double time= 0.0, voltage = 12;
     public static int loops = 0;
     public static VoltageSensor voltageSensor;
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
     public static final boolean isSim = false;
+    public static boolean isFlipped = false;
 
     /**
      * instantiates basic robot
@@ -43,7 +44,7 @@ public class BasicRobot{
      * @param p_isTeleop is it teleOp
      */
 
-    public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
+    public BasicRobot(LinearOpMode opMode, boolean p_isTeleop, boolean isFlipped){
         op = opMode;
         LOGGER = new RFLogger("Robot");
         LOGGER.setLogLevel(RFLogger.Severity.ALL);
@@ -64,7 +65,11 @@ public class BasicRobot{
         gampad = new RFGamepad();
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-
+        BasicRobot.isFlipped = isFlipped;
+        voltage = voltageSensor.getVoltage();
+    }
+    public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
+        this(opMode, p_isTeleop, false);
     }
 
     /**
