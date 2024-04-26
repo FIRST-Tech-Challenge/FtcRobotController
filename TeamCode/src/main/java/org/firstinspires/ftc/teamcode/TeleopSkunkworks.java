@@ -198,9 +198,8 @@ public class TeleopSkunkworks extends LinearOpMode {
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
 
             // Update telemetry data for positioning
-            telemetry.addData("Corrected Global X Position", robotGlobalCoordinateCorrectedPosition.getX());
-            telemetry.addData("Corrected Global Y Position", robotGlobalCoordinateCorrectedPosition.getY());
-            telemetry.addData("Corrected Global Angle", Math.toDegrees(robotGlobalCoordinateCorrectedPosition.getAngleRadians()));
+            telemetry.addData("Corrected Global Position", "X %.2f Y %.2f Angle %.2f", robotGlobalCoordinateCorrectedPosition.getX(),
+                    robotGlobalCoordinateCorrectedPosition.getY(),  Math.toDegrees(robotGlobalCoordinateCorrectedPosition.getAngleRadians()));
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
