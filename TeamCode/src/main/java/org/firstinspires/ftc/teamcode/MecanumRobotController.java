@@ -212,9 +212,6 @@ public class MecanumRobotController {
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double correctionPower = HEADING_CORRECTION_POWER;
-        // if (Math.abs(direction - currentHeading) > 90) correctionPower *= -1;
-
         while ((backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy())
                 && robot.opModeIsActive()) {
             double distanceToDestination = (Math.abs(backLeftTarget - backLeft.getCurrentPosition()) +
@@ -224,7 +221,7 @@ public class MecanumRobotController {
             robot.telemetry.addData("Current Action", "Distance Driving");
             robot.telemetry.addData("Distance To Target", distanceToDestination / moveCountMult);
             robot.telemetry.addData("", "");
-            move(speed, 0.0, 0.0, correctionPower);
+            move(speed, 0.0, 0.0, 0.0);
         }
 
         // Stop movement and switch modes
