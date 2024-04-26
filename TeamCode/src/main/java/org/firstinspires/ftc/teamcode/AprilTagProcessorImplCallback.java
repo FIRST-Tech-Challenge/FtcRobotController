@@ -7,7 +7,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessorImpl;
 import org.opencv.core.Mat;
-import org.openftc.apriltag.AprilTagDetectorJNI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +34,15 @@ public class AprilTagProcessorImplCallback extends AprilTagProcessorImpl {
     public static final FieldCoordinate APRIL_TAG_6 = new FieldCoordinate(112.5, 130.25, Math.toRadians(90.0));
     // Left side stack images
     // 23" + 0.75" + 11.5"
-    public static final FieldCoordinate APRIL_TAG_7 = new FieldCoordinate(111.5, 0.0, Math.toRadians(270.0));
-    public static final FieldCoordinate APRIL_TAG_8 = new FieldCoordinate(106.0, 0.0, Math.toRadians(270.0));
+    // Y Min
+//    public static final FieldCoordinate APRIL_TAG_7 = new FieldCoordinate(111.5, 0.0, Math.toRadians(270.0));
+//    public static final FieldCoordinate APRIL_TAG_8 = new FieldCoordinate(106.0, 0.0, Math.toRadians(270.0));
+    // X Max
+//    public static final FieldCoordinate APRIL_TAG_7 = new FieldCoordinate(141.75, 32.5, Math.toRadians(0.0));
+//    public static final FieldCoordinate APRIL_TAG_8 = new FieldCoordinate(141.75, 27.0, Math.toRadians(0.0));
+    // X Min
+    public static final FieldCoordinate APRIL_TAG_7 = new FieldCoordinate(0.0, 29.0, Math.toRadians(180.0));
+    public static final FieldCoordinate APRIL_TAG_8 = new FieldCoordinate(0.0, 34.5, Math.toRadians(180.0));
     // Right side stack images
     // 4x23" + 4x0.75" + 11.5"
     public static final FieldCoordinate APRIL_TAG_9 = new FieldCoordinate(34.75, 0.0, Math.toRadians(270.0));
@@ -105,60 +111,98 @@ public class AprilTagProcessorImplCallback extends AprilTagProcessorImpl {
             double aprilTagAngleRadians = Math.toRadians(detection.ftcPose.yaw);
             double myPositionX, myPositionY, myPositionAngleRadians;
             switch(detection.id) {
+                // Against Y Max wall
                 case 1:
                     myPositionX = APRIL_TAG_1.getX() + aprilTagS;  // EHAGUE X plus/minus depends on AprilTag front/rear walls
                     myPositionY = APRIL_TAG_1.getY() - aprilTagD;
                     myPositionAngleRadians = APRIL_TAG_1.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Max wall
                 case 2:
                     myPositionX = APRIL_TAG_2.getX() + aprilTagS;
                     myPositionY = APRIL_TAG_2.getY() - aprilTagD;
                     myPositionAngleRadians = APRIL_TAG_2.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Max wall
                 case 3:
                     myPositionX = APRIL_TAG_3.getX() + aprilTagS;
                     myPositionY = APRIL_TAG_3.getY() - aprilTagD;
                     myPositionAngleRadians = APRIL_TAG_3.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Max wall
                 case 4:
                     myPositionX = APRIL_TAG_4.getX() + aprilTagS;
                     myPositionY = APRIL_TAG_4.getY() - aprilTagD;
                     myPositionAngleRadians = APRIL_TAG_4.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Max wall
                 case 5:
                     myPositionX = APRIL_TAG_5.getX() + aprilTagS;
                     myPositionY = APRIL_TAG_5.getY() - aprilTagD;
                     myPositionAngleRadians = APRIL_TAG_5.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Max wall
                 case 6:
                     myPositionX = APRIL_TAG_6.getX() + aprilTagS;
                     myPositionY = APRIL_TAG_6.getY() - aprilTagD;
                     myPositionAngleRadians = APRIL_TAG_6.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Min wall
+//                case 7:
+//                    myPositionX = APRIL_TAG_7.getX() - aprilTagS;
+//                    myPositionY = APRIL_TAG_7.getY() + aprilTagD;
+//                    myPositionAngleRadians = APRIL_TAG_7.getAngleRadians() - aprilTagAngleRadians;
+//                    result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
+//                    break;
+                // Against Y Min wall
+//                case 8:
+//                    myPositionX = APRIL_TAG_8.getX() - aprilTagS;
+//                    myPositionY = APRIL_TAG_8.getY() + aprilTagD;
+//                    myPositionAngleRadians = APRIL_TAG_8.getAngleRadians() - aprilTagAngleRadians;
+//                    result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
+//                    break;
+                // Against X Max wall
+//                case 7:
+//                    myPositionX = APRIL_TAG_7.getX() - aprilTagD;
+//                    myPositionY = APRIL_TAG_7.getY() - aprilTagS;
+//                    myPositionAngleRadians = APRIL_TAG_7.getAngleRadians() - aprilTagAngleRadians;
+//                    result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
+//                    break;
+                // Against X Max wall
+//                case 8:
+//                    myPositionX = APRIL_TAG_8.getX() - aprilTagD;
+//                    myPositionY = APRIL_TAG_8.getY() - aprilTagS;
+//                    myPositionAngleRadians = APRIL_TAG_8.getAngleRadians() - aprilTagAngleRadians;
+//                    result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
+//                    break;
+                // Against X Min wall
                 case 7:
-                    myPositionX = APRIL_TAG_7.getX() - aprilTagS;
-                    myPositionY = APRIL_TAG_7.getY() + aprilTagD;
+                    myPositionX = APRIL_TAG_7.getX() + aprilTagD;
+                    myPositionY = APRIL_TAG_7.getY() + aprilTagS;
                     myPositionAngleRadians = APRIL_TAG_7.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against X Min wall
                 case 8:
-                    myPositionX = APRIL_TAG_8.getX() - aprilTagS;
-                    myPositionY = APRIL_TAG_8.getY() + aprilTagD;
+                    myPositionX = APRIL_TAG_8.getX() + aprilTagD;
+                    myPositionY = APRIL_TAG_8.getY() + aprilTagS;
                     myPositionAngleRadians = APRIL_TAG_8.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Min wall
                 case 9:
                     myPositionX = APRIL_TAG_9.getX() - aprilTagS;
                     myPositionY = APRIL_TAG_9.getY() + aprilTagD;
                     myPositionAngleRadians = APRIL_TAG_9.getAngleRadians() - aprilTagAngleRadians;
                     result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleRadians);
                     break;
+                // Against Y Min wall
                 case 10:
                     myPositionX = APRIL_TAG_10.getX() - aprilTagS;
                     myPositionY = APRIL_TAG_10.getY() + aprilTagD;
