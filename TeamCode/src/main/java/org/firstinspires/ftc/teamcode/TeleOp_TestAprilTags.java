@@ -246,7 +246,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     if(timeAprilTagsDriveStarted<runtime.seconds()-5){
                         telemetry.addData("breaking due to runtime:" , runtime.seconds());
                         telemetry.addData("breaking due to runtime:" , timeAprilTagsDriveStarted);
-                        telemetry.update();
+                        //telemetry.update();
                         sleep(3000);
                         break;}
 
@@ -259,7 +259,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     // if something went wrong and we can't see the tag anymore, give up
                     if(detectedTag==null){
                         telemetry.addLine("WE LOST THE TAG!");
-                        telemetry.update();
+                        //telemetry.update();
                         sleep(3000);
                         break;}
 
