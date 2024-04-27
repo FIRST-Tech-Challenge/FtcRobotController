@@ -267,9 +267,9 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     tagRange = detectedTag.ftcPose.range;
                     tagBearing = detectedTag.ftcPose.bearing;
                     tagYaw = detectedTag.ftcPose.yaw;
-                    telemetry.addData("before while range:" , tagRange);
-                    telemetry.addData("before while bearing:" , tagBearing);
-                    telemetry.addData("before while yaw:" , tagYaw);
+                    telemetry.addData("during while range:" , tagRange);
+                    telemetry.addData("during while bearing:" , tagBearing);
+                    telemetry.addData("during while yaw:" , tagYaw);
                     telemetry.update();
                 }
                 // sleep(300);
