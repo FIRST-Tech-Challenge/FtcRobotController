@@ -390,10 +390,10 @@ public class CyDogsAprilTags
         // double rightFrontPower   =  x +y +yaw;
         //   double leftBackPower     =  x +y -yaw;
         //     double rightBackPower    =  x -y +yaw;
-        double leftFrontPower    =  x -y -yaw;
-        double rightFrontPower   =  x +y +yaw;
-        double leftBackPower     =  x +y -yaw;
-        double rightBackPower    =  x -y +yaw;
+        double leftFrontPower    =  x +y -yaw;
+        double rightFrontPower   =  x -y +yaw;
+        double leftBackPower     =  x -y -yaw;
+        double rightBackPower    =  x +y +yaw;
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
