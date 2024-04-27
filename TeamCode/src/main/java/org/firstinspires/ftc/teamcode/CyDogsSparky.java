@@ -187,6 +187,11 @@ public class CyDogsSparky extends CyDogsChassis{
                 isElbowOpen = false;
             }
         }
+        else {
+            myOpMode.telemetry.addData("Arm not high enough, arm at:",ArmLift.getCurrentPosition());
+            myOpMode.telemetry.update();
+            myOpMode.sleep(3000);
+        }
     }
 
     public void scoreFromDrivingPositionAndReturn(){
