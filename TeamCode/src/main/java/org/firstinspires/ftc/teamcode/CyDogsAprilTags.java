@@ -441,9 +441,6 @@ public class CyDogsAprilTags
         myOpMode.telemetry.addData("adjusted left back power:", String.format("%.2f", LBP) + "/" + String.format("%.2f", leftBackPower));
         myOpMode.telemetry.addData("adjusted right back power:", String.format("%.2f", RBP) + "/" + String.format("%.2f", rightBackPower));
 
-
-
-
         // Send powers to the wheels.
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
