@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="InBackstageTwo", group="Robot")
-public class InBackstageTwo extends LinearOpMode {
+@Autonomous(name="InBStageTwo", group="Robot")
+public class InBStageTwo extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeft = null;
@@ -72,8 +72,9 @@ public class InBackstageTwo extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        arm1.setPosition(0.65);
         claw.setPosition(0.2);
+        sleep(100);
+        arm1.setPosition(0.6);
         sleep(2000);
         encoderDrive(DRIVE_SPEED, 6.5, 6.5, 5.0);
         telemetry.addData("Path", "Complete");
