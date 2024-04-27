@@ -426,6 +426,11 @@ public class CyDogsAprilTags
             rightFrontPower *= 3;
             leftBackPower *= 3;
             rightBackPower *= 3;
+        } else if (max < 0.3) {
+            leftFrontPower *= 2;
+            rightFrontPower *= 2;
+            leftBackPower *= 2;
+            rightBackPower *= 2;
         }
         myOpMode.telemetry.addData("adjusted left front power:", String.format("%.2f", leftFrontPower));
         myOpMode.telemetry.addData("adjusted right front power:", String.format("%.2f", rightFrontPower));
