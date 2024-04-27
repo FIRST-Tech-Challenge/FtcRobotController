@@ -223,6 +223,11 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                 tagRange = detectedTag.ftcPose.range;
                 tagBearing = detectedTag.ftcPose.bearing;
                 tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("before while range:" , tagRange);
+                telemetry.addData("before while bearing:" , tagBearing);
+                telemetry.addData("before while yaw:" , tagYaw);
+                telemetry.update();
+                sleep(3000);
 
                 // while we're not yet there, keep driving and updating where the tag is
                 while (
@@ -235,6 +240,8 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     if(timeAprilTagsDriveStarted<runtime.seconds()-5){
                         telemetry.addData("breaking due to runtime:" , runtime.seconds());
                         telemetry.addData("breaking due to runtime:" , timeAprilTagsDriveStarted);
+                        telemetry.update();
+                        sleep(3000);
                         break;}
 
                     // drive to the tag
@@ -250,6 +257,10 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     tagRange = detectedTag.ftcPose.range;
                     tagBearing = detectedTag.ftcPose.bearing;
                     tagYaw = detectedTag.ftcPose.yaw;
+                    telemetry.addData("before while range:" , tagRange);
+                    telemetry.addData("before while bearing:" , tagBearing);
+                    telemetry.addData("before while yaw:" , tagYaw);
+                    telemetry.update();
                 }
                 // sleep(300);
             }
