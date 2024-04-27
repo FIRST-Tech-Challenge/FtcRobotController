@@ -415,25 +415,25 @@ public class CyDogsAprilTags
             leftBackPower /= max;
             rightBackPower /= max;
         } else if (max < 0.05) {
-            leftFrontPower *= 8;
-            rightFrontPower *= 8;
-            leftBackPower *= 8;
-            rightBackPower *= 8;
+            leftFrontPower *= 6;
+            rightFrontPower *= 6;
+            leftBackPower *= 6;
+            rightBackPower *= 6;
         } else if (max < 0.1) {
-            leftFrontPower *= 5;
-            rightFrontPower *= 5;
-            leftBackPower *= 5;
-            rightBackPower *= 5;
+            leftFrontPower *= 4;
+            rightFrontPower *= 4;
+            leftBackPower *= 4;
+            rightBackPower *= 4;
         } else if (max < 0.2) {
-            leftFrontPower *= 3;
-            rightFrontPower *= 3;
-            leftBackPower *= 3;
-            rightBackPower *= 3;
-        } else if (max < 0.3) {
             leftFrontPower *= 2;
             rightFrontPower *= 2;
             leftBackPower *= 2;
             rightBackPower *= 2;
+        } else if (max < 0.3) {
+            leftFrontPower *= 1;
+            rightFrontPower *= 1;
+            leftBackPower *= 1;
+            rightBackPower *= 1;
         }
         myOpMode.telemetry.addData("adjusted left front power:", String.format("%.2f", leftFrontPower));
         myOpMode.telemetry.addData("adjusted right front power:", String.format("%.2f", rightFrontPower));
