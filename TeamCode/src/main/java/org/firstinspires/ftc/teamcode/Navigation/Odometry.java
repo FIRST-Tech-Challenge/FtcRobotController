@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-
 public class Odometry {
     final double TRACK_WIDTH = 304.8;
     private final double BACK_DISTANCE_TO_MID = 69.85;
@@ -75,7 +74,7 @@ public class Odometry {
         final double DEAD_WHEEL_RADIUS = 24;
         final double TICKS_PER_REV = 2000;
         final double MM_TO_TICKS = 2.0 * Math.PI * DEAD_WHEEL_RADIUS / TICKS_PER_REV;
-        final double TICKS_TO_MM = 1.0/MM_TO_TICKS;
+        final double TICKS_TO_MM = 1.0 / MM_TO_TICKS;
 //        final double TICKS_TO_MM = 13.2625995;
         return ticks / TICKS_TO_MM;
     }
@@ -107,12 +106,12 @@ public class Odometry {
             return relativeDelta;
         }
 
-        Log.d("odometry", "linearDelta "+ relativeDelta.toString());
+        Log.d("odometry", "linearDelta " + relativeDelta.toString());
         double forwardRadius = relativeDelta.x / relativeDelta.theta;
         double strafeRadius = relativeDelta.y / relativeDelta.theta;
 
         double relDeltaX =
-                forwardRadius * Math.sin(relativeDelta.theta) + strafeRadius * (1 - Math.cos(relativeDelta.theta));
+                forwardRadius * Math.sin(relativeDelta.theta) + -strafeRadius * (1 - Math.cos(relativeDelta.theta));
 
         double relDeltaY =
                 strafeRadius * Math.sin(relativeDelta.theta) + forwardRadius * (1 - Math.cos(relativeDelta.theta));
@@ -121,7 +120,7 @@ public class Odometry {
         jose.addData("cos strafe theta hamburger", (1 - Math.cos(relativeDelta.theta)));
         jose.addData("sin y axis hamburger", Math.sin(relativeDelta.theta));
         Position arcDelta = new Position(relDeltaX, relDeltaY, relativeDelta.theta);
-        Log.d("odometry", "arcDelta "+ arcDelta.toString());
+        Log.d("odometry", "arcDelta " + arcDelta.toString());
         return arcDelta;
     }
 
