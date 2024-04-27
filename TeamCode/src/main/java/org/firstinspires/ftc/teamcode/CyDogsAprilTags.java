@@ -378,6 +378,9 @@ public class CyDogsAprilTags
            // myOpMode.telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
+            myOpMode.telemetry.addData("drive:", String.format("%.2f", drive));
+            myOpMode.telemetry.addData("strafe:", String.format("%.2f", strafe));
+            myOpMode.telemetry.addData("turn:", String.format("%.2f", turn));
             moveRobot(drive, strafe, turn);
             myOpMode.sleep(10);
 
@@ -390,9 +393,9 @@ public class CyDogsAprilTags
         // double rightFrontPower   =  x +y +yaw;
         //   double leftBackPower     =  x +y -yaw;
         //     double rightBackPower    =  x -y +yaw;
-        double leftFrontPower    =  x +y -yaw;
+        double leftFrontPower    =  x -y -yaw;
         double rightFrontPower   =  x -y +yaw;
-        double leftBackPower     =  x -y -yaw;
+        double leftBackPower     =  x +y -yaw;
         double rightBackPower    =  x +y +yaw;
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
