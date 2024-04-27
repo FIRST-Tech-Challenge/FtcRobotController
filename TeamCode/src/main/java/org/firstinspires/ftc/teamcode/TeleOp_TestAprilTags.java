@@ -251,7 +251,11 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
 
                     // if something went wrong and we can't see the tag anymore, give up
-                    if(detectedTag==null){break;}
+                    if(detectedTag==null){
+                        telemetry.addLine("WE LOST THE TAG!");
+                        telemetry.update();
+                        sleep(3000);
+                        break;}
 
                     // get new tag positioning
                     tagRange = detectedTag.ftcPose.range;
