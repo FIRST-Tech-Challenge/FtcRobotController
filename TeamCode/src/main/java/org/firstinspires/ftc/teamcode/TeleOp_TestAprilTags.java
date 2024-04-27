@@ -277,7 +277,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                 leftBackDrive.setPower(0);
                 rightFrontDrive.setPower(0);
                 rightBackDrive.setPower(0);
-                // sleep(300);
+                sleep(1000);
             }
         }
         if(gamepad1.x)
