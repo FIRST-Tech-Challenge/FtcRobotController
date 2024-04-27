@@ -90,6 +90,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
     double tagBearing = 100;
     double tagYaw = 100;
     double desiredRange = 8.25;
+    double timeAprilTagsDriveStarted = 0;
     @Override
     public void runOpMode() {
 
@@ -106,6 +107,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -216,17 +218,32 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
         if(gamepad1.b)
         {
             if(detectedTag!=null) {
+                timeAprilTagsDriveStarted = runtime.seconds();
                 telemetry.addData("Driving to tag!", detectedTag.id);
                 tagRange = detectedTag.ftcPose.range;
                 tagBearing = detectedTag.ftcPose.bearing;
                 tagYaw = detectedTag.ftcPose.yaw;
-        //        while (tagRange > desiredRange
-         //               || !(tagBearing > -5 && tagBearing < 5)
-         //               || !(tagYaw > -5 && tagYaw < 5)) {
-                    while (tagRange > desiredRange) {
+
+                // while we're not yet there, keep driving and updating where the tag is
+                while (
+                ((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
+                        || (-5 <= tagBearing && tagBearing <= 5)
+                        || (-5 <= tagYaw && tagYaw <= 5))
+                {
+
+                    // if we've been going at this for 5 seconds, break out and stop
+                    if(timeAprilTagsDriveStarted<runtime.seconds()-5){break;}
+
+                    // drive to the tag
                     newAprilTags.DriveToTag(detectedTag);
+
+                    // now that we've driven a fraction of a second, check the tag again
                     detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+
+                    // if something went wrong and we can't see the tag anymore, give up
                     if(detectedTag==null){break;}
+
+                    // get new tag positioning
                     tagRange = detectedTag.ftcPose.range;
                     tagBearing = detectedTag.ftcPose.bearing;
                     tagYaw = detectedTag.ftcPose.yaw;

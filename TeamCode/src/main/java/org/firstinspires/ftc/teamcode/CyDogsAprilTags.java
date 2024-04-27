@@ -152,6 +152,12 @@ public class CyDogsAprilTags
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
+        // set the motors to run based on power alone
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         if (USE_WEBCAM)
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
@@ -239,58 +245,7 @@ public class CyDogsAprilTags
         }
     }
 
-    /**
-     * Move robot according to desired axes motions
-     * <p>
-     * Positive X is forward
-     * <p>
-     * Positive Y is strafe left
-     * <p>
-     * Positive Yaw is counter-clockwise
-     */
-    public void moveRobot(double x, double y, double yaw) {
-        // Calculate wheel powers.
-        //double leftFrontPower    =  x -y -yaw;
-       // double rightFrontPower   =  x +y +yaw;
-     //   double leftBackPower     =  x +y -yaw;
-   //     double rightBackPower    =  x -y +yaw;
-        double leftFrontPower    =  x -y +yaw;
-        double rightFrontPower   =  x +y -yaw;
-        double leftBackPower     =  x +y +yaw;
-        double rightBackPower    =  x -y -yaw;
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
 
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
-        }
-        if(max < 0.2){
-            leftFrontPower *= 2.5;
-            rightFrontPower *= 2.5;
-            leftBackPower *= 2.5;
-            rightBackPower *= 2.5;
-        }
-        if(max < 0.1){
-            leftFrontPower *= 4;
-            rightFrontPower *= 4;
-            leftBackPower *= 4;
-            rightBackPower *= 4;
-        }
-        myOpMode.telemetry.addLine("Trying to move inside moveRobot function");
-        myOpMode.telemetry.update();
-      //  myOpMode.sleep(2000);
-        // Send powers to the wheels.
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
-       // myOpMode.sleep(3000);
-    }
 
     /**
      * Initialize the AprilTag processor.
@@ -427,4 +382,46 @@ public class CyDogsAprilTags
             myOpMode.sleep(10);
 
         }
+
+
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.  These are original formulas but our robot was moving the wrong way
+        //double leftFrontPower    =  x -y -yaw;
+        // double rightFrontPower   =  x +y +yaw;
+        //   double leftBackPower     =  x +y -yaw;
+        //     double rightBackPower    =  x -y +yaw;
+        double leftFrontPower    =  x -y +yaw;
+        double rightFrontPower   =  x +y -yaw;
+        double leftBackPower     =  x +y +yaw;
+        double rightBackPower    =  x -y -yaw;
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        } else if (max < 0.1) {
+            leftFrontPower *= 3;
+            rightFrontPower *= 3;
+            leftBackPower *= 3;
+            rightBackPower *= 3;
+        } else if (max < 0.2) {
+            leftFrontPower *= 2;
+            rightFrontPower *= 2;
+            leftBackPower *= 2;
+            rightBackPower *= 2;
+        }
+
+
+        // Send powers to the wheels.
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
+        // myOpMode.sleep(3000);
+    }
 }
