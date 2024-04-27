@@ -365,9 +365,13 @@ public class CyDogsAprilTags
                 double  yawError        = detectedTag.ftcPose.yaw;
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
+             //   drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+             //   turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+             //   strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
                 drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+                turn   = Range.clip(yawError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                strafe = Range.clip(headingError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
                 myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
                 // need to add code here, if close enough, break from loop
@@ -378,9 +382,6 @@ public class CyDogsAprilTags
            // myOpMode.telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
-            myOpMode.telemetry.addData("drive:", String.format("%.2f", drive));
-            myOpMode.telemetry.addData("strafe:", String.format("%.2f", strafe));
-            myOpMode.telemetry.addData("turn:", String.format("%.2f", turn));
             moveRobot(drive, strafe, turn);
             myOpMode.sleep(10);
 

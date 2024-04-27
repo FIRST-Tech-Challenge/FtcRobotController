@@ -242,6 +242,10 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                         || !(-5 <= tagYaw && tagYaw <= 5))
                 {
                     telemetry.addLine("In the while loop");
+                    telemetry.addData("during while range:" , tagRange);
+                    telemetry.addData("during while bearing:" , tagBearing);
+                    telemetry.addData("during while yaw:" , tagYaw);
+
                     // if we've been going at this for 5 seconds, break out and stop
                     if(timeAprilTagsDriveStarted<runtime.seconds()-5){
                         telemetry.addData("breaking due to runtime:" , runtime.seconds());
@@ -268,9 +272,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     tagRange = detectedTag.ftcPose.range;
                     tagBearing = detectedTag.ftcPose.bearing;
                     tagYaw = detectedTag.ftcPose.yaw;
-                    telemetry.addData("during while range:" , tagRange);
-                    telemetry.addData("during while bearing:" , tagBearing);
-                    telemetry.addData("during while yaw:" , tagYaw);
+
                     telemetry.update();
                 }
                 leftFrontDrive.setPower(0);
