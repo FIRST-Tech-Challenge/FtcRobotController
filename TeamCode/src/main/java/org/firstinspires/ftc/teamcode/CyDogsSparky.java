@@ -375,10 +375,12 @@ public class CyDogsSparky extends CyDogsChassis{
                 while (!myOpMode.gamepad1.dpad_down) {
                     if (parkingSpot==Direction.LEFT) {
                         myOpMode.telemetry.addLine("Parking LEFT, Press Dpad Down to Confirm.");
+                        myOpMode.telemetry.addLine("Press Dpad Up to restart selection.");
                     } else if (parkingSpot==Direction.RIGHT) {
                         myOpMode.telemetry.addLine("Parking RIGHT, Press Dpad Down to Confirm.");
-                    } else {
-                        myOpMode.telemetry.addLine("Nothing selected, press Right Bumper to restart selection.");
+                        myOpMode.telemetry.addLine("Press Dpad Up to restart selection.");
+                   // } else {
+                        //myOpMode.telemetry.addLine("Nothing selected, press Right Bumper to restart selection.");
                     }
                     myOpMode.telemetry.update();
                     if (myOpMode.gamepad1.dpad_down) {
@@ -408,82 +410,83 @@ public class CyDogsSparky extends CyDogsChassis{
 
     }
 
-    public Direction askDrivePath(){
-        Direction drivePath = null;
+   // public Direction askDrivePath(){
+      //  Direction drivePath = null;
 
-        if (myOpMode.opModeInInit()) {
-            while (myOpMode.opModeInInit()) {
+      //  if (myOpMode.opModeInInit()) {
+         //   while (myOpMode.opModeInInit()) {
                 // Put loop blocks here.
-                while (drivePath==null) {
-                    myOpMode.telemetry.addLine("Driver,");
-                    myOpMode.telemetry.addLine("To drive through left, press DPAD LEFT");
+             //   while (drivePath==null) {
+                 //   myOpMode.telemetry.addLine("Driver,");
+                 //   myOpMode.telemetry.addLine("To drive through left, press DPAD LEFT");
              //       myOpMode.telemetry.addLine("To drive through center, press DPAD UP");
-                    myOpMode.telemetry.addLine("To drive through right, press DPAD RIGHT");
-                    myOpMode.telemetry.update();
-                    if (myOpMode.gamepad1.dpad_right) {
-                        drivePath = Direction.RIGHT;
-                        break;
-                    }
-                    if (myOpMode.gamepad1.dpad_left) {
-                        drivePath = Direction.LEFT;
-                        break;
-                    }
+                 //  myOpMode.telemetry.addLine("To drive through right, press DPAD RIGHT");
+                 //   myOpMode.telemetry.update();
+                 //   if (myOpMode.gamepad1.dpad_right) {
+                  //      drivePath = Direction.RIGHT;
+                    //    break;
+                  //  }
+                  //  if (myOpMode.gamepad1.dpad_left) {
+                    //   drivePath = Direction.LEFT;
+                     //   break;
+                  //  }
                 //    if (myOpMode.gamepad1.dpad_up) {
                 //        drivePath = Direction.CENTER;
                 //        break;
                  //   }
-                }
-                while (!myOpMode.gamepad1.dpad_down) {
-                    if (drivePath==Direction.LEFT) {
-                        myOpMode.telemetry.addLine("Driving under LEFT, Press Dpad Down to Confirm.");
-                    } else if (drivePath==Direction.RIGHT) {
-                        myOpMode.telemetry.addLine("Driving under RIGHT, Press Dpad Down to Confirm.");
-                    } else if (drivePath==Direction.CENTER) {
-                        myOpMode.telemetry.addLine("Driving under CENTER, Press Dpad Down to Confirm.");
-                    } else {
-                        myOpMode.telemetry.addLine("Nothing selected, press Right Bumper to restart selection.");
-                    }
-                    myOpMode.telemetry.update();
-                    if (myOpMode.gamepad1.dpad_down) {
-                        break;
-                    }
-                }
-                if (drivePath==Direction.LEFT) {
-                    myOpMode. telemetry.addLine("Driving under LEFT Confirmed.");
-                    myOpMode.telemetry.update();
-                    myOpMode.sleep(1000);
-                } else if (drivePath==Direction.RIGHT) {
-                    myOpMode. telemetry.addLine("Driving under RIGHT Confirmed.");
-                    myOpMode.telemetry.update();
-                    myOpMode.sleep(1000);
-                } else if (drivePath==Direction.CENTER) {
-                    myOpMode. telemetry.addLine("Driving under CENTER Confirmed.");
-                    myOpMode.telemetry.update();
-                    myOpMode.sleep(1000);
-                } else {
-                    myOpMode.telemetry.addLine("Driving under not selected.");
-                    myOpMode.telemetry.update();
-                }
-                if (drivePath != null) {
-                    break;
-                }
-                break;
-            }
+              //  }
+              //  while (!myOpMode.gamepad1.dpad_down) {
+                  //  if (drivePath==Direction.LEFT) {
+                   //     myOpMode.telemetry.addLine("Driving under LEFT, Press Dpad Down to Confirm.");
+                  //  } else if (drivePath==Direction.RIGHT) {
+                    //   myOpMode.telemetry.addLine("Driving under RIGHT, Press Dpad Down to Confirm.");
+                  //  } else if (drivePath==Direction.CENTER) {
+                     //   myOpMode.telemetry.addLine("Driving under CENTER, Press Dpad Down to Confirm.");
+                  //  } else {
+                      //  myOpMode.telemetry.addLine("Nothing selected, press Right Bumper to restart selection.");
+                 //  }
+                  //  myOpMode.telemetry.update();
+                   // if (myOpMode.gamepad1.dpad_down) {
+                    //    break;
+                 //  }
+              //  }
+              //  if (drivePath==Direction.LEFT) {
+                 //   myOpMode. telemetry.addLine("Driving under LEFT Confirmed.");
+                 //   myOpMode.telemetry.update();
+                //    myOpMode.sleep(1000);
+             //  } else if (drivePath==Direction.RIGHT) {
+               //     myOpMode. telemetry.addLine("Driving under RIGHT Confirmed.");
+                //   myOpMode.telemetry.update();
+                 //   myOpMode.sleep(1000);
+             //   } else if (drivePath==Direction.CENTER) {
+                //   myOpMode. telemetry.addLine("Driving under CENTER Confirmed.");
+                 //  myOpMode.telemetry.update();
+                 //   myOpMode.sleep(1000);
+              //  } else {
+                  //  myOpMode.telemetry.addLine("Driving under not selected.");
+                  //  myOpMode.telemetry.update();
+               // }
+              //  if (drivePath != null) {
+               //     break;
+              //  }
+              //  break;
+           // }
 
-        }
-        return drivePath;
+      //  }
+      //  return drivePath;
 
-    }
+   //}
 
     public void AutonPlacePurplePixel(SpikeCam.location mySpike){
         if(mySpike==SpikeCam.location.LEFT){
             RotateLeft(94,.5,StandardAutonWaitTime);
-            MoveStraight(-20,.5,200);
+            MoveStraight(-15,.5,200);
+           // MoveStraight(-20,.5,200);
             dropPurplePixel();
         } else if (mySpike==SpikeCam.location.MIDDLE) {
             MoveStraight(70,.5,StandardAutonWaitTime);
             dropPurplePixel();
-        } else {
+        } else { //Right
             RotateLeft(-90,.5,StandardAutonWaitTime);
             MoveStraight(-5,.5,200);
             dropPurplePixel();
