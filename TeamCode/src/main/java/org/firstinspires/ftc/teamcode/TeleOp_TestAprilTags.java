@@ -272,6 +272,10 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                     telemetry.addData("during while yaw:" , tagYaw);
                     telemetry.update();
                 }
+                leftFrontDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightFrontDrive.setPower(0);
+                rightBackDrive.setPower(0);
                 // sleep(300);
             }
         }
