@@ -59,12 +59,13 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class RFAprilCam {
   public static double X_OFFSET = 6.5,
-      Y_OFFSET = -4,
+      Y_OFFSET = -4.9,
       UPSAMPLE_THRESHOLD = 25,
-      NUMBER_OF_SAMPLES = 7;
-  public static int EXPOSURE_MS = 4  , GAIN = 5;
+
+      NUMBER_OF_SAMPLES = 5;
+  public static int EXPOSURE_MS = 5  , GAIN = 5;
   public static double FOCAL_LENGTH = 820;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 7;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 2;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -168,7 +169,7 @@ public class RFAprilCam {
               .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
               .build();
       tuned = false;
-      Y_OFFSET = -4;
+      Y_OFFSET = -4.9;
       X_OFFSET = 6.5;
     } else {
       aprilTag =
@@ -192,8 +193,6 @@ public class RFAprilCam {
               .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
               .build();
       tuned = true;
-      Y_OFFSET = 3.0;
-      X_OFFSET = 5.1;
     }
   }
 
@@ -250,7 +249,7 @@ public class RFAprilCam {
                 && (currentVelocity.vec().getY() < 1)
                 && abs(currentPose.getHeading() - toRadians(180)) < 10
                 && abs(currentVelocity.getHeading())
-                    < toRadians(10) /*camPose.vec().distTo(currentPose.vec())<5*/) {
+                    < toRadians(20)&& BasicRobot.time>6 /*camPose.vec().distTo(currentPose.vec())<5*/) {
               //                        if (!upsample) {
               //                            aprilTag.setDecimation((float) UPSAMPLE);
               //                        }
@@ -276,6 +275,8 @@ public class RFAprilCam {
                     + p_x
                     + ','
                     + p_y);
+            packet.put("px", p_x);
+            packet.put("py", p_y);
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
             LOGGER.log("camPoseError" + camPoseError);
             LOGGER.log("velMag" + currentVelocity.vec().norm());
