@@ -241,7 +241,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                         || (-5 <= tagBearing && tagBearing <= 5)
                         || (-5 <= tagYaw && tagYaw <= 5))
                 {
-
+                    telemetry.addLine("In the while loop");
                     // if we've been going at this for 5 seconds, break out and stop
                     if(timeAprilTagsDriveStarted<runtime.seconds()-5){
                         telemetry.addData("breaking due to runtime:" , runtime.seconds());
@@ -251,6 +251,7 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                         break;}
 
                     // drive to the tag
+                    telemetry.addLine("Calling Drive to Tag");
                     newAprilTags.DriveToTag(detectedTag);
 
                     // now that we've driven a fraction of a second, check the tag again
