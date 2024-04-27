@@ -43,7 +43,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int ArmMedium = 3600;
     public static final int ArmHigh = 6300;
     public static final int ArmRaiseBeforeElbowMovement = 3400;
-    public static final double WristForDriving = 0.47;
+    public static final double WristForDriving = 0.46;
     public static final double WristForScoring = 0.76;
     public static final double ElbowHomePosition = 0.27;
     public static final double ElbowScoringPosition = 0.54;

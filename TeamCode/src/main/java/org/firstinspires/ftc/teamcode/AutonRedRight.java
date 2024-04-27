@@ -23,10 +23,11 @@ public class AutonRedRight extends LinearOpMode {
 
         // Create the instance of sparky, initialize the SpikeCam, devices, and positions
         CyDogsSparky mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 330);
-        mySparky.initializeSpikeCam();
+
         mySparky.initializeDevices();
  //       mySparky.initializePositions();
         mySparky.initializeAprilTags();
+        mySparky.initializeSpikeCam();
 
         // Ask the initialization questions
         parkingSpot = mySparky.askParkingSpot();
