@@ -5,11 +5,22 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
 
 @Autonomous
 public class AutonRedRightNewAprilTagCode extends LinearOpMode {
     SpikeCam.location mySpikeLocation;
-
+    private int lookingForTagNumber = 1;
+    private AprilTagDetection detectedTag = null;
+    CyDogsAprilTags newAprilTags;
+    double tagRange = 100;
+    double tagBearing = 100;
+    double tagYaw = 100;
+    double desiredRange = 8.25;
+    double timeAprilTagsDriveStarted = 0;
+    private CyDogsSparky mySparky;
+    private ElapsedTime runtime = new ElapsedTime();
     // This is a SHORT side Auton
     @Override
     public void runOpMode() {
@@ -22,14 +33,16 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
         CyDogsChassis.Direction parkingSpot = CyDogsChassis.Direction.LEFT;
 
         // Create the instance of sparky, initialize the SpikeCam, devices, and positions
-        CyDogsSparky mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 330);
+        mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 330);
         mySparky.initializeSpikeCam();
         mySparky.initializeDevices();
  //       mySparky.initializePositions();
  //       mySparky.initializeAprilTags();
 
-        CyDogsAprilTags newAprilTags = new CyDogsAprilTags(this);
-        newAprilTags.Initialize();
+        newAprilTags = new CyDogsAprilTags(this);
+
+
+     //   newAprilTags.Initialize();
 
         // Ask the initialization questions
         parkingSpot = mySparky.askParkingSpot();
@@ -87,8 +100,11 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
              }
 
 
-        //    mySparky.AdjustToAprilTag(mySpikeLocation,"RedRight");
-            newAprilTags.DriveToAprilTag(mySparky.getAprilTagTarget(mySpikeLocation, mySparky.myAlliance));
+
+            newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
+            DriveToAprilTag();
+            mySparky.ResetWheelConfig();
+
             mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.MoveStraight(-50,.5,300);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
@@ -100,6 +116,48 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
     }
 
 
+    private void DriveToAprilTag()
+    {
+        lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
+        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+
+        if(detectedTag!=null) {
+            timeAprilTagsDriveStarted = runtime.seconds();
+            telemetry.addData("Driving to tag!", detectedTag.id);
+            tagRange = detectedTag.ftcPose.range;
+            tagBearing = detectedTag.ftcPose.bearing;
+            tagYaw = detectedTag.ftcPose.yaw;
+
+            // while we're not yet there, keep driving and updating where the tag is
+            while (
+                    ((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
+                    || (-5 <= tagBearing && tagBearing <= 5)
+                    || (-5 <= tagYaw && tagYaw <= 5))
+
+            {
+
+                // if we've been going at this for 5 seconds, break out and stop
+                if(timeAprilTagsDriveStarted<runtime.seconds()-5){break;}
+
+                // drive to the tag
+                newAprilTags.DriveToTag(detectedTag);
+
+                // now that we've driven a fraction of a second, check the tag again
+                detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+
+                // if something went wrong and we can't see the tag anymore, give up
+                if(detectedTag==null){break;}
+
+                // get new tag positioning
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+            }
+
+            // sleep(300);
+        }
+
+    }
 
 
 }

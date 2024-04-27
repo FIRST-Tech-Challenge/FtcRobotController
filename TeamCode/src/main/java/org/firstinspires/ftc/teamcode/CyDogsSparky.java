@@ -43,10 +43,10 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int ArmMedium = 3600;
     public static final int ArmHigh = 6300;
     public static final int ArmRaiseBeforeElbowMovement = 3400;
-    public static final double WristForDriving = 0.47;
+    public static final double WristForDriving = 0.46;
     public static final double WristForScoring = 0.76;
-    public static final double ElbowHomePosition = 0.233;
-    public static final double ElbowScoringPosition = 0.5;
+    public static final double ElbowHomePosition = 0.27;
+    public static final double ElbowScoringPosition = 0.54;
     public static final double FingerLeftOpen = 0.4;
     public static final double FingerLeftClosed = 0.5;
     public static final double FingerRightOpen = 0.4;
@@ -197,9 +197,9 @@ public class CyDogsSparky extends CyDogsChassis{
         myOpMode.sleep(2000);
         openFingers();
         myOpMode.sleep(400);
-
-
     }
+
+
     public void returnArmFromScoring(){
         raiseArmToScore(ArmMedium);
         myOpMode.sleep(1700);

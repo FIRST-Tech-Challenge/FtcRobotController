@@ -29,11 +29,22 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -64,7 +75,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp
-public class TeleOp_TestJava extends LinearOpMode {
+public class TeleOp_TestAprilTags extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -72,21 +83,31 @@ public class TeleOp_TestJava extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
-    private CyDogsSparky mySparky;
+    private int lookingForTagNumber = 1;
+    private AprilTagDetection detectedTag = null;
+    CyDogsAprilTags newAprilTags;
+    double tagRange = 100;
+    double tagBearing = 100;
+    double tagYaw = 100;
+    double desiredRange = 8.25;
+    double timeAprilTagsDriveStarted = 0;
     @Override
     public void runOpMode() {
 
-        mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 300);
 
 
         initializeWheels();
         // Wait for the game to start (driver presses PLAY)
+        newAprilTags = new CyDogsAprilTags(this);
+        newAprilTags.Initialize(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
+
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
         runtime.reset();
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -94,6 +115,8 @@ public class TeleOp_TestJava extends LinearOpMode {
             manageDriverButtons();
             manageDriverCrossPad();
             manageDriverTriggersAndBumpers();
+
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
             telemetry.update();
         }
     }
@@ -154,9 +177,9 @@ public class TeleOp_TestJava extends LinearOpMode {
         rightBackDrive.setPower(rightBackPower);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+      //  telemetry.addData("Status", "Run Time: " + runtime.toString());
+       // telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+       // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
 
     }
 
@@ -187,20 +210,58 @@ public class TeleOp_TestJava extends LinearOpMode {
     private void manageDriverButtons(){
         if(gamepad1.a)
         {
-            telemetry.addLine("Driver A/cross is pushed");
 
+            lookingForTagNumber-=1;
+            telemetry.addData("Looking for April Tag:",lookingForTagNumber);
+            sleep(300);
         }
         if(gamepad1.b)
         {
-            telemetry.addLine("Driver B/circle is pushed");
+            if(detectedTag!=null) {
+                timeAprilTagsDriveStarted = runtime.seconds();
+                telemetry.addData("Driving to tag!", detectedTag.id);
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+
+                // while we're not yet there, keep driving and updating where the tag is
+                while (
+                ((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
+                        || (-5 <= tagBearing && tagBearing <= 5)
+                        || (-5 <= tagYaw && tagYaw <= 5))
+                {
+
+                    // if we've been going at this for 5 seconds, break out and stop
+                    if(timeAprilTagsDriveStarted<runtime.seconds()-5){break;}
+
+                    // drive to the tag
+                    newAprilTags.DriveToTag(detectedTag);
+
+                    // now that we've driven a fraction of a second, check the tag again
+                    detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+
+                    // if something went wrong and we can't see the tag anymore, give up
+                    if(detectedTag==null){break;}
+
+                    // get new tag positioning
+                    tagRange = detectedTag.ftcPose.range;
+                    tagBearing = detectedTag.ftcPose.bearing;
+                    tagYaw = detectedTag.ftcPose.yaw;
+                }
+                // sleep(300);
+            }
         }
         if(gamepad1.x)
         {
-            telemetry.addLine("Driver X/square is pushed");
+
+        //    telemetry.addLine("Searching for tags!");
         }
         if(gamepad1.y)
         {
-            telemetry.addLine("Driver Y/triangle is pushed");
+
+            lookingForTagNumber+=1;
+            telemetry.addData("Looking for April Tag:",lookingForTagNumber);
+            sleep(300);
         }
     }
 
@@ -242,4 +303,6 @@ public class TeleOp_TestJava extends LinearOpMode {
         }
 
     }
+
+
 }

@@ -23,10 +23,11 @@ public class AutonRedRight extends LinearOpMode {
 
         // Create the instance of sparky, initialize the SpikeCam, devices, and positions
         CyDogsSparky mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 330);
-        mySparky.initializeSpikeCam();
+
         mySparky.initializeDevices();
  //       mySparky.initializePositions();
         mySparky.initializeAprilTags();
+        mySparky.initializeSpikeCam();
 
         // Ask the initialization questions
         parkingSpot = mySparky.askParkingSpot();
@@ -42,7 +43,7 @@ public class AutonRedRight extends LinearOpMode {
 
             // Get to standard position before placing purple pixel
             mySparky.MoveStraight(-300, .5, mySparky.StandardAutonWaitTime);
-            mySparky.StrafeRight(90,0.5, mySparky.StandardAutonWaitTime);
+            mySparky.StrafeRight(90,.5, mySparky.StandardAutonWaitTime);
             mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
 
             // Place purple pixel and back away from it
