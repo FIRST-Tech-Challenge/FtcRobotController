@@ -176,17 +176,17 @@ public class CyDogsSparky extends CyDogsChassis{
         //   compensates for if the motor didn't get exactly to the right spot.
         if (ArmLift.getCurrentPosition() > ArmRaiseBeforeElbowMovement-20) {
             if (!isElbowOpen) {
-                myOpMode.telemetry.addData("Elbow is not open, trying to open",ArmLift.getCurrentPosition());
-                myOpMode.telemetry.update();
-                myOpMode.sleep(3000);
+             //   myOpMode.telemetry.addData("Elbow is not open, trying to open",ArmLift.getCurrentPosition());
+             //   myOpMode.telemetry.update();
+             //   myOpMode.sleep(3000);
 
                 Elbow.setPosition(ElbowScoringPosition);
                 Wrist.setPosition(WristForScoring);
                 isElbowOpen = true;
             } else {
-                myOpMode.telemetry.addData("Elbow is open, trying to close",ArmLift.getCurrentPosition());
-                myOpMode.telemetry.update();
-                myOpMode.sleep(3000);
+             //   myOpMode.telemetry.addData("Elbow is open, trying to close",ArmLift.getCurrentPosition());
+              //  myOpMode.telemetry.update();
+              //  myOpMode.sleep(3000);
 
                 Wrist.setPosition(WristForDriving);
                 Elbow.setPosition(ElbowHomePosition);
