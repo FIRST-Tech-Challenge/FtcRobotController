@@ -105,7 +105,7 @@ public class CyDogsSparky extends CyDogsChassis{
         ArmLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ArmLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmLift.setDirection(DcMotor.Direction.FORWARD);
-        ArmLift.setPower(0.8);
+        ArmLift.setPower(0.9);
         ArmLift.setTargetPosition(0);
         ArmLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // Initialize Finger
@@ -176,10 +176,18 @@ public class CyDogsSparky extends CyDogsChassis{
         //   compensates for if the motor didn't get exactly to the right spot.
         if (ArmLift.getCurrentPosition() > ArmRaiseBeforeElbowMovement-20) {
             if (!isElbowOpen) {
+                myOpMode.telemetry.addData("Elbow is not open, trying to open",ArmLift.getCurrentPosition());
+                myOpMode.telemetry.update();
+                myOpMode.sleep(3000);
+
                 Elbow.setPosition(ElbowScoringPosition);
                 Wrist.setPosition(WristForScoring);
                 isElbowOpen = true;
             } else {
+                myOpMode.telemetry.addData("Elbow is open, trying to close",ArmLift.getCurrentPosition());
+                myOpMode.telemetry.update();
+                myOpMode.sleep(3000);
+
                 Wrist.setPosition(WristForDriving);
                 Elbow.setPosition(ElbowHomePosition);
                 FingerLeft.setPosition(FingerLeftOpen);
