@@ -40,7 +40,7 @@ public class CyDogsSparky extends CyDogsChassis{
     //   variable names so that we only have them stored in one place in case we need to change them.
     public static final int ArmHomePosition = 0;
     public static final int ArmLow = 1800;
-    public static final int ArmMedium = 3600;
+    public static final int ArmMedium = 3900;
     public static final int ArmHigh = 6300;
     public static final int ArmRaiseBeforeElbowMovement = 3400;
     public static final double WristForDriving = 0.46;
@@ -488,7 +488,7 @@ public class CyDogsSparky extends CyDogsChassis{
             dropPurplePixel();
         } else { //Right
             RotateLeft(-90,.5,StandardAutonWaitTime);
-            MoveStraight(-5,.5,200);
+            MoveStraight(-164,.5,200);
             dropPurplePixel();
         }
     }

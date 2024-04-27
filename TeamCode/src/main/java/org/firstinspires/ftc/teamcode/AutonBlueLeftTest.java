@@ -56,7 +56,7 @@ SpikeCam.location mySpikeLocation;
                 mySparky.AutonPlacePurplePixel(mySpikeLocation);
                 if (mySpikeLocation == SpikeCam.location.LEFT) {
                     mySparky.MoveStraight(80, .5, mySparky.StandardAutonWaitTime);
-                    mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                    mySparky.raiseArmToScore(CyDogsSparky.ArmMedium);
                     sleep(400);
                 } else {
                     mySparky.MoveStraight(30, .5, mySparky.StandardAutonWaitTime);
@@ -76,15 +76,15 @@ SpikeCam.location mySpikeLocation;
                     mySparky.RotateRight(92, .5, mySparky.StandardAutonWaitTime);
                     // We're 50mm further away from start position
                     mySparky.StrafeLeft(-50, .5, mySparky.StandardAutonWaitTime);
-                    mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                    mySparky.raiseArmToScore(CyDogsSparky.ArmMedium);
                     mySparky.MoveStraight(500, .5, 2000);
-                    ;
+
                 } else {  //RIGHT
                     //Already facing the correct way
                     //We're 'BackUpDistanceFromSpike' closer to scoreboard
                     mySparky.RotateLeft(3, .5, mySparky.StandardAutonWaitTime);
                     mySparky.StrafeLeft(40, .5, mySparky.StandardAutonWaitTime);
-                    mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                    mySparky.raiseArmToScore(CyDogsSparky.ArmMedium);
                     mySparky.MoveStraight(675, .5, 2000);
                     // I took 200 off the above to be far enough away to read april tags
                 }
