@@ -399,11 +399,23 @@ public class CyDogsAprilTags
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
 
+        myOpMode.telemetry.addData("max power for april tags is:", max);
+        myOpMode.telemetry.addData("left front power:", leftFrontPower);
+        myOpMode.telemetry.addData("right front power:", rightFrontPower);
+        myOpMode.telemetry.addData("left back power:", leftBackPower);
+        myOpMode.telemetry.addData("right back power:", rightBackPower);
+
+
         if (max > 1.0) {
             leftFrontPower /= max;
             rightFrontPower /= max;
             leftBackPower /= max;
             rightBackPower /= max;
+        } else if (max < 0.05) {
+            leftFrontPower *= 8;
+            rightFrontPower *= 8;
+            leftBackPower *= 8;
+            rightBackPower *= 8;
         } else if (max < 0.1) {
             leftFrontPower *= 5;
             rightFrontPower *= 5;
@@ -415,6 +427,10 @@ public class CyDogsAprilTags
             leftBackPower *= 3;
             rightBackPower *= 3;
         }
+        myOpMode.telemetry.addData("adjusted left front power:", leftFrontPower);
+        myOpMode.telemetry.addData("adjusted right front power:", rightFrontPower);
+        myOpMode.telemetry.addData("adjusted left back power:", leftBackPower);
+        myOpMode.telemetry.addData("adjusted right back power:", rightBackPower);
 
 
         // Send powers to the wheels.
