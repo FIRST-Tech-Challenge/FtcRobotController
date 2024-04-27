@@ -180,16 +180,16 @@ public class CyDogsSparky extends CyDogsChassis{
                 myOpMode.telemetry.update();
                 myOpMode.sleep(3000);
 
-                Elbow.setPosition(ElbowScoringPosition);
-                Wrist.setPosition(WristForScoring);
+                //Elbow.setPosition(ElbowScoringPosition);
+                //Wrist.setPosition(WristForScoring);
                 isElbowOpen = true;
             } else {
                 myOpMode.telemetry.addData("Elbow is open, trying to close",ArmLift.getCurrentPosition());
                 myOpMode.telemetry.update();
                 myOpMode.sleep(3000);
 
-                Wrist.setPosition(WristForDriving);
-                Elbow.setPosition(ElbowHomePosition);
+                //Wrist.setPosition(WristForDriving);
+                //Elbow.setPosition(ElbowHomePosition);
                 FingerLeft.setPosition(FingerLeftOpen);
                 FingerRight.setPosition(FingerRightOpen);
                 isElbowOpen = false;
