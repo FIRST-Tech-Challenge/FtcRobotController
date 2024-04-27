@@ -98,7 +98,7 @@ public class Odometry {
 
         double deltaDistanceMiddle = (deltaLeftDistance + deltaRightDistance) / 2;
         double deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
-        double deltaBackDistance = ticksToMM(backTicks - prevBackTicks) - BACK_DISTANCE_TO_MID * deltaTheta;
+        double deltaBackDistance = ticksToMM(backTicks - prevBackTicks);
         return new Position(deltaDistanceMiddle, deltaBackDistance, deltaTheta);
     }
 
@@ -109,17 +109,17 @@ public class Odometry {
 
         Log.d("odometry", "linearDelta "+ relativeDelta.toString());
         double forwardRadius = relativeDelta.x / relativeDelta.theta;
-        double strafeRadius = countBack() / relativeDelta.theta;
+        double strafeRadius = relativeDelta.y / relativeDelta.theta;
 
         double relDeltaX =
                 forwardRadius * Math.sin(relativeDelta.theta) + strafeRadius * (1 - Math.cos(relativeDelta.theta));
-        //strafeRadius * (1 -
-        // Math.cos
-        // (relativeDelta
-        // .theta));
+
         double relDeltaY =
                 strafeRadius * Math.sin(relativeDelta.theta) + forwardRadius * (1 - Math.cos(relativeDelta.theta));
 
+        jose.addData("strafeRadius", strafeRadius);
+        jose.addData("cos strafe theta hamburger", (1 - Math.cos(relativeDelta.theta)));
+        jose.addData("sin y axis hamburger", Math.sin(relativeDelta.theta));
         Position arcDelta = new Position(relDeltaX, relDeltaY, relativeDelta.theta);
         Log.d("odometry", "arcDelta "+ arcDelta.toString());
         return arcDelta;
