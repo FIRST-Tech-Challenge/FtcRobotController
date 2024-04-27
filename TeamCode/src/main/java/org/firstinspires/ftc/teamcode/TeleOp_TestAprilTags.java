@@ -232,7 +232,10 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
                 {
 
                     // if we've been going at this for 5 seconds, break out and stop
-                    if(timeAprilTagsDriveStarted<runtime.seconds()-5){break;}
+                    if(timeAprilTagsDriveStarted<runtime.seconds()-5){
+                        telemetry.addData("breaking due to runtime:" , runtime.seconds());
+                        telemetry.addData("breaking due to runtime:" , timeAprilTagsDriveStarted);
+                        break;}
 
                     // drive to the tag
                     newAprilTags.DriveToTag(detectedTag);

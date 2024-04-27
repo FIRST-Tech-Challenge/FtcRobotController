@@ -405,15 +405,15 @@ public class CyDogsAprilTags
             leftBackPower /= max;
             rightBackPower /= max;
         } else if (max < 0.1) {
+            leftFrontPower *= 5;
+            rightFrontPower *= 5;
+            leftBackPower *= 5;
+            rightBackPower *= 5;
+        } else if (max < 0.2) {
             leftFrontPower *= 3;
             rightFrontPower *= 3;
             leftBackPower *= 3;
             rightBackPower *= 3;
-        } else if (max < 0.2) {
-            leftFrontPower *= 2;
-            rightFrontPower *= 2;
-            leftBackPower *= 2;
-            rightBackPower *= 2;
         }
 
 
