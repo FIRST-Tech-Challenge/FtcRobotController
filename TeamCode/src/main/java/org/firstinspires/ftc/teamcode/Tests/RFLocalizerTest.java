@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import static java.lang.Math.toRadians;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -27,6 +29,7 @@ public class RFLocalizerTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
+        drive.setPoseEstimate(new Pose2d(0,0,toRadians(-90)));
         waitForStart();
         while (opModeIsActive()) {
             robot.update();

@@ -5,6 +5,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.localization.Localizer
 import com.acmerobotics.roadrunner.util.Angle
+import com.acmerobotics.roadrunner.util.Angle.norm
+import com.acmerobotics.roadrunner.util.Angle.normDelta
 import com.acmerobotics.roadrunner.util.epsilonEquals
 import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import org.apache.commons.math3.linear.DecompositionSolver
@@ -16,6 +18,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.lastWheelPositions
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset
+import java.lang.Math.toRadians
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -31,8 +35,10 @@ abstract class RFThreeTrackingWheelLocalizer(
         get() = currentPose
         set(value) {
             lastWheelPositions = emptyList()
-//            poseHeadOffset = value.heading- currentPose.heading
-            currentPose = value
+            if(abs(normDelta(value.heading-currentPose.heading))>toRadians(10.0)) {
+                poseHeadOffset = normDelta(value.heading-currentPose.heading)
+            }
+            currentPose = Pose2d(value.x,value.y,norm(value.heading))
         }
     override var poseVelocity: Pose2d? = null
     private val forwardSolver: DecompositionSolver

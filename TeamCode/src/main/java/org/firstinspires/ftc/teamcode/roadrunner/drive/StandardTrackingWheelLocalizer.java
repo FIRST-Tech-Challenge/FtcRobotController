@@ -49,6 +49,7 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     public static double X_MULTIPLIER = 1/*107.5/119*/;
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 1.3779/2; // in
+    public static double BUHTIPLIER=1.00;
     public static double wheelrad2 = 1;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
     //short clockwise, 12.27, short counter clock wise, 12.29
@@ -99,7 +100,7 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
 //        currentPose = new Pose2d(currentPose.getX(), currentPose.getY(), Angle.norm(-encoderTicksToInches(leftEncoder.getCurrentPosition()-rightEncoder.getCurrentPosition())/(LATERAL_DISTANCE)+poseHeadOffset));
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCurrentPosition()),
-                encoderTicksToInches(rightEncoder.getCurrentPosition()),
+                encoderTicksToInches(rightEncoder.getCurrentPosition()*BUHTIPLIER),
                 encoderTicksToInches(frontEncoder.getCurrentPosition())*2*0.966/1.3779
         );
     }

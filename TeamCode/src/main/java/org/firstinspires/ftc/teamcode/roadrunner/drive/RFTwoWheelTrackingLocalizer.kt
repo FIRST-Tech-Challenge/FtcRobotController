@@ -26,6 +26,7 @@ abstract class RFTwoTrackingWheelLocalizer(
         set(value) {
             poseHeadOffset = value.heading-currentPose.heading
             currentPose = value
+            lastHeading = currentPose.heading
 
         }
     override var poseVelocity: Pose2d? = null
