@@ -237,9 +237,9 @@ public class TeleOp_TestAprilTags extends LinearOpMode {
 
                 // while we're not yet there, keep driving and updating where the tag is
                 while (
-                ((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
-                        || (-5 <= tagBearing && tagBearing <= 5)
-                        || (-5 <= tagYaw && tagYaw <= 5))
+                !((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
+                        || !(-5 <= tagBearing && tagBearing <= 5)
+                        || !(-5 <= tagYaw && tagYaw <= 5))
                 {
                     telemetry.addLine("In the while loop");
                     // if we've been going at this for 5 seconds, break out and stop
