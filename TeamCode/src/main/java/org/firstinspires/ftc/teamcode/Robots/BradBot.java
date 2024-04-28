@@ -111,7 +111,7 @@ public class BradBot extends BasicRobot {
       launcher = new Launcher();
       lift = new Lift();
       //    preloader = new Preloader();
-      roadrun = new SampleMecanumDrive(p_op.hardwareMap, Tracker.TrackType.ROADRUN_IMU_LEFT);
+      roadrun = new SampleMecanumDrive(p_op.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
       twrist = new Twrist();
       ultras = new Ultrasonics();
       wrist = new Wrist();
@@ -951,13 +951,13 @@ public class BradBot extends BasicRobot {
     //    LOGGER.log("updating each component");
     super.update();
     arm.update();
-    //    if (!isTeleop) {
-    //      if(intake.getIntakePower()==0&&Magazine.pixels==2){
-    //        Magazine.pixels =0;
-    //        intaked=false;
-    //      }
-    ////      cv.update();
-    //    }
+        if (!isTeleop) {
+//          if(intake.getIntakePower()==0&&Magazine.pixels==2){
+//            Magazine.pixels =0;
+//            intaked=false;
+//          }
+          cv.update();
+        }
     if (!isTeleop && abs(intake.getIntakePower()) > 0) {
       magazine.updateSensors();
     }

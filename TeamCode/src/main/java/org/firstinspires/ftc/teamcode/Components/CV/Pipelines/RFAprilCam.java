@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.ceil;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
@@ -58,10 +59,10 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class RFAprilCam {
   public static double X_OFFSET = 6.5,
-      Y_OFFSET = -4.75,
+      Y_OFFSET = -4,
       UPSAMPLE_THRESHOLD = 25,
       NUMBER_OF_SAMPLES = 7;
-  public static int EXPOSURE_MS = 3, GAIN = 5;
+  public static int EXPOSURE_MS = 4  , GAIN = 5;
   public static double FOCAL_LENGTH = 820;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 7;
   boolean tuned = false;
@@ -167,7 +168,7 @@ public class RFAprilCam {
               .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
               .build();
       tuned = false;
-      Y_OFFSET = -4.75;
+      Y_OFFSET = -4;
       X_OFFSET = 6.5;
     } else {
       aprilTag =
@@ -225,58 +226,61 @@ public class RFAprilCam {
         double time = aprilTag.getPerTagAvgPoseSolveTime();
         AprilTagPoseFtc poseFtc = detection.ftcPose;
         if (poseFtc != null) {
-          double p_x = poseFtc.y, p_y = -poseFtc.x;
-          int p_ind = detection.id;
-          AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
-          VectorF values = tagData.fieldPosition;
-          Vector2d pos = new Vector2d(values.get(0), values.get(1));
-          Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
-          //          offset = offset.rotated(currentPose.getHeading());
-          Pose2d camPose =
-              new Pose2d(
-                  pos.plus(
-                      new Vector2d(
-                              -(p_x) * directions[p_ind][0] - offset.getX(),
-                              -(p_y) * directions[p_ind][1] - offset.getY())
-                          .rotated(currentPose.getHeading() + PI)),
-                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 + toRadians(5.2) + PI);
-          if (isLogi) {
-            camPose =
-                new Pose2d(camPose.getX(), camPose.getY(), camPose.getHeading() - toRadians(8.1));
-          }
-          if (poseFtc.range < UPSAMPLE_THRESHOLD
-              && (!isLogi
-                  || currentVelocity.vec().norm()
-                      < 1) /*camPose.vec().distTo(currentPose.vec())<5*/) {
-            //                        if (!upsample) {
-            //                            aprilTag.setDecimation((float) UPSAMPLE);
+          if (detection.id == 5) {
+            double p_x = poseFtc.y, p_y = -poseFtc.x;
+            int p_ind = detection.id;
+            AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
+            VectorF values = tagData.fieldPosition;
+            Vector2d pos = new Vector2d(values.get(0), values.get(1));
+            Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
+            //          offset = offset.rotated(currentPose.getHeading());
+            Pose2d camPose =
+                new Pose2d(
+                    pos.plus(
+                        new Vector2d(
+                                -(p_x) * directions[p_ind][0] - offset.getX(),
+                                -(p_y) * directions[p_ind][1] - offset.getY())
+                            .rotated(currentPose.getHeading() + PI)),
+                    -directions[p_ind][0] * poseFtc.yaw * PI / 180 + toRadians(5.2) + PI);
+            if (isLogi) {
+              camPose =
+                  new Pose2d(camPose.getX(), camPose.getY(), camPose.getHeading() - toRadians(8.1));
+            }
+            if (poseFtc.range < UPSAMPLE_THRESHOLD
+                && (currentVelocity.vec().getY() < 1)
+                && abs(currentPose.getHeading() - toRadians(180)) < 10
+                && abs(currentVelocity.getHeading())
+                    < toRadians(10) /*camPose.vec().distTo(currentPose.vec())<5*/) {
+              //                        if (!upsample) {
+              //                            aprilTag.setDecimation((float) UPSAMPLE);
+              //                        }
+              //                        upsample = true;
+              camPoseError = camPoseError.plus(camPose).minus(currentPose);
+              poseCount++;
+            }
+            //                    } else {
+            //                        if (upsample) {
+            //                            aprilTag.setDecimation((float) DOWNSAMPLE);
             //                        }
-            //                        upsample = true;
-            camPoseError = camPoseError.plus(camPose).minus(currentPose);
-            poseCount++;
+            //                        upsample = false;
+            //                    }
+            LOGGER.setLogLevel(RFLogger.Severity.FINER);
+            LOGGER.log(
+                "id: "
+                    + p_ind
+                    + " aprilPos = "
+                    + camPose
+                    + ", dist:"
+                    + poseFtc.range
+                    + " p_x, p_y: "
+                    + p_x
+                    + ','
+                    + p_y);
+            LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
+            LOGGER.log("camPoseError" + camPoseError);
+            LOGGER.log("velMag" + currentVelocity.vec().norm());
+            LOGGER.log("time" + time);
           }
-          //                    } else {
-          //                        if (upsample) {
-          //                            aprilTag.setDecimation((float) DOWNSAMPLE);
-          //                        }
-          //                        upsample = false;
-          //                    }
-          LOGGER.setLogLevel(RFLogger.Severity.FINER);
-          LOGGER.log(
-              "id: "
-                  + p_ind
-                  + " aprilPos = "
-                  + camPose
-                  + ", dist:"
-                  + poseFtc.range
-                  + " p_x, p_y: "
-                  + p_x
-                  + ','
-                  + p_y);
-          LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
-          LOGGER.log("camPoseError" + camPoseError);
-          LOGGER.log("velMag" + currentVelocity.vec().norm());
-          LOGGER.log("time" + time);
         }
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
           LOGGER.log("avgAprilError" + camPoseError.div(poseCount));

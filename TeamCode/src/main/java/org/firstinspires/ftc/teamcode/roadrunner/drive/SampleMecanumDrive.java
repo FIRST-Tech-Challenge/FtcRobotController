@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -14,6 +16,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.imuHeadoffset;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset;
 
 import androidx.annotation.NonNull;
@@ -35,6 +38,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.arcrobotics.ftclib.drivebase.RobotDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -51,6 +55,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
@@ -75,10 +82,11 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static final PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0.0, 0.5);
-    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0.1, 0.5);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0.0, 0.5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
 
-    public static final double LATERAL_MULTIPLIER = 1.3;
+    public static final double LATERAL_MULTIPLIER = 1.7;
+    public static double imuMultiply = 1.022, IMU_INTERVAL = 0.2;
 
     public static final double VX_WEIGHT = 1;
     public static final double VY_WEIGHT = 1;
@@ -94,7 +102,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private IMU imu;
+    private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
     private Pose2d endPose = new Pose2d(0, 0, 0);
 
@@ -102,6 +110,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private final double BUTTERED_POSITION = 0.6;
     private final double INIT_POSITION = 1.0;
+
+    double lastImuTime = -100,lastImu = -100;
+    double lastImuPos = 0, lastImuVel=0;
 
     private final double FIELD_CENTRIC_DOWNSCALE = 0.3;
     public static double INITIAL1 = 0.005, INITIAL2 = 0.005,INITIAL3 = .01, INITIAL4 = 0.9;
@@ -201,11 +212,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
 
-        imu = hardwareMap.get(IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        imu.initialize(parameters);
 
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        imu.resetYaw();
 
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
@@ -235,12 +247,19 @@ public class SampleMecanumDrive extends MecanumDrive {
     drive =
         new org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive(
             frontLeft, frontRight, backLeft, backRight);
-    currentPose = new Pose2d(0,0,0);
-    poseHeadOffset = 0;
+    update();
+    setPoseEstimate(new Pose2d(0,0,0));
 
     update();
+    setPoseEstimate(new Pose2d(0,0,0));
 
+        lastImuTime = -100;lastImu = -100;
+    poseHeadOffset=0;
+    imuHeadoffset = 0;
 //
+    }
+    public void resetIMUTime(){
+        lastImuTime = -100;
     }
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
@@ -343,11 +362,20 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void update() {
-//        setPoseEstimate(currentPose);
-        logger.log("/RobotLogs/GeneralRobot", "curPose"+currentPose);
-        updatePoseEstimate();
+    //        setPoseEstimate(currentPose);
 
-        logger.log("/RobotLogs/GeneralRobot", "curPose2"+currentPose);
+//        logger.log("/RobotLogs/GeneralRobot", "curPose"+currentPose);
+        updatePoseEstimate();
+        packet.put("lastImu", lastImuTime);
+        if (time - lastImuTime > IMU_INTERVAL) {
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+            lastImuPos = angles.firstAngle;
+            lastImuTime = time;
+            packet.put("imu", lastImuPos);
+            packet.put("offset", poseHeadOffset);
+           currentPose = new Pose2d(currentPose.getX(), currentPose.getY(), lastImuPos*imuMultiply+poseHeadOffset);
+        }
+//        logger.log("/RobotLogs/GeneralRobot", "curPose2"+currentPose);
 
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
@@ -489,7 +517,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)+poseHeadOffset;
+//        if(time-lastImuTime>0.012){
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        lastImuPos=angles.firstAngle;
+        lastImuTime=time;
+        return lastImuPos+poseHeadOffset;
+//        }else{
+//            return lastImuPos+poseHeadOffset;
+//        }
     }
 
     @Override
@@ -498,8 +533,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         // and -xRotationRate in place of zRotationRate (yRotationRate behaves as
         // expected). This bug does NOT affect orientation.
         //
-        // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+        // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details
+//        if(time-lastImu>0.012){
+//            lastImu=time;
+            lastImuVel=(double) imu.getAngularVelocity().zRotationRate;
+            return lastImuVel;
+//        }else{
+//            return lastImuVel;
+//        }
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
