@@ -105,6 +105,8 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
             DriveToAprilTag();
             mySparky.ResetWheelConfig();
 
+            if(detectedTag!=null) { FinishAprilTagMoves();}
+
             mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.MoveStraight(-50,.5,300);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
@@ -130,14 +132,13 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
             // while we're not yet there, keep driving and updating where the tag is
             while (
-                    ((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
-                    || (-5 <= tagBearing && tagBearing <= 5)
-                    || (-5 <= tagYaw && tagYaw <= 5))
-
+                    !((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
+                            || !(-5 <= tagBearing && tagBearing <= 5)
+                            || !(-5 <= tagYaw && tagYaw <= 5))
             {
 
                 // if we've been going at this for 5 seconds, break out and stop
-                if(timeAprilTagsDriveStarted<runtime.seconds()-5){break;}
+                if(timeAprilTagsDriveStarted<runtime.seconds()-3){break;}
 
                 // drive to the tag
                 newAprilTags.DriveToTag(detectedTag);
@@ -156,6 +157,14 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
             // sleep(300);
         }
+
+    }
+
+    private void FinishAprilTagMoves()
+    {
+        mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,300);
+        mySparky.StrafeLeft((int)detectedTag.ftcPose.bearing, 300);
+        mySparky.MoveStraight((int)detectedTag.ftcPose.range-desiredRange,300);
 
     }
 
