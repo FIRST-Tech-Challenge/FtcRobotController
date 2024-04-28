@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -38,11 +39,14 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public boolean checkAlliance() {
+        LOGGER.log("ULTRA: Attempted to detect");
         backRight.setLine(allianceLine);
 //        op.telemetry.addData("dist", backRight.getDist());
 //        frontRight.setLine(allianceLine);
 //        op.telemetry.addData("detected2", backRight.isDetected());
-        return backRight.isDetected();
+        boolean det = backRight.isDetected();
+        LOGGER.log("ULTRA: Detected: " + det);
+        return det;
 //                && frontRight.isDetected();
     }
     /**

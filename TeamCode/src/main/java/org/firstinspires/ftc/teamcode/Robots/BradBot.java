@@ -716,7 +716,7 @@ public class BradBot extends BasicRobot {
       if (queuer.queue(false, (!roadrun.isBusy()), isOptional)) {
         if (!roadrun.isBusy() && !queuer.isExecuted()) {
           roadrun.followTrajectorySequenceAsync(p_traj);
-          LOGGER.log("going from: " + p_traj.start() + " to: " + p_traj.end());
+          LOGGER.log("ULTRA: start: " + p_traj.start() + " end: " + p_traj.end());
         }
       }
     }
@@ -734,6 +734,7 @@ public class BradBot extends BasicRobot {
         brokenFollowing = true;
         roadrun.breakFollowing();
         roadrun.setMotorPowers(0, 0, 0, 0);
+        LOGGER.log("ULTRA: STOPPED");
       }
     }
     //    }
