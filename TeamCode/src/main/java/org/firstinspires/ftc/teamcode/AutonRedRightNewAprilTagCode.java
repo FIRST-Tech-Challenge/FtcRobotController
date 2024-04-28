@@ -162,9 +162,9 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
     private void FinishAprilTagMoves()
     {
-        mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,300);
-        mySparky.StrafeLeft((int)detectedTag.ftcPose.bearing, 300);
-        mySparky.MoveStraight((int)detectedTag.ftcPose.range-desiredRange,300);
+        mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,.4, 300);
+        mySparky.StrafeLeft((int)detectedTag.ftcPose.bearing, .4, 300);
+        mySparky.MoveStraight((int)detectedTag.ftcPose.range-desiredRange,.4, 300);
 
     }
 
