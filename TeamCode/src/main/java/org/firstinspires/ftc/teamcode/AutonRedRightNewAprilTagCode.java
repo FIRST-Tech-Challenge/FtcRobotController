@@ -106,7 +106,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
 
 
-            DriveToAprilTag();
+            ManageDriveToAprilTag();
             sleep(100);
             mySparky.ResetWheelConfig();
             sleep(50);
@@ -123,7 +123,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
     }
 
 
-    private void DriveToAprilTag()
+    private void ManageDriveToAprilTag()
     {
         lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
         detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
@@ -141,6 +141,11 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                             || !(-5 <= tagBearing && tagBearing <= 5)
                             || !(-5 <= tagYaw && tagYaw <= 5))
             {
+                telemetry.addLine("In the while loop");
+                telemetry.addData("during while range:" , tagRange);
+                telemetry.addData("during while bearing:" , tagBearing);
+                telemetry.addData("during while yaw:" , tagYaw);
+
 
                 // if we've been going at this for 5 seconds, break out and stop
                 if(timeAprilTagsDriveStarted<runtime.seconds()-3){break;}
@@ -158,6 +163,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 tagRange = detectedTag.ftcPose.range;
                 tagBearing = detectedTag.ftcPose.bearing;
                 tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.update();
             }
 
             // sleep(300);

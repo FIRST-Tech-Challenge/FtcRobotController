@@ -403,14 +403,21 @@ public class CyDogsAprilTags
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
 
-        myOpMode.telemetry.addData("max power for april tags is:", max);
+        //myOpMode.telemetry.addData("max power for april tags is:", max);
 
         double LFP = leftFrontPower;
         double RFP = rightFrontPower;
         double LBP = leftBackPower;
         double RBP = rightBackPower;
 
-        if (max > 1.0) {
+        //Scale the power
+        double maxScale = 0.7;
+        leftFrontPower = (leftFrontPower/max) * maxScale;
+        rightFrontPower = (rightFrontPower/max) * maxScale;
+        leftBackPower = (leftBackPower/max) * maxScale;
+        rightBackPower = (rightBackPower/max) * maxScale;
+
+ /*       if (max > 1.0) {
             leftFrontPower /= max;
             rightFrontPower /= max;
             leftBackPower /= max;
@@ -435,9 +442,10 @@ public class CyDogsAprilTags
             rightFrontPower *= 1;
             leftBackPower *= 1;
             rightBackPower *= 1;
-        }
+        }  */
+
         myOpMode.telemetry.addData("adjusted left front power:", String.format("%.2f", LFP) + "/" + String.format("%.2f", leftFrontPower));
-        myOpMode.telemetry.addData("2adjusted right front power:", String.format("%.2f", RFP) + "/" + String.format("%.2f", rightFrontPower));
+        myOpMode.telemetry.addData("adjusted right front power:", String.format("%.2f", RFP) + "/" + String.format("%.2f", rightFrontPower));
         myOpMode.telemetry.addData("adjusted left back power:", String.format("%.2f", LBP) + "/" + String.format("%.2f", leftBackPower));
         myOpMode.telemetry.addData("adjusted right back power:", String.format("%.2f", RBP) + "/" + String.format("%.2f", rightBackPower));
 
