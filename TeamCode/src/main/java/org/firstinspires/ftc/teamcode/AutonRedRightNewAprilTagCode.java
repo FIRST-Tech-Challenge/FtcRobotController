@@ -63,6 +63,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
             // Place purple pixel and back away from it
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
+
             if(mySpikeLocation== SpikeCam.location.MIDDLE) {
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
                 mySparky.MoveStraight(65, .5, mySparky.StandardAutonWaitTime);
@@ -71,7 +72,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 mySparky.MoveStraight(20, .5, mySparky.StandardAutonWaitTime);
             }
 
-
+            // do this after purple pixel is placed and spike cam isn't needed anymore
             newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
 
 
@@ -91,7 +92,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 // We're 50mm further away from start position
                 mySparky.StrafeRight(-50,.5,mySparky.StandardAutonWaitTime);
                // mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                // has long wait time to handle arm movement before it
+                // has long wait time to handle arm movement before it moves
                 mySparky.MoveStraight(500, .5, 2000);
             } else {  //RIGHT
                 mySparky.StrafeLeft(CyDogsChassis.OneTileMM, .5, mySparky.StandardAutonWaitTime);
@@ -104,14 +105,14 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
              }
 
 
-
-
+            // This section gets the robot in front of the april tag
             ManageDriveToAprilTag();
             sleep(100);
             mySparky.ResetWheelConfig();
             sleep(50);
             FinishAprilTagMoves();
 
+            // Finish scoring and park
             mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.MoveStraight(-50,.5,300);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
@@ -173,16 +174,18 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
     private void FinishAprilTagMoves()
     {
+        // you can use the Yaw from the last time we got the tag, so no need to find it again
         if(detectedTag!=null) {
             mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,.4, 300);
         }
 
+        // after adjusting for Yaw, get the new bearing and adjust for bearing
         detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
         if(detectedTag!=null) {
             mySparky.StrafeLeft((int) detectedTag.ftcPose.bearing, .4, 300);
         }
 
-
+        // after adjusting for Bearing, get the data again and adjust for range
         detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
         if(detectedTag!=null) {
             int moveDistance = (int) (25.4 * (detectedTag.ftcPose.range - desiredRange));
