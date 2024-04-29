@@ -148,8 +148,8 @@ public class CyDogsChassis {
 
         TicksToTarget = (mmToTarget / (96 * Math.PI)) * 537.7;
         TicksPerSecond = ((VelocityPercentage * 312) / 60) * 537.7;
-        myOpMode.telemetry.addData("ticksToTarget", TicksToTarget);
-        myOpMode.telemetry.update();
+       // myOpMode.telemetry.addData("ticksToTarget", TicksToTarget);
+        //myOpMode.telemetry.update();
         FrontLeftWheel.setTargetPosition((int) (FrontLeftWheel.getCurrentPosition() + TicksToTarget));
         FrontRightWheel.setTargetPosition((int) (FrontRightWheel.getCurrentPosition() + TicksToTarget));
         BackLeftWheel.setTargetPosition((int) (BackLeftWheel.getCurrentPosition() + TicksToTarget));

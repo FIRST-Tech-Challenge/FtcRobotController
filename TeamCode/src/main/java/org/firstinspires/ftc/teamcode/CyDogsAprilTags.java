@@ -351,7 +351,7 @@ public class CyDogsAprilTags
                 myOpMode.telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
                 myOpMode.telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
             } else {
-                myOpMode.telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+             //   myOpMode.telemetry.addData("\n>","Drive using joysticks to find valid target\n");
             }
             return desiredTag;
         }
@@ -372,6 +372,8 @@ public class CyDogsAprilTags
                 drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
                 turn   = Range.clip(yawError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
                 strafe = Range.clip(headingError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+
 
                 myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
                 // need to add code here, if close enough, break from loop
@@ -411,18 +413,18 @@ public class CyDogsAprilTags
         double RBP = rightBackPower;
 
         //Scale the power
-        double maxScale = 0.7;
-        leftFrontPower = (leftFrontPower/max) * maxScale;
-        rightFrontPower = (rightFrontPower/max) * maxScale;
-        leftBackPower = (leftBackPower/max) * maxScale;
-        rightBackPower = (rightBackPower/max) * maxScale;
+        double maxScale = 0.4;
+     //   leftFrontPower = (leftFrontPower/max) * maxScale;
+     //   rightFrontPower = (rightFrontPower/max) * maxScale;
+     //  leftBackPower = (leftBackPower/max) * maxScale;
+     //   rightBackPower = (rightBackPower/max) * maxScale;
 
- /*       if (max > 1.0) {
+        if (max > 1.0) {
             leftFrontPower /= max;
             rightFrontPower /= max;
             leftBackPower /= max;
-            rightBackPower /= max;
-        } else if (max < 0.05) {
+            rightBackPower /= max;  }
+ /*       } else if (max < 0.05) {
             leftFrontPower *= 6;
             rightFrontPower *= 6;
             leftBackPower *= 6;
