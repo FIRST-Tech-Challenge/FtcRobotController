@@ -71,6 +71,10 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 mySparky.MoveStraight(20, .5, mySparky.StandardAutonWaitTime);
             }
 
+
+            newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
+
+
             // First, let's get ourselves straight facing scoring area
             //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
             if (mySpikeLocation == SpikeCam.location.LEFT) {
@@ -101,11 +105,12 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
 
 
-            newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
-            DriveToAprilTag();
-            mySparky.ResetWheelConfig();
 
-            if(detectedTag!=null) { FinishAprilTagMoves();}
+            DriveToAprilTag();
+            sleep(100);
+            mySparky.ResetWheelConfig();
+            sleep(50);
+            FinishAprilTagMoves();
 
             mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.MoveStraight(-50,.5,300);
@@ -162,11 +167,21 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
     private void FinishAprilTagMoves()
     {
-        mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,.4, 300);
-        mySparky.StrafeLeft((int)detectedTag.ftcPose.bearing, .4, 300);
-        int moveDistance = (int)(25.4 * (detectedTag.ftcPose.range-desiredRange));
-        mySparky.MoveStraight(moveDistance,.4, 300);
+        if(detectedTag!=null) {
+            mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,.4, 300);
+        }
 
+        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+        if(detectedTag!=null) {
+            mySparky.StrafeLeft((int) detectedTag.ftcPose.bearing, .4, 300);
+        }
+
+
+        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+        if(detectedTag!=null) {
+            int moveDistance = (int) (25.4 * (detectedTag.ftcPose.range - desiredRange));
+            mySparky.MoveStraight(moveDistance, .4, 300);
+        }
 
     }
 
