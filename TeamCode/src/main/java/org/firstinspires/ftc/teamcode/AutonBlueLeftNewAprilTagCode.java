@@ -89,7 +89,7 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
                 //Already facing the correct way
                 //We're 'BackUpDistanceFromSpike' closer to scoreboard
                 mySparky.RotateLeft(3,.5,mySparky.StandardAutonWaitTime);
-                mySparky.StrafeLeft(40,.5,mySparky.StandardAutonWaitTime);
+                mySparky.StrafeLeft(-40,.5,mySparky.StandardAutonWaitTime);
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
                 mySparky.MoveStraight(675, .5, 2000);
                 // I took 200 off the above to be far enough away to read april tags
