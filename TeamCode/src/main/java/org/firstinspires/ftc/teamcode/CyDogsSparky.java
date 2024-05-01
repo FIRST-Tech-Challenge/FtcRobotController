@@ -514,7 +514,7 @@ public class CyDogsSparky extends CyDogsChassis{
         } else if (myPath==Direction.CENTER) {
             // Should be aligned in the center already
         } else {
-            StrafeLeft(OneTileMM+110,.5,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM-90,.5,StandardAutonWaitTime);
         }
     }
 

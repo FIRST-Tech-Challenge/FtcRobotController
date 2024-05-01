@@ -75,8 +75,8 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
             if (mySpikeLocation == SpikeCam.location.LEFT) {
 
                 mySparky.StrafeRight(CyDogsChassis.OneTileMM, .5, mySparky.StandardAutonWaitTime);
-                mySparky.MoveStraight(-CyDogsChassis.OneTileMM-160, .5, mySparky.StandardAutonWaitTime);
-                mySparky.StrafeLeft(CyDogsChassis.OneTileMM-40, .5, mySparky.StandardAutonWaitTime);
+                mySparky.MoveStraight(-CyDogsChassis.OneTileMM-130, .5, mySparky.StandardAutonWaitTime);
+                mySparky.StrafeLeft(430, .5, mySparky.StandardAutonWaitTime);
 
                 mySparky.RotateLeft(188, .5, 2000);
             } else if (mySpikeLocation == SpikeCam.location.MIDDLE) {
@@ -88,8 +88,8 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
             } else {  //RIGHT
                 //Already facing the correct way
                 //We're 'BackUpDistanceFromSpike' closer to scoreboard
-                mySparky.RotateLeft(3,.5,mySparky.StandardAutonWaitTime);
-                mySparky.StrafeLeft(-40,.5,mySparky.StandardAutonWaitTime);
+            //    mySparky.RotateLeft(3,.5,mySparky.StandardAutonWaitTime);
+                mySparky.StrafeLeft(-30,.5,mySparky.StandardAutonWaitTime);
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
                 mySparky.MoveStraight(675, .5, 2000);
                 // I took 200 off the above to be far enough away to read april tags

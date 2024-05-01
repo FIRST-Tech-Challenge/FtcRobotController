@@ -80,11 +80,11 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
             }
             else if(mySpikeLocation==SpikeCam.location.LEFT)
             {
-                backAwayFromPurple=20+CyDogsSparky.BackUpDistanceFromSpike+50;
+                backAwayFromPurple=40+CyDogsSparky.BackUpDistanceFromSpike+50;
             }
+
             mySparky.MoveStraight(backAwayFromPurple, .5, mySparky.StandardAutonWaitTime);
 
-            newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
 
             switch (mySpikeLocation) {
                 case LEFT:
@@ -93,13 +93,14 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
                     mySparky.RotateRight(190,.5,mySparky.StandardAutonWaitTime);
 
                     mySparky.StrafeRight(CyDogsSparky.OneTileMM,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.RotateLeft(3,.5,mySparky.StandardAutonWaitTime);
                     break;
                 case MIDDLE:
 
                     mySparky.RotateRight(91,.5,mySparky.StandardAutonWaitTime);
 
                     mySparky.MoveStraight(-CyDogsChassis.OneTileMM+220,.5,mySparky.StandardAutonWaitTime);
-                    mySparky.StrafeRight(CyDogsSparky.OneTileMM+240,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.StrafeRight(CyDogsSparky.OneTileMM+220,.5,mySparky.StandardAutonWaitTime);
                     mySparky.RotateLeft(2,.5,mySparky.StandardAutonWaitTime);
                     extraVerticalMovement+=410;
 
@@ -115,7 +116,9 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
                     break;
             }
             // We move not all the way so we don't crash into a parker, then after strafe move the rest
-            mySparky.MoveStraight(1900+extraVerticalMovement,.5,500);
+            mySparky.MoveStraight(1830+extraVerticalMovement,.5,300);
+            newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
+
             if(mySpikeLocation== SpikeCam.location.MIDDLE) {
                 mySparky.StrafeLeft(100,.5,mySparky.StandardAutonWaitTime);
             }
@@ -128,6 +131,9 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
             sleep(500);
             FinishAprilTagMoves();
 
+            if(mySpikeLocation== SpikeCam.location.RIGHT) {
+                mySparky.StrafeRight(50,.5,mySparky.StandardAutonWaitTime);
+            }
 
             mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.MoveStraight(-50,.5,300);

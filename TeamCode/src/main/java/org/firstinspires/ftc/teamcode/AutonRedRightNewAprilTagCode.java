@@ -66,7 +66,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
             if(mySpikeLocation== SpikeCam.location.MIDDLE) {
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                mySparky.MoveStraight(65, .5, mySparky.StandardAutonWaitTime);
+                mySparky.MoveStraight(80, .5, mySparky.StandardAutonWaitTime);
             }
             else {
                 mySparky.MoveStraight(20, .5, mySparky.StandardAutonWaitTime);
