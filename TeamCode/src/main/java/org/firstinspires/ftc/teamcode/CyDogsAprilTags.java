@@ -147,7 +147,7 @@ public class CyDogsAprilTags
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+/*        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -157,14 +157,14 @@ public class CyDogsAprilTags
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+*/
         if (USE_WEBCAM)
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
-        myOpMode.telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        myOpMode.telemetry.addData(">", "Touch Play to start OpMode");
-        myOpMode.telemetry.update();
+        //myOpMode.telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
+        //myOpMode.telemetry.addData(">", "Touch Play to start OpMode");
+        //myOpMode.telemetry.update();
     }
 
     public void FindAndDriveToAprilTag(int targetTagID){
@@ -346,10 +346,10 @@ public class CyDogsAprilTags
             // Tell the driver what we see, and what to do.
             if (targetFound) {
             //    myOpMode.telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
-                myOpMode.telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                myOpMode.telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                myOpMode.telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                myOpMode.telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+             //   myOpMode.telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+             //   myOpMode.telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+             //   myOpMode.telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+             //   myOpMode.telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
             } else {
              //   myOpMode.telemetry.addData("\n>","Drive using joysticks to find valid target\n");
             }
