@@ -43,7 +43,7 @@ public class RobotClass {
     }
 
     public double getHeading(){
-        Orientation Theta = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        Orientation Theta = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
         return Theta.thirdAngle;
     }
     public void resetIMU(){

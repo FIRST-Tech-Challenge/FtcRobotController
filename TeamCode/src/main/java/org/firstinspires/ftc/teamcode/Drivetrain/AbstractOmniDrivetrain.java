@@ -19,32 +19,31 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
             motor.setPower(power);
         }
     }
-    public void mecanumDrive(float x, float y, double turn, double heading){
-        double direction = Math.atan2(x, y);
-        double magnitude = Math.sqrt((x*x) + (y*y));
+    public void mecanumDrive(double drive, double strafe, double turn, double heading){
 
-        VectorF powerVector = new VectorF(x, y);
-        rotateVector(powerVector, heading);
+        drive = ((drive * Math.cos(heading)) + ( strafe * Math.sin(heading)));
+        strafe = ((drive * -Math.sin(heading)) + (strafe * Math.cos(heading)));
 
-        float negativeGroup = (float) (powerVector.get(0) / (Math.sqrt(2) / 2));
-        float positiveGroup = (float) (powerVector.get(1) / (Math.sqrt(2) / 2));
+        double[] speeds = {
+                (drive + strafe + turn),
+                (drive - strafe - turn),
+                (drive - strafe + turn),
+                (drive + strafe - turn)
+        };
 
-        driveMotors[0].setPower(negativeGroup + turn);
-        driveMotors[1].setPower(positiveGroup - turn);
-        driveMotors[2].setPower(positiveGroup + turn);
-        driveMotors[3].setPower(negativeGroup - turn);
+        double max = Math.abs(speeds[0]);
+        for (double speed : speeds) {
+            if (max < Math.abs(speed)) max = Math.abs(speed);
+        }
 
-    }
+        if (max > 1) {
+            for (int i = 0; i < speeds.length; i++) speeds[i] /= max;
+        }
 
-
-
-
-    public static void rotateVector(VectorF originalVector, double angle){
-        float x = originalVector.get(0);
-        float y = originalVector.get(1);
-
-        originalVector.put(0, (float) ((x * Math.cos(angle)) + ( y * Math.sin(angle))));
-        originalVector.put(1, (float) ((x * -Math.sin(angle)) + (y * Math.cos(angle))));
+        driveMotors[0].setPower(speeds[0]);
+        driveMotors[1].setPower(speeds[1]);
+        driveMotors[2].setPower(speeds[2]);
+        driveMotors[3].setPower(speeds[3]);
 
     }
 
