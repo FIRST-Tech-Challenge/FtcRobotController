@@ -86,7 +86,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
 
     public static final double LATERAL_MULTIPLIER = 1.7;
-    public static double imuMultiply = 1.0215, IMU_INTERVAL = 0.18;
+    public static double imuMultiply = 1.02,fishMoley = 0.5, IMU_INTERVAL = 0.18;
 
     public static final double VX_WEIGHT = 1;
     public static final double VY_WEIGHT = 1;
@@ -102,7 +102,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BNO055IMU imu;
+    private BNO055IMU imu,imu2;
     private VoltageSensor batteryVoltageSensor;
     private Pose2d endPose = new Pose2d(0, 0, 0);
 
@@ -121,7 +121,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private boolean isButtered = false, isFieldCentric = false;
 
-    private ArrayList<Servo> servos;
+//    private ArrayList<Servo> servos;
 
     public org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive drive;
 
@@ -217,6 +217,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
+        imu2 = hardwareMap.get(BNO055IMU.class, "imu2");
+        imu2.initialize(parameters);
 
 
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
@@ -232,11 +234,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
-        servos = new ArrayList<>();
-        servos.add(hardwareMap.servo.get("servoLeftFront"));
-        servos.add(hardwareMap.servo.get("servoLeftBack"));
-        servos.add(hardwareMap.servo.get("servoRightFront"));
-        servos.add(hardwareMap.servo.get("servoRightBack"));
+
         isButtered=true;
         toggleButtered();
         Motor frontLeft = new Motor(hardwareMap, "motorLeftFront"),
@@ -323,6 +321,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                         .build()
         );
 
+
     }
 
     public void followTrajectory(Trajectory trajectory) {
@@ -369,7 +368,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         packet.put("lastImu", lastImuTime);
         if (time - lastImuTime > IMU_INTERVAL) {
             Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-            lastImuPos = angles.firstAngle;
+            Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
+            lastImuPos = (1-fishMoley)*angles.firstAngle+fishMoley*angles2.firstAngle;
             lastImuTime = time;
             packet.put("imu", lastImuPos);
             packet.put("offset", poseHeadOffset);
@@ -414,7 +414,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public TrajectorySequence getCurrentTraj() {
-        return trajectorySequenceRunner.getTrajectorySequence();
+    if (trajectorySeq!=null) return trajectorySeq;
+    else return this.trajectorySequenceBuilder(new Pose2d(0,0,0)).lineToLinearHeading(new Pose2d(0,1,0)).build();
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
@@ -467,20 +468,20 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
     public void toggleServos(){
-            if(isButtered){
-                servos.get(0).setPosition(INITIAL1);
-                servos.get(1).setPosition(INITIAL2);
-                servos.get(2).setPosition(INITIAL3);
-                servos.get(3).setPosition(INITIAL4);
-//            isButtered = false;
-            }
-            else{
-                servos.get(0).setPosition(FINAL1);
-                servos.get(1).setPosition(FINAL2);
-                servos.get(2).setPosition(FINAL3);
-                servos.get(3).setPosition(FINAL4);
-//                isButtered = true;
-            }
+//            if(isButtered){
+//                servos.get(0).setPosition(INITIAL1);
+//                servos.get(1).setPosition(INITIAL2);
+//                servos.get(2).setPosition(INITIAL3);
+//                servos.get(3).setPosition(INITIAL4);
+////            isButtered = false;
+//            }
+//            else{
+//                servos.get(0).setPosition(FINAL1);
+//                servos.get(1).setPosition(FINAL2);
+//                servos.get(2).setPosition(FINAL3);
+//                servos.get(3).setPosition(FINAL4);
+////                isButtered = true;
+//            }
 
     }
 

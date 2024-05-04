@@ -33,15 +33,13 @@ public class RL23 {
         logi = isLogi;
         this.op=op;
         robot = new BradBot(op, false,isLogi);
-        Pose2d startPose = new Pose2d(-36,-60.5,toRadians(-90));
+        Pose2d startPose = new Pose2d(-36,-62.5,toRadians(-90));
         robot.roadrun.setPoseEstimate(startPose);
 
         spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-52, -25.5,toRadians(-120)), toRadians(90))
-                .lineToLinearHeading(new Pose2d(-49, -36.5,toRadians(-120)))
-
+                .splineToLinearHeading(new Pose2d(-48, -34.5,toRadians(-120)), toRadians(90))
                 .build();
 
         spikey[1] = robot.roadrun
@@ -58,8 +56,8 @@ public class RL23 {
                 .build();
         intake[0] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[0].end())
-                .lineToLinearHeading(new Pose2d(-51, -37.5,toRadians(-120)))
-                .lineToLinearHeading(new Pose2d(-50.5,-35.25, toRadians(-190)))
+//                .lineToLinearHeading(new Pose2d(-51, -37.5,toRadians(-120)))
+                .lineToLinearHeading(new Pose2d(-50.5,-35.25, toRadians(-180)))
                 .build();
         intake[1] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
@@ -79,10 +77,10 @@ public class RL23 {
                             .roadrun
                             .trajectorySequenceBuilder(intake[0].end())
                             .setReversed(true)
-                            .splineToConstantHeading(new Vector2d(-40, -56.5), toRadians(-15))
-                            .splineToConstantHeading(new Vector2d(-20, -57.5), toRadians(0))
-                            .splineToConstantHeading(new Vector2d(25, -57.5), toRadians(2))
-                            .splineToConstantHeading(new Vector2d(47, -29), toRadians(0))
+                            .splineToConstantHeading(new Vector2d(-40, -57.5), toRadians(-15))
+                            .splineToConstantHeading(new Vector2d(-20, -58.5), toRadians(0))
+                            .splineToConstantHeading(new Vector2d(15, -58.5), toRadians(0))
+                            .splineToConstantHeading(new Vector2d(47, -35.25), toRadians(0))
 //                            .addTemporalMarker(robot::done)
                             .build();
 
@@ -121,8 +119,8 @@ public class RL23 {
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(20, -57.5), toRadians(180))
 //                .splineTo(new Vector2d(10, -57.5), toRadians(186))
-                .splineToConstantHeading(new Vector2d(-25, -58), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-51, -27.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -58.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51, -35.25), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         backToStack[1] = robot.roadrun
@@ -133,7 +131,7 @@ public class RL23 {
                 .splineToConstantHeading(new Vector2d(-25, -60.5), toRadians(180))
 //                .splineToSplineHeading(new Pose2d(-25, -60.5, toRadians(180)), toRadians(180))
 
-                .splineToConstantHeading(new Vector2d(-51, -32.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51, -35.25), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         backToStack[2] = robot.roadrun
@@ -149,10 +147,10 @@ public class RL23 {
                 .build();
         drop[0] = robot.roadrun.trajectorySequenceBuilder(backToStack[0].end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40, -53.5), toRadians(-15))
-                .splineToConstantHeading(new Vector2d(-20, -53.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(6, -54.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(47, -38), toRadians(0))
+                .splineToConstantHeading(new Vector2d(-40, -57.5), toRadians(-15))
+                .splineToConstantHeading(new Vector2d(-20, -58.5), toRadians(0))
+                .splineToConstantHeading(new Vector2d(15, -58.5), toRadians(0))
+                .splineToConstantHeading(new Vector2d(47, -35.25), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         drop[1] = robot.roadrun.trajectorySequenceBuilder(backToStack[1].end())
@@ -235,72 +233,74 @@ public class RL23 {
             robot.update();
         }
         op.resetRuntime();
+        bark=0;
         time=0;
     }
     public void purp()
     {
+        bark=0;
         robot.queuer.queue(false, true);
-        robot.upAuto();
+//        robot.upAuto();
     if (bark != 0) {
-      robot.purpurAuto();
+//      robot.purpurAuto();
         }
     else{
-        robot.purpurAuto2();
+//        robot.purpurAuto2();
     }
     if (bark == 0) {
-      robot.queuer.addDelay(0.4+delaySec);
+//      robot.queuer.addDelay(0.4+delaySec);
     } else {
-      robot.queuer.addDelay(delaySec);
+//      robot.queuer.addDelay(delaySec);
         }
 
         robot.followTrajSeq(spikey[bark]);
         robot.queuer.addDelay(0.0);
-        robot.dropAuto(0);
+//        robot.dropAuto(0);
     }
 
     public void intake(int height){
         robot.followTrajSeq(intake[bark]);
-        robot.resetAuto();
+//        robot.resetAuto();
         if (bark == 0) {
-            robot.queuer.addDelay(2.0);
+//            robot.queuer.addDelay(2.0);
         }
-        robot.intakeAuto(height);
+//        robot.intakeAuto(height);
     }
     public void cycleIntake(int height){
 
         robot.followTrajSeq(backToStack[bark]);
-        robot.intakeAuto(height);
-        robot.queuer.addDelay(0.6);
-        robot.resetAuto();
+//        robot.intakeAuto(height);
+//        robot.queuer.addDelay(0.6);
+//        robot.resetAuto();
     }
     public void cycleDrop(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(drop[bark]);
-        robot.grabAuto();
-        robot.lowAuto(false);
-        robot.drop();
+//        robot.grabAuto();
+//        robot.lowAuto(false);
+//        robot.drop();
     }
     public void pre(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
-        robot.grabAuto();
+//        robot.grabAuto();
     if (bark == 2) {
-        robot.lowAuto(true);
-        robot.queuer.addDelay(1.5);
-        robot.yellowAuto(true);
+//        robot.lowAuto(true);
+//        robot.queuer.addDelay(1.5);
+//        robot.yellowAuto(true);
         }else{
-        robot.lowAuto(false);
-        robot.queuer.addDelay(1.5);
-        robot.yellowAuto(false);
+//        robot.lowAuto(false);
+//        robot.queuer.addDelay(1.5);
+//        robot.yellowAuto(false);
 
     }
-        robot.drop();
+//        robot.drop();
 
     }
 
     public void park(){
-        robot.queuer.addDelay(.7);
-        robot.resetAuto();
+//        robot.queuer.addDelay(.7);
+//        robot.resetAuto();
     if (isRight) {
       robot.followTrajSeq(park[1]);
         }

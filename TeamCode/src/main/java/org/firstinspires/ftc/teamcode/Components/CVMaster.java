@@ -7,6 +7,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.camera.libuvc.nativeobject.UvcFormatDesc;
+import org.firstinspires.ftc.robotcore.internal.camera.libuvc.nativeobject.UvcStreamCtrl;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.BlueRightSpikeObserverPipeline;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.BlueSpikeObserverPipeline;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam;
@@ -117,7 +119,8 @@ public class CVMaster {
             //            }
             if (!isLogi)
               webcam.startStreaming(
-                  1280, 800, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
+                  1280, 800, 
+                      OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
             else
               webcam.startStreaming(
                   640, 480, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);

@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @Config
 public class Magazine {
-  private RFLEDStrip blinkin;
-  private LED rf, rb, lf, lb;
+//  private RFLEDStrip blinkin;
+//  private LED rf, rb, lf, lb;
   private RFColorSensor colorSensor1, colorSensor2;
 
   public static int pixels = 0;
@@ -25,14 +25,14 @@ public class Magazine {
   double dist1=100,dist2=100;
 
   public Magazine() {
-    rf = op.hardwareMap.get(LED.class, "rf");
-    rb = op.hardwareMap.get(LED.class, "rb");
-    lf = op.hardwareMap.get(LED.class, "lf");
-    lb = op.hardwareMap.get(LED.class, "lb");
+//    rf = op.hardwareMap.get(LED.class, "rf");
+//    rb = op.hardwareMap.get(LED.class, "rb");
+//    lf = op.hardwareMap.get(LED.class, "lf");
+//    lb = op.hardwareMap.get(LED.class, "lb");
 
     colorSensor1 = new RFColorSensor("colorSensor");
     colorSensor2 = new RFColorSensor("colorSensor2");
-    blinkin = new RFLEDStrip("blinkin");
+//    blinkin = new RFLEDStrip("blinkin");
     pixels=0;
   }
 
@@ -107,29 +107,29 @@ public class Magazine {
 
 
 
-  public void updateLEDs() {
-    if (Arm.ArmStates.HOVER.state && Claw.clawStates.GRAB.state) {
-      rf.enable(true);
-      rb.enable(true);
-      lf.enable(true);
-      lb.enable(true);
-    } else if (pixels == 0) {
-      rf.enable(false);
-      rb.enable(false);
-      lf.enable(false);
-      lb.enable(false);
-    } else if (pixels == 1) {
-      rf.enable(false);
-      rb.enable(false);
-      lf.enable(false);
-      lb.enable(false);
-    } else if (pixels == 2) {
-      rf.enable(true);
-      rb.enable(false);
-      lf.enable(true);
-      lb.enable(false);
-    }
-  }
+//  public void updateLEDs() {
+//    if (Arm.ArmStates.HOVER.state && Claw.clawStates.GRAB.state) {
+//      rf.enable(true);
+//      rb.enable(true);
+//      lf.enable(true);
+//      lb.enable(true);
+//    } else if (pixels == 0) {
+//      rf.enable(false);
+//      rb.enable(false);
+//      lf.enable(false);
+//      lb.enable(false);
+//    } else if (pixels == 1) {
+//      rf.enable(false);
+//      rb.enable(false);
+//      lf.enable(false);
+//      lb.enable(false);
+//    } else if (pixels == 2) {
+//      rf.enable(true);
+//      rb.enable(false);
+//      lf.enable(true);
+//      lb.enable(false);
+//    }
+//  }
 
   public int getPixels() {
     return pixels;
@@ -142,7 +142,7 @@ public class Magazine {
     LOGGER.log("# Pixels: " + getPixels());
 
     if (isTeleop) {
-      updateLEDs();
+//      updateLEDs();
       updateSensors();
     }
   }

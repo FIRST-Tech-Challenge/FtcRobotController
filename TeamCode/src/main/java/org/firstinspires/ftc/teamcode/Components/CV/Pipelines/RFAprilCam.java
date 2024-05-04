@@ -24,6 +24,7 @@ import android.util.Size;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.util.Angle;
 
 import org.apache.commons.math3.analysis.function.Exp;
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
@@ -59,12 +60,12 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class RFAprilCam {
   public static double X_OFFSET = 6.5,
-      Y_OFFSET = -4.9,
-      UPSAMPLE_THRESHOLD = 25,
+      Y_OFFSET = -4,
+      UPSAMPLE_THRESHOLD = 18,
 
       NUMBER_OF_SAMPLES = 5;
   public static int EXPOSURE_MS = 5  , GAIN = 5;
-  public static double FOCAL_LENGTH = 820;
+  public static double FOCAL_LENGTH = 840;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 2;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
@@ -169,7 +170,7 @@ public class RFAprilCam {
               .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
               .build();
       tuned = false;
-      Y_OFFSET = -4.9;
+      Y_OFFSET = -4;
       X_OFFSET = 6.5;
     } else {
       aprilTag =
@@ -225,7 +226,6 @@ public class RFAprilCam {
         double time = aprilTag.getPerTagAvgPoseSolveTime();
         AprilTagPoseFtc poseFtc = detection.ftcPose;
         if (poseFtc != null) {
-          if (detection.id == 5) {
             double p_x = poseFtc.y, p_y = -poseFtc.x;
             int p_ind = detection.id;
             AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
@@ -247,7 +247,7 @@ public class RFAprilCam {
             }
             if (poseFtc.range < UPSAMPLE_THRESHOLD
                 && (currentVelocity.vec().getY() < 1)
-                && abs(currentPose.getHeading() - toRadians(180)) < 10
+                && abs(Angle.normDelta(currentPose.getHeading() - toRadians(180))) < toRadians(10)
                 && abs(currentVelocity.getHeading())
                     < toRadians(20)&& BasicRobot.time>6 /*camPose.vec().distTo(currentPose.vec())<5*/) {
               //                        if (!upsample) {
@@ -277,12 +277,13 @@ public class RFAprilCam {
                     + p_y);
             packet.put("px", p_x);
             packet.put("py", p_y);
+            packet.put("dist", poseFtc.range);
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
             LOGGER.log("camPoseError" + camPoseError);
             LOGGER.log("velMag" + currentVelocity.vec().norm());
             LOGGER.log("time" + time);
           }
-        }
+
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
           LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
           camPoseError =

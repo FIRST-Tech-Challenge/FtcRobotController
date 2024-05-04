@@ -16,6 +16,8 @@ public class Ultrasonics {
     RFUltrasonic backLeft, backRight, frontLeft, frontRight;
 
     private double lastFlipTime = 0;
+    private int falseCount = 10;
+    private int trueCount = 10;
 
     Line allianceLine = new Line(1,0,50, new Vector2d(0,-60), new Vector2d(50,60));
 
@@ -41,10 +43,28 @@ public class Ultrasonics {
     public boolean checkAlliance() {
         LOGGER.log("ULTRA: Attempted to detect");
         backRight.setLine(allianceLine);
+        LOGGER.log("Falsecount:"+ falseCount);
+        LOGGER.log("trueCount:"+ trueCount);
+
 //        op.telemetry.addData("dist", backRight.getDist());
 //        frontRight.setLine(allianceLine);
 //        op.telemetry.addData("detected2", backRight.isDetected());
-        boolean det = backRight.isDetected();
+        boolean det;
+        if(!backRight.isDetected()){
+            if(falseCount > 2)
+                det = false;
+            else
+                det = true;
+            falseCount++;
+            trueCount = 0;
+    } else {
+            if(trueCount > 2)
+                det = true;
+            else
+                det = false;
+            trueCount++;
+      falseCount=0;
+    }
         LOGGER.log("ULTRA: Detected: " + det);
         return det;
 //                && frontRight.isDetected();
