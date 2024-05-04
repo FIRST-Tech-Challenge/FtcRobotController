@@ -94,7 +94,7 @@ public class RL23 {
                             .setReversed(true)
                             .splineToConstantHeading(new Vector2d(-40, -56.5), toRadians(-15))
                             .splineToConstantHeading(new Vector2d(5, -57.5), toRadians(0))
-//                            .splineToConstantHeading(new Vector2d(20, -57.5), toRadians(2))
+//                            .splineToConstantHeading(new Vpiector2d(20, -57.5), toRadians(2))
                             .splineTo(new Vector2d(47, -35), toRadians(0))
 //                            .addTemporalMarker(robot::done)
                             .build();

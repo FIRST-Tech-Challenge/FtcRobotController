@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Disabled
 
 @Config
 @Autonomous(name = "RedLeftUltraAuto")
