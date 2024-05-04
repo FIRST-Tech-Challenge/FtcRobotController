@@ -965,8 +965,8 @@ public class BradBot extends BasicRobot {
     lift.update();
     roadrun.update();
     wrist.update();
+    ultras.update();
     if (isTeleop) {
-      ultras.update();
       magazine.update();
       hanger.update();
     }

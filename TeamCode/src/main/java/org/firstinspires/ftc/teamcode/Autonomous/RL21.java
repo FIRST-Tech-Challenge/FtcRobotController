@@ -293,10 +293,10 @@ public class RL21 {
     public void intake(int height){
         robot.followTrajSeq(intake[bark]);
         robot.resetAuto();
-        if (bark == 0) {
-            robot.queuer.addDelay(2.0);
-        }
-        robot.intakeAuto(height);
+//        if (bark == 0) {
+//            robot.queuer.addDelay(2.0);
+//        }
+//        robot.intakeAuto(height);
     }
 
     public void pre() {
