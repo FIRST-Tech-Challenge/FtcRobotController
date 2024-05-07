@@ -80,7 +80,7 @@ public class BlueSideHautDecal extends LinearOpMode {
 
     void goLeft(double power) {
 
-        double ROTATIONS = 0.285 / 0.2827;
+        double ROTATIONS = 0.30 / 0.2827;
         double COUNTS = ROTATIONS * 515.46;
         int leftTarget = (int)  COUNTS + motorA.getCurrentPosition();
         int rightTarget = (int) COUNTS + motorB.getCurrentPosition();
@@ -94,7 +94,6 @@ public class BlueSideHautDecal extends LinearOpMode {
             telemetry.addData("MA", motorA.getTargetPosition());
             telemetry.addData("MAC", motorA.getCurrentPosition());
             telemetry.update();
-            if (!opModeIsActive()) {break;}
             idle();
         }
         motorA.setPower(0);
@@ -102,10 +101,9 @@ public class BlueSideHautDecal extends LinearOpMode {
         motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
     void goRight(double power) {
 
-        double ROTATIONS = 0.285 / 0.2827;
+        double ROTATIONS = 0.30 / 0.2827;
         double COUNTS = ROTATIONS * 515.46;
         int leftTarget = (int)  COUNTS - motorA.getCurrentPosition();
         int rightTarget = (int) -COUNTS + motorB.getCurrentPosition();
@@ -119,7 +117,6 @@ public class BlueSideHautDecal extends LinearOpMode {
             telemetry.addData("MA", motorA.getTargetPosition());
             telemetry.addData("MAC", motorA.getCurrentPosition());
             telemetry.update();
-            if (!opModeIsActive()) {break;}
             idle();
         }
         motorA.setPower(0);
@@ -203,31 +200,29 @@ public class BlueSideHautDecal extends LinearOpMode {
         zeroDuHaut = zeroDuBras - 462;
         targetBras = 462;
 
-
+        mainG.setPosition(0);
+        mainD.setPosition(1);
 
         // Display the light level while we are waiting to start
         telemetry.addData("Status", "Waiting for start");
         telemetry.update();
         waitForStart();
 
-
+        telemetry.addData("Status", "Started");
+        telemetry.update();
 
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-        telemetry.addData("Status", "Started");
-        telemetry.update();
-
         //coudeTo(0.2,0.0001);
-        coudeG.setPosition(0.95);
-        coudeD.setPosition(1-95);
-        mainG.setPosition(1);
-        mainD.setPosition(0);
+        //coudeG.setPosition(0.95);
+        //coudeD.setPosition(1-95);
+        //mainG.setPosition(1);
+        //mainD.setPosition(0);
 
-        waitTime(1.5);
+        //waitTime(1.5);
 
-        driveForwardPID(0.1,1);
+        //driveForwardPID(0.1,1);
 
         //waitTime(1);
 
@@ -235,9 +230,9 @@ public class BlueSideHautDecal extends LinearOpMode {
         mainD.setPosition(1);
 
 
-        waitTime(1);
-        coudeG.setPosition(0.1);
-        coudeD.setPosition(1-0.1);
+        //waitTime(1);
+        //coudeG.setPosition(0.1);
+        //coudeD.setPosition(1-0.1);
 
 
         targetBras = 432;

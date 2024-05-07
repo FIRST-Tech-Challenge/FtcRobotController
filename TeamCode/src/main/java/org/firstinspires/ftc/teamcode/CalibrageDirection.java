@@ -51,7 +51,7 @@ public class CalibrageDirection extends LinearOpMode {
 
     void goLeft(double power) {
 
-        double ROTATIONS = 0.29 / 0.2827;
+        double ROTATIONS = 0.30 / 0.2827;
         double COUNTS = ROTATIONS * 515.46;
         int leftTarget = (int)  COUNTS + motorA.getCurrentPosition();
         int rightTarget = (int) COUNTS + motorB.getCurrentPosition();
@@ -74,7 +74,7 @@ public class CalibrageDirection extends LinearOpMode {
     }
     void goRight(double power) {
 
-        double ROTATIONS = 0.285 / 0.2827;
+        double ROTATIONS = 0.30 / 0.2827;
         double COUNTS = ROTATIONS * 515.46;
         int leftTarget = (int)  COUNTS - motorA.getCurrentPosition();
         int rightTarget = (int) -COUNTS + motorB.getCurrentPosition();
