@@ -39,7 +39,7 @@ public class RL23 {
         spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-48, -34.5,toRadians(-120)), toRadians(90))
+                .splineToLinearHeading(new Pose2d(-46, -34.5,toRadians(-120)), toRadians(90))
                 .build();
 
         spikey[1] = robot.roadrun
@@ -57,11 +57,11 @@ public class RL23 {
         intake[0] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[0].end())
 //                .lineToLinearHeading(new Pose2d(-51, -37.5,toRadians(-120)))
-                .lineToLinearHeading(new Pose2d(-50.5,-35.25, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-51.5,-35.25, toRadians(-180)))
                 .build();
         intake[1] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
-                .lineToLinearHeading(new Pose2d(-51.5,-32.25, toRadians(-185)))
+                .lineToLinearHeading(new Pose2d(-51.5,-32.25, toRadians(-180)))
                 .addTemporalMarker(robot::done)
                 .build();
         intake[2] = robot.roadrun

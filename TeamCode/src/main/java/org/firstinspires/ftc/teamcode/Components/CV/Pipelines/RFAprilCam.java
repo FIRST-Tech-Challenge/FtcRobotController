@@ -52,6 +52,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.core.Point;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -59,14 +60,13 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 6.5,
-      Y_OFFSET = -4,
-      UPSAMPLE_THRESHOLD = 18,
-
+  public static double X_OFFSET = -6.5,
+      Y_OFFSET = 3,
+      UPSAMPLE_THRESHOLD = 25,
       NUMBER_OF_SAMPLES = 5;
-  public static int EXPOSURE_MS = 5  , GAIN = 5;
+  public static int EXPOSURE_MS = 5, GAIN = 5;
   public static double FOCAL_LENGTH = 840;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 2;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 4;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -89,7 +89,7 @@ public class RFAprilCam {
     new Vector2d(3 * 23.5 - 1, 1.5 * 23.5),
     new Vector2d(3 * 23.5 - 1, 1.5 * 23.5 - 4.5)
   };
-  private Pose2d camPoseError = new Pose2d(0, 0, 0);
+  private Vector2d camPoseError = new Pose2d(0, 0, 0).vec();
   private double poseCount = 0;
 
   boolean isLogi = false;
@@ -170,8 +170,7 @@ public class RFAprilCam {
               .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
               .build();
       tuned = false;
-      Y_OFFSET = -4;
-      X_OFFSET = 6.5;
+
     } else {
       aprilTag =
           new AprilTagProcessor.Builder()
@@ -222,81 +221,147 @@ public class RFAprilCam {
     //        aprilTag.setDecimation((float) UPSAMPLE);
     upsample = true;
     if (detections != null) {
-      for (AprilTagDetection detection : detections) {
-        double time = aprilTag.getPerTagAvgPoseSolveTime();
-        AprilTagPoseFtc poseFtc = detection.ftcPose;
-        if (poseFtc != null) {
-            double p_x = poseFtc.y, p_y = -poseFtc.x;
-            int p_ind = detection.id;
-            AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
-            VectorF values = tagData.fieldPosition;
-            Vector2d pos = new Vector2d(values.get(0), values.get(1));
-            Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
-            //          offset = offset.rotated(currentPose.getHeading());
-            Pose2d camPose =
-                new Pose2d(
-                    pos.plus(
-                        new Vector2d(
-                                -(p_x) * directions[p_ind][0] - offset.getX(),
-                                -(p_y) * directions[p_ind][1] - offset.getY())
-                            .rotated(currentPose.getHeading() + PI)),
-                    -directions[p_ind][0] * poseFtc.yaw * PI / 180 + toRadians(5.2) + PI);
-            if (isLogi) {
-              camPose =
-                  new Pose2d(camPose.getX(), camPose.getY(), camPose.getHeading() - toRadians(8.1));
-            }
-            if (poseFtc.range < UPSAMPLE_THRESHOLD
-                && (currentVelocity.vec().getY() < 1)
-                && abs(Angle.normDelta(currentPose.getHeading() - toRadians(180))) < toRadians(10)
-                && abs(currentVelocity.getHeading())
-                    < toRadians(20)&& BasicRobot.time>6 /*camPose.vec().distTo(currentPose.vec())<5*/) {
-              //                        if (!upsample) {
-              //                            aprilTag.setDecimation((float) UPSAMPLE);
-              //                        }
-              //                        upsample = true;
-              camPoseError = camPoseError.plus(camPose).minus(currentPose);
-              poseCount++;
-            }
-            //                    } else {
-            //                        if (upsample) {
-            //                            aprilTag.setDecimation((float) DOWNSAMPLE);
-            //                        }
-            //                        upsample = false;
-            //                    }
-            LOGGER.setLogLevel(RFLogger.Severity.FINER);
-            LOGGER.log(
-                "id: "
-                    + p_ind
-                    + " aprilPos = "
-                    + camPose
-                    + ", dist:"
-                    + poseFtc.range
-                    + " p_x, p_y: "
-                    + p_x
-                    + ','
-                    + p_y);
-            packet.put("px", p_x);
-            packet.put("py", p_y);
-            packet.put("dist", poseFtc.range);
+      if (detections.size() > 1&& BasicRobot.time>6) {
+        VectorF p1 = detections.get(0).metadata.fieldPosition;
+        VectorF p2 = detections.get(1).metadata.fieldPosition;
+        double d1 = detections.get(0).ftcPose.range, d2 = detections.get(1).ftcPose.range;
+        if (d1 < UPSAMPLE_THRESHOLD && d2 < UPSAMPLE_THRESHOLD) {
+          double
+              d =
+                  sqrt(
+                      (p1.get(0) - p2.get(0)) * (p1.get(0) - p2.get(0))
+                          + (p1.get(1) - p2.get(1)) * (p1.get(1) - p2.get(1))),
+              l = (d1 * d1 - d2 * d2 + d * d) / (2 * d),
+              h = sqrt(d1 * d1 - l * l);
+          packet.put("d1", d1);
+          packet.put("d2", d2);
+          packet.put("d", d);
+          packet.put("l", l);
+          packet.put("h", h);
+          Vector2d
+              c1 =
+                  new Vector2d(
+                      l / d * (p2.get(0) - p1.get(0)) + h / d * (p2.get(1) - p1.get(1)) + p1.get(0),
+                      l / d * (p2.get(1) - p1.get(1))
+                          - h / d * (p2.get(0) - p1.get(0))
+                          + p1.get(1)),
+              c2 =
+                  new Vector2d(
+                      l / d * (p2.get(0) - p1.get(0)) - h / d * (p2.get(1) - p1.get(1)) + p1.get(0),
+                      l / d * (p2.get(1) - p1.get(1))
+                          + h / d * (p2.get(0) - p1.get(0))
+                          + p1.get(1));
+          Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
+
+          c1 = c1.plus(offset);
+          c2 = c2.plus(offset);
+          double dist1 = currentPose.vec().distTo(c1), dist2 = currentPose.vec().distTo(c2);
+          if (dist1 < dist2) {
+            camPoseError = camPoseError.plus(c1).minus(currentPose.vec());
+            poseCount++;
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
             LOGGER.log("camPoseError" + camPoseError);
-            LOGGER.log("velMag" + currentVelocity.vec().norm());
-            LOGGER.log("time" + time);
+          } else {
+            camPoseError = camPoseError.plus(c2).minus(currentPose.vec());
+            poseCount++;
+            LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
+            LOGGER.log("camPoseError" + camPoseError);
           }
-
-        if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
-          LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
-          camPoseError =
-              new Pose2d(camPoseError.getX(), camPoseError.getY(), 0 /*camPoseError.getHeading()*/);
-          LOGGER.log("oldPose" + currentPose);
-          poseHeadOffset += camPoseError.getHeading() / poseCount;
-          currentPose = currentPose.plus(camPoseError.div(poseCount));
-          LOGGER.log("newPose" + currentPose);
-          poseCount = 0;
-          camPoseError = new Pose2d(0, 0, 0);
-          poseHistory.clear();
+          if (poseCount >= NUMBER_OF_SAMPLES) {
+                      LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
+                      camPoseError =
+                          new Vector2d(camPoseError.getX(), camPoseError.getY());
+                      LOGGER.log("oldPose" + currentPose);
+                      currentPose = currentPose.plus(new Pose2d(camPoseError.div(poseCount),0));
+                      LOGGER.log("newPose" + currentPose);
+                      poseCount = 0;
+                      camPoseError = new Vector2d(0,0);
+                      poseHistory.clear();
+                    }
+          packet.put("c1", c1);
+          packet.put("c2", c2);
         }
       }
+      packet.put("det size", detections.size());
+
+      //      for (AprilTagDetection detection : detections) {
+      //        double time = aprilTag.getPerTagAvgPoseSolveTime();
+      //        AprilTagPoseFtc poseFtc = detection.ftcPose;
+      //        if (poseFtc != null) {
+      //            double p_x = poseFtc.y, p_y = -poseFtc.x;
+      //            int p_ind = detection.id;
+      //            AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
+      //            VectorF values = tagData.fieldPosition;
+      //            Vector2d pos = new Vector2d(values.get(0), values.get(1));
+      //            Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
+      //            //          offset = offset.rotated(currentPose.getHeading());
+      //            Pose2d camPose =
+      //                new Pose2d(
+      //                    pos.plus(
+      //                        new Vector2d(
+      //                                -(p_x) * directions[p_ind][0] - offset.getX(),
+      //                                -(p_y) * directions[p_ind][1] - offset.getY())
+      //                            .rotated(currentPose.getHeading() + PI)),
+      //                    -directions[p_ind][0] * poseFtc.yaw * PI / 180 + toRadians(5.2) + PI);
+      //            if (isLogi) {
+      //              camPose =
+      //                  new Pose2d(camPose.getX(), camPose.getY(), camPose.getHeading() -
+      // toRadians(8.1));
+      //            }
+      //            if (poseFtc.range < UPSAMPLE_THRESHOLD
+      //                && (currentVelocity.vec().getY() < 1)
+      //                && abs(Angle.normDelta(currentPose.getHeading() - toRadians(180))) <
+      // toRadians(10)
+      //                && abs(currentVelocity.getHeading())
+      //                    < toRadians(20)&& BasicRobot.time>6
+      // /*camPose.vec().distTo(currentPose.vec())<5*/) {
+      //              //                        if (!upsample) {
+      //              //                            aprilTag.setDecimation((float) UPSAMPLE);
+      //              //                        }
+      //              //                        upsample = true;
+      //              camPoseError = camPoseError.plus(camPose).minus(currentPose);
+      //              poseCount++;
+      //            }
+      //            //                    } else {
+      //            //                        if (upsample) {
+      //            //                            aprilTag.setDecimation((float) DOWNSAMPLE);
+      //            //                        }
+      //            //                        upsample = false;
+      //            //                    }
+      //            LOGGER.setLogLevel(RFLogger.Severity.FINER);
+      //            LOGGER.log(
+      //                "id: "
+      //                    + p_ind
+      //                    + " aprilPos = "
+      //                    + camPose
+      //                    + ", dist:"
+      //                    + poseFtc.range
+      //                    + " p_x, p_y: "
+      //                    + p_x
+      //                    + ','
+      //                    + p_y);
+      //            packet.put("px", p_x);
+      //            packet.put("py", p_y);
+      //            packet.put("dist", poseFtc.range);
+      //            LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
+      //            LOGGER.log("camPoseError" + camPoseError);
+      //            LOGGER.log("velMag" + currentVelocity.vec().norm());
+      //            LOGGER.log("time" + time);
+      //          }
+      //
+      //        if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
+      //          LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
+      //          camPoseError =
+      //              new Pose2d(camPoseError.getX(), camPoseError.getY(), 0
+      // /*camPoseError.getHeading()*/);
+      //          LOGGER.log("oldPose" + currentPose);
+      //          poseHeadOffset += camPoseError.getHeading() / poseCount;
+      //          currentPose = currentPose.plus(camPoseError.div(poseCount));
+      //          LOGGER.log("newPose" + currentPose);
+      //          poseCount = 0;
+      //          camPoseError = new Pose2d(0, 0, 0);
+      //          poseHistory.clear();
+      //        }
     } else {
       LOGGER.log("waitForApril"); //                aprilTag.setDecimation((float)DOWNSAMPLE);
     }
@@ -312,6 +377,6 @@ public class RFAprilCam {
    * @return cameraPosition
    */
   public Pose2d getCamPose() {
-    return currentPose.plus(camPoseError.div(poseCount));
+    return currentPose.plus(new Pose2d(camPoseError.div(poseCount), currentPose.getHeading()));
   }
 }

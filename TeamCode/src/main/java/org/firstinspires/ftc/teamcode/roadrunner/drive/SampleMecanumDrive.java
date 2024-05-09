@@ -86,7 +86,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
 
     public static final double LATERAL_MULTIPLIER = 1.7;
-    public static double imuMultiply = 1.02,fishMoley = 0.5, IMU_INTERVAL = 0.18;
+    public static double imuMultiply = 1.01,fishMoley = 0.5, IMU_INTERVAL = 0.18;
 
     public static final double VX_WEIGHT = 1;
     public static final double VY_WEIGHT = 1;
@@ -218,7 +218,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
         imu2 = hardwareMap.get(BNO055IMU.class, "imu2");
-        imu2.initialize(parameters);
+        BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        imu2.initialize(parameters2);
 
 
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
