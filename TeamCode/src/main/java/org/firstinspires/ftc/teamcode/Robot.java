@@ -425,6 +425,10 @@ public class Robot {
         this.fRight.setPower(fRight);
     }
 
+    public void setMotorPower (DcMotor dcMotor, double power) {
+        dcMotor.setPower(power);
+    }
+
     public double getCurrentHeading() {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
@@ -2465,6 +2469,73 @@ public class Robot {
             return new DrivetrainPowers(power,power,power,power);
         }
         return new DrivetrainPowers(0,0,0,0);
+    }
+
+    public double motorParallelPowerP(int currentPos, double targetPos, double maxPower) {
+        double ERROR_TOLERANCE = 15;
+        double power;
+        double p_constant = 0.001;
+
+        double error = targetPos - currentPos;
+
+        if (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+            power = error * p_constant;
+            power = Range.clip(power, -maxPower, maxPower);
+            return power;
+        }
+
+        power = 0;
+        return power;
+    }
+
+    public double motorParallelPowerPWait(int currentPos, double targetPos, double maxPower, double currentTimeStampMillis, double timeStampStartMillis) {
+        double ERROR_TOLERANCE = 15;
+        double power;
+        double p_constant = 0.001;
+
+        double error = targetPos - currentPos;
+
+        if (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive() && (timeStampStartMillis >= currentTimeStampMillis)) {
+            power = error * p_constant;
+            power = Range.clip(power, -maxPower, maxPower);
+            return power;
+        }
+
+        power = 0;
+        return power;
+    }
+
+    public void servoParallelWait(Servo servo, double pos, double currentTimeStampMillis, double timeStampStartMillis) {
+        if (timeStampStartMillis > currentTimeStampMillis) {
+            servo.setPosition(pos);
+        }
+    }
+
+    public boolean checkMotorPos(DcMotor motor, double ticks) {
+        boolean atTicks = (Math.abs(motor.getCurrentPosition() - ticks) <= 15);
+
+        return atTicks;
+    }
+
+    public boolean checkServoPos(Servo servo, double pos) {
+        boolean atPos = (Math.abs(servo.getPosition() - pos) <= 0.05);
+
+        return atPos;
+    }
+
+    public boolean checkStatus(DcMotor motor) {
+        double goalValue = 0; // placeholder
+        if (motor.getCurrentPosition() == goalValue) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void motorParallelPowerPCheckStatus(boolean checkedStatus) {
+        if (checkedStatus) {
+            //run
+        }
     }
 
     public void moveFingerUp() {

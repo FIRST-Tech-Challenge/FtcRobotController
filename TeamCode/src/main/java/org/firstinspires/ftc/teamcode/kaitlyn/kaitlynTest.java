@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.kaitlyn;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -33,10 +34,10 @@ public class kaitlynTest extends LinearOpMode {
 //            telemetry.addData("fleft", robot.fLeft.getCurrentPosition());
 //            telemetry.addData("3 inch to tick", robot.bRightMecanumController.convertInchesToTicks(3));
 //            telemetry.update();
-             //expected behavior: robot move 3 inches to the right
-            DrivetrainPowers drivetrainPowers = robot.straightParallelPowerPID(robot.fLeft.getCurrentPosition(), robot.bRightMecanumController.convertInchesToTicks(inchesToMove), 1);
-            robot.setMotorPower(drivetrainPowers);
-            Log.d("parallel", "fleft power" + drivetrainPowers.fLeftPower);
+            //expected behavior: robot move 3 inches to the right
+            //DrivetrainPowers drivetrainPowers = robot.straightParallelPowerPID(robot.fLeft.getCurrentPosition(), robot.bRightMecanumController.convertInchesToTicks(inchesToMove), 1);
+            robot.setMotorPower(robot.fLeft, robot.motorParallelPowerPWait(robot.fLeft.getCurrentPosition(), robot.bRightMecanumController.convertInchesToTicks(inchesToMove), 1, SystemClock.currentThreadTimeMillis(), 3000));
+            //Log.d("parallel", "fleft power" + drivetrainPowers.fLeftPower);
             //robot.mecanumBlocking2(-24);
             //break;
         }
