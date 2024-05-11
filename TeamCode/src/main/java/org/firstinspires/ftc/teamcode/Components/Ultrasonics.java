@@ -63,7 +63,7 @@ public class Ultrasonics {
             else
                 det = false;
             trueCount++;
-      falseCount=0;
+            falseCount=0;
     }
         LOGGER.log("ULTRA: Detected: " + det);
         return det;

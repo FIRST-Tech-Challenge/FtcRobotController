@@ -25,7 +25,7 @@ public class Line {
     }
     public double distToLine(){
         double[] intercept = findIntercept();
-        return sqrt(pow(intercept[0] - currentPose.getX(), 2) + pow(intercept[1] - currentPose.getY(), 2))-5;
+        return sqrt(pow(intercept[0] - currentPose.getX(), 2) + pow(intercept[1] - currentPose.getY(), 2))-10;
     }
 
     public double[] findIntercept() {

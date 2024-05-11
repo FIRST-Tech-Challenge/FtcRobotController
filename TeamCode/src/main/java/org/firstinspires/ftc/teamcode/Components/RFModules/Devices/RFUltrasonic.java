@@ -76,8 +76,8 @@ public class RFUltrasonic {
                 op.telemetry.addData("robotDist", robotDist);
                 packet.put("robotDist", robotDist);
             packet.put("ultraDist", ultraDist);
-            LOGGER.log("ULTRA: " + ultraDist + " | ROBOT: " + robotDist);
-            detected = ultraDist < robotDist;
+            LOGGER.log("ULTRA: " + ultraDist + " | ROBOT: " + (robotDist));
+            detected = ultraDist < (robotDist);
 //                op.telemetry.addData("detected", detected);
 //            }
 
