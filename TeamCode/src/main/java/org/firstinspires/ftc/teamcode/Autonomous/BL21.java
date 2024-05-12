@@ -299,7 +299,7 @@ public class BL21 {
         }
         if (ultras) {
             robot.queuer.addDelay(0.2);
-            robot.followTrajSeqUltra(check, droppy[bark].end());
+//            robot.followTrajSeqUltra(check, droppy[bark].end());
             robot.queuer.waitForFinish();
             if(check){
                 everChecked = true;

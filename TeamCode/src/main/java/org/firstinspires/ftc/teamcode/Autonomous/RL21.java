@@ -314,12 +314,12 @@ public class RL21 {
         robot.followTrajSeq(droppy[bark]);
         if (ultras) {
             robot.queuer.addDelay(0.2);
-            robot.followTrajSeqUltra(check, droppy[bark].start());
+            robot.checkUltra(check, droppy[bark].start());
             robot.queuer.waitForFinish();
             if(check){
                 everChecked = true;
             }
-            robot.followTrajSeq(droppy[bark], !everChecked);
+            everChecked = !robot.followTrajSeqUltra(check, droppy[bark], !everChecked);
             robot.queuer.queue(false, true);
         }
         robot.queuer.addDelay(.5);
