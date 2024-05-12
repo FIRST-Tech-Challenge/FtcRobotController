@@ -710,7 +710,7 @@ public class BradBot extends BasicRobot {
     cv.setBlue(blue);
   }
 
-  public void followTrajSeq(TrajectorySequence p_traj, boolean isOptional) {
+  public boolean followTrajSeq(TrajectorySequence p_traj, boolean isOptional) {
     if (queuer.isFirstLoop()) {
       queuer.queue(false, false, true);
     } else {
@@ -718,28 +718,49 @@ public class BradBot extends BasicRobot {
         if (!roadrun.isBusy() && !queuer.isExecuted()) {
           roadrun.followTrajectorySequenceAsync(p_traj);
           LOGGER.log("ULTRA: start: " + p_traj.start() + " end: " + p_traj.end());
+          return !isOptional;
         }
+      }
+    }
+    return isOptional;
+  }
+
+  public void checkUltra(boolean check, Pose2d startPose){
+    if(queuer.queue(true,!roadrun.getCurrentTraj().start().equals(startPose) || (!roadrun.isBusy() && !check && roadrun.getCurrentTraj().start().equals(startPose)))) {
+      if(check){
+        brokenFollowing = true;
+        roadrun.breakFollowing();
+        roadrun.setMotorPowers(0,0,0,0);
       }
     }
   }
 
-  public void followTrajSeqUltra(boolean check, Pose2d startPose) {
+  public boolean followTrajSeqUltra(boolean check, TrajectorySequence p_traj, boolean isOptional) {
     //    if (queuer.isFirstLoop()) {
-    //      queuer.queue(true, false, true);
-    //    } else {
-    if (queuer.queue(true, !roadrun.getCurrentTraj().start().equals(startPose) || (!roadrun.isBusy()&&!check&&roadrun.getCurrentTraj().start().equals(startPose)))) {
-      LOGGER.log("STOP IF ULTRA" + roadrun.getCurrentTraj().start() +"<  >" + startPose + "NI" + roadrun.getCurrentTraj().start().equals(startPose));
-      if (check) {
-        op.telemetry.addData("UTLRADETECT", "ULTRADETECT");
-        //          op.telemetry.update();
+    //      queuer.queue(true, f
+    Pose2d startPose = p_traj.start();
+    if (queuer.isFirstLoop()) {
+      queuer.queue(false, false, true);
+    } else {
+      if (queuer.queue(false, (!roadrun.isBusy() && !check && isOptional && roadrun.getCurrentTraj().start().equals(startPose)), isOptional)) {
+        if (!check && !isOptional && !roadrun.isBusy()){
+          roadrun.followTrajectorySequenceAsync(p_traj);
+          LOGGER.log("ULTRA: start: " + p_traj.start() + " end: " + p_traj.end());
+          return !isOptional;
+        }
+        LOGGER.log("ULTRA: thinking" + isOptional);
+        if (check ) {
+          op.telemetry.addData("UTLRADETECT", "ULTRADETECT");
+          //          op.telemetry.update();
 
-        brokenFollowing = true;
-        roadrun.breakFollowing();
-        roadrun.setMotorPowers(0, 0, 0, 0);
-        LOGGER.log("ULTRA: STOPPED");
+          brokenFollowing = true;
+          roadrun.breakFollowing();
+          roadrun.setMotorPowers(0, 0, 0, 0);
+          LOGGER.log("ULTRA: STOPPED");
+        }
       }
     }
-    //    }
+    return isOptional;
   }
 
   public void hangerTele() {

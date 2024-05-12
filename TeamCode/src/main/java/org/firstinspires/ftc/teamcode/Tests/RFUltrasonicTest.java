@@ -27,7 +27,7 @@ public class RFUltrasonicTest extends LinearOpMode {
 //        BradBot robot = new BradBot(this, false);
         BradBot robot = new BradBot(this, false);
         RFUltrasonic ultra = new RFUltrasonic("backRightUltraAnalog");
-//        robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -56, Math.toRadians(-90)));
+        robot.roadrun.setPoseEstimate(new Pose2d(20, -30, Math.toRadians(-90)));
 
         while (!isStarted()) {
             ultra.setLine(new Line(1,0,56, new Vector2d(56,-54), new Vector2d(56,-18)));
@@ -39,7 +39,9 @@ public class RFUltrasonicTest extends LinearOpMode {
             op.telemetry.update();
             op.telemetry.addData("check alliance", robot.checkAlliance());
 //            packet.put("dist", ultra.getLinearRegressionDist());
+            packet.put("check", robot.checkAlliance());
             packet.put("rawDist", ultra.getDist());
+            packet.put("robotDIst", ultra.getLineDist());
 //            op.telemetry.addData("check", ultra.detected);
             op.telemetry.addData("voltage", ultra.getVoltage());
             op.telemetry.addData("dist", ultra.getDist());

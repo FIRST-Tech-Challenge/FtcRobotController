@@ -41,13 +41,13 @@ public class RFUltrasonic {
         ultrasonicAnalog = op.hardwareMap.get(AnalogInput.class, p_ultraAnalogName);
         ultrasonicLED = op.hardwareMap.get(LED.class, p_ultraLEDName);
         ultrasonicLED.enable(ultrasonicLED.isLightOn());
-        targetLine = new Line(1,0,0, new Vector2d(0,-10), new Vector2d(0,10));
+        targetLine = new Line(1,0,56, new Vector2d(0,-10), new Vector2d(0,10));
         leastSquaresFilter = new LineRegressionFilter(0, 5);
     }
 
     public RFUltrasonic(String p_ultraAnalogName){
         ultrasonicAnalog = op.hardwareMap.get(AnalogInput.class, p_ultraAnalogName);
-        targetLine = new Line(1,0,0, new Vector2d(0,-10), new Vector2d(0,10));
+        targetLine = new Line(1,0,56, new Vector2d(50,-100), new Vector2d(70,100));
         leastSquaresFilter = new LineRegressionFilter(0, 5);
         lastEnabled=-100;
         lastEnabled=-100;
@@ -60,6 +60,9 @@ public class RFUltrasonic {
      * Logs to least fine level.
      * Does not update a state machine.
      */
+    public double getLineDist(){
+        return targetLine.distToLine();
+    }
     public void check() {
         double robotDist = targetLine.distToLine();
         double ultraDist;
