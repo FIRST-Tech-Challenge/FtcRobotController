@@ -9,23 +9,20 @@ public abstract class AbstractDrivetrain {
 
         //FLM == "Front Left Motor" etc.
 
-        FLM.setDirection(DcMotorSimple.Direction.REVERSE);
-        BLM.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        driveMotors = new DcMotor[]{FLM, FRM, BLM, BRM};
+        driveMotors = new DcMotor[]{BLM, BRM, FLM, FRM};
     }
     public void setDriveDirection(DcMotorSimple.Direction direction){
         switch(direction) {
-            case REVERSE:
-                driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD);
-                driveMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
-                driveMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
-                driveMotors[3].setDirection(DcMotorSimple.Direction.REVERSE);
             case FORWARD:
                 driveMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
                 driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE);
                 driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD);
                 driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+            case REVERSE:
+                driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD);
+                driveMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
+                driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD);
+                driveMotors[3].setDirection(DcMotorSimple.Direction.REVERSE);
         }
     }
     public void driveBasic(double forwards, double turn) {

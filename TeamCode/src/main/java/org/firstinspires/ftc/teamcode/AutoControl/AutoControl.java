@@ -15,7 +15,25 @@ public class AutoControl extends OpMode {
     @Override
     public void loop() {
 
+
     }
+    public void AutoDrive(double power, double targetDistance, double angle){
+
+        angle -= robot.getHeading();
+        double distanceUpper = targetDistance + 10;
+        double distanceLower = targetDistance - 10;
+        double distanceTraveled = 0;
+
+        double distanceToTarget = targetDistance;
+        double currentPositionEncoder = robot.drivetrain.driveMotors[0].getCurrentPosition();
+
+        while(distanceToTarget < distanceLower || distanceToTarget > distanceUpper){
+            distanceToTarget = targetDistance - robot.drivetrain.driveMotors[0].getCurrentPosition();
+
+
+        }
+    }
+
     @Override
     public void stop(){
 

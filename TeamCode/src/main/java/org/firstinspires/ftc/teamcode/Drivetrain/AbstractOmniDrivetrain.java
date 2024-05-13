@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.Drivetrain;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
@@ -12,6 +13,11 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
         this.impulseRotation = impulseRotation;
 
+        driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD);
+        driveMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
+        driveMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+
     }
 
     public void setPowerBasic(double power){
@@ -19,31 +25,39 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
             motor.setPower(power);
         }
     }
-    public void mecanumDrive(double drive, double strafe, double turn, double heading){
+    public void mecanumDrive(double leftY, double leftX, double turn, double heading_RADIANS, Telemetry telemetry){
+        //heading_DEGREES -= Math.toDegrees(Math.PI / 2);
 
-        drive = ((drive * Math.cos(heading)) + ( strafe * Math.sin(heading)));
-        strafe = ((drive * -Math.sin(heading)) + (strafe * Math.cos(heading)));
+        // drive == y strafe == x
 
-        double[] speeds = {
-                (drive + strafe + turn),
-                (drive - strafe - turn),
-                (drive - strafe + turn),
-                (drive + strafe - turn)
-        };
+        //starting value off by 90 degrees; 270 == -90
+        heading_RADIANS += Math.toRadians(90);
 
-        double max = Math.abs(speeds[0]);
-        for (double speed : speeds) {
-            if (max < Math.abs(speed)) max = Math.abs(speed);
-        }
 
-        if (max > 1) {
-            for (int i = 0; i < speeds.length; i++) speeds[i] /= max;
-        }
+        double rotY = leftX * Math.cos(-heading_RADIANS) - leftY * Math.sin(-heading_RADIANS);
 
-        driveMotors[0].setPower(speeds[0]);
-        driveMotors[1].setPower(speeds[1]);
-        driveMotors[2].setPower(speeds[2]);
-        driveMotors[3].setPower(speeds[3]);
+        //IF robot strafe or forward movement is inverted after turn 90 degrees inverse either the rotX or rotY
+        double rotX = leftX * Math.sin(heading_RADIANS) - leftY * Math.cos(heading_RADIANS);
+
+
+        double denominator = Math.max(Math.abs(leftX) + Math.abs(leftY) + Math.abs(turn), 1);
+        // normalizes ranges from 0 to 1
+
+
+        driveMotors[2].setPower((rotY + rotX + turn) / denominator); //front_left
+        driveMotors[0].setPower((rotY - rotX + turn) / denominator); //back_left
+        driveMotors[3].setPower((rotY - rotX - turn) / denominator); //front_right
+        driveMotors[1].setPower((rotY + rotX - turn) / denominator); //back_right
+
+        telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
+        telemetry.addData("heading_RADIANS", heading_RADIANS);
+        telemetry.addData("drive", leftY);
+        telemetry.addData("strafe", leftX);
+        telemetry.addData("turn", turn);
+        telemetry.update();
+
+
+
 
     }
 

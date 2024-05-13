@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Control extends OpMode {
     RobotClass robot;
@@ -31,6 +32,7 @@ public class Control extends OpMode {
     @Override
     public void init() {
         robot = new RobotClass(hardwareMap);
+        //robot.drivetrain.setDriveDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     @Override
@@ -41,8 +43,15 @@ public class Control extends OpMode {
         robot.drivetrain.driveBasic(forward, turn);
     }
 
-    public void mecanumDrive(float forward, float strafe, double turn){
-        robot.drivetrain.mecanumDrive(forward, strafe, turn, robot.getHeading());
+    public void mecanumDrive(double leftY, double leftX, double turn){
+
+        robot.drivetrain.mecanumDrive(leftY, leftX, turn, robot.getHeading(), telemetry);
+    }
+    public void resetIMU(boolean button){
+        if (!button){
+            return;
+        }
+        robot.resetIMU();
     }
 
     @Override
