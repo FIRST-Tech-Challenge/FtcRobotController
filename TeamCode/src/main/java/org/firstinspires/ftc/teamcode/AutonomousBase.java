@@ -1598,8 +1598,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
 
         synchronized(AprilTagProcessorImplCallback.positionLock) {
-            robotGlobalCoordinateCorrectedPosition.setAngleRadians(robotGlobalCoordinateCorrectedPosition.getAngleRadians() + changeInRobotOrientation);
-            robotGlobalCoordinateCorrectedPosition.setAngleRadians(AngleWrapRadians(robotGlobalCoordinateCorrectedPosition.getAngleRadians()));   // Keep between -PI and +PI
+            robotGlobalCoordinateCorrectedPosition.setAngleDegrees(Math.toDegrees(robotGlobalCoordinateCorrectedPosition.getAngleRadians() + changeInRobotOrientation));
+            robotGlobalCoordinateCorrectedPosition.setAngleDegrees(AngleWrapDegrees(robotGlobalCoordinateCorrectedPosition.getAngleDegrees()));   // Keep between -PI and +PI
             robotGlobalCoordinateCorrectedPosition.setX(robotGlobalCoordinateCorrectedPosition.getX() + (p * Math.sin(robotGlobalCoordinateCorrectedPosition.getAngleRadians()) + n * Math.cos(robotGlobalCoordinateCorrectedPosition.getAngleRadians())));
             robotGlobalCoordinateCorrectedPosition.setY(robotGlobalCoordinateCorrectedPosition.getY() + (p * Math.cos(robotGlobalCoordinateCorrectedPosition.getAngleRadians()) - n * Math.sin(robotGlobalCoordinateCorrectedPosition.getAngleRadians())));
         }
