@@ -37,7 +37,7 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
         mySparky.initializeSpikeCam();
         mySparky.initializeDevices();
      //   mySparky.initializePositions();
-        newAprilTags = new CyDogsAprilTags(this);
+    //    newAprilTags = new CyDogsAprilTags(this);
 
         // Ask the initialization questions
         parkingSpot = mySparky.askParkingSpot();
@@ -117,7 +117,7 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
             }
             // We move not all the way so we don't crash into a parker, then after strafe move the rest
             mySparky.MoveStraight(1830+extraVerticalMovement,.5,300);
-            newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
+        //    newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
 
             if(mySpikeLocation== SpikeCam.location.MIDDLE) {
                 mySparky.StrafeLeft(100,.5,mySparky.StandardAutonWaitTime);
@@ -127,9 +127,9 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
 
 
             // This section gets the robot in front of the april tag
-            lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.BLUE);
-            sleep(500);
-            FinishAprilTagMoves();
+         //   lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.BLUE);
+         //   sleep(500);
+         //   FinishAprilTagMoves();
 
             if(mySpikeLocation== SpikeCam.location.RIGHT) {
                 mySparky.StrafeRight(50,.5,mySparky.StandardAutonWaitTime);

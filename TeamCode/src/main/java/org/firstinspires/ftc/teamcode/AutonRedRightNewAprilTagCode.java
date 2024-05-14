@@ -60,6 +60,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
             mySparky.MoveStraight(-300, .5, mySparky.StandardAutonWaitTime);
             mySparky.StrafeRight(90,0.5, mySparky.StandardAutonWaitTime);
             mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
+            mySparky.spikeCam.closeStream();
 
             // Place purple pixel and back away from it
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
