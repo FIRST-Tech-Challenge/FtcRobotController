@@ -27,7 +27,7 @@ public class AprilTagTarget {
     // Determine if this is a good detection to generate a location from that
     // degrades range as angle increases up to validAngleDeg, where it is zeroed
     public boolean isReliableDetectionAdaptive(AprilTagDetection detection) {
-        double angleBasedRange = lineSlope * detection.ftcPose.yaw + lineOffset;
+        double angleBasedRange = lineSlope * Math.abs(detection.ftcPose.yaw) + lineOffset;
         return (detection.ftcPose.range < angleBasedRange);
     }
     // Calculate a location based on an april tag detection
