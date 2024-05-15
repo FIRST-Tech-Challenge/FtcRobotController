@@ -156,8 +156,8 @@ public class CyDogsSparky extends CyDogsChassis{
     public void LowerArmAtAutonEnd()
     {
         ArmLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        ArmLift.setPower(-0.4);
-        myOpMode.sleep(1000);
+        ArmLift.setPower(-0.5);
+        myOpMode.sleep(1500);
         ArmLift.setPower(0);
 
     }
@@ -214,12 +214,12 @@ public class CyDogsSparky extends CyDogsChassis{
 
 
     public void returnArmFromScoring(){
-        raiseArmToScore(ArmMedium);
-        myOpMode.sleep(1700);
+        raiseArmToScore(ArmRaiseBeforeElbowMovement);
+        myOpMode.sleep(1500);
         SwingElbow();
         myOpMode.sleep(1500);
         returnLiftForDriving();
-        myOpMode.sleep(2000);
+        myOpMode.sleep(300);
     }
 
     public void AdjustToAprilTag(SpikeCam.location mySpike, String corner)
@@ -534,11 +534,11 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         if(myParkingSpot==Direction.LEFT){
-            StrafeLeft(OneTileMM+leftAdjustment+120,.7,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM+leftAdjustment+120,.7,200);
         } else if (myParkingSpot==Direction.CENTER) {
             // really shouldn't park in center, but if so, I guess we're here
         } else {
-            StrafeRight(OneTileMM+rightAdjustment+120,.7,StandardAutonWaitTime);
+            StrafeRight(OneTileMM+rightAdjustment+120,.7,200);
         }
     }
 
