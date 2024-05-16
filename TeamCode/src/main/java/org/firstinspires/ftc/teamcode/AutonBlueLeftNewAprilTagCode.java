@@ -56,6 +56,7 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
             mySparky.MoveStraight(-300, .5, mySparky.StandardAutonWaitTime);
             mySparky.StrafeLeft(75,0.5, mySparky.StandardAutonWaitTime);
             mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
+            mySparky.spikeCam.closeStream();
 
             // Place purple pixel and back away from it
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
@@ -95,19 +96,26 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
                 // I took 200 off the above to be far enough away to read april tags
             }
 
+            try {
 
-            // This section gets the robot in front of the april tag
-            lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.BLUE);
-            sleep(500);
-            FinishAprilTagMoves();
+                // This section gets the robot in front of the april tag
+                lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.BLUE);
+                sleep(500);
+                FinishAprilTagMoves();
 
 
-            mySparky.scoreFromDrivingPositionAndReturn();
-            mySparky.MoveStraight(-50,.5,300);
-            mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
-            mySparky.returnArmFromScoring();
-            mySparky.LowerArmAtAutonEnd();
-            mySparky.MoveStraight(100,.5,300);
+                mySparky.scoreFromDrivingPositionAndReturn();
+                mySparky.MoveStraight(-50,.5,300);
+                mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
+                mySparky.returnArmFromScoring();
+                mySparky.MoveStraight(100,.5,200);
+                mySparky.LowerArmAtAutonEnd();
+            }
+            catch (Exception e) {
+                telemetry.addLine("Major malfunction in main");
+                sleep(3000);
+                telemetry.update();
+            }
         }
     }
 

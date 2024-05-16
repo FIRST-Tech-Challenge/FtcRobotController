@@ -16,7 +16,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
     double tagRange = 100;
     double tagBearing = 100;
     double tagYaw = 100;
-    double desiredRange = 6.9;
+    double desiredRange = 6.7;
     double timeAprilTagsDriveStarted = 0;
     private CyDogsSparky mySparky;
     private ElapsedTime runtime = new ElapsedTime();
@@ -68,7 +68,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
             else {  //RIGHT
                 mySparky.StrafeLeft(70,0.5, mySparky.StandardAutonWaitTime);
             }
-
+            mySparky.spikeCam.closeStream();
             mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
 
 
@@ -97,7 +97,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
                 backAwayFromPurple=20+CyDogsSparky.BackUpDistanceFromSpike+50;
             }
             mySparky.MoveStraight(backAwayFromPurple, .5, mySparky.StandardAutonWaitTime);
-
+            mySparky.StandardAutonWaitTime = 300;
 
             switch (mySpikeLocation) {
                 case LEFT:
@@ -132,7 +132,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
 
             // We move not all the way so we don't crash into a parker, then after strafe move the rest
 
-            mySparky.MoveStraight(1900+extraVerticalMovement,.5,300);
+            mySparky.MoveStraight(1830+extraVerticalMovement,.5,300);
             newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
 
 
@@ -146,21 +146,27 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
                 mySparky.StrafeRight(780,.5,mySparky.StandardAutonWaitTime);
             }
 
+            try {
+                // This section gets the robot in front of the april tag
+                lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
+                sleep(500);
+                FinishAprilTagMoves();
+                if(mySpikeLocation== SpikeCam.location.RIGHT) {
+                    mySparky.StrafeRight(50,.5,mySparky.StandardAutonWaitTime);
+                }
 
-            // This section gets the robot in front of the april tag
-            lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
-            sleep(500);
-            FinishAprilTagMoves();
-            if(mySpikeLocation== SpikeCam.location.RIGHT) {
-                mySparky.StrafeRight(50,.5,mySparky.StandardAutonWaitTime);
+                mySparky.scoreFromDrivingPositionAndReturn();
+                mySparky.MoveStraight(-50,.5,300);
+                mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
+                mySparky.returnArmFromScoring();
+                mySparky.MoveStraight(150,.5,200);
+                mySparky.LowerArmAtAutonEnd();
             }
-
-            mySparky.scoreFromDrivingPositionAndReturn();
-            mySparky.MoveStraight(-50,.5,300);
-            mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
-            mySparky.returnArmFromScoring();
-            mySparky.LowerArmAtAutonEnd();
-            mySparky.MoveStraight(100,.5,300);
+            catch (Exception e) {
+                telemetry.addLine("Major malfunction in main");
+                sleep(3000);
+                telemetry.update();
+            }
         }
 
     }
@@ -168,57 +174,61 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
 
     private void FinishAprilTagMoves()
     {
-        // you can use the Yaw from the last time we got the tag, so no need to find it again
-        telemetry.addData("Looking for tag:",lookingForTagNumber);
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+        try {
+            // you can use the Yaw from the last time we got the tag, so no need to find it again
+            telemetry.addData("Looking for tag:", lookingForTagNumber);
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
 
 
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("Before Yaw: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
-            mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,.6, 500);
-        }
-        else {
-            telemetry.addLine("detected tag is null");
-        }
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("Before Yaw: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                mySparky.RotateLeft((int) detectedTag.ftcPose.yaw, .6, 500);
+            } else {
+                telemetry.addLine("detected tag is null");
+            }
 
-        // after adjusting for Yaw, get the new bearing and adjust for bearing
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("Before Bearing: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
-            double radians = Math.toRadians(tagBearing);
-            double distance = tagRange * Math.sin(radians);
-            distance *= 25.4;
-            telemetry.addData("distance to strafe:",distance);
-            mySparky.StrafeLeft((int) distance, .6, 500);
-        }
+            // after adjusting for Yaw, get the new bearing and adjust for bearing
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("Before Bearing: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                double radians = Math.toRadians(tagBearing);
+                double distance = tagRange * Math.sin(radians);
+                distance *= 25.4;
+                telemetry.addData("distance to strafe:", distance);
+                mySparky.StrafeLeft((int) distance, .6, 500);
+            }
 
-        // after adjusting for Bearing, get the data again and adjust for range
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("Before Range: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
-            int moveDistance = (int) (25.4 * (detectedTag.ftcPose.range - desiredRange));
-            mySparky.MoveStraight(moveDistance, .6, 500);
-        }
+            // after adjusting for Bearing, get the data again and adjust for range
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("Before Range: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                int moveDistance = (int) (25.4 * (detectedTag.ftcPose.range - desiredRange));
+                mySparky.MoveStraight(moveDistance, .6, 500);
+            }
 
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("After Range: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("After Range: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                telemetry.update();
+
+            }
+        }catch(Exception e) {
+            telemetry.addLine("Major malfunction");
+            sleep(3000);
             telemetry.update();
-
         }
-
     }
 }
 

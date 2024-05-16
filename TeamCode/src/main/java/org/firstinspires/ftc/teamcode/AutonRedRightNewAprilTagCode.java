@@ -106,20 +106,25 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
              }
 
+            try {
+                // This section gets the robot in front of the april tag
+                lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
+                sleep(500);
+                FinishAprilTagMoves();
 
-            // This section gets the robot in front of the april tag
-            lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
-            sleep(500);
-            FinishAprilTagMoves();
-
-            // Finish scoring and park
-            mySparky.scoreFromDrivingPositionAndReturn();
-            mySparky.MoveStraight(-50,.5,300);
-            mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
-            mySparky.returnArmFromScoring();
-            mySparky.LowerArmAtAutonEnd();
-            mySparky.MoveStraight(100,.5,300);
-
+                // Finish scoring and park
+                mySparky.scoreFromDrivingPositionAndReturn();
+                mySparky.MoveStraight(-50,.5,300);
+                mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
+                mySparky.returnArmFromScoring();
+                mySparky.MoveStraight(100,.5,200);
+                mySparky.LowerArmAtAutonEnd();
+            }
+            catch (Exception e) {
+                telemetry.addLine("Major malfunction in main");
+                sleep(3000);
+                telemetry.update();
+            }
         }
     }
 
@@ -178,61 +183,63 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
 
     }
 
-    private void FinishAprilTagMoves()
-    {
-        // you can use the Yaw from the last time we got the tag, so no need to find it again
-        telemetry.addData("Looking for tag:",lookingForTagNumber);
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+    private void FinishAprilTagMoves() {
+        try {
+            // you can use the Yaw from the last time we got the tag, so no need to find it again
+            telemetry.addData("Looking for tag:", lookingForTagNumber);
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
 
 
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("Before Yaw: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
-            mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,.6, 500);
-        }
-        else {
-            telemetry.addLine("detected tag is null");
-        }
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("Before Yaw: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                mySparky.RotateLeft((int) detectedTag.ftcPose.yaw, .6, 500);
+            } else {
+                telemetry.addLine("detected tag is null");
+            }
 
-        // after adjusting for Yaw, get the new bearing and adjust for bearing
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("Before Bearing: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
-            double radians = Math.toRadians(tagBearing);
-            double distance = tagRange * Math.sin(radians);
-            distance *= 25.4;
-            telemetry.addData("distance to strafe:",distance);
-            mySparky.StrafeLeft((int) distance, .6, 500);
-        }
+            // after adjusting for Yaw, get the new bearing and adjust for bearing
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("Before Bearing: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                double radians = Math.toRadians(tagBearing);
+                double distance = tagRange * Math.sin(radians);
+                distance *= 25.4;
+                telemetry.addData("distance to strafe:", distance);
+                mySparky.StrafeLeft((int) distance, .6, 500);
+            }
 
-        // after adjusting for Bearing, get the data again and adjust for range
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("Before Range: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
-            int moveDistance = (int) (25.4 * (detectedTag.ftcPose.range - desiredRange));
-            mySparky.MoveStraight(moveDistance, .6, 500);
-        }
+            // after adjusting for Bearing, get the data again and adjust for range
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("Before Range: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                int moveDistance = (int) (25.4 * (detectedTag.ftcPose.range - desiredRange));
+                mySparky.MoveStraight(moveDistance, .6, 500);
+            }
 
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-        if(detectedTag!=null) {
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-            telemetry.addData("After Range: ","Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+            if (detectedTag != null) {
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("After Range: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
+                telemetry.update();
+
+            }
+        } catch (Exception e) {
+            telemetry.addLine("Major malfunction");
+            sleep(3000);
             telemetry.update();
-
         }
-
     }
-
 
 }
 
