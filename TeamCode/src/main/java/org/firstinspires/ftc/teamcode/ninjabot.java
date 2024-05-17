@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.util.*;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 public class NinjaBot {
