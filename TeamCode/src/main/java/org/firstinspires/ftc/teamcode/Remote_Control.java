@@ -21,7 +21,7 @@ public class Remote_Control extends LinearOpMode {
       // eg: boolean move = gamepad1.a;
 
       // set motor power
-      // eg: robot.leftDrive.setPower(power);
+      // eg: robot.leftDrive.setPower(1);
 
       // optional
       // sleep(10);
