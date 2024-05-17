@@ -19,6 +19,7 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
     double tagYaw = 100;
     double desiredRange = 6.9;
     double timeAprilTagsDriveStarted = 0;
+    boolean foundAprilTag = true;
     private CyDogsSparky mySparky;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -102,7 +103,10 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
                 lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.BLUE);
                 sleep(500);
                 FinishAprilTagMoves();
-
+                if(!foundAprilTag)
+                {
+                    mySparky.MoveStraight(200,.5,500);
+                }
 
                 mySparky.scoreFromDrivingPositionAndReturn();
                 mySparky.MoveStraight(-50,.5,300);
@@ -134,6 +138,7 @@ public class AutonBlueLeftNewAprilTagCode extends LinearOpMode {
             mySparky.RotateLeft((int)detectedTag.ftcPose.yaw,.6, 500);
         }
         else {
+            foundAprilTag = false;
             telemetry.addLine("detected tag is null");
         }
 

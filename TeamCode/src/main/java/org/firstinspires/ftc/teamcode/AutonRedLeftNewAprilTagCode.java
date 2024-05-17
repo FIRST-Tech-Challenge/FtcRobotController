@@ -16,8 +16,9 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
     double tagRange = 100;
     double tagBearing = 100;
     double tagYaw = 100;
-    double desiredRange = 6.7;
+    double desiredRange = 6.6;
     double timeAprilTagsDriveStarted = 0;
+    boolean foundAprilTag = true;
     private CyDogsSparky mySparky;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -83,7 +84,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
                 mySparky.dropPurplePixel();
             } else { //Right
                 mySparky.RotateLeft(-90,.5,mySparky.StandardAutonWaitTime);
-                mySparky.MoveStraight(-10,.5,200);
+                mySparky.MoveStraight(-25,.5,200);
                 mySparky.dropPurplePixel();
             }
 
@@ -94,7 +95,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
             }
             else if(mySpikeLocation==SpikeCam.location.RIGHT)
             {
-                backAwayFromPurple=20+CyDogsSparky.BackUpDistanceFromSpike+50;
+                backAwayFromPurple=45+CyDogsSparky.BackUpDistanceFromSpike+50;
             }
             mySparky.MoveStraight(backAwayFromPurple, .5, mySparky.StandardAutonWaitTime);
             mySparky.StandardAutonWaitTime = 300;
@@ -151,6 +152,10 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
                 lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
                 sleep(500);
                 FinishAprilTagMoves();
+                if(!foundAprilTag)
+                {
+                    mySparky.MoveStraight(200,.5,500);
+                }
                 if(mySpikeLocation== SpikeCam.location.RIGHT) {
                     mySparky.StrafeRight(50,.5,mySparky.StandardAutonWaitTime);
                 }
@@ -187,6 +192,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
                 telemetry.addData("Before Yaw: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
                 mySparky.RotateLeft((int) detectedTag.ftcPose.yaw, .6, 500);
             } else {
+                foundAprilTag = false;
                 telemetry.addLine("detected tag is null");
             }
 

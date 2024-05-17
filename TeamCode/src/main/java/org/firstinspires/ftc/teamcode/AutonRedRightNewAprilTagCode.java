@@ -17,8 +17,9 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
     double tagRange = 100;
     double tagBearing = 100;
     double tagYaw = 100;
-    double desiredRange = 6.9;
+    double desiredRange = 6.7;
     double timeAprilTagsDriveStarted = 0;
+    boolean foundAprilTag = true;
     private CyDogsSparky mySparky;
     private ElapsedTime runtime = new ElapsedTime();
     // This is a SHORT side Auton
@@ -63,7 +64,19 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
             mySparky.spikeCam.closeStream();
 
             // Place purple pixel and back away from it
-            mySparky.AutonPlacePurplePixel(mySpikeLocation);
+            if(mySpikeLocation==SpikeCam.location.LEFT){
+                mySparky.RotateLeft(94,.5,mySparky.StandardAutonWaitTime);
+                mySparky.MoveStraight(-35,.5,200);
+                // MoveStraight(-20,.5,200);
+                mySparky.dropPurplePixel();
+            } else if (mySpikeLocation==SpikeCam.location.MIDDLE) {
+                mySparky.MoveStraight(70,.5,mySparky.StandardAutonWaitTime);
+                mySparky.dropPurplePixel();
+            } else { //Right
+                mySparky.RotateLeft(-90,.5,mySparky.StandardAutonWaitTime);
+                //   MoveStraight(-10,.5,200);
+                mySparky.dropPurplePixel();
+            }
 
             if(mySpikeLocation== SpikeCam.location.MIDDLE) {
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
@@ -86,8 +99,8 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 mySparky.RotateRight(3,.5,mySparky.StandardAutonWaitTime);
                 mySparky.StrafeRight(40,.5,mySparky.StandardAutonWaitTime);
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                // has long wait time to handle arm movement before it
-                mySparky.MoveStraight(675, .5, 1000);
+                mySparky.MoveStraight(400, .5, 300);
+                mySparky.StrafeLeft(200, .5, 500);                // has long wait time to handle arm movement before it
       // I took 200 off the above to be far enough away to read april tags
             } else if (mySpikeLocation == SpikeCam.location.MIDDLE) {
                 mySparky.RotateLeft(92, .5, mySparky.StandardAutonWaitTime);
@@ -103,21 +116,25 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
                 // has long wait time to handle arm movement before it
                 mySparky.RotateRight(188, .5, 1000);
-
              }
 
             try {
                 // This section gets the robot in front of the april tag
                 lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
                 sleep(500);
+
                 FinishAprilTagMoves();
+                if(!foundAprilTag)
+                {
+                    mySparky.MoveStraight(200,.5,500);
+                }
 
                 // Finish scoring and park
                 mySparky.scoreFromDrivingPositionAndReturn();
                 mySparky.MoveStraight(-50,.5,300);
                 mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
                 mySparky.returnArmFromScoring();
-                mySparky.MoveStraight(100,.5,200);
+                mySparky.MoveStraight(200,.5,200);
                 mySparky.LowerArmAtAutonEnd();
             }
             catch (Exception e) {
@@ -197,6 +214,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 telemetry.addData("Before Yaw: ", "Yaw %5.2f, Bearing %5.2f, Range %5.2f ", tagYaw, tagBearing, tagRange);
                 mySparky.RotateLeft((int) detectedTag.ftcPose.yaw, .6, 500);
             } else {
+                foundAprilTag = false;
                 telemetry.addLine("detected tag is null");
             }
 
