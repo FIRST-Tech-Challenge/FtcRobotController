@@ -33,13 +33,11 @@ public class AprilTagTarget {
     // Calculate a location based on an april tag detection
     public FieldCoordinate calculateCoordinatesFromDetection(AprilTagDetection detection) {
         FieldCoordinate result = null;
-        if((detection != null) && (detection.ftcPose != null) && (isReliableDetection(detection))) {
-            double myPositionX = detection.ftcPose.range * Math.cos(
-                    Math.toRadians(aprilTagLocation.getAngleDegrees() + detection.ftcPose.bearing)) +
-                    aprilTagLocation.getX();
-            double myPositionY = detection.ftcPose.range * Math.sin(
-                    Math.toRadians(aprilTagLocation.getAngleDegrees() + detection.ftcPose.bearing)) +
-                    aprilTagLocation.getY();
+        if((detection != null) && (detection.ftcPose != null) && (isReliableDetectionAdaptive(detection))) {
+            double detectionAngleRadians = Math.toRadians(aprilTagLocation.getAngleDegrees() + detection.ftcPose.bearing);
+            double myPositionX = detection.ftcPose.range * Math.cos(detectionAngleRadians) + aprilTagLocation.getX();
+            double myPositionY = detection.ftcPose.range * Math.sin(detectionAngleRadians) + aprilTagLocation.getY();
+            // This angle is assuming the camera is on the back of the robot.
             double myPositionAngleDegrees = aprilTagLocation.getAngleDegrees() - detection.ftcPose.yaw;
             result = new FieldCoordinate(myPositionX, myPositionY, myPositionAngleDegrees);
         }

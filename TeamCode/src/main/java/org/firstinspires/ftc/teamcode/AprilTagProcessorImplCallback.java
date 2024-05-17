@@ -44,12 +44,12 @@ public class AprilTagProcessorImplCallback extends AprilTagProcessorImpl {
 //    public static final FieldCoordinate APRIL_TAG_7 = new FieldCoordinate(141.75, 32.5, Math.toRadians(0.0));
 //    public static final FieldCoordinate APRIL_TAG_8 = new FieldCoordinate(141.75, 27.0, Math.toRadians(0.0));
     // X Min
-    public static final AprilTagTarget APRIL_TAG_7 = new AprilTagTarget(7, new FieldCoordinate(0.0, 29.0, 0.0), 36.0, 20.0);
-    public static final AprilTagTarget APRIL_TAG_8 = new AprilTagTarget(8, new FieldCoordinate(0.0, 34.5, 90.0), 18.0, 20.0);
+    public static final AprilTagTarget APRIL_TAG_7 = new AprilTagTarget(7, new FieldCoordinate(141.75, 27.0, 180.0), 36.0, 20.0);
+    public static final AprilTagTarget APRIL_TAG_8 = new AprilTagTarget(8, new FieldCoordinate(106.0, 0.0, 90.0), 18.0, 20.0);
     // Right side stack images
     // 4x23" + 4x0.75" + 11.5"
-    public static final AprilTagTarget APRIL_TAG_9 = new AprilTagTarget(9, new FieldCoordinate(34.75, 0.0, 0.0), 18.0, 20.0);
-    public static final AprilTagTarget APRIL_TAG_10 = new AprilTagTarget(10, new FieldCoordinate(29.25, 0.0, 180.0), 36.0, 20.0);
+    public static final AprilTagTarget APRIL_TAG_9 = new AprilTagTarget(9, new FieldCoordinate(34.75, 0.0, 90.0), 18.0, 20.0);
+    public static final AprilTagTarget APRIL_TAG_10 = new AprilTagTarget(10, new FieldCoordinate(0.0, 29.5, 0.0), 36.0, 20.0);
     protected Map<Integer, AprilTagTarget> aprilTags;
     protected FieldCoordinate robotPosition;
     public final static Object positionLock = new Object();
@@ -99,17 +99,17 @@ public class AprilTagProcessorImplCallback extends AprilTagProcessorImpl {
             if(detectionCount > 0) {
                 double sumX = 0.0;
                 double sumY = 0.0;
-                double sumAngleRadians = 0.0;
+                double sumAngleDegrees = 0.0;
                 for(FieldCoordinate detection : detectionCoordinates) {
                     sumX += detection.getX();
                     sumY += detection.getY();
-                    sumAngleRadians += detection.getAngleRadians();
+                    sumAngleDegrees += detection.getAngleDegrees();
                 }
                 double x = sumX / detectionCount;
                 double y = sumY / detectionCount;
-                double angleRadians = sumAngleRadians / detectionCount;
+                double angleDegrees = sumAngleDegrees / detectionCount;
                 synchronized(positionLock) {
-                    robotPosition.setLocation(x, y, angleRadians);
+                    robotPosition.setLocation(x, y, angleDegrees);
                 }
             }
         }

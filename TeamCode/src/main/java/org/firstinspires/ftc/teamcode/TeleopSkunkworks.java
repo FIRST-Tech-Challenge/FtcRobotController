@@ -99,7 +99,7 @@ public class TeleopSkunkworks extends LinearOpMode {
                 AprilTagProcessor.TagFamily.TAG_36h11, THREADS_DEFAULT, false,
                 robotGlobalCoordinateCorrectedPosition, telemetry);
         visionPortalBack = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"))
                 .addProcessor(aprilTag)
                 .setCameraResolution(new Size(1280, 800))
                 .build();
@@ -199,7 +199,7 @@ public class TeleopSkunkworks extends LinearOpMode {
 
             // Update telemetry data for positioning
             telemetry.addData("Corrected Global Position", "X %.2f Y %.2f Angle %.2f", robotGlobalCoordinateCorrectedPosition.getX(),
-                    robotGlobalCoordinateCorrectedPosition.getY(),  Math.toDegrees(robotGlobalCoordinateCorrectedPosition.getAngleRadians()));
+                    robotGlobalCoordinateCorrectedPosition.getY(),  robotGlobalCoordinateCorrectedPosition.getAngleDegrees());
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
