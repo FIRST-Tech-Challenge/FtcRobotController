@@ -16,7 +16,7 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
     double tagRange = 100;
     double tagBearing = 100;
     double tagYaw = 100;
-    double desiredRange = 6.7;
+    double desiredRange = 6.6;
     double timeAprilTagsDriveStarted = 0;
     boolean foundAprilTag = true;
     private CyDogsSparky mySparky;
@@ -102,7 +102,7 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
 
 
             mySparky.MoveStraight(backAwayFromPurple, .5, mySparky.StandardAutonWaitTime);
-            mySparky.StandardAutonWaitTime = 300;
+            mySparky.StandardAutonWaitTime = 400;
 
             switch (mySpikeLocation) {
                 case LEFT:
@@ -125,8 +125,8 @@ public class AutonBlueRightNewAprilTagCode extends LinearOpMode {
                     break;
                 case RIGHT:
                     extraVerticalMovement-=50;
-                    mySparky.raiseArmToScore(400);
-                    sleep(300);
+                    mySparky.raiseArmToScore(800);
+                    sleep(600);
                     mySparky.StrafeRight(CyDogsSparky.OneTileMM+10, .5, mySparky.StandardAutonWaitTime);
                     mySparky.raiseArmToScore(0);
                     mySparky.RotateLeft(2,.5,mySparky.StandardAutonWaitTime);
