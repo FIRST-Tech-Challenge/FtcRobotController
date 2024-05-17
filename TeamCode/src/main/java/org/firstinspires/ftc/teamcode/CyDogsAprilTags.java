@@ -126,6 +126,12 @@ public class CyDogsAprilTags
     public CyDogsAprilTags(LinearOpMode currentOpMode){
         myOpMode = currentOpMode;
     }
+
+    public void CloseStream()
+    {
+        visionPortal.stopStreaming();
+
+    }
     public void Initialize(DcMotor LFD, DcMotor RFD, DcMotor LBD, DcMotor RBD) {
 
         leftFrontDrive = LFD;
@@ -290,13 +296,13 @@ public class CyDogsAprilTags
 
         // Make sure camera is streaming before we try to set the exposure controls
         if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            myOpMode. telemetry.addData("Camera", "Waiting");
-            myOpMode.telemetry.update();
+         //   myOpMode.telemetry.addData("Camera", "Waiting");
+         //   myOpMode.telemetry.update();
             while (!myOpMode.isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
                 myOpMode.sleep(20);
             }
-            myOpMode.telemetry.addData("Camera", "Ready");
-            myOpMode.telemetry.update();
+         //   myOpMode.telemetry.addData("Camera", "Ready");
+         //   myOpMode.telemetry.update();
         }
 
         // Set camera controls unless we are stopping.

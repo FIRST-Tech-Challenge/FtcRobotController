@@ -84,7 +84,7 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
                 mySparky.dropPurplePixel();
             } else { //Right
                 mySparky.RotateLeft(-90,.5,mySparky.StandardAutonWaitTime);
-                mySparky.MoveStraight(-25,.5,200);
+                mySparky.MoveStraight(-30,.5,200);
                 mySparky.dropPurplePixel();
             }
 
@@ -95,10 +95,10 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
             }
             else if(mySpikeLocation==SpikeCam.location.RIGHT)
             {
-                backAwayFromPurple=45+CyDogsSparky.BackUpDistanceFromSpike+50;
+                backAwayFromPurple=150;
             }
             mySparky.MoveStraight(backAwayFromPurple, .5, mySparky.StandardAutonWaitTime);
-            mySparky.StandardAutonWaitTime = 300;
+            mySparky.StandardAutonWaitTime = 400;
 
             switch (mySpikeLocation) {
                 case LEFT:
@@ -144,13 +144,13 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
             } else if (mySpikeLocation== SpikeCam.location.MIDDLE) {
                 mySparky.StrafeRight(700,.5,mySparky.StandardAutonWaitTime);
             } else {
-                mySparky.StrafeRight(780,.5,mySparky.StandardAutonWaitTime);
+                mySparky.StrafeRight(880,.5,mySparky.StandardAutonWaitTime);
             }
 
             try {
                 // This section gets the robot in front of the april tag
                 lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
-                sleep(500);
+                sleep(800);
                 FinishAprilTagMoves();
                 if(!foundAprilTag)
                 {
@@ -169,8 +169,9 @@ public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
             }
             catch (Exception e) {
                 telemetry.addLine("Major malfunction in main");
-                sleep(3000);
                 telemetry.update();
+                sleep(3000);
+
             }
         }
 

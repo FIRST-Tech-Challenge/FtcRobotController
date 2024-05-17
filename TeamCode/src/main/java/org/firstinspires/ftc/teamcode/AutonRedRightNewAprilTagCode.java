@@ -124,6 +124,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 sleep(500);
 
                 FinishAprilTagMoves();
+                newAprilTags.CloseStream();
                 if(!foundAprilTag)
                 {
                     mySparky.MoveStraight(200,.5,500);
