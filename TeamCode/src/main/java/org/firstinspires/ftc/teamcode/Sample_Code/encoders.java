@@ -55,17 +55,17 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="encoder", group="Sample")
+@TeleOp(name="encoder adjustable", group="Sample")
 
 public class encoders extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-   DcMotor motor;
+    DcMotor motor;
     double newTarget;
 
-   Double ticks = 537.7;
+    Double ticks = 537.7;
 
 
     // A is for intake
@@ -91,49 +91,13 @@ public class encoders extends LinearOpMode {
         while (opModeIsActive()) {
 
             if(gamepad1.a){
-                reset();
-            }
-            if(gamepad1.b){
-                turn90();
-            }
-            if(gamepad1.y){
-                turn180();
-            }
-            if(gamepad1.x){
-                turn270();
-            }
-            if(gamepad1.dpad_up){
-                turn360();
+                degin(90);
             }
 
         }
     }
-    public void turn90(){
-        newTarget = ticks/4;
-        motor.setTargetPosition((int)newTarget);
-        motor.setPower(0.3);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void turn180(){
-        newTarget = ticks/2;
-        motor.setTargetPosition((int)newTarget);
-        motor.setPower(0.3);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void turn270(){
-        newTarget = (ticks*3)/4;
-        motor.setTargetPosition((int)newTarget);
-        motor.setPower(0.3);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void turn360(){
-        newTarget = ticks;
-        motor.setTargetPosition((int)newTarget);
-        motor.setPower(0.3);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void reset(){
-        newTarget = 0;
+    public void degin(double deg){
+        newTarget = ticks/(360/deg);
         motor.setTargetPosition((int)newTarget);
         motor.setPower(0.3);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
