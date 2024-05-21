@@ -13,9 +13,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 
 
 public class MecanumRobotController {
@@ -27,9 +29,9 @@ public class MecanumRobotController {
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
-    public static final double Kp = 0.05;
-    public static final double Kd = 0.0005;
-    public static final double Ki = 0.000005;
+    public static double Kp = 0.15;
+    public static double Kd = 0.00;
+    public static double Ki = 0.00000;
 
     private final DcMotor backLeft;
     private final DcMotor backRight;
@@ -50,6 +52,8 @@ public class MecanumRobotController {
     private double integralSum;
     private double lastError;
     private double turnStartedTime;
+    private double turnStoppedTime;
+    private int kTuner;
 
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
@@ -103,7 +107,11 @@ public class MecanumRobotController {
             if (turnStartedTime == 0) {
                 turnStartedTime = runtime.seconds();
             }
+            turnStoppedTime = 0;
         } else {
+            if (turnStoppedTime == 0) {
+                turnStoppedTime = runtime.seconds();
+            }
             turnStartedTime = 0;
         }
         double turnTime = runtime.seconds() - turnStartedTime;
@@ -115,7 +123,7 @@ public class MecanumRobotController {
         // when the robot turns fast. This ensures that the robot doesn't set back as much after
         // stopping, and if it gets hit by something super fast, it doesn't try to correct its
         // heading back into that object.
-        if ((robot == null && currentAngularVelocity > MIN_VELOCITY_TO_SMOOTH_TURN) || turn != 0) {
+        if ((robot == null && currentAngularVelocity > MIN_VELOCITY_TO_SMOOTH_TURN) || turn != 0 || runtime.seconds() - turnStoppedTime < currentAngularVelocity * 0.005) {
             wantedHeading = currentHeading;
         } else {
             double error = normalize(wantedHeading - currentHeading);
@@ -272,6 +280,41 @@ public class MecanumRobotController {
         move(forward, strafe, turn, HEADING_CORRECTION_POWER);
     }
 
+    // Behavior: Allows driver to tune heading correction using the controller.
+    // Params:
+    //      - Gamepad gamepad1: The first gamepad from driver control
+    //      - Telemetry telemetry: Telemetry object, so telemetry can be sent to Driver Hub
+    public void tuneHeadingCorrection(Gamepad gamepad1, Telemetry telemetry) {
+        if (gamepad1.a) {
+            kTuner = (kTuner == 2) ? 0 : kTuner + 1;
+        }
+        if (kTuner == 0) {
+            if (gamepad1.dpad_down) {
+                Kp -= 0.001;
+            } else if (gamepad1.dpad_up) {
+                Kp += 0.001;
+            }
+            telemetry.addData("Tuning", "proportional");
+        } else if (kTuner == 1) {
+            if (gamepad1.dpad_down) {
+                Ki -= 0.000001;
+            } else if (gamepad1.dpad_up) {
+                Ki += 0.000001;
+            }
+            telemetry.addData("Tuning", "integral");
+        } else {
+            if (gamepad1.dpad_down) {
+                Kd -= 0.00001;
+            } else if (gamepad1.dpad_up) {
+                Kd += 0.00001;
+            }
+            telemetry.addData("Tuning", "derivative");
+        }
+        telemetry.addData("Kp", Kp);
+        telemetry.addData("Ki", Ki);
+        telemetry.addData("Kd", Kd);
+    }
+
     // Behavior: Overloaded method of continuousDrive. This sets the default of isFieldCentric.
     // Params:
     //      - double forwardPower: The power at which the robot will move forward.
@@ -331,6 +374,11 @@ public class MecanumRobotController {
         telemetry.addData("Wanted Heading", wantedHeading);
         telemetry.addData("", "");
         telemetry.addData("Runtime", runtime.seconds());
+        telemetry.addData("", "");
+        telemetry.addData("Front Left Target", frontLeft.getCurrentPosition() - frontLeft.getTargetPosition());
+        telemetry.addData("Front Right Target", frontRight.getCurrentPosition() - frontRight.getTargetPosition());
+        telemetry.addData("Back Left Target", backLeft.getCurrentPosition() - backLeft.getTargetPosition());
+        telemetry.addData("Back Right Target", backRight.getCurrentPosition() - backRight.getTargetPosition());
 
         telemetry.update();
     }
