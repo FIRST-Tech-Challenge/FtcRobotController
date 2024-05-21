@@ -13,5 +13,7 @@ public class Autonomous extends LinearOpMode {
     waitForStart();
 
     // there is not running loop, all code is executed sequentially.
+    // same as remote control, but without the loop.
+    // eg: robot.leftDrive.setPower(1);
   }
 }

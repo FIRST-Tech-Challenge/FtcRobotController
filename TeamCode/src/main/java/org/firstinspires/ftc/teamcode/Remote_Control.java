@@ -23,7 +23,7 @@ public class Remote_Control extends LinearOpMode {
       // set motor power
       // eg: robot.leftDrive.setPower(1);
 
-      // optional
+      // optional (waits before continueing loop)
       // sleep(10);
     }
   }
