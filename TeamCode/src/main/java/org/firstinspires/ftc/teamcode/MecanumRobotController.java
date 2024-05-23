@@ -310,6 +310,30 @@ public class MecanumRobotController {
         telemetry.addData("Kp", Kp);
         telemetry.addData("Ki", Ki);
         telemetry.addData("Kd", Kd);
+        telemetry.addData("", "");
+    }
+
+    // Behavior: Tests the current Kp, Kd, and Ki values by turning the robot, stopping, and seeing
+    //           how fast it stops.
+    // Returns: A double representing how good the heading correction is. The lower, the better.
+    // Parameters:
+    //      - double testTime: The amount of time in seconds that the robot should test for.
+    public double testHeadingCorrection(double testTime) {
+        double startTime = runtime.seconds();
+        double totalError = 0;
+        double lastTime = runtime.seconds();
+        while (startTime + testTime > runtime.seconds()) {
+            double currentTime = runtime.seconds();
+            double deltaTime = currentTime - lastTime;
+            if ((int)currentTime % 2 == 0) {
+                move(0, 0, 0.5, HEADING_CORRECTION_POWER);
+            } else {
+                move(0, 0, 0, HEADING_CORRECTION_POWER);
+                totalError += deltaTime * currentAngularVelocity;
+            }
+            lastTime = currentTime;
+        }
+        return totalError;
     }
 
     // Behavior: Overloaded method of continuousDrive. This sets the default of isFieldCentric.
