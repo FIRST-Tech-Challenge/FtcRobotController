@@ -81,6 +81,7 @@ public class MecanumDriver extends OpMode {
         robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
+        robotController.tuneHeadingCorrection(gamepad1, telemetry);
         robotController.sendTelemetry(telemetry);
     }
 
