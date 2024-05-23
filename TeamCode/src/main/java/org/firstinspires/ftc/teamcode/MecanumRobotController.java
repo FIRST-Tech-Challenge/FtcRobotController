@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
-
 public class MecanumRobotController {
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
