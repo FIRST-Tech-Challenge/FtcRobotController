@@ -128,7 +128,7 @@ public class MecanumRobotController {
         } else {
             double error = normalize(wantedHeading - currentHeading);
             double derivative = (error - lastError) / PIDTimer.seconds();
-            integralSum += error * runtime.seconds();
+            integralSum += error * PIDTimer.seconds();
 
             double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
             headingCorrection = normalize(headingCorrection);
