@@ -47,7 +47,7 @@ public class MecanumDriver extends OpMode {
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
-    public final boolean isFieldCentric = true;
+    public final boolean isFieldCentric = false;
 
     @Override
     public void init() {
