@@ -23,15 +23,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MecanumRobotController {
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
-    public static final double FORWARD_COUNTS_PER_INCH = 43.59;
-    public static final double STRAFE_COUNTS_PER_INCH = 51.29;
+    public static final double FORWARD_COUNTS_PER_INCH = 43.80;
+    public static final double STRAFE_COUNTS_PER_INCH = 50.58;
     public static final double HEADING_CORRECTION_POWER = 1.0;
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
-    public static double Kp = 0.15;
+    public static double Kp = 0.064;
     public static double Kd = 0.00;
-    public static double Ki = 0.00000;
+    public static double Ki = 0.000001;
 
     private final DcMotor backLeft;
     private final DcMotor backRight;
@@ -123,7 +123,7 @@ public class MecanumRobotController {
         // when the robot turns fast. This ensures that the robot doesn't set back as much after
         // stopping, and if it gets hit by something super fast, it doesn't try to correct its
         // heading back into that object.
-        if ((robot == null && currentAngularVelocity > MIN_VELOCITY_TO_SMOOTH_TURN) || turn != 0 || runtime.seconds() - turnStoppedTime < currentAngularVelocity * 0.005) {
+        if ((robot == null && currentAngularVelocity > MIN_VELOCITY_TO_SMOOTH_TURN) || turn != 0 || runtime.seconds() - turnStoppedTime < 0.15) {
             wantedHeading = currentHeading;
         } else {
             double error = normalize(wantedHeading - currentHeading);
