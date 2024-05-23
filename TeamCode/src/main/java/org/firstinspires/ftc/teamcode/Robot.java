@@ -2488,6 +2488,7 @@ public class Robot {
         return power;
     }
 
+
     public double motorParallelPowerPWait(int currentPos, double targetPos, double maxPower, double currentTimeStampMillis, double timeStampStartMillis) {
         double ERROR_TOLERANCE = 15;
         double power;
