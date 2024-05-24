@@ -69,7 +69,7 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
     ElapsedTime trapdoorToggle = new ElapsedTime();
 
     // Variable that will later be used for placing the second pixel.
-    int borderLine = 400;
+    int borderLine = 300;
 
     final double SPEED_GAIN  =  0.1; //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double STRAFE_GAIN =  0.1; //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
@@ -103,15 +103,16 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
 
         gobbler = new Gobbler(hardwareMap);
         initDoubleVision();
+        gobbler.planeHang.initServo();
 
         while (WaitingToStart()) {
-            //IdentifyTeamPropLocation();
+            IdentifyTeamPropLocation();
         }
 
         if (opModeIsActive()) {
-//            PlaceFirstPixel();
+            PlaceFirstPixel();
 //            setupRobotToPlaceSecondPixel();
-            placeSecondPixel();
+            //placeSecondPixel();
 //            parkRobot();
         }
 
@@ -406,7 +407,7 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
             gobbler.driveTrain.centerBlueFarRedClose();
         }
 
-        else if (DESIRED_TAG_ID == 1) { // drives robot to the right position.
+        else if (DESIRED_TAG_ID == 3) { // drives robot to the right position.
             gobbler.driveTrain.rightBlueFarRedClose();
         }
 
@@ -428,9 +429,9 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
         gobbler.outtake.trapdoor(true, trapdoorToggle);
         gobbler.driveTrain.Wait(1.0);
         gobbler.outtake.driveLift(-0.5);
-        gobbler.driveTrain.Wait(1.0);
+        gobbler.driveTrain.Wait(0.5);
         gobbler.outtake.driveLift(0.0);
-        gobbler.driveTrain.Wait(2);
+        gobbler.driveTrain.Wait(1.0);
         gobbler.outtake.trapdoor(true, trapdoorToggle);
     }
 

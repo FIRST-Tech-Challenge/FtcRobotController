@@ -27,11 +27,8 @@ public class DriveTrain {
 
 
     boolean directionToggle = true;
-
 //    private DistanceSensor BackWDRight;
 //    private DistanceSensor BackWDLeft;
-    private double BackWDValueRight;
-    private double BackWDValueLeft;
 
     private double RampDownStart = 16;
     private double RampDownEnd = 8;
@@ -54,8 +51,9 @@ public class DriveTrain {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-//        BackWDRight = hwMap.get(DistanceSensor.class, "sensor_distance_BackWDRight");
-//        BackWDLeft = hwMap.get(DistanceSensor.class, "sensor_distance_BackWDLeft");
+
+//        distanceRight = hwMap.get(DistanceSensor.class, "distanceRight");
+//        distanceLeft = hwMap.get(DistanceSensor.class, "distanceLeft");
 
     }
 
@@ -64,14 +62,15 @@ public class DriveTrain {
     // The last two variables are for direction switching.
     public void drive(double axial, double lateral, double yaw, boolean directionButton, ElapsedTime time) {
 
-//        BackWDValueRight = BackWDRight.getDistance(DistanceUnit.INCH);
-//        BackWDValueLeft = BackWDLeft.getDistance(DistanceUnit.INCH);
+//        distanceRightValue = distanceRight.getDistance(DistanceUnit.INCH);
+//        distanceLeftValue = distanceLeft.getDistance(DistanceUnit.INCH);
+
 
         // The next two lines calculate the needed variables for the distance sensor.
         // If BackWDValueLeft is less than BackWDValueRight, then return BackWDValueLeft.
         // If BackWDValueLeft is greater thank BackWDValueRight, then return BackWDValueRight.
-        double effectiveDistance = BackWDValueLeft < BackWDValueRight ? BackWDValueLeft : BackWDValueRight;
-        double DistanceEquationValue = slope * effectiveDistance + intercept;
+//        double effectiveDistance = distanceLeftValue < distanceRightValue ? distanceLeftValue : distanceRightValue;
+//        double DistanceEquationValue = slope * effectiveDistance + intercept;
 
         // Adjustable variable for sensitivity. The default is 0.5. (half power)
         double sensitivity = 0.5;
@@ -83,26 +82,35 @@ public class DriveTrain {
 
         double max;
 
-        // Ramps down speed as mailbox approaches backstage.
-        if (effectiveDistance <= RampDownStart && effectiveDistance >= RampDownEnd){
-            yaw *= DistanceEquationValue;
-            if (axial < 0) {
-                axial *= DistanceEquationValue;
-            }
-        }
-        if (effectiveDistance < RampDownEnd){
-            yaw *= RampDownSpeed;
-            if ( axial < 0) {
-                axial *= RampDownSpeed;
-            }
-        }
+//        // Ramps down speed as mailbox approaches backstage.
+//        if (effectiveDistance <= RampDownStart && effectiveDistance >= RampDownEnd){
+//            yaw *= DistanceEquationValue;
+//            if (axial < 0) {
+//                axial *= DistanceEquationValue;
+//            }
+//        }
+//        if (effectiveDistance < RampDownEnd){
+//            yaw *= RampDownSpeed;
+//            if ( axial < 0) {
+//                axial *= RampDownSpeed;
+//            }
+//        }
 
         // This code calculates the power to give to each motor.
         if (Math.abs(axial) > 0.05 || Math.abs(lateral) > 0.05 || Math.abs(yaw) > 0.05) {
-            leftFrontPower = axial + lateral + yaw;
-            rightFrontPower = axial - lateral - yaw;
-            leftBackPower = axial - lateral + yaw;
-            rightBackPower = axial + lateral - yaw;
+            if (directionToggle) {
+                leftFrontPower = axial + lateral + yaw;
+                rightFrontPower = axial - lateral - yaw;
+                leftBackPower = axial - lateral + yaw;
+                rightBackPower = axial + lateral - yaw;
+            }
+            else {
+                leftFrontPower = -axial - lateral + yaw;
+                rightFrontPower = -axial + lateral - yaw;
+                leftBackPower = -axial + lateral + yaw;
+                rightBackPower = -axial - lateral - yaw;
+            }
+
         }
 
         // All code below this comment normalizes the values so no wheel power exceeds 100%.
@@ -135,17 +143,12 @@ public class DriveTrain {
         }
 
         // The next eleven lines gives the calculated power to each motor.
-        if (directionToggle) {
+
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-        } else {
-            leftFrontDrive.setPower(-leftFrontPower);
-            rightFrontDrive.setPower(-rightFrontPower);
-            leftBackDrive.setPower(-leftBackPower);
-            rightBackDrive.setPower(-rightBackPower);
-        }
+
     }
 
     public void driveAutonomously(double axial, double lateral, double yaw) {
@@ -693,67 +696,85 @@ public class DriveTrain {
                 leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
         }
     }
-    public double getBackWDValueRight(){
-        return BackWDValueRight;
-    }
-    public double getBackWDValueLeft(){
-        return BackWDValueLeft;
-    }
+//    public double getDistanceRightValue(){
+//        return distanceRightValue;
+//    }
+//    public double getDistanceLeftValue(){
+//        return distanceLeftValue;
+//    }
     public boolean getDriveDirection() {
         return directionToggle;
     }
 
     public void rightPos() {
-        moveBackward(22, 0.5);
+        moveBackward(25, 0.5);
         Wait(.5);
-        turnCounterClockwise(-92, 0.5);
+        turnClockwise(-92, 0.5);
         Wait(.5);
-        moveBackward(3, 0.5);
+        moveBackward(2, 0.5);
         Wait(.5);
-    }
-
-    public void rightBlueFarRedClose() {
-        moveBackward(14, 0.5);
-        Wait(.5);
-        strafeLeft(13,0.5);
-        Wait(.5);
-    }
-
-    public void centerPos() {
-        moveBackward(14, 0.5);
-        Wait(.5);
-        strafeRight(13,0.5);
-        Wait(.5);
-        moveBackward(18, 0.5);
-        Wait(.5);
-        turnCounterClockwise(-90, 0.5);
-        Wait(.5);
-    }
-
-    public void centerBlueFarRedClose() {
-        moveBackward(12, 0.5);
-        Wait(.5);
-        strafeLeft(13,0.5);
-        Wait(.5);
-        moveBackward(16, 0.5);
-        Wait(.5);
-        turnClockwise(-90, 0.5);
-        Wait(.5);
-    }
-
-    public void leftPos() {
-        moveBackward(16, 0.5);
-        Wait(.5);
-        strafeRight(13,0.5);
+        turnCounterClockwise(20,0.5);
         Wait(.5);
         moveBackward(2, 0.5);
         Wait(.5);
     }
 
-    public void leftBlueFarRedClose() {
-        moveBackward(20, 0.5);
+    public void rightBlueFarRedClose() {
+        moveBackward(21, 0.5);
         Wait(.5);
-        turnClockwise(-92, 0.5);
+        strafeLeft(11,0.5);
+        Wait(.5);
+//        moveBackward(3, 0.5);
+//        Wait(.5);
+    }
+
+    public void centerPos() {
+        moveBackward(15, 0.5);
+        Wait(.5);
+        strafeRight(13,0.5);
+        Wait(.5);
+        moveBackward(21, 0.5);
+        Wait(.5);
+        turnClockwise(-90, 0.5);
+        Wait(.5);
+        moveBackward(3, 0.5);
+        Wait(.5);
+    }
+
+    public void centerBlueFarRedClose() {
+        moveBackward(15, 0.5);
+        Wait(.5);
+        strafeLeft(13,0.5);
+        Wait(.5);
+        moveBackward(21, 0.5);
+        Wait(.5);
+        turnCounterClockwise(-90, 0.5);
+        Wait(.5);
+        moveBackward(3, 0.5);
+        Wait(.5);
+    }
+
+    public void leftPos() {
+        moveBackward(25, 0.5);
+        Wait(.5);
+        turnCounterClockwise(-85, 0.5);
+        Wait(.5);
+        moveBackward(2, 0.5);
+        Wait(.5);
+        turnClockwise(20,0.5);
+        Wait(.5);
+        moveBackward(1, 0.5);
+        Wait(.5);
+    }
+
+    public void leftBlueFarRedClose() {
+        moveBackward(25, 0.5);
+        Wait(.5);
+        turnCounterClockwise(-92, 0.5);
+        Wait(.5);
+        moveBackward(2, 0.5);
+        Wait(.5);
+        turnClockwise(20,0.5);
         Wait(.5);
         moveBackward(2, 0.5);
         Wait(.5);

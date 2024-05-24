@@ -88,7 +88,7 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
     ElapsedTime trapdoorToggle = new ElapsedTime();
 
     // Variable that will later be used for placing the second pixel.
-    int borderLine = 450;
+    int borderLine = 300;
 
     /**
      * //The variable to store our instance of the TensorFlow Object Detection processor.
@@ -110,15 +110,16 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
 
         gobbler = new Gobbler(hardwareMap);
         initDoubleVision();
+        gobbler.planeHang.initServo();
 
         while (WaitingToStart()) {
-            //IdentifyTeamPropLocation();
+            IdentifyTeamPropLocation();
         }
 
-        if (opModeIsActive()) {
-//            PlaceFirstPixel();
+        if (opModeIsActive()) {gobbler.planeHang.initServo();
+           PlaceFirstPixel();
 //            setupRobotToPlaceSecondPixel();
-            placeSecondPixel();
+           // placeSecondPixel();
 //            parkRobot();
         }
 
@@ -334,8 +335,8 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
             if (xValue < borderLine) {
                 // center
-                telemetry.addData("position", "Center");
-                DESIRED_TAG_ID = 2;
+                telemetry.addData("position", "Left");
+                DESIRED_TAG_ID = 1;
                 seen = true;
             }
 
@@ -343,15 +344,15 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
             else if (xValue > borderLine) {  //
                 // right
-                telemetry.addData("position", "Right");
-                DESIRED_TAG_ID = 1;
+                telemetry.addData("position", "Center");
+                DESIRED_TAG_ID = 2;
                 seen = true;
 
             }
         }
         // If the team prop is not seen on the center or right, it will assume it is on the left.
         if (!seen) {
-            telemetry.addData("position", "Left");
+            telemetry.addData("position", "Right");
             DESIRED_TAG_ID = 3;
         }
 
@@ -405,7 +406,7 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
             gobbler.driveTrain.centerBlueFarRedClose();
         }
 
-        else if (DESIRED_TAG_ID == 1) { // drives robot to the right position.
+        else if (DESIRED_TAG_ID == 3) { // drives robot to the right position.
             gobbler.driveTrain.rightBlueFarRedClose();
         }
 
