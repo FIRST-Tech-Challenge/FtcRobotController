@@ -41,7 +41,7 @@ import org.nknsd.robotics.framework.NKNProgram;
 import java.util.LinkedList;
 import java.util.List;
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative OpMode")
+@TeleOp(name="Sample NKNOpMode", group="Iterative OpMode")
 //@Disabled
 public class NKNOpMode_Iterative extends OpMode
 {
@@ -59,8 +59,6 @@ public class NKNOpMode_Iterative extends OpMode
         runtime.reset();
         telemetry.addData("Status", "Initializing");
         telemetry.update();
-
-        program.createComponents();
 
         program.init(telemetry,hardwareMap,gamepad1,gamepad2);
 
