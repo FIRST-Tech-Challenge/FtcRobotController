@@ -69,5 +69,8 @@ public class SampleNKNComponent implements NKNComponent {
         return "SampleNKNComponent";
     }
 
+//    public void attachMotorComponent(MotorComponent motor){
+//        this.motor = motor;
+//    }
 
 }
