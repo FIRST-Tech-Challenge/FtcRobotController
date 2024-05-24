@@ -131,6 +131,7 @@ public class BradBot extends BasicRobot {
     this(p_op, p_isTeleop, false);
   }
 
+  public double getVoltage(){return voltage;}
   public int getSpikePos() {
     return cv.getPosition();
   }
@@ -428,12 +429,8 @@ public class BradBot extends BasicRobot {
   public void intakeAuto(int height) {
     if (queuer.queue(
         true,
-        ((pixels == 1
-                && time - intake.getStartIntakeTime() > 0.4
-                && magazine.solidTwoPixels()
-                && abs(intake.getVelocity()) < 1400)
-            || pixels == 2 && intaked
-            || Intake.IntakeStates.REVERSING.getState()))) {
+        (( pixels == 2 && intaked
+            || Intake.IntakeStates.REVERSING.getState())))) {
       LOGGER.log(String.valueOf(intake.getVelocity()));
       //      packet.put("pixel", pixels);
       //      packet.put("timeInt",time-intake.getStartIntakeTime());
@@ -447,7 +444,6 @@ public class BradBot extends BasicRobot {
 //        if(abs(intake.getVelocity()) < 1300 && time - intake.getStartIntakeTime()>0.8 && intake.getIntakePower()!=0){
 //            minus=-1;
 //        }
-
         magazine.updateSensors();
         intake.intakeAutoHeight(max(height - pixels, height - 1));
       }
@@ -501,11 +497,24 @@ public class BradBot extends BasicRobot {
   public void loopPPUI(ArrayList<Waypoint> path, int sign) {
     ppui.followPath(path, sign);
   }
-
   public void drop() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
       //      if (!queuer.isExecuted()) {
       if (currentPose.getX() > 47) {
+        claw.moveTwo(false);
+        claw.moveOne(false);
+        Claw.clawStates.CLOSE.setStateTrue();
+        gapped = false;
+        intaked = false;
+        queuer.done();
+      }
+      //      }
+    }
+  }
+  public void drop(double thresh) {
+    if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
+      //      if (!queuer.isExecuted()) {
+      if (currentPose.getX() > thresh) {
         claw.moveTwo(false);
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();
