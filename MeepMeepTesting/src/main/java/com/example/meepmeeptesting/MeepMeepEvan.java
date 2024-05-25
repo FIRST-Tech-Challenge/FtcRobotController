@@ -938,7 +938,7 @@ public class MeepMeepEvan {
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(RedBackdropTrussCOpposite)
+                .addEntity(BlueFarStageL)
                 .start();
     }
 }
