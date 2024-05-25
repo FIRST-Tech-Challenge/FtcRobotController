@@ -34,6 +34,29 @@ public class RedBackDropPath {
                 .build();
     }
 
+    public static TrajectorySequence getRightPurpleOuttake(SampleMecanumDrive drive, Pose2d startPose) {
+
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(-220))
+                .splineToLinearHeading(new Pose2d(33, -27, Math.toRadians(180)), Math.toRadians(-250))
+                .build();
+    }
+    public static TrajectorySequence getLeftPurpleOuttake (SampleMecanumDrive drive,  Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(120))
+                .splineToLinearHeading(new Pose2d(13, -35, Math.toRadians(-180)), Math.toRadians(30))
+
+                .build();
+    }
+
+    public static TrajectorySequence getMidPurpleOuttake (SampleMecanumDrive drive,  Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians((90)))
+                .splineToLinearHeading(new Pose2d(16, -34, Math.toRadians(90)), Math.toRadians(90))
+
+                .build();
+    }
+
 
     public static TrajectorySequence getRightYellow(SampleMecanumDrive drive, Pose2d startPose) {
 

@@ -12,8 +12,8 @@ import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
 import org.firstinspires.ftc.masters.world.paths.RedFarSidePath;
 
 @Config
-@Autonomous(name = "Red Far Side 2 + 1", group = "competition")
-public class RedFarSide_2_1 extends FarSideOpMode {
+@Autonomous(name = "Red Far Side 2 + 3", group = "competition")
+public class RedFarSide_2_3 extends FarSideOpMode {
 
 
     Vector2d yellowLeftPos = new Vector2d();
@@ -63,6 +63,13 @@ public class RedFarSide_2_1 extends FarSideOpMode {
         parkFromMid = RedFarSidePath.park(drive, stackToMidYellow.end());
         parkFromLeft = RedFarSidePath.park(drive, stackToLeftYellow.end());
         parkFromRight = RedFarSidePath.park(drive, stackToRightYellow.end());
+
+        toStackCycleGateLeft = RedFarSidePath.toStackFromBackboardGate(drive, stackToLeftYellow.end() );
+        toStackCycleGateMid = RedFarSidePath.toStackFromBackboardGate(drive, stackToMidYellow.end());
+        toStackCycleGateRight = RedFarSidePath.toStackFromBackboardGate(drive, stackToRightYellow.end());
+
+        toBackboardCycleGate = RedFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
+
 
 
 
@@ -125,30 +132,39 @@ public class RedFarSide_2_1 extends FarSideOpMode {
                     purpleDeposit();
                     break;
                 case TO_STACK:
-                    switch (propPos){
-                        case LEFT:
-                            nextPath = stackToLeftYellow;
-                            break;
-                        case RIGHT:
-                            nextPath = stackToRightYellow;
-                            break;
-                        case MID:
-                            nextPath = stackToMidYellow;
-                            break;
+                    if (cycleCount ==0) {
+                        switch (propPos) {
+                            case LEFT:
+                                nextPath = stackToLeftYellow;
+                                break;
+                            case RIGHT:
+                                nextPath = stackToRightYellow;
+                                break;
+                            case MID:
+                                nextPath = stackToMidYellow;
+                                break;
+                        }
+                    } else {
+                        nextPath= toBackboardCycleGate;
                     }
+
                     toStack(nextPath);
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    switch (propPos){
-                        case LEFT:
-                            backdropDepositPath(State.PARK, parkFromLeft);
-                            break;
-                        case RIGHT:
-                            backdropDepositPath(State.PARK, parkFromRight);
-                            break;
-                        case MID:
-                            backdropDepositPath(State.PARK, parkFromMid);
-                            break;
+                    if (cycleCount==0) {
+                        switch (propPos) {
+                            case LEFT:
+                                nextPath = toStackCycleGateLeft;
+                                break;
+                            case RIGHT:
+                                nextPath = toStackCycleGateRight;
+                                break;
+                            case MID:
+                                nextPath = toStackCycleGateMid;
+                                break;
+                        }
+                    } else {
+                        backdropDepositPath(State.PARK, park);
                     }
                     break;
                 case PARK:
