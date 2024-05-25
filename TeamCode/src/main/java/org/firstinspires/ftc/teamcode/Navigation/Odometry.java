@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-
 public class Odometry {
     final double TRACK_WIDTH = 304.8;
     private final double BACK_DISTANCE_TO_MID = 69.85;
@@ -86,7 +85,6 @@ public class Odometry {
     private double countLeft() {
         return -leftEncoder.getCurrentPosition();
     }
-
     private double countBack() {
         return backEncoder.getCurrentPosition();
     }
@@ -97,7 +95,7 @@ public class Odometry {
 
         double deltaDistanceMiddle = (deltaLeftDistance + deltaRightDistance) / 2;
         double deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
-        double deltaBackDistance = ticksToMM(backTicks - prevBackTicks);
+        double deltaBackDistance = ticksToMM((backTicks - prevBackTicks) - BACK_DISTANCE_TO_MID * deltaTheta);
         return new Position(deltaDistanceMiddle, deltaBackDistance, deltaTheta);
     }
 
@@ -114,8 +112,13 @@ public class Odometry {
                 forwardRadius * Math.sin(relativeDelta.theta) + -strafeRadius * (1 - Math.cos(relativeDelta.theta));
 
         double relDeltaY =
-                strafeRadius * Math.sin(relativeDelta.theta) + forwardRadius * (1 - Math.cos(relativeDelta.theta));
+                +strafeRadius * Math.sin(relativeDelta.theta) + forwardRadius * (1 - Math.cos(relativeDelta.theta));
+      /*  double relDeltaX =
+                forwardRadius * Math.sin(relativeDelta.theta) + relativeDelta.y * Math.sin(currentPosition.theta);
 
+        double relDeltaY =
+                forwardRadius * (1 - Math.cos(relativeDelta.theta)) + relativeDelta.y * Math.cos(currentPosition.theta);
+*/
         jose.addData("strafeRadius", strafeRadius);
         jose.addData("cos strafe theta hamburger", (1 - Math.cos(relativeDelta.theta)));
         jose.addData("sin y axis hamburger", Math.sin(relativeDelta.theta));
