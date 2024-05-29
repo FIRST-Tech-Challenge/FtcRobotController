@@ -37,18 +37,19 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
+import org.nknsd.robotics.team.SampleNKNProgram;
 
 import java.util.LinkedList;
 import java.util.List;
 
-@TeleOp(name="Sample NKNOpMode", group="Iterative OpMode")
+@TeleOp(name = "Sample NKNOpMode", group = "Iterative OpMode")
 //@Disabled
-public class NKNOpMode_Iterative extends OpMode
-{
+public class NKNOpMode_Iterative extends OpMode {
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
-
-    private final NKNProgram program = null;// load your program here
+    // Comments are great
+    // Really
+    private final NKNProgram program = new SampleNKNProgram();// load your program here
 
 
     /*
@@ -60,7 +61,7 @@ public class NKNOpMode_Iterative extends OpMode
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
-        program.init(telemetry,hardwareMap,gamepad1,gamepad2);
+        program.init(telemetry, hardwareMap, gamepad1, gamepad2);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -72,7 +73,7 @@ public class NKNOpMode_Iterative extends OpMode
      */
     @Override
     public void init_loop() {
-        program.init_loop(runtime,telemetry);
+        program.init_loop(runtime, telemetry);
     }
 
     /*
@@ -81,7 +82,7 @@ public class NKNOpMode_Iterative extends OpMode
     @Override
     public void start() {
         runtime.reset();
-        program.start(runtime,telemetry);
+        program.start(runtime, telemetry);
     }
 
     /*
@@ -89,7 +90,7 @@ public class NKNOpMode_Iterative extends OpMode
      */
     @Override
     public void loop() {
-        program.loop(runtime,telemetry);
+        program.loop(runtime, telemetry);
     }
 
     /*
@@ -97,7 +98,7 @@ public class NKNOpMode_Iterative extends OpMode
      */
     @Override
     public void stop() {
-        program.stop(runtime,telemetry);
+        program.stop(runtime, telemetry);
     }
 
 }
