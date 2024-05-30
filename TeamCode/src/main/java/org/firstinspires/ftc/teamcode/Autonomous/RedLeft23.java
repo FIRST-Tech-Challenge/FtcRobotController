@@ -125,10 +125,10 @@ public class RedLeft23 extends LinearOpMode {
             aut.intake(5);
             aut.pre();
             aut.cycleIntake(4);
-            aut.cycleDrop();
-            aut.cycleIntake(2);
-            aut.cycleDrop();
-//            aut.park();
+            aut.cycleDrop(0);
+            aut.cycleIntake2(2);
+            aut.cycleDrop(0);
+            aut.park();
             aut.update();
         }
     }

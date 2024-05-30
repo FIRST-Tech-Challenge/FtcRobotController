@@ -45,7 +45,7 @@ public class MeepMeepTesting {
                                         .splineToConstantHeading(new Vector2d(15,-58),toRadians(180))
                                         .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
                                         .splineToConstantHeading(new Vector2d(-35,-58),toRadians(180))
-                                        .splineToConstantHeading(new Vector2d(-52,-35.25),toRadians(180))
+                                        .splineToConstantHeading(new Vector2d(-52,-35.25),toRadians(160))
                                         .build()
                 );
 

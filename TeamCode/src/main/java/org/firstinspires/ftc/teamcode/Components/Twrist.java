@@ -11,7 +11,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Twrist extends RFServo {
-    public static double GRABBY = 0.6, LEFT_TILTY = 0.38, SLEFT_TILTY = 0.44, RIGHT_TILTY = 0.8, SRIGHT_TILTY =0.74 , DROPPY = 0.013, VERT = 0.58,  POPP = 1.0, FLIP_TIME=0.2;
+    public static double GRABBY = 0.54, LEFT_TILTY = 0.38, SLEFT_TILTY = 0.44, RIGHT_TILTY = 0.8, SRIGHT_TILTY =0.74 , DROPPY = 0.013, VERT = 0.58,  POPP = 1.0, FLIP_TIME=0.2;
     private double lastTime=-100;
     public Twrist(){
         super("twistServo", 1.0);
@@ -87,7 +87,7 @@ public class Twrist extends RFServo {
     if (!twristStates.values()[p_state.ordinal()].state) {
       if (abs(time - lastTime) > FLIP_TIME) {
         if (p_state == twristTargetStates.GRAB) {
-          if ((Arm.ArmStates.HOVER.state || Arm.ArmStates.GRAB.state)
+          if ((Arm.ArmTargetStates.HOVER.state || Arm.ArmTargetStates.GRAB.state)
               && super.getPosition() != GRABBY) {
             super.setPosition(GRABBY);
             LOGGER.log("twrist to GRAB");

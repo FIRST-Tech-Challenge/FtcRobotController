@@ -124,6 +124,7 @@ public class BradBot extends BasicRobot {
       MAX_ACCEL*=voltage / 15;
       kV *= 12.89/voltage;
       // 12.4,12.2
+    packet.put("voltage", voltage);
       update();
   }
 
@@ -210,12 +211,12 @@ public class BradBot extends BasicRobot {
 
   public void yellowAuto(boolean left) {
     if (queuer.queue(
-        true, Twrist.twristStates.DROP.getState() || Twrist.twristStates.OT.getState())) {
-      if (currentPose.getX() > -10 && DROP.getState()) {
+        true, lift.getTarget()==630 || lift.getTarget()==690)) {
+      if (currentPose.getX() > 10 && DROP.getState()) {
         if (left) {
-          lift.setPosition(530);
+          lift.setPosition(690);
         } else {
-          lift.setPosition(530);
+          lift.setPosition(630);
         }
         if (left) {
           twrist.flipTo(Twrist.twristTargetStates.OT);
@@ -307,7 +308,11 @@ public class BradBot extends BasicRobot {
         intake.stopIntake();
         arm.flipTo(DROP);
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        twrist.flipTo(Twrist.twristTargetStates.DROP);
+        if (left) {
+          twrist.flipTo(Twrist.twristTargetStates.OT);
+        } else {
+          twrist.flipTo(Twrist.twristTargetStates.DROP);
+        }
         LOGGER.log("ocook");
       }
     }
@@ -416,10 +421,8 @@ public class BradBot extends BasicRobot {
         wrist.flipTo(Wrist.WristTargetStates.GRAB);
         arm.flipTo(HOVER, -.04, false);
         lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
-        claw.moveOne(false);
-          claw.moveTwo(false);
-          Claw.clawStates.CLOSE.setStateTrue();
-        LOGGER.log("buh");
+        claw.flipTo(Claw.clawTargetStates.CLOSE);
+        intake.stopIntake();
       }
       //      lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       //      Lift.LiftMovingStates.AT_ZERO.clearTargets();
@@ -429,22 +432,20 @@ public class BradBot extends BasicRobot {
   public void intakeAuto(int height) {
     if (queuer.queue(
         true,
-        (( pixels == 2 && intaked
-            || Intake.IntakeStates.REVERSING.getState())))) {
-      LOGGER.log(String.valueOf(intake.getVelocity()));
+        (Intake.IntakeStates.REVERSING.getState()||(intaked&&magazine.solidTwoPixels())))) {
+//      LOGGER.log(String.valueOf(intake.getVelocity()));
       //      packet.put("pixel", pixels);
       //      packet.put("timeInt",time-intake.getStartIntakeTime());
       //      packet.put("solidTwoPixels", magazine.solidTwoPixels());
       //      packet.put("intakeVel", intake.getVelocity());
 
 
-      if (currentPose.getX() < 0) {
-        int minus=0;
+      if (currentPose.getX() < -54) {
         intaked = true;
-//        if(abs(intake.getVelocity()) < 1300 && time - intake.getStartIntakeTime()>0.8 && intake.getIntakePower()!=0){
-//            minus=-1;
-//        }
         magazine.updateSensors();
+        if(height==5&&pixels!=0){
+          height=6;
+        }
         intake.intakeAutoHeight(max(height - pixels, height - 1));
       }
     }
