@@ -4,7 +4,6 @@ import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.WaitCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 public class TimedIntake extends WaitCommand {
-
     private final Intake subsystem;
     private final double speed;
 

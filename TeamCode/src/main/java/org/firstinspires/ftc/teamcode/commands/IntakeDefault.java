@@ -11,11 +11,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Lights;
 import java.util.function.Supplier;
 
 public class IntakeDefault extends Command {
-
     private final Intake intake;
     private final Lights lights;
     private final Supplier<Pose2d> poseSupplier;
-
     private final FlashLights flashLights;
 
     public IntakeDefault(Intake intake, Lights lights, Supplier<Pose2d> poseSupplier) {

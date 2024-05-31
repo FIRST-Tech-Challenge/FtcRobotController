@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.org.rustlib.drive.DriveSubsystem;
 
 import java.util.function.DoubleSupplier;
 
@@ -9,9 +9,9 @@ public class DriveDefault extends Command {
     private final DoubleSupplier drive;
     private final DoubleSupplier strafe;
     private final DoubleSupplier turn;
-    private final Drive subsystem;
+    private final DriveSubsystem subsystem;
 
-    public DriveDefault(Drive subsystem, DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
+    public DriveDefault(DriveSubsystem subsystem, DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
         this.subsystem = subsystem;
         this.drive = drive;
         this.strafe = strafe;

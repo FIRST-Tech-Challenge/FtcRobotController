@@ -10,13 +10,12 @@ import java.util.function.Supplier;
 
 public class BackdropHome extends Command {
     private final MecanumBase base;
-
     private final Slide slide;
     private final Placer placer;
     private final Supplier<Waypoint> futureBackdropWaypoint;
-    private Waypoint backdropWaypoint;
     private final double followTimeout;
     private final double endTime;
+    private Waypoint backdropWaypoint;
     private boolean atWaypoint = false;
     private boolean lastAtWaypoint = false;
     private double timestamp = -1;

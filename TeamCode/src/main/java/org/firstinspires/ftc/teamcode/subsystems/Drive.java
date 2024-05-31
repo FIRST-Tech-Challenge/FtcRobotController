@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.constants.DriveConstants;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Subsystem;
 import org.firstinspires.ftc.teamcode.org.rustlib.control.PIDController;
+import org.firstinspires.ftc.teamcode.org.rustlib.drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.org.rustlib.drive.MecanumBase;
 import org.firstinspires.ftc.teamcode.org.rustlib.drive.Odometry;
 import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Rotation2d;
@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.org.rustlib.hardware.PairedEncoder;
 import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
 import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.RustboardLayout;
 
-public class Drive extends Subsystem {
-    public final MecanumBase base;
-    public final Odometry odometry;
+public class Drive extends DriveSubsystem {
+    private final MecanumBase base;
+    private final Odometry odometry;
     private Rotation2d fieldCentricOffset = new Rotation2d();
 
     public Drive(HardwareMap hardwareMap) {
@@ -41,12 +41,21 @@ public class Drive extends Subsystem {
                 .setRotGains(DriveConstants.rotGains)
                 .build();
     }
+    @Override
+    public Odometry getOdometry() {
+        return odometry;
+    }
+    @Override
+    public MecanumBase getBase() {
+        return base;
+    }
 
     public void drive(double drive, double strafe, double turn, double heading) {
         base.drive(drive * multiplier, strafe * multiplier, turn * multiplier, heading - fieldCentricOffset.getAngleRadians(), false);
         Rustboard.setNodeValue("input", "drive: " + drive + " strafe: " + strafe + " turn: " + turn);
     }
 
+    @Override
     public void drive(double drive, double strafe, double turn) {
         drive(drive, strafe, turn, odometry.getPose().rotation.getAngleRadians());
     }
@@ -89,5 +98,4 @@ public class Drive extends Subsystem {
                 layout.getDoubleValue("rot kI", 0.0),
                 layout.getDoubleValue("rot kD", 0.0)));
     }
-
 }

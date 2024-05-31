@@ -53,22 +53,8 @@ public abstract class Robot extends RobotBase {
     public static int slidePose = 0;
     public static Rotation2d fieldCentricOffset = new Rotation2d();
 
-    public enum Alliance {
-        BLUE,
-        RED
-    }
-
-    public enum GameElementLocation {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
-    public static Alliance alliance = Alliance.BLUE;
-    protected Pose2d startPosition;
-
     @Override
-    public void setup() {
+    public void onInit() {
         if (botPose == null) {
             botPose = new Pose2d(0, 0, new Rotation2d(-Math.PI));
         }
@@ -84,8 +70,8 @@ public abstract class Robot extends RobotBase {
         aprilTagCamera = AprilTagCamera.getBuilder()
                 .setHardwareMap(hardwareMap)
                 .setRelativePose(new Pose3d())
-                .setCameraActivationZones(new CameraCameraActivationBox(Field.topLeftCorner, Field.topLeftCorner.translateX(50), Field.bottomLeftCorner.translateX(50), Field.bottomLeftCorner, drive.odometry::getPose))
-                .onDetect(() -> drive.odometry.setPosition(aprilTagCamera.getCalculatedBotPose()))
+                .setCameraActivationZones(new CameraCameraActivationBox(Field.topLeftCorner, Field.topLeftCorner.translateX(50), Field.bottomLeftCorner.translateX(50), Field.bottomLeftCorner, drive.getOdometry()::getPose))
+                .onDetect(() -> drive.getOdometry().setPosition(aprilTagCamera.getCalculatedBotPose()))
                 .setExposureTime(6)
                 .setExposureGain(250)
                 .setDecimation(2)
@@ -97,7 +83,7 @@ public abstract class Robot extends RobotBase {
     @Override
     public void mainLoop() {
         Rustboard.setNodeValue("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
-        botPose = drive.odometry.getPose();
+        botPose = drive.getOdometry().getPose();
         slidePose = slide.encoder.getPosition();
     }
 
@@ -111,7 +97,7 @@ public abstract class Robot extends RobotBase {
     }
 
     private Path getToBackdropPath(Waypoint backdropWaypoint) {
-        Pose2d botPose = drive.odometry.getPose();
+        Pose2d botPose = drive.getOdometry().getPose();
         ArrayList<Waypoint> waypoints = new ArrayList<>();
         waypoints.add(botPose.toWaypoint());
         double timeout;
@@ -142,7 +128,7 @@ public abstract class Robot extends RobotBase {
                 new SlideToPosition(slide, 1200),
                 new WaitCommand(1500), // Wait for an april tag detection
                 new InstantCommand(aprilTagCamera::disable),
-                new BackdropHome(drive.base, slide, placer, backdropWaypoint, 2000, 500), // Home in on the backdrop
+                new BackdropHome(drive.getBase(), slide, placer, backdropWaypoint, 2000, 500), // Home in on the backdrop
                 new InstantCommand(() -> placer.open()),
                 new FollowPathCommand(Path.getBuilder().addWaypoint(backdropWaypoint).addWaypoint(backdropWaypoint.x + 4.0, backdropWaypoint.y).build(), drive),
                 new InstantCommand(flashLights::cancel));

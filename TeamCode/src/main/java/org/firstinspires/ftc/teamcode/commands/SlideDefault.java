@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Slide;
 import java.util.function.DoubleSupplier;
 
 public class SlideDefault extends Command {
-
     Slide slide;
     DoubleSupplier speedSupplier;
 
@@ -20,5 +19,4 @@ public class SlideDefault extends Command {
     public void execute() {
         slide.mizoom(speedSupplier.getAsDouble());
     }
-
 }

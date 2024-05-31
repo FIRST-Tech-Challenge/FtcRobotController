@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision;
 
-import org.firstinspires.ftc.teamcode.opmodes.Robot.GameElementLocation;
+import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase;
+import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase.GameElementLocation;
 import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
 import org.firstinspires.ftc.teamcode.org.rustlib.vision.GameElementDetectorPipeline;
 import org.opencv.core.Mat;
@@ -12,7 +13,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 
 public class DetectorPipeline extends GameElementDetectorPipeline {
-    private GameElementLocation propLocation = GameElementLocation.LEFT;
+    private GameElementLocation propLocation = RobotBase.GameElementLocation.LEFT;
 
     @Override
     public Mat processFrame(Mat frame) {
@@ -39,13 +40,13 @@ public class DetectorPipeline extends GameElementDetectorPipeline {
             propX = xSum / circles.cols(); // Divide by the number of circles detected
         }
         if (circles.empty() || propX > 1240) {
-            propLocation = GameElementLocation.LEFT;
+            propLocation = RobotBase.GameElementLocation.LEFT;
         } else if (propX < 640) {
-            propLocation = GameElementLocation.CENTER;
+            propLocation = RobotBase.GameElementLocation.CENTER;
         } else {
-            propLocation = GameElementLocation.RIGHT;
+            propLocation = RobotBase.GameElementLocation.RIGHT;
         }
-        
+
         Rustboard.setNodeValue("prop x", propX);
         return frame;
     }

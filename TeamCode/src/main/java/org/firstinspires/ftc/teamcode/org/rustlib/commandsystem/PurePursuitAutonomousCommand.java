@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.org.rustlib.commandsystem;
 
+import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase;
+import org.firstinspires.ftc.teamcode.org.rustlib.drive.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.org.rustlib.drive.Field;
 import org.firstinspires.ftc.teamcode.org.rustlib.drive.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.org.rustlib.drive.Path;
 import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Pose2d;
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -12,23 +14,33 @@ public class PurePursuitAutonomousCommand extends Command {
     public final Pose2d startPosition;
     private final Command command;
     private boolean timerEnabled = true;
-    private Drive driveSubsystem;
+    private DriveSubsystem driveSubsystem;
 
     public PurePursuitAutonomousCommand(Pose2d startPosition, Command command) {
-        this.startPosition = startPosition;
-        this.command = command;
         recursiveInspection(command, false);
+        this.startPosition = startPosition;
+        findAlliance(startPosition);
+        this.command = command;
     }
 
-    private PurePursuitAutonomousCommand(Drive driveSubsystem, Pose2d startPosition, Command command) {
+    private PurePursuitAutonomousCommand(DriveSubsystem driveSubsystem, Pose2d startPosition, Command command) {
         this.driveSubsystem = driveSubsystem;
         this.startPosition = startPosition;
+        findAlliance(startPosition);
         this.command = command;
+    }
+
+    private void findAlliance(Pose2d startPosition) {
+        if (startPosition.y > Field.fieldLengthIn / 2) {
+            RobotBase.alliance = RobotBase.Alliance.RED;
+        } else {
+            RobotBase.alliance = RobotBase.Alliance.BLUE;
+        }
     }
 
     @Override
     public void initialize() {
-        driveSubsystem.odometry.setPosition(startPosition);
+        driveSubsystem.getOdometry().setPosition(startPosition);
         command.schedule();
     }
 

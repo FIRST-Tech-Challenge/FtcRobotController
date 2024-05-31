@@ -485,5 +485,4 @@ public class MecanumBase {
         }
         return botPose.distanceTo(waypoint) < maxLinearErr && rotErr < maxRotErr;
     }
-
 }

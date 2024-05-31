@@ -16,5 +16,4 @@ public class SlideCalibrate extends Command {
         slide.motor1.setPower(1.0);
         slide.motor1.setPower(-1.0);
     }
-
 }

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Rotation3d;
 import org.firstinspires.ftc.teamcode.org.rustlib.vision.AprilTag;
 
 public class VisionConstants {
-    public static final int elementDetectionLookBehindFrames = 30;
+    public static final int elementDetectionFrameAverageCount = 30;
     public static final AprilTag[] aprilTags = {
             new AprilTag(new Pose3d(8.908, 29.292, 3.897, new Rotation3d(new Rotation2d(), Rotation2d.fromDegrees(60), Rotation2d.fromDegrees(90))), 1),
             new AprilTag(new Pose3d(8.908, 35.292, 3.897, new Rotation3d(new Rotation2d(), Rotation2d.fromDegrees(60), Rotation2d.fromDegrees(90))), 2),

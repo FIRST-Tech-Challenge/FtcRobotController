@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 public class RunIntake extends Command {
-
-    private final org.firstinspires.ftc.teamcode.subsystems.Intake subsystem;
+    private final Intake subsystem;
     private final double speed;
 
     public RunIntake(org.firstinspires.ftc.teamcode.subsystems.Intake subsystem, double speed) {

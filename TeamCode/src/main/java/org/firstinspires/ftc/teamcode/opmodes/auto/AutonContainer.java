@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import org.firstinspires.ftc.teamcode.commands.BackdropHome;
 import org.firstinspires.ftc.teamcode.commands.SlideToPosition;
 import org.firstinspires.ftc.teamcode.constants.SubsystemConstants;
+import org.firstinspires.ftc.teamcode.constants.VisionConstants;
 import org.firstinspires.ftc.teamcode.opmodes.Robot;
 import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.DelayCommand;
 import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.InstantCommand;
@@ -37,7 +38,7 @@ public abstract class AutonContainer extends Robot implements Auton {
                             new FollowPathCommand(Path.loadPath("to_backdrop_BL"), drive)),
                     new SlideToPosition(slide, SubsystemConstants.Slide.autoPlacePosition), // Move the slide to the correct position
                     new DelayCommand(slide::atTargetPosition, 2000), // Wait until the slide is close to the correct position
-                    new BackdropHome(drive.base, slide, placer, new FutureInstance(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
+                    new BackdropHome(drive.getBase(), slide, placer, new FutureInstance(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
                     new InstantCommand(placer::open), // Drop the yellow pixel
                     new WaitCommand(750), // Wait for the pixel to drop
                     new ParallelCommandGroup( // Begin driving away and stow the slide
@@ -62,7 +63,7 @@ public abstract class AutonContainer extends Robot implements Auton {
                             new FollowPathCommand(Path.loadPath("to_backdrop_BR"), drive)),
                     new SlideToPosition(slide, SubsystemConstants.Slide.autoPlacePosition), // Move the slide to the correct position
                     new DelayCommand(slide::atTargetPosition, 3000), // Wait until the slide is close to the correct position
-                    new BackdropHome(drive.base, slide, placer, new FutureInstance<>(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
+                    new BackdropHome(drive.getBase(), slide, placer, new FutureInstance<>(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
                     new InstantCommand(placer::open), // Drop the yellow pixel
                     new WaitCommand(750), // Wait for the pixel to drop
                     new ParallelCommandGroup( // Begin driving away and stow the slide
@@ -77,24 +78,28 @@ public abstract class AutonContainer extends Robot implements Auton {
     protected PurePursuitAutonomousCommand redRightCommand = blueLeftCommand.mirror();
 
     Path getPurplePlacePath() {
+        switch (gameElementDetector.getElementLocation()) {
+
+        }
         return new Path();
     }
 
     Waypoint getYellowPlaceWaypoint() {
+        switch (gameElementDetector.getElementLocation()) {
+
+        }
         return null;
     }
 
     @Override
-    public void setup() {
+    public void onInit() {
         gameElementDetector = OpenCVGameElementDetector.getBuilder()
                 .setHardwareMap(hardwareMap)
                 .setCameraName("game element detector cam")
-                .setStreamSize(new OpenCVGameElementDetector.StreamDimension(1280, 720))
-                .setDetectorPipeline(new DetectorPipeline()).build();
-    }
-
-    @Override
-    public void onStart() {
-        gameElementDetector.closePipeline();
+                .setStreamSize(OpenCVGameElementDetector.StreamDimension.HIGH_DEF)
+                .setDetectorPipeline(new DetectorPipeline())
+                .setFrameAveragingCount(VisionConstants.elementDetectionFrameAverageCount)
+                .closePipelineOnOpModeStart()
+                .build();
     }
 }

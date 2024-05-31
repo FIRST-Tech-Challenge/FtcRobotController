@@ -3,8 +3,9 @@ package org.firstinspires.ftc.teamcode.org.rustlib.vision;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.opmodes.Robot.GameElementLocation;
 import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Subsystem;
+import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase;
+import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase.GameElementLocation;
 import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -16,7 +17,7 @@ public class OpenCVGameElementDetector extends Subsystem {
     private final OpenCvWebcam detectorCam;
     private final GameElementDetectorPipeline pipeline;
     private final ArrayList<Integer> locationHistory = new ArrayList<>();
-    private GameElementLocation gameElementLocation = GameElementLocation.LEFT;
+    private GameElementLocation gameElementLocation = RobotBase.GameElementLocation.LEFT;
     private final int frameAveragingCount;
     private boolean streaming;
 
@@ -25,6 +26,9 @@ public class OpenCVGameElementDetector extends Subsystem {
         detectorCam.setPipeline(builder.detectorPipeline);
         pipeline = builder.detectorPipeline;
         frameAveragingCount = builder.frameAveragingCount;
+        if (builder.closeOnOpModeStart) {
+            RobotBase.onStartCallbacks.add(() -> closePipeline());
+        }
         detectorCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -62,6 +66,7 @@ public class OpenCVGameElementDetector extends Subsystem {
         private StreamDimension streamSize;
         private GameElementDetectorPipeline detectorPipeline;
         private int frameAveragingCount = 1;
+        private boolean closeOnOpModeStart;
 
         private Builder() {
 
@@ -96,6 +101,11 @@ public class OpenCVGameElementDetector extends Subsystem {
             return this;
         }
 
+        public Builder closePipelineOnOpModeStart() {
+            closeOnOpModeStart = true;
+            return this;
+        }
+
         public OpenCVGameElementDetector build() {
             return new OpenCVGameElementDetector(this);
         }
@@ -110,6 +120,10 @@ public class OpenCVGameElementDetector extends Subsystem {
     }
 
     public static class StreamDimension {
+        public static final StreamDimension HIGH_DEF = new StreamDimension(1280, 720);
+        public static final StreamDimension STANDARD_DEF = new StreamDimension(640, 480);
+        public static final StreamDimension LOW_DEF = new StreamDimension(320, 240);
+
         public final int width;
         public final int height;
 
@@ -134,7 +148,7 @@ public class OpenCVGameElementDetector extends Subsystem {
                 sum += locationHistory.get(locationHistory.size() - i - 1);
                 i++;
             }
-            gameElementLocation = GameElementLocation.values()[Math.round((float) sum / (float) i)];
+            gameElementLocation = RobotBase.GameElementLocation.values()[Math.round((float) sum / (float) i)];
         }
     }
 }

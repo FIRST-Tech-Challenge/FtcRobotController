@@ -24,7 +24,7 @@ public class Tele extends Robot {
     Command automaticPlace;
 
     @Override
-    public void setup() {
+    public void onInit() {
         aprilTagCamera.enable();
         if (alliance == Alliance.RED) {
             backdropPose = redBackdropPose;
@@ -39,15 +39,15 @@ public class Tele extends Robot {
         BackdropAlign backdropAlign = new BackdropAlign(drive, placer, 2000);
         driveController.a.onTrue(backdropAlign);
         driveController.gamepadActive.and(new Trigger(() -> backdropAlign.timeSinceInitialized() > 1000)).onTrue(new InstantCommand((() -> backdropAlign.cancel())));
-        driveController.b.and(driveController.x).and(driveController.y).onTrue(new InstantCommand(() -> drive.odometry.setPosition(new Pose2d())));
+        driveController.b.and(driveController.x).and(driveController.y).onTrue(new InstantCommand(() -> drive.getOdometry().setPosition(new Pose2d())));
 
         if (botPose == null) {
             botPose = new Pose2d();
         }
-        drive.odometry.setPosition(botPose); // Set the robot position to the last position of the robot in autonomous
+        drive.getOdometry().setPosition(botPose); // Set the robot position to the last position of the robot in autonomous
         drive.setFieldCentricOffset(fieldCentricOffset);
 
-        intake.setDefaultCommand(new IntakeDefault(intake, lights, drive.odometry::getPose)); // Runs the intake automatically when the robot is in the right spot
+        intake.setDefaultCommand(new IntakeDefault(intake, lights, drive.getOdometry()::getPose)); // Runs the intake automatically when the robot is in the right spot
         payloadController.rightTrigger.or(driveController.rightTrigger).whileTrue(new RunIntake(intake, SubsystemConstants.Intake.defaultSpeed));
         payloadController.leftTrigger.or(driveController.leftTrigger).whileTrue(new RunIntake(intake, -SubsystemConstants.Intake.defaultSpeed));
 
@@ -87,6 +87,6 @@ public class Tele extends Robot {
     @Override
     public void mainLoop() {
         telemetry.addData("servo pose", droneShooter.angleAdjuster.getPosition());
-        telemetry.addData("heading", drive.odometry.getPose().rotation.getAngleDegrees());
+        telemetry.addData("heading", drive.getOdometry().getPose().rotation.getAngleDegrees());
     }
 }

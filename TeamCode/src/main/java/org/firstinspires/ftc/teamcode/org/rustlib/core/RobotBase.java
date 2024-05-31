@@ -8,13 +8,29 @@ import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.CommandScheduler
 import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
 import org.firstinspires.ftc.teamcode.org.rustlib.utils.SuperGamepad;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RobotBase extends OpMode {
+    public enum Alliance {
+        BLUE,
+        RED
+    }
+
+    public enum GameElementLocation {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
+    public static Alliance alliance = Alliance.BLUE;
     protected LynxModule controlHub;
     protected LynxModule expansionHub;
     protected SuperGamepad driveController;
     protected SuperGamepad payloadController;
+    public static final ArrayList<Runnable> onInitCallbacks = new ArrayList<>(); // TODO: make these private and add methods to add callbacks.  Otherwise whenever init is called duplicate callbacks may be added
+    public static final ArrayList<Runnable> onStartCallbacks = new ArrayList<>();
+    public static final ArrayList<Runnable> onStopCallbacks = new ArrayList<>();
 
     static {
         Rustboard.getInstance().start();
@@ -38,13 +54,14 @@ public abstract class RobotBase extends OpMode {
         expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         driveController = new SuperGamepad(gamepad1);
         payloadController = new SuperGamepad(gamepad2);
-        setup();
+        runCallbacks(onInitCallbacks);
+        onInit();
     }
 
     @Override
     public final void init_loop() {
         CommandScheduler.getInstance().run();
-        setupLoop();
+        initLoop();
     }
 
     @Override
@@ -53,6 +70,7 @@ public abstract class RobotBase extends OpMode {
             Command autonomousCommand = ((Auton) this).getAutonomousCommand();
             autonomousCommand.schedule();
         }
+        runCallbacks(onStartCallbacks);
         onStart();
     }
 
@@ -66,14 +84,22 @@ public abstract class RobotBase extends OpMode {
     @Override
     public final void stop() {
         CommandScheduler.getInstance().clearRegistry();
+        CommandScheduler.getInstance().cancelAll();
+        runCallbacks(onStopCallbacks);
         onStop();
     }
 
-    public void setup() {
+    private void runCallbacks(ArrayList<Runnable> callbacks) {
+        for (Runnable callback : callbacks) {
+            callback.run();
+        }
+    }
+
+    public void onInit() {
 
     }
 
-    public void setupLoop() {
+    public void initLoop() {
 
     }
 
