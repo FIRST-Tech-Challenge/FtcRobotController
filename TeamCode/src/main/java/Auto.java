@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 
 @Autonomous
-public class Autonomous extends LinearOpMode {
+public class Auto extends LinearOpMode {
   @Override
   public void runOpMode() {
     NinjaBot robot = new NinjaBot(hardwareMap, this);

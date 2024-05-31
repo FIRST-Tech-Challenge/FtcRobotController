@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.util.*;
 
 
 @TeleOp(name = "Basic: Remote Control", group = "Linear Opmode")
-public class Remote_Control extends LinearOpMode {
+public class RemoteControl extends LinearOpMode {
   private ElapsedTime runtime = new ElapsedTime();
-      
-  @override
+
+  @Override
   public void runOpMode() {
     NinjaBot robot = new NinjaBot(hardwareMap, this);
 
@@ -25,10 +25,10 @@ public class Remote_Control extends LinearOpMode {
       // set motor power
       if (left) {
         robot.leftDrive.setPower(1);
-      } else {robot.leftDrive.setPower(0)}
+      } else {robot.leftDrive.setPower(0);}
       if (right) {
         robot.rightDrive.setPower(1);
-      } else {robot.rightDrive.setPower(0)}
+      } else {robot.rightDrive.setPower(0);}
 
       // optional (waits before continueing loop)
       // sleep(10);
