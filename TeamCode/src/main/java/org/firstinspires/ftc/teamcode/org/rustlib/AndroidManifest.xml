@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest> <!--TODO: register a service here for the websocket server-->
+
+    <application />
+</manifest>

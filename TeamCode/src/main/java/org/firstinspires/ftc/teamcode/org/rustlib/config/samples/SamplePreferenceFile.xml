@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <boolean name="android.permission.READ_PHONE_STATE" value="false" />
+    <boolean name="pref_autostarted_robot_controller" value="true" />
+    <boolean name="pref_warn_about_obsolete_software" value="true" />
+    <boolean name="pref_has_independent_phone_battery" value="false" />
+    <boolean name="android.permission.CAMERA" value="false" />
+    <boolean name="pref_wifip2p_remote_channel_change_works" value="false" />
+    <string name="pref_hardware_config_filename">{&quot;isDirty&quot;:false,&quot;location&quot;:&quot;LOCAL_STORAGE&quot;,&quot;name&quot;:&quot;config&quot;,&quot;resourceId&quot;:0}</string>
+    <boolean name="pref_warn_about_mismatched_app_versions" value="true" />
+    <boolean name="pref_sound_on_off" value="false" />
+    <int name="pref_ftc_season_year_of_current_rc_new" value="2023" />
+    <string name="App Restrictions">AAAAAA==&#10;</string>
+    <boolean name="pref_warn_about_incorrect_clocks" value="true" />
+    <boolean name="pref_has_speaker" value="false" />
+    <boolean name="android.permission.ACCESS_COARSE_LOCATION" value="false" />
+    <boolean name="android.permission.WRITE_EXTERNAL_STORAGE" value="false" />
+    <string name="pref_connection_owner_password">@ftc21865</string>
+    <string name="pref_pairing_kind">RCWIRELESSAP</string>
+    <string name="pref_device_name_internal">21865-RC</string>
+    <boolean name="android.permission.ACCESS_FINE_LOCATION" value="false" />
+    <string name="pref_app_theme">red</string>
+    <string name="pref_device_name">21865-RC</string>
+    <boolean name="pref_warn_about_2_4_ghz_band" value="true" />
+    <string name="pref_device_name_tracking">WIFIAP</string>
+    <boolean name="android.permission.READ_EXTERNAL_STORAGE" value="false" />
+    <boolean name="pref_rc_connected" value="true" />
+</map>
