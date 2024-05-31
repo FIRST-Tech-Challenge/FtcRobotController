@@ -19,9 +19,16 @@ public class Remote_Control extends LinearOpMode {
     while (opModeIsActive()) {
       // recieve controller inputs
       // eg: boolean move = gamepad1.a;
+      boolean left = gamepad1.x;
+      boolean right = gamepad1.b;
 
       // set motor power
-      // eg: robot.leftDrive.setPower(1);
+      if (left) {
+        robot.leftDrive.setPower(1);
+      } else {robot.leftDrive.setPower(0)}
+      if (right) {
+        robot.rightDrive.setPower(1);
+      } else {robot.rightDrive.setPower(0)}
 
       // optional (waits before continueing loop)
       // sleep(10);

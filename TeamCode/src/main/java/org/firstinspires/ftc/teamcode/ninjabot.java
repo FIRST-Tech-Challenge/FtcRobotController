@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class NinjaBot {
 
   // Define motors
-  // eg: public DcMotor leftDrive = null;
+  public DcMotor leftDrive = null;
+  public DcMotor rightDrive = null;
 
   // define constants and other variabes
 
@@ -27,7 +28,8 @@ public class NinjaBot {
     control = ctrl;
 
     // link motors to their references
-    // eg: leftDrive = hwMap.get(DcMotor.class, "RD");
+    leftDrive = hwMap.get(DcMotor.class, "left");
+    leftDrive = hwMap.get(DcMotor.class, "right");
   }
   // define functions relating to the controll of motors of the robot in general. specific controll should be in the OpMode code file/s.
   // eg: public void updateWheelTelemetry() {...}
