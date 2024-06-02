@@ -61,12 +61,12 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class RFAprilCam {
   public static double X_OFFSET = -6.5,
-      Y_OFFSET = 3.8,
-      UPSAMPLE_THRESHOLD = 40,
+      Y_OFFSET = 2.8,
+      UPSAMPLE_THRESHOLD = 30,
       NUMBER_OF_SAMPLES = 2;
   public static int EXPOSURE_MS = 5, GAIN = 5;
   public static double FOCAL_LENGTH = 840;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 3;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 4;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -221,7 +221,7 @@ public class RFAprilCam {
     //        aprilTag.setDecimation((float) UPSAMPLE);
     upsample = true;
     if (detections != null) {
-      if (detections.size() > 1&& BasicRobot.time>2) {
+      if (detections.size() > 1&& BasicRobot.time>0) {
         VectorF p1 = detections.get(0).metadata.fieldPosition;
         VectorF p2 = detections.get(1).metadata.fieldPosition;
         double d1 = detections.get(0).ftcPose.range, d2 = detections.get(1).ftcPose.range;

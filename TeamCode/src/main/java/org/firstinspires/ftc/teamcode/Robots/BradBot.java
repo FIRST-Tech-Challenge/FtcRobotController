@@ -134,6 +134,7 @@ public class BradBot extends BasicRobot {
 
   public double getVoltage(){return voltage;}
   public int getSpikePos() {
+    packet.put("voltage", voltage);
     return cv.getPosition();
   }
 
@@ -440,11 +441,11 @@ public class BradBot extends BasicRobot {
       //      packet.put("intakeVel", intake.getVelocity());
 
 
-      if (currentPose.getX() < -54) {
+      if (currentPose.getX() < -53) {
         intaked = true;
         magazine.updateSensors();
-        if(height==5&&pixels!=0){
-          height=6;
+        if(height==6&&pixels==0){
+          height=5;
         }
         intake.intakeAutoHeight(max(height - pixels, height - 1));
       }

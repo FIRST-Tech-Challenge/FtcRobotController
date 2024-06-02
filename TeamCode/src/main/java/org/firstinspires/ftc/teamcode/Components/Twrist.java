@@ -119,7 +119,7 @@ public class Twrist extends RFServo {
           twristTargetStates.RIGHT_TILT.state = true;
         } else if (p_state == twristTargetStates.OT) {
 
-          if ((Arm.ArmTargetStates.DROP.state|| Arm.ArmStates.DROP.getState()) && super.getPosition() != 1.0) {
+          if ((Arm.ArmStates.DROP.getState()) && super.getPosition() != 1.0) {
             super.setPosition(1.0);
             LOGGER.log("OT claw");
             lastTime = time;

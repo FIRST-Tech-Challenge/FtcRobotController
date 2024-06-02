@@ -122,7 +122,7 @@ public class RedLeft23 extends LinearOpMode {
         aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
             aut.purp();
-            aut.intake(5);
+            aut.intake(6);
             aut.pre();
             aut.cycleIntake(4);
             aut.cycleDrop(0);
