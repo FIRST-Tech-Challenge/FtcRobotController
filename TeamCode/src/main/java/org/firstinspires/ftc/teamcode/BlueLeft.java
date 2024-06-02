@@ -162,7 +162,7 @@ public class BlueLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(500);
         move.driveSeq(-33.0, 38, 90);
-        move.driveToBoard(-33.0, 46.5, 90);
+        move.driveToBoard(-33.0, 48.5, 90);
         move.driveFromBoard(-33.0, 42.25, 90);
         move.driveSeq(-54, 43.25, 90);
         move.driveSeq(-54, 50, 90);
@@ -176,7 +176,7 @@ public class BlueLeft extends LinearOpMode {
         sleep(500);
         utils.dumpClose();
         move.driveSeq(-27.0, 38, 90);
-        move.driveToBoard(-27.0, 46.5, 90);
+        move.driveToBoard(-27.0, 48.5, 90);
         move.driveFromBoard(-27.0, 42.75, 90);
         move.driveSeq(-54, 43.75, 90);
         move.driveSeq(-54, 50, 90);
@@ -190,7 +190,7 @@ public class BlueLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(1000);
         move.driveSeq(-20, 38, 90);
-        move.driveToBoard(-20, 46.5, 90);
+        move.driveToBoard(-20, 48.5, 90);
         move.driveFromBoard(-20, 42.75, 90);
         move.driveSeq(-54, 43.75, 90);
         move.driveSeq(-54, 50, 90);

@@ -75,8 +75,8 @@ public class MecanumDrive2024 extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    //private BNO055IMU imu;
-    //private IMU imu;
+    ///private BNO055IMU imu;
+    private IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
     public MecanumDrive2024(HardwareMap hardwareMap) {
@@ -94,14 +94,14 @@ public class MecanumDrive2024 extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        //imu = hardwareMap.get(IMU.class, "imu");
-        //IMU.Parameters parameters = new IMU.Parameters(
-        //        new RevHubOrientationOnRobot(
-        //                RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
-        //                RevHubOrientationOnRobot.UsbFacingDirection.LEFT)
-        //            );
+        imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
+                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT)
+                    );
 
-        //imu.initialize(parameters);
+        imu.initialize(parameters);
 /*
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -160,7 +160,7 @@ public class MecanumDrive2024 extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
@@ -310,14 +310,14 @@ public class MecanumDrive2024 extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        //return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-        return 0.0;
+        return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        //return 0.0;
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        //return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
-        return 0.0;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+        //return 0.0;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
