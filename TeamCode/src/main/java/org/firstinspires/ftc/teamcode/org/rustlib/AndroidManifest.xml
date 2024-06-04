@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<manifest> <!--TODO: register a service here for the websocket server-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <application />
+    <application>
+        <!-- The main robot controller activity -->
+        <activity
+            android:name=".org.rustlib.core.MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="fullUser">
+
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".org.rustlib.core.RobotControllerActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="fullUser">
+
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+
+            <!--org.firstinspires.main.entry indicates that this app is compatible with the Dragonboard Control Hub-->
+            <meta-data
+                android:name="org.firstinspires.main.entry"
+                android:value="true" />
+        </activity>
+    </application>
 </manifest>

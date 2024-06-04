@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
 
-public class Command {
+public abstract class Command {
     ArrayList<Trigger> triggers = new ArrayList<>();
 
     ElapsedTime timer = new ElapsedTime();

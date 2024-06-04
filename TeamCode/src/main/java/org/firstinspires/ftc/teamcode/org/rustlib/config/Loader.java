@@ -12,14 +12,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class Loader {
+    public static final File localStorage = new File("/sdcard/FIRST");
     public static final File defaultStorageDirectory = new File(Environment.getExternalStorageDirectory() + "\\Download");
 
     public static String loadString(File filePath) {
@@ -107,5 +115,19 @@ public class Loader {
 
     public static void savePath(JsonObject object) throws IOException {
         saveValue(object, "json");
+    }
+
+    public static String toXMLString(Document document) throws TransformerException, IOException {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
+
+        StringWriter stringWriter = new StringWriter();
+        StreamResult result = new StreamResult(stringWriter);
+        DOMSource source = new DOMSource(document.getDocumentElement());
+
+        transformer.transform(source, result);
+        return stringWriter.toString();
     }
 }

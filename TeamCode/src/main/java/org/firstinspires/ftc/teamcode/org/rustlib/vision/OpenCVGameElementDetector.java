@@ -27,7 +27,7 @@ public class OpenCVGameElementDetector extends Subsystem {
         pipeline = builder.detectorPipeline;
         frameAveragingCount = builder.frameAveragingCount;
         if (builder.closeOnOpModeStart) {
-            RobotBase.onStartCallbacks.add(() -> closePipeline());
+            RobotBase.onOpModeStart(() -> closePipeline());
         }
         detectorCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
