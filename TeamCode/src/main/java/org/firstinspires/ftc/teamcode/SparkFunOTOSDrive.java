@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import static com.acmerobotics.roadrunner.ftc.OTOSKt.OTOSPoseToRRPose;
+import static com.acmerobotics.roadrunner.ftc.OTOSKt.RRPoseToOTOSPose;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -58,6 +59,7 @@ public class SparkFunOTOSDrive extends MecanumDrive {
 
     public static SparkFunOTOSDrive.Params PARAMS = new SparkFunOTOSDrive.Params();
     public SparkFunOTOS otos;
+    private Pose2d lastOtosPose = pose;
 
     public SparkFunOTOSDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
@@ -69,6 +71,8 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         otos.setOffset(PARAMS.offset);
         otos.setLinearScalar(PARAMS.linearScalar);
         otos.setAngularScalar(PARAMS.angularScalar);
+
+        otos.setPosition(RRPoseToOTOSPose(pose));
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
         // will be lost after a power cycle; the OTOS performs a quick calibration
@@ -86,6 +90,16 @@ public class SparkFunOTOSDrive extends MecanumDrive {
     }
     @Override
     public PoseVelocity2d updatePoseEstimate() {
+        if (lastOtosPose != pose) {
+            // rr localizer note:
+            // something other then this function has modified pose
+            // probably the user
+            // so we override otos pose with the new pose
+            // this could potentially cause up to 1 loops worth of drift
+            // I don't really like this solution at all, but it preserves compatibility
+            // the only alternative is to add getter and setters but that breaks compat
+            otos.setPosition(RRPoseToOTOSPose(pose));
+        }
         SparkFunOTOS.Pose2D otosPose = otos.getPosition();
         SparkFunOTOS.Pose2D otosVel = otos.getVelocity();
         pose = OTOSPoseToRRPose(otosPose);
