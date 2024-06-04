@@ -9,22 +9,6 @@ import org.firstinspires.ftc.teamcode.commands.FlashLights;
 import org.firstinspires.ftc.teamcode.commands.SlideDefault;
 import org.firstinspires.ftc.teamcode.commands.SlideToPosition;
 import org.firstinspires.ftc.teamcode.constants.DriveConstants;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.InstantCommand;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Trigger;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.WaitCommand;
-import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.Field;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.FollowPathCommand;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.Path;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.Waypoint;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Pose2d;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Pose3d;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
-import org.firstinspires.ftc.teamcode.org.rustlib.vision.AprilTagCamera;
-import org.firstinspires.ftc.teamcode.org.rustlib.vision.CameraCameraActivationBox;
 import org.firstinspires.ftc.teamcode.subsystems.Climber;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.DroneShooter;
@@ -33,11 +17,31 @@ import org.firstinspires.ftc.teamcode.subsystems.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.Placer;
 import org.firstinspires.ftc.teamcode.subsystems.PurplePixelPlacer;
 import org.firstinspires.ftc.teamcode.subsystems.Slide;
+import org.rustlib.commandsystem.Command;
+import org.rustlib.commandsystem.InstantCommand;
+import org.rustlib.commandsystem.SequentialCommandGroup;
+import org.rustlib.commandsystem.Trigger;
+import org.rustlib.commandsystem.WaitCommand;
+import org.rustlib.core.RobotBase;
+import org.rustlib.drive.Field;
+import org.rustlib.drive.FollowPathCommand;
+import org.rustlib.drive.Path;
+import org.rustlib.drive.Waypoint;
+import org.rustlib.geometry.Pose2d;
+import org.rustlib.geometry.Pose3d;
+import org.rustlib.geometry.Rotation2d;
+import org.rustlib.rustboard.Rustboard;
+import org.rustlib.vision.AprilTagCamera;
+import org.rustlib.vision.CameraCameraActivationBox;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class Robot extends RobotBase {
+    public static Pose2d botPose = null;
+    public static Pose2d blueBackdropPose = new Pose2d(17.0, 30, new Rotation2d(-Math.PI / 2));
+    public static Pose2d redBackdropPose = new Pose2d(17.0, 110, new Rotation2d(-Math.PI / 2));
+    public static int slidePose = 0;
+    public static Rotation2d fieldCentricOffset = new Rotation2d();
     public Drive drive;
     public Intake intake;
     public Slide slide;
@@ -47,11 +51,6 @@ public abstract class Robot extends RobotBase {
     public AprilTagCamera aprilTagCamera;
     public DroneShooter droneShooter;
     public PurplePixelPlacer purplePixelPlacer;
-    public static Pose2d botPose = null;
-    public static Pose2d blueBackdropPose = new Pose2d(17.0, 30, new Rotation2d(-Math.PI / 2));
-    public static Pose2d redBackdropPose = new Pose2d(17.0, 110, new Rotation2d(-Math.PI / 2));
-    public static int slidePose = 0;
-    public static Rotation2d fieldCentricOffset = new Rotation2d();
 
     @Override
     public void onInit() {
@@ -85,15 +84,6 @@ public abstract class Robot extends RobotBase {
         Rustboard.setNodeValue("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
         botPose = drive.getOdometry().getPose();
         slidePose = slide.encoder.getPosition();
-    }
-
-    @Override
-    public void onStop() {
-        try {
-            Rustboard.getInstance().stop();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private Path getToBackdropPath(Waypoint backdropWaypoint) {

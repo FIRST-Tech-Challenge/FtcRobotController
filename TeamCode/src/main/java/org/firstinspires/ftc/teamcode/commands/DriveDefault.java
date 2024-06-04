@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.DriveSubsystem;
+import org.rustlib.commandsystem.Command;
+import org.rustlib.drive.DriveSubsystem;
 
 import java.util.function.DoubleSupplier;
 

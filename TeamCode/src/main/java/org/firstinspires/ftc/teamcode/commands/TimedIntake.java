@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.WaitCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.rustlib.commandsystem.WaitCommand;
 
 public class TimedIntake extends WaitCommand {
     private final Intake subsystem;

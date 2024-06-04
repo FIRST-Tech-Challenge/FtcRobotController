@@ -7,17 +7,15 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.constants.SubsystemConstants;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Subsystem;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
+import org.rustlib.commandsystem.Subsystem;
+import org.rustlib.rustboard.Rustboard;
 
 public class Placer extends Subsystem {
+    public final TouchSensor touchSensor;
     private final Servo lifter0;
     private final Servo lifter1;
-
     private final Servo placer;
-
     public DistanceSensor distanceSensor;
-    public final TouchSensor touchSensor;
 
     public Placer(HardwareMap hardwareMap) {
         lifter0 = hardwareMap.get(Servo.class, "lifter0");

@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.teamcode.constants.SubsystemConstants;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lights;
+import org.rustlib.commandsystem.Command;
+import org.rustlib.geometry.Pose2d;
 
 import java.util.function.Supplier;
 

@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.constants;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Pose3d;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Rotation3d;
-import org.firstinspires.ftc.teamcode.org.rustlib.vision.AprilTag;
+import org.rustlib.geometry.Pose3d;
+import org.rustlib.geometry.Rotation2d;
+import org.rustlib.geometry.Rotation3d;
+import org.rustlib.vision.AprilTag;
 
 public class VisionConstants {
     public static final int elementDetectionFrameAverageCount = 30;

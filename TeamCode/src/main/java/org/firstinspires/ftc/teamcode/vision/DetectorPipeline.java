@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.vision;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase;
-import org.firstinspires.ftc.teamcode.org.rustlib.core.RobotBase.GameElementLocation;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
-import org.firstinspires.ftc.teamcode.org.rustlib.vision.GameElementDetectorPipeline;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.CLAHE;
 import org.opencv.imgproc.Imgproc;
+import org.rustlib.core.RobotBase;
+import org.rustlib.core.RobotBase.GameElementLocation;
+import org.rustlib.rustboard.Rustboard;
+import org.rustlib.vision.GameElementDetectorPipeline;
 
 import java.util.ArrayList;
 

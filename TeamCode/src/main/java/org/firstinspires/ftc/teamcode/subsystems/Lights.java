@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Subsystem;
+import org.rustlib.commandsystem.Subsystem;
 
 public class Lights extends Subsystem {
     private final RevBlinkinLedDriver ledDriver;

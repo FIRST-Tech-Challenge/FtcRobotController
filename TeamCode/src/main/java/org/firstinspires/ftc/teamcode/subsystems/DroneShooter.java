@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Subsystem;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
+import org.rustlib.commandsystem.Subsystem;
+import org.rustlib.rustboard.Rustboard;
 
 public class DroneShooter extends Subsystem {
     public final Servo angleAdjuster;

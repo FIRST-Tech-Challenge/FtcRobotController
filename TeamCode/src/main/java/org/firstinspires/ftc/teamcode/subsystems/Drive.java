@@ -4,19 +4,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.constants.DriveConstants;
-import org.firstinspires.ftc.teamcode.org.rustlib.control.PIDController;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.MecanumBase;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.Odometry;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.org.rustlib.hardware.PairedEncoder;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.RustboardLayout;
+import org.rustlib.control.PIDController;
+import org.rustlib.drive.DriveSubsystem;
+import org.rustlib.drive.MecanumBase;
+import org.rustlib.drive.Odometry;
+import org.rustlib.geometry.Rotation2d;
+import org.rustlib.hardware.PairedEncoder;
+import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardLayout;
 
 public class Drive extends DriveSubsystem {
     private final MecanumBase base;
     private final Odometry odometry;
     private Rotation2d fieldCentricOffset = new Rotation2d();
+    private double multiplier = Mode.FAST.multiplier;
 
     public Drive(HardwareMap hardwareMap) {
         odometry = Odometry.getBuilder()
@@ -41,10 +42,12 @@ public class Drive extends DriveSubsystem {
                 .setRotGains(DriveConstants.rotGains)
                 .build();
     }
+
     @Override
     public Odometry getOdometry() {
         return odometry;
     }
+
     @Override
     public MecanumBase getBase() {
         return base;
@@ -63,19 +66,6 @@ public class Drive extends DriveSubsystem {
     public void setFieldCentricOffset(Rotation2d fieldCentricOffset) {
         this.fieldCentricOffset = fieldCentricOffset;
     }
-
-    public enum Mode {
-        FAST(1.0),
-        SLOW(0.25);
-
-        final double multiplier;
-
-        Mode(double multiplier) {
-            this.multiplier = multiplier;
-        }
-    }
-
-    private double multiplier = Mode.FAST.multiplier;
 
     public void enableFastMode() {
         multiplier = Mode.FAST.multiplier;
@@ -97,5 +87,16 @@ public class Drive extends DriveSubsystem {
                 layout.getDoubleValue("rot kP", 1.0),
                 layout.getDoubleValue("rot kI", 0.0),
                 layout.getDoubleValue("rot kD", 0.0)));
+    }
+
+    public enum Mode {
+        FAST(1.0),
+        SLOW(0.25);
+
+        final double multiplier;
+
+        Mode(double multiplier) {
+            this.multiplier = multiplier;
+        }
     }
 }

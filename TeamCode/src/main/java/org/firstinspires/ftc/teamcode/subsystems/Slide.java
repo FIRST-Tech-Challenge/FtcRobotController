@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.constants.SubsystemConstants;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.InstantCommand;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Subsystem;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Trigger;
-import org.firstinspires.ftc.teamcode.org.rustlib.control.PIDController;
-import org.firstinspires.ftc.teamcode.org.rustlib.hardware.PairedEncoder;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
+import org.rustlib.commandsystem.InstantCommand;
+import org.rustlib.commandsystem.Subsystem;
+import org.rustlib.commandsystem.Trigger;
+import org.rustlib.control.PIDController;
+import org.rustlib.hardware.PairedEncoder;
+import org.rustlib.rustboard.Rustboard;
 
 public class Slide extends Subsystem {
 
@@ -42,6 +42,10 @@ public class Slide extends Subsystem {
 
         new Trigger(() -> encoder.getPosition() > SubsystemConstants.Slide.preparePlacerPosition && encoder.getVelocity() > 0).onTrue(new InstantCommand(placer::placePosition));
         new Trigger(() -> encoder.getPosition() < SubsystemConstants.Slide.stowPlacerPosition && targetPosition < 10 || encoder.getVelocity() < -400).onTrue(new InstantCommand(placer::storagePosition));
+    }
+
+    private static boolean gamepadActive(double input) {
+        return Math.abs(input) > 0.05;
     }
 
     public void mizoom(double input) {
@@ -79,10 +83,6 @@ public class Slide extends Subsystem {
         motor1.setPower(speed);
         motor2.setPower(-speed);
         lastSpeed = speed;
-    }
-
-    private static boolean gamepadActive(double input) {
-        return Math.abs(input) > 0.05;
     }
 
     public void setTargetPosition(int targetPosition) {

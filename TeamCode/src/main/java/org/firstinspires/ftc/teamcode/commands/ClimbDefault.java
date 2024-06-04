@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.subsystems.Climber;
+import org.rustlib.commandsystem.Command;
 
 import java.util.function.DoubleSupplier;
 

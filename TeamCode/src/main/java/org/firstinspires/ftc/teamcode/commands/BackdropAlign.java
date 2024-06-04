@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.org.rustlib.drive.Waypoint;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Pose2d;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.org.rustlib.rustboard.Rustboard;
 import org.firstinspires.ftc.teamcode.subsystems.Placer;
+import org.rustlib.commandsystem.Command;
+import org.rustlib.drive.DriveSubsystem;
+import org.rustlib.drive.Waypoint;
+import org.rustlib.geometry.Pose2d;
+import org.rustlib.geometry.Rotation2d;
+import org.rustlib.rustboard.Rustboard;
 
 public class BackdropAlign extends Command {
     private final DriveSubsystem drive;

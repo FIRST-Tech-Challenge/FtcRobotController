@@ -1,0 +1,38 @@
+plugins {
+    id 'com.android.application'
+}
+
+apply from: '../build.common.gradle'
+apply from: '../build.dependencies.gradle'
+
+android {
+    namespace 'org.rustlib'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "org.rustlib"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation("org.glassfish:javax.json:1.1.4")
+    implementation("javax.websocket:javax.websocket-api:1.1")
+    implementation("org.glassfish.websocket:websocket-api:0.2")
+}

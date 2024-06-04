@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.PurePursuitAutonomousCommand;
+import org.rustlib.commandsystem.PurePursuitAutonomousCommand;
 
-@Autonomous(name = "Blue Left")
+@Autonomous(name = "Blue Right")
 public class BlueRight extends AutonContainer {
     @Override
     public PurePursuitAutonomousCommand getAutonomousCommand() {

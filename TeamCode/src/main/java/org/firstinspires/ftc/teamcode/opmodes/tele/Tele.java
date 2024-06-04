@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.commands.SlideCalibrate;
 import org.firstinspires.ftc.teamcode.commands.SlideToPosition;
 import org.firstinspires.ftc.teamcode.constants.SubsystemConstants;
 import org.firstinspires.ftc.teamcode.opmodes.Robot;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Command;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.InstantCommand;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.Trigger;
-import org.firstinspires.ftc.teamcode.org.rustlib.commandsystem.WaitCommand;
-import org.firstinspires.ftc.teamcode.org.rustlib.geometry.Pose2d;
+import org.rustlib.commandsystem.Command;
+import org.rustlib.commandsystem.InstantCommand;
+import org.rustlib.commandsystem.SequentialCommandGroup;
+import org.rustlib.commandsystem.Trigger;
+import org.rustlib.commandsystem.WaitCommand;
+import org.rustlib.geometry.Pose2d;
 
 @TeleOp(name = "TeleOp")
 public class Tele extends Robot {

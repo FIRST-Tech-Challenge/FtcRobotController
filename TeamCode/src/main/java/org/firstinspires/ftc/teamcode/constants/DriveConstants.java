@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.constants;
 
-import org.firstinspires.ftc.teamcode.org.rustlib.control.PIDController;
+import org.rustlib.control.PIDController;
 
 public class DriveConstants {
     public static double maxEndpointErr = 0.5;
