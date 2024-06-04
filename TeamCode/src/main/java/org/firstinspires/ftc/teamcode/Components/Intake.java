@@ -38,7 +38,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.49, TWO=0.51, THREE = 0.535, FOUR = 0.56, FIVE =0.585, STOP_DELAY = 0.3, UPPIES = 0.9, SUPPER_UPIES = 0.9;
+  public static double ONE=0.4, TWO=0.51, THREE = 0.545, FOUR = 0.57, FIVE =0.594, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -70,6 +70,9 @@ public class Intake extends RFMotor {
     IntakeStates.STOPPED.setStateTrue();
     if(isTeleop){
       height = 5;
+    }
+    if(!isTeleop){
+      height=6;
     }
     lastHeightTime=-5;
 
@@ -171,7 +174,10 @@ public class Intake extends RFMotor {
   public void uppies(){
     if (IntakeStates.STOPPED.getState() && curPower!=0) {
       intakeServo.setPosition(UPPIES);
-      height =1;
+      if(isTeleop) {
+        height = 1;
+      }else
+        height=6;
     }
   }
   public void downy(){
@@ -230,6 +236,7 @@ public class Intake extends RFMotor {
     }
     intake();
     if (p_height != height) {
+      this.height = p_height;
       setHeight(p_height);
     }
     return false;

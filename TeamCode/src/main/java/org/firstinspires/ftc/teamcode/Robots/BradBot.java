@@ -56,6 +56,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.secret.Waypoint;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /** Warren Robot class to contain all the season's functions */
 public class BradBot extends BasicRobot {
@@ -85,6 +86,9 @@ public class BradBot extends BasicRobot {
   boolean intaked = false;
 
   MecanumDrive drive;
+
+  Pose2d endPose;
+  double lastHeightTime=-100;
 
   /**
    * Instatiates all the hardware and sets up initial states of some software Logs that this
@@ -126,6 +130,7 @@ public class BradBot extends BasicRobot {
       // 12.4,12.2
     packet.put("voltage", voltage);
       update();
+      lastHeightTime=-100;
   }
 
   public BradBot(LinearOpMode p_op, boolean p_isTeleop) {
@@ -309,11 +314,11 @@ public class BradBot extends BasicRobot {
         intake.stopIntake();
         arm.flipTo(DROP);
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        if (left) {
-          twrist.flipTo(Twrist.twristTargetStates.OT);
-        } else {
-          twrist.flipTo(Twrist.twristTargetStates.DROP);
-        }
+//        if (left) {
+//          twrist.flipTo(Twrist.twristTargetStates.OT);
+//        } else {
+//          twrist.flipTo(Twrist.twristTargetStates.DROP);
+//        }
         LOGGER.log("ocook");
       }
     }
@@ -434,6 +439,9 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(
         true,
         (Intake.IntakeStates.REVERSING.getState()||(intaked&&magazine.solidTwoPixels())))) {
+      if(!intaked){
+        endPose = roadrun.getCurrentTraj().end();
+      }
 //      LOGGER.log(String.valueOf(intake.getVelocity()));
       //      packet.put("pixel", pixels);
       //      packet.put("timeInt",time-intake.getStartIntakeTime());
@@ -441,13 +449,57 @@ public class BradBot extends BasicRobot {
       //      packet.put("intakeVel", intake.getVelocity());
 
 
-      if (currentPose.getX() < -53) {
+      if (currentPose.getX() < -52.8 || !roadrun.getCurrentTraj().end().equals(endPose)) {
+        LOGGER.log(""+lastHeightTime);
+        if(!intaked){
+          lastHeightTime=time;
+          LOGGER.log("intakeheighttime");
+        }
         intaked = true;
         magazine.updateSensors();
+        if(time-lastHeightTime>1&&height-pixels!=height-1&&pixels!=2){
+            height-=1;
+        }
         if(height==6&&pixels==0){
           height=5;
         }
-        intake.intakeAutoHeight(max(height - pixels, height - 1));
+        if(max(height - pixels, height - 1)< intake.getHeight()&&roadrun.getCurrentTraj().end().equals(endPose)){
+          LOGGER.log("cumon"+roadrun.getCurrentTraj().end());
+          LOGGER.log(""+endPose);
+          lastHeightTime=time;
+        }
+        if(time-lastHeightTime>1.4){
+          LOGGER.log("sequencing");
+          if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().equals(endPose)) {
+            LOGGER.log("moving");
+            intake.stopIntake();
+            TrajectorySequence traj = roadrun.trajectorySequenceBuilder(endPose)
+                    .setReversed(true)
+                    .lineTo(new Vector2d(endPose.getX() + 5.5, endPose.getY()))
+                    .build();
+            roadrun.followTrajectorySequenceAsync(traj);
+          }
+          if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().vec().equals(new Vector2d(endPose.getX() + 5.5, endPose.getY()))){
+            TrajectorySequence traj = roadrun.trajectorySequenceBuilder(roadrun.getEndPose())
+                    .setReversed(false)
+                    .lineTo(new Vector2d(endPose.getX() + 3, endPose.getY()))
+                    .build();
+            roadrun.followTrajectorySequenceAsync(traj);
+          }
+          if(!roadrun.isBusy()|| roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX()+3, endPose.getY()))){
+            LOGGER.log("reintaking");
+            if(time-lastHeightTime>2.5&&pixels==0){
+              pixels=1;
+            }
+            intake.intakeAutoHeight(2-pixels);
+          }
+          if(time-lastHeightTime>4){
+            LOGGER.log("doning");
+            pixels=2;
+          }
+        }else {
+          intake.intakeAutoHeight(min(max(height - pixels, height - 1),intake.getHeight()));
+        }
       }
     }
   }

@@ -121,13 +121,7 @@ public class BlueLeft23 extends LinearOpMode {
 
         aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
-            aut.purp();
-            aut.intake(5);
-            aut.pre();
-            aut.cycleIntake(4);
-            aut.cycleDrop();
-            aut.park();
-            aut.update();
+            aut.loop();
         }
     }
 }

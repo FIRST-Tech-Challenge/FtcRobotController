@@ -63,10 +63,10 @@ public class RFAprilCam {
   public static double X_OFFSET = -6.5,
       Y_OFFSET = 2.8,
       UPSAMPLE_THRESHOLD = 30,
-      NUMBER_OF_SAMPLES = 2;
-  public static int EXPOSURE_MS = 5, GAIN = 5;
+      NUMBER_OF_SAMPLES = 1;
+  public static int EXPOSURE_MS = 4, GAIN = 5;
   public static double FOCAL_LENGTH = 840;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 4;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 5;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -259,10 +259,10 @@ public class RFAprilCam {
           if (dist1 < dist2) {
             camPoseError = camPoseError.plus(c1).minus(currentPose.vec());
             poseCount++;
-            LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
+            LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample) ;
             LOGGER.log("camPoseError" + camPoseError);
           } else {
-            camPoseError = camPoseError.plus(c2).minus(currentPose.vec());
+            camPoseError = camPoseError.plus(c2).minus(currentPose.vec()).plus(currentVelocity.vec().times(0.0));
             poseCount++;
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
             LOGGER.log("camPoseError" + camPoseError);
