@@ -2,22 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 
 
-import com.acmerobotics.dashboard.config.Config;
+import static com.acmerobotics.roadrunner.ftc.OTOSKt.OTOSPoseToRRPose;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 /**
  * Experimental extension of MecanumDrive that uses the SparkFun OTOS sensor for localization.
@@ -64,7 +57,7 @@ public class SparkFunOTOSDrive extends MecanumDrive {
     }
 
     public static SparkFunOTOSDrive.Params PARAMS = new SparkFunOTOSDrive.Params();
-    SparkFunOTOS otos;
+    public SparkFunOTOS otos;
 
     public SparkFunOTOSDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
@@ -111,14 +104,5 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         // I don't know enough math to understand dual nums :(
 
         return new PoseVelocity2d(new Vector2d(otosVel.x, otosVel.y),otosVel.h);
-    }
-    /**
-     * Convert SparkFunOTOS poses to Roadrunner poses
-     * NOTE: assumes units are inches and radians
-     * @param otosPose The SparkFun OTOS sensor's pose
-     * @return Input pose as a Roadrunner pose
-     */
-    public Pose2d OTOSPoseToRRPose(SparkFunOTOS.Pose2D otosPose) {
-        return new Pose2d(otosPose.x, otosPose.y, otosPose.h);
     }
 }
