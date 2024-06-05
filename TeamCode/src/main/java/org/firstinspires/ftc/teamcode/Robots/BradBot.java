@@ -8,6 +8,7 @@ import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
 import static org.firstinspires.ftc.teamcode.Components.Arm.DROP_POS;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam.Y_OFFSET;
 import static org.firstinspires.ftc.teamcode.Components.Magazine.pixels;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -218,7 +219,7 @@ public class BradBot extends BasicRobot {
   public void yellowAuto(boolean left) {
     if (queuer.queue(
         true, lift.getTarget()==630 || lift.getTarget()==690)) {
-      if (currentPose.getX() > 10 && DROP.getState()) {
+      if (currentPose.getX() > 5 && DROP.getState()) {
         if (left) {
           lift.setPosition(690);
         } else {
@@ -488,19 +489,32 @@ public class BradBot extends BasicRobot {
           }
           if(!roadrun.isBusy()|| roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX()+3, endPose.getY()))){
             LOGGER.log("reintaking");
-            if(time-lastHeightTime>2.5&&pixels==0){
+            if(time-lastHeightTime>3.5&&pixels==0){
               pixels=1;
             }
             intake.intakeAutoHeight(2-pixels);
           }
-          if(time-lastHeightTime>4){
+          if(time-lastHeightTime>5){
             LOGGER.log("doning");
             pixels=2;
+            magazine.setTwoPixelTime(0);
+
           }
         }else {
-          intake.intakeAutoHeight(min(max(height - pixels, height - 1),intake.getHeight()));
+          if(pixels<2) {
+            intake.intakeAutoHeight(min(max(height - pixels, height - 1), intake.getHeight()));
+          }
         }
       }
+    }
+  }
+
+  public boolean triggered(){
+    if(queuer.queue(true,true) || queuer.isExecuted()){
+      return true;
+    }
+    else{
+      return false;
     }
   }
 
@@ -770,6 +784,7 @@ public class BradBot extends BasicRobot {
   }
 
   public void setBlue(boolean blue) {
+    Y_OFFSET = 3.8;
     cv.setBlue(blue);
   }
 

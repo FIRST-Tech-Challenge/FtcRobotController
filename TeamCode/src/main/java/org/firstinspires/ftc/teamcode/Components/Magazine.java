@@ -104,6 +104,9 @@ public class Magazine {
       return false;
     }
   }
+  public void setTwoPixelTime(double p_time){
+    twoPixelTime = p_time;
+  }
 
 
 

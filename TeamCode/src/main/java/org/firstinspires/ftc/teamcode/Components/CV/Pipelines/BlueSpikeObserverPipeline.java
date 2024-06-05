@@ -27,18 +27,18 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
     ArrayList<Integer> pos;
     public static double p1x = 0,
-            p1y = 390,
+            p1y = 240,
             p2x = 80,
             p2y = 490,
-            p21x = 340,
-            p21y = 360,
-            p22x = 440,
-            p22y = 460,
-            p31x = 735,
-            p31y = 360,
-            p32x = 860,
-            p32y = 490,
-            threshhold = 0.2,
+            p21x = 370,
+            p21y = 340,
+            p22x = 430,
+            p22y = 400,
+            p31x = 730,
+            p31y = 340,
+            p32x = 820,
+            p32y = 440,
+            threshhold = 0.3,
 
     // h3u and s3u: 71 and 90
     colour = 1,
@@ -129,13 +129,13 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
         }
 
         if(counters[0]>max(counters[1],counters[2])){
-            return 1;
+            return 0;
         }
         else if(counters[1]>max(counters[2],counters[0])){
-            return 2;
+            return 1;
         }
         else{
-            return 0;
+            return 2;
         }
     }
 }

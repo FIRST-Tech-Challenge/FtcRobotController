@@ -86,6 +86,15 @@ public class CVMaster {
         webcam.setPipeline(logiopenSleeve);
       }
     }
+    if(isBlue&&isRed){
+      openSleevey = new BlueRightSpikeObserverPipeline();
+      webcam.setPipeline(openSleevey);
+    }
+    if(isBlue&&!isRed){
+      openSleeviy = new BlueSpikeObserverPipeline();
+      webcam.setPipeline(openSleeviy);
+
+    }
     isObservingPole = true;
     webcam.openCameraDeviceAsync(
         new OpenCvCamera.AsyncCameraOpenListener() {

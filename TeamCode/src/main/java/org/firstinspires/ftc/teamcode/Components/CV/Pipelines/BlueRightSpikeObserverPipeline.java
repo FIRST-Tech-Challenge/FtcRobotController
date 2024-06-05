@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import static java.lang.Double.max;
-import static java.lang.Double.min;
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -17,22 +18,26 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
+/**
+ * Warren This is the pipeline that is activated when the robot is initializing, it will determine
+ * which position the team prop is in
+ */
 @Config
 public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
     ArrayList<Integer> pos;
     public static double p1x = 0,
-            p1y = 390,
+            p1y = 240,
             p2x = 80,
             p2y = 490,
-            p21x = 60,
-            p21y = 400,
-            p22x = 150,
-            p22y = 530,
-            p31x = 500,
-            p31y = 380,
-            p32x = 600,
-            p32y = 480,
+            p21x = 370,
+            p21y = 340,
+            p22x = 430,
+            p22y = 400,
+            p31x = 730,
+            p31y = 340,
+            p32x = 820,
+            p32y = 440,
             threshhold = 0.3,
 
     // h3u and s3u: 71 and 90
@@ -44,8 +49,7 @@ public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
 
     /** This will construct the pipeline */
     public BlueRightSpikeObserverPipeline() {
-        frameList = new ArrayList<>();
-        pos = new ArrayList<>();
+        frameList = new ArrayList<>(); pos = new ArrayList<>();
     }
 
     /**
@@ -65,14 +69,11 @@ public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
                         new Point(p21x, p21y), new Point(p22x, p22y));
         Rect ROI3 = new Rect(new Point(p31x, p31y), new Point(p32x, p32y));
         Mat cone = input.submat(ROI1);
-        double[] sums = Core.sumElems(cone).val;
-        double redValue = (sums[0]+sums[1]+sums[2]) / ROI1.area() / 255;
+        double redValue = Core.sumElems(cone).val[0] / ROI1.area() / 255;
         cone = input.submat(ROI2);
-        sums = Core.sumElems(cone).val;
-        double redValue2 = (sums[0]+sums[1]+sums[2]) / ROI2.area() / 255;
+        double redValue2 = Core.sumElems(cone).val[0] / ROI2.area() / 255;
         cone = input.submat(ROI3);
-        sums = Core.sumElems(cone).val;
-        double redValue3 = (sums[0]+sums[1]+sums[2]) / ROI3.area() / 255;
+        double redValue3 = Core.sumElems(cone).val[0] / ROI3.area() / 255;
         frameList.add(new double[] {redValue, redValue2, redValue3});
         if (frameList.size() > 5) {
             frameList.remove(0);
@@ -92,7 +93,7 @@ public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
      */
     public int getPosition() {
         double[] sums = {0, 0, 0};
-        for (int i = 0; i < min(frameList.size() - 1,1); i++) {
+        for (int i = 0; i < Double.min(frameList.size() - 1,1); i++) {
             sums[0] += frameList.get(0)[0];
             sums[1] += frameList.get(0)[1];
             sums[2] += frameList.get(0)[2];
@@ -106,10 +107,10 @@ public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
             pos.add(1);
         }
         else if(diffRatio<-threshhold){
-            pos.add(0);
+            pos.add(2);
         }
         else{
-            pos.add(2);
+            pos.add(0);
         }
         if(pos.size()>5){
             pos.remove(0);
@@ -128,13 +129,13 @@ public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
         }
 
         if(counters[0]>max(counters[1],counters[2])){
-            return 2;
+            return 0;
         }
         else if(counters[1]>max(counters[2],counters[0])){
             return 1;
         }
         else{
-            return 0;
+            return 2;
         }
     }
 }

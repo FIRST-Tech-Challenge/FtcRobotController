@@ -62,7 +62,7 @@ import java.util.concurrent.TimeUnit;
 public class RFAprilCam {
   public static double X_OFFSET = -6.5,
       Y_OFFSET = 2.8,
-      UPSAMPLE_THRESHOLD = 30,
+      UPSAMPLE_THRESHOLD = 25,
       NUMBER_OF_SAMPLES = 1;
   public static int EXPOSURE_MS = 4, GAIN = 5;
   public static double FOCAL_LENGTH = 840;
