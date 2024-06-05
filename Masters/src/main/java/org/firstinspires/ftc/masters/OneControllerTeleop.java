@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Config
-@TeleOp(name = "World Teleop", group = "competition")
+@TeleOp(name = "OC Teleop", group = "competition")
 public class OneControllerTeleop extends LinearOpMode {
 
     public enum TransferStatus {
@@ -361,11 +361,11 @@ public class OneControllerTeleop extends LinearOpMode {
             switch (driveMode) {
                 case NORMAL:
 
-                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_trigger - gamepad1.left_trigger);
 
                     break;
                 case END_GAME:
-                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_trigger - gamepad1.left_trigger);
                     if (gamepad2.y) {
                         planeRaise.setPosition(CSCons.droneShooting);
                         elapsedTime = new ElapsedTime();
@@ -748,7 +748,14 @@ public class OneControllerTeleop extends LinearOpMode {
         }
 
 
-    protected void drive(double x, double y, double rx) {
+    protected void drive(double x, double y, double t) {
+
+//        float threshold = 0.1;
+//
+//        if (Math.abs(t) < threshold)
+//        {
+//            t = 0;
+//        }
 
         if (Math.abs(y) < 0.2) {
             y = 0;
@@ -757,14 +764,14 @@ public class OneControllerTeleop extends LinearOpMode {
             x = 0;
         }
 
-        double leftFrontPower = y + x*CSCons.frontMultiplier + rx;
-        double leftRearPower = y - (x*CSCons.backMultiplier) + rx;
-        double rightFrontPower = y - x*CSCons.frontMultiplier - rx;
-        double rightRearPower = y + (x*CSCons.backMultiplier) - rx;
+        double leftFrontPower = y + x*CSCons.frontMultiplier + t;
+        double leftRearPower = y - (x*CSCons.backMultiplier) + t;
+        double rightFrontPower = y - x*CSCons.frontMultiplier - t;
+        double rightRearPower = y + (x*CSCons.backMultiplier) - t;
 
         //if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(t), 1);
             double max;
             max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
             max = Math.max(max, Math.abs(rightFrontPower));
