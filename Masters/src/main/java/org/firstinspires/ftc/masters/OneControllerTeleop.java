@@ -349,7 +349,7 @@ public class OneControllerTeleop extends LinearOpMode {
                 driveMode = DriveMode.NORMAL;
             }
 
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 target -= 15;
             }
             if (gamepad1.x) {
@@ -413,8 +413,7 @@ public class OneControllerTeleop extends LinearOpMode {
                     }
                     planeRaise.setPosition((CSCons.droneFlat));
                 }
-
-                if (gamepad1.right_trigger >= 0.1 && !buttonPushed) {
+                if (gamepad1.right_stick_y >= 0.5 && !buttonPushed) {
                     //intake start/stop
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.BACKWARD) {
                         intakeDirection = CSCons.IntakeDirection.ON;
@@ -425,11 +424,11 @@ public class OneControllerTeleop extends LinearOpMode {
                     }
                     buttonPushed = true;
                 }
-                if (gamepad1.right_trigger < 0.1 && gamepad1.left_trigger<0.1) {
+                if (gamepad1.right_stick_x > 0.5) {
                     buttonPushed = false;
                 }
 
-                if (gamepad1.left_trigger > 0.1 && !buttonPushed) {
+                if (gamepad1.right_stick_x < 0.5 && !buttonPushed) {
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.ON) {
                         intakeDirection = CSCons.IntakeDirection.BACKWARD;
                         intake.setPower(-CSCons.speed);
