@@ -131,8 +131,8 @@ public class OneControllerTeleop extends LinearOpMode {
         down - intake reverse
         right - intake off
     TODO: D-pad - stack control
-        up - intake top
-        down - intake bottom
+        up - intake top // Done
+        down - intake bottom // Done
         left - intake down by 1
         right - stack up by 1
     TODO: Touchpad:
@@ -442,26 +442,28 @@ public class OneControllerTeleop extends LinearOpMode {
                     buttonPushed = true;
                 }
 
-                if (gamepad2.a && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Use the D-pad to control the intake when it is not ready to drop
+                if (gamepad2.dpad_down && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeHeight.setPosition(CSCons.intakeBottom);
                     stackPosition = 0;
                 }
-                if (gamepad2.y && outtakeState!=OuttakeState.ReadyToDrop) {
+                if (gamepad2.dpad_up && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition = 5;
                     intakeHeight.setPosition(CSCons.intakeAboveTop);
                 }
 
-                if (gamepad2.x && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Change stack position
+                if (gamepad2.dpad_left && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition--;
                     intakeStackButtonPushed = true;
                 }
-
-                if (gamepad2.b && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
+                if (gamepad2.dpad_right && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition++;
                     intakeStackButtonPushed = true;
                 }
 
-                if (!gamepad2.x && !gamepad2.b && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Clear button press status
+                if (!gamepad2.dpad_left && !gamepad2.dpad_right && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeStackButtonPushed = false;
                 }
 
