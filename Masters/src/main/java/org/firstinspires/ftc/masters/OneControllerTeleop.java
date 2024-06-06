@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Config
-@TeleOp(name = "World Teleop", group = "competition")
+@TeleOp(name = "OC Teleop", group = "competition")
 public class OneControllerTeleop extends LinearOpMode {
 
     public enum TransferStatus {
@@ -131,8 +131,8 @@ public class OneControllerTeleop extends LinearOpMode {
         down - intake reverse
         right - intake off
     TODO: D-pad - stack control
-        up - intake top
-        down - intake bottom
+        up - intake top // Done
+        down - intake bottom // Done
         left - intake down by 1
         right - stack up by 1
     TODO: Touchpad:
@@ -349,7 +349,7 @@ public class OneControllerTeleop extends LinearOpMode {
                 driveMode = DriveMode.NORMAL;
             }
 
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 target -= 15;
             }
             if (gamepad1.x) {
@@ -361,11 +361,11 @@ public class OneControllerTeleop extends LinearOpMode {
             switch (driveMode) {
                 case NORMAL:
 
-                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_trigger - gamepad1.left_trigger);
 
                     break;
                 case END_GAME:
-                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_trigger - gamepad1.left_trigger);
                     if (gamepad2.y) {
                         planeRaise.setPosition(CSCons.droneShooting);
                         elapsedTime = new ElapsedTime();
@@ -413,8 +413,7 @@ public class OneControllerTeleop extends LinearOpMode {
                     }
                     planeRaise.setPosition((CSCons.droneFlat));
                 }
-
-                if (gamepad1.right_trigger >= 0.1 && !buttonPushed) {
+                if (gamepad1.right_stick_y >= 0.5 && !buttonPushed) {
                     //intake start/stop
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.BACKWARD) {
                         intakeDirection = CSCons.IntakeDirection.ON;
@@ -425,11 +424,11 @@ public class OneControllerTeleop extends LinearOpMode {
                     }
                     buttonPushed = true;
                 }
-                if (gamepad1.right_trigger < 0.1 && gamepad1.left_trigger<0.1) {
+                if (gamepad1.right_stick_x > 0.5) {
                     buttonPushed = false;
                 }
 
-                if (gamepad1.left_trigger > 0.1 && !buttonPushed) {
+                if (gamepad1.right_stick_x < 0.5 && !buttonPushed) {
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.ON) {
                         intakeDirection = CSCons.IntakeDirection.BACKWARD;
                         intake.setPower(-CSCons.speed);
@@ -442,26 +441,28 @@ public class OneControllerTeleop extends LinearOpMode {
                     buttonPushed = true;
                 }
 
-                if (gamepad2.a && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Use the D-pad to control the intake when it is not ready to drop
+                if (gamepad2.dpad_down && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeHeight.setPosition(CSCons.intakeBottom);
                     stackPosition = 0;
                 }
-                if (gamepad2.y && outtakeState!=OuttakeState.ReadyToDrop) {
+                if (gamepad2.dpad_up && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition = 5;
                     intakeHeight.setPosition(CSCons.intakeAboveTop);
                 }
 
-                if (gamepad2.x && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Change stack position
+                if (gamepad2.dpad_left && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition--;
                     intakeStackButtonPushed = true;
                 }
-
-                if (gamepad2.b && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
+                if (gamepad2.dpad_right && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition++;
                     intakeStackButtonPushed = true;
                 }
 
-                if (!gamepad2.x && !gamepad2.b && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Clear button press status
+                if (!gamepad2.dpad_left && !gamepad2.dpad_right && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeStackButtonPushed = false;
                 }
 
@@ -748,7 +749,14 @@ public class OneControllerTeleop extends LinearOpMode {
         }
 
 
-    protected void drive(double x, double y, double rx) {
+    protected void drive(double x, double y, double t) {
+
+//        float threshold = 0.1;
+//
+//        if (Math.abs(t) < threshold)
+//        {
+//            t = 0;
+//        }
 
         if (Math.abs(y) < 0.2) {
             y = 0;
@@ -757,14 +765,14 @@ public class OneControllerTeleop extends LinearOpMode {
             x = 0;
         }
 
-        double leftFrontPower = y + x*CSCons.frontMultiplier + rx;
-        double leftRearPower = y - (x*CSCons.backMultiplier) + rx;
-        double rightFrontPower = y - x*CSCons.frontMultiplier - rx;
-        double rightRearPower = y + (x*CSCons.backMultiplier) - rx;
+        double leftFrontPower = y + x*CSCons.frontMultiplier + t;
+        double leftRearPower = y - (x*CSCons.backMultiplier) + t;
+        double rightFrontPower = y - x*CSCons.frontMultiplier - t;
+        double rightRearPower = y + (x*CSCons.backMultiplier) - t;
 
         //if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(t), 1);
             double max;
             max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
             max = Math.max(max, Math.abs(rightFrontPower));
