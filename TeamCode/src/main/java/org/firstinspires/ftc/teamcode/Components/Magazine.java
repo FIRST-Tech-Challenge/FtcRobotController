@@ -97,6 +97,9 @@ public class Magazine {
   }
 
   public boolean solidTwoPixels(){
+    LOGGER.log("pixies" + pixels);
+    LOGGER.log("twoTime" + twoPixelTime);
+    LOGGER.log("time"+BasicRobot.time);
     if (Magazine.pixels == 2) {
       return BasicRobot.time - twoPixelTime > 0.25;
     }

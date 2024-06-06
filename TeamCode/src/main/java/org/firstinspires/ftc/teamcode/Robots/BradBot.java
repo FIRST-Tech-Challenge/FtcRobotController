@@ -483,11 +483,11 @@ public class BradBot extends BasicRobot {
           if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().vec().equals(new Vector2d(endPose.getX() + 5.5, endPose.getY()))){
             TrajectorySequence traj = roadrun.trajectorySequenceBuilder(roadrun.getEndPose())
                     .setReversed(false)
-                    .lineTo(new Vector2d(endPose.getX() + 3, endPose.getY()))
+                    .lineTo(new Vector2d(endPose.getX() + 2.8, endPose.getY()))
                     .build();
             roadrun.followTrajectorySequenceAsync(traj);
           }
-          if(!roadrun.isBusy()|| roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX()+3, endPose.getY()))){
+          if(!roadrun.isBusy()|| roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX()+2.8, endPose.getY()))){
             LOGGER.log("reintaking");
             if(time-lastHeightTime>3.5&&pixels==0){
               pixels=1;
@@ -498,7 +498,6 @@ public class BradBot extends BasicRobot {
             LOGGER.log("doning");
             pixels=2;
             magazine.setTwoPixelTime(0);
-
           }
         }else {
           if(pixels<2) {
@@ -1063,9 +1062,11 @@ public class BradBot extends BasicRobot {
     if (!isTeleop && abs(intake.getIntakePower()) > 0) {
       magazine.updateSensors();
     }
+    if(!isTeleop){
+      roadrun.update();
+    }
     intake.update();
     lift.update();
-    roadrun.update();
     wrist.update();
     ultras.update();
     if (isTeleop) {
