@@ -26,18 +26,18 @@ import java.util.ArrayList;
 public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
     ArrayList<Integer> pos;
-    public static double p1x = 0,
-            p1y = 240,
-            p2x = 80,
-            p2y = 490,
-            p21x = 370,
-            p21y = 340,
-            p22x = 430,
-            p22y = 400,
-            p31x = 730,
+    public static double p1x = 300,
+            p1y = 300,
+            p2x = 180,
+            p2y = 450,
+            p21x = 690,
+            p21y = 320,
+            p22x = 570,
+            p22y = 410,
+            p31x = 1150,
             p31y = 340,
-            p32x = 820,
-            p32y = 440,
+            p32x = 1030,
+            p32y = 430,
             threshhold = 0.3,
 
     // h3u and s3u: 71 and 90
