@@ -567,7 +567,7 @@ public class BradBot extends BasicRobot {
   }
   public void drop() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
-      //      if (!queuer.isExecuted()) {
+            if (!queuer.isExecuted()) {
       if (currentPose.getX() > 47) {
         claw.moveTwo(false);
         claw.moveOne(false);
@@ -576,7 +576,7 @@ public class BradBot extends BasicRobot {
         intaked = false;
         queuer.done();
       }
-      //      }
+            }
     }
   }
   public void drop(double thresh) {
@@ -592,6 +592,7 @@ public class BradBot extends BasicRobot {
       }
       //      }
     }
+
   }
   public void drop2() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {

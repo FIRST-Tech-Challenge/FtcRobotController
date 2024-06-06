@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "RedLeftBark")
+@Autonomous(name = "BlueRightBark")
 @Config
-public class RedLeftPark extends LinearOpMode {
+public class BlueRightPark extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RLPARK aut = new RLPARK(this, false);
+        BRPARK aut = new BRPARK(this, false);
         aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
             aut.parg();
