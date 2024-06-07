@@ -117,7 +117,7 @@ public class RR20 {
     }
     public void purp()
     {
-        bark=2;
+//        bark=2;
         robot.queuer.queue(false, true);
         robot.queuer.waitForFinish();
         robot.followTrajSeq(spikey[bark]);
