@@ -36,7 +36,7 @@ public class RL20 {
     logi = isLogi;
     this.op=op;
     robot = new BradBot(op, false,isLogi);
-    Pose2d startPose = new Pose2d(-32,-61.5,toRadians(-90));
+    Pose2d startPose = new Pose2d(-37.5,-61.5,toRadians(-90));
     robot.roadrun.setPoseEstimate(startPose);
     imuMultiply = 1.039 + .002*(robot.getVoltage()-12.5);
     spikey[0] = robot.roadrun
@@ -64,7 +64,7 @@ public class RL20 {
                       .trajectorySequenceBuilder(spikey[bark].end())
                       .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(46.5,-30.25,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(45,-30,toRadians(-180)))
                       .build();
 
       droppy[1] =
@@ -73,7 +73,7 @@ public class RL20 {
                       .trajectorySequenceBuilder(spikey[bark].end())
                       .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(46.5,-35.25,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(46.5,-34.25,toRadians(-180)))
                       .build();
 
       droppy[2] =
@@ -100,7 +100,7 @@ public class RL20 {
   }
   public void waitForStart(){
     while (!op.isStarted() || op.isStopRequested()) {
-      bark = robot.getSpikePos();
+      bark = 2-robot.getSpikePos();
       op.telemetry.addData("pixel", bark);
       packet.put("spike", bark);
       op.telemetry.addData("delaySec", delaySec);
@@ -124,7 +124,7 @@ public class RL20 {
   }
   public void purp()
   {
-    bark=0;
+//    bark=0;
     robot.queuer.queue(false, true);
     robot.queuer.waitForFinish();
     robot.followTrajSeq(spikey[bark]);
@@ -133,14 +133,21 @@ public class RL20 {
   public void pre(){
     robot.queuer.waitForFinish();
     robot.followTrajSeq(droppy[bark]);
-    robot.lowAuto(false);
-    robot.yellowAuto(false);
-    if(bark==0)
-      robot.drop(45);
-    else if(bark==1)
+    if(bark==0) {
+      robot.lowAuto(true);
+      robot.yellowAuto(true);
       robot.drop(44);
-    else
+    }
+    else if(bark==1) {
+      robot.lowAuto(true);
+      robot.yellowAuto(true);
+      robot.drop(44);
+    }
+    else {
+      robot.lowAuto(false);
+      robot.yellowAuto(false);
       robot.drop(45);
+    }
   }
 
   public void park(){
