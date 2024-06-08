@@ -2,17 +2,18 @@ package org.rustlib.commandsystem;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class CommandScheduler implements Runnable {
     private static CommandScheduler instance = null;
-    ArrayList<Command> commands;
-    ArrayList<Subsystem> subsystems;
+    Set<Command> commands;
+    Set<Subsystem> subsystems;
     ElapsedTime timer = new ElapsedTime();
 
     public CommandScheduler() {
-        commands = new ArrayList<>();
-        subsystems = new ArrayList<>();
+        commands = new HashSet<>();
+        subsystems = new HashSet<>();
     }
 
     public static CommandScheduler getInstance() {
@@ -66,7 +67,7 @@ public final class CommandScheduler implements Runnable {
     }
 
     public void clearRegistry() {
-        subsystems = new ArrayList<>();
-        commands = new ArrayList<>();
+        subsystems = new HashSet<>();
+        commands = new HashSet<>();
     }
 }

@@ -178,7 +178,7 @@ public class AprilTagCamera extends Subsystem {
             return this;
         }
 
-        public Builder setExposureTime(int exposureMS) {
+        public Builder setExposureMS(int exposureMS) {
             this.exposureMS = exposureMS;
             return this;
         }

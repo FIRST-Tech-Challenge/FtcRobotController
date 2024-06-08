@@ -1,4 +1,4 @@
-package org.rustlib.utils;
+package org.rustlib.hardware;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 

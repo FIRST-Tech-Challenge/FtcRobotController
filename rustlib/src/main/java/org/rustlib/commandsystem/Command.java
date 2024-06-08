@@ -2,12 +2,13 @@ package org.rustlib.commandsystem;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 public abstract class Command {
     protected State state = State.UNSCHEDULED;
-    ArrayList<Trigger> triggers = new ArrayList<>();
+    Set<Trigger> triggers = new HashSet<>();
     ElapsedTime timer = new ElapsedTime();
     double scheduledTimestamp = 0;
     double initializedTimestamp = 0;

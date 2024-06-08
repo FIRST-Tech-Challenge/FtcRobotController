@@ -49,5 +49,4 @@ public class Trigger implements BooleanSupplier {
         lastState = condition.getAsBoolean();
         return lastState;
     }
-
 }

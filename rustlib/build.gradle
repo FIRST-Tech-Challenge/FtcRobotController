@@ -1,30 +1,16 @@
-plugins {
-    id 'com.android.application'
-}
-
-apply from: '../build.common.gradle'
-apply from: '../build.dependencies.gradle'
+apply plugin: 'com.android.library'
 
 android {
-    namespace 'org.rustlib'
-    compileSdk 34
+    namespace "org.rustlib"
 
     defaultConfig {
-        applicationId "org.rustlib"
         minSdk 24
-        targetSdk 34
+        targetSdk 28
+        compileSdkVersion 28
         versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionName "0.1"
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -32,7 +18,10 @@ android {
 }
 
 dependencies {
+    implementation project(':FtcRobotController')
     implementation("org.glassfish:javax.json:1.1.4")
     implementation("javax.websocket:javax.websocket-api:1.1")
     implementation("org.glassfish.websocket:websocket-api:0.2")
 }
+
+apply from: '../build.dependencies.gradle'

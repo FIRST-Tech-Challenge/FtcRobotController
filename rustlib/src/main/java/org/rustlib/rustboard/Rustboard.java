@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.ThreadPool;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.robotcore.internal.opmode.RegisteredOpModes;
-import org.firstinspires.ftc.teamcode.constants.SubsystemConstants;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -34,6 +33,7 @@ public class Rustboard extends WebSocketServer {
     private static final File storageDir = new File(Environment.getExternalStorageDirectory() + "\\Download");
     private static final RustboardLayout emptyLayout = new EmptyLayout();
     private static Rustboard instance = null;
+    private static boolean debugMode = true;
     protected ArrayList<RustboardLayout> layouts = new ArrayList<>();
     ElapsedTime timer;
     private ArrayList<Pair<String, String>> messageQueue = new ArrayList<>();
@@ -45,8 +45,20 @@ public class Rustboard extends WebSocketServer {
         timer = new ElapsedTime();
     }
 
+    public static void enableDebugMode() {
+        debugMode = false;
+    }
+
+    public static void disableDebugMode() {
+        debugMode = true;
+    }
+
+    public static boolean inDebugMode() {
+        return debugMode;
+    }
+
     public static void setNodeValue(String id, String value) {
-        if (SubsystemConstants.debugMode) {
+        if (!debugMode) {
             JsonObject jsonObject = RustboardLayout.getSendableNodeData(id, value);
             getInstance().broadcastJson(jsonObject);
         }
@@ -124,7 +136,7 @@ public class Rustboard extends WebSocketServer {
     public void start() {
         messageQueue.clear();
         layouts.addAll(loadLayouts());
-        if (SubsystemConstants.debugMode) {
+        if (!debugMode) {
             super.start();
         }
     }
@@ -144,7 +156,7 @@ public class Rustboard extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        log("client " + conn.getRemoteSocketAddress().toString() + " connected to the robot.");
+        log("Client " + conn.getRemoteSocketAddress().toString() + " connected to the robot.");
         layouts.add(new RustboardLayout(conn));
         HashMap<String, RustboardLayout> duplicates = new HashMap<>();
         ArrayList<RustboardLayout> toRemove = new ArrayList<>();

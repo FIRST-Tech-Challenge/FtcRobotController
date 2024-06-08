@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <Webcam name="backCam" serialNumber="5CE7ED60" />
+    <Webcam name="propCam" serialNumber="2B157F60" />
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 1" port="1">
+            <goBILDA5201SeriesMotor name="lf" port="0" />
+            <goBILDA5201SeriesMotor name="rf" port="1" />
+            <goBILDA5201SeriesMotor name="lb" port="2" />
+            <goBILDA5201SeriesMotor name="rb" port="3" />
+            <Servo name="lifter0" port="0" />
+            <Servo name="lifter1" port="1" />
+            <Servo name="placer" port="2" />
+            <Servo name="angleAdjusterServo" port="3" />
+            <Servo name="releaseServo" port="4" />
+            <Servo name="climbServo" port="5" />
+            <RevTouchSensor name="limit" port="0" />
+            <RevTouchSensor name="placerTouch" port="1" />
+            <REV_VL53L0X_RANGE_SENSOR name="distanceSensor" port="0" bus="0" />
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <goBILDA5201SeriesMotor name="climbMotor" port="0" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="intakeMotor" port="1" />
+            <goBILDA5201SeriesMotor name="slideMotor1" port="2" />
+            <goBILDA5201SeriesMotor name="slideMotor2" port="3" />
+            <Servo name="purplePixelPlacer" port="0" />
+            <RevBlinkinLedDriver name="lights" port="1" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>

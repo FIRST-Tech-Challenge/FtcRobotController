@@ -2,7 +2,6 @@ package org.rustlib.geometry;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.constants.DriveConstants;
 import org.rustlib.drive.Field;
 import org.rustlib.drive.Waypoint;
 
@@ -59,7 +58,7 @@ public class Pose2d extends Vector2d {
     }
 
     public Waypoint toWaypoint() {
-        return toWaypoint(DriveConstants.defaultFollowRadius);
+        return toWaypoint(8);
     }
 
     public Pose2d translateX(double x) {

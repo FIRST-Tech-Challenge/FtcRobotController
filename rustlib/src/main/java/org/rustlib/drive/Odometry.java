@@ -1,6 +1,5 @@
 package org.rustlib.drive;
 
-import org.firstinspires.ftc.teamcode.constants.DriveConstants;
 import org.rustlib.commandsystem.Subsystem;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Rotation2d;
@@ -15,6 +14,9 @@ public class Odometry extends Subsystem {
     public final Encoder leftEncoder;
     public final Encoder backEncoder;
     private final DoubleSupplier imuHeading;
+    private final double inPerTick;
+    private final double trackWidth;
+    private final double verticalDistance;
     private int lastRight = 0;
     private int lastLeft = 0;
     private int lastBack = 0;
@@ -27,6 +29,9 @@ public class Odometry extends Subsystem {
         leftEncoder = builder.leftEncoder;
         backEncoder = builder.backEncoder;
         imuHeading = builder.imuHeading;
+        inPerTick = builder.inPerTick;
+        trackWidth = builder.trackWidth;
+        verticalDistance = builder.verticalDistance;
         resetEncoders();
     }
 
@@ -49,7 +54,7 @@ public class Odometry extends Subsystem {
 
         double deltaHeading;
         if (imuHeading == null) {
-            deltaHeading = DriveConstants.Odometry.inPerTick * (deltaRight - deltaLeft) / DriveConstants.Odometry.trackWidth;
+            deltaHeading = inPerTick * (deltaRight - deltaLeft) / trackWidth;
         } else {
             double currentHeading = imuHeading.getAsDouble();
             deltaHeading = currentHeading - lastIMUHeading;
@@ -64,20 +69,20 @@ public class Odometry extends Subsystem {
 
         if (deltaHeading == 0.0) {
             deltaXDrive = 0;
-            deltaYDrive = DriveConstants.Odometry.inPerTick * deltaRight;
+            deltaYDrive = inPerTick * deltaRight;
 
-            deltaXStrafe = DriveConstants.Odometry.inPerTick * deltaBack;
+            deltaXStrafe = inPerTick * deltaBack;
             deltaYStrafe = 0;
         } else {
-            double par0Radius = DriveConstants.Odometry.inPerTick * deltaRight / deltaHeading;
-            double par1Radius = DriveConstants.Odometry.inPerTick * deltaLeft / deltaHeading;
+            double par0Radius = inPerTick * deltaRight / deltaHeading;
+            double par1Radius = inPerTick * deltaLeft / deltaHeading;
 
             double driveRadius = (par0Radius + par1Radius) / 2;
 
             deltaXDrive = -driveRadius * (1 - Math.cos(deltaHeading));
             deltaYDrive = driveRadius * Math.sin(deltaHeading);
 
-            double strafeRadius = DriveConstants.Odometry.inPerTick * deltaBack / deltaHeading - DriveConstants.Odometry.verticalDistance;
+            double strafeRadius = inPerTick * deltaBack / deltaHeading - verticalDistance;
 
             deltaXStrafe = strafeRadius * Math.sin(deltaHeading);
             deltaYStrafe = strafeRadius * (1 - Math.cos(deltaHeading));

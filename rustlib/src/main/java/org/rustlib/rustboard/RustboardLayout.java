@@ -2,7 +2,6 @@ package org.rustlib.rustboard;
 
 import com.google.gson.JsonParseException;
 
-import org.firstinspires.ftc.teamcode.constants.SubsystemConstants;
 import org.java_websocket.WebSocket;
 import org.rustlib.config.Loader;
 
@@ -97,7 +96,7 @@ public class RustboardLayout {
      */
     public void setNodeValue(String id, String value) {
         Objects.requireNonNull(nodes.get(id)).state = value;
-        if (SubsystemConstants.debugMode) {
+        if (true) { // TODO: formerly if debug mode
             JsonObject jsonObject = getSendableNodeData(id, value);
             Rustboard.getInstance().sendToConnection(this, jsonObject.toString());
         }

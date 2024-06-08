@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.rustlib.commandsystem.Command;
 import org.rustlib.commandsystem.CommandScheduler;
+import org.rustlib.hardware.SuperGamepad;
 import org.rustlib.rustboard.Rustboard;
-import org.rustlib.utils.SuperGamepad;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

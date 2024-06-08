@@ -22,6 +22,7 @@ import org.rustlib.commandsystem.InstantCommand;
 import org.rustlib.commandsystem.SequentialCommandGroup;
 import org.rustlib.commandsystem.Trigger;
 import org.rustlib.commandsystem.WaitCommand;
+import org.rustlib.config.HardwareConfiguration;
 import org.rustlib.core.RobotBase;
 import org.rustlib.drive.Field;
 import org.rustlib.drive.FollowPathCommand;
@@ -54,6 +55,15 @@ public abstract class Robot extends RobotBase {
 
     @Override
     public void onInit() {
+        HardwareConfiguration.getBuilder()
+                .addDevice("lf", 0, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
+                .addDevice("rf", 1, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
+                .addDevice("lb", 2, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
+                .addDevice("rb", 3, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
+                .setConfigurationName("test_configuration")
+                .build()
+                .setAsActiveConfiguration();
+
         if (botPose == null) {
             botPose = new Pose2d(0, 0, new Rotation2d(-Math.PI));
         }
@@ -71,7 +81,7 @@ public abstract class Robot extends RobotBase {
                 .setRelativePose(new Pose3d())
                 .setCameraActivationZones(new CameraCameraActivationBox(Field.topLeftCorner, Field.topLeftCorner.translateX(50), Field.bottomLeftCorner.translateX(50), Field.bottomLeftCorner, drive.getOdometry()::getPose))
                 .onDetect(() -> drive.getOdometry().setPosition(aprilTagCamera.getCalculatedBotPose()))
-                .setExposureTime(6)
+                .setExposureMS(6)
                 .setExposureGain(250)
                 .setDecimation(2)
                 .build();
