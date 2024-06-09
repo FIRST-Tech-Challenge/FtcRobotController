@@ -81,7 +81,7 @@ public class BR20 {
     }
     public void waitForStart(){
         while (!op.isStarted() || op.isStopRequested()) {
-            bark = robot.getSpikePos();
+            bark = 2- robot.getSpikePos();
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
             op.telemetry.addData("delaySec", delaySec);
@@ -122,7 +122,7 @@ public class BR20 {
         else if(bark==1) {
             robot.lowAuto(true);
             robot.yellowAuto(true);
-            robot.drop(43.5);
+            robot.drop(43);
         }
         else {
             robot.lowAuto(false);

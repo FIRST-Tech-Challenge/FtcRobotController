@@ -36,13 +36,13 @@ public class BL20 {
         logi = isLogi;
         this.op=op;
         robot = new BradBot(op, false,isLogi);
-        Pose2d startPose = new Pose2d(-36,60,toRadians(90));
+        Pose2d startPose = new Pose2d(-37.5,61.5,toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
         imuMultiply = 1.039 + .002*(robot.getVoltage()-12.5);
         spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-35,31,toRadians(180)),toRadians(-30))
+                .splineToSplineHeading(new Pose2d(-32,32,toRadians(180)),toRadians(-30))
                 .build();
 
         spikey[1] = robot.roadrun
@@ -64,7 +64,7 @@ public class BL20 {
                             .trajectorySequenceBuilder(spikey[0].end())
                             .lineToLinearHeading(new Pose2d(-40,58,toRadians(180)))
                             .lineToLinearHeading(new Pose2d(25,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(45,44,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(45.5,44,toRadians(180)))
                             .build();
 
             droppy[1] =
@@ -72,8 +72,8 @@ public class BL20 {
                             .roadrun
                             .trajectorySequenceBuilder(spikey[1].end())
                             .lineToLinearHeading(new Pose2d(-40,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(25,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(45,36,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(27,58,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(45.5,36,toRadians(180)))
                             .build();
 
             droppy[2] =
@@ -81,8 +81,8 @@ public class BL20 {
                             .roadrun
                             .trajectorySequenceBuilder(spikey[2].end())
                             .lineToLinearHeading(new Pose2d(-40,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(25,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(44.5,31,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(27,58,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(45,31,toRadians(180)))
                             .build();
 
         } else{
@@ -101,7 +101,7 @@ public class BL20 {
     }
     public void waitForStart(){
         while (!op.isStarted() || op.isStopRequested()) {
-            bark = robot.getSpikePos();
+            bark = 2 - robot.getSpikePos();
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
             op.telemetry.addData("delaySec", delaySec);
@@ -134,11 +134,9 @@ public class BL20 {
     public void pre(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
-        robot.lowAuto(false);
-        robot.yellowAuto(false);
         if(bark==0) {
-            robot.lowAuto(true);
-            robot.yellowAuto(true);
+            robot.lowAuto(false);
+            robot.yellowAuto(false);
             robot.drop(44);
         }
         else if(bark==1){

@@ -22,7 +22,7 @@ public class MeepMeepTesting {
                 .setDimensions(15,19)
                 .setConstraints(100, 60, 4 * PI, 2 * PI, 16)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(17,-64, toRadians(-90)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-38 ,60,toRadians(90)))
                                         //purp
                                         .setReversed(true)
                                         .lineToLinearHeading(new Pose2d(25.5,-40, toRadians(-90)))
