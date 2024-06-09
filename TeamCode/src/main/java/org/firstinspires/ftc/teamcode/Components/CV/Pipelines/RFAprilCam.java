@@ -61,12 +61,12 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class RFAprilCam {
   public static double X_OFFSET = -6.5,
-      Y_OFFSET = 2.8,
+      Y_OFFSET = 3.1,
       UPSAMPLE_THRESHOLD = 25,
       NUMBER_OF_SAMPLES = 1;
   public static int EXPOSURE_MS = 4, GAIN = 5;
   public static double FOCAL_LENGTH = 840;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 5;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 4;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;

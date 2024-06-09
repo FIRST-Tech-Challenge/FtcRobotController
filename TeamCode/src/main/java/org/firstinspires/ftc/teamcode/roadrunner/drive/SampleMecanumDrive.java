@@ -86,11 +86,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
 
     public static final double LATERAL_MULTIPLIER = 1.2;
-    public static double imuMultiply = 1.04,fishMoley = 0.5, IMU_INTERVAL = 0.18;
+    public static double imuMultiply = 1.013,fishMoley = 1.0, IMU_INTERVAL = 0.12;
 
     public static final double VX_WEIGHT = 1;
     public static final double VY_WEIGHT = 1;
-    public static final double OMEGA_WEIGHT = 1;
+    public static final double OMEGA_WEIGHT = 1.5;
     private TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectorySequence trajectorySeq;
 

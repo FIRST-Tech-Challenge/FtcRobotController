@@ -302,7 +302,7 @@ public class BradBot extends BasicRobot {
   }
 
   public void lowAuto(boolean left) {
-    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 970)) {
+    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 1000)) {
       LOGGER.log(
           "armor"
               + Claw.clawStates.GRAB.getState()
@@ -311,7 +311,7 @@ public class BradBot extends BasicRobot {
               + " "
               + (currentPose.getX() > -15));
       if (currentPose.getX() > -17 && Claw.clawStates.GRAB.getState()) {
-        lift.setPosition(970);
+        lift.setPosition(1000);
         intake.stopIntake();
         arm.flipTo(DROP);
         wrist.flipTo(Wrist.WristTargetStates.DROP);
@@ -435,6 +435,9 @@ public class BradBot extends BasicRobot {
       //      Lift.LiftMovingStates.AT_ZERO.clearTargets();
     }
   }
+  public void stopIntake(){
+    intake.stopIntake();
+  }
 
   public void intakeAuto(int height) {
     if (queuer.queue(
@@ -442,6 +445,7 @@ public class BradBot extends BasicRobot {
         (Intake.IntakeStates.REVERSING.getState()||(intaked&&magazine.solidTwoPixels())))) {
       if(!intaked){
         endPose = roadrun.getCurrentTraj().end();
+        lastHeightTime=time;
       }
 //      LOGGER.log(String.valueOf(intake.getVelocity()));
       //      packet.put("pixel", pixels);
@@ -450,16 +454,18 @@ public class BradBot extends BasicRobot {
       //      packet.put("intakeVel", intake.getVelocity());
 
 
-      if (currentPose.getX() < -52.8 || !roadrun.getCurrentTraj().end().equals(endPose)) {
+      if (currentPose.getX() <roadrun.getEndPose().vec().getX()+2 || !roadrun.getCurrentTraj().end().equals(endPose)) {
         LOGGER.log(""+lastHeightTime);
         if(!intaked){
           lastHeightTime=time;
           LOGGER.log("intakeheighttime");
         }
         intaked = true;
+        pixels=0;
         magazine.updateSensors();
-        if(time-lastHeightTime>1&&height-pixels!=height-1&&pixels!=2){
-            height-=1;
+        int offset=0;
+        if(time-lastHeightTime>0.8&&pixels==0){
+            offset-=1;
         }
         if(height==6&&pixels==0){
           height=5;
@@ -469,7 +475,7 @@ public class BradBot extends BasicRobot {
           LOGGER.log(""+endPose);
           lastHeightTime=time;
         }
-        if(time-lastHeightTime>1.4){
+        if(time-lastHeightTime>1.6){
           LOGGER.log("sequencing");
           if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().equals(endPose)) {
             LOGGER.log("moving");
@@ -483,11 +489,11 @@ public class BradBot extends BasicRobot {
           if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().vec().equals(new Vector2d(endPose.getX() + 5.5, endPose.getY()))){
             TrajectorySequence traj = roadrun.trajectorySequenceBuilder(roadrun.getEndPose())
                     .setReversed(false)
-                    .lineTo(new Vector2d(endPose.getX() + 2.8, endPose.getY()))
+                    .lineTo(new Vector2d(endPose.getX() + 3, endPose.getY()))
                     .build();
             roadrun.followTrajectorySequenceAsync(traj);
           }
-          if(!roadrun.isBusy()|| roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX()+2.8, endPose.getY()))){
+          if(!roadrun.isBusy()|| roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX()+3, endPose.getY()))){
             LOGGER.log("reintaking");
             if(time-lastHeightTime>3.5&&pixels==0){
               pixels=1;
@@ -501,7 +507,7 @@ public class BradBot extends BasicRobot {
           }
         }else {
           if(pixels<2) {
-            intake.intakeAutoHeight(min(max(height - pixels, height - 1), intake.getHeight()));
+            intake.intakeAutoHeight(min(max(height - pixels+offset, height - 1 + offset), intake.getHeight()));
           }
         }
       }
