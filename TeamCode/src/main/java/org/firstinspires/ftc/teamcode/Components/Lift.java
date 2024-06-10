@@ -144,6 +144,7 @@ public class Lift extends RFDualMotor {
 //    LOGGER.log(
 //        RFLogger.Severity.FINEST,
 //        "currentPos: " + super.getCurrentPosition() + ", currentTarget: " + super.getTarget());
+    packet.put("liftPos", super.getCurrentPosition());
     for (var i : LiftPositionStates.values()) {
       if (abs(super.getCurrentPosition() - i.position) < 50
           && (i != LiftPositionStates.AT_ZERO

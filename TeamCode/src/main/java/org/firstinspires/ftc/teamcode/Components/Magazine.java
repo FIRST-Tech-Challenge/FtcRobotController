@@ -71,10 +71,10 @@ public class Magazine {
     dist1 = colorSensor1.getDist();
     dist2 = colorSensor2.getDist();
     pixels=0;
-    if (dist1 < 5.8) {
+    if (dist1 < 4.2) {
       MagStates.FRONT.setState(true);
       pixels++;
-    } else if (dist1 > 5.8) {
+    } else if (dist1 >4.2) {
       MagStates.FRONT.setState(false);
     }
     if (dist2 < 1.4) {
