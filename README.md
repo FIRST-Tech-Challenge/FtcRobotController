@@ -10,7 +10,7 @@ Make sure you are at the branch where you want to work. It can be changed by cli
 
 If you want to catch up with other people's changes, select the default master branch and click "pull origin." Then, switch to the branch you want to work with.
 
-When finished, switch back to the Git Hub desktop application and review your changes.  Select and right-click "Discard Changes" to reverse something you created/changed/deleted.
+When finished working, switch back to the Git Hub desktop application and review your changes.  Select and right-click "Discard Changes" to reverse something you created/changed/deleted.
 
 Select all the changes you want to commit, fill out the summary and description, and click "Commit to <Branch>."
 
