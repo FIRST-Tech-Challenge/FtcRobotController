@@ -8,7 +8,7 @@ Check if you are working in the "TeamCode" Repository listed beneath the file me
 
 Make sure you are at the branch where you want to work. It can be changed by clicking on the "current branch" to the right of the Repository. To make a new branch, click "new branch" to the right of the "filter" bar.
 
-If you want to catch up with other people's changes, select the default master branch and click "fetch origin." Then, switch to the branch you want to work with.
+If you want to catch up with other people's changes, select the default master branch and click "pull origin." Then, switch to the branch you want to work with.
 
 When finished, switch back to the Git Hub desktop application and review your changes.  Select and right-click "Discard Changes" to reverse something you created/changed/deleted.
 
