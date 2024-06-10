@@ -1,3 +1,7 @@
+# [NEW PULL REQUEST](https://github.com/GearUp12499-org/GearUp2024-5/compare/master...feature?expand=1)
+
+click to PR this repo! don't accidentally submit to upstream!
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
