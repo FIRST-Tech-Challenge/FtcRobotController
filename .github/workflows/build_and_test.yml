@@ -1,0 +1,36 @@
+name: Build and Test
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Set +x
+        run: chmod a+x gradlew
+      - name: Build and test
+        run: ./gradlew clean assembleDebug test
+      - name: Collate tests
+        if: ${{ true }}
+        run: |
+          mkdir -p build/test_results
+          find . -regextype posix-extended -regex '.*reports/tests/([^/]+?)' -exec cp -r {} build/test_results/ \;
+      - name: Upload test results
+        if: ${{ true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/test_results
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: TeamCode/build/outputs/apk/debug/TeamCode-debug.apk
