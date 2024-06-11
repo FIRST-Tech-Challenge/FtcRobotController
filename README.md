@@ -23,3 +23,4 @@ MAKE SURE YOU ARE SUBMITTING THE CHANGES TO THE NKN CODE AND NOT THE FTC CODE. T
 When you are ready, click "create pull request."
 
 Ask a teammate to review the pull request, test it on the robot, then if everyone is satisfied it can be merged.
+Also, make sure not to delete or edit other people's comments.
