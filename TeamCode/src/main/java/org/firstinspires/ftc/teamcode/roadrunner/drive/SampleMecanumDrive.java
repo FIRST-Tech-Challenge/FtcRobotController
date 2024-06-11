@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static com.acmerobotics.roadrunner.util.Angle.normDelta;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
@@ -15,9 +17,15 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.enc
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.imuHeadoffset;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+import static java.lang.Math.toRadians;
 
 import androidx.annotation.NonNull;
 
@@ -86,11 +94,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
 
     public static final double LATERAL_MULTIPLIER = 1.2;
-    public static double imuMultiply = 1.013,fishMoley = 1.0, IMU_INTERVAL = 0.12;
+    public static double imuMultiply = 1.0132,fishMoley = 1.0, IMU_INTERVAL = 10000, funnyIMUOffset = 1.7;
 
     public static final double VX_WEIGHT = 1;
     public static final double VY_WEIGHT = 1;
-    public static final double OMEGA_WEIGHT = 1.5;
+    public static final double OMEGA_WEIGHT = 1;
     private TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectorySequence trajectorySeq;
 
@@ -133,10 +141,11 @@ public class SampleMecanumDrive extends MecanumDrive {
                 TRACK_WIDTH,
                 LATERAL_MULTIPLIER);
         follower = new RFHolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, toRadians(5.0)), 0.5);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        IMU_INTERVAL=10000;
 
 
 
@@ -217,10 +226,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
-        imu2 = hardwareMap.get(BNO055IMU.class, "imu2");
+        imu2 = op.hardwareMap.get(BNO055IMU.class, "imu2");
         BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters2.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters2.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu2.initialize(parameters2);
 
 
@@ -258,6 +267,14 @@ public class SampleMecanumDrive extends MecanumDrive {
     poseHeadOffset=0;
     imuHeadoffset = 0;
 //
+    }
+
+    public void startIMU(){
+        Orientation angles2 = imu2.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS);
+        poseHeadOffset = currentPose.getHeading()-angles2.firstAngle+toRadians(funnyIMUOffset);
+    }
+    public void changeIMUInterval(){
+        IMU_INTERVAL = 0.18;
     }
     public void resetIMUTime(){
         lastImuTime = -100;
@@ -376,7 +393,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             lastImuTime = time;
             packet.put("imu", lastImuPos);
             packet.put("offset", poseHeadOffset);
-           currentPose = new Pose2d(currentPose.getX(), currentPose.getY(), lastImuPos*imuMultiply+poseHeadOffset);
+           currentPose = new Pose2d(currentPose.getX(), currentPose.getY(), lastImuPos+poseHeadOffset);
         }
 //        logger.log("/RobotLogs/GeneralRobot", "curPose2"+currentPose);
 
@@ -433,21 +450,52 @@ public class SampleMecanumDrive extends MecanumDrive {
             drivePower = new Pose2d(vel.vec().rotated(-currentPose.getHeading()), vel.getHeading());
             vel = drivePower;
         }
-        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
-                + Math.abs(drivePower.getHeading()) > 1) {
-            // re-normalize the powers according to the weights
-            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
-                    + VY_WEIGHT * Math.abs(drivePower.getY())
-                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
+//        if (drivePower.getX()*drivePower.getX()+drivePower.getY()*drivePower.getY()+drivePower.getHeading()*drivePower.getHeading()> 1) {
+//            // re-normalize the powers according to the weights
+//            double denom = VX_WEIGHT * abs(drivePower.getX()*drivePower.getX())
+//                    + VY_WEIGHT * abs(drivePower.getY()*drivePower.getY())
+//                    + OMEGA_WEIGHT * abs(drivePower.getHeading()*drivePower.getHeading());
+//
+//            vel = new Pose2d(
+//                    VX_WEIGHT * drivePower.getX(),
+//                    VY_WEIGHT * drivePower.getY(),
+//                    OMEGA_WEIGHT * drivePower.getHeading()
+//            ).div(denom);
+//        }
+        double head = vel.getHeading();
+        double y = vel.getX();
+        double ny = y;
+        double x = vel.getY();
+        double nx = x;
+        double nhead = head;
 
-            vel = new Pose2d(
-                    VX_WEIGHT * drivePower.getX(),
-                    VY_WEIGHT * drivePower.getY(),
-                    OMEGA_WEIGHT * drivePower.getHeading()
-            ).div(denom);
+        if(abs(head)>0.002){
+//            nhead = 0.9*(abs(head) + .18)*(abs(head) + .18)+0.1;
+
+            nhead = 11.2/(10+15*pow(Math.E,-20*(abs(head)/3-0.23)))+.12;
+            nhead*=head/abs(head);
+            packet.put("heado", head);
+            packet.put("bhead", nhead);
+            if(currentVelocity.getHeading()==toRadians(0)){
+                nhead+=.2*head/abs(head);
+            }
+        }
+        if(abs(y)>.002) {
+            ny = 11.2/(10+15*pow(Math.E,-20*(abs(y)/3-0.23)))+.12;
+            ny *= y / abs(y);
+            if(currentPOVVelocity.getX()==toRadians(0)){
+                ny+=.2*y/abs(y);
+            }
+        }
+        if(abs(x)>.02){
+            nx = 11/(10+15*pow(Math.E,-20*(abs(x)/3-0.23)))+.2;
+            nx*=x/abs(x);
+            if(currentPOVVelocity.getY()==toRadians(0)){
+                nx+=.2*x/abs(x);
+            }
         }
 
-        setDrivePower(vel);
+        setDrivePower(new Pose2d(ny,nx,nhead));
     }
     public void toggleFieldCentric(){
         isFieldCentric= !isFieldCentric;

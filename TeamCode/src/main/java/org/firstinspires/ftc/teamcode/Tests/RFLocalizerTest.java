@@ -30,10 +30,19 @@ public class RFLocalizerTest extends LinearOpMode {
         BasicRobot robot = new BasicRobot(this,true);
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
         drive.setPoseEstimate(new Pose2d(0,0,toRadians(-90)));
+        boolean imud = false, doneImud = false;
         waitForStart();
         while (opModeIsActive()) {
             robot.update();
             drive.update();
+            if(!imud && BasicRobot.time>4){
+                drive.startIMU();
+                imud=true;
+            }
+            if(!doneImud && BasicRobot.time>5){
+                drive.changeIMUInterval();
+                doneImud=true;
+            }
             drive.setWeightedDrivePower(new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
             packet.put("rrPose", drive.getPoseEstimate());
             packet.put("rrPOVVelocity", drive.getPoseVelocity());
