@@ -17,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRA
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.IMU_INTERVAL;
 
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -72,7 +73,7 @@ public class BradBot extends BasicRobot {
 
   boolean purped = false;
   boolean pathFin = false;
-  boolean gapped = false;
+  boolean gapped = false, uppered = false;
   boolean brokenFollowing = false;
   //  double startIntake = -100;
   //  Preloader preloader;
@@ -132,6 +133,7 @@ public class BradBot extends BasicRobot {
     packet.put("voltage", voltage);
       update();
       lastHeightTime=-100;
+      uppered=false;
   }
 
   public BradBot(LinearOpMode p_op, boolean p_isTeleop) {
@@ -439,6 +441,20 @@ public class BradBot extends BasicRobot {
     intake.stopIntake();
   }
 
+  public void startIMU(){
+//    if(queuer.queue(true, true)){
+      roadrun.startIMU();
+//    }
+  }
+  public void changeIMUInterval(){
+    if(queuer.queue(true,true)){
+      roadrun.changeIMUInterval();
+    }
+  }
+  public void stopAllMotors(){
+    roadrun.setMotorPowers(0,0,0,0);
+  }
+
   public void intakeAuto(int height) {
     if (queuer.queue(
         true,
@@ -464,7 +480,7 @@ public class BradBot extends BasicRobot {
         pixels=0;
         magazine.updateSensors();
         int offset=0;
-        if(time-lastHeightTime>0.8&&pixels==0){
+        if(height<6 && time-lastHeightTime>1.0&&pixels==0){
             offset-=1;
         }
         if(height==6&&pixels==0){
@@ -475,7 +491,7 @@ public class BradBot extends BasicRobot {
           LOGGER.log(""+endPose);
           lastHeightTime=time;
         }
-        if(time-lastHeightTime>1.6){
+        if(time-lastHeightTime>1.7){
           LOGGER.log("sequencing");
           if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().equals(endPose)) {
             LOGGER.log("moving");
@@ -500,14 +516,14 @@ public class BradBot extends BasicRobot {
             }
             intake.intakeAutoHeight(2-pixels);
           }
-          if(time-lastHeightTime>5){
+          if(time-lastHeightTime>6){
             LOGGER.log("doning");
             pixels=2;
-            magazine.setTwoPixelTime(0);
+            intake.reverseIntake();
           }
         }else {
           if(pixels<2) {
-            intake.intakeAutoHeight(min(max(height - pixels+offset, height - 1 + offset), intake.getHeight()));
+            intake.intakeAutoHeight(min(max(height - pixels+offset, height - 1), intake.getHeight()));
           }
         }
       }
@@ -1015,10 +1031,23 @@ public class BradBot extends BasicRobot {
     if (isX2) {
       //      preloader.deposit();
     }
+    if(abs(currentVelocity.getHeading())>toRadians(30)&&intake.getHeight()==1&&Intake.IntakeStates.INTAKING.getState()){
+      intake.setHeight(2);
+      uppered = true;
+    }
+    if(uppered && abs(currentVelocity.getHeading())<=toRadians(30)&&Intake.IntakeStates.INTAKING.getState()){
+      intake.setHeight(1);
+      uppered = false;
+    }
+    if(!Intake.IntakeStates.INTAKING.getState()){
+      uppered = false;
+    }
 
     roadrun.setWeightedDrivePower(
         new Pose2d(
             -op.gamepad1.left_stick_y, -op.gamepad1.left_stick_x, -op.gamepad1.right_stick_x));
+    packet.put("vel", currentVelocity);
+    packet.put("joytick", new Pose2d(-op.gamepad1.left_stick_y, -op.gamepad1.left_stick_x, -op.gamepad1.right_stick_x/180 * PI));
     update();
     if(isY2){
       lift.iterateUp();
@@ -1068,9 +1097,10 @@ public class BradBot extends BasicRobot {
     if (!isTeleop && abs(intake.getIntakePower()) > 0) {
       magazine.updateSensors();
     }
-    if(!isTeleop){
-      roadrun.update();
+    if(isTeleop){
+      IMU_INTERVAL=10000;
     }
+    roadrun.update();
     intake.update();
     lift.update();
     wrist.update();

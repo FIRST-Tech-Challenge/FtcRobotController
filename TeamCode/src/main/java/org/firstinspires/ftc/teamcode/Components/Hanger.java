@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 public class Hanger extends RFMotor {
     double permaPower = 0.0;
     boolean up = false;
-    public static double max = 5440,
+    public static double max = 5640,
             min = -15,
             RESISTANCE = 400,
             kS = 0.3,
