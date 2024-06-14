@@ -20,16 +20,7 @@ public class RedRight24 extends LinearOpMode {
         RR24 aut = new RR24(this, false);
         aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
-            aut.purp();
-            aut.pre();
-            aut.cycleIntake(5);
-            aut.cycleDrop();
-            aut.cycleIntake2(3);
-            aut.cycleDrop2();
-            aut.cycleIntake3(5);
-            aut.cycleDrop3();
-            aut.park();
-            aut.update();
+            aut.loop();
         }
         stop();
     }

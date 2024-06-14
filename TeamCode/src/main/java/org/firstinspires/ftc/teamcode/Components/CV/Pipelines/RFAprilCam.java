@@ -62,8 +62,8 @@ import java.util.concurrent.TimeUnit;
 public class RFAprilCam {
   public static double X_OFFSET = -6.5,
       Y_OFFSET = 3.1,
-      UPSAMPLE_THRESHOLD = 25,
-      NUMBER_OF_SAMPLES = 1;
+      UPSAMPLE_THRESHOLD = 20,
+      NUMBER_OF_SAMPLES = 2;
   public static int EXPOSURE_MS = 4, GAIN = 5;
   public static double FOCAL_LENGTH = 840;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 4;
@@ -225,7 +225,7 @@ public class RFAprilCam {
         VectorF p1 = detections.get(0).metadata.fieldPosition;
         VectorF p2 = detections.get(1).metadata.fieldPosition;
         double d1 = detections.get(0).ftcPose.range, d2 = detections.get(1).ftcPose.range;
-        if (d1 < UPSAMPLE_THRESHOLD && d2 < UPSAMPLE_THRESHOLD) {
+        if (d1 < UPSAMPLE_THRESHOLD && d2 < UPSAMPLE_THRESHOLD && abs(currentVelocity.getY())<25) {
           double
               d =
                   sqrt(

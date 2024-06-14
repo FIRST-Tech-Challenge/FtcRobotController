@@ -156,6 +156,9 @@ public class Arm extends RFServo {
             flipTo(HOVER);
             return;
           }
+          if(super.getPosition() == DROP_POS){
+            ArmTargetStates.DROP.state=false;
+          }
           if ((super.getPosition() != DROP_POS && !(Lift.LiftMovingStates.AT_ZERO.state ||(HOVER.state&& Lift.LiftPositionStates.AT_ZERO.state)))||override) {
             super.setPosition(DROP_POS+offset);
             position = DROP_POS;

@@ -11,7 +11,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Twrist extends RFServo {
-    public static double GRABBY = 0.54, LEFT_TILTY = 0.38, SLEFT_TILTY = 0.44, RIGHT_TILTY = 0.8, SRIGHT_TILTY =0.74 , DROPPY = 0.013, VERT = 0.58,  POPP = 1.0, FLIP_TIME=0.2;
+    public static double GRABBY = 0.54, LEFT_TILTY = 0.34, SLEFT_TILTY = 0.4, RIGHT_TILTY = 0.76, SRIGHT_TILTY =0.7 , DROPPY = 0.0, VERT = 0.545,  POPP = 1.0, FLIP_TIME=0.2;
     private double lastTime=-100;
     public Twrist(){
         super("twistServo", 1.0);
@@ -39,7 +39,7 @@ public class Twrist extends RFServo {
         RIGHT_TILT(false, RIGHT_TILTY),
         SRIGHT_TILT(false, SRIGHT_TILTY),
         VERT(false, Twrist.VERT),
-        OT(false, 1.0);
+        OT(false, 1);
 
         boolean state;
         double pos;
@@ -66,7 +66,7 @@ public class Twrist extends RFServo {
         SRIGHT_TILTY(false, Twrist.SRIGHT_TILTY),
 
         VERT(false, Twrist.VERT),
-        OT(false, 1.0);
+        OT(false, 1);
         boolean state;
         double pos;
         twristTargetStates(boolean p_state, double p_pos){
@@ -93,7 +93,7 @@ public class Twrist extends RFServo {
             LOGGER.log("twrist to GRAB");
             lastTime = time;
           }
-          twristTargetStates.GRAB.state = true;
+          twristTargetStates.GRAB.setStateTrue();
         } else if (p_state == twristTargetStates.DROP) {
           if ((Arm.ArmTargetStates.DROP.state|| Arm.ArmStates.DROP.getState()) && super.getPosition() != DROPPY) {
             super.setPosition(DROPPY);
@@ -119,8 +119,8 @@ public class Twrist extends RFServo {
           twristTargetStates.RIGHT_TILT.state = true;
         } else if (p_state == twristTargetStates.OT) {
 
-          if ((Arm.ArmStates.DROP.getState()) && super.getPosition() != 1.0) {
-            super.setPosition(1.0);
+          if ((Arm.ArmStates.DROP.getState()) && super.getPosition() != 1) {
+            super.setPosition(1);
             LOGGER.log("OT claw");
             lastTime = time;
           }

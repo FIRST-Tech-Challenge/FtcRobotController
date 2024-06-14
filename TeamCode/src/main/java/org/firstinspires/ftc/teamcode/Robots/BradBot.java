@@ -223,7 +223,7 @@ public class BradBot extends BasicRobot {
         true, lift.getTarget()==630 || lift.getTarget()==690)) {
       if (currentPose.getX() > 5 && DROP.getState()) {
         if (left) {
-          lift.setPosition(690);
+          lift.setPosition(630);
         } else {
           lift.setPosition(630);
         }
@@ -491,7 +491,7 @@ public class BradBot extends BasicRobot {
           LOGGER.log(""+endPose);
           lastHeightTime=time;
         }
-        if(time-lastHeightTime>1.7){
+        if(time-lastHeightTime>1.5){
           LOGGER.log("sequencing");
           if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().equals(endPose)) {
             LOGGER.log("moving");
@@ -516,7 +516,7 @@ public class BradBot extends BasicRobot {
             }
             intake.intakeAutoHeight(2-pixels);
           }
-          if(time-lastHeightTime>6){
+          if(time-lastHeightTime>5){
             LOGGER.log("doning");
             pixels=2;
             intake.reverseIntake();
@@ -950,7 +950,7 @@ public class BradBot extends BasicRobot {
     if (leftBumper) {
       intake.reverseIntake();
     }
-    if (left2) {
+    if (right2) {
       if (Twrist.twristStates.LEFT_TILT.getState()) {
         twrist.flipTo(Twrist.twristTargetStates.SLEFT_TILTY);
       } else if (Twrist.twristStates.DROP.getState()) {
@@ -967,7 +967,7 @@ public class BradBot extends BasicRobot {
         twrist.flipTo(Twrist.twristTargetStates.DROP);
       }
     }
-    if (right2) {
+    if (left2) {
       if (Twrist.twristStates.LEFT_TILT.getState()) {
         twrist.flipTo(Twrist.twristTargetStates.DROP);
       } else if (Twrist.twristStates.DROP.getState()) {
@@ -987,12 +987,14 @@ public class BradBot extends BasicRobot {
     }
     if (up) {
       lift.iterateUp();
-      intake.stopIntake();
-      arm.flipTo(DROP);
       if (Wrist.WristStates.LOCK.getState()) {
         wrist.flipTo(Wrist.WristTargetStates.GRAB);
       }
-      wrist.flipTo(Wrist.WristTargetStates.DROP);
+      if(!DROP.getState()) {
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        intake.stopIntake();
+        arm.flipTo(DROP);
+      }
       if (Twrist.twristStates.GRAB.getState()) twrist.flipTo(Twrist.twristTargetStates.VERT);
     }
     if (intUp) {
@@ -1000,11 +1002,14 @@ public class BradBot extends BasicRobot {
     }
     if (intDown) intake.toggleIntakeHeightDown();
     if (down) {
-      arm.flipTo(DROP);
-      wrist.flipTo(Wrist.WristTargetStates.DROP);
+      if(!DROP.getState()){
+        arm.flipTo(DROP);
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        intake.stopIntake();
+      }
+
 //      twrist.flipTo(Twrist.twristTargetStates.DROP);
       lift.iterateDown();
-      intake.stopIntake();
     }
     if (abs(op.gamepad2.left_stick_y) > 0.05) {
       lift.manualExtend(-op.gamepad2.left_stick_y);
@@ -1031,17 +1036,7 @@ public class BradBot extends BasicRobot {
     if (isX2) {
       //      preloader.deposit();
     }
-    if(abs(currentVelocity.getHeading())>toRadians(30)&&intake.getHeight()==1&&Intake.IntakeStates.INTAKING.getState()){
-      intake.setHeight(2);
-      uppered = true;
-    }
-    if(uppered && abs(currentVelocity.getHeading())<=toRadians(30)&&Intake.IntakeStates.INTAKING.getState()){
-      intake.setHeight(1);
-      uppered = false;
-    }
-    if(!Intake.IntakeStates.INTAKING.getState()){
-      uppered = false;
-    }
+
 
     roadrun.setWeightedDrivePower(
         new Pose2d(

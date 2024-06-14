@@ -32,13 +32,13 @@ public class Intake extends RFMotor {
   double requestTime = 0.0;
 
   private final double INTAKE_POWER = 1.0;
-  private final double REVERSE_POWER = -1.0;
+  private final double REVERSE_POWER = -0.7;
 
   private boolean full = false;
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.49, TWO=0.53, THREE = 0.555, FOUR = 0.58, FIVE =0.605, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
+  public static double ONE=0.49, TWO=0.53, THREE = 0.555, FOUR = 0.58, FIVE =0.603, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;

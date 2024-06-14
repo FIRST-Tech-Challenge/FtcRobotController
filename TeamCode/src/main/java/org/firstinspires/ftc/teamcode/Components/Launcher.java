@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
@@ -10,8 +12,9 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
  * Warren
  * Launcher class, shoot plane, pls zone 1
  */
+@Config
 public class Launcher extends RFServo {
-    private final double SHOOT_POSITION = 0.3, OTHER_POSITION = 1.0;
+    public static double SHOOT_POSITION = 0.4, OTHER_POSITION = 0.8;
     boolean isLoaded = false;
 
     /**
