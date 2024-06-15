@@ -77,7 +77,7 @@ public class encoders extends LinearOpMode {
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("Motor Ticks: ", motor.getCurrentPosition());
+        //telemetry.addData("Motor Ticks: ", motor.getCurrentPosition());
 
         telemetry.update();
 
@@ -91,7 +91,7 @@ public class encoders extends LinearOpMode {
         while (opModeIsActive()) {
 
             if(gamepad1.a){
-                degin(90);
+                degin(360);
             }
 
         }
@@ -104,3 +104,4 @@ public class encoders extends LinearOpMode {
     }
 }
 
+ni

@@ -25,7 +25,7 @@ public class A2LongRoute extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    private OpenCvWebcam webcam;
+
     A2bluePipeline pipeline = new A2bluePipeline();
     A2globalVar A2var = new A2globalVar();
 
@@ -53,10 +53,11 @@ public class A2LongRoute extends LinearOpMode {
 
     RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
+
+
     @Override
     public void runOpMode() {
 
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));
 
         lfDrive = hardwareMap.get(DcMotor.class, "lf_drive");
         rfDrive = hardwareMap.get(DcMotor.class, "rf_drive");
@@ -96,18 +97,14 @@ public class A2LongRoute extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY) and telemetry for prop location
 
         imu.resetYaw();
-        runtime.reset();
 
+        waitForStart();
+        runtime.reset();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
             telemetry.addData("Yaw: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
-
-
-
-
-
 
             lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -119,21 +116,9 @@ public class A2LongRoute extends LinearOpMode {
             rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            imu.resetYaw();
+                imu.resetYaw();
 
-
-
-            lfDrive.setPower(0);
-            lbDrive.setPower(0);
-            rfDrive.setPower(0);
-            rbDrive.setPower(0);
-
-            lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            encoderDriveRightInches(A2var.A2mSpike1);
+            encoderDriveRightInches(10);
             imuCorrection(0, 0.5);
 
             sleep(500);
@@ -145,19 +130,19 @@ public class A2LongRoute extends LinearOpMode {
             imuCorrection(0, 0.5);
 
 
-//            encoderDriveBackwardInches(A2var.A2LongM1);
-//            imuCorrection(0, 0.5);
+//                encoderDriveBackwardInches(A2var.A2LongM1);
+//                imuCorrection(0, 0.5);
 //
-//            encoderDriveRightInches(A2var.A2LongM2);
-//            imuCorrection(0, 0.5);
+//                encoderDriveRightInches(A2var.A2LongM2);
+//                imuCorrection(0, 0.5);
 ////
 ////                encoderDriveRightInches(A2var.A2LongM3);
 ////                imuCorrection(90, 0.5);
 ////
-//            encoderDriveForwardInches(A2var.A2LongM4);
-//            imuCorrection(0, 0.5);
+//                encoderDriveForwardInches(A2var.A2LongM4);
+//                imuCorrection(0, 0.5);
 ////
-//            TurnLeft(A2var.A2LongM5);
+//                TurnLeft(A2var.A2LongM5);
 //
 ////                imuCorrection(-100, 0.5);
 ////
@@ -181,38 +166,56 @@ public class A2LongRoute extends LinearOpMode {
 //
 ////                imuCorrection(-173, 0.5);
 ////
-//            encoderDriveRightInches(A2var.A2LongM6);
+//                encoderDriveRightInches(A2var.A2LongM6);
 ////                imuCorrection(-173, 0.5);
 //
-//            encoderDriveBackwardInches(A2var.A2LongM7);
+//                encoderDriveBackwardInches(A2var.A2LongM7);
 ////                imuCorrection(-173, 0.5);
 //
-//            encoderDriveBackwardInchesSlow(A2var.A2LongM8);
+//                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
 ////                imuCorrection(-173, 0.5);
 //
-//            sleep(200);
+//                sleep(200);
 //
-//            autoarm.setPosition(0);
-//            sleep(900);
+//                autoarm.setPosition(0);
+//                sleep(900);
 //
-//            autoarm.setPosition(1);
-//            sleep(100);
+//                autoarm.setPosition(1);
+//                sleep(100);
 //
 //
-//            sleep(500);
-//            AutoP.setPosition(0);
+////                encoderDriveForwardInches(5);
+////                imuCorrection(-173,0.1);
+////
+////                encoderDriveRightInches(23);
+////                imuCorrection(-90,0.1);
+////
+////                encoderDriveBackwardInches(12);
+////                imuCorrection(-90,0.1);
+//
+//                sleep(500);
+//                AutoP.setPosition(0);
 
-            lfDrive.setPower(0);
-            rfDrive.setPower(0);
-            lbDrive.setPower(0);
-            rbDrive.setPower(0);
+
+                lfDrive.setPower(0);
+                lbDrive.setPower(0);
+                rfDrive.setPower(0);
+                rbDrive.setPower(0);
+
+                lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+                sleep(10);
 
 
 
         }
     }
 
-
+/*rbDrive*/
 
 
     public void imuCorrection(double directionDeg, double margin) {

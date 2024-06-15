@@ -26,14 +26,19 @@ public class A2globalVar {
 //    public double A2LongL5 = 11;//moving backwards to get the auto arm ready to deploy
 //    public double A2LongL6 = 70;//moving backwards slow to get the auto arm ready to deploy
 //    //MID SPIKE MARK ROUTE TO BACK BOARD
-    public double A2LongM1 = 17;//strafe to the white pixels
-    public double A2LongM2 = 33;//turnLeft for next strafe
-    public double A2LongM3 = 29;//strafe to the middle of field getting ready to cross the truss
-    public double A2LongM4 = 95;//Drive to other side of the field
-    public double A2LongM5 = 160;//spin 180 to face the backboard backwards
-    public double A2LongM6 = 50;//strafe to get aligned with the middle april tag
-    public double A2LongM7 = 8;//moving backwards to getting the arm set for pixel drop
-    public double A2LongM8 = 50;//moving backwards slower to getting the arm set for pixel drop
+
+
+
+//    public double A2LongM1 = 17;//strafe to the white pixels
+//    public double A2LongM2 = 33;//turnLeft for next strafe
+//    public double A2LongM3 = 29;//strafe to the middle of field getting ready to cross the truss
+//    public double A2LongM4 = 95;//Drive to other side of the field
+//    public double A2LongM5 = 160;//spin 180 to face the backboard backwards
+//    public double A2LongM6 = 50;//strafe to get aligned with the middle april tag
+//    public double A2LongM7 = 8;//moving backwards to getting the arm set for pixel drop
+//    public double A2LongM8 = 50;//moving backwards slower to getting the arm set for pixel drop
+
+
 
     //RIGHT SPIKE MARK ROUTE TO BACK BOARD
 //    public double A2LongR1 = 10;//moving backwards and strafing away from the spike mark
