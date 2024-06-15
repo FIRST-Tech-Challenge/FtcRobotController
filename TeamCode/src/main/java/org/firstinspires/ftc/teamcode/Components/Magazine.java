@@ -71,10 +71,10 @@ public class Magazine {
     dist1 = colorSensor1.getDist();
     dist2 = colorSensor2.getDist();
     pixels=0;
-    if (dist1 < 3.6) {
+    if (dist1 < 4.2) {
       MagStates.FRONT.setState(true);
       pixels++;
-    } else if (dist1 >3.6) {
+    } else if (dist1 >4.2) {
       MagStates.FRONT.setState(false);
     }
     if (dist2 < 1.4) {
@@ -143,6 +143,7 @@ public class Magazine {
 
   public void update() {
     LOGGER.log("front | back dist: " + dist1 + " | " + dist2);
+    packet.put("front | back dist", dist1 + " | " + dist2);
     LOGGER.log(
         "front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
     LOGGER.log("# Pixels: " + getPixels());

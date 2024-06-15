@@ -277,13 +277,13 @@ public class BL23 {
     {
         bark=0;
         if(bark==0){
-            funnyIMUOffset = 1.7;
+            funnyIMUOffset = 2.2;
         }
         if(bark==1){
-            funnyIMUOffset = 1;
+            funnyIMUOffset = 1.5;
         }
         if (bark==2){
-            funnyIMUOffset = 1;
+            funnyIMUOffset = 1.5;
         }
         robot.queuer.queue(false, true);
         robot.followTrajSeq(spikey[bark]);

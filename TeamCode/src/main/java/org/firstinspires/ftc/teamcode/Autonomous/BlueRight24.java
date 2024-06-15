@@ -20,14 +20,7 @@ public class BlueRight24 extends LinearOpMode {
         BR24 aut = new BR24(this, false);
         aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
-            aut.purp();
-            aut.pre();
-            aut.cycleIntake(5);
-            aut.cycleDrop();
-            aut.cycleIntake(3);
-            aut.cycleDrop();
-            aut.park();
-            aut.update();
+            aut.loop();
         }
     }
 }
