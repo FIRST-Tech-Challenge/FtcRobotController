@@ -7,6 +7,10 @@ public class Outtake {
 
     public static final double P_CONSTANT = 0.001;
     DcMotor lsFront, lsBack;
+    private double CLAMP_OPEN_POS = 0.471;
+    private double CLAMP_CLOSE_POS = 0.57;
+    private double TRAY_INTAKE_POS = 0.3;
+    private double TRAY_OUTTAKE_POS = 0;
 
     public Outtake(Robot robot) {
         lsFront = robot.lsFront;
@@ -20,5 +24,21 @@ public class Outtake {
             }
         }
         return 0;
+    }
+
+    public double getCLAMP_OPEN_POS () {
+        return CLAMP_OPEN_POS;
+    }
+
+    public double getCLAMP_CLOSE_POS() {
+        return CLAMP_CLOSE_POS;
+    }
+
+    public double getTRAY_INTAKE_POS() {
+        return TRAY_INTAKE_POS;
+    }
+
+    public double getTRAY_OUTTAKE_POS() {
+        return TRAY_OUTTAKE_POS;
     }
 }
