@@ -276,7 +276,7 @@ public class RL23 {
     public void purp()
     {
         if(bark==0){
-            funnyIMUOffset = 2.7;
+            funnyIMUOffset = 2.3;
         }
         if(bark==1){
             funnyIMUOffset = 3.5;
