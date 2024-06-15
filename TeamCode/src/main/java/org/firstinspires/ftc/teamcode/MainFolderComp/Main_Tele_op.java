@@ -164,6 +164,7 @@ public class Main_Tele_op extends LinearOpMode {
 //        double delay = 2.5;
         String foundColor = "null";
 //        double lastLeftTime = -(delay) - 0.01; //so that it wouldn't light up at the start
+//        double lastLeftTime = -(delay) - 0.01; //so that it wouldn't light up at the start
 //        double lastRightTime = -(delay) - 0.01; //so that it wouldn't light up at the start
 
         // Wait for the game to start (driver presses PLAY)

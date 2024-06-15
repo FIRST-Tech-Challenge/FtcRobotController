@@ -87,30 +87,14 @@ public class A2LongRoute extends LinearOpMode {
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
 
-        webcam.setPipeline(pipeline);
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
 
-                // start streaming the camera
-                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
 
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addLine("camera pipeline error");
-            }
-        });
 
 
 
         // Wait for the game to start (driver presses PLAY) and telemetry for prop location
-        while (!opModeIsActive() && !isStarted()) {
-            telemetry.addData("Prop Location: ", pipeline.getLocation());
-            telemetry.update();
-        }
+
         imu.resetYaw();
         runtime.reset();
 
@@ -121,274 +105,115 @@ public class A2LongRoute extends LinearOpMode {
             telemetry.update();
 
 
-            if (usingCV) {
-                if (getRuntime() >= 3.0) {
 
-                    // Turn team element detection off
-                    // pipeline.toggleCVonoff();
 
-                    usingCV = false;
-                }
-            }
 
-            if (!usingCV && !ready4April) {
 
-                lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                imu.resetYaw();
+            imu.resetYaw();
 
-                moveToProp();
 
-                lfDrive.setPower(0);
-                lbDrive.setPower(0);
-                rfDrive.setPower(0);
-                rbDrive.setPower(0);
 
-                lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            lfDrive.setPower(0);
+            lbDrive.setPower(0);
+            rfDrive.setPower(0);
+            rbDrive.setPower(0);
 
-                ready4April = true;
-                sleep(10);
+            lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            }
+            encoderDriveRightInches(A2var.A2mSpike1);
+            imuCorrection(0, 0.5);
+
+            sleep(500);
+            AutoP.setPosition(1);
+            sleep(500);
+
+
+            encoderDriveLeftInches(A2var.A2mSpike2);
+            imuCorrection(0, 0.5);
+
+
+//            encoderDriveBackwardInches(A2var.A2LongM1);
+//            imuCorrection(0, 0.5);
+//
+//            encoderDriveRightInches(A2var.A2LongM2);
+//            imuCorrection(0, 0.5);
+////
+////                encoderDriveRightInches(A2var.A2LongM3);
+////                imuCorrection(90, 0.5);
+////
+//            encoderDriveForwardInches(A2var.A2LongM4);
+//            imuCorrection(0, 0.5);
+////
+//            TurnLeft(A2var.A2LongM5);
+//
+////                imuCorrection(-100, 0.5);
+////
+////                encoderDriveRightInches(A2var.A2LongM6);
+////                imuCorrection(-100, 0.5);
+////
+////                encoderDriveBackwardInches(A2var.A2LongM7);
+////                imuCorrection(-90, 0.5);
+////
+////                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
+////                imuCorrection(-90, 0.5);
+////
+////                sleep(200);
+////
+////                autoarm.setPosition(0);
+////                sleep(900);
+////
+////                autoarm.setPosition(1);
+////                sleep(100);
+////
+//
+////                imuCorrection(-173, 0.5);
+////
+//            encoderDriveRightInches(A2var.A2LongM6);
+////                imuCorrection(-173, 0.5);
+//
+//            encoderDriveBackwardInches(A2var.A2LongM7);
+////                imuCorrection(-173, 0.5);
+//
+//            encoderDriveBackwardInchesSlow(A2var.A2LongM8);
+////                imuCorrection(-173, 0.5);
+//
+//            sleep(200);
+//
+//            autoarm.setPosition(0);
+//            sleep(900);
+//
+//            autoarm.setPosition(1);
+//            sleep(100);
+//
+//
+//            sleep(500);
+//            AutoP.setPosition(0);
+
+            lfDrive.setPower(0);
+            rfDrive.setPower(0);
+            lbDrive.setPower(0);
+            rbDrive.setPower(0);
+
+
+
         }
     }
 
 
-    public void moveToProp() {
 
-        switch (pipeline.getLocation()) {
-            case "middle":
-
-                encoderDriveRightInches(A2var.A2mSpike1);
-                imuCorrection(0, 0.5);
-
-                sleep(500);
-                AutoP.setPosition(1);
-                sleep(500);
-
-
-                encoderDriveLeftInches(A2var.A2mSpike2);
-                imuCorrection(0, 0.5);
-
-
-                encoderDriveBackwardInches(A2var.A2LongM1);
-                imuCorrection(0, 0.5);
-
-                encoderDriveRightInches(A2var.A2LongM2);
-                imuCorrection(0, 0.5);
-//
-//                encoderDriveRightInches(A2var.A2LongM3);
-//                imuCorrection(90, 0.5);
-//
-                encoderDriveForwardInches(A2var.A2LongM4);
-                imuCorrection(0, 0.5);
-//
-                TurnLeft(A2var.A2LongM5);
-
-//                imuCorrection(-100, 0.5);
-//
-//                encoderDriveRightInches(A2var.A2LongM6);
-//                imuCorrection(-100, 0.5);
-//
-//                encoderDriveBackwardInches(A2var.A2LongM7);
-//                imuCorrection(-90, 0.5);
-//
-//                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
-//                imuCorrection(-90, 0.5);
-//
-//                sleep(200);
-//
-//                autoarm.setPosition(0);
-//                sleep(900);
-//
-//                autoarm.setPosition(1);
-//                sleep(100);
-//
-
-//                imuCorrection(-173, 0.5);
-//
-                encoderDriveRightInches(A2var.A2LongM6);
-//                imuCorrection(-173, 0.5);
-
-                encoderDriveBackwardInches(A2var.A2LongM7);
-//                imuCorrection(-173, 0.5);
-
-                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
-//                imuCorrection(-173, 0.5);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(900);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-
-//                encoderDriveForwardInches(5);
-//                imuCorrection(-173,0.1);
-//
-//                encoderDriveRightInches(23);
-//                imuCorrection(-90,0.1);
-//
-//                encoderDriveBackwardInches(12);
-//                imuCorrection(-90,0.1);
-
-                sleep(500);
-                AutoP.setPosition(0);
-
-                lfDrive.setPower(0);
-                rfDrive.setPower(0);
-                lbDrive.setPower(0);
-                rbDrive.setPower(0);
-
-                break;
-            case "right":
-                encoderDriveRightInches(A2var.A2rSpike4);
-                imuCorrection(0, 0.5);
-
-                encoderDriveBackwardInches(A2var.A2rSpike1);
-                imuCorrection(0, 0.5);
-                sleep(1000);
-
-                encoderDriveRightInches(A2var.A2rSpike2);
-                imuCorrection(0, 0.5);
-
-                sleep(500);
-                AutoP.setPosition(1);
-                sleep(500);
-
-
-                encoderDriveLeftInches(A2var.A2rSpike3);
-                imuCorrection(0,0.5);
-
-                encoderDriveForwardInches(A2var.A2LongR1);
-                imuCorrection(0, 0.5);
-
-                encoderDriveRightInches(A2var.A2LongR2);
-                imuCorrection(0, 0.5);
-//
-//                TurnLeft(A2var.A2LongR3);
-//                imuCorrection(90, 0.3);
-//
-                encoderDriveForwardInches(A2var.A2LongR4);
-                imuCorrection(0, 0.5);
-
-                TurnLeft(A2var.A2LongR5);
-//                imuCorrection(-173, 0.5);
-
-                encoderDriveRightInches(A2var.A2LongR6);
-//                imuCorrection(-173, 0.5);
-//
-                encoderDriveBackwardInches(A2var.A2LongR7);
-//                imuCorrection(-173, 0.5);
-//
-                encoderDriveBackwardInchesSlow(A2var.A2LongR8);
-//                imuCorrection(-173, 0.5);
-//
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-//                encoderDriveForwardInches(5);
-//                imuCorrection(-90,0.1);
-//
-//                encoderDriveRightInches(35);
-//                imuCorrection(-90,0.1);
-//
-//                encoderDriveBackwardInches(12);
-//                imuCorrection(-90,0.1);
-
-                sleep(500);
-                AutoP.setPosition(0);
-
-                lfDrive.setPower(0);
-                rfDrive.setPower(0);
-                lbDrive.setPower(0);
-                rbDrive.setPower(0);
-
-                break;
-            case "left":
-
-                encoderDriveRightInches(A2var.A2lSpike1);
-                imuCorrection(0, 0.1);
-
-                TurnLeft(A2var.A2lSpike2);
-                imuCorrection(90, 0.1);
-
-                encoderDriveRightInches(A2var.A2lSpike3);
-                imuCorrection(90, 0.1);
-
-                sleep(500);
-                AutoP.setPosition(10);
-
-                sleep(500);
-
-
-                encoderDriveLeftInches(A2var.A2lSpike4);
-                imuCorrection(90, 0.1);
-
-                encoderDriveBackwardInches(A2var.A2LongL1);
-                imuCorrection(90, 0.1);
-
-                encoderDriveRightInches(A2var.A2LongL2);
-                imuCorrection(90, 0.1);
-
-                TurnLeft(A2var.A2LongL3);
-               // imuCorrection(-90, 0.1);
-
-                encoderDriveRightInches(A2var.A2LongL4);
-                //imuCorrection(-90, 0.1);
-
-                encoderDriveBackwardInches(A2var.A2LongL5);
-               // imuCorrection(-90, 0.1);
-
-                encoderDriveBackwardInchesSlow(A2var.A2LongL6);
-               // imuCorrection(-90, 0.1);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-//                encoderDriveForwardInches(5);
-//                //imuCorrection(-90,0.1);
-//
-//                encoderDriveRightInches(20);
-//                //imuCorrection(-90,0.1);
-//
-//                encoderDriveBackwardInches(15);
-//               // imuCorrection(-90,0.1);
-
-                sleep(500);
-                AutoP.setPosition(0);
-
-                lfDrive.setPower(0);
-                rfDrive.setPower(0);
-                lbDrive.setPower(0);
-                rbDrive.setPower(0);
-
-                break;
-        }
-    }
 
     public void imuCorrection(double directionDeg, double margin) {
 
