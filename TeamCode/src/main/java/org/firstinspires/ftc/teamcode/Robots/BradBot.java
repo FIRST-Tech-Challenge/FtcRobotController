@@ -327,6 +327,30 @@ public class BradBot extends BasicRobot {
       }
     }
   }
+  public void louAuto(boolean left) {
+    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 850)) {
+      LOGGER.log(
+              "armor"
+                      + Claw.clawStates.GRAB.getState()
+                      + " "
+                      + Arm.ArmTargetStates.HOVER.getState()
+                      + " "
+                      + (currentPose.getX() > -15));
+      if (currentPose.getX() > 0 && Claw.clawStates.GRAB.getState()) {
+        lift.setPosition(850);
+        intake.stopIntake();
+        arm.flipTo(DROP);
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+//        if (left) {
+//          twrist.flipTo(Twrist.twristTargetStates.OT);
+//        } else {
+//          twrist.flipTo(Twrist.twristTargetStates.DROP);
+//        }
+        LOGGER.log("ocook");
+      }
+    }
+  }
+
   public void lessLowAuto(boolean left) {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 1200)) {
       LOGGER.log(
@@ -890,21 +914,22 @@ public class BradBot extends BasicRobot {
     boolean left = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_dpad_left", "toggleClamp");
 
     boolean isX2 = gampad.readGamepad(op.gamepad2.x, "gamepad2_x", "toggleFieldCentricSlow");
-    boolean isY2 = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "hanger up");
+    boolean isY2 = gampad.readGamepad(op.gamepad2.b, "gamepad2_b", "hanger up");
 
     float manualUp = op.gamepad1.right_trigger;
     float manualDown = op.gamepad1.left_trigger;
     float hangUp = op.gamepad2.right_trigger;
     float hangDown = op.gamepad2.left_trigger;
     boolean intUp =
-        gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "intake iterate up");
+        gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "intake iterate up");
     boolean intDown =
-        gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "intake iterate down");
+        gampad.readGamepad(op.gamepad2.x, "gamepad2_x", "intake iterate down");
     boolean isRightBumper2 =
-        gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");
+        gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "right twisty");
     boolean isLeftBumper2 =
-            gampad.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "startIntake");
-    ;
+            gampad.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "left twisty");
+    boolean dropUp = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "dropUp");
+    boolean dropDOwn = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "dropDown");
     if (isA) {
       twrist.flipTo(Twrist.twristTargetStates.GRAB);
       wrist.flipTo(Wrist.WristTargetStates.GRAB);
@@ -933,6 +958,10 @@ public class BradBot extends BasicRobot {
         intakeSequence = false;
       }
     }
+    if (dropUp)
+      claw.moveOne(false);
+    if (dropDOwn)
+      claw.moveTwo(false);
     if (left) {
       intake.stopIntake();
       if (HOVER.getState()
