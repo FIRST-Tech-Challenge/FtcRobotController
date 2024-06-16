@@ -37,7 +37,7 @@ public class Lift extends RFDualMotor {
       MAX_DECEL = -6000,
       kP = 0,
       kD = 0;
-  double[] liftPositions = {350,680,800,1000,1100,1200,1300,1400,1700};
+  double[] liftPositions = {450,680,800,1000,1100,1200,1300,1400,1700};
 
   /** Constructor */
   public Lift() {

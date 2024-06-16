@@ -13,32 +13,36 @@ import static java.lang.Math.min;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLimitSwitch;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /** Warren Class to contain flipping intake and associated functions */
 @Config
 public class Intake extends RFMotor {
   RFBreakBeam breakBeam;
   RFLimitSwitch limitSwitch;
-  Motor motor;
 
   RFServo intakeServo;
   double requestTime = 0.0;
+  public static double currentThresh = 3.2;
 
   private final double INTAKE_POWER = 1.0;
   private final double REVERSE_POWER = -0.7;
+  double lastSequenceTime = -100;
 
-  private boolean full = false;
+  private boolean full = false, goofed = false;
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.49, TWO=0.53, THREE = 0.555, FOUR = 0.58, FIVE =0.603, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
+  public static double ONE=0.49, TWO=0.53, THREE = 0.555, FOUR = 0.58, FIVE =0.6, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .51;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -79,6 +83,7 @@ public class Intake extends RFMotor {
     reverseTime=-100;
     pixeled = !isTeleop;
     curPower=0;
+    lastSequenceTime = -100;
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -125,8 +130,13 @@ public class Intake extends RFMotor {
     }
   }
 
+  public void upper(){
+      intakeServo.setPosition(UPPER);
+      height = 2;
+  }
+
   public void toggleIntakeHeight(){
-    if(height!=5){
+    if(height<5){
       height++;
     }
     else{
@@ -175,7 +185,7 @@ public class Intake extends RFMotor {
     if (IntakeStates.STOPPED.getState() && curPower!=0) {
       intakeServo.setPosition(UPPIES);
       if(isTeleop) {
-        height = 1;
+        height = 6;
       }else
         height=6;
     }
@@ -277,6 +287,23 @@ public class Intake extends RFMotor {
       intakeServo.setPosition(FIVE-autoOff);
     }
   }
+  public boolean intakeSequence(){
+    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-1;}
+    IntakeStates.INTAKING.setStateTrue();
+    if(BasicRobot.time-lastSequenceTime>0.2&&this.getCurrent()<currentThresh) {
+      if (height == 1)
+        return false;
+      else
+        setHeight(height - 1);
+      lastSequenceTime = BasicRobot.time;
+      goofed = false;
+      if(height==5){
+        lastSequenceTime+=.4;
+      }
+    }
+    packet.put("lastSequenceTime", lastSequenceTime);
+    return pixels!=2 && height != 1;
+  }
   public boolean intakePath(){
     return intakePath;
   }
@@ -292,6 +319,7 @@ public class Intake extends RFMotor {
 //    LOGGER.setLogLevel(RFLogger.Severity.FINEST);
 //    LOGGER.log("intake power:" + power);
     packet.put("intakePos", this.getCurrentPosition());
+    packet.put("current", this.getCurrent());
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();
@@ -302,7 +330,7 @@ public class Intake extends RFMotor {
       pixeled1=true;
     }
 
-    if(pixels==2){
+    if(pixels==2 && IntakeStates.INTAKING.getState()){
       if(!pixeled){
         lastTime = time;
         pixeled=true;

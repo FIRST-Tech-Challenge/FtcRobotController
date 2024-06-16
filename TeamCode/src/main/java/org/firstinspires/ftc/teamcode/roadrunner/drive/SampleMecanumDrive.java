@@ -25,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHe
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import androidx.annotation.NonNull;
@@ -450,18 +451,18 @@ public class SampleMecanumDrive extends MecanumDrive {
             drivePower = new Pose2d(vel.vec().rotated(-currentPose.getHeading()), vel.getHeading());
             vel = drivePower;
         }
-//        if (drivePower.getX()*drivePower.getX()+drivePower.getY()*drivePower.getY()+drivePower.getHeading()*drivePower.getHeading()> 1) {
-//            // re-normalize the powers according to the weights
-//            double denom = VX_WEIGHT * abs(drivePower.getX()*drivePower.getX())
-//                    + VY_WEIGHT * abs(drivePower.getY()*drivePower.getY())
-//                    + OMEGA_WEIGHT * abs(drivePower.getHeading()*drivePower.getHeading());
-//
-//            vel = new Pose2d(
-//                    VX_WEIGHT * drivePower.getX(),
-//                    VY_WEIGHT * drivePower.getY(),
-//                    OMEGA_WEIGHT * drivePower.getHeading()
-//            ).div(denom);
-//        }
+        if (drivePower.getX()*drivePower.getX()+drivePower.getY()*drivePower.getY()+drivePower.getHeading()*drivePower.getHeading()> 1) {
+            // re-normalize the powers according to the weights
+            double denom = sqrt(VX_WEIGHT * abs(drivePower.getX()*drivePower.getX())
+                    + VY_WEIGHT * abs(drivePower.getY()*drivePower.getY())
+                    + OMEGA_WEIGHT * abs(drivePower.getHeading()*drivePower.getHeading()));
+
+            vel = new Pose2d(
+                    VX_WEIGHT * drivePower.getX(),
+                    VY_WEIGHT * drivePower.getY(),
+                    OMEGA_WEIGHT * drivePower.getHeading()
+            ).div(denom);
+        }
         double head = vel.getHeading();
         double y = vel.getX();
         double ny = y;
@@ -472,7 +473,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         if(abs(head)>0.002){
 //            nhead = 0.9*(abs(head) + .18)*(abs(head) + .18)+0.1;
 
-            nhead = 11.2/(10+15*pow(Math.E,-20*(abs(head)/3-0.23)))+.12;
+            nhead = 10/(10+15*pow(Math.E,-20*(abs(head)/3.5-0.205)))+.13;
             nhead*=head/abs(head);
             packet.put("heado", head);
             packet.put("bhead", nhead);

@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.IMU_INTERVAL;
@@ -73,7 +74,7 @@ public class BradBot extends BasicRobot {
 
   boolean purped = false;
   boolean pathFin = false;
-  boolean gapped = false, uppered = false;
+  boolean gapped = false, uppered = false, intakeSequence=false;
   boolean brokenFollowing = false;
   //  double startIntake = -100;
   //  Preloader preloader;
@@ -516,7 +517,7 @@ public class BradBot extends BasicRobot {
             }
             intake.intakeAutoHeight(2-pixels);
           }
-          if(time-lastHeightTime>5){
+          if(time-lastHeightTime>5 || time>25.5){
             LOGGER.log("doning");
             pixels=2;
             intake.reverseIntake();
@@ -929,6 +930,7 @@ public class BradBot extends BasicRobot {
         //        magazine.clampTo(Magazine.MagazineTargetStates.OPEN);
         intake.stopIntake();
         intake.downy();
+        intakeSequence = false;
       }
     }
     if (left) {
@@ -1031,18 +1033,30 @@ public class BradBot extends BasicRobot {
       intake.superYuppers();
     }
     if (isX) {
-      intake.setHeight(1);
+      intakeSequence = !intakeSequence;
+    }
+    if(intakeSequence){
+      intakeSequence = intake.intakeSequence();
     }
     if (isX2) {
       //      preloader.deposit();
     }
 
 
+    double left_y = -op.gamepad1.left_stick_y, left_x = -op.gamepad1.left_stick_x, right_x = -op.gamepad1.right_stick_x;
     roadrun.setWeightedDrivePower(
         new Pose2d(
-            -op.gamepad1.left_stick_y, -op.gamepad1.left_stick_x, -op.gamepad1.right_stick_x));
+            left_y, left_x, right_x));
     packet.put("vel", currentVelocity);
-    packet.put("joytick", new Pose2d(-op.gamepad1.left_stick_y, -op.gamepad1.left_stick_x, -op.gamepad1.right_stick_x/180 * PI));
+    packet.put("joytick", new Pose2d(left_y, left_x, right_x/180 * PI));
+    if(!uppered && Intake.IntakeStates.INTAKING.getState()&&abs(right_x)>.2){
+      uppered = true;
+      intake.upper();
+    }
+    if(uppered && abs(right_x)<.2){
+      intake.setHeight(1);
+      uppered = false;
+    }
     update();
     if(isY2){
       lift.iterateUp();

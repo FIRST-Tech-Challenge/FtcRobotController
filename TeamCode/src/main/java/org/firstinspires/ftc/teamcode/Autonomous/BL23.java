@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam.Y_OFFSET;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.gampad;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -43,9 +44,11 @@ public class BL23 {
         Pose2d startPose = new Pose2d(-40.5,61.5,toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
         imuMultiply = 1.0132;
+        SampleMecanumDrive.LATERAL_MULTIPLIER = 1.4;
         lastCycle = false;
         joever = false;
         parky = false;
+        Y_OFFSET = 2.1;
         spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
@@ -75,13 +78,13 @@ public class BL23 {
                 .build();
         intake[1] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
-                .lineToLinearHeading(new Pose2d(-56.7,35.25, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-57,35.25, toRadians(180)))
                 .addTemporalMarker(robot::stopAllMotors)
                 .addTemporalMarker(robot::startIMU)
                 .build();
         intake[2] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[2].end())
-                .lineToLinearHeading(new Pose2d(-56.7,35.25, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-57,35.25, toRadians(180)))
                 .addTemporalMarker(robot::stopAllMotors)
                 .addTemporalMarker(robot::startIMU)
                 .build();
@@ -93,13 +96,13 @@ public class BL23 {
                             .roadrun
                             .trajectorySequenceBuilder(intake[0].end())
                             .setReversed(true)
-                            .splineToConstantHeading(new Vector2d(-40,57.5),toRadians(0))
-                            .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(31,5,15))
-                            .splineToConstantHeading(new Vector2d(-35,57.5),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(-40,58.5),toRadians(0))
+                            .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(29,5,15))
+                            .splineToConstantHeading(new Vector2d(-35,58.5),toRadians(0))
                             .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
-                            .splineToConstantHeading(new Vector2d(5,57.5),toRadians(0))
-                            .splineToConstantHeading(new Vector2d(40,30.25),toRadians(0))
-                            .splineToSplineHeading(new Pose2d(46,30.25,toRadians(180)),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(5,58.5),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(40,30.75),toRadians(0))
+                            .splineToSplineHeading(new Pose2d(46,31.5,toRadians(180)),toRadians(0))
                             .build();
 
 
@@ -108,13 +111,13 @@ public class BL23 {
                             .roadrun
                             .trajectorySequenceBuilder(intake[1].end())
                             .setReversed(true)
-                            .splineToConstantHeading(new Vector2d(-40,57.5),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(-40,58.5),toRadians(0))
                             .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(31,5,15))
-                            .splineToConstantHeading(new Vector2d(-35,57.5),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(-35,58.5),toRadians(0))
                             .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
-                            .splineToConstantHeading(new Vector2d(5,57.5),toRadians(0))
-                            .splineToConstantHeading(new Vector2d(40,37.75),toRadians(0))
-                            .splineToSplineHeading(new Pose2d(46,37.75,toRadians(180)),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(5,58.5),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(40,38.75),toRadians(0))
+                            .splineToSplineHeading(new Pose2d(44,38.75,toRadians(180)),toRadians(0))
                             .build();
 
             droppy[2] =
@@ -127,8 +130,8 @@ public class BL23 {
                             .splineToConstantHeading(new Vector2d(-29,58),toRadians(0))
                             .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
                             .splineToConstantHeading(new Vector2d(5,58),toRadians(0))
-                            .splineToConstantHeading(new Vector2d(40,37),toRadians(0))
-                            .splineToSplineHeading(new Pose2d(46,37,toRadians(180)),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(40,39),toRadians(0))
+                            .splineToSplineHeading(new Pose2d(44,39,toRadians(180)),toRadians(0))
                             .build();
 
         } else{
@@ -139,25 +142,27 @@ public class BL23 {
         backToStack[0] = robot.roadrun
                 .trajectorySequenceBuilder(new Pose2d(droppy[0].end().vec(),toRadians(180)))
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(25,57.5),toRadians(180))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
+                .splineToConstantHeading(new Vector2d(25,58),toRadians(180))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(28,5,15))
-                .splineToConstantHeading(new Vector2d(20,57.5),toRadians(180))
+                .splineToConstantHeading(new Vector2d(20,58),toRadians(180))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(43))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
-                .splineToConstantHeading(new Vector2d(-20,57.5),toRadians(180))
+                .splineToConstantHeading(new Vector2d(-20,58),toRadians(180))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(35))
-                .splineToConstantHeading(new Vector2d(-24,57.5),toRadians(180))
-                .splineToConstantHeading(new Vector2d(-563,35),toRadians(180))
-                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(41))
+                .splineToConstantHeading(new Vector2d(-24,58),toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.3,34.5),toRadians(180))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(43))
                 .build();
         drop[0] = robot.roadrun.trajectorySequenceBuilder(backToStack[0].end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40,58.5),toRadians(0))
+                .splineToConstantHeading(new Vector2d(-40,57),toRadians(0))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30,5,15))
-                .splineToConstantHeading(new Vector2d(-35,58.5),toRadians(0))
+                .splineToConstantHeading(new Vector2d(-35,57),toRadians(0))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
-                .splineToConstantHeading(new Vector2d(5,58.5),toRadians(0))
+                .splineToConstantHeading(new Vector2d(5,55.5),toRadians(0))
                 .splineToConstantHeading(new Vector2d(40,36.25),toRadians(0))
-                .splineToConstantHeading(new Vector2d(46,36.25),toRadians(0))
+                .splineToConstantHeading(new Vector2d(44.5,36.25),toRadians(0))
                 .build();
         backToStack[1] = robot.roadrun
                 .trajectorySequenceBuilder(new Pose2d(droppy[1].end().vec(), toRadians(180)))
@@ -169,8 +174,8 @@ public class BL23 {
                 .splineToConstantHeading(new Vector2d(-20,57.5),toRadians(180))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(35))
                 .splineToConstantHeading(new Vector2d(-24,57.5),toRadians(180))
-                .splineToConstantHeading(new Vector2d(-56,35.5),toRadians(180))
-                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(41))
+                .splineToConstantHeading(new Vector2d(-55,35),toRadians(180))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(43))
                 .build();
         backToStack[2] = robot.roadrun
                 .trajectorySequenceBuilder(new Pose2d(droppy[2].end().vec(),toRadians(180)))
@@ -183,18 +188,18 @@ public class BL23 {
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(35))
                 .splineToConstantHeading(new Vector2d(-24,57.5),toRadians(180))
                 .splineToConstantHeading(new Vector2d(-56,35.25),toRadians(180))
-                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(41))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(43))
                 .build();
 //k is bad
         drop[1] = robot.roadrun.trajectorySequenceBuilder(backToStack[1].end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40,58.5),toRadians(0))
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(32,5,15))
-                .splineToConstantHeading(new Vector2d(-35,58.5),toRadians(0))
+                .splineToConstantHeading(new Vector2d(-40,57),toRadians(0))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30,5,15))
+                .splineToConstantHeading(new Vector2d(-35,57),toRadians(0))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
-                .splineToConstantHeading(new Vector2d(5,58.5),toRadians(0))
-                .splineToConstantHeading(new Vector2d(40,36),toRadians(0))
-                .splineToSplineHeading(new Pose2d(46,36, toRadians(180)),toRadians(0))
+                .splineToConstantHeading(new Vector2d(5,55.5),toRadians(0))
+                .splineToConstantHeading(new Vector2d(40,36.25),toRadians(0))
+                .splineToConstantHeading(new Vector2d(44.5,36.25),toRadians(0))
                 .build();
         drop[2] = robot.roadrun.trajectorySequenceBuilder(backToStack[2].end())
                 .setReversed(true)
@@ -275,15 +280,15 @@ public class BL23 {
     }
     public void purp()
     {
-        bark=0;
+        bark=2;
         if(bark==0){
-            funnyIMUOffset = 2.2;
+            funnyIMUOffset = 1.7;
         }
         if(bark==1){
-            funnyIMUOffset = 1.5;
+            funnyIMUOffset = 1.1;
         }
         if (bark==2){
-            funnyIMUOffset = 1.5;
+            funnyIMUOffset = 0.9;
         }
         robot.queuer.queue(false, true);
         robot.followTrajSeq(spikey[bark]);
@@ -321,7 +326,7 @@ public class BL23 {
         robot.queuer.addDelay(0.2);
         robot.grabAuto();
         robot.lowAuto(false);
-        robot.drop(44.6);
+        robot.drop(44);
     }
     public void pre(){
         robot.queuer.waitForFinish();
@@ -336,12 +341,12 @@ public class BL23 {
         }else if(bark==1){
             robot.lowAuto(true);
             robot.yellowAuto(true);
-            robot.drop(44.6);
+            robot.drop(43.5);
         }
         else{
             robot.lowAuto(true);
             robot.yellowAuto(true);
-            robot.drop(44.6);
+            robot.drop(43.5);
         }
         robot.changeIMUInterval();
     }
@@ -364,7 +369,7 @@ public class BL23 {
     }
 
     public void loop(){
-        if ((time<20||lastCycle)&&!joever) {
+        if ((time<21||lastCycle)&&!joever) {
             purp();
             intake(6);
             pre();

@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 
@@ -632,6 +633,10 @@ public class RFMotor {
     public void setRawPower(double p_power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rfMotor.setPower(p_power);
+    }
+
+    public double getCurrent(){
+        return rfMotor.getCurrent(CurrentUnit.AMPS);
     }
 
     /**
