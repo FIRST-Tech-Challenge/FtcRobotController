@@ -104,4 +104,3 @@ public class encoders extends LinearOpMode {
     }
 }
 
-ni
