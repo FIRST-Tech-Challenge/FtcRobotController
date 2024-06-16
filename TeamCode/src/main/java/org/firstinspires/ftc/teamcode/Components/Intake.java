@@ -179,6 +179,7 @@ public class Intake extends RFMotor {
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
     if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=1;}
     REVERSING.setStateTrue();
+    reverseTime = time;
   }
 
   public void uppies(){
@@ -324,7 +325,7 @@ public class Intake extends RFMotor {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();
       if(i.state&&i==IntakeStates.STOPPED){stopIntake();Magazine.twoPixelTime=time;pixels = 2;}
-      if(i.state&&i== REVERSING)reverseIntake();
+      if(i.state&&i== REVERSING&&curPower!=-REVERSE_POWER)reverseIntake();
     }
     if(pixels==1){
       pixeled1=true;
@@ -338,7 +339,6 @@ public class Intake extends RFMotor {
       if (time - lastTime > STOP_DELAY && IntakeStates.INTAKING.getState()) {
         uppies();
         reverseIntake();
-        reverseTime = time;
         stopped = true;
       }
     }
