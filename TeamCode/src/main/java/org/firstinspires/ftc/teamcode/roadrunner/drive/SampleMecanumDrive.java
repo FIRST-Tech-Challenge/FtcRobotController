@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static com.acmerobotics.roadrunner.util.Angle.normDelta;
+import static org.firstinspires.ftc.teamcode.Components.Lift.liftHeight;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -481,6 +482,11 @@ public class SampleMecanumDrive extends MecanumDrive {
                 nhead+=.2*head/abs(head);
             }
         }
+        else{
+            if(abs(currentPOVVelocity.getHeading())>toRadians(20)){
+                nhead = -kV*currentPOVVelocity.getHeading()*TRACK_WIDTH*.2;
+            }
+        }
         if(abs(y)>.002) {
             ny = 11.2/(10+15*pow(Math.E,-20*(abs(y)/3-0.23)))+.12;
             ny *= y / abs(y);
@@ -488,11 +494,21 @@ public class SampleMecanumDrive extends MecanumDrive {
                 ny+=.2*y/abs(y);
             }
         }
+        else{
+            if(abs(currentPOVVelocity.getX())>3){
+                ny = -kV*currentPOVVelocity.getX()*.8*(1700*(1/.95)-liftHeight)/(1700*1/.95);
+            }
+        }
         if(abs(x)>.02){
             nx = 11/(10+15*pow(Math.E,-20*(abs(x)/3-0.23)))+.2;
             nx*=x/abs(x);
             if(currentPOVVelocity.getY()==toRadians(0)){
                 nx+=.2*x/abs(x);
+            }
+        }
+        else{
+            if(abs(currentPOVVelocity.getY())>3){
+                nx = -kV*currentPOVVelocity.getY()*.8*(1700*(1/.95)-liftHeight)/(1700*1/.95);
             }
         }
 

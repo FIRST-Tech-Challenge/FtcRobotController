@@ -36,8 +36,8 @@ public class Lift extends RFDualMotor {
       MAX_ACCEL = 6000,
       MAX_DECEL = -6000,
       kP = 0,
-      kD = 0;
-  double[] liftPositions = {450,680,800,1000,1100,1200,1300,1400,1700};
+      kD = 0, liftHeight = 0;
+  double[] liftPositions = {550,680,800,1000,1100,1200,1300,1400,1700};
 
   /** Constructor */
   public Lift() {
@@ -144,6 +144,7 @@ public class Lift extends RFDualMotor {
 //    LOGGER.log(
 //        RFLogger.Severity.FINEST,
 //        "currentPos: " + super.getCurrentPosition() + ", currentTarget: " + super.getTarget());
+    liftHeight = super.getCurrentPosition();
     packet.put("liftPos", super.getCurrentPosition());
     for (var i : LiftPositionStates.values()) {
       if (abs(super.getCurrentPosition() - i.position) < 50

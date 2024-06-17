@@ -93,7 +93,7 @@ public class BR24 {
                     .addTemporalMarker(robot::stopAllMotors)
                     .addTemporalMarker(robot::startIMU)
                     .addTemporalMarker(()->robot.roadrun.changeIMUInterval())
-                    .lineToLinearHeading(new Pose2d(46, 39, toRadians(179.9)))
+                    .lineToLinearHeading(new Pose2d(46, 40, toRadians(179.9)))
                     .addTemporalMarker(()->robot.dropServo(0))
                     .addTemporalMarker(()->robot.dropServo(1))
                     .build();
@@ -135,7 +135,7 @@ public class BR24 {
                 .splineToConstantHeading(new Vector2d(15, 11.25), toRadians(0))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
                 .splineToConstantHeading(new Vector2d(40, 36), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45.8, 36), toRadians(0))
+                .splineToConstantHeading(new Vector2d(46.7, 36), toRadians(0))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(42))
                 .build();
         drop[1] = robot.roadrun.trajectorySequenceBuilder(intake[0].end())
@@ -144,7 +144,7 @@ public class BR24 {
                 .splineToConstantHeading(new Vector2d(15, 11.25), toRadians(0))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
                 .splineToConstantHeading(new Vector2d(40, 36), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45.8, 36), toRadians(0))
+                .splineToConstantHeading(new Vector2d(46.7, 36), toRadians(0))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(42))
                 .build();
         intake2[0] = robot.roadrun.trajectorySequenceBuilder(drop[0].end())
@@ -254,7 +254,7 @@ public class BR24 {
             robot.louAuto(false);
         else
             robot.lowAuto(false);
-        robot.drop(45.7);
+        robot.drop(46);
     }
     public void pre(){
         robot.followTrajSeq(droppy[bark]);

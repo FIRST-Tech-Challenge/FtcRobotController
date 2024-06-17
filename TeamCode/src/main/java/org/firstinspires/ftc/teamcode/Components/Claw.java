@@ -127,6 +127,22 @@ public class Claw extends RFServo {
       servo2.setPosition(CLOSE2);
     }
   }
+  public void moveTwo(){
+    if(servo2.getPosition()==GRAB2){
+      servo2.setPosition(CLOSE2);
+    }
+    else{
+      servo2.setPosition(GRAB2);
+    }
+  }
+  public void moveOne(){
+    if(super.getPosition()==GRAB_POS){
+      super.setPosition(CLOSE_POS);
+    }
+    else{
+      super.setPosition(GRAB_POS);
+    }
+  }
 
   public void update() {
     for (var i : clawStates.values()) {

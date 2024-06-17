@@ -31,6 +31,8 @@ public class RFGamepad {
         booleanMap.put("gamepad1_dpad_right", false);
         booleanMap.put("gamepad1_dpad_up", false);
         booleanMap.put("gamepad1_dpad_down", false);
+        booleanMap.put("gamepad1_right_trigger_bool", false);
+        booleanMap.put("gamepad1_left_trigger_bool", false);
         floatMap.put("gamepad1_left_stick_x", 0f);
         floatMap.put("gamepad1_left_stick_y", 0f);
         floatMap.put("gamepad1_right_stick_x", 0f);

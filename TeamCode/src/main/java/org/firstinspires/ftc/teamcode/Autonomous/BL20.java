@@ -104,7 +104,7 @@ public class BL20 {
     }
     public void waitForStart(){
         while (!op.isStarted() || op.isStopRequested()) {
-            bark = 2 - robot.getSpikePos();
+            bark = robot.getSpikePos();
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
             op.telemetry.addData("delaySec", delaySec);
@@ -128,7 +128,6 @@ public class BL20 {
     }
     public void purp()
     {
-        bark=0;
         robot.queuer.queue(false, true);
         robot.queuer.waitForFinish();
         robot.followTrajSeq(spikey[bark]);

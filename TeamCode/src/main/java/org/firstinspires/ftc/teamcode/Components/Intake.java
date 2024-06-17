@@ -32,7 +32,7 @@ public class Intake extends RFMotor {
 
   RFServo intakeServo;
   double requestTime = 0.0;
-  public static double currentThresh = 3.2;
+  public static double currentThresh = 3.0;
 
   private final double INTAKE_POWER = 1.0;
   private final double REVERSE_POWER = -0.7;
@@ -42,7 +42,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.49, TWO=0.53, THREE = 0.555, FOUR = 0.58, FIVE =0.6, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .51;
+  public static double ONE=0.49, TWO=0.53, THREE = 0.555, FOUR = 0.575, FIVE =0.6, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .51, CUR_THRESH=3.28;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -163,7 +163,7 @@ public class Intake extends RFMotor {
     if(height==2)
       intakeServo.setPosition(TWO);if(height==3)
       intakeServo.setPosition(THREE);if(height==4)
-      intakeServo.setPosition(FOUR);if(height==5)
+      intakeServo.setPosition(FOUR+0.005);if(height==5)
       intakeServo.setPosition(FIVE);
   }
   public double getIntakePower(){
@@ -282,16 +282,19 @@ public class Intake extends RFMotor {
       intakeServo.setPosition(THREE-autoOff);
     }
     else if(height==4){
-      intakeServo.setPosition(FOUR-autoOff);
+      if(isTeleop)
+        intakeServo.setPosition(FOUR-autoOff);
+      else
+        intakeServo.setPosition(.58);
     }
     else{
       intakeServo.setPosition(FIVE-autoOff);
     }
   }
   public boolean intakeSequence(){
-    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-1;}
+    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-INTAKE_POWER;}
     IntakeStates.INTAKING.setStateTrue();
-    if(BasicRobot.time-lastSequenceTime>0.2&&this.getCurrent()<currentThresh) {
+    if(BasicRobot.time-lastSequenceTime>0.3&&this.getCurrent()<currentThresh) {
       if (height == 1)
         return false;
       else
@@ -303,7 +306,7 @@ public class Intake extends RFMotor {
       }
     }
     packet.put("lastSequenceTime", lastSequenceTime);
-    return pixels!=2 && height != 1;
+    return height != 1;
   }
   public boolean intakePath(){
     return intakePath;
@@ -321,6 +324,9 @@ public class Intake extends RFMotor {
 //    LOGGER.log("intake power:" + power);
     packet.put("intakePos", this.getCurrentPosition());
     packet.put("current", this.getCurrent());
+    double voltage = BasicRobot.voltageSensor.getVoltage();
+    currentThresh = CUR_THRESH /** 13.0/voltage*/;
+    packet.put("currentThresh", currentThresh);
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();
