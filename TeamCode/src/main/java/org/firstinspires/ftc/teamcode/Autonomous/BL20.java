@@ -62,9 +62,12 @@ public class BL20 {
                     robot
                             .roadrun
                             .trajectorySequenceBuilder(spikey[0].end())
+                            .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
+                            .lineToLinearHeading(new Pose2d(-40,38,toRadians(180)))
                             .lineToLinearHeading(new Pose2d(-40,58,toRadians(180)))
                             .lineToLinearHeading(new Pose2d(25,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(45.5,44,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(38, 36, toRadians(-180)))
+                            .lineToLinearHeading(new Pose2d(45.5,42,toRadians(180)))
                             .build();
 
             droppy[1] =
@@ -73,7 +76,7 @@ public class BL20 {
                             .trajectorySequenceBuilder(spikey[1].end())
                             .lineToLinearHeading(new Pose2d(-40,58,toRadians(180)))
                             .lineToLinearHeading(new Pose2d(27,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(45.5,36,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(45.5,35.5,toRadians(180)))
                             .build();
 
             droppy[2] =
@@ -82,7 +85,7 @@ public class BL20 {
                             .trajectorySequenceBuilder(spikey[2].end())
                             .lineToLinearHeading(new Pose2d(-40,58,toRadians(180)))
                             .lineToLinearHeading(new Pose2d(27,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(45,31,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(45,30,toRadians(180)))
                             .build();
 
         } else{
@@ -95,7 +98,7 @@ public class BL20 {
 //    robot.dropServo(1);
 //    robot.dropServo(0);
         robot.setRight(false);
-        robot.setBlue(false);
+        robot.setBlue(true);
         robot.observeSpike();
         robot.hoverArm();
     }
@@ -135,8 +138,8 @@ public class BL20 {
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
         if(bark==0) {
-            robot.lowAuto(false);
-            robot.yellowAuto(false);
+            robot.lowAuto(true);
+            robot.yellowAuto(true);
             robot.drop(44);
         }
         else if(bark==1){

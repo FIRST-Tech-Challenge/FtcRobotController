@@ -62,19 +62,19 @@ public class RR20 {
         if (!isLogi) {
             droppy[0] = robot.roadrun.trajectorySequenceBuilder(spikey[0].end())
                     .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(50))
-                    .lineToLinearHeading(new Pose2d(34,-36,toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(45, -29, toRadians(-180))).build();
+                    .lineToLinearHeading(new Pose2d(38,-36,toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(45.5, -30.5, toRadians(-180))).build();
 
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
                     .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(40))
-                    .lineToLinearHeading(new Pose2d(34,-36,toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(44, -36, toRadians(-180))).build();
+                    .lineToLinearHeading(new Pose2d(38,-36,toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(45.5, -35, toRadians(-180))).build();
 
             droppy[2] = robot.roadrun.trajectorySequenceBuilder(spikey[2].end())
 //                    .lineToLinearHeading(new Pose2d(40,-50,toRadians(-180)))
                     .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
                     .lineToLinearHeading(new Pose2d(38,-36,toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(45, -42.5, toRadians(-180))).build();
+                    .lineToLinearHeading(new Pose2d(45.5, -41.5, toRadians(-180))).build();
 
         } else{
         }
@@ -132,14 +132,14 @@ public class RR20 {
             robot.drop(44);
         }
         else if(bark==1) {
-            robot.lowAuto(false);
-            robot.yellowAuto(false);
+            robot.lowAuto(true);
+            robot.yellowAuto(true);
             robot.drop(44);
         }
         else {
-            robot.lowAuto(false);
-            robot.yellowAuto(false);
-            robot.drop(44);
+            robot.lowAuto(true);
+            robot.yellowAuto(true);
+            robot.drop(47.75);
         }
     }
 

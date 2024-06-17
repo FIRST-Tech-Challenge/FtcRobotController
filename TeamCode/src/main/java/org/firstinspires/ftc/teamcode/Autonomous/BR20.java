@@ -64,7 +64,7 @@ public class BR20 {
 
             droppy[2] = robot.roadrun.trajectorySequenceBuilder(spikey[2].end())
                     .lineToLinearHeading(new Pose2d(30, 35, toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(43, 30, toRadians(180))).build();
+                    .lineToLinearHeading(new Pose2d(44, 30, toRadians(180))).build();
 
         } else{
         }
@@ -117,17 +117,17 @@ public class BR20 {
         if(bark==0) {
             robot.lowAuto(true);
             robot.yellowAuto(true);
-            robot.drop(43.5);
+            robot.drop(45);
         }
         else if(bark==1) {
             robot.lowAuto(true);
             robot.yellowAuto(true);
-            robot.drop(43);
+            robot.drop(45);
         }
         else {
             robot.lowAuto(false);
             robot.yellowAuto(false);
-            robot.drop(43);
+            robot.drop(44);
         }
     }
 

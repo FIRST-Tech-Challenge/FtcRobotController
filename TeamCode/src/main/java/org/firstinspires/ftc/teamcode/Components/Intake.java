@@ -177,7 +177,7 @@ public class Intake extends RFMotor {
   public void reverseIntake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
-    if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=1;}
+    if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=-REVERSE_POWER;}
     REVERSING.setStateTrue();
     reverseTime = time;
   }

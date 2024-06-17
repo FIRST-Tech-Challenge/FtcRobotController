@@ -54,7 +54,7 @@ public class RL20 {
     spikey[2] = robot.roadrun
             .trajectorySequenceBuilder(startPose)
             .setReversed(true)
-            .splineToSplineHeading(new Pose2d(-33,-36,toRadians(-180)), toRadians(60))
+            .splineToSplineHeading(new Pose2d(-32.5,-36,toRadians(-180)), toRadians(60))
             .build();
 
     if (!isLogi) {
@@ -64,7 +64,8 @@ public class RL20 {
                       .trajectorySequenceBuilder(spikey[bark].end())
                       .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(45,-30,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(44.5,-30,toRadians(-180)))
                       .build();
 
       droppy[1] =
@@ -73,7 +74,8 @@ public class RL20 {
                       .trajectorySequenceBuilder(spikey[bark].end())
                       .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(46.5,-34.25,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(45.5,-34.25,toRadians(-180)))
                       .build();
 
       droppy[2] =
@@ -82,7 +84,8 @@ public class RL20 {
                       .trajectorySequenceBuilder(spikey[bark].end())
                       .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(47.5,-40,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(45.5,-39.5,toRadians(-180)))
                       .build();
 
     } else{
@@ -146,7 +149,7 @@ public class RL20 {
     else {
       robot.lowAuto(false);
       robot.yellowAuto(false);
-      robot.drop(45);
+      robot.drop(44);
     }
   }
 
