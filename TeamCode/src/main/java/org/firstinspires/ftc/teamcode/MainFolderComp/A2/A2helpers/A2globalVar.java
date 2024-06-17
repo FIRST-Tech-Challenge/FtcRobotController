@@ -10,8 +10,8 @@ public class A2globalVar {
 
     public double A2mSpike1 = 50; // move forward
     public double A2mSpike2 = 7; // move backward
-    public double A2rSpike1= 12; //strafe right
-    public double A2rSpike2= 40; //Move forward
+    public double A2rSpike2= 12; //strafe right
+    public double A2rSpike1= 40; //Move forward
 
 //    public double A2rSpike1 = 11.5; // strafe right
 //    public double A2rSpike2 = 20; // move forward
