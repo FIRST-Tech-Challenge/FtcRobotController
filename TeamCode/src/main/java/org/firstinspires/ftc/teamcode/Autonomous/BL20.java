@@ -54,7 +54,7 @@ public class BL20 {
         spikey[2] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-47,36,toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-45,36,toRadians(90)))
                 .build();
 
         if (!isLogi) {
@@ -65,7 +65,7 @@ public class BL20 {
                             .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
                             .lineToLinearHeading(new Pose2d(-40,38,toRadians(180)))
                             .lineToLinearHeading(new Pose2d(-40,58,toRadians(180)))
-                            .lineToLinearHeading(new Pose2d(25,58,toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(27,58,toRadians(180)))
                             .lineToLinearHeading(new Pose2d(38, 36, toRadians(-180)))
                             .lineToLinearHeading(new Pose2d(45.5,42,toRadians(180)))
                             .build();

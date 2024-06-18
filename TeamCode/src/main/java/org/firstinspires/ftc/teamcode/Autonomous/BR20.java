@@ -56,15 +56,15 @@ public class BR20 {
 
         if (!isLogi) {
             droppy[0] = robot.roadrun.trajectorySequenceBuilder(spikey[0].end())
-                    .lineToLinearHeading(new Pose2d(44, 42, toRadians(180))).build();
+                    .lineToLinearHeading(new Pose2d(45, 42, toRadians(180))).build();
 
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
                     .lineToLinearHeading(new Pose2d(13,50, toRadians(90)))
-                    .lineToLinearHeading(new Pose2d(44, 35.25, toRadians(180))).build();
+                    .lineToLinearHeading(new Pose2d(45, 35.25, toRadians(180))).build();
 
             droppy[2] = robot.roadrun.trajectorySequenceBuilder(spikey[2].end())
                     .lineToLinearHeading(new Pose2d(30, 35, toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(44, 30, toRadians(180))).build();
+                    .lineToLinearHeading(new Pose2d(45, 30, toRadians(180))).build();
 
         } else{
         }
