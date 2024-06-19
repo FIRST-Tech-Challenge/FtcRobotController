@@ -2,11 +2,11 @@ package org.rustlib.utils;
 
 import java.util.function.Supplier;
 
-public class FutureInstance<T> implements Supplier<T> {
+public class Future<T> implements Supplier<T> {
     private final Supplier<T> supplier;
     private T path = null;
 
-    public FutureInstance(Supplier<T> supplier) {
+    public Future(Supplier<T> supplier) {
         this.supplier = supplier;
     }
 

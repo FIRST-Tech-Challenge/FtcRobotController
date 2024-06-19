@@ -78,7 +78,7 @@ public class Drive extends DriveSubsystem {
     @Override
     public void periodic() {
         Rustboard.setNodeValue("pose", odometry.getPose().toString());
-        RustboardLayout layout = Rustboard.getRustboard("dashboard_0");
+        RustboardLayout layout = Rustboard.getRustboardLayout("dashboard_0");
         base.driveController.setGains(new PIDController.PIDGains(
                 layout.getDoubleValue("drive kP", 0.1),
                 layout.getDoubleValue("drive kI", 0.0),

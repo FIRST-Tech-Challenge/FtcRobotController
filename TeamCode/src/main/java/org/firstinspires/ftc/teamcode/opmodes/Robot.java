@@ -56,13 +56,15 @@ public abstract class Robot extends RobotBase {
     @Override
     public void onInit() {
         HardwareConfiguration.getBuilder()
-                .addDevice("lf", 0, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
-                .addDevice("rf", 1, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
-                .addDevice("lb", 2, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
-                .addDevice("rb", 3, HardwareConfiguration.DeviceType.GOBILDA_5201_SERIES_MOTOR)
-                .setConfigurationName("test_configuration")
-                .build()
-                .setAsActiveConfiguration();
+                .setConfigurationName("default")
+                .configureControlHub("Control Hub", 0)
+                .configureExpansionHub("Expansion Hub 1", 0)
+                .addMotor("lf", 0, HardwareConfiguration.Motors.GOBILDA_5201_SERIES_MOTOR, HardwareConfiguration.HubType.CONTROL_HUB)
+                .addMotor("rf", 1, HardwareConfiguration.Motors.GOBILDA_5201_SERIES_MOTOR, HardwareConfiguration.HubType.CONTROL_HUB)
+                .addMotor("lb", 2, HardwareConfiguration.Motors.GOBILDA_5201_SERIES_MOTOR, HardwareConfiguration.HubType.CONTROL_HUB)
+                .addMotor("rb", 3, HardwareConfiguration.Motors.GOBILDA_5201_SERIES_MOTOR, HardwareConfiguration.HubType.CONTROL_HUB)
+                .addI2CDevice("slide limit", 0, 0, HardwareConfiguration.I2CDevices.REV_DISTANCE_SENSOR, HardwareConfiguration.HubType.CONTROL_HUB)
+                .build();
 
         if (botPose == null) {
             botPose = new Pose2d(0, 0, new Rotation2d(-Math.PI));

@@ -16,6 +16,7 @@ public class RobotControllerActivity extends FtcRobotControllerActivity {
 
     public void reloadHardwareMap() throws RuntimeException {
         try {
+            Rustboard.getInstance().start();
             FtcEventLoopHandler eventLoopHandler;
             Field eventLoopHandlerField = FtcEventLoopBase.class.getDeclaredField("ftcEventLoopHandler");
             eventLoopHandler = (FtcEventLoopHandler) eventLoopHandlerField.get(eventLoop);

@@ -90,7 +90,7 @@ public class Rustboard extends WebSocketServer {
         return getInstance().layouts.get(0).getSelectedValue(id);
     }
 
-    public static RustboardLayout getRustboard(String id) {
+    public static RustboardLayout getRustboardLayout(String id) {
         for (RustboardLayout layout : getInstance().layouts) {
             if (Objects.equals(layout.id, id)) {
                 return layout;
@@ -186,7 +186,7 @@ public class Rustboard extends WebSocketServer {
         if (Objects.equals(data, "ping")) {
             conn.send("pong");
         } else {
-            RustboardLayout layout = getRustboard(conn);
+            RustboardLayout layout = getRustboardLayout(conn);
             JsonReader reader = Json.createReader(new StringReader(data));
             JsonObject object = reader.readObject();
             JsonObject message = object.getJsonObject("message");
@@ -251,7 +251,7 @@ public class Rustboard extends WebSocketServer {
         return System.currentTimeMillis() + timeOffset;
     }
 
-    private RustboardLayout getRustboard(WebSocket conn) {
+    private RustboardLayout getRustboardLayout(WebSocket conn) {
         for (RustboardLayout layout : layouts) {
             if (layout.connection == conn) {
                 return layout;
@@ -289,7 +289,7 @@ public class Rustboard extends WebSocketServer {
             if (message.first == null) { // If no layout id is given, broadcast to all layouts
                 ThreadPool.getDefaultScheduler().submit(() -> broadcast(message.second));
             } else {
-                WebSocket connection = getRustboard(message.first).connection;
+                WebSocket connection = getRustboardLayout(message.first).connection;
                 if (connection != null) {
                     ThreadPool.getDefaultScheduler().submit(() -> connection.send(message.second));
                     toRemove.add(message); // So the collection isn't being modified in the for loop

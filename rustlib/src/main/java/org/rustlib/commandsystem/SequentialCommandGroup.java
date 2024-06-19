@@ -3,7 +3,7 @@ package org.rustlib.commandsystem;
 import java.util.ArrayList;
 
 public class SequentialCommandGroup extends CommandGroup {
-
+    
     private boolean hasStarted = false;
     private int index = 0;
 

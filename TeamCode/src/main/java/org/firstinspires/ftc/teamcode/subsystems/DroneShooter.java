@@ -24,7 +24,7 @@ public class DroneShooter extends Subsystem {
     }
 
     public void releaseAngle() {
-        release.setPosition(Rustboard.getRustboard("dashboard_0").getDoubleValue("release angle", -0.4));
+        release.setPosition(Rustboard.getRustboardLayout("dashboard_0").getDoubleValue("release angle", -0.4));
     }
 
     public void stopAngle() {

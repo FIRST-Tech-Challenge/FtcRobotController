@@ -5,7 +5,7 @@ import com.google.gson.JsonParseException;
 import org.rustlib.config.Loader;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.rustboard.Rustboard;
-import org.rustlib.utils.FutureInstance;
+import org.rustlib.utils.Future;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -143,7 +143,7 @@ public class Path implements Supplier<Path> {
     public Path translate(double x, double y) {
         Builder builder = getBuilder().setTimeout(timeout);
         for (Supplier<Waypoint> waypoint : waypoints) {
-            builder.addWaypoint(new FutureInstance<>(() -> waypoint.get().translate(x, y)));
+            builder.addWaypoint(new Future<>(() -> waypoint.get().translate(x, y)));
         }
         return builder.build();
     }
@@ -151,7 +151,7 @@ public class Path implements Supplier<Path> {
     public Path mirror() {
         Builder builder = getBuilder().setTimeout(timeout);
         for (Supplier<Waypoint> waypoint : waypoints) {
-            builder.addWaypoint(new FutureInstance<>(() -> waypoint.get().mirror()));
+            builder.addWaypoint(new Future<>(() -> waypoint.get().mirror()));
         }
         return builder.build();
     }

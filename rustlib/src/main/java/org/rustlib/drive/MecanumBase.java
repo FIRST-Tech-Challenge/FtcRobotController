@@ -35,6 +35,7 @@ public class MecanumBase {
     private double followStartTimestamp;
     private Waypoint[][] segments;
     private double lastTargetAngle = 0;
+
     private MecanumBase(Builder builder) {
         lf = builder.leftFront;
         rf = builder.rightFront;
@@ -80,8 +81,6 @@ public class MecanumBase {
 
             intersectionX = (b0 - b1) / (m0 - m1);
             intersectionY = m0 * intersectionX + b0;
-
-
         }
         return new Waypoint(intersectionX, intersectionY, 0, lineSegment[1].targetFollowRotation, lineSegment[1].targetEndRotation, lineSegment[1].maxVelocity);
     }

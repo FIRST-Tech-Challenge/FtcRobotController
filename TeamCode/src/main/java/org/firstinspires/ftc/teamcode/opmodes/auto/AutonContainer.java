@@ -20,7 +20,7 @@ import org.rustlib.drive.Waypoint;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.rustboard.RustboardLayout;
-import org.rustlib.utils.FutureInstance;
+import org.rustlib.utils.Future;
 import org.rustlib.vision.OpenCVGameElementDetector;
 
 public abstract class AutonContainer extends Robot implements Auton {
@@ -38,7 +38,7 @@ public abstract class AutonContainer extends Robot implements Auton {
                             new FollowPathCommand(Path.loadPath("to_backdrop_BL"), drive)),
                     new SlideToPosition(slide, SubsystemConstants.Slide.autoPlacePosition), // Move the slide to the correct position
                     new DelayCommand(slide::atTargetPosition, 2000), // Wait until the slide is close to the correct position
-                    new BackdropHome(drive.getBase(), slide, placer, new FutureInstance(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
+                    new BackdropHome(drive.getBase(), slide, placer, new Future(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
                     new InstantCommand(placer::open), // Drop the yellow pixel
                     new WaitCommand(750), // Wait for the pixel to drop
                     new ParallelCommandGroup( // Begin driving away and stow the slide
@@ -64,7 +64,7 @@ public abstract class AutonContainer extends Robot implements Auton {
                             new FollowPathCommand(Path.loadPath("to_backdrop_BR"), drive)),
                     new SlideToPosition(slide, SubsystemConstants.Slide.autoPlacePosition), // Move the slide to the correct position
                     new DelayCommand(slide::atTargetPosition, 3000), // Wait until the slide is close to the correct position
-                    new BackdropHome(drive.getBase(), slide, placer, new FutureInstance<>(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
+                    new BackdropHome(drive.getBase(), slide, placer, new Future<>(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
                     new InstantCommand(placer::open), // Drop the yellow pixel
                     new WaitCommand(750), // Wait for the pixel to drop
                     new ParallelCommandGroup( // Begin driving away and stow the slide

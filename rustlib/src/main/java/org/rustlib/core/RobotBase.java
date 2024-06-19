@@ -1,18 +1,15 @@
 package org.rustlib.core;
 
-import android.content.Context;
 import android.util.Pair;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.rustlib.commandsystem.Command;
 import org.rustlib.commandsystem.CommandScheduler;
 import org.rustlib.hardware.SuperGamepad;
 import org.rustlib.rustboard.Rustboard;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,12 +18,7 @@ public abstract class RobotBase extends OpMode {
     private static final ArrayList<ArrayList<Pair<OpModeState, Runnable>>> callbacks = new ArrayList();
     public static Alliance alliance = Alliance.BLUE;
     static RobotControllerActivity mainActivity;
-    private static Context appContext;
     private static OpModeState opModeState = OpModeState.IDLE;
-
-    static {
-        Rustboard.getInstance().start();
-    }
 
     protected LynxModule controlHub;
     protected LynxModule expansionHub;
@@ -40,21 +32,10 @@ public abstract class RobotBase extends OpMode {
         for (int i = 0; i < 3; i++) {
             callbacks.add(new ArrayList<>());
         }
-        try {
-            Field context = HardwareMap.class.getDeclaredField("appContext");
-            context.setAccessible(true);
-            appContext = (Context) context.get(hardwareMap);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            Rustboard.log(e);
-        }
         if (this instanceof Auton) {
             inAuto = true;
             autonomousInstance = (Auton) this;
         }
-    }
-
-    public static Context getApplicationContext() {
-        return appContext;
     }
 
     private static void addCallback(Runnable callback, Collection<Pair<OpModeState, Runnable>> targetCollection) {
