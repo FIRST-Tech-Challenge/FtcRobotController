@@ -501,14 +501,15 @@ public class BradBot extends BasicRobot {
           lastHeightTime=time;
           LOGGER.log("intakeheighttime");
         }
-        intaked = true;
         pixels=0;
         magazine.updateSensors();
-        if(intake.getHeight()==6){
-          intake.setHeight(height);
+        if(intake.getHeight()==6 || !intaked){
+          intake.setHeight(min(height,5));
         } else{
           intake.intakeSequence();
         }
+        intaked = true;
+
 //        int offset=0;
 //        if(height<6 && time-lastHeightTime>1.0&&pixels==0){
 //            offset-=1;
@@ -519,7 +520,7 @@ public class BradBot extends BasicRobot {
         if(max(height - pixels, height - 1)< intake.getHeight()&&roadrun.getCurrentTraj().end().equals(endPose)){
           LOGGER.log("cumon"+roadrun.getCurrentTraj().end());
           LOGGER.log(""+endPose);
-          lastHeightTime=time;
+          lastHeightTime=intake.getLastSequenceTime();
         }
         if(time-lastHeightTime>1.5){
           LOGGER.log("sequencing");
@@ -545,7 +546,7 @@ public class BradBot extends BasicRobot {
               pixels=1;
             }
             if(intake.getHeight()>3)
-              intake.setHeight(3);
+              intake.setHeight(2);
             else
               intake.intakeSequence();
 //            intake.intakeAutoHeight(2-pixels);
@@ -962,16 +963,22 @@ public class BradBot extends BasicRobot {
         intakeSequence = false;
       }
     }
-    if (dropUp)
+    if (dropUp) {
       claw.moveTwo();
-    if (dropDOwn)
+      gapped=false;
+    }
+    if (dropDOwn) {
       claw.moveOne();
+      gapped=false;
+    }
     if (left) {
       intake.stopIntake();
       if (HOVER.getState()
           && !Arm.ArmTargetStates.GRAB.getState()
           && !DROP.getState()
           && lift.getCurrentPosition() < 40) {
+        claw.moveOne(false);
+        claw.moveTwo(false);
         arm.flipTo(GRAB);
         wrist.flipTo(Wrist.WristTargetStates.LOCK);
       }
@@ -1074,6 +1081,8 @@ public class BradBot extends BasicRobot {
       uppered = true;
       intake.upper();
     }
+    if(!Intake.IntakeStates.INTAKING.getState())
+      uppered = false;
     if(uppered && abs(right_x)<.2){
       intake.setHeight(1);
       uppered = false;

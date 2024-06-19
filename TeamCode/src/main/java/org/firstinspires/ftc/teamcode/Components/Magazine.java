@@ -101,7 +101,7 @@ public class Magazine {
     LOGGER.log("twoTime" + twoPixelTime);
     LOGGER.log("time"+BasicRobot.time);
     if (Magazine.pixels == 2) {
-      return BasicRobot.time - twoPixelTime > 0.4;
+      return BasicRobot.time - twoPixelTime > 0.5;
     }
     else{
       return false;

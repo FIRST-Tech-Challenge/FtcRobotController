@@ -495,19 +495,19 @@ public class SampleMecanumDrive extends MecanumDrive {
             }
         }
         else{
-            if(abs(currentPOVVelocity.getX())>3){
+            if(abs(currentPOVVelocity.getX())>3&&liftHeight<300){
                 ny = -kV*currentPOVVelocity.getX()*.8*(1700*(1/.95)-liftHeight)/(1700*1/.95);
             }
         }
         if(abs(x)>.02){
             nx = 11/(10+15*pow(Math.E,-20*(abs(x)/3-0.23)))+.2;
             nx*=x/abs(x);
-            if(currentPOVVelocity.getY()==toRadians(0)){
+            if(currentPOVVelocity.getY()==toRadians(0)&&liftHeight<300){
                 nx+=.2*x/abs(x);
             }
         }
         else{
-            if(abs(currentPOVVelocity.getY())>3){
+            if(abs(currentPOVVelocity.getY())>3&&liftHeight<300){
                 nx = -kV*currentPOVVelocity.getY()*.8*(1700*(1/.95)-liftHeight)/(1700*1/.95);
             }
         }
