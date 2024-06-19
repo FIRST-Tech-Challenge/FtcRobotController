@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "BlueLeft2+0")
+@Autonomous(name = "BlueFar2+0")
 @Config
 public class BlueLeft20 extends LinearOpMode {
 
@@ -26,5 +26,6 @@ public class BlueLeft20 extends LinearOpMode {
             aut.park();
             aut.update();
         }
+        aut.robot.stop();
     }
 }

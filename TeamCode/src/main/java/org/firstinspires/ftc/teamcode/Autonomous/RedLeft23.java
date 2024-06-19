@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "RedLeft2+3")
+@Autonomous(name = "RedFar2+3")
 @Config
 public class RedLeft23 extends LinearOpMode {
 //    int bark = 1;
@@ -123,5 +123,7 @@ public class RedLeft23 extends LinearOpMode {
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
             aut.loop();
         }
+        aut.robot.stop();
+
     }
 }

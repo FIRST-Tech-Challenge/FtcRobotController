@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 
 @Autonomous(name = "logiRedRight2+0")
 @Config
+@Disabled
 public class logiRRRR extends LinearOpMode {
     int bark = 1;
     public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 7.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
