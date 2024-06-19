@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "logiBlueRight2+0")
 @Config
+@Disabled
 public class logiBRRR extends LinearOpMode {
 //    int bark = 1;
 

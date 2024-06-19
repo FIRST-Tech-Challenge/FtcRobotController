@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -36,13 +37,13 @@ public class Intake extends RFMotor {
 
   private final double INTAKE_POWER = 1.0;
   private final double REVERSE_POWER = -0.7;
-  double lastSequenceTime = -100;
+  double lastSequenceTime = -100, nowPixel = 0;
 
   private boolean full = false, goofed = false;
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.49, TWO=0.53, THREE = 0.555, FOUR = 0.575, FIVE =0.6, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .51, CUR_THRESH=3.28;
+  public static double ONE=0.52, TWO=0.55, THREE = 0.575, FOUR = 0.592, FIVE =0.62, STOP_DELAY = 0.5, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .54, CUR_THRESH=3.0;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -136,7 +137,7 @@ public class Intake extends RFMotor {
   }
 
   public void toggleIntakeHeight(){
-    if(height<5){
+    if(height<6){
       height++;
     }
     else{
@@ -149,6 +150,8 @@ public class Intake extends RFMotor {
       intakeServo.setPosition(THREE);if(height==4)
       intakeServo.setPosition(FOUR);if(height==5)
       intakeServo.setPosition(FIVE);
+      if(height==6)
+        intakeServo.setPosition(UPPIES);
   }
 
   public void toggleIntakeHeightDown(){
@@ -269,6 +272,7 @@ public class Intake extends RFMotor {
   public void setHeight(int height){
     double autoOff = -0.00;
     this.height = height;
+    lastHeightTime=time;
     if(isTeleop){
       autoOff=0;
     }
@@ -292,7 +296,7 @@ public class Intake extends RFMotor {
     }
   }
   public boolean intakeSequence(){
-    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-INTAKE_POWER;}
+    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-INTAKE_POWER;nowPixel=pixels;lastSequenceTime=time;}
     IntakeStates.INTAKING.setStateTrue();
     if(BasicRobot.time-lastSequenceTime>0.3&&this.getCurrent()<currentThresh) {
       if (height == 1)
@@ -302,12 +306,20 @@ public class Intake extends RFMotor {
       lastSequenceTime = BasicRobot.time;
       goofed = false;
       if(height==5){
-        lastSequenceTime+=.4;
+        lastSequenceTime=time+.6;
       }
     }
+    else if(time-lastSequenceTime>.3 && this.getCurrent()>currentThresh){
+      lastSequenceTime=time+0.2;
+    }
     packet.put("lastSequenceTime", lastSequenceTime);
+    nowPixel=pixels;
     return height != 1;
   }
+  public double getLastSequenceTime(){
+    return lastSequenceTime;
+  }
+  public double getLastHeightTIme() {return lastHeightTime;}
   public boolean intakePath(){
     return intakePath;
   }
@@ -324,8 +336,8 @@ public class Intake extends RFMotor {
 //    LOGGER.log("intake power:" + power);
     packet.put("intakePos", this.getCurrentPosition());
     packet.put("current", this.getCurrent());
-    double voltage = BasicRobot.voltageSensor.getVoltage();
-    currentThresh = CUR_THRESH /** 13.0/voltage*/;
+//    double voltage = BasicRobot.voltageSensor.getVoltage();
+    currentThresh = CUR_THRESH+(0.4*(voltage-12)/2);
     packet.put("currentThresh", currentThresh);
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());

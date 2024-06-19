@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "RedRight2+4")
+@Autonomous(name = "RedClose2+4")
 @Config
 public class RedRight24 extends LinearOpMode {
 
@@ -22,6 +22,6 @@ public class RedRight24 extends LinearOpMode {
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
             aut.loop();
         }
-        stop();
+        aut.robot.stop();
     }
 }

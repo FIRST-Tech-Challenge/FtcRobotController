@@ -40,6 +40,7 @@ import com.acmerobotics.roadrunner.followers.RFHolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.RFTrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -95,7 +96,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0.0, 0.5);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 3, .5);
 
-    public static double LATERAL_MULTIPLIER = 1.2;
+    public static double LATERAL_MULTIPLIER = 1.2, NEW_WEIGHT=1.2, NEW_COEFF=0.19;
     public static double imuMultiply = 1.0132,fishMoley = 1.0, IMU_INTERVAL = 10000, funnyIMUOffset =2.3;
 
     public static final double VX_WEIGHT = 1;
@@ -495,24 +496,32 @@ public class SampleMecanumDrive extends MecanumDrive {
             }
         }
         else{
-            if(abs(currentPOVVelocity.getX())>3){
+            if(abs(currentPOVVelocity.getX())>3&&liftHeight<300){
                 ny = -kV*currentPOVVelocity.getX()*.8*(1700*(1/.95)-liftHeight)/(1700*1/.95);
             }
         }
         if(abs(x)>.02){
             nx = 11/(10+15*pow(Math.E,-20*(abs(x)/3-0.23)))+.2;
             nx*=x/abs(x);
-            if(currentPOVVelocity.getY()==toRadians(0)){
+            if(currentPOVVelocity.getY()==toRadians(0)&&liftHeight<300){
                 nx+=.2*x/abs(x);
             }
         }
         else{
-            if(abs(currentPOVVelocity.getY())>3){
+            if(abs(currentPOVVelocity.getY())>3&&liftHeight<300){
                 nx = -kV*currentPOVVelocity.getY()*.8*(1700*(1/.95)-liftHeight)/(1700*1/.95);
             }
         }
-
-        setDrivePower(new Pose2d(ny,nx,nhead));
+        List<Double> powers = MecanumKinematics.robotToWheelVelocities(
+                new Pose2d(ny,nx,nhead),
+                1.0,
+                1.0,
+                LATERAL_MULTIPLIER);
+        double backMulti = 1;
+//        if(abs(nx) > 2*abs(ny+nhead)){
+            backMulti=NEW_WEIGHT+NEW_COEFF*liftHeight/1700;
+//        }
+        setMotorPowers(powers.get(0), powers.get(1)*backMulti, powers.get(2)*backMulti, powers.get(3));
     }
     public void toggleFieldCentric(){
         isFieldCentric= !isFieldCentric;
