@@ -19,8 +19,8 @@ public class BLPARK {
     boolean logi = false, isRight = false, ultras = true, check = true, everChecked = false;
     LinearOpMode op;
     BradBot robot;
-    int bark = 0, delaySec =0;
-    TrajectorySequence go;
+    int bark = 0, delaySec =0,barg = 0;
+    TrajectorySequence[] go = new TrajectorySequence[2];
 
 
 
@@ -33,9 +33,14 @@ public class BLPARK {
         Pose2d startPose = new Pose2d(-32,61.5,toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
         imuMultiply = 1.041 + .002*(robot.getVoltage()-12.5);
-        go = robot.roadrun.trajectorySequenceBuilder(startPose)
+        go[1] = robot.roadrun.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(-32,61,toRadians(180)))
                 .lineToLinearHeading(new Pose2d(50, 61, toRadians(180)))
+                .build();
+        go[0] = robot.roadrun.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-32,61,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50, 61, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50, 15, toRadians(180)))
                 .build();
         robot.dropServo(1);
         robot.dropServo(0);
@@ -50,7 +55,7 @@ public class BLPARK {
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
             op.telemetry.addData("delaySec", delaySec);
-            op.telemetry.addData("isRight", isRight);
+            op.telemetry.addData("barg,0=L,1=R", barg);
             if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
                 delaySec++;
             }
@@ -58,22 +63,21 @@ public class BLPARK {
                 delaySec = min(0, delaySec - 1);
             }
             if (gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight")) {
-                isRight = true;
+                barg = 1;
             }
             if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
-                isRight = false;
+                barg = 0;
             }
             robot.update();
         }
         op.resetRuntime();
-        bark=0;
         time=0;
     }
     public void parg()
     {
-        bark=0;
         robot.queuer.queue(false, true);
-        robot.followTrajSeq(go);
+        robot.queuer.addDelay(delaySec);
+        robot.followTrajSeq(go[barg]);
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
     }

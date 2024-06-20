@@ -20,13 +20,13 @@ public class BL20 {
     boolean logi=false, isRight;
     LinearOpMode op;
     BradBot robot;
-    int bark = 0, delaySec =0;
+    int bark = 0, delaySec =0, barg=0;
     TrajectorySequence[] spikey = new TrajectorySequence[3];
     TrajectorySequence[] intake = new TrajectorySequence[3];
     TrajectorySequence[] backToStack = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
-    TrajectorySequence park;
+    TrajectorySequence[] park = new TrajectorySequence[2];
 
 
 
@@ -91,8 +91,11 @@ public class BL20 {
         } else{
         }
 
-        park = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
+        park[0] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
                 .lineToLinearHeading(new Pose2d(43,57, toRadians(180)))
+                .build();
+        park[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
+                .lineToLinearHeading(new Pose2d(43,20, toRadians(180)))
                 .build();
 
 //    robot.dropServo(1);
@@ -108,7 +111,7 @@ public class BL20 {
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
             op.telemetry.addData("delaySec", delaySec);
-            op.telemetry.addData("isRight", isRight);
+            op.telemetry.addData("barg,0=L,1=R", barg);
             if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
                 delaySec++;
             }
@@ -116,10 +119,10 @@ public class BL20 {
                 delaySec = min(0, delaySec - 1);
             }
             if (gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight")) {
-                isRight = true;
+                barg=1;
             }
             if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
-                isRight = false;
+                barg=0;
             }
             robot.update();
         }
@@ -129,6 +132,7 @@ public class BL20 {
     public void purp()
     {
         robot.queuer.queue(false, true);
+        robot.queuer.addDelay(delaySec);
         robot.queuer.waitForFinish();
         robot.followTrajSeq(spikey[bark]);
     }
@@ -154,7 +158,7 @@ public class BL20 {
     }
 
     public void park(){
-        robot.followTrajSeq(park);
+        robot.followTrajSeq(park[barg]);
         robot.queuer.addDelay(.5);
         robot.resetAuto();
         robot.queuer.waitForFinish();
