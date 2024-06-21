@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam.Y_OFFSET;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.gampad;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
+import static org.firstinspires.ftc.teamcode.Robots.BradBot.intakeFInishTIme;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.funnyIMUOffset;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.imuMultiply;
 import static java.lang.Math.max;
@@ -37,6 +40,7 @@ public class BL23 {
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
     TrajectorySequence[] park= new TrajectorySequence[3], parkLeft= new TrajectorySequence[3];
+    TrajectorySequence altPark;
     double[][] ranges = {{0,0},{0,0},{0,0},{0,0},{0,0}};
 
 
@@ -227,6 +231,15 @@ public class BL23 {
                 .lineToLinearHeading(new Pose2d(43.8,38.25, toRadians(-180)))
                 .lineToLinearHeading(new Pose2d(45, 58,toRadians(-180)))
                 .build();
+        altPark = robot.roadrun.trajectorySequenceBuilder(backToStack[1].end())
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(-40,58.5),toRadians(0))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30,5,15))
+                .splineToConstantHeading(new Vector2d(-35,58.5),toRadians(0))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
+                .splineToConstantHeading(new Vector2d(5,58),toRadians(0))
+                .splineToConstantHeading(new Vector2d(46,58),toRadians(0))
+                .build();
         parkLeft[1] = robot.roadrun.trajectorySequenceBuilder(drop[1].end())
                 .lineToLinearHeading(new Pose2d(43.8,38, toRadians(-180)))
                 .lineToLinearHeading(new Pose2d(45, 11,toRadians(-180)))
@@ -298,7 +311,7 @@ public class BL23 {
             else if(a&&right){
                 currentSection ++;
                 if(currentSection>1){
-                    currentRange=0;
+                    currentSection=0;
                 }
             }
             else if(b&&up){
@@ -339,12 +352,12 @@ public class BL23 {
     public void purp()
     {
         if(bark==0){
-            funnyIMUOffset = 1.7;
+            funnyIMUOffset = 2.5;
         }
         if(bark==1){
             funnyIMUOffset = -1.2;      }
         if (bark==2){
-            funnyIMUOffset = -1.5;
+            funnyIMUOffset = -1;
         }
         robot.queuer.queue(false, true);
         robot.followTrajSeq(spikey[bark]);
@@ -379,14 +392,20 @@ public class BL23 {
         }
         robot.queuer.waitForFinish();
         double delTime = 0;
-        double arriveTime = time+travelTime;
+        double arriveTime = intakeFInishTIme+travelTime;
         double leaveTime = arriveTime+lingerTime;
         for(var j : ranges){
             if(arriveTime>j[0]&&arriveTime<j[1])
                 delTime = j[1]-arriveTime;
             if(leaveTime>j[0]&&leaveTime<j[1]){
-                delTime = max(j[1]-leaveTime,delTime);
+                delTime = max(j[1]-arriveTime,delTime);
             }
+        }
+        arriveTime = arriveTime+delTime;
+        LOGGER.log("arriveTIme" + arriveTime);
+        if(arriveTime>=29.75){
+            drop[i] = altPark;
+            delTime=0;
         }
         robot.queuer.queue(false,true);
         robot.queuer.addDelay(delTime);
@@ -399,14 +418,20 @@ public class BL23 {
     public void pre(){
         robot.queuer.waitForFinish();
         double delTime = 0;
-        double arriveTime = time+travelTime;
+        double arriveTime = intakeFInishTIme+travelTime;
         double leaveTime = arriveTime+lingerTime;
         for(var j : ranges){
             if(arriveTime>j[0]&&arriveTime<j[1])
                 delTime = j[1]-arriveTime;
             if(leaveTime>j[0]&&leaveTime<j[1]){
-                delTime = max(j[1]-leaveTime,delTime);
+                delTime = max(j[1]-arriveTime,delTime);
             }
+        }
+        arriveTime = arriveTime+delTime;
+        LOGGER.log("arriveTIme" + arriveTime);
+        if(arriveTime>=29.75){
+            droppy[bark] = altPark;
+            delTime=0;
         }
         robot.queuer.queue(false,true);
         robot.queuer.addDelay(delTime);
@@ -432,7 +457,10 @@ public class BL23 {
     }
 
     public void park(){
-        robot.followTrajSeq(park[0]);
+        if(currentPose.vec().distTo(park[0].end().vec())>5)
+            robot.followTrajSeq(park[0]);
+        else
+            robot.queuer.queue(false,true);
         robot.queuer.addDelay(.7);
         robot.resetAuto();
         robot.queuer.waitForFinish();
@@ -455,8 +483,14 @@ public class BL23 {
             pre();
             cycleIntake(4);
             cycleDrop(0);
-            cycleIntake2(2);
-            cycleDrop(1);
+            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+                cycleIntake2(2);
+                cycleDrop(1);
+            }
+            else{
+                robot.queuer.reset();
+                joever = true;
+            }
         }
         else if(!joever){
             joever = true;
@@ -467,8 +501,16 @@ public class BL23 {
             pre();
             cycleIntake(4);
             cycleDrop(0);
-            cycleIntake2(2);
-            cycleDrop(1);
+            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+                cycleIntake2(2);
+                cycleDrop(1);
+            }
+            else{
+                robot.queuer.reset();
+                joever = true;
+                lastCycle
+                        = true;
+            }
         }
         else if(joever && lastCycle && !parky){
             robot.queuer.reset();

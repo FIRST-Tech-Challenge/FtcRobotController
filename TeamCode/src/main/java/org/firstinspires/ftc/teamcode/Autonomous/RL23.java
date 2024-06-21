@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.gampad;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
+import static org.firstinspires.ftc.teamcode.Robots.BradBot.intakeFInishTIme;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.funnyIMUOffset;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.imuMultiply;
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.toRadians;
 
@@ -25,12 +29,17 @@ public class RL23 {
     boolean lastCycle = false;
     boolean joever = false;
     boolean parky = false;
+    TrajectorySequence altPark;
+    double travelTime =4.5, lingerTime = 3;
+
+    double[][] ranges = {{0,0},{0,0},{0,0},{0,0},{0,0}};
     TrajectorySequence[] spikey = new TrajectorySequence[3];
     TrajectorySequence[] intake = new TrajectorySequence[3];
     TrajectorySequence[] backToStack = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
     TrajectorySequence[] park= new TrajectorySequence[3], parkLeft= new TrajectorySequence[3];
+    int currentSection =0, currentRange = 0;
 
 
 
@@ -114,7 +123,7 @@ public class RL23 {
                             .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
                             .splineToConstantHeading(new Vector2d(5,-58.5),toRadians(0))
                             .splineToConstantHeading(new Vector2d(40,-34.75),toRadians(0))
-                            .splineTo(new Vector2d(46.4,-34.75),toRadians(0))
+                            .splineToConstantHeading(new Vector2d(46.4,-34.75),toRadians(0))
                             .build();
 
             droppy[2] =
@@ -208,6 +217,15 @@ public class RL23 {
             .lineToLinearHeading(new Pose2d(43.8,-38, toRadians(-180)))
             .lineToLinearHeading(new Pose2d(45, -58,toRadians(-180)))
             .build();
+        altPark = robot.roadrun.trajectorySequenceBuilder(backToStack[1].end())
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(-40,-58.5),toRadians(0))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(24,5,15))
+                .splineToConstantHeading(new Vector2d(-35,-58.5),toRadians(0))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(80,5,15))
+                .splineToConstantHeading(new Vector2d(5,-58.5),toRadians(0))
+                .splineToConstantHeading(new Vector2d(45,-58),toRadians(0))
+                .build();
         park[0] = robot.roadrun.trajectorySequenceBuilder(drop[1].end())
                 .lineToLinearHeading(new Pose2d(43.8,-38.25, toRadians(-180)))
                 .lineToLinearHeading(new Pose2d(45, -58,toRadians(-180)))
@@ -254,18 +272,64 @@ public class RL23 {
             packet.put("spike", bark);
             op.telemetry.addData("delaySec", delaySec);
             op.telemetry.addData("isRight", isRight);
-            if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
-                delaySec++;
+            boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")
+                    ,down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "minusSecs")
+                    , right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight"),
+                    left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft"),
+                    a = op.gamepad1.a,
+                    b = op.gamepad1.b;
+            if(a&&up){
+                currentRange ++;
+                if(currentRange>ranges.length){
+                    currentRange =0;
+                }
             }
-            if (gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "minusSecs")) {
-                delaySec = min(0, delaySec - 1);
+            else if(a&&down){
+                currentRange--;
+                if(currentRange<0){
+                    currentRange = ranges.length-1;
+                }
             }
-            if (gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight")) {
+            else if(a && left){
+                currentSection--;
+                if(currentSection<0){
+                    currentSection = 1;
+                }
+            }
+            else if(a&&right){
+                currentSection ++;
+                if(currentSection>1){
+                    currentSection=0;
+                }
+            }
+            else if(b&&up){
+                ranges[currentRange][currentSection]++;
+            }
+            else if(b&&down){
+                if(ranges[currentRange][currentSection]>0){
+                    ranges[currentRange][currentSection]--;
+                }
+            }
+            else if(b&&right){
+                ranges[currentRange][currentSection]+=5;
+            }
+            else if(b&&left){
+                if(ranges[currentRange][currentSection]>4){
+                    ranges[currentRange][currentSection]-=5;
+                }
+            }
+            else if (right) {
                 isRight = true;
             }
-            if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
+            else if (left) {
                 isRight = false;
             }
+            String stringify = "";
+            for(double[] i : ranges){
+                stringify += "["+i[0]+","+i[1]+"]";
+            }
+            op.telemetry.addData("ranges", stringify);
+            packet.put("ranges", stringify);
             robot.update();
         }
         op.resetRuntime();
@@ -316,6 +380,24 @@ public class RL23 {
             intakey=true;
         }
         robot.queuer.waitForFinish();
+        double delTime = 0;
+        double arriveTime = intakeFInishTIme+travelTime;
+        double leaveTime = arriveTime+lingerTime;
+        for(var j : ranges){
+            if(arriveTime>j[0]&&arriveTime<j[1])
+                delTime = j[1]-arriveTime;
+            if(leaveTime>j[0]&&leaveTime<j[1]){
+                delTime = max(j[1]-arriveTime,delTime);
+            }
+        }
+        arriveTime = arriveTime+delTime;
+        LOGGER.log("arriveTIme" + arriveTime);
+        if(arriveTime>=29.75){
+            drop[i] = altPark;
+            delTime=0;
+        }
+        robot.queuer.queue(false,true);
+        robot.queuer.addDelay(delTime);
         robot.followTrajSeq(drop[i]);
         robot.queuer.addDelay(0.2);
         robot.grabAuto();
@@ -324,6 +406,24 @@ public class RL23 {
     }
     public void pre(){
         robot.queuer.waitForFinish();
+        double delTime = 0;
+        double arriveTime = intakeFInishTIme+travelTime;
+        double leaveTime = arriveTime+lingerTime;
+        for(var j : ranges){
+            if(arriveTime>j[0]&&arriveTime<j[1])
+                delTime = j[1]-arriveTime;
+            if(leaveTime>j[0]&&leaveTime<j[1]){
+                delTime = max(j[1]-arriveTime,delTime);
+            }
+        }
+        arriveTime = arriveTime+delTime;
+        LOGGER.log("arriveTIme" + arriveTime);
+        if(arriveTime>=29.75){
+            droppy[bark] = altPark;
+            delTime=0;
+        }
+        robot.queuer.queue(false,true);
+        robot.queuer.addDelay(delTime);
         robot.followTrajSeq(droppy[bark]);
         robot.queuer.addDelay(0.4);
         robot.grabAuto();
@@ -363,14 +463,20 @@ public class RL23 {
     }
 
     public void loop(){
-        if ((time<20.5||lastCycle)&&!joever) {
+        if ((time<21||lastCycle)&&!joever) {
             purp();
             intake(6);
             pre();
             cycleIntake(4);
             cycleDrop(0);
-            cycleIntake2(2);
-            cycleDrop(1);
+            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+                cycleIntake2(2);
+                cycleDrop(1);
+            }
+            else{
+                robot.queuer.reset();
+                joever = true;
+            }
         }
         else if(!joever){
             joever = true;
@@ -381,8 +487,16 @@ public class RL23 {
             pre();
             cycleIntake(4);
             cycleDrop(0);
-            cycleIntake2(2);
-            cycleDrop(1);
+            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+                cycleIntake2(2);
+                cycleDrop(1);
+            }
+            else{
+                robot.queuer.reset();
+                joever = true;
+                lastCycle
+                        = true;
+            }
         }
         else if(joever && lastCycle && !parky){
             robot.queuer.reset();

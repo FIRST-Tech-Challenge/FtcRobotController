@@ -88,6 +88,7 @@ public class BradBot extends BasicRobot {
 
     PPUI ppui;
     double voltage = 12;
+    public static double intakeFInishTIme = 0;
     boolean intaked = false;
 
     MecanumDrive drive;
@@ -388,7 +389,7 @@ public class BradBot extends BasicRobot {
         && !Intake.IntakeStates.INTAKING.getState())||*/
                         Claw.clawStates.GRAB.getState()
                         && HOVER.getState())) {
-            if (!GRAB.state&&!Claw.clawStates.GRAB.getState()&&roadrun.isBusy()&&roadrun.getEndPose().getX()>0){
+            if (!GRAB.state&&!Claw.clawStates.GRAB.getState() || Claw.clawTargetStates.GRAB.getState()&&roadrun.isBusy()&&roadrun.getEndPose().getX()>0){
                 arm.flipTo(GRAB);
                 wrist.flipTo(Wrist.WristTargetStates.LOCK);
                 claw.flipTo(Claw.clawTargetStates.CLOSE);

@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
+import static org.firstinspires.ftc.teamcode.Robots.BradBot.intakeFInishTIme;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -43,7 +44,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.52, TWO=0.55, THREE = 0.575, FOUR = 0.594 , FIVE =0.626, STOP_DELAY = 0.5, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .54, CUR_THRESH=3.2;
+  public static double ONE=0.52, TWO=0.55, THREE = 0.575, FOUR = 0.594 , FIVE =0.626, STOP_DELAY = 0.5, UPPIES = 0.94, SUPPER_UPIES = 0.9, UPPER = .54, CUR_THRESH=3.2;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -124,7 +125,8 @@ public class Intake extends RFMotor {
    */
   public void intake() {
     LOGGER.log("starting intake, power : " + INTAKE_POWER);
-    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-1;}
+    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-1;intakeFInishTIme = time;
+    }
     IntakeStates.INTAKING.setStateTrue();
     if (isTeleop) {
       downy();
@@ -182,7 +184,8 @@ public class Intake extends RFMotor {
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
     if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=-REVERSE_POWER;
     if(!isTeleop)
-      setRawPower(0.5);}
+      setRawPower(0.5);
+    }
     REVERSING.setStateTrue();
     reverseTime = time;
   }
