@@ -93,7 +93,7 @@ public class RR24 {
                     .addTemporalMarker(robot::stopAllMotors)
                     .addTemporalMarker(robot::startIMU)
                     .addTemporalMarker(()->robot.roadrun.changeIMUInterval())
-                    .lineToLinearHeading(new Pose2d(46.5, -38, toRadians(-179.9)))
+                    .lineToLinearHeading(new Pose2d(46.5, -40, toRadians(-179.9)))
                     .addTemporalMarker(()->robot.dropServo(0))
                     .addTemporalMarker(()->robot.dropServo(1))
                     .build();
@@ -104,29 +104,29 @@ public class RR24 {
         intake[0] = robot.roadrun.trajectorySequenceBuilder(droppy[0].end())
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(25, -11.25), toRadians(180))
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(35,5,14))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(28,5,14))
                 .splineToConstantHeading(new Vector2d(7, -11.25), toRadians(180))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(85,5,14))
-                .splineToConstantHeading(new Vector2d(-30, -13.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-56.9, -14.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.9, -11.25), toRadians(180))
                 .build();
         intake[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(25, -12.25), toRadians(180))
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(35,5,14))
-                .splineToConstantHeading(new Vector2d(7, -12.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(25, -11.25), toRadians(180))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(28,5,14))
+                .splineToConstantHeading(new Vector2d(7, -11.25), toRadians(180))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(85,5,14))
-                .splineToConstantHeading(new Vector2d(-30, -12.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-56.9, -14.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.9, -11.25), toRadians(180))
                 .build();
         intake[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(25, -12.25), toRadians(180))
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(35,5,14))
-                .splineToConstantHeading(new Vector2d(7, -12.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(25, -11.25), toRadians(180))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(28,5,14))
+                .splineToConstantHeading(new Vector2d(7, -11.25), toRadians(180))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(85,5,14))
-                .splineToConstantHeading(new Vector2d(-30, -12.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-56.9, -13.75), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.9, -11.75), toRadians(180))
                 .build();
         drop[0] = robot.roadrun.trajectorySequenceBuilder(intake[0].end())
                 .setReversed(true)
@@ -205,15 +205,15 @@ public class RR24 {
     public void purp()
     {
 //        bark=2;
-        if(bark==0){
-            funnyIMUOffset = 3.0;
-        }
-        if(bark==1){
-            funnyIMUOffset = 3.0;
-        }
-        if(bark ==2){
-            funnyIMUOffset = 3.0;
-        }
+//        if(bark==0){
+//            funnyIMUOffset = 3.0; 2.3
+//        }
+//        if(bark==1){
+//            funnyIMUOffset = 3.0; 2.3
+//        }
+//        if(bark ==2){
+//            funnyIMUOffset = 3.0; 2.3
+//        }
         robot.queuer.queue(false, true);
         robot.followTrajSeq(spikey[bark]);
         robot.queuer.addDelay(0.0);

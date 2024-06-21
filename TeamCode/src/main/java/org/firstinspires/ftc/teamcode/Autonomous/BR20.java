@@ -26,7 +26,7 @@ public class BR20 {
     TrajectorySequence[] backToStack = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
-    TrajectorySequence[] park = new TrajectorySequence[2];
+    TrajectorySequence[] park = new TrajectorySequence[3];
 
     public BR20(LinearOpMode op, boolean isLogi){
         logi = isLogi;
@@ -56,24 +56,30 @@ public class BR20 {
         if (!isLogi) {
             droppy[0] = robot.roadrun.trajectorySequenceBuilder(spikey[0].end())
                     .lineToLinearHeading(new Pose2d(22,53,toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(45, 42, toRadians(180))).build();
+                    .lineToLinearHeading(new Pose2d(46, 42, toRadians(180))).build();
 
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
                     .lineToLinearHeading(new Pose2d(13,50, toRadians(90)))
-                    .lineToLinearHeading(new Pose2d(45, 35.25, toRadians(180))).build();
+                    .lineToLinearHeading(new Pose2d(46, 35.25, toRadians(180))).build();
 
             droppy[2] = robot.roadrun.trajectorySequenceBuilder(spikey[2].end())
                     .lineToLinearHeading(new Pose2d(30, 35, toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(45, 30, toRadians(180))).build();
+                    .lineToLinearHeading(new Pose2d(46, 30, toRadians(180))).build();
 
         } else{
         }
-        park[0] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
+        park[0] = robot.roadrun.trajectorySequenceBuilder(droppy[0].end())
+                .lineTo(new Vector2d(droppy[0].end().getX()-3, droppy[0].end().getY()))
                 .lineToLinearHeading(new Pose2d(44,57, toRadians(180)))
                 .build();
         park[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
-                .lineToLinearHeading(new Pose2d(44,20,toRadians(180)))
+                .lineTo(new Vector2d(droppy[1].end().getX()-3, droppy[1].end().getY()))
+                .lineToLinearHeading(new Pose2d(44,57, toRadians(180)))
                         .build();
+        park[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
+                .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
+                .lineToLinearHeading(new Pose2d(44,57, toRadians(180)))
+                .build();
 
     /*    robot.dropServo(1);
         robot.dropServo(0);*/
@@ -136,7 +142,7 @@ public class BR20 {
     }
 
     public void park(){
-        robot.followTrajSeq(park[barg]);
+        robot.followTrajSeq(park[bark]);
         robot.queuer.addDelay(.5);
         robot.resetAuto();
         robot.queuer.addDelay(1);

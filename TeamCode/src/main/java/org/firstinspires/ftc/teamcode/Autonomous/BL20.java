@@ -42,19 +42,19 @@ public class BL20 {
         spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-32,32,toRadians(180)),toRadians(-30))
+                .splineToSplineHeading(new Pose2d(-31,32,toRadians(180)),toRadians(-30))
                 .build();
 
         spikey[1] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-40,30,toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-36,32,toRadians(90)))
                 .build();
 
         spikey[2] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-45,36,toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-40,36,toRadians(90)))
                 .build();
 
         if (!isLogi) {

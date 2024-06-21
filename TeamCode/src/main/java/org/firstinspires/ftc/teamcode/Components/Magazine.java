@@ -70,6 +70,7 @@ public class Magazine {
   public void updateSensors() {
     dist1 = colorSensor1.getDist();
     dist2 = colorSensor2.getDist();
+    int prevPixels = pixels;
     pixels=0;
     if (dist1 < 5) {
       MagStates.FRONT.setState(true);
@@ -84,7 +85,7 @@ public class Magazine {
       MagStates.BACK.setState(false);
     }
 
-    if(pixels==2){
+    if(pixels!=2){
       twoPixelTime = BasicRobot.time;
     }
     if(dist2<1.3&&pixels==0){
@@ -101,7 +102,7 @@ public class Magazine {
     LOGGER.log("twoTime" + twoPixelTime);
     LOGGER.log("time"+BasicRobot.time);
     if (Magazine.pixels == 2) {
-      return BasicRobot.time - twoPixelTime > 0.5;
+      return BasicRobot.time - twoPixelTime > 0.3;
     }
     else{
       return false;

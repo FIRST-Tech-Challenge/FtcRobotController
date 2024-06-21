@@ -43,14 +43,14 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.52, TWO=0.55, THREE = 0.575, FOUR = 0.592, FIVE =0.62, STOP_DELAY = 0.5, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .54, CUR_THRESH=3.0;
+  public static double ONE=0.52, TWO=0.55, THREE = 0.575, FOUR = 0.594 , FIVE =0.626, STOP_DELAY = 0.5, UPPIES = 0.9, SUPPER_UPIES = 0.9, UPPER = .54, CUR_THRESH=3.2;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
   boolean pixeled1= false;
 
   boolean intakePath = false;
-  int height = -1;
+  double height = -1;
 
   double startIntakeTime = -100;
 
@@ -180,7 +180,9 @@ public class Intake extends RFMotor {
   public void reverseIntake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
-    if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=-REVERSE_POWER;}
+    if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=-REVERSE_POWER;
+    if(!isTeleop)
+      setRawPower(0.5);}
     REVERSING.setStateTrue();
     reverseTime = time;
   }
@@ -264,32 +266,42 @@ public class Intake extends RFMotor {
     return intakePathTIme;
   }
 
-  public int getHeight(){
+  public double getHeight(){
     return height;
   }
 
 
-  public void setHeight(int height){
+  public void setHeight(double height){
     double autoOff = -0.00;
+    if(this.height!=height)
+      lastHeightTime=time;
     this.height = height;
-    lastHeightTime=time;
     if(isTeleop){
       autoOff=0;
     }
     if(height==1){
       intakeServo.setPosition(ONE);
     }
+    else if(height == 1.5){
+      intakeServo.setPosition((ONE+TWO)*.5);
+    }
     else if(height ==2){
       intakeServo.setPosition(TWO-autoOff);
+    }
+    else if(height == 2.5){
+      intakeServo.setPosition((TWO+THREE)*.5);
     }
     else if(height ==3){
       intakeServo.setPosition(THREE-autoOff);
     }
+    else if(height == 3.5){
+      intakeServo.setPosition((THREE+FOUR)*.5);
+    }
     else if(height==4){
-      if(isTeleop)
         intakeServo.setPosition(FOUR-autoOff);
-      else
-        intakeServo.setPosition(.58);
+    }
+    else if(height == 4.5){
+      intakeServo.setPosition((FIVE+FOUR)*.5);
     }
     else{
       intakeServo.setPosition(FIVE-autoOff);
@@ -302,7 +314,28 @@ public class Intake extends RFMotor {
       if (height == 1)
         return false;
       else
-        setHeight(height - 1);
+        setHeight(height - .5);
+      lastSequenceTime = BasicRobot.time;
+      goofed = false;
+      if(height==5){
+        lastSequenceTime=time+.6;
+      }
+    }
+    else if(time-lastSequenceTime>.3 && this.getCurrent()>currentThresh){
+      lastSequenceTime=time+0.2;
+    }
+    packet.put("lastSequenceTime", lastSequenceTime);
+    nowPixel=pixels;
+    return height != 1;
+  }
+  public boolean intakeSequence(int heighd){
+    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-INTAKE_POWER;nowPixel=pixels;lastSequenceTime=time;}
+    IntakeStates.INTAKING.setStateTrue();
+    if(BasicRobot.time-lastSequenceTime>0.3&&this.getCurrent()<currentThresh) {
+      if (height == 1)
+        return false;
+      else
+        setHeight(max(height - .5, heighd-1));
       lastSequenceTime = BasicRobot.time;
       goofed = false;
       if(height==5){

@@ -493,10 +493,11 @@ public class BradBot extends BasicRobot {
     public void intakeAuto(int height) {
         if (queuer.queue(
                 true,
-                (Intake.IntakeStates.REVERSING.getState() || (intaked && magazine.solidTwoPixels())))) {
-            if (!intaked) {
+                (Intake.IntakeStates.REVERSING.getState()||(intaked&&magazine.solidTwoPixels())))) {
+            LOGGER.log("solidTwoPixles" + magazine.solidTwoPixels());
+            if(!intaked){
                 endPose = roadrun.getCurrentTraj().end();
-                lastHeightTime = time;
+                lastHeightTime=time;
             }
 //      LOGGER.log(String.valueOf(intake.getVelocity()));
             //      packet.put("pixel", pixels);
@@ -505,36 +506,24 @@ public class BradBot extends BasicRobot {
             //      packet.put("intakeVel", intake.getVelocity());
 
 
-            if (currentPose.getX() < roadrun.getEndPose().vec().getX() + 2 || !roadrun.getCurrentTraj().end().equals(endPose)) {
-                LOGGER.log("" + lastHeightTime);
-                if (!intaked) {
-                    lastHeightTime = time;
+            if (currentPose.vec().distTo(roadrun.getEndPose().vec())<1 || !roadrun.getCurrentTraj().end().equals(endPose)||intaked) {
+                LOGGER.log(""+lastHeightTime);
+                if(!intaked){
+                    lastHeightTime=time;
                     LOGGER.log("intakeheighttime");
                 }
-                pixels = 0;
-                magazine.updateSensors();
-                if (intake.getHeight() == 6 || !intaked) {
-                    intake.setHeight(min(height+1, 5));
-                } else {
-                    intake.intakeSequence();
-                }
                 intaked = true;
-
-//        int offset=0;
-//        if(height<6 && time-lastHeightTime>1.0&&pixels==0){
-//            offset-=1;
-//        }
-//        if(height==6&&pixels==0){
-//          height=5;
-//        }
-                if (roadrun.getCurrentTraj().end().equals(endPose)) {
-                    LOGGER.log("cumon" + roadrun.getCurrentTraj().end());
-                    LOGGER.log("" + endPose);
-                    lastHeightTime = intake.getLastHeightTIme();
+                pixels=0;
+                magazine.updateSensors();
+                int offset=0;
+                if(height<6 && time-lastHeightTime>0.7){
+                    offset= -1;
+                    if((int)intake.getHeight()>height-1&&roadrun.getEndPose().equals(endPose))
+                        lastHeightTime = time;
                 }
-                if (time - lastHeightTime > 1.5) {
+                if(time-lastHeightTime>1.5){
                     LOGGER.log("sequencing");
-                    if (!roadrun.isBusy() && roadrun.getCurrentTraj().end().equals(endPose)) {
+                    if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().equals(endPose)) {
                         LOGGER.log("moving");
                         intake.stopIntake();
                         TrajectorySequence traj = roadrun.trajectorySequenceBuilder(endPose)
@@ -543,33 +532,37 @@ public class BradBot extends BasicRobot {
                                 .build();
                         roadrun.followTrajectorySequenceAsync(traj);
                     }
-                    if (!roadrun.isBusy() && roadrun.getCurrentTraj().end().vec().equals(new Vector2d(endPose.getX() + 5.5, endPose.getY()))) {
+                    if(!roadrun.isBusy()&&roadrun.getCurrentTraj().end().vec().equals(new Vector2d(endPose.getX() + 5.5, endPose.getY()))){
                         TrajectorySequence traj = roadrun.trajectorySequenceBuilder(roadrun.getEndPose())
                                 .setReversed(false)
-                                .lineTo(new Vector2d(endPose.getX() + 2, endPose.getY()))
+                                .lineTo(new Vector2d(endPose.getX() + 3, endPose.getY()))
                                 .build();
                         roadrun.followTrajectorySequenceAsync(traj);
                     }
-                    if (!roadrun.isBusy() || roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX() + 2, endPose.getY()))) {
+                    if(!roadrun.isBusy()|| roadrun.getEndPose().vec().equals(new Vector2d(endPose.getX()+3, endPose.getY()))){
                         LOGGER.log("reintaking");
-                        if (time - lastHeightTime > 3.5 && pixels == 0) {
-                            pixels = 1;
+                        if(time-lastHeightTime>1.5&&pixels==0){
+                            pixels=1;
                         }
-                        if (intake.getHeight() > 3)
-                            intake.setHeight(3);
-                        else
-                            intake.intakeSequence();
-//            intake.intakeAutoHeight(2-pixels);
+                        intake.intakeAutoHeight(max(2-pixels,1));
                     }
-                    if (time - lastHeightTime > 5 || time > 25.5) {
+                    if(time-lastHeightTime>5 || time>25.5){
                         LOGGER.log("doning");
-                        pixels = 2;
+                        pixels=2;
                         intake.reverseIntake();
                     }
-                } else {
-//          if(pixels<2) {
-//            intake.intakeAutoHeight(min(max(height - pixels, height - 1), intake.getHeight()));
-//          }
+                }else {
+                    if(pixels<2) {
+                        if(height==6){
+                            intake.intakeAutoHeight(5);
+                        }else
+                            intake.intakeAutoHeight(min(height,(int)intake.getHeight()+offset));
+                    }
+                }
+                if(time>25){
+                    LOGGER.log("doning");
+                    pixels=2;
+                    intake.reverseIntake();
                 }
             }
         }
@@ -1201,7 +1194,5 @@ public class BradBot extends BasicRobot {
         LOGGER.log("the program has stopped normally");
         roadrun.breakFollowing();
         stopAllMotors();
-        cv.stop();
-        op.stop();
     }
 }

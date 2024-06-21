@@ -42,7 +42,7 @@ public class RL20 {
     spikey[0] = robot.roadrun
             .trajectorySequenceBuilder(startPose)
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-45,-38,toRadians(-90)))
+            .lineToLinearHeading(new Pose2d(-43,-38,toRadians(-90)))
             .build();
 
     spikey[1] = robot.roadrun
@@ -65,7 +65,7 @@ public class RL20 {
                       .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(44.5,-30,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(45.5,-30,toRadians(-180)))
                       .build();
 
       droppy[1] =
@@ -85,7 +85,7 @@ public class RL20 {
                       .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
                       .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(45.5,-39.5,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(45.5,-40.5,toRadians(-180)))
                       .build();
 
     } else{
