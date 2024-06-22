@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.masters.components;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
+public interface Component {
+    void initializeHardware();
+    // void update();
 
-abstract public class Component {
-    protected HardwareMap hardwareMap = null;
-    abstract void initializeHardware();
 }

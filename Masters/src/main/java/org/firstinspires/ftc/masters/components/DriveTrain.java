@@ -1,22 +1,101 @@
 package org.firstinspires.ftc.masters.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.masters.CSCons;
 
-public class DriveTrain extends Component{
+public class DriveTrain implements Component{
 
     private DcMotor leftFrontMotor = null;
     private DcMotor rightFrontMotor = null;
     private DcMotor leftRearMotor = null;
     private DcMotor rightRearMotor = null;
+    private HardwareMap hardwareMap = null;
 
-    public void initializeHardware () {
+    public enum RestrictTo {
+        X,
+        Y,
+        T,
+        XY,
+        XT,
+        YT,
+        XYT
+
+    }
+    public DriveTrain (HardwareMap hardwareMap){
+        this.hardwareMap=hardwareMap;
+    }
+    public void initializeHardware() {
+        // Read from the hardware maps
         leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
+
+        // Reset the encoder values
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set the drive motor direction:
+        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        // Don't use the encoders for motor odometry
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Engage the brakes when the robot cuts off power to the motors
+        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
     }
-    public void drive(double x, double y, double t) {
+
+    // Drive using gamepad (THIS IS THE PREFERRED METHOD TO USE)
+    public void drive(Gamepad gamepad) {
+        cartesianDrive(gamepad.left_stick_x, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
+    }
+
+    // Drive, but restrict the axis
+    public void drive(Gamepad gamepad, RestrictTo axis){
+        switch(axis){
+            case X:
+                cartesianDrive(gamepad.left_stick_x, 0, 0);
+                break;
+            case Y:
+                cartesianDrive(0, -gamepad.left_stick_y, 0);
+                break;
+            case T:
+                cartesianDrive(0, 0, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+            case XY:
+                polarDrive(gamepad.left_stick_x, -gamepad.left_stick_y);
+                break;
+            case XT:
+                polarDrive(gamepad.left_stick_x, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+            case YT:
+                cartesianDrive(0, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+            case XYT:
+                cartesianDrive(gamepad.left_stick_x, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+        }
+
+    }
+
+    // Cartesian based driving
+    public void cartesianDrive(double x, double y, double t) {
 
         //        float threshold = 0.1;
         //
@@ -57,7 +136,8 @@ public class DriveTrain extends Component{
         rightRearMotor.setPower(rightRearPower);
     }
 
-    public void drive(double theta, double t){
-        this.drive(Math.cos(theta), Math.sin(theta), t);
+    // Angle based driving
+    public void polarDrive(double theta, double t){
+        cartesianDrive(Math.cos(theta), Math.sin(theta), t);
     }
 }
