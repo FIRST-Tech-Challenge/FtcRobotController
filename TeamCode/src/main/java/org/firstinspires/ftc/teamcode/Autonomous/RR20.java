@@ -26,7 +26,7 @@ public class RR20 {
     TrajectorySequence[] backToStack = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
-    TrajectorySequence park;
+    TrajectorySequence[] park = new TrajectorySequence[3];
 
 
 
@@ -78,11 +78,18 @@ public class RR20 {
 
         } else{
         }
-
-        park = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
+        park[0] = robot.roadrun.trajectorySequenceBuilder(droppy[0].end())
+                .lineTo(new Vector2d(droppy[0].end().getX()-3, droppy[0].end().getY()))
                 .lineToLinearHeading(new Pose2d(44.5,-60, toRadians(-180)))
                 .build();
-
+        park[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
+                .lineTo(new Vector2d(droppy[1].end().getX()-3, droppy[1].end().getY()))
+                .lineToLinearHeading(new Pose2d(44.5,-60, toRadians(-180)))
+                .build();
+        park[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
+                .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
+                .lineToLinearHeading(new Pose2d(44.5,-60, toRadians(-180)))
+                .build();
 
     /*    robot.dropServo(1);
         robot.dropServo(0);*/
@@ -144,7 +151,7 @@ public class RR20 {
     }
 
     public void park(){
-        robot.followTrajSeq(park);
+        robot.followTrajSeq(park[bark]);
         robot.queuer.addDelay(.5);
         robot.resetAuto();
         robot.queuer.waitForFinish();
