@@ -17,6 +17,7 @@
 
 import java.util.regex.Pattern
 
+apply plugin: 'com.adarshr.test-logger'
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 
