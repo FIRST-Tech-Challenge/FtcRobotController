@@ -116,6 +116,10 @@ public class Queuer {
       logger.log("/RobotLogs/GeneralRobot", "currentEventDone" + currentEvent);
     }
   }
+  public void imDone(){
+    queueElements.get(currentlyQueueing).setDone(true);
+    calculateCompleteCurrentEvent();
+  }
 
   /**
    * update start conditions of subsequent events after one is suddenly changed to non-optional logs

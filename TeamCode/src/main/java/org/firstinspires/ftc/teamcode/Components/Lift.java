@@ -25,7 +25,7 @@ public class Lift extends RFDualMotor {
   private double target = 0.0;
   private double MIN_VELOCITY = 20, MANUAL_TIME = 0.2, lastManualTime = -1.0;
   private int iterateHeight = 6;
-  public static double max = 1700,
+  public static double max = 1800,
       min = -15,
       RESISTANCE = 650,
       kS = 0.06,
@@ -37,7 +37,7 @@ public class Lift extends RFDualMotor {
       MAX_DECEL = -6000,
       kP = 0,
       kD = 0, liftHeight = 0;
-  double[] liftPositions = {550,680,800,1000,1100,1200,1300,1400,1700};
+  double[] liftPositions = {550,680,800,1000,1100,1200,1300,1400,1800};
 
   /** Constructor */
   public Lift() {

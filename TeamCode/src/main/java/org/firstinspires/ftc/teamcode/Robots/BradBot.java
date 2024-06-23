@@ -512,6 +512,8 @@ public class BradBot extends BasicRobot {
                 if(!intaked){
                     lastHeightTime=time;
                     LOGGER.log("intakeheighttime");
+                    if(height==5)
+                        lastHeightTime+=.5;
                 }
                 intaked = true;
                 pixels=0;
@@ -551,6 +553,7 @@ public class BradBot extends BasicRobot {
                         LOGGER.log("doning");
                         pixels=2;
                         intake.reverseIntake();
+//                        queuer.imDone();
                     }
                 }else {
                     if(pixels<2) {
@@ -727,6 +730,7 @@ public class BradBot extends BasicRobot {
     public void followTrajSeq(TrajectorySequence p_traj) {
         if (queuer.queue(false, !roadrun.isBusy())) {
             if (!queuer.isExecuted()) {
+                roadrun.breakFollowing();
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
                 LOGGER.log("going from: " + p_traj.start() + " to: " + p_traj.end());
                 roadrun.followTrajectorySequenceAsync(p_traj);

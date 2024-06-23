@@ -13,6 +13,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,7 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-
+@Config
 public class RL23 {
     boolean logi=false, isRight,ultras = true, check = true, everChecked = false, intakey = false ;
     LinearOpMode op;
@@ -31,6 +32,7 @@ public class RL23 {
     boolean parky = false;
     TrajectorySequence altPark;
     double travelTime =4.5, lingerTime = 3;
+    public static int overBark =0;
 
     double[][] ranges = {{0,0},{0,0},{0,0},{0,0},{0,0}};
     TrajectorySequence[] spikey = new TrajectorySequence[3];
@@ -339,14 +341,15 @@ public class RL23 {
     }
     public void purp()
     {
+        bark=overBark;
 //        if(bark==0){
-//            funnyIMUOffset = 2.3;
+//            funnyIMUOffset = 2.3; 3.5
 //        }
 //        if(bark==1){
-//            funnyIMUOffset = 3.5; 2.5
+//            funnyIMUOffset = 3.5; 3.7
 //        }
 //        if (bark==2){
-//            funnyIMUOffset = 4.4; 2.3
+//            funnyIMUOffset = 4.4; 3.5
 //        }
         robot.queuer.queue(false, true);
         robot.followTrajSeq(spikey[bark]);
@@ -392,7 +395,7 @@ public class RL23 {
         }
         arriveTime = arriveTime+delTime;
         LOGGER.log("arriveTIme" + arriveTime);
-        if(arriveTime>=29.75){
+        if(arriveTime>=29.75&& !robot.queuer.isNextExecuted()){
             drop[i] = altPark;
             delTime=0;
         }
@@ -418,7 +421,7 @@ public class RL23 {
         }
         arriveTime = arriveTime+delTime;
         LOGGER.log("arriveTIme" + arriveTime);
-        if(arriveTime>=29.75){
+        if(arriveTime>=29.75&& !robot.queuer.isNextExecuted()){
             droppy[bark] = altPark;
             delTime=0;
         }
@@ -446,8 +449,10 @@ public class RL23 {
     }
 
     public void park(){
-        robot.followTrajSeq(park[0]);
-        robot.queuer.addDelay(.4);
+        if(currentPose.vec().distTo(park[0].end().vec())>1 || robot.roadrun.isBusy())
+            robot.followTrajSeq(park[0]);
+        else
+            robot.queuer.queue(false, true);        robot.queuer.addDelay(.4);
         robot.resetAuto();
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
@@ -469,7 +474,7 @@ public class RL23 {
             pre();
             cycleIntake(4);
             cycleDrop(0);
-            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+            if(!drop[0].equals(altPark)) {
                 cycleIntake2(2);
                 cycleDrop(1);
             }
@@ -487,7 +492,7 @@ public class RL23 {
             pre();
             cycleIntake(4);
             cycleDrop(0);
-            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+            if(!drop[0].equals(altPark)) {
                 cycleIntake2(2);
                 cycleDrop(1);
             }

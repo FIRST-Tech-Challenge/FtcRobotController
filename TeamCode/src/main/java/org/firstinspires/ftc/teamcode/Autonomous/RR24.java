@@ -13,6 +13,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-
+@Config
 public class RR24 {
     boolean logi=false, isRight,ultras = true, check = true, everChecked = false, intakey = false ;
     LinearOpMode op;
@@ -29,6 +30,7 @@ public class RR24 {
     int bark = 0, delaySec =0;
     boolean lastCycle = false;
     double travelTime =4.5, lingerTime = 3;
+    public static int overBark =0;
     TrajectorySequence altPark ;
     double[][] ranges = {{0,0},{0,0},{0,0},{0,0},{0,0}};
     int currentRange=0, currentSection=0;
@@ -51,7 +53,6 @@ public class RR24 {
         robot = new BradBot(op, false,isLogi);
         Pose2d startPose = new Pose2d(15,-61.5,toRadians(-90));
         robot.roadrun.setPoseEstimate(startPose);
-        imuMultiply = 1.0132;
         LATERAL_MULTIPLIER = 1.1;
         lastCycle = false;
         joever = false;
@@ -116,7 +117,7 @@ public class RR24 {
                 .splineToConstantHeading(new Vector2d(7, -11.25), toRadians(180))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(85,5,14))
                 .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-56.9, -11.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-55.4, -11.25), toRadians(180))
                 .build();
         intake[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
                 .setReversed(false)
@@ -134,12 +135,12 @@ public class RR24 {
                 .splineToConstantHeading(new Vector2d(7, -11.25), toRadians(180))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(85,5,14))
                 .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-56.9, -11.75), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-55.4, -11.75), toRadians(180))
                 .build();
         drop[0] = robot.roadrun.trajectorySequenceBuilder(intake[0].end())
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(0))
-                .splineToConstantHeading(new Vector2d(18, -11.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(18, -14.25), toRadians(0))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
                 .splineToConstantHeading(new Vector2d(40, -36), toRadians(0))
                 .splineToConstantHeading(new Vector2d(46, -36), toRadians(0))
@@ -153,12 +154,12 @@ public class RR24 {
                 .splineToConstantHeading(new Vector2d(7, -11.25), toRadians(180))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(85,5,14))
                 .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-56.9, -11.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-55.4, -11.25), toRadians(180))
                 .build();
         drop[1] = robot.roadrun.trajectorySequenceBuilder(intake2[0].end())
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(-30, -11.25), toRadians(0))
-                .splineToConstantHeading(new Vector2d(20, -11.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(20, -14.25), toRadians(0))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
                 .splineToConstantHeading(new Vector2d(40, -35), toRadians(0))
                 .splineToConstantHeading(new Vector2d(46, -35), toRadians(0))
@@ -266,15 +267,16 @@ public class RR24 {
     }
     public void purp()
     {
-//        bark=2;
+        RFAprilCam.Y_OFFSET = 2.1;
+        bark=overBark;
 //        if(bark==0){
-//            funnyIMUOffset = 3.0; 2.3
+//            funnyIMUOffset = 3.0; 2.3 1.8
 //        }
 //        if(bark==1){
-//            funnyIMUOffset = 3.0; 2.3
+//            funnyIMUOffset = 3.0; 2.3 2.0
 //        }
 //        if(bark ==2){
-//            funnyIMUOffset = 3.0; 2.3
+//            funnyIMUOffset = 3.0; 2.3 1.8
 //        }
         robot.queuer.queue(false, true);
         robot.followTrajSeq(spikey[bark]);
@@ -322,7 +324,7 @@ public class RR24 {
         LOGGER.log("arriveTIme" + arriveTime);
         LOGGER.log("intakeFInTIme" + intakeFInishTIme);
         LOGGER.log("delTIme" + delTime);
-        if(arriveTime>=29.75){
+        if(arriveTime>=29.75&& !robot.queuer.isNextExecuted()){
             drop[i] = altPark;
             delTime=0;
         }
@@ -352,7 +354,10 @@ public class RR24 {
     }
 
     public void park(){
-        robot.followTrajSeq(park[0]);
+        if(currentPose.vec().distTo(park[0].end().vec())>1 || robot.roadrun.isBusy())
+            robot.followTrajSeq(park[0]);
+        else
+            robot.queuer.queue(false, true);
         robot.queuer.addDelay(.2);
         robot.resetAuto();
         robot.queuer.waitForFinish();
@@ -374,7 +379,7 @@ public class RR24 {
             pre();
             intake(5);
             cycleDrop(0);
-            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+            if(!drop[0].equals(altPark)) {
                 cycleIntake2(3);
                 cycleDrop(1);
             }
@@ -391,7 +396,7 @@ public class RR24 {
             pre();
             intake(5);
             cycleDrop(0);
-            if(currentPose.vec().distTo(park[0].end().vec())>3) {
+            if(!drop[0].equals(altPark)) {
                 cycleIntake2(3);
                 cycleDrop(1);
             }
