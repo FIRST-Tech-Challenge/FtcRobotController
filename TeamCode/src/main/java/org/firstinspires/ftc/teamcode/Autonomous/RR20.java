@@ -69,13 +69,13 @@ public class RR20 {
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
                     .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(40))
                     .lineToLinearHeading(new Pose2d(38,-36,toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(45.5, -35, toRadians(-180))).build();
+                    .lineToLinearHeading(new Pose2d(45.5, -35.5, toRadians(-180))).build();
 
             droppy[2] = robot.roadrun.trajectorySequenceBuilder(spikey[2].end())
 //                    .lineToLinearHeading(new Pose2d(40,-50,toRadians(-180)))
                     .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
                     .lineToLinearHeading(new Pose2d(38,-36,toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(45.5, -41.5, toRadians(-180))).build();
+                    .lineToLinearHeading(new Pose2d(46.5, -41.5, toRadians(-180))).build();
 
         } else{
         }
@@ -93,15 +93,15 @@ public class RR20 {
                 .build();
         opark[0] = robot.roadrun.trajectorySequenceBuilder(droppy[0].end())
                 .lineTo(new Vector2d(droppy[0].end().getX()-3, droppy[0].end().getY()))
-                .lineToLinearHeading(new Pose2d(44.5,-20, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(44.5,-12, toRadians(-180)))
                 .build();
         opark[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
                 .lineTo(new Vector2d(droppy[1].end().getX()-3, droppy[1].end().getY()))
-                .lineToLinearHeading(new Pose2d(44.5,-20, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(44.5,-12, toRadians(-180)))
                 .build();
         opark[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
                 .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
-                .lineToLinearHeading(new Pose2d(44.5,-20, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(44.5,-12, toRadians(-180)))
                 .build();
 
     /*    robot.dropServo(1);
@@ -160,7 +160,7 @@ public class RR20 {
         else {
             robot.lowAuto(true);
             robot.yellowAuto(true);
-            robot.drop(47.75);
+            robot.drop(45);
         }
     }
 

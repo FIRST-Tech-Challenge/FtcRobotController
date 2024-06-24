@@ -228,12 +228,12 @@ public class BradBot extends BasicRobot {
 
     public void yellowAuto(boolean left) {
         if (queuer.queue(
-                true, lift.getTarget() == 630 || lift.getTarget() == 690)) {
+                true, lift.getTarget() == 740 || lift.getTarget() == 740)) {
             if (currentPose.getX() > 5 && DROP.getState()) {
                 if (left) {
-                    lift.setPosition(630);
+                    lift.setPosition(740);
                 } else {
-                    lift.setPosition(630);
+                    lift.setPosition(740);
                 }
                 if (left) {
                     twrist.flipTo(Twrist.twristTargetStates.OT);

@@ -83,15 +83,15 @@ public class BR20 {
                 .build();
         opark[0] = robot.roadrun.trajectorySequenceBuilder(droppy[0].end())
                 .lineTo(new Vector2d(droppy[0].end().getX()-3, droppy[0].end().getY()))
-                .lineToLinearHeading(new Pose2d(44,20, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(44,12, toRadians(180)))
                 .build();
         opark[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
                 .lineTo(new Vector2d(droppy[1].end().getX()-3, droppy[1].end().getY()))
-                .lineToLinearHeading(new Pose2d(44,20, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(44,12, toRadians(180)))
                 .build();
         opark[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
                 .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
-                .lineToLinearHeading(new Pose2d(44,20, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(44,12, toRadians(180)))
                 .build();
 
     /*    robot.dropServo(1);

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Wrist extends RFServo {
   public static double GRABBY = 0.4
-          , DROPPY = .64, FLIP_TIME=0.43, LOCKY=0.43;
+          , DROPPY = .61, FLIP_TIME=0.43, LOCKY=0.43;
   private double lastTime=-100;
   public Wrist(){
     super("wristServo", 1.0);

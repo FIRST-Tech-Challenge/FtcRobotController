@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.gampad;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
+import static org.firstinspires.ftc.teamcode.Robots.BradBot.intakeFInishTIme;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.imuMultiply;
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.toRadians;
 
@@ -21,6 +24,8 @@ public class RL20 {
   LinearOpMode op;
   BradBot robot;
   int bark = 0, delaySec =0, barg=0;
+  int lingerTime = 4;
+  double travelTime = 1;
   TrajectorySequence[] spikey = new TrajectorySequence[3];
   TrajectorySequence[] intake = new TrajectorySequence[3];
   TrajectorySequence[] backToStack = new TrajectorySequence[3];
@@ -29,8 +34,11 @@ public class RL20 {
   TrajectorySequence[] park = new TrajectorySequence[3];
   TrajectorySequence[] opark = new TrajectorySequence[3];
 
+  TrajectorySequence[] droppa = new TrajectorySequence[3];
 
-
+  double[][] ranges = {{0,0},{0,0},{0,0},{0,0},{0,0}};
+  int currentRange =0;
+  int currentSection=0;
 
 
   public RL20(LinearOpMode op, boolean isLogi){
@@ -55,38 +63,55 @@ public class RL20 {
     spikey[2] = robot.roadrun
             .trajectorySequenceBuilder(startPose)
             .setReversed(true)
-            .splineToSplineHeading(new Pose2d(-32.5,-36,toRadians(-180)), toRadians(60))
+            .splineToSplineHeading(new Pose2d(-30.5,-36,toRadians(-180)), toRadians(60))
             .build();
+    droppa[0] = robot.roadrun
+            .trajectorySequenceBuilder(spikey[0].end())
+            .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
+            .lineToLinearHeading(new Pose2d(-40,-59,toRadians(180)))
+            .lineToLinearHeading(new Pose2d(27,-59,toRadians(180)))
+            .addTemporalMarker(()->{intakeFInishTIme=time;})
+            .addTemporalMarker(robot::done).build();
+    droppa[1] = robot.roadrun
+            .trajectorySequenceBuilder(spikey[1].end())
+            .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
+            .lineToLinearHeading(new Pose2d(-40,-59,toRadians(180)))
+            .lineToLinearHeading(new Pose2d(27,-59,toRadians(180)))
+            .addTemporalMarker(()->{intakeFInishTIme=time;})
+            .addTemporalMarker(robot::done).build();
+    droppa[2] = robot.roadrun
+            .trajectorySequenceBuilder(spikey[2].end())
+            .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(30))
+            .lineToLinearHeading(new Pose2d(-40,-38,toRadians(180)))
+            .lineToLinearHeading(new Pose2d(-40,-59,toRadians(180)))
+            .lineToLinearHeading(new Pose2d(27,-59,toRadians(180)))
+            .addTemporalMarker(()->{intakeFInishTIme=time;})
+            .addTemporalMarker(robot::done).build();
+
 
     if (!isLogi) {
       droppy[0] =
               robot
                       .roadrun
-                      .trajectorySequenceBuilder(spikey[bark].end())
-                      .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
+                      .trajectorySequenceBuilder(droppa[bark].end())
                       .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(45.5,-30,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(47.5,-31.5,toRadians(-180)))
                       .build();
 
       droppy[1] =
               robot
                       .roadrun
-                      .trajectorySequenceBuilder(spikey[bark].end())
-                      .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
+                      .trajectorySequenceBuilder(droppa[bark].end())
                       .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(45.5,-34.25,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(47.5,-37.25,toRadians(-180)))
                       .build();
 
       droppy[2] =
               robot
                       .roadrun
-                      .trajectorySequenceBuilder(spikey[bark].end())
-                      .lineToLinearHeading(new Pose2d(-40,-58,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(25,-58,toRadians(-180)))
+                      .trajectorySequenceBuilder(droppa[bark].end())
                       .lineToLinearHeading(new Pose2d(38,-34,toRadians(-180)))
-                      .lineToLinearHeading(new Pose2d(45.5,-40.5,toRadians(-180)))
+                      .lineToLinearHeading(new Pose2d(47.5,-40.5,toRadians(-180)))
                       .build();
 
     } else{
@@ -130,18 +155,70 @@ public class RL20 {
       op.telemetry.addData("pixel", bark);
       packet.put("spike", bark);
       op.telemetry.addData("delaySec", delaySec);
-      op.telemetry.addData("park,0=R,1=L", barg);
-      if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
-        delaySec++;
+      op.telemetry.addData("isRight", isRight);
+      boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")
+              ,down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "minusSecs")
+              , right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight"),
+              left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft"),
+              a = op.gamepad1.a,
+              b = op.gamepad1.b;
+      if(a&&up){
+        currentRange ++;
+        if(currentRange>ranges.length){
+          currentRange =0;
+        }
       }
-      if (gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "minusSecs")) {
-        delaySec = min(0, delaySec - 1);
+      else if(a&&down){
+        currentRange--;
+        if(currentRange<0){
+          currentRange = ranges.length-1;
+        }
       }
+      else if(a && left){
+        currentSection--;
+        if(currentSection<0){
+          currentSection = 1;
+        }
+      }
+      else if(a&&right){
+        currentSection ++;
+        if(currentSection>1){
+          currentSection=0;
+        }
+      }
+      else if(b&&up){
+        ranges[currentRange][currentSection]++;
+      }
+      else if(b&&down){
+        if(ranges[currentRange][currentSection]>0){
+          ranges[currentRange][currentSection]--;
+        }
+      }
+      else if(b&&right){
+        ranges[currentRange][currentSection]+=5;
+      }
+      else if(b&&left){
+        if(ranges[currentRange][currentSection]>4){
+          ranges[currentRange][currentSection]-=5;
+        }
+      }
+      else if (right) {
+        isRight = true;
+      }
+      else if (left) {
+        isRight = false;
+      }
+      String stringify = "";
+      for(double[] i : ranges){
+        stringify += "["+i[0]+","+i[1]+"]";
+      }
+      op.telemetry.addData("ranges", stringify);
+      packet.put("ranges", stringify);
       if (gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight")) {
-        barg = 0;
+        barg=1;
       }
       if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
-        barg = 1;
+        barg=0;
       }
       robot.update();
     }
@@ -158,22 +235,36 @@ public class RL20 {
   }
 
   public void pre(){
+    robot.followTrajSeq(droppa[bark]);
+    double delTime = 0;
+    double arriveTime = intakeFInishTIme+travelTime;
+    double leaveTime = arriveTime+lingerTime;
+    for(var j : ranges){
+      if(arriveTime>j[0]&&arriveTime<j[1])
+        delTime = j[1]-arriveTime;
+      if(leaveTime>j[0]&&leaveTime<j[1]){
+        delTime = max(j[1]-arriveTime,delTime);
+      }
+    }
+    arriveTime = arriveTime+delTime;
+    LOGGER.log("arriveTIme" + arriveTime);
+    robot.queuer.addDelay(delTime);
     robot.queuer.waitForFinish();
     robot.followTrajSeq(droppy[bark]);
     if(bark==0) {
       robot.lowAuto(true);
       robot.yellowAuto(true);
-      robot.drop(44);
+      robot.drop(46);
     }
     else if(bark==1) {
       robot.lowAuto(true);
       robot.yellowAuto(true);
-      robot.drop(44);
+      robot.drop(46);
     }
     else {
       robot.lowAuto(false);
       robot.yellowAuto(false);
-      robot.drop(44);
+      robot.drop(46);
     }
   }
 

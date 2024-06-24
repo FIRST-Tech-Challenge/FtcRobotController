@@ -61,7 +61,7 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class RFAprilCam {
   public static double X_OFFSET = -6.5,
-      Y_OFFSET = 3.1,
+      Y_OFFSET = 3.1, H_OFFSET = 0,
       UPSAMPLE_THRESHOLD = 20,
       NUMBER_OF_SAMPLES = 2;
   public static int EXPOSURE_MS = 4, GAIN = 5;
@@ -89,7 +89,7 @@ public class RFAprilCam {
     new Vector2d(3 * 23.5 - 1, 1.5 * 23.5),
     new Vector2d(3 * 23.5 - 1, 1.5 * 23.5 - 4.5)
   };
-  private Vector2d camPoseError = new Pose2d(0, 0, 0).vec();
+  private Pose2d camPoseError = new Pose2d(0, 0, 0);
   private double poseCount = 0;
 
   boolean isLogi = false;
@@ -225,7 +225,7 @@ public class RFAprilCam {
         VectorF p1 = detections.get(0).metadata.fieldPosition;
         VectorF p2 = detections.get(1).metadata.fieldPosition;
         double d1 = detections.get(0).ftcPose.range, d2 = detections.get(1).ftcPose.range;
-        if (d1 < UPSAMPLE_THRESHOLD && d2 < UPSAMPLE_THRESHOLD && abs(currentVelocity.getY())<25) {
+        if (/*d1 < UPSAMPLE_THRESHOLD && d2 < UPSAMPLE_THRESHOLD &&*/ abs(currentVelocity.getY())<25) {
           double
               d =
                   sqrt(
@@ -238,6 +238,7 @@ public class RFAprilCam {
           packet.put("d", d);
           packet.put("l", l);
           packet.put("h", h);
+
           Vector2d
               c1 =
                   new Vector2d(
@@ -257,25 +258,47 @@ public class RFAprilCam {
           c2 = c2.plus(offset);
           double dist1 = currentPose.vec().distTo(c1), dist2 = currentPose.vec().distTo(c2);
           if (dist1 < dist2) {
-            camPoseError = camPoseError.plus(c1).minus(currentPose.vec());
+            double theda1 = (detections.get(0).center.x*0.04637490725) - 29.68;
+            Vector2d tagPos = new Vector2d(p1.get(0), p1.get(1));
+            double offtheda1 = tagPos.minus(c1.minus(offset)).angle();
+            double theda2 = (detections.get(1).center.x*0.04637490725) - 29.68;
+            Vector2d tagPos2 = new Vector2d(p2.get(0), p2.get(1));
+            double offtheda2 = tagPos2.minus(c1.minus(offset)).angle();
             poseCount++;
+            theda1*=PI/180;
+            theda2*=PI/180;
+            packet.put("id", detections.get(0).id);
+            packet.put("coord", detections.get(0).center.x);
+            packet.put("thea1", theda1*180/PI);
+            packet.put("offtehda", offtheda1*180/PI);
+            camPoseError = camPoseError.plus(new Pose2d(c1, /*((Angle.norm(theda1+offtheda1+theda2+offtheda2))*.5)+PI)*/0).minus(new Pose2d(currentPose.vec(),0)));
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample) ;
             LOGGER.log("camPoseError" + camPoseError);
           } else {
-            camPoseError = camPoseError.plus(c2).minus(currentPose.vec()).plus(currentVelocity.vec().times(0.0));
+            double theda1 = (detections.get(0).center.x*0.04637490725) - 29.68;
+            Vector2d tagPos = new Vector2d(p1.get(0), p1.get(1));
+            double offtheda1 = tagPos.minus(c2.minus(offset)).angle();
+            double theda2 = (detections.get(1).center.x*0.04637490725) - 29.68;
+            Vector2d tagPos2 = new Vector2d(p2.get(0), p2.get(1));
+            double offtheda2 = tagPos2.minus(c2.minus(offset)).angle();
             poseCount++;
-            LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
+            theda1*=PI/180;
+            theda2*=PI/180;
+            packet.put("id", detections.get(0).id);
+            packet.put("coord", detections.get(0).center.x);
+            packet.put("thea1", theda1*180/PI);
+            packet.put("offtehda", offtheda1*180/PI);
+            camPoseError = camPoseError.plus(new Pose2d(c2, /*((Angle.norm(theda1+offtheda1+theda2+offtheda2))*.5)+PI)*/0).minus(new Pose2d(currentPose.vec(),0)));
+            LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample) ;
             LOGGER.log("camPoseError" + camPoseError);
           }
           if (poseCount >= NUMBER_OF_SAMPLES) {
                       LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
-                      camPoseError =
-                          new Vector2d(camPoseError.getX(), camPoseError.getY());
                       LOGGER.log("oldPose" + currentPose);
-                      currentPose = currentPose.plus(new Pose2d(camPoseError.div(poseCount),0));
+                      currentPose = currentPose.plus(camPoseError.div(poseCount));
                       LOGGER.log("newPose" + currentPose);
                       poseCount = 0;
-                      camPoseError = new Vector2d(0,0);
+                      camPoseError = new Pose2d(0,0);
                       poseHistory.clear();
                     }
           packet.put("c1", c1);
@@ -377,6 +400,6 @@ public class RFAprilCam {
    * @return cameraPosition
    */
   public Pose2d getCamPose() {
-    return currentPose.plus(new Pose2d(camPoseError.div(poseCount), currentPose.getHeading()));
+    return currentPose.plus(camPoseError.div(poseCount));
   }
 }
