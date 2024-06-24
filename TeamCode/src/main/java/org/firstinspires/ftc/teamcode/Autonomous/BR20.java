@@ -27,6 +27,7 @@ public class BR20 {
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
     TrajectorySequence[] park = new TrajectorySequence[3];
+    TrajectorySequence[] opark = new TrajectorySequence[3];
 
     public BR20(LinearOpMode op, boolean isLogi){
         logi = isLogi;
@@ -79,6 +80,18 @@ public class BR20 {
         park[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
                 .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
                 .lineToLinearHeading(new Pose2d(44,57, toRadians(180)))
+                .build();
+        opark[0] = robot.roadrun.trajectorySequenceBuilder(droppy[0].end())
+                .lineTo(new Vector2d(droppy[0].end().getX()-3, droppy[0].end().getY()))
+                .lineToLinearHeading(new Pose2d(44,20, toRadians(180)))
+                .build();
+        opark[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
+                .lineTo(new Vector2d(droppy[1].end().getX()-3, droppy[1].end().getY()))
+                .lineToLinearHeading(new Pose2d(44,20, toRadians(180)))
+                .build();
+        opark[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
+                .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
+                .lineToLinearHeading(new Pose2d(44,20, toRadians(180)))
                 .build();
 
     /*    robot.dropServo(1);
@@ -142,7 +155,12 @@ public class BR20 {
     }
 
     public void park(){
-        robot.followTrajSeq(park[bark]);
+        if(barg == 0){
+            robot.followTrajSeq(park[bark]);
+        }
+        else{
+            robot.followTrajSeq(opark[bark]);
+        }
         robot.queuer.addDelay(.5);
         robot.resetAuto();
         robot.queuer.addDelay(1);

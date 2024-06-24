@@ -20,13 +20,14 @@ public class RR20 {
     boolean logi=false, isRight;
     LinearOpMode op;
     BradBot robot;
-    int bark = 0, delaySec =0;
+    int bark = 0, delaySec =0, barg=0;
     TrajectorySequence[] spikey = new TrajectorySequence[3];
     TrajectorySequence[] intake = new TrajectorySequence[3];
     TrajectorySequence[] backToStack = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
     TrajectorySequence[] park = new TrajectorySequence[3];
+    TrajectorySequence[] opark = new TrajectorySequence[3];
 
 
 
@@ -90,6 +91,18 @@ public class RR20 {
                 .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
                 .lineToLinearHeading(new Pose2d(44.5,-60, toRadians(-180)))
                 .build();
+        opark[0] = robot.roadrun.trajectorySequenceBuilder(droppy[0].end())
+                .lineTo(new Vector2d(droppy[0].end().getX()-3, droppy[0].end().getY()))
+                .lineToLinearHeading(new Pose2d(44.5,-20, toRadians(-180)))
+                .build();
+        opark[1] = robot.roadrun.trajectorySequenceBuilder(droppy[1].end())
+                .lineTo(new Vector2d(droppy[1].end().getX()-3, droppy[1].end().getY()))
+                .lineToLinearHeading(new Pose2d(44.5,-20, toRadians(-180)))
+                .build();
+        opark[2] = robot.roadrun.trajectorySequenceBuilder(droppy[2].end())
+                .lineTo(new Vector2d(droppy[2].end().getX()-3, droppy[2].end().getY()))
+                .lineToLinearHeading(new Pose2d(44.5,-20, toRadians(-180)))
+                .build();
 
     /*    robot.dropServo(1);
         robot.dropServo(0);*/
@@ -104,7 +117,7 @@ public class RR20 {
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
             op.telemetry.addData("delaySec", delaySec);
-            op.telemetry.addData("isRight", isRight);
+            op.telemetry.addData("park,0=R,1=L", barg);
             if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
                 delaySec++;
             }
@@ -112,10 +125,10 @@ public class RR20 {
                 delaySec = min(0, delaySec - 1);
             }
             if (gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight")) {
-                isRight = true;
+                barg = 0;
             }
             if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
-                isRight = false;
+                barg = 1;
             }
             robot.update();
         }
@@ -126,6 +139,7 @@ public class RR20 {
     {
 //        bark=2;
         robot.queuer.queue(false, true);
+        robot.queuer.addDelay(delaySec);
         robot.queuer.waitForFinish();
         robot.followTrajSeq(spikey[bark]);
     }
@@ -151,7 +165,12 @@ public class RR20 {
     }
 
     public void park(){
-        robot.followTrajSeq(park[bark]);
+        if(barg == 0){
+            robot.followTrajSeq(park[bark]);
+        }
+        else{
+            robot.followTrajSeq(opark[bark]);
+        }
         robot.queuer.addDelay(.5);
         robot.resetAuto();
         robot.queuer.waitForFinish();
