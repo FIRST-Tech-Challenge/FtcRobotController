@@ -36,7 +36,7 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    implementation 'com.github.jdhs-ftc:road-runner-ftc-otos:5f1b6c5a05'
+    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:7c00759558"
     implementation "com.acmerobotics.roadrunner:core:1.0.0-beta8"
     implementation "com.acmerobotics.roadrunner:actions:1.0.0-beta8"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.15"
