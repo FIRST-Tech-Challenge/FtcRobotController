@@ -69,8 +69,9 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         otos.setAngularUnit(SparkFunOTOS.AngularUnit.RADIANS);
 
         otos.setOffset(PARAMS.offset);
-        otos.setLinearScalar(PARAMS.linearScalar);
-        otos.setAngularScalar(PARAMS.angularScalar);
+        System.out.println("OTOS calibration beginning!");
+        System.out.println(otos.setLinearScalar(PARAMS.linearScalar));
+        System.out.println(otos.setAngularScalar(PARAMS.angularScalar));
 
         otos.setPosition(RRPoseToOTOSPose(pose));
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
@@ -86,7 +87,8 @@ public class SparkFunOTOSDrive extends MecanumDrive {
 
         // RR localizer note: numSamples number completely arbitrary at the moment, feel free to change to fit your needs
         // Will get better number once I actually get this sensor
-        otos.calibrateImu(100, true);
+        System.out.println(otos.calibrateImu(255, true));
+        System.out.println("OTOS calibration complete!");
     }
     @Override
     public PoseVelocity2d updatePoseEstimate() {
@@ -103,6 +105,7 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         SparkFunOTOS.Pose2D otosPose = otos.getPosition();
         SparkFunOTOS.Pose2D otosVel = otos.getVelocity();
         pose = OTOSPoseToRRPose(otosPose);
+        lastOtosPose = pose;
 
         // rr standard
         poseHistory.add(pose);
