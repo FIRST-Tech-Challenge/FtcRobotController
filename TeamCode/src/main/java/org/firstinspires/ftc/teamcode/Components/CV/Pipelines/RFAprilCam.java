@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset;
 
+import static java.lang.Double.max;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.ceil;
@@ -65,8 +66,9 @@ public class RFAprilCam {
       UPSAMPLE_THRESHOLD = 20,
       NUMBER_OF_SAMPLES = 2;
   public static int EXPOSURE_MS = 4, GAIN = 5;
+  public static double CONST = -0.005;
   public static double FOCAL_LENGTH = 840;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 4;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 3;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -225,7 +227,7 @@ public class RFAprilCam {
         VectorF p1 = detections.get(0).metadata.fieldPosition;
         VectorF p2 = detections.get(1).metadata.fieldPosition;
         double d1 = detections.get(0).ftcPose.range, d2 = detections.get(1).ftcPose.range;
-        if (/*d1 < UPSAMPLE_THRESHOLD && d2 < UPSAMPLE_THRESHOLD &&*/ abs(currentVelocity.getY())<25) {
+        if (d1 < UPSAMPLE_THRESHOLD && d2 < UPSAMPLE_THRESHOLD && abs(currentVelocity.getY())<25&&max(abs(detections.get(0).center.x-640),abs(detections.get(0).center.x-640))<600) {
           double
               d =
                   sqrt(
@@ -258,39 +260,55 @@ public class RFAprilCam {
           c2 = c2.plus(offset);
           double dist1 = currentPose.vec().distTo(c1), dist2 = currentPose.vec().distTo(c2);
           if (dist1 < dist2) {
-            double theda1 = (detections.get(0).center.x*0.04637490725) - 29.68;
+            double theda1 = 1.08E-03*(detections.get(0).center.x-640) + CONST;
             Vector2d tagPos = new Vector2d(p1.get(0), p1.get(1));
-            double offtheda1 = tagPos.minus(c1.minus(offset)).angle();
-            double theda2 = (detections.get(1).center.x*0.04637490725) - 29.68;
+            double offtheda1 = Angle.normDelta(tagPos.minus(c1.minus(offset)).angle());
+            double theda2 = 1.08E-03*(detections.get(1).center.x-640) + CONST;
             Vector2d tagPos2 = new Vector2d(p2.get(0), p2.get(1));
-            double offtheda2 = tagPos2.minus(c1.minus(offset)).angle();
+            double offtheda2 = Angle.normDelta(tagPos2.minus(c1.minus(offset)).angle());
             poseCount++;
-            theda1*=PI/180;
-            theda2*=PI/180;
             packet.put("id", detections.get(0).id);
             packet.put("coord", detections.get(0).center.x);
             packet.put("thea1", theda1*180/PI);
             packet.put("offtehda", offtheda1*180/PI);
-            camPoseError = camPoseError.plus(new Pose2d(c1, /*((Angle.norm(theda1+offtheda1+theda2+offtheda2))*.5)+PI)*/0).minus(new Pose2d(currentPose.vec(),0)));
+            packet.put("predictedThea", (theda1+offtheda1)*180/PI + 180);
+            packet.put("id2", detections.get(1).id);
+            packet.put("coord2", detections.get(1).center.x);
+            packet.put("thea2", theda2*180/PI);
+            packet.put("offtehda2", offtheda2*180/PI);
+            packet.put("predictedThea2", (theda2+offtheda2)*180/PI + 180);
+            packet.put("angle", Angle.normDelta((theda1+offtheda1+theda2+offtheda2)*.5+PI));
+            camPoseError = camPoseError.plus(new Pose2d(c1, (((theda1+offtheda1+theda2+offtheda2)*.5+PI)))).minus(currentPose);
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample) ;
             LOGGER.log("camPoseError" + camPoseError);
           } else {
-            double theda1 = (detections.get(0).center.x*0.04637490725) - 29.68;
+            double theda1 = 1.08E-03*(detections.get(0).center.x-640) + CONST;
             Vector2d tagPos = new Vector2d(p1.get(0), p1.get(1));
-            double offtheda1 = tagPos.minus(c2.minus(offset)).angle();
-            double theda2 = (detections.get(1).center.x*0.04637490725) - 29.68;
+            double offtheda1 = Angle.normDelta(tagPos.minus(c2.minus(offset)).angle());
+            double theda2 = 1.08E-03*(detections.get(1).center.x-640) + CONST;
             Vector2d tagPos2 = new Vector2d(p2.get(0), p2.get(1));
-            double offtheda2 = tagPos2.minus(c2.minus(offset)).angle();
+            double offtheda2 = Angle.normDelta(tagPos2.minus(c2.minus(offset)).angle());
             poseCount++;
-            theda1*=PI/180;
-            theda2*=PI/180;
             packet.put("id", detections.get(0).id);
             packet.put("coord", detections.get(0).center.x);
             packet.put("thea1", theda1*180/PI);
             packet.put("offtehda", offtheda1*180/PI);
-            camPoseError = camPoseError.plus(new Pose2d(c2, /*((Angle.norm(theda1+offtheda1+theda2+offtheda2))*.5)+PI)*/0).minus(new Pose2d(currentPose.vec(),0)));
+            packet.put("predictedThea", (theda1+offtheda1)*180/PI + 180);
+            packet.put("id2", detections.get(1).id);
+            packet.put("coord2", detections.get(1).center.x);
+            packet.put("thea2", theda2*180/PI);
+            packet.put("offtehda2", offtheda2*180/PI);
+            packet.put("predictedThea2", (theda2+offtheda2)*180/PI + 180);
+            packet.put("angle", Angle.normDelta((theda1+offtheda1+theda2+offtheda2)*.5+PI));
+            camPoseError = camPoseError.plus(new Pose2d(c2, (((theda1+offtheda1+theda2+offtheda2)*.5+PI)))).minus(currentPose);
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample) ;
             LOGGER.log("camPoseError" + camPoseError);
+          }
+          for(AprilTagDetection i : detections){
+            if(i.id == 5){
+              packet.put("pix_off", i.center.x-640);
+              packet.put("dist", i.ftcPose.range);
+            }
           }
           if (poseCount >= NUMBER_OF_SAMPLES) {
                       LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
@@ -305,6 +323,7 @@ public class RFAprilCam {
           packet.put("c2", c2);
         }
       }
+
       packet.put("det size", detections.size());
 
       //      for (AprilTagDetection detection : detections) {

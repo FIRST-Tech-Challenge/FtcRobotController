@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
 import static org.firstinspires.ftc.teamcode.Robots.BradBot.intakeFInishTIme;
 
+import static java.lang.Math.decrementExact;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -60,6 +61,7 @@ public class Intake extends RFMotor {
   double TICKS_PER_REV = 52;
 
   double curPower=0;
+  double upperTime =0;
 
   /** initializes all the hardware, logs that hardware has been initialized */
   public Intake() {
@@ -86,6 +88,7 @@ public class Intake extends RFMotor {
     pixeled = !isTeleop;
     curPower=0;
     lastSequenceTime = -100;
+    intakeFInishTIme=-100;
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -185,7 +188,7 @@ public class Intake extends RFMotor {
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
     if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=-REVERSE_POWER;
     if(!isTeleop)
-      setRawPower(0.6);
+      setRawPower(0.7);
       intakeFInishTIme = time;
     }
     REVERSING.setStateTrue();
@@ -312,6 +315,7 @@ public class Intake extends RFMotor {
       intakeServo.setPosition(FIVE-autoOff);
     }
   }
+
   public boolean intakeSequence(){
     if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-INTAKE_POWER;nowPixel=pixels;lastSequenceTime=time;}
     IntakeStates.INTAKING.setStateTrue();
@@ -361,6 +365,11 @@ public class Intake extends RFMotor {
   public boolean intakePath(){
     return intakePath;
   }
+  public void intaking(){
+    setRawPower(-0.8);
+    curPower=-0.8;
+    upperTime = time;
+  }
 
   /**
    * updates the state machine, log in general and intake surface updates sensor information,
@@ -377,6 +386,10 @@ public class Intake extends RFMotor {
 //    double voltage = BasicRobot.voltageSensor.getVoltage();
     currentThresh = CUR_THRESH+(0.4*(voltage-12)/2);
     packet.put("currentThresh", currentThresh);
+    if(time-upperTime>.5){
+      setRawPower(0);
+      curPower=0;
+    }
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();

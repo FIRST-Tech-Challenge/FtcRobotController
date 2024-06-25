@@ -44,7 +44,7 @@ public class Queuer {
    * which element is currently being executed determines if currently queued element should run
    *
    * @param p_asynchronous is the function asynchronous
-   * @param p_done_condition is the function done
+   * @param p_done_condition condition that becomes true when the function done
    * @return if the function should run
    */
   public boolean queue(boolean p_asynchronous, boolean p_done_condition) {
