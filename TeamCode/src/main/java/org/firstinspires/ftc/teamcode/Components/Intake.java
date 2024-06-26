@@ -40,6 +40,7 @@ public class Intake extends RFMotor {
   private final double INTAKE_POWER = 1.0;
   private final double REVERSE_POWER = -0.7;
   double lastSequenceTime = -100, nowPixel = 0;
+  boolean upped = false;
 
   private boolean full = false, goofed = false;
   private int storPixel=0;
@@ -367,8 +368,11 @@ public class Intake extends RFMotor {
   }
   public void intaking(){
     setRawPower(-0.8);
-    curPower=-0.8;
     upperTime = time;
+    upped = true;
+//    if(isTeleop){
+//      upperTime+=.4;
+//    }
   }
 
   /**
@@ -386,9 +390,11 @@ public class Intake extends RFMotor {
 //    double voltage = BasicRobot.voltageSensor.getVoltage();
     currentThresh = CUR_THRESH+(0.4*(voltage-12)/2);
     packet.put("currentThresh", currentThresh);
-    if(time-upperTime>.5){
+    if(upped&&time-upperTime>.4){
+      stopIntake();
       setRawPower(0);
       curPower=0;
+      upped=false;
     }
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());

@@ -1174,10 +1174,11 @@ public class BradBot extends BasicRobot {
         }
         if (GRAB.state && !Arm.ArmTargetStates.HOVER.getState() && lift.getCurrentPosition() < 20) {
             claw.flipTo(Claw.clawTargetStates.GRAB);
-            intake.intaking();
         }
+
         if (Claw.clawStates.GRAB.getState() && GRAB.state) {
             arm.flipTo(HOVER);
+            intake.intaking();
         }
     }
 

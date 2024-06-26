@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 @Config
 public class Claw extends RFServo {
-  public static double GRAB_POS = 0.15,
-      CLOSE_POS = 0.4,
-      FLIP_TIME = 0.1, GRAB2=0.7, CLOSE2 = 0.45;
+  public static double GRAB_POS = 0.24,
+      CLOSE_POS = 0.38,
+      FLIP_TIME = 0.1, GRAB2=0.68, CLOSE2 = 0.47;
   private double lastTime = 0;
   private Servo servo2;
   public Claw() {
