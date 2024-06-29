@@ -44,7 +44,7 @@ public class RedLongWall22 extends LinearOpMode {
             robot.trussToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoardTruss();
-            robot.intake.setPower(0);
+            robot.intakeMotor.setPower(0);
 
             robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);

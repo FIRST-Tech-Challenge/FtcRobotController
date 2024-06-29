@@ -26,6 +26,11 @@ public class Outtake {
         return 0;
     }
 
+    public void setState (double currentTicks, double currentTargetTicks, OuttakeState state) {
+        state.setCurrentTicks(currentTicks);
+        state.setCurrentTargetTicks(currentTargetTicks);
+    }
+
     public double getCLAMP_OPEN_POS () {
         return CLAMP_OPEN_POS;
     }
