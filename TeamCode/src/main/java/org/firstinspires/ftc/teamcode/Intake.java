@@ -6,16 +6,19 @@ public class Intake {
 
     DcMotor wheelMotor;
 
+    public static final double P_CONSTANT = 0.01;
+
     public Intake(Robot robot) {
         this.wheelMotor = robot.intakeMotor;
     }
 
-    public double intakeTestSequencePower(GenericState conditionState, IntakeState state) {
+    public double intakeToTicksParallelPowerPSequence(GenericState conditionState, IntakeState state) {
         if (conditionState.isDone()) {
-            if (!state.isDone() && state.getOpMode().opModeIsActive()) {
-                return 1000;
+            if(!state.isDone() && state.getOpMode().opModeIsActive()) {
+                return P_CONSTANT * state.getError();
             }
         }
+
         return 0;
     }
 
