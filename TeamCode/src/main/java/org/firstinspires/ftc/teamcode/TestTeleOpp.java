@@ -27,12 +27,16 @@ public class TestTeleOpp extends LinearOpMode {
             robot.droneLauncher.setState(robot.planeLauncher.getCurrentPosition(), 1000,droneLauncherState);
 
             //sequence 1
-            robot.intake.wheelMotor.setPower(robot.intake.intakeTestSequencePower(trueState, intakeState));
-            robot.outtake.lsFront.setPower(robot.outtake.lsParallelPowerPSequence(intakeState, outtakeState, 1));
-            robot.outtake.lsBack.setPower(-1 * (robot.outtake.lsParallelPowerPSequence(intakeState, outtakeState, 1)));
+            robot.intake.wheelMotor.setPower(robot.intake.intakeToTicksParallelPowerPSequence(trueState, intakeState));
+            robot.outtake.lsFront.setPower(robot.outtake.lsToTicksParallelPowerPSequence(intakeState, outtakeState, 1));
+            robot.outtake.lsBack.setPower(-1 * (robot.outtake.lsToTicksParallelPowerPSequence(intakeState, outtakeState, 1)));
 
             //sequence 2
-            robot.droneLauncher.testDroneMotorSequencePower(trueState, droneLauncherState);
+            robot.droneLauncher.wheelParallelPowerPSequence(trueState, droneLauncherState);
+
+            if (intakeState.isDone() && outtakeState.isDone() && droneLauncherState.isDone()) {
+                break;
+            }
         }
 
 //        robot.lsFront.setPower(0.001 * (outtakeState.getError()));

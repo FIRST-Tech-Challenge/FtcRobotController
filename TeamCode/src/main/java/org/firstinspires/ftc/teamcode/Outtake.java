@@ -17,7 +17,7 @@ public class Outtake {
         lsBack = robot.lsBack;
     }
 
-    public double lsParallelPowerPSequence(GenericState conditionState, OuttakeState state, double maxPower) {
+    public double lsToTicksParallelPowerPSequence(GenericState conditionState, OuttakeState state, double maxPower) {
         if (conditionState.isDone()) {
             if (!state.isDone() && state.getOpMode().opModeIsActive()) {
                 return Range.clip(state.getError() * P_CONSTANT, -maxPower, maxPower);

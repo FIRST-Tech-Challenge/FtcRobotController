@@ -8,15 +8,20 @@ public class DroneLauncher {
     DcMotor wheel;
     Servo engageServo;
 
+    public static final double P_CONSTANT = 0.01;
+
     public DroneLauncher(Robot robot) {
         this.wheel = robot.planeLauncher;
         this.engageServo = robot.planeLauncherServo;
     }
 
-    public int testDroneMotorSequencePower(GenericState conditionState, DroneLauncherState state) {
-        if (!state.isDone() && state.getOpMode().opModeIsActive()) {
-            return 500;
+    public double wheelParallelPowerPSequence(GenericState conditionState, DroneLauncherState state) {
+        if (conditionState.isDone()) {
+            if (!state.isDone() && state.getOpMode().opModeIsActive()) {
+                return P_CONSTANT * state.getError();
+            }
         }
+
         return 0;
     }
 
