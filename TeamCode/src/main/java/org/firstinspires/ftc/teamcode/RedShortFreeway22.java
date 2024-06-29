@@ -49,7 +49,7 @@ public class RedShortFreeway22 extends LinearOpMode {
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
-            robot.intake.setPower(0);
+            robot.intakeMotor.setPower(0);
             robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 

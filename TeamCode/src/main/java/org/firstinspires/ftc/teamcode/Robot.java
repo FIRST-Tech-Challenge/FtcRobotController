@@ -26,6 +26,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 public class Robot {
+    public final Outtake outtake;
+    public final Intake intake;
+    public final DroneLauncher droneLauncher;
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
@@ -36,7 +39,7 @@ public class Robot {
     DcMotor fRight;
     public DcMotor bLeft;
     DcMotor bRight;
-    DcMotor intake;
+    DcMotor intakeMotor;
     DcMotor lsBack;
     DcMotor lsFront;
     Servo tray;
@@ -61,7 +64,7 @@ public class Robot {
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     boolean isRedAlliance;
-    boolean testingOnBert = true;
+    boolean testingOnBert = false;
     boolean allowTrayAngle = false;
     boolean allowTrayAngleOverride = false;
     double hardStopTrayAngleBig;
@@ -122,7 +125,7 @@ public class Robot {
         }
 
         if (!testingOnBert) {
-            intake = hardwareMap.dcMotor.get("intake");
+            intakeMotor = hardwareMap.dcMotor.get("intake");
             lsFront = hardwareMap.dcMotor.get("lsFront");
             lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lsBack = hardwareMap.dcMotor.get("lsBack");
@@ -142,6 +145,14 @@ public class Robot {
             fLeftMecanumController = new PIDController("fl mecanum", 0.005, 0.0000005, 0.4, true); //0.01 - 0.0001
             bRightMecanumController = new PIDController("br mecanum", 0.005, 0.0000005, 0.4, true);
             setHeadingController = new PIDController("set heading", 0.06, 0, 2_500_000, false);
+
+            outtake = new Outtake(this);
+            intake = new Intake(this);
+            droneLauncher = new DroneLauncher(this);
+        } else {
+            outtake = null;
+            intake = null;
+            droneLauncher = null;
         }
     }
 
@@ -398,15 +409,15 @@ public class Robot {
     }
 
     public void setUpIntakeOuttake() {
-        intake = hardwareMap.dcMotor.get("intake");
+        intakeMotor = hardwareMap.dcMotor.get("intake");
         lsBack = hardwareMap.dcMotor.get("lsBack");
         lsFront = hardwareMap.dcMotor.get("lsFront");
 
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
         lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -1424,11 +1435,11 @@ public class Robot {
             if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
                 // do nothing
             } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
-                intake.setPower(-1);
+                intakeMotor.setPower(-1);
             } else if (gamepad2.left_bumper) { // left bumper - regurgitate
-                intake.setPower(1);
+                intakeMotor.setPower(1);
             } else { // neither - stop
-                intake.setPower(0);
+                intakeMotor.setPower(0);
             }
 
             //b to use slow linear slide
@@ -1934,7 +1945,7 @@ public class Robot {
 
         opMode.sleep(delay);
 
-        intake.setPower(-1);
+        intakeMotor.setPower(-1);
 
         if (isRedAlliance) {
             Log.d("freeway", "free");
@@ -1964,7 +1975,7 @@ public class Robot {
         closeClamp(true);
         opMode.sleep(100);
 
-        intake.setPower(1);
+        intakeMotor.setPower(1);
 
         if (!isRedAlliance) {
             mecanumBlocking2(-1);
@@ -2267,7 +2278,7 @@ public class Robot {
             straightBlocking2FixHeading(102.5);
         }
 
-        intake.setPower(-1);
+        intakeMotor.setPower(-1);
 
         if (isRedAlliance) {
             if (isLong) {
@@ -2327,7 +2338,7 @@ public class Robot {
         closeClamp(true);
 
         //regurgitate
-        intake.setPower(1);
+        intakeMotor.setPower(1);
         opMode.sleep(100);
 
         straightBlocking2FixHeading(-99.5);
