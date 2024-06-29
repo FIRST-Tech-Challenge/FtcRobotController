@@ -11,6 +11,8 @@ public class PressedTest extends LinearOpMode {
 
         waitForStart();
 
+        ButtonHandler buttonHandler = new ButtonHandler();
+
         if (isStopRequested()) return;
 
         boolean pressedLastIteration = false;
@@ -18,8 +20,12 @@ public class PressedTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             boolean gamepad1A_pressed = gamepad1.a;
+            boolean gamepad1B_pressed = gamepad1.b;
 
-            if (gamepad1A_pressed & !pressedLastIteration) {
+            if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
+                //DO STUFF
+            }
+            if (gamepad1B_pressed & !pressedLastIteration) {
                 //DO STUFF
             }
 
