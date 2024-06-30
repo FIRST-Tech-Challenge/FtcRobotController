@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Disabled
 @TeleOp(name = "Motor Test", group = "debug")
-public class MotorTest extends OpMode {
+public class SimpleMotorTest extends OpMode {
     DcMotor motor;
 
     @Override

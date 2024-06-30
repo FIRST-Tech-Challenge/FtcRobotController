@@ -23,7 +23,7 @@ public class CameraServer implements VisionProcessor {
 //        Server server = new Server(port);
 //        server.setHandler(new Handler.Abstract() {
 //            @Override
-//            public boolean handle(Request request, Response response, Callback callback) throws Exception {
+//            public boolean handle(Request request, NanoHTTPD.Response response, Callback callback) throws Exception {
 //                byte[] imageBytes = binaryImg.toArray();
 //                response.write(true, ByteBuffer.allocate(imageBytes.length).put(imageBytes), callback);
 //                callback.succeeded();
