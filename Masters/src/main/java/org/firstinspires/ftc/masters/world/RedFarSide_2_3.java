@@ -93,22 +93,6 @@ public class RedFarSide_2_3 extends FarSideOpMode {
 
 
 
-        //OTHER PATHS
-
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(stackToRightYellow.end())
-                .forward(5)
-
-                .build();
-
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-
-                .build();
-
-
-
         propPos = drive.getPropFindProcessor().position;
 
         waitForStart();
@@ -163,6 +147,7 @@ public class RedFarSide_2_3 extends FarSideOpMode {
                                 nextPath = toStackCycleGateMid;
                                 break;
                         }
+                        backdropDepositPath(State.TO_STACK_CYCLE, nextPath);
                     } else {
                         backdropDepositPath(State.PARK, park);
                     }

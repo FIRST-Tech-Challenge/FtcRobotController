@@ -284,7 +284,7 @@ public class WorldsTeleop extends LinearOpMode {
 
             backSlidesMove(target);
 
-            if (has2Pixels() && outtakeState!=OuttakeState.ReadyToDrop) {
+            if (has2Pixels() && outtakeState!=OuttakeState.ReadyToDrop && outtakeState!=OuttakeState.MoveToDrop) {
                 if (currentTransferStatus== TransferStatus.WAITING_FOR_PIXELS){
                     gamepad1.rumble(5000);
                     currentTransferStatus = TransferStatus.MOVE_ARM;

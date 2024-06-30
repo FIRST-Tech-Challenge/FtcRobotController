@@ -24,7 +24,7 @@ public class RedFarSidePath {
     public static TrajectorySequence getMidPurple(SampleMecanumDrive drive,  Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(-44, -11, Math.toRadians(130)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-47, -11, Math.toRadians(130)), Math.toRadians(90))
                 .build();
     }
 
@@ -39,7 +39,7 @@ public class RedFarSidePath {
 
         return  drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-57, -11.8, Math.toRadians(180)), Math.toRadians(180))
                 .build();
     }
 
@@ -47,7 +47,7 @@ public class RedFarSidePath {
 
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(-57, -11.8, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-57, -12, Math.toRadians(180)), Math.toRadians(180))
                 .build();
     }
 
@@ -56,7 +56,7 @@ public class RedFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -37, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -36, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class RedFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(20, -11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -30, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -31.5, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -74,7 +74,16 @@ public class RedFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -28, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -29, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+    }
+
+    public static TrajectorySequence getStackToLeftYellowWMI(SampleMecanumDrive drive, Pose2d startPose) {
+
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(25, -11.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(40, -29, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 

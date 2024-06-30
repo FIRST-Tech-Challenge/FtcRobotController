@@ -60,8 +60,8 @@ public class CSCons {
     public static double wristFlatLeft =0.745; //
     public static double wristVerticalDown=1;
 
-    public static double droneFlat = 0.59;
-    public static double droneShooting = 0.2;
+    public static double droneFlat = 1;
+    public static double droneShooting = 0.1;
 
     public static double closeClawDistance = 3; //in cm
 

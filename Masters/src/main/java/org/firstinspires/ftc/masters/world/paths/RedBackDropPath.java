@@ -21,7 +21,7 @@ public class RedBackDropPath {
     public static TrajectorySequence getLeftPurple (SampleMecanumDrive drive,  Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(-220))
-                .splineToLinearHeading(new Pose2d(10, -30, Math.toRadians(180)), Math.toRadians(-70-180))
+                .splineToLinearHeading(new Pose2d(11, -30, Math.toRadians(180)), Math.toRadians(-70-180))
 
                 .build();
     }

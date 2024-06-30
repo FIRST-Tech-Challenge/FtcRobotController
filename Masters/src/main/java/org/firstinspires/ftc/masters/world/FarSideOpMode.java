@@ -101,6 +101,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
         drive.raiseIntake();
         drive.closeFrontFingers();
+        drive.initPlane();
 
     }
 
@@ -137,7 +138,6 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected void purpleDeposit(){
-
 
         if (!drive.isBusy()){
             if (depositTime==null){
@@ -292,6 +292,10 @@ public abstract class FarSideOpMode extends LinearOpMode {
         if (propPos== PropFindRightProcessor.pos.RIGHT){
             return CSCons.OuttakeWrist.flatLeft;
         } else
+        return CSCons.OuttakeWrist.flatRight;
+    }
+
+    public CSCons.OuttakeWrist getOuttakeWristPosition(){
         return CSCons.OuttakeWrist.flatRight;
     }
 
