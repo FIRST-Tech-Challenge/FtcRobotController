@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.util.TeamColor;
 
 @TeleOp(name = "Blue Team - Driver")
 public class BlueDriverOpMode extends DriverOpMode {
-
-    protected BlueDriverOpMode() {
-        super(TeamColor.BLUE);
+    @Override
+    public void initialize() {
+        super.initialize(TeamColor.BLUE);
     }
 }

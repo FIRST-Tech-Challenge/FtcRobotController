@@ -4,8 +4,8 @@ package org.firstinspires.ftc.teamcode.maps;
  * Contains all motors
  * <pre>
  *  {@code
- *  ARM("arm"),
- *  JOINT("joint");
+ *  ARM("arm", 288, 6000),
+ *  JOINT("joint", 24, 500);
  *  }
  * </pre>
  **/

@@ -4,10 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PController;
 
-import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubSystem;
+import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubsystem;
 
 public class TankRotateRobotByDegCommand extends CommandBase {
-    private TankDriveBaseSubSystem driveBaseSubsystem;
+    private TankDriveBaseSubsystem driveBaseSubsystem;
     private PController pController;
 
     public static final double defaultKp = 0.05f;
@@ -20,7 +20,7 @@ public class TankRotateRobotByDegCommand extends CommandBase {
 
     private double STARTING_ANGLE;
 
-    public TankRotateRobotByDegCommand(TankDriveBaseSubSystem driveBaseSubsystem, double degToRotate, double kp) {
+    public TankRotateRobotByDegCommand(TankDriveBaseSubsystem driveBaseSubsystem, double degToRotate, double kp) {
         addRequirements(driveBaseSubsystem);
         this.driveBaseSubsystem = driveBaseSubsystem;
         this.pController = new PController(kp);
@@ -28,7 +28,7 @@ public class TankRotateRobotByDegCommand extends CommandBase {
         this.degToRotate = degToRotate;
     }
 
-    public TankRotateRobotByDegCommand(TankDriveBaseSubSystem driveBaseSubsystem, double degToRotate) {
+    public TankRotateRobotByDegCommand(TankDriveBaseSubsystem driveBaseSubsystem, double degToRotate) {
         this(driveBaseSubsystem, degToRotate, defaultKp);
     }
 

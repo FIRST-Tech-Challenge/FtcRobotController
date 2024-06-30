@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.maps.MotorMap;
 
-public class TankDriveBaseSubSystem extends SubsystemBase {
+public class TankDriveBaseSubsystem extends SubsystemBase {
     // motors tick per rev
     public static final double TICKS_PER_REV = 288;
 
@@ -31,7 +31,7 @@ public class TankDriveBaseSubSystem extends SubsystemBase {
     private final MotorEx leftMotor, rightMotor;
     private final BHI260IMU imu;
 
-    public TankDriveBaseSubSystem(final HardwareMap hMap, MotorMap leftMotor, MotorMap rightMotor) {
+    public TankDriveBaseSubsystem(final HardwareMap hMap, MotorMap leftMotor, MotorMap rightMotor) {
         this.rightMotor = new MotorEx(hMap, rightMotor.getId());
         this.leftMotor = new MotorEx(hMap, leftMotor.getId());
         this.rightMotor.setInverted(true);

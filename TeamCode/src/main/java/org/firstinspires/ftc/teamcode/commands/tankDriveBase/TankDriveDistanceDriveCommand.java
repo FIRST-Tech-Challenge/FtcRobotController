@@ -5,11 +5,11 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PController;
 
-import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubSystem;
+import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubsystem;
 
 @Config
 public class TankDriveDistanceDriveCommand extends CommandBase {
-    private TankDriveBaseSubSystem driveBaseSubsystem;
+    private TankDriveBaseSubsystem driveBaseSubsystem;
     private PController pController;
 
     public static double Kp = 0.5;
@@ -18,7 +18,7 @@ public class TankDriveDistanceDriveCommand extends CommandBase {
     private double STARTING_POS;
     private final double finalPos;
 
-    public TankDriveDistanceDriveCommand(TankDriveBaseSubSystem driveBaseSubsystem, double meters) {
+    public TankDriveDistanceDriveCommand(TankDriveBaseSubsystem driveBaseSubsystem, double meters) {
         addRequirements(driveBaseSubsystem);
         this.driveBaseSubsystem = driveBaseSubsystem;
         this.finalPos = meters;
@@ -41,7 +41,7 @@ public class TankDriveDistanceDriveCommand extends CommandBase {
         double driveDistance = (this.driveBaseSubsystem.getLeftWheelDistanceDriven() - this.STARTING_POS);
 
         double rawPower = this.pController.calculate(driveDistance);
-        rawPower += Math.signum(rawPower) * TankDriveBaseSubSystem.Ks;
+        rawPower += Math.signum(rawPower) * TankDriveBaseSubsystem.Ks;
 
         double power = Math.min(Math.max(rawPower, -MAX_POWER), MAX_POWER);
 
