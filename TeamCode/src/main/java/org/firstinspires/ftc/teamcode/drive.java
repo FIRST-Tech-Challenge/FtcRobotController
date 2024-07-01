@@ -25,23 +25,28 @@ public class drive extends LinearOpMode {
 
         while(opModeIsActive()) {
             double y = gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x * 1.1;
-            double rx = gamepad1.right_stick_x;
+            double x = gamepad1.left_stick_x;
+            double rx = -gamepad1.right_stick_x;
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double leftPower = (y + x + rx) / denominator;
-            double rightPower = (y - x - rx) / denominator;
+            double denominator = Math.max(Math.abs(y) + Math.abs(rx), 1);
+            double leftPower = (y + rx) / denominator;
+            double rightPower = (y - rx) / denominator;
             double middlePower = (x) / denominator;
 
+            leftMotor.setPower(leftPower);
+            rightMotor.setPower(rightPower);
 
-            if (x > 0.2) {
-                middleMotor.setPower(middlePower);
+            if (y >= -0.2 && y <= 0.2) {
+                middleMotor.setPower(middlePower * 2);
             } else {
-                leftMotor.setPower(leftPower);
-                rightMotor.setPower(rightPower);
+                middleMotor.setPower(0);
             }
-
-
+             
+            telemetry.addData("X Value", x);
+            telemetry.addData("Left Power", leftPower);
+            telemetry.addData("Right Power", rightPower);
+            telemetry.addData("Middle Power", middlePower);
+            telemetry.update();
 
         }
 
