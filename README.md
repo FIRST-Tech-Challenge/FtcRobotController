@@ -59,6 +59,30 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+## Version 9.2 (20240701-085519)
+
+### Important Notes
+* Java classes and Blocks for TensorFlow Object Detection have been deprecated and will be removed in Version 10.0.
+* The samples that use TensorFlow Object Detection have been removed.
+
+### Enhancements
+* Adds explanatory text to failed items on the inspection activities.  To view the explanatory text tap the red warning icon for a failed item.
+* In the Blocks editor: added a new kind of variable set block that sets the variable and also returns the new value.
+* Changes the way that camera controls behave for a SwitchableCamera. Now, each method (such as getExposure, getMinExposure, getMaxExposure, setExposure for ExposureControl) acts on the currently active camera.
+* Adds support for the REV USB PS4 Compatible Gamepad (REV-31-2983)
+* Adds ConceptAprilTagMultiPortal OpMode
+* Adds support for OctoQuad Quadrature Encoder & Pulse Width Interface Module
+* Adds the ExportAprilTagLibraryToBlocks annotation that indicates that a static method that returns an AprilTagLibrary is exported to the Blocks programming environment. The corresponding block will appear in the Blocks toolbox along with the built-in tag libraries.
+* Adds Blocks OpMode ConceptAprilTagOptimizeExposure.
+* Adds support for the SparkFun Optical Tracking Odometry sensor.
+
+### Bug Fixes
+* Fixes https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/942 where visionPortal.close() can cause an IndexOutOfBoundsError.
+* Fixes a bug in the blocks editor where collapsed function blocks show a warning "Collapsed blocks contain warnings." when the Blocks OpMode is reopened.
+* Fixes a bug where the blocks editor wouldn't warn you that you have unsaved changes when you try to leave. This bug was introduced due to a behavior change in Chrome 119.
+* [Issue #764](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/764) - Get gain control returns a null pointer for a switchable camera
+* Fixes a bug where the correct deadzone for certain gamepads was not applied when Advanced Gamepad Features was enabled
+
 ## Version 9.1 (20240215-115542)
 
 ### Enhancements
