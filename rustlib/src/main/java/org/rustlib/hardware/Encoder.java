@@ -1,11 +1,11 @@
 package org.rustlib.hardware;
 
 public interface Encoder {
-    int getPosition();
+    int getTicks();
 
-    void setPosition(int position);
+    void setTicks(int ticks);
 
-    double getVelocity();
+    double ticksPerSecond();
 
     void reset();
 }

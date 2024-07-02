@@ -9,48 +9,70 @@ public class PairedEncoder extends Subsystem implements Encoder {
     private final int polarity;
     DcMotor pairedMotor;
     ElapsedTime timer = new ElapsedTime();
-    private int position = 0;
+    private int ticks = 0;
     private int offset = 0;
     private double lastPosition = 0;
     private double lastTimestamp = 0;
-    private double velocity = 0;
+    private double ticksPerSecond = 0;
+    private final double ticksToPosition;
 
-    public PairedEncoder(DcMotor pairedMotor, boolean reversed) {
+    public PairedEncoder(DcMotor pairedMotor, boolean reversed, double ticksToPosition) {
         this.pairedMotor = pairedMotor;
         pairedMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pairedMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         polarity = reversed ? -1 : 1;
+        this.ticksToPosition = ticksToPosition;
+    }
+
+    public PairedEncoder(DcMotor pairedMotor, double ticksToPosition) {
+        this(pairedMotor, false, ticksToPosition);
+    }
+
+    public PairedEncoder(DcMotor pairedMotor, boolean reversed) {
+        this(pairedMotor, reversed, 1.0);
     }
 
     public PairedEncoder(DcMotor pairedMotor) {
-        this(pairedMotor, false);
+        this(pairedMotor, false, 1.0);
     }
 
-    private int calculatePosition() {
-        return position;
+    private int calculateTicks() {
+        return ticks;
     }
 
     @Override
-    public int getPosition() {
+    public int getTicks() {
         return (pairedMotor.getCurrentPosition() + offset) * polarity;
     }
 
-    public void setPosition(int position) {
-        offset = -pairedMotor.getCurrentPosition() + position * polarity;
+    public double getPosition() {
+        return ticks * ticksToPosition;
+    }
+
+    public void setTicks(int ticks) {
+        offset = -pairedMotor.getCurrentPosition() + ticks * polarity;
+    }
+
+    public void setPosition(double position) {
+        setTicks((int) (position / ticksToPosition));
     }
 
     @Override
-    public double getVelocity() {
-        return velocity;
+    public double ticksPerSecond() {
+        return ticksPerSecond;
     }
 
-    private double calculateVelocity() {
-        double position = getPosition();
+    public double getVelocity() {
+        return ticksPerSecond * ticksToPosition;
+    }
+
+    private double calculateTicksPerSecond() {
+        double position = getTicks();
         double timestamp = timer.milliseconds();
-        double velocity = (position - lastPosition) / (timestamp - lastTimestamp);
+        double ticksPerSecond = (position - lastPosition) / (timestamp - lastTimestamp);
         lastPosition = position;
         lastTimestamp = timestamp;
-        return velocity;
+        return ticksPerSecond;
     }
 
     @Override
@@ -60,7 +82,7 @@ public class PairedEncoder extends Subsystem implements Encoder {
 
     @Override
     public void periodic() {
-        position = calculatePosition(); // This is done to ensure that the encoder value is being read in every loop, which allows the hubs to do bulk hardware reading
-        velocity = calculateVelocity();
+        ticks = calculateTicks(); // This is done to ensure that the encoder value is being read in every loop, which allows the hubs to do bulk hardware reading
+        ticksPerSecond = calculateTicksPerSecond();
     }
 }

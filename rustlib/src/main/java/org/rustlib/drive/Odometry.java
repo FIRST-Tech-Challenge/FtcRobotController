@@ -44,9 +44,9 @@ public class Odometry extends Subsystem {
     }
 
     private Pose2d delta() {
-        int currentRightTicks = rightEncoder.getPosition();
-        int currentLeftTicks = leftEncoder.getPosition();
-        int currentBackTicks = backEncoder.getPosition();
+        int currentRightTicks = rightEncoder.getTicks();
+        int currentLeftTicks = leftEncoder.getTicks();
+        int currentBackTicks = backEncoder.getTicks();
 
         double deltaRight = currentRightTicks - lastRight;
         double deltaLeft = currentLeftTicks - lastLeft;
@@ -94,9 +94,9 @@ public class Odometry extends Subsystem {
     }
 
     public Pose2d update() {
-        Rustboard.setNodeValue(".right odometry encoder", rightEncoder.getPosition());
-        Rustboard.setNodeValue(".left odometry encoder", leftEncoder.getPosition());
-        Rustboard.setNodeValue(".back odometry encoder", backEncoder.getPosition());
+        Rustboard.setNodeValue(".right odometry encoder", rightEncoder.getTicks());
+        Rustboard.setNodeValue(".left odometry encoder", leftEncoder.getTicks());
+        Rustboard.setNodeValue(".back odometry encoder", backEncoder.getTicks());
         Pose2d delta = delta();
         pose = pose.add(new Pose2d(delta.rotate(pose.rotation.getAngleRadians()), new Rotation2d(delta.rotation.getAngleRadians())));
         return pose;

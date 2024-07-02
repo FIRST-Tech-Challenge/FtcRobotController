@@ -95,7 +95,7 @@ public abstract class Robot extends RobotBase {
     public void mainLoop() {
         Rustboard.setNodeValue("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
         botPose = drive.getOdometry().getPose();
-        slidePose = slide.encoder.getPosition();
+        slidePose = slide.encoder.getTicks();
     }
 
     private Path getToBackdropPath(Waypoint backdropWaypoint) {

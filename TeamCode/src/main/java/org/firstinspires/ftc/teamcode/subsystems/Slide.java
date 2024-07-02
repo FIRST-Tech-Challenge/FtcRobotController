@@ -40,8 +40,8 @@ public class Slide extends Subsystem {
         controller = new PIDController(0.0017, 0.0000008, 0.000003);
         controller.resetIntegralOnSetPointChange = true;
 
-        new Trigger(() -> encoder.getPosition() > SubsystemConstants.Slide.preparePlacerPosition && encoder.getVelocity() > 0).onTrue(new InstantCommand(placer::placePosition));
-        new Trigger(() -> encoder.getPosition() < SubsystemConstants.Slide.stowPlacerPosition && targetPosition < 10 || encoder.getVelocity() < -400).onTrue(new InstantCommand(placer::storagePosition));
+        new Trigger(() -> encoder.getTicks() > SubsystemConstants.Slide.preparePlacerPosition && encoder.ticksPerSecond() > 0).onTrue(new InstantCommand(placer::placePosition));
+        new Trigger(() -> encoder.getTicks() < SubsystemConstants.Slide.stowPlacerPosition && targetPosition < 10 || encoder.ticksPerSecond() < -400).onTrue(new InstantCommand(placer::storagePosition));
     }
 
     private static boolean gamepadActive(double input) {
@@ -50,15 +50,15 @@ public class Slide extends Subsystem {
 
     public void mizoom(double input) {
         double calculatedSpeed;
-        if (gamepadActive(input) && !(input > 0 && encoder.getPosition() > SubsystemConstants.Slide.maxExtensionPosition)) { // If manual control is both requested and allowed
+        if (gamepadActive(input) && !(input > 0 && encoder.getTicks() > SubsystemConstants.Slide.maxExtensionPosition)) { // If manual control is both requested and allowed
             calculatedSpeed = input + feedforward;
             lastInput = input;
         } else { // If automatic control is requested or manual control is not allowed
             if (gamepadActive(lastInput)) {
-                targetPosition = encoder.getPosition();
+                targetPosition = encoder.getTicks();
             }
-            calculatedSpeed = controller.calculate(encoder.getPosition(), targetPosition) + feedforward;
-            if (encoder.getPosition() < 125 && targetPosition < 80) {
+            calculatedSpeed = controller.calculate(encoder.getTicks(), targetPosition) + feedforward;
+            if (encoder.getTicks() < 125 && targetPosition < 80) {
                 calculatedSpeed -= 0.5;
             }
             lastInput = 0;
@@ -90,7 +90,7 @@ public class Slide extends Subsystem {
     }
 
     public boolean atTargetPosition() {
-        return Math.abs(targetPosition - encoder.getPosition()) < SubsystemConstants.Slide.maxTargetError;
+        return Math.abs(targetPosition - encoder.getTicks()) < SubsystemConstants.Slide.maxTargetError;
     }
 
     @Override
@@ -108,8 +108,8 @@ public class Slide extends Subsystem {
         ;
         Rustboard.log(controller.getGains().toString());
         Rustboard.log("feedforward: " + feedforward);
-        Rustboard.setNodeValue("slide pose", encoder.getPosition());
-        Rustboard.setNodeValue("slide velocity", encoder.getVelocity());
+        Rustboard.setNodeValue("slide pose", encoder.getTicks());
+        Rustboard.setNodeValue("slide velocity", encoder.ticksPerSecond());
         Rustboard.setNodeValue("slide target", targetPosition);
         Rustboard.setNodeValue("slide limit", limit.isPressed());
     }

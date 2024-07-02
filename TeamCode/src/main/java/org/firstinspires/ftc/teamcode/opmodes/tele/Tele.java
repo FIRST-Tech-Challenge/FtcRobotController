@@ -62,7 +62,7 @@ public class Tele extends Robot {
         payloadController.rightBumper.onTrue(new SlideToPosition(slide, SubsystemConstants.Slide.defaultPlacePosition));
         payloadController.options.whileTrue(new SlideCalibrate(slide));
         payloadController.options.and(payloadController.b).onTrue(new InstantCommand(() -> slide.encoder.reset()));
-        slide.encoder.setPosition(slidePose); // Set the slide position to the last slide position in autonomous
+        slide.encoder.setTicks(slidePose); // Set the slide position to the last slide position in autonomous
 
         payloadController.a.onTrue(new InstantCommand(() -> placer.open()));
         payloadController.b.onTrue(new InstantCommand(() -> placer.close()));
