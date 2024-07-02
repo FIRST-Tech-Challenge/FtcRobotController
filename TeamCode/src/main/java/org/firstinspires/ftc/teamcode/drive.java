@@ -28,9 +28,9 @@ public class drive extends LinearOpMode {
 
         float defaultPower = 2;
 
-        boolean servoFirst= true;
-        boolean servoMiddle = false;
-        boolean servoLast = false;
+        boolean servoFirstPos = true;
+        boolean servoMiddlePos = false;
+        boolean servoLastPos = false;
 
         waitForStart();
 
@@ -57,46 +57,35 @@ public class drive extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             backRightMotor.setPower(backRightPower);
 
-
             boolean gamepad1A_pressed = gamepad1.a;
             boolean gamepad1B_pressed = gamepad1.b;
 
             if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
+                if (servoFirstPos){
+                    servoFlag.setPosition(0.25);
+                    servoFirstPos = false;
+                    servoMiddlePos = true;
 
-                if(servoFirst) {
-                    servoFlag.setPosition(1.0);
-                    servoMiddle = true;
-                    servoFirst = false;
-
-                } else if(servoMiddle == true) {
+                } else if (servoMiddlePos == true){
                     servoFlag.setPosition(0.5);
-                    servoLast = true;
-                    servoMiddle = false;
-
-                } else if(servoLast == true) {
-                    servoFlag.setPosition(0.0);
-                    servoFirst = true;
-                    servoLast = false;
+                    servoMiddlePos = false;
+                    servoLastPos = true;
+                }else if (servoLastPos == true){
+                    servoFlag.setPosition(1);
+                    servoLastPos = false;
+                    servoFirstPos = true;
                 }
-
             }
             if (buttonHandler.isPressedOnceB(gamepad1B_pressed)) {
                 servoFlag.setPosition(0);
                 telemetry.addData("B", gamepad1B_pressed);
             }
 
-
-
-
-
             telemetry.addData("X Value", x);
             telemetry.addData("frontLeftPower", frontLeftPower);
             telemetry.addData("backRightPower", backRightPower);
             telemetry.addData("backLeftPower", backLeftPower);
             telemetry.addData("frontRightPower", frontRightPower);
-            telemetry.addData("servoFirst", servoFirst);
-            telemetry.addData("servoMiddle", servoMiddle);
-            telemetry.addData("servoLast", servoLast);
             telemetry.update();
 
         }
