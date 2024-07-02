@@ -4,20 +4,27 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class drive extends LinearOpMode {
-    private DcMotor leftMotor; // location 2
-    private DcMotor rightMotor; // location 1
-    private DcMotor middleMotor; // location 0
+    private DcMotor frontLeftMotor; // location 0
+    private DcMotor frontRightMotor; // location 1
+    private DcMotor backLeftMotor; // location 3
+    private DcMotor backRightMotor; // location 2
+    private Servo servoFlag;
+
     @Override
     public void runOpMode()  {
 
-        leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
-        rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
-        middleMotor = hardwareMap.get(DcMotor.class, "middleMotor");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
+        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        servoFlag = hardwareMap.get(Servo.class, "servoFlag");
 
-        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -28,24 +35,22 @@ public class drive extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(rx), 1);
-            double leftPower = (y + rx) / denominator;
-            double rightPower = (y - rx) / denominator;
-            double middlePower = (x) / denominator;
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
 
-            leftMotor.setPower(leftPower);
-            rightMotor.setPower(rightPower);
+            frontLeftMotor.setPower(frontLeftPower);
+            frontRightMotor.setPower(frontRightPower);
+            backLeftMotor.setPower(backLeftPower);
+            backRightMotor.setPower(backRightPower);
 
-            if (y >= -0.2 && y <= 0.2) {
-                middleMotor.setPower(middlePower * 2);
-            } else {
-                middleMotor.setPower(0);
-            }
-             
             telemetry.addData("X Value", x);
-            telemetry.addData("Left Power", leftPower);
-            telemetry.addData("Right Power", rightPower);
-            telemetry.addData("Middle Power", middlePower);
+            telemetry.addData("frontLeftPower", frontLeftPower);
+            telemetry.addData("backRightPower", backRightPower);
+            telemetry.addData("backLeftPower", backLeftPower);
+            telemetry.addData("frontRightPower", frontRightPower);
             telemetry.update();
 
         }
