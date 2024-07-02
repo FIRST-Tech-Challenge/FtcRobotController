@@ -26,20 +26,23 @@ public class drive extends LinearOpMode {
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        float defaultPower = 2;
+
+
         waitForStart();
 
         if (isStopRequested()) return;
 
         while(opModeIsActive()) {
             double y = gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
+            double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
+            double frontLeftPower = ((y + x + rx) / denominator) / defaultPower;
+            double backRightPower = ((y + x - rx) / denominator) / defaultPower;
+            double frontRightPower = ((y - x - rx) / denominator) / defaultPower;
+            double backLeftPower = ((y - x + rx) / denominator) / defaultPower;
 
             frontLeftMotor.setPower(frontLeftPower);
             frontRightMotor.setPower(frontRightPower);
