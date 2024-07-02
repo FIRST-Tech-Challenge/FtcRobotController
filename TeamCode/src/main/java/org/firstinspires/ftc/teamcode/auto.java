@@ -38,8 +38,9 @@ public class auto extends OpMode {
     }
     @Override
     public void start() {
-        moveToPos(12, 0.2);
+        moveToPos(24, 0.2);
         servoFlag.setPosition(1);
+        moveToPos(-24, 0.2);
     }
 
     @Override
