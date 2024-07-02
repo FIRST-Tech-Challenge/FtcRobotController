@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
 public class auto extends OpMode {
-    Integer cpr = 28;
-    double gearRatio = 0;
-    double diameter = 2.83;
+    double cpr = 537.7;
+    double gearRatio = 1;
+    double diameter = 3.77;
     double cpi = (cpr * gearRatio)/(Math.PI * diameter);
-    double bias = 1;
+    double bias = 0.7;
     double conversion = cpi * bias;
 
     DcMotor frontLeftMotor; // location 0
@@ -23,7 +23,6 @@ public class auto extends OpMode {
 
     @Override
     public void init() {
-
 
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
@@ -37,11 +36,18 @@ public class auto extends OpMode {
         servoFlag.setPosition(0);
 
     }
+    @Override
+    public void start() {
+        moveToPos(12, 0.2);
+        servoFlag.setPosition(1);
+    }
 
     @Override
     public void loop() {
-        moveToPos(12, 0.2);
-        servoFlag.setPosition(1);
+
+    }
+    @Override
+    public void stop() {
     }
 
     public void moveToPos(double inches, double speed) {
@@ -70,6 +76,5 @@ public class auto extends OpMode {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-        return;
     }
 }
