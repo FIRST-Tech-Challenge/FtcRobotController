@@ -30,8 +30,11 @@ public class auto extends OpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         servoFlag = hardwareMap.get(Servo.class, "servoFlag");
 
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
         servoFlag.setPosition(0.35);
 
