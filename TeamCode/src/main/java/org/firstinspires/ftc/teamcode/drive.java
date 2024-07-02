@@ -26,6 +26,8 @@ public class drive extends LinearOpMode {
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        //Reverse the other motors and sex X to not negative
+
         float defaultPower = 2;
 
         boolean servoFirstPos = true;

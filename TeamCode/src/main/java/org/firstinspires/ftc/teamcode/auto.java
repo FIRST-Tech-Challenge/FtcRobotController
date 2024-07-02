@@ -35,7 +35,6 @@ public class auto extends OpMode {
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-
         servoFlag.setPosition(0.35);
 
     }
