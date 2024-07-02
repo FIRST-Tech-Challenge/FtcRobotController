@@ -62,7 +62,7 @@ public class drive extends LinearOpMode {
 
             if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
                 if (servoFirstPos){
-                    servoFlag.setPosition(0.4);
+                    servoFlag.setPosition(0.35);
                     servoFirstPos = false;
                     servoMiddlePos = true;
 
@@ -71,7 +71,7 @@ public class drive extends LinearOpMode {
                     servoMiddlePos = false;
                     servoLastPos = true;
                 }else if (servoLastPos == true){
-                    servoFlag.setPosition(0.6);
+                    servoFlag.setPosition(0.65);
                     servoLastPos = false;
                     servoFirstPos = true;
                 }
