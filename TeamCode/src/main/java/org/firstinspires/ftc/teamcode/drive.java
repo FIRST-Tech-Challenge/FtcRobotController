@@ -28,14 +28,20 @@ public class drive extends LinearOpMode {
 
         float defaultPower = 2;
 
+        boolean servoFirst= true;
+        boolean servoMiddle = false;
+        boolean servoLast = false;
 
         waitForStart();
+
+        servoFlag.setPosition(0);
 
         ButtonHandler buttonHandler = new ButtonHandler();
 
         if (isStopRequested()) return;
 
         while(opModeIsActive()) {
+
             double y = gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
@@ -56,12 +62,26 @@ public class drive extends LinearOpMode {
             boolean gamepad1B_pressed = gamepad1.b;
 
             if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
-                servoFlag.setPosition(1.0);
-                telemetry.addData("A:", gamepad1A_pressed);
+
+                if(servoFirst) {
+                    servoFlag.setPosition(1.0);
+                    servoMiddle = true;
+                    servoFirst = false;
+
+                } else if(servoMiddle == true) {
+                    servoFlag.setPosition(0.5);
+                    servoLast = true;
+                    servoMiddle = false;
+
+                } else if(servoLast == true) {
+                    servoFlag.setPosition(0.0);
+                    servoFirst = true;
+                    servoLast = false;
+                }
 
             }
             if (buttonHandler.isPressedOnceB(gamepad1B_pressed)) {
-                servoFlag.setPosition(0.4);
+                servoFlag.setPosition(0);
                 telemetry.addData("B", gamepad1B_pressed);
             }
 
@@ -74,6 +94,9 @@ public class drive extends LinearOpMode {
             telemetry.addData("backRightPower", backRightPower);
             telemetry.addData("backLeftPower", backLeftPower);
             telemetry.addData("frontRightPower", frontRightPower);
+            telemetry.addData("servoFirst", servoFirst);
+            telemetry.addData("servoMiddle", servoMiddle);
+            telemetry.addData("servoLast", servoLast);
             telemetry.update();
 
         }
