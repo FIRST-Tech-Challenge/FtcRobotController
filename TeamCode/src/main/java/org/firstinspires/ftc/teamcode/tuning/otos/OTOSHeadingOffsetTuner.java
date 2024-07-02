@@ -18,8 +18,9 @@ public class OTOSHeadingOffsetTuner extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addData("Heading Offset (radians, enter this one into SparkFunOTOSDrive!)",Math.atan2(drive.pose.position.x,drive.pose.position.y));
-            telemetry.addData("Heading Offset (degrees)",Math.toRadians(Math.atan2(drive.pose.position.x,drive.pose.position.y)));
+            drive.updatePoseEstimate();
+            telemetry.addData("Heading Offset (radians, enter this one into SparkFunOTOSDrive!)",Math.atan2(drive.pose.position.y,drive.pose.position.x));
+            telemetry.addData("Heading Offset (degrees)",Math.toDegrees(Math.atan2(drive.pose.position.y,drive.pose.position.x)));
             telemetry.update();
         }
 

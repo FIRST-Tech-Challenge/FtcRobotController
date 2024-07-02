@@ -20,6 +20,7 @@ public class OTOSAngularScalar extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
+            drive.updatePoseEstimate();
             radsTurned += drive.pose.heading.minus(lastHeading);
             lastHeading = drive.pose.heading;
             telemetry.addData("Uncorrected Degrees Turned", Math.toDegrees(radsTurned));
