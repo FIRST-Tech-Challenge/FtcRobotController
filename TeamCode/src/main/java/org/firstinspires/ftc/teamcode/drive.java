@@ -31,6 +31,8 @@ public class drive extends LinearOpMode {
 
         waitForStart();
 
+        ButtonHandler buttonHandler = new ButtonHandler();
+
         if (isStopRequested()) return;
 
         while(opModeIsActive()) {
@@ -48,6 +50,24 @@ public class drive extends LinearOpMode {
             frontRightMotor.setPower(frontRightPower);
             backLeftMotor.setPower(backLeftPower);
             backRightMotor.setPower(backRightPower);
+
+
+            boolean gamepad1A_pressed = gamepad1.a;
+            boolean gamepad1B_pressed = gamepad1.b;
+
+            if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
+                servoFlag.setPosition(1.0);
+                telemetry.addData("A:", gamepad1A_pressed);
+
+            }
+            if (buttonHandler.isPressedOnceB(gamepad1B_pressed)) {
+                servoFlag.setPosition(0.4);
+                telemetry.addData("B", gamepad1B_pressed);
+            }
+
+
+
+
 
             telemetry.addData("X Value", x);
             telemetry.addData("frontLeftPower", frontLeftPower);
