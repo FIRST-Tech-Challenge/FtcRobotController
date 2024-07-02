@@ -34,7 +34,7 @@ public class drive extends LinearOpMode {
 
         waitForStart();
 
-        servoFlag.setPosition(0);
+        servoFlag.setPosition(0.35);
 
         ButtonHandler buttonHandler = new ButtonHandler();
 
