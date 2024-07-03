@@ -148,13 +148,14 @@ public class CSCons {
     }
 
     public enum OuttakeState{
-        ClosingHook, MoveToTransfer, ReadyToTransfer, MoveToDrop, ReadyToDrop, Align, BackUp
+        ClosingHook, MoveToTransfer, ReadyToTransfer, MoveToDrop, ReadyToDrop, Align, BackUp,GrabPixels
     }
 
     public enum DriveMode {
         NORMAL,
         PIXEL_SCORE,
-        END_GAME
+        END_GAME,
+        HANG
     }
 
     public enum ClawPosition{
@@ -180,6 +181,23 @@ public class CSCons {
 
         public double getPosition(){
             return position;
+        }
+    }
+
+    public enum TransferStatus {
+        WAITING_FOR_PIXELS (100),
+        MOVE_ARM (100),
+        MOVE_OUTTAKE(100),
+        CLOSE_FINGERS (500),
+        DONE(0);
+
+        private int waitTime;
+        private TransferStatus(int waitTime){
+            this.waitTime = waitTime;
+        }
+
+        public int getWaitTime() {
+            return waitTime;
         }
     }
 
