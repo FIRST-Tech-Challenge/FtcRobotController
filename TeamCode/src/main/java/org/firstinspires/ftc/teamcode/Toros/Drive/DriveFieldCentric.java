@@ -36,8 +36,8 @@ public class DriveFieldCentric extends LinearOpMode {
         BackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         imu = hardwareMap.get(IMU.class, "imu2");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(

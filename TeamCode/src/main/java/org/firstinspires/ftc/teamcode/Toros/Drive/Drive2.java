@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 
 @TeleOp(name = "MainDrive")
@@ -41,10 +42,10 @@ public class Drive2 extends LinearOpMode {
 
     //Declares the Variables for all of our motors and servos
     private DcMotor FrontLeftMotor;
+    private VoltageSensor volt_prime;
     private DcMotor BackLeftMotor;
     private DcMotor FrontRightMotor;
     private DcMotor BackRightMotor;
-    private DcMotor Railgun;
     private DcMotorEx Arm1;
 
     //Servos
@@ -189,16 +190,15 @@ public class Drive2 extends LinearOpMode {
                     target =-3250;
                 }
 
-                // Airplane launcher
-                if(gamepad2.dpad_left){
-                    Railgun.setPower(1);
-                    sleep(500);
-                } else if (gamepad2.dpad_right) {
-                    Railgun.setPower(0);
-
+                double volts = volt_prime.getVoltage();
+                double battery = 0;
+                if(volts > 12.00){
+                    battery = 100;
+                } else if (volts <= 12) {
+                    battery = volts / 12.00 * 100;
                 }
-
-
+                
+                telemetry.addData("Battery%",battery);
                 telemetry.addData("Speed", speed);
                 initTelemetry();
                 telemetry.update();
@@ -213,7 +213,6 @@ public class Drive2 extends LinearOpMode {
         BackLeftMotor = hardwareMap.get(DcMotor.class, "BackLeftMotor");
         FrontRightMotor = hardwareMap.get(DcMotor.class, "FrontRightMotor");
         BackRightMotor = hardwareMap.get(DcMotor.class, "BackRightMotor");
-        Railgun = hardwareMap.get(DcMotor.class,"Railgun");
         Arm1 = hardwareMap.get(DcMotorEx.class, "Arm");
         //Servos
         Claw1 = hardwareMap.get(Servo.class, "Claw1");
@@ -231,6 +230,7 @@ public class Drive2 extends LinearOpMode {
         Claw2.setDirection(Servo.Direction.REVERSE);
         Claw1.setPosition(0);
         Claw2.setPosition(0);
+        volt_prime = hardwareMap.get(VoltageSensor.class, "Voltsense");
         Claw3.setPosition(0);
 
     }
