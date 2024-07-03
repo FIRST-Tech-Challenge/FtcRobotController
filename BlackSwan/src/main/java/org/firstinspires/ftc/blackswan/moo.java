@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Config
+@Config // Enables FTC Dashboard
 @TeleOp(name = "moo")
 public class moo extends LinearOpMode {
 

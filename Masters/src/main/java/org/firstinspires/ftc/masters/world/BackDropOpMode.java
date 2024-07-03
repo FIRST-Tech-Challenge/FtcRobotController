@@ -108,7 +108,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
 
         drive.raiseIntake();
         drive.closeFingers();
-
+        drive.initPlane();
 
     }
 

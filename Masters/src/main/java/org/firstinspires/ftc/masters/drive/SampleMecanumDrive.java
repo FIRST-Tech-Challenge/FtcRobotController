@@ -474,6 +474,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         outtakeServo1.setPosition(servo1Down);
     }
 
+    public void closeBackFingers(){
+        outtakeServo2.setPosition(servo2Down);
+    }
+
+
     public void openFingers(){
         outtakeServo1.setPosition(servo1Up);
         outtakeServo2.setPosition(servo2Up);
@@ -947,6 +952,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void raiseTransferArm(){
         transferServo.setPosition(CSCons.transferUp);
+    }
+
+    public void initPlane(){
+        planeRaise.setPosition(CSCons.droneFlat);
     }
 
 

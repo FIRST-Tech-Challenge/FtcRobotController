@@ -91,7 +91,6 @@ public class BlueBackDropPath {
                 .setTangent(Math.toRadians(180))
                 .splineToLinearHeading(new Pose2d(44, 58, Math.toRadians(180)), Math.toRadians(0))
                 .build();
-
     }
 
     public static TrajectorySequence toStackWing(SampleMecanumDrive drive, Pose2d startPose) {

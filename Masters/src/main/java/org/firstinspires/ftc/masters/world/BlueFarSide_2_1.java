@@ -59,41 +59,6 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
         parkFromMid = BlueFarSidePath.park(drive, stackToMidYellow.end());
         parkFromLeft = BlueFarSidePath.park(drive, stackToLeftYellow.end());
         parkFromRight = BlueFarSidePath.park(drive, stackToRightYellow.end());
-//
-//        TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
-//                .back(5)
-//                .setTangent(Math.toRadians(0))
-//                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-//                .build();
-//
-//        TrajectorySequence tagAlignMid = drive.trajectorySequenceBuilder(middlePurple.end())
-//                .setTangent(Math.toRadians(0))
-//                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-//                .build();
-//
-//        TrajectorySequence tagAlignRight = drive.trajectorySequenceBuilder(rightPurple.end())
-//                .back(5)
-//                .setTangent(Math.toRadians(0))
-//                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-//                .build();
-//
-//
-//
-//        //OTHER PATHS
-//
-//        TrajectorySequence backAway = drive.trajectorySequenceBuilder(stackToRightYellow.end())
-//                .forward(5)
-//
-//                .build();
-//
-//
-//        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-//                .setTangent(Math.toRadians(0))
-//                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-//
-//                .build();
-
-
 
         propPos = drive.getPropFindProcessor().position;
 

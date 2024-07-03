@@ -58,7 +58,7 @@ public class RedFarSide_2_1 extends FarSideOpMode {
 
         stackToMidYellow = RedFarSidePath.getStackToMidYellow(drive, midPurpleToStack.end());
 
-        stackToLeftYellow = RedFarSidePath.getStackToLeftYellow(drive, leftPurpleToStack.end());
+        stackToLeftYellow = RedFarSidePath.getStackToLeftYellowWMI(drive, leftPurpleToStack.end());
 
         parkFromMid = RedFarSidePath.park(drive, stackToMidYellow.end());
         parkFromLeft = RedFarSidePath.park(drive, stackToLeftYellow.end());

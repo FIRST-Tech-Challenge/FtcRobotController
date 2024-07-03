@@ -25,15 +25,15 @@ import org.firstinspires.ftc.masters.CSCons.DriveMode;
 import org.firstinspires.ftc.masters.CSCons.HookPosition;
 import org.firstinspires.ftc.masters.CSCons.OuttakePosition;
 import org.firstinspires.ftc.masters.CSCons.OuttakeState;
+import org.firstinspires.ftc.masters.components.DriveTrain;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-
 @Config
-@TeleOp(name = "World Teleop", group = "competition")
-public class WorldsTeleop extends LinearOpMode {
+@TeleOp(name = "OC Teleop Refactor", group = "competition")
+public class OneControllerTeleopRefactor extends LinearOpMode {
 
     public enum TransferStatus {
         WAITING_FOR_PIXELS (100),
@@ -66,10 +66,6 @@ public class WorldsTeleop extends LinearOpMode {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private final ElapsedTime runtime = new ElapsedTime();
-    DcMotor leftFrontMotor = null;
-    DcMotor rightFrontMotor = null;
-    DcMotor leftRearMotor = null;
-    DcMotor rightRearMotor = null;
 
     DcMotor backSlides = null;
     DcMotor otherBackSlides = null;
@@ -120,59 +116,69 @@ public class WorldsTeleop extends LinearOpMode {
     private CSCons.IntakeDirection intakeDirection = CSCons.IntakeDirection.OFF;
     private HookPosition hookPosition = HookPosition.OPEN;
 
-
-
-
     @Override
     public void runOpMode() {
         /*
-            Controls
-            --------
-            Gamepad2
-
-            Gamepad1
-
-            --------
-    Drive with sticks intake is the front
-    Four bar position 1-5 auto stack pixels
-    Slides position 1-11 placement on backboard
-    Normal mode - pixel grabbing mode - entered with left stick down
-    TODO: D-pad controls extendo
-    TODO: D-pad up - extendo fully extended with four bar in position 4
-    TODO: D-pad right - extendo out 2/3? with four bar in position 1
-    TODO: D-pad down - extendo out 1/3? with four bar in position 1
-    TODO: D-pad left - extendo fully in and four bar in position 1
-    Buttons
-    TODO: A - claw opens and closes
-    TODO: B - transfers and moves to slide pos 1
-    TODO: X - auto aligns and switches to pixel scoring mode
-    TODO: Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
-    TODO: LB - four bar down (presets)
-    TODO: RB - four bar up (presets)
-    TODO: LT - slides down (presets)
-    TODO: RT - slides up (presets)
-
-    Pixel scoring mode - entered with x while in normal
-    Only moves right and left no forward/ backwards
-    TODO: LT - slides down (presets)
-    TODO: RT - slides up (presets)
-    TODO: Y - press once drop one pixel, hold for drop both pixels
-
-    Endgame mode - entered with right stick down
-    Normal driving
-    TODO: X - Auto aligns on April tag for shooter, raise shooter, shoot
-    TODO: LB - Hang down
-    TODO: RB - Hang up
+    CONTROLS:
+    TODO: Left stick - drive
+    TODO: Triggers - turning
+    DRIVE CONTROLS:
+    TODO: Right stick - intake:
+        up - intake on
+        down - intake reverse
+        right - intake off
+    TODO: D-pad - stack control
+        up - intake top // Done
+        down - intake bottom // Done
+        left - intake down by 1
+        right - stack up by 1
+    TODO: Touchpad:
+        two finger click - drone
+    TODO: stick Buttons:
+        left stick - release transfer
+        right stick - transfer
+    SCORE CONTROLS:
+    TODO: ABXY & Back Bumper - outtake control initial
+        A - outtake vertical
+        Y - outtake vertical flip
+        X - outtake horizontal
+        B - outtake horizontal flip
+        LB - outtake mid
+        RB - outtake high
+        NB - outtake low
+    TODO: ABXY & Back Bumper - outtake control final
+        vertical:
+            A - bottom pixel drop
+            Y - top pixel drop
+        horizontal:
+            X - left pixel drop
+            B - right pixel drop
+        angled right:
+            X - left pixel drop
+            Y - right pixel drop
+        angled left:
+            Y - left pixel drop
+            B - right pixel drop
+        right stick:
+            up - grab
+            down - drop
+            right - drive mode
+        dpad:
+            up - vertical
+            down - vertical flip
+            left - rotate left
+            right - rotate right
+       touchpad:
+            left - flat
+            right - flat flip
+    HANG CONTROLS:
+    TODO: PS button - hang mode
+        sets up hang
+        A - hang
         */
-        leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
-        rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
-        leftRearMotor = hardwareMap.dcMotor.get("backLeft");
-        rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DriveTrain driveTrain = new DriveTrain(hardwareMap);
+        driveTrain.initializeHardware();
 
         backSlides = hardwareMap.dcMotor.get("backSlides");
         otherBackSlides = hardwareMap.dcMotor.get("otherBackSlides");
@@ -200,21 +206,7 @@ public class WorldsTeleop extends LinearOpMode {
 
 
         // Set the drive motor direction:
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
         otherBackSlides.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -284,7 +276,7 @@ public class WorldsTeleop extends LinearOpMode {
 
             backSlidesMove(target);
 
-            if (has2Pixels() && outtakeState!=OuttakeState.ReadyToDrop && outtakeState!=OuttakeState.MoveToDrop) {
+            if (has2Pixels() && outtakeState!=OuttakeState.ReadyToDrop) {
                 if (currentTransferStatus== TransferStatus.WAITING_FOR_PIXELS){
                     gamepad1.rumble(5000);
                     currentTransferStatus = TransferStatus.MOVE_ARM;
@@ -318,7 +310,7 @@ public class WorldsTeleop extends LinearOpMode {
                     intake.setPower(-CSCons.speed);
                     gamepad2.rumble(5000);
                     transferElapsedTime = new ElapsedTime();
-                    currentTransferStatus=TransferStatus.DONE;
+                    currentTransferStatus= TransferStatus.DONE;
 
                 }
 
@@ -334,7 +326,7 @@ public class WorldsTeleop extends LinearOpMode {
                 driveMode = DriveMode.NORMAL;
             }
 
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 target -= 15;
             }
             if (gamepad1.x) {
@@ -346,11 +338,11 @@ public class WorldsTeleop extends LinearOpMode {
             switch (driveMode) {
                 case NORMAL:
 
-                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    driveTrain.drive(gamepad1);
 
                     break;
                 case END_GAME:
-                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    driveTrain.drive(gamepad1);
                     if (gamepad2.y) {
                         planeRaise.setPosition(CSCons.droneShooting);
                         elapsedTime = new ElapsedTime();
@@ -379,11 +371,10 @@ public class WorldsTeleop extends LinearOpMode {
                     }
 
                     break;
-                case PIXEL_SCORE:
-                    drive(gamepad1.left_stick_x, 0, 0);
-                    break;
+                // case PIXEL_SCORE:
+                //     driveTrain.drive(gamepad1, DriveTrain.RestrictTo.X);
+                //     break;
             }
-
 
             //intakeSlidesMove(intakeSlideTarget);
 
@@ -398,8 +389,7 @@ public class WorldsTeleop extends LinearOpMode {
                     }
                     planeRaise.setPosition((CSCons.droneFlat));
                 }
-
-                if (gamepad1.right_trigger >= 0.1 && !buttonPushed) {
+                if (gamepad1.right_stick_y >= 0.5 && !buttonPushed) {
                     //intake start/stop
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.BACKWARD) {
                         intakeDirection = CSCons.IntakeDirection.ON;
@@ -410,11 +400,11 @@ public class WorldsTeleop extends LinearOpMode {
                     }
                     buttonPushed = true;
                 }
-                if (gamepad1.right_trigger < 0.1 && gamepad1.left_trigger<0.1) {
+                if (gamepad1.right_stick_x > 0.5) {
                     buttonPushed = false;
                 }
 
-                if (gamepad1.left_trigger > 0.1 && !buttonPushed) {
+                if (gamepad1.right_stick_x < 0.5 && !buttonPushed) {
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.ON) {
                         intakeDirection = CSCons.IntakeDirection.BACKWARD;
                         intake.setPower(-CSCons.speed);
@@ -427,26 +417,28 @@ public class WorldsTeleop extends LinearOpMode {
                     buttonPushed = true;
                 }
 
-                if (gamepad2.a && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Use the D-pad to control the intake when it is not ready to drop
+                if (gamepad2.dpad_down && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeHeight.setPosition(CSCons.intakeBottom);
                     stackPosition = 0;
                 }
-                if (gamepad2.y && outtakeState!=OuttakeState.ReadyToDrop) {
+                if (gamepad2.dpad_up && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition = 5;
                     intakeHeight.setPosition(CSCons.intakeAboveTop);
                 }
 
-                if (gamepad2.x && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Change stack position
+                if (gamepad2.dpad_left && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition--;
                     intakeStackButtonPushed = true;
                 }
-
-                if (gamepad2.b && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
+                if (gamepad2.dpad_right && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition++;
                     intakeStackButtonPushed = true;
                 }
 
-                if (!gamepad2.x && !gamepad2.b && outtakeState!=OuttakeState.ReadyToDrop) {
+                // Clear button press status
+                if (!gamepad2.dpad_left && !gamepad2.dpad_right && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeStackButtonPushed = false;
                 }
 
@@ -592,9 +584,9 @@ public class WorldsTeleop extends LinearOpMode {
                             if(gamepad2.y){
                                 if (outtakeWristPosition== OuttakeWrist.vertical){
                                     outtakeServo2.setPosition(servo2Up);
-                                } else if (outtakeWristPosition==OuttakeWrist.angleLeft){
+                                } else if (outtakeWristPosition== OuttakeWrist.angleLeft){
                                     outtakeServo2.setPosition(servo2Up);
-                                } else if (outtakeWristPosition==OuttakeWrist.angleRight){
+                                } else if (outtakeWristPosition== OuttakeWrist.angleRight){
                                     outtakeServo2.setPosition(servo2Up);
                                 } else if (outtakeWristPosition== OuttakeWrist.verticalDown){
                                     outtakeServo1.setPosition(servo1Up);
@@ -615,7 +607,7 @@ public class WorldsTeleop extends LinearOpMode {
                                     outtakeServo2.setPosition(servo2Up);
                                 } else if (outtakeWristPosition== OuttakeWrist.flatRight){
                                     outtakeServo1.setPosition(servo1Up);
-                                } else if (outtakeWristPosition==OuttakeWrist.angleRight) {
+                                } else if (outtakeWristPosition== OuttakeWrist.angleRight) {
                                     outtakeServo1.setPosition(servo1Up);
                                 }
                             }
@@ -625,7 +617,7 @@ public class WorldsTeleop extends LinearOpMode {
                                     outtakeServo2.setPosition(servo2Up);
                                 } else if (outtakeWristPosition== OuttakeWrist.flatLeft){
                                     outtakeServo1.setPosition(servo1Up);
-                                }else if (outtakeWristPosition==OuttakeWrist.angleLeft){
+                                }else if (outtakeWristPosition== OuttakeWrist.angleLeft){
                                     outtakeServo1.setPosition(servo1Up);
                                 }
                             }
@@ -731,41 +723,6 @@ public class WorldsTeleop extends LinearOpMode {
                 telemetry.update();
             }
         }
-
-
-    protected void drive(double x, double y, double rx) {
-
-        if (Math.abs(y) < 0.2) {
-            y = 0;
-        }
-        if (Math.abs(x) < 0.2) {
-            x = 0;
-        }
-
-        double leftFrontPower = y + x*CSCons.frontMultiplier + rx;
-        double leftRearPower = y - (x*CSCons.backMultiplier) + rx;
-        double rightFrontPower = y - x*CSCons.frontMultiplier - rx;
-        double rightRearPower = y + (x*CSCons.backMultiplier) - rx;
-
-        //if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
-
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double max;
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
-            max = Math.max(max, Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(rightRearPower));
-
-            leftFrontPower /= denominator;
-            leftRearPower /= denominator;
-            rightFrontPower /= denominator;
-            rightRearPower /= denominator;
-        //}
-
-        leftFrontMotor.setPower(leftFrontPower);
-        leftRearMotor.setPower(leftRearPower);
-        rightFrontMotor.setPower(rightFrontPower);
-        rightRearMotor.setPower(rightRearPower);
-    }
 
     protected void backSlidesMove(int target) {
 
