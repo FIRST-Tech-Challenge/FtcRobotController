@@ -20,14 +20,12 @@ public class Transfer {
     private final DigitalChannel backBreakBeam;
 
     private ElapsedTime elapsedTime = null;
-    private HardwareMap hardwareMap;
 
     private final Servo transferServo;
     boolean pickupOverride = false;
 
     private Transfer(HardwareMap hardwareMap){
         currentTransferStatus = CSCons.TransferStatus.WAITING_FOR_PIXELS;
-        this.hardwareMap = hardwareMap;
         transferServo = hardwareMap.servo.get("transfer");
         frontBreakBeam = hardwareMap.digitalChannel.get("breakBeam2");
         frontBreakBeam.setMode(DigitalChannel.Mode.INPUT);
@@ -59,7 +57,9 @@ public class Transfer {
             if (currentTransferStatus == CSCons.TransferStatus.CLOSE_FINGERS && elapsedTime.milliseconds() > CSCons.TransferStatus.CLOSE_FINGERS.getWaitTime()) {
                 transferServo.setPosition(transferUp);
                 elapsedTime = null;
-                gamepad.rumble(3000);
+                if (gamepad!=null) {
+                    gamepad.rumble(3000);
+                }
                 currentTransferStatus= CSCons.TransferStatus.DONE;
                 pickupOverride = false;
             }

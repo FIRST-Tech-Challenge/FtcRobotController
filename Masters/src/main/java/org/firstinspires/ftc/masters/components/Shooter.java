@@ -25,6 +25,11 @@ public class Shooter implements Component{
         }
     }
 
+    public void initializeDrone(){
+        planeRaise.setPosition(CSCons.droneFlat);
+    }
+
+
     public void shoot(){
         planeRaise.setPosition(CSCons.droneShooting);
     }

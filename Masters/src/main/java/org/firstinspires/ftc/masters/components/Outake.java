@@ -38,6 +38,15 @@ public class Outake implements Component{
     //PID
     PIDController outtakeController;
 
+    private long closeFingerWaitTime= 100;
+    private long openFingerWaitTime = 100;
+    private long wristWaitTime = 100;
+
+
+
+    ElapsedTime fingersElapsedTime = null;
+    ElapsedTime wristElapsedTime = null;
+
     private final double ticks_in_degrees = 384.5 / 180;
     public static double p = 0.01, i = 0, d = 0.0001;
     public static double f = 0.05;
@@ -254,7 +263,7 @@ public class Outake implements Component{
         this.outtakeState = outtakeState;
     }
 
-    protected void setOuttakeToTransfer(){
+    public void setOuttakeToTransfer(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
@@ -262,7 +271,7 @@ public class Outake implements Component{
         wristServo.setPosition(CSCons.wristVertical);
     }
 
-    protected void setOuttakeToPickup(){
+    public void setOuttakeToPickup(){
         outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
         outtakeMovement.setPosition(CSCons.wristOuttakePickup);
         outtakeMovementRight.setPosition(CSCons.wristOuttakePickup);
@@ -270,20 +279,34 @@ public class Outake implements Component{
         wristServo.setPosition(CSCons.wristVertical);
     }
 
-    protected void setOuttakeToBackdrop(){
+    public void setOuttakeToBackdrop(){
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
         outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementBackdrop);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
     }
 
-    protected void closeFingers(){
+    public void closeFingers(){
         outtakeServo1.setPosition(servo1Down);
         outtakeServo2.setPosition(servo2Down);
+        fingersElapsedTime = new ElapsedTime();
     }
 
     protected void liftOuttakeFingers(){
         outtakeServo1.setPosition(servo1Up);
         outtakeServo2.setPosition(servo2Up);
+        fingersElapsedTime = new ElapsedTime();
+    }
+
+    public boolean areFingersOpened(){
+        return fingersElapsedTime.milliseconds()>openFingerWaitTime;
+    }
+
+    public boolean areFingersClosed(){
+        return  fingersElapsedTime.milliseconds()>closeFingerWaitTime;
+    }
+
+    public void setOuttakeWristPosition(CSCons.OuttakeWrist outtakeWristPosition) {
+        this.outtakeWristPosition = outtakeWristPosition;
     }
 
     protected void setWristPosition(Gamepad gamepad){
@@ -304,7 +327,7 @@ public class Outake implements Component{
         }
     }
 
-    protected void moveWristServo(){
+    public void moveWristServo(){
         if (outtakeWristPosition == CSCons.OuttakeWrist.angleLeft) {
             wristServo.setPosition(CSCons.wristAngleLeft);
         }

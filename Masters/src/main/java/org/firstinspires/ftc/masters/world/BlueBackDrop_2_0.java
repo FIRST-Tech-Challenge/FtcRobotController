@@ -14,10 +14,6 @@ import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
 public class BlueBackDrop_2_0 extends BackDropOpMode {
 
 
-    Vector2d yellowLeftPos = new Vector2d();
-    Vector2d yellowMidPos = new Vector2d();
-    Vector2d yellowRightPos = new Vector2d();
-
     Pose2d tagAlignmentPosition = new Pose2d(54, 36, Math.toRadians(180));
 
     @Override
@@ -44,22 +40,22 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
         middlePurple = BlueBackDropPath.getMidPurple(drive, startPose);
 
 
-        TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
-                .back(5)
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-                .build();
-
-        TrajectorySequence tagAlignMid = drive.trajectorySequenceBuilder(middlePurple.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-                .build();
-
-        TrajectorySequence tagAlignRight = drive.trajectorySequenceBuilder(rightPurple.end())
-                .back(5)
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-                .build();
+//        TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
+//                .back(5)
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
+//                .build();
+//
+//        TrajectorySequence tagAlignMid = drive.trajectorySequenceBuilder(middlePurple.end())
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
+//                .build();
+//
+//        TrajectorySequence tagAlignRight = drive.trajectorySequenceBuilder(rightPurple.end())
+//                .back(5)
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
+//                .build();
 
 
         //YELLOW PIXELS
@@ -71,23 +67,6 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
         parkFromLeft = BlueBackDropPath.park(drive, leftYellow.end());
         parkFromRight =BlueBackDropPath.park(drive, rightYellow.end());
         parkFromMid = BlueBackDropPath.park(drive, midYellow.end());
-
-
-        //OTHER PATHS
-//
-//        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
-//                .forward(5)
-//
-//                .build();
-//
-//
-//        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-//                .setTangent(Math.toRadians(0))
-//                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-//
-//                .build();
-
-
 
         drive.raiseIntake();
         drive.closeFingers();

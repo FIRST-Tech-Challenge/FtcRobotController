@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.masters.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -40,7 +39,7 @@ public class Intake implements Component{
 
         if (driveMode== CSCons.DriveMode.HANG ){
             //setup hang
-            raiseIntake();
+            initIntake();
             intakeControl(CSCons.IntakeDirection.OFF);
 
             this.driveMode= driveMode;
@@ -128,13 +127,11 @@ public class Intake implements Component{
     }
 
 
-    protected  void raiseIntake(){
-
-        //raise intake for hang
+    public void initIntake(){
         intakeHeight.setPosition(CSCons.intakeInit);
     }
 
-    protected void setIntakeHeight(int stackPosition){
+    public void setIntakeHeight(int stackPosition){
 
         switch (stackPosition) {
             case 0:
