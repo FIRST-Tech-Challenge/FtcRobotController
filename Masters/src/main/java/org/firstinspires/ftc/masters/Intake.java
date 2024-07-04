@@ -4,13 +4,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake {
 
-    DcMotor intake = null;
-    Servo intakeHeight = null;
+    DcMotor intake;
+    Servo intakeHeight;
     Servo transferServo;
     DigitalChannel frontBreakBeam, backBreakBeam;
     Telemetry telemetry;
@@ -19,6 +20,8 @@ public class Intake {
     int stackPosition = 0;
     PixelStatus pixelStatus;
     TransferServoStatus transferServoStatus;
+
+    ElapsedTime transferElapsedTime = null;
 
     public enum PixelStatus{
         WAITING_FOR_PIXELS,
@@ -48,8 +51,7 @@ public class Intake {
 
     public void init(){
         intakeHeight.setPosition(CSCons.intakeInit);
-        transferServo.setPosition(CSCons.transferUp);
-        transferServoStatus= TransferServoStatus.UP;
+        transferServoUp();
         updatePixelStatus();
     }
 
@@ -78,16 +80,23 @@ public class Intake {
 
     }
 
+    public void setIntakeHeight(int newStackPosition){
+        stackPosition = newStackPosition;
+        update();
+    }
+
     public void raiseIntake(){
         if (stackPosition<5){
             stackPosition++;
         }
+        update();
     }
 
     public void lowerIntake(){
         if (stackPosition>0){
             stackPosition--;
         }
+        update();
     }
 
     protected void updatePixelStatus(){
@@ -100,9 +109,32 @@ public class Intake {
         }
     }
 
+    public void check(){
+        if (intakeDirection != CSCons.IntakeDirection.ON){
+            run();
+        }
+        else {
+            stop();
+        }
+    }
+
+    public void reverseCheck(){
+        if (intakeDirection != CSCons.IntakeDirection.BACKWARD){
+            reverse();
+            stackPosition = 5;
+            update();
+        }
+        else {
+            stop();
+        }
+    }
+
     public void run(){
-        intakeDirection = CSCons.IntakeDirection.ON;
-        intake.setPower(CSCons.speed);
+        updatePixelStatus();
+        if (pixelStatus != PixelStatus.HAS_PIXELS && transferServoStatus == TransferServoStatus.UP){
+            intakeDirection = CSCons.IntakeDirection.ON;
+            intake.setPower(CSCons.speed);
+        }
     }
 
     public void stop(){
@@ -115,5 +147,29 @@ public class Intake {
         intake.setPower(-CSCons.speed);
     }
 
+    public void transferServoUp(){
+        transferServo.setPosition(CSCons.transferUp);
+        transferServoStatus = TransferServoStatus.UP;
+    }
 
+    public void transferServoDown(){
+        transferServo.setPosition(CSCons.transferPush);
+        transferServoStatus = TransferServoStatus.DOWN;
+    }
+
+    public void transferCheck(){
+        updatePixelStatus();
+        if (pixelStatus == PixelStatus.HAS_PIXELS){
+            if (transferElapsedTime == null){
+                transferElapsedTime = new ElapsedTime();
+            }
+        }
+        else {
+            transferServoUp();
+        }
+        if (transferElapsedTime != null && transferElapsedTime.milliseconds() > 100){
+            transferServoDown();
+            transferElapsedTime = null;
+        }
+    }
 }
