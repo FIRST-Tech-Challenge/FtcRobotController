@@ -123,8 +123,8 @@ public class OneControllerTeleop extends LinearOpMode {
     public void runOpMode() {
         /*
     CONTROLS:
-    TODO: Left stick - drive
-    TODO: Triggers - turning
+    Left stick - drive
+    Triggers - turning
     DRIVE CONTROLS:
     TODO: Right stick - intake:
         up - intake on
@@ -174,6 +174,9 @@ public class OneControllerTeleop extends LinearOpMode {
        touchpad:
             left - flat
             right - flat flip
+       outtake up down:
+            share - down
+            options - up
     HANG CONTROLS:
     TODO: PS button - hang mode
         sets up hang
@@ -296,7 +299,6 @@ public class OneControllerTeleop extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
             backSlidesMove(target);
 
             if (has2Pixels() && outtakeState!=OuttakeState.ReadyToDrop) {
@@ -366,7 +368,7 @@ public class OneControllerTeleop extends LinearOpMode {
                     break;
                 case END_GAME:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_trigger - gamepad1.left_trigger);
-                    if (gamepad2.y) {
+                    if (gamepad2.touchpad_finger_1 && gamepad2.touchpad_finger_2) {
                         planeRaise.setPosition(CSCons.droneShooting);
                         elapsedTime = new ElapsedTime();
                         while (elapsedTime.time(TimeUnit.MILLISECONDS) < 500 && opModeIsActive()) {
@@ -428,7 +430,7 @@ public class OneControllerTeleop extends LinearOpMode {
                     buttonPushed = false;
                 }
 
-                if (gamepad1.right_stick_x < 0.5 && !buttonPushed) {
+                if (gamepad1.right_stick_y < 0.5 && !buttonPushed) {
                     if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.ON) {
                         intakeDirection = CSCons.IntakeDirection.BACKWARD;
                         intake.setPower(-CSCons.speed);
@@ -466,11 +468,11 @@ public class OneControllerTeleop extends LinearOpMode {
                     intakeStackButtonPushed = false;
                 }
 
-                if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
+                if (gamepad2.share && driveMode != DriveMode.END_GAME) { //down
                     target -= 10;
                 }
 
-                if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
+                if (gamepad2.options && driveMode != DriveMode.END_GAME) { //up
                     target += 10;
                 }
 
@@ -500,14 +502,14 @@ public class OneControllerTeleop extends LinearOpMode {
                     switch (outtakeState) {
                         case ReadyToTransfer:
 
-                            if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // if press x and hook is closed, open hook
+                            if (gamepad2.right_stick_button) { // if press x and hook is closed, open hook
                                 outtakeMovement.setPosition(CSCons.wristOuttakePickup);
                                 outtakeMovementRight.setPosition(CSCons.wristOuttakePickup);
                                 outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
                                 pickupElapsedTime = new ElapsedTime();
 
                             }
-                            if (gamepad2.left_stick_y<-0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // closes hook with x
+                            if (gamepad2.left_stick_button) { // closes hook with x
 
                                 outtakeServo1.setPosition(servo1Up);
                                 outtakeServo2.setPosition(servo2Up);
@@ -718,12 +720,6 @@ public class OneControllerTeleop extends LinearOpMode {
                             break;
                     }
 
-
-//            if (gamepad1.a ) {
-//                clawPosition = ClawPosition.TRANSFER;
-//                clawServo.setPosition(CSCons.clawTransfer);
-//            }
-
 //            telemetry.addData("left y", gamepad1.left_stick_y);
 //            telemetry.addData("left x", gamepad1.left_stick_x);
 //            telemetry.addData("right x", gamepad1.right_stick_x);
@@ -750,13 +746,6 @@ public class OneControllerTeleop extends LinearOpMode {
 
 
     protected void drive(double x, double y, double t) {
-
-//        float threshold = 0.1;
-//
-//        if (Math.abs(t) < threshold)
-//        {
-//            t = 0;
-//        }
 
         if (Math.abs(y) < 0.2) {
             y = 0;
