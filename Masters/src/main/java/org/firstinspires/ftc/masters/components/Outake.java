@@ -181,6 +181,7 @@ public class Outake implements Component{
                                 retractTime =  null;
 
                             }
+                            wristServo.setPosition(outtakeWristPosition.getPosition());
 
                             break;
                         case GrabPixels:
@@ -202,6 +203,7 @@ public class Outake implements Component{
                             setSlidesPosition(gamepad1);
                             target= backSlidePos.getTarget();
                             setWristPosition(gamepad1);
+                            wristServo.setPosition(outtakeWristPosition.getPosition());
                             dropPixels(gamepad1);
 
                             moveWristServo();
@@ -353,6 +355,7 @@ public class Outake implements Component{
                 }
                 target = backSlidePos.getTarget();
                 setOuttakeToBackdrop();
+                outtakeState= CSCons.OuttakeState.MoveToDrop;
 
             }
             if (gamepad.y){
@@ -366,6 +369,7 @@ public class Outake implements Component{
                 }
                 target = backSlidePos.getTarget();
                 setOuttakeToBackdrop();
+                outtakeState= CSCons.OuttakeState.MoveToDrop;
             }
             if (gamepad.x){
                 outtakeWristPosition= CSCons.OuttakeWrist.flatLeft;
@@ -378,6 +382,7 @@ public class Outake implements Component{
                 }
                 target = backSlidePos.getTarget();
                 setOuttakeToBackdrop();
+                outtakeState= CSCons.OuttakeState.MoveToDrop;
             }
             if (gamepad.b){
                 outtakeWristPosition= CSCons.OuttakeWrist.flatRight;
@@ -390,6 +395,7 @@ public class Outake implements Component{
                 }
                 target = backSlidePos.getTarget();
                 setOuttakeToBackdrop();
+                outtakeState= CSCons.OuttakeState.MoveToDrop;
             }
 
         }

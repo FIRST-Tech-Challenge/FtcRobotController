@@ -37,8 +37,8 @@ public class CSCons {
 
     public static double wristAngleInit= 0.9;
     public static double wristOuttakeAngleBackdrop =0.04;
-    public static double wristOuttakeAngleTransfer =1;
-    public static double wristOuttakeMovementTransfer=0.44;
+    public static double wristOuttakeAngleTransfer =0.99;
+    public static double wristOuttakeMovementTransfer=0.43;
 
     public static double wristOuttakeMovementM=0.6;
 
