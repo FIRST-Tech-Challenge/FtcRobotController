@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Outake implements Component{
 
@@ -58,9 +59,11 @@ public class Outake implements Component{
 
     private HardwareMap hardwareMap = null;
     private Transfer transfer = null;
-    public Outake(HardwareMap hardwareMap){
+    private Telemetry telemetry;
+    public Outake(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap=hardwareMap;
-        this.transfer = Transfer.getInstance(hardwareMap);
+        this.transfer = Transfer.getInstance(hardwareMap, telemetry);
+        this.telemetry= telemetry;
     }
     public void initializeHardware(){
 
@@ -70,6 +73,7 @@ public class Outake implements Component{
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
         outtakeMovementRight = hardwareMap.servo.get("backSlideServoRight");
+        wristServo = hardwareMap.servo.get("wrist");
 
         outtakeServo1 = hardwareMap.servo.get("outtakeHook");
         outtakeServo2 = hardwareMap.servo.get("microHook");
@@ -85,6 +89,7 @@ public class Outake implements Component{
 
 
         driveMode= CSCons.DriveMode.NORMAL;
+        outtakeState = CSCons.OuttakeState.ReadyToTransfer;
 
         backSlidePos= CSCons.OuttakePosition.BOTTOM;
         target = backSlidePos.getTarget();
@@ -106,6 +111,7 @@ public class Outake implements Component{
 
     public void update(Gamepad gamepad1, CSCons.DriveMode driveMode){
 
+            telemetry.addData("outtake state", outtakeState);
 
         if (driveMode== CSCons.DriveMode.HANG && this.driveMode!=driveMode){
             //setup hang
@@ -122,6 +128,9 @@ public class Outake implements Component{
                 if (this.transfer.getCurrentTransferStatus()== CSCons.TransferStatus.MOVE_OUTTAKE){
                     setOuttakeToPickup();
                 }
+                if (this.transfer.getCurrentTransferStatus() == CSCons.TransferStatus.CLOSE_FINGERS){
+                    closeFingers();
+                }
 
                 if (this.transfer.getCurrentTransferStatus()== CSCons.TransferStatus.DONE || this.transfer.getCurrentTransferStatus()== CSCons.TransferStatus.WAITING_FOR_PIXELS){
 
@@ -129,6 +138,7 @@ public class Outake implements Component{
                         case ReadyToTransfer:
                             //grab pixels even if 2 pixels are not detected
                             if (gamepad1.right_stick_button){
+                                telemetry.addLine("pickup pixels");
                                 transfer.setPickupOverride(true);
                             }
 
@@ -231,6 +241,7 @@ public class Outake implements Component{
             }
             if (gamepad.right_stick_x<-0.2){
                 outtakeState = CSCons.OuttakeState.Retract;
+                setOuttakeToTransfer();
             }
 
         }
@@ -341,6 +352,7 @@ public class Outake implements Component{
                     backSlidePos= CSCons.OuttakePosition.LOW;
                 }
                 target = backSlidePos.getTarget();
+                setOuttakeToBackdrop();
 
             }
             if (gamepad.y){
@@ -353,6 +365,7 @@ public class Outake implements Component{
                     backSlidePos= CSCons.OuttakePosition.LOW;
                 }
                 target = backSlidePos.getTarget();
+                setOuttakeToBackdrop();
             }
             if (gamepad.x){
                 outtakeWristPosition= CSCons.OuttakeWrist.flatLeft;
@@ -364,6 +377,7 @@ public class Outake implements Component{
                     backSlidePos= CSCons.OuttakePosition.LOW;
                 }
                 target = backSlidePos.getTarget();
+                setOuttakeToBackdrop();
             }
             if (gamepad.b){
                 outtakeWristPosition= CSCons.OuttakeWrist.flatRight;
@@ -375,6 +389,7 @@ public class Outake implements Component{
                     backSlidePos= CSCons.OuttakePosition.LOW;
                 }
                 target = backSlidePos.getTarget();
+                setOuttakeToBackdrop();
             }
 
         }

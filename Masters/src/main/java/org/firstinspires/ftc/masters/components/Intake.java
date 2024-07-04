@@ -4,12 +4,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake implements Component{
     private HardwareMap hardwareMap = null;
     CSCons.DriveMode driveMode= CSCons.DriveMode.NORMAL;
+
+    ElapsedTime elapsedTime = new ElapsedTime();
 
     DcMotor intake = null;
     Servo intakeHeight = null;
@@ -18,16 +22,20 @@ public class Intake implements Component{
     CSCons.IntakeDirection intakeDirection;
     int stackPosition;
     boolean stackButtonPushed= false;
+    CSCons.TransferStatus currentTransferStatus;
 
     Transfer transfer = null;
-    public Intake(HardwareMap hardwareMap){
+    Telemetry telemetry;
+    public Intake(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
-        this.transfer = Transfer.getInstance(hardwareMap);
+        this.transfer = Transfer.getInstance(hardwareMap, telemetry);
+        this.telemetry=telemetry;
     }
     public void initializeHardware(){
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
+        transferServo = hardwareMap.servo.get("transfer");
 
         intakeHeight.setPosition(CSCons.intakeInit);
         transferServo.setPosition(CSCons.transferUp);
@@ -47,8 +55,14 @@ public class Intake implements Component{
             if (transfer.getCurrentTransferStatus()== CSCons.TransferStatus.CLOSE_FINGERS){
                 stackPosition = 5;
             }
-            if (transfer.getCurrentTransferStatus()== CSCons.TransferStatus.DONE){
+            if (transfer.getCurrentTransferStatus()== CSCons.TransferStatus.DONE && currentTransferStatus!= transfer.getCurrentTransferStatus()){
                 intakeControl(CSCons.IntakeDirection.BACKWARD);
+                elapsedTime = new ElapsedTime();
+            }
+
+            if (currentTransferStatus == CSCons.TransferStatus.DONE && elapsedTime!=null && elapsedTime.milliseconds()>3000){
+                intakeControl(CSCons.IntakeDirection.OFF);
+                elapsedTime =null;
             }
 
 
@@ -58,6 +72,7 @@ public class Intake implements Component{
             }
 
             setIntakeHeight(stackPosition);
+            currentTransferStatus = transfer.getCurrentTransferStatus();
         }
 
     }
@@ -74,7 +89,7 @@ public class Intake implements Component{
             intakeDirection= CSCons.IntakeDirection.BACKWARD;
         }
         //right stick right intake off
-        if (gamepad.right_stick_x>0.5 && Math.abs(gamepad.right_stick_x)<0.5){
+        if (gamepad.right_stick_x>0.5 && Math.abs(gamepad.right_stick_y)<0.5){
             intakeDirection= CSCons.IntakeDirection.OFF;
         }
         intakeControl(intakeDirection);

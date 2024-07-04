@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Transfer {
 
@@ -23,20 +24,22 @@ public class Transfer {
 
     private final Servo transferServo;
     boolean pickupOverride = false;
+    Telemetry telemetry;
 
-    private Transfer(HardwareMap hardwareMap){
+    private Transfer(HardwareMap hardwareMap, Telemetry telemetry){
         currentTransferStatus = CSCons.TransferStatus.WAITING_FOR_PIXELS;
         transferServo = hardwareMap.servo.get("transfer");
         frontBreakBeam = hardwareMap.digitalChannel.get("breakBeam2");
         frontBreakBeam.setMode(DigitalChannel.Mode.INPUT);
         backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
         backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
+        this.telemetry = telemetry;
 
     }
 
-    public static Transfer getInstance(HardwareMap hardwareMap){
+    public static Transfer getInstance(HardwareMap hardwareMap, Telemetry telemetry){
         if (singleInstance==null){
-            singleInstance = new Transfer(hardwareMap);
+            singleInstance = new Transfer(hardwareMap, telemetry);
         }
         return singleInstance;
     }
@@ -45,8 +48,13 @@ public class Transfer {
 
         if ((has2Pixels() || pickupOverride) && outtakeState!= CSCons.OuttakeState.ReadyToDrop ) {
 
-            if (currentTransferStatus == CSCons.TransferStatus.MOVE_ARM && elapsedTime != null && elapsedTime.milliseconds() > CSCons.TransferStatus.MOVE_ARM.getWaitTime()) {
+            telemetry.addData("override", pickupOverride);
+            if (currentTransferStatus == CSCons.TransferStatus.WAITING_FOR_PIXELS){
                 transferServo.setPosition(transferPush);
+                elapsedTime = new ElapsedTime();
+                currentTransferStatus = CSCons.TransferStatus.MOVE_ARM;
+            }
+            if (currentTransferStatus == CSCons.TransferStatus.MOVE_ARM && elapsedTime != null && elapsedTime.milliseconds() > CSCons.TransferStatus.MOVE_ARM.getWaitTime()) {
                 currentTransferStatus = CSCons.TransferStatus.MOVE_OUTTAKE;
                 elapsedTime = new ElapsedTime();
             }
@@ -69,6 +77,8 @@ public class Transfer {
             transferServo.setPosition(transferUp);
             pickupOverride= false;
         }
+
+        telemetry.addData("transfer state", currentTransferStatus);
 
 
     }

@@ -98,11 +98,15 @@ public class LobsterCupTeleop extends LinearOpMode {
     public void runOpMode() {
 
         drivetrain = new DriveTrain(hardwareMap);
-        transfer = Transfer.getInstance(hardwareMap);
+        drivetrain.initializeHardware();
+        transfer = Transfer.getInstance(hardwareMap, telemetry);
 
-        outake = new Outake(hardwareMap);
-        intake = new Intake(hardwareMap);
+        outake = new Outake(hardwareMap, telemetry);
+        outake.initializeHardware();
+        intake = new Intake(hardwareMap, telemetry);
+        intake.initializeHardware();
         shooter = new Shooter(hardwareMap);
+        shooter.initializeHardware();
 
 
         /*
@@ -170,9 +174,6 @@ public class LobsterCupTeleop extends LinearOpMode {
         */
 
 
-        planeRaise = hardwareMap.servo.get("planeRaise");
-        wristServo = hardwareMap.servo.get("wrist");
-
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -180,19 +181,6 @@ public class LobsterCupTeleop extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
-        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementTransfer);
-        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
-
-        hookPosition = HookPosition.OPEN;
-        planeRaise.setPosition(CSCons.droneFlat);
-
-        outtakeServo1.setPosition(CSCons.servo1Up);
-        outtakeServo2.setPosition(CSCons.servo2Up);
-
-
-        outtakeWristPosition = OuttakeWrist.vertical;
-        wristServo.setPosition(CSCons.wristVertical);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -217,7 +205,7 @@ public class LobsterCupTeleop extends LinearOpMode {
             outake.update(gamepad1, driveMode);
             shooter.update(gamepad1);
 
-
+            telemetry.update();
         }
     }
 
