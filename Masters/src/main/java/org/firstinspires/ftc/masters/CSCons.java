@@ -148,7 +148,7 @@ public class CSCons {
     }
 
     public enum OuttakeState{
-        ClosingHook, MoveToTransfer, ReadyToTransfer, MoveToDrop, ReadyToDrop, Align, BackUp,GrabPixels
+        ClosingHook, MoveToTransfer, ReadyToTransfer, MoveToDrop, ReadyToDrop, Align, BackUp, GrabPixels, Retract
     }
 
     public enum DriveMode {
