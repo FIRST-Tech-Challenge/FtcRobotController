@@ -46,7 +46,7 @@ public class Transfer {
 
     public void update(Gamepad gamepad, CSCons.OuttakeState outtakeState){
 
-        if ((has2Pixels() || pickupOverride) && outtakeState!= CSCons.OuttakeState.ReadyToDrop ) {
+        if ((has2Pixels() || pickupOverride || currentTransferStatus== CSCons.TransferStatus.DONE) &&  outtakeState== CSCons.OuttakeState.ReadyToTransfer) {
 
             telemetry.addData("override", pickupOverride);
             if (currentTransferStatus == CSCons.TransferStatus.WAITING_FOR_PIXELS){
@@ -66,7 +66,7 @@ public class Transfer {
                 transferServo.setPosition(transferUp);
                 elapsedTime = null;
                 if (gamepad!=null) {
-                    gamepad.rumble(3000);
+                    gamepad.rumble(1500);
                 }
                 currentTransferStatus= CSCons.TransferStatus.DONE;
                 pickupOverride = false;
@@ -79,7 +79,6 @@ public class Transfer {
         }
 
         telemetry.addData("transfer state", currentTransferStatus);
-
 
     }
 

@@ -11,11 +11,11 @@ public class Shooter implements Component{
     Servo planeRaise;
     public Shooter(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
+        initializeHardware();
     }
     public void initializeHardware(){
 
         planeRaise = hardwareMap.servo.get("planeRaise");
-
         planeRaise.setPosition(CSCons.droneFlat);
     }
 

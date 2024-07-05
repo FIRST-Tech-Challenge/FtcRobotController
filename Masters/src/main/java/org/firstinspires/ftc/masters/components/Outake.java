@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.masters.CSCons.servo1Down;
 import static org.firstinspires.ftc.masters.CSCons.servo1Up;
 import static org.firstinspires.ftc.masters.CSCons.servo2Down;
 import static org.firstinspires.ftc.masters.CSCons.servo2Up;
-import static org.firstinspires.ftc.masters.CSCons.transferUp;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -64,6 +63,7 @@ public class Outake implements Component{
         this.hardwareMap=hardwareMap;
         this.transfer = Transfer.getInstance(hardwareMap, telemetry);
         this.telemetry= telemetry;
+        initializeHardware();
     }
     public void initializeHardware(){
 
@@ -150,16 +150,16 @@ public class Outake implements Component{
                             }
 
 
-                            setWristPosition(gamepad1);
-                            setSlidesPosition(gamepad1);
+                            setWristAndSlidesPosition(gamepad1);
+
 
                             break;
                         case MoveToTransfer:
                             if (backSlides.getCurrentPosition() < 50) {
                                 liftOuttakeFingers();
                                 outtakeState = CSCons.OuttakeState.ReadyToTransfer;
-                                backSlidePos= CSCons.OuttakePosition.BOTTOM;
-                                target= backSlidePos.getTarget();
+//                                backSlidePos= CSCons.OuttakePosition.BOTTOM;
+//                                target= backSlidePos.getTarget();
 
                             }
                             break;
@@ -184,12 +184,12 @@ public class Outake implements Component{
                             wristServo.setPosition(outtakeWristPosition.getPosition());
 
                             break;
-                        case GrabPixels:
-                            if (transfer.getCurrentTransferStatus()== CSCons.TransferStatus.DONE){
-                                outtakeState= CSCons.OuttakeState.MoveToDrop;
-                                target= backSlidePos.getTarget();
-                            }
-                            break;
+//                        case GrabPixels:
+//                            if (transfer.getCurrentTransferStatus()== CSCons.TransferStatus.DONE){
+//                                outtakeState= CSCons.OuttakeState.MoveToDrop;
+//                                target= backSlidePos.getTarget();
+//                            }
+//                            break;
                         case MoveToDrop:
                             if (backSlides.getCurrentPosition() > 100) {
                                 setOuttakeToBackdrop();
@@ -202,7 +202,7 @@ public class Outake implements Component{
                         case ReadyToDrop:
                             setSlidesPosition(gamepad1);
                             target= backSlidePos.getTarget();
-                            setWristPosition(gamepad1);
+                            setWristAndSlidesPosition(gamepad1);
                             wristServo.setPosition(outtakeWristPosition.getPosition());
                             dropPixels(gamepad1);
 
@@ -328,7 +328,7 @@ public class Outake implements Component{
         this.outtakeWristPosition = outtakeWristPosition;
     }
 
-    protected void setWristPosition(Gamepad gamepad){
+    protected void setWristAndSlidesPosition(Gamepad gamepad){
         if (outtakeState == CSCons.OuttakeState.ReadyToDrop ) {
             if (gamepad.dpad_left) {
                 outtakeWristPosition = CSCons.OuttakeWrist.angleRight;

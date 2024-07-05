@@ -25,7 +25,9 @@ public class DriveTrain implements Component{
 
     }
     public DriveTrain (HardwareMap hardwareMap){
+
         this.hardwareMap=hardwareMap;
+        initializeHardware();
     }
     public void initializeHardware() {
         // Read from the hardware maps

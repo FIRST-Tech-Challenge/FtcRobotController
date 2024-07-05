@@ -30,6 +30,7 @@ public class Intake implements Component{
         this.hardwareMap = hardwareMap;
         this.transfer = Transfer.getInstance(hardwareMap, telemetry);
         this.telemetry=telemetry;
+        initializeHardware();
     }
     public void initializeHardware(){
 

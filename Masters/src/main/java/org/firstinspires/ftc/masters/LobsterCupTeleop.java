@@ -42,71 +42,20 @@ public class LobsterCupTeleop extends LinearOpMode {
     Transfer transfer;
     Shooter shooter;
 
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private final ElapsedTime runtime = new ElapsedTime();
 
-
-//    DcMotor intake = null;
-//    Servo intakeHeight = null;
-
-    Servo planeRaise;
-
-    Servo outtakeRotation;
-    Servo outtakeMovement;
-    Servo outtakeMovementRight;
-
-//    Servo transferServo;
-
-    private Servo wristServo;
-    private Servo outtakeServo1, outtakeServo2;
-    private OuttakeWrist outtakeWristPosition;
-
-
-
-    int numberOfPixelsInRamp= 0;
-
-    double outtakeRotationTarget;
-
-    CSCons.TransferStatus currentTransferStatus;
-
-
-    ElapsedTime liftFingers = new ElapsedTime();
-
-
-//    private enum OuttakeWrist{
-//        flatRight (CSCons.wristFlatRight), angleRight(CSCons.wristAngleRight), verticalDown(CSCons.wristVerticalDown),
-//        vertical(CSCons.wristVertical), angleLeft(CSCons.wristAngleLeft), flatLeft(CSCons.wristFlatLeft);
-//
-//        double position;
-//        private OuttakeWrist(double position){
-//            this.position= position;
-//        }
-//
-//        public double getPosition(){
-//            return position;
-//        }
-//    }
-
     private DriveMode driveMode = DriveMode.NORMAL;
-    private OuttakeState outtakeState = OuttakeState.ReadyToTransfer;
-
-    private CSCons.IntakeDirection intakeDirection = CSCons.IntakeDirection.OFF;
-    private HookPosition hookPosition = HookPosition.OPEN;
 
     @Override
     public void runOpMode() {
 
         drivetrain = new DriveTrain(hardwareMap);
-        drivetrain.initializeHardware();
         transfer = Transfer.getInstance(hardwareMap, telemetry);
 
         outake = new Outake(hardwareMap, telemetry);
-        outake.initializeHardware();
         intake = new Intake(hardwareMap, telemetry);
-        intake.initializeHardware();
         shooter = new Shooter(hardwareMap);
-        shooter.initializeHardware();
 
 
         /*
@@ -173,8 +122,6 @@ public class LobsterCupTeleop extends LinearOpMode {
         A - hang
         */
 
-
-
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
@@ -197,6 +144,11 @@ public class LobsterCupTeleop extends LinearOpMode {
 
             if (gamepad1.ps) {
                 driveMode = DriveMode.HANG;
+            }
+            if (driveMode == DriveMode.HANG){
+                if (gamepad1.right_stick_x>0.2){
+                    driveMode = DriveMode.NORMAL;
+                }
             }
 
             drivetrain.drive(gamepad1);
