@@ -181,7 +181,9 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected void toStack(TrajectorySequence nextPath){
         if (drive.isBusy()) {
-            drive.setOuttakeToTransfer();
+            if (cycleCount==0 || retractElapsed!=null && retractElapsed.milliseconds()>1500) {
+                drive.setOuttakeToTransfer();
+            }
         }
         if (!drive.isBusy()){
             if(pickupElapsedTime==null) {
@@ -249,7 +251,8 @@ public abstract class FarSideOpMode extends LinearOpMode {
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
                     outtakeTarget=0;
-                    drive.outtakeToTransfer();
+                    retractElapsed = new ElapsedTime();
+//                    drive.outtakeToTransfer();
                     drive.followTrajectorySequenceAsync(nextPath);
                 }
                 cycleCount++;
