@@ -129,7 +129,7 @@ public class RedFarSide_2_3 extends FarSideOpMode {
                                 break;
                         }
                     } else {
-                        nextPath= toBackboardCycleGate;
+                        nextPath= stackToLeftYellow;
                     }
 
                     toStack(nextPath);

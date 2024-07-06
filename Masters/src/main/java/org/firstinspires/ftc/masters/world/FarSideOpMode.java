@@ -181,11 +181,17 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected void toStack(TrajectorySequence nextPath){
         if (drive.isBusy()) {
-            drive.setOuttakeToTransfer();
+            if (cycleCount==0 || retractElapsed!=null && retractElapsed.milliseconds()>1500) {
+                drive.setOuttakeToTransfer();
+            }
         }
         if (!drive.isBusy()){
             if(pickupElapsedTime==null) {
-                drive.intakeToTopStack();
+                if (cycleCount==0) {
+                    drive.intakeToTopStack();
+                } else{
+                    drive.intakeToPosition3();
+                }
                 drive.startIntake();
                 pickupElapsedTime = new ElapsedTime();
             }
@@ -194,7 +200,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
                 pickupElapsedTime = new ElapsedTime();
             }
 
-           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>2000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
+           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
 
                drive.pushPixels();
 
@@ -251,7 +257,8 @@ public abstract class FarSideOpMode extends LinearOpMode {
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
                     outtakeTarget=0;
-                    drive.outtakeToTransfer();
+                    retractElapsed = new ElapsedTime();
+//                    drive.outtakeToTransfer();
                     drive.followTrajectorySequenceAsync(nextPath);
                 }
                 cycleCount++;
