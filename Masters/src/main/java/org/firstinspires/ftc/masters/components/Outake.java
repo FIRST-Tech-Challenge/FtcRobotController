@@ -138,7 +138,7 @@ public class Outake implements Component{
                         case ReadyToTransfer:
                             //grab pixels even if 2 pixels are not detected
                             if (gamepad1.right_stick_button){
-                                telemetry.addLine("pickup pixels");
+                                //telemetry.addLine("pickup pixels");
                                 transfer.setPickupOverride(true);
                             }
 
@@ -147,6 +147,7 @@ public class Outake implements Component{
                                 liftOuttakeFingers();
                                 setOuttakeToTransfer();
                                 transfer.setPickupOverride(false);
+                                transfer.setCurrentTransferStatus(CSCons.TransferStatus.WAITING_FOR_PIXELS);
                             }
 
 
@@ -201,7 +202,7 @@ public class Outake implements Component{
                             break;
                         case ReadyToDrop:
                             setSlidesPosition(gamepad1);
-                            target= backSlidePos.getTarget();
+
                             setWristAndSlidesPosition(gamepad1);
                             wristServo.setPosition(outtakeWristPosition.getPosition());
                             dropPixels(gamepad1);
@@ -235,10 +236,10 @@ public class Outake implements Component{
     private void setSlidesPosition(Gamepad gamepad){
         //TODO: what control for up/down target=target+10, target=target-10;
         if (outtakeState== CSCons.OuttakeState.ReadyToDrop){
-            if (gamepad.share){
+            if (gamepad.left_bumper){
                 target = target-10;
             }
-            if (gamepad.options){
+            if (gamepad.right_bumper){
                 target = target+10;
             }
             if (gamepad.right_stick_x<-0.2){
@@ -343,8 +344,11 @@ public class Outake implements Component{
             } else if (gamepad.touchpad && gamepad.touchpad_finger_1_x > 0.1) {
                 outtakeWristPosition = CSCons.OuttakeWrist.flatLeft;
             }
+
+
+
         } else {
-            if (gamepad.a) {
+            if (gamepad.y) {
                 outtakeWristPosition= CSCons.OuttakeWrist.vertical;
                 if (gamepad.left_bumper){
                     backSlidePos= CSCons.OuttakePosition.MID;
@@ -358,7 +362,7 @@ public class Outake implements Component{
                 outtakeState= CSCons.OuttakeState.MoveToDrop;
 
             }
-            if (gamepad.y){
+            if (gamepad.a){
                 outtakeWristPosition= CSCons.OuttakeWrist.verticalDown;
                 if (gamepad.left_bumper){
                     backSlidePos= CSCons.OuttakePosition.MID;
@@ -469,6 +473,13 @@ public class Outake implements Component{
             }else if (outtakeWristPosition== CSCons.OuttakeWrist.angleLeft){
                 outtakeServo1.setPosition(servo1Up);
             }
+        }
+
+        if (gamepad.right_stick_y>0.5 && Math.abs(gamepad.right_stick_x)<0.2){
+            liftOuttakeFingers();
+        }
+        if (gamepad.right_stick_y<-0.5 && Math.abs(gamepad.right_stick_x)<0.2){
+            closeFingers();
         }
 
     }

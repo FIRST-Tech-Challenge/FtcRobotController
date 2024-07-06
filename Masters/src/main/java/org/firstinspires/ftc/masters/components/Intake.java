@@ -81,11 +81,11 @@ public class Intake implements Component{
 
     protected void intakeControl(Gamepad gamepad){
         //right stick up intake on
-        if (gamepad.right_stick_y>0.5 && Math.abs(gamepad.right_stick_x)<0.5){
+        if (gamepad.right_stick_y<-0.5 && Math.abs(gamepad.right_stick_x)<0.5){
             intakeDirection= CSCons.IntakeDirection.ON;
         }
         //right stick down intake backward
-        if (gamepad.right_stick_y<-0.5 && Math.abs(gamepad.right_stick_x)<0.5){
+        if (gamepad.right_stick_y>0.5 && Math.abs(gamepad.right_stick_x)<0.5){
             stackPosition=5;
             intakeDirection= CSCons.IntakeDirection.BACKWARD;
         }
