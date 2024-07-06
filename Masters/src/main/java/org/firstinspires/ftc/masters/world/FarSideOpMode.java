@@ -187,7 +187,11 @@ public abstract class FarSideOpMode extends LinearOpMode {
         }
         if (!drive.isBusy()){
             if(pickupElapsedTime==null) {
-                drive.intakeToTopStack();
+                if (cycleCount==0) {
+                    drive.intakeToTopStack();
+                } else{
+                    drive.intakeToPosition3();
+                }
                 pickupElapsedTime = new ElapsedTime();
             }
             if (has2Pixels() ){
@@ -195,7 +199,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
                 pickupElapsedTime = new ElapsedTime();
             }
 
-           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>2000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
+           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
 
                drive.pushPixels();
 
