@@ -12,6 +12,7 @@ import org.rustlib.commandsystem.ParallelCommandGroup;
 import org.rustlib.commandsystem.PurePursuitAutonomousCommand;
 import org.rustlib.commandsystem.SequentialCommandGroup;
 import org.rustlib.commandsystem.WaitCommand;
+import org.rustlib.config.Loader;
 import org.rustlib.core.Auton;
 import org.rustlib.drive.Field;
 import org.rustlib.drive.FollowPathCommand;
@@ -19,7 +20,6 @@ import org.rustlib.drive.Path;
 import org.rustlib.drive.Waypoint;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Rotation2d;
-import org.rustlib.rustboard.RustboardLayout;
 import org.rustlib.utils.Future;
 import org.rustlib.vision.OpenCVGameElementDetector;
 
@@ -32,7 +32,7 @@ public abstract class AutonContainer extends Robot implements Auton {
             new SequentialCommandGroup(
                     new FollowPathCommand(this::getPurplePlacePath, drive), // Drive to the spike mark
                     new InstantCommand(purplePixelPlacer::place), // Place the pixel
-                    new WaitCommand(RustboardLayout.loadDouble("wait_time_BL", 1000)), // Wait for the pixel to drop
+                    new WaitCommand(Loader.loadNumber("wait_time_BL", 1000)), // Wait for the pixel to drop
                     new ParallelCommandGroup( // Begin driving away and retract the dropper arm
                             new SequentialCommandGroup(new WaitCommand(1000), new InstantCommand(purplePixelPlacer::retract)),
                             new FollowPathCommand(Path.loadPath("to_backdrop_BL"), drive)),
@@ -57,7 +57,7 @@ public abstract class AutonContainer extends Robot implements Auton {
                     new InstantCommand(() -> aprilTagCamera.disable()),
                     new FollowPathCommand(this::getPurplePlacePath, drive), // Drive to the spike mark
                     new InstantCommand(purplePixelPlacer::place), // Place the pixel
-                    new WaitCommand(RustboardLayout.loadDouble("wait_time_BR", 1000)), // Wait for the pixel to drop
+                    new WaitCommand(Loader.loadNumber("wait_time_BR", 1000)), // Wait for the pixel to drop
                     new FollowPathCommand(Path.loadPath("back_up"), drive),
                     new ParallelCommandGroup( // Begin driving away and retract the dropper arm
                             new SequentialCommandGroup(new WaitCommand(1000), new InstantCommand(purplePixelPlacer::retract)),

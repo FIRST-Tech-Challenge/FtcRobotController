@@ -4,7 +4,7 @@ import com.google.gson.JsonParseException;
 
 import org.rustlib.config.Loader;
 import org.rustlib.geometry.Rotation2d;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 import org.rustlib.utils.Future;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class Path implements Supplier<Path> {
             Path loaded = pathBuilder.setTimeout(timeout).build();
             return loaded;
         } catch (JsonParseException e) {
-            Rustboard.log(e.toString());
+            RustboardServer.log(e.toString());
         }
         return new Path();
     }

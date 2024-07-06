@@ -5,7 +5,7 @@ import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.hardware.Encoder;
 import org.rustlib.hardware.PairedEncoder;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 import java.util.function.DoubleSupplier;
 
@@ -94,9 +94,9 @@ public class Odometry extends Subsystem {
     }
 
     public Pose2d update() {
-        Rustboard.setNodeValue(".right odometry encoder", rightEncoder.getTicks());
-        Rustboard.setNodeValue(".left odometry encoder", leftEncoder.getTicks());
-        Rustboard.setNodeValue(".back odometry encoder", backEncoder.getTicks());
+        RustboardServer.setNodeValue(".right odometry encoder", rightEncoder.getTicks());
+        RustboardServer.setNodeValue(".left odometry encoder", leftEncoder.getTicks());
+        RustboardServer.setNodeValue(".back odometry encoder", backEncoder.getTicks());
         Pose2d delta = delta();
         pose = pose.add(new Pose2d(delta.rotate(pose.rotation.getAngleRadians()), new Rotation2d(delta.rotation.getAngleRadians())));
         return pose;

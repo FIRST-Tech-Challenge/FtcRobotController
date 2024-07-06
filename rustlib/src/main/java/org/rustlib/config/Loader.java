@@ -2,7 +2,7 @@ package org.rustlib.config;
 
 import android.os.Environment;
 
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -42,7 +42,7 @@ public class Loader {
 
             return data.toString();
         } catch (IOException e) {
-            Rustboard.log(e.toString());
+            RustboardServer.log(e.toString());
             e.printStackTrace();
         }
         return "";
@@ -79,6 +79,26 @@ public class Loader {
 
     public static JsonObject getJsonObject(String jsonString) {
         return Json.createReader(new StringReader(jsonString)).readObject();
+    }
+
+    public static double loadNumber(File filePath, double defaultValue) {
+        try {
+            return Double.parseDouble(loadString(filePath));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static double loadNumber(String parentDir, String child, String fileExtension, double defaultValue) {
+        return loadNumber(parentDir + "/" + child + "." + fileExtension, defaultValue);
+    }
+
+    public static double loadNumber(String filePath, String fileExtension, double defaultValue) {
+        return loadNumber(filePath + "." + fileExtension, defaultValue);
+    }
+
+    public static double loadNumber(String filePath, double defaultValue) {
+        return loadNumber(new File(filePath), defaultValue);
     }
 
     public static void writeString(File output, String string) throws IOException {

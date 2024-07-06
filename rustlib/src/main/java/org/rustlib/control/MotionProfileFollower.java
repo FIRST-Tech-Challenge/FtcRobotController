@@ -22,6 +22,6 @@ public class MotionProfileFollower {
     public double calculate(double t) {
         MotionProfileSetpoint setpoint = profile.sample(t);
         double[] pidTerms = controller.calculateTerms(position.getAsDouble(), setpoint.position);
-        return kV * setpoint.velocity + kA * setpoint.acceleration + pidTerms[0] + pidTerms[1] + pidTerms[2] - setpoint.velocity;
+        return kV * setpoint.velocity + kA * setpoint.acceleration + pidTerms[0] + pidTerms[1] + pidTerms[2] - controller.getGains().kD * setpoint.velocity;
     }
 }

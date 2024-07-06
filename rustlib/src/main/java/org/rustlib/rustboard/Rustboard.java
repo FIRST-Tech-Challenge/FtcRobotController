@@ -1,335 +1,186 @@
 package org.rustlib.rustboard;
 
-import android.os.Environment;
-import android.util.Pair;
-
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.util.ThreadPool;
-
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.robotcore.internal.opmode.RegisteredOpModes;
 import org.java_websocket.WebSocket;
-import org.java_websocket.handshake.ClientHandshake;
-import org.java_websocket.server.WebSocketServer;
+import org.rustlib.commandsystem.Command;
 import org.rustlib.config.Loader;
+import org.rustlib.geometry.Pose2d;
+import org.rustlib.rustboard.RustboardNode.NodeNotFoundException;
+import org.rustlib.rustboard.RustboardNode.Type;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-public class Rustboard extends WebSocketServer {
-    public static final int port = 21865;
-    private static final File storageDir = new File(Environment.getExternalStorageDirectory() + "\\Download");
-    private static final RustboardLayout emptyLayout = new EmptyLayout();
-    private static Rustboard instance = null;
-    private static boolean debugMode = true;
-    protected ArrayList<RustboardLayout> layouts = new ArrayList<>();
-    ElapsedTime timer;
-    private ArrayList<Pair<String, String>> messageQueue = new ArrayList<>();
-    private long timeOffset = 0;
+public class Rustboard {
+    private static int nextAvailableClientId = 0;
+    private WebSocket connection = null;
+    private int clientId = -1;
+    private Set<RustboardNode> nodes = new HashSet<>();
+    private boolean connected = false;
+    private Map<String, Runnable> callbacks = new HashMap();
 
-    private Rustboard(int port) throws UnknownHostException {
-        super(new InetSocketAddress(port));
-        setReuseAddr(true);
-        timer = new ElapsedTime();
+    Rustboard(JsonObject descriptor) {
+
     }
 
-    public static void enableDebugMode() {
-        debugMode = false;
+    WebSocket getConnection() {
+        return connection;
     }
 
-    public static void disableDebugMode() {
-        debugMode = true;
+    void onConnect(WebSocket connection) {
+        connected = true;
+        this.connection = connection;
+        negotiateIds();
     }
 
-    public static boolean inDebugMode() {
-        return debugMode;
-    }
-
-    public static void setNodeValue(String id, String value) {
-        if (!debugMode) {
-            JsonObject jsonObject = RustboardLayout.getSendableNodeData(id, value);
-            getInstance().broadcastJson(jsonObject);
-        }
-    }
-
-    /**
-     * Sets the value of every connected dashboard node that has the corresponding id.  Be careful!  Multiple dashboards may have nodes of different types and the same id.
-     *
-     * @param id    The id of the target dashboard nodes.
-     * @param value The value to send to the target dashboard nodes.
-     */
-    public static void setNodeValue(String id, Object value) {
-        setNodeValue(id, String.valueOf(value));
-    }
-
-    public static double getDoubleValue(String id, double defaultValue) {
-        return getInstance().layouts.get(0).getDoubleValue(id, defaultValue);
-    }
-
-    public static boolean getBooleanValue(String id) {
-        return getInstance().layouts.get(0).getBooleanValue(id);
-    }
-
-    public static String getInputValue(String id) {
-        return getInstance().layouts.get(0).getInputValue(id);
-    }
-
-    public static String getSelectedValue(String id) {
-        return getInstance().layouts.get(0).getSelectedValue(id);
-    }
-
-    public static RustboardLayout getRustboardLayout(String id) {
-        for (RustboardLayout layout : getInstance().layouts) {
-            if (Objects.equals(layout.id, id)) {
-                return layout;
-            }
-        }
-        return emptyLayout;
-    }
-
-    public static void log(Object value) {
-        getInstance().log(value.toString());
-    }
-
-    public static void log(String value) {
-        JsonObject message = Json.createObjectBuilder()
-                .add("messageType", "log")
-                .add("value", getInstance().timer.milliseconds() + ": " + value)
-                .build();
-        getInstance().broadcastJson(message);
-    }
-
-    private static void clearStorage() {
-        File[] files = storageDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
-        }
-    }
-
-    public static Rustboard getInstance() {
-        if (instance == null) {
-            try {
-                instance = new Rustboard(port);
-                RobotLog.v("dashboard server started");
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-        }
-        return instance;
-    }
-
-    @Override
-    public void start() {
-        messageQueue.clear();
-        layouts.addAll(loadLayouts());
-        if (!debugMode) {
-            super.start();
-        }
-    }
-
-    @Override
-    public void stop() throws IOException, InterruptedException {
-        for (RustboardLayout layout : layouts) {
-            layout.save();
-        }
-        super.stop();
-    }
-
-    @Override
-    public void onStart() {
-        setConnectionLostTimeout(3);
-    }
-
-    @Override
-    public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        log("Client " + conn.getRemoteSocketAddress().toString() + " connected to the robot.");
-        layouts.add(new RustboardLayout(conn));
-        HashMap<String, RustboardLayout> duplicates = new HashMap<>();
-        ArrayList<RustboardLayout> toRemove = new ArrayList<>();
-        for (RustboardLayout layout : layouts) { // Check for layouts with the same id and remove a duplicate if its connection is not open.  If a layout has a closed connection but no duplicate, it will be kept.
-            RustboardLayout first = duplicates.get(layout.id);
-            if (first == null) {
-                duplicates.put(layout.id, layout);
-            } else { // If this block is reached, then there are two layouts with the same id
-                if (layout.connection == null || layout.connection.isClosed()) {
-                    toRemove.add(layout);
-                } else {
-                    toRemove.add(first);
+    void onMessage(String data) {
+        JsonReader reader = Json.createReader(new StringReader(data));
+        JsonObject object = reader.readObject();
+        JsonObject message = object.getJsonObject("message");
+        String messageType = message.getString("messageType");
+        switch (messageType) {
+            case "connection info":
+                // TODO
+                break;
+            case "switch layout":
+                break;
+            case "layout state":
+                // TODO
+                break;
+            case "node update":
+                // TODO
+                break;
+            case "path update":
+                try {
+                    Loader.savePath(message);
+                    createNotice("Saved path to robot", NoticeType.POSITIVE, 8000);
+                } catch (IOException e) {
+                    createNotice("Could not save the path to the robot", NoticeType.NEGATIVE, 8000);
+                    RustboardServer.log(e.toString());
                 }
-            }
-        }
-        toRemove.forEach((layout) -> layouts.remove(layout));
-        sendQueuedMessages();
-    }
-
-    @Override
-    public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        log("client " + conn.getRemoteSocketAddress().toString() + " disconnected from the robot.");
-    }
-
-    @Override
-    public void onMessage(WebSocket conn, String data) {
-        if (Objects.equals(data, "ping")) {
-            conn.send("pong");
-        } else {
-            RustboardLayout layout = getRustboardLayout(conn);
-            JsonReader reader = Json.createReader(new StringReader(data));
-            JsonObject object = reader.readObject();
-            JsonObject message = object.getJsonObject("message");
-            String messageType = message.getString("messageType");
-            switch (messageType) {
-                case "connection info":
-                    setTimeOffset(message.getString("time"));
-                    layout.id = message.getString("id");
-                    layout.setConnectionOpenedTimestamp(getUTCTime());
-                    break;
-                case "layout state":
-                    layout.update(message);
-                    layout.id = message.getString("id");
-                    break;
-                case "node update":
-                    layout.updateNode(message);
-                    break;
-                case "path update":
-                    try {
-                        Loader.savePath(message);
-                        layout.createNotice("Saved path to robot", RustboardLayout.NoticeType.POSITIVE, 8000);
-                    } catch (IOException e) {
-                        log(e.toString());
-                    }
-                    break;
-                case "value update":
-                    try {
-                        Loader.saveValue(message);
-                        layout.createNotice("Saved value to robot", RustboardLayout.NoticeType.POSITIVE, 8000);
-                    } catch (IOException e) {
-                        log(e.toString());
-                    }
-                    break;
-                case "click":
-                    layout.buttonClicked(message.getString("nodeID"));
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void onError(WebSocket conn, Exception e) {
-        log(e);
-    }
-
-    private void setTimeOffset(String time) {
-        timeOffset = Long.parseLong(time) - System.currentTimeMillis();
-    }
-
-    private boolean timeIsCalibrated() {
-        if (connected()) {
-            for (RustboardLayout layout : layouts) {
-                if (layout.connection.isOpen()) {
-                    layout.getConnectionOpenedTimestamp();
+                break;
+            case "value update":
+                try {
+                    Loader.saveValue(message);
+                    createNotice("Saved value to robot", NoticeType.POSITIVE, 8000);
+                } catch (IOException e) {
+                    createNotice("Could not save the value to the robot", NoticeType.NEGATIVE, 8000);
+                    RustboardServer.log(e.toString());
                 }
-            }
-        }
-        return false;
-    }
-
-    protected long getUTCTime() {
-        return System.currentTimeMillis() + timeOffset;
-    }
-
-    private RustboardLayout getRustboardLayout(WebSocket conn) {
-        for (RustboardLayout layout : layouts) {
-            if (layout.connection == conn) {
-                return layout;
-            }
-        }
-        return emptyLayout;
-    }
-
-    private ArrayList<RustboardLayout> loadLayouts() {
-        ArrayList<RustboardLayout> layouts = new ArrayList<>();
-        File[] files = Loader.defaultStorageDirectory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (RustboardLayout.isDashboardLayoutFile(file.getName())) {
-                    layouts.add(RustboardLayout.loadLayout(file.getName()));
+                break;
+            case "click":
+                String nodeId = message.getString("nodeID");
+                if (callbacks.containsKey(nodeId)) {
+                    clickButton(nodeId);
                 }
-            }
+                break;
         }
-        return layouts;
     }
 
-    public boolean connected() {
-        boolean connected = false;
-        for (RustboardLayout layout : layouts) {
-            if (layout.connection != null && layout.connection.isOpen()) {
-                connected = true;
-            }
-        }
+    void onDisconnect() {
+        connected = false;
+    }
+
+    public boolean isConnected() {
         return connected;
     }
 
-    private void sendQueuedMessages() {
-        ArrayList<Pair<String, String>> toRemove = new ArrayList<>();
-        for (Pair<String, String> message : messageQueue) {
-            if (message.first == null) { // If no layout id is given, broadcast to all layouts
-                ThreadPool.getDefaultScheduler().submit(() -> broadcast(message.second));
-            } else {
-                WebSocket connection = getRustboardLayout(message.first).connection;
-                if (connection != null) {
-                    ThreadPool.getDefaultScheduler().submit(() -> connection.send(message.second));
-                    toRemove.add(message); // So the collection isn't being modified in the for loop
-                }
-            }
-        }
-        toRemove.forEach((message) -> messageQueue.remove(message));
-    }
-
-    public void sendToConnection(RustboardLayout layout, String message) {
-        if (connected()) {
-            ThreadPool.getDefaultScheduler().submit(() -> layout.connection.send(message));
-        } else {
-            messageQueue.add(new Pair<>(layout.id, message));
-        }
-    }
-
-    public void broadcastJson(JsonObject json) {
-        if (connected()) {
-            ThreadPool.getDefaultScheduler().submit(() -> broadcast(json.toString()));
-        } else { // The server sends 3 types of messages to clients: node update, notify, and log
-            String messageType = json.getString("messageType");
-            if (Objects.equals(messageType, "node update") || messageType.equals("log")) {
-                messageQueue.add(new Pair<>(null, json.toString()));
-            }
-        }
-    }
-
-    public void newLog() {
-        JsonObject message = Json.createObjectBuilder()
-                .add("messageType", "reset log")
+    public void createNotice(String notice, NoticeType type, int durationMilliseconds) {
+        JsonObject data = Json.createObjectBuilder()
+                .add("messageType", "notify")
+                .add("message", notice)
+                .add("type", type.value)
+                .add("duration", durationMilliseconds)
                 .build();
-        broadcastJson(message);
+        connection.send(data.toString());
     }
 
-    public void startOpMode(String opModeName) {
-        RegisteredOpModes.getInstance().getOpMode(opModeName).init();
+    private RustboardNode getNode(String id, Type type) {
+        for (RustboardNode node : nodes) {
+            if (node.type == type) {
+                return node;
+            }
+        }
+        throw new RustboardNode.NodeNotFoundException(id);
     }
 
-    public List<OpModeMeta> getRegisteredOpModes() {
-        return RegisteredOpModes.getInstance().getOpModes();
+    private boolean nodeExists(String id, Type type) {
+        try {
+            getNode(id, type);
+            return true;
+        } catch (NodeNotFoundException e) {
+            return false;
+        }
+    }
+
+    public void addCallback(String buttonId, Runnable callback) {
+        if (nodeExists(buttonId, Type.BUTTON)) {
+            callbacks.put(buttonId, callback);
+        } else {
+            throw new NodeNotFoundException(buttonId);
+        }
+    }
+
+    public void addCallback(String buttonId, Command command) {
+        callbacks.put(buttonId, command::schedule);
+    }
+
+    public void clickButton(String buttonId) {
+        try {
+            callbacks.get(buttonId).run();
+        } catch (NullPointerException e) {
+            if (nodeExists(buttonId, Type.BUTTON)) {
+                throw new RuntimeException("No runnable was mapped to the button with id '" + buttonId + "'");
+            } else {
+                throw new NodeNotFoundException(buttonId);
+            }
+        }
+    }
+
+    public void updatePositionGraph(String id, Pose2d position) {
+        getNode(id, Type.POSITION_GRAPH).updateAndSend((position));
+    }
+
+    public void updateSelectorValue(String id, String value) {
+        getNode(id, Type.SELECTOR).updateAndSend((value));
+    }
+
+    public void updateTelemetryNode(String id, Object value) {
+        getNode(id, Type.TEXT_TELEMETRY).updateAndSend((value));
+    }
+
+    public void updateInputNode(String id, Object value) {
+        getNode(id, Type.TEXT_INPUT).updateAndSend((value));
+    }
+
+    public void updateBooleanTelemetryNode(String id, boolean value) {
+        getNode(id, Type.BOOLEAN_TELEMETRY).updateAndSend((value));
+    }
+
+    public void updateToggleNode(String id, boolean value) {
+        getNode(id, Type.TOGGLE).updateAndSend(value);
+    }
+
+    private void negotiateIds() { // TODO: add code for negotiating client and server ids
+
+    }
+
+    public enum NoticeType {
+        POSITIVE("positive"),
+        NEGATIVE("negative"),
+        NEUTRAL("neutral");
+
+        String value;
+
+        NoticeType(String value) {
+            this.value = value;
+        }
     }
 }

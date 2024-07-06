@@ -13,7 +13,7 @@ import org.rustlib.commandsystem.InstantCommand;
 import org.rustlib.commandsystem.Subsystem;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Pose3d;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -95,7 +95,7 @@ public class AprilTagCamera extends Subsystem {
             visionPortal.resumeStreaming();
             streaming = true;
         } catch (RuntimeException e) {
-            Rustboard.log(e);
+            RustboardServer.log(e);
         }
     }
 
@@ -104,7 +104,7 @@ public class AprilTagCamera extends Subsystem {
             visionPortal.stopStreaming();
             streaming = false;
         } catch (RuntimeException e) {
-            Rustboard.log(e);
+            RustboardServer.log(e);
         }
     }
 

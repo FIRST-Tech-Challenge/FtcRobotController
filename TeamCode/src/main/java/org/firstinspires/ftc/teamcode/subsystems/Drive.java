@@ -10,8 +10,7 @@ import org.rustlib.drive.MecanumBase;
 import org.rustlib.drive.Odometry;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.hardware.PairedEncoder;
-import org.rustlib.rustboard.Rustboard;
-import org.rustlib.rustboard.RustboardLayout;
+import org.rustlib.rustboard.RustboardServer;
 
 public class Drive extends DriveSubsystem {
     private final MecanumBase base;
@@ -55,7 +54,7 @@ public class Drive extends DriveSubsystem {
 
     public void drive(double drive, double strafe, double turn, double heading) {
         base.drive(drive * multiplier, strafe * multiplier, turn * multiplier, heading - fieldCentricOffset.getAngleRadians(), false);
-        Rustboard.setNodeValue("input", "drive: " + drive + " strafe: " + strafe + " turn: " + turn);
+        RustboardServer.setNodeValue("input", "drive: " + drive + " strafe: " + strafe + " turn: " + turn);
     }
 
     @Override
@@ -77,8 +76,8 @@ public class Drive extends DriveSubsystem {
 
     @Override
     public void periodic() {
-        Rustboard.setNodeValue("pose", odometry.getPose().toString());
-        RustboardLayout layout = Rustboard.getRustboardLayout("dashboard_0");
+        RustboardServer.setNodeValue("pose", odometry.getPose().toString());
+        RustboardLayout layout = RustboardServer.getRustboardLayout("dashboard_0");
         base.driveController.setGains(new PIDController.PIDGains(
                 layout.getDoubleValue("drive kP", 0.1),
                 layout.getDoubleValue("drive kI", 0.0),

@@ -9,7 +9,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import org.rustlib.commandsystem.Subsystem;
 import org.rustlib.core.RobotBase;
 import org.rustlib.core.RobotBase.GameElementLocation;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 import java.util.ArrayList;
 
@@ -34,12 +34,12 @@ public class OpenCVGameElementDetector extends Subsystem {
             public void onOpened() {
                 detectorCam.startStreaming(builder.streamSize.width, builder.streamSize.height);
                 streaming = true;
-                Rustboard.log("OpenCV game element detector camera opened.");
+                RustboardServer.log("OpenCV game element detector camera opened.");
             }
 
             @Override
             public void onError(int errorCode) {
-                Rustboard.log("OpenCV game element detector camera failed to open.");
+                RustboardServer.log("OpenCV game element detector camera failed to open.");
             }
         });
     }

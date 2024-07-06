@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.rustlib.commandsystem.Subsystem;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 public class Climber extends Subsystem {
-    
+
     public final DcMotor motor;
     public final Servo servo;
 
@@ -19,11 +19,11 @@ public class Climber extends Subsystem {
     }
 
     public void deliverHook() {
-        servo.setPosition(Rustboard.getDoubleValue("climb up", 0.07));
+        servo.setPosition(RustboardServer.getDoubleValue("climb up", 0.07));
     }
 
     public void hookDown() {
-        servo.setPosition(Rustboard.getDoubleValue("climb down", 0.45));
+        servo.setPosition(RustboardServer.getDoubleValue("climb down", 0.45));
     }
 
     public void winch(double speed) {

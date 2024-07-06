@@ -31,7 +31,8 @@ import org.rustlib.drive.Waypoint;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Pose3d;
 import org.rustlib.geometry.Rotation2d;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.CameraServer;
+import org.rustlib.rustboard.RustboardServer;
 import org.rustlib.vision.AprilTagCamera;
 import org.rustlib.vision.CameraCameraActivationBox;
 
@@ -52,6 +53,7 @@ public abstract class Robot extends RobotBase {
     public AprilTagCamera aprilTagCamera;
     public DroneShooter droneShooter;
     public PurplePixelPlacer purplePixelPlacer;
+    public CameraServer cameraServer;
 
     @Override
     public void onInit() {
@@ -65,6 +67,8 @@ public abstract class Robot extends RobotBase {
                 .addMotor("rb", 3, HardwareConfiguration.Motors.GOBILDA_5201_SERIES_MOTOR, HardwareConfiguration.HubType.CONTROL_HUB)
                 .addI2CDevice("slide limit", 0, 0, HardwareConfiguration.I2CDevices.REV_DISTANCE_SENSOR, HardwareConfiguration.HubType.CONTROL_HUB)
                 .build();
+
+        cameraServer = new CameraServer(hardwareMap, "Webcam0");
 
         if (botPose == null) {
             botPose = new Pose2d(0, 0, new Rotation2d(-Math.PI));
@@ -93,7 +97,7 @@ public abstract class Robot extends RobotBase {
 
     @Override
     public void mainLoop() {
-        Rustboard.setNodeValue("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
+        RustboardServer.setNodeValue("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
         botPose = drive.getOdometry().getPose();
         slidePose = slide.encoder.getTicks();
     }

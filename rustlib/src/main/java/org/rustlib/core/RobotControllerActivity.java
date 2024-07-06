@@ -5,7 +5,7 @@ import com.qualcomm.ftccommon.FtcEventLoopHandler;
 import com.qualcomm.hardware.HardwareFactory;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 import java.lang.reflect.Field;
 
@@ -16,7 +16,7 @@ public class RobotControllerActivity extends FtcRobotControllerActivity {
 
     public void reloadHardwareMap() throws RuntimeException {
         try {
-            Rustboard.getInstance().start();
+            RustboardServer.getInstance().start();
             FtcEventLoopHandler eventLoopHandler;
             Field eventLoopHandlerField = FtcEventLoopBase.class.getDeclaredField("ftcEventLoopHandler");
             eventLoopHandler = (FtcEventLoopHandler) eventLoopHandlerField.get(eventLoop);
@@ -28,7 +28,7 @@ public class RobotControllerActivity extends FtcRobotControllerActivity {
             eventLoop.getOpModeManager().setHardwareMap(eventLoopHandler.getHardwareMap(eventLoop.getOpModeManager()));
             cfgFileMgr.sendActiveConfigToDriverStation();
         } catch (Exception e) {
-            Rustboard.log(e);
+            RustboardServer.log(e);
             throw new RuntimeException("Could not reload the hardware map.");
         }
     }

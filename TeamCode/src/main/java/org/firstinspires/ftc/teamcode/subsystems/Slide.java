@@ -11,7 +11,7 @@ import org.rustlib.commandsystem.Subsystem;
 import org.rustlib.commandsystem.Trigger;
 import org.rustlib.control.PIDController;
 import org.rustlib.hardware.PairedEncoder;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 public class Slide extends Subsystem {
 
@@ -64,12 +64,12 @@ public class Slide extends Subsystem {
             lastInput = 0;
         }
         calculatedSpeed = applyAccelerationLimits(calculatedSpeed);
-        Rustboard.setNodeValue("slide speed", calculatedSpeed);
+        RustboardServer.setNodeValue("slide speed", calculatedSpeed);
         drive(calculatedSpeed);
     }
 
     private double applyAccelerationLimits(double speed) {
-        double accelMax = Rustboard.getDoubleValue("slide accel", 0.5);
+        double accelMax = RustboardServer.getDoubleValue("slide accel", 0.5);
         ;
         if (speed > 0) {
             speed = Math.min(lastSpeed + accelMax, speed);
@@ -101,16 +101,16 @@ public class Slide extends Subsystem {
             targetPosition = Math.max(targetPosition, 0);
         }
 
-        controller.setP(Rustboard.getDoubleValue("slide kP", 0.0014));
-        controller.setI(Rustboard.getDoubleValue("slide kI", 0.0));
-        controller.setD(Rustboard.getDoubleValue("slide kD", 0.0008));
-        feedforward = Rustboard.getDoubleValue("slide feedforward", 0.2);
+        controller.setP(RustboardServer.getDoubleValue("slide kP", 0.0014));
+        controller.setI(RustboardServer.getDoubleValue("slide kI", 0.0));
+        controller.setD(RustboardServer.getDoubleValue("slide kD", 0.0008));
+        feedforward = RustboardServer.getDoubleValue("slide feedforward", 0.2);
         ;
-        Rustboard.log(controller.getGains().toString());
-        Rustboard.log("feedforward: " + feedforward);
-        Rustboard.setNodeValue("slide pose", encoder.getTicks());
-        Rustboard.setNodeValue("slide velocity", encoder.ticksPerSecond());
-        Rustboard.setNodeValue("slide target", targetPosition);
-        Rustboard.setNodeValue("slide limit", limit.isPressed());
+        RustboardServer.log(controller.getGains().toString());
+        RustboardServer.log("feedforward: " + feedforward);
+        RustboardServer.setNodeValue("slide pose", encoder.getTicks());
+        RustboardServer.setNodeValue("slide velocity", encoder.ticksPerSecond());
+        RustboardServer.setNodeValue("slide target", targetPosition);
+        RustboardServer.setNodeValue("slide limit", limit.isPressed());
     }
 }

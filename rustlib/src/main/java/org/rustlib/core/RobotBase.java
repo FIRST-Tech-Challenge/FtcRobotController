@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.rustlib.commandsystem.Command;
 import org.rustlib.commandsystem.CommandScheduler;
 import org.rustlib.hardware.SuperGamepad;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,8 +78,8 @@ public abstract class RobotBase extends OpMode {
         removeDuplicateCallbacks();
         CommandScheduler.getInstance().clearRegistry();
         CommandScheduler.getInstance().cancelAll();
-        Rustboard.getInstance().start();
-        Rustboard.getInstance().newLog();
+        RustboardServer.getInstance().start();
+        RustboardServer.getInstance().newLog();
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         if (hubs.get(0).isParent()) {
             controlHub = hubs.get(0);

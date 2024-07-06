@@ -6,7 +6,7 @@ import org.rustlib.drive.DriveSubsystem;
 import org.rustlib.drive.Waypoint;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Rotation2d;
-import org.rustlib.rustboard.Rustboard;
+import org.rustlib.rustboard.RustboardServer;
 
 public class BackdropAlign extends Command {
     private final DriveSubsystem drive;
@@ -23,7 +23,7 @@ public class BackdropAlign extends Command {
     @Override
     public void execute() {
         Pose2d botPose = drive.getOdometry().getPose();
-        backdropOffset = Rustboard.getDoubleValue("place offset", 3.5);
+        backdropOffset = RustboardServer.getDoubleValue("place offset", 3.5);
         drive.getBase().driveToPosition(new Waypoint(botPose.x - (placer.getDistance() - backdropOffset), botPose.y, 0, Rotation2d.fromDegrees(-90), Rotation2d.fromDegrees(-90), 0.5));
     }
 
