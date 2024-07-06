@@ -102,8 +102,9 @@ public class SparkFunOTOSDrive extends MecanumDrive {
             // the only alternative is to add getter and setters but that breaks compat
             otos.setPosition(RRPoseToOTOSPose(pose));
         }
-        SparkFunOTOS.Pose2D otosPose = otos.getPosition();
-        SparkFunOTOS.Pose2D otosVel = otos.getVelocity();
+        SparkFunOTOS.Pose2D[] posVelList = otos.getPosVelCorrected();
+        SparkFunOTOS.Pose2D otosPose = posVelList[0];
+        SparkFunOTOS.Pose2D otosVel = posVelList[1];
         pose = OTOSPoseToRRPose(otosPose);
         lastOtosPose = pose;
 
