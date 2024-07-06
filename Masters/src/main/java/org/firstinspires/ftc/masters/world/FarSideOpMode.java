@@ -245,6 +245,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
                 if (nextState == State.PARK){
                     drive.followTrajectorySequenceAsync(nextPath);
+                    retractElapsed = new ElapsedTime();
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
                     outtakeTarget=0;

@@ -115,6 +115,10 @@ public class RedFarSide_2_1 extends FarSideOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
+            if (retractElapsed != null) {
+                telemetry.addData("time", retractElapsed.milliseconds());
+            }
+            telemetry.update();
 
 
             switch (currentState){

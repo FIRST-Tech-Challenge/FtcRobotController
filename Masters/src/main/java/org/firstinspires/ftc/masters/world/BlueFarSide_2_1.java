@@ -74,6 +74,9 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
+            if (retractElapsed != null) {
+                telemetry.addData("time", retractElapsed.milliseconds());
+            }
             telemetry.update();
 
             switch (currentState){
@@ -98,7 +101,6 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
                         }
 
                     toStack(nextPath);
-                        retractElapsed = new ElapsedTime();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
                     switch (propPos){
