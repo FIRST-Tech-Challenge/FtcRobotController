@@ -84,7 +84,7 @@ public class TestTeleOp extends LinearOpMode {
             //set motor power ONLY if a value has changed. else, use previous value.
             if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
                     || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
-                robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+                robot.drivetrain.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
                 fLeftPowerPrev = fLeftPower;
                 fRightPowerPrev = fRightPower;

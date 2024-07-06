@@ -36,7 +36,7 @@ public class kaitlynTest extends LinearOpMode {
 //            telemetry.update();
             //expected behavior: robot move 3 inches to the right
             //DrivetrainPowers drivetrainPowers = robot.straightParallelPowerPID(robot.fLeft.getCurrentPosition(), robot.bRightMecanumController.convertInchesToTicks(inchesToMove), 1);
-            robot.setMotorPower(robot.fLeft, robot.motorParallelPowerPWait(robot.fLeft.getCurrentPosition(), robot.bRightMecanumController.convertInchesToTicks(inchesToMove), 1, SystemClock.currentThreadTimeMillis(), 3000));
+            robot.drivetrain.setMotorPower(robot.fLeft, robot.motorParallelPowerPWait(robot.fLeft.getCurrentPosition(), robot.bRightMecanumController.convertInchesToTicks(inchesToMove), 1, SystemClock.currentThreadTimeMillis(), 3000));
             //Log.d("parallel", "fleft power" + drivetrainPowers.fLeftPower);
             //robot.mecanumBlocking2(-24);
             //break;
