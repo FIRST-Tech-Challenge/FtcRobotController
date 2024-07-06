@@ -44,6 +44,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         TO_PARK,
 
         PARK,
+        PARKFULLY,
         LOWER,
         END
     }
@@ -67,7 +68,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
     protected TrajectorySequence toStackFromRight, toStackFromLeft, toStackFromMid;
     protected TrajectorySequence toBackBoard;
     protected TrajectorySequence parkFromLeft, parkFromRight, parkFromMid;
-    protected TrajectorySequence park;
+    protected TrajectorySequence park, parkFully;
 
     protected State currentState;
     protected int outtakeTarget = 0;
@@ -292,6 +293,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
         if (!drive.isBusy()){
             outtakeTarget = 0;
             drive.outtakeToTransfer();
+            drive.followTrajectorySequenceAsync(parkFully);
+            currentState = State.PARKFULLY;
         }
 
     }

@@ -66,6 +66,7 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
         parkFromLeft = RedBackDropPath.park(drive, leftYellow.end());
         parkFromRight =RedBackDropPath.park(drive, rightYellow.end());
         parkFromMid = RedBackDropPath.park(drive, midYellow.end());
+        parkFully = RedBackDropPath.parkFully(drive, parkFromLeft.end());
 
 
         drive.raiseIntake();
@@ -107,6 +108,7 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
                 case PARK:
                     park();
                     break;
+                case PARKFULLY:
 
             }
 

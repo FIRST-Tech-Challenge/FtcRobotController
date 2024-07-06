@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
+import org.firstinspires.ftc.masters.world.paths.RedBackDropPath;
 
 @Config
 @Autonomous(name = "Blue Backdrop 2 + 0", group = "competition")
@@ -67,6 +68,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
         parkFromLeft = BlueBackDropPath.park(drive, leftYellow.end());
         parkFromRight =BlueBackDropPath.park(drive, rightYellow.end());
         parkFromMid = BlueBackDropPath.park(drive, midYellow.end());
+        parkFully = BlueBackDropPath.parkFully(drive, parkFromLeft.end());
 
         drive.raiseIntake();
         drive.closeFingers();
@@ -108,6 +110,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
                 case PARK:
                     park();
                     break;
+                case PARKFULLY:
 
             }
 

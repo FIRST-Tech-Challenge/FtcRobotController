@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -79,7 +80,7 @@ public class RedBackDropPath {
 
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -29, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -25, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -108,6 +109,13 @@ public class RedBackDropPath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(180))
                 .splineToLinearHeading(new Pose2d(44, -58, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+
+    }
+
+    public static TrajectorySequence parkFully(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(63, -58))
                 .build();
 
     }

@@ -54,6 +54,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected ElapsedTime liftTime = null;
     protected ElapsedTime pickupElapsedTime= null;
+    protected ElapsedTime retractElapsed= null;
     protected CSCons.OuttakeWrist outtakeWristPosition = CSCons.OuttakeWrist.vertical;
 
     protected SampleMecanumDrive drive;
@@ -277,7 +278,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected  void park(){
-        if (!drive.isBusy()){
+        if (retractElapsed != null && retractElapsed.milliseconds() > 1500){
             outtakeTarget = 0;
             drive.outtakeToTransfer();
         }

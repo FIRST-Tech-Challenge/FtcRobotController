@@ -150,6 +150,19 @@ public class Outake implements Component{
                                 transfer.setCurrentTransferStatus(CSCons.TransferStatus.WAITING_FOR_PIXELS);
                             }
 
+                            if (gamepad1.options) { //set to transfer position
+                                setOuttakeToHub();
+                            }
+
+                            if (gamepad1.right_stick_x < -0.5 && backSlidePos == CSCons.OuttakePosition.AUTO){
+                                liftOuttakeFingers();
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                outtakeState = CSCons.OuttakeState.Retract;
+                            }
 
                             setWristAndSlidesPosition(gamepad1);
 
@@ -303,6 +316,14 @@ public class Outake implements Component{
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
         outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementBackdrop);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
+    }
+
+    public void setOuttakeToHub(){
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementHub);
+        outtakeMovementRight.setPosition(CSCons.wristOuttakeMovementHub);
+        backSlidePos= CSCons.OuttakePosition.AUTO;
+        target=backSlidePos.getTarget();
     }
 
     public void closeFingers(){

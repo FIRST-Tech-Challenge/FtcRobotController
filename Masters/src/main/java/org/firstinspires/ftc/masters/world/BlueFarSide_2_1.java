@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -97,6 +98,7 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
                         }
 
                     toStack(nextPath);
+                        retractElapsed = new ElapsedTime();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
                     switch (propPos){

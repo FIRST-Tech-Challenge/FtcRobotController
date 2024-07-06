@@ -93,6 +93,13 @@ public class BlueBackDropPath {
                 .build();
     }
 
+    public static TrajectorySequence parkFully(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(63, 58))
+                .build();
+
+    }
+
     public static TrajectorySequence toStackWing(SampleMecanumDrive drive, Pose2d startPose) {
 
         return drive.trajectorySequenceBuilder(startPose)

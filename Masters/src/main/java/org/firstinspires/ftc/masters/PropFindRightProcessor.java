@@ -25,12 +25,12 @@ import org.opencv.imgproc.Imgproc;
 
 public class PropFindRightProcessor implements VisionProcessor, CameraStreamSource {
 
-    public  Rect interestMid = new Rect(75, 200, 32, 50);
-    public  Rect interestRight = new Rect(320, 260, 32, 50);
+    public  Rect interestMid = new Rect(75, 230, 32, 50);
+    public  Rect interestRight = new Rect(340, 260, 32, 50);
 
-    private final Scalar upper = new Scalar(0,50,0); // lower bounds for masking
+    private final Scalar upper = new Scalar(0,40,0); // lower bounds for masking
     // if to much black is detected, raise middle scaler
-    // if to little lower it, try 70 first2
+    // if to little lower it, try 70 first
     private final Scalar lower = new Scalar(255,255,255); // upper bounds for masking
     private TextPaint textPaint = null;
     private Paint linePaint = null;
