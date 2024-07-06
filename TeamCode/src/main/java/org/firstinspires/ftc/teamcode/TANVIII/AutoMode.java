@@ -55,7 +55,7 @@ public class AutoMode extends LinearOpMode {
             blpr /= scaleFactor;
             brpr /= scaleFactor;
         }
-        robot.setMotorPower(flpr, frpr, blpr, brpr);
+        robot.drivetrain.setMotorPower(flpr, frpr, blpr, brpr);
     }
     /*
     public void encoderStraight(double inches) {

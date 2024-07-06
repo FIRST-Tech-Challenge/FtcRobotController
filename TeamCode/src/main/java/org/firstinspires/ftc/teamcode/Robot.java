@@ -29,6 +29,7 @@ public class Robot {
     public final Outtake outtake;
     public final Intake intake;
     public final DroneLauncher droneLauncher;
+    public final Drivetrain drivetrain;
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
@@ -149,10 +150,12 @@ public class Robot {
             outtake = new Outtake(this);
             intake = new Intake(this);
             droneLauncher = new DroneLauncher(this);
+            drivetrain = new Drivetrain(this);
         } else {
             outtake = null;
             intake = null;
             droneLauncher = null;
+            drivetrain = null;
         }
     }
 
@@ -197,24 +200,6 @@ public class Robot {
         servo.setPosition(targetServoPos);
     }
 
-    public void trayToIntakePos(boolean blocking) {
-        //backup value 0.45
-        //delta 0.3
-        setServoPos(tray, 0.3);
-        if (blocking) {
-            opMode.sleep(500);
-        }
-    }
-
-    public void trayToOuttakePos(boolean blocking) {
-        //backup value 0.15
-        //delta 0.3
-        setServoPos(tray, 0);
-        if (blocking) {
-            opMode.sleep(100);
-        }
-    }
-
     public void trayToOuttakeSplitEditionOne() {
         setServoPos(tray, 0.15);
     }
@@ -228,17 +213,17 @@ public class Robot {
 
         // move linear slide up
         if (lowOuttake) {
-            trayToOuttakePos(false); // pivot tray to outtake position
+            outtake.trayToOuttakePos(false); // pivot tray to outtake position
             moveLinearSlideByTicksBlocking(slideStartingPosition + 1550); //1700
             opMode.sleep(100);
-            openClamp(true, true, false); // drop pixel
+            outtake.openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
             moveLinearSlideByTicksBlocking(slideStartingPosition + 1950);
         } else {
             trayToOuttakeSplitEditionOne();
             moveLinearSlideByTicksBlocking(slideStartingPosition + 1750);//1900
             trayToOuttakeSplitEditionTwo();
-            openClamp(true, true, false); // drop pixel
+            outtake.openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
             moveLinearSlideByTicksBlocking(slideStartingPosition + 2350);
         }
@@ -246,7 +231,7 @@ public class Robot {
         straightBlocking(4, true, 0.7); //move back 2
 
         setServoPos(trayAngle, 0.5);
-        trayToIntakePos(true); //intake pos
+        outtake.trayToIntakePos(true); //intake pos
     }
 
     public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
@@ -425,21 +410,6 @@ public class Robot {
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setMotorPower(final DrivetrainPowers drivetrainPowers) {
-        setMotorPower(drivetrainPowers.fLeftPower, drivetrainPowers.fRightPower, drivetrainPowers.bLeftPower, drivetrainPowers.bRightPower);
-    }
-
-    public void setMotorPower(double fLeft, double fRight, double bLeft, double bRight) {
-        this.fLeft.setPower(fLeft);
-        this.bRight.setPower(bRight);
-        this.bLeft.setPower(bLeft);
-        this.fRight.setPower(fRight);
-    }
-
-    public void setMotorPower (DcMotor dcMotor, double power) {
-        dcMotor.setPower(power);
-    }
-
     public double getCurrentHeading() {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
@@ -511,11 +481,11 @@ public class Robot {
             power = Range.clip(power, -1 * maxPower, maxPower);
             // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
 
-            setMotorPower(-1 * power, power, -1 * power, power);
+            drivetrain.setMotorPower(-1 * power, power, -1 * power, power);
             prevError = error;
             prevTime = currentTime;
         }
-        setMotorPower(0, 0, 0, 0);
+        drivetrain.setMotorPower(0, 0, 0, 0);
         opMode.sleep(100);
         currentHeading = getCurrentHeading();
         botHeading = targetAbsDegrees;
@@ -560,11 +530,11 @@ public class Robot {
             //cap power
             power = Range.clip(power, -1 * maxPower, maxPower);
 
-            setMotorPower(power, -1 * power, -1 * power, power);
+            drivetrain.setMotorPower(power, -1 * power, -1 * power, power);
 
             error = targetTick - fLeft.getCurrentPosition();
         }
-        setMotorPower(0, 0, 0, 0);
+        drivetrain.setMotorPower(0, 0, 0, 0);
         opMode.sleep(100);
     }
 
@@ -611,13 +581,13 @@ public class Robot {
             //cap power
             power = Range.clip(power, -1 * maxPower, maxPower);
 
-            setMotorPower(power, power, power, power);
+            drivetrain.setMotorPower(power, power, power, power);
 
             currentTick = fLeft.getCurrentPosition();
             prevTime = currentTime;
             prevError = error;
         }
-        setMotorPower(0, 0, 0, 0);
+        drivetrain.setMotorPower(0, 0, 0, 0);
         opMode.sleep(100);
     }
 
@@ -666,13 +636,13 @@ public class Robot {
             //cap power
             power = Range.clip(power, -1 * maxPower, maxPower);
 
-            setMotorPower(power, power, power, power);
+            drivetrain.setMotorPower(power, power, power, power);
 
             currentTick = fLeft.getCurrentPosition();
             prevTime = currentTime;
             prevError = error;
         }
-        setMotorPower(0, 0, 0, 0);
+        drivetrain.setMotorPower(0, 0, 0, 0);
         opMode.sleep(100);
     }
 
@@ -1082,30 +1052,6 @@ public class Robot {
         }
     }
 
-    public void closeClamp(boolean blocking) {
-        setServoPos(clamp, 0.57);
-        if (blocking) {
-            opMode.sleep(300);
-        }
-    }
-
-    public void openClamp(boolean wide, boolean auto, boolean blocking) {
-        if (wide) {
-            if (auto) {
-                setServoPos(clamp, 0.471);
-            }
-            else {
-                setServoPos(clamp, 0.471);
-            }
-        } else {
-            setServoPos(clamp, 0.51);
-        }
-
-        if (blocking) {
-            opMode.sleep(300);
-        }
-    }
-
     public void openHook() {
         hook.setPosition(0.37); //started 0.49
     }
@@ -1149,8 +1095,8 @@ public class Robot {
         stackAttachment = hardwareMap.servo.get("stackAttachment");
 
         openHook();
-        closeClamp(false);
-        trayToIntakePos(true);
+        outtake.closeClamp(false);
+        outtake.trayToIntakePos(true);
         moveFingerUp();
         opMode.sleep(100);
         planeLauncher.setPower(0);
@@ -1340,7 +1286,7 @@ public class Robot {
             //set motor power ONLY if a value has changed. else, use previous value.
             if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
                     || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
-                setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+                drivetrain.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
                 fLeftPowerPrev = fLeftPower;
                 fRightPowerPrev = fRightPower;
@@ -1369,10 +1315,10 @@ public class Robot {
             } else if (gamepad2.a) { // a - intake position
                 allowTrayAngle = false;
                 trayAngle.setPosition(trayAngleDefault);
-                trayToIntakePos(false);
+                outtake.trayToIntakePos(false);
             } else if (gamepad2.y) { // y - outtake position
                 allowTrayAngle = true;
-                trayToOuttakePos(false);
+                outtake.trayToOuttakePos(false);
             }
 
             hardStopTrayAngleBig = trayAngleDefault + 0.18;
@@ -1426,9 +1372,9 @@ public class Robot {
             }
 
             if (willOpenClamp) {
-                openClamp(true, false, false);
+                outtake.openClamp(true, false, false);
             } else {
-                closeClamp(false);
+                outtake.closeClamp(false);
             }
 
             // intake regurgitate
@@ -1569,13 +1515,13 @@ public class Robot {
                 counter = 0;
             }
 
-            setMotorPower(power, power, power, power);
+            drivetrain.setMotorPower(power, power, power, power);
         }
 
         currentPos = fLeft.getCurrentPosition();
         finalError = targetPos - currentPos;
         Log.d("new pid", "straightBlocking2: final error is " + finalError);
-        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        drivetrain.setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
     public void straightBlocking2FixHeading (double inches) {
@@ -1645,16 +1591,16 @@ public class Robot {
                 Log.d("fixHeading", "straightBlocking2FixHeading: leftpower is " + leftPower);
                 Log.d("fixHeading", "straightBlocking2FixHeading: rightpower is " + rightPower);
                 Log.d("fixHeading", "straightBlocking2FixHeading: headingerror is " + headingError);
-                setMotorPower(leftPower, rightPower, leftPower, rightPower);
+                drivetrain.setMotorPower(leftPower, rightPower, leftPower, rightPower);
             } else {
-                setMotorPower(power, power, power, power);
+                drivetrain.setMotorPower(power, power, power, power);
             }
         }
 
         currentPos = fLeft.getCurrentPosition();
         finalError = targetPos - currentPos;
         Log.d("new pid", "straightBlocking2: final error is " + finalError);
-        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        drivetrain.setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
 
@@ -1681,23 +1627,23 @@ public class Robot {
 
             currentPos = fLeft.getCurrentPosition();
             power = fLeftMecanumController.calculatePID(currentPos, targetPos);
-            setMotorPower(power, -1 * power, -1 * power, power);
+            drivetrain.setMotorPower(power, -1 * power, -1 * power, power);
 
         }
 
-        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        drivetrain.setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
 
     public void oneButtonOuttake(Gamepad gamepad1, Gamepad gamepad2) {
         double distanceToMove = -lsFront.getCurrentPosition();
 
-        openClamp(true, false, true);
+        outtake.openClamp(true, false, true);
         opMode.sleep(500);
         trayAngle.setPosition(trayAngleDefault);
         allowTrayAngle = false;
         opMode.sleep(50);
-        trayToIntakePos(false);
+        outtake.trayToIntakePos(false);
         opMode.sleep(50);
 
         Log.d("linear slides", "moving linear slides now");
@@ -1805,7 +1751,7 @@ public class Robot {
                 //set motor power ONLY if a value has changed. else, use previous value.
                 if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
                         || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
-                    setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+                    drivetrain.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
                     fLeftPowerPrev = fLeftPower;
                     fRightPowerPrev = fRightPower;
@@ -1857,7 +1803,7 @@ public class Robot {
                     //set motor power ONLY if a value has changed. else, use previous value.
                     if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
                             || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
-                        setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+                        drivetrain.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
                         fLeftPowerPrev = fLeftPower;
                         fRightPowerPrev = fRightPower;
@@ -1924,14 +1870,15 @@ public class Robot {
 
     public void servoToInitPositions() {
         // set clamp, hook, spike
-        closeClamp(false);
+        outtake.closeClamp(false);
         openHook();
         moveFingerDown();
         opMode.sleep(100);
     }
+
     public void middleToStackAndIntake(int delay) {
 
-        openClamp(true, true, false);
+        outtake.openClamp(true, true, false);
         stackAttachmentOut();
         if (isRedAlliance) {
             if (isLong) {
@@ -1972,7 +1919,7 @@ public class Robot {
             setHeadingRelativeToBoard(0, 0.7);
         }
 
-        closeClamp(true);
+        outtake.closeClamp(true);
         opMode.sleep(100);
 
         intakeMotor.setPower(1);
@@ -2264,7 +2211,7 @@ public class Robot {
 
     public void trussToStackAndIntake() {
 
-        openClamp(true, true, false);
+        outtake.openClamp(true, true, false);
         setHeadingRelativeToBoard(0, 0.7);
         stackAttachmentOut();
         if (isRedAlliance) {
@@ -2335,7 +2282,7 @@ public class Robot {
 
         mecanumBlocking2(polarity * 23);
 
-        closeClamp(true);
+        outtake.closeClamp(true);
 
         //regurgitate
         intakeMotor.setPower(1);
@@ -2412,10 +2359,10 @@ public class Robot {
 
             currentPos = fLeft.getCurrentPosition();
             power = fLeftMecanumController.calculatePID(currentPos, targetPos);
-            setMotorPower(power, -1 * power, -1 * power, power);
+            drivetrain.setMotorPower(power, -1 * power, -1 * power, power);
         }
 
-        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        drivetrain.setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
 
@@ -2445,10 +2392,10 @@ public class Robot {
 
             currentPos = fLeft.getCurrentPosition();
             power = fLeftMecanumController.calculatePID(currentPos, targetPos);
-            setMotorPower(power, -1 * power, -1 * power, power);
+            drivetrain.setMotorPower(power, -1 * power, -1 * power, power);
         }
 
-        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        drivetrain.setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
 
@@ -2460,24 +2407,6 @@ public class Robot {
             power = fLeftMecanumController.calculatePID(currentPos, targetPos);
 //            setMotorPower(power, -1 * power, -1 * power, power);
             return new DrivetrainPowers(power, -1 * power, -1 * power, power);
-        }
-        return new DrivetrainPowers(0,0,0,0);
-    }
-
-    public DrivetrainPowers straightParallelPowerPID(double currentPos, double targetPos, double maxPower) {
-        double ERROR_TOLERANCE = 15;
-        double power;
-
-        double error = targetPos - currentPos;
-
-        if (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
-
-            power = straightController.calculatePID(currentPos, targetPos);
-
-            //cap power
-            power = Range.clip(power, -1 * maxPower, maxPower);
-
-            return new DrivetrainPowers(power,power,power,power);
         }
         return new DrivetrainPowers(0,0,0,0);
     }

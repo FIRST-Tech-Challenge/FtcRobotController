@@ -51,7 +51,7 @@ public class BlueShortFreeway22 extends LinearOpMode {
             robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.outtake.trayToOuttakePos(true); // pivot tray to outtake position
             robot.autoOuttake(false);
             robot.configuredParking();
 
