@@ -91,6 +91,7 @@ public class RedFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(180))
                 .splineToLinearHeading(new Pose2d(10, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                .setTangent(Math.toRadians(180))
                 .splineToLinearHeading(new Pose2d(-57, -11.5, Math.toRadians(180)), Math.toRadians(180))
                 .build();
     }

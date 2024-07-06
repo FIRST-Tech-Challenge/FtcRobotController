@@ -186,6 +186,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
         if (!drive.isBusy()){
             if(pickupElapsedTime==null) {
                 drive.intakeToTopStack();
+                drive.startIntake();
                 pickupElapsedTime = new ElapsedTime();
             }
             if (has2Pixels() ){
@@ -239,6 +240,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
         if (!drive.isBusy()){
             drive.openFingers();
+            telemetry.addData("depositTime", nextState);
             if (depositTime==null){
                 depositTime= new ElapsedTime();
             } else if (depositTime.milliseconds()>100){

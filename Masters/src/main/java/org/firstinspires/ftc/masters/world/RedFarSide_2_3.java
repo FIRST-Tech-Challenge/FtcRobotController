@@ -147,7 +147,7 @@ public class RedFarSide_2_3 extends FarSideOpMode {
                                 nextPath = toStackCycleGateMid;
                                 break;
                         }
-                        backdropDepositPath(State.TO_STACK_CYCLE, nextPath);
+                        backdropDepositPath(State.TO_STACK, nextPath);
                     } else {
                         backdropDepositPath(State.PARK, park);
                     }
