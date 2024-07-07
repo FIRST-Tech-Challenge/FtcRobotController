@@ -112,10 +112,10 @@ public class CSCons {
 
     public static double intakeGround = 0.38; //for autonomous, purple pixel
     public static double intakeBottom = 0.32;
-    public static double intake2 =0.29;
-    public static double intake3 =0.27;
-    public static double intake4 =0.25;
-    public static double intake5 =0.23;
+    public static double intake2 =0.31;
+    public static double intake3 =0.29;
+    public static double intake4 =0.27;
+    public static double intake5 =0.25;
     public static double intakeAboveTop =0.2;
     public static double intakeInit =0.02;
 
