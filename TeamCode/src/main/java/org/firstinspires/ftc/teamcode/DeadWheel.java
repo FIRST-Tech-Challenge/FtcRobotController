@@ -17,8 +17,8 @@ public class DeadWheel extends LinearOpMode {
     @Override
     public void runOpMode() {
         leftDeadWheel = hardwareMap.get(DcMotorEx.class, "left_dead_wheel");
-        rightDeadWheel = hardwareMap.get(DcMotorEx.class, "left_dead_wheel");
-        strafeDeadWheel = hardwareMap.get(DcMotorEx.class, "left_dead_wheel");
+        rightDeadWheel = hardwareMap.get(DcMotorEx.class, "right_dead_wheel");
+        strafeDeadWheel = hardwareMap.get(DcMotorEx.class, "strafe_dead_wheel");
 
         telemetry.addData("Status", "Initilized");
         telemetry.update();
