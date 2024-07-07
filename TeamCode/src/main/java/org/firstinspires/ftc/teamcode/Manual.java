@@ -23,7 +23,7 @@ public class Manual extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        verticalSlide = hardwareMap.get(DcMotor.class, "motor1");
+       // verticalSlide = hardwareMap.get(DcMotor.class, "motor1");
 
         /* -- Uncomment once we have encoders
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -33,11 +33,12 @@ public class Manual extends LinearOpMode {
         verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         */
 
+        // TODO: Wrong combination of reversed and forward
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        verticalSlide.setDirection(DcMotor.Direction.FORWARD);
+        //verticalSlide.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -47,7 +48,7 @@ public class Manual extends LinearOpMode {
 
         while (opModeIsActive()) {
            drive();
-           moveVerticalSlide();
+        //   moveVerticalSlide();
            telemetry.update();
         }
     }
