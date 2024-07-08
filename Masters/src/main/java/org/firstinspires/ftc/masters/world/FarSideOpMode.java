@@ -69,7 +69,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected State currentState;
     protected int outtakeTarget = 0;
-
+    protected boolean has2pixels= false;
 
     protected void initAuto(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -184,24 +184,33 @@ public abstract class FarSideOpMode extends LinearOpMode {
             if (cycleCount==0 || retractElapsed!=null && retractElapsed.milliseconds()>1500) {
                 outtakeTarget=0;
                 drive.setOuttakeToTransfer();
+                pickupElapsedTime=null;
             }
         }
         if (!drive.isBusy()){
+
+            telemetry.addData("pickup elapsed", pickupElapsedTime);
             if(pickupElapsedTime==null) {
+                telemetry.addData("move intake", "true");
+                has2pixels = false;
                 if (cycleCount==0) {
                     drive.intakeToTopStack();
                 } else{
+                    drive.startIntake();
                     drive.intakeToPosition3();
                 }
                 pickupElapsedTime = new ElapsedTime();
             }
-            if (has2Pixels() ){
+            if (has2Pixels() && ! has2pixels ){
+                has2pixels = true;
                 telemetry.addData("has 2 pixels", "true");
                 pickupElapsedTime = new ElapsedTime();
+            } else {
+                telemetry.addData("has 2 pixels", "false");
             }
 
            if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000 || (has2Pixels() && pickupElapsedTime.milliseconds()>100))  ){
-
+               telemetry.addData("move intake", "done");
                drive.pushPixels();
 
               // drive.stopIntake();
@@ -209,6 +218,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
               //  drive.outtakeToPickup();
                 pickupElapsedTime = new ElapsedTime();
                 currentState = State.BACKDROP_DEPOSIT_PATH;
+               telemetry.addData("follow path", cycleCount);
                 drive.followTrajectorySequenceAsync(nextPath);
 
             }
@@ -288,7 +298,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected  void park(){
-        if (retractElapsed != null && retractElapsed.milliseconds() > 1500){
+        if (!drive.isBusy()){
             outtakeTarget = 0;
             drive.outtakeToTransfer();
         }

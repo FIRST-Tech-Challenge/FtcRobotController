@@ -106,7 +106,11 @@ public class RedFarSide_2_3 extends FarSideOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
+            telemetry.addData("cycle", cycleCount);
+            telemetry.addData("target", outtakeTarget);
+            telemetry.addData("state", currentState);
 
+            telemetry.update();
 
             switch (currentState){
                 case PURPLE_DEPOSIT_PATH:
@@ -136,6 +140,7 @@ public class RedFarSide_2_3 extends FarSideOpMode {
                     toStack(nextPath);
                     break;
                 case BACKDROP_DEPOSIT_PATH:
+
                     if (cycleCount==0) {
                         switch (propPos) {
                             case LEFT:

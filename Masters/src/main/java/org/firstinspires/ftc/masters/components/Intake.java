@@ -58,6 +58,7 @@ public class Intake implements Component{
             }
             if (transfer.getCurrentTransferStatus()== CSCons.TransferStatus.DONE && currentTransferStatus!= transfer.getCurrentTransferStatus()){
                 intakeControl(CSCons.IntakeDirection.BACKWARD);
+                stackPosition=3;
                 elapsedTime = new ElapsedTime();
             }
 
@@ -86,7 +87,7 @@ public class Intake implements Component{
         }
         //right stick down intake backward
         if (gamepad.right_stick_y>0.5 && Math.abs(gamepad.right_stick_x)<0.5){
-            stackPosition=5;
+            stackPosition=3;
             intakeDirection= CSCons.IntakeDirection.BACKWARD;
         }
         //right stick right intake off

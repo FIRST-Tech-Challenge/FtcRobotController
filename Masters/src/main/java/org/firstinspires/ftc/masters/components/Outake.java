@@ -265,6 +265,7 @@ public class Outake implements Component{
     }
     private void setupHang(){
         backSlidePos = CSCons.OuttakePosition.HIGH;
+        setOuttakeToBackdrop();
         target= backSlidePos.getTarget();
     }
 

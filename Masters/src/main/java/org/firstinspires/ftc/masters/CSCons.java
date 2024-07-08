@@ -37,17 +37,17 @@ public class CSCons {
 
     public static double wristAngleInit= 0.9;
     public static double wristOuttakeAngleBackdrop =0.04;
-    public static double wristOuttakeAngleTransfer =0.99;
-    public static double wristOuttakeMovementTransfer=0.425;
+    public static double wristOuttakeAngleTransfer =0.98;
+    public static double wristOuttakeMovementTransfer=0.39; //0.43
 
     public static double wristOuttakeMovementM=0.6;
 
-    public static double wristOuttakeMovementGround = 0.89;
-    public static double wristOuttakeMovementHub = 1;
+    public static double wristOuttakeMovementGround = 0.85;
+    public static double wristOuttakeMovementHub = 0.96;
 
-    public static double wristOuttakePickup=0.37;
+    public static double wristOuttakePickup=0.33;
     public static double wristOuttakeAnglePickup=0.95;
-    public static double wristOuttakeMovementBackdrop =0.82;
+    public static double wristOuttakeMovementBackdrop =0.78;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -111,7 +111,7 @@ public class CSCons {
 
 
     public static double intakeGround = 0.38; //for autonomous, purple pixel
-    public static double intakeBottom = 0.32;
+    public static double intakeBottom = 0.33;
     public static double intake2 =0.31;
     public static double intake3 =0.29;
     public static double intake4 =0.27;
