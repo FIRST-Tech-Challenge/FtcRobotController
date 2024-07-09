@@ -181,15 +181,15 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected void toStack(TrajectorySequence nextPath){
         if (drive.isBusy()) {
-            if (cycleCount==0 || retractElapsed!=null && retractElapsed.milliseconds()>1200 && retractElapsed.milliseconds()<2000) {
-                drive.setOuttakeToTransfer();
-                outtakeTarget= 300;
-
+            if (cycleCount==0 || retractElapsed!=null && retractElapsed.milliseconds()>1000 && outtakeTarget!=0) {
+                outtakeTarget= 400;
             }
-            if (cycleCount ==1 && retractElapsed!=null && retractElapsed.milliseconds()>2000){
+            if (cycleCount ==1 && drive.getBackSlides().getCurrentPosition()>350 && retractElapsed!=null){
                 outtakeTarget=0;
+                drive.setOuttakeToTransfer();
                 pickupElapsedTime=null;
                 drive.startIntake();
+                retractElapsed=null;
             }
         }
         if (!drive.isBusy()){
@@ -326,8 +326,9 @@ public abstract class FarSideOpMode extends LinearOpMode {
     public CSCons.OuttakeWrist getOuttakeWristPosition(PropFindRightProcessor.pos propPos){
         if (propPos== PropFindRightProcessor.pos.RIGHT){
             return CSCons.OuttakeWrist.flatLeft;
-        } else
-        return CSCons.OuttakeWrist.flatRight;
+        } else {
+            return CSCons.OuttakeWrist.flatRight;
+        }
     }
 
     public CSCons.OuttakeWrist getOuttakeWristPosition(){
