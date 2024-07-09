@@ -71,9 +71,6 @@ public class RedFarSide_2_3 extends FarSideOpMode {
         toBackboardCycleGate = RedFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
 
 
-
-
-
         TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
                 .back(5)
                 .setTangent(Math.toRadians(0))
@@ -156,7 +153,7 @@ public class RedFarSide_2_3 extends FarSideOpMode {
                         backdropDepositPath(State.TO_STACK, nextPath);
 
                     } else {
-                        backdropDepositPath(State.PARK, park);
+                        backdropDepositPath(State.PARK, parkFromLeft);
                     }
                     break;
                 case PARK:
