@@ -56,7 +56,7 @@ public class RedFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -36, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -39, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class RedFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(20, -11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -31.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -33.5, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -74,7 +74,7 @@ public class RedFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(30, -11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, -29, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, -31, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -87,7 +87,7 @@ public class RedFarSidePath {
                 .build();
     }
 
-    public static TrajectorySequence toStack1FromBackboardGate (SampleMecanumDrive drive, Pose2d startPose){
+    public static TrajectorySequence toGateFromBackdrop(SampleMecanumDrive drive, Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(180))
                 .splineToLinearHeading(new Pose2d(10, -11.5, Math.toRadians(180)), Math.toRadians(180))
@@ -96,12 +96,18 @@ public class RedFarSidePath {
                 .build();
     }
 
-    public static TrajectorySequence toStackCenterFromBackboardGate(SampleMecanumDrive drive, Pose2d startPose){
+    public static TrajectorySequence toStackFromPark(SampleMecanumDrive drive, Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-58, -10.5, Math.toRadians(180)))
+                .build();
+    }
+
+    public static TrajectorySequence toStackFromGate(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+               // .setTangent(Math.toRadians(180))
+               // .splineToLinearHeading(new Pose2d(10, -11.5, Math.toRadians(180)), Math.toRadians(180))
                 .setTangent(Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(10, -11.5, Math.toRadians(180)), Math.toRadians(180))
-//                .setTangent(Math.toRadians(180))
-//                .splineToLinearHeading(new Pose2d(-58, -10.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-58, -10.5, Math.toRadians(180)), Math.toRadians(180))
                 .build();
     }
 

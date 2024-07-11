@@ -967,6 +967,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         planeRaise.setPosition(CSCons.droneFlat);
     }
 
+    public void shootPlane(){
+        planeRaise.setPosition(CSCons.droneShooting);
+    }
+
 
 
 
