@@ -45,8 +45,8 @@ public class hdrive extends LinearOpMode {
             double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double middleMotorPower = ((rx) / denominator) / defaultPower;
+            double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
+            double middleMotorPower = ((rx)) / defaultPower;
             double leftMotorPower = ((y + x) / denominator) / defaultPower;
             double rightMotorPower = ((y - x) / denominator) / defaultPower;
 
