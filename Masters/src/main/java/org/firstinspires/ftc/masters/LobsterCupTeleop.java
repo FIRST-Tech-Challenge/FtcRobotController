@@ -142,7 +142,7 @@ public class LobsterCupTeleop extends LinearOpMode {
             telemetry.addData("DRIVE MODE", driveMode.name());
 
 
-            if (gamepad1.ps) {
+            if (gamepad1.share) {
                 driveMode = DriveMode.HANG;
             }
             if (driveMode == DriveMode.HANG){

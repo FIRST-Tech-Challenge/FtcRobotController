@@ -33,7 +33,7 @@ public class CSCons {
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop =0;
-    public static double outtakeMovementTransfer =0.55;
+    public static double outtakeMovementTransfer =0.55;//0.55
 
     public static double wristAngleInit= 0.9;
     public static double wristOuttakeAngleBackdrop =0.04;
@@ -61,8 +61,8 @@ public class CSCons {
     public static double wristFlatLeft =0.745; //
     public static double wristVerticalDown=1;
 
-    public static double droneFlat = 1;
-    public static double droneShooting = 0.1;
+    public static double droneFlat = 0.5;
+    public static double droneShooting = 0.11;
 
     public static double closeClawDistance = 3; //in cm
 

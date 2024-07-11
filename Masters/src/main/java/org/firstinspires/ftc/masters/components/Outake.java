@@ -500,7 +500,7 @@ public class Outake implements Component{
         if (gamepad.right_stick_y>0.2 && Math.abs(gamepad.right_stick_x)<0.2){
             liftOuttakeFingers();
         }
-        if (gamepad.right_stick_y<-0.3 && Math.abs(gamepad.right_stick_x)<0.2){
+        if (gamepad.right_stick_y<-0.6 && Math.abs(gamepad.right_stick_x)<0.2){
             closeFingers();
         }
 

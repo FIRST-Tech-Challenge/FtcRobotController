@@ -181,19 +181,13 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     protected void toStack(TrajectorySequence nextPath){
         if (drive.isBusy()) {
-            if (cycleCount==0 || retractElapsed!=null && retractElapsed.milliseconds()>1000 && outtakeTarget!=0) {
-                outtakeTarget= 400;
-            }
-            if (cycleCount ==1 && drive.getBackSlides().getCurrentPosition()>350 && retractElapsed!=null){
-                outtakeTarget=0;
-                drive.setOuttakeToTransfer();
-                pickupElapsedTime=null;
-                drive.startIntake();
-                retractElapsed=null;
-            }
+          if (retractElapsed!=null && retractElapsed.milliseconds()>500 ){
+              outtakeTarget=0;
+              drive.outtakeToTransfer();
+              retractElapsed=null;
+          }
         }
         if (!drive.isBusy()){
-
             telemetry.addData("pickup elapsed", pickupElapsedTime);
             if(pickupElapsedTime==null) {
                 telemetry.addData("move intake", "true");
@@ -216,11 +210,11 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
             if (!has2pixels &&  cycleCount==1){
                 if (pickupElapsedTime.milliseconds()>1500){
-                    drive.intakeToPosition3();
+                    drive.intakeToPosition1();
                 } else if (pickupElapsedTime.milliseconds()>1000){
                     drive.intakeToPosition2();
                 } else if (pickupElapsedTime.milliseconds()>500){
-                    drive.intakeToPosition1();
+                    drive.intakeToPosition3();
                 }
             }
 
