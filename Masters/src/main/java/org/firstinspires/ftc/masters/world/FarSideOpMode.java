@@ -34,6 +34,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
         PURPLE_DEPOSIT_PATH,
         PURPLE_DEPOSIT,
 
+        TO_STACK_1,
         TO_STACK,
 
         BACKDROP_DEPOSIT_PATH,
@@ -65,6 +66,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
     protected TrajectorySequence rightPurpleToStack, leftPurpleToStack, midPurpleToStack;
     protected TrajectorySequence stackToRightYellow, stackToLeftYellow,stackToMidYellow;
     protected TrajectorySequence toStackCycleGateLeft, toStackCycleGateRight, toStackCycleGateMid, toBackboardCycleGate, toStackCycleTruss, goBackboardCycleGate;
+    protected TrajectorySequence toStackFromCenterGate;
     protected TrajectorySequence park, parkFromLeft, parkFromMid, parkFromRight;
 
     protected State currentState;
@@ -179,14 +181,27 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
     }
 
-    protected void toStack(TrajectorySequence nextPath){
-        if (drive.isBusy()) {
-          if (retractElapsed!=null && retractElapsed.milliseconds()>500 ){
-              outtakeTarget=0;
-              drive.outtakeToTransfer();
-              retractElapsed=null;
-          }
+    protected void toStack1(){
+        if (cycleCount==0){
+            currentState=State.TO_STACK;
+        } else {
+            if (!drive.isBusy()) {
+                outtakeTarget = 0;
+                drive.outtakeToTransfer();
+                currentState = State.TO_STACK;
+                drive.followTrajectorySequenceAsync(toStackFromCenterGate);
+            }
         }
+    }
+
+    protected void toStack(TrajectorySequence nextPath){
+//        if (drive.isBusy()) {
+//          if (retractElapsed!=null && retractElapsed.milliseconds()>500 ){
+//              outtakeTarget=0;
+//              drive.outtakeToTransfer();
+//              retractElapsed=null;
+//          }
+//        }
         if (!drive.isBusy()){
             telemetry.addData("pickup elapsed", pickupElapsedTime);
             if(pickupElapsedTime==null) {

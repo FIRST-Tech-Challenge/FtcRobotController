@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
-import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
 import org.firstinspires.ftc.masters.world.paths.RedFarSidePath;
 
 @Config
@@ -64,11 +63,14 @@ public class RedFarSide_2_3 extends FarSideOpMode {
         parkFromLeft = RedFarSidePath.park(drive, stackToLeftYellow.end());
         parkFromRight = RedFarSidePath.park(drive, stackToRightYellow.end());
 
-        toStackCycleGateLeft = RedFarSidePath.toStackFromBackboardGate(drive, stackToLeftYellow.end() );
-        toStackCycleGateMid = RedFarSidePath.toStackFromBackboardGate(drive, stackToMidYellow.end());
-        toStackCycleGateRight = RedFarSidePath.toStackFromBackboardGate(drive, stackToRightYellow.end());
+        toStackCycleGateLeft = RedFarSidePath.toStackCenterFromBackboardGate(drive, stackToLeftYellow.end() );
+        toStackCycleGateMid = RedFarSidePath.toStackCenterFromBackboardGate(drive, stackToMidYellow.end());
+        toStackCycleGateRight = RedFarSidePath.toStackCenterFromBackboardGate(drive, stackToRightYellow.end());
+
+        toStackFromCenterGate = RedFarSidePath.toStack1FromBackboardGate(drive, toStackCycleGateLeft.end());
 
         toBackboardCycleGate = RedFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
+
 
 
         TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
@@ -136,6 +138,9 @@ public class RedFarSide_2_3 extends FarSideOpMode {
 
                     toStack(nextPath);
                     break;
+                case TO_STACK_1:
+                    toStack1();
+                    break;
                 case BACKDROP_DEPOSIT_PATH:
 
                     if (cycleCount==0) {
@@ -150,7 +155,7 @@ public class RedFarSide_2_3 extends FarSideOpMode {
                                 nextPath = toStackCycleGateMid;
                                 break;
                         }
-                        backdropDepositPath(State.TO_STACK, nextPath);
+                        backdropDepositPath(State.TO_STACK_1, nextPath);
 
                     } else {
                         backdropDepositPath(State.PARK, parkFromLeft);
