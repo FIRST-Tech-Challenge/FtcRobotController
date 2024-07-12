@@ -39,11 +39,6 @@ public class hAuto extends OpMode {
 
         newTimer.reset();
 
-
-
-
-
-
     }
 
     @Override
@@ -54,6 +49,7 @@ public class hAuto extends OpMode {
             telemetry.update();
             fiveSeconds = true;
         }
+
         telemetry.addData("time", newTimer.seconds());
         telemetry.update();
     }

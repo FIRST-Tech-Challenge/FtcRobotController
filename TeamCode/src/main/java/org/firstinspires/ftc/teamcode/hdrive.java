@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
 public class hdrive extends LinearOpMode {
@@ -12,6 +13,7 @@ public class hdrive extends LinearOpMode {
     private DcMotor leftMotor; // location 1
     private DcMotor rightMotor; // location 2
     private Servo servoClaw;
+    private ElapsedTime newTimer = new ElapsedTime();
 
     @Override
     public void runOpMode()  {
@@ -32,6 +34,8 @@ public class hdrive extends LinearOpMode {
         boolean servoLastPos = false;
 
         waitForStart();
+
+        newTimer.reset();
 
         servoClaw.setPosition(0.35);
 
@@ -82,6 +86,7 @@ public class hdrive extends LinearOpMode {
             telemetry.addData("middleMotorPower", middleMotorPower);
             telemetry.addData("leftMotorPower", leftMotorPower);
             telemetry.addData("backLeftPower", rightMotorPower);
+            telemetry.addData("time", newTimer.seconds());
             telemetry.update();
 
         }
