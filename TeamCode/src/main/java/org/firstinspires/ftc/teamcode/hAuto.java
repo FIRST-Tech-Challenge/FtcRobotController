@@ -38,7 +38,9 @@ public class hAuto extends OpMode {
 
         newTimer.reset();
 
-
+        if (newTimer.seconds() >= 5){
+            moveToPos(6,0.2);
+        }
 
 
 
