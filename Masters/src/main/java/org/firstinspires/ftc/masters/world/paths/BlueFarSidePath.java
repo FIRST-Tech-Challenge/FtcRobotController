@@ -123,6 +123,31 @@ public class BlueFarSidePath {
                 .build();
     }
 
+    public static TrajectorySequence toGateFromBackdrop(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(180))
+//                .setTangent(Math.toRadians(180))
+//                .splineToLinearHeading(new Pose2d(-58, -10.5, Math.toRadians(180)), Math.toRadians(180))
+                .build();
+    }
+
+    public static TrajectorySequence toStackFromPark(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-58, 10.5, Math.toRadians(180)))
+                .build();
+    }
+
+    public static TrajectorySequence toStackFromGate(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                // .setTangent(Math.toRadians(180))
+                // .splineToLinearHeading(new Pose2d(10, -11.5, Math.toRadians(180)), Math.toRadians(180))
+                .setTangent(Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-58, 10.5, Math.toRadians(180)), Math.toRadians(180))
+                .build();
+    }
+
+
     public static TrajectorySequence toStackFromBackboardGate (SampleMecanumDrive drive, Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(180))

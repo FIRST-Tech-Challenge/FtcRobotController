@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
+import org.firstinspires.ftc.masters.world.paths.RedFarSidePath;
 
 @Config
 @Autonomous(name = "Far Side blue 2 + 3 Gate", group = "competition")
@@ -56,11 +57,22 @@ public class BlueFarSide_2_3_gate extends FarSideOpMode {
 
         stackToLeftYellow = BlueFarSidePath.getStackToLeftYellow(drive, leftPurpleToStack.end());
 
-        toStackCycleGateLeft = BlueFarSidePath.toStackFromBackboardGate(drive, stackToLeftYellow.end() );
-        toStackCycleGateMid = BlueFarSidePath.toStackFromBackboardGate(drive, stackToMidYellow.end());
-        toStackCycleGateRight = BlueFarSidePath.toStackFromBackboardGate(drive, stackToRightYellow.end());
+//        toStackCycleGateLeft = BlueFarSidePath.toStackFromBackboardGate(drive, stackToLeftYellow.end() );
+//        toStackCycleGateMid = BlueFarSidePath.toStackFromBackboardGate(drive, stackToMidYellow.end());
+//        toStackCycleGateRight = BlueFarSidePath.toStackFromBackboardGate(drive, stackToRightYellow.end());
 
-        toBackboardCycleGate = BlueFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
+        parkFromMid = BlueFarSidePath.park(drive, stackToMidYellow.end());
+        parkFromLeft = BlueFarSidePath.park(drive, stackToLeftYellow.end());
+        parkFromRight = BlueFarSidePath.park(drive, stackToRightYellow.end());
+
+        toGateCycleRight= BlueFarSidePath.toGateFromBackdrop(drive,stackToRightYellow.end());
+        toGateCycleLeft = BlueFarSidePath.toGateFromBackdrop(drive, stackToLeftYellow.end());
+        toGateCycleMid = BlueFarSidePath.toGateFromBackdrop(drive, stackToMidYellow.end());
+        toStackFromCenterGate = BlueFarSidePath.toStackFromGate(drive, toGateCycleMid.end());
+
+        toStackFromPark = BlueFarSidePath.toStackFromPark(drive, parkFromMid.end());
+
+        //toBackboardCycleGate = BlueFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
 
 
 
@@ -115,6 +127,11 @@ public class BlueFarSide_2_3_gate extends FarSideOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
+            telemetry.addData("cycle", cycleCount);
+            telemetry.addData("target", outtakeTarget);
+            telemetry.addData("state", currentState);
+
+            telemetry.update();
 
 
             switch (currentState){
@@ -138,30 +155,21 @@ public class BlueFarSide_2_3_gate extends FarSideOpMode {
                                 break;
                         }
                     } else {
-                        nextPath= toBackboardCycleGate;
+                        stackToLeftYellow = RedFarSidePath.getStackToLeftYellow(drive, toStackFromCenterGate.end());
+                        nextPath = stackToLeftYellow;
                     }
 
                     toStack(nextPath);
                     break;
+                case TO_GATE:
+                    toGate();
+                    break;
                 case BACKDROP_DEPOSIT_PATH:
-                    if (cycleCount==0) {
-                        switch (propPos) {
-                            case LEFT:
-                                nextPath = toStackCycleGateLeft;
-                                break;
-                            case RIGHT:
-                                nextPath = toStackCycleGateRight;
-                                break;
-                            case MID:
-                                nextPath = toStackCycleGateMid;
-                                break;
-                        }
-                    } else {
-                        backdropDepositPath(State.PARK, park);
-                    }
+                    backdropDepositPath(State.PARK, parkFromLeft);
                     break;
                 case PARK:
-                    park();
+                    nextPath= toStackFromPark;
+                    park(toStackFromPark);
                     break;
 
             }
