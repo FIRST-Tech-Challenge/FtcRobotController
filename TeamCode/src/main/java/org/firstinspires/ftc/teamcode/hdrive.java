@@ -81,6 +81,13 @@ public class hdrive extends LinearOpMode {
                 servoClaw.setPosition(0);
                 telemetry.addData("B", gamepad1B_pressed);
             }
+            if (newTimer.seconds() >= 10){
+                telemetry.addData("10","test");
+
+            }else if (newTimer.seconds() >= 5){
+                telemetry.addData("5","test");
+
+            }
 
             telemetry.addData("X Value", x);
             telemetry.addData("middleMotorPower", middleMotorPower);
