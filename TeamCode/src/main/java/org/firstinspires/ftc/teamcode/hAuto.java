@@ -40,6 +40,8 @@ public class hAuto extends OpMode {
 
         if (newTimer.seconds() >= 5){
             moveToPos(6,0.2);
+            telemetry.addData("something","test");
+            telemetry.update();
         }
 
 
