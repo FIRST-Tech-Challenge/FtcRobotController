@@ -147,23 +147,21 @@ public class RedFarSide_2_3 extends FarSideOpMode {
                     toGate();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-//
-//                    if (cycleCount==0) {
-//                        switch (propPos) {
-//                            case LEFT:
-//                                nextPath = toGateCycleLeft;
-//                                break;
-//                            case RIGHT:
-//                                nextPath = toGateCycleRight;
-//                                break;
-//                            case MID:
-//                                nextPath = toGateCycleMid;
-//                                break;
-//                        }
-//                        backdropDepositPath(State.TO_GATE, nextPath);
-//
-//                    } else {
+                    if (cycleCount==0) {
+                        switch (propPos) {
+                            case LEFT:
+                                backdropDepositPath(State.PARK, parkFromLeft);
+                                break;
+                            case RIGHT:
+                                backdropDepositPath(State.PARK, parkFromRight);
+                                break;
+                            case MID:
+                                backdropDepositPath(State.PARK, parkFromMid);
+                                break;
+                        }
+                    } else {
                         backdropDepositPath(State.PARK, parkFromLeft);
+                    }
                     //}
                     break;
                 case PARK:

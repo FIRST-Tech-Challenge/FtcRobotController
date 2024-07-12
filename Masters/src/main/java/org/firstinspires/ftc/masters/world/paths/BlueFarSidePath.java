@@ -101,7 +101,16 @@ public class BlueFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, 27, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(49.5, 29, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+    }
+
+    public static TrajectorySequence getStackToRightYellowCycle(SampleMecanumDrive drive, Pose2d startPose) {
+
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(49, 29, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -110,7 +119,7 @@ public class BlueFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(30, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, 29, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(49.5, 31, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -119,7 +128,7 @@ public class BlueFarSidePath {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(30, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(50, 34, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(49.5, 36, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 
@@ -192,9 +201,7 @@ public class BlueFarSidePath {
     public static TrajectorySequence park(SampleMecanumDrive drive, Pose2d startPose){
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(180))
-                .setTangent(Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(42, 12, Math.toRadians(180)), Math.toRadians(0))
                 .build();
     }
 

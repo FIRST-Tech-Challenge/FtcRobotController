@@ -255,7 +255,7 @@ public class Outake implements Component{
             if (gamepad.right_bumper){
                 target = target+10;
             }
-            if (gamepad.right_stick_x<-0.2){
+            if (gamepad.right_stick_x<-0.7){
                 outtakeState = CSCons.OuttakeState.Retract;
                 setOuttakeToTransfer();
             }

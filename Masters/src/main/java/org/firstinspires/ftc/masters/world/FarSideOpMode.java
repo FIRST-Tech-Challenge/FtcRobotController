@@ -54,6 +54,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
     protected ElapsedTime liftTime = null;
     protected ElapsedTime pickupElapsedTime= null;
     protected ElapsedTime retractElapsed= null;
+    protected ElapsedTime shooterTime = null;
     protected CSCons.OuttakeWrist outtakeWristPosition = CSCons.OuttakeWrist.vertical;
 
     protected SampleMecanumDrive drive;
@@ -188,6 +189,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
             if (!drive.isBusy()) {
                 outtakeTarget = 0;
                 drive.outtakeToTransfer();
+
                 currentState = State.TO_STACK;
                 drive.followTrajectorySequenceAsync(toStackFromCenterGate);
             }
@@ -195,23 +197,21 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected void toStack(TrajectorySequence nextPath){
-//        if (drive.isBusy()) {
-//          if (retractElapsed!=null && retractElapsed.milliseconds()>500 ){
-//              outtakeTarget=0;
-//              drive.outtakeToTransfer();
-//              retractElapsed=null;
-//          }
-//        }
+        if (drive.isBusy() && cycleCount==1) {
+          drive.intakeToPosition1();
+          drive.startIntake();
+        }
         if (!drive.isBusy()){
             telemetry.addData("pickup elapsed", pickupElapsedTime);
             if(pickupElapsedTime==null) {
                 telemetry.addData("move intake", "true");
                 has2pixels = false;
+                drive.outtakeToTransfer();
                 if (cycleCount==0) {
                     drive.intakeToTopStack();
                 } else{
 
-                    drive.intakeToPosition4();
+                    drive.intakeToPosition2();
                 }
                 pickupElapsedTime = new ElapsedTime();
             }
@@ -227,14 +227,22 @@ public abstract class FarSideOpMode extends LinearOpMode {
 //                if (pickupElapsedTime.milliseconds()>1500){
 //                    drive.intakeToPosition1();
 //                } else
-                if (pickupElapsedTime.milliseconds()>1000){
-                    drive.intakeToGround();
-                } else if (pickupElapsedTime.milliseconds()>500){
+               if (pickupElapsedTime.milliseconds()>700){
                     drive.intakeToPosition1();
                 }
             }
 
-           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>1000*(cycleCount+1) || (has2Pixels() && pickupElapsedTime.milliseconds()>250))  ){
+            if (!has2pixels && cycleCount==0){
+                if (pickupElapsedTime.milliseconds()>500){
+                    drive.intakeToPosition3();
+                }
+            }
+            int wait =1000;
+            if (cycleCount==1){
+                wait = 3000;
+            }
+
+           if (pickupElapsedTime!=null && (pickupElapsedTime.milliseconds()>wait || (has2pixels && pickupElapsedTime.milliseconds()>300))  ){
                telemetry.addData("move intake", "done");
                drive.pushPixels();
 
@@ -287,7 +295,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
             //drive.shootPlane();
             if (depositTime==null){
                 depositTime= new ElapsedTime();
-            } else if (depositTime.milliseconds()>300){
+            } else if (depositTime.milliseconds()>500){
 
                 if (nextState == State.PARK){
                     drive.followTrajectorySequenceAsync(nextPath);
@@ -350,14 +358,21 @@ public abstract class FarSideOpMode extends LinearOpMode {
                     drive.followTrajectorySequenceAsync(nextPath);
                     currentState = State.TO_STACK;
                 } else {
-                    drive.shootPlane();
+                    if (shooterTime==null) {
+                        drive.shootPlane();
+                        shooterTime = new ElapsedTime();
+                    }
                 }
+            }
+
+            if (shooterTime!=null && shooterTime.milliseconds()>700){
+                drive.initPlane();
             }
         }
     }
 
     protected boolean has2Pixels(){
-        return drive.frontBreakBeam.getState() && drive.backBreakBeam.getState();
+        return !drive.frontBreakBeam.getState() && !drive.backBreakBeam.getState();
     }
 
     public CSCons.OuttakeWrist getOuttakeWristPosition(PropFindRightProcessor.pos propPos){

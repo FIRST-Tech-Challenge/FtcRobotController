@@ -426,8 +426,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
 
-
-
     public void intakeToTransfer() {
 //        clawAngle.setPosition(CSCons.clawAngleTransfer);
 //        clawArm.setPosition(clawArmTransfer);
