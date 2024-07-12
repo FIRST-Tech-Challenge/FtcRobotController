@@ -49,7 +49,7 @@ public class hAuto extends OpMode {
     @Override
     public void loop() {
         if (!fiveSeconds && newTimer.seconds() >= 5){
-            moveToPos(6,0.2);
+            moveToPos(36,0.2);
             telemetry.addData("something","test");
             telemetry.update();
             fiveSeconds = true;
@@ -64,8 +64,8 @@ public class hAuto extends OpMode {
     public void moveToPos(double inches, double speed) {
         int move = (int)(Math.round(inches * conversion));
 
-        leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + move);
-        rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + move);
+        leftMotor.setTargetPosition(leftMotor.getCurrentPosition() - move);
+        rightMotor.setTargetPosition(rightMotor.getCurrentPosition() - move);
 
         leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
