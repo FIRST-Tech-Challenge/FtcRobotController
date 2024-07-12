@@ -21,6 +21,7 @@ public class hAuto extends OpMode {
     private DcMotor rightMotor; // location 2
     private Servo servoClaw;
     private ElapsedTime newTimer = new ElapsedTime();
+    private boolean fiveSeconds = false;
 
     @Override
     public void init() {
@@ -38,11 +39,7 @@ public class hAuto extends OpMode {
 
         newTimer.reset();
 
-        if (newTimer.seconds() >= 5){
-            moveToPos(6,0.2);
-            telemetry.addData("something","test");
-            telemetry.update();
-        }
+
 
 
 
@@ -51,6 +48,12 @@ public class hAuto extends OpMode {
 
     @Override
     public void loop() {
+        if (!fiveSeconds && newTimer.seconds() >= 5){
+            moveToPos(6,0.2);
+            telemetry.addData("something","test");
+            telemetry.update();
+            fiveSeconds = true;
+        }
         telemetry.addData("time", newTimer.seconds());
         telemetry.update();
     }
