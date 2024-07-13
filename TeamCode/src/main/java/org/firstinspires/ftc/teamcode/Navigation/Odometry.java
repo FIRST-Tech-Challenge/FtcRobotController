@@ -30,45 +30,6 @@ public class Odometry {
 
     }
 
-    //to be deprecated
-/*    public void odometryAluminumCobblersProbably() {
-
-        double rightDistance;
-        double leftDistance;
-        double distanceMiddle;
-        double deltaX;
-        double deltaY;
-        double deltaAngle;
-        double initialAngle = 0;
-        double angleCoordinate;
-        double currentAngle = 0;
-        double deltaAngleDegrees = 0;
-
-        rightDistance = rightEncoder.getCurrentPosition() / TICKS_TO_MM;
-        leftDistance = leftEncoder.getCurrentPosition() / TICKS_TO_MM;
-        distanceMiddle = (leftDistance + rightDistance) / 2;
-
-        theta = (rightDistance - leftDistance) / TRACK_WIDTH;
-        deltaAngle = theta / 2;
-        deltaAngleDegrees = Math.toDegrees(deltaAngle);
-
-        deltaX = distanceMiddle * Math.cos(initialAngle + deltaAngle);
-        deltaY = distanceMiddle * Math.sin(initialAngle + deltaAngle);
-
-        xCoordinate = prevX + deltaX;
-        yCoordinate = prevY + deltaY;
-        angleCoordinate = currentAngle + deltaAngle;
-
-
-        jose.addData("theta", theta);
-        jose.addData("delta y", deltaY);
-        jose.addData("delta x", deltaX);
-
-        jose.addData("x coordinate", xCoordinate);
-        jose.addData("y coordinate", yCoordinate);
-        jose.addData("angle", angleCoordinate);
-    }*/
-
     private double ticksToMM(double ticks) {
         final double DEAD_WHEEL_RADIUS = 24;
         final double TICKS_PER_REV = 2000;
@@ -113,12 +74,6 @@ public class Odometry {
 
         double relDeltaY =
                 +strafeRadius * Math.sin(relativeDelta.theta) + forwardRadius * (1 - Math.cos(relativeDelta.theta));
-      /*  double relDeltaX =
-                forwardRadius * Math.sin(relativeDelta.theta) + relativeDelta.y * Math.sin(currentPosition.theta);
-
-        double relDeltaY =
-                forwardRadius * (1 - Math.cos(relativeDelta.theta)) + relativeDelta.y * Math.cos(currentPosition.theta);
-*/
         jose.addData("strafeRadius", strafeRadius);
         jose.addData("cos strafe theta hamburger", (1 - Math.cos(relativeDelta.theta)));
         jose.addData("sin y axis hamburger", Math.sin(relativeDelta.theta));
@@ -131,7 +86,7 @@ public class Odometry {
         double newX =
                 previousGlobalPosition.x + relativeDelta.x * Math.cos(previousGlobalPosition.theta) - relativeDelta.y * Math.sin(previousGlobalPosition.theta);
         double newY =
-                previousGlobalPosition.y + relativeDelta.y * Math.cos(previousGlobalPosition.theta) + relativeDelta.x * Math.sin(previousGlobalPosition.theta);
+                previousGlobalPosition.y - relativeDelta.y * Math.cos(previousGlobalPosition.theta) + relativeDelta.x * Math.sin(previousGlobalPosition.theta);
         double newHeading = previousGlobalPosition.theta + relativeDelta.theta;
         return new Position(newX, newY, newHeading);
     }
