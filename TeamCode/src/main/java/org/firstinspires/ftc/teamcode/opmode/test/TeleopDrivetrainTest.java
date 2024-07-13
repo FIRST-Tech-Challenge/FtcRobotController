@@ -4,14 +4,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.common.TeleopBot;
+import org.firstinspires.ftc.teamcode.common.TeleopBotFancy;
 
 @Config
 @TeleOp(name = "TeleopDrivetrainTest", group = "Test")
 
 public class TeleopDrivetrainTest extends LinearOpMode {
 
-    private TeleopBot bot;
+    private TeleopBotFancy bot;
 
     public static boolean loggingOn = true;
 
@@ -22,7 +22,7 @@ public class TeleopDrivetrainTest extends LinearOpMode {
         double driveStrafe = 0.0;
         double driveYaw = 0.0;
 
-        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
+        bot = new TeleopBotFancy(hardwareMap, telemetry);
         waitForStart();
 
         while (opModeIsActive() && !gamepad1.ps) {

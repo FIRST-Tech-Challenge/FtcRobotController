@@ -7,12 +7,16 @@ public abstract class Component {
     protected Telemetry telemetry;
     protected boolean loggingOn = false;
 
-    public Component(Telemetry telemetry, boolean loggingOn)
-    {
+    public Component(Telemetry telemetry) {
         this.telemetry = telemetry;
         this.loggingOn = loggingOn;
     }
 
-    public abstract void update();
+    public void log()
+    {
+    }
+
+    public void update() {
+    }
 
 }

@@ -6,14 +6,15 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.common.Lift;
+import org.firstinspires.ftc.teamcode.common.LiftBasic;
+import org.firstinspires.ftc.teamcode.common.LiftFancy;
 
 @Config
-@TeleOp(name = "LiftTest", group = "Test")
+@TeleOp(name = "LiftBasicTest", group = "Test")
 
-public class LiftTestTeleop extends LinearOpMode {
+public class LiftBasicTestTeleop extends LinearOpMode {
 
-    private Lift lift;
+    private LiftBasic lift;
     public static double liftPowerFactor = 0.15;
     @Override
     public void runOpMode() {
@@ -23,7 +24,7 @@ public class LiftTestTeleop extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        lift = new Lift(hardwareMap, telemetry, true);
+        lift = new LiftBasic(hardwareMap, telemetry);
         waitForStart();
 
         while (opModeIsActive()) {

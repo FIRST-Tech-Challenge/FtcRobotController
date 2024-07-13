@@ -2,18 +2,16 @@ package org.firstinspires.ftc.teamcode.common;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.hardware_data.GoBilda435DcMotorData;
 
 @Config
-public class Lift extends Component {
+public class LiftFancy extends Component {
     private final DcMotorEx liftMotorL;
     private final DcMotorEx liftMotorR;
     private final PIDFController pidfL;
@@ -41,8 +39,8 @@ public class Lift extends Component {
     private double maxPower = defaultMaxPower;
     public static int currentPos;
 
-    public Lift(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
-        super(telemetry, loggingOn);
+    public LiftFancy(HardwareMap hardwareMap, Telemetry telemetry) {
+        super(telemetry);
         pidfL = new PIDFController(kP, kI, kD, kF);
         pidfL.setTolerance(positionTolerance);
         pidfR = new PIDFController(kP, kI, kD, kF);
@@ -72,7 +70,7 @@ public class Lift extends Component {
 
         setPIDFMotorPower();
         if (loggingOn) {
-            logTelemetry();
+            log();
         }
     }
 
@@ -168,7 +166,7 @@ public class Lift extends Component {
         setRMotorPower(pidfR.calculate(liftMotorR.getCurrentPosition(), targetPos));
     }
 
-    private void logTelemetry() {
+    public void log() {
         telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
         telemetry.addData("PositionR:  ", liftMotorR.getCurrentPosition());
         telemetry.addData("Target:  ", targetPos);

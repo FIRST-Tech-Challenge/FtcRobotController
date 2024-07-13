@@ -1,20 +1,19 @@
 package org.firstinspires.ftc.teamcode.common;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Bot extends Component {
-    private Intake intake = null;
-    protected Lift lift = null;
+public class BotFancy extends Component {
+    private IntakeBasic intake = null;
+    protected LiftFancy lift = null;
     protected boolean liftAuto = true;
     private Servo shoulderL = null;
     private Servo shoulderR = null;
     private Servo wrist = null;
-    private Dropper dropper = null;
+    private DropperBasic dropper = null;
     private Servo launcher = null;
     public static boolean handlerDeployed = true;
     public static boolean handlerDeploying = false;
@@ -34,13 +33,13 @@ public class Bot extends Component {
     private boolean loading = false;
     ElapsedTime timer;
 
-    public Bot(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
-        super(telemetry, false);
+    public BotFancy(HardwareMap hardwareMap, Telemetry telemetry) {
+        super(telemetry);
         // Intake
-        intake = new Intake(hardwareMap, telemetry, loggingOn);
+        intake = new IntakeBasic(hardwareMap, telemetry, loggingOn);
 
         // Lift
-        lift = new Lift(hardwareMap, telemetry, loggingOn);
+        lift = new LiftFancy(hardwareMap, telemetry);
         liftAuto = true;
 
         // Shoulder
@@ -54,7 +53,7 @@ public class Bot extends Component {
         wrist.setDirection(Servo.Direction.REVERSE);
 
         // Dropper
-        dropper = new Dropper(hardwareMap, telemetry, loggingOn);
+        dropper = new DropperBasic(hardwareMap, telemetry);
 
         handlerDeployed = true;
         handlerDeploying = false;
@@ -191,14 +190,14 @@ public class Bot extends Component {
         intake.stop();
     }
 
+        public void log(){
+        telemetry.addData("handlerDeploying: ", handlerDeploying);
+        telemetry.addData("handlerDeployed: ", handlerDeployed);
+        telemetry.addData("handlerRetracting: ", handlerRetracting);
+        telemetry.addData("dropperDeployed: ", dropperDeployed);
+        telemetry.addData("Time: ", timer.milliseconds());
+    }
     public void update() {
-        if (loggingOn) {
-            telemetry.addData("handlerDeploying: ", handlerDeploying);
-            telemetry.addData("handlerDeployed: ", handlerDeployed);
-            telemetry.addData("handlerRetracting: ", handlerRetracting);
-            telemetry.addData("dropperDeployed: ", dropperDeployed);
-            telemetry.addData("Time: ", timer.milliseconds());
-        }
         if (liftAuto) {
             lift.update();
         }

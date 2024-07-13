@@ -7,15 +7,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Intake extends Component {
+public class IntakeBasic extends Component {
     private final DcMotorEx intakeMotor;
     private final Servo intakeServo;
     private final double upPos = 1.0;
     private final double downPos = 0.175;
     private final double maxPower = 0.9;
 
-    public Intake(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
-        super(telemetry, loggingOn);
+    public IntakeBasic(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
+        super(telemetry);
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
         intakeServo = hardwareMap.get(Servo.class, "intakeServo");
@@ -60,4 +60,6 @@ public class Intake extends Component {
     public void update()
     {
     }
+    public void log()
+    {}
 }

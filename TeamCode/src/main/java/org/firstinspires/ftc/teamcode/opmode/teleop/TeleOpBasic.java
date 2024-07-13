@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.common.TeleopBot;
+import org.firstinspires.ftc.teamcode.common.TeleopBotBasic;
+import org.firstinspires.ftc.teamcode.common.TeleopBotFancy;
 
 @Config
-@TeleOp(name = "TeleOpNormal", group = "Linear OpMode")
+@TeleOp(name = "TeleOpSample", group = "Linear OpMode")
 
-public class TeleOpNormal extends LinearOpMode {
+public class TeleOpBasic extends LinearOpMode {
 
-    private TeleopBot bot;
+    private TeleopBotFancy bot;
 
     public static boolean loggingOn = false;
 
@@ -26,11 +25,8 @@ public class TeleOpNormal extends LinearOpMode {
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
         double liftPowerFactor = 0.5;
-        double hangPowerFactor = 1.0;
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
+        bot = new TeleopBotFancy(hardwareMap, telemetry);
         waitForStart();
         bot.handlerRetract();
         while (opModeIsActive() && !isStopRequested()) {
@@ -59,43 +55,11 @@ public class TeleOpNormal extends LinearOpMode {
             } else if (rightTrigger > 0.3) {
                 bot.liftManualUp(rightTrigger * liftPowerFactor);
             } else {
-                if (gamepad1.ps) {
-                    bot.liftManualDown(hangPowerFactor);
-                } else {
-                    bot.liftStop();
-                }
+                bot.liftStop();
             }
-
-            if (gamepad1.triangle) {
-                bot.handlerDeployLevel1();
-            } else if (gamepad1.circle) {
-                bot.handlerRetract();
-            }
-
-            if (gamepad1.right_bumper) {
-                bot.load();
-            } else if (gamepad1.left_bumper) {
-                bot.stopLoad();
-            }
-
-            if (gamepad1.square) {
-                bot.dropPixel();
-                sleep(200);
-            }
-
-            if (gamepad1.start && gamepad1.share) {
-                bot.launcherUnlock();
-                sleep(150);
-                bot.launcherLock();
-            }
-
-            if(gamepad1.cross)
-            {
-                bot.intakeReverse();
-            }
-            bot.update();
         }
-
     }
+
 }
+
 
