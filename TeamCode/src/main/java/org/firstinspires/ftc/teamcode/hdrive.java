@@ -29,8 +29,9 @@ public class hdrive extends LinearOpMode {
 
         green = hardwareMap.get(DigitalChannel.class, "green");
         red = hardwareMap.get(DigitalChannel.class, "red");
-        green.setMode(DigitalChannel.Mode.OUTPUT);
-        red.setMode(DigitalChannel.Mode.OUTPUT);
+
+        green.setMode(DigitalChannel.Mode.INPUT);
+        red.setMode(DigitalChannel.Mode.INPUT);
 
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -47,6 +48,7 @@ public class hdrive extends LinearOpMode {
         boolean servoLastPos = false;
 
         waitForStart();
+
 
         newTimer.reset();
 
@@ -102,13 +104,21 @@ public class hdrive extends LinearOpMode {
             }
             if (newTimer.seconds() >= 10){
                 telemetry.addData("10","test");
-                green.setState(true);
-                red.setState(false);
+
+                green.setMode(DigitalChannel.Mode.INPUT);
+                red.setMode(DigitalChannel.Mode.OUTPUT);
+
             }else if (newTimer.seconds() >= 5){
-                green.setState(false);
-                red.setState(true);
+                green.setMode(DigitalChannel.Mode.OUTPUT);
+                red.setMode(DigitalChannel.Mode.INPUT);
 
                 telemetry.addData("5","test");
+
+            }else{
+
+                telemetry.addData("0","test");
+
+
 
             }
 
