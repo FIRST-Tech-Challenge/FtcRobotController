@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,6 +16,11 @@ public class hdrive extends LinearOpMode {
     private DcMotor rightMotor; // location 2
     private Servo servoClaw;
     private ElapsedTime newTimer = new ElapsedTime();
+    private DigitalChannel green;
+    private DigitalChannel red;
+
+
+
 
     @Override
     public void runOpMode()  {
@@ -22,6 +29,11 @@ public class hdrive extends LinearOpMode {
         leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
         servoClaw = hardwareMap.get(Servo.class, "servoClaw");
+        green = hardwareMap.get(DigitalChannel.class, "green");
+        red = hardwareMap.get(DigitalChannel.class, "red");
+
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -64,15 +76,19 @@ public class hdrive extends LinearOpMode {
             if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
                 if (servoFirstPos){
                     servoClaw.setPosition(0.35);
+                    green.setState(true);
                     servoFirstPos = false;
                     servoMiddlePos = true;
 
                 } else if (servoMiddlePos){
                     servoClaw.setPosition(0.5);
+                    red.setState(true);
                     servoMiddlePos = false;
                     servoLastPos = true;
                 }else if (servoLastPos){
                     servoClaw.setPosition(0.65);
+                    green.setState(false);
+                    red.setState(false);
                     servoLastPos = false;
                     servoFirstPos = true;
                 }
