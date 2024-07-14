@@ -16,21 +16,22 @@ public class hdrive extends LinearOpMode {
     private DcMotor rightMotor; // location 2
     private Servo servoClaw;
     private ElapsedTime newTimer = new ElapsedTime();
-    private DigitalChannel green;
-    private DigitalChannel red;
-
-
-
-
+    private DigitalChannel green; //0
+    private DigitalChannel red; //1
     @Override
     public void runOpMode()  {
 
         middleMotor = hardwareMap.get(DcMotor.class, "middleMotor");
         leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+
         servoClaw = hardwareMap.get(Servo.class, "servoClaw");
+
         green = hardwareMap.get(DigitalChannel.class, "green");
         red = hardwareMap.get(DigitalChannel.class, "red");
+        green.setMode(DigitalChannel.Mode.OUTPUT);
+        red.setMode(DigitalChannel.Mode.OUTPUT);
+
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -73,6 +74,8 @@ public class hdrive extends LinearOpMode {
             boolean gamepad1A_pressed = gamepad1.a;
             boolean gamepad1B_pressed = gamepad1.b;
 
+            green.setState(true);
+
             if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
                 if (servoFirstPos){
                     servoClaw.setPosition(0.35);
@@ -99,8 +102,12 @@ public class hdrive extends LinearOpMode {
             }
             if (newTimer.seconds() >= 10){
                 telemetry.addData("10","test");
-
+                green.setState(true);
+                red.setState(false);
             }else if (newTimer.seconds() >= 5){
+                green.setState(false);
+                red.setState(true);
+
                 telemetry.addData("5","test");
 
             }

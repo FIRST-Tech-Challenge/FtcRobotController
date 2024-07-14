@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -22,6 +23,12 @@ public class hAuto extends OpMode {
     private Servo servoClaw;
     private ElapsedTime newTimer = new ElapsedTime();
     private boolean fiveSeconds = false;
+    private DigitalChannel green;
+    private DigitalChannel red;
+
+
+
+
 
     @Override
     public void init() {
@@ -30,7 +37,11 @@ public class hAuto extends OpMode {
         leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
         servoClaw = hardwareMap.get(Servo.class, "servoClaw");
+        green = hardwareMap.get(DigitalChannel.class, "green");
+        red = hardwareMap.get(DigitalChannel.class, "red");
 
+        green.setMode(DigitalChannel.Mode.OUTPUT);
+        red.setMode(DigitalChannel.Mode.OUTPUT);
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
@@ -44,7 +55,9 @@ public class hAuto extends OpMode {
     @Override
     public void loop() {
         if (!fiveSeconds && newTimer.seconds() >= 5){
-            moveToPos(36,0.2);
+           // moveToPos(36,0.2);
+            green.setState(true);
+            red.setState(false);
             telemetry.addData("something","test");
             telemetry.update();
             fiveSeconds = true;
