@@ -51,7 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class DrivetrainMecanumRR {
+public final class MecanumDrive {
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -130,10 +130,10 @@ public final class DrivetrainMecanumRR {
         private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(DrivetrainMecanumRR.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(DrivetrainMecanumRR.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(DrivetrainMecanumRR.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(DrivetrainMecanumRR.this.rightFront));
+            leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
+            leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
+            rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
+            rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
 
             imu = lazyImu.get();
 
@@ -205,7 +205,7 @@ public final class DrivetrainMecanumRR {
         }
     }
 
-    public DrivetrainMecanumRR(HardwareMap hardwareMap, Pose2d pose) {
+    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);

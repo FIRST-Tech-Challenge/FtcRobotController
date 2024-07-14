@@ -22,8 +22,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.teamcode.roadrunner.DrivetrainMecanumRR;
-import org.firstinspires.ftc.teamcode.roadrunner.TankDriveRR;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.TwoDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.LocalizationTest;
@@ -34,7 +34,7 @@ import java.util.List;
 
 public final class TuningOpModes {
     // TODO: change this to TankDrive.class if you're using tank
-    public static final Class<?> DRIVE_CLASS = DrivetrainMecanumRR.class;
+    public static final Class<?> DRIVE_CLASS = MecanumDrive.class;
 
     public static final String GROUP = "quickstart";
     public static final boolean DISABLED = false;
@@ -54,14 +54,14 @@ public final class TuningOpModes {
         if (DISABLED) return;
 
         DriveViewFactory dvf;
-        if (DRIVE_CLASS.equals(DrivetrainMecanumRR.class)) {
+        if (DRIVE_CLASS.equals(MecanumDrive.class)) {
             dvf = hardwareMap -> {
-                DrivetrainMecanumRR md = new DrivetrainMecanumRR(hardwareMap, new Pose2d(0, 0, 0));
+                MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (md.localizer instanceof DrivetrainMecanumRR.DriveLocalizer) {
-                    DrivetrainMecanumRR.DriveLocalizer dl = (DrivetrainMecanumRR.DriveLocalizer) md.localizer;
+                if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
+                    MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) md.localizer;
                     leftEncs.add(dl.leftFront);
                     leftEncs.add(dl.leftBack);
                     rightEncs.add(dl.rightFront);
@@ -81,10 +81,10 @@ public final class TuningOpModes {
 
                 return new DriveView(
                     DriveType.MECANUM,
-                        DrivetrainMecanumRR.PARAMS.inPerTick,
-                        DrivetrainMecanumRR.PARAMS.maxWheelVel,
-                        DrivetrainMecanumRR.PARAMS.minProfileAccel,
-                        DrivetrainMecanumRR.PARAMS.maxProfileAccel,
+                        MecanumDrive.PARAMS.inPerTick,
+                        MecanumDrive.PARAMS.maxWheelVel,
+                        MecanumDrive.PARAMS.minProfileAccel,
+                        MecanumDrive.PARAMS.maxProfileAccel,
                         hardwareMap.getAll(LynxModule.class),
                         Arrays.asList(
                                 md.leftFront,
@@ -100,19 +100,19 @@ public final class TuningOpModes {
                         perpEncs,
                         md.lazyImu,
                         md.voltageSensor,
-                        () -> new MotorFeedforward(DrivetrainMecanumRR.PARAMS.kS,
-                                DrivetrainMecanumRR.PARAMS.kV / DrivetrainMecanumRR.PARAMS.inPerTick,
-                                DrivetrainMecanumRR.PARAMS.kA / DrivetrainMecanumRR.PARAMS.inPerTick)
+                        () -> new MotorFeedforward(MecanumDrive.PARAMS.kS,
+                                MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
+                                MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick)
                 );
             };
-        } else if (DRIVE_CLASS.equals(TankDriveRR.class)) {
+        } else if (DRIVE_CLASS.equals(TankDrive.class)) {
             dvf = hardwareMap -> {
-                TankDriveRR td = new TankDriveRR(hardwareMap, new Pose2d(0, 0, 0));
+                TankDrive td = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (td.localizer instanceof TankDriveRR.DriveLocalizer) {
-                    TankDriveRR.DriveLocalizer dl = (TankDriveRR.DriveLocalizer) td.localizer;
+                if (td.localizer instanceof TankDrive.DriveLocalizer) {
+                    TankDrive.DriveLocalizer dl = (TankDrive.DriveLocalizer) td.localizer;
                     leftEncs.addAll(dl.leftEncs);
                     rightEncs.addAll(dl.rightEncs);
                 } else if (td.localizer instanceof ThreeDeadWheelLocalizer) {
@@ -130,10 +130,10 @@ public final class TuningOpModes {
 
                 return new DriveView(
                     DriveType.TANK,
-                        TankDriveRR.PARAMS.inPerTick,
-                        TankDriveRR.PARAMS.maxWheelVel,
-                        TankDriveRR.PARAMS.minProfileAccel,
-                        TankDriveRR.PARAMS.maxProfileAccel,
+                        TankDrive.PARAMS.inPerTick,
+                        TankDrive.PARAMS.maxWheelVel,
+                        TankDrive.PARAMS.minProfileAccel,
+                        TankDrive.PARAMS.maxProfileAccel,
                         hardwareMap.getAll(LynxModule.class),
                         td.leftMotors,
                         td.rightMotors,
@@ -143,9 +143,9 @@ public final class TuningOpModes {
                         perpEncs,
                         td.lazyImu,
                         td.voltageSensor,
-                        () -> new MotorFeedforward(TankDriveRR.PARAMS.kS,
-                                TankDriveRR.PARAMS.kV / TankDriveRR.PARAMS.inPerTick,
-                                TankDriveRR.PARAMS.kA / TankDriveRR.PARAMS.inPerTick)
+                        () -> new MotorFeedforward(TankDrive.PARAMS.kS,
+                                TankDrive.PARAMS.kV / TankDrive.PARAMS.inPerTick,
+                                TankDrive.PARAMS.kA / TankDrive.PARAMS.inPerTick)
                 );
             };
         } else {
