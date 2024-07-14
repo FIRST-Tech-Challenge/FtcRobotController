@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class TeleopDrivetrainBasic extends DrivetrainFancy {
+public class TeleOpDrivetrainBasic extends DrivetrainFancy {
 
 
-    public TeleopDrivetrainBasic(HardwareMap hardwareMap, Telemetry telemetry) {
+    public TeleOpDrivetrainBasic(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap,telemetry);
     }
 

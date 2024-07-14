@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class TeleopBotBasic extends BotBasic {
-    private TeleopDrivetrainBasic drivetrain = null;
-    public TeleopBotBasic(HardwareMap hardwareMap, Telemetry telemetry)
+public class TeleOpBotFancy extends BotFancy {
+    private TeleOpDrivetrainBasic drivetrain = null;
+    public TeleOpBotFancy(HardwareMap hardwareMap, Telemetry telemetry)
     {
         super(hardwareMap, telemetry);
-        drivetrain = new TeleopDrivetrainBasic(hardwareMap, telemetry);
+        drivetrain = new TeleOpDrivetrainBasic(hardwareMap, telemetry);
     }
 
     public void creepDirection(double axial, double strafe, double yaw) {

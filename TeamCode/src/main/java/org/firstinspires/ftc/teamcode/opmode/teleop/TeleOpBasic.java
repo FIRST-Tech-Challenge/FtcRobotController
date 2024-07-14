@@ -4,15 +4,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.common.TeleopBotBasic;
-import org.firstinspires.ftc.teamcode.common.TeleopBotFancy;
+import org.firstinspires.ftc.teamcode.common.TeleOpBotBasic;
 
 @Config
-@TeleOp(name = "TeleOpSample", group = "Linear OpMode")
+@TeleOp(name = "TeleOpBasic", group = "Linear OpMode")
 
 public class TeleOpBasic extends LinearOpMode {
 
-    private TeleopBotFancy bot;
+    private TeleOpBotBasic bot;
 
     public static boolean loggingOn = false;
 
@@ -26,7 +25,7 @@ public class TeleOpBasic extends LinearOpMode {
         double rightTrigger = 0.0;
         double liftPowerFactor = 0.5;
 
-        bot = new TeleopBotFancy(hardwareMap, telemetry);
+        bot = new TeleOpBotBasic(hardwareMap, telemetry);
         waitForStart();
         bot.handlerRetract();
         while (opModeIsActive() && !isStopRequested()) {
