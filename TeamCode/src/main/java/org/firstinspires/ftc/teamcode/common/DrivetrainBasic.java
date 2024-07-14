@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class DrivetrainFancy extends Component {
+//  Drivetrain with four motors without encoders or odometry
+public class DrivetrainBasic extends Component {
     public final DcMotorEx leftFrontDrive;
     public final DcMotorEx rightFrontDrive;
     public final DcMotorEx leftBackDrive;
@@ -16,7 +17,7 @@ public class DrivetrainFancy extends Component {
     protected final double maxCreepPower = 0.35;
     protected double maxPower =  maxNormalPower;
 
-    protected DrivetrainFancy(HardwareMap hardwareMap, Telemetry telemetry)
+    protected DrivetrainBasic(HardwareMap hardwareMap, Telemetry telemetry)
     {
         super(telemetry);
         
@@ -41,6 +42,7 @@ public class DrivetrainFancy extends Component {
     public void setToCreepPower(){
         maxPower = maxCreepPower;
     }
+
     protected void setBrakingOn() {
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

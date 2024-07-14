@@ -6,7 +6,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-// BotBasic implements a simple bot that has a one-motor lift (LiftBasic) and a servo that acts as a grabber.
+// Class for a simple competition bot
+// Includes:
+//          one-motor lift with no PID controller
+//          servo grabber
 public class BotBasic extends Component {
     private LiftBasic lift = null;
     private Servo grabber = null;
