@@ -10,7 +10,7 @@ public class BotBasic extends Component {
     private LiftBasic lift = null;
     private Servo grabber = null;
     private double grabberOpenPos = 0.0;
-    private double grabberClosedPos = 1.0;
+    private double grabberClosePos = 1.0;
 
     public BotBasic(HardwareMap hardwareMap, Telemetry telemetry) {
         super(telemetry);
@@ -18,11 +18,19 @@ public class BotBasic extends Component {
         lift = new LiftBasic(hardwareMap, telemetry);
     }
 
-    public void liftManualUp(double power) {
+    public void grabberOpen() {
+        grabber.setPosition(grabberOpenPos);
+    }
+
+    public void grabberClose() {
+        grabber.setPosition(grabberClosePos);
+    }
+
+    public void liftUp(double power) {
         lift.manualUp(power);
     }
 
-    public void liftManualDown(double power) {
+    public void liftDown(double power) {
         lift.manualDown(power);
     }
 

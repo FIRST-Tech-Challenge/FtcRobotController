@@ -1,23 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.common.TeleOpBotBasic;
 
-@Config
 @TeleOp(name = "TeleOpBasic", group = "Linear OpMode")
 
 public class TeleOpBasic extends LinearOpMode {
 
     private TeleOpBotBasic bot;
 
-    public static boolean loggingOn = false;
-
     @Override
     public void runOpMode() {
-
         double driveAxial = 0.0;
         double driveStrafe = 0.0;
         double driveYaw = 0.0;
@@ -27,7 +21,6 @@ public class TeleOpBasic extends LinearOpMode {
 
         bot = new TeleOpBotBasic(hardwareMap, telemetry);
         waitForStart();
-        bot.handlerRetract();
         while (opModeIsActive() && !isStopRequested()) {
             if (gamepad1.dpad_up) {
                 bot.creepDirection(1.0, 0.0, 0.0);
@@ -50,9 +43,9 @@ public class TeleOpBasic extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                bot.liftManualDown(leftTrigger * liftPowerFactor);
+                bot.liftDown(leftTrigger * liftPowerFactor);
             } else if (rightTrigger > 0.3) {
-                bot.liftManualUp(rightTrigger * liftPowerFactor);
+                bot.liftUp(rightTrigger * liftPowerFactor);
             } else {
                 bot.liftStop();
             }
