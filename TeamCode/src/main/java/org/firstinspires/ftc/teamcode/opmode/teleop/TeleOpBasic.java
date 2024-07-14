@@ -49,6 +49,12 @@ public class TeleOpBasic extends LinearOpMode {
             } else {
                 bot.liftStop();
             }
+
+            if (gamepad1.x) {
+                bot.grabberClose();
+            } else if (gamepad1.a) {
+                bot.grabberOpen();
+            }
         }
     }
 

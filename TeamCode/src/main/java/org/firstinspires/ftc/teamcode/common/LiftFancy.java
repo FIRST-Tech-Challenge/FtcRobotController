@@ -64,16 +64,6 @@ public class LiftFancy extends Component {
         targetPos = 0;
     }
 
-    public void update() {
-//        pidfL.setPIDF(kP,kI,kD,kF);
-//        pidfR.setPIDF(kP,kI,kD,kF);
-
-        setPIDFMotorPower();
-        if (loggingOn) {
-            log();
-        }
-    }
-
     public void manualUp(double power) {
         if (!atTop(manualOffset)) {
             setMotorsPower(power);
@@ -173,6 +163,10 @@ public class LiftFancy extends Component {
         telemetry.addData("PowerL:  ", liftMotorL.getPower());
         telemetry.addData("PowerR:  ", liftMotorR.getPower());
         telemetry.addData("Busy:  ", isBusy());
-        //        telemetry.update();
+        telemetry.update();
+    }
+
+    public void update() {
+        setPIDFMotorPower();
     }
 }

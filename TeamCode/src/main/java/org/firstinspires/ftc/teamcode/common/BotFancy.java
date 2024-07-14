@@ -36,7 +36,7 @@ public class BotFancy extends Component {
     public BotFancy(HardwareMap hardwareMap, Telemetry telemetry) {
         super(telemetry);
         // Intake
-        intake = new IntakeBasic(hardwareMap, telemetry, loggingOn);
+        intake = new IntakeBasic(hardwareMap, telemetry);
 
         // Lift
         lift = new LiftFancy(hardwareMap, telemetry);

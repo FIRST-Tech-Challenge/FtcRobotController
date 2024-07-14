@@ -34,13 +34,6 @@ public class DropperBasic extends Component {
         lockServos();
     }
 
-    public void log()
-    {
-        telemetry.addData("upperSensor: ", upperSensor.getDistance(DistanceUnit.MM));
-        telemetry.addData("lowerSensor: ", lowerSensor.getDistance(DistanceUnit.MM));
-        telemetry.addData("loadSize: ", loadSize);
-        telemetry.update();
-    }
     public void dropPixel() {
         if (lowerLocked) {
             unlockLowerServo();
@@ -110,11 +103,15 @@ public class DropperBasic extends Component {
         unlockLowerServo();
     }
 
+    public void log()
+    {
+        telemetry.addData("upperSensor: ", upperSensor.getDistance(DistanceUnit.MM));
+        telemetry.addData("lowerSensor: ", lowerSensor.getDistance(DistanceUnit.MM));
+        telemetry.addData("loadSize: ", loadSize);
+        telemetry.update();
+    }
+
     public void update() {
         loadSize = countPixels();
-        if (loggingOn)
-        {
-            log();
-        }
     }
 }

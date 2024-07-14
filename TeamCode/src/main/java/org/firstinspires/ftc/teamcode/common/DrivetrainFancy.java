@@ -55,6 +55,9 @@ public class DrivetrainFancy extends Component {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
+    public void log()
+    {}
+
     public void update()
     {
 

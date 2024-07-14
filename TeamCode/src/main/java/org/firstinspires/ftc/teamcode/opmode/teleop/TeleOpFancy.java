@@ -31,6 +31,7 @@ public class TeleOpFancy extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         bot = new TeleOpBotFancy(hardwareMap, telemetry);
+
         waitForStart();
         bot.handlerRetract();
         while (opModeIsActive() && !isStopRequested()) {

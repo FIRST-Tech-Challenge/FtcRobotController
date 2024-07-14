@@ -18,7 +18,7 @@ public class IntakeTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        intake = new IntakeBasic(hardwareMap, telemetry, true);
+        intake = new IntakeBasic(hardwareMap, telemetry);
         waitForStart();
 
         while (opModeIsActive()) {

@@ -32,9 +32,9 @@ public class LiftBasicTestTeleop extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                lift.manualDown(leftTrigger*liftPowerFactor);
+                lift.up(leftTrigger*liftPowerFactor);
             } else if (rightTrigger > 0.3) {
-                lift.manualUp(rightTrigger*liftPowerFactor);
+                lift.down(rightTrigger*liftPowerFactor);
             } else
             {
                 lift.stop();

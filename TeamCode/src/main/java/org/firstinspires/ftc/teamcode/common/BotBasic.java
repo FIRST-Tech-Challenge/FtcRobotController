@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+// BotBasic implements a simple bot that has a one-motor lift (LiftBasic) and a servo that acts as a grabber.
 public class BotBasic extends Component {
     private LiftBasic lift = null;
     private Servo grabber = null;
@@ -16,6 +17,20 @@ public class BotBasic extends Component {
         super(telemetry);
 
         lift = new LiftBasic(hardwareMap, telemetry);
+        grabber = hardwareMap.get(Servo.class, "grabber");
+        grabber.setPosition(grabberClosePos);
+    }
+
+    public void liftUp(double power) {
+        lift.up(power);
+    }
+
+    public void liftDown(double power) {
+        lift.down(power);
+    }
+
+    public void liftStop() {
+        lift.stop();
     }
 
     public void grabberOpen() {
@@ -26,19 +41,11 @@ public class BotBasic extends Component {
         grabber.setPosition(grabberClosePos);
     }
 
-    public void liftUp(double power) {
-        lift.manualUp(power);
-    }
-
-    public void liftDown(double power) {
-        lift.manualDown(power);
-    }
-
-    public void liftStop() {
-        lift.stop();
-    }
-
     public void log() {
         lift.log();
+    }
+
+    public void update() {
+        lift.update();
     }
 }

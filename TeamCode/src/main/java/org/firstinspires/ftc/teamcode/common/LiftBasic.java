@@ -19,39 +19,47 @@ public class LiftBasic extends Component {
     private final int minPos = 0;
     private final double defaultMaxPower = 0.90;
     private double maxPower = defaultMaxPower;
+    private double holdPower = 0.75;
 
     public LiftBasic(HardwareMap hardwareMap, Telemetry telemetry) {
         super(telemetry);
 
         liftMotor = hardwareMap.get(DcMotorEx.class, "lift");
 
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     
-    public void manualUp(double power) {
+    public void up(double power) {
         if (!atTop(positionTolerance)) {
             setMotorPower(power);
         } else {
-            stop();
+            stopAtPosition(maxPos);
         }
     }
 
-    public void manualDown(double power) {
+    public void down(double power) {
         if (!atBottom(positionTolerance)) {
             setMotorPower(-power);
         } else {
-            stop();
+            stopAtPosition(minPos);
         }
     }
 
-    public void stop() {
-        setMotorPower(0);
+    public void stop()
+    {
+        stopAtPosition(liftMotor.getCurrentPosition());
+    }
+
+    public void stopAtPosition(int targetPosition) {
+        liftMotor.setTargetPosition(targetPosition);
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(holdPower);
     }
 
     private boolean atTop(int tolerance) {
@@ -79,4 +87,7 @@ public class LiftBasic extends Component {
         telemetry.addData("Power:  ", liftMotor.getPower());
         telemetry.update();
     }
+
+    public void update()
+    {}
 }

@@ -14,7 +14,7 @@ public class IntakeBasic extends Component {
     private final double downPos = 0.175;
     private final double maxPower = 0.9;
 
-    public IntakeBasic(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
+    public IntakeBasic(HardwareMap hardwareMap, Telemetry telemetry) {
         super(telemetry);
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
