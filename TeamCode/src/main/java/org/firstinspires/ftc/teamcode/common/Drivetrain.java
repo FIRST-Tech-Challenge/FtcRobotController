@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-//  Drivetrain with four motors without encoders or odometry
-public class DrivetrainBasic extends Component {
+public class Drivetrain extends Component {
     public final DcMotorEx leftFrontDrive;
     public final DcMotorEx rightFrontDrive;
     public final DcMotorEx leftBackDrive;
@@ -17,10 +16,10 @@ public class DrivetrainBasic extends Component {
     protected final double maxCreepPower = 0.35;
     protected double maxPower =  maxNormalPower;
 
-    protected DrivetrainBasic(HardwareMap hardwareMap, Telemetry telemetry)
+    protected Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
     {
-        super(telemetry);
-        
+        super(telemetry, loggingOn);
+
         leftFrontDrive = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
@@ -42,7 +41,6 @@ public class DrivetrainBasic extends Component {
     public void setToCreepPower(){
         maxPower = maxCreepPower;
     }
-
     protected void setBrakingOn() {
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -55,13 +53,5 @@ public class DrivetrainBasic extends Component {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    }
-
-    public void log()
-    {}
-
-    public void update()
-    {
-
     }
 }

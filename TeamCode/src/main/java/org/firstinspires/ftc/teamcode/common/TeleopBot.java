@@ -7,12 +7,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 // Class for a simple competition bot for teleop control
 // Includes a a basic drivetrain
 //  plus devices included in the parent class (BotBasic)
-public class TeleOpBot extends Bot {
-    private TeleOpDrivetrainBasic drivetrain = null;
+public class TeleopBot extends Bot {
+    private TeleopDrivetrain drivetrain = null;
 
-    public TeleOpBot(HardwareMap hardwareMap, Telemetry telemetry) {
+    public TeleopBot(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap, telemetry);
-        drivetrain = new TeleOpDrivetrainBasic(hardwareMap, telemetry);
+        drivetrain = new TeleopDrivetrain(hardwareMap, telemetry);
     }
 
     public void creepDirection(double axial, double strafe, double yaw) {

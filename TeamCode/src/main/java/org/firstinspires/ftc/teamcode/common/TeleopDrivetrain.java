@@ -4,14 +4,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-
-//  Mecanum drivetrain without encoders or odometry
-//  Includes methods to move in any given direction in normal and creep modes
-public class TeleOpDrivetrainBasic extends DrivetrainBasic {
+public class TeleopDrivetrain extends Drivetrain {
 
 
-    public TeleOpDrivetrainBasic(HardwareMap hardwareMap, Telemetry telemetry) {
-        super(hardwareMap,telemetry);
+    public TeleopDrivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
+        super(hardwareMap,telemetry, loggingOn);
     }
 
     public void creepDirection(double axial, double strafe, double yaw) {
