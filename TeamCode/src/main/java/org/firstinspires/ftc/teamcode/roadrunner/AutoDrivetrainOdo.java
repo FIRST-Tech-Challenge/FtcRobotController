@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.common.hardware_data.GoBilda312DcMotorData;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumLocalizerInputsMessage;
@@ -51,7 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class MecanumDrive {
+public final class AutoDrivetrainOdo {
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -62,7 +63,7 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
-        public double inPerTick = 1;
+        public double inPerTick = GoBilda312DcMotorData.wheelInchesPerTick;
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
 
@@ -130,10 +131,10 @@ public final class MecanumDrive {
         private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
+            leftFront = new OverflowEncoder(new RawEncoder(AutoDrivetrainOdo.this.leftFront));
+            leftBack = new OverflowEncoder(new RawEncoder(AutoDrivetrainOdo.this.leftBack));
+            rightBack = new OverflowEncoder(new RawEncoder(AutoDrivetrainOdo.this.rightBack));
+            rightFront = new OverflowEncoder(new RawEncoder(AutoDrivetrainOdo.this.rightFront));
 
             imu = lazyImu.get();
 
@@ -205,7 +206,7 @@ public final class MecanumDrive {
         }
     }
 
-    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+    public AutoDrivetrainOdo(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
