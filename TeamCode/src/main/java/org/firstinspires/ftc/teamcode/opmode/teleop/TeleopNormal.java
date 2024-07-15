@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.TeleopBot;
 @Config
 @TeleOp(name = "TeleOp", group = "Linear OpMode")
 
+
 public class TeleopNormal extends LinearOpMode {
 
     private TeleopBot bot;
