@@ -100,7 +100,4 @@ public class LiftSingle extends Component {
         telemetry.addData("Power:  ", liftMotor.getPower());
         telemetry.update();
     }
-
-    public void update() {
-    }
 }

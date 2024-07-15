@@ -26,40 +26,34 @@ public class Intake extends Component {
         stop();
     }
 
-    public void deploy()
-    {
+    public void deploy() {
         down();
         forward();
     }
 
-    public void retract()
-    {
+    public void retract() {
         stop();
         up();
     }
-    public void up()
-    {
+
+    public void up() {
         intakeServo.setPosition(upPos);
     }
-    public void down()
-    {
+
+    public void down() {
         intakeServo.setPosition(downPos);
     }
-    public void forward()
-    {
+
+    public void forward() {
         intakeMotor.setPower(maxPower);
     }
-    public void reverse()
-    {
+
+    public void reverse() {
         intakeMotor.setPower(-maxPower);
     }
-    public void stop()
-    {
+
+    public void stop() {
         intakeMotor.setPower(0.0);
     }
-    public void update()
-    {
-    }
-    public void log()
-    {}
+
 }

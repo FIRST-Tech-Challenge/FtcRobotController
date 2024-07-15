@@ -10,9 +10,6 @@ public abstract class Component {
         this.telemetry = telemetry;
     }
 
-    public void log() {
-    }
-
-    public void update() {
-    }
+    public void update()
+    {}
 }

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Drivetrain extends Component {
+public abstract class Drivetrain extends Component {
     public final DcMotorEx leftFrontDrive;
     public final DcMotorEx rightFrontDrive;
     public final DcMotorEx leftBackDrive;

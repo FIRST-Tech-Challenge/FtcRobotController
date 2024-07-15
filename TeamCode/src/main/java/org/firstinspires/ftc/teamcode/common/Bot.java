@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Bot extends Component {
+public abstract class Bot extends Component {
     private LiftSingle lift = null;
     private Servo grabber = null;
     private double grabberOpenPos = 0.0;
@@ -37,14 +37,6 @@ public class Bot extends Component {
 
     public void grabberClose() {
         grabber.setPosition(grabberClosePos);
-    }
-
-    public void log() {
-        lift.log();
-    }
-
-    public void update() {
-        lift.update();
     }
 }
 

@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-// Class for a simple competition bot for teleop control
-// Includes a a basic drivetrain
-//  plus devices included in the parent class (BotBasic)
+// Simple competition bot for teleop control
+//  Includes a basic drivetrain with no encoders or odometry
+//  plus devices included in the parent class (Bot)
 public class TeleopBot extends Bot {
     private TeleopDrivetrain drivetrain = null;
 
