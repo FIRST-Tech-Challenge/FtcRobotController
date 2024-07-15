@@ -1,25 +1,36 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.common.TeleOpBotBasic;
 
-@TeleOp(name = "TeleOpBasic", group = "Linear OpMode")
+import org.firstinspires.ftc.teamcode.common.TeleOpBot;
 
-public class TeleOpBasic extends LinearOpMode {
+@Config
+@TeleOp(name = "TeleOp", group = "Linear OpMode")
 
-    private TeleOpBotBasic bot;
+public class TeleOpNormal extends LinearOpMode {
+
+    private TeleOpBot bot;
 
     @Override
     public void runOpMode() {
+
         double driveAxial = 0.0;
         double driveStrafe = 0.0;
         double driveYaw = 0.0;
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
         double liftPowerFactor = 0.5;
+        double hangPowerFactor = 1.0;
 
-        bot = new TeleOpBotBasic(hardwareMap, telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        bot = new TeleOpBot(hardwareMap, telemetry);
+
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             if (gamepad1.dpad_up) {
@@ -47,17 +58,19 @@ public class TeleOpBasic extends LinearOpMode {
             } else if (rightTrigger > 0.3) {
                 bot.liftUp(rightTrigger * liftPowerFactor);
             } else {
-                bot.liftStop();
+                if (gamepad1.ps) {
+                    bot.liftDown(hangPowerFactor);
+                } else {
+                    bot.liftStop();
+                }
             }
 
-            if (gamepad1.x) {
+            if (gamepad1.right_bumper) {
                 bot.grabberClose();
-            } else if (gamepad1.a) {
+            } else if (gamepad1.left_bumper) {
                 bot.grabberOpen();
             }
         }
     }
-
 }
-
 

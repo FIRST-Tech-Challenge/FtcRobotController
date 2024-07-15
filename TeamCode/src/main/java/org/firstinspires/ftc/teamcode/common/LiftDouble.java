@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.hardware_data.GoBilda435DcMotorData;
 
 @Config
-public class LiftFancy extends Component {
+public class LiftDouble extends Component {
     private final DcMotorEx liftMotorL;
     private final DcMotorEx liftMotorR;
     private final PIDFController pidfL;
@@ -39,7 +39,7 @@ public class LiftFancy extends Component {
     private double maxPower = defaultMaxPower;
     public static int currentPos;
 
-    public LiftFancy(HardwareMap hardwareMap, Telemetry telemetry) {
+    public LiftDouble(HardwareMap hardwareMap, Telemetry telemetry) {
         super(telemetry);
         pidfL = new PIDFController(kP, kI, kD, kF);
         pidfL.setTolerance(positionTolerance);

@@ -4,11 +4,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-
-public class TeleOpBotFancy extends BotFancy {
+// Class for a simple competition bot for teleop control
+// Includes a a basic drivetrain
+//  plus devices included in the parent class (BotBasic)
+public class TeleOpBot extends Bot {
     private TeleOpDrivetrainBasic drivetrain = null;
-    public TeleOpBotFancy(HardwareMap hardwareMap, Telemetry telemetry)
-    {
+
+    public TeleOpBot(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap, telemetry);
         drivetrain = new TeleOpDrivetrainBasic(hardwareMap, telemetry);
     }
@@ -20,6 +22,7 @@ public class TeleOpBotFancy extends BotFancy {
     public void moveDirection(double axial, double strafe, double yaw) {
         drivetrain.moveDirection(axial, strafe, yaw);
     }
+
     public void stopDrive() {
         drivetrain.stop();
     }

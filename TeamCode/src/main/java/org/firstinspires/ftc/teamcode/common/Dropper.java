@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
-public class DropperBasic extends Component {
+public class Dropper extends Component {
     private final ColorRangeSensor lowerSensor;
     public static double lowerSensorThreshold = 15.0;
     private final ColorRangeSensor upperSensor;
@@ -25,7 +25,7 @@ public class DropperBasic extends Component {
     private boolean upperLocked = false;
     private int loadSize;
 
-    public DropperBasic(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Dropper(HardwareMap hardwareMap, Telemetry telemetry) {
         super(telemetry);
         lowerSensor = hardwareMap.get(ColorRangeSensor.class, "dropperLowerSensor");
         upperSensor = hardwareMap.get(ColorRangeSensor.class, "dropperUpperSensor");
