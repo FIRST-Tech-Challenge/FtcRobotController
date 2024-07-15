@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.common.TeleopBot;
 
 public class TeleopNormal extends LinearOpMode {
 
-
     private TeleopBot bot;
 
     @Override

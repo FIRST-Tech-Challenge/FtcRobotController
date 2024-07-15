@@ -16,9 +16,9 @@ public class Drivetrain extends Component {
     protected final double maxCreepPower = 0.35;
     protected double maxPower =  maxNormalPower;
 
-    protected Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
+    protected Drivetrain(HardwareMap hardwareMap, Telemetry telemetry)
     {
-        super(telemetry, loggingOn);
+        super(telemetry);
 
         leftFrontDrive = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
