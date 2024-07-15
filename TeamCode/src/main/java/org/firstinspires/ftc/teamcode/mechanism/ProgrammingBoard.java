@@ -24,7 +24,7 @@ public class ProgrammingBoard {
     // Defines the motors.
 
     private double tickPerRotation;
-
+    private boolean Board1Active;
 
     public void init(HardwareMap hwMap) {
         // Function runs during init phase of robot.
@@ -63,6 +63,7 @@ public class ProgrammingBoard {
         clawServo.setDirection(Servo.Direction.REVERSE);
 
         tickPerRotation = testMotor.getMotorType().getTicksPerRev();
+        Board1Active = true;
     }
 
     public void setDCMotorPower(double leftFrontPower, double leftBackPower, double rightFrontPower, double rightBackPower){
@@ -89,6 +90,10 @@ public class ProgrammingBoard {
     public void setTestMotor (double motorSpeed) {testMotor.setPower(motorSpeed);}
 
     public double getMotorRotation() {return testMotor.getCurrentPosition()/tickPerRotation;}
+
+    public boolean isBoard1Active(){
+        return Board1Active;
+    }
 
 
 

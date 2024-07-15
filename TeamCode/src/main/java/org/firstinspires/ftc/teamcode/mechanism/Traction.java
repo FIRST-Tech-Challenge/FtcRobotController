@@ -31,12 +31,12 @@ public class Traction {
             leftBackPower  /= max;
         }
         // Readjusts for max value to preserve the intention of the controller.
-
-//        Board.setDCMotorPower(leftFrontPower, rightBackPower, rightFrontPower, leftBackPower);
-        // Sends the desired inputs over to the Board class.
-
-        Board2.setDCMotorPower(leftFrontPower, rightBackPower, rightFrontPower, leftBackPower);
-
+        if (Board.isBoard1Active()) {
+            Board.setDCMotorPower(leftFrontPower, rightBackPower, rightFrontPower, leftBackPower);
+            // Sends the desired inputs over to the Board class.
+        } else {
+            Board2.setDCMotorPower(leftFrontPower, rightBackPower, rightFrontPower, leftBackPower);
+        }
 
 
 
