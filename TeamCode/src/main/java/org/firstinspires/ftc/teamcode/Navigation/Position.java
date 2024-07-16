@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Navigation;
 
 class Position {
-    double x;
-    double y;
-    double theta;
+    final double x;
+    final double y;
+    final double theta;
 
     Position(double x, double y, double theta) {
         this.x = x;
