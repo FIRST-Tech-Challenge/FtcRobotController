@@ -25,6 +25,9 @@ public class newBotTeleOp extends LinearOpMode {
     private DigitalChannel green0; //0
     private DigitalChannel red0; //1
     private RevBlinkinLedDriver led;
+    private RevBlinkinLedDriver.BlinkinPattern pattern;
+
+
     @Override
     public void runOpMode()  {
 
@@ -37,6 +40,8 @@ public class newBotTeleOp extends LinearOpMode {
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         claw = hardwareMap.get(Servo.class,"claw");
         led = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+
+
 
         green0 = hardwareMap.get(DigitalChannel.class, "green0");
         red0 = hardwareMap.get(DigitalChannel.class, "red0");
@@ -93,7 +98,7 @@ public class newBotTeleOp extends LinearOpMode {
             backRightMotor.setPower(backRightMotorPower / changeSpeed);
             backLeftMotor.setPower(backLeftMotorPower / changeSpeed);
 
-            slideMotor.setPower(gamepad2.right_trigger * 2);
+            slideMotor.setPower(gamepad2.right_trigger * 4);
             slideMotor.setPower(-gamepad2.left_trigger / 1.5);
 
 
@@ -148,14 +153,14 @@ public class newBotTeleOp extends LinearOpMode {
 
                 green0.setMode(DigitalChannel.Mode.INPUT);
                 red0.setMode(DigitalChannel.Mode.OUTPUT);
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                //pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 
 
             }else if (newTimer.seconds() >= 5){
                 green0.setMode(DigitalChannel.Mode.OUTPUT);
                 red0.setMode(DigitalChannel.Mode.INPUT);
 
-                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                //pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
                 telemetry.addLine("5");
 
             }else{
@@ -165,6 +170,8 @@ public class newBotTeleOp extends LinearOpMode {
 
 
             }
+
+            //led.setPattern(pattern);
 
             telemetry.addData("X Value", x);
             telemetry.addData("time", newTimer.seconds());
