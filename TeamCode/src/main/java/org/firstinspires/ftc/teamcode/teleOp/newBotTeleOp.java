@@ -33,7 +33,7 @@ public class newBotTeleOp extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         jointMotor = hardwareMap.get(DcMotor.class, "jointMotor");
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
-        claw = hardwareMap.get(Servo.class, "servoClaw");
+        claw = hardwareMap.get(Servo.class,"claw");
 
         green0 = hardwareMap.get(DigitalChannel.class, "green0");
         red0 = hardwareMap.get(DigitalChannel.class, "red0");
@@ -52,11 +52,14 @@ public class newBotTeleOp extends LinearOpMode {
         //Reverse the other motors and sex X to not negative
 
         float defaultPower = 2;
-        float changeSpeed = 1;
+        double changeSpeed = 1;
+        double middleDefaultPower = 1.5;
 
         boolean servoFirstPos = true;
         boolean servoMiddlePos = false;
         boolean servoLastPos = false;
+
+        boolean changeSpeedPos = false;
 
         waitForStart();
 
@@ -73,34 +76,32 @@ public class newBotTeleOp extends LinearOpMode {
             double rx = -gamepad1.right_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
-            double middleMotorPower = ((rx)) / defaultPower;
+            double middleMotorPower = ((rx)) / middleDefaultPower;
             double frontLeftMotorPower = ((y + x) / denominator) / defaultPower;
             double backLeftMotorPower = ((y + x) / denominator) / defaultPower;
             double frontRightMotorPower = ((y - x) / denominator) / defaultPower;
             double backRightMotorPower = ((y - x) / denominator) / defaultPower;
 
-            middleMotor.setPower(middleMotorPower);
-            frontLeftMotor.setPower(frontLeftMotorPower);
-            frontRightMotor.setPower(frontRightMotorPower);
-            backRightMotor.setPower(backRightMotorPower);
-            backLeftMotor.setPower(backLeftMotorPower);
+            middleMotor.setPower(middleMotorPower / changeSpeed);
+            frontLeftMotor.setPower(frontLeftMotorPower / changeSpeed);
+            frontRightMotor.setPower(frontRightMotorPower / changeSpeed);
+            backRightMotor.setPower(backRightMotorPower / changeSpeed);
+            backLeftMotor.setPower(backLeftMotorPower / changeSpeed);
 
             boolean gamepad1A_pressed = gamepad1.a;
             boolean gamepad1B_pressed = gamepad1.b;
 
             if (buttonHandler.isPressedOnceA(gamepad1A_pressed)) {
-                if (servoFirstPos){
-                    servoFirstPos = false;
-                    servoMiddlePos = true;
+                if (changeSpeedPos){
+                    changeSpeedPos = false;
+                    changeSpeed = 1;
 
-                } else if (servoMiddlePos){
-
-                    servoMiddlePos = false;
-                    servoLastPos = true;
-                }else if (servoLastPos){
-                    servoLastPos = false;
-                    servoFirstPos = true;
+                } else {
+                    changeSpeed = 2;
+                    changeSpeedPos = true;
                 }
+
+
             }
             if (buttonHandler.isPressedOnceB(gamepad1B_pressed)) {
                 telemetry.addData("B", gamepad1B_pressed);
