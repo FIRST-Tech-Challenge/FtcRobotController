@@ -101,11 +101,6 @@ public class newBotTeleOp extends LinearOpMode {
             slideMotor.setPower(gamepad2.right_trigger * 4);
             slideMotor.setPower(-gamepad2.left_trigger / 1.5);
 
-
-
-
-
-
             boolean gamepad1A_pressed = gamepad1.a;
             boolean gamepad1B_pressed = gamepad1.b;
 
@@ -118,8 +113,6 @@ public class newBotTeleOp extends LinearOpMode {
                     changeSpeed = 2;
                     changeSpeedPos = true;
                 }
-
-
             }
             if (buttonHandler.isPressedOnceB(gamepad1B_pressed)) {
                 telemetry.addData("B", gamepad1B_pressed);
@@ -128,7 +121,6 @@ public class newBotTeleOp extends LinearOpMode {
                 jointMotor.setTargetPosition(410);
                 jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 jointMotor.setPower(0.25);
-
             }
             if (gamepad2.dpad_up) {
                 jointMotor.setTargetPosition(0);
@@ -140,21 +132,12 @@ public class newBotTeleOp extends LinearOpMode {
                 jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 jointMotor.setPower(0.25);
             }
-
-
-
-
-
-
-
-
             if (newTimer.seconds() >= 15){
                 telemetry.addLine("15");
 
                 green0.setMode(DigitalChannel.Mode.INPUT);
                 red0.setMode(DigitalChannel.Mode.OUTPUT);
                 //pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
-
 
             }else if (newTimer.seconds() >= 5){
                 green0.setMode(DigitalChannel.Mode.OUTPUT);
@@ -166,9 +149,7 @@ public class newBotTeleOp extends LinearOpMode {
             }else{
 
                 telemetry.addLine("0");
-
-
-
+                
             }
 
             //led.setPattern(pattern);
