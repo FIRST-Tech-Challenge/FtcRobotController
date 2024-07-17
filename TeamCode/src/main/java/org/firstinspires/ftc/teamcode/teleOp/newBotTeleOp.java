@@ -63,6 +63,8 @@ public class newBotTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        jointMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         newTimer.reset();
 
         ButtonHandler buttonHandler = new ButtonHandler();
