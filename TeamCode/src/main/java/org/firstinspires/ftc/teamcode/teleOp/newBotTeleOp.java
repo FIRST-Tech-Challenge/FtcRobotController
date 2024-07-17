@@ -90,6 +90,14 @@ public class newBotTeleOp extends LinearOpMode {
             backRightMotor.setPower(backRightMotorPower / changeSpeed);
             backLeftMotor.setPower(backLeftMotorPower / changeSpeed);
 
+            slideMotor.setPower(gamepad2.right_trigger * 2);
+            slideMotor.setPower(-gamepad2.left_trigger / 1.5);
+
+
+
+
+
+
             boolean gamepad1A_pressed = gamepad1.a;
             boolean gamepad1B_pressed = gamepad1.b;
 
@@ -109,16 +117,20 @@ public class newBotTeleOp extends LinearOpMode {
                 telemetry.addData("B", gamepad1B_pressed);
             }
             if (gamepad2.dpad_down) {
-                jointMotor.setTargetPosition(100);
+                jointMotor.setTargetPosition(410);
                 jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                jointMotor.setPower(0.5);
+                jointMotor.setPower(0.25);
 
             }
             if (gamepad2.dpad_up) {
                 jointMotor.setTargetPosition(0);
                 jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                jointMotor.setPower(0.5);
-
+                jointMotor.setPower(0.25);
+            }
+            if (gamepad2.dpad_right) {
+                jointMotor.setTargetPosition(-50);
+                jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                jointMotor.setPower(0.25);
             }
 
 
