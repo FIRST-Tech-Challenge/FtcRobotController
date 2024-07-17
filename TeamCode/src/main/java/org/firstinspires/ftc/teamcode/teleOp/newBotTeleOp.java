@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,6 +24,7 @@ public class newBotTeleOp extends LinearOpMode {
     private ElapsedTime newTimer = new ElapsedTime();
     private DigitalChannel green0; //0
     private DigitalChannel red0; //1
+    private RevBlinkinLedDriver led;
     @Override
     public void runOpMode()  {
 
@@ -34,6 +36,7 @@ public class newBotTeleOp extends LinearOpMode {
         jointMotor = hardwareMap.get(DcMotor.class, "jointMotor");
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         claw = hardwareMap.get(Servo.class,"claw");
+        led = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         green0 = hardwareMap.get(DigitalChannel.class, "green0");
         red0 = hardwareMap.get(DigitalChannel.class, "red0");
@@ -140,16 +143,19 @@ public class newBotTeleOp extends LinearOpMode {
 
 
 
-            if (newTimer.seconds() >= 10){
-                telemetry.addLine("10");
+            if (newTimer.seconds() >= 15){
+                telemetry.addLine("15");
 
                 green0.setMode(DigitalChannel.Mode.INPUT);
                 red0.setMode(DigitalChannel.Mode.OUTPUT);
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+
 
             }else if (newTimer.seconds() >= 5){
                 green0.setMode(DigitalChannel.Mode.OUTPUT);
                 red0.setMode(DigitalChannel.Mode.INPUT);
 
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
                 telemetry.addLine("5");
 
             }else{
