@@ -53,7 +53,7 @@ public class newBotTeleOp extends LinearOpMode {
 
         float defaultPower = 2;
         double changeSpeed = 1;
-        double middleDefaultPower = 1.5;
+        double middleDefaultPower = 1.25;
 
         boolean servoFirstPos = true;
         boolean servoMiddlePos = false;
@@ -106,6 +106,24 @@ public class newBotTeleOp extends LinearOpMode {
             if (buttonHandler.isPressedOnceB(gamepad1B_pressed)) {
                 telemetry.addData("B", gamepad1B_pressed);
             }
+            if (gamepad2.dpad_down) {
+                jointMotor.setTargetPosition(100);
+                jointMotor.setPower(0.5);
+
+            }
+            if (gamepad2.dpad_up) {
+                jointMotor.setTargetPosition(0);
+                jointMotor.setPower(0.5);
+
+            }
+
+
+
+
+
+
+
+
             if (newTimer.seconds() >= 10){
                 telemetry.addLine("10");
 
@@ -128,6 +146,7 @@ public class newBotTeleOp extends LinearOpMode {
 
             telemetry.addData("X Value", x);
             telemetry.addData("time", newTimer.seconds());
+            telemetry.addData("jointMotorpos", jointMotor.getCurrentPosition());
             telemetry.update();
 
         }
