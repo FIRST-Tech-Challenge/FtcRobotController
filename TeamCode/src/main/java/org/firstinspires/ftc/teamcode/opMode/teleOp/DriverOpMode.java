@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.util.opModes.SympleCommandOpMode;
 
 public abstract class DriverOpMode extends SympleCommandOpMode {
     private TeamColor teamColor;
-    private RobotController robotController;
+    protected RobotController robotController;
 
     public void initialize(TeamColor teamColor) {
         this.teamColor = teamColor;
