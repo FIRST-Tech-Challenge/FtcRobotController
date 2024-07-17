@@ -64,7 +64,7 @@ public class newBotTeleOp extends LinearOpMode {
         waitForStart();
 
         jointMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         newTimer.reset();
 
         ButtonHandler buttonHandler = new ButtonHandler();
@@ -110,11 +110,13 @@ public class newBotTeleOp extends LinearOpMode {
             }
             if (gamepad2.dpad_down) {
                 jointMotor.setTargetPosition(100);
+                jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 jointMotor.setPower(0.5);
 
             }
             if (gamepad2.dpad_up) {
                 jointMotor.setTargetPosition(0);
+                jointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 jointMotor.setPower(0.5);
 
             }
