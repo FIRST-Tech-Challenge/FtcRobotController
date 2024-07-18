@@ -41,15 +41,12 @@ public class newBotTeleOp extends LinearOpMode {
         claw = hardwareMap.get(Servo.class,"claw");
         led = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
-
-
         green0 = hardwareMap.get(DigitalChannel.class, "green0");
         red0 = hardwareMap.get(DigitalChannel.class, "red0");
 
         green0.setMode(DigitalChannel.Mode.INPUT);
         red0.setMode(DigitalChannel.Mode.INPUT);
-
-
+        
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -62,6 +59,7 @@ public class newBotTeleOp extends LinearOpMode {
         float defaultPower = 2;
         double changeSpeed = 1;
         double middleDefaultPower = 1.25;
+        double slide = 0;
 
         boolean servoFirstPos = true;
         boolean servoMiddlePos = false;
@@ -69,11 +67,14 @@ public class newBotTeleOp extends LinearOpMode {
 
         boolean changeSpeedPos = false;
 
+
         waitForStart();
 
         jointMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         newTimer.reset();
+
+        claw.setPosition(0.3);
 
         ButtonHandler buttonHandler = new ButtonHandler();
 
@@ -81,8 +82,8 @@ public class newBotTeleOp extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            double y = gamepad1.left_stick_y;
-            double x = -gamepad1.left_stick_x;
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
@@ -98,8 +99,15 @@ public class newBotTeleOp extends LinearOpMode {
             backRightMotor.setPower(backRightMotorPower / changeSpeed);
             backLeftMotor.setPower(backLeftMotorPower / changeSpeed);
 
-            slideMotor.setPower(gamepad2.right_trigger * 4);
-            slideMotor.setPower(-gamepad2.left_trigger / 1.5);
+            if (gamepad2.right_trigger > 0){
+                slide = gamepad2.right_trigger * 4;
+            } else if (gamepad2.left_trigger > 0){
+                slide = -gamepad2.left_trigger / 1.5;
+            } else {
+                slide = 0;
+            }
+
+            slideMotor.setPower(slide);
 
             boolean gamepad1A_pressed = gamepad1.a;
             boolean gamepad1B_pressed = gamepad1.b;
@@ -156,6 +164,7 @@ public class newBotTeleOp extends LinearOpMode {
 
             telemetry.addData("X Value", x);
             telemetry.addData("time", newTimer.seconds());
+            telemetry.addData("slide", slide);
             telemetry.addData("jointMotorpos", jointMotor.getCurrentPosition());
             telemetry.update();
 
