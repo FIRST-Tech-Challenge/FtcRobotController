@@ -3,10 +3,14 @@ package org.rustlib.rustboard;
 import org.java_websocket.WebSocket;
 import org.rustlib.rustboard.RustboardServer.Timestamp;
 
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Objects;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 public class RustboardNode {
     private WebSocket connection;
@@ -18,11 +22,9 @@ public class RustboardNode {
     private Timestamp lastLocalUpdate;
     private Timestamp lastClientUpdate;
 
-    public RustboardNode(WebSocket connection, String parentLayoutId, Type type, String id, String state) {
-        this.connection = connection;
-        this.parentLayoutId = parentLayoutId;
-        this.type = type;
+    public RustboardNode(String id, Type type, String state) {
         this.id = id;
+        this.type = type;
         this.state = state;
     }
 
@@ -43,25 +45,8 @@ public class RustboardNode {
         return false;
     }
 
-    void updateLocal(Object state) {
-        if (canUpdate()) {
-            this.state = state.toString();
-            lastLocalUpdate = new Timestamp();
-        }
-    }
-
-    void updateAndSend(Object state) {
-        updateLocal(state);
-        requestClientModification();
-    }
-
-    void requestClientModification() {
-        if (canUpdate()) {
-            if (connection != null && connection.isOpen()) {
-                connection.send(getSendableData().toString());
-                lastClientUpdate = new Timestamp();
-            }
-        }
+    void update(Object state) {
+        this.state = state.toString();
     }
 
     public boolean isClientAwaitingUpdate() {
@@ -91,12 +76,25 @@ public class RustboardNode {
         PATH("path", OverrideAbility.CHECK_TIME),
         CAMERA_STREAM("camera steam", OverrideAbility.NEVER);
 
-        public final String name;
+        public final String typeName;
         private final OverrideAbility overrideAbility;
+        private static final HashMap<String, Type> these = new HashMap<>();
 
-        Type(String name, OverrideAbility overrideAbility) {
-            this.name = name;
+        static {
+            EnumSet.allOf(Type.class).forEach((Type type) -> these.put(type.typeName, type));
+        }
+
+        Type(String typeName, OverrideAbility overrideAbility) {
+            this.typeName = typeName;
             this.overrideAbility = overrideAbility;
+        }
+
+        public static Type getType(String typeName) {
+            Type type = these.get(typeName);
+            if (type == null) {
+                throw new IllegalArgumentException(String.format("No such node type '%s'", typeName));
+            }
+            return type;
         }
     }
 
@@ -110,5 +108,18 @@ public class RustboardNode {
         public NodeNotFoundException(String nodeId) {
             super("These are not the droids you're looking for!\nCould not find a node with id '" + nodeId + "'");
         }
+    }
+
+    JsonObjectBuilder getJsonBuilder() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder.add("id", id);
+        builder.add("type", type.typeName);
+        builder.add("state", state);
+        return builder;
+    }
+
+    static RustboardNode buildFromJson(JsonValue json) {
+        JsonObject data = (JsonObject) json;
+        return new RustboardNode(data.getString("id"), Type.getType(data.getString("type")), data.getString("state"));
     }
 }

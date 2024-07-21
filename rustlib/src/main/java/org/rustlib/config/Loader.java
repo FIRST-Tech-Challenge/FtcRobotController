@@ -102,10 +102,19 @@ public class Loader {
     }
 
     public static void writeString(File output, String string) throws IOException {
+        output.createNewFile();
         FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath());
         OutputStreamWriter writer = new OutputStreamWriter(fileOut);
         writer.write(string);
         writer.close();
+    }
+
+    public static void writeJson(File output, JsonObject json) throws IOException {
+        writeString(output, json.toString());
+    }
+
+    public static void write(File output, Object o) throws IOException {
+        writeString(output, o.toString());
     }
 
     public static Document readXML(File file) {
@@ -129,12 +138,20 @@ public class Loader {
         Loader.writeString(output, value);
     }
 
-    public static void saveValue(JsonObject object) throws IOException {
+    public static void saveText(String fileName, JsonObject object) throws IOException {
         saveValue(object, "txt");
+    }
+
+    public static void saveJson(JsonObject object) throws IOException {
+        saveValue(object, "json");
     }
 
     public static void savePath(JsonObject object) throws IOException {
         saveValue(object, "json");
+    }
+
+    public static JsonObject readJsonString(String json) {
+        return Json.createReader(new StringReader(json)).readObject();
     }
 
     public static String toXMLString(Document document) throws TransformerException, IOException {

@@ -7,27 +7,78 @@ import org.rustlib.geometry.Pose2d;
 import org.rustlib.rustboard.RustboardNode.NodeNotFoundException;
 import org.rustlib.rustboard.RustboardNode.Type;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 public class Rustboard {
-    private static int nextAvailableClientId = 0;
+
+    interface SetUUID {
+        Builder setUUID(String uuid);
+    }
+
+    static class Builder implements SetUUID {
+        private String uuid;
+        private final List<RustboardNode> nodes = new ArrayList<>();
+
+        private Builder() {
+        }
+
+
+        @Override
+        public Builder setUUID(String uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
+        public Builder addNode(RustboardNode node) {
+            nodes.add(node);
+            return this;
+        }
+
+        public Rustboard build() {
+            return new Rustboard(this);
+        }
+    }
+
+    static SetUUID getBuilder() {
+        return new Builder();
+    }
     private WebSocket connection = null;
-    private int clientId = -1;
+    private final String uuid;
     private Set<RustboardNode> nodes = new HashSet<>();
     private boolean connected = false;
     private Map<String, Runnable> callbacks = new HashMap();
+    Map<String, RustboardNode> toUpdate = new ConcurrentHashMap();
 
-    Rustboard(JsonObject descriptor) {
 
+    Map<String, RustboardNode> getNodeList() {
+        return toUpdate;
+    }
+
+    Rustboard(String uuid, JsonObject json) {
+        this.uuid = uuid;
+    }
+
+    Rustboard(Builder builder) {
+        this.uuid = builder.uuid;
+    }
+
+    public static Rustboard getActiveRustboard() {
+        return RustboardServer.getInstance().getActiveRustboard();
     }
 
     WebSocket getConnection() {
@@ -37,14 +88,30 @@ public class Rustboard {
     void onConnect(WebSocket connection) {
         connected = true;
         this.connection = connection;
-        negotiateIds();
     }
 
-    void onMessage(String data) {
-        JsonReader reader = Json.createReader(new StringReader(data));
-        JsonObject object = reader.readObject();
-        JsonObject message = object.getJsonObject("message");
-        String messageType = message.getString("messageType");
+    static Rustboard load(String uuid) throws NoSuchRustboardException {
+        try {
+            Builder rustboardBuilder = getBuilder().setUUID(uuid);
+            JsonObject json = Loader.loadJsonObject(uuid + ".json");
+            JsonArray nodes = json.getJsonArray("nodes");
+            nodes.forEach((JsonValue nodeJson) -> rustboardBuilder.addNode(RustboardNode.buildFromJson(nodeJson)));
+            return rustboardBuilder.build();
+        } catch (RuntimeException e) {
+            throw new NoSuchRustboardException("");
+        }
+    }
+
+    Rustboard mergeWithClientRustboard(JsonObject clientRustboardJson) {
+        Builder builder = getBuilder().setUUID(uuid);
+        for () {
+
+        }
+        return null;
+    }
+
+    void onMessage(JsonObject messageJson) {
+        String messageType = messageJson.getString("messageType");
         switch (messageType) {
             case "connection info":
                 // TODO
@@ -59,24 +126,24 @@ public class Rustboard {
                 break;
             case "path update":
                 try {
-                    Loader.savePath(message);
-                    createNotice("Saved path to robot", NoticeType.POSITIVE, 8000);
+                    Loader.savePath(messageJson);
+                    createNotice("Saved path to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
                 } catch (IOException e) {
-                    createNotice("Could not save the path to the robot", NoticeType.NEGATIVE, 8000);
+                    createNotice("Could not save the path to the robot", RustboardNotice.NoticeType.NEGATIVE, 8000);
                     RustboardServer.log(e.toString());
                 }
                 break;
             case "value update":
                 try {
-                    Loader.saveValue(message);
-                    createNotice("Saved value to robot", NoticeType.POSITIVE, 8000);
+                    Loader.saveText(messageJson.toString());
+                    createNotice("Saved value to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
                 } catch (IOException e) {
-                    createNotice("Could not save the value to the robot", NoticeType.NEGATIVE, 8000);
+                    createNotice("Could not save the value to the robot", RustboardNotice.NoticeType.NEGATIVE, 8000);
                     RustboardServer.log(e.toString());
                 }
                 break;
             case "click":
-                String nodeId = message.getString("nodeID");
+                String nodeId = messageJson.getString("nodeID");
                 if (callbacks.containsKey(nodeId)) {
                     clickButton(nodeId);
                 }
@@ -92,7 +159,7 @@ public class Rustboard {
         return connected;
     }
 
-    public void createNotice(String notice, NoticeType type, int durationMilliseconds) {
+    public void createNotice(String notice, RustboardNotice.NoticeType type, int durationMilliseconds) {
         JsonObject data = Json.createObjectBuilder()
                 .add("messageType", "notify")
                 .add("message", notice)
@@ -144,43 +211,72 @@ public class Rustboard {
         }
     }
 
+    public static void updatePositionGraphNode(String id, Pose2d position) {
+        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.POSITION_GRAPH).update((position));
+    }
+
+    public static void updateSelectorValueNode(String id, String value) {
+        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.SELECTOR).update((value));
+    }
+
+    public static void updateTelemetryNode(String id, Object value) {
+        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.TEXT_TELEMETRY).update((value));
+    }
+
+    public static void updateInputNode(String id, Object value) {
+        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.TEXT_INPUT).update((value));
+    }
+
+    public static void updateBooleanTelemetryNode(String id, boolean value) {
+        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.BOOLEAN_TELEMETRY).update((value));
+    }
+
+    public static void updateToggleNode(String id, boolean value) {
+        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.TOGGLE).update(value);
+    }
+
     public void updatePositionGraph(String id, Pose2d position) {
-        getNode(id, Type.POSITION_GRAPH).updateAndSend((position));
+        getNode(id, Type.POSITION_GRAPH).update((position));
     }
 
     public void updateSelectorValue(String id, String value) {
-        getNode(id, Type.SELECTOR).updateAndSend((value));
+        getNode(id, Type.SELECTOR).update((value));
     }
 
-    public void updateTelemetryNode(String id, Object value) {
-        getNode(id, Type.TEXT_TELEMETRY).updateAndSend((value));
+    public void updateTelemetry(String id, Object value) {
+        getNode(id, Type.TEXT_TELEMETRY).update((value));
     }
 
-    public void updateInputNode(String id, Object value) {
-        getNode(id, Type.TEXT_INPUT).updateAndSend((value));
+    public void updateInput(String id, Object value) {
+        getNode(id, Type.TEXT_INPUT).update((value));
     }
 
-    public void updateBooleanTelemetryNode(String id, boolean value) {
-        getNode(id, Type.BOOLEAN_TELEMETRY).updateAndSend((value));
+    public void updateBooleanTelemetry(String id, boolean value) {
+        getNode(id, Type.BOOLEAN_TELEMETRY).update((value));
     }
 
-    public void updateToggleNode(String id, boolean value) {
-        getNode(id, Type.TOGGLE).updateAndSend(value);
+    public void updateToggle(String id, boolean value) {
+        getNode(id, Type.TOGGLE).update(value);
     }
 
-    private void negotiateIds() { // TODO: add code for negotiating client and server ids
-
+    JsonObject getJson() {
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+        jsonBuilder.add("uuid", uuid);
+        JsonArrayBuilder nodeArray = Json.createArrayBuilder();
+        nodes.forEach((RustboardNode node) -> nodeArray.add(node.getJsonBuilder()));
+        jsonBuilder.add("nodes", nodeArray);
+        return jsonBuilder.build();
     }
-
-    public enum NoticeType {
-        POSITIVE("positive"),
-        NEGATIVE("negative"),
-        NEUTRAL("neutral");
-
-        String value;
-
-        NoticeType(String value) {
-            this.value = value;
+    void save(File file) {
+        try {
+            Loader.writeJson(file, getJson());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    static class NoSuchRustboardException extends Exception {
+        NoSuchRustboardException(String uuid) {
+            super(String.format("The rustboard with the id '%s' has no corresponding file", uuid));
         }
     }
 }
