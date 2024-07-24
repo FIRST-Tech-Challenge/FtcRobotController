@@ -15,7 +15,7 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
     Presses gamepad1_a;
     Presses gamepad1_b;
     Presses gamepad2_L_bumper;
-
+    boolean testVar;
     Erection erection;
     
     @Override
