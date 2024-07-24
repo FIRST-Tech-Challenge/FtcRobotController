@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <Webcam name="Webcam 1" serialNumber="DC74BFC0" />
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Control Hub" port="173">
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_0_CH" port="0" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_1_CH" port="1" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_2_CH" port="2" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_3_CH" port="3" />
+            <Servo name="Servo_Port_0_CH" port="0" />
+            <Servo name="Servo_Port_1_CH" port="1" />
+            <Servo name="Servo_Port_2_CH" port="2" />
+            <Servo name="Servo_Port_3_CH" port="3" />
+            <Servo name="Servo_Port_4_CH" port="4" />
+            <Servo name="Servo_Port_5_CH" port="5" />
+            <AnalogInput name="Analog_Port_0_CH" port="0" />
+            <AnalogInput name="Analog_Port_1_CH" port="1" />
+            <AnalogInput name="Analog_Port_2_CH" port="2" />
+            <AnalogInput name="Analog_Port_3_CH" port="3" />
+            <DigitalDevice name="Digital_Port_0_CH" port="0" />
+            <DigitalDevice name="Digital_Port_1_CH" port="1" />
+            <DigitalDevice name="Digital_Port_2_CH" port="2" />
+            <DigitalDevice name="Digital_Port_3_CH" port="3" />
+            <DigitalDevice name="Digital_Port_4_CH" port="4" />
+            <DigitalDevice name="Digital_Port_5_CH" port="5" />
+            <DigitalDevice name="Digital_Port_6_CH" port="6" />
+            <DigitalDevice name="Digital_Port_7_CH" port="7" />
+            <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="I2C_Distance_2_CH" port="0" bus="2" />
+            <RevColorSensorV3 name="I2C_Color_2_CH" port="1" bus="2" />
+            <REV_VL53L0X_RANGE_SENSOR name="I2C_Distance_3_CH" port="0" bus="3" />
+            <RevColorSensorV3 name="I2C_Color_3_CH" port="1" bus="3" />
+            <REV_VL53L0X_RANGE_SENSOR name="I2C_Distance_1_CH" port="0" bus="1" />
+            <RevColorSensorV3 name="I2C_Color_1_CH" port="1" bus="1" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>

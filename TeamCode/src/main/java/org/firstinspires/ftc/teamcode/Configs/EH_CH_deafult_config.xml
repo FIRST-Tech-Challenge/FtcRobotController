@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_0_EH" port="0" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_1_EH" port="1" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_2_EH" port="2" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_3_EH" port="3" />
+            <ContinuousRotationServo name="Servo_Port_0_EH" port="0" />
+            <ContinuousRotationServo name="Servo_Port_1_EH" port="1" />
+            <ContinuousRotationServo name="Servo_Port_2_EH" port="2" />
+            <ContinuousRotationServo name="Servo_Port_3_EH" port="3" />
+            <ContinuousRotationServo name="Servo_Port_4_EH" port="4" />
+            <ContinuousRotationServo name="Servo_Port_5_EH" port="5" />
+            <AnalogInput name="Analog_Port_0_EH" port="0" />
+            <AnalogInput name="Analog_Port_1_EH" port="1" />
+            <AnalogInput name="Analog_Port_2_EH" port="2" />
+            <AnalogInput name="Analog_Port_3_EH" port="3" />
+            <DigitalDevice name="Digital_Port_0_EH" port="0" />
+            <DigitalDevice name="Digital_Port_1_EH" port="1" />
+            <DigitalDevice name="Digital_Port_2_EH" port="2" />
+            <DigitalDevice name="Digital_Port_3_EH" port="3" />
+            <DigitalDevice name="Digital_Port_4_EH" port="4" />
+            <DigitalDevice name="Digital_Port_5_EH" port="5" />
+            <DigitalDevice name="Digital_Port_6_EH" port="6" />
+            <DigitalDevice name="Digital_Port_7_EH" port="7" />
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_0_CH" port="0" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_1_CH" port="1" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_2_CH" port="2" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_3_CH" port="3" />
+            <Servo name="Servo_Port_0_CH" port="0" />
+            <Servo name="Servo_Port_1_CH" port="1" />
+            <Servo name="Servo_Port_2_CH" port="2" />
+            <Servo name="Servo_Port_3_CH" port="3" />
+            <Servo name="Servo_Port_4_CH" port="4" />
+            <Servo name="Servo_Port_5_CH" port="5" />
+            <AnalogInput name="Analog_Port_0_CH" port="0" />
+            <AnalogInput name="Analog_Port_1_CH" port="1" />
+            <AnalogInput name="Analog_Port_2_CH" port="2" />
+            <AnalogInput name="Analog_Port_3_CH" port="3" />
+            <DigitalDevice name="Digital_Port_0_CH" port="0" />
+            <DigitalDevice name="Digital_Port_1_CH" port="1" />
+            <DigitalDevice name="Digital_Port_2_CH" port="2" />
+            <DigitalDevice name="Digital_Port_3_CH" port="3" />
+            <DigitalDevice name="Digital_Port_4_CH" port="4" />
+            <DigitalDevice name="Digital_Port_5_CH" port="5" />
+            <DigitalDevice name="Digital_Port_6_CH" port="6" />
+            <DigitalDevice name="Digital_Port_7_CH" port="7" />
+            <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
