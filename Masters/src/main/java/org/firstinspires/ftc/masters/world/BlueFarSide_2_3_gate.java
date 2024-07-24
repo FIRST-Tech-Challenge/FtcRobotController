@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
+import org.firstinspires.ftc.masters.world.paths.RedFarSidePath;
 
 @Config
 @Autonomous(name = "Far Side blue 2 + 3 Gate", group = "competition")
@@ -56,47 +57,24 @@ public class BlueFarSide_2_3_gate extends FarSideOpMode {
 
         stackToLeftYellow = BlueFarSidePath.getStackToLeftYellow(drive, leftPurpleToStack.end());
 
-        toStackCycleGateLeft = BlueFarSidePath.toStackFromBackboardGate(drive, stackToLeftYellow.end() );
-        toStackCycleGateMid = BlueFarSidePath.toStackFromBackboardGate(drive, stackToMidYellow.end());
-        toStackCycleGateRight = BlueFarSidePath.toStackFromBackboardGate(drive, stackToRightYellow.end());
+//        toStackCycleGateLeft = BlueFarSidePath.toStackFromBackboardGate(drive, stackToLeftYellow.end() );
+//        toStackCycleGateMid = BlueFarSidePath.toStackFromBackboardGate(drive, stackToMidYellow.end());
+//        toStackCycleGateRight = BlueFarSidePath.toStackFromBackboardGate(drive, stackToRightYellow.end());
 
-        toBackboardCycleGate = BlueFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
+        parkFromMid = BlueFarSidePath.park(drive, stackToMidYellow.end());
+        parkFromLeft = BlueFarSidePath.park(drive, stackToLeftYellow.end());
+        parkFromRight = BlueFarSidePath.park(drive, stackToRightYellow.end());
 
+        toGateCycleRight= BlueFarSidePath.toGateFromBackdrop(drive,stackToRightYellow.end());
+        toGateCycleLeft = BlueFarSidePath.toGateFromBackdrop(drive, stackToLeftYellow.end());
+        toGateCycleMid = BlueFarSidePath.toGateFromBackdrop(drive, stackToMidYellow.end());
+        toStackFromCenterGate = BlueFarSidePath.toStackFromGate(drive, toGateCycleMid.end());
 
+        toStackFromPark = BlueFarSidePath.toStackFromPark(drive, parkFromMid.end());
 
-        TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
-                .back(5)
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-                .build();
-
-        TrajectorySequence tagAlignMid = drive.trajectorySequenceBuilder(middlePurple.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-                .build();
-
-        TrajectorySequence tagAlignRight = drive.trajectorySequenceBuilder(rightPurple.end())
-                .back(5)
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
-                .build();
-
-
+        //toBackboardCycleGate = BlueFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
 
         //OTHER PATHS
-
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(stackToRightYellow.end())
-                .forward(5)
-
-                .build();
-
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-
-                .build();
-
 
 
         propPos = drive.getPropFindProcessor().position;
@@ -105,16 +83,20 @@ public class BlueFarSide_2_3_gate extends FarSideOpMode {
 
         currentState = State.PURPLE_DEPOSIT_PATH;
 
-        drive.dropIntake();
+//        drive.dropIntake();
 
         retrievePropPos();
 
-        propPos= PropFindRightProcessor.pos.RIGHT;
         TrajectorySequence nextPath=null;
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
+            telemetry.addData("cycle", cycleCount);
+            telemetry.addData("target", outtakeTarget);
+            telemetry.addData("state", currentState);
+
+            telemetry.update();
 
 
             switch (currentState){
@@ -138,35 +120,44 @@ public class BlueFarSide_2_3_gate extends FarSideOpMode {
                                 break;
                         }
                     } else {
-                        nextPath= toBackboardCycleGate;
+                        stackToLeftYellow = BlueFarSidePath.getStackToRightYellowCycle(drive,toStackFromCenterGate.end());
+                        nextPath= stackToLeftYellow;
                     }
 
                     toStack(nextPath);
                     break;
+                case TO_GATE:
+                    toGate();
+                    break;
                 case BACKDROP_DEPOSIT_PATH:
+
                     if (cycleCount==0) {
                         switch (propPos) {
                             case LEFT:
-                                nextPath = toStackCycleGateLeft;
+                                backdropDepositPath(State.PARK, parkFromLeft);
                                 break;
                             case RIGHT:
-                                nextPath = toStackCycleGateRight;
+                                backdropDepositPath(State.PARK, parkFromRight);
                                 break;
                             case MID:
-                                nextPath = toStackCycleGateMid;
+                                backdropDepositPath(State.PARK, parkFromMid);
                                 break;
                         }
                     } else {
-                        backdropDepositPath(State.PARK, park);
+                        backdropDepositPath(State.PARK, parkFromRight);
                     }
+                    //}
                     break;
                 case PARK:
-                    park();
+                    nextPath= toStackFromPark;
+                    park(toStackFromPark);
+
                     break;
 
             }
-
-
         }
     }
+
+
+
 }

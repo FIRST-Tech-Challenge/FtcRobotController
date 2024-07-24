@@ -3,12 +3,15 @@ package org.firstinspires.ftc.masters.components;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons;
 
 public class Shooter implements Component{
     private HardwareMap hardwareMap = null;
     Servo planeRaise;
+    ElapsedTime time=null;
+
     public Shooter(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         initializeHardware();
@@ -22,6 +25,12 @@ public class Shooter implements Component{
     public void update(Gamepad gamepad){
         if (gamepad.touchpad_finger_2) {
             shoot();
+            time= new ElapsedTime();
+        }
+
+        if (time!=null && time.milliseconds()>500){
+            planeRaise.setPosition(CSCons.droneFlat);
+            time=null;
         }
     }
 

@@ -414,9 +414,16 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
     //pick up pixel 3 and 4
     public void intakeToPosition3(){
-;
+;       intakeHeight.setPosition(CSCons.intake3);
     }
 
+    public void intakeToPosition2(){
+        intakeHeight.setPosition(CSCons.intake2);
+    }
+
+    public void intakeToPosition1(){
+        intakeHeight.setPosition(CSCons.intakeBottom);
+    }
 
 
     public void intakeToTransfer() {
@@ -956,6 +963,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void initPlane(){
         planeRaise.setPosition(CSCons.droneFlat);
+    }
+
+    public void shootPlane(){
+        planeRaise.setPosition(CSCons.droneShooting);
     }
 
 

@@ -33,12 +33,12 @@ public class CSCons {
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop =0;
-    public static double outtakeMovementTransfer =0.55;
+    public static double outtakeMovementTransfer =0.55;//0.55
 
     public static double wristAngleInit= 0.9;
     public static double wristOuttakeAngleBackdrop =0.04;
-    public static double wristOuttakeAngleTransfer =0.99;
-    public static double wristOuttakeMovementTransfer=0.425;
+    public static double wristOuttakeAngleTransfer =0.98;
+    public static double wristOuttakeMovementTransfer=0.43; //0.43
 
     public static double wristOuttakeMovementM=0.6;
 
@@ -61,8 +61,8 @@ public class CSCons {
     public static double wristFlatLeft =0.745; //
     public static double wristVerticalDown=1;
 
-    public static double droneFlat = 1;
-    public static double droneShooting = 0.1;
+    public static double droneFlat = 0.5;
+    public static double droneShooting = 0.11;
 
     public static double closeClawDistance = 3; //in cm
 
@@ -111,11 +111,11 @@ public class CSCons {
 
 
     public static double intakeGround = 0.38; //for autonomous, purple pixel
-    public static double intakeBottom = 0.32;
-    public static double intake2 =0.29;
-    public static double intake3 =0.27;
-    public static double intake4 =0.25;
-    public static double intake5 =0.23;
+    public static double intakeBottom = 0.33;
+    public static double intake2 =0.31;
+    public static double intake3 =0.29;
+    public static double intake4 =0.27;
+    public static double intake5 =0.24;
     public static double intakeAboveTop =0.2;
     public static double intakeInit =0.02;
 
@@ -128,7 +128,7 @@ public class CSCons {
     public enum OuttakePosition{
         BOTTOM (-10),
         LOW_AUTO(105),
-        AUTO(600),
+        AUTO(800),
         LOW(800),
         MID(1500),
         HIGH(2400);

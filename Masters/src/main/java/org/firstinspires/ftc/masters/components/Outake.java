@@ -255,7 +255,7 @@ public class Outake implements Component{
             if (gamepad.right_bumper){
                 target = target+10;
             }
-            if (gamepad.right_stick_x<-0.2){
+            if (gamepad.right_stick_x<-0.7){
                 outtakeState = CSCons.OuttakeState.Retract;
                 setOuttakeToTransfer();
             }
@@ -265,6 +265,7 @@ public class Outake implements Component{
     }
     private void setupHang(){
         backSlidePos = CSCons.OuttakePosition.HIGH;
+        setOuttakeToBackdrop();
         target= backSlidePos.getTarget();
     }
 
@@ -496,10 +497,10 @@ public class Outake implements Component{
             }
         }
 
-        if (gamepad.right_stick_y>0.5 && Math.abs(gamepad.right_stick_x)<0.2){
+        if (gamepad.right_stick_y>0.2 && Math.abs(gamepad.right_stick_x)<0.2){
             liftOuttakeFingers();
         }
-        if (gamepad.right_stick_y<-0.5 && Math.abs(gamepad.right_stick_x)<0.2){
+        if (gamepad.right_stick_y<-0.6 && Math.abs(gamepad.right_stick_x)<0.2){
             closeFingers();
         }
 

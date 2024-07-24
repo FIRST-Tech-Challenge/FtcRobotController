@@ -400,7 +400,7 @@ public class MeepMeepEvan {
 
 //
                                 .setTangent(Math.toRadians(180))
-                                .splineToLinearHeading(new Pose2d(44, 15, Math.toRadians(180)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(42, 12, Math.toRadians(180)), Math.toRadians(0))
 
 
 
@@ -1093,7 +1093,7 @@ public class MeepMeepEvan {
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(RedBFarSideGateL)
+                .addEntity(BlueFarStageR )
                 .start();
     }
 }
