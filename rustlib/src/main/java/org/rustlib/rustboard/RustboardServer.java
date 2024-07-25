@@ -110,7 +110,7 @@ public class RustboardServer extends WebSocketServer {
     }
 
     private static void clearStorage() {
-        File[] files = defaultStorageDirectory.listFiles();
+        File[] files = storedRustboardDir.listFiles();
         if (files != null) {
             for (File file : files) {
                 file.delete();
@@ -168,6 +168,7 @@ public class RustboardServer extends WebSocketServer {
         JsonObject messageJson = Loader.readJsonString(message);
         switch (messageJson.getString("action")) {
             case "client_details":
+                Time.calibrateUTCTime(Long.parseLong(messageJson.getString("utc_time")));
                 String uuid = messageJson.getString("uuid");
                 JsonObject rustboardJson = messageJson.getJsonObject("rustboard");
                 Rustboard rustboard;
@@ -212,50 +213,5 @@ public class RustboardServer extends WebSocketServer {
 
     public List<OpModeMeta> getRegisteredOpModes() {
         return RegisteredOpModes.getInstance().getOpModes();
-    }
-
-    static class Timestamp {
-        private static Set<Timestamp> registry = new HashSet<>();
-        private static long offset = 0;
-        private static boolean calibrated;
-
-        static long getTime() {
-            return System.currentTimeMillis() + offset;
-        }
-
-        static boolean isTimeCalibrated() {
-            return calibrated;
-        }
-
-        static void calibrateTime(long actualTime) {
-            if (!calibrated) {
-                double offset = actualTime - System.currentTimeMillis();
-                registry.forEach((timestamp) -> timestamp.timeMillis += offset);
-                calibrated = true;
-            }
-        }
-
-        private long timeMillis;
-
-        Timestamp(long timeMillis) {
-            this.timeMillis = timeMillis;
-            registry.add(this);
-        }
-
-        Timestamp() {
-            this(getTime());
-        }
-
-        long getTimeMillis() {
-            return timeMillis;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Timestamp) {
-                return Math.abs(((Timestamp) o).timeMillis - timeMillis) < 1;
-            }
-            return false;
-        }
     }
 }

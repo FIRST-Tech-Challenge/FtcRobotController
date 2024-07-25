@@ -4,7 +4,7 @@ import org.java_websocket.WebSocket;
 import org.rustlib.commandsystem.Command;
 import org.rustlib.config.Loader;
 import org.rustlib.geometry.Pose2d;
-import org.rustlib.rustboard.RustboardNode.NodeNotFoundException;
+import org.rustlib.rustboard.RustboardNode.NoSuchNodeException;
 import org.rustlib.rustboard.RustboardNode.Type;
 
 import java.io.File;
@@ -57,6 +57,7 @@ public class Rustboard {
     static SetUUID getBuilder() {
         return new Builder();
     }
+
     private WebSocket connection = null;
     private final String uuid;
     private Set<RustboardNode> nodes = new HashSet<>();
@@ -71,6 +72,11 @@ public class Rustboard {
 
     Rustboard(String uuid, JsonObject json) {
         this.uuid = uuid;
+    }
+
+    public Rustboard(String uuid, Set<RustboardNode> nodes) {
+        this.uuid = uuid;
+        this.nodes.addAll(nodes);
     }
 
     Rustboard(Builder builder) {
@@ -103,28 +109,38 @@ public class Rustboard {
     }
 
     Rustboard mergeWithClientRustboard(JsonObject clientRustboardJson) {
-        Builder builder = getBuilder().setUUID(uuid);
-        for () {
-
+        JsonArray clientNodes = clientRustboardJson.getJsonArray("nodes");
+        Set<RustboardNode> updatedNodeList = new HashSet<>(nodes);
+        for (JsonValue nodeJson : clientNodes) {
+            RustboardNode clientNode = RustboardNode.buildFromJson(nodeJson);
+            for (RustboardNode node : nodes) {
+                if (node.isSame(clientNode)) {
+                    updatedNodeList.add(node.merge(clientNode));
+                    updatedNodeList.remove(node);
+                }
+            }
         }
-        return null;
+        return new Rustboard(uuid, updatedNodeList);
     }
 
     void onMessage(JsonObject messageJson) {
-        String messageType = messageJson.getString("messageType");
-        switch (messageType) {
-            case "connection info":
-                // TODO
+        String action = messageJson.getString("action");
+        switch (action) {
+            case "update_nodes":
+                JsonArray nodes = messageJson.getJsonArray("nodes");
+                for (JsonValue nodeJson : nodes) {
+                    JsonObject node = (JsonObject) nodeJson;
+                    String id = node.getString("id");
+                    Type type = Type.getType(node.getString("type"));
+                    String state = node.getString("state");
+                    try {
+                        getNode(id, type).update(node.getString(state));
+                    } catch (NoSuchNodeException e) {
+                        this.nodes.add(new RustboardNode(id, type, state));
+                    }
+                }
                 break;
-            case "switch layout":
-                break;
-            case "layout state":
-                // TODO
-                break;
-            case "node update":
-                // TODO
-                break;
-            case "path update":
+            case "save_path":
                 try {
                     Loader.savePath(messageJson);
                     createNotice("Saved path to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
@@ -133,7 +149,7 @@ public class Rustboard {
                     RustboardServer.log(e.toString());
                 }
                 break;
-            case "value update":
+            case "save_value":
                 try {
                     Loader.saveText(messageJson.toString());
                     createNotice("Saved value to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
@@ -142,7 +158,7 @@ public class Rustboard {
                     RustboardServer.log(e.toString());
                 }
                 break;
-            case "click":
+            case "click_button":
                 String nodeId = messageJson.getString("nodeID");
                 if (callbacks.containsKey(nodeId)) {
                     clickButton(nodeId);
@@ -171,18 +187,18 @@ public class Rustboard {
 
     private RustboardNode getNode(String id, Type type) {
         for (RustboardNode node : nodes) {
-            if (node.type == type) {
+            if (node.id.equals(id) && node.type == type) {
                 return node;
             }
         }
-        throw new RustboardNode.NodeNotFoundException(id);
+        throw new NoSuchNodeException(id);
     }
 
     private boolean nodeExists(String id, Type type) {
         try {
             getNode(id, type);
             return true;
-        } catch (NodeNotFoundException e) {
+        } catch (NoSuchNodeException e) {
             return false;
         }
     }
@@ -191,7 +207,7 @@ public class Rustboard {
         if (nodeExists(buttonId, Type.BUTTON)) {
             callbacks.put(buttonId, callback);
         } else {
-            throw new NodeNotFoundException(buttonId);
+            throw new NoSuchNodeException(buttonId);
         }
     }
 
@@ -206,7 +222,7 @@ public class Rustboard {
             if (nodeExists(buttonId, Type.BUTTON)) {
                 throw new RuntimeException("No runnable was mapped to the button with id '" + buttonId + "'");
             } else {
-                throw new NodeNotFoundException(buttonId);
+                throw new NoSuchNodeException(buttonId);
             }
         }
     }
@@ -259,6 +275,54 @@ public class Rustboard {
         getNode(id, Type.TOGGLE).update(value);
     }
 
+    public String getInputValue(String id, String defaultValue) {
+        try {
+            return getNode(id, Type.TEXT_INPUT).getState();
+        } catch (NoSuchNodeException e) {
+            return defaultValue;
+        }
+    }
+
+    public String getInputValue(String id) throws NoSuchNodeException {
+        return getNode(id, Type.TEXT_INPUT).getState();
+    }
+
+    public String safeGetInputValue(String id) {
+        return getInputValue(id, "");
+    }
+
+    public boolean getToggleValue(String id, boolean defaultValue) {
+        try {
+            return Boolean.parseBoolean(getNode(id, Type.TOGGLE).getState());
+        } catch (NoSuchNodeException e) {
+            return defaultValue;
+        }
+    }
+
+    public boolean getToggleValue(String id) throws NoSuchNodeException {
+        return Boolean.parseBoolean(getNode(id, Type.TOGGLE).getState());
+    }
+
+    public boolean safeGetToggleValue(String id) {
+        return getToggleValue(id, false);
+    }
+
+    public String getSelectorValue(String id, String defaultValue) {
+        try {
+            return getNode(id, Type.SELECTOR).getState();
+        } catch (NoSuchNodeException e) {
+            return defaultValue;
+        }
+    }
+
+    public String getSelectorValue(String id) throws NoSuchNodeException {
+        return getNode(id, Type.SELECTOR).getState();
+    }
+
+    public String safeGetSelectorValue(String id) {
+        return getSelectorValue(id, null);
+    }
+
     JsonObject getJson() {
         JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
         jsonBuilder.add("uuid", uuid);
@@ -267,6 +331,7 @@ public class Rustboard {
         jsonBuilder.add("nodes", nodeArray);
         return jsonBuilder.build();
     }
+
     void save(File file) {
         try {
             Loader.writeJson(file, getJson());
@@ -274,6 +339,7 @@ public class Rustboard {
             throw new RuntimeException(e);
         }
     }
+
     static class NoSuchRustboardException extends Exception {
         NoSuchRustboardException(String uuid) {
             super(String.format("The rustboard with the id '%s' has no corresponding file", uuid));
