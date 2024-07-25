@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.centerstage;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-
 @Autonomous
-public class AutonRedRightNewAprilTagCode extends LinearOpMode {
+public class AutonRedLeftNewAprilTagCode extends LinearOpMode {
     SpikeCam.location mySpikeLocation;
     private int lookingForTagNumber = 1;
     private AprilTagDetection detectedTag = null;
@@ -17,56 +16,67 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
     double tagRange = 100;
     double tagBearing = 100;
     double tagYaw = 100;
-    double desiredRange = 6.7;
+    double desiredRange = 6.6;
     double timeAprilTagsDriveStarted = 0;
     boolean foundAprilTag = true;
     private CyDogsSparky mySparky;
     private ElapsedTime runtime = new ElapsedTime();
-    // This is a SHORT side Auton
+
+// This is a LONG side Auton
     @Override
     public void runOpMode() {
-
         ElapsedTime runtime = new ElapsedTime();
 
         telemetry.addLine("Starting Initialization");
 
         // Set defaults for initialization options
         CyDogsChassis.Direction parkingSpot = CyDogsChassis.Direction.LEFT;
+        CyDogsChassis.Direction drivePath = CyDogsChassis.Direction.LEFT;
 
         // Create the instance of sparky, initialize the SpikeCam, devices, and positions
-        mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 330);
+        mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 430);
         mySparky.initializeSpikeCam();
         mySparky.initializeDevices();
- //       mySparky.initializePositions();
- //       mySparky.initializeAprilTags();
 
         newAprilTags = new CyDogsAprilTags(this);
 
-
-     //   newAprilTags.Initialize();
-
         // Ask the initialization questions
         parkingSpot = mySparky.askParkingSpot();
+     //   drivePath = mySparky.askDrivePath();
 
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
 
-        if (opModeIsActive()) {
+
+        if(opModeIsActive()) {
             mySparky.initializePositions();
             sleep(300);
+            int extraVerticalMovement=0;
             mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
             telemetry.update();
+
             // Get to standard position before placing purple pixel
             mySparky.MoveStraight(-300, .5, mySparky.StandardAutonWaitTime);
-            mySparky.StrafeRight(90,0.5, mySparky.StandardAutonWaitTime);
-            mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
+
+            if(mySpikeLocation==SpikeCam.location.LEFT)
+            {
+                mySparky.StrafeLeft(100,0.5, mySparky.StandardAutonWaitTime);
+            }
+            else if(mySpikeLocation==SpikeCam.location.MIDDLE) {
+                mySparky.StrafeLeft(100,0.5, mySparky.StandardAutonWaitTime);
+            }
+            else {  //RIGHT
+                mySparky.StrafeLeft(70,0.5, mySparky.StandardAutonWaitTime);
+            }
             mySparky.spikeCam.closeStream();
+            mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
+
 
             // Place purple pixel and back away from it
             if(mySpikeLocation==SpikeCam.location.LEFT){
                 mySparky.RotateLeft(94,.5,mySparky.StandardAutonWaitTime);
-                mySparky.MoveStraight(-35,.5,200);
+                mySparky.MoveStraight(-15,.5,200);
                 // MoveStraight(-20,.5,200);
                 mySparky.dropPurplePixel();
             } else if (mySpikeLocation==SpikeCam.location.MIDDLE) {
@@ -74,134 +84,102 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 mySparky.dropPurplePixel();
             } else { //Right
                 mySparky.RotateLeft(-90,.5,mySparky.StandardAutonWaitTime);
-                //   MoveStraight(-10,.5,200);
+                mySparky.MoveStraight(-30,.5,200);
                 mySparky.dropPurplePixel();
             }
 
-            if(mySpikeLocation== SpikeCam.location.MIDDLE) {
-                mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                mySparky.MoveStraight(80, .5, mySparky.StandardAutonWaitTime);
-            }
-            else {
-                mySparky.MoveStraight(20, .5, mySparky.StandardAutonWaitTime);
-            }
 
-            // do this after purple pixel is placed and spike cam isn't needed anymore
-            //newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
+            int backAwayFromPurple = 20;
+            if(mySpikeLocation== SpikeCam.location.MIDDLE){
+                backAwayFromPurple=85;
+            }
+            else if(mySpikeLocation==SpikeCam.location.RIGHT)
+            {
+                backAwayFromPurple=150;
+            }
+            mySparky.MoveStraight(backAwayFromPurple, .5, mySparky.StandardAutonWaitTime);
+            mySparky.StandardAutonWaitTime = 400;
+
+            switch (mySpikeLocation) {
+                case LEFT:
+                    extraVerticalMovement-=50;
+                //    mySparky.MoveStraight(mySparky.BackUpDistanceFromSpike,.5,mySparky.StandardAutonWaitTime);
+               //    mySparky.raiseArmToScore(400);
+                //    sleep(300);
+                    mySparky.StrafeLeft(CyDogsSparky.OneTileMM, .5, mySparky.StandardAutonWaitTime);
+                //    mySparky.RotateRight(2,.5,mySparky.StandardAutonWaitTime);
+               //     mySparky.raiseArmToScore(0);
+                    break;
+                case MIDDLE:
+
+                    mySparky.RotateLeft(91,.5,mySparky.StandardAutonWaitTime);
+
+                    mySparky.MoveStraight(-CyDogsChassis.OneTileMM+180,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.StrafeLeft(CyDogsSparky.OneTileMM+240,.5,500);
+                    //mySparky.MoveStraight(CyDogsChassis.OneTileMM,.5,mySparky.StandardAutonWaitTime);
+                    extraVerticalMovement+=410;
+
+                    break;
+                case RIGHT:
+                case NOT_FOUND:
+                    extraVerticalMovement+=70;
+                    mySparky.RotateRight(190,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.StrafeLeft(CyDogsSparky.OneTileMM,.5,mySparky.StandardAutonWaitTime);
+
+                    break;
+
+            }
+            mySparky.RotateRight(2,.5,mySparky.StandardAutonWaitTime);
+
+            // We move not all the way so we don't crash into a parker, then after strafe move the rest
+
+            mySparky.MoveStraight(1830+extraVerticalMovement,.5,300);
             newAprilTags.Initialize(mySparky.FrontLeftWheel, mySparky.FrontRightWheel, mySparky.BackLeftWheel, mySparky.FrontRightWheel);
 
 
-            // First, let's get ourselves straight facing scoring area
-            //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
-            if (mySpikeLocation == SpikeCam.location.LEFT) {
-                //Already facing the correct way
-                //We're 'BackUpDistanceFromSpike' closer to scoreboard
-                mySparky.RotateRight(3,.5,mySparky.StandardAutonWaitTime);
-                mySparky.StrafeRight(40,.5,mySparky.StandardAutonWaitTime);
-                mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                mySparky.MoveStraight(400, .5, 300);
-                mySparky.StrafeLeft(200, .5, 500);                // has long wait time to handle arm movement before it
-      // I took 200 off the above to be far enough away to read april tags
-            } else if (mySpikeLocation == SpikeCam.location.MIDDLE) {
-                mySparky.RotateLeft(92, .5, mySparky.StandardAutonWaitTime);
-                // We're 50mm further away from start position
-                mySparky.StrafeRight(-50,.5,mySparky.StandardAutonWaitTime);
-               // mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                // has long wait time to handle arm movement before it moves
-                mySparky.MoveStraight(500, .5, 1000);
-            } else {  //RIGHT
-                mySparky.StrafeLeft(CyDogsChassis.OneTileMM, .5, mySparky.StandardAutonWaitTime);
-                mySparky.MoveStraight(-CyDogsChassis.OneTileMM, .5, mySparky.StandardAutonWaitTime);
-                mySparky.StrafeRight(400, .5, mySparky.StandardAutonWaitTime);
-                mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                // has long wait time to handle arm movement before it
-                mySparky.RotateRight(188, .5, 1000);
-             }
+            mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+
+            if(mySpikeLocation== SpikeCam.location.LEFT) {
+                mySparky.StrafeRight(630,.5,mySparky.StandardAutonWaitTime);
+            } else if (mySpikeLocation== SpikeCam.location.MIDDLE) {
+                mySparky.StrafeRight(700,.5,mySparky.StandardAutonWaitTime);
+            } else {
+                mySparky.StrafeRight(880,.5,mySparky.StandardAutonWaitTime);
+            }
 
             try {
                 // This section gets the robot in front of the april tag
                 lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
-                sleep(500);
-
+                sleep(800);
                 FinishAprilTagMoves();
-                newAprilTags.CloseStream();
                 if(!foundAprilTag)
                 {
                     mySparky.MoveStraight(200,.5,500);
                 }
+                if(mySpikeLocation== SpikeCam.location.RIGHT) {
+                    mySparky.StrafeRight(50,.5,mySparky.StandardAutonWaitTime);
+                }
 
-                // Finish scoring and park
                 mySparky.scoreFromDrivingPositionAndReturn();
                 mySparky.MoveStraight(-50,.5,300);
                 mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
                 mySparky.returnArmFromScoring();
-                mySparky.MoveStraight(200,.5,200);
+                mySparky.MoveStraight(150,.5,200);
                 mySparky.LowerArmAtAutonEnd();
             }
             catch (Exception e) {
                 telemetry.addLine("Major malfunction in main");
+                telemetry.update();
                 sleep(3000);
-                telemetry.update();
+
             }
         }
+
     }
 
 
-    private void ManageDriveToAprilTag()
+    private void FinishAprilTagMoves()
     {
-        lookingForTagNumber = mySparky.getAprilTagTarget(mySpikeLocation, CyDogsChassis.Alliance.RED);
-        detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-        if(detectedTag==null) {
-            telemetry.addData("no april tag found, looked for: ", lookingForTagNumber);
-            telemetry.update();
-        }
-
-
-
-        if(detectedTag!=null) {
-            timeAprilTagsDriveStarted = runtime.seconds();
-            telemetry.addData("Driving to tag!", detectedTag.id);
-            tagRange = detectedTag.ftcPose.range;
-            tagBearing = detectedTag.ftcPose.bearing;
-            tagYaw = detectedTag.ftcPose.yaw;
-
-            // while we're not yet there, keep driving and updating where the tag is
-            while (
-                    !((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
-                            || !(-5 <= tagBearing && tagBearing <= 5)
-                            || !(-5 <= tagYaw && tagYaw <= 5))
-            {
-                telemetry.addLine("In the while loop");
-                telemetry.addData("during while range:" , tagRange);
-                telemetry.addData("during while bearing:" , tagBearing);
-                telemetry.addData("during while yaw:" , tagYaw);
-
-
-                // if we've been going at this for 5 seconds, break out and stop
-                if(timeAprilTagsDriveStarted<runtime.seconds()-3){break;}
-
-                // drive to the tag
-                newAprilTags.DriveToTag(detectedTag);
-
-                // now that we've driven a fraction of a second, check the tag again
-                detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
-
-                // if something went wrong and we can't see the tag anymore, give up
-                if(detectedTag==null){break;}
-
-                // get new tag positioning
-                tagRange = detectedTag.ftcPose.range;
-                tagBearing = detectedTag.ftcPose.bearing;
-                tagYaw = detectedTag.ftcPose.yaw;
-                telemetry.update();
-            }
-
-            // sleep(300);
-        }
-
-    }
-
-    private void FinishAprilTagMoves() {
         try {
             // you can use the Yaw from the last time we got the tag, so no need to find it again
             telemetry.addData("Looking for tag:", lookingForTagNumber);
@@ -253,14 +231,12 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
                 telemetry.update();
 
             }
-        } catch (Exception e) {
+        }catch(Exception e) {
             telemetry.addLine("Major malfunction");
             sleep(3000);
             telemetry.update();
         }
     }
-
 }
-
 
 

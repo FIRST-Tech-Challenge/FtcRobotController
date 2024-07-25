@@ -27,12 +27,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.centerstage;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -63,7 +65,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp
-public class JavaRidingChassis extends LinearOpMode {
+public class TeleOp_TestAprilTags extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -71,8 +73,14 @@ public class JavaRidingChassis extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
-    private CyDogsSparky mySparky;
+    private int lookingForTagNumber = 1;
+    private AprilTagDetection detectedTag = null;
+    CyDogsAprilTags newAprilTags;
+    double tagRange = 100;
+    double tagBearing = 100;
+    double tagYaw = 100;
+    double desiredRange = 8.25;
+    double timeAprilTagsDriveStarted = 0;
     @Override
     public void runOpMode() {
 
@@ -80,11 +88,16 @@ public class JavaRidingChassis extends LinearOpMode {
 
         initializeWheels();
         // Wait for the game to start (driver presses PLAY)
+        newAprilTags = new CyDogsAprilTags(this);
+        newAprilTags.Initialize(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
+
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
         runtime.reset();
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -92,6 +105,8 @@ public class JavaRidingChassis extends LinearOpMode {
             manageDriverButtons();
             manageDriverCrossPad();
             manageDriverTriggersAndBumpers();
+
+            detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
             telemetry.update();
         }
     }
@@ -152,9 +167,9 @@ public class JavaRidingChassis extends LinearOpMode {
         rightBackDrive.setPower(rightBackPower);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+      //  telemetry.addData("Status", "Run Time: " + runtime.toString());
+       // telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+       // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
 
     }
 
@@ -180,25 +195,94 @@ public class JavaRidingChassis extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
     }
 
     private void manageDriverButtons(){
         if(gamepad1.a)
         {
-            telemetry.addLine("Driver A/cross is pushed");
 
+            lookingForTagNumber-=1;
+            telemetry.addData("Looking for April Tag:",lookingForTagNumber);
+            sleep(300);
         }
         if(gamepad1.b)
         {
-            telemetry.addLine("Driver B/circle is pushed");
+            if(detectedTag!=null) {
+                timeAprilTagsDriveStarted = runtime.seconds();
+                telemetry.addData("Driving to tag!", detectedTag.id);
+                tagRange = detectedTag.ftcPose.range;
+                tagBearing = detectedTag.ftcPose.bearing;
+                tagYaw = detectedTag.ftcPose.yaw;
+                telemetry.addData("before while range:" , tagRange);
+                telemetry.addData("before while bearing:" , tagBearing);
+                telemetry.addData("before while yaw:" , tagYaw);
+                telemetry.update();
+                //sleep(3000);
+
+                // while we're not yet there, keep driving and updating where the tag is
+                while (
+                !((desiredRange-.25) <= tagRange && (tagRange <= desiredRange+0.25))
+                        || !(-5 <= tagBearing && tagBearing <= 5)
+                        || !(-5 <= tagYaw && tagYaw <= 5))
+                {
+                    telemetry.addLine("In the while loop");
+                    telemetry.addData("during while range:" , tagRange);
+                    telemetry.addData("during while bearing:" , tagBearing);
+                    telemetry.addData("during while yaw:" , tagYaw);
+
+                    // if we've been going at this for 5 seconds, break out and stop
+                    if(timeAprilTagsDriveStarted<runtime.seconds()-3){
+                        telemetry.addData("breaking due to runtime:" , runtime.seconds());
+                        telemetry.addData("breaking due to runtime:" , timeAprilTagsDriveStarted);
+                        //telemetry.update();
+                        //sleep(3000);
+                        break;}
+
+                    // drive to the tag
+                    telemetry.addLine("Calling Drive to Tag");
+                    newAprilTags.DriveToTag(detectedTag);
+
+                    // now that we've driven a fraction of a second, check the tag again
+                    detectedTag = newAprilTags.FindAprilTag(lookingForTagNumber);
+
+                    // if something went wrong and we can't see the tag anymore, give up
+                    if(detectedTag==null){
+                        telemetry.addLine("WE LOST THE TAG!");
+                        //telemetry.update();
+                        //sleep(3000);
+                        break;}
+
+                    // get new tag positioning
+                    tagRange = detectedTag.ftcPose.range;
+                    tagBearing = detectedTag.ftcPose.bearing;
+                    tagYaw = detectedTag.ftcPose.yaw;
+
+                    telemetry.update();
+                }
+                leftFrontDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightFrontDrive.setPower(0);
+                rightBackDrive.setPower(0);
+                sleep(1000);
+            }
         }
         if(gamepad1.x)
         {
-            telemetry.addLine("Driver X/square is pushed");
+
+        //    telemetry.addLine("Searching for tags!");
         }
         if(gamepad1.y)
         {
-            telemetry.addLine("Driver Y/triangle is pushed");
+
+            lookingForTagNumber+=1;
+            telemetry.addData("Looking for April Tag:",lookingForTagNumber);
+            sleep(300);
         }
     }
 
@@ -240,4 +324,6 @@ public class JavaRidingChassis extends LinearOpMode {
         }
 
     }
+
+
 }
