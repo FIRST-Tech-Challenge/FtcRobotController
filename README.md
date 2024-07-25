@@ -59,6 +59,69 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+## Version 9.2 (20240701-085519)
+
+### Important Notes
+* Java classes and Blocks for TensorFlow Object Detection have been deprecated and will be removed in Version 10.0.
+* The samples that use TensorFlow Object Detection have been removed.
+
+### Enhancements
+* Adds explanatory text to failed items on the inspection activities.  To view the explanatory text tap the red warning icon for a failed item.
+* In the Blocks editor: added a new kind of variable set block that sets the variable and also returns the new value.
+* Changes the way that camera controls behave for a SwitchableCamera. Now, each method (such as getExposure, getMinExposure, getMaxExposure, setExposure for ExposureControl) acts on the currently active camera.
+* Adds support for the REV USB PS4 Compatible Gamepad (REV-31-2983)
+* Adds ConceptAprilTagMultiPortal OpMode
+* Adds support for OctoQuad Quadrature Encoder & Pulse Width Interface Module
+* Adds the ExportAprilTagLibraryToBlocks annotation that indicates that a static method that returns an AprilTagLibrary is exported to the Blocks programming environment. The corresponding block will appear in the Blocks toolbox along with the built-in tag libraries.
+* Adds Blocks OpMode ConceptAprilTagOptimizeExposure.
+* Adds support for the SparkFun Optical Tracking Odometry sensor.
+
+### Bug Fixes
+* Fixes https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/942 where visionPortal.close() can cause an IndexOutOfBoundsError.
+* Fixes a bug in the blocks editor where collapsed function blocks show a warning "Collapsed blocks contain warnings." when the Blocks OpMode is reopened.
+* Fixes a bug where the blocks editor wouldn't warn you that you have unsaved changes when you try to leave. This bug was introduced due to a behavior change in Chrome 119.
+* [Issue #764](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/764) - Get gain control returns a null pointer for a switchable camera
+* Fixes a bug where the correct deadzone for certain gamepads was not applied when Advanced Gamepad Features was enabled
+
+## Version 9.1 (20240215-115542)
+
+### Enhancements
+* Fixes a problem with Blocks: if the user closes a Block's warning balloon, it will still be closed next time the project is opened in the Blocks editor.
+* In the Blocks editor, an alert concerning missing hardware devices is not shown if all the Blocks that use the missing hardware devices are disabled.
+* Adds Blocks to support comparing property values CRServo.Direction, DCMotor.Direction, DCMotor.Mode, DCMotor.ZeroPowerBehavior, DigitalChannel.Mode, GyroSensor.HeadingMode, IrSeekerSensor.Mode, and Servo.Direction, to the corresponding enum Block.
+* Improves OnBotJava auto-import to correctly import classes when used in certain situations.
+* Improves OnBotJava autocomplete to provide better completion options in most cases.
+  * This fixes an issue where autocomplete would fail if a method with two or more formal parameters was defined.
+* In OnBotJava, code folding support was added to expand and collapse code sections
+* In OnBotJava, the copyright header is now automatically collapsed loading new files
+* For all Blocks OpMode samples, intro comments have been moved to the RunOpMode comment balloon.
+* The Clean up Blocks command in the Blocks editor now positions function Blocks so their comment balloons don't overlap other function Blocks.
+* Added Blocks OpMode sample SensorTouch.
+* Added Java OpMode sample SensorDigitalTouch.
+* Several improvements to VisionPortal
+  * Adds option to control whether the stream is automatically started following a `.build()` call on a VisionPortal Builder
+  * Adds option to control whether the vision processing statistics overlay is rendered or not
+  * VisionPortals now implement the `CameraStreamSource` interface, allowing multiportal users to select which portal is routed to the DS in INIT by calling CameraStreamServer.getInstance().setSource(visionPortal). Can be selected via gamepad, between Camera Stream sessions.
+  * Add option to `AprilTagProcessor` to suppress calibration warnings
+  * Improves camera calibration warnings
+    * If a calibration is scaled, the resolution it was scaled from will be listed
+    * If calibrations exist with the wrong aspect ratio, the calibrated resolutions will be listed
+  * Fixes race condition which caused app crash when calling `stopStreaming()` immediately followed by `close()` on a VisionPortal
+  * Fixes IllegalStateException when calling `stopStreaming()` immediately after building a VisionPortal
+  * Added FTC Blocks counterparts to new Java methods:
+    * VisionPortal.Builder.setAutoStartStreamOnBuild
+    * VisionPortal.Builder.setShowStatsOverlay
+    * AprilTagProcessor.Builder.setSuppressCalibrationWarnings
+    * CameraStreamServer.setSource​
+
+### Bug Fixes
+* Fixes a problem where OnBotJava does not apply font size settings to the editor.
+* Updates EasyOpenCV dependency to v1.7.1
+  * Fixes inability to use EasyOpenCV CameraFactory in OnBotJava
+  * Fixes entire RC app crash when user pipeline throws an exception
+  * Fixes entire RC app crash when user user canvas annotator throws an exception
+  * Use the modern stacktrace display when handling user exceptions instead of the legacy ESTOP telemetry message
+
 ## Version 9.0.1 (20230929-083754)
 
 ### Enhancements
