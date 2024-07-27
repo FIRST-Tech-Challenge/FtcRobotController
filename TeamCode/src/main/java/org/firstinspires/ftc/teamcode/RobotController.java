@@ -59,6 +59,8 @@ public class RobotController {
         this.opModeTemplate.createControls(this.driverController, this.actionController, this);
 
         telemetry.update();
+
+        this.opModeTemplate.init(this);
     }
 
     public <T extends Subsystem> T getSubsystem(Class<T> clazz) {
