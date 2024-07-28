@@ -42,7 +42,6 @@ public class Odometry {
     private double countRight() {
         return -rightEncoder.getCurrentPosition();
     }
-
     private double countLeft() {
         return -leftEncoder.getCurrentPosition();
     }
@@ -50,17 +49,21 @@ public class Odometry {
         return backEncoder.getCurrentPosition();
     }
 
-    private Position calculateRelativeDelta(double rightTicks, double leftTicks, double backTicks) {
+    private Velocity calculateRelativeDelta(double rightTicks, double leftTicks, double backTicks) {
         double deltaRightDistance = ticksToMM(rightTicks - prevRightTicks);
         double deltaLeftDistance = ticksToMM(leftTicks - prevLeftTicks);
 
         double deltaDistanceMiddle = (deltaLeftDistance + deltaRightDistance) / 2;
         double deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
         double deltaBackDistance = ticksToMM((backTicks - prevBackTicks) - BACK_DISTANCE_TO_MID * deltaTheta);
-        return new Position(deltaDistanceMiddle, deltaBackDistance, deltaTheta);
+        return new Velocity(
+                deltaDistanceMiddle,
+                deltaBackDistance,
+                deltaTheta
+        );
     }
 
-    private Position linearToArcDelta(Position relativeDelta) {
+    private Velocity linearToArcDelta(Velocity relativeDelta) {
         if (relativeDelta.theta == 0) {
             return relativeDelta;
         }
@@ -74,21 +77,23 @@ public class Odometry {
 
         double relDeltaY =
                 +strafeRadius * Math.sin(relativeDelta.theta) + forwardRadius * (1 - Math.cos(relativeDelta.theta));
-        jose.addData("strafeRadius", strafeRadius);
-        jose.addData("cos strafe theta hamburger", (1 - Math.cos(relativeDelta.theta)));
-        jose.addData("sin y axis hamburger", Math.sin(relativeDelta.theta));
-        Position arcDelta = new Position(relDeltaX, relDeltaY, relativeDelta.theta);
+        Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relativeDelta.theta);
         Log.d("odometry", "arcDelta " + arcDelta.toString());
         return arcDelta;
     }
+    //converts to global
+    private Velocity rotate(Velocity relativeDelta, Position previousGlobalPosition) {
+        double newX = relativeDelta.x * Math.cos(previousGlobalPosition.theta) - relativeDelta.y * Math.sin(previousGlobalPosition.theta);
+        double newY = relativeDelta.y * Math.cos(previousGlobalPosition.theta) + relativeDelta.x * Math.sin(previousGlobalPosition.theta);
+        return new Velocity(newX,
+                            newY,
+                            relativeDelta.theta);
+    }
 
-    private Position getGlobalPosition(Position relativeDelta, Position previousGlobalPosition) {
-        double newX =
-                previousGlobalPosition.x + relativeDelta.x * Math.cos(previousGlobalPosition.theta) - relativeDelta.y * Math.sin(previousGlobalPosition.theta);
-        double newY =
-                previousGlobalPosition.y - relativeDelta.y * Math.cos(previousGlobalPosition.theta) + relativeDelta.x * Math.sin(previousGlobalPosition.theta);
-        double newHeading = previousGlobalPosition.theta + relativeDelta.theta;
-        return new Position(newX, newY, newHeading);
+    private Position updateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {
+        Velocity globalDelta = rotate(relativeDelta, previousGlobalPosition);
+
+        return previousGlobalPosition.add(globalDelta);
     }
 
     public void updatePosition() {
@@ -96,11 +101,11 @@ public class Odometry {
         double leftTicks = countLeft();
         double backTicks = countBack();
 
-        Position relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
+        Velocity relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
 
         relativeDelta = linearToArcDelta(relativeDelta);
 
-        currentPosition = getGlobalPosition(relativeDelta, currentPosition);
+        currentPosition = updateGlobal(relativeDelta, currentPosition);
 
         prevRightTicks = rightTicks;
         prevLeftTicks = leftTicks;

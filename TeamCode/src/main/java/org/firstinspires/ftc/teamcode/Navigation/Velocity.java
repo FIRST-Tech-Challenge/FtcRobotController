@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode.Navigation;
 
-class Position {
+class Velocity {
     final double x;
     final double y;
     final double theta;
 
-    Position (double x, double y, double theta) {
+    Velocity(double x, double y, double theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
     }
-    //add point to vector
-    public Position add (Velocity velocity) {
-        return new Position (
-            this.x + velocity.x,
-            this.y + velocity.y,
-            this.theta + velocity.theta
+//add vector to vector
+    public Velocity add (Velocity velocity) {
+        return new Velocity(
+          this.x + velocity.x,
+          this.y + velocity.y,
+          this.theta + velocity.y
         );
     }
 
