@@ -4,7 +4,7 @@
 ## **INIT**:
 
 **프로젝트 시작** : get from vcs https://github.com/DFG08/FtcRobotController<br/>
-**remote 설정** : git remote <원격 이름> https://github.com/DFG08/FtcRobotController<br/>
+**remote 설정** : git remote add <원격 이름> https://github.com/DFG08/FtcRobotController<br/>
 
 ---
 
