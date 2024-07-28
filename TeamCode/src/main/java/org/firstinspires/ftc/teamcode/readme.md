@@ -129,3 +129,32 @@ Note: Some names start with "Team" and others start with "team".  This is intent
 5)  Add:    include ':Team0417' to the "/settings.gradle" file.
     
 6)  Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""
+
+---
+# ***GIT***
+---
+# **INIT**:
+
+**프로젝트 시작** : get from vcs https://github.com/DFG08/FtcRobotController<br/>
+**remote 설정** : git remote <원격 이름> https://github.com/DFG08/FtcRobotController<br/>
+
+---
+
+# **BRANCH**:
+
+**branch 생성** : git branch <가지 이름><br/>
+**branch 교체** : git switch <가지 이름><br/>
+**branch 병합** : _(병합 할 가지(주로 master)로 이동)_ git merge <가지 이름><br/>
+**branch 삭제(로컬)** : git branch -d <가지 이름><br/>
+**branch 삭제(원격)** : git push <원격 이름> --delete <가지 이름><br/>
+**branch 확인** : git status<br/>
+
+---
+
+# **COMMIT**:
+
+**변화 내용 추가** : git add -A<br/>
+**commit** : git commit -m "메세지"<br/>
+**push** : git push <원격 이름> <가지(원격) 이름><br/>
+
+---
