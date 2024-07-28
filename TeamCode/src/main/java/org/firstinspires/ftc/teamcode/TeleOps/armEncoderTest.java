@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class armEncoderTest extends OpMode {
     //Telemetry mTelmeurytrue = FtcDashboard.getInstance().getTelemetry();
     AnalogInput sensor;
+    // hello
 
     @Override
     public void init() {
