@@ -130,26 +130,6 @@ public class Loader {
         }
     }
 
-    public static void saveValue(JsonObject object, String fileExtension) throws IOException {
-        JsonObject configuration = object.getJsonObject("configuration");
-        String value = configuration.getString("input");
-        String fileName = configuration.getString("id").replace(" ", "_") + "." + fileExtension;
-        File output = new File(defaultStorageDirectory, fileName);
-        Loader.writeString(output, value);
-    }
-
-    public static void saveText(String fileName, JsonObject object) throws IOException {
-        saveValue(object, "txt");
-    }
-
-    public static void saveJson(JsonObject object) throws IOException {
-        saveValue(object, "json");
-    }
-
-    public static void savePath(JsonObject object) throws IOException {
-        saveValue(object, "json");
-    }
-
     public static JsonObject readJsonString(String json) {
         return Json.createReader(new StringReader(json)).readObject();
     }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -30,7 +31,7 @@ import javax.json.JsonValue;
 
 public class RustboardServer extends WebSocketServer {
     public static final int port = 21865;
-    private static final File rustboardStorageDir = new File(defaultStorageDirectory + "\\Rustboard");
+    static final File rustboardStorageDir = new File(defaultStorageDirectory + "\\Rustboard");
     private static final File rustboardMetadataFile = new File(rustboardStorageDir + "\\rustboard_metadata.json");
     private static final File storedRustboardDir = new File(rustboardStorageDir + "\\rustboards");
     private static RustboardServer instance = null;
@@ -45,7 +46,7 @@ public class RustboardServer extends WebSocketServer {
 
     private final Set<WebSocket> connections = new HashSet<>();
 
-    private RustboardClientUpdater clientUpdater = new RustboardClientUpdater();
+    private ClientUpdater clientUpdater = ClientUpdater.getInstance();
 
     public Rustboard getActiveRustboard() {
         return activeRustboard;
@@ -90,23 +91,8 @@ public class RustboardServer extends WebSocketServer {
         return debugMode;
     }
 
-    public static void setNodeValue(String id, String value) {
-        /*if (!debugMode) {
-            JsonObject jsonObject = RustboardLayout.getSendableNodeData(id, value);
-            getInstance().broadcastJson(jsonObject);
-        }*/ // TODO: get rid of this method
-    }
-
     public static void log(Object value) {
-        getInstance().log(value.toString());
-    }
-
-    public static void log(String value) {
-        /*JsonObject message = Json.createObjectBuilder()
-                .add("messageType", "log")
-                .add("value", getInstance().timer.milliseconds() + ": " + value)
-                .build();
-        getInstance().broadcastJson(message);*/ // TODO
+        log(value.toString());
     }
 
     private static void clearStorage() {
@@ -135,7 +121,7 @@ public class RustboardServer extends WebSocketServer {
         if (!debugMode) {
             super.start();
         }
-        clientUpdater.start();
+        new Timer().scheduleAtFixedRate(ClientUpdater.getInstance(), 0, 50);
     }
 
     @Override
@@ -171,23 +157,24 @@ public class RustboardServer extends WebSocketServer {
                 Time.calibrateUTCTime(Long.parseLong(messageJson.getString("utc_time")));
                 String uuid = messageJson.getString("uuid");
                 JsonObject rustboardJson = messageJson.getJsonObject("rustboard");
+                JsonArray clientNodes = messageJson.getJsonArray("nodes");
                 Rustboard rustboard;
                 if (loadedRustboards.containsKey(uuid)) {
-                    rustboard = loadedRustboards.get(uuid).mergeWithClientRustboard(rustboardJson);
+                    rustboard = loadedRustboards.get(uuid).mergeWithClientRustboard(clientNodes);
                 } else if (storedRustboardIds.contains(uuid)) {
                     try {
-                        rustboard = Rustboard.load(uuid).mergeWithClientRustboard(rustboardJson);
+                        rustboard = Rustboard.load(uuid).mergeWithClientRustboard(clientNodes);
                     } catch (Rustboard.NoSuchRustboardException e) {
                         rustboard = new Rustboard(uuid, rustboardJson);
                     }
                 } else {
                     rustboard = new Rustboard(uuid, rustboardJson);
                 }
-                if (activeRustboard == null) {
+                if (activeRustboard == null || !activeRustboard.isConnected()) {
                     activeRustboard = rustboard;
-                } else {
-                    loadedRustboards.put(uuid, rustboard);
                 }
+                loadedRustboards.put(uuid, rustboard);
+
                 break;
             case "exception":
                 throw new RuntimeException(messageJson.getString("exception_message"));
@@ -199,7 +186,7 @@ public class RustboardServer extends WebSocketServer {
     }
 
     public void saveAll() {
-        loadedRustboards.forEach(((uuid, rustboard) -> rustboard.save(new File(rustboardStorageDir + uuid + ".json")))); // TODO: add method to get file
+        loadedRustboards.forEach(((uuid, rustboard) -> rustboard.save(new File(rustboardStorageDir, uuid + ".json")))); // TODO: add method to get file
     }
 
     @Override

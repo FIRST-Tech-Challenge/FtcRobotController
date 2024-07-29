@@ -2,6 +2,7 @@ package org.rustlib.rustboard;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -117,8 +118,7 @@ public class RustboardNode {
         return toCompare;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    public boolean strictEquals(Object o) {
         if (o instanceof RustboardNode) {
             RustboardNode node = (RustboardNode) o;
             return id.equals(node.id) && type == node.type && state.equals(node.state);
@@ -126,11 +126,17 @@ public class RustboardNode {
         return false;
     }
 
-    public boolean isSame(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (o instanceof RustboardNode) {
             RustboardNode node = (RustboardNode) o;
             return id.equals(node.id) && type == node.type;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type.typeName);
     }
 }

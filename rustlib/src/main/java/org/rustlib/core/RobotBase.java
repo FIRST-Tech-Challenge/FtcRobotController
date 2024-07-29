@@ -79,7 +79,6 @@ public abstract class RobotBase extends OpMode {
         CommandScheduler.getInstance().clearRegistry();
         CommandScheduler.getInstance().cancelAll();
         RustboardServer.getInstance().start();
-        RustboardServer.getInstance().newLog();
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         if (hubs.get(0).isParent()) {
             controlHub = hubs.get(0);

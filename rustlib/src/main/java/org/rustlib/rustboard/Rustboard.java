@@ -1,5 +1,7 @@
 package org.rustlib.rustboard;
 
+import static org.rustlib.rustboard.RustboardServer.rustboardStorageDir;
+
 import org.java_websocket.WebSocket;
 import org.rustlib.commandsystem.Command;
 import org.rustlib.config.Loader;
@@ -14,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,10 +63,10 @@ public class Rustboard {
 
     private WebSocket connection = null;
     private final String uuid;
-    private Set<RustboardNode> nodes = new HashSet<>();
+    private final Set<RustboardNode> nodes = new HashSet<>();
     private boolean connected = false;
-    private Map<String, Runnable> callbacks = new HashMap();
-    Map<String, RustboardNode> toUpdate = new ConcurrentHashMap();
+    private final Map<String, Runnable> callbacks = new HashMap<>();
+    Map<String, RustboardNode> toUpdate = new ConcurrentHashMap<>();
 
 
     Map<String, RustboardNode> getNodeList() {
@@ -108,14 +111,14 @@ public class Rustboard {
         }
     }
 
-    Rustboard mergeWithClientRustboard(JsonObject clientRustboardJson) {
-        JsonArray clientNodes = clientRustboardJson.getJsonArray("nodes");
+    Rustboard mergeWithClientRustboard(JsonArray clientNodes) {
         Set<RustboardNode> updatedNodeList = new HashSet<>(nodes);
         for (JsonValue nodeJson : clientNodes) {
             RustboardNode clientNode = RustboardNode.buildFromJson(nodeJson);
             for (RustboardNode node : nodes) {
-                if (node.isSame(clientNode)) {
+                if (node.equals(clientNode)) {
                     updatedNodeList.add(node.merge(clientNode));
+                    // TODO: update client
                     updatedNodeList.remove(node);
                 }
             }
@@ -124,36 +127,31 @@ public class Rustboard {
     }
 
     void onMessage(JsonObject messageJson) {
-        String action = messageJson.getString("action");
-        switch (action) {
-            case "update_nodes":
-                JsonArray nodes = messageJson.getJsonArray("nodes");
-                for (JsonValue nodeJson : nodes) {
-                    JsonObject node = (JsonObject) nodeJson;
-                    String id = node.getString("id");
-                    Type type = Type.getType(node.getString("type"));
-                    String state = node.getString("state");
-                    try {
-                        getNode(id, type).update(node.getString(state));
-                    } catch (NoSuchNodeException e) {
-                        this.nodes.add(new RustboardNode(id, type, state));
-                    }
+        switch (messageJson.getString("action")) {
+            case "update_node":
+                String id = messageJson.getString("node_id");
+                Type type = Type.getType(messageJson.getString("node_type"));
+                String state = messageJson.getString("node_state");
+                try {
+                    getNode(id, type).update(state);
+                } catch (NoSuchNodeException e) {
+                    this.nodes.add(new RustboardNode(id, type, state));
                 }
                 break;
             case "save_path":
                 try {
-                    Loader.savePath(messageJson);
+                    Loader.writeString(rustboardStorageDir, Objects.requireNonNull(messageJson.get("path")).toString());
                     createNotice("Saved path to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     createNotice("Could not save the path to the robot", RustboardNotice.NoticeType.NEGATIVE, 8000);
                     RustboardServer.log(e.toString());
                 }
                 break;
             case "save_value":
                 try {
-                    Loader.saveText(messageJson.toString());
+                    Loader.writeString(rustboardStorageDir, Objects.requireNonNull(messageJson.get("value")).toString()); // TODO: fix
                     createNotice("Saved value to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     createNotice("Could not save the value to the robot", RustboardNotice.NoticeType.NEGATIVE, 8000);
                     RustboardServer.log(e.toString());
                 }
@@ -176,13 +174,13 @@ public class Rustboard {
     }
 
     public void createNotice(String notice, RustboardNotice.NoticeType type, int durationMilliseconds) {
-        JsonObject data = Json.createObjectBuilder()
-                .add("messageType", "notify")
-                .add("message", notice)
-                .add("type", type.value)
-                .add("duration", durationMilliseconds)
+        JsonObject message = Json.createObjectBuilder()
+                .add("action", "create_notice")
+                .add("notice_message", notice)
+                .add("notice_type", type.value)
+                .add("notice_duration", durationMilliseconds)
                 .build();
-        connection.send(data.toString());
+        connection.send(message.toString());
     }
 
     private RustboardNode getNode(String id, Type type) {
