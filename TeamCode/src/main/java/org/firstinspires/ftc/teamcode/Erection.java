@@ -24,7 +24,7 @@ public class Erection{
     Telemetry telemetry;
     HardwareMap hardwareMap;
     
-    public void initErection(HardwareMap hardwareMapPorted, Telemetry telemetryPorted){
+    public void groom(HardwareMap hardwareMapPorted, Telemetry telemetryPorted){
         try{
         hardwareMap = hardwareMapPorted;
         telemetry = telemetryPorted;
