@@ -26,7 +26,10 @@ public class MoveRobot{
     TractionControl tractionControl;
 
     private boolean cameraError = false;
+    private boolean cameraInitError = false;
     private boolean imuError = false;
+
+    private Exception cameraException;
 
     private void initImu(){
         // Initializing imu to avoid errors
@@ -43,6 +46,16 @@ public class MoveRobot{
 
     }
 
+    private void initCamera(){
+        try { // init camera with safeguards
+            aprilTagTrackerGimabl = new AprilTagTrackerGimbal();
+            aprilTagTrackerGimabl.initAprilTag(hardwareMap, telemetry);
+            cameraInitError=false;
+        } catch(Exception e) {
+            cameraInitError=true;
+        }
+    }
+
     public void initMoveRobot(HardwareMap hardwareMapPorted, Telemetry telemetryPorted){
         
          //mapping hardwaremap and telemetry as they need to be connected thru the main programm
@@ -52,13 +65,7 @@ public class MoveRobot{
         tractionControl = new TractionControl();
         tractionControl.initTractionControl(hardwareMap, telemetry);
 
-    	try { // init camera with safeguards
-            aprilTagTrackerGimabl = new AprilTagTrackerGimbal();
-            aprilTagTrackerGimabl.initAprilTag(hardwareMap, telemetry);
-        } catch(Exception e) {
-            cameraError=true;
-        }
-        
+        initCamera();
 
         //init imu with safeguards
         try{
@@ -88,7 +95,7 @@ public class MoveRobot{
 
     // the main funrion for moving the robot
     public void move(double drive, double strafe, double turn, boolean fieldCentric, boolean tractionControlToggle) {
-        
+        cameraError=false;
         if (fieldCentric && !imuError) {
             try{
             double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -136,6 +143,7 @@ public class MoveRobot{
             testApril();
         } catch(Exception e){
             cameraError=true;
+            cameraException = e;
         }
 
 
@@ -148,7 +156,15 @@ public class MoveRobot{
                 imuError=true;
                 }
         }
+        while (cameraInitError){
+            initCamera();
+        }
+
+        telemetry.addData("cameraInitState", Boolean.toString(!cameraInitError));
         telemetry.addData("cameraState", Boolean.toString(!cameraError));
+        if (cameraError){
+            telemetry.addData("CameraError", cameraException);
+        }
     }
 }
     
