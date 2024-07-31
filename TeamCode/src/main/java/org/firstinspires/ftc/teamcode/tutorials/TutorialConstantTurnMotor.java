@@ -1,6 +1,6 @@
 // Date: 7-16-24
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tutorials;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
