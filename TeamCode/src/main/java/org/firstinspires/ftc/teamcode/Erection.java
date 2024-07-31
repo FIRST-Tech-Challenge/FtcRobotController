@@ -24,26 +24,36 @@ public class Erection{
     Telemetry telemetry;
     HardwareMap hardwareMap;
     
-    public void groom(HardwareMap hardwareMapPorted, Telemetry telemetryPorted){
+    public void initErection(HardwareMap hardwareMapPorted, Telemetry telemetryPorted){
         try{
         hardwareMap = hardwareMapPorted;
         telemetry = telemetryPorted;
 
+
+
+        //map Dc motors with encoders, it is in a try, catch because if the expansion hub is not
+            //properly connected the robot will throw an error and prevent the code from running
+
         frontElevatorEx = hardwareMap.get(DcMotorEx.class, "Motor_Port_1_EH");
         backElevatorEx = hardwareMap.get(DcMotorEx.class, "Motor_Port_0_EH");
 
-        frontElevatorEx.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        backElevatorEx.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        frontElevatorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backElevatorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         frontElevatorEx.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         backElevatorEx.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        
+
         } catch(Exception e){
             isError=true;
         }
     }
 
-    public void raise(double joysitck, double rightStick, boolean height80, boolean height100, boolean height120){
+    public void raise(double leftStick, double rightStick, boolean bottom, boolean height80, boolean height100, boolean height120){
 
         if (!isError){
         if (height80){

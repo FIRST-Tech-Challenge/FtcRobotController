@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-
 import java.io.ByteArrayInputStream;
 
 import fi.iki.elonen.NanoHTTPD;
