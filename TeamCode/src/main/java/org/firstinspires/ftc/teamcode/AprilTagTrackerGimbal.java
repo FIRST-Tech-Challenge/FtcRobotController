@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,11 +21,27 @@ import java.util.List;
 
 public class AprilTagTrackerGimbal{
 
-    //craating objects so that they could be mapped later on when initAprilTag is called
+    //crating objects so that they could be mapped later on when initAprilTag is called
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
+
+    private static AprilTagLibrary getFeedingTheFutureTagLibrary() {
+        return (new AprilTagLibrary.Builder())
+                .addTag(100, "Blue Nexus Goal - Field Center - Facing Platform", 160.0, DistanceUnit.MM)
+                .addTag(101, "Red Nexus Goal - Field Center - Facing Platform", 160.0, DistanceUnit.MM)
+                .addTag(102, "Red Nexus Goal - Field Center - Facing Food Warehouse", 160.0, DistanceUnit.MM)
+                .addTag(103, "Blue Nexus Goal - Field Center - Facing Food Warehouse", 160.0, DistanceUnit.MM)
+                .addTag(104, "Blue Nexus Goal - Field Edge - Alliance Station", 160.0, DistanceUnit.MM)
+                .addTag(105, "Blue Nexus Goal - Field Edge - Center Field", 160.0, DistanceUnit.MM)
+                .addTag(106, "Red Nexus Goal - Field Edge - Center Field", 160.0, DistanceUnit.MM)
+                .addTag(107, "Red Nexus Goal - Field Edge - Alliance Station", 160.0, DistanceUnit.MM)
+                .build();
+    }
+
+    private static final AprilTagLibrary feedingTheFutureTagLibrary = getFeedingTheFutureTagLibrary();
+
 
     private static final boolean USE_WEBCAM = true;
 
@@ -34,15 +51,15 @@ public class AprilTagTrackerGimbal{
         telemetry = telemetryPorted;
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
-            //.setTagLibrary(FeedingTheFutureGameDatabase.getFeedingTheFutureTagLibrary())
+            .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+            .setTagLibrary(feedingTheFutureTagLibrary)
+            //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
             .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
 
             // The following default settings are available to un-comment and edit as needed.
             //.setDrawAxes(false)
             //.setDrawCubeProjection(false)
             //.setDrawTagOutline(true)
-            //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-            //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
             //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
             // == CAMERA CALIBRATION ==
@@ -122,6 +139,5 @@ public class AprilTagTrackerGimbal{
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
-        telemetry.update();
     }   // end method telemetryAprilTag()
 }
