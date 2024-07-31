@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;  //place where the code is located
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -84,6 +85,11 @@ public class MoveRobot {
         leftBackDriveEx.setDirection(DcMotorEx.Direction.FORWARD);
         rightFrontDriveEx.setDirection(DcMotorEx.Direction.REVERSE);
         rightBackDriveEx.setDirection(DcMotorEx.Direction.REVERSE);
+
+        leftFrontDriveEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDriveEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDriveEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDriveEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // a test to return the apriltag(s) position for testing
@@ -116,11 +122,16 @@ public class MoveRobot {
                     y = strafe;
                 }
 
-                // Calculates raw power to motors
-                double leftFrontPowerRaw = x + y + turn;
-                double leftBackPowerRaw = x - y + turn;
-                double rightFrontPowerRaw = x - y - turn;
-                double rightBackPowerRaw = x + y - turn;
+        // Calculates raw power to motors
+        double leftFrontPowerRaw = x + y + turn;
+        double leftBackPowerRaw = x - y + turn;
+        double rightFrontPowerRaw = x - y - turn;
+        double rightBackPowerRaw = x + y - turn;
+
+        telemetry.addData("leftbackPWR", leftBackPowerRaw);
+        telemetry.addData("leftfrontPWR", leftFrontPowerRaw);
+        telemetry.addData("rightbackPWR", rightBackPowerRaw);
+        telemetry.addData("rightfrontPWR", rightFrontPowerRaw);
 
                 // Calculate the maximum absolute power value for normalization
                 double maxRawPower = Math.max(Math.max(Math.abs(leftFrontPowerRaw), Math.abs(leftBackPowerRaw)),
@@ -130,21 +141,27 @@ public class MoveRobot {
                 double maxRadian = 1972.92;
 
                 // Calculate wheel speeds normalized to the wheels.
-                leftFrontRawSpeed = (leftFrontPowerRaw / max * maxRadian / 1.2039);
+                leftFrontRawSpeed = (leftFrontPowerRaw / max * maxRadian);
                 leftBackRawSpeed = (leftBackPowerRaw / max * maxRadian);
-                rightFrontRawSpeed = (rightFrontPowerRaw / max * maxRadian / 1.2039);
+                rightFrontRawSpeed = (rightFrontPowerRaw / max * maxRadian);
                 rightBackRawSpeed = (rightBackPowerRaw / max * maxRadian);
             } // move robot
+            telemetry.addData("SPEEDleftback", leftBackRawSpeed);
+            telemetry.addData("SPEEDleftfront", leftFrontRawSpeed);
 
             // Make wheels go speed or use traction control
             if (tractionControlToggle) {
                 tractionControl.avoidSlip(leftBackRawSpeed, leftFrontRawSpeed, rightBackRawSpeed, rightFrontRawSpeed);
 
             } else {
-                leftBackDriveEx.setVelocity(leftBackRawSpeed);
+                leftBackDriveEx.setVelocity(400);
                 leftFrontDriveEx.setVelocity(leftFrontRawSpeed);
                 rightBackDriveEx.setVelocity(rightBackRawSpeed);
                 rightFrontDriveEx.setVelocity(rightFrontRawSpeed);
+                telemetry.addData("leftback", leftBackDriveEx.getVelocity());
+                telemetry.addData("leftfront", leftFrontDriveEx.getVelocity());
+                telemetry.addData("rightback", rightBackDriveEx.getVelocity());
+                telemetry.addData("rightfront", rightFrontDriveEx.getVelocity());
             }
 
             if (cameraInitError) {
