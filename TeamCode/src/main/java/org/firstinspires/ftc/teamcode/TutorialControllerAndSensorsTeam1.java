@@ -6,11 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name="Tutorial: Controller and Sensors Turns Motor")
-public class TutorialControllerAndSensorsTurnMotor extends OpMode {
+public class TutorialControllerAndSensorsTeam1 extends OpMode {
     DcMotor motor;
     TouchSensor touchSensor;
     ColorSensor jimmy;
@@ -25,15 +24,10 @@ public class TutorialControllerAndSensorsTurnMotor extends OpMode {
 
     @Override
     public void loop() {
-        // 1. Get the power from the controller
-        // 2. Show the power on the Android device in real time
-        // 3. Turn the motor by that power value
-
-        // Option 1: Do everything in the loop method
-        // Great for simple processes
+        // If triggers pressed, use those to determine motor speed / direction
+        // Right trigger = forward, left trigger = backward
         power = gamepad1.right_trigger - gamepad1.left_trigger;
 
-        // If triggers pressed, use those to determine motor speed / direction
         // If no triggers pressed, use color sensor. Green = forward. Red = backward.
         if ((gamepad1.right_trigger == 0) && (gamepad1.left_trigger == 0)) {
             int bob = jimmy.red();
@@ -51,19 +45,6 @@ public class TutorialControllerAndSensorsTurnMotor extends OpMode {
         telemetry.addData("ButtonPressed", touchSensor.isPressed());
         telemetry.addData("Power", power);
         telemetry.update();
-        motor.setPower(power);
-    }
-
-    private double getPower() {
-        return gamepad1.right_trigger - gamepad1.left_trigger;
-    }
-
-    private void showPower() {
-        telemetry.addData("Power", power);
-        telemetry.update();
-    }
-
-    private void turnMotor() {
         motor.setPower(power);
     }
 }
