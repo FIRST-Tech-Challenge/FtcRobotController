@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name="Tutorial: Controller Turns Motor")
+@TeleOp(name="Tutorial: Controller and Sensors Turns Motor")
 public class TutorialControllerAndSensorsTurnMotor extends OpMode {
     DcMotor motor;
     TouchSensor touchSensor;
@@ -31,9 +32,6 @@ public class TutorialControllerAndSensorsTurnMotor extends OpMode {
         // Option 1: Do everything in the loop method
         // Great for simple processes
         power = gamepad1.right_trigger - gamepad1.left_trigger;
-        telemetry.addData("Power", power);
-        telemetry.update();
-        motor.setPower(power);
 
         // If triggers pressed, use those to determine motor speed / direction
         // If no triggers pressed, use color sensor. Green = forward. Red = backward.
@@ -48,12 +46,12 @@ public class TutorialControllerAndSensorsTurnMotor extends OpMode {
             power = 0;
         }
 
-
-        // Option 2: Using individual methods
-        // Great for organization and separating complexity
-        // power = getPower();
-        // showPower();
-        // turnMotor();
+        telemetry.addData("Red", jimmy.red());
+        telemetry.addData("Green", jimmy.green());
+        telemetry.addData("ButtonPressed", touchSensor.isPressed());
+        telemetry.addData("Power", power);
+        telemetry.update();
+        motor.setPower(power);
     }
 
     private double getPower() {
