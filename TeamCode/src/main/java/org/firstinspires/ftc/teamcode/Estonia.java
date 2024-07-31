@@ -37,7 +37,7 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
         gamepad1_b = new Presses();
 
         erection = new Erection();
-        erection.groom(hardwareMap, telemetry);
+        erection.initErection(hardwareMap, telemetry);
 
         waitForStart(); //everything has been initialized, waiting for the start button
         
@@ -54,10 +54,11 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
                 );
 
             erection.raise(
-                gamepad2.left_stick_y,
-                gamepad2.right_stick_y,
+                gamepad2.left_stick_y, //raise left
+                gamepad2.right_stick_y, //raise right
                 gamepad2.a,
                 gamepad2.b,
+                gamepad2.y,
                 gamepad2.x
                 );
 

@@ -9,8 +9,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import org.opencv.core.Mat;
-import org.opencv.core.CvType;
-import org.opencv.imgcodecs.Imgcodecs;
 
 @Autonomous(name="Webcam Frame Stream", group="Example")
 public class WebcamFrameStream extends OpMode {
