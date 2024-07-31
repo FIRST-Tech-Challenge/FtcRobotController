@@ -47,13 +47,14 @@ public class MoveRobot{
     }
 
     private void initCamera(){
+        /*
         try { // init camera with safeguards
             aprilTagTrackerGimabl = new AprilTagTrackerGimbal();
             aprilTagTrackerGimabl.initAprilTag(hardwareMap, telemetry);
             cameraInitError=false;
         } catch(Exception e) {
             cameraInitError=true;
-        }
+        }*/
     }
 
     public void initMoveRobot(HardwareMap hardwareMapPorted, Telemetry telemetryPorted){
@@ -138,7 +139,7 @@ public class MoveRobot{
         rightBackDriveEx.setVelocity(rightBackRawSpeed);
         rightFrontDriveEx.setVelocity(rightFrontRawSpeed);
         }
-
+/*
         try{
             testApril();
         } catch(Exception e){
@@ -146,7 +147,7 @@ public class MoveRobot{
             cameraException = e;
         }
 
-
+*/
         if (imuError){
             telemetry.addData("imu", "error");
         } else{

@@ -44,6 +44,7 @@ public class Erection{
     }
 
     public void raise(double joysitck, double rightStick, boolean height80, boolean height100, boolean height120){
+
         if (!isError){
         if (height80){
             runToHeight(1184);
@@ -55,8 +56,8 @@ public class Erection{
             runToHeight(1776);
         }
         if (!(height80 || height100 || height120)){
-            frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            backElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             frontElevatorEx.setPower(joysitck + 0.5*rightStick);
             backElevatorEx.setPower(-joysitck - 0.5*rightStick);
@@ -64,12 +65,17 @@ public class Erection{
 
 
         telemetry.addData("motor position", backElevatorEx.getCurrentPosition());
+        telemetry.addData("gamepad2_left", joysitck);
+            telemetry.addData("gamepad2_right", rightStick);
         }else{
             
             telemetry.addData("erectile disfunction", isError);
         }
     }
+
     public void runToHeight(int height){
+            backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             frontElevatorEx.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backElevatorEx.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             frontElevatorEx.setTargetPosition(height);//1000(height mm)/(6mm(hex shaft diameter)*3,14)*28(ticks per rotation)

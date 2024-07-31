@@ -25,12 +25,6 @@
             <DigitalDevice name="Digital_Port_6_CH" port="6" />
             <DigitalDevice name="Digital_Port_7_CH" port="7" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
-            <REV_VL53L0X_RANGE_SENSOR name="I2C_Distance_2_CH" port="0" bus="2" />
-            <RevColorSensorV3 name="I2C_Color_2_CH" port="1" bus="2" />
-            <REV_VL53L0X_RANGE_SENSOR name="I2C_Distance_3_CH" port="0" bus="3" />
-            <RevColorSensorV3 name="I2C_Color_3_CH" port="1" bus="3" />
-            <REV_VL53L0X_RANGE_SENSOR name="I2C_Distance_1_CH" port="0" bus="1" />
-            <RevColorSensorV3 name="I2C_Color_1_CH" port="1" bus="1" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
