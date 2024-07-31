@@ -6,15 +6,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-public class TractionControl{
+public class TractionControl {
 
+    private final double accelerationLimit = 20; //RPSS revolutions per second  second
     private double lastTime = 0; // create last varriables for traction control
     private double lastSpeedLeftFrontDrive = 0;
     private double lastSpeedLeftBackDrive = 0;
     private double lastSpeedRightBackDrive = 0;
     private double lastSpeedRightFrontDrive = 0;
-    private final double accelerationLimit = 20; //RPSS revolutions per second  second 
-
     private DcMotorEx leftFrontDriveEx = null;  //  Used to control the left front drive wheel
     private DcMotorEx rightFrontDriveEx = null;  //  Used to control the right front drive wheel
     private DcMotorEx leftBackDriveEx = null;  //  Used to control the left back drive wheel
@@ -23,10 +22,10 @@ public class TractionControl{
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
 
-    public void initTractionControl(HardwareMap hardwareMapPorted, Telemetry telemetryPorted){
-        
-        hardwareMap=hardwareMapPorted;
-        telemetry=telemetryPorted;
+    public void initTractionControl(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
+
+        hardwareMap = hardwareMapPorted;
+        telemetry = telemetryPorted;
 
         // Mapping motors
         rightFrontDriveEx = hardwareMap.get(DcMotorEx.class, "Motor_Port_0_CH");
@@ -40,21 +39,21 @@ public class TractionControl{
         rightBackDriveEx.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
-    public void avoidSlip(double speedLeftBackDrive, double speedLeftFrontDrive, double speedRightBackDrive, double speedRightFrontDrive){
+    public void avoidSlip(double speedLeftBackDrive, double speedLeftFrontDrive, double speedRightBackDrive, double speedRightFrontDrive) {
         double deltaTime = System.currentTimeMillis() - lastTime;
         double deltaSpeedLeftFrontDrive = speedLeftFrontDrive - lastSpeedLeftFrontDrive;
         double deltaSpeedLeftBackDrive = speedLeftBackDrive - lastSpeedLeftBackDrive;
         double deltaSpeedRightFrontDrive = speedRightFrontDrive - lastSpeedRightFrontDrive;
         double deltaSpeedRightBackDrive = speedRightBackDrive - lastSpeedRightBackDrive;
         double maxDelta = deltaTime * accelerationLimit;
-        
+
         double[] maxList = {
-            1.0,
-            Math.abs(deltaSpeedLeftBackDrive / maxDelta),
-            Math.abs(deltaSpeedLeftFrontDrive / maxDelta),
-            Math.abs(deltaSpeedRightBackDrive / maxDelta),
-            Math.abs(deltaSpeedRightFrontDrive / maxDelta)
-            };
+                1.0,
+                Math.abs(deltaSpeedLeftBackDrive / maxDelta),
+                Math.abs(deltaSpeedLeftFrontDrive / maxDelta),
+                Math.abs(deltaSpeedRightBackDrive / maxDelta),
+                Math.abs(deltaSpeedRightFrontDrive / maxDelta)
+        };
 
         double maxMultiplier = returnMax(maxList);
 
@@ -72,10 +71,10 @@ public class TractionControl{
         telemetry.addData("maxMultiplier", maxMultiplier);
     }
 
-    public double returnMax(double[] intList){
-        double maxInt=0;
+    public double returnMax(double[] intList) {
+        double maxInt = 0;
         for (double INT : intList) {
-            maxInt=Math.max(maxInt, INT);
+            maxInt = Math.max(maxInt, INT);
         }
         return maxInt;
     }

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot type="FirstInspires-FTC">
     <Webcam name="Webcam 1" serialNumber="DC74BFC0" />
-    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+    <LynxUsbDevice name="Control Hub Portal" parentModuleAddress="173" serialNumber="(embedded)">
         <LynxModule name="Control Hub" port="173">
             <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_0_CH" port="0" />
             <RevRoboticsUltraplanetaryHDHexMotor name="Motor_Port_1_CH" port="1" />
@@ -25,7 +25,7 @@
             <DigitalDevice name="Digital_Port_5_CH" port="5" />
             <DigitalDevice name="Digital_Port_6_CH" port="6" />
             <DigitalDevice name="Digital_Port_7_CH" port="7" />
-            <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
+            <ControlHubImuBHI260AP name="imu" bus="0" port="0" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

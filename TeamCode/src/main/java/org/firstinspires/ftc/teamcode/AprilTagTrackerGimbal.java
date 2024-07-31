@@ -5,22 +5,22 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-
 
 import java.util.List;
 
 //import global.first.FeedingTheFutureGameDatabase;
 
 
-public class AprilTagTrackerGimbal{
+public class AprilTagTrackerGimbal {
 
+    private static final AprilTagLibrary feedingTheFutureTagLibrary = getFeedingTheFutureTagLibrary();
+    private static final boolean USE_WEBCAM = true;
     //crating objects so that they could be mapped later on when initAprilTag is called
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
@@ -40,35 +40,30 @@ public class AprilTagTrackerGimbal{
                 .build();
     }
 
-    private static final AprilTagLibrary feedingTheFutureTagLibrary = getFeedingTheFutureTagLibrary();
-
-
-    private static final boolean USE_WEBCAM = true;
-
-        public void initAprilTag(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
+    public void initAprilTag(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
 
         hardwareMap = hardwareMapPorted;
         telemetry = telemetryPorted;
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
-            .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-            .setTagLibrary(feedingTheFutureTagLibrary)
-            //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-            .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(feedingTheFutureTagLibrary)
+                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
 
-            // The following default settings are available to un-comment and edit as needed.
-            //.setDrawAxes(false)
-            //.setDrawCubeProjection(false)
-            //.setDrawTagOutline(true)
-            //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                // The following default settings are available to un-comment and edit as needed.
+                //.setDrawAxes(false)
+                //.setDrawCubeProjection(false)
+                //.setDrawTagOutline(true)
+                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
-            // == CAMERA CALIBRATION ==
-            // If you do not manually specify calibration parameters, the SDK will attempt
-            // to load a predefined calibration for your camera.
-            //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
-            // ... these parameters are fx, fy, cx, cy.
+                // == CAMERA CALIBRATION ==
+                // If you do not manually specify calibration parameters, the SDK will attempt
+                // to load a predefined calibration for your camera.
+                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+                // ... these parameters are fx, fy, cx, cy.
 
-            .build();
+                .build();
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
         // eg: Some typical detection data using a Logitech C920 WebCam
