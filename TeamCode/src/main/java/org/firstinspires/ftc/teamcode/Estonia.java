@@ -1,5 +1,14 @@
 package org.firstinspires.ftc.teamcode;  //place where the code is located
 
+//     o
+//        o      ______/~/~/~/__           /((
+//        o  // __            ====__    /_((
+//        o  //  @))       ))))      ===/__((
+//       ))           )))))))        __((
+//       \\     \)     ))))    __===\ _((
+//        \\_______________====      \_((
+//        \((
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
