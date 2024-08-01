@@ -42,7 +42,7 @@ public class Presses {
 
     }
 
-    //sets the toggeled state to false
+    //sets the toggleed state to false
     public void setToggleFalse() {
         toggledVariable = false;
     }
