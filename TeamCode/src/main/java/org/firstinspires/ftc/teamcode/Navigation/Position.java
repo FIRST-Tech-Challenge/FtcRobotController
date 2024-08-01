@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Navigation;
 
 class Position {
-    final double x;
-    final double y;
-    final double theta;
+    final private double x;
+    final private double y;
+    final private double theta;
 
     Position (double x, double y, double theta) {
         this.x = x;
@@ -11,11 +11,11 @@ class Position {
         this.theta = theta;
     }
     //add point to vector
-    public Position add (Velocity velocity) {
+    public Position add(Velocity velocity) {
         return new Position (
-            this.x + velocity.x,
-            this.y + velocity.y,
-            this.theta + velocity.theta
+            this.x + velocity.getX(),
+            this.y + velocity.getY(),
+            this.theta + velocity.getTheta()
         );
     }
 
@@ -26,5 +26,17 @@ class Position {
                 ", y=" + y +
                 ", theta=" + theta +
                 '}';
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getTheta() {
+        return theta;
     }
 }

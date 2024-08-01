@@ -15,10 +15,10 @@ public class Drivetrain {
     public PIDController fLeftMecanumController = new PIDController("fl mecanum", 0.005, 0.0000005, 0.4, true);
 
     public Drivetrain(Robot robot) {
-        this.fLeft = robot.fLeft;
-        this.fRight = robot.fRight;
-        this.bLeft = robot.bLeft;
-        this.bRight = robot.bRight;
+        this.fLeft = robot.getfLeft();
+        this.fRight = robot.getfRight();
+        this.bLeft = robot.getbLeft();
+        this.bRight = robot.getbRight();
 
         this.opMode = robot.opMode;
     }
