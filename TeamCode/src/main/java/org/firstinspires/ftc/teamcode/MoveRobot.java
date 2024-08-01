@@ -37,9 +37,9 @@ public class MoveRobot {
             imu = hardwareMap.get(IMU.class, "imu");
 
             RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-            RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+            RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
-            RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+            RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);ˇ
 
             imu.initialize(new IMU.Parameters(orientationOnRobot));
 
@@ -143,8 +143,8 @@ public class MoveRobot {
 
                 // Calculate wheel speeds normalized to the wheels.
                 leftFrontRawSpeed = (leftFrontPowerRaw / max * maxRadian);
-                leftBackRawSpeed = (leftBackPowerRaw / max * maxRadian);
-                rightFrontRawSpeed = (rightFrontPowerRaw / max * maxRadian);
+                leftBackRawSpeed = (leftBackPowerRaw / max * maxRadian / 1.2039);
+                rightFrontRawSpeed = (rightFrontPowerRaw / max * maxRadian / 1.2039);
                 rightBackRawSpeed = (rightBackPowerRaw / max * maxRadian);
             } // move robot
             telemetry.addData("SPEEDleftback", leftBackRawSpeed);
@@ -170,12 +170,18 @@ public class MoveRobot {
                 initCamera();
             }
             if (imuInitError) {
-                telemetry.addData("Camera innit error", true);
+                telemetry.addData("Imu innit error", true);
                 initImu();
             }
 
-            if (imuError && fieldCentric){
-                telemetry.addData("imu Error", true);
+            if (imuError){
+                telemetry.addData("imu", "error");
+            } else {
+                try {
+                    telemetry.addData("imu", imu.getRobotYawPitchRollAngles());
+                } catch (Exception e) {
+                    imuError = true;
+                }
             }
 
             if (cameraToggle) {
