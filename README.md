@@ -1,4 +1,4 @@
-## this is a forked repo from first
+## this is a forked repo from FIRST
 our code is in TeamCode/src/main/java/org/firstinspires/ftc/teamcode
 
 
