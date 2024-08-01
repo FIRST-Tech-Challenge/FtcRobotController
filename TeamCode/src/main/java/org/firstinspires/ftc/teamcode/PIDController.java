@@ -5,9 +5,9 @@ import android.util.Log;
 
 public class PIDController {
 
-    public static final double MMS_IN_INCH = 25.4;
+    public static final double MMS_PER_INCH = 25.4;
     public static final int TICKS_PER_REV = 537;
-    static final double TICKS_IN_THIRTY_INCHES = convertInchesToTicks(30, true);
+    static final double TICKS_PER_THIRTY_INCHES = convertInchesToTicks(30, true);
     public final PIDState state;
     String name;
 
@@ -17,6 +17,60 @@ public class PIDController {
         this.name = name;
         this.state = new PIDState(KP, KI, KD, SystemClock.elapsedRealtimeNanos() * 0.000001, mecanum);
     }
+
+
+
+
+    /*public class PIDController {
+        private double P;
+        private double I;
+        private double D;
+
+        private double errorIntegral = 0;
+        private double lastTime = SystemClock.();
+        private double lastError = 0
+
+        public PID(double P, double I, double D){
+            this.P = P;
+            this.I = I;
+            this.D = D;
+        }
+
+        public getPower(double error){
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            deltaTime = currentTime - lastTime
+
+            errorIntegral += error * deltaTime;
+            errorDerivative = (error - lastError)/deltaTime
+
+            lastTime = currentTime
+            lastError = error
+            return P * error + I * errorIntegral + D * errorDerivative;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
 
     /**
      * Calculate the PID power given the current position and target position.
@@ -48,7 +102,7 @@ public class PIDController {
             pidState.lastPos = currentPos;
 
         } else {
-            if (Math.abs(currentError) < TICKS_IN_THIRTY_INCHES) {
+            if (Math.abs(currentError) < TICKS_PER_THIRTY_INCHES) {
                 pidState.integral += averageError * deltaTime;
             } else {
                 // = 0;
@@ -79,7 +133,7 @@ public class PIDController {
     public static double convertInchesToTicks(double inches, boolean isMecanum) {
         if (!isMecanum) {
             final double wheelDiaMm = 96; // in mms
-            final double wheelCircIn = wheelDiaMm * Math.PI / MMS_IN_INCH;
+            final double wheelCircIn = wheelDiaMm * Math.PI / MMS_PER_INCH;
             final double IN_TO_TICK = TICKS_PER_REV / wheelCircIn;
             final double SLIDING_DISTANCE = 40;
 

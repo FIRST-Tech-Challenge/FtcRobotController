@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareDeviceCloseOnTearDown;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.Navigation.Odometry;
+import org.firstinspires.ftc.teamcode.Navigation.PidNav;
+import org.firstinspires.ftc.teamcode.Navigation.RobotMovement;
 
 @TeleOp
 public class TestTeleOp extends LinearOpMode {
@@ -15,6 +17,8 @@ public class TestTeleOp extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry, false, false, false);
         Odometry odometry = new Odometry(robot.backEncoder, robot.rightEncoder, robot.leftEncoder, robot.opMode,
                 telemetry, 0, 0, 0);
+        PidNav pidNav = new PidNav(0.1, 0, 0);
+        RobotMovement robotMovement = new RobotMovement(robot, odometry, pidNav);
         //robot.initForTeleOp();
         robot.setUpDrivetrainMotors();
         int TRIGGER_PRESSED = 0; // TODO: test
@@ -94,7 +98,7 @@ public class TestTeleOp extends LinearOpMode {
                 bRightPowerPrev = bRightPower;
             }
 
-            odometry.updatePosition();
+            robotMovement.goToPosition(10, 0, 0);
 
         }
     }

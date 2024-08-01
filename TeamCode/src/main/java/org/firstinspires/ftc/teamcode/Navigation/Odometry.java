@@ -64,30 +64,32 @@ public class Odometry {
     }
 
     private Velocity linearToArcDelta(Velocity relativeDelta) {
-        if (relativeDelta.theta == 0) {
+        if (relativeDelta.getTheta() == 0) {
             return relativeDelta;
         }
 
         Log.d("odometry", "linearDelta " + relativeDelta.toString());
-        double forwardRadius = relativeDelta.x / relativeDelta.theta;
-        double strafeRadius = relativeDelta.y / relativeDelta.theta;
+        double forwardRadius = relativeDelta.getX() / relativeDelta.getTheta();
+        double strafeRadius = relativeDelta.getY() / relativeDelta.getTheta();
 
         double relDeltaX =
-                forwardRadius * Math.sin(relativeDelta.theta) + -strafeRadius * (1 - Math.cos(relativeDelta.theta));
+                forwardRadius * Math.sin(relativeDelta.getTheta()) + -strafeRadius * (1 - Math.cos(relativeDelta.getTheta()));
 
         double relDeltaY =
-                +strafeRadius * Math.sin(relativeDelta.theta) + forwardRadius * (1 - Math.cos(relativeDelta.theta));
-        Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relativeDelta.theta);
+                +strafeRadius * Math.sin(relativeDelta.getTheta()) + forwardRadius * (1 - Math.cos(relativeDelta.getTheta()));
+        Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relativeDelta.getTheta());
         Log.d("odometry", "arcDelta " + arcDelta.toString());
         return arcDelta;
     }
     //converts to global
     private Velocity rotate(Velocity relativeDelta, Position previousGlobalPosition) {
-        double newX = relativeDelta.x * Math.cos(previousGlobalPosition.theta) - relativeDelta.y * Math.sin(previousGlobalPosition.theta);
-        double newY = relativeDelta.y * Math.cos(previousGlobalPosition.theta) + relativeDelta.x * Math.sin(previousGlobalPosition.theta);
+        double newX =
+                relativeDelta.getX() * Math.cos(previousGlobalPosition.getTheta()) - relativeDelta.getY() * Math.sin(previousGlobalPosition.getTheta());
+        double newY =
+                relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
         return new Velocity(newX,
                             newY,
-                            relativeDelta.theta);
+                            relativeDelta.getTheta());
     }
 
     private Position updateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {
@@ -96,7 +98,7 @@ public class Odometry {
         return previousGlobalPosition.add(globalDelta);
     }
 
-    public void updatePosition() {
+    public Position updatePosition() {
         double rightTicks = countRight();
         double leftTicks = countLeft();
         double backTicks = countBack();
@@ -116,8 +118,10 @@ public class Odometry {
 
         jose.addData("global", currentPosition.toString());
         jose.update();
-
+        return currentPosition;
     }
 
-
+    public Position getCurrentPosition() {
+        return currentPosition;
+    }
 }

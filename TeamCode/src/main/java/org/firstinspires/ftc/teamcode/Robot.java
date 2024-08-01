@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.MathFunctions.angleWrapDeg;
+
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
@@ -32,14 +34,14 @@ public class Robot {
     public final Drivetrain drivetrain;
     HardwareMap hardwareMap;
     Telemetry telemetry;
-    LinearOpMode opMode;
-    DcMotor rightEncoder;
-    DcMotor leftEncoder;
-    DcMotor backEncoder;
-    public DcMotor fLeft;
-    DcMotor fRight;
-    public DcMotor bLeft;
-    DcMotor bRight;
+    public LinearOpMode opMode;
+    public DcMotor rightEncoder;
+    public DcMotor leftEncoder;
+    public DcMotor backEncoder;
+    private DcMotor fLeft;
+    private DcMotor fRight;
+    private DcMotor bLeft;
+    private DcMotor bRight;
     DcMotor intakeMotor;
     DcMotor lsBack;
     DcMotor lsFront;
@@ -65,7 +67,7 @@ public class Robot {
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     boolean isRedAlliance;
-    boolean testingOnBert = false;
+    boolean testingOnBert = true;
     boolean allowTrayAngle = false;
     boolean allowTrayAngleOverride = false;
     double hardStopTrayAngleBig;
@@ -159,6 +161,29 @@ public class Robot {
         }
     }
 
+
+    public DcMotor getfLeft() {
+        return fLeft;
+    }
+
+    public DcMotor getfRight() {
+        return fRight;
+    }
+
+    public DcMotor getbLeft() {
+        return bLeft;
+    }
+
+    public DcMotor getbRight() {
+        return bRight;
+    }
+
+    public void setPower (double fLeft, double fRight, double bLeft, double bRight){
+        getfLeft().setPower(fLeft);
+        getfRight().setPower(fRight);
+        getbLeft().setPower(bLeft);
+        getbRight().setPower(bRight);
+    }
 
     public void moveLinearSlideByTicksBlocking(double targetDistanceInTicks) {
 
@@ -445,7 +470,7 @@ public class Robot {
         double KD = 2_500_000;
         double ERROR_TOLERANCE = 0.5; //degrees
         double currentHeading = getCurrentHeading();
-        double error = angleWrap(targetAbsDegrees - currentHeading);
+        double error = angleWrapDeg(targetAbsDegrees - currentHeading);
         double errorDer;
         double power;
         double currentTime;
@@ -2326,15 +2351,7 @@ public class Robot {
         setHeadingRelativeToBoard(0, 0.7);
     }
 
-    public static double angleWrap (double angle) {
-        double moddedAngle = angle % 360;
-        if (moddedAngle > 180) {
-            return moddedAngle - 360;
-        } else if (moddedAngle <= -180) {
-            return moddedAngle + 360;
-        }
-        return moddedAngle;
-    }
+
 
     public void mecanumAndSlidesDownToZero(double inchesMove, double slideStartingPos) {
         resetDrivetrainEncoders();

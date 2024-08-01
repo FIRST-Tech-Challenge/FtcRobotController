@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Navigation;
 
 class Velocity {
-    final double x;
-    final double y;
-    final double theta;
+    final private double x;
+    final private double y;
+    final private double theta;
 
     Velocity(double x, double y, double theta) {
         this.x = x;
@@ -26,5 +26,17 @@ class Velocity {
                 ", y=" + y +
                 ", theta=" + theta +
                 '}';
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getTheta() {
+        return theta;
     }
 }
