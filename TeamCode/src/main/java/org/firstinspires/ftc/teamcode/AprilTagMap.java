@@ -17,52 +17,53 @@ public class AprilTagMap {
     AprilTag tag106;
     AprilTag tag107;
 
-    public AprilTagMap() {
+    public AprilTagMap() { //all dimensions are from the center of the apriltag
+        //dimensions are with a .3 mm accuracy according to the step file provided by FIRST
         tag100 = new AprilTag();
         tag100.setAttributes("Blue Nexus Goal - Field Center - Facing Platform",
-                160, 40, 20,
+                1025, 4080, 3911,
                 new int[0]
         );
 
         tag101 = new AprilTag();
         tag101.setAttributes("Red Nexus Goal - Field Center - Facing Platform",
-                160, 60, 30,
+                1025, 2920, 3911,
                 new int[0]
         );
 
         tag102 = new AprilTag();
         tag102.setAttributes("Red Nexus Goal - Field Center - Facing Food Warehouse",
-                160, 80, 40,
+                1025, 2920, 3039,
                 new int[0]
         );
 
         tag103 = new AprilTag();
         tag103.setAttributes("Blue Nexus Goal - Field Center - Facing Food Warehouse",
-                160, 100, 50,
+                1025, 4080, 3039,
                 new int[0]
         );
 
         tag104 = new AprilTag();
         tag104.setAttributes("Blue Nexus Goal - Field Edge - Alliance Station",
-                160, 120, 60,
+                1025, 642, 506,
                 new int[0]
         );
 
         tag105 = new AprilTag();
         tag105.setAttributes("Blue Nexus Goal - Field Edge - Center Field",
-                160, 140, 70,
+                785, 1614, 506,
                 new int[0]
         );
 
         tag106 = new AprilTag();
         tag106.setAttributes("Red Nexus Goal - Field Edge - Center Field",
-                160, 160, 80,
+                785, 5386, 506,
                 new int[0]
         );
 
         tag107 = new AprilTag();
         tag107.setAttributes("Red Nexus Goal - Field Edge - Alliance Station",
-                160, 180, 90,
+                1025, 6358, 506,
                 new int[0]
         );
     }
