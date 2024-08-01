@@ -90,6 +90,7 @@ public class MoveRobot {
         leftBackDriveEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDriveEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDriveEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     // a test to return the apriltag(s) position for testing
@@ -102,7 +103,7 @@ public class MoveRobot {
         }
     }
         // the main function for moving the robot
-        public void move ( double drive, double strafe, double turn, boolean fieldCentric,
+    public void move ( double drive, double strafe, double turn, boolean fieldCentric,
         boolean tractionControlToggle, boolean cameraToggle){
 
             {
@@ -154,7 +155,7 @@ public class MoveRobot {
                 tractionControl.avoidSlip(leftBackRawSpeed, leftFrontRawSpeed, rightBackRawSpeed, rightFrontRawSpeed);
 
             } else {
-                leftBackDriveEx.setVelocity(400);
+                leftBackDriveEx.setVelocity(leftBackRawSpeed);
                 leftFrontDriveEx.setVelocity(leftFrontRawSpeed);
                 rightBackDriveEx.setVelocity(rightBackRawSpeed);
                 rightFrontDriveEx.setVelocity(rightFrontRawSpeed);

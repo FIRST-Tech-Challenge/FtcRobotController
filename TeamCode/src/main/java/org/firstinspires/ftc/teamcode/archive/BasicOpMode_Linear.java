@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -35,7 +35,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /*
@@ -52,11 +51,15 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Spinnermees", group="Linear OpMode")
+@Disabled
 public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members..............................
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx mootor = null;
+    private DcMotorEx mootor1 = null;
+    private DcMotorEx mootor2 = null;
+    private DcMotorEx mootor3 = null;
 
     @Override
     public void runOpMode() {
@@ -67,6 +70,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         mootor  = hardwareMap.get(DcMotorEx.class, "Motor_Port_0_CH");
+        mootor1  = hardwareMap.get(DcMotorEx.class, "Motor_Port_1_CH");
+
+        mootor2  = hardwareMap.get(DcMotorEx.class, "Motor_Port_2_CH");
+        mootor3  = hardwareMap.get(DcMotorEx.class, "Motor_Port_3_CH");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -83,6 +90,9 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double drive = -gamepad1.left_stick_y;
 
             mootor.setVelocity(400);
+            mootor1.setVelocity(400);
+            mootor2.setVelocity(400);
+            mootor3.setVelocity(400);
             telemetry.addData("actVelocity",    mootor.getVelocity());
             telemetry.addData("gamepad", drive);
             telemetry.update();
