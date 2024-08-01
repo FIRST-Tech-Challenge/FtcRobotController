@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;  //place where the code is located
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -17,7 +19,13 @@ import java.util.List;
 //import global.first.FeedingTheFutureGameDatabase;
 
 
-public class AprilTagTrackerGimbal {
+public class Gimbal {
+    private AnalogInput potentiometer = null;
+
+    private Servo gimbalPitch = null;
+    private Servo gimbalYaw = null;
+
+    private Servo gimbalPos = null;
 
     private static final AprilTagLibrary feedingTheFutureTagLibrary = getFeedingTheFutureTagLibrary();
     private static final boolean USE_WEBCAM = true;
@@ -44,12 +52,18 @@ public class AprilTagTrackerGimbal {
 
         hardwareMap = hardwareMapPorted;
         telemetry = telemetryPorted;
+
+        potentiometer = hardwareMap.get(AnalogInput.class, "Analog_Port_0_CH");
+
+        gimbalPitch = hardwareMap.get(Servo.class, "Servo_Port_0_CH");
+        gimbalYaw = hardwareMap.get(Servo.class, "Servo_Port_1_CH");
+        gimbalPos = hardwareMap.get(Servo.class, "Servo_Port_2_CH");
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(feedingTheFutureTagLibrary)
                 //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .setOutputUnits(DistanceUnit.MM, AngleUnit.DEGREES)
 
                 // The following default settings are available to un-comment and edit as needed.
                 //.setDrawAxes(false)
@@ -109,6 +123,9 @@ public class AprilTagTrackerGimbal {
 
     }   // end method initAprilTag()
 
+    public double position(){
+        return (potentiometer.getVoltage()*81.8);
+    }
 
     /**
      * Add telemetry about AprilTag detections.
@@ -134,5 +151,17 @@ public class AprilTagTrackerGimbal {
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
+        telemetry.addData("Potentiometer Angle", position());
     }   // end method telemetryAprilTag()
+
+    public void untuck(){
+        gimbalPos.setPosition(0.5);
+        gimbalPitch.setPosition(0.5);
+        gimbalYaw.setPosition(0.5);
+    }
+    public void tuck() {
+        gimbalPos.setPosition(0.5);
+        gimbalPitch.setPosition(0.5);
+        gimbalYaw.setPosition(0.5);
+    }
 }

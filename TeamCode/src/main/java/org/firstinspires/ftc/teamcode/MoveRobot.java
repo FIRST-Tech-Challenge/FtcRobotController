@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MoveRobot {
     double x;
     double y;
-    AprilTagTrackerGimbal aprilTagTrackerGimabl;
+    Gimbal gimbal;
     TractionControl tractionControl;
     double leftFrontRawSpeed;
     double leftBackRawSpeed;
@@ -39,7 +39,7 @@ public class MoveRobot {
             RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
             RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
-            RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);ˇ
+            RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
             imu.initialize(new IMU.Parameters(orientationOnRobot));
 
@@ -53,8 +53,8 @@ public class MoveRobot {
     private void initCamera() {
 
         try { // init camera with safeguards
-            aprilTagTrackerGimabl = new AprilTagTrackerGimbal();
-            aprilTagTrackerGimabl.initAprilTag(hardwareMap, telemetry);
+            gimbal = new Gimbal();
+            gimbal.initAprilTag(hardwareMap, telemetry);
             cameraInitError = false;
         } catch (Exception e) {
             cameraInitError = true;
@@ -96,7 +96,7 @@ public class MoveRobot {
     // a test to return the apriltag(s) position for testing
     private void testApril() {
         try {
-            aprilTagTrackerGimabl.telemetryAprilTag();
+            gimbal.telemetryAprilTag();
             cameraError = false;
         } catch (Exception e) {
             cameraError = true;
