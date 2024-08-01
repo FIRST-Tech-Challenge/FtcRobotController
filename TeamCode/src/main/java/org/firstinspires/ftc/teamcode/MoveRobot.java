@@ -129,10 +129,10 @@ public class MoveRobot {
         double rightFrontPowerRaw = x - y - turn;
         double rightBackPowerRaw = x + y - turn;
 
-        telemetry.addData("leftbackPWR", leftBackPowerRaw);
-        telemetry.addData("leftfrontPWR", leftFrontPowerRaw);
-        telemetry.addData("rightbackPWR", rightBackPowerRaw);
-        telemetry.addData("rightfrontPWR", rightFrontPowerRaw);
+        telemetry.addData("leftBackPWR", leftBackPowerRaw);
+        telemetry.addData("leftFrontPWR", leftFrontPowerRaw);
+        telemetry.addData("rightBackPWR", rightBackPowerRaw);
+        telemetry.addData("rightFrontPWR", rightFrontPowerRaw);
 
                 // Calculate the maximum absolute power value for normalization
                 double maxRawPower = Math.max(Math.max(Math.abs(leftFrontPowerRaw), Math.abs(leftBackPowerRaw)),
@@ -147,8 +147,8 @@ public class MoveRobot {
                 rightFrontRawSpeed = (rightFrontPowerRaw / max * maxRadian / 1.2039);
                 rightBackRawSpeed = (rightBackPowerRaw / max * maxRadian);
             } // move robot
-            telemetry.addData("SPEEDleftback", leftBackRawSpeed);
-            telemetry.addData("SPEEDleftfront", leftFrontRawSpeed);
+            telemetry.addData("speedLeftBack", leftBackRawSpeed);
+            telemetry.addData("speedLeftFront", leftFrontRawSpeed);
 
             // Make wheels go speed or use traction control
             if (tractionControlToggle) {
@@ -159,10 +159,10 @@ public class MoveRobot {
                 leftFrontDriveEx.setVelocity(leftFrontRawSpeed);
                 rightBackDriveEx.setVelocity(rightBackRawSpeed);
                 rightFrontDriveEx.setVelocity(rightFrontRawSpeed);
-                telemetry.addData("leftback", leftBackDriveEx.getVelocity());
-                telemetry.addData("leftfront", leftFrontDriveEx.getVelocity());
-                telemetry.addData("rightback", rightBackDriveEx.getVelocity());
-                telemetry.addData("rightfront", rightFrontDriveEx.getVelocity());
+                telemetry.addData("leftBack", leftBackDriveEx.getVelocity());
+                telemetry.addData("leftFront", leftFrontDriveEx.getVelocity());
+                telemetry.addData("rightBack", rightBackDriveEx.getVelocity());
+                telemetry.addData("rightFront", rightFrontDriveEx.getVelocity());
             }
 
             if (cameraInitError) {
