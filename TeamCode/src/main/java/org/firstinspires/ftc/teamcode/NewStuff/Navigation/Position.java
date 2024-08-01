@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Navigation;
+package org.firstinspires.ftc.teamcode.NewStuff.Navigation;
 
 class Position {
     final private double x;

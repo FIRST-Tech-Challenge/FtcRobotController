@@ -401,8 +401,6 @@ public class Robot {
         bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
     }
 
     public void resetDrivetrainEncoders () {
