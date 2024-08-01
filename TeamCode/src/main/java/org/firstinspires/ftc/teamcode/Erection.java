@@ -16,13 +16,11 @@ public class Erection {
     private Servo rightServo;
     private DcMotorEx frontElevatorEx;
     private DcMotorEx backElevatorEx;
-    private boolean isError = false;
 
-    public void initErection(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
+    private boolean isInitError = false;
+
+    private void mapMotors() {
         try {
-            hardwareMap = hardwareMapPorted;
-            telemetry = telemetryPorted;
-
 
             //map Dc motors with encoders, it is in a try, catch because if the expansion hub is not
             //properly connected the robot will throw an error and prevent the code from running
@@ -39,42 +37,53 @@ public class Erection {
             frontElevatorEx.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             backElevatorEx.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-
+            isInitError = false;
         } catch (Exception e) {
-            isError = true;
+            isInitError = true;
         }
+    }
+
+    public void initErection(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
+
+            hardwareMap = hardwareMapPorted;
+            telemetry = telemetryPorted;
+
+            mapMotors();
     }
 
     public void raise(double leftStick, double rightStick, boolean bottom, boolean height80, boolean height100, boolean height120) {
 
-        if (!isError) {
-            if (bottom) {
-                runToHeight(0);
-            }
-            if (height80) {
-                runToHeight(1184);
-            }
-            if (height100) {
-                runToHeight(1480);
-            }
-            if (height120) {
-                runToHeight(1776);
-            }
-            if (!(height80 || height100 || height120 || bottom)) {
-                frontElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //runs using power
-                backElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (!isInitError) {
+            try {
+                if (bottom) {
+                    runToHeight(0);
+                }
+                if (height80) {
+                    runToHeight(1184);
+                }
+                if (height100) {
+                    runToHeight(1480);
+                }
+                if (height120) {
+                    runToHeight(1776);
+                }
+                if (!(height80 || height100 || height120 || bottom)) {
+                    frontElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //runs using power
+                    backElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-                frontElevatorEx.setPower(rightStick);
-                backElevatorEx.setPower(-rightStick);
+                    frontElevatorEx.setPower(rightStick);
+                    backElevatorEx.setPower(-rightStick);
+                }
+
+
+                telemetry.addData("front erector position", frontElevatorEx.getCurrentPosition());
+                telemetry.addData("back erector position", backElevatorEx.getCurrentPosition());
+            } catch (Exception e){
+                telemetry.addData("erectile  disfunction", true);
             }
-
-
-            telemetry.addData("front erector position", frontElevatorEx.getCurrentPosition());
-            telemetry.addData("back erector position", backElevatorEx.getCurrentPosition());
-
         } else {
-
-            telemetry.addData("erectile disfunction", isError);
+            telemetry.addData("erectile initialization disfunction", true);
+            mapMotors();
         }
     }
 
