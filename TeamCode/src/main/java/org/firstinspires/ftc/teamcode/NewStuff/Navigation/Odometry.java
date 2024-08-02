@@ -9,17 +9,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
 
 public class Odometry {
-    final double TRACK_WIDTH = 304.8;
+    final private double TRACK_WIDTH = 304.8;
     private final double BACK_DISTANCE_TO_MID = 69.85;
 
-    Telemetry jose;
-    DcMotor rightEncoder;
-    DcMotor leftEncoder;
-    DcMotor backEncoder;
-    Position currentPosition;
-    double prevRightTicks = 0;
-    double prevLeftTicks = 0;
-    double prevBackTicks = 0;
+    private Telemetry jose;
+    private DcMotor rightEncoder;
+    private DcMotor leftEncoder;
+    private DcMotor backEncoder;
+    private Position currentPosition;
+    private double prevRightTicks = 0;
+    private double prevLeftTicks = 0;
+    private double prevBackTicks = 0;
 
     public Odometry(DriveTrain driveTrain, LinearOpMode opMode,
                     Telemetry telemetry, double xCoordinate, double yCoordinate, double theta) {

@@ -54,15 +54,12 @@ public class DriveTrain {
     public void setFRightPower(double power) { fRight.setPower(power); }
     public void setBLeftPower(double power) { bLeft.setPower(power); }
     public void setBRightPower(double power) { bRight.setPower(power); }
-
     public void setPower (double fLeftPower, double fRightPower, double bLeftPower, double bRightPower){
         setFLeftPower(fLeftPower);
         setFRightPower(fRightPower);
         setBLeftPower(bLeftPower);
         setBRightPower(bRightPower);
     }
-
-
     public DcMotor getBackEncoder() {
         return backEncoder;
     }
