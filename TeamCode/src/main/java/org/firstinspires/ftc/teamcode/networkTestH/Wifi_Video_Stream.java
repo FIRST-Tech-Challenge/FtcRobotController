@@ -35,7 +35,7 @@ public class Wifi_Video_Stream extends LinearOpMode {
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT); // Set resolution manually
             }
 
             @Override
@@ -111,14 +111,16 @@ public class Wifi_Video_Stream extends LinearOpMode {
 
         @Override
         public Mat processFrame(Mat input) {
-            if (!latestFrame.empty()) {
-                latestFrame.release(); // Release previous frame
+            synchronized (this) {
+                if (!latestFrame.empty()) {
+                    latestFrame.release(); // Release previous frame
+                }
+                latestFrame = input.clone(); // Save the current frame
             }
-            latestFrame = input.clone(); // Save the current frame
             return input;
         }
 
-        public Mat getLatestFrame() {
+        public synchronized Mat getLatestFrame() {
             return latestFrame;
         }
     }
