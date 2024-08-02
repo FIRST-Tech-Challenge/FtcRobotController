@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.NewStuff.Navigation;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
+
+import java.util.ArrayList;
+
 @TeleOp
 public class TestPurePursuit extends LinearOpMode {
 
@@ -15,13 +17,19 @@ public class TestPurePursuit extends LinearOpMode {
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         Odometry odometry = new Odometry(driveTrain, this, telemetry, 0, 0, 0);
         PidNav pidNav = new PidNav(0, 0, 0);
-        RobotMovement robotMovement = new RobotMovement(telemetry, driveTrain, odometry, pidNav);
+        RobotMovement robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry, pidNav);
 
+
+        ArrayList<Point> path = new ArrayList<Point>() {{
+            add(new Point(0, 0));
+            add(new Point(0, 600));
+            add(new Point(600, 600));
+        }};
 
         waitForStart();
         while (opModeIsActive()) {
-
-            robotMovement.goToPosition(-300, 0, 135, 0);
+            robotMovement.targetPosition(0, 600, 0, 0);
+            //robotMovement.pathFollow(path);
         }
     }
 }

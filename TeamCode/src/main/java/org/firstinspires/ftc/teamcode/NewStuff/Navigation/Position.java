@@ -5,7 +5,7 @@ class Position {
     final private double y;
     final private double theta;
 
-    Position (double x, double y, double theta) {
+    public Position (double x, double y, double theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
@@ -17,6 +17,10 @@ class Position {
             this.y + velocity.getY(),
             this.theta + velocity.getTheta()
         );
+    }
+
+    public Point toPoint() {
+        return new Point(getX(), getY());
     }
 
     @Override
