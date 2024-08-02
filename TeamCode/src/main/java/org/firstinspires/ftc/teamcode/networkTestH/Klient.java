@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -12,32 +13,44 @@ public class VideoClient {
     private static final int SERVER_PORT = 25565;
 
     public static void main(String[] args) {
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-             InputStream is = socket.getInputStream();
-             DataInputStream dis = new DataInputStream(is)) {
+        while (true) {
+            try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+                 InputStream is = socket.getInputStream();
+                 DataInputStream dis = new DataInputStream(is)) {
 
-            int frameCount = 0;
+                int frameCount = 0;
 
-            while (true) {
-                // Read the length of the image data
-                int imageSize = dis.readInt();
-                byte[] imageData = new byte[imageSize];
+                while (true) {
+                    try {
+                        // Read the length of the image data
+                        int imageSize = dis.readInt();
+                        byte[] imageData = new byte[imageSize];
 
-                // Read the image data
-                dis.readFully(imageData);
+                        // Read the image data
+                        dis.readFully(imageData);
 
-                // Convert byte array to BufferedImage
-                BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
+                        // Convert byte array to BufferedImage
+                        BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
 
-                // Save the image to disk
-                File outputFile = new File("frame_" + frameCount + ".jpg");
-                ImageIO.write(img, "jpg", outputFile);
+                        // Save the image to disk
+                        File outputFile = new File("frame_" + frameCount + ".jpg");
+                        ImageIO.write(img, "jpg", outputFile);
 
-                System.out.println("Saved frame " + frameCount + " to " + outputFile.getAbsolutePath() + " at " + System.currentTimeMillis());
-                frameCount++;
+                        System.out.println("Saved frame " + frameCount + " to " + outputFile.getAbsolutePath() + " at " + System.currentTimeMillis());
+                        frameCount++;
+                    } catch (EOFException e) {
+                        System.err.println("EOFException: " + e.getMessage());
+                        break;  // Break the loop to retry connection
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                try {
+                    Thread.sleep(5000);  // Wait before retrying connection
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
