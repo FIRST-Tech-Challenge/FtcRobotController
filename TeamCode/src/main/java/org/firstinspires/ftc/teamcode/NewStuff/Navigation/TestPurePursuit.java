@@ -28,7 +28,7 @@ public class TestPurePursuit extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            robotMovement.targetPosition(0, 600, 0, 0);
+            robotMovement.targetPosition(600, 0, 0, 0);
             //robotMovement.pathFollow(path);
         }
     }

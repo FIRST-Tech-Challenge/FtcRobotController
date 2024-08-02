@@ -55,9 +55,9 @@ public class RobotMovement{
         double bLeftPower = moveX + moveY;
         double bRightPower = moveX + moveY;*/
 
-        double fLeftPower = relativeYtoPoint - relativeXtoPoint;// - turn;
+        double fLeftPower = relativeYtoPoint + relativeXtoPoint;// - turn;
         double fRightPower = relativeYtoPoint - relativeXtoPoint;// + turn;
-        double bLeftPower = relativeYtoPoint + relativeXtoPoint;// - turn;
+        double bLeftPower = relativeYtoPoint - relativeXtoPoint;// - turn;
         double bRightPower = relativeYtoPoint + relativeXtoPoint;// + turn;
 
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
