@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
 
 public class Odometry {
     final double TRACK_WIDTH = 304.8;
@@ -20,13 +21,13 @@ public class Odometry {
     double prevLeftTicks = 0;
     double prevBackTicks = 0;
 
-    public Odometry(DcMotor backEncoder, DcMotor rightEncoder, DcMotor leftEncoder, LinearOpMode opMode,
+    public Odometry(DriveTrain driveTrain, LinearOpMode opMode,
                     Telemetry telemetry, double xCoordinate, double yCoordinate, double theta) {
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
         jose = telemetry;
-        this.rightEncoder = rightEncoder;
-        this.leftEncoder = leftEncoder;
-        this.backEncoder = backEncoder;
+        this.rightEncoder = driveTrain.getRightEncoder();
+        this.leftEncoder = driveTrain.getLeftEncoder();
+        this.backEncoder = driveTrain.getBackEncoder();
 
     }
 

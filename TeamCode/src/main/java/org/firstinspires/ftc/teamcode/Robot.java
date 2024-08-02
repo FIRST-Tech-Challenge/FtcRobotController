@@ -1,6 +1,7 @@
+/*
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.MathFunctions.angleWrapDeg;
+//import static org.firstinspires.ftc.teamcode.MathFunctions.angleWrapDeg;
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.NewStuff.MarkerProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -406,14 +408,16 @@ public class Robot {
     public void resetDrivetrainEncoders () {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        /*
+        */
+/*
         fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        */
+        *//*
+
     }
 
     public void setUpIntakeOuttake() {
@@ -483,14 +487,16 @@ public class Robot {
             errorDer = (error - prevError) / (currentTime - prevTime);
             power = (KP * error) + (KD * errorDer);
 
-                /*
+                */
+/*
                 Log.d("pid", "setHeading: current heading is " + currentHeading);
                 Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
                 Log.d("pid", "setHeading: time is " + currentTime);
                 Log.d("pid", "setHeading: heading error is " + error);
                 Log.d("pid", "setHeading: errorDer is " + errorDer);
                 Log.d("pid", "setHeading: calculated power is " + power);
-                */
+                *//*
+
 
             if (power > 0 && power < minPower) {
                 power = minPower;
@@ -1186,7 +1192,8 @@ public class Robot {
 
             // GAMEPAD 1: DRIVER CONTROLS
 
-            /*
+            */
+/*
             // b aligns bot to board - disabled because setheading loops imu
             if (gamepad1.b) {
                 if (isRedAlliance) {
@@ -1195,7 +1202,8 @@ public class Robot {
                     setHeading(90, 0.7);
                 }
             }
-            */
+            *//*
+
 
 
             //a and y switch which side is front
@@ -1454,15 +1462,18 @@ public class Robot {
                 lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
-            /*
+            */
+/*
             //one button outtake - disabled this because it uses setheading, which loops imu
             if(gamepad2.dpad_left) {
                 oneButtonOuttake(gamepad1, gamepad2);
             }
 
-            */
+            *//*
 
-        /*
+
+        */
+/*
             if (gamepad2.x) {
                 linearSlideFlag = true;
                 targetLinearSlideTicks = 1000 + getCurrentLinearSlideTicks();
@@ -1472,7 +1483,8 @@ public class Robot {
                 boolean done = moveLinearSlidesByTicksParallel(targetLinearSlideTicks);
                 linearSlideFlag = !done;
             }
-            */
+            *//*
+
 
 //            Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
 //            telemetry.addData("tray angle position servo", trayAngleServoPos);
@@ -1698,7 +1710,8 @@ public class Robot {
 
                 // GAMEPAD 1: DRIVER CONTROLS
 
-            /*
+            */
+/*
                 // b aligns bot to board - disabled this because setheading loops imu
                 if (gamepad1.b) {
                     if (isRedAlliance) {
@@ -1707,7 +1720,8 @@ public class Robot {
                         setHeading(90, 0.7);
                     }
                 }
-             */
+             *//*
+
 
                 //a and y switch which side is front
                 if (gamepad1.a) {
@@ -2620,3 +2634,4 @@ public class Robot {
 // todo write timeout for apriltag final forward
 // todo turns need a timeout, and maybe other control loops
 // todo tune tray pivot outtake pos
+*/

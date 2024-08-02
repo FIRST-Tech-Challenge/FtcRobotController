@@ -9,9 +9,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class OpModeUtilities {
 
-    private HardwareMap hardwareMap;
-    private LinearOpMode opMode;
-    private Telemetry telemetry;
+    private final HardwareMap hardwareMap;
+    private final LinearOpMode opMode;
+    private final Telemetry telemetry;
 
     public OpModeUtilities(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
