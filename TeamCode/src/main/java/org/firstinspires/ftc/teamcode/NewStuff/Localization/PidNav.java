@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Navigation;
+package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
 import android.os.SystemClock;
 
 public class PidNav {
-    private double P;
-    private double I;
-    private double D;
+    private final double P;
+    private final double I;
+    private final double D;
 
     private double errorIntegral = 0;
     private double lastTime = SystemClock.elapsedRealtimeNanos();
