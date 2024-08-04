@@ -1,22 +1,26 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Navigation;
+package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
-class Velocity {
+class Position {
     final private double x;
     final private double y;
     final private double theta;
 
-    Velocity(double x, double y, double theta) {
+    public Position (double x, double y, double theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
     }
-//add vector to vector
-    public Velocity add (Velocity velocity) {
-        return new Velocity(
-          this.x + velocity.x,
-          this.y + velocity.y,
-          this.theta + velocity.y
+    //add point to vector
+    public Position add(Velocity velocity) {
+        return new Position (
+            this.x + velocity.getX(),
+            this.y + velocity.getY(),
+            this.theta + velocity.getTheta()
         );
+    }
+
+    public Point toPoint() {
+        return new Point(getX(), getY());
     }
 
     @Override

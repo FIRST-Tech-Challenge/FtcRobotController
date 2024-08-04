@@ -1,12 +1,6 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
-import static java.lang.Math.*;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.teamcode.NewStuff.Navigation.Point;
-import org.opencv.core.Mat;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.NewStuff.Localization.Point;
 
 public class MathFunctions {
     public static double angleWrapRad(double angle) {
@@ -46,10 +40,15 @@ public class MathFunctions {
     public static Point project(Point point, Point vector) {
         return scale(vector, dot(point, vector)/dot(vector, vector));
     }
+    public static double absoluteAngleBetweenPoints(Point start, Point finish) {
+        return Math.atan2(finish.getY() - start.getY(), finish.getX() - start.getX());
+    }
     public static Point lineCircleIntersection(Point start, Point finish, Point current, double radius) throws ArithmeticException {
-        Point vector = add(finish, scale(start, -1));
-        Point shifted = lineCircleIntersection(vector, current, radius);
-        return add(shifted, start);
+        Point shiftedFinish = add(finish, scale(start, -1));
+        Point shiftedCurrent = add(current, scale(start, -1));
+
+        Point shiftedFollow = lineCircleIntersection(shiftedFinish, shiftedCurrent, radius);
+        return add(shiftedFollow, start);
     }
     private static Point lineCircleIntersection(Point vector, Point current, double radius) throws ArithmeticException {
         Point projection = project(current, vector);

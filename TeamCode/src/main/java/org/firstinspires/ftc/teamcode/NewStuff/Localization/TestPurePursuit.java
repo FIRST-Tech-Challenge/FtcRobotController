@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Navigation;
+package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,21 +15,22 @@ public class TestPurePursuit extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        Odometry odometry = new Odometry(driveTrain, this, telemetry, 0, 0, 0);
-        PidNav pidNav = new PidNav(0, 0, 0);
-        RobotMovement robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry, pidNav);
+        Odometry odometry = new Odometry(driveTrain, this, telemetry, 0, 0, Math.toRadians(0));
+        RobotMovement robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry);
 
 
         ArrayList<Point> path = new ArrayList<Point>() {{
             add(new Point(0, 0));
-            add(new Point(0, 600));
+            add(new Point(600, 0));
             add(new Point(600, 600));
+            add(new Point(1200, 600));
+            add(new Point(1200, 0));
         }};
 
         waitForStart();
         while (opModeIsActive()) {
-            robotMovement.targetPosition(600, 0, 0, 0);
-            //robotMovement.pathFollow(path);
+            //robotMovement.targetPosition(0, 600, 0 , 0, 300);
+            robotMovement.pathFollow(path);
         }
     }
 }

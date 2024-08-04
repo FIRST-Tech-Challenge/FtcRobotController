@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Navigation;
-
-import androidx.annotation.NonNull;
+package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
 public class Point {
 

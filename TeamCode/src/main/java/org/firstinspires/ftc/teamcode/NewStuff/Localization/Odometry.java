@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Navigation;
+package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
 import android.util.Log;
 
@@ -53,13 +53,14 @@ public class Odometry {
     private Velocity calculateRelativeDelta(double rightTicks, double leftTicks, double backTicks) {
         double deltaRightDistance = ticksToMM(rightTicks - prevRightTicks);
         double deltaLeftDistance = ticksToMM(leftTicks - prevLeftTicks);
+        double deltaMecanumDistance = ticksToMM(backTicks - prevBackTicks);
 
-        double deltaDistanceMiddle = (deltaLeftDistance + deltaRightDistance) / 2;
+        double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
         double deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
-        double deltaBackDistance = ticksToMM((backTicks - prevBackTicks) - BACK_DISTANCE_TO_MID * deltaTheta);
+        double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID * deltaTheta);
         return new Velocity(
-                deltaDistanceMiddle,
-                deltaBackDistance,
+                deltaX,
+                deltaY,
                 deltaTheta
         );
     }
@@ -78,6 +79,7 @@ public class Odometry {
 
         double relDeltaY =
                 +strafeRadius * Math.sin(relativeDelta.getTheta()) + forwardRadius * (1 - Math.cos(relativeDelta.getTheta()));
+
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relativeDelta.getTheta());
         Log.d("odometry", "arcDelta " + arcDelta.toString());
         return arcDelta;
