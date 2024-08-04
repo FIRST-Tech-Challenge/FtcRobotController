@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opMode.templates.OpModeTemplate;
+import org.firstinspires.ftc.teamcode.util.opModes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.util.TeamColor;
 
 import java.lang.reflect.Constructor;
@@ -50,7 +50,7 @@ public class RobotController {
     public void initSubSystems() {
         for(Class<? extends Subsystem> subsystem : this.opModeTemplate.getSubsystems()) {
             try {
-                subsystemHashMap.put(subsystem, subsystem.getDeclaredConstructor(HardwareMap.class).newInstance(this.hardwareMap));
+                subsystemHashMap.put(subsystem, subsystem.getDeclaredConstructor(RobotController.class).newInstance(this));
             } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
                 telemetry.addData("RobotController", String.format("failed to initialize the '%s' subsystem.", subsystem.getSimpleName()));
             }
@@ -73,5 +73,9 @@ public class RobotController {
 
     public MultipleTelemetry getTelemetry() {
         return telemetry;
+    }
+
+    public HardwareMap getHardwareMap() {
+        return hardwareMap;
     }
 }

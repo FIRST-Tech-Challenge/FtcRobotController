@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.RobotController;
 import org.firstinspires.ftc.teamcode.maps.MotorMap;
 
 public class TankDriveBaseSubsystem extends SubsystemBase {
@@ -31,15 +32,15 @@ public class TankDriveBaseSubsystem extends SubsystemBase {
     private final MotorEx leftMotor, rightMotor;
     private final BHI260IMU imu;
 
-    public TankDriveBaseSubsystem(final HardwareMap hMap, MotorMap leftMotor, MotorMap rightMotor) {
-        this.rightMotor = new MotorEx(hMap, rightMotor.getId());
-        this.leftMotor = new MotorEx(hMap, leftMotor.getId());
+    public TankDriveBaseSubsystem(RobotController robotController) {
+        this.rightMotor = new MotorEx(robotController.getHardwareMap(), "right_wheels");
+        this.leftMotor = new MotorEx(robotController.getHardwareMap(), "left_wheels");
         this.rightMotor.setInverted(true);
 
 
         BHI260IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(LOGO_FACING_DIRECTION, USB_FACING_DIRECTION));
 
-        this.imu = hMap.get(BHI260IMU.class, "imu");
+        this.imu = robotController.getHardwareMap().get(BHI260IMU.class, "imu");
 
         this.imu.initialize(parameters);
     }

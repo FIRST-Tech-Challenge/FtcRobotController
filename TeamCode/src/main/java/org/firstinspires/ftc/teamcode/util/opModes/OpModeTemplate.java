@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opMode.templates;
+package org.firstinspires.ftc.teamcode.util.opModes;
 
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
