@@ -12,14 +12,16 @@ import org.opencv.imgcodecs.Imgcodecs;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 @TeleOp(name = "Wifi Video Stream", group = "Example")
 public class Wifi_Video_Stream extends LinearOpMode {
 
     private static final int PORT = 25565;
+    private static final int TIMEOUT = 5000;  // 5 seconds timeout
     private OpenCvCamera webcam;
     private FramePipeline pipeline;
-    private boolean sendData = true;
+    private volatile boolean sendData = true;
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private DataOutputStream dos;
@@ -49,82 +51,26 @@ public class Wifi_Video_Stream extends LinearOpMode {
 
         waitForStart();
 
+        new Thread(new ServerRunnable()).start();
+
+        while (opModeIsActive()) {
+            idle();
+        }
+
+        // Clean up resources
+        sendData = false;
+        closeResources();
+    }
+
+    private void closeResources() {
         try {
-            serverSocket = new ServerSocket(PORT);
-            telemetry.addData("Status", "Server started. Waiting for client connection...");
-            telemetry.update();
-
-            while (opModeIsActive() && sendData) {
-                try {
-                    clientSocket = serverSocket.accept();
-                    dos = new DataOutputStream(clientSocket.getOutputStream());
-                    telemetry.addData("Status", "Client connected");
-                    telemetry.update();
-                    dis = new DataInputStream(clientSocket.getInputStream());
-
-                    while (opModeIsActive() && sendData && clientSocket.isConnected()) {
-                        //muudab lokaalse arvutuse falsiks
-                        
-                        // saadab video arvutile
-                        byte[] imageData = captureFrame();
-                        if (imageData != null) {
-                            dos.writeInt(imageData.length);  // Send the length of the image data
-                            dos.write(imageData);            // Send the image data itself
-                            dos.flush();
-                        }
-
-                        String response = dis.readUTF();
-                        while (response.equals("pildi protsessimine")) {
-                            telemetry.addData("Info", "Infot pole");
-                            telemetry.update();
-                        }
-                        // mingi protsessimis asi salvestab vastuseid
-                        telemetry.addData("Info", "info on");
-                        telemetry.update();
-                    }
-
-                    telemetry.addData("Status", "Client disconnected");
-                    telemetry.update();
-                }//Siia catchi peab panema siis selle alternatiivse koodi kui ühendus ära kaob, arvutab ise need kaamera asjad
-                catch (IOException e) {
-                    telemetry.addData("Error", e.getMessage());
-                    telemetry.update();
-                    e.printStackTrace();
-                    Thread.sleep(1000);  // Wait before retrying connection
-                } finally {
-                    if (dos != null) {
-                        try {
-                            dos.close();
-                        } catch (IOException e) {
-                            telemetry.addData("Error", "Failed to close DataOutputStream");
-                            telemetry.update();
-                        }
-                    }
-                    if (clientSocket != null && !clientSocket.isClosed()) {
-                        try {
-                            clientSocket.close();
-                        } catch (IOException e) {
-                            telemetry.addData("Error", "Failed to close client socket");
-                            telemetry.update();
-                        }
-                    }
-                }
-            }
-            dos.writeInt(-1); // Special flag to indicate the end of streaming
-            dos.flush();
+            if (dis != null) dis.close();
+            if (dos != null) dos.close();
+            if (clientSocket != null && !clientSocket.isClosed()) clientSocket.close();
+            if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
         } catch (IOException e) {
-            telemetry.addData("Server Error", e.getMessage());
+            telemetry.addData("Error", "Failed to close resources: " + e.getMessage());
             telemetry.update();
-            e.printStackTrace();
-        } finally {
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    telemetry.addData("Error", "Failed to close server socket");
-                    telemetry.update();
-                }
-            }
         }
     }
 
@@ -167,6 +113,96 @@ public class Wifi_Video_Stream extends LinearOpMode {
 
         public synchronized void getLatestFrame(Mat frame) {
             latestFrame.copyTo(frame);
+        }
+    }
+
+    private class ServerRunnable implements Runnable {
+        @Override
+        public void run() {
+            try {
+                serverSocket = new ServerSocket(PORT);
+                serverSocket.setSoTimeout(TIMEOUT);
+                telemetry.addData("Status", "Server started. Waiting for client connection...");
+                telemetry.update();
+
+                while (sendData) {
+                    try {
+                        clientSocket = serverSocket.accept();
+                        clientSocket.setSoTimeout(TIMEOUT);
+                        dos = new DataOutputStream(clientSocket.getOutputStream());
+                        dis = new DataInputStream(clientSocket.getInputStream());
+
+                        telemetry.addData("Status", "Client connected");
+                        telemetry.update();
+
+                        while (sendData && clientSocket.isConnected()) {
+                            if (dis.available() > 0) {
+                                String response = dis.readUTF();
+                                while (response.equals("pildi protsessimine")) {
+                                    telemetry.addData("Info", "Infot pole");
+                                    telemetry.update();
+                                }
+                                telemetry.addData("Info", "info on");
+                                telemetry.update();
+                            }
+
+                            byte[] imageData = captureFrame();
+                            if (imageData != null) {
+                                dos.writeInt(imageData.length);  // Send the length of the image data
+                                dos.write(imageData);            // Send the image data itself
+                                dos.flush();
+                            }
+
+                            Thread.yield();  // Yield to avoid blocking
+                        }
+
+                        telemetry.addData("Status", "Client disconnected");
+                        telemetry.update();
+                    } catch (SocketTimeoutException e) {
+                        telemetry.addData("Error", "Client connection timeout");
+                        telemetry.update();
+                    } catch (IOException e) {
+                        telemetry.addData("Error", e.getMessage());
+                        telemetry.update();
+                        e.printStackTrace();
+                        Thread.sleep(1000);  // Wait before retrying connection
+                    } finally {
+                        if (dos != null) {
+                            try {
+                                dos.close();
+                            } catch (IOException e) {
+                                telemetry.addData("Error", "Failed to close DataOutputStream");
+                                telemetry.update();
+                            }
+                        }
+                        if (clientSocket != null && !clientSocket.isClosed()) {
+                            try {
+                                clientSocket.close();
+                            } catch (IOException e) {
+                                telemetry.addData("Error", "Failed to close client socket");
+                                telemetry.update();
+                            }
+                        }
+                    }
+                }
+                if (dos != null) {
+                    dos.writeInt(-1); // Special flag to indicate the end of streaming
+                    dos.flush();
+                }
+            } catch (IOException e) {
+                telemetry.addData("Server Error", e.getMessage());
+                telemetry.update();
+                e.printStackTrace();
+            } finally {
+                if (serverSocket != null && !serverSocket.isClosed()) {
+                    try {
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        telemetry.addData("Error", "Failed to close server socket");
+                        telemetry.update();
+                    }
+                }
+            }
         }
     }
 }

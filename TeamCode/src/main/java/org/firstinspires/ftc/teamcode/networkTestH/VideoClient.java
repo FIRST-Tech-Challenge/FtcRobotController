@@ -50,18 +50,25 @@ public class VideoClient {
                         System.out.println("Saved frame " + frameCount + " to " + outputFile.getAbsolutePath() + " at " + System.currentTimeMillis());
                         frameCount++;
 
-                        // Saadab infi et protsessib pilti
+                        // Send info that the image is being processed
                         dos.writeUTF("pildi protsessimine");
                         dos.flush();
 
-                        // mingi loogika priltagide tuvastuseks
+                        // loogika osa pildi protsessimiseks
+                        processImage(img);
 
-                        //saadab infi robotile ja ss saadab robot uue kaadri
-                        dos.writeint();
+                        // Send info to the robot to request a new frame
+                        dos.writeUTF("ready for next frame");
                         dos.flush();
 
                     } catch (EOFException e) {
                         System.err.println("EOFException: " + e.getMessage());
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            ie.printStackTrace();
+                        }
                         break;  // Break the loop to retry connection
                     }
                 }
@@ -74,6 +81,18 @@ public class VideoClient {
                     ie.printStackTrace();
                 }
             }
+        }
+    }
+
+    // Simulate some image processing logic (replace with your actual logic)
+    private static void processImage(BufferedImage img) {
+        // Add your image processing logic here
+        // For demonstration, we'll just simulate a delay
+        try {
+            Thread.sleep(10);  // Simulate a 500 ms processing delay
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();  // Restore interrupted status
+            e.printStackTrace();
         }
     }
 }
