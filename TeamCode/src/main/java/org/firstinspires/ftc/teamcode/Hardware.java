@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareName;
 import org.firstinspires.ftc.teamcode.hardware.MotorSet;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
-import org.firstinspires.ftc.teamcode.localization.TriOdoProvider;
+import org.firstinspires.ftc.teamcode.mmooover.TriOdoProvider;
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     // left = left motor = exp 0 frontLeft
