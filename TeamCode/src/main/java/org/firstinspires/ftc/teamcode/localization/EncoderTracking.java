@@ -49,12 +49,14 @@ public class EncoderTracking {
         double deltaForward = (deltaLeft + deltaRight) / 2.;
         double deltaStrafe = deltaCenter - forwardOffset * deltaTurn;
 
-        double deltaX = deltaForward * cos(heading) - deltaStrafe * sin(heading);
-        double deltaY = deltaForward * sin(heading) + deltaStrafe * cos(heading);
+        double nextHeading = heading + deltaTurn;
+        double avgHead = (heading + nextHeading) / 2.;
+        double deltaX = deltaForward * cos(avgHead) - deltaStrafe * sin(avgHead);
+        double deltaY = deltaForward * sin(avgHead) + deltaStrafe * cos(avgHead);
 
         x += deltaX;
         y += deltaY;
-        heading += deltaTurn;
+        heading = nextHeading;
 
         lastLeft = currentLeft;
         lastCenter = currentCenter;

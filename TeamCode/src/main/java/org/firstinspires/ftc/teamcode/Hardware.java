@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.hardware.AutoClearEncoder;
 import org.firstinspires.ftc.teamcode.hardware.HardwareMapper;
 import org.firstinspires.ftc.teamcode.hardware.HardwareName;
+import org.firstinspires.ftc.teamcode.hardware.MotorSet;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 
@@ -44,7 +45,15 @@ public class Hardware extends HardwareMapper {
     @AutoClearEncoder
     public DcMotor encoderRight;
 
+    public MotorSet driveMotors;
+
     public Hardware(HardwareMap hwMap) {
         super(hwMap);
+        driveMotors = new MotorSet(
+            frontLeft,
+            frontRight,
+            backLeft,
+            backRight
+        );
     }
 }
