@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.localization
 
 import org.firstinspires.ftc.teamcode.hardware.MotorSet
 import kotlin.contracts.contract
+import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.sin
 
@@ -25,13 +27,22 @@ data class Pose(
     @JvmName("add")
     operator fun plus(other: Pose) = Pose(x + other.x, y + other.y, heading + other.heading)
 
-    fun to(other: Pose): Motion {
+    fun linearDistanceTo(other: Pose): Double {
+        val dx = other.x - x
+        val dy = other.y - y
+        return hypot(dx, dy)
+    }
+    fun subtractAngle(other: Pose): Double {
+        return wrapAngle(other.heading - heading)
+    }
+
+    fun to(other: Pose, robot: TriOdoProvider): Motion {
         val dh = wrapAngle(other.heading - heading)
         val dx = other.x - x
         val dy = other.y - y
         val forward = cos(heading) * dx + sin(heading) * dy
         val strafe = sin(heading) * dx - cos(heading) * dy
-        return Motion(forward, strafe, dh)
+        return Motion(forward, strafe, -dh * robot.forwardOffset)
     }
 
     @JvmOverloads
@@ -55,7 +66,8 @@ data class Motion(
         turn.toDouble()
     )
 
-    fun apply(motors: MotorSet, calibration: Calibrate) {
+    @JvmOverloads
+    fun apply(motors: MotorSet, calibration: Calibrate, factor: Number = 1.0) {
         val fwBias = calibration.preferForward
         val rtBias = calibration.preferStrafe
         val turnBias = calibration.preferTurn
@@ -63,11 +75,16 @@ data class Motion(
         var fr = forward * fwBias - right * rtBias + turn * turnBias
         var bl = forward * fwBias - right * rtBias - turn * turnBias
         var br = forward * fwBias + right * rtBias + turn * turnBias
-        val div = max(1.0, max(fl, max(fr, max(bl, br))))
+        val div = max(1.0, max(abs(fl), max(abs(fr), max(abs(bl), abs(br)))))
         fl /= div
         fr /= div
         bl /= div
         br /= div
+        val factorD = factor.toDouble()
+        fl *= factorD
+        fr *= factorD
+        bl *= factorD
+        br *= factorD
         motors.set(fl, fr, bl, br);
     }
 }

@@ -6,18 +6,16 @@ import static java.lang.StrictMath.PI;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Hardware;
-
 public class EncoderTracking {
 
     private double tick2inch(int ticks) {
         return (ticks / ticksPerRotation) * 2 * PI * radiusInches;
     }
 
-    private static final double ticksPerRotation = 8192.0;
-    private static final double radiusInches = 0.69;
-    private static final double trackWidth = 14 + 7 / 16.; // distance between two parallel encoders
-    private static final double forwardOffset = -(6 + 3 / 4.);
+    private final double ticksPerRotation;
+    private final double radiusInches;
+    private final double trackWidth; // distance between two parallel encoders
+    private final double forwardOffset;
 
     double heading = 0;
     double x = 0;
@@ -26,10 +24,14 @@ public class EncoderTracking {
     double lastLeft, lastCenter, lastRight;
     final DcMotor leftEncoder, centerEncoder, rightEncoder;
 
-    public EncoderTracking(Hardware hardware) {
-        leftEncoder = hardware.encoderLeft;
-        centerEncoder = hardware.encoderCenter;
-        rightEncoder = hardware.encoderRight;
+    public EncoderTracking(TriOdoProvider encoderSource) {
+        leftEncoder = encoderSource.getLeftEncoder();
+        centerEncoder = encoderSource.getCenterEncoder();
+        rightEncoder = encoderSource.getRightEncoder();
+        ticksPerRotation = encoderSource.getEncoderTicksPerRevolution();
+        radiusInches = encoderSource.getEncoderWheelRadius();
+        trackWidth = encoderSource.getTrackWidth();
+        forwardOffset = encoderSource.getForwardOffset();
 
         lastLeft = tick2inch(leftEncoder.getCurrentPosition());
         lastCenter = tick2inch(centerEncoder.getCurrentPosition());

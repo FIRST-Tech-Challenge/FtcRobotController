@@ -9,8 +9,9 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareName;
 import org.firstinspires.ftc.teamcode.hardware.MotorSet;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
+import org.firstinspires.ftc.teamcode.localization.TriOdoProvider;
 
-public class Hardware extends HardwareMapper {
+public class Hardware extends HardwareMapper implements TriOdoProvider {
     // left = left motor = exp 0 frontLeft
     // right = right motor = ctr 0 frontRight
     // center = ctr 3 intake
@@ -45,15 +46,40 @@ public class Hardware extends HardwareMapper {
     @AutoClearEncoder
     public DcMotor encoderRight;
 
+    @Override
+    public DcMotor getLeftEncoder() {
+        return encoderLeft;
+    }
+
+    @Override
+    public DcMotor getRightEncoder() {
+        return encoderRight;
+    }
+
+    @Override
+    public DcMotor getCenterEncoder() {
+        return encoderCenter;
+    }
+
+    @Override
+    public double getTrackWidth() {
+        return 14 + 7 / 16.;
+    }
+
+    @Override
+    public double getForwardOffset() {
+        return -(6 + 3 / 4.);
+    }
+
     public MotorSet driveMotors;
 
     public Hardware(HardwareMap hwMap) {
         super(hwMap);
         driveMotors = new MotorSet(
-            frontLeft,
-            frontRight,
-            backLeft,
-            backRight
+                frontLeft,
+                frontRight,
+                backLeft,
+                backRight
         );
     }
 }
