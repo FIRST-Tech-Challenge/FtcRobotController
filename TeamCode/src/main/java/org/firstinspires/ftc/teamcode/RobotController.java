@@ -16,6 +16,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
+import top.symple.symplegraphdisplay.SympleGraphDisplay;
+
 public class RobotController {
     public final GamepadEx driverController;
     public final GamepadEx actionController;
@@ -36,6 +38,8 @@ public class RobotController {
         this.actionController = new GamepadEx(actionController);
 
         FtcDashboard.getInstance().stopCameraStream();
+        SympleGraphDisplay.getInstance().reset();
+        SympleGraphDisplay.getInstance().setUpdateTime(0.05);
         CommandScheduler.getInstance().reset();
 
         try {
@@ -65,6 +69,10 @@ public class RobotController {
 
     public <T extends Subsystem> T getSubsystem(Class<T> clazz) {
         return (T) this.subsystemHashMap.get(clazz);
+    }
+
+    public void run() {
+        SympleGraphDisplay.getInstance().run();
     }
 
     public TeamColor getTeamColor() {

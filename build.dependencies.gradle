@@ -2,6 +2,7 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
     maven { url = 'https://maven.brott.dev/' }
+    maven { url = uri('https://Symple25125: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@maven.pkg.github.com/SympleOrg/SympleGraphDisplay') }
 }
 
 dependencies {
@@ -19,5 +20,7 @@ dependencies {
     runtimeOnly 'org.tensorflow:tensorflow-lite:2.12.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.15'
+
+    implementation 'top.symple:symplegraphdisplay:1.0.0'
 }
 
