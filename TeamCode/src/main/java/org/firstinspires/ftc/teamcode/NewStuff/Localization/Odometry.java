@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
+import org.firstinspires.ftc.teamcode.NewStuff.Math.Position;
+import org.firstinspires.ftc.teamcode.NewStuff.Math.Velocity;
 
 public class Odometry {
     final private double TRACK_WIDTH = 304.8;

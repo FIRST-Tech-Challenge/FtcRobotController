@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Localization;
+package org.firstinspires.ftc.teamcode.NewStuff.Math;
 
-class Position {
+public class Position {
     final private double x;
     final private double y;
     final private double theta;

@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Localization;
+package org.firstinspires.ftc.teamcode.NewStuff.Math;
 
-class Velocity {
+public class Velocity {
     final private double x;
     final private double y;
     final private double theta;
 
-    Velocity(double x, double y, double theta) {
+    public Velocity(double x, double y, double theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
