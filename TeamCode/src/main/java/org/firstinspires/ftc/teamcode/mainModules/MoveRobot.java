@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;  //place where the code is located
+package org.firstinspires.ftc.teamcode.mainModules;  //place where the code is located
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;

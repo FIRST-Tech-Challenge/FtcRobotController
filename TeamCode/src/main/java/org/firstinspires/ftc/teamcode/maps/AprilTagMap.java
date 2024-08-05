@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.maps;
 
 public class AprilTagMap {
     // All units are in mm

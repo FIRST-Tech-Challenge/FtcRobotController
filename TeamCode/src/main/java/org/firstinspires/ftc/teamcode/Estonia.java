@@ -12,6 +12,10 @@ package org.firstinspires.ftc.teamcode;  //place where the code is located
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.mainModules.Erection;
+import org.firstinspires.ftc.teamcode.mainModules.MoveRobot;
+import org.firstinspires.ftc.teamcode.mainModules.Presses;
+
 @TeleOp(name = "Main code Estonia")
 // allows to display the code in the driver station, comment out to remove
 public class Estonia extends LinearOpMode { //file name is Main.java    extends the prebuilt LinearOpMode by rev to run

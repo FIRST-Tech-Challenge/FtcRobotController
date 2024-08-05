@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode; //place where the code is located
+package org.firstinspires.ftc.teamcode.mainModules; //place where the code is located
 
 //a class for simplifing toggeling and presses
 public class Presses {
