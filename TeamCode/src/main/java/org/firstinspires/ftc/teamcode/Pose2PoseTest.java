@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 public class Pose2PoseTest extends LinearOpMode {
     public static final double ACCEPT_DIST = 1.0; // inch. euclidean distance
     public static final double ACCEPT_TURN = degrees(5); // radian.
+    // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0);
 
     private static double degrees(double deg) {
@@ -30,6 +31,7 @@ public class Pose2PoseTest extends LinearOpMode {
     public void runOpMode() {
         Hardware hardware = new Hardware(hardwareMap);
         EncoderTracking tracker = new EncoderTracking(hardware);
+        // Pose targets to go thru
         Pose[] targets = {
                 new Pose(48, 0, degrees(90)),
         };
@@ -45,7 +47,9 @@ public class Pose2PoseTest extends LinearOpMode {
         ticker.clear();
         while (opModeIsActive()) {
             ticker.click();
+            // Updates pose
             tracker.step();
+            // Gets current pose
             Pose p = tracker.getPose();
             if (wait) {
                 hardware.driveMotors.setAll(0);
@@ -58,11 +62,13 @@ public class Pose2PoseTest extends LinearOpMode {
                     wait = false;
                 }
             } else {
+                // Calculates the distance between current pose and target pose
                 double linear = p.linearDistanceTo(targets[targetIndex]);
                 double angular = p.subtractAngle(targets[targetIndex]);
                 if (linear > ACCEPT_DIST || abs(angular) > ACCEPT_TURN) {
                     targetTime.reset();
                 }
+                // Waits at the target for one second
                 if (targetTime.time() > 1.0) {
                     targetIndex++;
                     wait = true;
