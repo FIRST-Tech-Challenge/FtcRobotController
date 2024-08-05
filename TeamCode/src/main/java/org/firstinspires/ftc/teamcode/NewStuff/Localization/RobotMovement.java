@@ -1,83 +1,76 @@
 package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
-import static org.firstinspires.ftc.teamcode.NewStuff.MathFunctions.absoluteAngleBetweenPoints;
-import static org.firstinspires.ftc.teamcode.NewStuff.MathFunctions.angleWrapRad;
-import static org.firstinspires.ftc.teamcode.NewStuff.MathFunctions.distance;
-import static org.firstinspires.ftc.teamcode.NewStuff.MathFunctions.lineCircleIntersection;
+import static org.firstinspires.ftc.teamcode.NewStuff.Math.MathFunctions.angleWrapRad;
+import static org.firstinspires.ftc.teamcode.NewStuff.Math.MathFunctions.maxAbsValueDouble;
 
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
-import org.firstinspires.ftc.teamcode.NewStuff.MathFunctions;
+import org.firstinspires.ftc.teamcode.NewStuff.Math.Path;
+import org.firstinspires.ftc.teamcode.NewStuff.Math.Point;
+import org.firstinspires.ftc.teamcode.NewStuff.Math.Position;
+import org.firstinspires.ftc.teamcode.NewStuff.Math.Segment;
+import org.firstinspires.ftc.teamcode.NewStuff.Math.Vector;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
-import org.opencv.core.Mat;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
 public class RobotMovement{
     private final OpModeUtilities opModeUtilities;
     private final Odometry odometry;
     private final DriveTrain driveTrain;
+    private final PidNav pidX;
+    private final PidNav pidY;
+    private final PidNav pidAngle;
 
     public RobotMovement (OpModeUtilities opModeUtilities, DriveTrain driveTrain, Odometry odometry) {
         this.opModeUtilities = opModeUtilities;
         this.odometry = odometry;
         this.driveTrain = driveTrain;
+        this.pidX = new PidNav(1. / 300, 0, 0);
+        this.pidY = new PidNav(1. / 300, 0, 0);
+        this.pidAngle = new PidNav(3 / 3.14, 0, 0);
     }
 
-    public void targetPosition(Point target, double preferredAngle, double radius){
+    public void targetPosition(Point target, double preferredAngle, double radius) {
         Position currentPos = odometry.getCurrentPosition();
+        Vector currentToTarget = Vector.between(currentPos.toPoint(), target);
 
-        double distanceToTarget = distance(target, currentPos.toPoint());
-        double absoluteAngleToPoint = absoluteAngleBetweenPoints(currentPos.toPoint(), target);
-        double relativeAngleToPoint = angleWrapRad(absoluteAngleToPoint - currentPos.getTheta());
+        double distanceToTarget = currentToTarget.getLength();
+        double targetAngle = currentToTarget.getHeadingDirection();
+        double targetDirection = currentToTarget.getHeadingDirection();
 
-        PidNav pidX = new PidNav(1 / radius, 0, 0);
-        double powerMagnitudeX = Range.clip(pidX.getPower(distanceToTarget), -1, 1);
-        double powerX = powerMagnitudeX * Math.cos(relativeAngleToPoint);
-
-
-        PidNav pidY = new PidNav(1 / radius, 0, 0);
-        double powerMagnitudeY = Range.clip(pidY.getPower(distanceToTarget), -1, 1);
-        double powerY = powerMagnitudeY * Math.sin(relativeAngleToPoint);
-
-
-        PidNav pidAngle = new PidNav(1.6 / Math.PI, 0 ,0);
-        double powerAngle = Range.clip(pidAngle.getPower(-preferredAngle + relativeAngleToPoint), -1, 1);
-
-        if (distanceToTarget < 0.75 * radius) {
-            powerAngle = 0;
+        if (distanceToTarget < 100) {
+            targetAngle = preferredAngle;
         }
+        opModeUtilities.getTelemetry().addData("targetAngle", targetAngle);
+        double angleError = angleWrapRad(targetAngle - currentPos.getTheta());
+        opModeUtilities.getTelemetry().addData("angle error", angleError);
+        double directionError = angleWrapRad(targetDirection - currentPos.getTheta());
+        opModeUtilities.getTelemetry().addData("direction error", directionError);
+
+        double xError = Math.cos(directionError) * distanceToTarget;
+        double powerX = Range.clip(pidX.getPower(xError), -1, 1);
+
+        double yError = Math.sin(directionError) * distanceToTarget;
+        double powerY = Range.clip(pidY.getPower(yError), -1, 1);
+
+        double powerAngle = Range.clip(pidAngle.getPower(angleError), -1, 1);
+        opModeUtilities.getTelemetry().addData("power angle", powerAngle);
 
         double fLeftPower = powerX - powerY - powerAngle;
         double fRightPower = powerX + powerY + powerAngle;
         double bLeftPower = powerX + powerY - powerAngle;
         double bRightPower = powerX - powerY + powerAngle;
 
-        double biggestPower = Math.max(fLeftPower, Math.max(fRightPower, Math.max(bLeftPower, bRightPower)));
+        double biggestPower = maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
+        opModeUtilities.getTelemetry().addData("biggest power", biggestPower);
         if (biggestPower > 1) {
             fLeftPower /= biggestPower;
             fRightPower /= biggestPower;
             bLeftPower /= biggestPower;
             bRightPower /= biggestPower;
         }
-
-//        double moveX = pidXNav.getPower(powerX);
-//        double moveY = pidYNav.getPower(powerY);
-//        double moveAngle = pidAngleNav.getPower(relativeAngleToPoint + preferredAngle) * turnSpeed;
-//
-//        double relativeTurningAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
-//        double moveTurn = Range.clip(relativeTurningAngle / Math.toRadians(30), -1, 1) * turnSpeed;
-//
-//        double fLeftPower = moveX - moveY - moveAngle;
-//        double fRightPower = moveX + moveY + moveAngle;
-//        double bLeftPower = moveX + moveY - moveAngle;
-//        double bRightPower = moveX - moveY + moveAngle;
-
-       /* double fLeftPower = relativeYtoPoint + relativeXtoPoint;// - moveTurn;
-        double fRightPower = relativeYtoPoint - relativeXtoPoint;// + moveTurn;
-        double bLeftPower = relativeYtoPoint - relativeXtoPoint;// - moveTurn;
-        double bRightPower = relativeYtoPoint + relativeXtoPoint;// + moveTurn;*/
 
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
         odometry.updatePosition();
@@ -89,37 +82,19 @@ public class RobotMovement{
         opModeUtilities.getTelemetry().update();
     }
 
-    private Point searchPath(ArrayList<Point> path, double radius) throws ArithmeticException{
-        for (int i = path.size() - 1; i >= 1; i--) {
-            Point segmentStart = path.get(i - 1);
-            Point segmentFinish = path.get(i);
-            try {
-                return lineCircleIntersection(segmentStart, segmentFinish,
-                        odometry.getCurrentPosition().toPoint(), radius);
-            } catch (ArithmeticException exception) {
-                continue;
-            }
-        }
-
-        throw new ArithmeticException("no intersection with path found");
-    }
-
-    public void pathFollow(ArrayList<Point> path) {
+    public void pathFollow(Path path) {
         while (opModeUtilities.getOpMode().opModeIsActive()) {
-            Point follow;
+            Optional<Point> follow = Optional.empty();
             double radius = 300;
-            while (true) {
-                try {
-                    follow = searchPath(path, radius);
-                    break;
-                } catch (ArithmeticException exception) {
-                    radius += 25;
-                    continue;
-                }
+            while (!follow.isPresent()) {
+                follow = path.searchFrom(odometry.getCurrentPosition().toPoint() , radius);
+                radius += 25;
             }
-
+            Segment lastLine = path.getSegment(path.numSegments() - 1);
+            double preferredAngle = lastLine.getHeadingDirection();
+            opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
             opModeUtilities.getTelemetry().addData("follow point", follow);
-            targetPosition(follow, 0, radius);
+            targetPosition(follow.get(), preferredAngle, radius);
         }
     }
 }
