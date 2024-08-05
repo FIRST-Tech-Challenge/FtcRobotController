@@ -51,7 +51,7 @@ public class Erection {
             mapMotors();
     }
 
-    public void raise(double leftStick, double rightStick, boolean bottom, boolean height80, boolean height100, boolean height120) {
+    public void raise(double leftStick, double rightStick, boolean bottom, boolean height80, boolean height100, boolean climax) {
 
         if (!isInitError) {
             try {
@@ -64,10 +64,10 @@ public class Erection {
                 if (height100) {
                     runToHeight(1480);
                 }
-                if (height120) {
-                    runToHeight(1776);
+                if (climax) {
+                    runToHeight(13000);
                 }
-                if (!(height80 || height100 || height120 || bottom)) {
+                if (!(height80 || height100 || bottom || climax)) {
                     frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //runs using power
                     backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
