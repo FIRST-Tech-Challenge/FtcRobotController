@@ -10,7 +10,7 @@ import kotlin.math.sin
 private fun wrapAngle(angle: Double): Double {
     return when {
         angle > Math.PI -> angle - 2 * Math.PI
-        angle < -Math.PI -> angle + 2 * Math.PI
+        angle <= -Math.PI -> angle + 2 * Math.PI
         else -> angle
     }
 }
@@ -20,21 +20,40 @@ data class Pose(
     @get:JvmName("y") val y: Double,
     @get:JvmName("heading") val heading: Double,
 ) {
+    companion object {
+        @JvmField
+        val ORIGIN = Pose(0, 0, 0)
+    }
+
     /**
-     * vector addition (i.e. [x1, y1, heading1] + [x2, y2, heading2] = [x1 + x2, y1 + y2, heading1 + heading2])
+     * Vector addition (i.e. [x1, y1, heading1] + [x2, y2, heading2] = [x1 + x2, y1 + y2, heading1 + heading2])
+     * Adds each component.
      */
     @JvmName("add")
     operator fun plus(other: Pose) = Pose(x + other.x, y + other.y, heading + other.heading)
 
+    /**
+     * Computes the linear (euclidean) distance between two poses, not considering
+     * the headings of the poses.
+     */
     fun linearDistanceTo(other: Pose): Double {
         val dx = other.x - x
         val dy = other.y - y
-        return hypot(dx, dy)
+        return hypot(dx, dy) // this does sqrt(x**2 + y**2)
     }
+
+    /**
+     * Computes the difference between the angles of `this` Pose and the `other` Pose.
+     * Wraps the result into the -PI to +PI range.
+     * @return angle, radians on (-PI, PI]
+     */
     fun subtractAngle(other: Pose): Double {
         return wrapAngle(other.heading - heading)
     }
 
+    /**
+     * Computes the motion required to travel to the `other` pose from `this` pose.
+     */
     fun to(other: Pose, robot: TriOdoProvider): Motion {
         val dh = wrapAngle(other.heading - heading)
         val dx = other.x - x
@@ -44,6 +63,9 @@ data class Pose(
         return Motion(forward, strafe, -dh * robot.forwardOffset)
     }
 
+    /**
+     * Constructor supporting non-Double types.
+     */
     @JvmOverloads
     constructor(x: Number, y: Number, heading: Number = 0.0) : this(
         x.toDouble(),
@@ -59,12 +81,21 @@ data class Motion(
 ) {
     data class Calibrate(val preferForward: Double, val preferStrafe: Double, val preferTurn: Double)
 
+    /**
+     * Constructor supporting non-Double types.
+     */
     constructor(forward: Number, right: Number, turn: Number) : this(
         forward.toDouble(),
         right.toDouble(),
         turn.toDouble()
     )
 
+    /**
+     * Apply this Motion to a MotorSet.
+     * @param motors target set of motors
+     * @param calibration motor bias calibration. configures how much power is used for e.g. strafing vs forwarding
+     * @param factor overall speed factor. applied after all other calculations.
+     */
     @JvmOverloads
     fun apply(motors: MotorSet, calibration: Calibrate, factor: Number = 1.0) {
         val fwBias = calibration.preferForward
