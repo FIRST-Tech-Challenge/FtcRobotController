@@ -51,7 +51,13 @@ public class Erection {
             mapMotors();
     }
 
-    public void raise(double leftStick, double rightStick, boolean bottom, boolean height80, boolean height100, boolean climax) {
+  /*  public double height(){
+        return (double) (frontElevatorEx.getCurrentPosition() + backElevatorEx.getCurrentPosition()) /2;
+    }
+
+   */
+
+    public void raise(double rightStick, boolean bottom, boolean height80, boolean height100, boolean climax) {
 
         if (!isInitError) {
             try {
@@ -70,9 +76,10 @@ public class Erection {
                 if (!(height80 || height100 || bottom || climax)) {
                     frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //runs using speed
                     backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                    frontElevatorEx.setVelocity(rightStick*1972.92);
-                    backElevatorEx.setVelocity(-rightStick*1972.92);
+                    //if (!(height() >= 13000)) {  bit bad lähenemine
+                    frontElevatorEx.setVelocity(rightStick * 1972.92);
+                    backElevatorEx.setVelocity(-rightStick * 1972.92);
+                   // }
                 }
 
 
@@ -96,4 +103,4 @@ public class Erection {
         frontElevatorEx.setPower(1);
     }
 
-}  
+}

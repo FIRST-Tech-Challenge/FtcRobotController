@@ -124,7 +124,7 @@ public class Gimbal {
     }   // end method initAprilTag()
 
     public double position(){
-        return (potentiometer.getVoltage()*81.8);
+        return (potentiometer.getVoltage()*81.8); //3.3v, 270 degrees
     }
 
     /**

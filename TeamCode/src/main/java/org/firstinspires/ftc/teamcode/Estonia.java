@@ -74,7 +74,6 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
             );
 
             erection.raise(
-                    gamepad2.left_stick_y, //raise front
                     gamepad2.right_stick_y, //raise back
                     gamepad2.a,
                     gamepad2.b,
