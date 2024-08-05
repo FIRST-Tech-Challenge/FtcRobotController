@@ -65,10 +65,10 @@ public class Erection {
                     runToHeight(1480);
                 }
                 if (climax) {
-                    runToHeight(13000);
+                    runToHeight(13000); //troll :P
                 }
                 if (!(height80 || height100 || bottom || climax)) {
-                    frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //runs using power
+                    frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //runs using speed
                     backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                     frontElevatorEx.setVelocity(rightStick*1972.92);
