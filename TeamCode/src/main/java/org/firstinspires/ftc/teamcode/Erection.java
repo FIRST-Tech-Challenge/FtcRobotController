@@ -68,11 +68,11 @@ public class Erection {
                     runToHeight(1776);
                 }
                 if (!(height80 || height100 || height120 || bottom)) {
-                    frontElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //runs using power
-                    backElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //runs using power
+                    backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                    frontElevatorEx.setPower(rightStick);
-                    backElevatorEx.setPower(-rightStick);
+                    frontElevatorEx.setVelocity(rightStick*1972.92);
+                    backElevatorEx.setVelocity(-rightStick*1972.92);
                 }
 
 

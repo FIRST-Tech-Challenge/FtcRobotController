@@ -28,7 +28,7 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
 
     Erection erection;
 
-    Gimbal gimbal;
+    //Gimbal gimbal;
 
     @Override
     public void runOpMode() {
@@ -50,8 +50,8 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
         gamepad1_b = new Presses();
         gamepad1_y = new Presses();
 
-        gimbal = new Gimbal();
-        gimbal.initAprilTag(hardwareMap, telemetry);
+       // gimbal = new Gimbal();
+        //gimbal.initAprilTag(hardwareMap, telemetry);
 
         erection = new Erection();
         erection.initErection(hardwareMap, telemetry);
