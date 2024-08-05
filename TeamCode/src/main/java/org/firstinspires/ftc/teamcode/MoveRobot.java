@@ -54,7 +54,7 @@ public class MoveRobot {
 
         try { // init camera with safeguards
             gimbal = new Gimbal();
-            gimbal.initAprilTag(hardwareMap, telemetry);
+            gimbal.initGimbal(hardwareMap, telemetry);
             cameraInitError = false;
         } catch (Exception e) {
             cameraInitError = true;
@@ -96,7 +96,7 @@ public class MoveRobot {
     // a test to return the apriltag(s) position for testing
     private void testApril() {
         try {
-            gimbal.telemetryAprilTag();
+            gimbal.telemetryGimbal();
             cameraError = false;
         } catch (Exception e) {
             cameraError = true;
