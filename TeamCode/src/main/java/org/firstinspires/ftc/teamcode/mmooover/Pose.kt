@@ -7,7 +7,7 @@ import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.sin
 
-private fun wrapAngle(angle: Double): Double {
+fun wrapAngle(angle: Double): Double {
     return when {
         angle > Math.PI -> angle - 2 * Math.PI
         angle <= -Math.PI -> angle + 2 * Math.PI
