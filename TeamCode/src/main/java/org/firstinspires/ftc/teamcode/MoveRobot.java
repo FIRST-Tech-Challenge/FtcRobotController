@@ -167,7 +167,7 @@ public class MoveRobot {
 
             if (cameraInitError) {
                 telemetry.addData("Camera innit error", true);
-                initCamera();
+                //initCamera();
             }
             if (imuInitError) {
                 telemetry.addData("Imu innit error", true);

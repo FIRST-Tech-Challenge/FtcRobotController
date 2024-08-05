@@ -1,3 +1,6 @@
+package org.firstinspires.ftc.teamcode.networkTestH;  //place where the code is located
+
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.openftc.easyopencv.OpenCvPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -165,7 +168,11 @@ public class Wifi_Video_Stream extends LinearOpMode {
                         telemetry.addData("Error", e.getMessage());
                         telemetry.update();
                         e.printStackTrace();
-                        Thread.sleep(1000);  // Wait before retrying connection
+                        try {
+                            Thread.sleep(1000);  // Wait before retrying connection
+                        } catch (Exception eew){
+
+                        }
                     } finally {
                         if (dos != null) {
                             try {
