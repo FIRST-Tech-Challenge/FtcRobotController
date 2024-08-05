@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.networkTestH;  //place where the code is located
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.openftc.easyopencv.OpenCvPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,6 +17,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+@Disabled
 
 @TeleOp(name = "Wifi Video Stream", group = "Example")
 public class Wifi_Video_Stream extends LinearOpMode {

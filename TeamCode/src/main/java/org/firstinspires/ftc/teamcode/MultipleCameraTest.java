@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;  //place where the code is located
 
 import android.graphics.Camera;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,7 +41,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 
 @TeleOp(name="test Multiple camera", group="Linear OpMode")
-
+@Disabled
 public class MultipleCameraTest extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.

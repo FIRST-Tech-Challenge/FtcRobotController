@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -46,7 +47,8 @@ import java.util.List;
  * using the Hydrogen Horizons tag library from HydrogenHorizonsTagLibrary.jar.
  */
 @TeleOp(name = "Feeding the Future AprilTag sample")
-//@Disabled
+@Disabled
+
 public class FeedingTheFutureAprilTagSample extends LinearOpMode {
     /**
      * {@link #aprilTag} is the variable to store our instance of the AprilTag processor.
