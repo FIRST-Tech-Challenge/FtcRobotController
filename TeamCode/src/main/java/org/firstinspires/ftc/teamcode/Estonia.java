@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.mainModules.Erection;
 import org.firstinspires.ftc.teamcode.mainModules.MoveRobot;
 import org.firstinspires.ftc.teamcode.mainModules.Presses;
+import org.firstinspires.ftc.teamcode.mainModules.Gimbal;
 
 @TeleOp(name = "Main code Estonia")
 // allows to display the code in the driver station, comment out to remove
