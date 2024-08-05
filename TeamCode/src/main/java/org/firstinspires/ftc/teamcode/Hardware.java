@@ -47,9 +47,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public DcMotor encoderRight;
 
     @Override
-    public DcMotor getLeftEncoder() {
-        return encoderLeft;
-    }
+    public DcMotor getLeftEncoder() { return encoderLeft; }
 
     @Override
     public DcMotor getRightEncoder() {

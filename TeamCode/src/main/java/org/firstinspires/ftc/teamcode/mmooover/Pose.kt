@@ -34,7 +34,7 @@ data class Pose(
     fun subtractAngle(other: Pose): Double {
         return wrapAngle(other.heading - heading)
     }
-
+    // Sets the power?
     fun to(other: Pose, robot: TriOdoProvider): Motion {
         val dh = wrapAngle(other.heading - heading)
         val dx = other.x - x
