@@ -73,6 +73,7 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
         erection = new Erection();
         erection.initErection(hardwareMap, telemetry);
 
+        telemetry.update();
         waitForStart(); //everything has been initialized, waiting for the start button
 
         while (opModeIsActive()) { // main loop
@@ -103,7 +104,7 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
 
             telemetry.addData("field centric", gamepad1_a.returnToggleState());
             telemetry.addData("traction control", gamepad1_b.returnToggleState());
-            telemetry.addData("PositionData", positionData);
+            telemetry.addData("PositionData", positionData[0]);
             telemetry.update();
         }
     }

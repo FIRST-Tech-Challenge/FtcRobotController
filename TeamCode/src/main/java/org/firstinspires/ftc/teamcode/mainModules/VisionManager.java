@@ -45,7 +45,6 @@ public class VisionManager {
     }
 
     public int[] returnPositionData(boolean forceOnBoardProcessor) {
-        telemetry.addData("apriltagmap", aprilTags.get(100));
         boolean isUpdated = false;
 
         if (!forceOnBoardProcessor && !externalInitError) {
@@ -67,8 +66,8 @@ public class VisionManager {
         }
 
         if (isUpdated && aprilTagDetections != null) {
-            int frameX = 0;
-            int frameY = 0;
+            int frameX = 1;
+            int frameY = 1;
 
             int[] robotPosition = calculateRobotPosition();
 
@@ -91,6 +90,6 @@ public class VisionManager {
 
     private int[] calculateRobotPosition() {
         // Implement logic to calculate the robot's position
-        return new int[]{0, 0, 0};
+        return new int[]{1, 1, 1};
     }
 }
