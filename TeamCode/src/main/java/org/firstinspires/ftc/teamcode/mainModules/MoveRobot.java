@@ -25,8 +25,6 @@ public class MoveRobot {
     private IMU imu;
     private HardwareMap hardwareMap; //creating objects so that they could be mapped when initMoveRobot is called by the main program
     private Telemetry telemetry;
-    private boolean cameraError = false;
-    private boolean cameraInitError = false;
 
     private boolean imuError = false;
     private boolean imuInitError = false;
@@ -50,17 +48,6 @@ public class MoveRobot {
         }
     }
 
-    private void initCamera() {
-
-        try { // init camera with safeguards
-            gimbal = new Gimbal();
-            gimbal.initGimbal(hardwareMap, telemetry);
-            cameraInitError = false;
-        } catch (Exception e) {
-            cameraInitError = true;
-        }
-    }
-
     public void initMoveRobot(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
 
         //mapping hardwareMap and telemetry as they need to be connected thru the main program
@@ -69,8 +56,6 @@ public class MoveRobot {
 
         tractionControl = new TractionControl();
         tractionControl.initTractionControl(hardwareMap, telemetry);
-
-        initCamera();
 
         //init imu with safeguards
         initImu();
@@ -166,10 +151,6 @@ public class MoveRobot {
                 telemetry.addData("rightFront", rightFrontDriveEx.getVelocity());*/
             }
 
-            if (cameraInitError) {
-                telemetry.addData("Camera innit error", true);
-                //initCamera();
-            }
             if (imuInitError) {
                 telemetry.addData("Imu innit error", true);
                 initImu();
@@ -185,12 +166,6 @@ public class MoveRobot {
                 }
             }
 
-            if (cameraToggle) {
-                if (cameraError){
-                    telemetry.addData("camera Error", true);
-                }
-                testApril();
-            }
 
 
         }

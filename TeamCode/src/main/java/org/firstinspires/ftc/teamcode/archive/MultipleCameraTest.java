@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;  //place where the code is located
 
-import android.graphics.Camera;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

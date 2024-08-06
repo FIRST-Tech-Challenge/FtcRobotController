@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.mainModules.Erection;
 import org.firstinspires.ftc.teamcode.mainModules.MoveRobot;
 import org.firstinspires.ftc.teamcode.mainModules.Presses;
 import org.firstinspires.ftc.teamcode.mainModules.Gimbal;
+import org.firstinspires.ftc.teamcode.mainModules.OnBoardVision;
+import org.firstinspires.ftc.teamcode.mainModules.VisionManager;
 
 @TeleOp(name = "Main code Estonia")
 // allows to display the code in the driver station, comment out to remove
@@ -30,6 +32,13 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
     Presses gamepad1_a;
     Presses gamepad1_b;
     Presses gamepad1_y;
+
+    VisionManager visionManager;
+    int[] positionData = {
+            0, //x
+            0, //y
+            0, //rotation
+    };
 
     Erection erection;
 
@@ -55,6 +64,8 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
         gamepad1_b = new Presses();
         gamepad1_y = new Presses();
 
+        visionManager = new VisionManager();
+
         gimbal = new Gimbal();
         gimbal.initGimbal(hardwareMap, telemetry);
 
@@ -64,8 +75,6 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
         waitForStart(); //everything has been initialized, waiting for the start button
 
         while (opModeIsActive()) { // main loop
-
-            gimbal.telemetryGimbal();
 
             double drive = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
@@ -86,8 +95,14 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
                     gamepad2.x
             );
 
+            positionData = visionManager.returnPositionData(true);
+
+
+            gimbal.telemetryGimbal();
+
             telemetry.addData("field centric", gamepad1_a.returnToggleState());
             telemetry.addData("traction control", gamepad1_b.returnToggleState());
+            telemetry.addData("PositionData", positionData);
             telemetry.update();
         }
     }

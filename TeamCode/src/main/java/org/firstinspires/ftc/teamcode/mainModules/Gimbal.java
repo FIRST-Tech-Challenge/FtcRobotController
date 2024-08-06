@@ -43,4 +43,8 @@ public class Gimbal {
         gimbalPitch.setPosition(1);
         gimbalYaw.setPosition(0.9);
     }
+    public void moveGimbal(){
+
+    }
+
 }
