@@ -3,14 +3,23 @@ package org.firstinspires.ftc.teamcode.mainModules;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.maps.AprilTag;
+import org.firstinspires.ftc.teamcode.maps.AprilTagMapping;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VisionManager {
+
+
+
     OnBoardVision onBoardVision;
     ExternalVision externalVision;
+
+    Map<Integer, AprilTag> aprilTags = AprilTagMapping.getMap();
 
     ArrayList<AprilTagDetection> aprilTagDetections = null;
 
@@ -28,10 +37,9 @@ public class VisionManager {
         onBoardVision = new OnBoardVision();
         try {
             onBoardVision.initProcessor(hardwareMap, telemetry);
-        } catch (Exception e1){
+        } catch (Exception e1) {
             onBoardInitError = true;
         }
-
 
         externalVision = new ExternalVision();
         try {
@@ -42,7 +50,7 @@ public class VisionManager {
     }
 
     public int[] returnPositionData(boolean forceOnBoardProcessor){
-
+        telemetry.addData("apriltagmap", aprilTags.get(100));
         boolean isUpdated = false;
 
         if (!forceOnBoardProcessor && !externalInitError){
@@ -55,7 +63,7 @@ public class VisionManager {
 
         }
 
-        if (isUpdated && !onBoardInitError){
+        if (!isUpdated && !onBoardInitError){
             try {
                 aprilTagDetections = onBoardVision.returnAprilTagData();
                 isUpdated = true;
@@ -80,6 +88,8 @@ public class VisionManager {
                 };
         }
         else{
+            int [] robotPosition = calculateRobotPosition();
+
             return new int[]{
                     -1, -1, -1, //robot x, y, absoluteAngle
                     -1, -1 //returns the x, y in the camera frame of the closest aprilTag

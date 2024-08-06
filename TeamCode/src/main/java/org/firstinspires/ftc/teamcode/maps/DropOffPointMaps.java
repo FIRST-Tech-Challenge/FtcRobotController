@@ -81,38 +81,3 @@ public class DropOffPointMaps {
         blue13.setAttributes(2371,495 + offset, 0, "blue", 13);
     }
 }
-
-class DropOffPoint{
-
-    private int xPos;
-    private int yPos;
-    private int absoluteDirection;
-    private int ID;
-    private String colour;
-
-
-    void setAttributes(int xPassed, int yPassed, int absoluteDirectionPassed, String colourPassed, int IDPassed) {
-        xPos = xPassed;
-        yPos = yPassed;
-        absoluteDirection = absoluteDirectionPassed;
-        colour = colourPassed;
-        ID = IDPassed;
-    }
-
-    public int getX() {
-        return xPos;
-    }
-
-    public int getY() {
-        return yPos;
-    }
-
-    public int getAbsoluteDirection() {
-        return absoluteDirection;
-    }
-
-    public String getColour(){return colour; }
-
-    public int getID(){return ID; }
-
-}

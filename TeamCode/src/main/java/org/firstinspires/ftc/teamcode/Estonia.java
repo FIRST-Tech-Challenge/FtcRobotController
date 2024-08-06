@@ -65,6 +65,7 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
         gamepad1_y = new Presses();
 
         visionManager = new VisionManager();
+        visionManager.initVision(hardwareMap, telemetry);
 
         gimbal = new Gimbal();
         gimbal.initGimbal(hardwareMap, telemetry);
