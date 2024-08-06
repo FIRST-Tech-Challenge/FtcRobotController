@@ -46,11 +46,17 @@ public class DropOffPointMaps {
         red6 = new DropOffPoint();
         //separator
         red8 = new DropOffPoint();
+        red8.setAttributes(6552,495 + offset, 0, "red", 8);
         red9 = new DropOffPoint();
+        red9.setAttributes(6170,495 + offset, 0, "red", 9);
         red10 = new DropOffPoint();
+        red10.setAttributes(5789,495 + offset, 0, "red", 10);
         red11 = new DropOffPoint();
+        red11.setAttributes(5392,495 + offset, 0, "red", 11);
         red12 = new DropOffPoint();
+        red12.setAttributes(5102,495 + offset, 0, "red", 12);
         red13 = new DropOffPoint();
+        red13.setAttributes(4629,495 + offset, 0, "red", 13);
 
 
         // Initialize the blue drop-off points
@@ -59,19 +65,20 @@ public class DropOffPointMaps {
         blue3 = new DropOffPoint();
         blue4 = new DropOffPoint();
         blue5 = new DropOffPoint();
+        blue6 = new DropOffPoint();
         //separator
         blue8 = new DropOffPoint();
-        blue8.setAttributes(448,495 + offset, 0);
+        blue8.setAttributes(448,495 + offset, 0, "blue", 8);
         blue9 = new DropOffPoint();
-        blue9.setAttributes(830,495 + offset, 0);
+        blue9.setAttributes(830,495 + offset, 0, "blue", 9);
         blue10 = new DropOffPoint();
-        blue10.setAttributes(1211,495 + offset, 0);
+        blue10.setAttributes(1211,495 + offset, 0, "blue", 10);
         blue11 = new DropOffPoint();
-        blue11.setAttributes(1608,495 + offset, 0);
+        blue11.setAttributes(1608,495 + offset, 0, "blue", 11);
         blue12 = new DropOffPoint();
-        blue12.setAttributes(1898,495 + offset, 0);
+        blue12.setAttributes(1898,495 + offset, 0, "blue", 12);
         blue13 = new DropOffPoint();
-        blue13.setAttributes(2371,495 + offset, 0);
+        blue13.setAttributes(2371,495 + offset, 0, "blue", 13);
     }
 }
 
@@ -80,11 +87,16 @@ class DropOffPoint{
     private int xPos;
     private int yPos;
     private int absoluteDirection;
+    private int ID;
+    private String colour;
 
-    void setAttributes(int xPassed, int yPassed, int absoluteDirectionPassed) {
+
+    void setAttributes(int xPassed, int yPassed, int absoluteDirectionPassed, String colourPassed, int IDPassed) {
         xPos = xPassed;
         yPos = yPassed;
         absoluteDirection = absoluteDirectionPassed;
+        colour = colourPassed;
+        ID = IDPassed;
     }
 
     public int getX() {
@@ -98,5 +110,9 @@ class DropOffPoint{
     public int getAbsoluteDirection() {
         return absoluteDirection;
     }
+
+    public String getColour(){return colour; }
+
+    public int getID(){return ID; }
 
 }
