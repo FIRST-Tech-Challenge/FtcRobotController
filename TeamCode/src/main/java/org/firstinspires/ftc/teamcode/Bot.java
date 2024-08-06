@@ -70,8 +70,23 @@ public class Bot extends RobotDrive{
     }
 
     //intakeonoff
-    public void intaketoggle(){
-        double intkpwr = 0.0;
-
+    public void intake(boolean rev){// rev specifies whether the intake should be reversed true = reversed false = normal
+        double intkpwr = 0.0;// intake power
+        if (rev == false){
+           if (intkpwr != 1.0){
+               intkpwr = 1.0;
+           }
+           else{
+               intkpwr = 0.0;
+           }
+        }
+        else{
+            if (intkpwr != -1.0){
+                intkpwr = -1.0;
+            }
+            else{
+                intkpwr = 0.0;
+            }
+        }
     }
 }
