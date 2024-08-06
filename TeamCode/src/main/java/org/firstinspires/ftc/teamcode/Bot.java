@@ -74,4 +74,17 @@ public class Bot extends RobotDrive{
         double intkpwr = 0.0;
 
     }
+
+    //lefttrigger for power changing
+    public double setspeed(double LTstats, double ogpwr){
+        if (LTstats > 0.5){
+            return ogpwr;
+        }
+        else if (LTstats < 0.5 && LTstats > 0.0) {
+            return ogpwr * 0.6;
+        }
+        else{
+            return ogpwr * 0.8;
+        }
+    }
 }
