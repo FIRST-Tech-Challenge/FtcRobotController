@@ -11,8 +11,7 @@ public class ServoTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        String servoName = ""; // add servo name for testing
-        Servo servoTest = hardwareMap.servo.get(servoName);
+        Servo servo = hardwareMap.servo.get("s");
 
         waitForStart();
 
@@ -31,7 +30,7 @@ public class ServoTest extends LinearOpMode {
                 pos -= 0.01;
             }
 
-            servoTest.setPosition(pos);
+            servo.setPosition(pos);
             TimeUnit.MILLISECONDS.sleep(200);
             telemetry.addData("Position: ", pos);
             telemetry.update();
