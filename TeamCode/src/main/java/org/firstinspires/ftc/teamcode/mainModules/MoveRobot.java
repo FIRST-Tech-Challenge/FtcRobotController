@@ -79,14 +79,6 @@ public class MoveRobot {
     }
 
     // a test to return the apriltag(s) position for testing
-    private void testApril() {
-        try {
-            gimbal.telemetryGimbal();
-            cameraError = false;
-        } catch (Exception e) {
-            cameraError = true;
-        }
-    }
         // the main function for moving the robot
     public void move ( double drive, double strafe, double turn, boolean fieldCentric,
         boolean tractionControlToggle, boolean cameraToggle){
