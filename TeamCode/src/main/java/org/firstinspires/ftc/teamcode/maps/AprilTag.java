@@ -1,26 +1,39 @@
 package org.firstinspires.ftc.teamcode.maps;
 
 public class AprilTag {
-    String name;
-    int height;
-    int x;
-    int y;
-    int[] detectionArea;
+    private String description;
+    private int x, y, z;
+    private int[] detectionArea;
 
-    public void setAttributes(String namePassed, int heightPassed, int xPassed, int yPassed, int[] detectionAreaPassed) {
-        name = namePassed;
-        height = heightPassed;
-        x = xPassed;
-        y = yPassed;
-        detectionArea = detectionAreaPassed;
+    public AprilTag(String description, int x, int y, int z, int[] detectionArea) {
+        this.description = description;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.detectionArea = detectionArea;
+    }
+    @Deprecated
+    public void setAttributes(String description, int x, int y, int z, int[] additionalAttributes) {
+        this.description = description;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.detectionArea = additionalAttributes;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public String toString() {
+        return "AprilTag{" +
+                "description='" + description + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
     }
 
-    public int getHeight() {
-        return height;
+    // Getters
+    public String getDescription() {
+        return description;
     }
 
     public int getX() {
@@ -31,7 +44,11 @@ public class AprilTag {
         return y;
     }
 
-    public boolean getDetectionArea() {
-        return true;
+    public int getZ() {
+        return z;
+    }
+
+    public int[] getDetectionArea() {
+        return detectionArea;
     }
 }
