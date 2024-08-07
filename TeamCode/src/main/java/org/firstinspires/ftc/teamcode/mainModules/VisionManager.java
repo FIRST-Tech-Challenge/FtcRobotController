@@ -45,7 +45,7 @@ public class VisionManager {
     }
 
     public int[] returnPositionData(boolean forceOnBoardProcessor) {
-        telemetry.addData("apriltagmap", aprilTags.get(100));
+        // telemetry.addData("apriltagmap", aprilTags.get(100));
         boolean isUpdated = false;
 
         if (!forceOnBoardProcessor && !externalInitError) {
