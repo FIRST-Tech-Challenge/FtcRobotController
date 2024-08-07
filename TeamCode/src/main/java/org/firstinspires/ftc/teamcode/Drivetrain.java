@@ -34,7 +34,7 @@ public class Drivetrain {
         this.fRight.setPower(fRight);
     }
 
-    public void setMotorPower (DcMotor dcMotor, double power) {
+    public void setMotorPower(DcMotor dcMotor, double power) {
         dcMotor.setPower(power);
     }
 
@@ -50,10 +50,12 @@ public class Drivetrain {
                 //cap power
                 power = Range.clip(power, -1 * maxPower, maxPower);
 
-                return new DrivetrainPowers(power,power,power,power);
+                return new DrivetrainPowers(power, power, power, power);
 
             }
         }
 
-        return new DrivetrainPowers(0,0,0,0);
+        return new DrivetrainPowers(0, 0, 0, 0);
     }
+
+}
