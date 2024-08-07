@@ -17,21 +17,21 @@ public abstract class AutoOpMode extends CommandOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // idle
+        // runs before you enter the init loop
         this.initialize();
 
-        // run this when in init mod
+        // runs when in init mode
         while (this.opModeInInit() && !this.isStopRequested()) {
             this.runInit();
         }
 
         this.waitForStart();
 
-        // init
+        // runs after the robot exit the init loop
         this.sympleStart();
 
 
-        //run mode
+        // run mode
         while (!this.isStopRequested() && this.opModeIsActive()) {
             this.run();
         }

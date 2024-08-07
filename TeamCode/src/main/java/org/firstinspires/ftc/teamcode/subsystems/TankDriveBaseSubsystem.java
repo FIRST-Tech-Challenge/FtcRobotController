@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RobotController;
-import org.firstinspires.ftc.teamcode.maps.MotorMap;
+import org.firstinspires.ftc.teamcode.util.DataLogger;
+import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubSystemBase;
 
-public class TankDriveBaseSubsystem extends SubsystemBase {
+public class TankDriveBaseSubsystem extends SympleSubSystemBase {
     // motors tick per rev
     public static final double TICKS_PER_REV = 288;
 
@@ -33,6 +32,8 @@ public class TankDriveBaseSubsystem extends SubsystemBase {
     private final BHI260IMU imu;
 
     public TankDriveBaseSubsystem(RobotController robotController) {
+        super(robotController);
+        this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Getting motors");
         this.rightMotor = new MotorEx(robotController.getHardwareMap(), "right_wheels");
         this.leftMotor = new MotorEx(robotController.getHardwareMap(), "left_wheels");
         this.rightMotor.setInverted(true);

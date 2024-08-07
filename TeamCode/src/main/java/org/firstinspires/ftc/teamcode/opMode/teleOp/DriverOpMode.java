@@ -13,7 +13,13 @@ public abstract class DriverOpMode extends SympleCommandOpMode {
     public void initialize(TeamColor teamColor) {
         this.teamColor = teamColor;
 
-        this.robotController = new RobotController(TeleOpModeTemplate.class, hardwareMap, telemetry, gamepad1, gamepad2, teamColor);
+        this.robotController = new RobotController(TeleOpModeTemplate.class, hardwareMap, telemetry, gamepad1, gamepad2, teamColor, true);
         this.robotController.initSubSystems();
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        this.robotController.run();
     }
 }

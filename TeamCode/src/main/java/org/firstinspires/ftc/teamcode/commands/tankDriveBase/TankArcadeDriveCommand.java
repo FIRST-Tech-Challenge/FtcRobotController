@@ -1,18 +1,16 @@
 package org.firstinspires.ftc.teamcode.commands.tankDriveBase;
 
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubsystem;
+import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
-public class TankArcadeDriveCommand extends CommandBase {
-    private final TankDriveBaseSubsystem driveBase;
+public class TankArcadeDriveCommand extends SympleCommandBase<TankDriveBaseSubsystem> {
     private final GamepadEx controller;
 
     public TankArcadeDriveCommand(TankDriveBaseSubsystem driveBase, GamepadEx controller) {
-        addRequirements(driveBase);
-        this.driveBase = driveBase;
+        super(driveBase);
         this.controller = controller;
     }
 
@@ -20,8 +18,8 @@ public class TankArcadeDriveCommand extends CommandBase {
     public void execute() {
         double speedModifier = 1 - (this.controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) * 0.5f);
 
-        double rotationSpeed = controller.getRightX() * 0.5f * (this.driveBase.isInverted() ? -1 : 1) * speedModifier;
-        double linerSpeed = controller.getLeftY() * 0.8f * (this.driveBase.isInverted() ? -1 : 1) * speedModifier;
+        double rotationSpeed = controller.getRightX() * 0.5f * (this.subsystem.isInverted() ? -1 : 1) * speedModifier;
+        double linerSpeed = controller.getLeftY() * 0.8f * (this.subsystem.isInverted() ? -1 : 1) * speedModifier;
 
         double rawLeftSpeed = (linerSpeed + rotationSpeed);
         double rawRightSpeed = (linerSpeed - rotationSpeed);
@@ -39,6 +37,6 @@ public class TankArcadeDriveCommand extends CommandBase {
             normalizedRightSpeed = rawRightSpeed / maxValue;
         }
 
-        this.driveBase.moveMotors(normalizedLeftSpeed, normalizedRightSpeed);
+        this.subsystem.moveMotors(normalizedLeftSpeed, normalizedRightSpeed);
     }
 }

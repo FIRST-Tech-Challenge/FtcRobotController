@@ -15,7 +15,13 @@ public class DebugOpMode extends SympleCommandOpMode {
 
     @Override
     public void initialize() {
-        this.robotController = new RobotController(DebugOpModeTemplate.class, hardwareMap, telemetry, gamepad1, gamepad2, this.teamColor);
+        this.robotController = new RobotController(DebugOpModeTemplate.class, hardwareMap, telemetry, gamepad1, gamepad2, this.teamColor, true);
         this.robotController.initSubSystems();
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        this.robotController.run();
     }
 }

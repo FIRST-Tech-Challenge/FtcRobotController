@@ -3,14 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.opModes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.util.TeamColor;
+import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubSystemBase;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -22,44 +23,58 @@ public class RobotController {
     public final GamepadEx driverController;
     public final GamepadEx actionController;
 
-    private final HashMap<Class<? extends Subsystem>, Subsystem> subsystemHashMap = new HashMap<>();
+    private final HashMap<Class<? extends SympleSubSystemBase>, SympleSubSystemBase> subsystemHashMap = new HashMap<>();
     private final OpModeTemplate opModeTemplate;
 
     private final HardwareMap hardwareMap;
     private final MultipleTelemetry telemetry;
     private final TeamColor teamColor;
+    private final DataLogger dataLogger;
 
-    public RobotController(Class<? extends OpModeTemplate> opModeTemplateClazz, HardwareMap hMap, Telemetry telemetry, Gamepad driverController, Gamepad actionController, TeamColor teamColor) {
+    public RobotController(Class<? extends OpModeTemplate> opModeTemplateClazz, HardwareMap hMap, Telemetry telemetry, Gamepad driverController, Gamepad actionController, TeamColor teamColor, boolean logData) {
         this.hardwareMap = hMap;
         this.teamColor = teamColor;
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        this.dataLogger = new DataLogger(opModeTemplateClazz.getSimpleName(), !logData);
+
+        this.dataLogger.addData(DataLogger.DataType.INFO, String.format("RobotController: starting on the '%s' team, with '%s' as the op mode template", teamColor.name(), opModeTemplateClazz.getSimpleName()));
 
         this.driverController = new GamepadEx(driverController);
         this.actionController = new GamepadEx(actionController);
 
+        this.dataLogger.addData(DataLogger.DataType.INFO, "RobotController: resetting robot");
         FtcDashboard.getInstance().stopCameraStream();
         SympleGraphDisplay.getInstance().reset();
         SympleGraphDisplay.getInstance().setUpdateTime(0.05);
         CommandScheduler.getInstance().reset();
 
+        this.dataLogger.addData(DataLogger.DataType.INFO, String.format("RobotController: trying to create the op template (%s)", opModeTemplateClazz.getSimpleName()));
         try {
             Constructor<? extends OpModeTemplate> opModeTemplateConstructor = opModeTemplateClazz.getDeclaredConstructor();
             opModeTemplateConstructor.setAccessible(true);
             this.opModeTemplate = opModeTemplateConstructor.newInstance();
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+            this.dataLogger.addData(DataLogger.DataType.ERROR, "RobotController: failed to create op mode template");
+            this.dataLogger.addThrowable(e);
             throw new RuntimeException(e);
         }
     }
 
     public void initSubSystems() {
-        for(Class<? extends Subsystem> subsystem : this.opModeTemplate.getSubsystems()) {
+        this.dataLogger.addData(DataLogger.DataType.INFO, "RobotController: Starting to initialize subsystems");
+        for(Class<? extends SympleSubSystemBase> subsystem : this.opModeTemplate.getSubsystems()) {
+            this.dataLogger.addData(DataLogger.DataType.INFO, "RobotController: initializing '" + subsystem.getSimpleName() + "' sub system");
             try {
                 subsystemHashMap.put(subsystem, subsystem.getDeclaredConstructor(RobotController.class).newInstance(this));
             } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
-                telemetry.addData("RobotController", String.format("failed to initialize the '%s' subsystem.", subsystem.getSimpleName()));
+                String err = String.format("failed to initialize the '%s' sub system.", subsystem.getSimpleName());
+                telemetry.addData("RobotController", err);
+                this.dataLogger.addData(DataLogger.DataType.WARN, "RobotController: " + err);
+                this.dataLogger.addThrowable(e);
             }
         }
 
+        this.dataLogger.addData(DataLogger.DataType.INFO, "RobotController: creating controls");
         this.opModeTemplate.createControls(this.driverController, this.actionController, this);
 
         telemetry.update();
@@ -67,7 +82,8 @@ public class RobotController {
         this.opModeTemplate.init(this);
     }
 
-    public <T extends Subsystem> T getSubsystem(Class<T> clazz) {
+    @SuppressWarnings("unchecked")
+    public <T extends SympleSubSystemBase> T getSubsystem(Class<T> clazz) {
         return (T) this.subsystemHashMap.get(clazz);
     }
 
@@ -85,5 +101,9 @@ public class RobotController {
 
     public HardwareMap getHardwareMap() {
         return hardwareMap;
+    }
+
+    public DataLogger getDataLogger() {
+        return dataLogger;
     }
 }
