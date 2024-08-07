@@ -32,7 +32,7 @@ import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Pose3d;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.rustboard.CameraServer;
-import org.rustlib.rustboard.RustboardServer;
+import org.rustlib.rustboard.Rustboard;
 import org.rustlib.vision.AprilTagCamera;
 import org.rustlib.vision.CameraCameraActivationBox;
 
@@ -97,7 +97,7 @@ public abstract class Robot extends RobotBase {
 
     @Override
     public void mainLoop() {
-        RustboardServer.setNodeValue("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
+        Rustboard.updateTelemetryNode("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
         botPose = drive.getOdometry().getPose();
         slidePose = slide.encoder.getTicks();
     }

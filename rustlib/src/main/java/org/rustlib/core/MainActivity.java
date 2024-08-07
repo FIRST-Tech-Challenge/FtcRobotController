@@ -7,7 +7,8 @@ import java.lang.reflect.Field;
 
 public class MainActivity extends PermissionValidatorWrapper {
     public MainActivity() {
-        super();
+        if (true) throw new RuntimeException("hi");
+        //super();
         try {
             Field startApplication = PermissionValidatorWrapper.class.getDeclaredField("startApplication");
             startApplication.setAccessible(true);

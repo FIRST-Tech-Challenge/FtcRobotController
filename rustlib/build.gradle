@@ -1,5 +1,19 @@
 apply plugin: 'com.android.library'
 
+
+buildscript {
+    repositories {
+        flatDir {
+            dirs("libs")
+        }
+    }
+    dependencies {
+        classpath("org.fe2o3:ModifyFTCManifest-1.0")
+    }
+}
+
+apply plugin: org.fe2o3.ModifyManifestPlugin
+
 android {
     namespace "org.rustlib"
 

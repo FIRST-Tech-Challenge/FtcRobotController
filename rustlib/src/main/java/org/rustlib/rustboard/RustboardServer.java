@@ -2,9 +2,6 @@ package org.rustlib.rustboard;
 
 import static org.rustlib.config.Loader.defaultStorageDirectory;
 
-import android.util.Pair;
-
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
@@ -18,15 +15,18 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 
+import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 public class RustboardServer extends WebSocketServer {
@@ -36,9 +36,6 @@ public class RustboardServer extends WebSocketServer {
     private static final File storedRustboardDir = new File(rustboardStorageDir + "\\rustboards");
     private static RustboardServer instance = null;
     private static boolean debugMode = true;
-    ElapsedTime timer;
-    private ArrayList<Pair<String, String>> messageQueue = new ArrayList<>();
-    private long timeOffset = 0;
     private Rustboard activeRustboard;
     private final JsonObject rustboardMetaData;
     private final HashSet<String> storedRustboardIds = new HashSet<>();
@@ -46,31 +43,42 @@ public class RustboardServer extends WebSocketServer {
 
     private final Set<WebSocket> connections = new HashSet<>();
 
-    private ClientUpdater clientUpdater = ClientUpdater.getInstance();
-
     public Rustboard getActiveRustboard() {
+        if (activeRustboard == null) {
+            activeRustboard = Rustboard.emptyRustboard();
+        }
         return activeRustboard;
     }
 
     private RustboardServer(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
         setReuseAddr(true);
-        timer = new ElapsedTime();
-        if (!rustboardStorageDir.exists()) {
-            rustboardStorageDir.mkdir();
+        RobotLog.v("Rustboard server initialized");
+        if (!rustboardMetadataFile.exists()) {
+            try {
+                rustboardMetadataFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Could not start the Rustboard server: unable to load metadata file");
+            }
         }
-        rustboardMetaData = Loader.loadJsonObject(rustboardMetadataFile);
-        JsonArray dataArray = rustboardMetaData.getJsonArray("rustboards");
-        for (JsonValue value : dataArray) {
-            JsonObject data = (JsonObject) value;
-            String uuid = data.getString("uuid");
-            storedRustboardIds.add(uuid);
-            if (data.getBoolean("active")) {
-                try {
-                    activeRustboard = Rustboard.load(uuid);
-                } catch (Rustboard.NoSuchRustboardException e) {
-                    e.printStackTrace();
+        try {
+            rustboardMetaData = Loader.loadJsonObject(rustboardMetadataFile);
+            JsonArray dataArray = rustboardMetaData.getJsonArray("rustboards");
+            for (JsonValue value : dataArray) {
+                JsonObject data = (JsonObject) value;
+                String uuid = data.getString("uuid");
+                storedRustboardIds.add(uuid);
+                if (data.getBoolean("active")) {
+                    try {
+                        activeRustboard = Rustboard.load(uuid);
+                    } catch (Rustboard.NoSuchRustboardException e) {
+                        e.printStackTrace();
+                    }
                 }
+            }
+        } finally {
+            if (!rustboardStorageDir.exists()) {
+                rustboardStorageDir.mkdir();
             }
         }
     }
@@ -148,6 +156,12 @@ public class RustboardServer extends WebSocketServer {
         log("client " + conn.getRemoteSocketAddress().toString() + " disconnected from the robot.");
     }
 
+    void setActiveRustboard(Rustboard rustboard) {
+        if (activeRustboard == null) {
+            activeRustboard = Objects.requireNonNull(rustboard);
+        }
+    }
+
     @Override
     @SuppressWarnings("ConstantConditions")
     public void onMessage(WebSocket conn, String message) {
@@ -177,7 +191,7 @@ public class RustboardServer extends WebSocketServer {
 
                 break;
             case "exception":
-                throw new RuntimeException(messageJson.getString("exception_message"));
+                throw new RustboardException(messageJson.getString("exception_message"));
             default:
                 if (activeRustboard != null) {
                     activeRustboard.onMessage(messageJson);
@@ -186,7 +200,17 @@ public class RustboardServer extends WebSocketServer {
     }
 
     public void saveAll() {
-        loadedRustboards.forEach(((uuid, rustboard) -> rustboard.save(new File(rustboardStorageDir, uuid + ".json")))); // TODO: add method to get file
+        JsonObjectBuilder metadataBuilder = Json.createObjectBuilder(rustboardMetaData);
+        JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder(rustboardMetaData.getJsonArray("rustboards"));
+        metadataBuilder.add("rustboards", rustboardArrayBuilder);
+        loadedRustboards.forEach((uuid, rustboard) -> {
+                    JsonObjectBuilder rustboardDescriptor = Json.createObjectBuilder();
+                    rustboardDescriptor.add("uuid", uuid);
+                    rustboardDescriptor.add("active", rustboard == activeRustboard);
+                    rustboardArrayBuilder.add(rustboardDescriptor);
+                    rustboard.save(new File(rustboardStorageDir, uuid + ".json"));
+                }
+        ); // TODO: add method to get file
     }
 
     @Override
@@ -200,5 +224,11 @@ public class RustboardServer extends WebSocketServer {
 
     public List<OpModeMeta> getRegisteredOpModes() {
         return RegisteredOpModes.getInstance().getOpModes();
+    }
+
+    public class RustboardException extends RuntimeException {
+        public RustboardException(String message) {
+            super(message);
+        }
     }
 }

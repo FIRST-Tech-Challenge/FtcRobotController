@@ -10,7 +10,7 @@ import org.rustlib.drive.MecanumBase;
 import org.rustlib.drive.Odometry;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.hardware.PairedEncoder;
-import org.rustlib.rustboard.RustboardServer;
+import org.rustlib.rustboard.Rustboard;
 
 public class Drive extends DriveSubsystem {
     private final MecanumBase base;
@@ -54,7 +54,7 @@ public class Drive extends DriveSubsystem {
 
     public void drive(double drive, double strafe, double turn, double heading) {
         base.drive(drive * multiplier, strafe * multiplier, turn * multiplier, heading - fieldCentricOffset.getAngleRadians(), false);
-        RustboardServer.setNodeValue("input", "drive: " + drive + " strafe: " + strafe + " turn: " + turn);
+        Rustboard.updateTelemetryNode("input", "drive: " + drive + " strafe: " + strafe + " turn: " + turn);
     }
 
     @Override
@@ -76,16 +76,15 @@ public class Drive extends DriveSubsystem {
 
     @Override
     public void periodic() {
-        RustboardServer.setNodeValue("pose", odometry.getPose().toString());
-        RustboardLayout layout = RustboardServer.getRustboardLayout("dashboard_0");
+        Rustboard.updateTelemetryNode("pose", odometry.getPose().toString());
         base.driveController.setGains(new PIDController.PIDGains(
-                layout.getDoubleValue("drive kP", 0.1),
-                layout.getDoubleValue("drive kI", 0.0),
-                layout.getDoubleValue("drive kD", 0.0001)));
+                Rustboard.getDouble("drive kP", 0.1),
+                Rustboard.getDouble("drive kI", 0.0),
+                Rustboard.getDouble("drive kD", 0.0001)));
         base.rotController.setGains(new PIDController.PIDGains(
-                layout.getDoubleValue("rot kP", 1.0),
-                layout.getDoubleValue("rot kI", 0.0),
-                layout.getDoubleValue("rot kD", 0.0)));
+                Rustboard.getDouble("rot kP", 1.0),
+                Rustboard.getDouble("rot kI", 0.0),
+                Rustboard.getDouble("rot kD", 0.0)));
     }
 
     public enum Mode {

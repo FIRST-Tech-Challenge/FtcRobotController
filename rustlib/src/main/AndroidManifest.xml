@@ -1,48 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="53"
     android:versionName="9.1">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <application>
 
-        <!-- Indicates to the ControlHubUpdater what the latest version of the Control Hub is that this app supports -->
-        <meta-data
-            android:name="org.firstinspires.latestSupportedControlHubVersion"
-            android:value="1" />
-
-        <!-- The main robot controller activity -->
-        <activity
-            android:name=".core.MainActivity"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-
-        <activity
-            android:name=".core.RobotControllerActivity"
-            android:launchMode="singleTask">
-
-            <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
-
-            <!--org.firstinspires.main.entry indicates that this app is compatible with the Dragonboard Control Hub-->
-            <meta-data
-                android:name="org.firstinspires.main.entry"
-                android:value="true" />
-        </activity>
-
-        <activity
-            android:name="org.firstinspires.ftc.robotcontroller.internal.PermissionValidatorWrapper"
-            tools:node="remove" />
-        <activity
-            android:name="org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity"
-            tools:node="remove" />
-    </application>
 </manifest>

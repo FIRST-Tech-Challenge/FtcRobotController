@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.rustlib.commandsystem.Subsystem;
-import org.rustlib.rustboard.RustboardServer;
+import org.rustlib.rustboard.Rustboard;
 
 public class PurplePixelPlacer extends Subsystem {
 
@@ -15,10 +15,10 @@ public class PurplePixelPlacer extends Subsystem {
     }
 
     public void place() {
-        servo.setPosition(RustboardServer.getDoubleValue("purple place", 0.95));
+        servo.setPosition(Rustboard.getDouble("purple place", 0.95));
     }
 
     public void retract() {
-        servo.setPosition(RustboardServer.getDoubleValue("purple retract", 0.6));
+        servo.setPosition(Rustboard.getDouble("purple retract", 0.6));
     }
 }

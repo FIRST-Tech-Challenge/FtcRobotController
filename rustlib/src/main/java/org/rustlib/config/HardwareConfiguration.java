@@ -264,15 +264,6 @@ public class HardwareConfiguration {
             return this;
         }
 
-        private void addDevice(String elementName, String deviceId, Node parent, XmlAttribute... attributes) {
-            Element child = xml.createElement(elementName);
-            child.setAttribute("name", deviceId);
-            for (XmlAttribute attribute : attributes) {
-                child.setAttribute(attribute.name, attribute.content);
-            }
-            parent.appendChild(child);
-        }
-
         private void addHardwareDevice(String id, int port, XmlDevice deviceType, int bus, HubType parentModule) {
             devices.add(new Device(id, (Enum) deviceType, port, bus, deviceType.getXmlTagName(), parentModule));
         }

@@ -77,17 +77,29 @@ public class Rustboard {
         this.uuid = uuid;
     }
 
-    public Rustboard(String uuid, Set<RustboardNode> nodes) {
+    Rustboard(String uuid, Set<RustboardNode> nodes) {
         this.uuid = uuid;
         this.nodes.addAll(nodes);
+    }
+
+    static Rustboard emptyRustboard() {
+        return new Rustboard(null, new HashSet<>());
     }
 
     Rustboard(Builder builder) {
         this.uuid = builder.uuid;
     }
 
-    public static Rustboard getActiveRustboard() {
+    static Rustboard getActiveRustboard() {
         return RustboardServer.getInstance().getActiveRustboard();
+    }
+
+    static Rustboard requireActiveRustboard() {
+        Rustboard activeRustboard = RustboardServer.getInstance().getActiveRustboard();
+        if (activeRustboard == null) {
+            throw new NullPointerException("No active rustboard available");
+        }
+        return activeRustboard;
     }
 
     WebSocket getConnection() {
@@ -225,100 +237,105 @@ public class Rustboard {
         }
     }
 
-    public static void updatePositionGraphNode(String id, Pose2d position) {
-        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.POSITION_GRAPH).update((position));
+    private static void updateNode(String id, Type type, Object value) {
+        Rustboard activeRustboard = RustboardServer.getInstance().getActiveRustboard();
+        try {
+            activeRustboard.getNode(id, type).update(value);
+        } catch (NoSuchNodeException e) {
+            activeRustboard.nodes.add(new RustboardNode(id, type, value.toString()));
+        }
     }
 
-    public static void updateSelectorValueNode(String id, String value) {
-        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.SELECTOR).update((value));
+    public static void updatePositionGraphNode(String id, Pose2d position) {
+        updateNode(id, Type.POSITION_GRAPH, position);
+    }
+
+    public static void updateSelectorNode(String id, String option) {
+        updateNode(id, Type.SELECTOR, option);
     }
 
     public static void updateTelemetryNode(String id, Object value) {
-        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.TEXT_TELEMETRY).update((value));
+        updateNode(id, Type.TEXT_TELEMETRY, value);
     }
 
     public static void updateInputNode(String id, Object value) {
-        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.TEXT_INPUT).update((value));
+        updateNode(id, Type.TEXT_INPUT, value);
     }
 
     public static void updateBooleanTelemetryNode(String id, boolean value) {
-        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.BOOLEAN_TELEMETRY).update((value));
+        updateNode(id, Type.BOOLEAN_TELEMETRY, value);
     }
 
     public static void updateToggleNode(String id, boolean value) {
-        RustboardServer.getInstance().getActiveRustboard().getNode(id, Type.TOGGLE).update(value);
+        updateNode(id, Type.TOGGLE, value);
     }
 
-    public void updatePositionGraph(String id, Pose2d position) {
-        getNode(id, Type.POSITION_GRAPH).update((position));
+    public static void updatePositionGraph(String id, Pose2d position) {
+        updateNode(id, Type.POSITION_GRAPH, position);
     }
 
-    public void updateSelectorValue(String id, String value) {
-        getNode(id, Type.SELECTOR).update((value));
-    }
-
-    public void updateTelemetry(String id, Object value) {
-        getNode(id, Type.TEXT_TELEMETRY).update((value));
-    }
-
-    public void updateInput(String id, Object value) {
-        getNode(id, Type.TEXT_INPUT).update((value));
-    }
-
-    public void updateBooleanTelemetry(String id, boolean value) {
-        getNode(id, Type.BOOLEAN_TELEMETRY).update((value));
-    }
-
-    public void updateToggle(String id, boolean value) {
-        getNode(id, Type.TOGGLE).update(value);
-    }
-
-    public String getInputValue(String id, String defaultValue) {
+    public static String getString(String id, String defaultValue) {
         try {
-            return getNode(id, Type.TEXT_INPUT).getState();
+            return requireActiveRustboard().getNode(id, Type.TEXT_INPUT).getState();
+        } catch (NoSuchNodeException | NullPointerException e) {
+            return defaultValue;
+        }
+    }
+
+    public static String getString(String id) throws NoSuchNodeException, NullPointerException {
+        return getActiveRustboard().getNode(id, Type.TEXT_INPUT).getState();
+    }
+
+    public static String safeGetString(String id) {
+        return getString(id, "");
+    }
+
+    public static double getDouble(String id, double defaultValue) {
+        try {
+            return Double.parseDouble(getString(id));
+        } catch (NumberFormatException | NoSuchNodeException | NullPointerException e) {
+            return defaultValue;
+        }
+    }
+
+    public static double getDouble(String id) throws NumberFormatException, NoSuchNodeException, NullPointerException {
+        return Double.parseDouble(getString(id));
+    }
+
+    public static double safeGetDouble(String id) {
+        return getDouble(id, 0);
+    }
+
+    public static boolean getToggleValue(String id, boolean defaultValue) {
+        try {
+            return Boolean.parseBoolean(getActiveRustboard().getNode(id, Type.TOGGLE).getState());
         } catch (NoSuchNodeException e) {
             return defaultValue;
         }
     }
 
-    public String getInputValue(String id) throws NoSuchNodeException {
-        return getNode(id, Type.TEXT_INPUT).getState();
+    public static boolean getToggleValue(String id) throws NoSuchNodeException {
+        return Boolean.parseBoolean(getActiveRustboard().getNode(id, Type.TOGGLE).getState());
     }
 
-    public String safeGetInputValue(String id) {
-        return getInputValue(id, "");
-    }
-
-    public boolean getToggleValue(String id, boolean defaultValue) {
-        try {
-            return Boolean.parseBoolean(getNode(id, Type.TOGGLE).getState());
-        } catch (NoSuchNodeException e) {
-            return defaultValue;
-        }
-    }
-
-    public boolean getToggleValue(String id) throws NoSuchNodeException {
-        return Boolean.parseBoolean(getNode(id, Type.TOGGLE).getState());
-    }
-
-    public boolean safeGetToggleValue(String id) {
+    public static boolean safeGetToggleValue(String id) {
         return getToggleValue(id, false);
     }
 
-    public String getSelectorValue(String id, String defaultValue) {
+    public static String getSelectedOption(String id, String defaultValue) {
         try {
-            return getNode(id, Type.SELECTOR).getState();
+            return getActiveRustboard().getNode(id, Type.SELECTOR).getState();
         } catch (NoSuchNodeException e) {
             return defaultValue;
         }
     }
 
-    public String getSelectorValue(String id) throws NoSuchNodeException {
-        return getNode(id, Type.SELECTOR).getState();
+    public static String getSelectedOption(String id) throws NoSuchNodeException {
+        return getActiveRustboard().getNode(id, Type.SELECTOR).getState();
     }
 
-    public String safeGetSelectorValue(String id) {
-        return getSelectorValue(id, null);
+    public String safeGetSelectedOption(String id) {
+        return getSelectedOption(id, null);
     }
 
     JsonObject getJson() {
