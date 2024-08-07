@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode;  //place where the code is located
+package org.firstinspires.ftc.teamcode.networkTestH;
 
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.openftc.easyopencv.OpenCvPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,7 +15,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-@Disabled
 
 @TeleOp(name = "Wifi Video Stream", group = "Example")
 public class Wifi_Video_Stream extends LinearOpMode {
@@ -143,19 +140,20 @@ public class Wifi_Video_Stream extends LinearOpMode {
                         while (sendData && clientSocket.isConnected()) {
                             if (dis.available() > 0) {
                                 String response = dis.readUTF();
-                                while (response.equals("pildi protsessimine")) {
-                                    telemetry.addData("Info", "Infot pole");
-                                    telemetry.update();
-                                }
-                                telemetry.addData("Info", "info on");
+                                telemetry.addData("Info", "Received: " + response);
                                 telemetry.update();
-                            }
-
-                            byte[] imageData = captureFrame();
-                            if (imageData != null) {
-                                dos.writeInt(imageData.length);  // Send the length of the image data
-                                dos.write(imageData);            // Send the image data itself
-                                dos.flush();
+                                if (response.contains("ready for next frame")) {
+                                    response.replace("ready for next frame", "");
+                                    byte[] imageData = captureFrame();
+                                    if (imageData != null) {
+                                        dos.writeInt(imageData.length);  // Send the length of the image data
+                                        dos.write(imageData);            // Send the image data itself
+                                        dos.flush();
+                                    } else {
+                                        dos.writeInt(0);  // Indicate no frame captured
+                                        dos.flush();
+                                    }
+                                }
                             }
 
                             Thread.yield();  // Yield to avoid blocking
@@ -170,11 +168,6 @@ public class Wifi_Video_Stream extends LinearOpMode {
                         telemetry.addData("Error", e.getMessage());
                         telemetry.update();
                         e.printStackTrace();
-                        try {
-                            Thread.sleep(1000);  // Wait before retrying connection
-                        } catch (Exception eew){
-
-                        }
                     } finally {
                         if (dos != null) {
                             try {
