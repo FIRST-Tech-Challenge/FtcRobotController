@@ -89,6 +89,7 @@ public class Bot extends RobotDrive{
                 intkpwr = 0.0;
             }
         }
+        intake.setPower(intkpwr );
     }
 
     //lefttrigger for power changing
