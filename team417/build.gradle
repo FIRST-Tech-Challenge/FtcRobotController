@@ -43,6 +43,7 @@ repositories {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation project(path: ':WilyWorks')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     implementation "com.acmerobotics.roadrunner:ftc:0.1.13"

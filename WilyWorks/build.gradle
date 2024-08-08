@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    jcenter()
+    maven { url = 'https://maven.brott.dev/' }
+}
+
+dependencies {
+    implementation "com.acmerobotics.roadrunner:core:1.0.0"
+}

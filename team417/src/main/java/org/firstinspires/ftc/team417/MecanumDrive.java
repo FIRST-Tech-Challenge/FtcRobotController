@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.team417;
 
+import static java.lang.Math.max;
+import static java.lang.System.nanoTime;
+
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -21,6 +26,7 @@ import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Rotation2dDual;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
@@ -47,12 +53,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import com.wilyworks.common.WilyWorks;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.team417.messages.DriveCommandMessage;
 import org.firstinspires.ftc.team417.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.team417.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.team417.messages.PoseMessage;
+import org.firstinspires.inspection.InspectionState;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -61,42 +70,95 @@ import java.util.List;
 @Config
 public final class MecanumDrive {
     public static class Params {
-        // IMU orientation
-        // TODO: fill in these values based on
-        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        Params() {
+            // path profile parameters (in inches)
+            maxWheelVel = 50;
+            minProfileAccel = -30;
+            maxProfileAccel = 50;
 
-        // drive model parameters
-        public double inPerTick = 1;
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 0;
+            // turn profile parameters (in radians)
+            maxAngVel = Math.PI; // shared with path
+            maxAngAccel = Math.PI;
 
-        // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
-        public double kA = 0;
+            axialVelGain = 0.0;
+            lateralVelGain = 0.0;
+            headingVelGain = 0.0; // shared with turn
 
-        // path profile parameters (in inches)
-        public double maxWheelVel = 50;
-        public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+            if (isDevBot) {
+                // IMU orientation
+                logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
-        // turn profile parameters (in radians)
-        public double maxAngVel = Math.PI; // shared with path
-        public double maxAngAccel = Math.PI;
+                // drive model parameters
+                inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
+                lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
+                trackWidthTicks = 690.3255416844875;
 
-        // path controller gains
-        public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 0.0; // shared with turn
+                // feedforward parameters (in tick units)
+                kS = 0.6298460597755153; // Voltage
+                kV = 0.004317546531109388;
+                kA = 0;
 
-        public double axialVelGain = 0.0;
-        public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+                // path controller gains
+                axialGain = 20.0;
+                lateralGain = 8.0;
+                headingGain = 8.0; // shared with turn
+            } else {
+                // IMU orientation
+                logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+
+                // drive model parameters
+                inPerTick = 1;
+                lateralInPerTick = inPerTick;
+                trackWidthTicks = 0;
+
+                // feedforward parameters (in tick units)
+                kS = 0;
+                kV = 0;
+                kA = 0;
+
+                // path controller gains
+                axialGain = 0.0;
+                lateralGain = 0.0;
+                headingGain = 0.0; // shared with turn
+            }
+        }
+
+        public double maxWheelVel;
+        public double minProfileAccel;
+        public double maxProfileAccel;
+
+        public double maxAngVel;
+        public double maxAngAccel;
+
+        public double axialVelGain;
+        public double lateralVelGain;
+        public double headingVelGain;
+
+        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection;
+        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection;
+
+        public double inPerTick;
+        public double lateralInPerTick;
+        public double trackWidthTicks;
+
+        public double kS;
+        public double kV;
+        public double kA;
+
+        public double axialGain;
+        public double lateralGain;
+        public double headingGain;
     }
+
+    public static String getBotName() {
+        InspectionState inspection=new InspectionState();
+        inspection.initializeLocal();
+        Log.d("roadrunner", String.format("Device name:" + inspection.deviceName));
+        return inspection.deviceName;
+    }
+    public static boolean isDevBot = getBotName().equals("DevBot");
 
     public static Params PARAMS = new Params();
 
@@ -121,6 +183,7 @@ public final class MecanumDrive {
 
     public final Localizer localizer;
     public Pose2d pose;
+    public PoseVelocity2d poseVelocity; // Robot-relative, not field-relative
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
@@ -216,6 +279,8 @@ public final class MecanumDrive {
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
+        WilyWorks.setStartPose(pose, new PoseVelocity2d(new Vector2d(0, 0), 0));
+
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -224,10 +289,24 @@ public final class MecanumDrive {
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        //noinspection IfStatementWithIdenticalBranches
+        if (isDevBot) {
+            leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+            leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+            rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+            rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+            leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+            leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+        } else {
+            leftFront = hardwareMap.get(DcMotorEx.class, "???");
+            leftBack = hardwareMap.get(DcMotorEx.class, "???");
+            rightBack = hardwareMap.get(DcMotorEx.class, "???");
+            rightFront = hardwareMap.get(DcMotorEx.class, "???");
+
+            leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+            leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+        }
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -250,6 +329,10 @@ public final class MecanumDrive {
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
+        // If running under Wily Works, request the drive powers directly:
+        if (WilyWorks.setDrivePowers(powers, new PoseVelocity2d(new Vector2d(0, 0), 0)))
+            return; // ====>
+
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
 
@@ -262,6 +345,117 @@ public final class MecanumDrive {
         leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
         rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
+    }
+
+    // Used by setDrivePowers to calculate acceleration:
+    PoseVelocity2d previousAssistVelocity = new PoseVelocity2d(new Vector2d(0, 0), 0);
+    double previousAssistSeconds = 0; // Previous call's nanoTime() in seconds
+
+    /**
+     * Power the motors according to the specified velocities. 'stickVelocity' is for controller
+     * input and 'assistVelocity' is for computed driver assistance. The former is specified in
+     * voltage values normalized from -1 to 1 (just like the regular DcMotor::SetPower() API)
+     * whereas the latter is in inches/s or radians/s. Both types of velocities can be specified
+     * at the same time in which case the velocities are added together (to allow assist and stick
+     * control to blend together, for example).
+     * <br>
+     * It's also possible to map the controller input to inches/s and radians/s instead of the
+     * normalized -1 to 1 voltage range. You can reference MecanumDrive.PARAMS.maxWheelVel and
+     * .maxAngVel to determine the range to specify. Note however that the robot can actually
+     * go faster than Road Runner's PARAMS values so you would be unnecessarily slowing your
+     * robot down.
+     * @noinspection unused
+     */
+    public void setDrivePowers(
+            // Current pose:
+            Pose2d pose,
+            // Current velocity:
+            PoseVelocity2d poseVelocity,
+            // Desired manual power velocity, normalized voltage from -1 to 1, robot-relative
+            // coordinates, can be null:
+            PoseVelocity2d stickVelocity,
+            // Desired computed power velocity, inches/s and radians/s, field-relative coordinates,
+            // can be null:
+            PoseVelocity2d assistVelocity)
+    {
+        if (stickVelocity == null)
+            stickVelocity = new PoseVelocity2d(new Vector2d(0, 0), 0);
+        if (assistVelocity == null)
+            assistVelocity = new PoseVelocity2d(new Vector2d(0, 0), 0);
+
+        // If running under Wily Works, request the drive powers directly:
+        if (WilyWorks.setDrivePowers(stickVelocity, assistVelocity))
+            return; // ====>
+
+        // Compute the assist acceleration as the difference between the new assist velocity
+        // and the old divided by delta-t:
+        double currentSeconds = nanoTime() * 1e-9;
+        //noinspection ExtractMethodRecommender
+        PoseVelocity2d assistAcceleration = new PoseVelocity2d(new Vector2d(0, 0), 0);
+        if (previousAssistSeconds != 0) {
+            double deltaT = currentSeconds - previousAssistSeconds;
+            assistAcceleration = new PoseVelocity2d(new Vector2d(
+                    (assistVelocity.linearVel.x - previousAssistVelocity.linearVel.x) / deltaT,
+                    (assistVelocity.linearVel.y - previousAssistVelocity.linearVel.y) / deltaT),
+                    (assistVelocity.angVel - previousAssistVelocity.angVel) / deltaT);
+        }
+        previousAssistSeconds = currentSeconds;
+
+        // Remember the current velocity for next time:
+        previousAssistVelocity = new PoseVelocity2d(new Vector2d(
+                assistVelocity.linearVel.x,assistVelocity.linearVel.y), assistVelocity.angVel);
+
+        // Compute the wheel powers for the stick contribution:
+        MecanumKinematics.WheelVelocities<Time> manualVels = new MecanumKinematics(1).inverse(
+                PoseVelocity2dDual.constant(stickVelocity, 1));
+
+        double leftFrontPower = manualVels.leftFront.get(0);
+        double leftBackPower = manualVels.leftBack.get(0);
+        double rightBackPower = manualVels.rightBack.get(0);
+        double rightFrontPower = manualVels.rightFront.get(0);
+
+        // Compute the wheel powers for the assist:
+        double[] x = { pose.position.x, assistVelocity.linearVel.x, assistAcceleration.linearVel.x };
+        double[] y = { pose.position.y, assistVelocity.linearVel.y, assistAcceleration.linearVel.y };
+        double[] angular = { pose.heading.log(), assistVelocity.angVel, assistAcceleration.angVel };
+
+        Pose2dDual<Time> computedDualPose = new Pose2dDual<>(
+                new Vector2dDual<>(new DualNum<>(x), new DualNum<>(y)),
+                Rotation2dDual.exp(new DualNum<>(angular)));
+
+        // Compute the feedforward for the assist while disabling the PID portion of the PIDF:
+        PoseVelocity2dDual<Time> command = new HolonomicController(0, 0, 0)
+                .compute(computedDualPose, pose, poseVelocity);
+
+        MecanumKinematics.WheelVelocities<Time> assistVels = kinematics.inverse(command);
+
+        double voltage = voltageSensor.getVoltage();
+        final MotorFeedforward feedforward = new MotorFeedforward(
+                PARAMS.kS, PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
+
+        // Check for zero velocities and accelerations to avoid adding 'kS'. Arguably these
+        // should be epsilon compares but equality is fine for checking when the assist is
+        // disabled:
+        if ((assistVels.leftFront.get(0) != 0) || (assistVels.leftFront.get(1) != 0))
+            leftFrontPower += feedforward.compute(assistVels.leftFront) / voltage;
+
+        if ((assistVels.leftBack.get(0) != 0) || (assistVels.leftBack.get(1) != 0))
+            leftBackPower += feedforward.compute(assistVels.leftBack) / voltage;
+
+        if ((assistVels.rightBack.get(0) != 0) || (assistVels.rightBack.get(1) != 0))
+            rightBackPower += feedforward.compute(assistVels.rightBack) / voltage;
+
+        if ((assistVels.rightFront.get(0) != 0) || (assistVels.rightFront.get(1) != 0))
+            rightFrontPower += feedforward.compute(assistVels.rightFront) / voltage;
+
+        // Normalize if any powers are more than 1:
+        double maxPower = max(max(max(max(1, leftFrontPower), leftBackPower), rightBackPower), rightFrontPower);
+
+        // Set the power to the motors:
+        leftFront.setPower(leftFrontPower / maxPower);
+        leftBack.setPower(leftBackPower / maxPower);
+        rightBack.setPower(rightBackPower / maxPower);
+        rightFront.setPower(rightFrontPower / maxPower);
     }
 
     public final class FollowTrajectoryAction implements Action {
@@ -315,6 +509,9 @@ public final class MecanumDrive {
             )
                     .compute(txWorldTarget, pose, robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
+
+            // Enlighten Wily Works as to where we should be:
+            WilyWorks.runTo(txWorldTarget.value(), txWorldTarget.velocity().value());
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
             double voltage = voltageSensor.getVoltage();
@@ -408,6 +605,9 @@ public final class MecanumDrive {
                     .compute(txWorldTarget, pose, robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
 
+            // Enlighten Wily Works as to where we should be:
+            WilyWorks.runTo(txWorldTarget.value(), txWorldTarget.velocity().value());
+
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
             double voltage = voltageSensor.getVoltage();
             final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS,
@@ -448,7 +648,11 @@ public final class MecanumDrive {
     }
 
     public PoseVelocity2d updatePoseEstimate() {
-        Twist2dDual<Time> twist = localizer.update();
+        Twist2dDual<Time> twist = WilyWorks.localizerUpdate();
+        if (twist == null) {
+            twist = localizer.update();
+        }
+
         pose = pose.plus(twist.value());
 
         poseHistory.add(pose);
@@ -492,5 +696,36 @@ public final class MecanumDrive {
                 defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint
         );
+    }
+
+    // List of currently running Actions:
+    LinkedList<Action> actionList = new LinkedList<>();
+
+    /** @noinspection unused*/ // Invoke an Action to run in parallel during TeleOp:
+    public void runParallel(Action action) {
+        actionList.add(action);
+    }
+
+    /** @noinspection unused*/
+    // On every iteration of your robot loop, call 'doActionsWork'. Specify the packet
+    // if you're drawing on the graph for FTC Dashboard:
+    public boolean doActionsWork(Pose2d pose, PoseVelocity2d poseVelocity, TelemetryPacket packet) {
+        this.pose = pose;
+        this.poseVelocity = poseVelocity;
+        LinkedList<Action> deletionList = new LinkedList<>();
+        for (Action action: actionList) {
+            // Once the Action returns false, the action is done:
+            if (!action.run(packet))
+                // We can't delete an item from a list while we're iterating on that list:
+                deletionList.add(action);
+        }
+        actionList.removeAll(deletionList);
+        return !actionList.isEmpty();
+    }
+
+    /** @noinspection unused*/
+    // Abort all currently running actions:
+    public void abortActions() {
+        actionList.clear();
     }
 }
