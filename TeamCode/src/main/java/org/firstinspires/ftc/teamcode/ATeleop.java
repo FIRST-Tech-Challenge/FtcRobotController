@@ -44,9 +44,9 @@ public class ATeleop extends LinearOpMode {
                 jx = nondrivebot.setspeed(gpad.left_trigger, jx);
                 jy = nondrivebot.setspeed(gpad.left_trigger, jy);
                 jw = nondrivebot.setspeed(gpad.left_trigger, jw);
-                bot.driveXYW( jx, jy, jw);
-            }
 
+            }
+            bot.driveXYW( jx, jy, jw);
 
             telemetry.addData("Status", "Running");
             telemetry.addData("heading", bot.getHeading());
