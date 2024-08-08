@@ -1,5 +1,6 @@
 include ':FtcRobotController'
 include ':TeamCode'
+include ':Team417'
 include ':Team417_CENTERSTAGE'
 include ':Team417_PowerPlay'
 include ':Team6220_CENTERSTAGE'
