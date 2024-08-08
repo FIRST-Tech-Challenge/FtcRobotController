@@ -9,8 +9,10 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.acmerobotics.roadrunner.ftc.SparkFunOTOS;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 
 /**
@@ -65,8 +67,8 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         super(hardwareMap, pose);
         otos = hardwareMap.get(SparkFunOTOS.class,"sensor_otos");
 
-        otos.setLinearUnit(SparkFunOTOS.LinearUnit.INCHES);
-        otos.setAngularUnit(SparkFunOTOS.AngularUnit.RADIANS);
+        otos.setLinearUnit(DistanceUnit.INCH);
+        otos.setAngularUnit(AngleUnit.RADIANS);
 
         otos.setOffset(PARAMS.offset);
         System.out.println("OTOS calibration beginning!");
@@ -102,9 +104,13 @@ public class SparkFunOTOSDrive extends MecanumDrive {
             // the only alternative is to add getter and setters but that breaks compat
             otos.setPosition(RRPoseToOTOSPose(pose));
         }
-        SparkFunOTOS.Pose2D[] posVelList = otos.getPosVelCorrected();
-        SparkFunOTOS.Pose2D otosPose = posVelList[0];
-        SparkFunOTOS.Pose2D otosVel = posVelList[1];
+        // passed by reference
+        // reading acc is slightly worse (1ms) for loop times but oh well, this is what the driver supports
+        // might have to make a custom driver eventually
+        SparkFunOTOS.Pose2D otosPose = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D otosVel = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D otosAcc = new SparkFunOTOS.Pose2D();
+        otos.getPosVelAcc(otosPose,otosVel,otosAcc);
         pose = OTOSPoseToRRPose(otosPose);
         lastOtosPose = pose;
 
@@ -123,4 +129,6 @@ public class SparkFunOTOSDrive extends MecanumDrive {
 
         return new PoseVelocity2d(new Vector2d(otosVel.x, otosVel.y),otosVel.h);
     }
+
+
 }
