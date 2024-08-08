@@ -1,0 +1,416 @@
+/// REGULA NR 1 - TOMA SCRIE COD PERFECT
+package org.firstinspires.ftc.teamcode2024;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.kotlin.extensions.geometry.Pose2dExtKt;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode2024.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode2024.trajectorysequence.TrajectorySequence;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode2024.drive.SampleMecanumDrive;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Autonomous(name="Albastru coltul lung", group="Linear Opmode")
+public class AlbastruColtulLung extends GlobalScope2024
+{
+    int pozitie = 0;
+    int cx = 0, cy = 0;
+    double maxArea = 0;
+    OpenCvWebcam webcam;
+    @Override
+    public void runOpMode()
+    {
+
+        class SamplePipeline extends OpenCvPipeline {
+            boolean viewportPaused;
+
+            boolean zoneFound = false;
+
+
+            @Override
+            public Mat processFrame(Mat input) {
+
+                if (true) {
+                    Mat hsvImage = new Mat();
+                    Imgproc.cvtColor(input, hsvImage, Imgproc.COLOR_RGB2BGR);
+
+                    // Define lower and upper bounds for red color in HSV
+                    Scalar lowerRed = new Scalar(150, 50, 50);
+                    Scalar upperRed = new Scalar(255, 100, 130);
+
+                    Scalar lowerBlue = new Scalar(50, 50, 150);
+                    Scalar upperBlue = new Scalar(130, 100, 255);
+
+                    // Create a binary mask for red regions
+                    Mat mask = new Mat();
+                    Mat mask2 = new Mat();
+                    Core.inRange(hsvImage, lowerRed, upperRed, mask);
+                    Core.inRange(hsvImage, lowerBlue, upperBlue, mask2);
+
+                    // Find contours in the binary mask
+                    List<MatOfPoint> contours = new ArrayList<>(), contours2 = new ArrayList<>();
+                    Mat hierarchy = new Mat();
+                    Mat hierarchy2 = new Mat();
+                    Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+                    Imgproc.findContours(mask2, contours2, hierarchy2, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+
+                    // Find the contour with the largest area (zone with the most red)
+                    maxArea = 0;
+                    MatOfPoint maxContour = null;
+                    for (MatOfPoint contour : contours) {
+                        double area = Imgproc.contourArea(contour);
+                        if (area > maxArea) {
+                            maxArea = area;
+                            maxContour = contour;
+                        }
+                    }
+
+                    for (MatOfPoint contour : contours2) {
+                        double area = Imgproc.contourArea(contour);
+                        if (area > maxArea) {
+                            maxArea = area;
+                            maxContour = contour;
+                        }
+                    }
+
+                    // Draw a circle around the identified zone
+                    if (maxContour != null) {
+                        Moments moments = Imgproc.moments(maxContour);
+                        cx = (int) (moments.get_m10() / moments.get_m00());
+                        cy = (int) (moments.get_m01() / moments.get_m00());
+
+                        int radius = 100; // You can adjust the radius as needed
+                        Imgproc.circle(input, new Point(cx, cy), radius, new Scalar(0, 255, 0), 2);
+                    }
+                    zoneFound = true;
+                    // Return the processed frame
+
+                }
+
+                Imgproc.circle(input, new Point(cx, cy), 100, new Scalar(0, 255, 0), 2);
+                if (cy <= 320)
+                    pozitie = 3;
+                else {
+                    if (cx <= 213) {
+                        // telemetry.addData("zona = 1", maxArea);
+                        if (maxArea < 0.5)
+                            pozitie = 3;
+                        else
+                            pozitie = 1;
+                    } else {
+                        if (maxArea < 0.5)
+                            pozitie = 3;
+                        else
+                            pozitie = 2;
+                    }
+                }
+                return input;
+
+
+            }
+
+
+            @Override
+            public void onViewportTapped() {
+                /*
+                 * The viewport (if one was specified in the constructor) can also be dynamically "paused"
+                 * and "resumed". The primary use case of this is to reduce CPU, memory, and power load
+                 * when you need your vision pipeline running, but do not require a live preview on the
+                 * robot controller screen. For instance, this could be useful if you wish to see the live
+                 * camera preview as you are initializing your robot, but you no longer require the live
+                 * preview after you have finished your initialization process; pausing the viewport does
+                 * not stop running your pipeline.
+                 *
+                 * Here we demonstrate dynamically pausing/resuming the viewport when the user taps it
+                 */
+
+                viewportPaused = !viewportPaused;
+
+                if (viewportPaused) {
+                    webcam.pauseViewport();
+                } else {
+                    webcam.resumeViewport();
+                }
+            }
+        }
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        webcam.setPipeline(new SamplePipeline());
+
+        webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                /*
+                 * Tell the webcam to start streaming images to us! Note that you must make sure
+                 * the resolution you specify is supported by the camera. If it is not, an exception
+                 * will be thrown.
+                 *
+                 * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
+                 * supports streaming from the webcam in the uncompressed YUV image format. This means
+                 * that the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
+                 * Streaming at e.g. 720p will limit you to up to 10FPS and so on and so forth.
+                 *
+                 * Also, we specify the rotation that the webcam is used in. This is so that the image
+                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
+                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+                 * away from the user.
+                 */
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
+
+        telemetry.addData("Arie", maxArea);
+        telemetry.addData("cx", cx);
+        telemetry.addData("pozitia este ", pozitie);
+        telemetry.update();
+        Initialise();
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        TrajectorySequence bazatus2 = drive.trajectorySequenceBuilder(new Pose2d(11.61, 67.05, Math.toRadians(270.00)))
+                .lineTo(new Vector2d(11.82, 31.97))
+                .build();
+
+
+        TrajectorySequence bazatus1 = drive.trajectorySequenceBuilder(new Pose2d(11.61, 67.05, Math.toRadians(270.00)))
+                .lineTo(new Vector2d(11.82, 37.95))
+                .lineTo(new Vector2d(22.50, 37.95))
+                .build();
+
+        TrajectorySequence b2 = drive.trajectorySequenceBuilder(bazatus2.end())
+                .lineTo(new Vector2d(11.82, 37.95))
+                .lineTo(new Vector2d(49.82, 37.95))
+                .setReversed(true)
+                .build();
+
+        /**/
+        TrajectorySequence b1 = drive.trajectorySequenceBuilder(bazatus1.end())
+                .lineTo(new Vector2d(49.82, 30.40))
+                .setReversed(true)
+                .build();
+
+        TrajectorySequence bazatus3 = drive.trajectorySequenceBuilder(new Pose2d(11.61, 67.05, Math.toRadians(270.00)))
+                .lineTo(new Vector2d(11.82, 40.05))
+                .lineTo(new Vector2d(6.83, 40.05))
+                .build();
+
+        /**/
+        TrajectorySequence b3 = drive.trajectorySequenceBuilder(bazatus3.end())
+                .lineTo(new Vector2d(49.82, 43.69))
+                .build();
+
+        TrajectorySequence endIt2 = drive.trajectorySequenceBuilder(b2.end())
+                .lineTo(new Vector2d(47.82, 66.63))
+                .lineTo(new Vector2d(57.34, 66.63))
+                .setReversed(true)
+                .build();
+
+        waitForStart();
+        drive.setPoseEstimate(new Pose2d());
+        SCutie.setPosition(0.36);
+        telemetry.addData("Ar trebui","Sa pornesc");
+        if (pozitie == 2 || pozitie == 0)
+        {
+            telemetry.addData("zona 2", pozitie);
+            telemetry.update();
+            drive.setPoseEstimate(bazatus2.start());
+            drive.followTrajectorySequence(bazatus2);
+            SPixel.setPosition(0.3);
+            sleep(500);
+            SPixel.setPosition(0);
+            //sleep(5000);
+            /**
+            drive.followTrajectorySequence(b2);
+            drive.turn(Math.toRadians(270));
+            mb1.setTargetPosition(BratArray[2]);
+            mb2.setTargetPosition(BratArray[2]);
+            mb1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mb2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep(500);
+            mb1.setPower(0.2);
+            mb2.setPower(0.2);
+            SCutie.setPosition(SCutieArray[2]);
+            while (mb1.isBusy() && mb2.isBusy() && !isStopRequested()) {
+                telemetry.addData("pozitia brat", mb1.getCurrentPosition());
+                telemetry.addData("pozitia brat2", mb2.getCurrentPosition());
+                telemetry.update();
+            }
+            SCutie.setPosition(SCutieArray[3]);
+            sleep(1000);
+            SCutie.setPosition(0.36);
+            sleep(1000);
+
+
+            mb1.setTargetPosition(BratArray[1]);
+            mb2.setTargetPosition(BratArray[1]);
+            mb1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mb2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep(500);
+            mb1.setPower(0.2);
+            mb2.setPower(0.2);
+            SCutie.setPosition(SCutieArray[1]);
+            while (mb1.isBusy() && mb2.isBusy() && !isStopRequested()) {
+                telemetry.addData("pozitia brat", mb1.getCurrentPosition());
+                telemetry.addData("pozitia brat2", mb2.getCurrentPosition());
+                telemetry.update();
+            }
+            SCutie.setPosition(0.36);
+            //   sleep(5000);
+            drive.followTrajectorySequence(endIt2);
+             */
+        }
+        else
+        if (pozitie == 1)
+        {
+
+            telemetry.addData("zona 1", pozitie);
+            telemetry.update();
+            drive.setPoseEstimate(bazatus1.start());
+            drive.followTrajectorySequence(bazatus1);
+            SPixel.setPosition(0.3);
+            sleep(500);
+            SPixel.setPosition(0);
+            /**
+            //sleep(5000);
+            drive.followTrajectorySequence(b1);
+            drive.turn(Math.toRadians(270));
+            mb1.setTargetPosition(BratArray[2]);
+            mb2.setTargetPosition(BratArray[2]);
+            mb1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mb2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep(500);
+            mb1.setPower(0.2);
+            mb2.setPower(0.2);
+            SCutie.setPosition(SCutieArray[2]);
+            while (mb1.isBusy() && mb2.isBusy() && !isStopRequested()) {
+                telemetry.addData("pozitia brat", mb1.getCurrentPosition());
+                telemetry.addData("pozitia brat2", mb2.getCurrentPosition());
+                telemetry.update();
+            }
+            sleep(3000);
+            SCutie.setPosition(SCutieArray[3]);
+            sleep(2000);
+            SCutie.setPosition(0.36);
+            sleep(1000);
+
+
+            mb1.setTargetPosition(BratArray[1]);
+            mb2.setTargetPosition(BratArray[1]);
+            mb1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mb2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep(500);
+            mb1.setPower(0.2);
+            mb2.setPower(0.2);
+            SCutie.setPosition(SCutieArray[1]);
+            while (mb1.isBusy() && mb2.isBusy() && !isStopRequested()) {
+                telemetry.addData("pozitia brat", mb1.getCurrentPosition());
+                telemetry.addData("pozitia brat2", mb2.getCurrentPosition());
+                telemetry.update();
+            }
+            SCutie.setPosition(0.36);
+            // sleep(5000);
+            drive.followTrajectorySequence(endIt2);
+             */
+        }
+        else if (pozitie == 3)
+        {
+            telemetry.addData("zona 3", pozitie);
+            telemetry.update();
+            drive.setPoseEstimate(bazatus3.start());
+            drive.followTrajectorySequence(bazatus3);
+            SPixel.setPosition(0.3);
+            //sleep(5500);
+            SPixel.setPosition(0);
+            // sleep(5000);
+            /**
+            drive.followTrajectorySequence(b3);
+            drive.turn(Math.toRadians(270));
+            mb1.setTargetPosition(BratArray[2]);
+            mb2.setTargetPosition(BratArray[2]);
+            mb1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mb2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep(500);
+            mb1.setPower(0.2);
+            mb2.setPower(0.2);
+            SCutie.setPosition(SCutieArray[2]);
+            while (mb1.isBusy() && mb2.isBusy() && !isStopRequested()) {
+                telemetry.addData("pozitia brat", mb1.getCurrentPosition());
+                telemetry.addData("pozitia brat2", mb2.getCurrentPosition());
+                telemetry.update();
+            }
+            sleep(1000);
+            SCutie.setPosition(SCutieArray[3]);
+            sleep(1000);
+            SCutie.setPosition(0.36);
+            sleep(1000);
+
+
+            mb1.setTargetPosition(BratArray[1]);
+            mb2.setTargetPosition(BratArray[1]);
+            mb1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mb2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep(500);
+            mb1.setPower(0.2);
+            mb2.setPower(0.2);
+            SCutie.setPosition(SCutieArray[1]);
+            while (mb1.isBusy() && mb2.isBusy() && !isStopRequested()) {
+                telemetry.addData("pozitia brat", mb1.getCurrentPosition());
+                telemetry.addData("pozitia brat2", mb2.getCurrentPosition());
+                telemetry.update();
+            }
+            SCutie.setPosition(0.36);
+            // sleep(5000);
+            drive.followTrajectorySequence(endIt2);
+             */
+        }
+
+
+
+        //  webcam.stopStreaming();
+        //   webcam.stopRecordingPipeline();
+
+
+
+
+
+        while (opModeIsActive());
+    }
+}
