@@ -22,6 +22,7 @@ public class OutreachBot2024 extends OpMode{
     public DcMotor  backRight = null;
     public RevBlinkinLedDriver FriedFries = null;
     public RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
+    public Servo triggerServo = null;
 
     public void init() {
         // Define and Initialize Motors
@@ -30,6 +31,7 @@ public class OutreachBot2024 extends OpMode{
         frontRight = hardwareMap.get(DcMotor.class, "RF");
         backRight  = hardwareMap.get(DcMotor.class, "RB");
         FriedFries = hardwareMap.get(RevBlinkinLedDriver.class, "Expelled14");
+        triggerServo = hardwareMap.get(Servo.class, "TriggerS");`
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
