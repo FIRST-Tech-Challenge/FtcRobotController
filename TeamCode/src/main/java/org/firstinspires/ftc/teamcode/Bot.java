@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Bot extends RobotDrive{
-    double currspdmul =
+    double currspdmul = 0;
     public DcMotor intake;
     public DcMotorEx rr;
     public DcMotorEx rl;
