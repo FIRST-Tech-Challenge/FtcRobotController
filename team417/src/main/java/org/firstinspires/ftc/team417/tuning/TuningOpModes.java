@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.AngularRampLogger;
+import com.acmerobotics.roadrunner.ftc.DeadWheelDirectionDebugger;
 import com.acmerobotics.roadrunner.ftc.DriveType;
 import com.acmerobotics.roadrunner.ftc.DriveView;
 import com.acmerobotics.roadrunner.ftc.DriveViewFactory;
@@ -21,16 +22,17 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.team417.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.team417.roadrunner.TankDrive;
-import org.firstinspires.ftc.team417.roadrunner.ThreeDeadWheelLocalizer;
-import org.firstinspires.ftc.team417.roadrunner.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.team417.MecanumDrive;
+import org.firstinspires.ftc.team417.TankDrive;
+import org.firstinspires.ftc.team417.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.team417.TwoDeadWheelLocalizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public final class TuningOpModes {
+    // TODO: change this to TankDrive.class if you're using tank
     public static final Class<?> DRIVE_CLASS = MecanumDrive.class;
 
     public static final String GROUP = "quickstart";
@@ -73,7 +75,7 @@ public final class TuningOpModes {
                     parEncs.add(dl.par);
                     perpEncs.add(dl.perp);
                 } else {
-                    throw new IllegalArgumentException("unknown localizer: " + md.localizer.getClass().getName());
+                    throw new RuntimeException("unknown localizer: " + md.localizer.getClass().getName());
                 }
 
                 return new DriveView(
@@ -95,7 +97,7 @@ public final class TuningOpModes {
                         rightEncs,
                         parEncs,
                         perpEncs,
-                        md.imu,
+                        md.lazyImu,
                         md.voltageSensor,
                         () -> new MotorFeedforward(MecanumDrive.PARAMS.kS,
                                 MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
@@ -122,7 +124,7 @@ public final class TuningOpModes {
                     parEncs.add(dl.par);
                     perpEncs.add(dl.perp);
                 } else {
-                    throw new IllegalArgumentException("unknown localizer: " + td.localizer.getClass().getName());
+                    throw new RuntimeException("unknown localizer: " + td.localizer.getClass().getName());
                 }
 
                 return new DriveView(
@@ -138,7 +140,7 @@ public final class TuningOpModes {
                         rightEncs,
                         parEncs,
                         perpEncs,
-                        td.imu,
+                        td.lazyImu,
                         td.voltageSensor,
                         () -> new MotorFeedforward(TankDrive.PARAMS.kS,
                                 TankDrive.PARAMS.kV / TankDrive.PARAMS.inPerTick,
@@ -146,7 +148,7 @@ public final class TuningOpModes {
                 );
             };
         } else {
-            throw new AssertionError();
+            throw new RuntimeException();
         }
 
         manager.register(metaForClass(AngularRampLogger.class), new AngularRampLogger(dvf));
@@ -156,6 +158,7 @@ public final class TuningOpModes {
         manager.register(metaForClass(LateralRampLogger.class), new LateralRampLogger(dvf));
         manager.register(metaForClass(ManualFeedforwardTuner.class), new ManualFeedforwardTuner(dvf));
         manager.register(metaForClass(MecanumMotorDirectionDebugger.class), new MecanumMotorDirectionDebugger(dvf));
+        manager.register(metaForClass(DeadWheelDirectionDebugger.class), new DeadWheelDirectionDebugger(dvf));
 
         manager.register(metaForClass(ManualFeedbackTuner.class), ManualFeedbackTuner.class);
         manager.register(metaForClass(SplineTest.class), SplineTest.class);
