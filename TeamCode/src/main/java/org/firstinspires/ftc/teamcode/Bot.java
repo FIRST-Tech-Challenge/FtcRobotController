@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Bot extends RobotDrive{
+    double currspdmul =
     public DcMotor intake;
     public DcMotorEx rr;
     public DcMotorEx rl;
@@ -93,13 +94,18 @@ public class Bot extends RobotDrive{
     //lefttrigger for power changing
     public double setspeed(double LTstats, double ogpwr){
         if (LTstats > 0.5){
+            currspdmul = 1;
             return ogpwr;
         }
         else if (LTstats < 0.5 && LTstats > 0.0) {
-            return ogpwr * 0.6;
+            currspdmul =  0.6;
+            return ogpwr * currspdmul;
         }
         else{
-            return ogpwr * 0.8;
+            currspdmul = 0.8;
+            return ogpwr * currspdmul;
         }
     }
+
+
 }
