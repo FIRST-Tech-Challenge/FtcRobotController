@@ -1,7 +1,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.MathFunctions.angleWrapDeg;
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -374,32 +373,32 @@ public class Robot {
         double KD = 2_500_000;
         double ERROR_TOLERANCE = 0.5; //degrees
         double currentHeading = getCurrentHeading();
-        double error = angleWrapDeg(targetAbsDegrees - currentHeading);
+        //double error = angleWrapDeg(targetAbsDegrees - currentHeading);
         double errorDer;
         double power;
         double currentTime;
         double minPower = 0.15;
 
         //while start
-        while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
+        //while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
             currentHeading = getCurrentHeading();
 
             currentTime = SystemClock.elapsedRealtimeNanos();
-            error = targetAbsDegrees - currentHeading; //error is degrees to goal
-            errorDer = (error - prevError) / (currentTime - prevTime);
-            power = (KP * error) + (KD * errorDer);
+            //error = targetAbsDegrees - currentHeading; //error is degrees to goal
+            //errorDer = (error - prevError) / (currentTime - prevTime);
+            //power = (KP * error) + (KD * errorDer);
 
 
 
                 Log.d("pid", "setHeading: current heading is " + currentHeading);
                 Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
                 Log.d("pid", "setHeading: time is " + currentTime);
-                Log.d("pid", "setHeading: heading error is " + error);
-                Log.d("pid", "setHeading: errorDer is " + errorDer);
-                Log.d("pid", "setHeading: calculated power is " + power);
+                //Log.d("pid", "setHeading: heading error is " + error);
+                //Log.d("pid", "setHeading: errorDer is " + errorDer);
+//                Log.d("pid", "setHeading: calculated power is " + power);
 
 
-
+            power = 0;//delete this line later trying to run smth else
             if (power > 0 && power < minPower) {
                 power = minPower;
                 // Log.d("pid", "setHeading: adjusted power is " + power);
@@ -413,15 +412,15 @@ public class Robot {
             // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
 
             drivetrain.setMotorPower(-1 * power, power, -1 * power, power);
-            prevError = error;
+            //prevError = error;
             prevTime = currentTime;
         }
-        drivetrain.setMotorPower(0, 0, 0, 0);
-        opMode.sleep(100);
-        currentHeading = getCurrentHeading();
-        botHeading = targetAbsDegrees;
-        Log.d("pid", "setHeading: final heading is " + currentHeading);
-    }
+        //drivetrain.setMotorPower(0, 0, 0, 0);
+        //opMode.sleep(100);
+        //currentHeading = getCurrentHeading();
+        //botHeading = targetAbsDegrees;
+        //Log.d("pid", "setHeading: final heading is " + currentHeading);
+    //}
 
     public void mecanumBlocking(double inches, boolean right, double maxPower) {
 

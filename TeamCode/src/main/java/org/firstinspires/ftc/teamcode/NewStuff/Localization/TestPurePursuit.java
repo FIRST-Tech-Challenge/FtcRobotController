@@ -23,7 +23,7 @@ public class TestPurePursuit extends LinearOpMode {
             // stuff, idk
             OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
             DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-            Odometry odometry = new Odometry(driveTrain, this, telemetry, 0, 0, Math.toRadians(0));
+            Odometry odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
             RobotMovement robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry);
 
             outer.fork(odometry::run);
