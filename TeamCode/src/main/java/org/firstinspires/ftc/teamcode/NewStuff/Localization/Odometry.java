@@ -13,11 +13,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
 import org.firstinspires.ftc.teamcode.NewStuff.Math.Position;
 import org.firstinspires.ftc.teamcode.NewStuff.Math.Velocity;
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
 public class Odometry {
+    OpModeUtilities opModeUtilities;
     final static private double TRACK_WIDTH = 304.8;
     static private final double BACK_DISTANCE_TO_MID = 69.85;
-    private final Telemetry jose;
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
     private final DcMotor backEncoder;
@@ -26,11 +27,10 @@ public class Odometry {
     private volatile double prevRightTicks = 0;
     private volatile double prevLeftTicks = 0;
     volatile private double prevBackTicks = 0;
-    private volatile double prevTime;
-    public Odometry(DriveTrain driveTrain, LinearOpMode opMode,
-                    Telemetry telemetry, double xCoordinate, double yCoordinate, double theta) {
+    private volatile long prevTime;
+    public Odometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
+        this.opModeUtilities = opModeUtilities;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
-        jose = telemetry;
         this.rightEncoder = driveTrain.getRightEncoder();
         this.leftEncoder = driveTrain.getLeftEncoder();
         this.backEncoder = driveTrain.getBackEncoder();
@@ -121,8 +121,8 @@ public class Odometry {
         double leftTicks = countLeft();
         double backTicks = countBack();
 
-        double currentTime = SystemClock.elapsedRealtime();
-        double timeElapsed = currentTime - prevTime;
+        long currentTime = SystemClock.elapsedRealtime();
+        double timeElapsed = (currentTime - prevTime) / 1000.;
 
         Velocity relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
         relativeDelta = linearToArcDelta(relativeDelta);
@@ -136,7 +136,7 @@ public class Odometry {
         prevLeftTicks = leftTicks;
         prevBackTicks = backTicks;
 
-        jose.addData("global", currentPosition.toString());
+        //opModeUtilities.getTelemetry().addData("global", currentPosition.toString());
         return currentPosition;
     }
 
