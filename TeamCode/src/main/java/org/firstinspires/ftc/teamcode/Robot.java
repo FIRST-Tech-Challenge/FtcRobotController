@@ -1,7 +1,7 @@
-/*
+
 package org.firstinspires.ftc.teamcode;
 
-//import static org.firstinspires.ftc.teamcode.MathFunctions.angleWrapDeg;
+import static org.firstinspires.ftc.teamcode.MathFunctions.angleWrapDeg;
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -40,10 +40,10 @@ public class Robot {
     public DcMotor rightEncoder;
     public DcMotor leftEncoder;
     public DcMotor backEncoder;
-    private DcMotor fLeft;
-    private DcMotor fRight;
-    private DcMotor bLeft;
-    private DcMotor bRight;
+    public DcMotor fLeft;
+    public DcMotor fRight;
+    public DcMotor bLeft;
+    public DcMotor bRight;
     DcMotor intakeMotor;
     DcMotor lsBack;
     DcMotor lsFront;
@@ -62,7 +62,6 @@ public class Robot {
     Servo stackAttachment;
     double botHeading = 0;
     ElapsedTime elapsedTime = new ElapsedTime();
-    public MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
     int secondWantedTagId;
     public MarkerProcessor markerProcessor;
@@ -261,103 +260,6 @@ public class Robot {
         outtake.trayToIntakePos(true); //intake pos
     }
 
-    public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
-        markerPos = position;
-    }
-
-    public void setMarkerLocation (boolean isRedAlliance, boolean longPath, MarkerDetector.MARKER_POSITION markerPosition) {
-        if (longPath) {
-            if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
-
-                markerLocation = MARKER_LOCATION.INNER;
-
-            } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
-
-                markerLocation = MARKER_LOCATION.OUTER;
-
-            } else {
-
-                markerLocation = MARKER_LOCATION.CENTER;
-
-            }
-        } else {
-            if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
-
-                markerLocation = MARKER_LOCATION.OUTER;
-
-            } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
-
-                markerLocation = MARKER_LOCATION.INNER;
-
-            } else {
-
-                markerLocation = MARKER_LOCATION.CENTER;
-
-            }
-        }
-    }
-
-    public void setWantedAprTagId(MarkerDetector.MARKER_POSITION position, MarkerDetector.ALLIANCE_COLOR allianceColor) {
-
-        if (allianceColor == MarkerDetector.ALLIANCE_COLOR.RED) {
-            switch (position) {
-                case CENTER:
-                    Log.d("vision", "setWantedAprTagId: tag = " + 5);
-                    wantedAprTagId = 5;
-                    break;
-                case RIGHT:
-                    Log.d("vision", "setWantedAprTagId: tag = " + 6);
-                    wantedAprTagId = 6;
-                    break;
-                case LEFT:
-                    Log.d("vision", "setWantedAprTagId: tag = " + 4);
-                    wantedAprTagId = 4;
-                    break;
-                default:
-                    Log.d("vision", "setWantedAprTagId: enter default. tag = " + 5);
-                    wantedAprTagId = 5;
-            }
-        } else {
-            switch (position) {
-                case CENTER:
-                    Log.d("vision", "setWantedAprTagId: tag = " + 2);
-                    wantedAprTagId = 2;
-                    break;
-                case RIGHT:
-                    Log.d("vision", "setWantedAprTagId: tag = " + 3);
-                    wantedAprTagId = 3;
-                    break;
-                case LEFT:
-                    Log.d("vision", "setWantedAprTagId: tag = " + 1);
-                    wantedAprTagId = 1;
-                    break;
-                default:
-                    Log.d("vision", "setWantedAprTagId: enter default. tag = " + 2);
-                    wantedAprTagId = 2;
-            }
-        }
-    }
-
-    public void initVisionProcessing() {
-        // Initializing marker and apriltag processors and setting them with visionportal
-        markerProcessor = new MarkerProcessor(telemetry, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
-        aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
-        visionPortal = new VisionPortal.Builder()
-                .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
-                .setCameraResolution(new Size(640, 480))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .enableLiveView(false)
-                .setAutoStopLiveView(true)
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(aprilTagProcessor)
-                .addProcessor(markerProcessor)
-                .build();
-    }
-
     public void setUpImu(boolean isAutonomous) {
 
         this.imu = hardwareMap.get(IMU.class, "imu");
@@ -408,15 +310,15 @@ public class Robot {
     public void resetDrivetrainEncoders () {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        */
-/*
+
+
         fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        *//*
+
 
     }
 
@@ -487,15 +389,15 @@ public class Robot {
             errorDer = (error - prevError) / (currentTime - prevTime);
             power = (KP * error) + (KD * errorDer);
 
-                */
-/*
+
+
                 Log.d("pid", "setHeading: current heading is " + currentHeading);
                 Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
                 Log.d("pid", "setHeading: time is " + currentTime);
                 Log.d("pid", "setHeading: heading error is " + error);
                 Log.d("pid", "setHeading: errorDer is " + errorDer);
                 Log.d("pid", "setHeading: calculated power is " + power);
-                *//*
+
 
 
             if (power > 0 && power < minPower) {
@@ -675,411 +577,6 @@ public class Robot {
         opMode.sleep(100);
     }
 
-    public void detectMarkerPosition() {
-
-        //boolean isTesting = false;
-        int visionTimeout = 500; // timeout detection after 2 seconds
-        double time;
-        MarkerDetector.MARKER_POSITION position;
-
-        elapsedTime.reset();
-        time = elapsedTime.milliseconds();
-
-        //detect marker position
-        position = MarkerDetector.MARKER_POSITION.UNDETECTED;
-        int i =  0;
-        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
-            i++;
-            Log.d("vision", i + " undetected marker, keep looking" + visionPortal.getCameraState());
-            position = markerProcessor.getPosition();
-            Log.d("color detection", String.valueOf(markerProcessor.avgCenterCb));
-            //Log.d("color detection", String.valueOf(markerProcessor.avgRightCb));
-            Log.d("color detection", String.valueOf(markerProcessor.avgCenterCr));
-            Log.d("elapsed time", String.valueOf(elapsedTime.milliseconds()));
-            if (elapsedTime.milliseconds() > time + visionTimeout && position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
-                position = MarkerDetector.MARKER_POSITION.CENTER;
-                Log.d("vision", "detected time out. Picking CENTER");
-                break;
-            }
-        }
-
-        Log.d("done process", "detected at" + String.valueOf(elapsedTime.milliseconds()));
-
-        //save marker position and apriltag position in robot class
-        setMarkerPos(position);
-        setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
-        setSecondWantedTagId();
-
-        //print position
-        Log.d("done process", "detected position: " + position);
-        telemetry.addData("position ", markerPos);
-        telemetry.update();
-    }
-
-    public void shortMoveToBoard2 () {
-        int polarity = isRedAlliance ? -1 : 1;
-
-        while (opMode.opModeIsActive()) {
-
-            Log.d("vision", "path: Pos " + markerPos);
-            Log.d("vision", "path: Tag " + wantedAprTagId);
-
-            if (markerLocation == MARKER_LOCATION.INNER) {
-                Log.d("vision", "path: Inner Spike");
-
-                // P1: (35, 17)
-
-                straightBlocking2(-29);
-
-                // P2: (35, 44)
-
-                setHeading(-90 * polarity, 0.7);
-
-                // P3: (43.5, 35.5)
-                if (isRedAlliance) {
-                    straightBlocking2(-2);
-                } else  {
-                    straightBlocking2(-3);
-                }
-                setHeading(-90 * polarity, 0.7);
-
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                setHeading(-90 * polarity, 0.7);
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-                straightBlocking2(29.5);
-                setHeading(90 * polarity, 0.7);
-
-                break;
-
-            } else if (markerLocation == MARKER_LOCATION.OUTER) {
-                Log.d("vision","path: Outer Spike");
-
-                // P1: (35, 17)
-
-                //straightBlocking2(-2);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(-23);
-                } else {
-                    mecanumBlocking2(19);
-                }
-                setHeading(0, 0.7);
-
-                // P2: (14, 17)
-
-                straightBlocking2(-29);
-
-                // P3: (14, 48)
-
-                setHeading(-90 * polarity, 0.7);
-
-                straightBlocking2(-1.5);
-
-                // P4: (22.5, 39.5)
-
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-                setHeading(-90 * polarity, 0.7);
-
-                straightBlocking2(9.5);
-                setHeading(90 * polarity, 0.7);
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                mecanumBlocking2(10 * polarity);
-                setHeading(90 * polarity, 0.7);
-
-                break;
-
-            } else { //center, default
-                Log.d("vision", "path: Center Spike");
-
-                // P1: (36, 17)
-
-                straightBlocking2(-2);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(-15);
-                } else {
-                    mecanumBlocking2(12);
-                }
-
-                setHeading(0, 0.7);
-
-                // P2: (23, 17)
-
-                straightBlocking2(-34);
-
-                // P3: (23, 52)
-                setHeading(-90 * polarity, 0.7);
-
-                // P4: (31.5, 44)
-
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                straightBlocking(6, true, 0.7);
-
-                setHeading(90 * polarity, 0.7);
-
-                straightBlocking2(-10);
-
-                setHeading(90 * polarity, 0.7);
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                mecanumBlocking2(10 * polarity);
-
-                break;
-            }
-        }
-    }
-
-    public void alignToBoardFast(int tagId) {
-        boolean aligned = false;
-        List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 12;
-        double PIXEL_SIZE = 6;
-        int numberOfDetectionsProcessed = 0;
-        double distanceToMove;
-        double distanceBetweenId = 6;
-        boolean movedToDesired = false;
-
-        if (isLong) {
-            opMode.sleep(250);
-        } else {
-            opMode.sleep(500);
-        }
-
-        while (!aligned && opMode.opModeIsActive()) {
-            Log.d("apriltag", "alignToBoardFast: passed tagid is " + tagId);
-
-            numberOfDetectionsProcessed++;
-            if (numberOfDetectionsProcessed > 20) {
-                Log.d("apriltag", "alignToBoardFast: didn't align, distanceToBoard is 12");
-                break;
-            }
-
-            myAprilTagDetections = aprilTagProcessor.getDetections();
-            if (myAprilTagDetections.size() == 0) {
-                Log.d("apriltag", "Houston: No tags seen");
-            }
-
-            for (AprilTagDetection detection : myAprilTagDetections) {
-                if (detection.metadata == null) {
-                    Log.d("apriltag", "Houston: No meta data for this detection");
-                }
-
-                if (detection.metadata != null && !movedToDesired) {
-                    Log.d("apriltag", "found tag" + detection.id);
-                    distanceToMove = ((tagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
-                    Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
-                    mecanumBlocking(distanceToMove, false, 0.7); //-1 to fix too much movement
-                    Log.d("apriltag", "moved");
-                    movedToDesired = true;
-                }
-
-                if (detection.metadata != null && movedToDesired) {
-                    Log.d("apriltag", "runOpMode: aligned");
-                    Log.d("apriltag", "alignToBoard: Range is " + detection.ftcPose.range);
-                    distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
-                    aligned = true;
-                    break;
-                }
-            }
-        }
-        straightBlockingWithTimer(distanceToBoard, false, 0.4, 1);
-    }
-
-    public void longMoveToBoard(boolean isJuice) {
-        int polarity = (isRedAlliance) ? -1 : 1;
-
-        while (opMode.opModeIsActive()) {
-
-            Log.d("vision", "path: Pos " + markerPos);
-            Log.d("vision", "path: Tag " + wantedAprTagId);
-
-            if (markerLocation == MARKER_LOCATION.INNER) {
-                Log.d("vision", "path: Inner Spike");
-
-                // P1: (35, 17)
-
-                straightBlocking2(-27);
-
-                setHeading(90 * polarity, 0.7);
-
-                if (isRedAlliance) {
-                    straightBlocking2(-3);
-                } else {
-                    straightBlocking2(-2);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                straightBlocking2(6);
-
-                // P3: (43.5, 35.5)
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(24.5);
-                } else {
-                    mecanumBlocking2(-26.5);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                // P4: (43.5, 60)
-
-                straightBlocking2FixHeading(-78.5);
-                setHeading(90 * polarity, 0.7);
-
-                // P5: (120, 60)
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(-30);
-                } else {
-                    mecanumBlocking2(30);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                // P6: (120, 30)
-
-                break;
-
-            } else if (markerLocation == MARKER_LOCATION.OUTER) {
-                Log.d("vision", "path: Outer Spike");
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(20);
-                } else {
-                    mecanumBlocking2(-23);
-                }
-
-                setHeading(0, 0.7);
-
-                straightBlocking2(-31);
-
-                setHeading(90 * polarity, 0.7);
-
-                //spike
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                if(isRedAlliance){
-                    //straightBlocking(2, false, 0.7);
-                    //setHeading(90 * polarity, 0.7);
-                    straightBlocking(2, true, 0.7);
-                    setHeading(90 * polarity, 0.7);
-                } else {
-//                    straightBlocking(2, false, 0.7);
-//                    setHeading(90 * polarity, 0.7);
-                    straightBlocking(2, true, 0.7);
-//                    setHeading(90 * polarity, 0.7);
-                }
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(18);
-                } else {
-                    mecanumBlocking2(-21);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                // P6: (19.5, 57.5)
-
-                straightBlocking2FixHeading(-93);
-                setHeading(90 * polarity, 0.7);
-
-                // P7: (117.5, 57.5)
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(-21);
-                } else {
-                    mecanumBlocking2(17);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                // P8: (117.5, 36.5)
-
-                break;
-
-            } else { //center, default
-                Log.d("vision", "path: Center Spike");
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(13);
-                } else {
-                    mecanumBlocking2(-13);
-                }
-                setHeading(0, 0.7);
-
-                if (isRedAlliance) {
-                    straightBlocking2(-36);
-                } else {
-                    straightBlocking2(-35);
-                }
-
-                setHeading(90 * polarity, 0.7);
-
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                straightBlocking(3, true, 0.7);
-
-                // P5: (27.5, 44)
-                // actually ending up at around 48 here
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(12);
-                } else {
-                    mecanumBlocking2(-15);
-                }
-
-                setHeading(90 * polarity, 0.7);
-
-                // P6: (27.5, 60)
-
-                straightBlocking2FixHeading(-89.5); // subtracted 4 here
-                setHeading(90 * polarity, 0.7);
-
-                // P7: (120, 60)
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(-26);
-                } else {
-                    mecanumBlocking2(26);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                // P8: (120, 35)
-
-                break;
-
-            }
-        }
-    }
-
     public void openHook() {
         hook.setPosition(0.37); //started 0.49
     }
@@ -1192,8 +689,8 @@ public class Robot {
 
             // GAMEPAD 1: DRIVER CONTROLS
 
-            */
-/*
+
+
             // b aligns bot to board - disabled because setheading loops imu
             if (gamepad1.b) {
                 if (isRedAlliance) {
@@ -1202,7 +699,7 @@ public class Robot {
                     setHeading(90, 0.7);
                 }
             }
-            *//*
+
 
 
 
@@ -1462,28 +959,12 @@ public class Robot {
                 lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
-            */
-/*
+
             //one button outtake - disabled this because it uses setheading, which loops imu
             if(gamepad2.dpad_left) {
                 oneButtonOuttake(gamepad1, gamepad2);
             }
 
-            *//*
-
-
-        */
-/*
-            if (gamepad2.x) {
-                linearSlideFlag = true;
-                targetLinearSlideTicks = 1000 + getCurrentLinearSlideTicks();
-            }
-
-            if (linearSlideFlag = true) {
-                boolean done = moveLinearSlidesByTicksParallel(targetLinearSlideTicks);
-                linearSlideFlag = !done;
-            }
-            *//*
 
 
 //            Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
@@ -1710,8 +1191,8 @@ public class Robot {
 
                 // GAMEPAD 1: DRIVER CONTROLS
 
-            */
-/*
+
+
                 // b aligns bot to board - disabled this because setheading loops imu
                 if (gamepad1.b) {
                     if (isRedAlliance) {
@@ -1720,7 +1201,7 @@ public class Robot {
                         setHeading(90, 0.7);
                     }
                 }
-             *//*
+
 
 
                 //a and y switch which side is front
@@ -2039,174 +1520,6 @@ public class Robot {
         }
 
         Log.d("apriltag", "setSecondWantedTagId: SECOND WANTED TAG ID IS " + secondWantedTagId);
-    }
-
-    public void longMoveToBoardTruss () {
-        int polarity = (isRedAlliance) ? -1 : 1;
-
-        Log.d("vision", "path: Pos " + markerPos);
-        Log.d("vision", "path: Tag " + wantedAprTagId);
-
-        while (opMode.opModeIsActive()) {
-
-            if (markerLocation == MARKER_LOCATION.INNER) {
-                Log.d("vision", "path: Inner Spike");
-
-                straightBlocking2(-27);
-
-                setHeading(90 * polarity, 0.7);
-
-                if (isRedAlliance) {
-                    straightBlocking2(-2);
-                } else {
-                    straightBlocking2(-2);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                if(isRedAlliance) {
-                    straightBlocking2(3);
-                } else {
-
-                }
-
-                if (isRedAlliance) { //
-                    mecanumBlocking2(-24.5);
-                } else {
-                    mecanumBlocking2(24.5);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                straightBlocking2FixHeading(-74.5);
-                setHeading(90 * polarity, 0.7);
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(21);
-                } else {
-                    mecanumBlocking2(-21);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                break;
-
-            } else if (markerLocation == MARKER_LOCATION.OUTER) {
-                Log.d("vision", "path: Outer Spike");
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(20);
-                } else {
-                    mecanumBlocking2(-23);
-                }
-
-                setHeading(0, 0.7);
-
-                straightBlocking2(-31);
-
-                setHeading(90 * polarity, 0.7);
-
-                //spike
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                if(isRedAlliance){
-                    straightBlocking(2, true, 0.7);
-                } else {
-                    //straightBlocking(2, true, 0.7); //no need to move
-                }
-                setHeading(90 * polarity, 0.7);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(-31);
-                } else {
-                    mecanumBlocking2(30);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                straightBlocking2FixHeading(-97);
-
-                setHeading(90 * polarity, 0.7);
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(27);
-                } else {
-                    mecanumBlocking2(-30);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                break;
-
-            } else { //center, default
-                Log.d("vision", "path: Center Spike");
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(13);
-                } else {
-                    mecanumBlocking2(-13);
-                }
-                setHeading(0, 0.7);
-
-                if (isRedAlliance) {
-                    straightBlocking2(-36);
-                } else {
-                    straightBlocking2(-35);
-                }
-
-                setHeading(90 * polarity, 0.7);
-
-                if (isRedAlliance) {
-                    straightBlocking(2, false, 0.7);
-                } else {
-
-                }
-
-                if (!testingOnBert) {
-                    moveFingerUp();
-                    opMode.sleep(200);
-                }
-
-                if (isRedAlliance) {
-                    straightBlocking(4, true, 0.7);
-                } else {
-                    straightBlocking(3,true,0.7);
-                }
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(-36);
-                } else {
-                    mecanumBlocking2(33);
-                }
-
-                setHeading(90 * polarity, 0.7);
-
-                if (isRedAlliance) {
-                    straightBlocking2FixHeading(-87.5); // subtracted 4 here
-                } else {
-                    straightBlocking2FixHeading(-83.5);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                if (isRedAlliance) {
-                    mecanumBlocking2(23);
-                } else {
-                    mecanumBlocking2(-26);
-                }
-                setHeading(90 * polarity, 0.7);
-
-                break;
-
-            }
-
-        }
     }
 
     public void boardToTruss () {
@@ -2530,7 +1843,7 @@ public class Robot {
         boolean wasPressedDPadUp = false;
 
         while (!opMode.opModeIsActive()) {
-            
+
             if (gamepad1.y) {
                 this.lowOuttake = false;
             } else if (gamepad1.a) {
@@ -2634,4 +1947,4 @@ public class Robot {
 // todo write timeout for apriltag final forward
 // todo turns need a timeout, and maybe other control loops
 // todo tune tray pivot outtake pos
-*/
+
