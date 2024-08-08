@@ -38,7 +38,7 @@ public class ATeleop extends LinearOpMode {
             }
 
             if (gpad.right_trigger > 0.0) {
-                nondrivebot.intake(false);//intake reversed
+                nondrivebot.intake(false);//intake reverse
             }
 
             //flight launcher
@@ -46,11 +46,13 @@ public class ATeleop extends LinearOpMode {
 
             }
 
-            if (gpad.left_trigger > 0.0){
+            if (gpad.left_trigger >= 0.0){
                 jx = nondrivebot.setspeed(gpad.left_trigger, jx);
                 jy = nondrivebot.setspeed(gpad.left_trigger, jy);
                 jw = nondrivebot.setspeed(gpad.left_trigger, jw);
-
+                telemetry.addData("Current speed multiplier", nondrivebot.currspdmul);
+                telemetry.addData("Current speed multiplier", nondrivebot.intkpwr);
+                telemetry.update();
             }
             bot.driveXYW( jx, jy, jw);
 
@@ -58,6 +60,7 @@ public class ATeleop extends LinearOpMode {
             telemetry.addData("heading", bot.getHeading());
             telemetry.addData("IMU heading", bot.getIMUHeading());
             telemetry.addData("Current speed multiplier", nondrivebot.currspdmul);
+            telemetry.addData("Current speed multiplier", nondrivebot.intkpwr);
             telemetry.update();
         }
     }
