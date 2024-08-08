@@ -2,14 +2,19 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class ATeleop extends LinearOpMode {
     public RobotDrive bot;
     public DualPad gpad;
-
+    public DcMotor intake;
     @Override
     public void runOpMode() {
+
         bot = new RobotDrive();
         Bot nondrivebot = new Bot();
         bot.init(hardwareMap);
@@ -34,11 +39,11 @@ public class ATeleop extends LinearOpMode {
             }
 
             if (gpad.right_bumper) {
-                nondrivebot.intake(true);
+                intake.setPower(nondrivebot.intakeforw());
             }
 
             if (gpad.right_trigger > 0.0) {
-                nondrivebot.intake(false);//intake reverse
+                intake.setPower(nondrivebot.intakebak());
             }
 
             //flight launcher
@@ -50,9 +55,7 @@ public class ATeleop extends LinearOpMode {
                 jx = nondrivebot.setspeed(gpad.left_trigger, jx);
                 jy = nondrivebot.setspeed(gpad.left_trigger, jy);
                 jw = nondrivebot.setspeed(gpad.left_trigger, jw);
-                telemetry.addData("Current speed multiplier", nondrivebot.currspdmul);
-                telemetry.addData("Current speed multiplier", nondrivebot.intkpwr);
-                telemetry.update();
+
             }
             bot.driveXYW( jx, jy, jw);
 
