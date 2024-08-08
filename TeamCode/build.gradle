@@ -29,8 +29,18 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url = "https://maven.kuriosityrobotics.com/releases/"
+    }
+}
+
 dependencies {
+    // other stuff
     implementation project(':FtcRobotController')
     testImplementation 'junit:junit:4.12'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+
+    implementation "com.kuriosityrobotics.shuttle:shuttle-core:1.0"
+    implementation "com.kuriosityrobotics.shuttle:shuttle-hardware:1.0"
 }

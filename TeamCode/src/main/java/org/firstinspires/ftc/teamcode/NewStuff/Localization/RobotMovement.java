@@ -32,7 +32,7 @@ public class RobotMovement{
         this.pidAngle = new PidNav(3 / 3.14, 0, 0);
     }
 
-    public void targetPosition(Point target, double preferredAngle, double radius) {
+    public void targetPosition(Point target, double preferredAngle) {
         Position currentPos = odometry.getCurrentPosition();
         Vector currentToTarget = Vector.between(currentPos.toPoint(), target);
 
@@ -73,7 +73,6 @@ public class RobotMovement{
         }
 
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
-        odometry.updatePosition();
 
         opModeUtilities.getTelemetry().addData("current pos", currentPos.toString());
         opModeUtilities.getTelemetry().addData("power x ", powerX);
@@ -82,19 +81,26 @@ public class RobotMovement{
         opModeUtilities.getTelemetry().update();
     }
 
-    public void pathFollow(Path path) {
-        while (opModeUtilities.getOpMode().opModeIsActive()) {
-            Optional<Point> follow = Optional.empty();
+    public void pathFollow(Path path) throws InterruptedException{
+        while (true) {
+            Optional<Point> follow;
             double radius = 300;
-            while (!follow.isPresent()) {
+            do {
                 follow = path.searchFrom(odometry.getCurrentPosition().toPoint() , radius);
                 radius += 25;
-            }
+            } while (!follow.isPresent());
             Segment lastLine = path.getSegment(path.numSegments() - 1);
             double preferredAngle = lastLine.getHeadingDirection();
             opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
             opModeUtilities.getTelemetry().addData("follow point", follow);
-            targetPosition(follow.get(), preferredAngle, radius);
+            targetPosition(follow.get(), preferredAngle);
+
+            if(odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 10 && odometry.getCurrentVelocity().isWithinThreshhold(10, 10, 0.2)) {
+                driveTrain.setPower(0,0,0,0);
+                break;
+            }
+
+            if (Thread.interrupted()) throw new InterruptedException();
         }
     }
 }
