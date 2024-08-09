@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.teamcode.PIDController;
 
 public class DriveTrain {
     private final OpModeUtilities opModeUtilities;

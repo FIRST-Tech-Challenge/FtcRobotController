@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.firstinspires.ftc.teamcode.NewStuff.PIDController;
+import org.firstinspires.ftc.teamcode.NewStuff.PIDState;
 import org.junit.Test;
 
 public class PIDControllerTest {
