@@ -42,6 +42,13 @@ public class TestTeleOpp extends LinearOpMode {
 
             // robot.outtake.update
             //sequence 1
+            intake.update(trueState);
+            outtake.update(intake.state);
+
+            //sequence 2
+            droneLauncher.update(trueState);
+
+            /* //sequence 1
             intake.wheelMotor.setPower(intake.intakeToTicksCalcPowerParallelSequence(trueState));
             outtake.lsMove(outtake.lsToTicksCalcPowerParallelSequence(intake.state, 1));
 //            outtake.lsFront.setPower(outtake.lsToTicksCalcPowerParallelSequence(intakeState, outtakeState, 1));
@@ -49,6 +56,7 @@ public class TestTeleOpp extends LinearOpMode {
 
             //sequence 2
             droneLauncher.wheel.setPower(droneLauncher.wheelCalcPowerParallelSequence(trueState));
+            */
 
             telemetry.addData("intake ticks", intake.state.getError());
             telemetry.addData("outtake ticks", outtake.state.getError());
