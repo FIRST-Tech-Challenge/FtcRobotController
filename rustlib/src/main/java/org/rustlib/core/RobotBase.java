@@ -9,21 +9,21 @@ import org.rustlib.commandsystem.Command;
 import org.rustlib.commandsystem.CommandScheduler;
 import org.rustlib.hardware.SuperGamepad;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public abstract class RobotBase extends OpMode {
-    private static final ArrayList<ArrayList<Pair<OpModeState, Runnable>>> callbacks = new ArrayList();
+    private static final ArrayList<ArrayList<Pair<OpModeState, Runnable>>> callbacks = new ArrayList<>();
     public static Alliance alliance = Alliance.BLUE;
-    static RobotControllerActivity mainActivity;
+    static WeakReference<RobotControllerActivity> mainActivity;
     private static OpModeState opModeState = OpModeState.IDLE;
     protected LynxModule controlHub;
     protected LynxModule expansionHub;
     protected SuperGamepad driveController;
     protected SuperGamepad payloadController;
     private boolean inAuto = false;
-    private boolean hasDriveSubsystem;
     private Auton autonomousInstance;
 
     public RobotBase() {
@@ -53,7 +53,7 @@ public abstract class RobotBase extends OpMode {
     }
 
     public static RobotControllerActivity getMainActivity() {
-        return mainActivity;
+        return mainActivity.get();
     }
 
     private void removeDuplicateCallbacks() {

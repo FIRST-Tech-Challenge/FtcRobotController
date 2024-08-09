@@ -12,14 +12,10 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 
 public class ClientUpdater extends TimerTask {
-    private static ClientUpdater instance = null;
     private final Map<String, RustboardNode> toUpdate = new ConcurrentHashMap<>();
 
-    private ClientUpdater() {
 
-    }
-
-    void updateNodeValue(RustboardNode node) {
+    void updateNode(RustboardNode node) {
         toUpdate.put(node.id, node);
     }
 
@@ -40,12 +36,5 @@ public class ClientUpdater extends TimerTask {
         }
         messageBuilder.add("nodes", nodes);
         RustboardServer.messageActiveRustboard(messageBuilder.build());
-    }
-
-    public static ClientUpdater getInstance() {
-        if (instance == null) {
-            instance = new ClientUpdater();
-        }
-        return instance;
     }
 }

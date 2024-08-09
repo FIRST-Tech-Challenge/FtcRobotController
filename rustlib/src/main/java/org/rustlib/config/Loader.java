@@ -102,7 +102,6 @@ public class Loader {
     }
 
     public static void writeString(File output, String string) throws IOException {
-        output.createNewFile();
         FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath());
         OutputStreamWriter writer = new OutputStreamWriter(fileOut);
         writer.write(string);

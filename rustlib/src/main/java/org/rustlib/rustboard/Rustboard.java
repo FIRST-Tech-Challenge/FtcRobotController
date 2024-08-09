@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -28,7 +27,6 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 public class Rustboard {
-
     interface SetUUID {
         Builder setUUID(String uuid);
     }
@@ -66,12 +64,6 @@ public class Rustboard {
     private final Set<RustboardNode> nodes = new HashSet<>();
     private boolean connected = false;
     private final Map<String, Runnable> callbacks = new HashMap<>();
-    Map<String, RustboardNode> toUpdate = new ConcurrentHashMap<>();
-
-
-    Map<String, RustboardNode> getNodeList() {
-        return toUpdate;
-    }
 
     Rustboard(String uuid, JsonObject json) {
         this.uuid = uuid;
@@ -106,7 +98,7 @@ public class Rustboard {
         return connection;
     }
 
-    void onConnect(WebSocket connection) {
+    void setConnection(WebSocket connection) {
         connected = true;
         this.connection = connection;
     }
@@ -128,9 +120,10 @@ public class Rustboard {
         for (JsonValue nodeJson : clientNodes) {
             RustboardNode clientNode = RustboardNode.buildFromJson(nodeJson);
             for (RustboardNode node : nodes) {
-                if (node.equals(clientNode)) {
-                    updatedNodeList.add(node.merge(clientNode));
-                    // TODO: update client
+                if (node.equals(clientNode) && !node.strictEquals(clientNode)) {
+                    RustboardNode updatedNode = node.merge(clientNode);
+                    updatedNodeList.add(updatedNode);
+                    RustboardServer.getInstance().getClientUpdater().updateNode(updatedNode);
                     updatedNodeList.remove(node);
                 }
             }

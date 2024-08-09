@@ -12,7 +12,7 @@ buildscript {
     }
 }
 
-apply plugin: org.fe2o3.ModifyManifestPlugin
+apply plugin: org.fe2o3.ModifyFtcAppManifest
 
 android {
     namespace "org.rustlib"
