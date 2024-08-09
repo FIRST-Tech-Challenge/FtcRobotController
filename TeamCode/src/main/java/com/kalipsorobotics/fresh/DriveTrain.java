@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
-
-import android.util.Log;
+package com.kalipsorobotics.fresh;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;

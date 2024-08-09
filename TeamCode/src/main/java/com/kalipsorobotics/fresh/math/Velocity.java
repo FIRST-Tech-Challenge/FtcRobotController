@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Math;
-
-import com.qualcomm.robotcore.util.ElapsedTime;
+package com.kalipsorobotics.fresh.math;
 
 public class Velocity {
     final private double x;

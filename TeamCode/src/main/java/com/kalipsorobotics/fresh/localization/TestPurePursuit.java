@@ -1,14 +1,13 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Localization;
+package com.kalipsorobotics.fresh.localization;
 
+import com.kalipsorobotics.fresh.DriveTrain;
+import com.kalipsorobotics.fresh.OpModeUtilities;
+import com.kalipsorobotics.fresh.math.Point;
 import com.kuriosityrobotics.shuttle.HardwareTaskScope;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Path;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Point;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Vector;
-import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
+import com.kalipsorobotics.fresh.math.Path;
 
 import java.util.ArrayList;
 import java.util.List;
