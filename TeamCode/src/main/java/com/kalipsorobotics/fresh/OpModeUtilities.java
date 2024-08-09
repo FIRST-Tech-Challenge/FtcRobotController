@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
-
-import android.graphics.Path;
+package com.kalipsorobotics.fresh;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;

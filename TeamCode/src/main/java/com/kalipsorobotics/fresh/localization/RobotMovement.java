@@ -1,21 +1,19 @@
-package org.firstinspires.ftc.teamcode.NewStuff.Localization;
-
-import static org.firstinspires.ftc.teamcode.NewStuff.Math.MathFunctions.angleWrapRad;
-import static org.firstinspires.ftc.teamcode.NewStuff.Math.MathFunctions.maxAbsValueDouble;
+package com.kalipsorobotics.fresh.localization;
 
 import android.util.Log;
 
 import androidx.annotation.GuardedBy;
 
+import com.kalipsorobotics.fresh.DriveTrain;
+import com.kalipsorobotics.fresh.OpModeUtilities;
+import com.kalipsorobotics.fresh.math.MathFunctions;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Path;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Point;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Position;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Segment;
-import org.firstinspires.ftc.teamcode.NewStuff.Math.Vector;
-import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
+import com.kalipsorobotics.fresh.math.Path;
+import com.kalipsorobotics.fresh.math.Point;
+import com.kalipsorobotics.fresh.math.Position;
+import com.kalipsorobotics.fresh.math.Segment;
+import com.kalipsorobotics.fresh.math.Vector;
 
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
@@ -53,8 +51,8 @@ public class RobotMovement{
         if (distanceToTarget < 100) {
             targetAngle = preferredAngle;
         }
-        double angleError = angleWrapRad(targetAngle - currentPos.getTheta());
-        double directionError = angleWrapRad(targetDirection - currentPos.getTheta());
+        double angleError = MathFunctions.angleWrapRad(targetAngle - currentPos.getTheta());
+        double directionError = MathFunctions.angleWrapRad(targetDirection - currentPos.getTheta());
 
 //        opModeUtilities.getTelemetry().addData("targetAngle", targetAngle);
 //        opModeUtilities.getTelemetry().addData("angle error", angleError);
@@ -74,7 +72,7 @@ public class RobotMovement{
         double bLeftPower = powerX + powerY - powerAngle;
         double bRightPower = powerX - powerY + powerAngle;
 
-        double biggestPower = maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
+        double biggestPower = MathFunctions.maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
 //        opModeUtilities.getTelemetry().addData("biggest power", biggestPower);
         if (biggestPower > 1) {
             fLeftPower /= biggestPower;
