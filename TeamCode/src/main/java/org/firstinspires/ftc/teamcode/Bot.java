@@ -72,14 +72,7 @@ public class Bot extends RobotDrive{
     }
 
     //intakeonoff
-    public double intakeforw(){
-        return 1.0;
 
-    }
-    public double intakebak(){
-
-        return -1.0;
-    }
 
     //lefttrigger for power changing
     public double setspeed(double LTstats, double ogpwr){

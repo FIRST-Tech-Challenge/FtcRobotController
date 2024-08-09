@@ -39,11 +39,11 @@ public class ATeleop extends LinearOpMode {
             }
 
             if (gpad.right_bumper) {
-                intake.setPower(nondrivebot.intakeforw());
+                intake.setPower(1.0);
             }
 
             if (gpad.right_trigger > 0.0) {
-                intake.setPower(nondrivebot.intakebak());
+                intake.setPower(-1.0);
             }
 
             //flight launcher
