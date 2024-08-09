@@ -1,6 +1,10 @@
 
-package org.firstinspires.ftc.teamcode;
+/* package org.firstinspires.ftc.teamcode;
 
+<<<<<<< HEAD
+=======
+//import static org.firstinspires.ftc.teamcode.MathFunctions.angleWrapDeg;
+>>>>>>> 73cc553 (no more errors (ahem THERE YOU GO))
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -19,41 +23,19 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import com.kalipsorobotics.fresh.MarkerProcessor;
+import org.firstinspires.ftc.teamcode.NewStuff.DrivetrainPowers;
+import org.firstinspires.ftc.teamcode.NewStuff.MarkerProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class Robot {
-    public final Outtake outtake;
-    public final Intake intake;
-    public final DroneLauncher droneLauncher;
-    public final Drivetrain drivetrain;
-    HardwareMap hardwareMap;
-    Telemetry telemetry;
-    public LinearOpMode opMode;
-    public DcMotor rightEncoder;
-    public DcMotor leftEncoder;
-    public DcMotor backEncoder;
-    public DcMotor fLeft;
-    public DcMotor fRight;
-    public DcMotor bLeft;
-    public DcMotor bRight;
-    DcMotor intakeMotor;
-    DcMotor lsBack;
-    DcMotor lsFront;
-    Servo tray;
-    Servo clamp;
-    Servo hook;
-    DcMotor planeLauncher;
-    Servo planeLauncherServo;
-    double planeServoDisengage = 0.73;
+
+
     Servo spikeServo;
-    Servo trayAngle;
-    double trayAngleDefault = 0.5;
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
-    Servo stackAttachment;
+
     double botHeading = 0;
     ElapsedTime elapsedTime = new ElapsedTime();
     int wantedAprTagId;
@@ -62,16 +44,10 @@ public class Robot {
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     boolean isRedAlliance;
-    boolean testingOnBert = true;
+    boolean testingOnBert = false;
     boolean allowTrayAngle = false;
     boolean allowTrayAngleOverride = false;
-    double hardStopTrayAngleBig;
-    double hardStopTrayAngleSmall;
 
-    public PIDController straightController;
-    public PIDController fLeftMecanumController;
-    public PIDController bRightMecanumController;
-    PIDController setHeadingController;
     double robotX = 0;
     double robotY = 0;
     private boolean previousHookButtonValue;
@@ -80,17 +56,7 @@ public class Robot {
     private boolean previousStackButtonValue;
     private double trayAngleSlope;
     private double teleOpTuneValueTrayAngle;
-    double slideStartingPosition;
     boolean isLong;
-
-
-    public enum MARKER_LOCATION {
-        INNER, CENTER, OUTER
-    }
-    public enum PARKING_POSITION {
-        FREEWAY, TRUSS, BOARD
-    }
-    MARKER_LOCATION markerLocation;
 
     boolean lowOuttake;
     int autoDelayInSeconds;
@@ -123,36 +89,9 @@ public class Robot {
         }
 
         if (!testingOnBert) {
-            intakeMotor = hardwareMap.dcMotor.get("intake");
-            lsFront = hardwareMap.dcMotor.get("lsFront");
-            lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lsBack = hardwareMap.dcMotor.get("lsBack");
-            lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            // get servos from hardware map
-            tray = hardwareMap.servo.get("arm");
-            clamp = hardwareMap.servo.get("holderClamp");
-            hook = hardwareMap.servo.get("linearLocker");
             spikeServo = hardwareMap.servo.get("spikeServo");
-            stackAttachment = hardwareMap.servo.get("stackAttachment");
-            trayAngle = hardwareMap.servo.get("trayAngle");
 
-            // initialize controllers
-            //straightController = new PIDController("straight", 0.007, 0.0000005, 0.4, false);
-            straightController = new PIDController("straight", 0.005, 0.0000015, 0.8, false);
-            fLeftMecanumController = new PIDController("fl mecanum", 0.005, 0.0000005, 0.4, true); //0.01 - 0.0001
-            bRightMecanumController = new PIDController("br mecanum", 0.005, 0.0000005, 0.4, true);
-            setHeadingController = new PIDController("set heading", 0.06, 0, 2_500_000, false);
-
-            outtake = new Outtake(this);
-            intake = new Intake(this);
-            droneLauncher = new DroneLauncher(this);
-            drivetrain = new Drivetrain(this);
-        } else {
-            outtake = null;
-            intake = null;
-            droneLauncher = null;
-            drivetrain = null;
         }
     }
 
@@ -368,7 +307,11 @@ public class Robot {
         double KD = 2_500_000;
         double ERROR_TOLERANCE = 0.5; //degrees
         double currentHeading = getCurrentHeading();
+<<<<<<< HEAD
         //double error = angleWrapDeg(targetAbsDegrees - currentHeading);
+=======
+        double error = targetAbsDegrees - currentHeading;
+>>>>>>> 73cc553 (no more errors (ahem THERE YOU GO))
         double errorDer;
         double power;
         double currentTime;
@@ -1937,6 +1880,8 @@ public class Robot {
         // else do nothing
     }
 }
+
+ */
 
 // todo write timeout for apriltag final forward
 // todo turns need a timeout, and maybe other control loops
