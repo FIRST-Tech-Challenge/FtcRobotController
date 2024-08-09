@@ -13,6 +13,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OnBoardVision {
 
@@ -89,7 +90,7 @@ public class OnBoardVision {
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableLiveView(true);
-        builder.setLiveViewContainerId(0);
+        //builder.setLiveViewContainerId(0);
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
 
@@ -115,22 +116,22 @@ public class OnBoardVision {
      */
     public ArrayList<AprilTagDetection> returnAprilTagData() {
 
-        /*
+
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         List<List<Integer>> rerunList;
 
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
 
-                //telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                //telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (cm)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                //telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (degree)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                //telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (cm, degree, degree)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (cm)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (degree)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (cm, degree, degree)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {
-                //telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                //telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
-        }   // end for() loop*/
+        }   // end for() loop
 
         return aprilTag.getDetections();
     }   // end method telemetryAprilTag()

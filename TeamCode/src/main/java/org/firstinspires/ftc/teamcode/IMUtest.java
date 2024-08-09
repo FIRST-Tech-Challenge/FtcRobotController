@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;  //place where the code is located
 
+import android.os.Environment;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -26,6 +28,7 @@ public class IMUtest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            telemetry.addData("location", Environment.getExternalStorageDirectory());
             telemetry.addData("gyro", imu.getRobotYawPitchRollAngles());
             telemetry.update();
         }

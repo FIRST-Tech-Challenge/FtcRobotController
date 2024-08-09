@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.mainModules;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.maps.AprilTag;
 import org.firstinspires.ftc.teamcode.maps.AprilTagMapping;
@@ -10,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public class VisionManager {
+
+    private final ElapsedTime clock = new ElapsedTime();
+    private double elapsedTime = 0;
 
     private OnBoardVision onBoardVision;
     private ExternalVision externalVision;
@@ -44,8 +49,18 @@ public class VisionManager {
         }
     }
 
-    public int[] returnPositionData(boolean forceOnBoardProcessor) {
+    public double[] returnPositionData(boolean forceOnBoardProcessor) {
         boolean isUpdated = false;
+        double[] robotPosition = new double[] {-1, -1, -1}; //set deafult value to -1 if not detected because robots position cant be negative
+        double poseX = 0; //if 0:0 the gimbal will not move so 0:0 is the deafult return
+        double poseY = 0;
+        double poseZ = 0;
+        double upDatedFrame = 0;
+
+        if ((clock.milliseconds()-elapsedTime)>33.333){
+            upDatedFrame = 1;
+            elapsedTime=clock.milliseconds();
+        }
 
         if (!forceOnBoardProcessor && !externalInitError) {
             try {
@@ -66,30 +81,24 @@ public class VisionManager {
         }
 
         if (isUpdated && aprilTagDetections != null) {
-            int frameX = 1;
-            int frameY = 1;
-
-            int[] robotPosition = calculateRobotPosition();
-
-            // Process detections to update frameX and frameY if needed
             for (AprilTagDetection detection : aprilTagDetections) {
-                // Your logic to update frameX and frameY based on detection
-            }
 
-            return new int[]{
-                    robotPosition[0], robotPosition[1], robotPosition[2],
-                    frameX, frameY
-            };
-        } else {
-            return new int[]{
-                    -1, -1, -1, // robot x, y, absoluteAngle
-                    -1, -1      // x, y in the camera frame of the closest AprilTag
-            };
+                poseX = detection.ftcPose.x;
+                poseY = detection.ftcPose.y;
+                poseZ = detection.ftcPose.z;
+
+                robotPosition = calculateRobotPosition();
+
+            }
         }
+        return new double[]{
+                robotPosition[0], robotPosition[1], robotPosition[2],
+                poseX, poseY, poseZ, upDatedFrame
+        };
     }
 
-    private int[] calculateRobotPosition() {
+    private double[] calculateRobotPosition() {
         // Implement logic to calculate the robot's position
-        return new int[]{1, 1, 1};
+        return new double[]{1, 1, 1};
     }
 }

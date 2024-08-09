@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.mainModules.Erection;
 import org.firstinspires.ftc.teamcode.mainModules.MoveRobot;
 import org.firstinspires.ftc.teamcode.mainModules.Presses;
 import org.firstinspires.ftc.teamcode.mainModules.Gimbal;
-import org.firstinspires.ftc.teamcode.mainModules.OnBoardVision;
 import org.firstinspires.ftc.teamcode.mainModules.VisionManager;
 
 @TeleOp(name = "Main code Estonia")
@@ -32,9 +31,11 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
     Presses gamepad1_a;
     Presses gamepad1_b;
     Presses gamepad1_y;
+    Presses gamepad2_dpad_up;
+    Presses gamepad2_right_bumper;
 
     VisionManager visionManager;
-    int[] positionData = {
+    double[] positionData = {
             0, //x
             0, //y
             0, //rotation
@@ -63,6 +64,9 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
         gamepad1_a = new Presses();
         gamepad1_b = new Presses();
         gamepad1_y = new Presses();
+        gamepad2_dpad_up = new Presses();
+        gamepad2_right_bumper = new Presses();
+
 
         visionManager = new VisionManager();
         visionManager.initVision(hardwareMap, telemetry);
@@ -99,13 +103,39 @@ public class Estonia extends LinearOpMode { //file name is Main.java    extends 
 
             positionData = visionManager.returnPositionData(true);
 
+            gimbal.moveGimbal(
+                    gamepad2_dpad_up.toggle(gamepad2.dpad_up),
+                    gamepad2.dpad_down,
+                    gamepad2.left_stick_x,
+                    gamepad2.left_stick_y,
+                    positionData[3],
+                    positionData[4],
+                    positionData[5],
+                    positionData[6]==1
+                    );
+            ;
+
+            if (gamepad2.left_bumper) { gimbal.untuck(); }
+
+            if (gamepad2.left_trigger > 0.5) { gimbal.tuck(); }
 
             gimbal.telemetryGimbal();
 
-            telemetry.addData("field centric", gamepad1_a.returnToggleState());
-            telemetry.addData("traction control", gamepad1_b.returnToggleState());
-            telemetry.addData("PositionData", positionData[0]);
+            //telemetry.addData("gamepad2.left_trigger", gamepad2.left_trigger);
+            //telemetry.addData("field centric", gamepad1_a.returnToggleState());
+            //telemetry.addData("traction control", gamepad1_b.returnToggleState());
+            //telemetry.addData("PositionData", positionData[0]);
             telemetry.update();
+            if (true){ //debugging
+                while (true){
+                    if (gamepad2_right_bumper.released(gamepad2.right_bumper)){
+                        break;
+                    } if (gamepad2.right_trigger >0.5) {
+                        break;
+                    }
+                }
+            }
+
         }
     }
 }
