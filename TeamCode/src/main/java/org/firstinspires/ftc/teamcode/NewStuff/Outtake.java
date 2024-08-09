@@ -70,6 +70,12 @@ public class Outtake {
         state.setCurrentTicks(currentTicks);
     }
 
+    public void update(GenericState conditionState) {
+        if (!this.state.isDone()) {
+            lsMove(lsToTicksCalcPowerParallelSequence(conditionState, 1));
+        }
+    }
+
     public void trayToIntakePos(boolean blocking) {
         //backup value 0.45
         //delta 0.3

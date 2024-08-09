@@ -44,5 +44,10 @@ public class DroneLauncher {
         state.setCurrentTicks(currentTicks);
     }
 
+    public void update(GenericState conditionState) {
+        if (!this.state.isDone()) {
+            wheelCalcPowerParallelSequence(conditionState);
+        }
+    }
 
 }
