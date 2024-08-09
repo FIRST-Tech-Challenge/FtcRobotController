@@ -4,7 +4,7 @@ package com.kalipsorobotics.fresh.mechanisms;
 import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class DroneLauncherMotor{
+public class DroneLauncherMotor {
     private final DcMotor droneLauncherMotor;
 
     private DroneLauncherMotor(DcMotor droneLauncherMotor) {
