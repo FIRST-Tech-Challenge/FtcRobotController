@@ -18,7 +18,6 @@ public class DroneLauncherServo extends ServoControl {
     public DroneLauncherServo(OpModeUtilities opModeUtilities) {
         this(opModeUtilities.getHardwareMap().servo.get("planeLauncherServo"));
     }
-
     public void disEngage() throws InterruptedException {
         goToAngle(toRadians(0));
     }

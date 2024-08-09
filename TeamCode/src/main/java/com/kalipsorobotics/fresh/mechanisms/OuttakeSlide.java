@@ -12,7 +12,6 @@ public class OuttakeSlide extends LinearMotorControl {
     private final DcMotorEx lsBack;
 
     private final double TICKS_PER_METER = 4754.31163987; //divide to get meters
-
     private OuttakeSlide(DcMotorEx lsBack, DcMotorEx lsFront) {
         this.lsBack = lsBack;
         this.lsFront = lsFront;
@@ -45,14 +44,12 @@ public class OuttakeSlide extends LinearMotorControl {
         lsFront.setPower(1);
         lsBack.setPower(1);
     }
-
     @Override
     protected boolean isBusy() {
         //return Math.abs(getTargetPositionMeters() - getPositionMeters()) < 0.001 && Math.abs(getVelocityMeters()) <
         // 0.001;
         return lsFront.isBusy() || lsBack.isBusy();
     }
-
     @Override
     protected void setTargetPositionMeters(double position) {
         lsFront.setTargetPosition((int) (position * TICKS_PER_METER));

@@ -52,15 +52,18 @@ public class TestShuttle extends LinearOpMode {
                 scope.fork(() -> outtakeSlide.goToPosition(0.25));
                 scope.fork(droneLauncher::launch);
                 scope.fork(outtakeArmPivot::goToOuttakePos);
-                scope.join();
-                outtakeArmClamp.release();
-                Thread.sleep(1000);
-                scope.fork(() -> {
-                    outtakeArmPivot.goToZeroPos();
-                    outtakeSlide.goToPosition(0);
-                });
 
                 scope.join();
+
+                outtakeArmClamp.release();
+
+                Thread.sleep(1000);
+
+                outtakeArmPivot.goToZeroPos();
+                outtakeSlide.goToPosition(0);
+
+                scope.join();
+
             } catch (TimeoutException e) {
                 throw new RuntimeException(e);
             } finally {
