@@ -12,7 +12,7 @@ import com.kalipsorobotics.fresh.math.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+@TeleOp(name = "Fresh Pure Pursuit")
 public class TestPurePursuit extends LinearOpMode {
 
     @Override
