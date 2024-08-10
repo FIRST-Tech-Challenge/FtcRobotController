@@ -698,7 +698,7 @@ public class WilyCore {
         // Enumerate all opModes and find a configuration class:
         Annotations annotations = getAnnotations();
         if (annotations.opModeChoices.size() == 0) {
-            String message = "Couldn't find @TeleOp or @Autonomous classes anywhere. Is the SRC_ROOT\n"
+            String message = "Couldn't find any @TeleOp or @Autonomous classes in your package.\n\nIs the SRC_ROOT"
                 + "environment variable set correctly in the WilyWorks configuration you created?";
             JOptionPane.showMessageDialog(null, message, "Exception",
                     JOptionPane.INFORMATION_MESSAGE);

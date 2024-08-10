@@ -101,6 +101,26 @@ data class SleepAction(val dt: Double) : Action {
 
     override fun preview(fieldOverlay: Canvas) {}
 }
+fun interface InstantFunction {
+    fun run()
+}
+
+/**
+ * Instant action that executes [f] immediately.
+ */
+class InstantAction(val f: InstantFunction) : Action {
+    override fun run(p: TelemetryPacket): Boolean {
+        f.run()
+        return false
+    }
+}
+
+/**
+ * Null action that does nothing.
+ */
+class NullAction : Action {
+    override fun run(p: TelemetryPacket) = false
+}
 
 private fun seqCons(hd: Action, tl: Action): Action =
     if (tl is SequentialAction) {
@@ -140,13 +160,11 @@ class TrajectoryActionBuilder private constructor(
     // constants
     val turnActionFactory: TurnActionFactory,
     val trajectoryActionFactory: TrajectoryActionFactory,
-    val eps: Double,
+    val trajectoryBuilderParams: TrajectoryBuilderParams,
     val beginEndVel: Double,
     val baseTurnConstraints: TurnConstraints,
     val baseVelConstraint: VelConstraint,
     val baseAccelConstraint: AccelConstraint,
-    val dispResolution: Double,
-    val angResolution: Double,
     val poseMap: PoseMap,
     // vary throughout
     private val tb: TrajectoryBuilder,
@@ -162,30 +180,27 @@ class TrajectoryActionBuilder private constructor(
     constructor(
         turnActionFactory: TurnActionFactory,
         trajectoryActionFactory: TrajectoryActionFactory,
+        trajectoryBuilderParams: TrajectoryBuilderParams,
         beginPose: Pose2d,
-        eps: Double,
         beginEndVel: Double,
         baseTurnConstraints: TurnConstraints,
         baseVelConstraint: VelConstraint,
         baseAccelConstraint: AccelConstraint,
-        dispResolution: Double,
-        angResolution: Double,
         poseMap: PoseMap = IdentityPoseMap(),
     ) :
             this(
                 turnActionFactory,
                 trajectoryActionFactory,
-                eps,
+                trajectoryBuilderParams,
                 beginEndVel,
                 baseTurnConstraints,
                 baseVelConstraint,
                 baseAccelConstraint,
-                dispResolution,
-                angResolution,
                 poseMap,
                 TrajectoryBuilder(
-                    beginPose, eps, beginEndVel,
-                    baseVelConstraint, baseAccelConstraint, dispResolution, angResolution,
+                    trajectoryBuilderParams,
+                    beginPose, beginEndVel,
+                    baseVelConstraint, baseAccelConstraint,
                     poseMap,
                 ),
                 0,
@@ -209,13 +224,11 @@ class TrajectoryActionBuilder private constructor(
             this(
                 ab.turnActionFactory,
                 ab.trajectoryActionFactory,
-                ab.eps,
+                ab.trajectoryBuilderParams,
                 ab.beginEndVel,
                 ab.baseTurnConstraints,
                 ab.baseVelConstraint,
                 ab.baseAccelConstraint,
-                ab.dispResolution,
-                ab.angResolution,
                 ab.poseMap,
                 tb,
                 n,
@@ -243,12 +256,11 @@ class TrajectoryActionBuilder private constructor(
             TrajectoryActionBuilder(
                 this,
                 TrajectoryBuilder(
+                    trajectoryBuilderParams,
                     endPoseUnmapped,
-                    eps,
                     beginEndVel,
                     baseVelConstraint,
                     baseAccelConstraint,
-                    dispResolution, angResolution,
                     poseMap,
                 ),
                 0,
@@ -257,7 +269,7 @@ class TrajectoryActionBuilder private constructor(
                 endTangent,
                 emptyList()
             ) { tail ->
-                val (aNew, msRem) = ts.zip(ts.scan(0) { acc, t -> acc + t.offsets.size }).foldRight(
+                val (aNew, msRem) = ts.zip(ts.scan(0) { acc, t -> acc + t.offsets.size - 1 }).foldRight(
                     Pair(tail, ms)
                 ) { (traj, offset), (acc, ms) ->
                     val timeTraj = TimeTrajectory(traj)
@@ -294,6 +306,7 @@ class TrajectoryActionBuilder private constructor(
             b.cont(seqCons(a, tail))
         }
     }
+    fun stopAndAdd(f: InstantFunction) = stopAndAdd(InstantAction(f))
 
     /**
      * Waits [t] seconds.
@@ -320,6 +333,7 @@ class TrajectoryActionBuilder private constructor(
             ms + listOf(DispMarkerFactory(n, ds, a)), cont
         )
     }
+    fun afterDisp(ds: Double, f: InstantFunction) = afterDisp(ds, InstantAction(f))
 
     /**
      * Schedules action [a] to execute in parallel starting [dt] seconds after the last trajectory segment, turn, or
@@ -339,6 +353,7 @@ class TrajectoryActionBuilder private constructor(
             )
         }
     }
+    fun afterTime(dt: Double, f: InstantFunction) = afterTime(dt, InstantAction(f))
 
     fun setTangent(r: Rotation2d) =
         TrajectoryActionBuilder(this, tb.setTangent(r), n, lastPoseUnmapped, lastPose, lastTangent, ms, cont)
@@ -368,12 +383,11 @@ class TrajectoryActionBuilder private constructor(
         return TrajectoryActionBuilder(
             b2,
             TrajectoryBuilder(
+                trajectoryBuilderParams,
                 lastPoseUnmapped,
-                eps,
                 beginEndVel,
                 baseVelConstraint,
                 baseAccelConstraint,
-                dispResolution, angResolution,
                 poseMap
             ),
             b2.n, lastPoseUnmapped, lastPose, lastTangent, b2.ms, b2.cont
@@ -735,6 +749,18 @@ class TrajectoryActionBuilder private constructor(
         ),
         n + 1, lastPoseUnmapped, lastPose, lastTangent, ms, cont
     )
+
+    /**
+     * Creates a new builder with the same settings at the current pose, tangent.
+     */
+    fun fresh() = TrajectoryActionBuilder(
+        turnActionFactory,
+        trajectoryActionFactory,
+        trajectoryBuilderParams,
+        lastPoseUnmapped,
+        beginEndVel, baseTurnConstraints, baseVelConstraint, baseAccelConstraint,
+        poseMap
+    ).setTangent(lastTangent)
 
     fun build(): Action {
         return endTrajectory().cont(SequentialAction())

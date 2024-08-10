@@ -37,7 +37,7 @@ package com.qualcomm.robotcore.hardware;
 public interface HardwareDevice {
 
     enum Manufacturer {
-        Unknown, Other, Lego, HiTechnic, ModernRobotics, Adafruit, Matrix, Lynx, AMS, STMicroelectronics, Broadcom, DFRobot
+        Unknown, Other, Lego, HiTechnic, ModernRobotics, Adafruit, Matrix, Lynx, AMS, STMicroelectronics, Broadcom, DFRobot, SparkFun
     }
 
     /**
