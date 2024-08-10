@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
 
     private final OpModeUtilities opModeUtilities;
     public DcMotor wheelMotor;
 
-    public DcMotor stackPusher;
+    public Servo stackPusher;
 
     public IntakeState state;
 
-    public static final double P_CONSTANT = 0.01;
+    public static final double P_CONSTANT = 0.004;
 
     public Intake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
@@ -21,12 +22,10 @@ public class Intake {
 
     private void setUpHardware() {
         wheelMotor = opModeUtilities.getHardwareMap().dcMotor.get("intake");
-        stackPusher = opModeUtilities.getHardwareMap().dcMotor.get("stackAttachment");
+        stackPusher = opModeUtilities.getHardwareMap().servo.get("stackAttachment");
 
         wheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        stackPusher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        stackPusher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public double intakeToTicksCalcPowerParallelSequence(GenericState conditionState) {
@@ -34,6 +33,8 @@ public class Intake {
             if (!state.isDone() && state.getOpMode().opModeIsActive()) {
                 return P_CONSTANT * state.getError();
             }
+
+            return 0;
         }
 
         return 0;
@@ -45,8 +46,8 @@ public class Intake {
     }
 
     public void update(GenericState conditionState) {
-        if (!this.state.isDone()) {
-            intakeToTicksCalcPowerParallelSequence(conditionState);
+        if (!this.state.isDone() && conditionState.isDone()) {
+            wheelMotor.setPower(intakeToTicksCalcPowerParallelSequence(conditionState));
         }
     }
 

@@ -13,10 +13,11 @@ public class DroneLauncher {
     private static final double LAUNCHER_SERVO_DISENGAGE_POS = 0.73;
     private static final double LAUNCHER_SERVO_ENGAGE_POS = 0.45;
 
-    private static final double P_CONSTANT = 0.01;
+    private static final double P_CONSTANT = 0.004;
 
     public DroneLauncher(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
+        this.state = new DroneLauncherState();
         setUpHardware();
     }
 
@@ -46,7 +47,7 @@ public class DroneLauncher {
 
     public void update(GenericState conditionState) {
         if (!this.state.isDone()) {
-            wheelCalcPowerParallelSequence(conditionState);
+            wheel.setPower(wheelCalcPowerParallelSequence(conditionState));
         }
     }
 

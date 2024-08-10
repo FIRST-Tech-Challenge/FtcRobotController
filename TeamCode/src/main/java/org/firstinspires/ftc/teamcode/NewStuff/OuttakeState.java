@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.NewStuff.GenericState;
 
 public class OuttakeState extends GenericState {
 
-    public static final double ERROR_TOLERANCE = 15;
+    public static final double ERROR_TOLERANCE = 50;
     private double currentTargetTicks;
     private double currentTicks;
 

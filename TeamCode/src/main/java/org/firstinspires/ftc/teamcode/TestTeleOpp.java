@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.NewStuff.DroneLauncher;
 import org.firstinspires.ftc.teamcode.NewStuff.Intake;
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 import org.firstinspires.ftc.teamcode.NewStuff.Outtake;
 import org.firstinspires.ftc.teamcode.NewStuff.TrueState;
 
@@ -18,8 +19,18 @@ public class TestTeleOpp extends LinearOpMode {
 
     TrueState trueState;
 
+    OpModeUtilities opModeUtilities;
+
     @Override
     public void runOpMode() throws InterruptedException {
+
+        opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+
+        outtake = new Outtake(opModeUtilities);
+        intake = new Intake(opModeUtilities);
+        droneLauncher = new DroneLauncher(opModeUtilities);
+
+        trueState = new TrueState();
 
         outtake.state.setOpMode(this);
         intake.state.setOpMode(this);
@@ -58,13 +69,15 @@ public class TestTeleOpp extends LinearOpMode {
             droneLauncher.wheel.setPower(droneLauncher.wheelCalcPowerParallelSequence(trueState));
             */
 
-            telemetry.addData("intake ticks", intake.state.getError());
-            telemetry.addData("outtake ticks", outtake.state.getError());
-            telemetry.addData("drone ticks", droneLauncher.state.getError());
+            telemetry.addData("intake ticks", intake.wheelMotor.getCurrentPosition());
+            telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());
+            telemetry.addData("drone ticks", droneLauncher.wheel.getCurrentPosition());
+            telemetry.addData("intake state done", intake.state.isDone());
+            telemetry.addData("outtake power", outtake.lsToTicksCalcPowerParallelSequence(trueState, 1));
             telemetry.update();
 
             if (intake.state.isDone() && outtake.state.isDone() && droneLauncher.state.isDone()) {
-                break;
+
             }
         }
 
