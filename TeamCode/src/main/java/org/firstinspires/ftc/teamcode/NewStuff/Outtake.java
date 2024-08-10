@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.NewStuff;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 public class Outtake {
 
-    public static final double P_CONSTANT = 0.01;
+    public static final double P_CONSTANT = 0.004;
     private final OpModeUtilities opModeUtilities;
     public DcMotor lsFront, lsBack;
     public Servo tray;
@@ -48,6 +49,9 @@ public class Outtake {
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lsBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lsBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
