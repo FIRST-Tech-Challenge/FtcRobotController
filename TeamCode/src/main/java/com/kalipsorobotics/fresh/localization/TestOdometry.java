@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-@TeleOp
+@TeleOp(name = "Fresh Odometry")
 public class TestOdometry extends LinearOpMode {
 
     @Override
