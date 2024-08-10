@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class EncoderMecanumTeleOp extends OpMode{
     /*
      * The mecanum drivetrain involves four separate motors that spin in
-     * different directions and different speeds to produce the desired
+     * different directions and different speeds to prod uce the desired
      * movement at the desired speed.
      */
 
