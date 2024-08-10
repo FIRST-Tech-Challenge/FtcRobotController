@@ -27,7 +27,7 @@ public class PotentiometerCalibration extends LinearOpMode {
         telemetry.update();
 
         // Ensure the directory exists
-        File directory = new File("/sdcard/potentiometerLogs");
+        File directory = new File("/sdcard/potentiometerLogs400");
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -83,7 +83,7 @@ public class PotentiometerCalibration extends LinearOpMode {
 
         // Create the file name with the battery voltage
 
-        String fileName = "/sdcard/potentiometerLogs/potentiometer_data_" + formattedVoltage + "V.txt";
+        String fileName = "/sdcard/potentiometerLogs400/potentiometer_data_" + formattedVoltage + "V.txt";
 
         // File writer setup
         try {
