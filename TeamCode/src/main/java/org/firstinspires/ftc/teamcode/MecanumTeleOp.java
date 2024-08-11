@@ -31,6 +31,7 @@ public class MecanumTeleOp extends OpMode {
         back_right   = hardwareMap.get(DcMotor.class, "backRightMotor");
 
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
