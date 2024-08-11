@@ -35,15 +35,13 @@ public class TurnDroneLauncherWheelAction extends Action {
         return error * P_CONSTANT;
     }
 
-    @Override
-    public void update() {
+    public void updateCheckDone() {
         Log.d("parallelaction", "entered turn drone wheel");
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
 
         Log.d("parallelaction", "should turn drone wheel");
-        this.currentTicks = wheel.getCurrentPosition();
-        wheel.setPower(calculatePower());
+        update();
 
         updateIsDone();
     }
@@ -64,16 +62,19 @@ public class TurnDroneLauncherWheelAction extends Action {
     }
 
     @Override
+    void update() {
+        this.currentTicks = wheel.getCurrentPosition();
+        wheel.setPower(calculatePower());
+    }
+
     boolean getIsDone() {
         return isDone;
     }
 
-    @Override
     void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
     }
 
-    @Override
     Action getDependentAction() {
         return this.dependentAction;
     }

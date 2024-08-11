@@ -11,7 +11,7 @@ public class MoveLSAction extends Action {
     final double ERROR_TOLERANCE = 50;
     final double P_CONSTANT = 0.003;
     Action dependentAction;
-    DoneStateAction doneStateAction = new DoneStateAction();;
+    DoneStateAction doneStateAction = new DoneStateAction();
     double targetTicks;
     double currentTicks;
     double error;
@@ -37,16 +37,13 @@ public class MoveLSAction extends Action {
         return error * P_CONSTANT;
     }
 
-    @Override
-    public void update() {
+    public void updateCheckDone() {
         Log.d("parallelaction", "entered move ls");
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
 
         Log.d("parallelaction", "should move ls");
-        this.currentTicks = lsFront.getCurrentPosition();
-        lsFront.setPower(calculatePower());
-        lsBack.setPower(calculatePower());
+        update();
 
         updateIsDone();
     }
@@ -67,16 +64,20 @@ public class MoveLSAction extends Action {
     }
 
     @Override
+    void update() {
+        this.currentTicks = lsFront.getCurrentPosition();
+        lsFront.setPower(calculatePower());
+        lsBack.setPower(calculatePower());
+    }
+
     boolean getIsDone() {
         return isDone;
     }
 
-    @Override
     void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
     }
 
-    @Override
     Action getDependentAction() {
         return this.dependentAction;
     }

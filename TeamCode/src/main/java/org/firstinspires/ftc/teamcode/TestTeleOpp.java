@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.NewStuff.Action;
 import org.firstinspires.ftc.teamcode.NewStuff.ActionSet;
 import org.firstinspires.ftc.teamcode.NewStuff.DroneLauncher;
 import org.firstinspires.ftc.teamcode.NewStuff.Intake;
@@ -69,7 +68,7 @@ public class TestTeleOpp extends LinearOpMode {
 //            action3.update();
 //            action4.update();
 
-            outer.update();
+            outer.updateCheckDone();
 
             telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());
             telemetry.addData("drone launcher ticks", droneLauncher.wheel.getCurrentPosition());
