@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.mechanumDrive;
+package org.firstinspires.ftc.teamcode.commands.driveTrain.mechanumDrive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 

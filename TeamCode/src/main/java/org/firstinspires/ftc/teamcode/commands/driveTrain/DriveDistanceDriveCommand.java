@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode.commands.tankDriveBase;
+package org.firstinspires.ftc.teamcode.commands.driveTrain;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PController;
 
+import org.firstinspires.ftc.teamcode.RobotConfig;
 import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
 @Config
-public class TankDriveDistanceDriveCommand extends SympleCommandBase<TankDriveBaseSubsystem> {
+public class DriveDistanceDriveCommand extends SympleCommandBase<DriveTrainBaseSubsystem> {
     public static final double Kp = 0.5;
     private static final double MAX_POWER = 0.3f;
 
@@ -17,7 +19,7 @@ public class TankDriveDistanceDriveCommand extends SympleCommandBase<TankDriveBa
 
     private double STARTING_POS;
 
-    public TankDriveDistanceDriveCommand(TankDriveBaseSubsystem driveBaseSubsystem, double meters) {
+    public DriveDistanceDriveCommand(TankDriveBaseSubsystem driveBaseSubsystem, double meters) {
         super(driveBaseSubsystem);
         this.finalPos = meters;
 
@@ -29,7 +31,7 @@ public class TankDriveDistanceDriveCommand extends SympleCommandBase<TankDriveBa
     public void initialize() {
         super.initialize();
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getDataLoggerPrefix() + "Moving " + this.finalPos + " meters");
-        this.STARTING_POS = this.subsystem.getLeftWheelDistanceDriven();
+        this.STARTING_POS = this.subsystem.getForwardDistanceDriven();
         this.pController.setSetPoint(this.finalPos);
     }
 
@@ -37,26 +39,26 @@ public class TankDriveDistanceDriveCommand extends SympleCommandBase<TankDriveBa
     public void execute() {
         super.execute();
 
-        double driveDistance = (this.subsystem.getLeftWheelDistanceDriven() - this.STARTING_POS);
+        double driveDistance = (this.subsystem.getForwardDistanceDriven() - this.STARTING_POS);
 
         double rawPower = this.pController.calculate(driveDistance);
-        rawPower += Math.signum(rawPower) * TankDriveBaseSubsystem.Ks;
+        rawPower += Math.signum(rawPower) * RobotConfig.DriveTrain.Ks;
 
         double power = Math.min(Math.max(rawPower, -MAX_POWER), MAX_POWER);
 
 
         this.getTelemetry().addData("power", power);
         this.getTelemetry().addData("dist", driveDistance);
-        this.getTelemetry().addData("rel motor encoder", this.subsystem.getLeftWheelDistanceDriven() - this.STARTING_POS);
-        this.getTelemetry().addData("motor encoder", this.subsystem.getLeftWheelDistanceDriven());
+        this.getTelemetry().addData("rel motor encoder", this.subsystem.getForwardDistanceDriven() - this.STARTING_POS);
+        this.getTelemetry().addData("motor encoder", this.subsystem.getForwardDistanceDriven());
         this.getTelemetry().update();
 
-        this.subsystem.moveMotors(power, power);
+        this.subsystem.moveSideMotors(power, power);
     }
 
     @Override
     public void end(boolean interrupted) {
-        this.subsystem.moveMotors(0, 0);
+        this.subsystem.moveSideMotors(0, 0);
         super.end(interrupted);
     }
 

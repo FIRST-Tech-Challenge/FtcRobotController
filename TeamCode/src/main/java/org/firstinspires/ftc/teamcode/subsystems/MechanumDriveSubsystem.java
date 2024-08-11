@@ -4,12 +4,13 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.RobotController;
 import org.firstinspires.ftc.teamcode.maps.MotorMap;
+import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubSystemBase;
 
 import java.util.HashMap;
 
-public class MechanumDriveSubsystem extends SympleSubSystemBase {
+public class MechanumDriveSubsystem extends SympleSubSystemBase implements DriveTrainBaseSubsystem {
     private final HashMap<MotorNames, MotorEx> motors = new HashMap<>();
 
     public MechanumDriveSubsystem(RobotController robotController) {
@@ -34,6 +35,24 @@ public class MechanumDriveSubsystem extends SympleSubSystemBase {
         m.set(power);
     }
 
+    @Override
+    public void moveSideMotors(double left, double right) {
+        this.moveMotor(MotorNames.FRONT_LEFT, left);
+        this.moveMotor(MotorNames.BACK_LEFT, left);
+
+        this.moveMotor(MotorNames.FRONT_RIGHT, right);
+        this.moveMotor(MotorNames.BACK_RIGHT, right);
+    }
+
+    @Override
+    public double getForwardDistanceDriven() {
+        return this.robotController.getRobotPositionManager().getRightWheelDistanceDriven();
+    }
+
+    @Override
+    public double getHeading() {
+        return this.robotController.getRobotPositionManager().getHeadingByGyro();
+    }
 
     public enum MotorNames {
         FRONT_RIGHT,

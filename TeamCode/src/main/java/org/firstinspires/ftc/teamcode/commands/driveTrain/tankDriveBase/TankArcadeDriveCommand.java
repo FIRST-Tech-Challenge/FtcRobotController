@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.tankDriveBase;
+package org.firstinspires.ftc.teamcode.commands.driveTrain.tankDriveBase;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;

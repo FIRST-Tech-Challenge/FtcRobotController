@@ -8,10 +8,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.managers.RobotPositionManager;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.opModes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.util.TeamColor;
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubSystemBase;
+import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubsystem;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -23,17 +24,19 @@ public class RobotController {
     public final GamepadEx driverController;
     public final GamepadEx actionController;
 
-    private final HashMap<Class<? extends SympleSubSystemBase>, SympleSubSystemBase> subsystemHashMap = new HashMap<>();
+    private final HashMap<Class<? extends SympleSubsystem>, SympleSubsystem> subsystemHashMap = new HashMap<>();
     private final OpModeTemplate opModeTemplate;
 
     private final HardwareMap hardwareMap;
     private final MultipleTelemetry telemetry;
     private final TeamColor teamColor;
     private final DataLogger dataLogger;
+    private final RobotPositionManager robotPositionManager;
 
     public RobotController(Class<? extends OpModeTemplate> opModeTemplateClazz, HardwareMap hMap, Telemetry telemetry, Gamepad driverController, Gamepad actionController, TeamColor teamColor, boolean logData) {
         this.hardwareMap = hMap;
         this.teamColor = teamColor;
+        this.robotPositionManager = new RobotPositionManager(this);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         this.dataLogger = new DataLogger(opModeTemplateClazz.getSimpleName(), !logData);
 
@@ -62,7 +65,7 @@ public class RobotController {
 
     public void initSubSystems() {
         this.dataLogger.addData(DataLogger.DataType.INFO, "RobotController: Starting to initialize subsystems");
-        for(Class<? extends SympleSubSystemBase> subsystem : this.opModeTemplate.getSubsystems()) {
+        for(Class<? extends SympleSubsystem> subsystem : this.opModeTemplate.getSubsystems()) {
             this.dataLogger.addData(DataLogger.DataType.INFO, "RobotController: initializing '" + subsystem.getSimpleName() + "' sub system");
             try {
                 subsystemHashMap.put(subsystem, subsystem.getDeclaredConstructor(RobotController.class).newInstance(this));
@@ -83,7 +86,7 @@ public class RobotController {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends SympleSubSystemBase> T getSubsystem(Class<T> clazz) {
+    public <T extends SympleSubsystem> T getSubsystem(Class<T> clazz) {
         return (T) this.subsystemHashMap.get(clazz);
     }
 
@@ -105,5 +108,9 @@ public class RobotController {
 
     public DataLogger getDataLogger() {
         return dataLogger;
+    }
+
+    public RobotPositionManager getRobotPositionManager() {
+        return robotPositionManager;
     }
 }

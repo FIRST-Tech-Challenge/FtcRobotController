@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opMode.templates;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.RobotController;
-import org.firstinspires.ftc.teamcode.commands.mechanumDrive.MechanumArcadeDriveCommand;
+import org.firstinspires.ftc.teamcode.commands.driveTrain.mechanumDrive.MechanumArcadeDriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.MechanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.opModes.OpModeTemplate;
 
