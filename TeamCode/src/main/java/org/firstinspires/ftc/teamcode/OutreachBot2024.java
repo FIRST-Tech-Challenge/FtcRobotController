@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.PWMOutput;
@@ -11,27 +13,31 @@ import com.qualcomm.robotcore.hardware.PWMOutputImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp(name="Tank Tele-Op", group="Robot")
+@TeleOp(name = "Tank Tele-Op", group = "Robot")
 
-public class OutreachBot2024 extends OpMode{
+public class OutreachBot2024 extends OpMode {
 
     /* Declare OpMode members. */
-    public DcMotor  frontLeft   = null;
-    public DcMotor  frontRight = null;
-    public DcMotor  backLeft = null;
-    public DcMotor  backRight = null;
+    public DcMotor frontLeft = null;
+    public DcMotor frontRight = null;
+    public DcMotor backLeft = null;
+    public DcMotor backRight = null;
     public RevBlinkinLedDriver FriedFries = null;
     public RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
     public Servo triggerServo = null;
-
+    public Servo piston = null;
+    double x;
     public void init() {
-        // Define and Initialize Motors
-        frontLeft  = hardwareMap.get(DcMotor.class, "LF");
-        backLeft  = hardwareMap.get(DcMotor.class, "LB");
+        // Define and Initialize Motor
+        //Dear robot, why wont you work???,i need you rn, plz btfm,youre my little pookie ber, we care about youz,ur lovd!
+        x=0;
+        frontLeft = hardwareMap.get(DcMotor.class, "LF");
+        backLeft = hardwareMap.get(DcMotor.class, "LB");
         frontRight = hardwareMap.get(DcMotor.class, "RF");
-        backRight  = hardwareMap.get(DcMotor.class, "RB");
-        FriedFries = hardwareMap.get(RevBlinkinLedDriver.class, "Expelled14");
-        triggerServo = hardwareMap.get(Servo.class, "TriggerS");`
+        backRight = hardwareMap.get(DcMotor.class, "RB");
+        FriedFries = hardwareMap.get(RevBlinkinLedDriver.class, "snuffleupagusLED");
+        triggerServo = hardwareMap.get(Servo.class, "TriggerS");
+        piston = hardwareMap.get(Servo.class, "Piston");
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -44,7 +50,6 @@ public class OutreachBot2024 extends OpMode{
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
 
         telemetry.addData(">", "Robot Ready.  Press Play.");    //
@@ -70,9 +75,9 @@ public class OutreachBot2024 extends OpMode{
         frontRight.setPower(rightPower);
         backLeft.setPower(leftPower);
         backRight.setPower(rightPower);
-        if (gamepad1.a) {
+        if (gamepad1.a){
             pattern = pattern.next();
-            if (pattern == RevBlinkinLedDriver.BlinkinPattern.TWINKLES_RAINBOW_PALETTE){
+            if (pattern == RevBlinkinLedDriver.BlinkinPattern.TWINKLES_RAINBOW_PALETTE) {
                 pattern = pattern.next();
             }
             FriedFries.setPattern(pattern);
@@ -86,7 +91,7 @@ public class OutreachBot2024 extends OpMode{
         if (gamepad1.b) {
             pattern = pattern.previous();
             telemetry.addData("pattern: ", pattern.toString());
-            if (pattern == RevBlinkinLedDriver.BlinkinPattern.TWINKLES_RAINBOW_PALETTE){
+            if (pattern == RevBlinkinLedDriver.BlinkinPattern.TWINKLES_RAINBOW_PALETTE) {
                 pattern = pattern.previous();
             }
             FriedFries.setPattern(pattern);
@@ -95,10 +100,21 @@ public class OutreachBot2024 extends OpMode{
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
+            if (gamepad1.dpad_right) {
+                piston.setPosition(0.1);
+            }
+            if (gamepad1.dpad_left) {
+                piston.setPosition(0.2);
+
+            }
+            if (gamepad1.dpad_down) {
+                triggerServo.setPosition(0);
+            }
+            if (gamepad1.dpad_up) {
+                triggerServo.setPosition(0.75);
+            }
+            FriedFries.setPattern(pattern);
         }
-        FriedFries.setPattern(pattern);
-    }
-    public void stop() {
     }
 }
-
