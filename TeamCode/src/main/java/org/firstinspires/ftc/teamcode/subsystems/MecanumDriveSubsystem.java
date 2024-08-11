@@ -16,10 +16,10 @@ public class MecanumDriveSubsystem extends SympleSubsystemBase implements DriveT
     public MecanumDriveSubsystem(RobotController robotController) {
         super(robotController);
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Getting motors");
-        this.motors.put(MotorNames.FRONT_RIGHT, new MotorEx(robotController.getHardwareMap(), MotorMap.FRONT_RIGHT.getId()));
-        this.motors.put(MotorNames.FRONT_LEFT, new MotorEx(robotController.getHardwareMap(), MotorMap.FRONT_LEFT.getId()));
-        this.motors.put(MotorNames.BACK_LEFT, new MotorEx(robotController.getHardwareMap(), MotorMap.BACK_LEFT.getId()));
-        this.motors.put(MotorNames.BACK_RIGHT, new MotorEx(robotController.getHardwareMap(), MotorMap.BACK_RIGHT.getId()));
+        this.motors.put(MotorNames.FRONT_RIGHT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_FRONT_RIGHT.getId()));
+        this.motors.put(MotorNames.FRONT_LEFT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_FRONT_LEFT.getId()));
+        this.motors.put(MotorNames.BACK_LEFT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_BACK_LEFT.getId()));
+        this.motors.put(MotorNames.BACK_RIGHT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_BACK_RIGHT.getId()));
 
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Inverting motors");
         this.motors.get(MotorNames.FRONT_RIGHT).setInverted(true);
@@ -47,6 +47,10 @@ public class MecanumDriveSubsystem extends SympleSubsystemBase implements DriveT
     @Override
     public double getForwardDistanceDriven() {
         return this.robotController.getRobotPositionManager().getRightWheelDistanceDriven();
+    }
+
+    public double getSideDistanceDriven() {
+        return this.robotController.getRobotPositionManager().getBackWheelDistanceDriven();
     }
 
     @Override

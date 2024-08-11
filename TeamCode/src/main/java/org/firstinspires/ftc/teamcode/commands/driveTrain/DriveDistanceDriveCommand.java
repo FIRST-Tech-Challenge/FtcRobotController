@@ -4,15 +4,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PController;
 
 import org.firstinspires.ftc.teamcode.RobotConfig;
-import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
 @Config
 public class DriveDistanceDriveCommand extends SympleCommandBase<DriveTrainBaseSubsystem> {
-    public static final double Kp = 0.5;
-    private static final double MAX_POWER = 0.3f;
+    public static final double Kp = 0.65;
+    private static final double MAX_POWER = 0.8f;
 
     private final PController pController;
     private final double finalPos;
@@ -32,6 +31,7 @@ public class DriveDistanceDriveCommand extends SympleCommandBase<DriveTrainBaseS
         super.initialize();
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getDataLoggerPrefix() + "Moving " + this.finalPos + " meters");
         this.STARTING_POS = this.subsystem.getForwardDistanceDriven();
+        this.pController.reset();
         this.pController.setSetPoint(this.finalPos);
     }
 

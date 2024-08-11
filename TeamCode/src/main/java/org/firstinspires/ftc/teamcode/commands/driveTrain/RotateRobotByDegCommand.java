@@ -2,14 +2,13 @@ package org.firstinspires.ftc.teamcode.commands.driveTrain;
 
 import com.arcrobotics.ftclib.controller.PController;
 
-import org.firstinspires.ftc.teamcode.subsystems.TankDriveBaseSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
 public class RotateRobotByDegCommand extends SympleCommandBase<DriveTrainBaseSubsystem> {
     public static final double defaultKp = 0.05f;
-    private static final double MAX_POWER = 0.3f;
+    private static final double MAX_POWER = 0.8f;
 
     private final PController pController;
     private final double degToRotate;
@@ -25,7 +24,7 @@ public class RotateRobotByDegCommand extends SympleCommandBase<DriveTrainBaseSub
         this.degToRotate = degToRotate;
     }
 
-    public RotateRobotByDegCommand(TankDriveBaseSubsystem driveBaseSubsystem, double degToRotate) {
+    public RotateRobotByDegCommand(DriveTrainBaseSubsystem driveBaseSubsystem, double degToRotate) {
         this(driveBaseSubsystem, degToRotate, defaultKp);
     }
 
@@ -53,7 +52,7 @@ public class RotateRobotByDegCommand extends SympleCommandBase<DriveTrainBaseSub
         this.getTelemetry().addData("heading", this.subsystem.getHeading());
         this.getTelemetry().update();
 
-        this.subsystem.moveSideMotors(-power, power);
+        this.subsystem.moveSideMotors(power, -power);
     }
 
     @Override

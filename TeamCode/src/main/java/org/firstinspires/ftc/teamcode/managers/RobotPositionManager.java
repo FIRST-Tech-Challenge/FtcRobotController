@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.managers;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -25,6 +26,14 @@ public class RobotPositionManager {
         this.rightDeadWheel = new MotorEx(robotController.getHardwareMap(), SensorMap.DEAD_WHEEL_RIGHT.getId());
         this.leftDeadWheel = new MotorEx(robotController.getHardwareMap(), SensorMap.DEAD_WHEEL_LEFT.getId());
         this.backDeadWheel = new MotorEx(robotController.getHardwareMap(), SensorMap.DEAD_WHEEL_BACK.getId());
+
+        this.rightDeadWheel.encoder.setDirection(Motor.Direction.REVERSE);
+        this.leftDeadWheel.encoder.setDirection(Motor.Direction.REVERSE);
+//        this.rightDeadWheel.encoder.setDirection(Motor.Direction.REVERSE);
+
+        this.rightDeadWheel.resetEncoder();
+        this.leftDeadWheel.resetEncoder();
+        this.backDeadWheel.resetEncoder();
     }
 
     public double getHeadingByGyro() {

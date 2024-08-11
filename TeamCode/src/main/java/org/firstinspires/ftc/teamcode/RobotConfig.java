@@ -9,7 +9,7 @@ public class RobotConfig {
 
         public static final double GEAR_RATIO = 1f;
         public static final double WHEEL_RADIUS = 0.045f;
-        public static final double WHEELS_DISTANCE = 1f; // TODO: FIND WHEELS DISTANCE
+        public static final double WHEELS_DISTANCE = 0.19f;
 
         public static final double METERS_PER_REV = (Math.PI * 2) * WHEEL_RADIUS;
         public static final double METERS_PER_TICK = (METERS_PER_REV / (TICKS_PER_REV * GEAR_RATIO));
