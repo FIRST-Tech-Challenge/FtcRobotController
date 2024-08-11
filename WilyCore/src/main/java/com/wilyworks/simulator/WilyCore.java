@@ -37,6 +37,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -210,7 +211,11 @@ class DashboardWindow extends JFrame {
         getContentPane().add(masterPanel);
         pack();
 
+        Image icon = Toolkit.getDefaultToolkit().getImage("main-icon.jpeg");
+        setIconImage(icon);
+
         dashboardCanvas.start();
+        setVisible(true);
     }
 }
 
@@ -707,12 +712,14 @@ public class WilyCore {
 
         // Start the UI:
         DashboardWindow dashboardWindow = new DashboardWindow(annotations.opModeChoices, args);
-        dashboardWindow.setVisible(true);
 
         config = getConfig(annotations.configKlass);
         dashboardCanvas = dashboardWindow.dashboardCanvas;
         simulation = new Simulation(config);
         field = new Field(simulation);
+
+dashboardWindow.setIconImage(field.compassImage); // @@@
+
         telemetry = new WilyTelemetry();
         gamepad1 = new Gamepad();
         gamepad2 = new Gamepad();
