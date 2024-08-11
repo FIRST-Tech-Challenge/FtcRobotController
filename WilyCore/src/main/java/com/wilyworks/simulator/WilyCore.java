@@ -68,7 +68,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * Structure for representing the choices of opMode:
+ * Structure for representing the choices of opMode.
  */
 class OpModeChoice {
     Class<?> klass; // Class reference
@@ -82,7 +82,7 @@ class OpModeChoice {
 }
 
 /**
- * Class for returning all relative found annotated classes:
+ * Class for returning all relative found annotated classes.
  */
 class Annotations {
     Class<?> configKlass;
@@ -211,8 +211,7 @@ class DashboardWindow extends JFrame {
         getContentPane().add(masterPanel);
         pack();
 
-        Image icon = Toolkit.getDefaultToolkit().getImage("main-icon.jpeg");
-        setIconImage(icon);
+        setIconImage(WilyCore.getImage("main-icon.jpeg", 256, 256));
 
         dashboardCanvas.start();
         setVisible(true);
@@ -694,6 +693,23 @@ public class WilyCore {
         }
     }
 
+    // Return an Image from a resource:
+    public static Image getImage(String imagePath, int width, int height) {
+        ClassLoader classLoader = currentThread().getContextClassLoader();
+        InputStream stream = classLoader.getResourceAsStream(imagePath);
+        Image image = null;
+
+        try {
+            if (stream != null) {
+                image = ImageIO.read(stream)
+                        .getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return image;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // This is the application entry point that starts up all of Wily Works!
     public static void main(String[] args)
@@ -717,8 +733,6 @@ public class WilyCore {
         dashboardCanvas = dashboardWindow.dashboardCanvas;
         simulation = new Simulation(config);
         field = new Field(simulation);
-
-dashboardWindow.setIconImage(field.compassImage); // @@@
 
         telemetry = new WilyTelemetry();
         gamepad1 = new Gamepad();
