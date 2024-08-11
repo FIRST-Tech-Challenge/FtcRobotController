@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubSystemBase;
 
 import java.util.HashMap;
 
-public class MechanumDriveSubsystem extends SympleSubSystemBase implements DriveTrainBaseSubsystem {
+public class MecanumDriveSubsystem extends SympleSubSystemBase implements DriveTrainBaseSubsystem {
     private final HashMap<MotorNames, MotorEx> motors = new HashMap<>();
 
-    public MechanumDriveSubsystem(RobotController robotController) {
+    public MecanumDriveSubsystem(RobotController robotController) {
         super(robotController);
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Getting motors");
         this.motors.put(MotorNames.FRONT_RIGHT, new MotorEx(robotController.getHardwareMap(), MotorMap.FRONT_RIGHT.getId()));

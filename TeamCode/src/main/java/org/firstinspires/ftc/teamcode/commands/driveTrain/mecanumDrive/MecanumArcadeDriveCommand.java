@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.commands.driveTrain.mechanumDrive;
+package org.firstinspires.ftc.teamcode.commands.driveTrain.mecanumDrive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
-import org.firstinspires.ftc.teamcode.subsystems.MechanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
-public class MechanumArcadeDriveCommand extends SympleCommandBase<MechanumDriveSubsystem> {
+public class MecanumArcadeDriveCommand extends SympleCommandBase<MecanumDriveSubsystem> {
     private final GamepadEx gamepad;
 
-    public MechanumArcadeDriveCommand(MechanumDriveSubsystem mechanumDriveSubsystem, GamepadEx gamepad) {
-        super(mechanumDriveSubsystem);
+    public MecanumArcadeDriveCommand(MecanumDriveSubsystem mecanumDriveSubsystem, GamepadEx gamepad) {
+        super(mecanumDriveSubsystem);
         this.gamepad = gamepad;
     }
 
@@ -43,18 +43,18 @@ public class MechanumArcadeDriveCommand extends SympleCommandBase<MechanumDriveS
             normalizedBackLeftSpeed /= maxSpeed;
         }
 
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.FRONT_RIGHT, normalizedFrontRightSpeed);
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.BACK_RIGHT, normalizedBackRightSpeed);
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.FRONT_LEFT, normalizedFrontLeftSpeed);
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.BACK_LEFT, normalizedBackLeftSpeed);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_RIGHT, normalizedFrontRightSpeed);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_RIGHT, normalizedBackRightSpeed);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_LEFT, normalizedFrontLeftSpeed);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_LEFT, normalizedBackLeftSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.FRONT_RIGHT, 0);
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.BACK_RIGHT, 0);
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.FRONT_LEFT, 0);
-        this.subsystem.moveMotor(MechanumDriveSubsystem.MotorNames.BACK_LEFT, 0);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_RIGHT, 0);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_RIGHT, 0);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_LEFT, 0);
+        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_LEFT, 0);
         super.end(interrupted);
     }
 }
