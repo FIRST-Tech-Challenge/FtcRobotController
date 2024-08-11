@@ -17,7 +17,7 @@ public class RotateRobotByDegCommand extends SympleCommandBase<DriveTrainBaseSub
     private int timesDone = 0;
     private double STARTING_ANGLE;
 
-    public RotateRobotByDegCommand(TankDriveBaseSubsystem driveBaseSubsystem, double degToRotate, double kp) {
+    public RotateRobotByDegCommand(DriveTrainBaseSubsystem driveBaseSubsystem, double degToRotate, double kp) {
         super(driveBaseSubsystem);
 
         this.pController = new PController(kp);

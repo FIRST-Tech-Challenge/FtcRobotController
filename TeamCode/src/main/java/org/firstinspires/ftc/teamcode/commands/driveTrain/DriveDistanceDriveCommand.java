@@ -19,7 +19,7 @@ public class DriveDistanceDriveCommand extends SympleCommandBase<DriveTrainBaseS
 
     private double STARTING_POS;
 
-    public DriveDistanceDriveCommand(TankDriveBaseSubsystem driveBaseSubsystem, double meters) {
+    public DriveDistanceDriveCommand(DriveTrainBaseSubsystem driveBaseSubsystem, double meters) {
         super(driveBaseSubsystem);
         this.finalPos = meters;
 
