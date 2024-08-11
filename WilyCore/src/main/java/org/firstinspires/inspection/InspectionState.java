@@ -26,7 +26,7 @@ public class InspectionState
     public String driverHubOsVersion = "";
     public int controlHubOsVersionNum;
     public int driverHubOsVersionNum;
-    public String firmwareVersion = ""; // TODO(Noah): The next time we bump Robocol, send a list of firmware versions instead
+    public String firmwareVersion = "";
     public int sdkInt;
     public boolean airplaneModeOn;
     public boolean bluetoothOn;
@@ -36,7 +36,7 @@ public class InspectionState
     public boolean wifiDirectConnected;
     public int wifiChannel;
     public boolean locationEnabled;
-    public String deviceName = "Simulator";
+    public String deviceName = "DevBot";
     public double batteryFraction;
     public boolean robotControllerInstalled;
     public boolean driverStationInstalled;
