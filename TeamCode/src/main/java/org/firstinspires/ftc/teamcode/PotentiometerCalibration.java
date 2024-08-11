@@ -27,7 +27,7 @@ public class PotentiometerCalibration extends LinearOpMode {
         telemetry.update();
 
         // Ensure the directory exists
-        File directory = new File("/sdcard/potentiometerLogs400");
+        File directory = new File("/sdcard/potentiometerLogs1000");
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -41,7 +41,7 @@ public class PotentiometerCalibration extends LinearOpMode {
 
                 gimbalPos.setPosition(i);
                 double startTime = clock.milliseconds();
-                while (clock.milliseconds() - startTime < 100) {
+                while (clock.milliseconds() - startTime < 1000) {
                     // Wait 200 ms
                 }
 
@@ -83,7 +83,7 @@ public class PotentiometerCalibration extends LinearOpMode {
 
         // Create the file name with the battery voltage
 
-        String fileName = "/sdcard/potentiometerLogs400/potentiometer_data_" + formattedVoltage + "V.txt";
+        String fileName = "/sdcard/potentiometerLogs1000/potentiometer_data_" + formattedVoltage + "V.txt";
 
         // File writer setup
         try {
