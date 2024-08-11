@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
-import org.opencv.core.Mat;
 import org.openftc.easyopencv.*;
 
 @Autonomous
-public class OpenCVTest extends OpenCvPipeline {
+public class OpenCVTest extends OpMode {
 
     public void init() {
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Camera");
@@ -35,7 +31,7 @@ public class OpenCVTest extends OpenCvPipeline {
     }
 
     @Override
-    public Mat processFrame(Mat input) {
-        return input;
+    public void loop() {
+
     }
 }
