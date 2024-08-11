@@ -101,7 +101,7 @@ class DashboardWindow extends JFrame {
     DashboardCanvas dashboardCanvas = new DashboardCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
     String opModeName = "";
 
-    DashboardWindow(List<OpModeChoice> opModeChoices, String[] args) {
+    DashboardWindow(Image icon, List<OpModeChoice> opModeChoices, String[] args) {
         Preferences preferences = Preferences.userRoot().node("com/wilyworks/simulator");
         setTitle("Dashboard");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -211,7 +211,7 @@ class DashboardWindow extends JFrame {
         getContentPane().add(masterPanel);
         pack();
 
-        setIconImage(WilyCore.getImage("main-icon.jpeg", 256, 256));
+        setIconImage(icon);
 
         dashboardCanvas.start();
         setVisible(true);
@@ -428,6 +428,7 @@ public class WilyCore {
     public static Gamepad gamepad1;
     public static Gamepad gamepad2;
     public static InputManager inputManager;
+    public static DashboardWindow dashboardWindow;
     public static Telemetry telemetry;
     public static Simulation simulation;
     public static Field field;
@@ -727,14 +728,15 @@ public class WilyCore {
         }
 
         // Start the UI:
-        DashboardWindow dashboardWindow = new DashboardWindow(annotations.opModeChoices, args);
+        Image icon = WilyCore.getImage("main-icon.jpeg", 256, 256);
+        dashboardWindow = new DashboardWindow(icon, annotations.opModeChoices, args);
+        telemetry = new WilyTelemetry(icon);
 
         config = getConfig(annotations.configKlass);
         dashboardCanvas = dashboardWindow.dashboardCanvas;
         simulation = new Simulation(config);
         field = new Field(simulation);
 
-        telemetry = new WilyTelemetry();
         gamepad1 = new Gamepad();
         gamepad2 = new Gamepad();
         inputManager = new InputManager(gamepad1, gamepad2);

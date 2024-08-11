@@ -429,10 +429,11 @@ public class WilyTelemetry implements Telemetry {
     Layout layout = new Layout();
 
     // Wily Works constructor for a Telemetry object:
-    public WilyTelemetry() {
+    public WilyTelemetry(java.awt.Image icon) {
         instance = this;
         telemetryWindow = new TelemetryWindow("Telemetry",
                 Layout.TELEMETRY_WIDTH + 5, Layout.TELEMETRY_HEIGHT + 5);
+        telemetryWindow.setIconImage(icon);
         telemetryWindow.setVisible(true);
         canvas = telemetryWindow.getCanvas();
     }
