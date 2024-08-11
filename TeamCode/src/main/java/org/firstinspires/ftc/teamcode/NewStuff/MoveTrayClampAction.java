@@ -34,26 +34,27 @@ public class MoveTrayClampAction extends Action {
     }
 
     @Override
+    void update() {
+        trayClamp.setPosition(targetPos);
+    }
+
     boolean getIsDone() {
         return isDone;
     }
 
-    @Override
     void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
     }
 
-    @Override
     Action getDependentAction() {
         return this.dependentAction;
     }
 
-    @Override
-    void update() {
+    void updateCheckDone() {
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
 
-        trayClamp.setPosition(targetPos);
+        update();
 
         updateIsDone();
     }

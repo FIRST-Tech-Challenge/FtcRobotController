@@ -7,22 +7,23 @@ public class DoneStateAction extends Action {
     }
 
     @Override
+    void update() {
+        return;
+    }
+
     boolean getIsDone() {
         return true;
     }
 
-    @Override
     void setDependentAction(Action newAction) {
         return;
     }
 
-    @Override
     Action getDependentAction() {
         return this;
     }
 
-    @Override
-    void update() {
+    void updateCheckDone() {
         return;
     }
 }

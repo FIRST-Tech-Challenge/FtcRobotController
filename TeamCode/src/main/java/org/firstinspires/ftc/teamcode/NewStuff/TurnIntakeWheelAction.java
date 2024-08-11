@@ -36,13 +36,12 @@ public class TurnIntakeWheelAction extends Action {
     }
 
     @Override
-    public void update() {
+    public void updateCheckDone() {
         Log.d("parallelaction", "entered turn wheel");
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
         Log.d("parallelaction", "should turn wheel");
-        this.currentTicks = intakeWheel.getCurrentPosition();
-        intakeWheel.setPower(calculatePower());
+        update();
 
         updateIsDone();
     }
@@ -61,16 +60,19 @@ public class TurnIntakeWheelAction extends Action {
     }
 
     @Override
+    void update() {
+        this.currentTicks = intakeWheel.getCurrentPosition();
+        intakeWheel.setPower(calculatePower());
+    }
+
     boolean getIsDone() {
         return isDone;
     }
 
-    @Override
     void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
     }
 
-    @Override
     Action getDependentAction() {
         return this.dependentAction;
     }

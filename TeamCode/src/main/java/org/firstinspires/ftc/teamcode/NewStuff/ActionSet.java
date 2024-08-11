@@ -61,29 +61,31 @@ public class ActionSet extends Action {
     }
 
     @Override
+    void update() {
+        for(int i = 0; i < actions.size(); i++) {
+            actions.get(i).updateCheckDone();
+            Log.d("parallelaction", "updating action #" + i);
+        }
+    }
+
     boolean getIsDone() {
         return isDone;
     }
 
-    @Override
     void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
     }
 
-    @Override
     Action getDependentAction() {
         return this.dependentAction;
     }
 
-    public void update() {
+    public void updateCheckDone() {
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
 
         Log.d("parallelaction", "should run");
-        for(int i = 0; i < actions.size(); i++) {
-            actions.get(i).update();
-            Log.d("parallelaction", "updating action #" + i);
-        }
+        update();
 
         updateIsDone();
     }

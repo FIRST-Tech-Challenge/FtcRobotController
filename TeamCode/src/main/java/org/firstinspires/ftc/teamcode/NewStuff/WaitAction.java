@@ -35,29 +35,30 @@ public class WaitAction extends Action{
     }
 
     @Override
-    boolean getIsDone() {
-        return isDone;
-    }
-
-    @Override
-    void setDependentAction(Action newAction) {
-        this.dependentAction = newAction;
-    }
-
-    @Override
-    Action getDependentAction() {
-        return this.dependentAction;
-    }
-
-    @Override
     void update() {
-        if (isDone) { return; } //if i'm done never update
-        if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
-
         if(!timerStarted) {
             elapsedTime = new ElapsedTime();
             timerStarted = true;
         }
+    }
+
+    boolean getIsDone() {
+        return isDone;
+    }
+
+    void setDependentAction(Action newAction) {
+        this.dependentAction = newAction;
+    }
+
+    Action getDependentAction() {
+        return this.dependentAction;
+    }
+
+    void updateCheckDone() {
+        if (isDone) { return; } //if i'm done never update
+        if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
+
+        update();
 
         updateIsDone();
     }
