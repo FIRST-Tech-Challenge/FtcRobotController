@@ -506,29 +506,22 @@ public class WilyCore {
 
     // Set the robot to a given pose and (optional) velocity in the simulation. The
     // localizer will not register a move.
-    static public void setStartPose(double x, double y, double heading,
-             double xVelocity, double yVelocity, double headingVelocity) {
-        simulation.setStartPose(
-                new Pose2d(x, y, heading),
-                new PoseVelocity2d(new Vector2d(xVelocity, yVelocity), headingVelocity));
+    static public void setStartPose(Pose2d pose, PoseVelocity2d velocity) {
+        simulation.setStartPose(pose, velocity);
     }
 
     // MecanumDrive uses this while running a trajectory to update the simulator as to its
     // current intermediate pose and velocity. This update will be reflected in the localizer
     // results.
-    static public void runTo(double x, double y, double heading,
-             double xVelocity, double yVelocity, double headingVelocity) {
+    static public void runTo(Pose2d pose, PoseVelocity2d velocity) {
         // If the user didn't explicitly call the simulation update() API, do it now:
         if (!simulationUpdated)
             updateSimulation(0);
-        simulation.runTo(
-                new Pose2d(x, y, heading),
-                new PoseVelocity2d(new Vector2d(xVelocity, yVelocity), headingVelocity));
+        simulation.runTo(pose, velocity);
         simulationUpdated = false;
     }
 
-
-    // Get the simulation's true pose and velocity:
+    // Get the simulation's true pose and velocity, in field coordinates and inches and radians:
     static public Pose2d getPose() { return getPose(0); }
     static public Pose2d getPose(double secondsAgo) {
         return simulation.getPose(secondsAgo);

@@ -1,9 +1,11 @@
 package com.wilyworks.simulator.framework;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
+import com.wilyworks.simulator.WilyCore;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -154,6 +156,20 @@ public class WilySparkFunOTOS extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     protected double _angularScalar = 0;
     protected Pose2D _offset = new Pose2D(0, 0, 0);
 
+    // Helpers to convert the OTOS notion of pose to-and-from the simulation's notion of pose:
+    protected Pose2d simulationPose(Pose2D otosPose) {
+        return new Pose2d(
+                _distanceUnit.toInches(otosPose.x),
+                _distanceUnit.toInches(otosPose.y),
+                _angularUnit.toRadians(otosPose.h));
+    }
+    protected Pose2D otosPose(Pose2d simulationPose) {
+        return new Pose2D(
+                _distanceUnit.fromInches(simulationPose.position.x),
+                _distanceUnit.fromInches(simulationPose.position.y),
+                _angularUnit.fromRadians(simulationPose.heading.log()));
+    }
+
     public WilySparkFunOTOS(I2cDeviceSynch deviceClient) { super(deviceClient, true); }
 
     @Override
@@ -208,10 +224,10 @@ public class WilySparkFunOTOS extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     public Status getStatus() { return new Status((byte) 0); }
     public Pose2D getOffset() { return new Pose2D(_offset.x, _offset.y, _offset.h); }
     public void setOffset(Pose2D pose) { _offset = new Pose2D(_offset.x, _offset.y, _offset.h); }
-    public Pose2D getPosition() { return new Pose2D(0, 0, 0); } // @@@@@@@@@
-    public void setPosition(Pose2D pose) { } // @@@@@
-    public Pose2D getVelocity() { return new Pose2D(0, 0, 0); } // @@@@@@@@@
-    public Pose2D getAcceleration() { return new Pose2D(0, 0, 0); } // @@@@@@@@@
+    public Pose2D getPosition() { return otosPose(WilyCore.getPose()); }
+    public void setPosition(Pose2D pose) { WilyCore.setStartPose(simulationPose(pose), null); }
+    public Pose2D getVelocity() { return new Pose2D(0, 0, 0); }
+    public Pose2D getAcceleration() { return new Pose2D(0, 0, 0); }
     public Pose2D getPositionStdDev() { return new Pose2D(0, 0, 0); }
     public Pose2D getVelocityStdDev() { return new Pose2D(0, 0, 0); }
     public Pose2D getAccelerationStdDev() { return new Pose2D(0, 0, 0); }

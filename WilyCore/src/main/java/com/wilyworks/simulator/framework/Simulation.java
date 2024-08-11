@@ -9,14 +9,14 @@ import com.wilyworks.simulator.WilyCore;
 import java.util.LinkedList;
 
 /**
- * Fake localizer for the simulation.
+ * Fake wheel odometry localizer for the simulation.
  */
-class Localizer {
+class WheelLocalizer {
     Simulation simulation;
     Pose2d previousPose;
     PoseVelocity2d previousVelocity;
 
-    Localizer(Simulation simulation) {
+    WheelLocalizer(Simulation simulation) {
         this.simulation = simulation;
         this.previousPose = simulation.getPose(0);
         this.previousVelocity = simulation.poseVelocity;
@@ -28,7 +28,7 @@ class Localizer {
                 x * Math.sin(theta) + y * Math.cos(theta));
     }
 
-    // Return an 'twist' that represents all movement since the last call:
+    // Return a 'twist' that represents all movement since the last call:
     double[] update() {
         Pose2d simulationPose = simulation.getPose(0);
         double deltaAng = simulationPose.heading.log() - previousPose.heading.log();
@@ -78,14 +78,14 @@ public class Simulation {
     // The robot's current true pose velocity, field-relative:
     public PoseVelocity2d poseVelocity = new PoseVelocity2d(new Vector2d(0, 0), Math.toRadians(0));
 
-    private Localizer localizer; // Fake odometry localizer
+    private WheelLocalizer wheelLocalizer; // Fake odometry localizer
     private WilyWorks.Config config; // Kinematic parameters for the simulation
     private PoseVelocity2d requestedVelocity; // Velocity requested by MecanumDrive
 
     public Simulation(WilyWorks.Config config) {
         this.config = config;
         poseHistory.add(new PoseRecord(WilyCore.time(), new Pose2d(0, 0, Math.toRadians(0))));
-        localizer = new Localizer(this);
+        wheelLocalizer = new WheelLocalizer(this);
     }
 
     // Find the closest pose from the specified seconds ago. Zero retrieves the current pose.
@@ -264,19 +264,20 @@ public class Simulation {
         this.requestedVelocity = fieldVelocity;
     }
 
-    // Entry point to get the current localizer position:
-    public double[] localizerUpdate() { return localizer.update(); }
+    // Entry point to get the current wheel-odometry localizer position:
+    public double[] localizerUpdate() { return wheelLocalizer.update(); }
 
     // Entry point to set the pose and velocity, both in field coordinates:
     public void runTo(Pose2d pose, PoseVelocity2d poseVelocity) {
         recordPose(WilyCore.time(), pose);
-        this.poseVelocity = poseVelocity;
+        if (poseVelocity != null)
+            this.poseVelocity = poseVelocity;
     }
 
-    // Entry point to set the pose and velocity, both in field coordinates:
+    // Entry point to set the pose and velocity, both in field coordinates and inches and radians:
     public void setStartPose(Pose2d pose, PoseVelocity2d poseVelocity) {
         runTo(pose, poseVelocity);
         // Recreate the localizer so that it doesn't register a move:
-        this.localizer = new Localizer(this);
+        wheelLocalizer = new WheelLocalizer(this);
     }
 }

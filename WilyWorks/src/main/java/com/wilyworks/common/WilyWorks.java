@@ -143,17 +143,13 @@ public class WilyWorks {
     // Control
 
     // Set the robot to a given pose and (optional) velocity in the simulation. The
-    // localizer will not register a move.
+    // localizer will not register a move. The velocity parameter can be null.
     @SuppressWarnings("UnusedReturnValue")
     static public boolean setStartPose(Pose2d pose, PoseVelocity2d velocity) {
         if (wilyCore != null) {
             try {
-                Method setPose = wilyCore.getMethod("setStartPose",
-                        double.class, double.class, double.class,
-                        double.class, double.class, double.class);
-                setPose.invoke(null,
-                        pose.position.x, pose.position.y, pose.heading.log(),
-                        velocity.linearVel.x, velocity.linearVel.y, velocity.angVel);
+                Method setPose = wilyCore.getMethod("setStartPose", Pose2d.class, PoseVelocity2d.class);
+                setPose.invoke(null, pose, velocity);
                 return true; // ====>
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new RuntimeException(e);
@@ -169,12 +165,8 @@ public class WilyWorks {
     static public boolean runTo(Pose2d pose, PoseVelocity2d velocity) {
         if (wilyCore != null) {
             try {
-                Method setPose = wilyCore.getMethod("runTo",
-                        double.class, double.class, double.class,
-                        double.class, double.class, double.class);
-                setPose.invoke(null,
-                        pose.position.x, pose.position.y, pose.heading.log(),
-                        velocity.linearVel.x, velocity.linearVel.y, velocity.angVel);
+                Method setPose = wilyCore.getMethod("runTo", Pose2d.class, PoseVelocity2d.class);
+                setPose.invoke(null, pose, velocity);
                 return true; // ====>
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new RuntimeException(e);
