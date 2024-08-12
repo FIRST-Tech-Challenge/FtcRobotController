@@ -18,9 +18,9 @@ import org.firstinspires.ftc.teamcode.mainModules.Presses;
 import org.firstinspires.ftc.teamcode.mainModules.Gimbal;
 import org.firstinspires.ftc.teamcode.mainModules.VisionManager;
 
-@TeleOp(name = "Main code Estonia")
+@TeleOp(name = "Main code EstoniaAthens")
 // allows to display the code in the driver station, comment out to remove
-public class Estonia extends LinearOpMode { //file name is Main.java    extends the prebuilt LinearOpMode by rev to run
+public class EstoniaAthens extends LinearOpMode { //file name is Main.java    extends the prebuilt LinearOpMode by rev to run
     /*
      * Import external classes
      * class name  name to be used in this class;
