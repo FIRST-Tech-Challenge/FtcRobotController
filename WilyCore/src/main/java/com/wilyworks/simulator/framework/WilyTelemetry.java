@@ -41,20 +41,20 @@ class Layout {
     };
 
     // \n
-    private Pattern newlineSearchPattern = Pattern.compile("(\\n)");
+    private final Pattern newlineSearchPattern = Pattern.compile("(\\n)");
 
     // <big>, &nbsp;, \n
     // For a tag, group2 = element name, group3 = arguments (needs trimming)
-    private Pattern htmlSearchPattern = Pattern.compile("(\\n|&.*?;|<([/\\w]+)(.*?)>)");
+    private final Pattern htmlSearchPattern = Pattern.compile("(\\n|&.*?;|<([/\\w]+)(.*?)>)");
 
     // style='color: 0xffffff; background: 0x3e3e3e;'
-    private Pattern spanColorPattern = Pattern.compile(
+    private final Pattern spanColorPattern = Pattern.compile(
             "\\s*?style\\s*?=\\s*?['|\"].*?color\\s*?:\\s*?(?:0x|#)([0-9a-fA-F]+)");
-    private Pattern spanBackgroundPattern = Pattern.compile(
+    private final Pattern spanBackgroundPattern = Pattern.compile(
             "\\s*?style\\s*?=\\s*?['|\"].*?background\\s*?:\\s*?(?:0x|#)([0-9a-fA-F]+)");
 
     // <font color='#00ff00'>
-    private Pattern fontColorPattern = Pattern.compile(
+    private final Pattern fontColorPattern = Pattern.compile(
             "\\s*?color\\s*?=\\s*?['|\"](?:0x|#)([0-9a-fA-F]+)");
 
     // Track tag attributes as we accumulate the string buffer:
@@ -93,12 +93,12 @@ class Layout {
     // Returns true if the current line is empty:
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isEmptyLine(StringBuilder builder, List<LineBreak> lineBreaks) {
-        if ((builder.length() == 0) || (lineBreaks.size() == 0))
+        if ((builder.length() == 0) || (lineBreaks.isEmpty()))
             return true;
 
         LineBreak lastBreak = lineBreaks.get(lineBreaks.size() - 1);
         String lastLine = builder.substring(lastBreak.pos).trim();
-        return lastLine.equals("");
+        return lastLine.isEmpty();
     }
 
     // Render what we've accumulated:
@@ -263,7 +263,7 @@ class Layout {
                                 lineBreaks.add(new LineBreak(buffer.length(), 1));
                             break;
                         case "/h1": case "/h2": case "/h3": case "/h4": case "/h5": case "/h6":
-                            if (sizeStack.size() != 0) {
+                            if (!sizeStack.isEmpty()) {
                                 size = sizeStack.pop();
                                 attributes.add(new Attribute(TextAttribute.SIZE, size, buffer.length()));
                                 lineBreaks.add(new LineBreak(buffer.length(), 1.5f));
@@ -297,7 +297,7 @@ class Layout {
                             break;
                         case "/span":
                         case "/font":
-                            if (colorStack.size() != 0) {
+                            if (!colorStack.isEmpty()) {
                                 ColorRecord node = colorStack.pop();
                                 foreground = node.foreground;
                                 background = node.background;
@@ -308,17 +308,17 @@ class Layout {
 
                         case "big":
                             sizeStack.push(size);
-                            size *= 1.25;
+                            size *= 1.25f;
                             attributes.add(new Attribute(TextAttribute.SIZE, size, buffer.length()));
                             break;
                         case "small":
                             sizeStack.push(size);
-                            size *= 0.8;
+                            size *= 0.8f;
                             attributes.add(new Attribute(TextAttribute.SIZE, size, buffer.length()));
                             break;
                         case "/small":
                         case "/big":
-                            if (sizeStack.size() != 0) {
+                            if (!sizeStack.isEmpty()) {
                                 size = sizeStack.pop();
                                 attributes.add(new Attribute(TextAttribute.SIZE, size, buffer.length()));
                             }
@@ -330,7 +330,7 @@ class Layout {
                             attributes.add(new Attribute(TextAttribute.FAMILY, family, buffer.length()));
                             break;
                         case "/tt":
-                            if (familyStack.size() != 0) {
+                            if (!familyStack.isEmpty()) {
                                 family = familyStack.pop();
                                 attributes.add(new Attribute(TextAttribute.FAMILY, family, buffer.length()));
                             }
@@ -342,7 +342,7 @@ class Layout {
                             attributes.add(new Attribute(TextAttribute.WEIGHT, weight, buffer.length()));
                             break;
                         case "/b":
-                            if (weightStack.size() != 0) {
+                            if (!weightStack.isEmpty()) {
                                 weight = weightStack.pop();
                                 attributes.add(new Attribute(TextAttribute.WEIGHT, weight, buffer.length()));
                             }
@@ -354,7 +354,7 @@ class Layout {
                             attributes.add(new Attribute(TextAttribute.POSTURE, posture, buffer.length()));
                             break;
                         case "/i":
-                            if (postureStack.size() != 0) {
+                            if (!postureStack.isEmpty()) {
                                 posture = postureStack.pop();
                                 attributes.add(new Attribute(TextAttribute.POSTURE, posture, buffer.length()));
                             }
@@ -366,7 +366,7 @@ class Layout {
                             attributes.add(new Attribute(TextAttribute.UNDERLINE, underline, buffer.length()));
                             break;
                         case "/u":
-                            if (underlineStack.size() != 0) {
+                            if (!underlineStack.isEmpty()) {
                                 underline = underlineStack.pop();
                                 attributes.add(new Attribute(TextAttribute.UNDERLINE, underline, buffer.length()));
                             }
@@ -378,7 +378,7 @@ class Layout {
                             attributes.add(new Attribute(TextAttribute.STRIKETHROUGH, strikeThrough, buffer.length()));
                             break;
                         case "/strike":
-                            if (strikeThroughStack.size() != 0) {
+                            if (!strikeThroughStack.isEmpty()) {
                                 strikeThrough = strikeThroughStack.pop();
                                 attributes.add(new Attribute(TextAttribute.STRIKETHROUGH, strikeThrough, buffer.length()));
                             }
@@ -396,7 +396,7 @@ class Layout {
                             break;
                         case "/sup":
                         case "/sub":
-                            if (superscriptStack.size() != 0) {
+                            if (!superscriptStack.isEmpty()) {
                                 superscript = superscriptStack.pop();
                                 attributes.add(new Attribute(TextAttribute.SUPERSCRIPT, superscript, buffer.length()));
                             }
