@@ -373,4 +373,20 @@ public class Rustboard {
             super(String.format("The rustboard with the id '%s' has no corresponding file", uuid));
         }
     }
+
+    private static String toFilePath(String fileName) {
+        return Loader.defaultStorageDirectory + "\\" + fileName + ".txt";
+    }
+
+    public static String loadSavedString(String fileName, String defaultValue) {
+        return Loader.safeLoadString(toFilePath(fileName), defaultValue);
+    }
+
+    public static double loadSavedDouble(String fileName, double defaultValue) {
+        return Loader.loadDouble(toFilePath(fileName), defaultValue);
+    }
+
+    public static long loadSavedLong(String fileName, long defaultValue) {
+        return Loader.loadLong(toFilePath(fileName), defaultValue);
+    }
 }

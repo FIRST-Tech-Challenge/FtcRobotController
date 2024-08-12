@@ -8,14 +8,12 @@ import org.rustlib.control.PIDController;
 import org.rustlib.drive.DriveSubsystem;
 import org.rustlib.drive.MecanumBase;
 import org.rustlib.drive.Odometry;
-import org.rustlib.geometry.Rotation2d;
 import org.rustlib.hardware.PairedEncoder;
 import org.rustlib.rustboard.Rustboard;
 
 public class Drive extends DriveSubsystem {
     private final MecanumBase base;
     private final Odometry odometry;
-    private Rotation2d fieldCentricOffset = new Rotation2d();
     private double multiplier = Mode.FAST.multiplier;
 
     public Drive(HardwareMap hardwareMap) {
@@ -60,10 +58,6 @@ public class Drive extends DriveSubsystem {
     @Override
     public void drive(double drive, double strafe, double turn) {
         drive(drive, strafe, turn, odometry.getPose().rotation.getAngleRadians());
-    }
-
-    public void setFieldCentricOffset(Rotation2d fieldCentricOffset) {
-        this.fieldCentricOffset = fieldCentricOffset;
     }
 
     public void enableFastMode() {

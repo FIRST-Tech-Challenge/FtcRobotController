@@ -30,9 +30,9 @@ public class Loader {
     public static final File localStorage = new File(Environment.getExternalStorageDirectory().getPath(), "FIRST");
     public static final File defaultStorageDirectory = new File(Environment.getExternalStorageDirectory(), "Download");
 
-    public static String loadString(File filePath) {
+    public static String loadString(File file) {
         StringBuilder data = new StringBuilder();
-        try (FileInputStream input = new FileInputStream(filePath)) {
+        try (FileInputStream input = new FileInputStream(file)) {
             int character;
             while ((character = input.read()) != -1) {
                 data.append((char) character);
@@ -40,63 +40,108 @@ public class Loader {
 
             return data.toString();
         } catch (IOException e) {
-            RustboardServer.log(e.toString());
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return "";
     }
 
-    public static JsonObject loadJsonObject(File filePath) {
-        return getJsonObject(loadString(filePath));
+    public static String safeLoadString(File file, String defaultString) {
+        try {
+            return loadString(file);
+        } catch (RuntimeException e) {
+            return defaultString;
+        }
     }
 
-    public static String loadString(String parentDir, String child, String fileExtension) {
-        return loadString(new File(parentDir + "\\" + child + "." + fileExtension));
+    public static String safeLoadString(File file) {
+        return safeLoadString(file, "");
     }
 
-    public static JsonObject loadJsonObject(String parentDir, String child, String fileExtension) {
-        return getJsonObject(loadString(parentDir, child, fileExtension));
+    public static JsonObject loadJsonObject(File file) {
+        return getJsonObject(loadString(file));
     }
 
-    public static String loadString(String filePath, String fileExtension) {
-        filePath = filePath.replace(" ", "_");
-        return loadString(new File(filePath + "." + fileExtension));
+    public static JsonObject safeLoadJsonObject(File file, JsonObject defaultJsonObject) {
+        try {
+            return loadJsonObject(file);
+        } catch (RuntimeException e) {
+            return defaultJsonObject;
+        }
     }
 
-    public static JsonObject loadJsonObject(String filePath, String fileExtension) {
-        return getJsonObject(loadString(filePath, fileExtension));
+    public static JsonObject safeLoadJsonObject(File file) {
+        return safeLoadJsonObject(file, Json.createObjectBuilder().build());
     }
 
     public static String loadString(String filePath) {
-        return loadString(filePath, ".txt");
+        return loadString(new File(filePath));
+    }
+
+    public static String safeLoadString(String filePath, String defaultString) {
+        try {
+            return loadString(filePath);
+        } catch (RuntimeException e) {
+            return defaultString;
+        }
+    }
+
+    public static String safeLoadString(String filePath) {
+        return safeLoadString(filePath, "");
     }
 
     public static JsonObject loadJsonObject(String filePath) {
         return getJsonObject(loadString(filePath));
     }
 
+    public static JsonObject safeLoadJsonObject(String filePath, JsonObject defaultJsonObject) {
+        try {
+            return loadJsonObject(filePath);
+        } catch (RuntimeException e) {
+            return defaultJsonObject;
+        }
+    }
+
+    public static JsonObject safeLoadJsonObject(String filePath) {
+        return safeLoadJsonObject(filePath, Json.createObjectBuilder().build());
+    }
+
     public static JsonObject getJsonObject(String jsonString) {
         return Json.createReader(new StringReader(jsonString)).readObject();
     }
 
-    public static double loadNumber(File filePath, double defaultValue) {
+    public static double loadDouble(File file, double defaultValue) {
         try {
-            return Double.parseDouble(loadString(filePath));
+            return Double.parseDouble(safeLoadString(file));
         } catch (NumberFormatException e) {
             return defaultValue;
         }
     }
 
-    public static double loadNumber(String parentDir, String child, String fileExtension, double defaultValue) {
-        return loadNumber(parentDir + "/" + child + "." + fileExtension, defaultValue);
+    public static double loadDouble(String filePath, double defaultValue) {
+        return loadDouble(new File(filePath), defaultValue);
     }
 
-    public static double loadNumber(String filePath, String fileExtension, double defaultValue) {
-        return loadNumber(filePath + "." + fileExtension, defaultValue);
+    public static long loadLong(File file, long defaultValue) {
+        try {
+            return Long.parseLong(safeLoadString(file));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
-    public static double loadNumber(String filePath, double defaultValue) {
-        return loadNumber(new File(filePath), defaultValue);
+    public static long loadLong(String filePath, long defaultValue) {
+        return loadLong(new File(filePath), defaultValue);
+    }
+
+    public static boolean loadBoolean(File file, boolean defaultValue) {
+        try {
+            return Boolean.parseBoolean(safeLoadString(file));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static boolean loadBoolean(String filePath, boolean defaultValue) {
+        return loadBoolean(new File(filePath), defaultValue);
     }
 
     public static void writeString(File output, String string) throws IOException {
@@ -144,8 +189,7 @@ public class Loader {
             factory.setValidating(true);
             factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(file);
-            return document;
+            return builder.parse(file);
         } catch (IOException | SAXException | ParserConfigurationException e) {
             throw new RuntimeException(e);
         }

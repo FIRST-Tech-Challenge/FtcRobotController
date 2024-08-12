@@ -31,7 +31,7 @@ public class FollowPathCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        driveSubsystem.getBase().enableBraking();
+        driveSubsystem.getBase().enableBraking(); // TODO: fix
         if (!interrupted) driveSubsystem.drive(0, 0, 0);
     }
 }

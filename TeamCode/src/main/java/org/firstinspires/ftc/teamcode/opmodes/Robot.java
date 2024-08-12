@@ -79,7 +79,7 @@ public abstract class Robot extends RobotBase {
         intake = new Intake(hardwareMap.get(DcMotor.class, "intakeMotor"));
         placer = new Placer(hardwareMap);
         slide = new Slide(hardwareMap, placer);
-        slide.setDefaultCommand(new SlideDefault(slide, () -> -payloadController.rightStickY.getAsDouble()));
+        slide.setDefaultCommand(new SlideDefault(slide, () -> -controller2.rightStickY.getAsDouble()));
         climber = new Climber(hardwareMap);
         lights = new Lights(hardwareMap.get(RevBlinkinLedDriver.class, "lights"));
         aprilTagCamera = AprilTagCamera.getBuilder()

@@ -76,7 +76,7 @@ public class Waypoint extends Vector2d implements Supplier<Waypoint> {
         return this;
     }
 
-    public Waypoint loadWaypoint() { // TODO: write inner code
+    public Waypoint load() { // TODO: write inner code
         return null;
     }
 }

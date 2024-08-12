@@ -56,7 +56,7 @@ public class Path implements Supplier<Path> {
     }
 
     public static Path load(String fileName) {
-        fileName = fileName.replace(" ", "_");
+        fileName = fileName.replace(" ", "_") + ".json";
         Builder pathBuilder = Path.getBuilder();
         try {
             JsonObject path = Loader.loadJsonObject(fileName);
@@ -79,8 +79,7 @@ public class Path implements Supplier<Path> {
 
                 pathBuilder.addWaypoint(new Waypoint(x, y, followRadius, targetFollowRotation, targetEndRotation, maxVelocity));
             }
-            Path loaded = pathBuilder.setTimeout(timeout).build();
-            return loaded;
+            return pathBuilder.setTimeout(timeout).build();
         } catch (JsonParseException e) {
             RustboardServer.log(e.toString());
         }

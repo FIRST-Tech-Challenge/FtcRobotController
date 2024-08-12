@@ -48,6 +48,8 @@ public class RobotControllerActivity extends FtcRobotControllerActivity {
             return (boolean) isStartedField.get(activeOpMode) && !(boolean) stopRequestedField.get(activeOpMode);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (NullPointerException e) {
+            return false;
         }
     }
 

@@ -25,7 +25,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import javax.json.stream.JsonParsingException;
 
 public class RustboardServer extends WebSocketServer {
     public static final int port = 5801;
@@ -75,12 +74,7 @@ public class RustboardServer extends WebSocketServer {
             if (!rustboardStorageDir.mkdir())
                 throw new RuntimeException("Failed to generate storage folders needed for the Rustboard server");
         }
-        try {
-            metaData = Loader.loadJsonObject(rustboardMetadataFile);
-        } catch (JsonParsingException e) {
-            metaData = Json.createObjectBuilder().build();
-        }
-        rustboardMetaData = metaData;
+        rustboardMetaData = Loader.safeLoadJsonObject(rustboardMetadataFile);
         if (rustboardMetaData.containsKey("rustboards")) {
             JsonArray dataArray = rustboardMetaData.getJsonArray("rustboards");
             for (JsonValue value : dataArray) {
@@ -145,7 +139,11 @@ public class RustboardServer extends WebSocketServer {
     @Override
     public void start() {
         if (!debugMode) {
-            super.start();
+            try {
+                super.start();
+            } catch (IllegalStateException e) {
+                log(e);
+            }
         }
     }
 

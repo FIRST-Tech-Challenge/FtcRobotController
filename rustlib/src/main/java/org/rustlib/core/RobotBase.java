@@ -5,7 +5,6 @@ import android.util.Pair;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.rustlib.commandsystem.Command;
 import org.rustlib.commandsystem.CommandScheduler;
 import org.rustlib.hardware.SuperGamepad;
 
@@ -21,8 +20,8 @@ public abstract class RobotBase extends OpMode {
     private static OpModeState opModeState = OpModeState.IDLE;
     protected LynxModule controlHub;
     protected LynxModule expansionHub;
-    protected SuperGamepad driveController;
-    protected SuperGamepad payloadController;
+    protected SuperGamepad controller1;
+    protected SuperGamepad controller2;
     private boolean inAuto = false;
     private Auton autonomousInstance;
 
@@ -86,8 +85,8 @@ public abstract class RobotBase extends OpMode {
         }
         controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        driveController = new SuperGamepad(gamepad1);
-        payloadController = new SuperGamepad(gamepad2);
+        controller1 = new SuperGamepad(gamepad1);
+        controller2 = new SuperGamepad(gamepad2);
         runCallbacks(callbacks.get(0));
         onInit();
     }
@@ -104,8 +103,7 @@ public abstract class RobotBase extends OpMode {
         opModeState = OpModeState.START;
         removeDuplicateCallbacks();
         if (inAuto) {
-            Command autonomousCommand = autonomousInstance.getAutonomousCommand();
-            autonomousCommand.schedule();
+            autonomousInstance.getAutonomousCommand().schedule();
         }
         runCallbacks(callbacks.get(1));
         onStart();

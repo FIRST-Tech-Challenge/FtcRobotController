@@ -37,12 +37,12 @@ public class PairedEncoder extends Subsystem implements Encoder {
     }
 
     private int calculateTicks() {
-        return ticks;
+        return (pairedMotor.getCurrentPosition() + offset) * polarity;
     }
 
     @Override
     public int getTicks() {
-        return (pairedMotor.getCurrentPosition() + offset) * polarity;
+        return ticks;
     }
 
     public double getPosition() {

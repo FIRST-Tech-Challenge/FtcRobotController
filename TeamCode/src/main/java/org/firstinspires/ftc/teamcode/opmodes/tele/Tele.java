@@ -31,15 +31,15 @@ public class Tele extends Robot {
         }
         automaticPlace = getAutomaticPlaceCommand(backdropPose.toWaypoint());
 
-        drive.setDefaultCommand(new DriveDefault(drive, () -> -driveController.leftStickY.getAsDouble(), () -> driveController.leftStickX.getAsDouble(), () -> -driveController.rightStickX.getAsDouble()));
-        driveController.leftBumper.onTrue(new InstantCommand(() -> drive.enableSlowMode()));
-        driveController.rightBumper.onTrue(new InstantCommand(() -> drive.enableFastMode()));
-        driveController.dpadUp.onTrue(new InstantCommand(() -> climber.deliverHook()));
-        driveController.dpadDown.onTrue(new InstantCommand(() -> climber.hookDown()));
+        drive.setDefaultCommand(new DriveDefault(drive, () -> -controller1.leftStickY.getAsDouble(), () -> controller1.leftStickX.getAsDouble(), () -> -controller1.rightStickX.getAsDouble()));
+        controller1.leftBumper.onTrue(new InstantCommand(() -> drive.enableSlowMode()));
+        controller1.rightBumper.onTrue(new InstantCommand(() -> drive.enableFastMode()));
+        controller1.dpadUp.onTrue(new InstantCommand(() -> climber.deliverHook()));
+        controller1.dpadDown.onTrue(new InstantCommand(() -> climber.hookDown()));
         BackdropAlign backdropAlign = new BackdropAlign(drive, placer, 2000);
-        driveController.a.onTrue(backdropAlign);
-        driveController.gamepadActive.and(new Trigger(() -> backdropAlign.timeSinceInitialized() > 1000)).onTrue(new InstantCommand((() -> backdropAlign.cancel())));
-        driveController.b.and(driveController.x).and(driveController.y).onTrue(new InstantCommand(() -> drive.getOdometry().setPosition(new Pose2d())));
+        controller1.a.onTrue(backdropAlign);
+        controller1.gamepadActive.and(new Trigger(() -> backdropAlign.timeSinceInitialized() > 1000)).onTrue(new InstantCommand((backdropAlign::cancel)));
+        controller1.b.and(controller1.x).and(controller1.y).onTrue(new InstantCommand(() -> drive.getOdometry().setPosition(new Pose2d())));
 
         if (botPose == null) {
             botPose = new Pose2d();
@@ -48,8 +48,8 @@ public class Tele extends Robot {
         drive.setFieldCentricOffset(fieldCentricOffset); // TODO: make way to set field centric offset
 
         intake.setDefaultCommand(new IntakeDefault(intake, lights, drive.getOdometry()::getPose)); // Runs the intake automatically when the robot is in the right spot
-        payloadController.rightTrigger.or(driveController.rightTrigger).whileTrue(new RunIntake(intake, SubsystemConstants.Intake.defaultSpeed));
-        payloadController.leftTrigger.or(driveController.leftTrigger).whileTrue(new RunIntake(intake, -SubsystemConstants.Intake.defaultSpeed));
+        controller2.rightTrigger.or(controller1.rightTrigger).whileTrue(new RunIntake(intake, SubsystemConstants.Intake.defaultSpeed));
+        controller2.leftTrigger.or(controller1.leftTrigger).whileTrue(new RunIntake(intake, -SubsystemConstants.Intake.defaultSpeed));
 
         Command shootDrone = new SequentialCommandGroup(
                 new InstantCommand(() -> droneShooter.shootAngle()),
@@ -59,24 +59,24 @@ public class Tele extends Robot {
                 })
         );
 
-        payloadController.rightBumper.onTrue(new SlideToPosition(slide, SubsystemConstants.Slide.defaultPlacePosition));
-        payloadController.options.whileTrue(new SlideCalibrate(slide));
-        payloadController.options.and(payloadController.b).onTrue(new InstantCommand(() -> slide.encoder.reset()));
+        controller2.rightBumper.onTrue(new SlideToPosition(slide, SubsystemConstants.Slide.defaultPlacePosition));
+        controller2.options.whileTrue(new SlideCalibrate(slide));
+        controller2.options.and(controller2.b).onTrue(new InstantCommand(() -> slide.encoder.reset()));
         slide.encoder.setTicks(slidePose); // Set the slide position to the last slide position in autonomous
 
-        payloadController.a.onTrue(new InstantCommand(() -> placer.open()));
-        payloadController.b.onTrue(new InstantCommand(() -> placer.close()));
+        controller2.a.onTrue(new InstantCommand(() -> placer.open()));
+        controller2.b.onTrue(new InstantCommand(() -> placer.close()));
 
-        climber.setDefaultCommand(new ClimbDefault(climber, payloadController.leftStickY));
-        payloadController.dpadRight.onTrue(new InstantCommand(() -> climber.deliverHook()));
-        payloadController.dpadLeft.onTrue(new SlideToPosition(slide, SubsystemConstants.Slide.defaultPlacePosition));
+        climber.setDefaultCommand(new ClimbDefault(climber, controller2.leftStickY));
+        controller2.dpadRight.onTrue(new InstantCommand(() -> climber.deliverHook()));
+        controller2.dpadLeft.onTrue(new SlideToPosition(slide, SubsystemConstants.Slide.defaultPlacePosition));
 
-        payloadController.dpadDown.onTrue(new InstantCommand(() -> placer.storagePosition()));
-        payloadController.dpadUp.onTrue(new InstantCommand(() -> placer.placePosition()));
+        controller2.dpadDown.onTrue(new InstantCommand(() -> placer.storagePosition()));
+        controller2.dpadUp.onTrue(new InstantCommand(() -> placer.placePosition()));
 
-        payloadController.y.onTrue(shootDrone);
-        payloadController.rightBumper.onTrue(new SlideToPosition(slide, SubsystemConstants.Slide.defaultPlacePosition));
-        payloadController.leftBumper.onTrue(new SlideToPosition(slide, -100));
+        controller2.y.onTrue(shootDrone);
+        controller2.rightBumper.onTrue(new SlideToPosition(slide, SubsystemConstants.Slide.defaultPlacePosition));
+        controller2.leftBumper.onTrue(new SlideToPosition(slide, -100));
     }
 
     @Override
