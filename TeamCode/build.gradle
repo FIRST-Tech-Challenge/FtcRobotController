@@ -39,5 +39,5 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:core:1.0.0"
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.15"
-    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:4b219ff0c0"
+    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:a0a02d3173"
 }
