@@ -8,6 +8,7 @@ import org.rustlib.rustboard.RustboardServer;
 import org.rustlib.utils.Future;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import javax.json.JsonArray;
@@ -19,9 +20,7 @@ public class Path implements Supplier<Path> {
 
     public Path(double timeout, Supplier<Waypoint>... waypoints) {
         this.waypoints = new ArrayList<>();
-        for (Supplier<Waypoint> waypoint : waypoints) {
-            this.waypoints.add(waypoint);
-        }
+        this.waypoints.addAll(Arrays.asList(waypoints));
         this.timeout = timeout;
     }
 
@@ -56,7 +55,7 @@ public class Path implements Supplier<Path> {
         }
     }
 
-    public static Path loadPath(String fileName) {
+    public static Path load(String fileName) {
         fileName = fileName.replace(" ", "_");
         Builder pathBuilder = Path.getBuilder();
         try {

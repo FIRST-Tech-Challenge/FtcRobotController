@@ -38,7 +38,6 @@ public class Slide extends Subsystem {
         limit = hardwareMap.get(TouchSensor.class, "limit");
         this.placer = placer;
         controller = new PIDController(0.0017, 0.0000008, 0.000003);
-        controller.resetIntegralOnSetPointChange = true;
 
         new Trigger(() -> encoder.getTicks() > SubsystemConstants.Slide.preparePlacerPosition && encoder.ticksPerSecond() > 0).onTrue(new InstantCommand(placer::placePosition));
         new Trigger(() -> encoder.getTicks() < SubsystemConstants.Slide.stowPlacerPosition && targetPosition < 10 || encoder.ticksPerSecond() < -400).onTrue(new InstantCommand(placer::storagePosition));

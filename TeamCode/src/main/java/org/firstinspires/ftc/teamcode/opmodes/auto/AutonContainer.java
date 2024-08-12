@@ -35,10 +35,10 @@ public abstract class AutonContainer extends Robot implements Auton {
                     new WaitCommand(Loader.loadNumber("wait_time_BL", 1000)), // Wait for the pixel to drop
                     new ParallelCommandGroup( // Begin driving away and retract the dropper arm
                             new SequentialCommandGroup(new WaitCommand(1000), new InstantCommand(purplePixelPlacer::retract)),
-                            new FollowPathCommand(Path.loadPath("to_backdrop_BL"), drive)),
+                            new FollowPathCommand(Path.load("to_backdrop_BL"), drive)),
                     new SlideToPosition(slide, SubsystemConstants.Slide.autoPlacePosition), // Move the slide to the correct position
                     new DelayCommand(slide::atTargetPosition, 2000), // Wait until the slide is close to the correct position
-                    new BackdropHome(drive.getBase(), slide, placer, new Future(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
+                    new BackdropHome(drive.getBase(), slide, placer, new Future<>(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop
                     new InstantCommand(placer::open), // Drop the yellow pixel
                     new WaitCommand(750), // Wait for the pixel to drop
                     new ParallelCommandGroup( // Begin driving away and stow the slide
@@ -46,7 +46,7 @@ public abstract class AutonContainer extends Robot implements Auton {
                                     new WaitCommand(750),
                                     new SlideToPosition(slide, SubsystemConstants.Slide.stowedPosition)
                             ),
-                            new FollowPathCommand(Path.loadPath("park_BL"), drive)
+                            new FollowPathCommand(Path.load("park_BL"), drive)
                     )
             )
     );
@@ -58,10 +58,10 @@ public abstract class AutonContainer extends Robot implements Auton {
                     new FollowPathCommand(this::getPurplePlacePath, drive), // Drive to the spike mark
                     new InstantCommand(purplePixelPlacer::place), // Place the pixel
                     new WaitCommand(Loader.loadNumber("wait_time_BR", 1000)), // Wait for the pixel to drop
-                    new FollowPathCommand(Path.loadPath("back_up"), drive),
+                    new FollowPathCommand(Path.load("back_up"), drive),
                     new ParallelCommandGroup( // Begin driving away and retract the dropper arm
                             new SequentialCommandGroup(new WaitCommand(1000), new InstantCommand(purplePixelPlacer::retract)),
-                            new FollowPathCommand(Path.loadPath("to_backdrop_BR"), drive)),
+                            new FollowPathCommand(Path.load("to_backdrop_BR"), drive)),
                     new SlideToPosition(slide, SubsystemConstants.Slide.autoPlacePosition), // Move the slide to the correct position
                     new DelayCommand(slide::atTargetPosition, 3000), // Wait until the slide is close to the correct position
                     new BackdropHome(drive.getBase(), slide, placer, new Future<>(this::getYellowPlaceWaypoint), 2000, 500), // Home in on the backdrop

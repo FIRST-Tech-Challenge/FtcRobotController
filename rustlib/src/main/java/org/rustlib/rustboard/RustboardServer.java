@@ -11,11 +11,11 @@ import org.rustlib.config.Loader;
 import org.rustlib.core.RobotControllerActivity;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,9 +29,9 @@ import javax.json.stream.JsonParsingException;
 
 public class RustboardServer extends WebSocketServer {
     public static final int port = 5801;
-    static final File rustboardStorageDir = new File(defaultStorageDirectory + "\\Rustboard");
-    private static final File rustboardMetadataFile = new File(rustboardStorageDir + "\\rustboard_metadata.json");
-    private static final File storedRustboardDir = new File(rustboardStorageDir + "\\rustboards");
+    static final File rustboardStorageDir = new File(defaultStorageDirectory, "Rustboard");
+    private static final File rustboardMetadataFile = new File(rustboardStorageDir, "rustboard_metadata.json");
+    private static final File storedRustboardDir = new File(rustboardStorageDir, "rustboards");
     private static RustboardServer instance = null;
     private static boolean debugMode = false;
     private Rustboard activeRustboard;
@@ -72,7 +72,8 @@ public class RustboardServer extends WebSocketServer {
         setReuseAddr(true);
         RobotLog.v("Rustboard server initialized");
         if (!rustboardStorageDir.exists()) {
-            rustboardStorageDir.mkdir();
+            if (!rustboardStorageDir.mkdir())
+                throw new RuntimeException("Failed to generate storage folders needed for the Rustboard server");
         }
         try {
             metaData = Loader.loadJsonObject(rustboardMetadataFile);
@@ -119,11 +120,12 @@ public class RustboardServer extends WebSocketServer {
 
     }
 
-    private static void clearStorage() {
+    private static void clearStorage() throws IOException {
         File[] files = storedRustboardDir.listFiles();
         if (files != null) {
             for (File file : files) {
-                file.delete();
+                if (!file.delete())
+                    throw new IOException(String.format("Could not delete \"%s\"", file.getAbsolutePath()));
             }
         }
     }
@@ -148,12 +150,22 @@ public class RustboardServer extends WebSocketServer {
     }
 
     @Override
+    public void stop() {
+        saveLayouts();
+        try {
+            super.stop();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void onStart() {
         setConnectionLostTimeout(3);
     }
 
-    public boolean noActiveRustboard() {
-        return activeRustboard == null || !activeRustboard.isConnected();
+    public static boolean isActiveRustboard() {
+        return getInstance().activeRustboard != null && getInstance().activeRustboard.isConnected();
     }
 
     @Override
@@ -181,12 +193,6 @@ public class RustboardServer extends WebSocketServer {
         log("client " + conn.getRemoteSocketAddress().toString() + " disconnected from the robot.");
     }
 
-    void setActiveRustboard(Rustboard rustboard) {
-        if (activeRustboard == null) {
-            activeRustboard = Objects.requireNonNull(rustboard);
-        }
-    }
-
     @Override
     @SuppressWarnings("ConstantConditions")
     public void onMessage(WebSocket conn, String message) {
@@ -209,7 +215,9 @@ public class RustboardServer extends WebSocketServer {
                 } else {
                     rustboard = new Rustboard(uuid, rustboardJson);
                 }
-                if (noActiveRustboard()) {
+                if (isActiveRustboard()) {
+                    rustboard.notifyClient("Rustboard queued because another Rustboard is connected", NoticeType.NEUTRAL, 5000);
+                } else {
                     activeRustboard = rustboard;
                     JsonObjectBuilder builder = Json.createObjectBuilder();
                     builder.add("action", "set_active");

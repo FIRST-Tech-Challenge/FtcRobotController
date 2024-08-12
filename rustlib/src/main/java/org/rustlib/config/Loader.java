@@ -27,14 +27,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 public class Loader {
-    public static final File localStorage = new File("/sdcard/FIRST");
-    public static final File defaultStorageDirectory = new File(Environment.getExternalStorageDirectory() + "\\Download");
+    public static final File localStorage = new File(Environment.getExternalStorageDirectory().getPath(), "FIRST");
+    public static final File defaultStorageDirectory = new File(Environment.getExternalStorageDirectory(), "Download");
 
     public static String loadString(File filePath) {
         StringBuilder data = new StringBuilder();
-        try {
-            FileInputStream input = new FileInputStream(filePath);
-
+        try (FileInputStream input = new FileInputStream(filePath)) {
             int character;
             while ((character = input.read()) != -1) {
                 data.append((char) character);

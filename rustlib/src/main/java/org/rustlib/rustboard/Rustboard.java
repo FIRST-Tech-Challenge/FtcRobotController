@@ -27,7 +27,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 /**
- * All public static methods in this class will be executed on the currently <b>active</b> rustboard.  These method calls will refer back to the RustboardServer singleton to access the currently active rustboard instance and then execute non-static methods of that instance.
+ * All public static methods in this class will be executed on the currently <b>active</b> rustboard.  These method calls will refer back to the RustboardServer singleton to access the currently active rustboard instance and then execute the non-static methods of that instance.  This means that you can only update nodes on the rustboard.
  */
 public class Rustboard {
     interface SetUUID {
@@ -151,18 +151,18 @@ public class Rustboard {
             case "save_path":
                 try {
                     Loader.writeString(rustboardStorageDir, Objects.requireNonNull(messageJson.get("path")).toString());
-                    createNotice("Saved path to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
+                    notifyClient("Saved path to robot", NoticeType.POSITIVE, 8000);
                 } catch (IOException | NullPointerException e) {
-                    createNotice("Could not save the path to the robot", RustboardNotice.NoticeType.NEGATIVE, 8000);
+                    notifyClient("Could not save the path to the robot", NoticeType.NEGATIVE, 8000);
                     RustboardServer.log(e.toString());
                 }
                 break;
             case "save_value":
                 try {
-                    Loader.writeString(rustboardStorageDir, Objects.requireNonNull(messageJson.get("value")).toString()); // TODO: fix
-                    createNotice("Saved value to robot", RustboardNotice.NoticeType.POSITIVE, 8000);
+                    Loader.writeString(rustboardStorageDir, Objects.requireNonNull(messageJson.get("value")).toString());
+                    notifyClient("Saved value to robot", NoticeType.POSITIVE, 8000);
                 } catch (IOException | NullPointerException e) {
-                    createNotice("Could not save the value to the robot", RustboardNotice.NoticeType.NEGATIVE, 8000);
+                    notifyClient("Could not save the value to the robot", NoticeType.NEGATIVE, 8000);
                     RustboardServer.log(e.toString());
                 }
                 break;
@@ -183,18 +183,29 @@ public class Rustboard {
         return connected;
     }
 
-    public void createNotice(String notice, RustboardNotice.NoticeType type, int durationMilliseconds) {
-        JsonObject message = Json.createObjectBuilder()
+    private static JsonObject createNoticeJson(String notice, NoticeType type, int durationMilliseconds) {
+        return Json.createObjectBuilder()
                 .add("action", "create_notice")
                 .add("notice_message", notice)
                 .add("notice_type", type.value)
                 .add("notice_duration", durationMilliseconds)
                 .build();
-        connection.send(message.toString());
     }
 
-    public static void notify() {
+    public void notifyClient(String notice, NoticeType type, int durationMilliseconds) {
+        connection.send(createNoticeJson(notice, type, durationMilliseconds).toString());
+    }
 
+    public static void notifyActiveClient(String notice, NoticeType type, int durationMilliseconds) {
+        if (RustboardServer.isActiveRustboard()) {
+            getActiveRustboard().notifyClient(notice, type, durationMilliseconds);
+        }
+    }
+
+    public static void notifyAllClients(String notice, NoticeType type, int durationMilliseconds) {
+        for (WebSocket connection : RustboardServer.getInstance().getConnections()) {
+            connection.send(createNoticeJson(notice, type, durationMilliseconds).toString());
+        }
     }
 
     private RustboardNode getNode(String id, Type type) {

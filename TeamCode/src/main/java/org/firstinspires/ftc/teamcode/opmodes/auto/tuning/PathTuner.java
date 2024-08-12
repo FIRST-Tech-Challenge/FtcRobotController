@@ -15,6 +15,6 @@ import org.rustlib.geometry.Pose2d;
 public class PathTuner extends AutonContainer {
     @Override
     public Command getAutonomousCommand() {
-        return new PurePursuitAutonomousCommand(new Pose2d(), new FollowPathCommand(Path.loadPath("red sample path"), drive));
+        return new PurePursuitAutonomousCommand(new Pose2d(), new FollowPathCommand(Path.load("red sample path"), drive));
     }
 }
