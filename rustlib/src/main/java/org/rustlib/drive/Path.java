@@ -94,7 +94,7 @@ public class Path implements Supplier<Path> {
         return generatedWaypoints.toArray(new Waypoint[]{});
     }
 
-    public Waypoint[][] generateLineSegments() {
+    Waypoint[][] generateLineSegments() {
         ArrayList<Waypoint[]> segments = new ArrayList<>();
         for (int i = 0; i < waypoints.size() - 1; i++) {
             segments.add(new Waypoint[]{waypoints.get(i).get(), waypoints.get(i + 1).get()});

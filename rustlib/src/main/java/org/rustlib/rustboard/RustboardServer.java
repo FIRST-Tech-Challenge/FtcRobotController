@@ -11,7 +11,6 @@ import org.rustlib.config.Loader;
 import org.rustlib.core.RobotControllerActivity;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -50,7 +49,7 @@ public class RustboardServer extends WebSocketServer {
 
     private void autoSave() {
         if (!RobotControllerActivity.opModeRunning()) {
-            saveAllLayouts();
+            saveLayouts();
             saveScheduler.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -101,10 +100,10 @@ public class RustboardServer extends WebSocketServer {
     }
 
     static void messageActiveRustboard(JsonObject json) {
-
+        getInstance().activeRustboard.getConnection().send(json.toString());
     }
 
-    public static void enableDebugMode() {
+    public static void enableDebugMode() { // TODO: make a good way to enable and disable debug mode
         debugMode = false;
     }
 
@@ -116,7 +115,7 @@ public class RustboardServer extends WebSocketServer {
         return debugMode;
     }
 
-    public static void log(Object value) {
+    public static void log(Object value) { // TODO: create simpler logger
 
     }
 
@@ -149,14 +148,12 @@ public class RustboardServer extends WebSocketServer {
     }
 
     @Override
-    public void stop() throws IOException, InterruptedException {
-        // TODO: save rustboards
-        super.stop();
-    }
-
-    @Override
     public void onStart() {
         setConnectionLostTimeout(3);
+    }
+
+    public boolean noActiveRustboard() {
+        return activeRustboard == null || !activeRustboard.isConnected();
     }
 
     @Override
@@ -164,7 +161,7 @@ public class RustboardServer extends WebSocketServer {
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                broadcast("ping");
+                broadcast("{\"action\": \"ping\"}");
             }
 
         }, pingClientPeriod, pingClientPeriod);
@@ -212,12 +209,21 @@ public class RustboardServer extends WebSocketServer {
                 } else {
                     rustboard = new Rustboard(uuid, rustboardJson);
                 }
-                if (activeRustboard == null || !activeRustboard.isConnected()) {
+                if (noActiveRustboard()) {
                     activeRustboard = rustboard;
+                    JsonObjectBuilder builder = Json.createObjectBuilder();
+                    builder.add("action", "set_active");
+                    rustboard.getConnection().send(builder.build().toString());
                 }
                 rustboard.setConnection(conn);
                 loadedRustboards.put(uuid, rustboard);
 
+                break;
+            case "save_path":
+                Loader.safeWriteJson(new File(defaultStorageDirectory, messageJson.getString("node_id").replace(" ", "_") + ".json"), messageJson.getJsonObject("path"));
+                break;
+            case "save_value":
+                Loader.safeWriteString(new File(defaultStorageDirectory, messageJson.getString("node_id").replace(" ", "_") + ".txt"), messageJson.getString("value"));
                 break;
             case "exception":
                 throw new RustboardException(messageJson.getString("exception_message"));
@@ -228,7 +234,7 @@ public class RustboardServer extends WebSocketServer {
         }
     }
 
-    public void saveAllLayouts() {
+    public void saveLayouts() {
         JsonObjectBuilder metadataBuilder = Json.createObjectBuilder(rustboardMetaData);
         JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder(rustboardMetaData.getJsonArray("rustboards"));
         metadataBuilder.add("rustboards", rustboardArrayBuilder);

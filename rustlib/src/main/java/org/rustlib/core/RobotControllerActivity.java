@@ -32,11 +32,12 @@ public class RobotControllerActivity extends FtcRobotControllerActivity {
         activeInstance = new WeakReference<>(this);
         RobotBase.mainActivity = new WeakReference<>(this);
         try {
-            isStartedField = OpMode.class.getDeclaredField("isStarted");
-            stopRequestedField = OpMode.class.getDeclaredField("stopRequested");
+            Class<?> opModeInternalClass = Class.forName("com.qualcomm.robotcore.eventloop.opmode.OpModeInternal");
+            isStartedField = opModeInternalClass.getDeclaredField("isStarted");
+            stopRequestedField = opModeInternalClass.getDeclaredField("stopRequested");
             isStartedField.setAccessible(true);
             stopRequestedField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (ClassNotFoundException | NoSuchFieldException e) {
             throw new RuntimeException("Reflection failed: rustlib version incompatible with app version.");
         }
     }

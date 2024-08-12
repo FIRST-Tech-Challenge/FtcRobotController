@@ -45,7 +45,7 @@ public class Tele extends Robot {
             botPose = new Pose2d();
         }
         drive.getOdometry().setPosition(botPose); // Set the robot position to the last position of the robot in autonomous
-        drive.setFieldCentricOffset(fieldCentricOffset);
+        drive.setFieldCentricOffset(fieldCentricOffset); // TODO: make way to set field centric offset
 
         intake.setDefaultCommand(new IntakeDefault(intake, lights, drive.getOdometry()::getPose)); // Runs the intake automatically when the robot is in the right spot
         payloadController.rightTrigger.or(driveController.rightTrigger).whileTrue(new RunIntake(intake, SubsystemConstants.Intake.defaultSpeed));

@@ -116,6 +116,30 @@ public class Loader {
         writeString(output, o.toString());
     }
 
+    public static void safeWriteString(File output, String string) {
+        try {
+            writeString(output, string);
+        } catch (IOException e) {
+            RustboardServer.log(e);
+        }
+    }
+
+    public static void safeWriteJson(File output, JsonObject json) {
+        try {
+            writeJson(output, json);
+        } catch (IOException e) {
+            RustboardServer.log(e);
+        }
+    }
+
+    public static void safeWrite(File output, Object o) {
+        try {
+            write(output, o);
+        } catch (IOException e) {
+            RustboardServer.log(e);
+        }
+    }
+
     public static Document readXML(File file) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

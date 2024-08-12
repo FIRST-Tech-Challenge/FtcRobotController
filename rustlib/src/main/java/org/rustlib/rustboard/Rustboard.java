@@ -26,6 +26,9 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+/**
+ * All public static methods in this class will be executed on the currently <b>active</b> rustboard.  These method calls will refer back to the RustboardServer singleton to access the currently active rustboard instance and then execute non-static methods of that instance.
+ */
 public class Rustboard {
     interface SetUUID {
         Builder setUUID(String uuid);
@@ -67,6 +70,8 @@ public class Rustboard {
 
     Rustboard(String uuid, JsonObject json) {
         this.uuid = uuid;
+        JsonArray nodes = json.getJsonArray("nodes");
+        nodes.forEach((JsonValue nodeJson) -> this.nodes.add(RustboardNode.buildFromJson(nodeJson)));
     }
 
     Rustboard(String uuid, Set<RustboardNode> nodes) {
@@ -186,6 +191,10 @@ public class Rustboard {
                 .add("notice_duration", durationMilliseconds)
                 .build();
         connection.send(message.toString());
+    }
+
+    public static void notify() {
+
     }
 
     private RustboardNode getNode(String id, Type type) {
