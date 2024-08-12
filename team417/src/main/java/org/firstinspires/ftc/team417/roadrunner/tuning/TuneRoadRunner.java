@@ -256,7 +256,7 @@ public class TuneRoadRunner extends LinearOpMode {
                     output += header;
                 }
                 for (int i = 0; i < numStrings; i++) {
-                    String cursor = (i == current) ? "➤" : " ";
+                    String cursor = (i == current) ? "\u27a4" : " ";
                     output += cursor + menuStrings.getString(i) + "\n";
                 }
                 telemetry.addLine(output);
