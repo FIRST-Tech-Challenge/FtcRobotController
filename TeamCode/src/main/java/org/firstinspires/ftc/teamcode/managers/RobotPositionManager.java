@@ -40,6 +40,12 @@ public class RobotPositionManager {
         return this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
+    public double getHeadingByWheels() {
+        double right = this.getRightWheelDistanceDriven();
+        double left = this.getLeftWheelDistanceDriven();
+        return Math.toDegrees((right - left) / RobotConfig.DriveTrain.WHEELS_DISTANCE);
+    }
+
     public double getLeftWheelDistanceDriven() {
         return MathUtil.encoderTicksToMeter(this.leftDeadWheel.getCurrentPosition());
     }

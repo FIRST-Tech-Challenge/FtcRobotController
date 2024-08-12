@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opMode.auto;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.RobotController;
 import org.firstinspires.ftc.teamcode.opMode.templates.AutoOpModeTemplate;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.util.TeamColor;
 import org.firstinspires.ftc.teamcode.util.opModes.AutoOpMode;
 
 @Autonomous(name = "Example auto", group = "auto")
+@Disabled
 public class ExampleAutoOpMode extends AutoOpMode {
     private RobotController robotController;
 

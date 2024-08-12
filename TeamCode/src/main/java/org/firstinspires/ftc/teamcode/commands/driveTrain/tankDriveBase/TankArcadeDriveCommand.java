@@ -27,14 +27,13 @@ public class TankArcadeDriveCommand extends SympleCommandBase<TankDriveBaseSubsy
         double normalizedLeftSpeed = rawLeftSpeed;
         double normalizedRightSpeed = rawRightSpeed;
 
-
         double absRightSpeed = Math.abs(rawRightSpeed);
         double absLeftSpeed = Math.abs(rawLeftSpeed);
         double maxValue = Math.max(absLeftSpeed, absRightSpeed);
 
         if (maxValue >= 1) {
-            normalizedLeftSpeed = rawLeftSpeed / maxValue;
-            normalizedRightSpeed = rawRightSpeed / maxValue;
+            normalizedLeftSpeed /= maxValue;
+            normalizedRightSpeed /= maxValue;
         }
 
         this.subsystem.moveMotors(normalizedLeftSpeed, normalizedRightSpeed);

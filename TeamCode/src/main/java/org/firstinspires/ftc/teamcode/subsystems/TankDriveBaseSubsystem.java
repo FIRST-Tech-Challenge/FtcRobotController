@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubsystemBase;
 
+// THIS CODE IS OUTDATED AND DIDN'T GET TESTED ON THE NEW ROBOT!
 public class TankDriveBaseSubsystem extends SympleSubsystemBase implements DriveTrainBaseSubsystem {
     private boolean invert = false;
 
@@ -29,12 +30,6 @@ public class TankDriveBaseSubsystem extends SympleSubsystemBase implements Drive
     public void moveSideMotors(double left, double right) {
         this.moveMotors(left, right);
     }
-
-//    public double getHeadingByWheels() {
-//        double right = this.getRightWheelDistanceDriven();
-//        double left = this.getLeftWheelDistanceDriven();
-//        return Math.toDegrees((right - left) / RobotConfig.DriveTrain.WHEELS_DISTANCE);
-//    }
 
     @Override
     public double getForwardDistanceDriven() {

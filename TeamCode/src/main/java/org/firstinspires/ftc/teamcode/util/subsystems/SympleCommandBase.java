@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 
-public class SympleCommandBase<T extends SympleSubsystem> extends CommandBase {
+public abstract class SympleCommandBase<T extends SympleSubsystem> extends CommandBase {
     protected final T subsystem;
 
     protected SympleCommandBase(T subsystem) {

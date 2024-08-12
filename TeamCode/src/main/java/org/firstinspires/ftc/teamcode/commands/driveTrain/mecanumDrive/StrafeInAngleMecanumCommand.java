@@ -37,15 +37,15 @@ public class StrafeInAngleMecanumCommand extends SympleCommandBase<MecanumDriveS
 
 
         double forwardDistanceMoved = this.subsystem.getForwardDistanceDriven() - this.STARTING_FORWARD_DIST;
-        double sideDistanceMoved = this.subsystem.getSideDistanceDriven() - STARTING_SIDE_DIST;
+        double sideDistanceMoved = this.subsystem.getSideDistanceDriven() - this.STARTING_SIDE_DIST;
 
-        double currentDist = Math.sqrt(Math.pow(forwardDistanceMoved, 2) + Math.pow(sideDistanceMoved, 2));
-        double allPower = this.pController.calculate(currentDist);
+        double currentDist = Math.hypot(forwardDistanceMoved, sideDistanceMoved); // => √x*x + y*y
+        double powerMultiplier = this.pController.calculate(currentDist);
 
-        double rawFrontRightSpeed = (vSpeed + hSpeed) * allPower;
-        double rawBackRightSpeed = (vSpeed - hSpeed) * allPower;
-        double rawFrontLeftSpeed = (vSpeed - hSpeed) * allPower;
-        double rawBackLeftSpeed = (vSpeed + hSpeed) * allPower;
+        double rawFrontRightSpeed = (vSpeed + hSpeed) * powerMultiplier;
+        double rawBackRightSpeed = (vSpeed - hSpeed) * powerMultiplier;
+        double rawFrontLeftSpeed = (vSpeed - hSpeed) * powerMultiplier;
+        double rawBackLeftSpeed = (vSpeed + hSpeed) * powerMultiplier;
 
         double normalizedFrontRightSpeed = rawFrontRightSpeed;
         double normalizedBackRightSpeed = rawBackRightSpeed;

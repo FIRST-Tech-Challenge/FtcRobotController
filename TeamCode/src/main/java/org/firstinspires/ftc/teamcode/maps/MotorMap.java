@@ -10,10 +10,12 @@ package org.firstinspires.ftc.teamcode.maps;
  * </pre>
  **/
 public enum MotorMap {
-    LEG_FRONT_RIGHT("leg_front_right", 0, 0),
-    LEG_FRONT_LEFT("leg_front_left", 0, 0),
-    LEG_BACK_LEFT("leg_back_left", 0, 0),
-    LEG_BACK_RIGHT("leg_back_right", 0, 0);
+    LEG_FRONT_RIGHT("leg_front_right", 0, 312),
+    LEG_FRONT_LEFT("leg_front_left", 0, 312),
+    LEG_BACK_LEFT("leg_back_left", 0, 312),
+    LEG_BACK_RIGHT("leg_back_right", 0, 312);
+
+
     private final String id;
     private final double maxRPM;
     private final int ticksPerRev;

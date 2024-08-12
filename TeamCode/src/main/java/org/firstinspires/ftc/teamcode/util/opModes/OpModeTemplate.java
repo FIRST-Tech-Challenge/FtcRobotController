@@ -9,17 +9,23 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public abstract class OpModeTemplate {
-    private final HashSet<Class<? extends SympleSubsystem>> subsytems = new HashSet<>();
+    private final HashSet<Class<? extends SympleSubsystem>> subsystems = new HashSet<>();
+
+    /**
+     * @param subsystems the subsystem that the op mode template will have
+     */
     @SafeVarargs
-    protected OpModeTemplate(Class<? extends SympleSubsystem>... subSystems) {
-        this.subsytems.addAll(Arrays.asList(subSystems));
+    protected OpModeTemplate(Class<? extends SympleSubsystem>... subsystems) {
+        this.subsystems.addAll(Arrays.asList(subsystems));
     }
 
     public HashSet<Class<? extends SympleSubsystem>> getSubsystems() {
-        return subsytems;
+        return subsystems;
     }
 
+    // runs after the subsystems are registered
     public void init(RobotController robotController) { }
 
+    // runs after the subsystems are registered
     public void createControls(GamepadEx driverController, GamepadEx actionController, RobotController robotController) { }
 }
