@@ -40,7 +40,10 @@ This will be fixed in the future, but for now make sure your hub orientation is 
 
 Also, make sure to configure the OTOS in your hardware config. 
 By default, SparkFunOTOSDrive will look for a sensor named sensor_otos,
-but you can change this in SparkFunOTOSDrive line 70. 
+but you can change this in SparkFunOTOSDrive line 70.
+
+Note that, to mitigate an issue with the OTOS driver in SDK version 9.2,
+you must currently configure the OTOS as "SparkFunOTOS Corrected" in your hardware config.
 ### Tune Scalars and Offsets
 First, tune the Angular Scalar by running the OTOSAngularScalar OpMode and following the instructions. 
 This will allow you to get the maximum accuracy from the OTOS IMU.
