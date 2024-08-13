@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.PWMOutput;
 import com.qualcomm.robotcore.hardware.PWMOutputImpl;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -26,6 +27,7 @@ public class OutreachBot2024 extends OpMode {
     public RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
     public Servo triggerServo = null;
     public Servo piston = null;
+    public PwmControl pistonController = null;
     double x;
     public void init() {
         // Define and Initialize Motor
@@ -50,6 +52,9 @@ public class OutreachBot2024 extends OpMode {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pistonController = (PwmControl) piston;
+        pistonController.setPwmRange(new PwmControl.PwmRange(0.75,2.27));
+
 
 
         telemetry.addData(">", "Robot Ready.  Press Play.");    //
@@ -102,10 +107,10 @@ public class OutreachBot2024 extends OpMode {
             }
 
             if (gamepad1.dpad_right) {
-                piston.setPosition(0.1);
+                piston.setPosition(0.5);
             }
             if (gamepad1.dpad_left) {
-                piston.setPosition(0.2);
+                piston.setPosition(0);
 
             }
             if (gamepad1.dpad_down) {
