@@ -22,17 +22,24 @@ public class AutoControl extends OpMode {
         angle -= robot.getHeading();
         double distanceUpper = targetDistance + 10;
         double distanceLower = targetDistance - 10;
+
+
+
         double distanceTraveled = 0;
 
         double distanceToTarget = targetDistance;
         double currentPositionEncoder = robot.drivetrain.driveMotors[0].getCurrentPosition();
 
-        while(distanceToTarget < distanceLower || distanceToTarget > distanceUpper){
+
+        while(distanceToTarget < distanceLower){
+            distanceTraveled =  robot.drivetrain.driveMotors[0].getCurrentPosition() - currentPositionEncoder;
             distanceToTarget = targetDistance - robot.drivetrain.driveMotors[0].getCurrentPosition();
+            //robot.drivetrain.mecanumDrive();
 
 
         }
     }
+
 
     @Override
     public void stop(){

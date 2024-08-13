@@ -9,7 +9,8 @@ public abstract class AbstractDrivetrain {
 
         //FLM == "Front Left Motor" etc.
 
-        driveMotors = new DcMotor[]{BLM, BRM, FLM, FRM};
+        driveMotors = new DcMotor[]{FLM, BLM, BRM, FRM};
+
     }
     public void setDriveDirection(DcMotorSimple.Direction direction){
         switch(direction) {

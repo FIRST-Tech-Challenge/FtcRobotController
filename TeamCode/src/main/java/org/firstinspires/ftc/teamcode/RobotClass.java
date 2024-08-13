@@ -29,9 +29,9 @@ public class RobotClass {
         imu = hwmap.get(IMU.class, "imu");
 
         drivetrain = new MecanumDrive(hwmap.get(DcMotor.class, "frontLeft"),
-                                    hwmap.get(DcMotor.class, "frontRight"),
                                     hwmap.get(DcMotor.class, "backLeft"),
-                                    hwmap.get(DcMotor.class, "backRight"));
+                                    hwmap.get(DcMotor.class, "backRight"),
+                                    hwmap.get(DcMotor.class, "frontRight"));
 
         WebcamName camera1Name = hwmap.get(WebcamName.class, "Webcam 1");
         camera1 = OpenCvCameraFactory.getInstance().createWebcam(camera1Name);

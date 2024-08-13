@@ -13,10 +13,10 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
         this.impulseRotation = impulseRotation;
 
-        driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD);
-        driveMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
-        driveMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
-        driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+        driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
+        driveMotors[1].setDirection(DcMotorSimple.Direction.REVERSE); //BLM
+        driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
+        driveMotors[3].setDirection(DcMotorSimple.Direction.REVERSE); //FRM
 
     }
 
@@ -44,16 +44,17 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         // normalizes ranges from 0 to 1
 
 
-        driveMotors[2].setPower((rotY + rotX + turn) / denominator); //front_left
-        driveMotors[0].setPower((rotY - rotX + turn) / denominator); //back_left
-        driveMotors[3].setPower((rotY - rotX - turn) / denominator); //front_right
-        driveMotors[1].setPower((rotY + rotX - turn) / denominator); //back_right
+        driveMotors[0].setPower((rotY + rotX + turn));// / denominator); // Front Left Motor
+        driveMotors[1].setPower((rotY - rotX + turn));// / denominator); // Back Left Motor
+        driveMotors[2].setPower((rotY - rotX - turn));// / denominator); // Back Right Motor
+        driveMotors[3].setPower((rotY + rotX - turn));// / denominator); // Front Right Motor
 
         telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
         telemetry.addData("heading_RADIANS", heading_RADIANS);
         telemetry.addData("drive", leftY);
         telemetry.addData("strafe", leftX);
         telemetry.addData("turn", turn);
+        telemetry.addData("denominator", denominator);
         telemetry.update();
 
 
