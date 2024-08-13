@@ -129,6 +129,8 @@ public class OpenCVTest extends OpMode {
         The only part that should not be copypasted is the camera.setPipeline, as that sets the
         wanted pipeline. This can also be done in the loop() function and multiple pipelines can be
         swapped between as the autonomous goes on.
+        The explanation for the boilerplate can be found at:
+        https://github.com/OpenFTC/EasyOpenCV/blob/master/doc/user_docs/camera_initialization_overview.md
         */
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Camera");
