@@ -2,6 +2,8 @@ package org.firstinspires.ftc.team417.roadrunner.tuning;
 
 import static com.acmerobotics.roadrunner.Profiles.constantProfile;
 
+import static java.lang.System.nanoTime;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -25,6 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team417.roadrunner.Drawing;
@@ -37,6 +40,52 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+/**
+ * Math helper for points and vectors:
+ */
+class Point { // Can't derive from vector2d because it's marked as final (by default?)
+    public double x, y;
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+    public Point(Vector2d vector) {
+        x = vector.x;
+        y = vector.y;
+    }
+    public Point(VectorF vector) {
+        x = vector.get(0);
+        y = vector.get(1);
+    }
+    public Vector2d vector2d() { return new Vector2d(x, y); }
+    public Point add(Point other) {
+        return new Point(this.x + other.x, this.y + other.y);
+    }
+    public Point subtract(Point other) {
+        return new Point(this.x - other.x, this.y - other.y);
+    }
+    public Point rotate(double theta) {
+        return new Point(Math.cos(theta) * x - Math.sin(theta) * y,
+                Math.sin(theta) * x + Math.cos(theta) * y);
+    }
+    public Point negate() { return new Point(-x, -y); }
+    public Point multiply(double scalar) { return new Point(x * scalar, y * scalar); }
+    public Point divide(double scalar) { return new Point(x / scalar, y / scalar); }
+    public double dot(Point other) {
+        return this.x * other.x + this.y * other.y;
+    }
+    public double cross(Point other) {
+        return this.x * other.y - this.y * other.x;
+    }
+    public double distance(Point other) {
+        return Math.hypot(other.x - this.x, other.y - this.y);
+    }
+    public double length() {
+        return Math.hypot(x, y);
+    }
+    public double atan2() { return Math.atan2(y, x); } // Rise over run
+}
 
 /**
  * Class to track encoder ticks.
@@ -514,8 +563,8 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         String message;
 
-        if (ui.readyPrompt("Push the robot forward in a straight line along a field wall for exactly ten tiles. "
-                + "\n\nPress A to start, B when complete")) {
+        if (ui.readyPrompt("In this test, you'll push the robot forward in a straight line along a field wall for exactly 4 tiles. "
+                + "\n\nPress A to start, B to cancel")) {
 
             double distance = 0;
             double heading = 0;
@@ -546,11 +595,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
             double newHeading = heading;
             double oldHeading = drive.opticalTracker.getOffset().h;
-            double headingChange = Math.abs(oldHeading - newHeading);
-            if (headingChange < -Math.PI)
-                headingChange += 2 * Math.PI;
-            if (headingChange >= Math.PI)
-                headingChange -= 2 * Math.PI; // Radians
+            double headingChange = normalizeAngle(Math.abs(oldHeading - newHeading));
 
             message = String.format("New offset heading is %.1f\u00b0 different from the old.\n", Math.toDegrees(headingChange));
             message += String.format("New linear scalar is %.1f%% different from the old.\n\n", linearScalarChange);
@@ -560,12 +605,231 @@ public class TuneRoadRunner extends LinearOpMode {
                 settings.opticalOffset.h = newHeading;
                 settings.save();
 
+                // TODO: @@@ Range check newLinearScalar
+
                 message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
                 message += String.format("  headingOffset = %.3f\n", Math.toDegrees(newHeading));
                 message += String.format("  linearScalar = %.3f\n", newLinearScalar);
                 message += "\nPress A or B to continue.";
                 ui.readyPrompt(message);
             }
+        }
+    }
+
+    // Return a high resolution time count, in seconds:
+    public static double time() {
+        return nanoTime() * 1e-9;
+    }
+
+    // Normalize a radians angle to (-pi, pi]:
+    public static double normalizeAngle(double angle) {
+        while (angle > Math.PI)
+            angle -= 2 * Math.PI;
+        while (angle <= -Math.PI)
+            angle += 2 * Math.PI;
+        return angle;
+    }
+
+    // Ramp the motors up or down to or from the target spin speed:
+    void rampMotors(MecanumDrive drive, boolean up) {
+        final double RAMP_TIME = 0.5; // Seconds
+        final double SPIN_SPEED = 0.2;
+
+        double startTime = time();
+        while (opModeIsActive()) {
+            double duration = time() - startTime;
+            double fraction = (up) ? (duration / RAMP_TIME) : (1 - duration / RAMP_TIME);
+            drive.rightFront.setPower(fraction * SPIN_SPEED);
+            drive.rightBack.setPower(fraction * SPIN_SPEED);
+            drive.leftFront.setPower(-fraction * SPIN_SPEED);
+            drive.leftBack.setPower(-fraction * SPIN_SPEED);
+            if (duration > RAMP_TIME)
+                break; // ===>
+        }
+    }
+
+    static class CenterOfRotation {
+        double x;
+        double y;
+        double farthestPointRadius;
+        double traveledRadius;
+        double leastSquaresRadius;
+
+        public CenterOfRotation(double x, double y, double farthestPointRadius, double traveledRadius, double leastSquaresRadius) {
+            this.x = x;
+            this.y = y;
+            this.farthestPointRadius = farthestPointRadius;
+            this.traveledRadius = traveledRadius;
+            this.leastSquaresRadius = leastSquaresRadius;
+        }
+    }
+
+    // Perform a least-squares fit of an array of points to a circle without using matrices,
+    // courtesy of Copilot:
+    static CenterOfRotation fitCircle(List<Point> points, double centerX, double centerY) {
+        double radius = 0.0;
+
+        // Iteratively refine the center and radius
+        for (int iter = 0; iter < 100; iter++) {
+            double sumX = 0.0;
+            double sumY = 0.0;
+            double sumR = 0.0;
+
+            for (Point p : points) {
+                double dx = p.x - centerX;
+                double dy = p.y - centerY;
+                double dist = Math.sqrt(dx * dx + dy * dy);
+                sumX += dx / dist;
+                sumY += dy / dist;
+                sumR += dist;
+            }
+
+            centerX += sumX / points.size();
+            centerY += sumY / points.size();
+            radius = sumR / points.size();
+        }
+
+        return new CenterOfRotation(centerX, centerY,0, 0, radius);
+    }
+
+    // Calculate the angular scale and sensor offset:
+    void opticalAngularScaleAndOffset() {
+        final int REVOLUTION_COUNT = 1;
+
+        useDrive(true); // Use MecanumDrive/TankDrive
+        String message;
+
+        if (!ui.readyPrompt("In this test, you'll align the robot against a wall to begin, then move "
+                + "it out so that the robot can rotate in place 10 times, then you'll align "
+                + "the robot against the wall again."
+                + "\n\nPress A to start, B to cancel"))
+            return; // ====>
+
+        while (opModeIsActive() && !ui.select()) {
+            telemetry.addLine("Carefully drive the robot to a wall and align it so that "
+                    + "it's facing forward. This marks the start orientation for calibration."
+                    + "\n\nPress A when ready, B to cancel");
+            telemetry.update();
+            drive.setDrivePowers(new PoseVelocity2d(
+                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
+                    -gamepad1.right_stick_x));
+            if (ui.cancel())
+                return; // ===>
+        }
+
+        drive.opticalTracker.resetTracking();
+        while (opModeIsActive() && !ui.select()) {
+            telemetry.addLine("Now move the robot far enough away from any objects so "
+                    + "that it can freely rotate in place. Don't rotate it. "
+                    + "\n\nPress A when ready for the robot to rotate, B to cancel");
+            telemetry.update();
+            drive.setDrivePowers(new PoseVelocity2d(
+                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
+                    -gamepad1.right_stick_x));
+            if (ui.cancel())
+                return; // ===>
+        }
+
+        telemetry.addLine(String.format("Rotating %.1f times...", REVOLUTION_COUNT));
+        telemetry.update();
+
+        ArrayList<Point> points = new ArrayList<>();
+        rampMotors(drive, true);
+
+        double rotationTotal = 0;
+        double rotationTarget = REVOLUTION_COUNT * 2 * Math.PI;
+
+        double farthestDistance = 0;
+        Point farthestPoint = new Point(0, 0);
+        Point currentPoint = new Point(0, 0);
+        SparkFunOTOS.Pose2D previousPosition = drive.opticalTracker.getPosition();
+        double lastHeading = previousPosition.h;
+        double distanceTraveled = 0;
+
+        while (opModeIsActive() && (rotationTotal < rotationTarget)) {
+            SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
+
+            // Track the amount of rotation we've done:
+            double heading = position.h;
+            rotationTotal += normalizeAngle(heading - lastHeading);
+            lastHeading = heading;
+
+            currentPoint = new Point(position.x, position.y);
+            points.add(currentPoint);
+            double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
+            if (distanceFromOrigin > farthestDistance) {
+                farthestDistance = distanceFromOrigin;
+                farthestPoint = currentPoint;
+            }
+
+            distanceTraveled += Math.hypot(position.x - previousPosition.x, position.y - previousPosition.y);
+            previousPosition = position;
+
+            // Update the telemetry:
+            double rotationsRemaining = (rotationTarget - rotationTotal) / (2 * Math.PI);
+            telemetry.addLine(String.format("%.2f rotations remaining, %d points sampled", rotationsRemaining, points.size()));
+            telemetry.update();
+
+            // Draw the circle:
+            TelemetryPacket packet = new TelemetryPacket();
+            Canvas canvas = packet.fieldOverlay();
+            double[] xPoints = new double[points.size()];
+            double[] yPoints = new double[points.size()];
+            for (int i = 0; i < points.size(); i++) {
+                xPoints[i] = points.get(i).x;
+                yPoints[i] = points.get(i).y;
+            }
+            canvas.setStroke("#00ff00");
+            canvas.strokePolyline(xPoints, yPoints);
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        }
+
+        // @@@ TODO: Need to startup/slowdown time into account for rotation adjustment
+
+        // Stop the rotation:
+        rampMotors(drive, false);
+
+        while (opModeIsActive() && !ui.select()) {
+            telemetry.addLine("Now drive the robot to align it at the wall in the same "
+                    + "place and orientation as it started."
+                    + "\n\nPress A when done, B to cancel");
+            telemetry.update();
+            drive.setDrivePowers(new PoseVelocity2d(
+                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
+                    -gamepad1.right_stick_x));
+            if (ui.cancel())
+                return; // ===>
+        }
+
+        CenterOfRotation circleFit = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
+
+        double resultX = farthestPoint.x / 2;
+        double resultY = farthestPoint.y / 2;
+        double farthestPointRadius = farthestDistance / 2;
+        double traveledRadius = distanceTraveled / (2 * REVOLUTION_COUNT * Math.PI);
+
+        message = String.format("Distance traveled: %f, farthestPoint.x: %f, farthestPoint.y: %f, traveledRadius: %f\n",
+                distanceTraveled, farthestPoint.x, farthestPoint.y, traveledRadius);
+        message += String.format("Test result...\nOffset from center of rotation (inches): (%.2f, %.2f), samples: %d",
+                resultX, resultY, points.size());
+        message += String.format("Farthest point radius: %.2f, Traveled radius: %.2f", farthestPointRadius, traveledRadius);
+        message += String.format("Error (inches): (%.2f, %.2f)\n", currentPoint.x, currentPoint.y);
+        message += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", circleFit.x, circleFit.y, circleFit.leastSquaresRadius);
+        message += "Use these results? Press A if they look good, B to discard them.";
+
+        if (ui.readyPrompt(message)) {
+            settings.opticalOffset.x = circleFit.x;
+            settings.opticalOffset.y = circleFit.y;
+            // @@@
+            settings.save();
+
+            // TODO: @@@ Range check newLinearScalar
+
+            message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
+            message += String.format("  xOffset = %.2f\n", circleFit.x);
+            message += String.format("  yOffset = %.3f\n", circleFit.y);
+            message += "\nPress A or B to continue.";
+            ui.readyPrompt(message);
         }
     }
 
@@ -853,7 +1117,8 @@ public class TuneRoadRunner extends LinearOpMode {
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
         if (settings.type == Type.OPTICAL) {
-            tests.add(new Test(this::opticalLinearScaleAndOrientation, "Optical scale & orientation"));
+            tests.add(new Test(this::opticalLinearScaleAndOrientation, "Optical linear scale & orientation"));
+            tests.add(new Test(this::opticalAngularScaleAndOffset, "Optical angular scale & offset"));
         } else {
             tests.add(new Test(this::encoderPush, "Push test (encoders and IMU)"));
             tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
