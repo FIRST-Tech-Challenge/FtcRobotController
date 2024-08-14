@@ -1,6 +1,6 @@
 package org.rustlib.rustboard;
 
-import static org.rustlib.config.Loader.defaultStorageDirectory;
+import static org.rustlib.config.Loader.externalStorage;
 
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -14,10 +14,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -28,7 +31,7 @@ import javax.json.JsonValue;
 
 public class RustboardServer extends WebSocketServer {
     public static final int port = 5801;
-    static final File rustboardStorageDir = new File(defaultStorageDirectory, "Rustboard");
+    static final File rustboardStorageDir = new File(externalStorage, "Rustboard");
     private static final File rustboardMetadataFile = new File(rustboardStorageDir, "rustboard_metadata.json");
     private static final File storedRustboardDir = new File(rustboardStorageDir, "rustboards");
     private static RustboardServer instance = null;
@@ -37,10 +40,11 @@ public class RustboardServer extends WebSocketServer {
     private final JsonObject rustboardMetaData;
     private final HashSet<String> storedRustboardIds = new HashSet<>();
     private final HashMap<String, Rustboard> loadedRustboards = new HashMap<>();
-    private final Timer saveScheduler = new Timer();
-    private static final int rustboardAutoSavePeriod = 30000;
-    private static final int pingClientPeriod = 8000;
+    private static final int rustboardAutoSavePeriod = 10000;
+    private static final int pingClientPeriod = 4000;
     private static final ClientUpdater clientUpdater = new ClientUpdater();
+    private final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(3);
+    private final Set<WebSocket> connections = Collections.synchronizedSet(new HashSet<>());
 
     ClientUpdater getClientUpdater() {
         return clientUpdater;
@@ -49,12 +53,9 @@ public class RustboardServer extends WebSocketServer {
     private void autoSave() {
         if (!RobotControllerActivity.opModeRunning()) {
             saveLayouts();
-            saveScheduler.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    autoSave();
-                }
-            }, rustboardAutoSavePeriod);
+            executorService.schedule(this::autoSave, rustboardAutoSavePeriod, TimeUnit.MILLISECONDS);
+        } else {
+            throw new RuntimeException("OpMode currently running");
         }
     }
 
@@ -67,14 +68,10 @@ public class RustboardServer extends WebSocketServer {
 
     private RustboardServer(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
-        JsonObject metaData;
         setReuseAddr(true);
-        RobotLog.v("Rustboard server initialized");
-        if (!rustboardStorageDir.exists()) {
-            if (!rustboardStorageDir.mkdir())
-                throw new RuntimeException("Failed to generate storage folders needed for the Rustboard server");
-        }
-        rustboardMetaData = Loader.safeLoadJsonObject(rustboardMetadataFile);
+        checkDirectoryExists(rustboardStorageDir);
+        JsonObject defaultMetaData = Json.createObjectBuilder().add("rustboards", Json.createArrayBuilder().build()).build();
+        rustboardMetaData = Loader.safeLoadJsonObject(rustboardMetadataFile, defaultMetaData);
         if (rustboardMetaData.containsKey("rustboards")) {
             JsonArray dataArray = rustboardMetaData.getJsonArray("rustboards");
             for (JsonValue value : dataArray) {
@@ -90,8 +87,19 @@ public class RustboardServer extends WebSocketServer {
                 }
             }
         }
+        autoSave();
         RobotControllerActivity.onOpModeStop(this::autoSave);
-        new Timer().scheduleAtFixedRate(new ClientUpdater(), 0, 50);
+        executorService.scheduleAtFixedRate(new ClientUpdater(), 0, 50, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(() -> {
+            connections.forEach((connection) -> {
+                if (connection.isOpen())
+                    try {
+                        connection.send("{\"action\": \"ping\"}");
+                    } catch (RuntimeException e) {
+                        logError("Couldn't ping clients");
+                    }
+            });
+        }, pingClientPeriod, pingClientPeriod, TimeUnit.MILLISECONDS);
     }
 
     static void messageActiveRustboard(JsonObject json) {
@@ -168,17 +176,12 @@ public class RustboardServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                broadcast("{\"action\": \"ping\"}");
-            }
-
-        }, pingClientPeriod, pingClientPeriod);
+        connections.add(conn);
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+        connections.remove(conn);
         if (activeRustboard.getConnection() == conn) {
             activeRustboard.onDisconnect();
         }
@@ -189,6 +192,9 @@ public class RustboardServer extends WebSocketServer {
             }
         }
         log("client " + conn.getRemoteSocketAddress().toString() + " disconnected from the robot.");
+        if (true) {
+            throw new RuntimeException("disconnected");
+        }
     }
 
     @Override
@@ -199,7 +205,6 @@ public class RustboardServer extends WebSocketServer {
             case "client_details":
                 Time.calibrateUTCTime(messageJson.getJsonNumber("utc_time").longValue());
                 String uuid = messageJson.getString("uuid");
-                JsonObject rustboardJson = messageJson.getJsonObject("rustboard");
                 JsonArray clientNodes = messageJson.getJsonArray("nodes");
                 Rustboard rustboard;
                 if (loadedRustboards.containsKey(uuid)) {
@@ -208,12 +213,14 @@ public class RustboardServer extends WebSocketServer {
                     try {
                         rustboard = Rustboard.load(uuid).mergeWithClientRustboard(clientNodes);
                     } catch (Rustboard.NoSuchRustboardException e) {
-                        rustboard = new Rustboard(uuid, rustboardJson);
+                        rustboard = new Rustboard(uuid, clientNodes);
                     }
                 } else {
-                    rustboard = new Rustboard(uuid, rustboardJson);
+                    rustboard = new Rustboard(uuid, clientNodes);
                 }
-                if (isActiveRustboard()) {
+                rustboard.setConnection(conn);
+                loadedRustboards.put(uuid, rustboard);
+                if (isActiveRustboard() && !rustboard.getUuid().equals(activeRustboard.getUuid())) {
                     rustboard.notifyClient("Rustboard queued because another Rustboard is connected", NoticeType.NEUTRAL, 5000);
                 } else {
                     activeRustboard = rustboard;
@@ -221,15 +228,13 @@ public class RustboardServer extends WebSocketServer {
                     builder.add("action", "set_active");
                     rustboard.getConnection().send(builder.build().toString());
                 }
-                rustboard.setConnection(conn);
-                loadedRustboards.put(uuid, rustboard);
 
                 break;
             case "save_path":
-                Loader.safeWriteJson(new File(defaultStorageDirectory, messageJson.getString("node_id").replace(" ", "_") + ".json"), messageJson.getJsonObject("path"));
+                Loader.safeWriteJson(new File(externalStorage, messageJson.getString("node_id").replace(" ", "_") + ".json"), messageJson.getJsonObject("path"));
                 break;
             case "save_value":
-                Loader.safeWriteString(new File(defaultStorageDirectory, messageJson.getString("node_id").replace(" ", "_") + ".txt"), messageJson.getString("value"));
+                Loader.safeWriteString(new File(externalStorage, messageJson.getString("node_id").replace(" ", "_") + ".txt"), messageJson.getString("value"));
                 break;
             case "exception":
                 throw new RustboardException(messageJson.getString("exception_message"));
@@ -241,6 +246,7 @@ public class RustboardServer extends WebSocketServer {
     }
 
     public void saveLayouts() {
+        checkDirectoryExists(storedRustboardDir);
         JsonObjectBuilder metadataBuilder = Json.createObjectBuilder(rustboardMetaData);
         JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder(rustboardMetaData.getJsonArray("rustboards"));
         metadataBuilder.add("rustboards", rustboardArrayBuilder);
@@ -249,9 +255,22 @@ public class RustboardServer extends WebSocketServer {
                     rustboardDescriptor.add("uuid", uuid);
                     rustboardDescriptor.add("active", rustboard == activeRustboard);
                     rustboardArrayBuilder.add(rustboardDescriptor);
-                    rustboard.save(new File(rustboardStorageDir, uuid + ".json"));
+                    rustboard.save(new File(storedRustboardDir, uuid + ".json"));
                 }
         );
+        try {
+            Loader.writeJson(rustboardMetadataFile, metadataBuilder.build());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void checkDirectoryExists(File file) {
+        String err = "";
+        if (!file.exists()) {
+            if (!file.mkdir())
+                throw new RuntimeException(String.format("Could not make directory '%s'", file.getPath()));
+        }
     }
 
     @Override
@@ -262,6 +281,15 @@ public class RustboardServer extends WebSocketServer {
     public static class RustboardException extends RuntimeException {
         public RustboardException(String message) {
             super(message);
+        }
+    }
+
+    void logError(String message) {
+        //Rustboard.notifyAllClients(message, NoticeType.NEGATIVE, 8000);
+        try {
+            Loader.writeString(new File(externalStorage, "log.txt"), message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

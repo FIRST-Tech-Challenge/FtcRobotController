@@ -51,9 +51,9 @@ public class RustboardNode {
         BOOLEAN_TELEMETRY("boolean telemetry", OverrideAbility.ALWAYS),
         TEXT_TELEMETRY("text telemetry", OverrideAbility.ALWAYS),
         TEXT_INPUT("text input", OverrideAbility.CHECK_TIME),
-        POSITION_GRAPH("position_graph", OverrideAbility.ALWAYS),
+        POSITION_GRAPH("position graph", OverrideAbility.ALWAYS),
         PATH("path", OverrideAbility.CHECK_TIME),
-        CAMERA_STREAM("camera steam", OverrideAbility.NEVER);
+        CAMERA_STREAM("camera stream", OverrideAbility.NEVER);
 
         public final String typeName;
         private final OverrideAbility overrideAbility;
@@ -99,7 +99,7 @@ public class RustboardNode {
 
     static RustboardNode buildFromJson(JsonValue json) {
         JsonObject data = (JsonObject) json;
-        return new RustboardNode(data.getString("id"), Type.getType(data.getString("type")), data.getString("state"), Time.buildFromString(data.getString("last_update")));
+        return new RustboardNode(data.getString("id"), Type.getType(data.getString("type")), data.getString("state"), new Time(data.getJsonNumber("last_update").longValue()));
     }
 
     RustboardNode merge(RustboardNode toCompare) {
@@ -138,5 +138,10 @@ public class RustboardNode {
     @Override
     public int hashCode() {
         return Objects.hash(id, type.typeName);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("id: '%s'\ntype: '%s'\nstate: '%s'", id, type.typeName, state);
     }
 }

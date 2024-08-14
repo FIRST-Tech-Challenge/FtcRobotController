@@ -18,8 +18,8 @@ public abstract class RobotBase extends OpMode {
     public static Alliance alliance = Alliance.BLUE;
     static WeakReference<RobotControllerActivity> mainActivity;
     private static OpModeState opModeState = OpModeState.IDLE;
-    protected LynxModule controlHub;
-    protected LynxModule expansionHub;
+    protected LynxModule controlHub = null;
+    protected LynxModule expansionHub = null;
     protected SuperGamepad controller1;
     protected SuperGamepad controller2;
     private boolean inAuto = false;
@@ -69,6 +69,11 @@ public abstract class RobotBase extends OpMode {
         return opModeState;
     }
 
+    private static void setBulkCachingOn(LynxModule hub) {
+        if (hub != null)
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+    }
+
     @Override
     public final void init() {
         opModeState = OpModeState.INIT;
@@ -78,13 +83,17 @@ public abstract class RobotBase extends OpMode {
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         if (hubs.get(0).isParent()) {
             controlHub = hubs.get(0);
-            expansionHub = hubs.get(1);
+            if (hubs.size() > 1) {
+                expansionHub = hubs.get(1);
+            }
         } else {
             controlHub = hubs.get(1);
-            expansionHub = hubs.get(0);
+            if (hubs.size() > 1) {
+                expansionHub = hubs.get(0);
+            }
         }
-        controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        setBulkCachingOn(controlHub);
+        setBulkCachingOn(expansionHub);
         controller1 = new SuperGamepad(gamepad1);
         controller2 = new SuperGamepad(gamepad2);
         runCallbacks(callbacks.get(0));

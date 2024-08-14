@@ -4,14 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 
-public class ClientUpdater extends TimerTask {
+public class ClientUpdater implements Runnable {
     private final Map<String, RustboardNode> toUpdate = new ConcurrentHashMap<>();
 
 

@@ -68,9 +68,8 @@ public class Rustboard {
     private boolean connected = false;
     private final Map<String, Runnable> callbacks = new HashMap<>();
 
-    Rustboard(String uuid, JsonObject json) {
+    Rustboard(String uuid, JsonArray nodes) {
         this.uuid = uuid;
-        JsonArray nodes = json.getJsonArray("nodes");
         nodes.forEach((JsonValue nodeJson) -> this.nodes.add(RustboardNode.buildFromJson(nodeJson)));
     }
 
@@ -97,6 +96,10 @@ public class Rustboard {
             throw new NullPointerException("No active rustboard available");
         }
         return activeRustboard;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     WebSocket getConnection() {
@@ -375,7 +378,7 @@ public class Rustboard {
     }
 
     private static String toFilePath(String fileName) {
-        return Loader.defaultStorageDirectory + "\\" + fileName + ".txt";
+        return Loader.externalStorage + "\\" + fileName + ".txt";
     }
 
     public static String loadSavedString(String fileName, String defaultValue) {

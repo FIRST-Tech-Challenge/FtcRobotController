@@ -28,7 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 
 public class Loader {
     public static final File localStorage = new File(Environment.getExternalStorageDirectory().getPath(), "FIRST");
-    public static final File defaultStorageDirectory = new File(Environment.getExternalStorageDirectory(), "Download");
+    public static final File externalStorage = Environment.getExternalStorageDirectory();
 
     public static String loadString(File file) {
         StringBuilder data = new StringBuilder();
@@ -146,9 +146,14 @@ public class Loader {
 
     public static void writeString(File output, String string) throws IOException {
         FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath());
-        OutputStreamWriter writer = new OutputStreamWriter(fileOut);
-        writer.write(string);
-        writer.close();
+        try (OutputStreamWriter writer = new OutputStreamWriter(fileOut)) {
+            writer.write(string);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (!output.exists()) {
+            throw new RuntimeException("couldn't create file");
+        }
     }
 
     public static void writeJson(File output, JsonObject json) throws IOException {
