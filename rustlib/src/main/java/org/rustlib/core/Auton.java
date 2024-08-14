@@ -2,6 +2,8 @@ package org.rustlib.core;
 
 import org.rustlib.commandsystem.Command;
 
-public interface Auton {
-    Command getAutonomousCommand();
+public interface Auton extends OpModeCore {
+    default Command getAutonomousCommand() {
+        return null;
+    }
 }

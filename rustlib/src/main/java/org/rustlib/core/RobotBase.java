@@ -5,6 +5,7 @@ import android.util.Pair;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.rustlib.commandsystem.Command;
 import org.rustlib.commandsystem.CommandScheduler;
 import org.rustlib.hardware.SuperGamepad;
 
@@ -22,16 +23,18 @@ public abstract class RobotBase extends OpMode {
     protected LynxModule expansionHub = null;
     protected SuperGamepad controller1;
     protected SuperGamepad controller2;
-    private boolean inAuto = false;
-    private Auton autonomousInstance;
+    private Auton autonomousInstance = null;
+    private OpModeCore opModeCoreInstance = null;
 
     public RobotBase() {
         for (int i = 0; i < 3; i++) {
             callbacks.add(new ArrayList<>());
         }
         if (this instanceof Auton) {
-            inAuto = true;
             autonomousInstance = (Auton) this;
+        }
+        if (this instanceof OpModeCore) {
+            opModeCoreInstance = (OpModeCore) this;
         }
     }
 
@@ -97,32 +100,46 @@ public abstract class RobotBase extends OpMode {
         controller1 = new SuperGamepad(gamepad1);
         controller2 = new SuperGamepad(gamepad2);
         runCallbacks(callbacks.get(0));
-        onInit();
+        robotInit();
+        if (opModeCoreInstance != null) {
+            opModeCoreInstance.opModeInit();
+        }
     }
 
     @Override
     public final void init_loop() {
         opModeState = OpModeState.INIT_LOOP;
         CommandScheduler.getInstance().run();
-        initLoop();
+        robotInitLoop();
+        if (opModeCoreInstance != null) {
+            opModeCoreInstance.opModeInitLoop();
+        }
     }
 
     @Override
     public final void start() {
         opModeState = OpModeState.START;
         removeDuplicateCallbacks();
-        if (inAuto) {
-            autonomousInstance.getAutonomousCommand().schedule();
+        if (autonomousInstance != null) {
+            Command autonomousCommand = autonomousInstance.getAutonomousCommand();
+            if (autonomousCommand != null)
+                autonomousCommand.schedule();
         }
         runCallbacks(callbacks.get(1));
-        onStart();
+        robotStart();
+        if (opModeCoreInstance != null) {
+            opModeCoreInstance.opmodeStart();
+        }
     }
 
     @Override
     public final void loop() {
         opModeState = OpModeState.LOOP;
         CommandScheduler.getInstance().run();
-        mainLoop();
+        robotLoop();
+        if (opModeCoreInstance != null) {
+            opModeCoreInstance.opModeLoop();
+        }
     }
 
     @Override
@@ -132,7 +149,10 @@ public abstract class RobotBase extends OpMode {
         CommandScheduler.getInstance().clearRegistry();
         CommandScheduler.getInstance().cancelAll();
         runCallbacks(callbacks.get(2));
-        onStop();
+        robotStop();
+        if (opModeCoreInstance != null) {
+            opModeCoreInstance.opModeStop();
+        }
         opModeState = OpModeState.IDLE;
     }
 
@@ -142,23 +162,23 @@ public abstract class RobotBase extends OpMode {
         }
     }
 
-    public void onInit() {
+    public void robotInit() {
 
     }
 
-    public void initLoop() {
+    public void robotInitLoop() {
 
     }
 
-    public void onStart() {
+    public void robotStart() {
 
     }
 
-    public void mainLoop() {
+    public void robotLoop() {
 
     }
 
-    public void onStop() {
+    public void robotStop() {
 
     }
 

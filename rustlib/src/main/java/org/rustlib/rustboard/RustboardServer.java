@@ -54,8 +54,6 @@ public class RustboardServer extends WebSocketServer {
         if (!RobotControllerActivity.opModeRunning()) {
             saveLayouts();
             executorService.schedule(this::autoSave, rustboardAutoSavePeriod, TimeUnit.MILLISECONDS);
-        } else {
-            throw new RuntimeException("OpMode currently running");
         }
     }
 
@@ -89,7 +87,7 @@ public class RustboardServer extends WebSocketServer {
         }
         autoSave();
         RobotControllerActivity.onOpModeStop(this::autoSave);
-        executorService.scheduleAtFixedRate(new ClientUpdater(), 0, 50, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(clientUpdater, 0, 50, TimeUnit.MILLISECONDS);
         executorService.scheduleAtFixedRate(() -> {
             connections.forEach((connection) -> {
                 if (connection.isOpen())

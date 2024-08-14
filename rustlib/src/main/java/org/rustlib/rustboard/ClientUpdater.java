@@ -13,13 +13,13 @@ import javax.json.JsonObjectBuilder;
 public class ClientUpdater implements Runnable {
     private final Map<String, RustboardNode> toUpdate = new ConcurrentHashMap<>();
 
-
     void updateNode(RustboardNode node) {
         toUpdate.put(node.id, node);
     }
 
     @Override
     public void run() {
+        Rustboard.notifyAllClients("running client updater", NoticeType.POSITIVE);
         JsonObjectBuilder messageBuilder = Json.createObjectBuilder();
         messageBuilder.add("action", "update_nodes");
         JsonArrayBuilder nodes = Json.createArrayBuilder();

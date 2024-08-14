@@ -18,9 +18,9 @@ public class Drive extends DriveSubsystem {
 
     public Drive(HardwareMap hardwareMap) {
         odometry = Odometry.getBuilder()
-                .defineLeftEncoder(new PairedEncoder(hardwareMap.get(DcMotor.class, "rb"), true))
-                .defineRightEncoder(new PairedEncoder(hardwareMap.get(DcMotor.class, "lb"), true))
-                .defineBackEncoder(new PairedEncoder(hardwareMap.get(DcMotor.class, "climbMotor")))
+                .defineLeftEncoder(new PairedEncoder(hardwareMap.get(DcMotor.class, "lf"), true))
+                .defineRightEncoder(new PairedEncoder(hardwareMap.get(DcMotor.class, "rf"), true))
+                .defineBackEncoder(new PairedEncoder(hardwareMap.get(DcMotor.class, "lb")))
                 .setTrackWidth(DriveConstants.Odometry.trackWidth)
                 .setVerticalDistance(DriveConstants.Odometry.verticalDistance)
                 .setInPerTick(DriveConstants.Odometry.inPerTick)

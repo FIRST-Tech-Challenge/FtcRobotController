@@ -18,7 +18,7 @@ import java.net.UnknownHostException;
 import fi.iki.elonen.NanoHTTPD;
 
 public class CameraServer extends NanoHTTPD implements FrameProcessor {
-    private static int nextAvailablePort = 8080;
+    private static int nextAvailablePort = 10000;
     private VisionPortal visionPortal;
     private VisionPortal.Builder visionPortalBuilder = new VisionPortal.Builder();
     private final CameraName camera;
@@ -32,9 +32,13 @@ public class CameraServer extends NanoHTTPD implements FrameProcessor {
     }
 
     private byte[] encode(Mat mat) {
-        MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".png", mat, matOfByte);
-        return matOfByte.toArray();
+        if (mat.empty()) {
+            return new byte[]{};
+        } else {
+            MatOfByte matOfByte = new MatOfByte();
+            Imgcodecs.imencode(".png", mat, matOfByte);
+            return matOfByte.toArray();
+        }
     }
 
     @Override

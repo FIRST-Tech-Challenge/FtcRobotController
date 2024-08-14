@@ -30,6 +30,8 @@ import javax.json.JsonValue;
  * All public static methods in this class will be executed on the currently <b>active</b> rustboard.  These method calls will refer back to the RustboardServer singleton to access the currently active rustboard instance and then execute the non-static methods of that instance.  This means that you can only update nodes on the rustboard.
  */
 public class Rustboard {
+    private static final int defaultNoticeDuration = 6000;
+
     interface SetUUID {
         Builder setUUID(String uuid);
     }
@@ -211,6 +213,22 @@ public class Rustboard {
         }
     }
 
+    public void notifyClient(String notice, NoticeType type) {
+        connection.send(createNoticeJson(notice, type, defaultNoticeDuration).toString());
+    }
+
+    public static void notifyActiveClient(String notice, NoticeType type) {
+        if (RustboardServer.isActiveRustboard()) {
+            getActiveRustboard().notifyClient(notice, type, defaultNoticeDuration);
+        }
+    }
+
+    public static void notifyAllClients(String notice, NoticeType type) {
+        for (WebSocket connection : RustboardServer.getInstance().getConnections()) {
+            connection.send(createNoticeJson(notice, type, defaultNoticeDuration).toString());
+        }
+    }
+
     private RustboardNode getNode(String id, Type type) {
         for (RustboardNode node : nodes) {
             if (node.id.equals(id) && node.type == type) {
@@ -255,11 +273,15 @@ public class Rustboard {
 
     private static void updateNode(String id, Type type, Object value) {
         Rustboard activeRustboard = RustboardServer.getInstance().getActiveRustboard();
+        RustboardNode toUpdate;
         try {
-            activeRustboard.getNode(id, type).update(value);
+            toUpdate = activeRustboard.getNode(id, type);
+            toUpdate.update(value);
         } catch (NoSuchNodeException e) {
-            activeRustboard.nodes.add(new RustboardNode(id, type, value.toString()));
+            toUpdate = new RustboardNode(id, type, value.toString());
+            activeRustboard.nodes.add(toUpdate);
         }
+        RustboardServer.getInstance().getClientUpdater().updateNode(toUpdate);
     }
 
     public static void updatePositionGraphNode(String id, Pose2d position) {
