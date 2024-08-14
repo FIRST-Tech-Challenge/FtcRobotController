@@ -20,7 +20,6 @@ sourceSets {
     main {
         java {
             srcDirs = ['src/main/java', {System.getenv('SRC_ROOT')}]
-            // main.java.srcDirs += System.getenv('SRC_ROOT')
         }
     }
 }
@@ -31,11 +30,12 @@ repositories {
 }
 
 dependencies {
+    implementation project(path: ':WilyWorks')
     implementation "com.acmerobotics.roadrunner:core:1.0.0" // For Pose2d, PoseVelocity2d, etc.
     implementation "uk.co.electronstudio.sdl2gdx:sdl2gdx:1.0.+" // For gamepad control
     implementation "org.reflections:reflections:0.10.2" // For enumerating classes with annotations
-    implementation project(path: ':WilyWorks')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8" // For enumerating all classes
+    implementation "com.google.code.gson:gson:2.11.0" // For serializing Java objects to JSON
 }
 compileKotlin {
     kotlinOptions {

@@ -15,7 +15,9 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.google.gson.Gson;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,14 +26,21 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team417.roadrunner.Drawing;
 import org.firstinspires.ftc.team417.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.team417.roadrunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.team417.roadrunner.TwoDeadWheelLocalizer;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+/**
+ * Class to track encoder ticks.
+ */
 class TickTracker {
     enum Correlation {
         FORWARD, REVERSE, ZERO, NONZERO, POSITIVE, NEGATIVE
@@ -204,11 +213,79 @@ class TickTracker {
     }
 }
 
+/**
+ * Class for remembering all of the tuned settings.
+ */
+class Settings {
+    String robotName;
+    TuneRoadRunner.Type type;
+    double opticalAngularScalar;
+    double opticalLinearScalar;
+    SparkFunOTOS.Pose2D opticalOffset;
+
+    // Get the settings from the current MecanumDrive object:
+    public Settings(MecanumDrive drive) {
+        robotName = MecanumDrive.getBotName();
+        if (drive.opticalTracker != null) {
+            type = TuneRoadRunner.Type.OPTICAL;
+        } else if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
+            type = TuneRoadRunner.Type.ALL_WHEEL;
+        } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
+            type = TuneRoadRunner.Type.THREE_DEAD;
+        } else {
+            type = TuneRoadRunner.Type.TWO_DEAD;
+        }
+        opticalAngularScalar = drive.opticalTracker.getAngularScalar();
+        opticalLinearScalar = drive.opticalTracker.getLinearScalar();
+        opticalOffset = drive.opticalTracker.getOffset();
+    }
+
+    // Save the current settings to the properties file:
+    public void save() {
+        Properties properties = new Properties();
+        Gson gson = new Gson();
+        String json = gson.toJson(this);
+        properties.setProperty("settings", json);
+        try {
+            properties.storeToXML(new FileOutputStream("settings.xml"), "");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Compare the current settings to the last saved settings. Returns a string of the
+    // results; returns null if there is no settings mismatch found.
+    public String compareToSaved() {
+        // Load the saved settings from the properties file:
+        Properties properties = new Properties();
+        Gson gson = new Gson();
+
+        try {
+            properties.loadFromXML(new FileInputStream("settings.xml"));
+        } catch (Exception e) {
+            return null;
+        }
+        String json = properties.getProperty("settings");
+        Settings savedSettings = gson.fromJson(json, Settings.class);
+
+        // Now compare to the current settings:
+        if (savedSettings.robotName.equals(robotName))
+            return null; // Different robots, so discard
+        if (savedSettings.type != type)
+            return null; // Different drive types, so discard
+        return null;
+    }
+}
+
 @TeleOp
 public class TuneRoadRunner extends LinearOpMode {
+    enum Type { OPTICAL, ALL_WHEEL, TWO_DEAD, THREE_DEAD };
+
     // Member fields referenced by every test:
     Ui ui;
     MecanumDrive drive;
+    Settings settings;
+    Settings savedSettings;
 
     // Constants:
     public static int DISTANCE = 72;
@@ -326,7 +403,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
-    void pushTest() {
+    void encoderPushTest() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         boolean passed = false;
 
@@ -361,6 +438,97 @@ public class TuneRoadRunner extends LinearOpMode {
                 telemetry.update();
             }
         }
+
+        if (passed) {
+            if (ui.readyPrompt("Push the robot sideways to the left for two or more tiles (24\")."
+                    + "\n\nPress A to start, B when complete")) {
+
+                TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.LATERAL);
+                if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
+                    MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
+                    tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.NEGATIVE);
+                    tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.POSITIVE);
+                    tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.NEGATIVE);
+                    tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.POSITIVE);
+                } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
+                    ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
+                    tracker.register(loc.par0, "par0", TickTracker.Correlation.ZERO);
+                    tracker.register(loc.par1, "par1", TickTracker.Correlation.ZERO);
+                    tracker.register(loc.perp, "perp", TickTracker.Correlation.FORWARD);
+                } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
+                    TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
+                    tracker.register(loc.par, "par", TickTracker.Correlation.ZERO);
+                    tracker.register(loc.perp, "perp", TickTracker.Correlation.FORWARD);
+                }
+
+                while (opModeIsActive() && !ui.cancel()) {
+                    telemetry.addLine("Push to the left.\n");
+                    passed = tracker.reportAll(telemetry);
+                    if (passed)
+                        telemetry.addLine("\nPress B when complete");
+                    else
+                        telemetry.addLine("\nPress B to cancel");
+                    telemetry.update();
+                }
+            }
+        }
+
+        if (passed) {
+            if (ui.readyPrompt("Rotate the robot counterclockwise at least 90° \uD83D\uDD04 by pushing."
+                    + "\n\nPress A to start, B when complete")) {
+
+                TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.ROTATE);
+                if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
+                    MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
+                    tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.REVERSE);
+                    tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.REVERSE);
+                    tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.FORWARD);
+                    tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.FORWARD);
+                } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
+                    ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
+                    tracker.register(loc.par0, "par0", TickTracker.Correlation.REVERSE);
+                    tracker.register(loc.par1, "par1", TickTracker.Correlation.FORWARD);
+                    tracker.register(loc.perp, "perp", TickTracker.Correlation.NONZERO);
+                } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
+                    TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
+                    tracker.register(loc.par, "par", TickTracker.Correlation.REVERSE);
+                    tracker.register(loc.perp, "perp", TickTracker.Correlation.NONZERO);
+                }
+
+                while (opModeIsActive() && !ui.cancel()) {
+                    telemetry.addLine("Rotate counterclockwise\uD83D\uDD04.\n");
+                    passed = tracker.reportAll(telemetry);
+                    if (passed)
+                        telemetry.addLine("\nCongratulations, the encoders and IMU passed! "
+                                + "Press B to return to the menu.");
+                    else
+                        telemetry.addLine("\nPress B to cancel");
+                    telemetry.update();
+                }
+            }
+        }
+    }
+
+    void opticalScaleAndOrientationTest() {
+        useDrive(false); // Don't use MecanumDrive/TankDrive
+        boolean passed = false;
+
+        if (ui.readyPrompt("Push the robot forward in a straight line along a field wall for exactly ten tiles. "
+                + "\n\nPress A to start, B when complete")) {
+
+            SparkFunOTOS.Pose2D pose = drive.opticalTracker.getPosition();
+            while (opModeIsActive() && !ui.cancel()) {
+                telemetry.addLine("Push forward exactly ten tiles along a field wall. Press B when complete.");
+
+
+
+
+
+
+
+            }
+        }
+
 
         if (passed) {
             if (ui.readyPrompt("Push the robot sideways to the left for two or more tiles (24\")."
@@ -685,13 +853,26 @@ public class TuneRoadRunner extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // Initialize member fields:
-        drive = new MecanumDrive(hardwareMap, defaultPose);
         ui = new Ui();
+        drive = new MecanumDrive(hardwareMap, defaultPose);
+        settings = new Settings(drive);
+        String comparison = settings.compareToSaved();
+        if (comparison != null) {
+            while (ui.readyPrompt("Did you forget to update your code?\n"
+                    + comparison
+                    + "\n\nPress B to ignore"))
+                ;
+        }
 
         String configuration = "Mecanum drive, ";
-        if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
+        if (settings.type == Type.OPTICAL) {
+            configuration += "optical tracking";
+            // Set our preferred units:
+            drive.opticalTracker.setAngularUnit(AngleUnit.RADIANS);
+            drive.opticalTracker.setLinearUnit(DistanceUnit.INCH);
+        } else if (settings.type == Type.ALL_WHEEL) {
             configuration += "no telemetry pods";
-        } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
+        } else if (settings.type == Type.THREE_DEAD) {
             configuration += "3 telemetry pods";
         } else {
             configuration += "2 telemetry pods";
@@ -702,10 +883,14 @@ public class TuneRoadRunner extends LinearOpMode {
         // Dynamically build the list of tests:
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
-        tests.add(new Test(this::pushTest, "Push test (encoders and IMU)"));
-        tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
-        // @@@ Call lateralEncoderTuner only if no dead wheels:
-        tests.add(new Test(this::lateralEncoderTuner, "Lateral encoder tuner (lateralInPerTick)"));
+        if (settings.type == Type.OPTICAL) {
+            tests.add(new Test(this::opticalScaleAndOrientationTest, "Optical scale & orientation"));
+        } else {
+            tests.add(new Test(this::encoderPushTest, "Push test (encoders and IMU)"));
+            tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
+            // @@@ Call lateralEncoderTuner only if no dead wheels:
+            tests.add(new Test(this::lateralEncoderTuner, "Lateral encoder tuner (lateralInPerTick)"));
+        }
         tests.add(new Test(this::manualFeedforwardTuner, "ManualFeedforwardTuner (kV and kA)"));
         tests.add(new Test(this::manualFeedbackTunerAxial, "ManualFeedbackTuner (axialGain)"));
         tests.add(new Test(this::manualFeedbackTunerLateral, "ManualFeedbackTuner (lateralGain)"));
