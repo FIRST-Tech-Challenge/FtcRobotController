@@ -347,7 +347,7 @@ public final class MecanumDrive {
     // Configure the optical tracking sensor
     private void configureOtos(SparkFunOTOS otos, Pose2d pose) {
         // TODO: Run TuneRoadRunner to calibrate these values:
-        final double angularOffset = 179.9; // Degrees
+        final double headingOffset = 179.9; // Degrees
         final double xOffset = 5.56; // Inches
         final double yOffset = 3.39; // Inches
         final double linearScalar = 0.956;
@@ -366,7 +366,7 @@ public final class MecanumDrive {
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.DEGREES);
-        otos.setOffset(new SparkFunOTOS.Pose2D(xOffset, yOffset, angularOffset));
+        otos.setOffset(new SparkFunOTOS.Pose2D(xOffset, yOffset, headingOffset));
 
         // Set the desired units for linear and angular measurements. Can be either
         // meters or inches for linear, and radians or degrees for angular. If not

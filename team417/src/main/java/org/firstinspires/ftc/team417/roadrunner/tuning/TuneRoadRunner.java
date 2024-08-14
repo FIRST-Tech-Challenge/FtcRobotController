@@ -217,6 +217,8 @@ class TickTracker {
  * Class for remembering all of the tuned settings.
  */
 class Settings {
+    final String SETTINGS_FILE = "roadrunner_settings.xml";
+
     String robotName;
     TuneRoadRunner.Type type;
     double opticalAngularScalar;
@@ -247,7 +249,7 @@ class Settings {
         String json = gson.toJson(this);
         properties.setProperty("settings", json);
         try {
-            properties.storeToXML(new FileOutputStream("settings.xml"), "");
+            properties.storeToXML(new FileOutputStream(SETTINGS_FILE), "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -261,7 +263,7 @@ class Settings {
         Gson gson = new Gson();
 
         try {
-            properties.loadFromXML(new FileInputStream("settings.xml"));
+            properties.loadFromXML(new FileInputStream(SETTINGS_FILE));
         } catch (Exception e) {
             return null;
         }
@@ -350,7 +352,8 @@ public class TuneRoadRunner extends LinearOpMode {
             telemetry.update();
         }
 
-        // Show a message and wait for A to be pressed:
+        // Show a message and wait for A to be pressed in which case it returns true. Returns
+        // false if the B button is pressed:
         boolean readyPrompt(String message) {
             while (opModeIsActive() && !cancel()) {
                 showMessage(message);
@@ -403,7 +406,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
-    void encoderPushTest() {
+    void encoderPush() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         boolean passed = false;
 
@@ -509,93 +512,63 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
-    void opticalScaleAndOrientationTest() {
+    // Calculate the optical linear scale and orientation:
+    void opticalLinearScaleAndOrientation() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         boolean passed = false;
+        String message;
 
         if (ui.readyPrompt("Push the robot forward in a straight line along a field wall for exactly ten tiles. "
                 + "\n\nPress A to start, B when complete")) {
 
-            SparkFunOTOS.Pose2D pose = drive.opticalTracker.getPosition();
+            double distance = 0;
+            double heading = 0;
+
+            drive.opticalTracker.resetTracking();
             while (opModeIsActive() && !ui.cancel()) {
-                telemetry.addLine("Push forward exactly ten tiles along a field wall. Press B when complete.");
 
+                SparkFunOTOS.Pose2D pose = drive.opticalTracker.getPosition();
+                distance = Math.hypot(pose.x, pose.y);
+                heading = -Math.atan2(pose.y, pose.x); // Rise over run
 
-
-
-
-
-
+                message = "Push forward exactly 4 tiles (96\") along a field wall. Press B when complete.\n\n";
+                message += String.format("  Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h));
+                message += String.format("  Heading angle: %.2f\u00b0\n", Math.toDegrees(heading));
+                message += String.format("  Measured distance: %.1f\"\n", distance);
+                telemetry.addLine(message);
+                telemetry.update();
             }
-        }
 
+            // Avoid divide-by-zeroes on aborts:
+            if (distance == 0)
+                distance = 0.1;
 
-        if (passed) {
-            if (ui.readyPrompt("Push the robot sideways to the left for two or more tiles (24\")."
-                    + "\n\nPress A to start, B when complete")) {
+            double newLinearScalar = 96.0 / distance;
+            double oldLinearScalar = drive.opticalTracker.getLinearScalar();
+            double linearScalarChange = Math.abs((oldLinearScalar - newLinearScalar)
+                    / oldLinearScalar * 100.0); // Percentage
 
-                TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.LATERAL);
-                if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-                    MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
-                    tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.NEGATIVE);
-                    tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.POSITIVE);
-                    tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.NEGATIVE);
-                    tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.POSITIVE);
-                } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-                    ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par0, "par0", TickTracker.Correlation.ZERO);
-                    tracker.register(loc.par1, "par1", TickTracker.Correlation.ZERO);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.FORWARD);
-                } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
-                    TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par, "par", TickTracker.Correlation.ZERO);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.FORWARD);
-                }
+            double newHeading = heading;
+            double oldHeading = drive.opticalTracker.getOffset().h;
+            double headingChange = Math.abs(oldHeading - newHeading);
+            if (headingChange < -Math.PI)
+                headingChange += 2 * Math.PI;
+            if (headingChange >= Math.PI)
+                headingChange -= 2 * Math.PI; // Radians
 
-                while (opModeIsActive() && !ui.cancel()) {
-                    telemetry.addLine("Push to the left.\n");
-                    passed = tracker.reportAll(telemetry);
-                    if (passed)
-                        telemetry.addLine("\nPress B when complete");
-                    else
-                        telemetry.addLine("\nPress B to cancel");
-                    telemetry.update();
-                }
-            }
-        }
+            message = String.format("New offset heading is %.1f\u00b0 different from the old.\n", Math.toDegrees(headingChange));
+            message += String.format("New linear scalar is %.1f%% different from the old.\n\n", linearScalarChange);
+            message += "Use these results? Press A if they look good, B to discard them.";
+            if (ui.readyPrompt(message)) {
+                settings.opticalLinearScalar = newLinearScalar;
+                settings.opticalOffset.h = newHeading;
+                settings.save();
 
-        if (passed) {
-            if (ui.readyPrompt("Rotate the robot counterclockwise at least 90° \uD83D\uDD04 by pushing."
-                    + "\n\nPress A to start, B when complete")) {
-
-                TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.ROTATE);
-                if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-                    MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
-                    tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.FORWARD);
-                    tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.FORWARD);
-                } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-                    ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par0, "par0", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.par1, "par1", TickTracker.Correlation.FORWARD);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.NONZERO);
-                } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
-                    TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par, "par", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.NONZERO);
-                }
-
-                while (opModeIsActive() && !ui.cancel()) {
-                    telemetry.addLine("Rotate counterclockwise\uD83D\uDD04.\n");
-                    passed = tracker.reportAll(telemetry);
-                    if (passed)
-                        telemetry.addLine("\nCongratulations, the encoders and IMU passed! "
-                                + "Press B to return to the menu.");
-                    else
-                        telemetry.addLine("\nPress B to cancel");
-                    telemetry.update();
-                }
+                message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
+                message += String.format("  headingOffset = %.3f\n", Math.toDegrees(newHeading));
+                message += String.format("  linearScalar = %.3f\n", newLinearScalar);
+                message += "\nPress A or B to continue.";
+                ui.readyPrompt(message);
             }
         }
     }
@@ -884,9 +857,9 @@ public class TuneRoadRunner extends LinearOpMode {
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
         if (settings.type == Type.OPTICAL) {
-            tests.add(new Test(this::opticalScaleAndOrientationTest, "Optical scale & orientation"));
+            tests.add(new Test(this::opticalLinearScaleAndOrientation, "Optical scale & orientation"));
         } else {
-            tests.add(new Test(this::encoderPushTest, "Push test (encoders and IMU)"));
+            tests.add(new Test(this::encoderPush, "Push test (encoders and IMU)"));
             tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
             // @@@ Call lateralEncoderTuner only if no dead wheels:
             tests.add(new Test(this::lateralEncoderTuner, "Lateral encoder tuner (lateralInPerTick)"));
