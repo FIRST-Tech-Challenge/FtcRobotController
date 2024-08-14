@@ -26,17 +26,23 @@ public class RustboardNode {
         this(id, type, state, new Time());
     }
 
-    void update(Object state) {
+    void localUpdateState(Object state) {
         this.state = state.toString();
         lastUpdate = new Time();
+        updateClient();
     }
 
+    void remoteUpdateState(Object state, long time) {
+        this.state = state.toString();
+        lastUpdate = new Time(time, true);
+    }
 
     JsonObject getSendableData() {
         return Json.createObjectBuilder()
                 .add("messageType", "node update")
                 .add("nodeID", id)
                 .add("state", state)
+                .add("last_update", lastUpdate.getTimeMS())
                 .build();
     }
 
@@ -99,17 +105,19 @@ public class RustboardNode {
 
     static RustboardNode buildFromJson(JsonValue json) {
         JsonObject data = (JsonObject) json;
-        return new RustboardNode(data.getString("id"), Type.getType(data.getString("type")), data.getString("state"), new Time(data.getJsonNumber("last_update").longValue()));
+        return new RustboardNode(data.getString("id"), Type.getType(data.getString("type")), data.getString("state"), new Time(data.getJsonNumber("last_update").longValue(), true));
     }
 
     RustboardNode merge(RustboardNode toCompare) {
         switch (type.overrideAbility) {
             case ALWAYS:
+                updateClient();
                 return this;
             case CHECK_TIME:
                 if (toCompare.lastUpdate.getTimeMS() > lastUpdate.getTimeMS()) {
                     return toCompare;
                 } else {
+                    updateClient();
                     return this;
                 }
             case NEVER:
@@ -133,6 +141,10 @@ public class RustboardNode {
             return id.equals(node.id) && type == node.type;
         }
         return false;
+    }
+
+    public void updateClient() {
+        RustboardServer.getInstance().getClientUpdater().updateNode(this);
     }
 
     @Override

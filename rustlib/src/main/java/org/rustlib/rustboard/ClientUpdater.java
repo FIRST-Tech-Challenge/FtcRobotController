@@ -18,22 +18,28 @@ public class ClientUpdater implements Runnable {
     }
 
     @Override
-    public void run() {
-        Rustboard.notifyAllClients("running client updater", NoticeType.POSITIVE);
-        JsonObjectBuilder messageBuilder = Json.createObjectBuilder();
-        messageBuilder.add("action", "update_nodes");
-        JsonArrayBuilder nodes = Json.createArrayBuilder();
-        Map<String, RustboardNode> nodeMap = new HashMap<>(toUpdate); // Copy the map to avoid concurrency issues in iteration
-        Set<String> keySet = nodeMap.keySet();
-        if (keySet.size() == 0) {
-            return;
+    public synchronized void run() {
+        try {
+            JsonObjectBuilder messageBuilder = Json.createObjectBuilder();
+            messageBuilder.add("action", "update_nodes");
+            JsonArrayBuilder nodes = Json.createArrayBuilder();
+            Map<String, RustboardNode> nodeMap = new HashMap<>(toUpdate); // Copy the map to avoid concurrency issues in iteration
+            Set<String> keySet = nodeMap.keySet();
+            if (keySet.size() == 0) {
+                return;
+            }
+            for (String key : keySet) {
+                RustboardNode node = Objects.requireNonNull(nodeMap.get(key));
+                nodes.add(node.getJsonBuilder());
+                toUpdate.remove(key);
+            }
+            messageBuilder.add("nodes", nodes);
+            //Rustboard.notifyAllClients(messageBuilder.build().toString(), NoticeType.POSITIVE);
+            //RustboardServer.logToClientConsole(messageBuilder.build().toString());
+            RustboardServer.messageActiveRustboard(messageBuilder.build());
+        } catch (Exception e) {
+            Rustboard.notifyAllClients(e.toString(), NoticeType.POSITIVE);
+            RustboardServer.logToClientConsole(e.getMessage());
         }
-        for (String key : keySet) {
-            RustboardNode node = Objects.requireNonNull(nodeMap.get(key));
-            nodes.add(node.getJsonBuilder());
-            toUpdate.remove(key);
-        }
-        messageBuilder.add("nodes", nodes);
-        RustboardServer.messageActiveRustboard(messageBuilder.build());
     }
 }

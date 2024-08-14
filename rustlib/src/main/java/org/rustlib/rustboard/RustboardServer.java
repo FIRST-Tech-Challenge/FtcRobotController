@@ -67,7 +67,7 @@ public class RustboardServer extends WebSocketServer {
     private RustboardServer(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
         setReuseAddr(true);
-        checkDirectoryExists(rustboardStorageDir);
+        makeDirIfMissing(rustboardStorageDir);
         JsonObject defaultMetaData = Json.createObjectBuilder().add("rustboards", Json.createArrayBuilder().build()).build();
         rustboardMetaData = Loader.safeLoadJsonObject(rustboardMetadataFile, defaultMetaData);
         if (rustboardMetaData.containsKey("rustboards")) {
@@ -101,7 +101,9 @@ public class RustboardServer extends WebSocketServer {
     }
 
     static void messageActiveRustboard(JsonObject json) {
-        getInstance().activeRustboard.getConnection().send(json.toString());
+        WebSocket connection = getInstance().activeRustboard.getConnection();
+        if (connection != null && connection.isOpen())
+            connection.send(json.toString());
     }
 
     public static void enableDebugMode() { // TODO: make a good way to enable and disable debug mode
@@ -244,7 +246,7 @@ public class RustboardServer extends WebSocketServer {
     }
 
     public void saveLayouts() {
-        checkDirectoryExists(storedRustboardDir);
+        makeDirIfMissing(storedRustboardDir);
         JsonObjectBuilder metadataBuilder = Json.createObjectBuilder(rustboardMetaData);
         JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder(rustboardMetaData.getJsonArray("rustboards"));
         metadataBuilder.add("rustboards", rustboardArrayBuilder);
@@ -263,7 +265,7 @@ public class RustboardServer extends WebSocketServer {
         }
     }
 
-    private static void checkDirectoryExists(File file) {
+    private static void makeDirIfMissing(File file) {
         String err = "";
         if (!file.exists()) {
             if (!file.mkdir())
@@ -289,5 +291,22 @@ public class RustboardServer extends WebSocketServer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Set<WebSocket> getConnectedSockets() {
+        return connections;
+    }
+
+    public void threadSafeBroadcast(String message) {
+        for (WebSocket connection : connections) {
+            connection.send(message);
+        }
+    }
+
+    public static void logToClientConsole(String info) {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder.add("action", "console_log");
+        builder.add("info", info);
+        getInstance().threadSafeBroadcast(builder.build().toString());
     }
 }

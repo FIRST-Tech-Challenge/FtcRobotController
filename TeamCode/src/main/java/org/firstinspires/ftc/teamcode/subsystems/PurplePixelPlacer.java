@@ -7,7 +7,6 @@ import org.rustlib.commandsystem.Subsystem;
 import org.rustlib.rustboard.Rustboard;
 
 public class PurplePixelPlacer extends Subsystem {
-
     private final Servo servo;
 
     public PurplePixelPlacer(HardwareMap hardwareMap) {

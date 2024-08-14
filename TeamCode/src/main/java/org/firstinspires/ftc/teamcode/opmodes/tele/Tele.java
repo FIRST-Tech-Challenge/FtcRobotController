@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.opmodes.Robot;
 import org.rustlib.commandsystem.InstantCommand;
 import org.rustlib.core.OpModeCore;
 import org.rustlib.geometry.Pose2d;
+import org.rustlib.rustboard.NoticeType;
 import org.rustlib.rustboard.Rustboard;
 
 @TeleOp(name = "TeleOp")
@@ -27,5 +28,6 @@ public class Tele extends Robot implements OpModeCore {
     public void opModeLoop() {
         telemetry.addData("heading", drive.getOdometry().getPosition().rotation.getAngleDegrees());
         Rustboard.updateTelemetryNode("slide speed", "hullo");
+        Rustboard.notifyActiveClient("op mode running", NoticeType.POSITIVE);
     }
 }

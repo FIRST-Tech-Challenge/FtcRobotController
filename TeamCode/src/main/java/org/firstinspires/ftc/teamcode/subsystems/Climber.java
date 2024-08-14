@@ -8,7 +8,6 @@ import org.rustlib.commandsystem.Subsystem;
 import org.rustlib.rustboard.Rustboard;
 
 public class Climber extends Subsystem {
-
     public final DcMotor motor;
     public final Servo servo;
 

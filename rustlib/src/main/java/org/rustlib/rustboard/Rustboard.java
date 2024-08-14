@@ -131,9 +131,7 @@ public class Rustboard {
             RustboardNode clientNode = RustboardNode.buildFromJson(nodeJson);
             for (RustboardNode node : nodes) {
                 if (node.equals(clientNode) && !node.strictEquals(clientNode)) {
-                    RustboardNode updatedNode = node.merge(clientNode);
-                    updatedNodeList.add(updatedNode);
-                    RustboardServer.getInstance().getClientUpdater().updateNode(updatedNode);
+                    updatedNodeList.add(node.merge(clientNode));
                     updatedNodeList.remove(node);
                 }
             }
@@ -148,7 +146,7 @@ public class Rustboard {
                 Type type = Type.getType(messageJson.getString("node_type"));
                 String state = messageJson.getString("node_state");
                 try {
-                    getNode(id, type).update(state);
+                    getNode(id, type).remoteUpdateState(state, messageJson.getJsonNumber("last_update").longValue());
                 } catch (NoSuchNodeException e) {
                     this.nodes.add(new RustboardNode(id, type, state));
                 }
@@ -198,7 +196,9 @@ public class Rustboard {
     }
 
     public void notifyClient(String notice, NoticeType type, int durationMilliseconds) {
-        connection.send(createNoticeJson(notice, type, durationMilliseconds).toString());
+        if (connection != null && connection.isOpen()) {
+            connection.send(createNoticeJson(notice, type, durationMilliseconds).toString());
+        }
     }
 
     public static void notifyActiveClient(String notice, NoticeType type, int durationMilliseconds) {
@@ -208,25 +208,31 @@ public class Rustboard {
     }
 
     public static void notifyAllClients(String notice, NoticeType type, int durationMilliseconds) {
-        for (WebSocket connection : RustboardServer.getInstance().getConnections()) {
-            connection.send(createNoticeJson(notice, type, durationMilliseconds).toString());
-        }
+        RustboardServer.getInstance().threadSafeBroadcast(createNoticeJson(notice, type, durationMilliseconds).toString());
     }
 
     public void notifyClient(String notice, NoticeType type) {
-        connection.send(createNoticeJson(notice, type, defaultNoticeDuration).toString());
+        notifyClient(notice, type, defaultNoticeDuration);
     }
 
     public static void notifyActiveClient(String notice, NoticeType type) {
-        if (RustboardServer.isActiveRustboard()) {
-            getActiveRustboard().notifyClient(notice, type, defaultNoticeDuration);
-        }
+        notifyActiveClient(notice, type, defaultNoticeDuration);
     }
 
     public static void notifyAllClients(String notice, NoticeType type) {
-        for (WebSocket connection : RustboardServer.getInstance().getConnections()) {
-            connection.send(createNoticeJson(notice, type, defaultNoticeDuration).toString());
-        }
+        notifyAllClients(notice, type, defaultNoticeDuration);
+    }
+
+    public void notifyClient(String notice) {
+        notifyClient(notice, NoticeType.NEUTRAL);
+    }
+
+    public static void notifyActiveClient(String notice) {
+        notifyActiveClient(notice, NoticeType.NEUTRAL);
+    }
+
+    public static void notifyAllClients(String notice) {
+        notifyAllClients(notice, NoticeType.NEUTRAL);
     }
 
     private RustboardNode getNode(String id, Type type) {
@@ -276,12 +282,11 @@ public class Rustboard {
         RustboardNode toUpdate;
         try {
             toUpdate = activeRustboard.getNode(id, type);
-            toUpdate.update(value);
+            toUpdate.localUpdateState(value);
         } catch (NoSuchNodeException e) {
             toUpdate = new RustboardNode(id, type, value.toString());
             activeRustboard.nodes.add(toUpdate);
         }
-        RustboardServer.getInstance().getClientUpdater().updateNode(toUpdate);
     }
 
     public static void updatePositionGraphNode(String id, Pose2d position) {

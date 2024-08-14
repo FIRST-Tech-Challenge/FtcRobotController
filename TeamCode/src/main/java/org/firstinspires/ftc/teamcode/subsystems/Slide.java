@@ -14,7 +14,6 @@ import org.rustlib.hardware.PairedEncoder;
 import org.rustlib.rustboard.Rustboard;
 
 public class Slide extends Subsystem {
-
     public final DcMotor motor1;
     public final DcMotor motor2;
     public final PairedEncoder encoder;

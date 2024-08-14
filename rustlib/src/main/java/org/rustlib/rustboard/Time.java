@@ -1,19 +1,20 @@
 package org.rustlib.rustboard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Time {
     private static long offset;
     private long time;
     private boolean locked;
-    private static List<Time> timeRegistry = new ArrayList<>();
+    private static List<Time> timeRegistry = Collections.synchronizedList(new ArrayList<>());
 
     public static long getUTCTime() {
         return System.currentTimeMillis() + offset;
     }
 
-    public static void calibrateUTCTime(long currentTime) {
+    public static synchronized void calibrateUTCTime(long currentTime) {
         offset = currentTime - System.currentTimeMillis();
         timeRegistry.forEach((time) -> time.calibrate(offset));
     }
@@ -35,8 +36,8 @@ public class Time {
     private void calibrate(double offset) {
         if (!locked) {
             time += offset;
+            locked = true;
         }
-        locked = true;
     }
 
     public long getTimeSeconds() {

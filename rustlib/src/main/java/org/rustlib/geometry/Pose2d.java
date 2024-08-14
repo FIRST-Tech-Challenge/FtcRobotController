@@ -88,6 +88,6 @@ public class Pose2d extends Vector2d {
     @NonNull
     @Override
     public String toString() {
-        return "x:" + x + "y:" + y + "heading:" + rotation.getAngleRadians();
+        return "x: " + x + " y: " + y + " heading: " + rotation.getAngleRadians();
     }
 }
