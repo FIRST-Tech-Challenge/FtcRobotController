@@ -106,7 +106,6 @@ class TickTracker {
         double maxTicks = maxTicks();
 
         if (maxTicks < 300) {
-            //noinspection ConstantValue
             passed &= report(telemetry, "Ticks so far", String.valueOf(maxTicks), "keep pushing");
         } else {
             if (mode == Mode.ROTATE) {
@@ -126,7 +125,6 @@ class TickTracker {
                 } else if (totalYaw < -5) {
                     error = "Yaw is negative, you're turning counterclockwise \uD83D\uDD04, right?";
                 }
-                //noinspection ConstantValue
                 passed &= report(telemetry, "<b>IMU</b>", String.format("%.1f°", totalYaw), error);
             }
 
@@ -281,13 +279,12 @@ class Settings {
 
 @TeleOp
 public class TuneRoadRunner extends LinearOpMode {
-    enum Type { OPTICAL, ALL_WHEEL, TWO_DEAD, THREE_DEAD };
+    enum Type { OPTICAL, ALL_WHEEL, TWO_DEAD, THREE_DEAD }
 
     // Member fields referenced by every test:
     Ui ui;
     MecanumDrive drive;
     Settings settings;
-    Settings savedSettings;
 
     // Constants:
     public static int DISTANCE = 72;
@@ -515,7 +512,6 @@ public class TuneRoadRunner extends LinearOpMode {
     // Calculate the optical linear scale and orientation:
     void opticalLinearScaleAndOrientation() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
-        boolean passed = false;
         String message;
 
         if (ui.readyPrompt("Push the robot forward in a straight line along a field wall for exactly ten tiles. "
@@ -844,13 +840,13 @@ public class TuneRoadRunner extends LinearOpMode {
             drive.opticalTracker.setAngularUnit(AngleUnit.RADIANS);
             drive.opticalTracker.setLinearUnit(DistanceUnit.INCH);
         } else if (settings.type == Type.ALL_WHEEL) {
-            configuration += "no telemetry pods";
+            configuration += "4 wheel encoders";
         } else if (settings.type == Type.THREE_DEAD) {
-            configuration += "3 telemetry pods";
+            configuration += "3 odometry pods";
         } else {
-            configuration += "2 telemetry pods";
+            configuration += "2 odometry pods";
         }
-        String navigation = "Used Dpad to navigate, A to select";
+        String navigation = "Use Dpad to navigate, A to select";
         String heading = String.format("<h4>%s</h4><h2>%s</h2>", configuration, navigation);
 
         // Dynamically build the list of tests:
@@ -870,7 +866,8 @@ public class TuneRoadRunner extends LinearOpMode {
         tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
         tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
 
-        telemetry.addLine("Press START to begin");
+        telemetry.addLine("<h1>Press START to begin</h1>");
+        telemetry.update();
         waitForStart();
 
         int selection = 0;

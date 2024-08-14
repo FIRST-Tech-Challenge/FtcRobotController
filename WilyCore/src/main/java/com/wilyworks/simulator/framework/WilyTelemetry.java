@@ -127,11 +127,6 @@ class Layout {
             int layoutEndPos = measurer.nextOffset(TELEMETRY_WIDTH);
             float extraLineCount = 0;
 
-            // If the explicitly requested newline happens to be the same as the natural
-            // layout line-end, we can ignore the explicit request:
-            if (lineBreak.pos == layoutEndPos) {
-                lineBreak = iterator.next();
-            }
             if (lineBreak.pos <= layoutEndPos) {
                 // We always advance by one line so start the count negative:
                 extraLineCount = -1;
@@ -230,6 +225,7 @@ class Layout {
             previousSearchEnd = matcher.end();
             switch (matcher.group().charAt(0)) {
                 case '\n':
+                    buffer.append(" "); // Prevent the line breaker from merging the next line
                     lineBreaks.add(new LineBreak(buffer.length(), 1));
                     break;
 
@@ -246,12 +242,15 @@ class Layout {
                     switch (element) {
                         case "div":
                         case "p":
-                            if (!isEmptyLine(buffer, lineBreaks))
+                            if (!isEmptyLine(buffer, lineBreaks)) {
+                                buffer.append(" "); // Prevent the line breaker from merging the next line
                                 lineBreaks.add(new LineBreak(buffer.length(), 1));
+                            }
                             break;
                         case "br":
                         case "/div":
                         case "/p":
+                            buffer.append(" "); // Prevent the line breaker from merging the next line
                             lineBreaks.add(new LineBreak(buffer.length(), 1));
                             break;
 
@@ -259,12 +258,15 @@ class Layout {
                             sizeStack.push(size);
                             size *= HEADING_MULTIPLES[element.charAt(1) - '1'];
                             attributes.add(new Attribute(TextAttribute.SIZE, size, buffer.length()));
-                            if (!isEmptyLine(buffer, lineBreaks))
+                            if (!isEmptyLine(buffer, lineBreaks)) {
+                                buffer.append(" "); // Prevent the line breaker from merging the next line
                                 lineBreaks.add(new LineBreak(buffer.length(), 1));
+                            }
                             break;
                         case "/h1": case "/h2": case "/h3": case "/h4": case "/h5": case "/h6":
                             if (!sizeStack.isEmpty()) {
                                 size = sizeStack.pop();
+                                buffer.append(" "); // Prevent the line breaker from merging the next line
                                 attributes.add(new Attribute(TextAttribute.SIZE, size, buffer.length()));
                                 lineBreaks.add(new LineBreak(buffer.length(), 1.5f));
                             }
