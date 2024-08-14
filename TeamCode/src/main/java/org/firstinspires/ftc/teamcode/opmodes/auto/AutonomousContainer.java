@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.opmodes.Robot;
 import org.firstinspires.ftc.teamcode.vision.DetectorPipeline;
 import org.rustlib.commandsystem.PurePursuitAutonomousCommand;
 import org.rustlib.commandsystem.SequentialCommandGroup;
-import org.rustlib.core.Auton;
+import org.rustlib.core.AutonomousCore;
 import org.rustlib.drive.Field;
 import org.rustlib.drive.Path;
 import org.rustlib.drive.Waypoint;
@@ -13,7 +13,7 @@ import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.vision.OpenCVGameElementDetector;
 
-public abstract class AutonomousContainer extends Robot implements Auton {
+public abstract class AutonomousContainer extends Robot implements AutonomousCore {
     protected static Pose2d blueLeftStartPosition = new Pose2d(58.944, 7.916899, new Rotation2d(Math.PI));
     protected static Pose2d blueRightStartPosition = blueLeftStartPosition.translateX(Field.tileLengthIn * 2);
     private OpenCVGameElementDetector gameElementDetector;

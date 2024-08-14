@@ -9,10 +9,8 @@ import org.rustlib.geometry.Rotation2d;
 import org.rustlib.rustboard.Rustboard;
 
 public abstract class Robot extends RobotBase {
-    public static Pose2d botPose = null;
     public static Pose2d blueBackdropPose = new Pose2d(17.0, 30, new Rotation2d(-Math.PI / 2));
     public static Pose2d redBackdropPose = new Pose2d(17.0, 110, new Rotation2d(-Math.PI / 2));
-    public static Rotation2d fieldCentricOffset = new Rotation2d();
     public Drive drive;
     //public CameraServer cameraServer;
 
@@ -31,17 +29,11 @@ public abstract class Robot extends RobotBase {
 
         //cameraServer = new CameraServer(hardwareMap, "Webcam0");
 
-        if (botPose == null) {
-            botPose = new Pose2d(0, 0, new Rotation2d(-Math.PI));
-        }
-
-        // Instantiate subsystems
         drive = new Drive(hardwareMap);
     }
 
     @Override
     public final void robotLoop() {
         Rustboard.updateTelemetryNode("battery voltage", controlHub.getInputVoltage(VoltageUnit.VOLTS));
-        botPose = drive.getOdometry().getPose();
     }
 }

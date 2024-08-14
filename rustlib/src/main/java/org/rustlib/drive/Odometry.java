@@ -108,7 +108,7 @@ public class Odometry extends Subsystem {
         backEncoder.reset();
     }
 
-    public Pose2d getPose() {
+    public Pose2d getPosition() {
         return pose;
     }
 

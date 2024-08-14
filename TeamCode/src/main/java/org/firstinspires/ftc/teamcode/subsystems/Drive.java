@@ -30,7 +30,7 @@ public class Drive extends DriveSubsystem {
                 .defineRightFront(hardwareMap.get(DcMotor.class, "rf"))
                 .defineLeftBack(hardwareMap.get(DcMotor.class, "lb"), true)
                 .defineRightBack(hardwareMap.get(DcMotor.class, "rb"))
-                .setPoseSupplier(odometry::getPose)
+                .setPoseSupplier(odometry::getPosition)
                 .setMaxEndpointErr(DriveConstants.maxEndpointErr)
                 .setUseEndpointHeadingDistance(DriveConstants.trackEndpointHeadingMaxDistance)
                 .setTargetHeadingCalculationDistance(DriveConstants.calculateTargetHeadingMinDistance)
@@ -57,7 +57,7 @@ public class Drive extends DriveSubsystem {
 
     @Override
     public void drive(double drive, double strafe, double turn) {
-        drive(drive, strafe, turn, odometry.getPose().rotation.getAngleRadians());
+        drive(drive, strafe, turn, odometry.getPosition().rotation.getAngleRadians());
     }
 
     public void enableFastMode() {
@@ -70,7 +70,7 @@ public class Drive extends DriveSubsystem {
 
     @Override
     public void periodic() {
-        Rustboard.updateTelemetryNode("pose", odometry.getPose().toString());
+        Rustboard.updateTelemetryNode("pose", odometry.getPosition().toString());
         base.driveController.setGains(new PIDController.PIDGains(
                 Rustboard.getDouble("drive kP", 0.1),
                 Rustboard.getDouble("drive kI", 0.0),

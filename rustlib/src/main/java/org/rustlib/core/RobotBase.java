@@ -3,13 +3,19 @@ package org.rustlib.core;
 import android.util.Pair;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.rustlib.commandsystem.Command;
 import org.rustlib.commandsystem.CommandScheduler;
+import org.rustlib.drive.DriveSubsystem;
+import org.rustlib.geometry.Rotation2d;
 import org.rustlib.hardware.SuperGamepad;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,19 +29,53 @@ public abstract class RobotBase extends OpMode {
     protected LynxModule expansionHub = null;
     protected SuperGamepad controller1;
     protected SuperGamepad controller2;
-    private Auton autonomousInstance = null;
     private OpModeCore opModeCoreInstance = null;
+    private static DriveSubsystem autonomousDriveSubsystem;
+    private static DriveSubsystem teleOpDriveSubsystem;
+
+    private enum OpModeType {
+        AUTO,
+        TELE
+    }
+
+    private OpModeType opModeType = OpModeType.AUTO;
 
     public RobotBase() {
         for (int i = 0; i < 3; i++) {
             callbacks.add(new ArrayList<>());
         }
-        if (this instanceof Auton) {
-            autonomousInstance = (Auton) this;
-        }
         if (this instanceof OpModeCore) {
             opModeCoreInstance = (OpModeCore) this;
         }
+        if (hasAnnotation(Autonomous.class)) {
+            autonomousDriveSubsystem = getDriveSubsystem(this.getClass()); // getClass() returns the runtime class of the instance in question
+        } else if (hasAnnotation(TeleOp.class)) {
+            teleOpDriveSubsystem = getDriveSubsystem(this.getClass());
+            opModeType = OpModeType.TELE;
+        }
+    }
+
+    private boolean hasAnnotation(Class<?> annotationType) {
+        for (Annotation annotation : this.getClass().getAnnotations()) {
+            if (annotation.annotationType().equals(annotationType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private DriveSubsystem getDriveSubsystem(Class<?> opModeClass) {
+        DriveSubsystem driveSubsystem = null;
+        for (Field field : opModeClass.getDeclaredFields()) {
+            if (field.getType().equals(DriveSubsystem.class)) {
+                try {
+                    driveSubsystem = (DriveSubsystem) field.get(this);
+                } catch (IllegalAccessException e) {
+                    driveSubsystem = null;
+                }
+            }
+        }
+        return driveSubsystem;
     }
 
     private static void addCallback(Runnable callback, Collection<Pair<OpModeState, Runnable>> targetCollection) {
@@ -90,10 +130,8 @@ public abstract class RobotBase extends OpMode {
                 expansionHub = hubs.get(1);
             }
         } else {
+            expansionHub = hubs.get(0);
             controlHub = hubs.get(1);
-            if (hubs.size() > 1) {
-                expansionHub = hubs.get(0);
-            }
         }
         setBulkCachingOn(controlHub);
         setBulkCachingOn(expansionHub);
@@ -119,16 +157,19 @@ public abstract class RobotBase extends OpMode {
     @Override
     public final void start() {
         opModeState = OpModeState.START;
-        removeDuplicateCallbacks();
-        if (autonomousInstance != null) {
-            Command autonomousCommand = autonomousInstance.getAutonomousCommand();
-            if (autonomousCommand != null)
-                autonomousCommand.schedule();
+        if (opModeType == OpModeType.TELE && teleOpDriveSubsystem != null) {
+            teleOpDriveSubsystem.setFieldCentricOffset(alliance == Alliance.BLUE ? new Rotation2d() : new Rotation2d(Math.PI));
         }
+        removeDuplicateCallbacks();
         runCallbacks(callbacks.get(1));
         robotStart();
         if (opModeCoreInstance != null) {
             opModeCoreInstance.opmodeStart();
+        }
+        if (this instanceof AutonomousCore) {
+            Command autonomousCommand = ((AutonomousCore) this).getAutonomousCommand();
+            if (autonomousCommand != null)
+                autonomousCommand.schedule();
         }
     }
 
@@ -145,6 +186,9 @@ public abstract class RobotBase extends OpMode {
     @Override
     public final void stop() {
         opModeState = OpModeState.STOP;
+        if (opModeType == OpModeType.AUTO && autonomousDriveSubsystem != null && teleOpDriveSubsystem != null) {
+            teleOpDriveSubsystem.getOdometry().setPosition(autonomousDriveSubsystem.getOdometry().getPosition());
+        }
         removeDuplicateCallbacks();
         CommandScheduler.getInstance().clearRegistry();
         CommandScheduler.getInstance().cancelAll();

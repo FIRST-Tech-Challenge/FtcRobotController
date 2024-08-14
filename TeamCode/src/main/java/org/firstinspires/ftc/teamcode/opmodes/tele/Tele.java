@@ -21,17 +21,11 @@ public class Tele extends Robot implements OpModeCore {
 
         drive.setDefaultCommand(new DriveDefault(drive, () -> -controller1.leftStickY.getAsDouble(), () -> controller1.leftStickX.getAsDouble(), () -> -controller1.rightStickX.getAsDouble()));
         controller1.b.and(controller1.x).and(controller1.y).onTrue(new InstantCommand(() -> drive.getOdometry().setPosition(new Pose2d())));
-
-        if (botPose == null) {
-            botPose = new Pose2d();
-        }
-        drive.getOdometry().setPosition(botPose); // Set the robot position to the last position of the robot in autonomous
-        drive.setFieldCentricOffset(fieldCentricOffset); // TODO: make way to set field centric offset
     }
 
     @Override
     public void opModeLoop() {
-        telemetry.addData("heading", drive.getOdometry().getPose().rotation.getAngleDegrees());
+        telemetry.addData("heading", drive.getOdometry().getPosition().rotation.getAngleDegrees());
         Rustboard.updateTelemetryNode("slide speed", "hullo");
     }
 }
