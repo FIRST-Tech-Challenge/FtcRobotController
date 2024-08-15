@@ -31,15 +31,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.robotcore.util;
 
-import androidx.annotation.NonNull;
-
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonWriter;
-
-import org.firstinspires.ftc.robotcore.internal.system.Misc;
-
-import java.io.IOException;
-import java.util.HashMap;
-
 public abstract class SerialNumber {
 }

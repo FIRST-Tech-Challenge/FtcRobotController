@@ -1,16 +1,60 @@
 package com.wilyworks.simulator.framework;
 
-import com.badlogic.gdx.controllers.Controller;
+// import com.badlogic.gdx.controllers.Controller;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.wilyworks.simulator.WilyCore;
 
-import org.libsdl.SDL;
+// import org.libsdl.SDL;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
-import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager;
+// import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager;
+
+/**
+ * Fake do-nothing gamepad classes while the gamepad library is offline.
+ */
+    class SDL {
+        public static final int SDL_CONTROLLER_BUTTON_INVALID = -1,
+                SDL_CONTROLLER_BUTTON_A = 0,
+                SDL_CONTROLLER_BUTTON_B = 1,
+                SDL_CONTROLLER_BUTTON_X = 2,
+                SDL_CONTROLLER_BUTTON_Y = 3,
+                SDL_CONTROLLER_BUTTON_BACK = 4,
+                SDL_CONTROLLER_BUTTON_GUIDE = 5,
+                SDL_CONTROLLER_BUTTON_START = 6,
+                SDL_CONTROLLER_BUTTON_LEFTSTICK = 7,
+                SDL_CONTROLLER_BUTTON_RIGHTSTICK = 8,
+                SDL_CONTROLLER_BUTTON_LEFTSHOULDER = 9,
+                SDL_CONTROLLER_BUTTON_RIGHTSHOULDER = 10,
+                SDL_CONTROLLER_BUTTON_DPAD_UP = 11,
+                SDL_CONTROLLER_BUTTON_DPAD_DOWN = 12,
+                SDL_CONTROLLER_BUTTON_DPAD_LEFT = 13,
+                SDL_CONTROLLER_BUTTON_DPAD_RIGHT = 14,
+                SDL_CONTROLLER_BUTTON_MAX = 15;
+        public static final int SDL_CONTROLLER_AXIS_INVALID = -1,
+                SDL_CONTROLLER_AXIS_LEFTX = 0,
+                SDL_CONTROLLER_AXIS_LEFTY = 1,
+                SDL_CONTROLLER_AXIS_RIGHTX = 2,
+                SDL_CONTROLLER_AXIS_RIGHTY = 3,
+                SDL_CONTROLLER_AXIS_TRIGGERLEFT = 4,
+                SDL_CONTROLLER_AXIS_TRIGGERRIGHT = 5,
+                SDL_CONTROLLER_AXIS_MAX = 6;
+    }
+    class Controller {
+        public boolean getButton (int buttonCode) { return false; }
+        public float getAxis (int axisCode) { return 0; }
+    }
+    class Array {
+        int size = 0;
+        Controller get(int i) { return null; }
+    }
+    class SDL2ControllerManager {
+        public Array getControllers() {
+            return new Array();
+        }
+    }
 
 /**
  * Window manager hook for key presses.

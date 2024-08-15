@@ -1,17 +1,5 @@
 package com.wilyworks.simulator.framework;
 
-import com.badlogic.gdx.controllers.Controller;
-import com.wilyworks.simulator.WilyCore;
-
-import org.libsdl.SDL;
-
-import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager;
-
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
-
-
 /**
  * Wily Works Gamepad implementation that takes input either from a connected gamepad or
  * from the keyboard.
