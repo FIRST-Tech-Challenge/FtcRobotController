@@ -405,7 +405,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
         // Show a message and wait for A to be pressed in which case it returns true. Returns
         // false if the B button is pressed:
-        boolean readyPrompt(String message) {
+        boolean prompt(String message) {
             while (opModeIsActive() && !cancel()) {
                 showMessage(message);
                 if (select())
@@ -462,7 +462,7 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         boolean passed = false;
 
-        if (ui.readyPrompt("Push the robot forward in a straight line for two or more tiles (24\")."
+        if (ui.prompt("Push the robot forward in a straight line for two or more tiles (24\")."
                 + "\n\nPress A to start, B when complete")) {
 
             TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.FORWARD);
@@ -495,7 +495,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
 
         if (passed) {
-            if (ui.readyPrompt("Push the robot sideways to the left for two or more tiles (24\")."
+            if (ui.prompt("Push the robot sideways to the left for two or more tiles (24\")."
                     + "\n\nPress A to start, B when complete")) {
 
                 TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.LATERAL);
@@ -529,7 +529,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
 
         if (passed) {
-            if (ui.readyPrompt("Rotate the robot counterclockwise at least 90° \uD83D\uDD04 by pushing."
+            if (ui.prompt("Rotate the robot counterclockwise at least 90° \uD83D\uDD04 by pushing."
                     + "\n\nPress A to start, B when complete")) {
 
                 TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.ROTATE);
@@ -571,7 +571,7 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         String message;
 
-        if (ui.readyPrompt("In this test, you'll push the robot forward in a straight line along a field wall for exactly 4 tiles. "
+        if (ui.prompt("In this test, you'll push the robot forward in a straight line along a field wall for exactly 4 tiles. "
                 + "\n\nPress A to start, B to cancel")) {
 
             double distance = 0;
@@ -606,7 +606,7 @@ public class TuneRoadRunner extends LinearOpMode {
             double headingChange = normalizeAngle(Math.abs(oldHeading - newHeading));
 
             if ((newLinearScalar < SparkFunOTOS.MIN_SCALAR) || (newLinearScalar > SparkFunOTOS.MAX_SCALAR)) {
-                ui.readyPrompt(String.format("The measured distance of %.1f\" is not close enough to "
+                ui.prompt(String.format("The measured distance of %.1f\" is not close enough to "
                         + "the expected distance of 96\". Either something is wrong with the sensor "
                         + "or you didn't push for 4 tiles."
                         + "\n\nAborting, press A to continue.", distance));
@@ -614,7 +614,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 message = String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 different from the old.\n", newHeading, Math.toDegrees(headingChange));
                 message += String.format("New linear scalar of %.2f is %.1f%% different from the old.\n\n", newLinearScalar, linearScalarChange);
                 message += "Use these results? Press A if they look good, B to discard them.";
-                if (ui.readyPrompt(message)) {
+                if (ui.prompt(message)) {
                     settings.opticalLinearScalar = newLinearScalar;
                     settings.opticalOffset.h = newHeading;
                     settings.save();
@@ -622,8 +622,8 @@ public class TuneRoadRunner extends LinearOpMode {
                     message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
                     message += String.format("  headingOffset = %.3f\n", Math.toDegrees(newHeading));
                     message += String.format("  linearScalar = %.3f\n", newLinearScalar);
-                    message += "\nPress A or B to continue.";
-                    ui.readyPrompt(message);
+                    message += "\nPress A to continue.";
+                    ui.prompt(message);
                 }
             }
         }
@@ -645,7 +645,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
     // Ramp the motors up or down to or from the target spin speed. Return the amount of
     // rotation
-    void opticalRampMotors(MecanumDrive drive, boolean up) {
+    void rampMotorsSpin(MecanumDrive drive, boolean up) {
         final double RAMP_TIME = 0.5; // Seconds
         final double SPIN_SPEED = 0.2;
 
@@ -744,7 +744,7 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(true); // Use MecanumDrive/TankDrive
         String message;
 
-        if (!ui.readyPrompt("In this test, you'll align the robot against a wall to begin, then move "
+        if (!ui.prompt("In this test, you'll align the robot against a wall to begin, then move "
                 + "it out so that the robot can rotate in place 10 times, then you'll align "
                 + "the robot against the wall again."
                 + "\n\nPress A to start, B to cancel"))
@@ -783,7 +783,7 @@ public class TuneRoadRunner extends LinearOpMode {
         telemetry.update();
 
         ArrayList<Point> points = new ArrayList<>();
-        opticalRampMotors(drive, true);
+        rampMotorsSpin(drive, true);
 
         double rotationTarget = REVOLUTION_COUNT * 2 * Math.PI;
 
@@ -835,7 +835,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
 
         // Stop the rotation:
-        opticalRampMotors(drive, false);
+        rampMotorsSpin(drive, false);
 
         while (opModeIsActive() && !ui.select()) {
             telemetry.addLine("Now drive the robot to align it at the wall in the same "
@@ -878,19 +878,19 @@ public class TuneRoadRunner extends LinearOpMode {
         if ((Math.abs(circleFit.x) > 12) || (Math.abs(circleFit.y) > 12)) {
             message += "The results are bad, the calculated center-of-rotation is bogus.\n\n"
                     + "Aborting, press A to continue.";
-            ui.readyPrompt(message);
+            ui.prompt(message);
             return; // ====>
         }
         if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
             message += "The measured number of circles is bad. Did you properly align "
                 + "the robot on the wall the same way at both the start and end of this test?\n\n"
                 + "Aborting, press A to continue.";
-            ui.readyPrompt(message);
+            ui.prompt(message);
             return;
         }
 
         message += "Use these results? Press A if they look good, B to discard them.";
-        if (ui.readyPrompt(message)) {
+        if (ui.prompt(message)) {
             settings.opticalOffset.x = circleFit.x;
             settings.opticalOffset.y = circleFit.y;
             settings.opticalAngularScalar = angularScalar;
@@ -900,17 +900,17 @@ public class TuneRoadRunner extends LinearOpMode {
             message += String.format("  xOffset = %.2f\n", circleFit.x);
             message += String.format("  yOffset = %.3f\n", circleFit.y);
             message += String.format("  angularScalar = %.3f\n", angularScalar);
-            message += "\nPress A or B to continue.";
-            ui.readyPrompt(message);
+            message += "\nPress A to continue.";
+            ui.prompt(message);
         }
     }
 
     void forwardEncoderTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
-        if (ui.readyPrompt("Push the robot forward in a straight line as far as possible. "
+        if (ui.prompt("Push the robot forward in a straight line as far as possible. "
                 + "Measure distance and set inPerTick = <i>inches-traveled</i> / <i>average-ticks</i>."
-                + "\n\nPress A to start, B when complete")) {
+                + "\n\nPress A to start, B to cancel")) {
 
             TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.FORWARD);
             if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
@@ -931,13 +931,101 @@ public class TuneRoadRunner extends LinearOpMode {
             }
 
             while (opModeIsActive() && !ui.cancel()) {
+                // Report stuff to telemetry:
                 boolean passed = tracker.reportAll(telemetry);
                 if (passed) {
                     telemetry.addLine(String.format("\n<b>inPerTick</b> = <i>inches-traveled</i> / %.1f",
                             tracker.averageTicks()));
                 }
+                telemetry.addLine("\nPress B when complete");
                 telemetry.update();
             }
+        }
+    }
+
+    // Automatically calculate the kS and kV terms of the feed-forward approximation by
+    // ramping up the velocity in a straight line. We increase power by 0.1 each second
+    // until it reaches 0.9.
+    void autoFeedForwardTuner() {
+        final double VOLTAGE_ADDER_PER_SECOND = 0.1;
+        final double MAX_VOLTAGE = 0.9;
+        final double MAX_SECONDS = MAX_VOLTAGE / VOLTAGE_ADDER_PER_SECOND + 0.1;
+
+        useDrive(false); // Don't use MecanumDrive/TankDrive
+
+        if (ui.prompt("Place the robot on the field with as much space in front of it as possible. "
+                + "The robot will go in a straight line with constant acceleration, starting slowly. "
+                + "Be ready to press B to stop the robot if it gets close to hitting something!"
+                + "\n\nPress A to start, B to cancel.")) {
+
+            ArrayList<Point> points = new ArrayList<>();
+            double startTime = time();
+            double oldVoltage = 0;
+            double maxVelocity = 0;
+
+            // Ramp up the
+            while (opModeIsActive() && !ui.cancel() && ((time() - startTime) < MAX_SECONDS)) {
+                // Increase power by 0.1 each second until it reaches 0.9:
+                double newVoltage = (time() - startTime) * VOLTAGE_ADDER_PER_SECOND;
+                newVoltage = Math.min(newVoltage, MAX_VOLTAGE);
+
+                drive.rightFront.setPower(newVoltage);
+                drive.rightBack.setPower(newVoltage);
+                drive.leftFront.setPower(newVoltage);
+                drive.leftBack.setPower(newVoltage);
+
+                double percentage = newVoltage / MAX_VOLTAGE * 100;
+                telemetry.addLine(String.format("%.0f%% done."));
+                telemetry.addLine("\nPress B to abort.");
+                telemetry.update();
+
+                SparkFunOTOS.Pose2D velocityVector = drive.opticalTracker.getVelocity();
+                double velocity = Math.hypot(velocityVector.x, velocityVector.y);
+                points.add(new Point(oldVoltage, velocity));
+                maxVelocity = Math.max(velocity, maxVelocity);
+
+                oldVoltage = newVoltage;
+            }
+
+            // Stop the robot:
+            drive.rightFront.setPower(0);
+            drive.rightBack.setPower(0);
+            drive.leftFront.setPower(0);
+            drive.leftBack.setPower(0);
+
+            if (oldVoltage < MAX_VOLTAGE) {
+                ui.prompt("The robot didn't hit top speed before the test was aborted."
+                        + "\n\nPress A to continue.");
+                return; // ====>
+            }
+            if (maxVelocity == 0) {
+                ui.prompt("The optical tracking sensor returned only zero velocities. "
+                        + "Is it working properly?"
+                        + "\n\nPress A to continue.");
+            }
+
+            // Draw the results to the FTC dashboard:
+            TelemetryPacket packet = new TelemetryPacket();
+            Canvas canvas = packet.fieldOverlay();
+
+            // The canvas coordinates go from -1.0 to 1.0 so scale appropriately:
+            double xOffset = -0.9;
+            double xScale = 1.8 / MAX_VOLTAGE;
+            double yOffset = -0.9;
+            double yScale = 1.8 / maxVelocity;
+
+            double[] xPoints = new double[points.size()];
+            double[] yPoints = new double[points.size()];
+            for (int i = 0; i < points.size(); i++) {
+                xPoints[i] = points.get(i).x;
+                yPoints[i] = points.get(i).y;
+            }
+            canvas.setStroke("#00ff00");
+            canvas.strokePolyline(xPoints, yPoints);
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
+            ui.prompt("Check out the graph!"
+                    + "\n\nPress A to continue.");
         }
     }
 
@@ -968,7 +1056,7 @@ public class TuneRoadRunner extends LinearOpMode {
     void lateralEncoderTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.readyPrompt(String.format("The robot will attempt to strafe left for %d inches. "
+        if (ui.prompt(String.format("The robot will attempt to strafe left for %d inches. "
             + "Measure the actual distance using a tape measure. "
             + "Multiply 'lateralInPerTick' by <distance-measured> / %d."
             + "\n\nPress A to start", DISTANCE, DISTANCE))) {
@@ -985,7 +1073,7 @@ public class TuneRoadRunner extends LinearOpMode {
     void manualFeedforwardTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
-        if (!ui.readyPrompt(String.format("The robot will attempt to drive forwards then backwards for %d inches. "
+        if (!ui.prompt(String.format("The robot will attempt to drive forwards then backwards for %d inches. "
                 + "Tune 'kV' and 'kA' using FTC Dashboard."
                 + "\n\nPress A to start, B to stop", DISTANCE)))
             return;
@@ -1065,7 +1153,7 @@ public class TuneRoadRunner extends LinearOpMode {
     void manualFeedbackTunerAxial() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.readyPrompt(String.format("The robot will attempt to drive backwards and forwards for %d inches. "
+        if (ui.prompt(String.format("The robot will attempt to drive backwards and forwards for %d inches. "
                 + "Tune 'axialGain' so that target and actual align (typical values between 1 and 20)."
                 + "\n\nPress A to start, B to stop", DISTANCE))) {
 
@@ -1083,7 +1171,7 @@ public class TuneRoadRunner extends LinearOpMode {
     void manualFeedbackTunerLateral() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.readyPrompt(String.format("The robot will attempt to strafe left and right for %d inches. "
+        if (ui.prompt(String.format("The robot will attempt to strafe left and right for %d inches. "
                 + "Tune 'lateralGain' so that target and actual align (typical values between 1 and 20)."
                 + "\n\nPress A to start, B to stop", DISTANCE))) {
 
@@ -1101,7 +1189,7 @@ public class TuneRoadRunner extends LinearOpMode {
     void manualFeedbackTunerHeading() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.readyPrompt("The robot will attempt to rotate in place "
+        if (ui.prompt("The robot will attempt to rotate in place "
                 + "180° clockwise and counterclockwise. "
                 + "Tune 'headingGain' so that target and actual align (typical values between 1 and 20)."
                 + "\n\nPress A to start, B to stop")) {
@@ -1120,7 +1208,7 @@ public class TuneRoadRunner extends LinearOpMode {
     void completionTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.readyPrompt("The robot will drive forward 48 inches using a spline. "
+        if (ui.prompt("The robot will drive forward 48 inches using a spline. "
                 + "It needs half a tile clearance on either side. "
                 + "\n\nPress A to start, B to stop")) {
 
@@ -1163,7 +1251,7 @@ public class TuneRoadRunner extends LinearOpMode {
         settings = new Settings(drive);
         String comparison = settings.compareToSaved();
         if (comparison != null) {
-            ui.readyPrompt("Did you forget to update your code?\n"
+            ui.prompt("Did you forget to update your code?\n"
                     + comparison
                     + "\n\nPress B to ignore");
         }
@@ -1190,6 +1278,7 @@ public class TuneRoadRunner extends LinearOpMode {
         if (settings.type == Type.OPTICAL) {
             tests.add(new Test(this::opticalLinearScaleAndOrientation, "Optical linear scale & orientation"));
             tests.add(new Test(this::opticalAngularScaleAndOffset, "Optical angular scale & offset"));
+            tests.add(new Test(this::autoFeedForwardTuner, "Auto feed forward tuner"));
         } else {
             tests.add(new Test(this::encoderPush, "Push test (encoders and IMU)"));
             tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
