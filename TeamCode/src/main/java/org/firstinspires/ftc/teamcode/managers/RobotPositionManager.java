@@ -18,6 +18,8 @@ public class RobotPositionManager {
     private final MotorEx leftDeadWheel;
     private final MotorEx backDeadWheel;
 
+    private final double startingAngle;
+
     public RobotPositionManager(RobotController robotController) {
         BHI260IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RobotConfig.LOGO_FACING_DIRECTION, RobotConfig.USB_FACING_DIRECTION));
         this.imu = robotController.getHardwareMap().get(BHI260IMU.class, "imu");
@@ -34,10 +36,16 @@ public class RobotPositionManager {
         this.rightDeadWheel.resetEncoder();
         this.leftDeadWheel.resetEncoder();
         this.backDeadWheel.resetEncoder();
+
+        this.startingAngle = getHeadingByGyro();
     }
 
     public double getHeadingByGyro() {
         return this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
+    public double getRelativeHeading() {
+        return this.getHeadingByGyro() - this.startingAngle;
     }
 
     public double getHeadingByWheels() {

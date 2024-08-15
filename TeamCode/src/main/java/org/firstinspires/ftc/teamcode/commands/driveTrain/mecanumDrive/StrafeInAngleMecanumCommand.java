@@ -15,7 +15,7 @@ public class StrafeInAngleMecanumCommand extends SympleCommandBase<MecanumDriveS
 
     public StrafeInAngleMecanumCommand(MecanumDriveSubsystem subsystem, double angle, double meters) {
         super(subsystem);
-        this.angle = angle;
+        this.angle = angle + 90;
         this.meters = meters;
     }
 
@@ -25,15 +25,15 @@ public class StrafeInAngleMecanumCommand extends SympleCommandBase<MecanumDriveS
         this.STARTING_FORWARD_DIST = this.subsystem.getForwardDistanceDriven();
         this.STARTING_SIDE_DIST = this.subsystem.getSideDistanceDriven();
 
-        this.pController = new PController(0.5);
+        this.pController = new PController(0.8);
         this.pController.setTolerance(0.02);
         this.pController.setSetPoint(this.meters);
     }
 
     @Override
     public void execute() {
-        double hSpeed = Math.cos(angle) * meters;
-        double vSpeed = Math.sin(angle) * meters;
+        double hSpeed = Math.cos(Math.toRadians(angle)) * meters;
+        double vSpeed = Math.sin(Math.toRadians(angle)) * meters;
 
 
         double forwardDistanceMoved = this.subsystem.getForwardDistanceDriven() - this.STARTING_FORWARD_DIST;
