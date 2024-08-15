@@ -425,6 +425,7 @@ public class TuneRoadRunner extends LinearOpMode {
             }
         }
         // The user either pressed Cancel or End:
+        drive.abortActions();
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
         return false;
     }
@@ -558,7 +559,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
-    // Calculate the optical linear scale and orientation:
+    // Measure the optical linear scale and orientation:
     void opticalLinearScaleAndOrientation() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         String message;
@@ -586,7 +587,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
             // Avoid divide-by-zeroes on aborts:
             if (distance == 0)
-                distance = 0.1;
+                distance = 0.001;
 
             double newLinearScalar = 96.0 / distance;
             double oldLinearScalar = drive.opticalTracker.getLinearScalar();
@@ -597,21 +598,26 @@ public class TuneRoadRunner extends LinearOpMode {
             double oldHeading = drive.opticalTracker.getOffset().h;
             double headingChange = normalizeAngle(Math.abs(oldHeading - newHeading));
 
-            message = String.format("New offset heading is %.1f\u00b0 different from the old.\n", Math.toDegrees(headingChange));
-            message += String.format("New linear scalar is %.1f%% different from the old.\n\n", linearScalarChange);
-            message += "Use these results? Press A if they look good, B to discard them.";
-            if (ui.readyPrompt(message)) {
-                settings.opticalLinearScalar = newLinearScalar;
-                settings.opticalOffset.h = newHeading;
-                settings.save();
+            if ((newLinearScalar < SparkFunOTOS.MIN_SCALAR) || (newLinearScalar > SparkFunOTOS.MAX_SCALAR)) {
+                ui.readyPrompt(String.format("The measured distance of %.1f\" is not close enough to "
+                        + "the expected distance of 96\". Either something is wrong with the sensor "
+                        + "or you didn't push for 4 tiles."
+                        + "\n\nAborting, press A to continue.", distance));
+            } else {
+                message = String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 different from the old.\n", newHeading, Math.toDegrees(headingChange));
+                message += String.format("New linear scalar of %.2f is %.1f%% different from the old.\n\n", newLinearScalar, linearScalarChange);
+                message += "Use these results? Press A if they look good, B to discard them.";
+                if (ui.readyPrompt(message)) {
+                    settings.opticalLinearScalar = newLinearScalar;
+                    settings.opticalOffset.h = newHeading;
+                    settings.save();
 
-                // TODO: @@@ Range check newLinearScalar
-
-                message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
-                message += String.format("  headingOffset = %.3f\n", Math.toDegrees(newHeading));
-                message += String.format("  linearScalar = %.3f\n", newLinearScalar);
-                message += "\nPress A or B to continue.";
-                ui.readyPrompt(message);
+                    message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
+                    message += String.format("  headingOffset = %.3f\n", Math.toDegrees(newHeading));
+                    message += String.format("  linearScalar = %.3f\n", newLinearScalar);
+                    message += "\nPress A or B to continue.";
+                    ui.readyPrompt(message);
+                }
             }
         }
     }
@@ -630,24 +636,28 @@ public class TuneRoadRunner extends LinearOpMode {
         return angle;
     }
 
-    // Ramp the motors up or down to or from the target spin speed:
-    void rampMotors(MecanumDrive drive, boolean up) {
+    // Ramp the motors up or down to or from the target spin speed. Return the amount of
+    // rotation
+    void opticalRampMotors(MecanumDrive drive, boolean up) {
         final double RAMP_TIME = 0.5; // Seconds
         final double SPIN_SPEED = 0.2;
 
         double startTime = time();
         while (opModeIsActive()) {
-            double duration = time() - startTime;
+            double duration = Math.min(time() - startTime, RAMP_TIME);
             double fraction = (up) ? (duration / RAMP_TIME) : (1 - duration / RAMP_TIME);
             drive.rightFront.setPower(fraction * SPIN_SPEED);
             drive.rightBack.setPower(fraction * SPIN_SPEED);
             drive.leftFront.setPower(-fraction * SPIN_SPEED);
             drive.leftBack.setPower(-fraction * SPIN_SPEED);
-            if (duration > RAMP_TIME)
+
+            updateSparkFunRotation(drive);
+            if (duration == RAMP_TIME)
                 break; // ===>
         }
     }
 
+    // Structure to describe the center of rotation for the robot:
     static class CenterOfRotation {
         double x;
         double y;
@@ -692,9 +702,34 @@ public class TuneRoadRunner extends LinearOpMode {
         return new CenterOfRotation(centerX, centerY,0, 0, radius);
     }
 
-    // Calculate the angular scale and sensor offset:
+    // Persisted state for initiateSparkfunRotation and updateSparkfunRotation:
+    double previousSparkFunHeading = 0;
+    double accumulatedSparkFunRotation = 0;
+
+    // Start tracking total amount of rotation:
+    SparkFunOTOS.Pose2D initiateSparkFunRotation(MecanumDrive drive) {
+        SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
+        previousSparkFunHeading = position.h;
+        return position;
+    }
+
+    // Call this regularly to update the tracked amount of rotation:
+    SparkFunOTOS.Pose2D updateSparkFunRotation(MecanumDrive drive) {
+        SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
+        accumulatedSparkFunRotation += normalizeAngle(position.h - previousSparkFunHeading);
+        previousSparkFunHeading = position.h;
+        return position;
+    }
+
+    // Get the resulting total rotation amount:
+    double getSparkFunRotation(MecanumDrive drive) {
+        updateSparkFunRotation(drive);
+        return accumulatedSparkFunRotation;
+    }
+
+    // Measure the angular scale and sensor offset:
     void opticalAngularScaleAndOffset() {
-        final int REVOLUTION_COUNT = 1;
+        final double REVOLUTION_COUNT = 1.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
         String message;
@@ -717,15 +752,19 @@ public class TuneRoadRunner extends LinearOpMode {
                 return; // ===>
         }
 
-        drive.opticalTracker.resetTracking();
+        // Start measuring accumulated rotation:
+        initiateSparkFunRotation(drive);
+
+        // Let the user position the robot:
         while (opModeIsActive() && !ui.select()) {
             telemetry.addLine("Now move the robot far enough away from any objects so "
-                    + "that it can freely rotate in place. Don't rotate it. "
+                    + "that it can freely rotate in place."
                     + "\n\nPress A when ready for the robot to rotate, B to cancel");
             telemetry.update();
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
                     -gamepad1.right_stick_x));
+            updateSparkFunRotation(drive);
             if (ui.cancel())
                 return; // ===>
         }
@@ -734,25 +773,22 @@ public class TuneRoadRunner extends LinearOpMode {
         telemetry.update();
 
         ArrayList<Point> points = new ArrayList<>();
-        rampMotors(drive, true);
+        opticalRampMotors(drive, true);
 
-        double rotationTotal = 0;
         double rotationTarget = REVOLUTION_COUNT * 2 * Math.PI;
 
         double farthestDistance = 0;
         Point farthestPoint = new Point(0, 0);
         Point currentPoint = new Point(0, 0);
         SparkFunOTOS.Pose2D previousPosition = drive.opticalTracker.getPosition();
-        double lastHeading = previousPosition.h;
         double distanceTraveled = 0;
+        double startRotation = getSparkFunRotation(drive);
 
-        while (opModeIsActive() && (rotationTotal < rotationTarget)) {
-            SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
-
-            // Track the amount of rotation we've done:
-            double heading = position.h;
-            rotationTotal += normalizeAngle(heading - lastHeading);
-            lastHeading = heading;
+        while (opModeIsActive()) {
+            SparkFunOTOS.Pose2D position = updateSparkFunRotation(drive);
+            double rotationAmount = accumulatedSparkFunRotation - startRotation;
+            if (rotationAmount >= rotationTarget)
+                break; // We're done, break out of this loop!
 
             currentPoint = new Point(position.x, position.y);
             points.add(currentPoint);
@@ -766,8 +802,9 @@ public class TuneRoadRunner extends LinearOpMode {
             previousPosition = position;
 
             // Update the telemetry:
-            double rotationsRemaining = (rotationTarget - rotationTotal) / (2 * Math.PI);
+            double rotationsRemaining = (rotationTarget - rotationAmount) / (2 * Math.PI);
             telemetry.addLine(String.format("%.2f rotations remaining, %d points sampled", rotationsRemaining, points.size()));
+            telemetry.addLine("\nPress B to abort.");
             telemetry.update();
 
             // Draw the circle:
@@ -782,18 +819,20 @@ public class TuneRoadRunner extends LinearOpMode {
             canvas.setStroke("#00ff00");
             canvas.strokePolyline(xPoints, yPoints);
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
+            if (ui.cancel())
+                return; // ====>
         }
 
-        // @@@ TODO: Need to startup/slowdown time into account for rotation adjustment
-
         // Stop the rotation:
-        rampMotors(drive, false);
+        opticalRampMotors(drive, false);
 
         while (opModeIsActive() && !ui.select()) {
             telemetry.addLine("Now drive the robot to align it at the wall in the same "
                     + "place and orientation as it started."
                     + "\n\nPress A when done, B to cancel");
             telemetry.update();
+            updateSparkFunRotation(drive);
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
                     -gamepad1.right_stick_x));
@@ -803,31 +842,54 @@ public class TuneRoadRunner extends LinearOpMode {
 
         CenterOfRotation circleFit = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
 
+        // Center of rotation results:
         double resultX = farthestPoint.x / 2;
         double resultY = farthestPoint.y / 2;
         double farthestPointRadius = farthestDistance / 2;
         double traveledRadius = distanceTraveled / (2 * REVOLUTION_COUNT * Math.PI);
 
-        message = String.format("Distance traveled: %f, farthestPoint.x: %f, farthestPoint.y: %f, traveledRadius: %f\n",
+        // Angular scalar results:
+        double totalMeasuredRotation = getSparkFunRotation(drive);
+        double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
+        double integerCircles = Math.round(totalMeasuredCircles);
+        double fractionalCircles = Math.abs(totalMeasuredCircles - integerCircles);
+        double angularScalar = integerCircles / totalMeasuredCircles;
+
+        message = String.format("Sensor thinks %.2f circles were completed\n", totalMeasuredCircles);
+        message += String.format("Distance traveled: %f, farthestPoint.x: %f, farthestPoint.y: %f, traveledRadius: %f\n",
                 distanceTraveled, farthestPoint.x, farthestPoint.y, traveledRadius);
-        message += String.format("Test result...\nOffset from center of rotation (inches): (%.2f, %.2f), samples: %d",
+        message += String.format("Offset from center of rotation: (%.2f\", %.2f\"), samples: %d",
                 resultX, resultY, points.size());
         message += String.format("Farthest point radius: %.2f, Traveled radius: %.2f", farthestPointRadius, traveledRadius);
         message += String.format("Error (inches): (%.2f, %.2f)\n", currentPoint.x, currentPoint.y);
         message += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", circleFit.x, circleFit.y, circleFit.leastSquaresRadius);
-        message += "Use these results? Press A if they look good, B to discard them.";
 
+        // Do some sanity checking on the results:
+        if ((Math.abs(circleFit.x) > 12) || (Math.abs(circleFit.y) > 12)) {
+            message += "The results are bad, the calculated center-of-rotation is bogus.\n\n"
+                    + "Aborting, press A to continue.";
+            ui.readyPrompt(message);
+            return; // ====>
+        }
+        if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
+            message += "The measured number of circles is bad. Did you properly align "
+                + "the robot on the wall the same way at both the start and end of this test?\n\n"
+                + "Aborting, press A to continue.";
+            ui.readyPrompt(message);
+            return;
+        }
+
+        message += "Use these results? Press A if they look good, B to discard them.";
         if (ui.readyPrompt(message)) {
             settings.opticalOffset.x = circleFit.x;
             settings.opticalOffset.y = circleFit.y;
-            // @@@
+            settings.opticalAngularScalar = angularScalar;
             settings.save();
-
-            // TODO: @@@ Range check newLinearScalar
 
             message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
             message += String.format("  xOffset = %.2f\n", circleFit.x);
             message += String.format("  yOffset = %.3f\n", circleFit.y);
+            message += String.format("  angularScalar = %.3f\n", angularScalar);
             message += "\nPress A or B to continue.";
             ui.readyPrompt(message);
         }
@@ -1131,7 +1193,7 @@ public class TuneRoadRunner extends LinearOpMode {
         tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
         tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
 
-        telemetry.addLine("<h1>Press START to begin</h1>");
+        telemetry.addLine("<big><big><big><big><big><big><big><big>Press START to begin");
         telemetry.update();
         waitForStart();
 
