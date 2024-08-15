@@ -51,54 +51,67 @@ public class VisionManager {
 
     public double[] returnPositionData(boolean forceOnBoardProcessor) {
         boolean isUpdated = false;
-        double[] robotPosition = new double[] {-1, -1, -1}; //set deafult value to -1 if not detected because robots position cant be negative
+        double[] robotPosition = new double[]{-1, -1, -1}; //set deafult value to -1 if not detected because robots position cant be negative
         double poseX = 0; //if 0:0 the gimbal will not move so 0:0 is the deafult return
         double poseY = 0;
         double poseZ = 0;
         double upDatedFrame = 0;
-
-        if ((clock.milliseconds()-elapsedTime)>33.333){
-            upDatedFrame = 1;
-            elapsedTime=clock.milliseconds();
-        }
-
-        if (!forceOnBoardProcessor && !externalInitError) {
-            try {
-                aprilTagDetections = externalVision.returnAprilTagData();
-                isUpdated = true;
-            } catch (Exception e3) {
-                telemetry.addData("External Vision Error", e3.getMessage());
+        try {
+            if ((clock.milliseconds() - elapsedTime) > 33.333) {
+                upDatedFrame = 1;
+                elapsedTime = clock.milliseconds();
             }
-        }
 
-        if (!isUpdated && !onBoardInitError) {
-            try {
-                aprilTagDetections = onBoardVision.returnAprilTagData();
-                isUpdated = true;
-            } catch (Exception e4) {
-                telemetry.addData("OnBoard Vision Error", e4.getMessage());
+            if (!forceOnBoardProcessor && !externalInitError) {
+                try {
+                    aprilTagDetections = externalVision.returnAprilTagData();
+                    isUpdated = true;
+                } catch (Exception e3) {
+                    telemetry.addData("External Vision Error", e3.getMessage());
+                }
             }
-        }
 
-        if (isUpdated && aprilTagDetections != null) {
-            for (AprilTagDetection detection : aprilTagDetections) {
-
-                poseX = detection.ftcPose.x;
-                poseY = detection.ftcPose.y;
-                poseZ = detection.ftcPose.z;
-
-                robotPosition = calculateRobotPosition();
-
+            if (!isUpdated && !onBoardInitError) {
+                try {
+                    aprilTagDetections = onBoardVision.returnAprilTagData();
+                    isUpdated = true;
+                } catch (Exception e4) {
+                    telemetry.addData("OnBoard Vision Error", e4.getMessage());
+                }
             }
+
+            if (isUpdated && aprilTagDetections != null) {
+                for (AprilTagDetection detection : aprilTagDetections) {
+
+                    poseX = detection.ftcPose.x;
+                    poseY = detection.ftcPose.y;
+                    poseZ = detection.ftcPose.z;
+
+                    robotPosition = calculateRobotPosition();
+
+                }
+            }
+
+        } catch (Exception e) {
+            telemetry.addData("VisionError", true);
+
         }
         return new double[]{
                 robotPosition[0], robotPosition[1], robotPosition[2],
                 poseX, poseY, poseZ, upDatedFrame
         };
     }
-
     private double[] calculateRobotPosition() {
-        // Implement logic to calculate the robot's position
+            // Implement logic to calculate the robot's position
         return new double[]{1, 1, 1};
+    }
+
+    //check if some errors passed
+    private double checkNaN(double checkAble){
+        if (Double.isNaN(checkAble)){
+            return -1;
+        } else {
+            return checkAble;
+        }
     }
 }

@@ -9,6 +9,7 @@ package org.firstinspires.ftc.teamcode;  //place where the code is located
 //        \\_______________====      \_((
 //        \((
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -38,7 +39,11 @@ public class EstoniaAthens extends LinearOpMode { //file name is Main.java    ex
     double[] positionData = {
             0, //x
             0, //y
-            0, //rotation
+            0, //Z
+            0, //PoseX
+            0, //PoseY
+            0, //PoseZ
+            0, //updatedFrame
     };
 
     Erection erection;
@@ -101,7 +106,7 @@ public class EstoniaAthens extends LinearOpMode { //file name is Main.java    ex
                     gamepad2.x
             );
 
-            positionData = visionManager.returnPositionData(true);
+
 
             gimbal.moveGimbal(
                     gamepad2_dpad_up.toggle(gamepad2.dpad_up),
@@ -125,8 +130,11 @@ public class EstoniaAthens extends LinearOpMode { //file name is Main.java    ex
             //telemetry.addData("field centric", gamepad1_a.returnToggleState());
             //telemetry.addData("traction control", gamepad1_b.returnToggleState());
             //telemetry.addData("PositionData", positionData[0]);
+            positionData = visionManager.returnPositionData(true);
+            //pos
+
             telemetry.update();
-            if (true){ //debugging
+            if (false){ //debugging
                 while (true){
                     if (gamepad2_right_bumper.released(gamepad2.right_bumper)){
                         break;

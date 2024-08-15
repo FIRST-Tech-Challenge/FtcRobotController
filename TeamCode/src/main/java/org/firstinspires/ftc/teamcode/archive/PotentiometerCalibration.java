@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.archive;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+@Disabled
 @TeleOp(name="potentiometer map test")
 public class PotentiometerCalibration extends LinearOpMode {
 
