@@ -92,6 +92,7 @@ class Point { // Can't derive from vector2d because it's marked as final (by def
 
 /**
  * Class to track encoder ticks.
+ * @noinspection UnnecessaryUnicodeEscape
  */
 class TickTracker {
     enum Correlation {
@@ -331,6 +332,7 @@ class Settings {
     }
 }
 
+/** @noinspection UnnecessaryUnicodeEscape*/
 @TeleOp
 public class TuneRoadRunner extends LinearOpMode {
     enum Type { OPTICAL, ALL_WHEEL, TWO_DEAD, THREE_DEAD }
@@ -348,6 +350,7 @@ public class TuneRoadRunner extends LinearOpMode {
     interface MenuStrings {
         String getString(int i);
     }
+    /** @noinspection UnnecessaryUnicodeEscape*/
     class Ui {
         // Button press state:
         private final boolean[] buttonPressed = new boolean[4];
@@ -744,7 +747,7 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(true); // Use MecanumDrive/TankDrive
         String message;
 
-        if (!ui.prompt("In this test, you'll align the robot against a wall to begin, then move "
+        if (!ui.prompt("In this test, you'll align the robot against a wall to begin, then drive "
                 + "it out so that the robot can rotate in place 10 times, then you'll align "
                 + "the robot against the wall again."
                 + "\n\nPress A to start, B to cancel"))
@@ -767,7 +770,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
         // Let the user position the robot:
         while (opModeIsActive() && !ui.select()) {
-            telemetry.addLine("Now move the robot far enough away from any objects so "
+            telemetry.addLine("Now move the robot far enough away from the wall and any objects so "
                     + "that it can freely rotate in place."
                     + "\n\nPress A when ready for the robot to rotate, B to cancel");
             telemetry.update();
@@ -862,7 +865,6 @@ public class TuneRoadRunner extends LinearOpMode {
         double totalMeasuredRotation = getSparkFunRotation(drive);
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
-        double fractionalCircles = Math.abs(totalMeasuredCircles - integerCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
 
         message = String.format("Sensor thinks %.2f circles were completed\n", totalMeasuredCircles);
@@ -905,6 +907,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     void forwardEncoderTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
@@ -946,16 +949,19 @@ public class TuneRoadRunner extends LinearOpMode {
     // Automatically calculate the kS and kV terms of the feed-forward approximation by
     // ramping up the velocity in a straight line. We increase power by 0.1 each second
     // until it reaches 0.9.
+    @SuppressLint("DefaultLocale")
     void autoFeedForwardTuner() {
         final double VOLTAGE_ADDER_PER_SECOND = 0.1;
         final double MAX_VOLTAGE = 0.9;
         final double MAX_SECONDS = MAX_VOLTAGE / VOLTAGE_ADDER_PER_SECOND + 0.1;
 
         useDrive(false); // Don't use MecanumDrive/TankDrive
+        assert(drive.opticalTracker != null);
 
         if (ui.prompt("Place the robot on the field with as much space in front of it as possible. "
-                + "The robot will go in a straight line with constant acceleration, starting slowly. "
-                + "Be ready to press B to stop the robot if it gets close to hitting something!"
+                + "The robot will drive forward in a straight line, starting slowly but getting "
+                + "faster and faster. Be ready to press B to stop the robot if it gets close to "
+                + "hitting something!"
                 + "\n\nPress A to start, B to cancel.")) {
 
             ArrayList<Point> points = new ArrayList<>();
@@ -975,13 +981,13 @@ public class TuneRoadRunner extends LinearOpMode {
                 drive.leftBack.setPower(newVoltage);
 
                 double percentage = newVoltage / MAX_VOLTAGE * 100;
-                telemetry.addLine(String.format("%.0f%% done."));
+                telemetry.addLine(String.format("%.0f%% done.", percentage));
                 telemetry.addLine("\nPress B to abort.");
                 telemetry.update();
 
                 SparkFunOTOS.Pose2D velocityVector = drive.opticalTracker.getVelocity();
                 double velocity = Math.hypot(velocityVector.x, velocityVector.y);
-                points.add(new Point(oldVoltage, velocity));
+                points.add(new Point(velocity, oldVoltage));
                 maxVelocity = Math.max(velocity, maxVelocity);
 
                 oldVoltage = newVoltage;
@@ -1002,6 +1008,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 ui.prompt("The optical tracking sensor returned only zero velocities. "
                         + "Is it working properly?"
                         + "\n\nPress A to continue.");
+                return; // ====>
             }
 
             // Draw the results to the FTC dashboard:
@@ -1010,15 +1017,16 @@ public class TuneRoadRunner extends LinearOpMode {
 
             // The canvas coordinates go from -1.0 to 1.0 so scale appropriately:
             double xOffset = -0.9;
-            double xScale = 1.8 / MAX_VOLTAGE;
+            double xScale = 1.8 / maxVelocity;
             double yOffset = -0.9;
-            double yScale = 1.8 / maxVelocity;
+            double yScale = 1.8 / MAX_VOLTAGE;
 
             double[] xPoints = new double[points.size()];
             double[] yPoints = new double[points.size()];
             for (int i = 0; i < points.size(); i++) {
-                xPoints[i] = points.get(i).x;
-                yPoints[i] = points.get(i).y;
+                // Velocity along the x axis, voltage along the y axis:
+                xPoints[i] = points.get(i).x * xScale + xOffset;
+                yPoints[i] = points.get(i).y * yScale + yOffset;
             }
             canvas.setStroke("#00ff00");
             canvas.strokePolyline(xPoints, yPoints);
@@ -1053,6 +1061,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     void lateralEncoderTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
@@ -1070,6 +1079,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
     // This is a re-implementation of 'manualFeedforwardTuner' so that DISTANCE can be changed
     // from its hardcoded 64".
+    @SuppressLint("DefaultLocale")
     void manualFeedforwardTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
@@ -1150,6 +1160,7 @@ public class TuneRoadRunner extends LinearOpMode {
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
     }
 
+    @SuppressLint("DefaultLocale")
     void manualFeedbackTunerAxial() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
@@ -1168,6 +1179,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     void manualFeedbackTunerLateral() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
@@ -1258,6 +1270,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
         String configuration = "Mecanum drive, ";
         if (settings.type == Type.OPTICAL) {
+            assert(drive.opticalTracker != null);
             configuration += "optical tracking";
             // Set our preferred units:
             drive.opticalTracker.setAngularUnit(AngleUnit.RADIANS);
