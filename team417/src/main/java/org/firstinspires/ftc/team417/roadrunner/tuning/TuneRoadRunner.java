@@ -4,6 +4,8 @@ import static com.acmerobotics.roadrunner.Profiles.constantProfile;
 
 import static java.lang.System.nanoTime;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -43,6 +45,7 @@ import java.util.Properties;
 
 /**
  * Math helper for points and vectors:
+ * @noinspection unused
  */
 class Point { // Can't derive from vector2d because it's marked as final (by default?)
     public double x, y;
@@ -145,6 +148,7 @@ class TickTracker {
         return passed;
     }
 
+    @SuppressLint("DefaultLocale")
     boolean reportAll(Telemetry telemetry) {
         final double ZERO_ERROR = 0.05; // Should be no higher than this of the max
         final double STRAIGHT_ERROR = 0.90; // Straight should be no lower than this of the max
@@ -262,6 +266,7 @@ class TickTracker {
 
 /**
  * Class for remembering all of the tuned settings.
+ * @noinspection IOStreamConstructor
  */
 class Settings {
     final String SETTINGS_FILE = "roadrunner_settings.xml";
@@ -270,13 +275,16 @@ class Settings {
     TuneRoadRunner.Type type;
     double opticalAngularScalar;
     double opticalLinearScalar;
-    SparkFunOTOS.Pose2D opticalOffset;
+    SparkFunOTOS.Pose2D opticalOffset = null;
 
     // Get the settings from the current MecanumDrive object:
     public Settings(MecanumDrive drive) {
         robotName = MecanumDrive.getBotName();
         if (drive.opticalTracker != null) {
             type = TuneRoadRunner.Type.OPTICAL;
+            opticalAngularScalar = drive.opticalTracker.getAngularScalar();
+            opticalLinearScalar = drive.opticalTracker.getLinearScalar();
+            opticalOffset = drive.opticalTracker.getOffset();
         } else if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
             type = TuneRoadRunner.Type.ALL_WHEEL;
         } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
@@ -284,9 +292,6 @@ class Settings {
         } else {
             type = TuneRoadRunner.Type.TWO_DEAD;
         }
-        opticalAngularScalar = drive.opticalTracker.getAngularScalar();
-        opticalLinearScalar = drive.opticalTracker.getLinearScalar();
-        opticalOffset = drive.opticalTracker.getOffset();
     }
 
     // Save the current settings to the properties file:
@@ -345,7 +350,7 @@ public class TuneRoadRunner extends LinearOpMode {
     }
     class Ui {
         // Button press state:
-        private boolean[] buttonPressed = new boolean[4];
+        private final boolean[] buttonPressed = new boolean[4];
         private boolean buttonPress(boolean pressed, int index) {
             boolean press = pressed && !buttonPressed[index];
             buttonPressed[index] = pressed;
@@ -560,7 +565,9 @@ public class TuneRoadRunner extends LinearOpMode {
     }
 
     // Measure the optical linear scale and orientation:
+    @SuppressLint("DefaultLocale")
     void opticalLinearScaleAndOrientation() {
+        assert(drive.opticalTracker != null);
         useDrive(false); // Don't use MecanumDrive/TankDrive
         String message;
 
@@ -707,14 +714,14 @@ public class TuneRoadRunner extends LinearOpMode {
     double accumulatedSparkFunRotation = 0;
 
     // Start tracking total amount of rotation:
-    SparkFunOTOS.Pose2D initiateSparkFunRotation(MecanumDrive drive) {
-        SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
-        previousSparkFunHeading = position.h;
-        return position;
+    void initiateSparkFunRotation(MecanumDrive drive) {
+        assert(drive.opticalTracker != null);
+        previousSparkFunHeading = drive.opticalTracker.getPosition().h;
     }
 
     // Call this regularly to update the tracked amount of rotation:
     SparkFunOTOS.Pose2D updateSparkFunRotation(MecanumDrive drive) {
+        assert(drive.opticalTracker != null);
         SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
         accumulatedSparkFunRotation += normalizeAngle(position.h - previousSparkFunHeading);
         previousSparkFunHeading = position.h;
@@ -723,12 +730,15 @@ public class TuneRoadRunner extends LinearOpMode {
 
     // Get the resulting total rotation amount:
     double getSparkFunRotation(MecanumDrive drive) {
+        assert(drive.opticalTracker != null);
         updateSparkFunRotation(drive);
         return accumulatedSparkFunRotation;
     }
 
     // Measure the angular scale and sensor offset:
+    @SuppressLint("DefaultLocale")
     void opticalAngularScaleAndOffset() {
+        assert(drive.opticalTracker != null);
         final double REVOLUTION_COUNT = 1.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
@@ -1153,10 +1163,9 @@ public class TuneRoadRunner extends LinearOpMode {
         settings = new Settings(drive);
         String comparison = settings.compareToSaved();
         if (comparison != null) {
-            while (ui.readyPrompt("Did you forget to update your code?\n"
+            ui.readyPrompt("Did you forget to update your code?\n"
                     + comparison
-                    + "\n\nPress B to ignore"))
-                ;
+                    + "\n\nPress B to ignore");
         }
 
         String configuration = "Mecanum drive, ";
