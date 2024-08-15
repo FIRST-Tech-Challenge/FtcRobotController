@@ -115,6 +115,23 @@ public class TeleOp extends OpMode {
 
         if (gamepad1.a) {
             gyro.resetYaw();
+            //not sure if all of these need to be reset
+            xCoord = 0;
+            yCoord = 0;
+            heading = 0;
+            auxPos = 0;
+            rightPos = 0;
+            leftPos = 0;
+            lastLeftPos = 0;
+            lastRightPos = 0;
+            lastAuxPos = 0;
+            deltaLeft = 0;
+            deltaRight = 0;
+            deltaAux = 0;
+            deltaX = 0;
+            deltaY = 0;
+            deltaHeading = 0;
+            robotHeading = 0;
         }
 
         double finalX = x * Math.cos(robotHeading) - y * Math.sin(robotHeading);
