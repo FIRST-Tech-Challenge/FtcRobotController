@@ -2,16 +2,19 @@ package com.millburnx.purePursuit.ftcDashboard
 
 import java.awt.Graphics
 import java.awt.GraphicsEnvironment
+import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import javax.swing.JButton
 import javax.swing.JPanel
+import kotlin.math.max
+import kotlin.math.min
 
 interface IFTCDashboard {
     fun sendTelemetryPacket(telemetryPacket: ITelemetryPacket)
 }
 
 class FTCDashboard(ppi: Double, val start: () -> Unit, val stop: () -> Unit, var reset: () -> Unit, var load: () -> Unit) : IFTCDashboard {
-    inner class Panel(val ppi: Double) : JPanel() {
+    inner class Panel(var ppi: Double) : JPanel() {
         init {
             val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
             val fonts = ge.availableFontFamilyNames
@@ -24,6 +27,17 @@ class FTCDashboard(ppi: Double, val start: () -> Unit, val stop: () -> Unit, var
             buttonRow.add(customButton("Reset") { reset() })
             buttonRow.add(customButton("Load") { load() })
             add(buttonRow)
+
+            addComponentListener(object : java.awt.event.ComponentAdapter() {
+                override fun componentResized(e: java.awt.event.ComponentEvent) {
+                    val minSize = min(width, height)
+                    val newOptimalPPI = minSize / 144.0
+                    if (newOptimalPPI != ppi) {
+                        ppi = newOptimalPPI
+                        repaint()
+                    }
+                }
+            })
         }
 
         private fun customButton(text: String, action: () -> Unit): JButton {
@@ -39,11 +53,12 @@ class FTCDashboard(ppi: Double, val start: () -> Unit, val stop: () -> Unit, var
 //            val g2d = graphics as Graphics2D
             val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
             val g2d = bufferedImage.createGraphics()
+            g2d.setRenderingHints(RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON))
             g2d.translate(width / 2, height / 2)
             val canvas = currentPacket.fieldOverlay()
             val ops = canvas.getOperations()
             for (op in ops) {
-                op.draw(g2d, ppi)
+                op.draw(g2d, ppi, this)
             }
             g.drawImage(bufferedImage, 0, 0, null)
         }

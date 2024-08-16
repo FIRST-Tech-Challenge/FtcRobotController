@@ -2,12 +2,12 @@ package com.millburnx.pathplanner.components;
 
 import com.millburnx.purePursuit.Utils.Point;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,9 +20,14 @@ public class PathEditor extends JPanel {
     private boolean isPrevSelected = false;
     private boolean isNextSelected = false;
 
+    private double[] ppi; // java anon innerclass workaround
+
     private final List<List<BezierPoint>> undoStack = new ArrayList<>();
 
-    public PathEditor() {
+    private JPanel buttonPanel;
+
+    public PathEditor(double ppi) {
+        this.ppi = new double[]{ppi};
         setBackground(Color.DARK_GRAY);
         setLayout(new BorderLayout());
 
@@ -47,7 +52,7 @@ public class PathEditor extends JPanel {
             }
         });
 
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         JButton loadButton = createModernButton("Load Path");
@@ -63,21 +68,38 @@ public class PathEditor extends JPanel {
         buttonPanel.add(undoButton);
 
         add(buttonPanel, BorderLayout.NORTH);
+
+        double[] ppiRef = this.ppi;
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int min = Math.min(getWidth(), getHeight() - buttonPanel.getHeight());
+                ppiRef[0] = min / 144.0;
+                repaint();
+            }
+        });
     }
 
     private void handleMousePressed(Point p) {
+        Point mappedPoint = p.minus(new Point(0, buttonPanel.getHeight()));
+        Point size = new Point(getWidth(), getHeight() - buttonPanel.getHeight());
+        mappedPoint = mappedPoint.minus(size.div(2));
+        mappedPoint = mappedPoint.div(ppi[0]);
+        System.out.println(mappedPoint);
+        double threshold = 10.0 / ppi[0];
         for (BezierPoint bp : bezierPath.getPoints()) {
-            if (bp.isAnchorNear(p)) {
+            if (bp.isAnchorNear(mappedPoint, threshold * 1.5)) {
                 selectedPoint = bp;
                 isPrevSelected = false;
                 isNextSelected = false;
                 return;
-            } else if (bp.isPrevNear(p)) {
+            } else if (bp.isPrevNear(mappedPoint, threshold)) {
                 selectedPoint = bp;
                 isPrevSelected = true;
                 isNextSelected = false;
                 return;
-            } else if (bp.isNextNear(p)) {
+            } else if (bp.isNextNear(mappedPoint, threshold)) {
                 selectedPoint = bp;
                 isPrevSelected = false;
                 isNextSelected = true;
@@ -86,14 +108,14 @@ public class PathEditor extends JPanel {
         }
 
         // Adding a new point
-        Double defaultHandleLength = 50.0;
+        double defaultHandleLength = 6.0;
         Point prevPoint = null;
         if (!bezierPath.getPoints().isEmpty()) {
-            prevPoint = p.minus(new Point(defaultHandleLength, 0.0));
+            prevPoint = mappedPoint.minus(new Point(defaultHandleLength, 0.0));
             BezierPoint lastPoint = bezierPath.getPoints().get(bezierPath.getPoints().size() - 1);
             lastPoint.setNextHandle(lastPoint.getAnchor().plus(new Point(defaultHandleLength, 0.0)));
         }
-        BezierPoint newPoint = new BezierPoint(p, prevPoint, null);
+        BezierPoint newPoint = new BezierPoint(mappedPoint, prevPoint, null);
         saveStateToUndoStack();
         bezierPath.addPoint(newPoint);
 
@@ -104,12 +126,16 @@ public class PathEditor extends JPanel {
         if (selectedPoint == null) {
             return;
         }
+        Point mappedPoint = p.minus(new Point(0, buttonPanel.getHeight()));
+        Point size = new Point(getWidth(), getHeight() - buttonPanel.getHeight());
+        mappedPoint = mappedPoint.minus(size.div(2));
+        mappedPoint = mappedPoint.div(ppi[0]);
         if (isPrevSelected) {
-            selectedPoint.setPreviousHandle(p);
+            selectedPoint.setPreviousHandle(mappedPoint);
         } else if (isNextSelected) {
-            selectedPoint.setNextHandle(p);
+            selectedPoint.setNextHandle(mappedPoint);
         } else {
-            selectedPoint.setAnchor(p);
+            selectedPoint.setAnchor(mappedPoint);
         }
         repaint();
     }
@@ -221,10 +247,24 @@ public class PathEditor extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+        BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.translate(0, buttonPanel.getHeight());
+        // center
+        g2d.translate((getWidth() - 144 * ppi[0]) / 2, (getHeight() - buttonPanel.getHeight() - 144 * ppi[0]) / 2);
+        try {
+            BufferedImage bg = ImageIO.read(new File("PathPlanner/src/main/resources/bg.png"));
+            g2d.drawImage(bg, 0, 0, (int) (144 * ppi[0]), (int) (144 * ppi[0]), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        bezierPath.draw(g2d);
-        bezierPath.drawHandles(g2d);
+        g2d.translate(72 * ppi[0], 72 * ppi[0]); // center
+
+        bezierPath.draw(g2d, ppi[0]);
+        bezierPath.drawHandles(g2d, ppi[0]);
+
+        g.drawImage(image, 0, 0, null);
     }
 }

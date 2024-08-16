@@ -39,16 +39,16 @@ public class BezierPoint {
         this.nextHandle = nextHandle;
     }
 
-    public boolean isAnchorNear(Point p) {
-        return anchor.distanceTo(p) < 15;
+    public boolean isAnchorNear(Point p, double threshold) {
+        return anchor.distanceTo(p) < threshold;
     }
 
-    public boolean isPrevNear(Point p) {
-        return previousHandle != null && previousHandle.distanceTo(p) < 10;
+    public boolean isPrevNear(Point p, double threshold) {
+        return previousHandle != null && previousHandle.distanceTo(p) < threshold;
     }
 
-    public boolean isNextNear(Point p) {
-        return nextHandle != null && nextHandle.distanceTo(p) < 10;
+    public boolean isNextNear(Point p, double threshold) {
+        return nextHandle != null && nextHandle.distanceTo(p) < threshold;
     }
 
     @Override
@@ -59,5 +59,14 @@ public class BezierPoint {
                 previousHandle == null ? null : previousHandle.copy(),
                 nextHandle == null ? null : nextHandle.copy()
         );
+    }
+
+    @Override
+    public String toString() {
+        return "BezierPoint{" +
+                "previousHandle=" + previousHandle +
+                ", anchor=" + anchor +
+                ", nextHandle=" + nextHandle +
+                '}';
     }
 }

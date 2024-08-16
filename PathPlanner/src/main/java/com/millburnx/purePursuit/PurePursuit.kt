@@ -73,6 +73,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
 
     fun renderPath(canvas: ICanvas) {
         canvas.drawImage("PathPlanner/src/main/resources/bg.png", 0.0, 0.0, 144.0, 144.0)
+//        canvas
             .setFill("#808080")
             .drawGrid(0.0, 0.0, 144.0, 144.0, 7, 7)
             .setFill("#D3D3D3")
@@ -80,8 +81,20 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         for (bezier in beziers) {
             bezier.draw(canvas)
         }
-        for (point in path) {
-            canvas.fillCircle(point.x, point.y, 1.0)
+//        for (point in path) {
+//            canvas.fillCircle(point.x, point.y, 1.0)
+//        }
+        var color = 0
+        val anchorColor = "#ffffff"
+        val prevHandleColor = "#ff00ff"
+        val nextHandleColor = "#00ff00"
+        val colors = listOf(anchorColor, nextHandleColor, prevHandleColor)
+        for ((index, point) in path.withIndex()) {
+            var colorString = colors[color]
+            color = (color + 1) % colors.size
+            canvas.setFill(colorString)
+                .fillCircle(point.x, point.y, 1.0)
+//                .fillText(index.toString(), point.x, point.y, "4px FreeSans", 0.0, false)
         }
     }
 
@@ -92,6 +105,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         renderPath(canvas)
 
         val distanceToFinal = robot.position.distanceTo(path.last())
+//        println(distanceToFinal)
         if (distanceToFinal < robot.lookahead) {
             if (distanceToFinal < 1.0) {
                 println("Reached the end of the path ${path.last()} with distance $distanceToFinal (ending at ${robot.position})")
