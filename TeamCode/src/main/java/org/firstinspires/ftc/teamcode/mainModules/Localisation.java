@@ -7,11 +7,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.maps.AprilTag;
 import org.firstinspires.ftc.teamcode.maps.AprilTagMapping;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 
-public class VisionManager {
+public class Localisation {
 
     private final ElapsedTime clock = new ElapsedTime();
     private double elapsedTime = 0;

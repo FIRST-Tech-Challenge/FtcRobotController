@@ -118,7 +118,6 @@ public class OnBoardVision {
 
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        List<List<Integer>> rerunList;
 
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
