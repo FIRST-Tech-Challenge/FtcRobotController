@@ -120,7 +120,7 @@ public class TeleOp extends OpMode {
         double deltaHeading = (deltaLeft - deltaRight) / encoderDistance;
         heading += deltaHeading;
 
-        double deltaX = deltaAux + (auxEncoderOffset * deltaHeading);
+        double deltaX = deltaAux - (auxEncoderOffset * deltaHeading); ///changed to a negative, as show in GM0
         double deltaY = (deltaLeft + deltaRight) / 2;
 
         xCoord += deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
@@ -128,8 +128,8 @@ public class TeleOp extends OpMode {
 
         double robotHeading = heading;//Math.toRadians(heading); //Might need degrees???
 
-        xCoord = xCoord / TICKS_PER_INCH;
-        yCoord = yCoord / TICKS_PER_INCH;
+        xCoord /= TICKS_PER_INCH;
+        yCoord /= TICKS_PER_INCH;
 
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
