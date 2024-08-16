@@ -72,13 +72,17 @@ class Point(val x: Double, val y: Double) {
         return java.awt.Point(x.toInt(), y.toInt())
     }
 
+    fun copy(): Point {
+        return Point(x, y)
+    }
+
     companion object {
         fun saveList(points: List<Point>, file: java.io.File) {
             val data = points.map { listOf(it.x.toString(), it.y.toString()) }
             TSV.bufferedWrite(file, data)
         }
 
-        fun readList(file: java.io.File): List<Point> {
+        fun loadList(file: java.io.File): List<Point> {
             val data = TSV.bufferedRead(file)
             return data.map { Point(it[0].toDouble(), it[1].toDouble()) }
         }

@@ -1,8 +1,11 @@
 package com.millburnx.pathplanner.components;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Color;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+
+import com.millburnx.purePursuit.Utils.Point;
 
 public class BezierPath {
     private final ArrayList<BezierPoint> points = new ArrayList<>();
@@ -19,13 +22,17 @@ public class BezierPath {
         if (points.size() >= 2) {
             Path2D path = new Path2D.Double();
             BezierPoint startPoint = points.get(0);
-            path.moveTo(startPoint.getAnchor().x, startPoint.getAnchor().y);
+            path.moveTo(startPoint.getAnchor().getX(), startPoint.getAnchor().getY());
 
             for (int i = 1; i < points.size(); i++) {
                 BezierPoint current = points.get(i);
                 BezierPoint previous = points.get(i - 1);
 
-                path.curveTo(previous.getHandle1().x, previous.getHandle1().y, current.getHandle2().x, current.getHandle2().y, current.getAnchor().x, current.getAnchor().y);
+                path.curveTo(
+                        previous.getNextHandle().getX(), previous.getNextHandle().getY(),
+                        current.getPreviousHandle().getX(), current.getPreviousHandle().getY(),
+                        current.getAnchor().getX(), current.getAnchor().getY()
+                );
             }
             g2d.setColor(Color.WHITE);
             g2d.draw(path);
@@ -36,17 +43,21 @@ public class BezierPath {
         for (int i = 0; i < points.size(); i++) {
             BezierPoint point = points.get(i);
             g2d.setColor(Color.GREEN);
-            g2d.fillOval(point.getAnchor().x - 5, point.getAnchor().y - 5, 10, 10);
+            g2d.fillOval((int) (point.getAnchor().getX() - 5), (int) (point.getAnchor().getY() - 5), 10, 10);
 
-            if (point.getHandle1() != null) {
+            if (point.getPreviousHandle() != null) {
                 g2d.setColor(Color.MAGENTA);
-                g2d.drawLine(point.getAnchor().x, point.getAnchor().y, point.getHandle1().x, point.getHandle1().y);
-                g2d.fillOval(point.getHandle1().x - 5, point.getHandle1().y - 5, 10, 10);
+                Point anchor = point.getAnchor();
+                Point handle = point.getPreviousHandle();
+                g2d.drawLine((int) anchor.getX(), (int) anchor.getY(), (int) handle.getX(), (int) handle.getY());
+                g2d.fillOval((int) (handle.getX() - 5), (int) (handle.getY() - 5), 10, 10);
             }
-            if (point.getHandle2() != null && i < points.size() - 1) {
+            if (point.getNextHandle() != null && i < points.size() - 1) {
                 g2d.setColor(Color.CYAN);
-                g2d.drawLine(point.getAnchor().x, point.getAnchor().y, point.getHandle2().x, point.getHandle2().y);
-                g2d.fillOval(point.getHandle2().x - 5, point.getHandle2().y - 5, 10, 10);
+                Point anchor = point.getAnchor();
+                Point handle = point.getNextHandle();
+                g2d.drawLine((int) anchor.getX(), (int) anchor.getY(), (int) handle.getX(), (int) handle.getY());
+                g2d.fillOval((int) (handle.getX() - 5), (int) (handle.getY() - 5), 10, 10);
             }
         }
     }

@@ -1,5 +1,7 @@
 package com.millburnx.pathplanner.components;
 
+import com.millburnx.purePursuit.Utils.Point;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -15,8 +17,8 @@ import java.util.stream.Collectors;
 public class PathEditor extends JPanel {
     private final BezierPath bezierPath = new BezierPath();
     private BezierPoint selectedPoint = null;
-    private Point selectedHandle = null;
-    private boolean isHandle1Selected = false;
+    private boolean isPrevSelected = false;
+    private boolean isNextSelected = false;
 
     private final List<List<BezierPoint>> undoStack = new ArrayList<>();
 
@@ -27,20 +29,21 @@ public class PathEditor extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                handleMousePressed(e.getPoint());
+                handleMousePressed(new Point(e.getPoint()));
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 selectedPoint = null;
-                selectedHandle = null;
+                isPrevSelected = false;
+                isNextSelected = false;
             }
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                handleMouseDragged(e.getPoint());
+                handleMouseDragged(new Point(e.getPoint()));
             }
         });
 
@@ -66,54 +69,46 @@ public class PathEditor extends JPanel {
         for (BezierPoint bp : bezierPath.getPoints()) {
             if (bp.isAnchorNear(p)) {
                 selectedPoint = bp;
+                isPrevSelected = false;
+                isNextSelected = false;
                 return;
-            } else if (bp.isHandle1Near(p)) {
-                selectedHandle = bp.getHandle1();
-                isHandle1Selected = true;
+            } else if (bp.isPrevNear(p)) {
+                selectedPoint = bp;
+                isPrevSelected = true;
+                isNextSelected = false;
                 return;
-            } else if (bp.isHandle2Near(p)) {
-                selectedHandle = bp.getHandle2();
-                isHandle1Selected = false;
+            } else if (bp.isNextNear(p)) {
+                selectedPoint = bp;
+                isPrevSelected = false;
+                isNextSelected = true;
                 return;
             }
         }
 
         // Adding a new point
-        Point handle1 = new Point(p.x + 50, p.y);
-        Point handle2 = null;
-
-        int pointCount = bezierPath.getPoints().size();
-        if (pointCount == 0) {
-            handle2 = null;
-        } else {
-            handle2 = new Point(p.x - 50, p.y);
+        Double defaultHandleLength = 50.0;
+        Point prevPoint = null;
+        if (!bezierPath.getPoints().isEmpty()) {
+            prevPoint = p.minus(new Point(defaultHandleLength, 0.0));
+            BezierPoint lastPoint = bezierPath.getPoints().get(bezierPath.getPoints().size() - 1);
+            lastPoint.setNextHandle(lastPoint.getAnchor().plus(new Point(defaultHandleLength, 0.0)));
         }
-
-        BezierPoint newPoint = new BezierPoint(p, handle1, handle2);
+        BezierPoint newPoint = new BezierPoint(p, prevPoint, null);
         saveStateToUndoStack();
         bezierPath.addPoint(newPoint);
-
-        if (pointCount > 0) {
-            BezierPoint previousPoint = bezierPath.getPoints().get(pointCount - 1);
-            if (previousPoint.getHandle2() == null && pointCount > 1) {
-                previousPoint.setHandle2(new Point(previousPoint.getAnchor().x - 50, previousPoint.getAnchor().y));
-            }
-        }
-
-        if (pointCount > 0) {
-            BezierPoint lastPoint = bezierPath.getPoints().get(bezierPath.getPoints().size() - 1);
-            if (lastPoint.getHandle2() == null) {
-                lastPoint.setHandle1(new Point(lastPoint.getAnchor().x + 50, lastPoint.getAnchor().y));
-            }
-        }
 
         repaint();
     }
 
     private void handleMouseDragged(Point p) {
-        if (selectedHandle != null) {
-            selectedHandle.setLocation(p);
-        } else if (selectedPoint != null) {
+        if (selectedPoint == null) {
+            return;
+        }
+        if (isPrevSelected) {
+            selectedPoint.setPreviousHandle(p);
+        } else if (isNextSelected) {
+            selectedPoint.setNextHandle(p);
+        } else {
             selectedPoint.setAnchor(p);
         }
         repaint();
@@ -148,23 +143,24 @@ public class PathEditor extends JPanel {
     private void savePath() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Path");
+        fileChooser.setCurrentDirectory(new File("paths"));
         int result = fileChooser.showSaveDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                List<BezierPoint> bezierPoints = bezierPath.getPoints();
-                List<com.millburnx.purePursuit.Utils.Point> points = bezierPoints.stream()
-                                .map(bp -> {
-                                    com.millburnx.purePursuit.Utils.Point anchor = new com.millburnx.purePursuit.Utils.Point(bp.getAnchor());
-                                    com.millburnx.purePursuit.Utils.Point handle1 = new com.millburnx.purePursuit.Utils.Point(bp.getHandle1());
-                                    com.millburnx.purePursuit.Utils.Point handle2 = bp.getHandle2() == null ? null : new com.millburnx.purePursuit.Utils.Point(bp.getHandle2());
-                                    return new com.millburnx.purePursuit.Utils.Point[] { anchor, handle1, handle2 };
-                                }).flatMap(Arrays::stream).filter(p -> p != null).collect(Collectors.toList());
-                List<com.millburnx.purePursuit.Utils.Point> actual = points.subList(0, points.size() - 1); // drop the last handle
-                System.out.println(actual);
-                System.out.println(actual.size());
-                com.millburnx.purePursuit.Utils.Point.Companion.saveList(actual, file);
+                // prev? anchor next ...
+                List<Point> points = bezierPath.getPoints().stream()
+                        .flatMap(bp -> Arrays.asList(
+                                bp.getPreviousHandle(),
+                                bp.getAnchor(),
+                                bp.getNextHandle()
+                        ).stream())
+                        .filter(p -> p != null)
+                        .collect(Collectors.toList());
+                System.out.println("Saving to file: " + file.getAbsolutePath());
+                System.out.println(points);
+                Point.Companion.saveList(points, file);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error saving path: " + ex.getMessage());
             }
@@ -174,14 +170,24 @@ public class PathEditor extends JPanel {
     private void loadPath() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Load Path");
+        fileChooser.setCurrentDirectory(new File("paths"));
         int result = fileChooser.showOpenDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
                 saveStateToUndoStack();
-                // Implement the path loading logic here
-                // bezierPath.loadPath(file);
+                // TODO: Implement the path loading logic here
+                List<Point> points = Point.Companion.loadList(file);
+                List<BezierPoint> bezierPoints = new ArrayList<>();
+                for (int i = 0; i < points.size(); i += 3) {
+                    Point prev = i == 0 ? null : points.get(i - 1);
+                    Point anchor = points.get(i);
+                    Point next = i + 1 < points.size() ? points.get(i + 1) : null;
+                    bezierPoints.add(new BezierPoint(anchor, prev, next));
+                }
+                bezierPath.getPoints().clear();
+                bezierPath.getPoints().addAll(bezierPoints);
                 repaint();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error loading path: " + ex.getMessage());
