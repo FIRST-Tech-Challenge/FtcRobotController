@@ -99,12 +99,20 @@ public class Gimbal {
                 gimbalPitch.setPosition(pitchPosition);
             }*/
 
-
+        wantedYaw = normalize(wantedYaw);
+        wantedPitch = normalize(wantedPitch);
         gimbalPos.setPosition(wantedYaw);
         gimbalPitch.setPosition(wantedPitch);
         gimbalYaw.setPosition(wantedYaw);
 
 
+    } private double normalize (double tooBig){
+        if (tooBig<0){
+            return 0;
+        } if (tooBig>1){
+            return 1;
+        }
+        return tooBig;
     }
 
     private double calculateServoAngle (double xy, double z, double potMeter) {

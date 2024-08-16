@@ -60,29 +60,35 @@ public class Erection {
 
    */
 
-    public void raise(double rightStick, boolean bottom, boolean height80, boolean height100, boolean climax) {
+    public void raise(double rightStick, boolean bottom, boolean height80, boolean height100, boolean height120) {
 
         if (!isInitError) {
             try {
                 if (bottom) {
-                    runToHeight(0);
+                    runToHeight(1500);
                 }
                 if (height80) {
-                    runToHeight(1184);
+                    runToHeight(7200);
                 }
                 if (height100) {
-                    runToHeight(1480);
+                    runToHeight(9380);
                 }
-                if (climax) {
-                    runToHeight(13000); //troll :P
+                if (height120) {
+                    runToHeight(1100);
                 }
-                if (!(height80 || height100 || bottom || climax)) {
-                    frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //runs using speed
-                    backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    //if (!(height() >= 13000)) {  bit bad lähenemine
-                    frontElevatorEx.setVelocity(rightStick * 1972.92);
-                    backElevatorEx.setVelocity(-rightStick * 1972.92);
-                   // }
+                if (!(height80 || height100 || bottom || height120)) {
+
+                        frontElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //runs using speed
+                        backElevatorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                        frontElevatorEx.setPower(-rightStick); // set max power
+                        backElevatorEx.setPower(-rightStick);
+                        /*
+                        //if (!(height() >= 13000)) {  bit bad lähenemine
+                        frontElevatorEx.setVelocity(rightStick * 1972.92);
+                        backElevatorEx.setVelocity(-rightStick * 1972.92);*/
+
+
                 }
 
 

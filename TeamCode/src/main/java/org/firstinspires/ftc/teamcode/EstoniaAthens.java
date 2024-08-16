@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.mainModules.Erection;
 import org.firstinspires.ftc.teamcode.mainModules.MoveRobot;
 import org.firstinspires.ftc.teamcode.mainModules.Presses;
 import org.firstinspires.ftc.teamcode.mainModules.Gimbal;
-import org.firstinspires.ftc.teamcode.mainModules.VisionManager;
+import org.firstinspires.ftc.teamcode.mainModules.Localisation;
 
 @TeleOp(name = "Main code EstoniaAthens")
 // allows to display the code in the driver station, comment out to remove
@@ -36,7 +36,7 @@ public class EstoniaAthens extends LinearOpMode { //file name is Main.java    ex
   //  Presses gamepad2_dpad_left;
     //Presses gamepad2_dpad_right;
 
-    VisionManager visionManager;
+    Localisation localisation;
     double[] positionData = {
             0, //x
             0, //y
@@ -76,8 +76,8 @@ public class EstoniaAthens extends LinearOpMode { //file name is Main.java    ex
         //gamepad2_dpad_right = new Presses();
 
 
-        visionManager = new VisionManager();
-        visionManager.initVision(hardwareMap, telemetry);
+        localisation = new Localisation();
+        localisation.initVision(hardwareMap, telemetry);
 
         gimbal = new Gimbal();
         gimbal.initGimbal(hardwareMap, telemetry);
@@ -104,9 +104,9 @@ public class EstoniaAthens extends LinearOpMode { //file name is Main.java    ex
             erection.raise(
                     gamepad2.right_stick_y, //raise back
                     gamepad2.a,
+                    gamepad2.x,
                     gamepad2.b,
-                    gamepad2.y,
-                    gamepad2.x
+                    gamepad2.y
             );
 
             erection.release(
@@ -136,7 +136,7 @@ public class EstoniaAthens extends LinearOpMode { //file name is Main.java    ex
             //telemetry.addData("field centric", gamepad1_a.returnToggleState());
             //telemetry.addData("traction control", gamepad1_b.returnToggleState());
             //telemetry.addData("PositionData", positionData[0]);
-            positionData = visionManager.returnPositionData(true);
+            positionData = localisation.returnPositionData(true);
             //pos
 
             telemetry.update();
