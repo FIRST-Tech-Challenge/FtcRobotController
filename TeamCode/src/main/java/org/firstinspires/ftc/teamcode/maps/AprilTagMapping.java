@@ -22,12 +22,13 @@ public class AprilTagMapping {
         return aprilTags;
     }
 
-    public static int[] getTagLocation(int tagID) {
+    public int[] getTagLocation(int tagID) throws Exception{
         AprilTag tag = aprilTags.get(tagID);
         if (tag != null) {
             return new int[]{tag.getX(), tag.getY(), tag.getZ()};
         } else {
-            return new int[]{-1, -1, -1}; // Or some default value or throw an exception
+            throw new Exception("tag does not exist");
         }
     }
+
 }

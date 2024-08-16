@@ -22,31 +22,10 @@ public class MoveRobot {
     private DcMotorEx rightFrontDriveEx = null;  //  Used to control the right front drive wheel
     private DcMotorEx leftBackDriveEx = null;  //  Used to control the left back drive wheel
     private DcMotorEx rightBackDriveEx = null;  //  Used to control the right back drive wheel
-    private IMU imu;
+
     private HardwareMap hardwareMap; //creating objects so that they could be mapped when initMoveRobot is called by the main program
     private Telemetry telemetry;
 
-    private boolean imuError = false;
-    private boolean imuInitError = false;
-
-    private void initImu() {
-        try {
-            // Initializing imu to avoid errors
-            imu = hardwareMap.get(IMU.class, "imu");
-
-            RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-            RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
-
-            RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-            imu.initialize(new IMU.Parameters(orientationOnRobot));
-
-            imu.resetYaw();
-            imuInitError = false;
-        } catch (Exception e) {
-            imuInitError = true;
-        }
-    }
 
     public void initMoveRobot(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
 
@@ -56,9 +35,6 @@ public class MoveRobot {
 
         tractionControl = new TractionControl();
         tractionControl.initTractionControl(hardwareMap, telemetry);
-
-        //init imu with safeguards
-        initImu();
 
         // Mapping motors
         rightFrontDriveEx = hardwareMap.get(DcMotorEx.class, "Motor_Port_0_CH");
@@ -80,18 +56,15 @@ public class MoveRobot {
 
     // a test to return the apriltag(s) position for testing
         // the main function for moving the robot
-    public void move ( double drive, double strafe, double turn, boolean fieldCentric,
+    public void move (double heading, double drive, double strafe, double turn, boolean fieldCentric,
         boolean tractionControlToggle, boolean cameraToggle){
 
             {
                 if (fieldCentric) {
                     try {
-                        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
                         x = drive * Math.cos(heading) - strafe * Math.sin(heading);
                         y = drive * Math.sin(heading) + strafe * Math.cos(heading);
-                        imuError = false;
                     } catch (Exception e) {
-                        imuError = true;
                         x = drive;
                         y = strafe;
                     }
@@ -142,23 +115,6 @@ public class MoveRobot {
                 telemetry.addData("rightBack", rightBackDriveEx.getVelocity());
                 telemetry.addData("rightFront", rightFrontDriveEx.getVelocity());*/
             }
-
-            if (imuInitError) {
-                telemetry.addData("Imu innit error", true);
-                initImu();
-            }
-
-            if (imuError){
-                telemetry.addData("imu", "error");
-            } else {
-                try {
-                    //telemetry.addData("imu", imu.getRobotYawPitchRollAngles());
-                } catch (Exception e) {
-                    imuError = true;
-                }
-            }
-
-
 
         }
     }

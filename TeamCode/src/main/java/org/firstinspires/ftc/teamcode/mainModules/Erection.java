@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.mainModules;  //place where the code is l
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -33,6 +34,8 @@ public class Erection {
 
             frontElevatorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backElevatorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            backElevatorEx.setDirection(DcMotorSimple.Direction.FORWARD);
 
             frontElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backElevatorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -74,7 +77,7 @@ public class Erection {
                     runToHeight(9380);
                 }
                 if (height120) {
-                    runToHeight(1100);
+                    runToHeight(11000);
                 }
                 if (!(height80 || height100 || bottom || height120)) {
 

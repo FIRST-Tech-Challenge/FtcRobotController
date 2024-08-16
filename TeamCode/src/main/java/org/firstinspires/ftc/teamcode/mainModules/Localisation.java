@@ -28,6 +28,8 @@ public class Localisation {
     private boolean onBoardInitError = false;
     private boolean externalInitError = false;
 
+    private AprilTagMapping aprilTagMapping;
+
     public void initVision(HardwareMap hardwareMapPorted, Telemetry telemetryPorted) {
         hardwareMap = hardwareMapPorted;
         telemetry = telemetryPorted;
@@ -49,19 +51,15 @@ public class Localisation {
         }
     }
 
-    public double[] returnPositionData(boolean forceOnBoardProcessor) {
+    public double[] returnPositionData(boolean forceOnBoardProcessor, double pitchAngle) {
         boolean isUpdated = false;
         double[] robotPosition = new double[]{-1, -1, -1}; //set deafult value to -1 if not detected because robots position cant be negative
         double poseX = 0; //if 0:0 the gimbal will not move so 0:0 is the deafult return
         double poseY = 0;
         double poseZ = 0;
-        double upDatedFrame = 0;
+        double isPositionData = 0;
         try {
-            if ((clock.milliseconds() - elapsedTime) > 33.333) {
-                upDatedFrame = 1;
-                elapsedTime = clock.milliseconds();
-            }
-
+            //try to get telemetry from external computer
             if (!forceOnBoardProcessor && !externalInitError) {
                 try {
                     aprilTagDetections = externalVision.returnAprilTagData();
@@ -70,7 +68,7 @@ public class Localisation {
                     telemetry.addData("External Vision Error", e3.getMessage());
                 }
             }
-
+            // if no data is returned try the onboard processor
             if (!isUpdated && !onBoardInitError) {
                 try {
                     aprilTagDetections = onBoardVision.returnAprilTagData();
@@ -87,8 +85,15 @@ public class Localisation {
                     poseY = detection.ftcPose.y;
                     poseZ = detection.ftcPose.z;
 
-                    robotPosition = calculateRobotPosition();
 
+
+                    robotPosition = calculateRobotPosition(
+                            detection.id,
+                            detection.ftcPose.x,
+                            detection.ftcPose.y,
+                            detection.ftcPose.z,
+                            pitchAngle
+                            );
                 }
             }
 
@@ -98,12 +103,24 @@ public class Localisation {
         }
         return new double[]{
                 robotPosition[0], robotPosition[1], robotPosition[2],
-                poseX, poseY, poseZ, upDatedFrame
+                poseX, poseY, poseZ, isPositionData
         };
     }
-    private double[] calculateRobotPosition() {
-            // Implement logic to calculate the robot's position
-        return new double[]{1, 1, 1};
+    private double[] calculateRobotPosition(int ID, double poseX, double poseY, double poseZ, double potentiometer) throws Exception{
+
+            int[] tagPosition = aprilTagMapping.getTagLocation(ID);
+
+
+            double[] cameraPosition = relativeToCamera(tagPosition[0], tagPosition[1], tagPosition[2], poseX, poseY, poseZ);
+
+
+        return compensateForCameraPosition(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+    }
+    private double[] relativeToCamera(int tagX, int tagY, int tagZ, double poseX, double poseY, double poseZ){
+        return new double[]{-1, -1, -1};
+    }
+    private double[] compensateForCameraPosition(double cameraX, double cameraY, double cameraZ){
+        return new double[]{-1, -1, -1};
     }
 
     //check if some errors passed

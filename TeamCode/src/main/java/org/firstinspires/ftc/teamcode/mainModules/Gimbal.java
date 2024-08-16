@@ -35,11 +35,11 @@ public class Gimbal {
         gimbalPos = hardwareMapPorted.get(Servo.class, "Servo_Port_2_CH");
     }
 
-    public double AnglePosition() {return (potentiometer.getVoltage() * 81.8);} // 3.3v, 270 degrees
+    public double anglePosition() {return (potentiometer.getVoltage() * 81.8);} // 3.3v, 270 degrees
     
 
     public void telemetryGimbal() {
-        telemetry.addData("Potentiometer Angle", AnglePosition());
+        telemetry.addData("Potentiometer Angle", anglePosition());
     }
 
     public void untuck() {
@@ -59,7 +59,7 @@ public class Gimbal {
         wantedPitch = 1;
 
     }
-    public void moveGimbal(boolean automatic, boolean moveManual, double manualX,
+    public double moveGimbal(boolean automatic, boolean moveManual, double manualX,
                            double manualY, double ftcPoseX, double ftcPoseY, double ftcPoseZ, boolean upDateAutomatic){
         telemetry.addData("automaticGimbal", automatic);
         telemetry.addData("moveManual", moveManual);
@@ -105,6 +105,7 @@ public class Gimbal {
         gimbalPitch.setPosition(wantedPitch);
         gimbalYaw.setPosition(wantedYaw);
 
+        return anglePosition();
 
     } private double normalize (double tooBig){
         if (tooBig<0){
