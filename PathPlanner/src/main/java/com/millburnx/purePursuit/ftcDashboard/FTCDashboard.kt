@@ -20,7 +20,6 @@ class FTCDashboard(ppi: Double) : IFTCDashboard {
         }
 
         override fun paintComponent(g: Graphics) {
-            println("rendering")
             super.paintComponent(g)
 //            val g2d = graphics as Graphics2D
             val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
@@ -32,17 +31,13 @@ class FTCDashboard(ppi: Double) : IFTCDashboard {
                 op.draw(g2d, ppi)
             }
             g.drawImage(bufferedImage, 0, 0, null)
-            println("done")
         }
     }
 
     val panel: Panel = Panel(ppi)
     private var currentPacket: ITelemetryPacket = TelemetryPacket()
     override fun sendTelemetryPacket(telemetryPacket: ITelemetryPacket) {
-//        TODO("Not yet implemented")
         currentPacket = telemetryPacket
-//        SwingUtilities.invokeAndWait { panel.repaint() }
-        println("Sent telemetry packet")
         panel.repaint()
     }
 }

@@ -1,6 +1,6 @@
 package com.millburnx.purePursuit.ftcDashboard
 
-import com.millburnx.purePursuit.Point
+import com.millburnx.purePursuit.Utils.Point
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Font
@@ -120,8 +120,6 @@ class Image(
             g2d.transform = AffineTransform()
         }
         g2d.rotate(theta, pivotX * ppi, pivotY * ppi)
-        println(File("./").absolutePath)
-        println(File(path).absolutePath)
         val image = ImageIO.read(File(path))
         g2d.drawImage(image, (x * ppi).toInt(), (y * ppi).toInt(), (width * ppi).toInt(), (height * ppi).toInt(), null)
         g2d.transform = prevTransform

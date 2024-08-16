@@ -1,4 +1,8 @@
 package com.millburnx.purePursuit
+
+import com.millburnx.purePursuit.Utils.Circle
+import com.millburnx.purePursuit.Utils.Point
+import com.millburnx.purePursuit.Utils.Utils
 import kotlin.math.abs
 
 class Robot(size: Point, val lookahead: Double = 14.0) {

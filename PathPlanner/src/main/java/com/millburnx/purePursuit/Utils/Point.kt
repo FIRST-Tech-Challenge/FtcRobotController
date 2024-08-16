@@ -1,10 +1,13 @@
-package com.millburnx.purePursuit
+package com.millburnx.purePursuit.Utils
+
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
 class Point(val x: Double, val y: Double) {
+    constructor(point: java.awt.Point) : this(point.x.toDouble(), point.y.toDouble())
+
     operator fun plus(point: Point): Point {
         return Point(x + point.x, y + point.y)
     }
@@ -59,5 +62,13 @@ class Point(val x: Double, val y: Double) {
         val x = this.x * cos(heading) - this.y * sin(heading)
         val y = this.x * sin(heading) + this.y * cos(heading)
         return Point(x, y)
+    }
+
+    fun lerp(other: Point, t: Double): Point {
+        return this + (other - this) * t
+    }
+
+    fun awt(): java.awt.Point {
+        return java.awt.Point(x.toInt(), y.toInt())
     }
 }

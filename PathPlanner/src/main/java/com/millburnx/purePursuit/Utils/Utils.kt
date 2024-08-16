@@ -1,4 +1,5 @@
-package com.millburnx.purePursuit
+package com.millburnx.purePursuit.Utils
+
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin

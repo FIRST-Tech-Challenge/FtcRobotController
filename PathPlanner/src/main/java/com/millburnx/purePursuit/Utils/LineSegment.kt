@@ -1,4 +1,4 @@
-package com.millburnx.purePursuit
+package com.millburnx.purePursuit.Utils
 
 class LineSegment(val p1: Point, val p2: Point) : Line(p1, p2) {
     override fun intersections(circle: Circle): List<Intersection> {

@@ -1,4 +1,6 @@
 package com.millburnx.purePursuit
+
+import com.millburnx.purePursuit.Utils.Point
 import com.millburnx.purePursuit.ftcDashboard.FTCDashboard
 import java.awt.Color
 

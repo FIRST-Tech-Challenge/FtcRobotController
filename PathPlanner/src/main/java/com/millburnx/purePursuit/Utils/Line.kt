@@ -1,4 +1,5 @@
-package com.millburnx.purePursuit
+package com.millburnx.purePursuit.Utils
+
 import kotlin.math.abs
 import kotlin.math.sqrt
 

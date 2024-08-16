@@ -25,18 +25,7 @@ public class BezierPath {
                 BezierPoint current = points.get(i);
                 BezierPoint previous = points.get(i - 1);
 
-                if (current.getHandle2() != null) {
-                    path.curveTo(
-                            previous.getHandle1().x, previous.getHandle1().y,
-                            current.getHandle2().x, current.getHandle2().y,
-                            current.getAnchor().x, current.getAnchor().y
-                    );
-                } else {
-                    path.quadTo(
-                            previous.getHandle1().x, previous.getHandle1().y,
-                            current.getAnchor().x, current.getAnchor().y
-                    );
-                }
+                path.curveTo(previous.getHandle1().x, previous.getHandle1().y, current.getHandle2().x, current.getHandle2().y, current.getAnchor().x, current.getAnchor().y);
             }
             g2d.setColor(Color.WHITE);
             g2d.draw(path);

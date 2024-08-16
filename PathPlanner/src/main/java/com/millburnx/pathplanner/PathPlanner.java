@@ -25,7 +25,7 @@ public class PathPlanner {
             frame2.getContentPane().add(purePursuit.getFtcDashboard().getPanel());
             frame2.setVisible(true);
 
-            // I have no idea why this needs to be multithreaded but it just breaks rendering if it isn't
+            // I have no idea why this needs to be multithreaded, but it just breaks rendering for both windows if it isn't
             Thread one = new Thread(purePursuit::start);
             one.start();
         });

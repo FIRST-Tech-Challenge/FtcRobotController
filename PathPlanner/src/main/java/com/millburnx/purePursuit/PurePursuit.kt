@@ -1,5 +1,9 @@
 package com.millburnx.purePursuit
 
+import com.millburnx.purePursuit.Utils.Intersection
+import com.millburnx.purePursuit.Utils.LineSegment
+import com.millburnx.purePursuit.Utils.Point
+import com.millburnx.purePursuit.Utils.Utils
 import com.millburnx.purePursuit.ftcDashboard.ICanvas
 import com.millburnx.purePursuit.ftcDashboard.TelemetryPacket
 import kotlin.math.abs
