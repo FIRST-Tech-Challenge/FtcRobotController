@@ -7,7 +7,6 @@ import static java.lang.Thread.sleep;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -36,14 +35,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -118,8 +114,6 @@ class DashboardWindow extends JFrame {
         setLocation(400, 0);
         setResizable(false);
 
-        BoxLayout layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
-
         Choice dropDown = new Choice();
         for (OpModeChoice opMode: opModeChoices) {
             dropDown.add(opMode.fullName);
@@ -166,7 +160,7 @@ class DashboardWindow extends JFrame {
                     WilyCore.status = new WilyCore.Status(WilyCore.State.INITIALIZED, opModeChoice.klass, button);
                     dropDown.setMaximumSize(new Dimension(0, 0));
                     dropDown.setVisible(false); // Needed for long opMode names, for whatever reason
-                    button.setText("Start");
+                    button.setText("\u25B6");
 
                     opModeName = opModeChoice.fullName;
                     preferences.put("opmode", opModeName);
@@ -422,8 +416,6 @@ class Field {
  * interface with the guest application.
  */
 public class WilyCore {
-    private static final double DELTA_T = 0.100; // 100ms
-
     public static WilyWorks.Config config;
     public static Gamepad gamepad1;
     public static Gamepad gamepad2;
@@ -652,6 +644,7 @@ public class WilyCore {
                 linearOpMode.runOpMode();
             } catch (Exception exception) {
                 // There was an exception. Print the stack trace to stdout:
+                //noinspection CallToPrintStackTrace
                 exception.printStackTrace();
 
                 // Now put the stack trace into a popup:
@@ -712,7 +705,7 @@ public class WilyCore {
 
         // Enumerate all opModes and find a configuration class:
         Annotations annotations = getAnnotations();
-        if (annotations.opModeChoices.size() == 0) {
+        if (annotations.opModeChoices.isEmpty()) {
             String message = "Couldn't find any @TeleOp or @Autonomous classes in your package.\n\nIs the SRC_ROOT"
                 + "environment variable set correctly in the WilyWorks configuration you created?";
             JOptionPane.showMessageDialog(null, message, "Exception",

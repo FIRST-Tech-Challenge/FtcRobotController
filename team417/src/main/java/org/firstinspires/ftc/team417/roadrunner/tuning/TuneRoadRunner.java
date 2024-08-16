@@ -1395,9 +1395,12 @@ public class TuneRoadRunner extends LinearOpMode {
         tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
         tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
 
-        telemetry.addLine("<big><big><big><big><big><big><big><big><b>Press START");
+        telemetry.addLine("<big><big><big><big><big><big><big><big><b>Press \u25B6");
         telemetry.update();
         waitForStart();
+
+        while (opModeIsActive() && !ui.prompt("<big><big><big><big><big><big><big><b>Press Gamepad A"))
+            ;
 
         int selection = 0;
         while (opModeIsActive()) {
