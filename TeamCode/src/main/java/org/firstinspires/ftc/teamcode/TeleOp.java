@@ -13,7 +13,7 @@ public class TeleOp extends OpMode {
     private DcMotor backRight;
     private IMU gyro;
 
-    double leftOffset, rightOffset;
+    double leftOffset, rightOffset, auxOffset;
 
     public DcMotor leftEncoder, rightEncoder, auxEncoder;
 
@@ -85,6 +85,10 @@ public class TeleOp extends OpMode {
             //If in DeadWheel mode
             leftOffset = leftEncoder.getCurrentPosition();
             rightOffset = rightEncoder.getCurrentPosition();
+
+            lastLeftPos = 0;
+            lastRightPos = 0;
+            lastAuxPos = 0;
         }
 
         // Offsets the encoders position to zero when zero function is updated.
@@ -97,6 +101,11 @@ public class TeleOp extends OpMode {
             rightPos -= rightOffset;
         } else {
             rightPos += rightOffset;
+        }
+        if(auxOffset >= 0){
+            auxPos -= auxOffset;
+        } else {
+            auxPos += auxOffset;
         }
 
         double deltaLeft = leftPos - lastLeftPos;
@@ -117,7 +126,7 @@ public class TeleOp extends OpMode {
         xCoord += deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
         yCoord += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
 
-        double robotHeading = Math.toRadians(heading); //Might need degrees???
+        double robotHeading = heading;//Math.toRadians(heading); //Might need degrees???
 
         xCoord = xCoord / TICKS_PER_INCH;
         yCoord = yCoord / TICKS_PER_INCH;
