@@ -22,6 +22,9 @@ public class Erection {
     private void mapMotors() {
         try {
 
+            leftServo = hardwareMap.get(Servo.class, "Servo_Port_4_CH");
+            rightServo = hardwareMap.get(Servo.class, "Servo_Port_3_CH");
+
             //map Dc motors with encoders, it is in a try, catch because if the expansion hub is not
             //properly connected the robot will throw an error and prevent the code from running
 
@@ -92,6 +95,20 @@ public class Erection {
             telemetry.addData("erectile initialization disfunction", true);
             mapMotors();
         }
+    }
+
+    public void release(boolean left, boolean right) {
+        if (left){
+            leftServo.setPosition(0);
+        } else {
+            leftServo.setPosition(0.5);
+        }
+        if (right){
+            rightServo.setPosition(1);
+        } else {
+            rightServo.setPosition(0.5);
+        }
+
     }
 
     public void runToHeight(int height) {
