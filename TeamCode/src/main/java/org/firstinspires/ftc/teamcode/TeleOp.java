@@ -13,7 +13,7 @@ public class TeleOp extends OpMode {
     private DcMotor backRight;
     private IMU gyro;
 
-    double leftOffset, rightOffset;
+    double leftOffset, rightOffset, auxOffset;
 
     public DcMotor leftEncoder, rightEncoder, auxEncoder;
 
@@ -24,6 +24,7 @@ public class TeleOp extends OpMode {
     private double lastLeftPos = 0, lastRightPos = 0, lastAuxPos = 0;
 
     double COUNTS_PER_INCH = 5945.0514285952;
+    double TICKS_PER_INCH = 1946.69; //1892.37; // Ticks per inch = 8192 ticks pet rev / Circumference in inches
     double encoderDistance = 8.5;
     double auxEncoderOffset = -2.48;
 
@@ -84,6 +85,10 @@ public class TeleOp extends OpMode {
             //If in DeadWheel mode
             leftOffset = leftEncoder.getCurrentPosition();
             rightOffset = rightEncoder.getCurrentPosition();
+
+            lastLeftPos = 0;
+            lastRightPos = 0;
+            lastAuxPos = 0;
         }
 
         // Offsets the encoders position to zero when zero function is updated.
@@ -96,6 +101,11 @@ public class TeleOp extends OpMode {
             rightPos -= rightOffset;
         } else {
             rightPos += rightOffset;
+        }
+        if(auxOffset >= 0){
+            auxPos -= auxOffset;
+        } else {
+            auxPos += auxOffset;
         }
 
         double deltaLeft = leftPos - lastLeftPos;
@@ -110,18 +120,20 @@ public class TeleOp extends OpMode {
         double deltaHeading = (deltaLeft - deltaRight) / encoderDistance;
         heading += deltaHeading;
 
-        double deltaX = deltaAux + (auxEncoderOffset * deltaHeading);
+        double deltaX = deltaAux - (auxEncoderOffset * deltaHeading); ///changed to a negative, as show in GM0
         double deltaY = (deltaLeft + deltaRight) / 2;
 
         xCoord += deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
         yCoord += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
 
-        double robotHeading = Math.toRadians(heading); //Might need degrees???
+        double robotHeading = heading;//Math.toRadians(heading); //Might need degrees???
+
+        xCoord /= TICKS_PER_INCH;
+        yCoord /= TICKS_PER_INCH;
 
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double h = -gamepad1.right_stick_x;
-
 
         double finalX = x * Math.cos(robotHeading) - y * Math.sin(robotHeading);
         double finalY = x * Math.sin(robotHeading) + y * Math.cos(robotHeading);
@@ -140,7 +152,7 @@ public class TeleOp extends OpMode {
 
         telemetry.addData("X Pos:", xCoord);
         telemetry.addData("Y Pos", yCoord);
-        telemetry.addData("Heading", Math.toDegrees(robotHeading));
+        telemetry.addData("Heading", heading);
         telemetry.addData("Enc Left ", leftEncoder.getCurrentPosition());
         telemetry.addData("Enc Right", rightEncoder.getCurrentPosition());
         telemetry.addData("Enc Aux  ", auxEncoder.getCurrentPosition());
