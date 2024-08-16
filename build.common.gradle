@@ -59,13 +59,13 @@ android {
          * We keep the versionCode and versionName of robot controller applications in sync with
          * the master information published in the AndroidManifest.xml file of the FtcRobotController
          * module. This helps avoid confusion that might arise from having multiple versions of
-         * a robot controller app simultaneously installed on a robot controller device.
+         * a.tsv robot controller app simultaneously installed on a.tsv robot controller device.
          *
-         * We accomplish this with the help of a funky little Groovy script that maintains that
+         * We accomplish this with the help of a.tsv funky little Groovy script that maintains that
          * correspondence automatically.
          *
-         * @see <a href="http://developer.android.com/tools/building/configuring-gradle.html">Configure Your Build</a>
-         * @see <a href="http://developer.android.com/tools/publishing/versioning.html">Versioning Your App</a>
+         * @see <a.tsv href="http://developer.android.com/tools/building/configuring-gradle.html">Configure Your Build</a.tsv>
+         * @see <a.tsv href="http://developer.android.com/tools/publishing/versioning.html">Versioning Your App</a.tsv>
          */
         def manifestFile = project(':FtcRobotController').file('src/main/AndroidManifest.xml');
         def manifestText = manifestFile.getText()

@@ -8,7 +8,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PathEditor extends JPanel {
     private final BezierPath bezierPath = new BezierPath();
@@ -151,7 +153,18 @@ public class PathEditor extends JPanel {
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                // Implement the path saving logic here
+                List<BezierPoint> bezierPoints = bezierPath.getPoints();
+                List<com.millburnx.purePursuit.Utils.Point> points = bezierPoints.stream()
+                                .map(bp -> {
+                                    com.millburnx.purePursuit.Utils.Point anchor = new com.millburnx.purePursuit.Utils.Point(bp.getAnchor());
+                                    com.millburnx.purePursuit.Utils.Point handle1 = new com.millburnx.purePursuit.Utils.Point(bp.getHandle1());
+                                    com.millburnx.purePursuit.Utils.Point handle2 = bp.getHandle2() == null ? null : new com.millburnx.purePursuit.Utils.Point(bp.getHandle2());
+                                    return new com.millburnx.purePursuit.Utils.Point[] { anchor, handle1, handle2 };
+                                }).flatMap(Arrays::stream).filter(p -> p != null).collect(Collectors.toList());
+                List<com.millburnx.purePursuit.Utils.Point> actual = points.subList(0, points.size() - 1); // drop the last handle
+                System.out.println(actual);
+                System.out.println(actual.size());
+                com.millburnx.purePursuit.Utils.Point.Companion.saveList(actual, file);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error saving path: " + ex.getMessage());
             }

@@ -6,7 +6,7 @@ import com.millburnx.purePursuit.ftcDashboard.TelemetryPacket
 import kotlin.math.abs
 
 class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateHertz) {
-    val path: List<Point> = listOf(
+    private val path: List<Point> = listOf(
         Point(0.0, 0.0),
         Point(48.0, 0.0),
         Point(48.0, -48.0),
@@ -16,12 +16,12 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         Point(-48.0, 48.0),
     )
 
-    var beziers: List<Bezier> = Utils.pathToBeziers(path)
+    private var beziers: List<Bezier> = Utils.pathToBeziers(path)
 
-    var lastIntersection: Intersection<Bezier> = Intersection(path[0], beziers[0]) // start of the path
-    var lastSegment: Int = 0 // prevent backtracking
+    private var lastIntersection: Intersection<Bezier> = Intersection(path[0], beziers[0]) // start of the path
+    private var lastSegment: Int = 0 // prevent backtracking
 
-    val prevPosition: MutableList<Point> = mutableListOf()
+    private val prevPosition: MutableList<Point> = mutableListOf()
 
     override fun init() {
         println("Initializing Pure Pursuit")
