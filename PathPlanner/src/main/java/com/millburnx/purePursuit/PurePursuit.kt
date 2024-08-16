@@ -58,6 +58,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
     fun loadPath() {
         val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.LOAD)
         fileDialog.directory = File("paths").absolutePath
+        fileDialog.file = "*.tsv"
         fileDialog.isVisible = true
         val file = fileDialog.file
         if (file == null) {

@@ -141,57 +141,63 @@ public class PathEditor extends JPanel {
     }
 
     private void savePath() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Save Path");
-        fileChooser.setCurrentDirectory(new File("paths"));
-        int result = fileChooser.showSaveDialog(this);
+        FileDialog fileDialog = new FileDialog((Frame) null, "Save Path", FileDialog.SAVE);
+        fileDialog.setDirectory("paths");
+        fileDialog.setFile("*.tsv");
+        fileDialog.setVisible(true);
+        String filename = fileDialog.getFile();
+        if (filename == null) {
+            return;
+        }
 
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            try {
-                // prev? anchor next ...
-                List<Point> points = bezierPath.getPoints().stream()
-                        .flatMap(bp -> Arrays.asList(
-                                bp.getPreviousHandle(),
-                                bp.getAnchor(),
-                                bp.getNextHandle()
-                        ).stream())
-                        .filter(p -> p != null)
-                        .collect(Collectors.toList());
-                System.out.println("Saving to file: " + file.getAbsolutePath());
-                System.out.println(points);
-                Point.Companion.saveList(points, file);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error saving path: " + ex.getMessage());
-            }
+        File file = new File(fileDialog.getDirectory(), filename);
+        try {
+            // prev? anchor next ...
+            List<Point> points = bezierPath.getPoints().stream()
+                    .flatMap(bp -> Arrays.asList(
+                            bp.getPreviousHandle(),
+                            bp.getAnchor(),
+                            bp.getNextHandle()
+                    ).stream())
+                    .filter(p -> p != null)
+                    .collect(Collectors.toList());
+            System.out.println("Saving to file: " + file.getAbsolutePath());
+            System.out.println(points);
+            Point.Companion.saveList(points, file);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error saving path: " + ex.getMessage());
+
         }
     }
 
     private void loadPath() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Load Path");
-        fileChooser.setCurrentDirectory(new File("paths"));
-        int result = fileChooser.showOpenDialog(this);
+        FileDialog fileDialog = new FileDialog((Frame) null, "Load Path", FileDialog.LOAD);
+        fileDialog.setDirectory("paths");
+        fileDialog.setFile("*.tsv");
+        fileDialog.setVisible(true);
+        String filename = fileDialog.getFile();
+        if (filename == null) {
+            return;
+        }
 
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            try {
-                saveStateToUndoStack();
-                // TODO: Implement the path loading logic here
-                List<Point> points = Point.Companion.loadList(file);
-                List<BezierPoint> bezierPoints = new ArrayList<>();
-                for (int i = 0; i < points.size(); i += 3) {
-                    Point prev = i == 0 ? null : points.get(i - 1);
-                    Point anchor = points.get(i);
-                    Point next = i + 1 < points.size() ? points.get(i + 1) : null;
-                    bezierPoints.add(new BezierPoint(anchor, prev, next));
-                }
-                bezierPath.getPoints().clear();
-                bezierPath.getPoints().addAll(bezierPoints);
-                repaint();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error loading path: " + ex.getMessage());
+        File file = new File(fileDialog.getDirectory(), filename);
+
+        try {
+            saveStateToUndoStack();
+            // TODO: Implement the path loading logic here
+            List<Point> points = Point.Companion.loadList(file);
+            List<BezierPoint> bezierPoints = new ArrayList<>();
+            for (int i = 0; i < points.size(); i += 3) {
+                Point prev = i == 0 ? null : points.get(i - 1);
+                Point anchor = points.get(i);
+                Point next = i + 1 < points.size() ? points.get(i + 1) : null;
+                bezierPoints.add(new BezierPoint(anchor, prev, next));
             }
+            bezierPath.getPoints().clear();
+            bezierPath.getPoints().addAll(bezierPoints);
+            repaint();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error loading path: " + ex.getMessage());
         }
     }
 
