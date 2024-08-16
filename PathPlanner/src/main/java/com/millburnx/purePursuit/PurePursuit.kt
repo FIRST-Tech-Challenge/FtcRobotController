@@ -1,9 +1,6 @@
 package com.millburnx.purePursuit
 
-import com.millburnx.purePursuit.Utils.Intersection
-import com.millburnx.purePursuit.Utils.LineSegment
-import com.millburnx.purePursuit.Utils.Point
-import com.millburnx.purePursuit.Utils.Utils
+import com.millburnx.purePursuit.Utils.*
 import com.millburnx.purePursuit.ftcDashboard.ICanvas
 import com.millburnx.purePursuit.ftcDashboard.TelemetryPacket
 import kotlin.math.abs
@@ -13,11 +10,15 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         Point(0.0, 0.0),
         Point(48.0, 0.0),
         Point(48.0, -48.0),
-        Point(0.0, -48.0)
+        Point(0.0, -48.0),
+        Point(-48.0, -48.0),
+        Point(-48.0, 0.0),
+        Point(-48.0, 48.0),
     )
-    val pathSegments: List<LineSegment> = path.zipWithNext().map { LineSegment(it.first, it.second) }
 
-    var lastIntersection: Intersection = Intersection(path[0], pathSegments[0]) // start of the path
+    var beziers: List<Bezier> = Utils.pathToBeziers(path)
+
+    var lastIntersection: Intersection<Bezier> = Intersection(path[0], beziers[0]) // start of the path
     var lastSegment: Int = 0 // prevent backtracking
 
     val prevPosition: MutableList<Point> = mutableListOf()
@@ -37,8 +38,9 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
             canvas.fillCircle(point.x, point.y, 1.0)
         }
         canvas.setStrokeWidth(2)
-        for (segment in pathSegments) {
-            canvas.strokeLine(segment.p1.x, segment.p1.y, segment.p2.x, segment.p2.y)
+        for (bezier in beziers) {
+//            canvas.strokeLine(segment.p1.x, segment.p1.y, segment.p2.x, segment.p2.y)
+            bezier.draw(canvas)
         }
 
         val distanceToFinal = robot.position.distanceTo(path.last())
@@ -47,7 +49,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
                 println("Reached the end of the path ${path.last()} with distance $distanceToFinal (ending at ${robot.position})")
                 return false
             }
-            lastIntersection = Intersection(path.last(), pathSegments.last())
+            lastIntersection = Intersection(path.last(), beziers.last())
             canvas.setFill("#00FFFF")
                 .fillCircle(lastIntersection.point.x, lastIntersection.point.y, 1.0)
             driveTo(path.last())
@@ -56,7 +58,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
             return true
         }
 
-        val remainingSegments = pathSegments.subList(lastSegment, pathSegments.size)
+        val remainingSegments = beziers.subList(lastSegment, beziers.size)
         val intersections = remainingSegments.flatMap { it.intersections(robot.lookaheadCircle) }
         // closest by angle from current heading
         val closestIntersection = intersections.minByOrNull { abs(getAngleDiff(it.point)) }
@@ -65,7 +67,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
                 .fillCircle(intersection.point.x, intersection.point.y, 1.0)
         }
         val targetIntersection = closestIntersection ?: lastIntersection
-        lastSegment = pathSegments.indexOf(targetIntersection.line)
+        lastSegment = beziers.indexOf(targetIntersection.line)
         lastIntersection = targetIntersection
         driveTo(targetIntersection.point)
 

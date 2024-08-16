@@ -23,7 +23,7 @@ open class Line(val a: Double, val b: Double, val c: Double) {
 
     constructor(p1: Point, p2: Point) : this(getA(p1, p2), getB(p1, p2), getC(p1, p2))
 
-    open fun intersections(circle: Circle): List<Intersection> {
+    open fun intersections(circle: Circle): List<Intersection<Line>> {
         // translate to center the circle at the origin
         val line = translate(circle.center * -1.0)
         val a = line.a

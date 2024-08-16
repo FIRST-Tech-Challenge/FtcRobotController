@@ -1,7 +1,7 @@
 package com.millburnx.purePursuit.Utils
 
 class LineSegment(val p1: Point, val p2: Point) : Line(p1, p2) {
-    override fun intersections(circle: Circle): List<Intersection> {
+    override fun intersections(circle: Circle): List<Intersection<Line>> {
         val intersections = super.intersections(circle)
         return intersections.filter { boundingContains(it.point) }
     }
