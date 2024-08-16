@@ -3,17 +3,16 @@ package com.millburnx.purePursuit
 import com.millburnx.purePursuit.Utils.*
 import com.millburnx.purePursuit.ftcDashboard.ICanvas
 import com.millburnx.purePursuit.ftcDashboard.TelemetryPacket
+import java.awt.FileDialog
+import java.io.File
 import kotlin.math.abs
 
 class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateHertz) {
-    private val path: List<Point> = listOf(
+    private var path: List<Point> = listOf(
         Point(0.0, 0.0),
         Point(48.0, 0.0),
         Point(48.0, -48.0),
         Point(0.0, -48.0),
-        Point(-48.0, -48.0),
-        Point(-48.0, 0.0),
-        Point(-48.0, 48.0),
     )
 
     private var beziers: List<Bezier> = Utils.pathToBeziers(path)
@@ -21,27 +20,75 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
     private var lastIntersection: Intersection<Bezier> = Intersection(path[0], beziers[0]) // start of the path
     private var lastSegment: Int = 0 // prevent backtracking
 
-    private val prevPosition: MutableList<Point> = mutableListOf()
+    private val prevPositions: MutableList<Point> = mutableListOf()
 
     override fun init() {
         println("Initializing Pure Pursuit")
+        ftcDashboard.reset = {
+            stop()
+            robot.position = Point(0.0, 0.0)
+            robot.heading = 0.0
+            prevPositions.clear()
+            lastSegment = 0
+            lastIntersection = Intersection(path[0], beziers[0])
+            lastFrame = 0L
+            val packet = TelemetryPacket()
+            val canvas = packet.fieldOverlay()
+            renderPath(canvas)
+            drawRobot(canvas)
+            ftcDashboard.sendTelemetryPacket(packet)
+        }
+        ftcDashboard.load = {
+            stop()
+            loadPath()
+        }
+    }
+
+    fun updatePath() {
+        beziers = Utils.pathToBeziers(path)
+        lastSegment = 0
+        lastIntersection = Intersection(path[0], beziers[0])
+        val packet = TelemetryPacket()
+        val canvas = packet.fieldOverlay()
+        renderPath(canvas)
+        drawRobot(canvas)
+        ftcDashboard.sendTelemetryPacket(packet)
+    }
+
+    fun loadPath() {
+        val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.LOAD)
+        fileDialog.directory = File("paths").absolutePath
+        fileDialog.isVisible = true
+        val file = fileDialog.file
+        if (file == null) {
+            println("No file selected")
+            return
+        }
+        val pathFile = File(fileDialog.directory, file)
+        val pathList = Point.loadList(pathFile)
+        path = pathList
+        updatePath()
+    }
+
+    fun renderPath(canvas: ICanvas) {
+        canvas.drawImage("PathPlanner/src/main/resources/bg.png", 0.0, 0.0, 144.0, 144.0)
+            .setFill("#808080")
+            .drawGrid(0.0, 0.0, 144.0, 144.0, 7, 7)
+            .setFill("#D3D3D3")
+            .setStrokeWidth(2)
+        for (bezier in beziers) {
+            bezier.draw(canvas)
+        }
+        for (point in path) {
+            canvas.fillCircle(point.x, point.y, 1.0)
+        }
     }
 
     override fun loop(): Boolean {
         val packet = TelemetryPacket()
         val canvas = packet.fieldOverlay()
-            .drawImage("PathPlanner/src/main/resources/bg.png", 0.0, 0.0, 144.0, 144.0)
-            .setFill("#808080")
-            .drawGrid(0.0, 0.0, 144.0, 144.0, 7, 7)
-            .setFill("#D3D3D3")
-        for (point in path) {
-            canvas.fillCircle(point.x, point.y, 1.0)
-        }
-        canvas.setStrokeWidth(2)
-        for (bezier in beziers) {
-//            canvas.strokeLine(segment.p1.x, segment.p1.y, segment.p2.x, segment.p2.y)
-            bezier.draw(canvas)
-        }
+
+        renderPath(canvas)
 
         val distanceToFinal = robot.position.distanceTo(path.last())
         if (distanceToFinal < robot.lookahead) {
@@ -86,11 +133,12 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
             .strokeCircle(robot.position.x, robot.position.y, robot.lookahead)
             .strokeLine(robot.position.x, robot.position.y, lookaheadPoint.x, lookaheadPoint.y)
 
-        prevPosition.add(robot.position)
+        prevPositions.add(robot.position)
+        val copyPositions = prevPositions.toList()
         canvas.setFill("#ffa500")
             .strokePolyline(
-                prevPosition.map { it.x }.toDoubleArray(),
-                prevPosition.map { it.y }.toDoubleArray()
+                copyPositions.map { it.x }.toDoubleArray(),
+                copyPositions.map { it.y }.toDoubleArray()
             )
     }
 

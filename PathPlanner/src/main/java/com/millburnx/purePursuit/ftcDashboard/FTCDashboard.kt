@@ -3,13 +3,14 @@ package com.millburnx.purePursuit.ftcDashboard
 import java.awt.Graphics
 import java.awt.GraphicsEnvironment
 import java.awt.image.BufferedImage
+import javax.swing.JButton
 import javax.swing.JPanel
 
 interface IFTCDashboard {
     fun sendTelemetryPacket(telemetryPacket: ITelemetryPacket)
 }
 
-class FTCDashboard(ppi: Double) : IFTCDashboard {
+class FTCDashboard(ppi: Double, val start: () -> Unit, val stop: () -> Unit, var reset: () -> Unit, var load: () -> Unit) : IFTCDashboard {
     inner class Panel(val ppi: Double) : JPanel() {
         init {
             val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -17,6 +18,20 @@ class FTCDashboard(ppi: Double) : IFTCDashboard {
             for (i in fonts) {
                 println("$i ")
             }
+            val buttonRow = JPanel()
+            buttonRow.add(customButton("Start") { start() })
+            buttonRow.add(customButton("Stop") { stop() })
+            buttonRow.add(customButton("Reset") { reset() })
+            buttonRow.add(customButton("Load") { load() })
+            add(buttonRow)
+        }
+
+        private fun customButton(text: String, action: () -> Unit): JButton {
+            val button = JButton(text)
+            button.addActionListener {
+                action()
+            }
+            return button
         }
 
         override fun paintComponent(g: Graphics) {

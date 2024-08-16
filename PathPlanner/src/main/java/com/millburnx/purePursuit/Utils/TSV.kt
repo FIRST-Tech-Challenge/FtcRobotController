@@ -17,7 +17,10 @@ class TSV {
         }
 
         fun parse(tsv: String): List<List<String>> {
-            return tsv.split("\n").map { parseRow(it) }
+            val rows = tsv.split("\n").map { parseRow(it) }
+            return rows.filter { row ->
+                row.isNotEmpty() && row.any { it.isNotBlank() }
+            }
         }
 
         fun stringify(data: List<List<String>>): String {

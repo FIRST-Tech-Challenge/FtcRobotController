@@ -142,6 +142,12 @@ class Polygon(val xPoints: DoubleArray, val yPoints: DoubleArray, val stroke: Bo
 class Polyline(val xPoints: DoubleArray, val yPoints: DoubleArray) :
     CanvasOp(Type.POLYLINE) {
     override fun draw(g2d: Graphics2D, ppi: Double) {
+        if (xPoints.size != yPoints.size) {
+            throw IllegalArgumentException("xPoints and yPoints must have the same length")
+        }
+        if (xPoints.isEmpty()) {
+            return
+        }
         val xPointsScaled = xPoints.map { it * ppi }.map { it.toInt() }.toIntArray()
         val yPointsScaled = yPoints.map { it * ppi }.map { it.toInt() }.toIntArray()
         g2d.drawPolyline(xPointsScaled, yPointsScaled, xPoints.size)
