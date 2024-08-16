@@ -13,6 +13,8 @@ public class TeleOp extends OpMode {
     private DcMotor backRight;
     private IMU gyro;
 
+    double leftOffset, rightOffset;
+
     public DcMotor leftEncoder, rightEncoder, auxEncoder;
 
     private Odometry Odometry;
@@ -75,68 +77,56 @@ public class TeleOp extends OpMode {
         double rightPos = rightEncoder.getCurrentPosition();
         double auxPos = auxEncoder.getCurrentPosition();
 
+        if (gamepad1.a) {
+            //if in imu mode
+            gyro.resetYaw();
 
-        //telemetry.addData("leftPos", leftPos);
+            //If in DeadWheel mode
+            leftOffset = leftEncoder.getCurrentPosition();
+            rightOffset = rightEncoder.getCurrentPosition();
+        }
+
+        // Offsets the encoders position to zero when zero function is updated.
+        if(leftOffset >= 0){
+            leftPos -= leftOffset;
+        } else {
+            leftPos += leftOffset;
+        }
+        if(rightOffset >= 0){
+            rightPos -= rightOffset;
+        } else {
+            rightPos += rightOffset;
+        }
 
         double deltaLeft = leftPos - lastLeftPos;
         double deltaRight = rightPos - lastRightPos;
         double deltaAux = auxPos - lastAuxPos;
 
-        //telemetry.addData("deltaLeft", deltaLeft);
-
         lastLeftPos = leftPos;
         lastRightPos = rightPos;
         lastAuxPos = auxPos;
-
-        //telemetry.addData("lastleftPOs", lastLeftPos);
 
         //Find the heading in radians - 5225 Position Docs Equations
         double deltaHeading = (deltaLeft - deltaRight) / encoderDistance;
         heading += deltaHeading;
 
-        //telemetry.addData("dHeading", deltaHeading);
-        //telemetry.addData("heading", heading);
-
         double deltaX = deltaAux + (auxEncoderOffset * deltaHeading);
         double deltaY = (deltaLeft + deltaRight) / 2;
-
-        //telemetry.addData("deltaX", deltaX);
-        //telemetry.addData("deltaY", deltaY);
 
         xCoord += deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
         yCoord += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
 
         double robotHeading = Math.toRadians(heading); //Might need degrees???
-        //double robotHeading = gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double h = -gamepad1.right_stick_x;
 
-        if (gamepad1.a) {
-            gyro.resetYaw();
-            //not sure if all of these need to be reset
-            xCoord = 0;
-            yCoord = 0;
-            heading = 0;
-            auxPos = 0;
-            rightPos = 0;
-            leftPos = 0;
-            lastLeftPos = 0;
-            lastRightPos = 0;
-            lastAuxPos = 0;
-            deltaLeft = 0;
-            deltaRight = 0;
-            deltaAux = 0;
-            deltaX = 0;
-            deltaY = 0;
-            deltaHeading = 0;
-            robotHeading = 0;
-        }
 
         double finalX = x * Math.cos(robotHeading) - y * Math.sin(robotHeading);
         double finalY = x * Math.sin(robotHeading) + y * Math.cos(robotHeading);
 
+        //Set motor speeds
         double denominator = Math.max(Math.abs(finalY) + Math.abs(finalX) + Math.abs(h), 1);
         double FLPower = (finalY + finalX + h) / denominator;
         double BLPower = (finalY - finalX + h) / denominator;
@@ -154,5 +144,16 @@ public class TeleOp extends OpMode {
         telemetry.addData("Enc Left ", leftEncoder.getCurrentPosition());
         telemetry.addData("Enc Right", rightEncoder.getCurrentPosition());
         telemetry.addData("Enc Aux  ", auxEncoder.getCurrentPosition());
+
+        ///// Debug /////
+
+        //telemetry.addData("leftPos", leftPos);
+        //telemetry.addData("deltaLeft", deltaLeft);
+        //telemetry.addData("lastleftPos", lastLeftPos);
+        //telemetry.addData("dHeading", deltaHeading);
+        //telemetry.addData("heading", heading);
+        //telemetry.addData("deltaX", deltaX);
+        //telemetry.addData("deltaY", deltaY);
+        //double robotHeading = gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 }
