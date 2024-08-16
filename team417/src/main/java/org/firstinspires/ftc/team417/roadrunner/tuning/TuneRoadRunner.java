@@ -879,14 +879,14 @@ public class TuneRoadRunner extends LinearOpMode {
         // Do some sanity checking on the results:
         if ((Math.abs(circleFit.x) > 12) || (Math.abs(circleFit.y) > 12)) {
             message += "The results are bad, the calculated center-of-rotation is bogus.\n\n"
-                    + "Aborting, press A to continue.";
+                    + "Aborted, press A to continue.";
             ui.prompt(message);
             return; // ====>
         }
         if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
             message += "The measured number of circles is bad. Did you properly align "
                 + "the robot on the wall the same way at both the start and end of this test?\n\n"
-                + "Aborting, press A to continue.";
+                + "Aborted, press A to continue.";
             ui.prompt(message);
             return;
         }
@@ -946,14 +946,99 @@ public class TuneRoadRunner extends LinearOpMode {
         }
     }
 
+    /* @@@
+    class LeastSquaresAlgorithm {
+        public static void main(String[] args) {
+            // Sample data points (x, y)
+            double[] xValues = {0, 1, 2, 3};
+            double[] yValues = {-1, 0.2, 0.9, 2.1};
+
+            // Calculate the means of x and y
+            double xMean = calculateMean(xValues);
+            double yMean = calculateMean(yValues);
+
+            // Calculate the sum of (xi - xMean) * (yi - yMean) and (xi - xMean)^2
+            double numerator = 0;
+            double denominator = 0;
+            for (int i = 0; i < xValues.length; i++) {
+                double diffX = xValues[i] - xMean;
+                double diffY = yValues[i] - yMean;
+                numerator += diffX * diffY;
+                denominator += diffX * diffX;
+            }
+
+            // Calculate the slope (m) and intercept (c)
+            double slope = numerator / denominator;
+            double intercept = yMean - slope * xMean;
+
+            System.out.println("Slope: " + slope);
+            System.out.println("Intercept: " + intercept);
+        }
+
+        // Helper method to calculate the mean of an array
+        private static double calculateMean(double[] values) {
+            double sum = 0;
+            for (double value : values) {
+                sum += value;
+            }
+            return sum / values.length;
+        }
+    }
+     */ // @@@
+
+    /**
+     * Structure for describing the best-fit-line for a set of points.
+     */
+    static class BestFitLine {
+        double slope;
+        double intercept;
+
+        public BestFitLine(double slope, double intercept) {
+            this.slope = slope;
+            this.intercept = intercept;
+        }
+    }
+
+    /**
+     * Find the best-fit line
+     */
+    BestFitLine fitLine(ArrayList<Point> points) {
+        // Calculate the means of x and y
+        Point sum = new Point(0, 0);
+        for (Point point: points) {
+            sum = sum.add(point);
+        }
+        Point mean = new Point(sum.x / points.size(), sum.y / points.size());
+
+        // Calculate the sum of (xi - xMean) * (yi - yMean) and (xi - xMean)^2
+        double numerator = 0;
+        double denominator = 0;
+        for (int i = 0; i < points.size(); i++) {
+            double diffX = points.get(i).x - mean.x;
+            double diffY = points.get(i).y - mean.y;
+            numerator += diffX * diffY;
+            denominator += diffX * diffX;
+        }
+
+        if (denominator == 0)
+            // All points are coincident or in a vertical line:
+            return new BestFitLine(0, 0);
+
+        // Calculate the slope (m) and intercept (c)
+        double slope = numerator / denominator;
+        double intercept = mean.y - slope * mean.x;
+
+        return new BestFitLine(slope, intercept);
+    }
+
     // Automatically calculate the kS and kV terms of the feed-forward approximation by
     // ramping up the velocity in a straight line. We increase power by 0.1 each second
     // until it reaches 0.9.
     @SuppressLint("DefaultLocale")
     void autoFeedForwardTuner() {
         final double VOLTAGE_ADDER_PER_SECOND = 0.1;
-        final double MAX_VOLTAGE = 0.9;
-        final double MAX_SECONDS = MAX_VOLTAGE / VOLTAGE_ADDER_PER_SECOND + 0.1;
+        final double MAX_VOLTAGE_FACTOR = 0.9;
+        final double MAX_SECONDS = MAX_VOLTAGE_FACTOR / VOLTAGE_ADDER_PER_SECOND + 0.1;
 
         useDrive(false); // Don't use MecanumDrive/TankDrive
         assert(drive.opticalTracker != null);
@@ -966,31 +1051,33 @@ public class TuneRoadRunner extends LinearOpMode {
 
             ArrayList<Point> points = new ArrayList<>();
             double startTime = time();
-            double oldVoltage = 0;
+            double oldVoltageFactor = 0;
             double maxVelocity = 0;
+            double voltage = drive.voltageSensor.getVoltage();
 
-            // Ramp up the
+            // Slowly ramp up the voltage:
             while (opModeIsActive() && !ui.cancel() && ((time() - startTime) < MAX_SECONDS)) {
+
                 // Increase power by 0.1 each second until it reaches 0.9:
-                double newVoltage = (time() - startTime) * VOLTAGE_ADDER_PER_SECOND;
-                newVoltage = Math.min(newVoltage, MAX_VOLTAGE);
+                double newVoltageFactor = (time() - startTime) * VOLTAGE_ADDER_PER_SECOND;
+                newVoltageFactor = Math.min(newVoltageFactor, MAX_VOLTAGE_FACTOR);
 
-                drive.rightFront.setPower(newVoltage);
-                drive.rightBack.setPower(newVoltage);
-                drive.leftFront.setPower(newVoltage);
-                drive.leftBack.setPower(newVoltage);
+                drive.rightFront.setPower(newVoltageFactor);
+                drive.rightBack.setPower(newVoltageFactor);
+                drive.leftFront.setPower(newVoltageFactor);
+                drive.leftBack.setPower(newVoltageFactor);
 
-                double percentage = newVoltage / MAX_VOLTAGE * 100;
+                double percentage = newVoltageFactor / MAX_VOLTAGE_FACTOR * 100;
                 telemetry.addLine(String.format("%.0f%% done.", percentage));
                 telemetry.addLine("\nPress B to abort.");
                 telemetry.update();
 
                 SparkFunOTOS.Pose2D velocityVector = drive.opticalTracker.getVelocity();
                 double velocity = Math.hypot(velocityVector.x, velocityVector.y);
-                points.add(new Point(velocity, oldVoltage));
+                points.add(new Point(velocity, oldVoltageFactor));
                 maxVelocity = Math.max(velocity, maxVelocity);
 
-                oldVoltage = newVoltage;
+                oldVoltageFactor = newVoltageFactor;
             }
 
             // Stop the robot:
@@ -999,7 +1086,7 @@ public class TuneRoadRunner extends LinearOpMode {
             drive.leftFront.setPower(0);
             drive.leftBack.setPower(0);
 
-            if (oldVoltage < MAX_VOLTAGE) {
+            if (oldVoltageFactor < MAX_VOLTAGE_FACTOR) {
                 ui.prompt("The robot didn't hit top speed before the test was aborted."
                         + "\n\nPress A to continue.");
                 return; // ====>
@@ -1019,7 +1106,7 @@ public class TuneRoadRunner extends LinearOpMode {
             double xOffset = -0.9;
             double xScale = 1.8 / maxVelocity;
             double yOffset = -0.9;
-            double yScale = 1.8 / MAX_VOLTAGE;
+            double yScale = 1.8 / MAX_VOLTAGE_FACTOR;
 
             double[] xPoints = new double[points.size()];
             double[] yPoints = new double[points.size()];
@@ -1028,8 +1115,12 @@ public class TuneRoadRunner extends LinearOpMode {
                 xPoints[i] = points.get(i).x * xScale + xOffset;
                 yPoints[i] = points.get(i).y * yScale + yOffset;
             }
+
             canvas.setStroke("#00ff00");
             canvas.strokePolyline(xPoints, yPoints);
+
+            BestFitLine bestFileLine = fitLine(points);
+
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
             ui.prompt("Check out the graph!"
@@ -1304,7 +1395,7 @@ public class TuneRoadRunner extends LinearOpMode {
         tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
         tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
 
-        telemetry.addLine("<big><big><big><big><big><big><big><big>Press START to begin");
+        telemetry.addLine("<big><big><big><big><big><big><big><big><b>Press START");
         telemetry.update();
         waitForStart();
 
