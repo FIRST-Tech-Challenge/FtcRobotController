@@ -17,14 +17,13 @@ public class TeleOp extends OpMode {
 
     public DcMotor leftEncoder, rightEncoder, auxEncoder;
 
-    private Odometry Odometry;
+    //private Odometry Odometry;
 
     private double xCoord = 0, yCoord = 0, heading = 0;
 
     private double lastLeftPos = 0, lastRightPos = 0, lastAuxPos = 0;
 
-    double COUNTS_PER_INCH = 5945.0514285952;
-    double TICKS_PER_INCH = 1946.69; //1892.37; // Ticks per inch = 8192 ticks pet rev / Circumference in inches
+    double TICKS_PER_INCH = 8192 / ((35 / 25.4) * Math.PI); //  1892.37   1946.69
     double encoderDistance = 8.5;
     double auxEncoderOffset = -2.48;
 
@@ -52,7 +51,7 @@ public class TeleOp extends OpMode {
         auxEncoder = hardwareMap.get(DcMotor.class, "LeftSlide"); //Hub: 2
 
         //Setup and start Odometry Thread
-        Odometry = new Odometry(
+        /*Odometry = new Odometry(
                 leftEncoder,
                 rightEncoder,
                 auxEncoder,
@@ -60,7 +59,7 @@ public class TeleOp extends OpMode {
                 12,
                 5);
         Thread odometryThread = new Thread(Odometry);
-        odometryThread.start();
+        odometryThread.start();*/
 
         gyro = hardwareMap.get(IMU.class, "imu");
 
@@ -126,7 +125,11 @@ public class TeleOp extends OpMode {
         xCoord += deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
         yCoord += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
 
-        double robotHeading = heading;//Math.toRadians(heading); //Might need degrees???
+        //Might need to be done to heading on 120 121 - Test in person
+        double robotHeading = Math.toDegrees(heading) / TICKS_PER_INCH; //Math.toRadians(heading); //Might need degrees???
+
+        //Loop heading from 0-360 deg
+        robotHeading = Math.abs(robotHeading % 360);
 
         xCoord /= TICKS_PER_INCH;
         yCoord /= TICKS_PER_INCH;
@@ -152,7 +155,7 @@ public class TeleOp extends OpMode {
 
         telemetry.addData("X Pos:", xCoord);
         telemetry.addData("Y Pos", yCoord);
-        telemetry.addData("Heading", heading);
+        telemetry.addData("Heading", robotHeading);
         telemetry.addData("Enc Left ", leftEncoder.getCurrentPosition());
         telemetry.addData("Enc Right", rightEncoder.getCurrentPosition());
         telemetry.addData("Enc Aux  ", auxEncoder.getCurrentPosition());
