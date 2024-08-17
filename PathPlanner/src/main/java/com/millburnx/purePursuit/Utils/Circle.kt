@@ -1,14 +1,19 @@
 package com.millburnx.purePursuit.Utils
 
-class Circle(val center: Point, val radius: Double) {
-
-    fun contains(p: Point): Boolean {
+class Circle(val center: Vec2d, val radius: Double) {
+    /**
+     * Checks if a point is inside the circle
+     */
+    fun contains(p: Vec2d): Boolean {
         return center.distanceTo(p) <= radius
     }
 
-    fun boundingContains(p: Point): Boolean {
-        val min = center - Point(radius, radius)
-        val max = center - Point(radius, radius)
+    /**
+     * Checks if a point is inside the bounding box of the circle
+     */
+    fun boundingContains(p: Vec2d): Boolean {
+        val min = center - Vec2d(radius, radius)
+        val max = center - Vec2d(radius, radius)
 
         return p.x in min.x..max.x && p.y in min.y..max.y
     }

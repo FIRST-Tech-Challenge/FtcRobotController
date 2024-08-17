@@ -1,6 +1,6 @@
 package com.millburnx.purePursuit
 
-import com.millburnx.purePursuit.Utils.Point
+import com.millburnx.purePursuit.Utils.Vec2d
 import com.millburnx.purePursuit.ftcDashboard.FTCDashboard
 import java.awt.Color
 
@@ -53,7 +53,7 @@ abstract class OpMode(ppi: Double, private val updateHertz: Double) : IOpMode {
 
     override val telemetry = Telemetry()
 
-    val robot: Robot = Robot(Point(16.0, 14.0), 14.0)
+    val robot: Robot = Robot(Vec2d(16.0, 14.0), 14.0)
 
     fun drive(x: Double, y: Double, rx: Double) {
         robot.drive(x, y, rx)

@@ -2,52 +2,52 @@ package com.millburnx.pathplanner.components;
 
 //import java.awt.*;
 
-import com.millburnx.purePursuit.Utils.Point;
+import com.millburnx.purePursuit.Utils.Vec2d;
 
 public class BezierPoint {
-    private Point previousHandle;
-    private Point anchor;
-    private Point nextHandle;
+    private Vec2d previousHandle;
+    private Vec2d anchor;
+    private Vec2d nextHandle;
 
-    public BezierPoint(Point anchor, Point prev, Point next) {
+    public BezierPoint(Vec2d anchor, Vec2d prev, Vec2d next) {
         this.anchor = anchor;
         this.previousHandle = prev;
         this.nextHandle = next;
     }
 
-    public Point getPreviousHandle() {
+    public Vec2d getPreviousHandle() {
         return previousHandle;
     }
 
-    public void setPreviousHandle(Point previousHandle) {
+    public void setPreviousHandle(Vec2d previousHandle) {
         this.previousHandle = previousHandle;
     }
 
-    public Point getAnchor() {
+    public Vec2d getAnchor() {
         return anchor;
     }
 
-    public void setAnchor(Point anchor) {
+    public void setAnchor(Vec2d anchor) {
         this.anchor = anchor;
     }
 
-    public Point getNextHandle() {
+    public Vec2d getNextHandle() {
         return nextHandle;
     }
 
-    public void setNextHandle(Point nextHandle) {
+    public void setNextHandle(Vec2d nextHandle) {
         this.nextHandle = nextHandle;
     }
 
-    public boolean isAnchorNear(Point p, double threshold) {
+    public boolean isAnchorNear(Vec2d p, double threshold) {
         return anchor.distanceTo(p) < threshold;
     }
 
-    public boolean isPrevNear(Point p, double threshold) {
+    public boolean isPrevNear(Vec2d p, double threshold) {
         return previousHandle != null && previousHandle.distanceTo(p) < threshold;
     }
 
-    public boolean isNextNear(Point p, double threshold) {
+    public boolean isNextNear(Vec2d p, double threshold) {
         return nextHandle != null && nextHandle.distanceTo(p) < threshold;
     }
 

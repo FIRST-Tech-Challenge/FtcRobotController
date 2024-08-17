@@ -1,6 +1,6 @@
 package com.millburnx.pathplanner.components;
 
-import com.millburnx.purePursuit.Utils.Point;
+import com.millburnx.purePursuit.Utils.Vec2d;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class PathEditor extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                handleMousePressed(new Point(e.getPoint()));
+                handleMousePressed(new Vec2d(e.getPoint()));
             }
 
             @Override
@@ -48,7 +48,7 @@ public class PathEditor extends JPanel {
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                handleMouseDragged(new Point(e.getPoint()));
+                handleMouseDragged(new Vec2d(e.getPoint()));
             }
         });
 
@@ -81,9 +81,9 @@ public class PathEditor extends JPanel {
         });
     }
 
-    private void handleMousePressed(Point p) {
-        Point mappedPoint = p.minus(new Point(0, buttonPanel.getHeight()));
-        Point size = new Point(getWidth(), getHeight() - buttonPanel.getHeight());
+    private void handleMousePressed(Vec2d p) {
+        Vec2d mappedPoint = p.minus(new Vec2d(0, buttonPanel.getHeight()));
+        Vec2d size = new Vec2d(getWidth(), getHeight() - buttonPanel.getHeight());
         mappedPoint = mappedPoint.minus(size.div(2));
         mappedPoint = mappedPoint.div(ppi[0]);
         System.out.println(mappedPoint);
@@ -109,11 +109,11 @@ public class PathEditor extends JPanel {
 
         // Adding a new point
         double defaultHandleLength = 6.0;
-        Point prevPoint = null;
+        Vec2d prevPoint = null;
         if (!bezierPath.getPoints().isEmpty()) {
-            prevPoint = mappedPoint.minus(new Point(defaultHandleLength, 0.0));
+            prevPoint = mappedPoint.minus(new Vec2d(defaultHandleLength, 0.0));
             BezierPoint lastPoint = bezierPath.getPoints().get(bezierPath.getPoints().size() - 1);
-            lastPoint.setNextHandle(lastPoint.getAnchor().plus(new Point(defaultHandleLength, 0.0)));
+            lastPoint.setNextHandle(lastPoint.getAnchor().plus(new Vec2d(defaultHandleLength, 0.0)));
         }
         BezierPoint newPoint = new BezierPoint(mappedPoint, prevPoint, null);
         saveStateToUndoStack();
@@ -122,12 +122,12 @@ public class PathEditor extends JPanel {
         repaint();
     }
 
-    private void handleMouseDragged(Point p) {
+    private void handleMouseDragged(Vec2d p) {
         if (selectedPoint == null) {
             return;
         }
-        Point mappedPoint = p.minus(new Point(0, buttonPanel.getHeight()));
-        Point size = new Point(getWidth(), getHeight() - buttonPanel.getHeight());
+        Vec2d mappedPoint = p.minus(new Vec2d(0, buttonPanel.getHeight()));
+        Vec2d size = new Vec2d(getWidth(), getHeight() - buttonPanel.getHeight());
         mappedPoint = mappedPoint.minus(size.div(2));
         mappedPoint = mappedPoint.div(ppi[0]);
         if (isPrevSelected) {
@@ -179,7 +179,7 @@ public class PathEditor extends JPanel {
         File file = new File(fileDialog.getDirectory(), filename);
         try {
             // prev? anchor next ...
-            List<Point> points = bezierPath.getPoints().stream()
+            List<Vec2d> points = bezierPath.getPoints().stream()
                     .flatMap(bp -> Arrays.asList(
                             bp.getPreviousHandle(),
                             bp.getAnchor(),
@@ -189,7 +189,7 @@ public class PathEditor extends JPanel {
                     .collect(Collectors.toList());
             System.out.println("Saving to file: " + file.getAbsolutePath());
             System.out.println(points);
-            Point.Companion.saveList(points, file);
+            Vec2d.Companion.saveList(points, file);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error saving path: " + ex.getMessage());
 
@@ -211,12 +211,12 @@ public class PathEditor extends JPanel {
         try {
             saveStateToUndoStack();
             // TODO: Implement the path loading logic here
-            List<Point> points = Point.Companion.loadList(file);
+            List<Vec2d> points = Vec2d.Companion.loadList(file);
             List<BezierPoint> bezierPoints = new ArrayList<>();
             for (int i = 0; i < points.size(); i += 3) {
-                Point prev = i == 0 ? null : points.get(i - 1);
-                Point anchor = points.get(i);
-                Point next = i + 1 < points.size() ? points.get(i + 1) : null;
+                Vec2d prev = i == 0 ? null : points.get(i - 1);
+                Vec2d anchor = points.get(i);
+                Vec2d next = i + 1 < points.size() ? points.get(i + 1) : null;
                 bezierPoints.add(new BezierPoint(anchor, prev, next));
             }
             bezierPath.getPoints().clear();

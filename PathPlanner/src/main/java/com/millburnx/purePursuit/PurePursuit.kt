@@ -8,11 +8,11 @@ import java.io.File
 import kotlin.math.abs
 
 class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateHertz) {
-    private var path: List<Point> = listOf(
-        Point(0.0, 0.0),
-        Point(48.0, 0.0),
-        Point(48.0, -48.0),
-        Point(0.0, -48.0),
+    private var path: List<Vec2d> = listOf(
+        Vec2d(0.0, 0.0),
+        Vec2d(48.0, 0.0),
+        Vec2d(48.0, -48.0),
+        Vec2d(0.0, -48.0),
     )
 
     private var beziers: List<Bezier> = Utils.pathToBeziers(path)
@@ -20,13 +20,13 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
     private var lastIntersection: Intersection<Bezier> = Intersection(path[0], beziers[0]) // start of the path
     private var lastSegment: Int = 0 // prevent backtracking
 
-    private val prevPositions: MutableList<Point> = mutableListOf()
+    private val prevPositions: MutableList<Vec2d> = mutableListOf()
 
     override fun init() {
         println("Initializing Pure Pursuit")
         ftcDashboard.reset = {
             stop()
-            robot.position = Point(0.0, 0.0)
+            robot.position = Vec2d(0.0, 0.0)
             robot.heading = 0.0
             prevPositions.clear()
             lastSegment = 0
@@ -66,7 +66,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
             return
         }
         val pathFile = File(fileDialog.directory, file)
-        val pathList = Point.loadList(pathFile)
+        val pathList = Vec2d.loadList(pathFile)
         path = pathList
         updatePath()
     }
@@ -140,7 +140,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
     }
 
     private fun drawRobot(canvas: ICanvas) {
-        val lookaheadVector = Point(robot.lookahead, 0.0).rotate(robot.heading)
+        val lookaheadVector = Vec2d(robot.lookahead, 0.0).rotate(robot.heading)
         val lookaheadPoint = robot.position + lookaheadVector
 
         canvas.setFill("#0000ff")
@@ -157,7 +157,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
             )
     }
 
-    private fun driveTo(point: Point) {
+    private fun driveTo(point: Vec2d) {
         val angleDiff = getAngleDiff(point)
         val forwardPower = robot.position.distanceTo(point) / robot.lookahead
         drive(
@@ -167,7 +167,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         ) // robot never strafes in pp since pp is a differential drive algorithm
     }
 
-    private fun getAngleDiff(point: Point): Double {
+    private fun getAngleDiff(point: Vec2d): Double {
         val angle = Utils.normalizeAngle(robot.position.angleTo(point))
         return Utils.normalizeAngle(angle - robot.heading)
     }

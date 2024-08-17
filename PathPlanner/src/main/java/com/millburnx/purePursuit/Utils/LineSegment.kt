@@ -1,30 +1,42 @@
 package com.millburnx.purePursuit.Utils
 
-class LineSegment(val p1: Point, val p2: Point) : Line(p1, p2) {
+import kotlin.math.max
+import kotlin.math.min
+
+class LineSegment(val p1: Vec2d, val p2: Vec2d) : Line(p1, p2) {
     override fun intersections(circle: Circle): List<Intersection<Line>> {
         val intersections = super.intersections(circle)
         return intersections.filter { boundingContains(it.point) }
     }
 
+    /**
+     * Returns the length of the line segment
+     */
     fun length(): Double {
         return p1.distanceTo(p2)
     }
 
-    override fun translate(p: Point): LineSegment {
+    override fun translate(p: Vec2d): LineSegment {
         return LineSegment(p1 + p, p2 + p)
     }
 
-    fun contains(p: Point): Boolean {
+    /**
+     * Checks if a point is on the line segment
+     */
+    fun contains(p: Vec2d): Boolean {
         val d1 = p1.distanceTo(p)
         val d2 = p2.distanceTo(p)
         return d1 + d2 == length()
     }
 
-    fun boundingContains(p: Point): Boolean {
-        val xMin = p1.x.coerceAtMost(p2.x)
-        val xMax = p1.x.coerceAtLeast(p2.x)
-        val yMin = p1.y.coerceAtMost(p2.y)
-        val yMax = p1.y.coerceAtLeast(p2.y)
+    /**
+     * Checks if a point is inside the bounding box of the line segment
+     */
+    fun boundingContains(p: Vec2d): Boolean {
+        val xMin = min(p1.x, p2.x)
+        val xMax = max(p1.x, p2.x)
+        val yMin = min(p1.y, p2.y)
+        val yMax = max(p1.y, p2.y)
 
         return p.x in xMin..xMax && p.y in yMin..yMax
     }

@@ -1,6 +1,6 @@
 package com.millburnx.purePursuit.ftcDashboard
 
-import com.millburnx.purePursuit.Utils.Point
+import com.millburnx.purePursuit.Utils.Vec2d
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Font
@@ -9,8 +9,6 @@ import java.awt.geom.AffineTransform
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JPanel
-import kotlin.math.max
-import kotlin.math.withSign
 
 // https://acmerobotics.github.io/ftc-dashboard/javadoc/com/acmerobotics/dashboard/canvas/CanvasOp.html
 abstract class CanvasOp(val type: Type) {
@@ -51,9 +49,9 @@ class Circle(
     Type.CIRCLE
 ) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
-        val center = Point(x, y) * ppi
+        val center = Vec2d(x, y) * ppi
         val r = radius * ppi
-        val origin = center - Point(r, r)
+        val origin = center - Vec2d(r, r)
         if (stroke) {
             g2d.drawOval(origin.x.toInt(), origin.y.toInt(), (2 * r).toInt(), (2 * r).toInt())
         } else {
