@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
+@TeleOp(name="odo")
 public class TeleOp extends OpMode {
     private DcMotor frontLeft;
     private DcMotor backLeft;
@@ -73,9 +74,9 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-        double leftPos = leftEncoder.getCurrentPosition();
-        double rightPos = rightEncoder.getCurrentPosition();
-        double auxPos = auxEncoder.getCurrentPosition();
+        double leftPos = leftEncoder.getCurrentPosition() / TICKS_PER_INCH;
+        double rightPos = rightEncoder.getCurrentPosition() / TICKS_PER_INCH;
+        double auxPos = auxEncoder.getCurrentPosition() / TICKS_PER_INCH;
 
         if (gamepad1.a) {
             //if in imu mode
@@ -125,21 +126,17 @@ public class TeleOp extends OpMode {
         xCoord += deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
         yCoord += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
 
-        //Might need to be done to heading on 120 121 - Test in person
-        double robotHeading = Math.toDegrees(heading) / TICKS_PER_INCH; //Math.toRadians(heading); //Might need degrees???
+        double robotHeading = Math.toDegrees(heading);
 
         //Loop heading from 0-360 deg
         robotHeading = Math.abs(robotHeading % 360);
-
-        xCoord /= TICKS_PER_INCH;
-        yCoord /= TICKS_PER_INCH;
 
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double h = -gamepad1.right_stick_x;
 
-        double finalX = x * Math.cos(robotHeading) - y * Math.sin(robotHeading);
-        double finalY = x * Math.sin(robotHeading) + y * Math.cos(robotHeading);
+        double finalX = x * Math.cos(heading) - y * Math.sin(heading);
+        double finalY = x * Math.sin(heading) + y * Math.cos(heading);
 
         //Set motor speeds
         double denominator = Math.max(Math.abs(finalY) + Math.abs(finalX) + Math.abs(h), 1);
