@@ -37,11 +37,9 @@ import org.firstinspires.ftc.team417.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.team417.roadrunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.team417.roadrunner.TwoDeadWheelLocalizer;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 
 /**
  * Math helper for points and vectors:
@@ -295,36 +293,28 @@ class Settings {
         }
     }
 
-    // Save the current settings to the properties file:
+    // Save the current settings to the preferences database:
     public void save() {
-        Properties properties = new Properties();
+        Preferences preferences = Preferences.userNodeForPackage(Settings.class);
         Gson gson = new Gson();
         String json = gson.toJson(this);
-        properties.setProperty("settings", json);
-        try {
-            properties.storeToXML(new FileOutputStream(SETTINGS_FILE), "");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        preferences.put("settings", json);
     }
 
     // Compare the current settings to the last saved settings. Returns a string of the
     // results; returns null if there is no settings mismatch found.
     public String compareToSaved() {
-        // Load the saved settings from the properties file:
-        Properties properties = new Properties();
+        // Load the saved settings from the preferences database:
+        Preferences preferences = Preferences.userNodeForPackage(Settings.class);
         Gson gson = new Gson();
-
-        try {
-            properties.loadFromXML(new FileInputStream(SETTINGS_FILE));
-        } catch (Exception e) {
-            return null;
-        }
-        String json = properties.getProperty("settings");
+        String json = preferences.get("settings", "");
         Settings savedSettings = gson.fromJson(json, Settings.class);
 
         // Now compare to the current settings:
-        if (savedSettings.robotName.equals(robotName))
+        if (savedSettings == null)
+            return null; // No saved settings were found
+        if (!savedSettings.robotName.equals(robotName))
             return null; // Different robots, so discard
         if (savedSettings.type != type)
             return null; // Different drive types, so discard
@@ -575,7 +565,7 @@ public class TuneRoadRunner extends LinearOpMode {
         String message;
 
         if (ui.prompt("In this test, you'll push the robot forward in a straight line along a field wall for exactly 4 tiles. "
-                + "\n\nPress A to start, B to cancel")) {
+                + "\n\nPress A once you've aligned the robot by hand and are ready to push. Press B to cancel.")) {
 
             double distance = 0;
             double heading = 0;
@@ -587,10 +577,11 @@ public class TuneRoadRunner extends LinearOpMode {
                 distance = Math.hypot(pose.x, pose.y);
                 heading = -Math.atan2(pose.y, pose.x); // Rise over run
 
-                message = "Push forward exactly 4 tiles (96\") along a field wall. Press B when complete.\n\n";
-                message += String.format("  Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h));
-                message += String.format("  Heading angle: %.2f\u00b0\n", Math.toDegrees(heading));
-                message += String.format("  Measured distance: %.1f\"\n", distance);
+                message = "Push forward exactly 4 tiles (96\") along a field wall.\n\n";
+                message += String.format("&ensp;Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h));
+                message += String.format("&ensp;Effective distance: %.2f\"\n", distance);
+                message += String.format("&ensp;Heading angle: %.2f\u00b0\n", Math.toDegrees(heading));
+                message += "\nPress B when complete.";
                 telemetry.addLine(message);
                 telemetry.update();
             }
@@ -599,33 +590,38 @@ public class TuneRoadRunner extends LinearOpMode {
             if (distance == 0)
                 distance = 0.001;
 
-            double newLinearScalar = 96.0 / distance;
             double oldLinearScalar = drive.opticalTracker.getLinearScalar();
+            double newLinearScalar = (96.0 / distance) * oldLinearScalar; // Undo the applied scalar
             double linearScalarChange = Math.abs((oldLinearScalar - newLinearScalar)
                     / oldLinearScalar * 100.0); // Percentage
 
-            double newHeading = heading;
-            double oldHeading = drive.opticalTracker.getOffset().h;
+            SparkFunOTOS.Pose2D offset = drive.opticalTracker.getOffset();
+            double oldHeading = offset.h;
+            double newHeading = normalizeAngle(heading + oldHeading); // Undo the applied heading
             double headingChange = normalizeAngle(Math.abs(oldHeading - newHeading));
 
             if ((newLinearScalar < SparkFunOTOS.MIN_SCALAR) || (newLinearScalar > SparkFunOTOS.MAX_SCALAR)) {
                 ui.prompt(String.format("The measured distance of %.1f\" is not close enough to "
                         + "the expected distance of 96\". Either something is wrong with the sensor "
                         + "or you didn't push for 4 tiles."
-                        + "\n\nAborting, press A to continue.", distance));
+                        + "\n\nAborted, press A to continue.", distance));
             } else {
-                message = String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 different from the old.\n", newHeading, Math.toDegrees(headingChange));
-                message += String.format("New linear scalar of %.2f is %.1f%% different from the old.\n\n", newLinearScalar, linearScalarChange);
-                message += "Use these results? Press A if they look good, B to discard them.";
+                message = String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 off from old.\n", newHeading, Math.toDegrees(headingChange))
+                    + String.format("New linear scalar of %.2f is %.1f%% off from old.\n\n", newLinearScalar, linearScalarChange)
+                    + "Use these results? Press A if they look good, B to discard them.";
                 if (ui.prompt(message)) {
                     settings.opticalLinearScalar = newLinearScalar;
                     settings.opticalOffset.h = newHeading;
                     settings.save();
 
-                    message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
-                    message += String.format("  headingOffset = %.3f\n", Math.toDegrees(newHeading));
-                    message += String.format("  linearScalar = %.3f\n", newLinearScalar);
-                    message += "\nPress A to continue.";
+                    drive.opticalTracker.setLinearScalar(newLinearScalar);
+                    drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(offset.x, offset.y, newHeading));
+
+                    message = "Go to the configureOtos() routine in MecanumDrive.java (double-tap "
+                            + "left-SHIFT and enter 'configureOtos'). Change to these values:\n\n"
+                            + String.format("&ensp;headingOffset = %.3f\n", Math.toDegrees(newHeading))
+                            + String.format("&ensp;linearScalar = %.3f\n", newLinearScalar)
+                            + "\nPress A to continue.";
                     ui.prompt(message);
                 }
             }
@@ -1094,7 +1090,7 @@ public class TuneRoadRunner extends LinearOpMode {
             if (maxVelocity == 0) {
                 ui.prompt("The optical tracking sensor returned only zero velocities. "
                         + "Is it working properly?"
-                        + "\n\nPress A to continue.");
+                        + "\n\nAborted, press A to continue.");
                 return; // ====>
             }
 
