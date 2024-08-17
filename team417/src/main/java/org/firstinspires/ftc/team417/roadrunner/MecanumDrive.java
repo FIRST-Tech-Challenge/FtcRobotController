@@ -320,8 +320,7 @@ public final class MecanumDrive {
         }
 
         // Configure the optical tracking sensor if we have one:
-        if (opticalTracker != null)
-            configureOtos(opticalTracker, pose);
+        configureOpticalTracker(pose);
 
         // Enable brake mode on the motors:
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -344,14 +343,37 @@ public final class MecanumDrive {
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
-    // Configure the optical tracking sensor
-    private void configureOtos(SparkFunOTOS otos, Pose2d pose) {
-        // TODO: Run TuneRoadRunner to calibrate these values:
-        final double headingOffset = 179.9; // Degrees
-        final double xOffset = 5.56; // Inches
-        final double yOffset = 3.39; // Inches
-        final double linearScalar = 0.956;
-        final double angularScalar = 1.0;
+    // Structure for optical tracking configuration settings.
+    class OpticalTrackerSettings {
+        double headingOffset;
+        double linearScalar;
+        double angularScalar;
+        double xOffset;
+        double yOffset;
+
+        // Configure the SparkFun Odometry Tracking Optical Sensor for your robot:
+        void configureOtos() {
+            if (isDevBot) {
+                headingOffset = 0; // Degrees
+                linearScalar = 1.000;
+                angularScalar = 1.0;
+                xOffset = 5.56; // Inches
+                yOffset = 3.39; // Inches
+            } else {
+                // Competition bot settings go here
+            }
+        }
+    }
+
+    // Configure the optical tracking sensor if we have one. The pose is the initial pose where
+    // the robot will start on the field.
+    private void configureOpticalTracker(Pose2d pose) {
+        if (opticalTracker == null)
+            return; // ====>
+
+        // Determine the settings to use:
+        OpticalTrackerSettings settings = new OpticalTrackerSettings();
+        settings.configureOtos();
 
         // Assuming you've mounted your sensor to a robot and it's not centered,
         // you can specify the offset for the sensor relative to the center of the
@@ -364,17 +386,18 @@ public final class MecanumDrive {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        otos.setLinearUnit(DistanceUnit.INCH);
-        otos.setAngularUnit(AngleUnit.DEGREES);
-        otos.setOffset(new SparkFunOTOS.Pose2D(xOffset, yOffset, headingOffset));
+        opticalTracker.setLinearUnit(DistanceUnit.INCH);
+        opticalTracker.setAngularUnit(AngleUnit.DEGREES);
+        opticalTracker.setOffset(new SparkFunOTOS.Pose2D(
+                settings.xOffset, settings.yOffset, settings.headingOffset));
 
         // Set the desired units for linear and angular measurements. Can be either
         // meters or inches for linear, and radians or degrees for angular. If not
         // set, the default is inches and degrees. Note that this setting is not
         // persisted in the sensor, so you need to set at the start of all your
         // OpModes if using the non-default value.
-        otos.setLinearUnit(DistanceUnit.INCH);
-        otos.setAngularUnit(AngleUnit.RADIANS);
+        opticalTracker.setLinearUnit(DistanceUnit.INCH);
+        opticalTracker.setAngularUnit(AngleUnit.RADIANS);
 
         // Here we can set the linear and angular scalars, which can compensate for
         // scaling issues with the sensor measurements. Note that as of firmware
@@ -392,8 +415,8 @@ public final class MecanumDrive {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        otos.setLinearScalar(linearScalar);
-        otos.setAngularScalar(angularScalar);
+        opticalTracker.setLinearScalar(settings.linearScalar);
+        opticalTracker.setAngularScalar(settings.angularScalar);
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
@@ -405,22 +428,23 @@ public final class MecanumDrive {
         // to wait until the calibration is complete. If no parameters are provided,
         // it will take 255 samples and wait until done; each sample takes about
         // 2.4ms, so about 612ms total
-        otos.calibrateImu();
+        opticalTracker.calibrateImu();
 
         // Reset the tracking algorithm - this resets the position to the origin,
         // but can also be used to recover from some rare tracking errors
-        otos.resetTracking();
+        opticalTracker.resetTracking();
 
         // After resetting the tracking, the OTOS will report that the robot is at
         // the origin. If your robot does not start at the origin, or you have
         // another source of location information (eg. vision odometry), you can set
         // the OTOS location to match and it will continue to track from there.
-        otos.setPosition(new SparkFunOTOS.Pose2D(pose.position.x, pose.position.y, pose.heading.log()));
+        opticalTracker.setPosition(new SparkFunOTOS.Pose2D(
+                pose.position.x, pose.position.y, pose.heading.log()));
 
         // Get the hardware and firmware version
         SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
-        otos.getVersionInfo(hwVersion, fwVersion);
+        opticalTracker.getVersionInfo(hwVersion, fwVersion);
     }
 
     // Set the drive powers for when driving manually via the controller:

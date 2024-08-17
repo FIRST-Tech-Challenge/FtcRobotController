@@ -265,11 +265,8 @@ class TickTracker {
 
 /**
  * Class for remembering all of the tuned settings.
- * @noinspection IOStreamConstructor
  */
 class Settings {
-    final String SETTINGS_FILE = "roadrunner_settings.xml";
-
     String robotName;
     TuneRoadRunner.Type type;
     double opticalAngularScalar;
@@ -343,7 +340,7 @@ public class TuneRoadRunner extends LinearOpMode {
     /** @noinspection UnnecessaryUnicodeEscape*/
     class Ui {
         // Button press state:
-        private final boolean[] buttonPressed = new boolean[4];
+        private final boolean[] buttonPressed = new boolean[5];
         private boolean buttonPress(boolean pressed, int index) {
             boolean press = pressed && !buttonPressed[index];
             buttonPressed[index] = pressed;
@@ -351,10 +348,11 @@ public class TuneRoadRunner extends LinearOpMode {
         }
 
         // Button press status:
-        boolean select() { return buttonPress(gamepad1.a, 0); }
+        boolean accept() { return buttonPress(gamepad1.a, 0); }
         boolean cancel() { return buttonPress(gamepad1.b, 1); }
-        boolean up() { return buttonPress(gamepad1.dpad_up, 2); }
-        boolean down() { return buttonPress(gamepad1.dpad_down, 3); }
+        boolean reposition() { return buttonPress(gamepad1.x, 2); }
+        boolean up() { return buttonPress(gamepad1.dpad_up, 3); }
+        boolean down() { return buttonPress(gamepad1.dpad_down, 4); }
 
         // Display the menu:
         /** @noinspection SameParameterValue, StringConcatenationInLoop */
@@ -373,7 +371,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 }
                 if (cancel() && !topmost)
                     return -1;
-                if (select())
+                if (accept())
                     return current;
                 if (header != null) {
                     output += header;
@@ -391,17 +389,38 @@ public class TuneRoadRunner extends LinearOpMode {
         }
 
         // Show a message:
-        void showMessage(String message) {
+        void message(String message) {
             telemetry.addLine(message);
             telemetry.update();
         }
 
-        // Show a message and wait for A to be pressed in which case it returns true. Returns
-        // false if the B button is pressed:
+        // Show a message and wait for an A or B button press. If accept (A) is pressed, return
+        // success. if cancel (B) is pressed, return failure. The robot CAN be driven while
+        // waiting.
+        boolean drivePrompt(String message) {
+            boolean success = false;
+            message(message);
+            while (opModeIsActive() && !cancel()) {
+                if (accept()) {
+                    success = true;
+                    break;
+                }
+                drive.setDrivePowers(new PoseVelocity2d(
+                        new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
+                        -gamepad1.right_stick_x));
+                updateSparkFunRotation();
+            }
+            drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
+            return success;
+        }
+
+        // Show a message and wait for an A or B button press. If accept (A) is pressed, return
+        // success. if cancel (B) is pressed, return failure. The robot CANNOT be driven while
+        // waiting.
         boolean prompt(String message) {
             while (opModeIsActive() && !cancel()) {
-                showMessage(message);
-                if (select())
+                message(message);
+                if (accept())
                     return true;
             }
             return false;
@@ -414,7 +433,7 @@ public class TuneRoadRunner extends LinearOpMode {
         drive.runParallel(action);
         while (opModeIsActive() && !ui.cancel()) {
             TelemetryPacket packet = new TelemetryPacket();
-            ui.showMessage("Press B to stop");
+            ui.message("Press B to stop");
             boolean more = drive.doActionsWork(drive.pose, drive.poseVelocity, packet);
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
             if (!more) {
@@ -564,14 +583,18 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         String message;
 
-        if (ui.prompt("In this test, you'll push the robot forward in a straight line along a field wall for exactly 4 tiles. "
-                + "\n\nPress A once you've aligned the robot by hand and are ready to push. Press B to cancel.")) {
+        if (ui.drivePrompt("In this test, you'll push the robot forward in a straight line "
+                + "along a field wall for exactly 4 tiles. "
+                + "\n\nTo start, align the robot by hand at its starting point. "
+                + "\n\nPress A when ready, B to cancel.")) {
 
             double distance = 0;
             double heading = 0;
 
             drive.opticalTracker.resetTracking();
-            while (opModeIsActive() && !ui.cancel()) {
+            while (opModeIsActive() && !ui.accept()) {
+                if (ui.cancel())
+                    return; // ====>
 
                 SparkFunOTOS.Pose2D pose = drive.opticalTracker.getPosition();
                 distance = Math.hypot(pose.x, pose.y);
@@ -581,7 +604,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 message += String.format("&ensp;Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h));
                 message += String.format("&ensp;Effective distance: %.2f\"\n", distance);
                 message += String.format("&ensp;Heading angle: %.2f\u00b0\n", Math.toDegrees(heading));
-                message += "\nPress B when complete.";
+                message += "\nPress A when complete, B to cancel";
                 telemetry.addLine(message);
                 telemetry.update();
             }
@@ -608,7 +631,7 @@ public class TuneRoadRunner extends LinearOpMode {
             } else {
                 message = String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 off from old.\n", newHeading, Math.toDegrees(headingChange))
                     + String.format("New linear scalar of %.2f is %.1f%% off from old.\n\n", newLinearScalar, linearScalarChange)
-                    + "Use these results? Press A if they look good, B to discard them.";
+                    + "Use these results? Press A if they look good, B to cancel.";
                 if (ui.prompt(message)) {
                     settings.opticalLinearScalar = newLinearScalar;
                     settings.opticalOffset.h = newHeading;
@@ -657,7 +680,7 @@ public class TuneRoadRunner extends LinearOpMode {
             drive.leftFront.setPower(-fraction * SPIN_SPEED);
             drive.leftBack.setPower(-fraction * SPIN_SPEED);
 
-            updateSparkFunRotation(drive);
+            updateSparkFunRotation();
             if (duration == RAMP_TIME)
                 break; // ===>
         }
@@ -713,14 +736,16 @@ public class TuneRoadRunner extends LinearOpMode {
     double accumulatedSparkFunRotation = 0;
 
     // Start tracking total amount of rotation:
-    void initiateSparkFunRotation(MecanumDrive drive) {
+    void initiateSparkFunRotation() {
         assert(drive.opticalTracker != null);
         previousSparkFunHeading = drive.opticalTracker.getPosition().h;
     }
 
     // Call this regularly to update the tracked amount of rotation:
-    SparkFunOTOS.Pose2D updateSparkFunRotation(MecanumDrive drive) {
-        assert(drive.opticalTracker != null);
+    SparkFunOTOS.Pose2D updateSparkFunRotation() {
+        if (drive.opticalTracker == null) // Handle case where we're using encoders
+            return null;
+
         SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
         accumulatedSparkFunRotation += normalizeAngle(position.h - previousSparkFunHeading);
         previousSparkFunHeading = position.h;
@@ -728,9 +753,9 @@ public class TuneRoadRunner extends LinearOpMode {
     }
 
     // Get the resulting total rotation amount:
-    double getSparkFunRotation(MecanumDrive drive) {
+    double getSparkFunRotation() {
         assert(drive.opticalTracker != null);
-        updateSparkFunRotation(drive);
+        updateSparkFunRotation();
         return accumulatedSparkFunRotation;
     }
 
@@ -741,45 +766,26 @@ public class TuneRoadRunner extends LinearOpMode {
         final double REVOLUTION_COUNT = 1.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
-        String message;
+        String results;
 
-        if (!ui.prompt("In this test, you'll align the robot against a wall to begin, then drive "
-                + "it out so that the robot can rotate in place 10 times, then you'll align "
+        if (!ui.drivePrompt("In this test, you'll position the robot against a wall, then drive "
+                + "it out so that the robot can rotate in place 10 times, then position "
                 + "the robot against the wall again."
-                + "\n\nPress A to start, B to cancel"))
+                + "\n\nFirst, carefully drive the robot to a wall and align it so that "
+                + "it's facing forward. This marks the start orientation for calibration."
+                + "\n\nDrive the robot, press A when ready, B to cancel"))
             return; // ====>
 
-        while (opModeIsActive() && !ui.select()) {
-            telemetry.addLine("Carefully drive the robot to a wall and align it so that "
-                    + "it's facing forward. This marks the start orientation for calibration."
-                    + "\n\nPress A when ready, B to cancel");
-            telemetry.update();
-            drive.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
-                    -gamepad1.right_stick_x));
-            if (ui.cancel())
-                return; // ===>
-        }
-
         // Start measuring accumulated rotation:
-        initiateSparkFunRotation(drive);
+        initiateSparkFunRotation();
 
         // Let the user position the robot:
-        while (opModeIsActive() && !ui.select()) {
-            telemetry.addLine("Now move the robot far enough away from the wall and any objects so "
+        if (!ui.drivePrompt("Now move the robot far enough away from the wall and any objects so "
                     + "that it can freely rotate in place."
-                    + "\n\nPress A when ready for the robot to rotate, B to cancel");
-            telemetry.update();
-            drive.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
-                    -gamepad1.right_stick_x));
-            updateSparkFunRotation(drive);
-            if (ui.cancel())
-                return; // ===>
-        }
+                    + "\n\nPress A when ready for the robot to rotate, B to cancel"))
+            return; // ====>
 
-        telemetry.addLine(String.format("Rotating %.1f times...", REVOLUTION_COUNT));
-        telemetry.update();
+        ui.message(String.format("Rotating %.1f times...", REVOLUTION_COUNT));
 
         ArrayList<Point> points = new ArrayList<>();
         rampMotorsSpin(drive, true);
@@ -791,10 +797,11 @@ public class TuneRoadRunner extends LinearOpMode {
         Point currentPoint = new Point(0, 0);
         SparkFunOTOS.Pose2D previousPosition = drive.opticalTracker.getPosition();
         double distanceTraveled = 0;
-        double startRotation = getSparkFunRotation(drive);
+        double startRotation = getSparkFunRotation();
 
+        // Now rotate the robot:
         while (opModeIsActive()) {
-            SparkFunOTOS.Pose2D position = updateSparkFunRotation(drive);
+            SparkFunOTOS.Pose2D position = updateSparkFunRotation();
             double rotationAmount = accumulatedSparkFunRotation - startRotation;
             if (rotationAmount >= rotationTarget)
                 break; // We're done, break out of this loop!
@@ -836,18 +843,10 @@ public class TuneRoadRunner extends LinearOpMode {
         // Stop the rotation:
         rampMotorsSpin(drive, false);
 
-        while (opModeIsActive() && !ui.select()) {
-            telemetry.addLine("Now drive the robot to align it at the wall in the same "
+        if (!ui.drivePrompt("Now drive the robot to align it at the wall in the same "
                     + "place and orientation as it started."
-                    + "\n\nPress A when done, B to cancel");
-            telemetry.update();
-            updateSparkFunRotation(drive);
-            drive.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
-                    -gamepad1.right_stick_x));
-            if (ui.cancel())
-                return; // ===>
-        }
+                    + "\n\nPress A when done, B to cancel"))
+            return; // ====>
 
         CenterOfRotation circleFit = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
 
@@ -858,48 +857,45 @@ public class TuneRoadRunner extends LinearOpMode {
         double traveledRadius = distanceTraveled / (2 * REVOLUTION_COUNT * Math.PI);
 
         // Angular scalar results:
-        double totalMeasuredRotation = getSparkFunRotation(drive);
+        double totalMeasuredRotation = getSparkFunRotation();
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
 
-        message = String.format("Sensor thinks %.2f circles were completed\n", totalMeasuredCircles);
-        message += String.format("Distance traveled: %f, farthestPoint.x: %f, farthestPoint.y: %f, traveledRadius: %f\n",
+        results = String.format("Sensor thinks %.2f circles were completed\n", totalMeasuredCircles);
+        results += String.format("Distance traveled: %f, farthestPoint.x: %f, farthestPoint.y: %f, traveledRadius: %f\n",
                 distanceTraveled, farthestPoint.x, farthestPoint.y, traveledRadius);
-        message += String.format("Offset from center of rotation: (%.2f\", %.2f\"), samples: %d",
+        results += String.format("Offset from center of rotation: (%.2f\", %.2f\"), samples: %d",
                 resultX, resultY, points.size());
-        message += String.format("Farthest point radius: %.2f, Traveled radius: %.2f", farthestPointRadius, traveledRadius);
-        message += String.format("Error (inches): (%.2f, %.2f)\n", currentPoint.x, currentPoint.y);
-        message += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", circleFit.x, circleFit.y, circleFit.leastSquaresRadius);
+        results += String.format("Farthest point radius: %.2f, Traveled radius: %.2f", farthestPointRadius, traveledRadius);
+        results += String.format("Error (inches): (%.2f, %.2f)\n", currentPoint.x, currentPoint.y);
+        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", circleFit.x, circleFit.y, circleFit.leastSquaresRadius);
+        results += "\n\n";
 
         // Do some sanity checking on the results:
         if ((Math.abs(circleFit.x) > 12) || (Math.abs(circleFit.y) > 12)) {
-            message += "The results are bad, the calculated center-of-rotation is bogus.\n\n"
-                    + "Aborted, press A to continue.";
-            ui.prompt(message);
+            ui.prompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
+                    + "Aborted, press A to continue.");
             return; // ====>
         }
         if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
-            message += "The measured number of circles is bad. Did you properly align "
+            ui.prompt(results + "The measured number of circles is bad. Did you properly align "
                 + "the robot on the wall the same way at both the start and end of this test?\n\n"
-                + "Aborted, press A to continue.";
-            ui.prompt(message);
-            return;
+                + "Aborted, press A to continue.");
+            return; // ====>
         }
 
-        message += "Use these results? Press A if they look good, B to discard them.";
-        if (ui.prompt(message)) {
+        if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
             settings.opticalOffset.x = circleFit.x;
             settings.opticalOffset.y = circleFit.y;
             settings.opticalAngularScalar = angularScalar;
             settings.save();
 
-            message = "Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n";
-            message += String.format("  xOffset = %.2f\n", circleFit.x);
-            message += String.format("  yOffset = %.3f\n", circleFit.y);
-            message += String.format("  angularScalar = %.3f\n", angularScalar);
-            message += "\nPress A to continue.";
-            ui.prompt(message);
+            ui.prompt("Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n"
+                    + String.format("  xOffset = %.2f\n", circleFit.x)
+                    + String.format("  yOffset = %.3f\n", circleFit.y)
+                    + String.format("  angularScalar = %.3f\n", angularScalar)
+                    + "\nPress A to continue.");
         }
     }
 
@@ -1039,11 +1035,11 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(false); // Don't use MecanumDrive/TankDrive
         assert(drive.opticalTracker != null);
 
-        if (ui.prompt("Place the robot on the field with as much space in front of it as possible. "
+        if (ui.drivePrompt("Place the robot on the field with as much space in front of it as possible. "
                 + "The robot will drive forward in a straight line, starting slowly but getting "
                 + "faster and faster. Be ready to press B to stop the robot if it gets close to "
                 + "hitting something!"
-                + "\n\nPress A to start, B to cancel.")) {
+                + "\n\nDrive the robot to a good spot, press A to start, B to cancel.")) {
 
             ArrayList<Point> points = new ArrayList<>();
             double startTime = time();
@@ -1115,7 +1111,7 @@ public class TuneRoadRunner extends LinearOpMode {
             canvas.setStroke("#00ff00");
             canvas.strokePolyline(xPoints, yPoints);
 
-            BestFitLine bestFileLine = fitLine(points);
+            BestFitLine bestFitLine = fitLine(points);
 
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
@@ -1138,8 +1134,8 @@ public class TuneRoadRunner extends LinearOpMode {
             drive.updatePoseEstimate();
 
             TelemetryPacket p = new TelemetryPacket();
-            ui.showMessage("Use the controller to drive the robot around. "
-                    + "Press B to return to the main menu when done.");
+            ui.message("Use the controller to drive the robot around. "
+                    + "\n\nPress B when done.");
 
             Canvas c = p.fieldOverlay();
             c.setStroke("#3F51B5");
@@ -1307,9 +1303,12 @@ public class TuneRoadRunner extends LinearOpMode {
     void completionTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.prompt("The robot will drive forward 48 inches using a spline. "
+        if (ui.drivePrompt("The robot will drive forward 48 inches using a spline. "
                 + "It needs half a tile clearance on either side. "
-                + "\n\nPress A to start, B to stop")) {
+                + "\n\nDrive the robot to a good spot, press A to start, B to cancel")) {
+
+            telemetry.addLine("Press B to cancel");
+            telemetry.update();
 
             Action action = drive.actionBuilder(drive.pose)
                     .setTangent(Math.toRadians(60))
@@ -1391,13 +1390,17 @@ public class TuneRoadRunner extends LinearOpMode {
         tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
         tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
 
-        telemetry.addLine("<big><big><big><big><big><big><big><big><b>Press \u25B6");
-        telemetry.update();
+        // Remind the user to press Start on the Driver Station, then press A on the gamepad.
+        // We require the latter because enabling the gamepad on the DS after it's been booted
+        // causes an A press to be sent to the app, and we don't want that to accidentally
+        // invoke a menu option:
+        ui.message("<big><big><big><big><big><big><big><big><b>Press \u25B6");
         waitForStart();
-
+        //noinspection StatementWithEmptyBody
         while (opModeIsActive() && !ui.prompt("<big><big><big><big><big><big><big><b>Press Gamepad A"))
             ;
 
+        // Except our main menu loop:
         int selection = 0;
         while (opModeIsActive()) {
             selection = ui.menu(heading, selection, true,
