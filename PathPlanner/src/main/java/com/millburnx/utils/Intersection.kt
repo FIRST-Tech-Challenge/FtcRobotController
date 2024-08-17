@@ -1,4 +1,4 @@
-package com.millburnx.purePursuit.Utils
+package com.millburnx.utils
 
 /**
  * Represents a point of intersection on a line

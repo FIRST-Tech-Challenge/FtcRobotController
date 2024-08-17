@@ -1,6 +1,6 @@
-package com.millburnx.purePursuit.Utils
+package com.millburnx.utils
 
-import com.millburnx.purePursuit.ftcDashboard.ICanvas
+import com.millburnx.dashboard.ICanvas
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow

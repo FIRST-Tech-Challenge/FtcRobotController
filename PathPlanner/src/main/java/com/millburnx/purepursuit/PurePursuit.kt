@@ -1,8 +1,11 @@
-package com.millburnx.purePursuit
+package com.millburnx.purepursuit
 
-import com.millburnx.purePursuit.Utils.*
-import com.millburnx.purePursuit.ftcDashboard.ICanvas
-import com.millburnx.purePursuit.ftcDashboard.TelemetryPacket
+import com.millburnx.utils.Bezier
+import com.millburnx.utils.Intersection
+import com.millburnx.utils.Utils
+import com.millburnx.utils.Vec2d
+import com.millburnx.dashboard.ICanvas
+import com.millburnx.dashboard.TelemetryPacket
 import java.awt.FileDialog
 import java.io.File
 import kotlin.math.abs

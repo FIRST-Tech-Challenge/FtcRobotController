@@ -2,7 +2,7 @@ package com.millburnx.pathplanner.components;
 
 //import java.awt.*;
 
-import com.millburnx.purePursuit.Utils.Vec2d;
+import com.millburnx.utils.Vec2d;
 
 public class BezierPoint {
     private Vec2d previousHandle;

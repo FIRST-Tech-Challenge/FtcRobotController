@@ -1,4 +1,4 @@
-package com.millburnx.purePursuit.ftcDashboard
+package com.millburnx.dashboard
 
 import java.awt.Graphics
 import java.awt.GraphicsEnvironment
@@ -6,14 +6,14 @@ import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import javax.swing.JButton
 import javax.swing.JPanel
-import kotlin.math.max
 import kotlin.math.min
 
 interface IFTCDashboard {
     fun sendTelemetryPacket(telemetryPacket: ITelemetryPacket)
 }
 
-class FTCDashboard(ppi: Double, val start: () -> Unit, val stop: () -> Unit, var reset: () -> Unit, var load: () -> Unit) : IFTCDashboard {
+class FTCDashboard(ppi: Double, val start: () -> Unit, val stop: () -> Unit, var reset: () -> Unit, var load: () -> Unit) :
+    IFTCDashboard {
     inner class Panel(var ppi: Double) : JPanel() {
         init {
             val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()

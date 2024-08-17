@@ -1,4 +1,4 @@
-package com.millburnx.purePursuit.Utils
+package com.millburnx.utils
 
 class Circle(val center: Vec2d, val radius: Double) {
     /**

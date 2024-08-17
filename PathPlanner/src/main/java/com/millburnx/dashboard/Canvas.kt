@@ -1,4 +1,4 @@
-package com.millburnx.purePursuit.ftcDashboard
+package com.millburnx.dashboard
 
 // https://acmerobotics.github.io/ftc-dashboard/javadoc/com/acmerobotics/dashboard/canvas/Canvas.html
 interface ICanvas {

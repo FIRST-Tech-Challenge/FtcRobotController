@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
-import com.millburnx.purePursuit.Utils.Vec2d;
+import com.millburnx.utils.Vec2d;
 
 public class BezierPath {
     private final ArrayList<BezierPoint> points = new ArrayList<>();

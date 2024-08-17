@@ -1,4 +1,4 @@
-package com.millburnx.purePursuit
+package com.millburnx.purepursuit
 
 import java.awt.Dimension
 import javax.swing.JFrame

@@ -1,4 +1,4 @@
-package com.millburnx.purePursuit.Utils
+package com.millburnx.utils
 
 import kotlin.math.max
 import kotlin.math.min

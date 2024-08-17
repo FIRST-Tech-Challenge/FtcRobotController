@@ -1,7 +1,7 @@
-package com.millburnx.purePursuit
+package com.millburnx.purepursuit
 
-import com.millburnx.purePursuit.Utils.Vec2d
-import com.millburnx.purePursuit.ftcDashboard.FTCDashboard
+import com.millburnx.utils.Vec2d
+import com.millburnx.dashboard.FTCDashboard
 import java.awt.Color
 
 interface IOpMode {

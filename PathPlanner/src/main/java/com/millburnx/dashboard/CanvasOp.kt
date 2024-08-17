@@ -1,6 +1,6 @@
-package com.millburnx.purePursuit.ftcDashboard
+package com.millburnx.dashboard
 
-import com.millburnx.purePursuit.Utils.Vec2d
+import com.millburnx.utils.Vec2d
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Font

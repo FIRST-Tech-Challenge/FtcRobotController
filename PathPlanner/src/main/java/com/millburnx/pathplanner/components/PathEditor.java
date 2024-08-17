@@ -1,6 +1,6 @@
 package com.millburnx.pathplanner.components;
 
-import com.millburnx.purePursuit.Utils.Vec2d;
+import com.millburnx.utils.Vec2d;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

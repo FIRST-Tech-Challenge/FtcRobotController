@@ -1,8 +1,8 @@
-package com.millburnx.purePursuit
+package com.millburnx.purepursuit
 
-import com.millburnx.purePursuit.Utils.Circle
-import com.millburnx.purePursuit.Utils.Vec2d
-import com.millburnx.purePursuit.Utils.Utils
+import com.millburnx.utils.Circle
+import com.millburnx.utils.Vec2d
+import com.millburnx.utils.Utils
 import kotlin.math.abs
 
 class Robot(size: Vec2d, val lookahead: Double = 14.0) {
