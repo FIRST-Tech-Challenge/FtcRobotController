@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class WaitAction extends Action{
 
     double waitTimeSeconds;
-    Action dependentAction;
-    DoneStateAction doneStateAction = new DoneStateAction();
-    boolean isDone = false;
     boolean timerStarted = false;
     ElapsedTime elapsedTime;
 
@@ -22,16 +19,14 @@ public class WaitAction extends Action{
     }
 
     @Override
-    boolean updateIsDone() {
+    boolean checkDoneCondition() {
         if (timerStarted) {
             if (elapsedTime.seconds() >= waitTimeSeconds) {
-                isDone = true;
-                return isDone;
+                return true;
             }
         }
 
-        isDone = false;
-        return isDone;
+        return false;
     }
 
     @Override
@@ -40,26 +35,5 @@ public class WaitAction extends Action{
             elapsedTime = new ElapsedTime();
             timerStarted = true;
         }
-    }
-
-    boolean getIsDone() {
-        return isDone;
-    }
-
-    void setDependentAction(Action newAction) {
-        this.dependentAction = newAction;
-    }
-
-    Action getDependentAction() {
-        return this.dependentAction;
-    }
-
-    void updateCheckDone() {
-        if (isDone) { return; } //if i'm done never update
-        if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
-
-        update();
-
-        updateIsDone();
     }
 }

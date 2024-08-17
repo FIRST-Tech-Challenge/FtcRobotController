@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
+import com.kalipsorobotics.fresh.MarkerDetector;
+
 public abstract class Action {
 
     Action dependentAction;
-    DoneStateAction doneStateAction;
-    boolean isDone;
+    DoneStateAction doneStateAction = new DoneStateAction();
+    boolean isDone = false;
 
     boolean getIsDone() {
         return isDone;
@@ -15,7 +17,7 @@ public abstract class Action {
     Action getDependentAction() {
         return this.dependentAction;
     }
-    void updateCheckDone() {
+    public void updateCheckDone() {
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
 
@@ -23,6 +25,12 @@ public abstract class Action {
 
         updateIsDone();
     }
-    abstract boolean updateIsDone();
+
+    boolean updateIsDone() {
+        isDone = checkDoneCondition();
+        return isDone;
+    }
+
+    abstract boolean checkDoneCondition();
     abstract void update();
 }

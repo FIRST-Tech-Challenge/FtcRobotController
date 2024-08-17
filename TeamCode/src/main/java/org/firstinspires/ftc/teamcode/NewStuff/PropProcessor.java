@@ -1,4 +1,4 @@
-package com.kalipsorobotics.fresh;
+package org.firstinspires.ftc.teamcode.NewStuff;
 
 import android.util.Log;
 
@@ -10,7 +10,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class MarkerProcessor implements VisionProcessor {
+public class PropProcessor implements VisionProcessor {
 
     private Telemetry telemetry;
     private Mat workingMatrix;
@@ -28,16 +28,15 @@ public class MarkerProcessor implements VisionProcessor {
 
     double counter;
 
-    public MarkerProcessor(Telemetry telemetry, MarkerDetector.ALLIANCE_COLOR allianceColor) {
+    public PropProcessor(Telemetry telemetry, PropDetector.ALLIANCE_COLOR allianceColor) {
 
         this.telemetry = telemetry;
-        detector = new MarkerDetector(telemetry, allianceColor);
+        detector = new PropDetector(telemetry, allianceColor);
     }
 
-    private final MarkerDetector detector;
+    public final PropDetector detector;
 
-
-    public MarkerDetector.PROP_POSITION getPosition() {
+    public PropDetector.PROP_POSITION getPosition() {
         return detector.position;
     }
 
