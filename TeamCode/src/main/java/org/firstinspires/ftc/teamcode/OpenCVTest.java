@@ -88,7 +88,7 @@ public class OpenCVTest extends OpMode {
         void inputToCb(Mat input)
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 2);
+            Core.extractChannel(YCrCb, Cb, 1);
         }
 
         @Override
