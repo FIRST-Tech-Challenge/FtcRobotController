@@ -16,109 +16,252 @@ public class OpenCVTest extends OpMode {
      */
 
     /*
-    This is a DetectRed internal class intended to detect whether the color red is in one rectangle
+    This is a Test internal class intended to detect whether the color red is in one rectangle
     or the other. All internal classes that are meant to do anything with EasyOpenCV must be a
     "pipeline" and extend OpenCVPipeline. They also have to include processFrame(Mat input) which
     is the actual image processing.
      */
-    class DetectRed extends OpenCvPipeline {
+    public class Test extends OpenCvPipeline {
         /*
-        Mat variables represent specific images. The YCrCb variable represents the input image
-        that the camera sends, changed to YCrCb color format. Cr represents the color's divergence
-        from red, while Cb represents the color's divergence from blue. Y represents the color's
-        brightness. leftCrop is a Mat that represents the left half of the image, while rightCrop
-        represents the right half of the image. leftAverageFinal and rightAverageFinal respectively
-        represent the left and right average red values of the image, and these will be ultimately
-        compared to each other to determine if the red object is in the left or right half. The two
-        RED and GREEN scalars are just for convenience so that I don't have to repeat the same
-        RGB color values for both the left and right rectangles.
+         * Some color constants
          */
-        Mat YCrCb = new Mat();
-        Mat leftCrop;
-        Mat rightCrop;
-        Mat output = new Mat();
-        double leftAverageFinal;
-        double rightAverageFinal;
-        final Scalar RED = new Scalar(255, 0, 0);
+        final Scalar BLUE = new Scalar(0, 0, 255);
         final Scalar GREEN = new Scalar(0, 255, 0);
 
-        // This is the function that does the actual image processing. It takes in
-        // the input frame from the camera, and it outputs the edited frame with rectangles along
-        // with the code to determine whether the object is in the right or left.
-        public Mat processFrame(Mat input) {
+        /*
+         * The core values which define the location and size of the sample regions
+         */
+        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100,100);
+        final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(300,100);
+        final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(500,100);
+        static final int REGION_WIDTH = 100;
+        static final int REGION_HEIGHT = 100;
 
-            /*
-            Imgproc contains all the functions to edit the image. For cvtColor, that changes the
-            image from one color format to another. In this case, we are changing from RGB to
-            YCrCb. The first parameter is the input frame, the second is the output frame, and
-            the third is the enum for what the image is being transferred from and to. The telemetry
-            is just to ensure that the pipeline is running.
-             */
+        /*
+         * Points which actually define the sample region rectangles, derived from above values
+         *
+         * Example of how points A and B work to define a rectangle
+         *
+         *   ------------------------------------
+         *   | (0,0) Point A                    |
+         *   |                                  |
+         *   |                                  |
+         *   |                                  |
+         *   |                                  |
+         *   |                                  |
+         *   |                                  |
+         *   |                  Point B (70,50) |
+         *   ------------------------------------
+         *
+         */
+        Point region1_pointA = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y);
+        Point region1_pointB = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+        Point region2_pointA = new Point(
+                REGION2_TOPLEFT_ANCHOR_POINT.x,
+                REGION2_TOPLEFT_ANCHOR_POINT.y);
+        Point region2_pointB = new Point(
+                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+        Point region3_pointA = new Point(
+                REGION3_TOPLEFT_ANCHOR_POINT.x,
+                REGION3_TOPLEFT_ANCHOR_POINT.y);
+        Point region3_pointB = new Point(
+                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+        /*
+         * Working variables
+         */
+        Mat region1_Cb, region2_Cb, region3_Cb;
+        Mat YCrCb = new Mat();
+        Mat Cb = new Mat();
+        int avg1, avg2, avg3;
+
+        /*
+         * This function takes the RGB frame, converts to YCrCb,
+         * and extracts the Cb channel to the 'Cb' variable
+         */
+        void inputToCb(Mat input)
+        {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            telemetry.addLine("DetectRed Pipeline Running");
+            Core.extractChannel(YCrCb, Cb, 2);
+        }
+
+        @Override
+        public void init(Mat firstFrame)
+        {
+            /*
+             * We need to call this in order to make sure the 'Cb'
+             * object is initialized, so that the submats we make
+             * will still be linked to it on subsequent frames. (If
+             * the object were to only be initialized in processFrame,
+             * then the submats would become delinked because the backing
+             * buffer would be re-allocated the first time a real frame
+             * was crunched)
+             */
+            inputToCb(firstFrame);
 
             /*
-            This is two rectangles that represent the left and right halves of the camera. The
-            values are chosen because the resolution is 640x360, but if the resolution was changed
-            this would need to be changed too.
+             * Submats are a persistent reference to a region of the parent
+             * buffer. Any changes to the child affect the parent, and the
+             * reverse also holds true.
              */
-            Rect leftRect = new Rect(1, 1, 319, 359);
-            Rect rightRect = new Rect(320, 1, 319, 359);
+            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+            region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+            region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
+        }
+
+        @Override
+        public Mat processFrame(Mat input)
+        {
+            /*
+             * Overview of what we're doing:
+             *
+             * We first convert to YCrCb color space, from RGB color space.
+             * Why do we do this? Well, in the RGB color space, chroma and
+             * luma are intertwined. In YCrCb, chroma and luma are separated.
+             * YCrCb is a 3-channel color space, just like RGB. YCrCb's 3 channels
+             * are Y, the luma channel (which essentially just a B&W image), the
+             * Cr channel, which records the difference from red, and the Cb channel,
+             * which records the difference from blue. Because chroma and luma are
+             * not related in YCrCb, vision code written to look for certain values
+             * in the Cr/Cb channels will not be severely affected by differing
+             * light intensity, since that difference would most likely just be
+             * reflected in the Y channel.
+             *
+             * After we've converted to YCrCb, we extract just the 2nd channel, the
+             * Cb channel. We do this because stones are bright yellow and contrast
+             * STRONGLY on the Cb channel against everything else, including SkyStones
+             * (because SkyStones have a black label).
+             *
+             * We then take the average pixel value of 3 different regions on that Cb
+             * channel, one positioned over each stone. The brightest of the 3 regions
+             * is where we assume the SkyStone to be, since the normal stones show up
+             * extremely darkly.
+             *
+             * We also draw rectangles on the screen showing where the sample regions
+             * are, as well as drawing a solid rectangle over top the sample region
+             * we believe is on top of the SkyStone.
+             *
+             * In order for this whole process to work correctly, each sample region
+             * should be positioned in the center of each of the first 3 stones, and
+             * be small enough such that only the stone is sampled, and not any of the
+             * surroundings.
+             */
 
             /*
-            As we already know, Imgproc edits the image. Imgproc.rectangle edits the image so that
-            our previously defined rectangles are drawn in RED.
+             * Get the Cb channel of the input frame after conversion to YCrCb
              */
-            Imgproc.rectangle(output, leftRect, RED, 2);
-            Imgproc.rectangle(output, rightRect, RED, 2);
+            inputToCb(input);
 
             /*
-            A submat is a piece of a Mat, aka a subsection of an image. This separates the YCrCb
-            Mat, AKA the input frame turned into YCrCb image, into two Mats divided by the
-            previously defined rectangles.
+             * Compute the average pixel value of each submat region. We're
+             * taking the average of a single channel buffer, so the value
+             * we need is at index 0. We could have also taken the average
+             * pixel value of the 3-channel image, and referenced the value
+             * at index 2 here.
              */
-            leftCrop = YCrCb.submat(leftRect);
-            rightCrop = YCrCb.submat(rightRect);
+            avg1 = (int) Core.mean(region1_Cb).val[0];
+            avg2 = (int) Core.mean(region2_Cb).val[0];
+            avg3 = (int) Core.mean(region3_Cb).val[0];
 
             /*
-            This function extracts one color channel from the image and puts it back into the image.
-            The first parameter is the input, the second parameter is the output. Because they are
-            the same here, this is effectively editing the image. The last parameter is the channel
-            to extract from the image. In this case it is channel 2. In Y Cr Cb format, this channel
-            is Cr, AKA the divergence from red.
+             * Draw a rectangle showing sample region 1 on the screen.
+             * Simply a visual aid. Serves no functional purpose.
              */
-            Core.extractChannel(leftCrop, leftCrop, 2);
-            Core.extractChannel(rightCrop, rightCrop, 2);
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1_pointA, // First point which defines the rectangle
+                    region1_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
 
-            // This Scalar is the mean color of the Mat that it is taking from.
-            Scalar leftAverage = Core.mean(leftCrop);
-            Scalar rightAverage = Core.mean(rightCrop);
+            /*
+             * Draw a rectangle showing sample region 2 on the screen.
+             * Simply a visual aid. Serves no functional purpose.
+             */
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region2_pointA, // First point which defines the rectangle
+                    region2_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
 
-            // This double is the final average values of the red in the submats, which is
-            // equal to the first digit of the Scalar.
-            leftAverageFinal = leftAverage.val[0];
-            rightAverageFinal = rightAverage.val[0];
+            /*
+             * Draw a rectangle showing sample region 3 on the screen.
+             * Simply a visual aid. Serves no functional purpose.
+             */
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region3_pointA, // First point which defines the rectangle
+                    region3_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
 
-            // Finally, we compare the left and right average finals.
-            // The correct rectangle will turn green. Telemetry will also be outputted.
-            if (leftAverageFinal > rightAverageFinal) {
-                Imgproc.rectangle(output, leftRect, GREEN, 2);
-                telemetry.addLine("Red object detected in left.");
+            /*
+             * Now that we found the min, we actually need to go and
+             * figure out which sample region that value was from
+             */
+            if(avg1 < 100) // Was it from region 1?
+            {
+
+                /*
+                 * Draw a solid rectangle on top of the chosen region.
+                 * Simply a visual aid. Serves no functional purpose.
+                 */
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        region1_pointA, // First point which defines the rectangle
+                        region1_pointB, // Second point which defines the rectangle
+                        GREEN, // The color the rectangle is drawn in
+                        2); // Negative thickness means solid fill
+
+                telemetry.addLine("LEFT DETECTED.");
             }
-            else if (leftAverageFinal < rightAverageFinal) {
-                Imgproc.rectangle(output, rightRect, GREEN, 2);
-                telemetry.addLine("Red object detected in right.");
+            else if(avg2 < 100) // Was it from region 2?
+            {
+
+                /*
+                 * Draw a solid rectangle on top of the chosen region.
+                 * Simply a visual aid. Serves no functional purpose.
+                 */
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        region2_pointA, // First point which defines the rectangle
+                        region2_pointB, // Second point which defines the rectangle
+                        GREEN, // The color the rectangle is drawn in
+                        2); // Negative thickness means solid fill
+                telemetry.addLine("MIDDLE DETECTED.");
             }
-            else {
-                telemetry.addLine("Red amount in both is equal.");
+            else if (avg3 < 100) {
+
+                /*
+                 * Draw a solid rectangle on top of the chosen region.
+                 * Simply a visual aid. Serves no functional purpose.
+                 */
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        region3_pointA, // First point which defines the rectangle
+                        region3_pointB, // Second point which defines the rectangle
+                        GREEN, // The color the rectangle is drawn in
+                        2); // Negative thickness means solid fill
+                telemetry.addLine("RIGHT DETECTED.");
             }
 
-            // This part just outputs the average red values in both to the telemetry.
-            telemetry.addData("Left Average Red Value: ", leftAverageFinal);
-            telemetry.addData("Right Average Red Value: ", rightAverageFinal);
+            telemetry.addData("Left: Avg: ", avg1);
+            telemetry.addData("Middle: Avg: ", avg2);
+            telemetry.addData("Right: Avg: ", avg3);
 
-            // This outputs the input Camera frame, edited to include the two rectangles.
-            return output;
+            /*
+             * Render the 'input' buffer to the viewport. But note this is not
+             * simply rendering the raw camera feed, because we called functions
+             * to add some annotations to this buffer earlier up.
+             */
+            return input;
         }
     }
 
@@ -138,7 +281,7 @@ public class OpenCVTest extends OpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewId);
-        camera.setPipeline(new DetectRed());
+        camera.setPipeline(new Test());
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -148,7 +291,7 @@ public class OpenCVTest extends OpMode {
 
             @Override
             public void onError(int errorCode) {
-                System.out.println("it no work");
+                telemetry.addLine("It no work");
             }
         });
     }
