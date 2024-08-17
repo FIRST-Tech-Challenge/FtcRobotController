@@ -1,4 +1,4 @@
-package com.kalipsorobotics.fresh;
+package org.firstinspires.ftc.teamcode.NewStuff;
 
 import android.util.Log;
 
@@ -10,15 +10,19 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class MarkerDetector extends OpenCvPipeline {
+public class PropDetector extends OpenCvPipeline {
     private Mat workingMatrix = new Mat();
+
+    public enum PROP_POSITION {
+        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
+    }
 
     public PROP_POSITION position = PROP_POSITION.UNKNOWN;
 
     double avgLeftCr;
     double avgCenterCr;
     double avgRightCr;
-    ALLIANCE_COLOR markerColor;
+    ALLIANCE_COLOR propColor;
 
     double leftCrTotal;
     double avgLeftCb;
@@ -34,12 +38,8 @@ public class MarkerDetector extends OpenCvPipeline {
         RED, BLUE;
     }
 
-    public enum PROP_POSITION {
-        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
-    }
-
-    public MarkerDetector(Telemetry telemetry, ALLIANCE_COLOR color) {
-        markerColor = color;
+    public PropDetector(Telemetry telemetry, ALLIANCE_COLOR color) {
+        propColor = color;
         this.telemetry = telemetry;
     }
 
@@ -78,7 +78,7 @@ public class MarkerDetector extends OpenCvPipeline {
 
         position = PROP_POSITION.UNDETECTED;
 
-        if (markerColor == ALLIANCE_COLOR.RED) {
+        if (propColor == ALLIANCE_COLOR.RED) {
             if (avgLeftCr > avgCenterCr) {
                 if (avgLeftCr > avgRightCr) {
                     if (((160 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
@@ -126,7 +126,4 @@ public class MarkerDetector extends OpenCvPipeline {
         return input;
     }
 }
-
-
-
 

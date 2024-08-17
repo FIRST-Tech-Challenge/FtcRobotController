@@ -7,11 +7,6 @@ import java.util.ArrayList;
 public class ActionSet extends Action {
 
     private ArrayList<Action> actions;
-    Action dependentAction;
-    DoneStateAction doneStateAction = new DoneStateAction();
-
-    boolean isDone = false;
-
     public ActionSet(Action dependentAction) {
         actions = new ArrayList<Action>();
         this.dependentAction = dependentAction;
@@ -49,15 +44,13 @@ public class ActionSet extends Action {
     }
 
     @Override
-    boolean updateIsDone() {
+    boolean checkDoneCondition() {
         for(int i = 0; i < actions.size(); i++) {
             if (!actions.get(i).getIsDone()) {
-                isDone = false;
-                return isDone;
+                return false;
             }
         }
-        isDone = true;
-        return isDone;
+        return true;
     }
 
     @Override
@@ -68,25 +61,4 @@ public class ActionSet extends Action {
         }
     }
 
-    boolean getIsDone() {
-        return isDone;
-    }
-
-    void setDependentAction(Action newAction) {
-        this.dependentAction = newAction;
-    }
-
-    Action getDependentAction() {
-        return this.dependentAction;
-    }
-
-    public void updateCheckDone() {
-        if (isDone) { return; } //if i'm done never update
-        if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
-
-        Log.d("parallelaction", "should run");
-        update();
-
-        updateIsDone();
-    }
 }

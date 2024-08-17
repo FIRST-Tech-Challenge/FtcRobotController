@@ -9,12 +9,9 @@ public class TurnIntakeWheelAction extends Action {
     DcMotor intakeWheel;
     final double ERROR_TOLERANCE = 20;
     final double P_CONSTANT = 0.004;
-    Action dependentAction;
-    DoneStateAction doneStateAction = new DoneStateAction();
     double targetTicks;
     double currentTicks;
     double error;
-    boolean isDone = false;
 
 
     public TurnIntakeWheelAction(Action dependentAction, double targetTicks, Intake intake) {
@@ -35,45 +32,23 @@ public class TurnIntakeWheelAction extends Action {
         return error * P_CONSTANT;
     }
 
-    @Override
-    public void updateCheckDone() {
-        Log.d("parallelaction", "entered turn wheel");
-        if (isDone) { return; } //if i'm done never update
-        if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
-        Log.d("parallelaction", "should turn wheel");
-        update();
-
-        updateIsDone();
-    }
-
     private void refreshError() {
         error = targetTicks - currentTicks;
     }
 
     @Override
-    boolean updateIsDone() {
+    boolean checkDoneCondition() {
         refreshError();
         if (error <= ERROR_TOLERANCE) {
-            isDone = true;
+            return true;
+        } else {
+            return false;
         }
-        return isDone;
     }
 
     @Override
     void update() {
         this.currentTicks = intakeWheel.getCurrentPosition();
         intakeWheel.setPower(calculatePower());
-    }
-
-    boolean getIsDone() {
-        return isDone;
-    }
-
-    void setDependentAction(Action newAction) {
-        this.dependentAction = newAction;
-    }
-
-    Action getDependentAction() {
-        return this.dependentAction;
     }
 }
