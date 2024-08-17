@@ -581,12 +581,14 @@ public class TuneRoadRunner extends LinearOpMode {
     void opticalLinearScaleAndOrientation() {
         assert(drive.opticalTracker != null);
         useDrive(false); // Don't use MecanumDrive/TankDrive
-        String message;
+
+        SparkFunOTOS.Pose2D offset = drive.opticalTracker.getOffset();
+        double oldHeading = offset.h;
 
         if (ui.drivePrompt("In this test, you'll push the robot forward in a straight line "
-                + "along a field wall for exactly 4 tiles. "
-                + "\n\nTo start, align the robot by hand at its starting point. "
-                + "\n\nPress A when ready, B to cancel.")) {
+                + "along a field wall for exactly 4 tiles. To start, align the robot by hand "
+                + "at its starting point along a wall. "
+                + "\n\nPress A when in position, B to cancel.")) {
 
             double distance = 0;
             double heading = 0;
@@ -598,15 +600,14 @@ public class TuneRoadRunner extends LinearOpMode {
 
                 SparkFunOTOS.Pose2D pose = drive.opticalTracker.getPosition();
                 distance = Math.hypot(pose.x, pose.y);
-                heading = -Math.atan2(pose.y, pose.x); // Rise over run
+                heading = Math.atan2(pose.y, pose.x); // Rise over run
 
-                message = "Push forward exactly 4 tiles (96\") along a field wall.\n\n";
-                message += String.format("&ensp;Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h));
-                message += String.format("&ensp;Effective distance: %.2f\"\n", distance);
-                message += String.format("&ensp;Heading angle: %.2f\u00b0\n", Math.toDegrees(heading));
-                message += "\nPress A when complete, B to cancel";
-                telemetry.addLine(message);
-                telemetry.update();
+                ui.message("Push forward exactly 4 tiles (96\") along a field wall.\n\n"
+                    + String.format("&ensp;Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h))
+                    + String.format("&ensp;Sensor offset: (%.2f, %.2f, %.2f)\n", offset.x, offset.y, Math.toDegrees(offset.h))
+                    + String.format("&ensp;Effective distance: %.2f\"\n", distance)
+                    + String.format("&ensp;Heading angle: %.2f\u00b0\n", Math.toDegrees(heading))
+                    + "\nPress A when you're finished pushing, B to cancel");
             }
 
             // Avoid divide-by-zeroes on aborts:
@@ -618,8 +619,6 @@ public class TuneRoadRunner extends LinearOpMode {
             double linearScalarChange = Math.abs((oldLinearScalar - newLinearScalar)
                     / oldLinearScalar * 100.0); // Percentage
 
-            SparkFunOTOS.Pose2D offset = drive.opticalTracker.getOffset();
-            double oldHeading = offset.h;
             double newHeading = normalizeAngle(heading + oldHeading); // Undo the applied heading
             double headingChange = normalizeAngle(Math.abs(oldHeading - newHeading));
 
@@ -629,23 +628,22 @@ public class TuneRoadRunner extends LinearOpMode {
                         + "or you didn't push for 4 tiles."
                         + "\n\nAborted, press A to continue.", distance));
             } else {
-                message = String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 off from old.\n", newHeading, Math.toDegrees(headingChange))
+                if (ui.prompt(String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 off from old.\n", Math.toDegrees(newHeading), Math.toDegrees(headingChange))
                     + String.format("New linear scalar of %.2f is %.1f%% off from old.\n\n", newLinearScalar, linearScalarChange)
-                    + "Use these results? Press A if they look good, B to cancel.";
-                if (ui.prompt(message)) {
+                    + "Use these results? Press A if they look good, B to cancel.")) {
+
                     settings.opticalLinearScalar = newLinearScalar;
                     settings.opticalOffset.h = newHeading;
                     settings.save();
 
                     drive.opticalTracker.setLinearScalar(newLinearScalar);
-                    drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(offset.x, offset.y, newHeading));
+                    drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(offset.x, offset.y, newHeading)); // Using radians
 
-                    message = "Go to the configureOtos() routine in MecanumDrive.java (double-tap "
-                            + "left-SHIFT and enter 'configureOtos'). Change to these values:\n\n"
+                    ui.prompt("Go to the configureSparkFun() routine in MecanumDrive.java (double-tap "
+                            + "left-SHIFT and enter 'configureSparkFun'). Change to these values:\n\n"
                             + String.format("&ensp;headingOffset = %.3f\n", Math.toDegrees(newHeading))
                             + String.format("&ensp;linearScalar = %.3f\n", newLinearScalar)
-                            + "\nPress A to continue.";
-                    ui.prompt(message);
+                            + "\nPress A to continue.");
                 }
             }
         }
@@ -1123,6 +1121,12 @@ public class TuneRoadRunner extends LinearOpMode {
     void driveTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
+//        double heading = Math.PI /2; // radians
+//        drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(0, 0, heading));
+//        ui.prompt(String.format("Setting offset to %.2f.\n\nPress A.", heading));
+
+        drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(36, 36, Math.toRadians(45)));
+
         while (opModeIsActive() && !ui.cancel()) {
             // @@@ Make it an exponent!
             // @@@ Add control for specific motors!
@@ -1134,8 +1138,14 @@ public class TuneRoadRunner extends LinearOpMode {
             drive.updatePoseEstimate();
 
             TelemetryPacket p = new TelemetryPacket();
-            ui.message("Use the controller to drive the robot around. "
-                    + "\n\nPress B when done.");
+            SparkFunOTOS.Pose2D opticalPose = drive.opticalTracker.getPosition(); // @@@
+            SparkFunOTOS.Pose2D sensorOffset = drive.opticalTracker.getOffset(); // Radians
+            Pose2d pose = drive.pose;
+            ui.message("Use the controller to drive the robot around.\n\n"
+                    + String.format("&ensp;Optical Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", opticalPose.x, opticalPose.y, opticalPose.h)
+                    + String.format("&ensp;RoadRun Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", pose.position.x, pose.position.y, pose.heading.toDouble())
+                    + String.format("&ensp;Sensor Offset: (%.2f\", %.2f\", %.2f\u00b0)\n", sensorOffset.x, sensorOffset.y, sensorOffset.h)
+                    + "\nPress B when done.");
 
             Canvas c = p.fieldOverlay();
             c.setStroke("#3F51B5");
@@ -1396,18 +1406,16 @@ public class TuneRoadRunner extends LinearOpMode {
         // invoke a menu option:
         ui.message("<big><big><big><big><big><big><big><big><b>Press \u25B6");
         waitForStart();
-        //noinspection StatementWithEmptyBody
-        while (opModeIsActive() && !ui.prompt("<big><big><big><big><big><big><big><b>Press Gamepad A"))
-            ;
+        ui.prompt("<big><big><big><big><big><big><big><b>Press Gamepad A or B");
 
-        // Except our main menu loop:
+        // Execute our main menu loop:
         int selection = 0;
         while (opModeIsActive()) {
             selection = ui.menu(heading, selection, true,
                     tests.size(), i -> tests.get(i).description);
 
             tests.get(selection).method.invoke();   // Invoke the chosen test
-            drive.pose = defaultPose;               // Reset pose for next test
+            drive.setPose(defaultPose);             // Reset pose for next test
         }
     }
 }

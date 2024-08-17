@@ -345,35 +345,45 @@ public final class MecanumDrive {
 
     // Structure for optical tracking configuration settings.
     class OpticalTrackerSettings {
-        double headingOffset;
-        double linearScalar;
-        double angularScalar;
-        double xOffset;
-        double yOffset;
+        double headingOffset; // Degrees
+        double linearScalar; // Scalar
+        double angularScalar; // Scalar
+        double xOffset; // Inches
+        double yOffset; // Inches
 
         // Configure the SparkFun Odometry Tracking Optical Sensor for your robot:
-        void configureOtos() {
+        void configureSparkFun() {
             if (isDevBot) {
-                headingOffset = 0; // Degrees
-                linearScalar = 1.000;
-                angularScalar = 1.0;
-                xOffset = 5.56; // Inches
-                yOffset = 3.39; // Inches
+                headingOffset = 45; // Degrees
+//                linearScalar = 1.024;
+//                angularScalar = 1.0;
+//                xOffset = 5.56; // Inches
+//                yOffset = 3.39; // Inches
             } else {
                 // Competition bot settings go here
             }
         }
     }
 
-    // Configure the optical tracking sensor if we have one. The pose is the initial pose where
-    // the robot will start on the field.
+    // Configure the optical tracking sensor if we have one. Derived from configureOtos(). The
+    // pose is the initial pose where the robot will start on the field.
     private void configureOpticalTracker(Pose2d pose) {
         if (opticalTracker == null)
             return; // ====>
 
         // Determine the settings to use:
         OpticalTrackerSettings settings = new OpticalTrackerSettings();
-        settings.configureOtos();
+        settings.configureSparkFun();
+
+System.out.printf("@@@ Setting offset to %.2f\n", Math.toRadians(settings.headingOffset));
+
+        // Set the desired units for linear and angular measurements. Can be either
+        // meters or inches for linear, and radians or degrees for angular. If not
+        // set, the default is inches and degrees. Note that this setting is not
+        // persisted in the sensor, so you need to set at the start of all your
+        // OpModes if using the non-default value.
+        opticalTracker.setLinearUnit(DistanceUnit.INCH);
+        opticalTracker.setAngularUnit(AngleUnit.RADIANS);
 
         // Assuming you've mounted your sensor to a robot and it's not centered,
         // you can specify the offset for the sensor relative to the center of the
@@ -386,18 +396,8 @@ public final class MecanumDrive {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        opticalTracker.setLinearUnit(DistanceUnit.INCH);
-        opticalTracker.setAngularUnit(AngleUnit.DEGREES);
         opticalTracker.setOffset(new SparkFunOTOS.Pose2D(
-                settings.xOffset, settings.yOffset, settings.headingOffset));
-
-        // Set the desired units for linear and angular measurements. Can be either
-        // meters or inches for linear, and radians or degrees for angular. If not
-        // set, the default is inches and degrees. Note that this setting is not
-        // persisted in the sensor, so you need to set at the start of all your
-        // OpModes if using the non-default value.
-        opticalTracker.setLinearUnit(DistanceUnit.INCH);
-        opticalTracker.setAngularUnit(AngleUnit.RADIANS);
+                settings.xOffset, settings.yOffset, Math.toRadians(settings.headingOffset)));
 
         // Here we can set the linear and angular scalars, which can compensate for
         // scaling issues with the sensor measurements. Note that as of firmware
@@ -441,10 +441,10 @@ public final class MecanumDrive {
         opticalTracker.setPosition(new SparkFunOTOS.Pose2D(
                 pose.position.x, pose.position.y, pose.heading.log()));
 
-        // Get the hardware and firmware version
-        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
-        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
-        opticalTracker.getVersionInfo(hwVersion, fwVersion);
+//        // Get the hardware and firmware version
+//        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
+//        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
+//        opticalTracker.getVersionInfo(hwVersion, fwVersion);
     }
 
     // Set the drive powers for when driving manually via the controller:
@@ -829,6 +829,15 @@ public final class MecanumDrive {
                 defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint
         );
+    }
+
+    // Override the robot's current pose:
+    public void setPose(Pose2d pose) {
+        this.pose = pose;
+        if (opticalTracker != null) {
+            opticalTracker.setPosition(new SparkFunOTOS.Pose2D(
+                    pose.position.x, pose.position.y, pose.heading.toDouble()));
+        }
     }
 
     // List of currently running Actions:
