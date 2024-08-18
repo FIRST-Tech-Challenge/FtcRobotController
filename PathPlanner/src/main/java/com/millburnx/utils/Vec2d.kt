@@ -4,11 +4,19 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.math.abs as kAbs
 
 /**
  * Represents a 2D vector/point
  */
 class Vec2d(val x: Double, val y: Double) {
+    constructor(x: Float, y: Float) : this(x.toDouble(), y.toDouble())
+    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
+
+    constructor(x: Double) : this(x, x)
+    constructor(x: Float) : this(x.toDouble())
+    constructor(x: Int) : this(x.toDouble())
+
     constructor(point: java.awt.Point) : this(point.x.toDouble(), point.y.toDouble())
 
     operator fun plus(other: Vec2d) = Vec2d(x + other.x, y + other.y)
@@ -78,6 +86,11 @@ class Vec2d(val x: Double, val y: Double) {
      */
     fun lerp(other: Vec2d, t: Double) = this + (other - this) * t
     fun lerp(other: Vec2d, t: Float) = this.lerp(other, t.toDouble())
+
+    /**
+     * Returns a copy of the vector with the absolute value of each component
+     */
+    fun abs() = Vec2d(kAbs(x), kAbs(y))
 
     /**
      * Converts the point to an java.awt point

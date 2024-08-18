@@ -1,5 +1,6 @@
 package com.millburnx.dashboard
 
+import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
 import java.awt.BasicStroke
 import java.awt.Color
@@ -49,14 +50,7 @@ class Circle(
     Type.CIRCLE
 ) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
-        val center = Vec2d(x, y) * ppi
-        val r = radius * ppi
-        val origin = center - Vec2d(r, r)
-        if (stroke) {
-            g2d.drawOval(origin.x.toInt(), origin.y.toInt(), (2 * r).toInt(), (2 * r).toInt())
-        } else {
-            g2d.fillOval(origin.x.toInt(), origin.y.toInt(), (2 * r).toInt(), (2 * r).toInt())
-        }
+        Utils.drawPoint(g2d, ppi, Vec2d(x, y), radius * 2, !stroke)
     }
 }
 
@@ -91,16 +85,11 @@ class Grid(
         g2d.rotate(theta, pivotX * ppi, pivotY * ppi)
         for (i in 0..ticksX) {
             val x = this.x + i * width / ticksX
-            g2d.drawLine(
-                (x * ppi).toInt(),
-                (this.y * ppi).toInt(),
-                (x * ppi).toInt(),
-                ((this.y + height) * ppi).toInt()
-            )
+            Utils.drawLine(g2d, ppi, Vec2d(x, this.y), Vec2d(x, this.y + height))
         }
         for (i in 0..ticksY) {
             val y = this.y + i * height / ticksY
-            g2d.drawLine((this.x * ppi).toInt(), (y * ppi).toInt(), ((this.x + width) * ppi).toInt(), (y * ppi).toInt())
+            Utils.drawLine(g2d, ppi, Vec2d(this.x, y), Vec2d(this.x + width, y))
         }
         g2d.transform = prevTransform
     }
