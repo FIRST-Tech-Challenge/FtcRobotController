@@ -83,7 +83,11 @@ class PathPlanner(val ppi: Double) : JPanel() {
                 when (e.keyCode) {
                     KeyEvent.VK_Z -> {
                         if (e.isControlDown) {
-                            undo()
+                            if (e.isShiftDown) {
+                                redo()
+                            } else {
+                                undo()
+                            }
                         }
                     }
                 }
@@ -131,20 +135,35 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
     val stockState = points.map { it.copy() }
 
-    val undoStack: ArrayDeque<List<BezierPoint>> = ArrayDeque()
+    val undoStack: MutableList<List<BezierPoint>> = mutableListOf()
+    var stackIndex = -1
 
     fun addState() {
         updatePoints()
+        val slice = undoStack.slice(0..stackIndex)
+        undoStack.clear()
+        undoStack.addAll(slice)
         undoStack.add(points.map { it.copy() })
-        println("add ${undoStack.size}")
+        stackIndex = undoStack.size - 1
+        println("add ${undoStack.size} $stackIndex")
     }
 
     fun undo() {
         if (undoStack.isEmpty()) return;
         points.clear()
-        undoStack.removeLast()
-        points.addAll(undoStack.lastOrNull() ?: stockState.map { it.copy() })
-        println("del ${undoStack.size}")
+        stackIndex--
+        points.addAll((undoStack.getOrNull(stackIndex) ?: stockState).map { it.copy() })
+        println("del ${undoStack.size} $stackIndex")
+        repaint()
+    }
+
+    fun redo() {
+        if (undoStack.isEmpty()) return;
+        points.clear()
+        stackIndex++
+        points.addAll((undoStack.getOrNull(stackIndex) ?: stockState).map { it.copy() })
+        println("res ${undoStack.size} $stackIndex")
+//        println(undoStack.joinToString("\n\n") { it.joinToString("\n") })
         repaint()
     }
 

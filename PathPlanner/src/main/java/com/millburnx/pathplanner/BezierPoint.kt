@@ -101,4 +101,8 @@ class BezierPoint(
     fun copy(): BezierPoint {
         return BezierPoint(anchor.copy(), prevHandle?.copy(), nextHandle?.copy(), modified, mirrored, split)
     }
+
+    override fun toString(): String {
+        return "BezierPoint(anchor=$anchor, prev=$prevHandle, next=$nextHandle, mod=$modified, mir=$mirrored, split=$split)"
+    }
 }
