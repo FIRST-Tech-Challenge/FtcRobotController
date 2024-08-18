@@ -64,7 +64,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="BeaverBots BasicTeleOp", group="Linear OpMode")
+@TeleOp(name = "BeaverBots BasicTeleOp", group = "Linear OpMode")
 
 public class BeaverBotsBasicTeleOp extends LinearOpMode {
 
@@ -86,24 +86,13 @@ public class BeaverBotsBasicTeleOp extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         linearSlide = hardwareMap.get(DcMotor.class, "linear_slide");
         servo = hardwareMap.get(Servo.class, "servo");
 
-
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -124,32 +113,31 @@ public class BeaverBotsBasicTeleOp extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-
-            if (gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
                 speed = 0.25;
                 turnspeed = 0.25;
             } else if (gamepad1.right_bumper) {
                 speed = 1;
                 turnspeed = 0.6;
-            }else{
+            } else {
                 speed = 0.5;
                 turnspeed = 0.6;
             }
 
-            if (gamepad2.dpad_up){
-                servo.setPosition(0.42);
+            if (gamepad2.dpad_up) {
                 // Closed Position
                 // Tested all values under and this is the optimal one
                 // If it's at anything lower it'll start vibrating
+                // If the claw changes, change this
+                //servo.setPosition(0.42);
+                servo.setPosition(0.38);
             } else if (gamepad2.dpad_down) {
-                servo.setPosition(0.69);
                 // Not tested just set to a good open position
+                servo.setPosition(0.69);
             }
 
-            if(gamepad2.square){
+            if (gamepad2.square) {
                 slideSpeed = 0.25;
                 gamepad2.rumbleBlips(1);
             } else if (gamepad2.triangle) {
@@ -163,10 +151,10 @@ public class BeaverBotsBasicTeleOp extends LinearOpMode {
                 gamepad2.rumbleBlips(1);
             }
 
-            if (1-gamepad2.right_trigger <0.02){
+            if (1 - gamepad2.right_trigger < 0.02) {
                 triggerspeed = 0.01;
             } else {
-                triggerspeed = 1-gamepad2.right_trigger;
+                triggerspeed = 1 - gamepad2.right_trigger;
             }
 
             linearSlide.setPower(gamepad2.left_stick_y * slideSpeed * triggerspeed);
@@ -181,16 +169,16 @@ public class BeaverBotsBasicTeleOp extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   =  gamepad1.left_stick_y * -speed;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x * speed;
-            double yaw     =  gamepad1.right_stick_x * turnspeed;
+            double axial = gamepad1.left_stick_y * -speed;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x * speed;
+            double yaw = gamepad1.right_stick_x * turnspeed;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = (axial + lateral + yaw);
+            double leftFrontPower = (axial + lateral + yaw);
             double rightFrontPower = (axial - lateral - yaw);
-            double leftBackPower   = (axial - lateral + yaw);
-            double rightBackPower  = (axial + lateral - yaw);
+            double leftBackPower = (axial - lateral + yaw);
+            double rightBackPower = (axial + lateral - yaw);
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -199,10 +187,10 @@ public class BeaverBotsBasicTeleOp extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
+                leftFrontPower /= max;
                 rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
             }
 
 
@@ -218,4 +206,5 @@ public class BeaverBotsBasicTeleOp extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
         }
-    }}
+    }
+}
