@@ -1,26 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import org.firstinspires.ftc.teamcode.fileUtils;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
-@TeleOp(name="Competition Teleop2024", group="Iterative Opmode")
-public class CompetitionTeleop2024 extends OpMode {
+@TeleOp(name="Competition Teleop2024NewRobot", group="Iterative Opmode")
+public class CompetitionTeleop2024NewRobot extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     //Declare the wheels
@@ -30,12 +26,13 @@ public class CompetitionTeleop2024 extends OpMode {
     private DcMotor LB = null; //Located on Control Hub- Motor port 1
     private DcMotor RB = null; //Located on Control Hub- Motor port 3
     //Declare variables used for our arm lift
-    private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
-    private DcMotor arm1 = null; //Located on Expansion Hub- Motor port 0
+    //private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
+    //private DcMotor arm1 = null; //Located on Expansion Hub- Motor port 0
+    private DcMotor intake = null; //Located on Expansion Hub- Motor port 0
 
-    private Servo elbow = null; //Located on Expansion Hub- Servo port 0
-    private Servo gripper = null; //Located on Expansion Hub- Servo port 0
-    private Servo plane = null; //Located on Expansion Hub- Servo port 0
+    //private Servo elbow = null; //Located on Expansion Hub- Servo port 0
+    //private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    //private Servo plane = null; //Located on Expansion Hub- Servo port 0
 
     private IMU imu = null;
     private fileUtils fUtils;
@@ -78,13 +75,13 @@ public class CompetitionTeleop2024 extends OpMode {
         RF = hardwareMap.get(DcMotor.class, "RF");
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        arm1 = hardwareMap.get(DcMotor.class, "arm1");
-        gripper = hardwareMap.get(Servo.class, "gripper");
-        elbow = hardwareMap.get(Servo.class, "elbow");
-        plane = hardwareMap.get(Servo.class, "plane");
-        plane.setPosition(0.0);
-        //elbow.setPosition(0.0);
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        //arm = hardwareMap.get(DcMotor.class, "arm");
+        //arm1 = hardwareMap.get(DcMotor.class, "arm1");
+        //gripper = hardwareMap.get(Servo.class, "gripper");
+        //elbow = hardwareMap.get(Servo.class, "elbow");
+        //plane = hardwareMap.get(Servo.class, "plane");
+        //plane.setPosition(0.0);
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
@@ -110,16 +107,16 @@ public class CompetitionTeleop2024 extends OpMode {
         RF.setDirection(DcMotor.Direction.REVERSE);
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
-
+        intake.setDirection(DcMotor.Direction.FORWARD);
         //Reverse the arm direction so it moves in the proper direction
-        arm.setDirection(DcMotor.Direction.REVERSE);
-        arm1.setDirection(DcMotor.Direction.REVERSE);
+        //arm.setDirection(DcMotor.Direction.REVERSE);
+        //arm1.setDirection(DcMotor.Direction.REVERSE);
         //Set arm up to use encoders
-        arm.setPower(0);
-        arm1.setPower(0);
+        //arm.setPower(0);
+        //arm1.setPower(0);
         //Set arm up to brake
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -171,12 +168,18 @@ public class CompetitionTeleop2024 extends OpMode {
         LF.setPower(LFPower);
         RF.setPower(RFPower);
 
+        double intakePower;
+
+        intakePower = (gamepad2.right_trigger) - gamepad2.left_trigger;
+        intake.setPower(intakePower);
+
         //Send telemetry data of the motor power for wheels
         telemetry.addData("Left Front Motor","Speed: "+ LFPower);
         telemetry.addData("Left Back Motor","Speed: "+ LBPower);
         telemetry.addData("Right Front Motor","Speed: "+RFPower);
         telemetry.addData("Right Back Motor","Speed: "+ RBPower);
-        telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
+        telemetry.addData("Intake Motor", "Speed: = "+ intakePower);
+        //telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
         telemetry.addData("Initial Heading", "Heading: "+initHeading);
 
         //Code for gamepad2
@@ -190,6 +193,7 @@ public class CompetitionTeleop2024 extends OpMode {
 
 
 
+        /*
         //Moves the arm up
         if (gamepad2.left_trigger >= .1)
         {
@@ -226,7 +230,7 @@ public class CompetitionTeleop2024 extends OpMode {
         if (gamepad2.a && !changed) {
             if (gripper.getPosition() < 0.001)
             {
-                gripper.setPosition(.07);
+                gripper.setPosition(.09);
                 //arm.setTargetPosition(150);
                 //arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //arm.setPower(armPower);
@@ -263,6 +267,7 @@ public class CompetitionTeleop2024 extends OpMode {
         //telemetry.addData("touchIsPressed ", touchIsPressed);
         telemetry.update();
     //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
+         */
 }
 
     /*

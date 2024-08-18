@@ -167,8 +167,8 @@ public class actuatorUtils {
         armPole(newHeight, true);
     }
     public static void armBoard() {
-        arm.setTargetPosition(-300);
-        arm1.setTargetPosition(-300);
+        arm.setTargetPosition(100);
+        arm1.setTargetPosition(100);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.5);

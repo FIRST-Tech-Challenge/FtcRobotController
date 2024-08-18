@@ -180,11 +180,11 @@ public class BlueRight extends LinearOpMode {
         sleep(500);
         utils.dumpClose();
         sleep(500);
-        move.driveSeq(-5, -30, -180);
-        move.driveSeq(-5, 45, -90);
-        move.driveSeq(-39, 45, 90);
-        move.driveToBoard(-39, 56.5, 90);
-        move.driveFromBoard(-39, 53.5, 90);
+        move.driveSeq(-3, -30, -180);
+        move.driveSeq(-3, 45, -90);
+        move.driveSeq(-40, 45, 90);
+        move.driveToBoard(-40, 58.5, 90);
+        move.driveFromBoard(-40, 53.5, 90);
         move.driveSeq(-7, 53.5, 90);
         move.driveSeq(-7, 63, 90);
     }
@@ -198,30 +198,30 @@ public class BlueRight extends LinearOpMode {
         utils.dumpClose();
         move.driveSeq(-2, -48, -180);
         move.driveSeq(-2, -42, -180);
-        move.driveSeq(-2, -38, -90);
+        //move.driveSeq(-2, -38, -90);
         move.driveSeq(-2, 40, -90);
-        move.driveSeq(-33, 40, 90);
-        move.driveToBoard(-33, 53.5, 90);
-        move.driveFromBoard(-33, 51.5, 90);
+        move.driveSeq(-32, 40, 90);
+        move.driveToBoard(-32, 58.5, 90);
+        move.driveFromBoard(-32, 51.5, 90);
         move.driveSeq(-6, 52.5, 90);
         move.driveSeq(-6, 69, 90);
     }
     private void RightPath()throws InterruptedException {
-        move.driveSeq(-16,-29.5,0);
+        move.driveSeq(-16,-30.5,0);
         sleep(500);
         utils.dumpOpen();
         sleep(500);
-        move.driveSeq(-17, -26, 0);
+        move.driveSeq(-17, -27, 0);
         sleep(500);
         utils.dumpClose();
         sleep(500);
-        move.driveSeq(-16, -26, 0);
-        move.driveSeq(-5, -27, 0);
-        move.driveSeq(-5, -23, -90);
+        move.driveSeq(-16, -27, 0);
+        move.driveSeq(-2, -27, 0);
+        //move.driveSeq(-5, -23, -90);
         move.driveSeq(-5, 40, -90);
-        move.driveSeq(-22, 40, 90);
-        move.driveToBoard(-22, 54, 90);
-        move.driveFromBoard(-22, 52,90);
+        move.driveSeq(-20, 40, 90);
+        move.driveToBoard(-20, 58.5, 90);
+        move.driveFromBoard(-20, 52,90);
         move.driveSeq(-2, 53, 90);
         move.driveSeq(-2, 63, 90);
     }
