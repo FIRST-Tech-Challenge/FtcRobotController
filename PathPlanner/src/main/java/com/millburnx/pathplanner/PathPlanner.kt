@@ -2,14 +2,14 @@ package com.millburnx.pathplanner
 
 import com.millburnx.utils.Bezier
 import com.millburnx.utils.Vec2d
-import java.awt.Color
-import java.awt.Graphics
-import java.awt.RenderingHints
+import java.awt.*
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
+import java.io.File
+import javax.swing.JButton
 import javax.swing.JPanel
 
 class PathPlanner(val ppi: Double) : JPanel() {
@@ -94,6 +94,59 @@ class PathPlanner(val ppi: Double) : JPanel() {
             }
         })
         isFocusable = true
+
+        val buttonPanel = JPanel()
+        buttonPanel.layout = FlowLayout(FlowLayout.LEFT)
+
+        val loadButton = JButton("Load")
+        loadButton.addActionListener { loadTSV() }
+        buttonPanel.add(loadButton)
+
+        val saveButton = JButton("Save")
+        saveButton.addActionListener { saveTSV() }
+        buttonPanel.add(saveButton)
+
+        add(buttonPanel, BorderLayout.NORTH)
+    }
+
+    fun loadTSV() {
+        val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.LOAD)
+        fileDialog.directory = File("paths").absolutePath
+        fileDialog.file = "*.tsv"
+        fileDialog.isVisible = true
+        val file = fileDialog.file
+        if (file == null) {
+            println("No file selected")
+            return
+        }
+        val pathFile = File(fileDialog.directory, file)
+        val pathPoints = Vec2d.loadList(pathFile)
+        val newPath: MutableList<BezierPoint> = mutableListOf()
+        for (i in 0..<pathPoints.size step 3) {
+            val anchor = pathPoints[i]
+            val prevHandle = pathPoints.getOrNull(i - 1)
+            val nextHandle = pathPoints.getOrNull(i + 1)
+            newPath.add(BezierPoint(anchor, prevHandle, nextHandle, true))
+        }
+        points.clear()
+        points.addAll(newPath)
+        addState()
+        repaint()
+    }
+
+    fun saveTSV() {
+        val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.SAVE)
+        fileDialog.directory = File("paths").absolutePath
+        fileDialog.file = "*.tsv"
+        fileDialog.isVisible = true
+        val file = fileDialog.file
+        if (file == null) {
+            println("No file selected")
+            return
+        }
+        val pathFile = File(fileDialog.directory, file)
+        val points = points.map { listOf(it.prevHandle, it.anchor, it.nextHandle) }.flatten().filterNotNull()
+        Vec2d.saveList(points, pathFile)
     }
 
     val points: MutableList<BezierPoint> = mutableListOf(
