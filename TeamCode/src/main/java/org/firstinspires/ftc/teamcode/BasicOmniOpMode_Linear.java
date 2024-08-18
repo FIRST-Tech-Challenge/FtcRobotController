@@ -59,6 +59,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
  * the direction of all 4 motors (see code below).
  *
+ * The following thingymabobber is named Jeffard because it's a good name that is a combination of
+ * Jeffery and, I don't know, Aardvark or something.
  */
 
 @TeleOp(name="Jeffard", group="Linear OpMode")
