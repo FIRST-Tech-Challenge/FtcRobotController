@@ -1125,8 +1125,6 @@ public class TuneRoadRunner extends LinearOpMode {
 //        drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(0, 0, heading));
 //        ui.prompt(String.format("Setting offset to %.2f.\n\nPress A.", heading));
 
-        drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(36, 36, Math.toRadians(45)));
-
         while (opModeIsActive() && !ui.cancel()) {
             // @@@ Make it an exponent!
             // @@@ Add control for specific motors!
@@ -1145,6 +1143,7 @@ public class TuneRoadRunner extends LinearOpMode {
                     + String.format("&ensp;Optical Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", opticalPose.x, opticalPose.y, opticalPose.h)
                     + String.format("&ensp;RoadRun Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", pose.position.x, pose.position.y, pose.heading.toDouble())
                     + String.format("&ensp;Sensor Offset: (%.2f\", %.2f\", %.2f\u00b0)\n", sensorOffset.x, sensorOffset.y, sensorOffset.h)
+                    + String.format("&ensp;Sensor scalars: %.3f, %.3f\n", drive.opticalTracker.getLinearScalar(), drive.opticalTracker.getAngularScalar())
                     + "\nPress B when done.");
 
             Canvas c = p.fieldOverlay();

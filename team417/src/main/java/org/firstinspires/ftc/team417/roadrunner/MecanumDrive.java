@@ -354,11 +354,11 @@ public final class MecanumDrive {
         // Configure the SparkFun Odometry Tracking Optical Sensor for your robot:
         void configureSparkFun() {
             if (isDevBot) {
-                headingOffset = 45; // Degrees
-//                linearScalar = 1.024;
-//                angularScalar = 1.0;
-//                xOffset = 5.56; // Inches
-//                yOffset = 3.39; // Inches
+                headingOffset = 90; // Degrees
+                linearScalar = 1.024;
+                angularScalar = 1.001;
+                xOffset = 6;
+                yOffset = -3.5;
             } else {
                 // Competition bot settings go here
             }
@@ -374,8 +374,6 @@ public final class MecanumDrive {
         // Determine the settings to use:
         OpticalTrackerSettings settings = new OpticalTrackerSettings();
         settings.configureSparkFun();
-
-System.out.printf("@@@ Setting offset to %.2f\n", Math.toRadians(settings.headingOffset));
 
         // Set the desired units for linear and angular measurements. Can be either
         // meters or inches for linear, and radians or degrees for angular. If not
