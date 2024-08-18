@@ -1,5 +1,6 @@
 package com.millburnx.pathplanner
 
+import com.millburnx.utils.Bezier
 import com.millburnx.utils.Vec2d
 import java.awt.Color
 import java.awt.Graphics
@@ -51,32 +52,6 @@ class PathPlanner(val ppi: Double) : JPanel() {
         })
 
         addMouseMotionListener(object : MouseAdapter() {
-            fun updateHandle(bezier: BezierPoint, type: BezierPoint.PointType, newPoint: Vec2d) {
-                if (type == BezierPoint.PointType.ANCHOR) {
-                    // it's called updateHandle and not updatePoint for a reason
-                    throw IllegalArgumentException("Do not call updateHandle with an anchor point")
-                }
-                bezier.modified = true
-                if (!bezier.split && !bezier.mirrored) {
-                    val oppositeType = type.opposite()
-                    val oppositePoint = bezier.getType(oppositeType)
-                    if (oppositePoint != null) {
-                        val distance = oppositePoint.distanceTo(bezier.anchor)
-                        val angle = newPoint.angleTo(bezier.anchor)
-                        val newOppositePoint = Vec2d(distance, 0.0).rotate(angle) + bezier.anchor
-                        bezier.setType(oppositeType, newOppositePoint)
-                    }
-                }
-                bezier.setType(type, newPoint)
-                if (bezier.split || !bezier.mirrored) {
-                    return;
-                }
-                val oppositeType = type.opposite()
-                val newDiff = newPoint - bezier.anchor
-                bezier.setType(oppositeType, bezier.anchor - newDiff)
-                return;
-            }
-
             override fun mouseDragged(e: MouseEvent) {
                 if (selectedBezier == null) return;
                 val point = Vec2d(e.x, e.y).minus(Vec2d(width / 2, height / 2)).div(ppi)
@@ -96,7 +71,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
                         if (e.isAltDown) {
                             bezier.split = true
                         }
-                        updateHandle(bezier, type, point)
+                        bezier.updateHandles(type, point)
                     }
                 }
                 repaint()
@@ -119,13 +94,47 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
     val points: MutableList<BezierPoint> = mutableListOf(
         BezierPoint(Vec2d(0, 0)),
-        BezierPoint(Vec2d(0, -12), Vec2d(-12, -12), Vec2d(12, -12)),
     )
+
+    fun updatePoints() {
+        // update catmull rom points
+        for (i in 0 until points.size - 1) {
+            val p1 = points[i]
+            if (p1.nextHandle == null && p1.prevHandle != null) {
+                // mirror prevHandle
+                val diff = p1.prevHandle!! - p1.anchor
+                p1.nextHandle = p1.anchor - diff
+            }
+            val p2 = points[i + 1]
+
+            val p0 = if (i == 0) {
+                // if no p0, mirror p2
+                val diff = p2.anchor - p1.anchor
+                BezierPoint(p1.anchor - diff)
+            } else {
+                points[i - 1]
+            }
+            val p3 = if (i == points.size - 2) {
+                // if no p3, mirror p1
+                val diff = p1.anchor - p2.anchor
+                BezierPoint(p2.anchor - diff)
+            } else {
+                points[i + 2]
+            }
+
+            val bezier = Bezier.fromCatmullRom(p0.anchor, p1.anchor, p2.anchor, p3.anchor, 0.5)
+            // update the bezier points
+            if (!p1.modified) p1.nextHandle = bezier.p1
+            if (!p2.modified) p2.prevHandle = bezier.p2
+        }
+    }
+
     val stockState = points.map { it.copy() }
 
     val undoStack: ArrayDeque<List<BezierPoint>> = ArrayDeque()
 
     fun addState() {
+        updatePoints()
         undoStack.add(points.map { it.copy() })
         println("add ${undoStack.size}")
     }
@@ -154,9 +163,33 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
         val red = Color(0xfb1155)
         val blue = Color(0x35b8fa)
+        val green = Color(0x11e59c)
+        val yellow = Color(0xf1d454)
 
+        val colors = listOf(red, blue, green, yellow)
+
+        var currentColor = 0
+        points.windowed(2, 1, false).forEach { (p1, p2) ->
+            var bezier = Bezier(p1.anchor, p1.nextHandle!!, p2.prevHandle!!, p2.anchor)
+            val color = colors[currentColor]
+            g2d.color = color
+            currentColor = (currentColor + 1) % colors.size
+            val samples = 100
+            var lastPoint = bezier!!.at(0.0) * ppi
+            for (i in 0..samples) {
+                val t = i.toDouble() / samples
+                val point = bezier.at(t) * ppi
+                g2d.drawLine(lastPoint.x.toInt(), lastPoint.y.toInt(), point.x.toInt(), point.y.toInt())
+                lastPoint = point
+            }
+        }
+
+        currentColor = 0;
         for (point in points) {
-            point.draw(g2d, ppi, red, blue)
+            val color1 = colors[(currentColor - 1 + colors.size) % colors.size]
+            val color2 = colors[currentColor]
+            currentColor = (currentColor + 1) % colors.size
+            point.draw(g2d, ppi, color1, color2)
         }
 
         g.drawImage(bufferedImage, 0, 0, null)
