@@ -22,23 +22,17 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
                 val clickPoint = Vec2d(e.x, e.y).minus(Vec2d(width / 2, height / 2)).div(ppi)
                 for (point in points) {
-                    val anchorThreshold = 20 / ppi
-                    val handleThreshold = 15 / ppi
-                    val prevDistance = point.prevHandle?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
-                    if (prevDistance < handleThreshold) {
-                        selectedBezier = Pair(point, BezierPoint.PointType.PREV_HANDLE)
-                        return;
-                    };
-                    val nextDistance = point.nextHandle?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
-                    if (nextDistance < handleThreshold) {
-                        selectedBezier = Pair(point, BezierPoint.PointType.NEXT_HANDLE)
-                        return;
-                    };
-                    val anchorDistance = point.anchor.distanceTo(clickPoint)
-                    if (anchorDistance < anchorThreshold) {
-                        selectedBezier = Pair(point, BezierPoint.PointType.ANCHOR)
-                        return;
-                    };
+                    for (type in BezierPoint.PointType.entries) {
+                        val threshold = when (type) {
+                            BezierPoint.PointType.ANCHOR -> 20 / ppi
+                            else -> 15 / ppi
+                        }
+                        val distance = point.getType(type)?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
+                        if (distance < threshold) {
+                            selectedBezier = Pair(point, type)
+                            return;
+                        }
+                    }
                 }
 
                 points.add(BezierPoint(clickPoint))
@@ -89,14 +83,6 @@ class PathPlanner(val ppi: Double) : JPanel() {
                 if (selectedBezier == null) return;
                 val point = Vec2d(e.x, e.y).minus(Vec2d(width / 2, height / 2)).div(ppi)
                 val (bezier, type) = selectedBezier!!
-                if (type != BezierPoint.PointType.ANCHOR) {
-                    if (e.isShiftDown) {
-                        bezier.mirrored = false
-                    }
-                    if (e.isAltDown) {
-                        bezier.split = true
-                    }
-                }
                 when (type) {
                     BezierPoint.PointType.ANCHOR -> {
                         val diff = point - bezier.anchor
@@ -105,8 +91,15 @@ class PathPlanner(val ppi: Double) : JPanel() {
                         bezier.nextHandle = bezier.nextHandle?.plus(diff)
                     }
 
-                    BezierPoint.PointType.PREV_HANDLE -> updateHandle(bezier, type, point)
-                    BezierPoint.PointType.NEXT_HANDLE -> updateHandle(bezier, type, point)
+                    else -> {
+                        if (e.isShiftDown) {
+                            bezier.mirrored = false
+                        }
+                        if (e.isAltDown) {
+                            bezier.split = true
+                        }
+                        updateHandle(bezier, type, point)
+                    }
                 }
                 repaint()
             }

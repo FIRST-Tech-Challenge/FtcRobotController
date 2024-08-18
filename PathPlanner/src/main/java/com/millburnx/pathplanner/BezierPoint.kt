@@ -38,23 +38,19 @@ class BezierPoint(
 
     fun draw(g2d: Graphics2D, ppi: Double, prevColor: Color, nextColor: Color) {
         // draw the previous handle
-        if (prevHandle != null) {
-            g2d.color = prevColor
-            Utils.drawLine(g2d, ppi, anchor, prevHandle!!)
+        for (type in listOf(PointType.PREV_HANDLE, PointType.NEXT_HANDLE)) {
+            val handle = getType(type) ?: continue
+            val color = when (type) {
+                PointType.PREV_HANDLE -> prevColor
+                PointType.NEXT_HANDLE -> nextColor
+                else -> continue
+            }
+            g2d.color = color
+            Utils.drawLine(g2d, ppi, anchor, handle)
             g2d.color = g2d.background
-            Utils.drawPoint(g2d, ppi, prevHandle!!, 2.5)
-            g2d.color = prevColor
-            Utils.drawPoint(g2d, ppi, prevHandle!!, 2.5, false)
-        }
-
-        // draw the next handle
-        if (nextHandle != null) {
-            g2d.color = nextColor
-            Utils.drawLine(g2d, ppi, anchor, nextHandle!!)
-            g2d.color = g2d.background
-            Utils.drawPoint(g2d, ppi, nextHandle!!, 2.5)
-            g2d.color = nextColor
-            Utils.drawPoint(g2d, ppi, nextHandle!!, 2.5, false)
+            Utils.drawPoint(g2d, ppi, handle, 2.5)
+            g2d.color = color
+            Utils.drawPoint(g2d, ppi, handle, 2.5, false)
         }
 
         // draw anchor point
