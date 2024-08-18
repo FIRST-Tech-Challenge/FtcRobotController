@@ -42,7 +42,7 @@ class Vec2d(val x: Double, val y: Double) {
     operator fun unaryMinus() = Vec2d(-x, -y)
 
     /**
-     * Returns the euclidean distance to another point
+     * Returns the Euclidean distance to another point
      */
     fun distanceTo(other: Vec2d): Double {
         val xDiff = x - other.x
@@ -93,7 +93,7 @@ class Vec2d(val x: Double, val y: Double) {
     fun abs() = Vec2d(kAbs(x), kAbs(y))
 
     /**
-     * Converts the point to an java.awt point
+     * Converts the point to a java.awt point
      */
     fun awt(): java.awt.Point {
         return java.awt.Point(x.toInt(), y.toInt())

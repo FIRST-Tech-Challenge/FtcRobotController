@@ -12,7 +12,7 @@ class LineSegment(val p1: Vec2d, val p2: Vec2d) : Line(p1, p2) {
     /**
      * Returns the length of the line segment
      */
-    fun length(): Double {
+    private fun length(): Double {
         return p1.distanceTo(p2)
     }
 
@@ -32,7 +32,7 @@ class LineSegment(val p1: Vec2d, val p2: Vec2d) : Line(p1, p2) {
     /**
      * Checks if a point is inside the bounding box of the line segment
      */
-    fun boundingContains(p: Vec2d): Boolean {
+    private fun boundingContains(p: Vec2d): Boolean {
         val xMin = min(p1.x, p2.x)
         val xMax = max(p1.x, p2.x)
         val yMin = min(p1.y, p2.y)

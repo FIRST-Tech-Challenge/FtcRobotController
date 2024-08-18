@@ -21,7 +21,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
         addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
-                if (e.button != MouseEvent.BUTTON1) return;
+                if (e.button != MouseEvent.BUTTON1) return
 
                 val clickPoint = Vec2d(e.x, e.y).minus(Vec2d(width / 2, height / 2)).div(ppi)
                 for (point in points) {
@@ -33,7 +33,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
                         val distance = point.getType(type)?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
                         if (distance < threshold) {
                             selectedBezier = Pair(point, type)
-                            return;
+                            return
                         }
                     }
                 }
@@ -53,7 +53,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
         addMouseMotionListener(object : MouseAdapter() {
             override fun mouseDragged(e: MouseEvent) {
-                if (selectedBezier == null) return;
+                if (selectedBezier == null) return
                 val point = Vec2d(e.x, e.y).minus(Vec2d(width / 2, height / 2)).div(ppi)
                 val (bezier, type) = selectedBezier!!
                 when (type) {
@@ -100,7 +100,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
         BezierPoint(Vec2d(0, 0)),
     )
 
-    fun updatePoints() {
+    private fun updatePoints() {
         // update catmull rom points
         for (i in 0 until points.size - 1) {
             val p1 = points[i]
@@ -133,10 +133,10 @@ class PathPlanner(val ppi: Double) : JPanel() {
         }
     }
 
-    val stockState = points.map { it.copy() }
+    private val stockState = points.map { it.copy() }
 
-    val undoStack: MutableList<List<BezierPoint>> = mutableListOf()
-    var stackIndex = -1
+    private val undoStack: MutableList<List<BezierPoint>> = mutableListOf()
+    private var stackIndex = -1
 
     fun addState() {
         updatePoints()
@@ -149,7 +149,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
     }
 
     fun undo() {
-        if (undoStack.isEmpty()) return;
+        if (undoStack.isEmpty()) return
         points.clear()
         stackIndex--
         points.addAll((undoStack.getOrNull(stackIndex) ?: stockState).map { it.copy() })
@@ -158,7 +158,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
     }
 
     fun redo() {
-        if (undoStack.isEmpty()) return;
+        if (undoStack.isEmpty()) return
         points.clear()
         stackIndex++
         points.addAll((undoStack.getOrNull(stackIndex) ?: stockState).map { it.copy() })
@@ -189,12 +189,12 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
         var currentColor = 0
         points.windowed(2, 1, false).forEach { (p1, p2) ->
-            var bezier = Bezier(p1.anchor, p1.nextHandle!!, p2.prevHandle!!, p2.anchor)
+            val bezier = Bezier(p1.anchor, p1.nextHandle!!, p2.prevHandle!!, p2.anchor)
             val color = colors[currentColor]
             g2d.color = color
             currentColor = (currentColor + 1) % colors.size
             val samples = 100
-            var lastPoint = bezier!!.at(0.0) * ppi
+            var lastPoint = bezier.at(0.0) * ppi
             for (i in 0..samples) {
                 val t = i.toDouble() / samples
                 val point = bezier.at(t) * ppi
@@ -203,7 +203,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
             }
         }
 
-        currentColor = 0;
+        currentColor = 0
         for (point in points) {
             val color1 = colors[(currentColor - 1 + colors.size) % colors.size]
             val color2 = colors[currentColor]

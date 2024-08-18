@@ -36,7 +36,7 @@ class BezierPoint(
         }
     }
 
-    fun setType(pointType: PointType, value: Vec2d?) {
+    private fun setType(pointType: PointType, value: Vec2d?) {
         when (pointType) {
             PointType.ANCHOR -> anchor = value!!
             PointType.PREV_HANDLE -> prevHandle = value
@@ -45,7 +45,7 @@ class BezierPoint(
     }
 
     fun updateHandles(type: PointType, newPoint: Vec2d) {
-        if (type == BezierPoint.PointType.ANCHOR) {
+        if (type == PointType.ANCHOR) {
             // it's called updateHandles and not updatePoints/updateAnchor for a reason
             throw IllegalArgumentException("Do not call updateHandle with an anchor point")
         }
@@ -62,15 +62,15 @@ class BezierPoint(
         }
         setType(type, newPoint)
         if (split || !mirrored) {
-            return;
+            return
         }
         val oppositeType = type.opposite()
         if (getType(oppositeType) == null) {
-            return;
+            return
         }
         val newDiff = newPoint - anchor
         setType(oppositeType, anchor - newDiff)
-        return;
+        return
     }
 
     fun draw(g2d: Graphics2D, ppi: Double, prevColor: Color, nextColor: Color) {

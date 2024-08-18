@@ -5,7 +5,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 
-class Bezier(val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, val p3: Vec2d) {
+class Bezier(private val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, private val p3: Vec2d) {
     companion object {
         /**
          * Generates a cubic bezier from a catmull-rom spline,
@@ -30,12 +30,7 @@ class Bezier(val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, val p3: Vec2d) {
             val v1 = ((p1 - p0) * c1 / (t1 - t0) + (p2 - p1) * c2 / (t2 - t1)) * (t2 - t1) // velocity/derivative at p1
             val v2 = ((p2 - p1) * d1 / (t2 - t1) + (p3 - p2) * d2 / (t3 - t2)) * (t2 - t1) // velocity/derivative at p2
 
-            val Q0 = p1
-            val Q1 = p1 + v1 / 3
-            val Q2 = p2 - v2 / 3
-            val Q3 = p2
-
-            return Bezier(Q0, Q1, Q2, Q3)
+            return Bezier(p1, p1 + v1 / 3, p2 - v2 / 3, p2)
         }
     }
 

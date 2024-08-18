@@ -1,14 +1,14 @@
 package com.millburnx.purepursuit
 
-import com.millburnx.utils.Vec2d
 import com.millburnx.dashboard.FTCDashboard
+import com.millburnx.utils.Vec2d
 import java.awt.Color
 
 interface IOpMode {
     val telemetry: ITelemetry
 
     fun init()
-    fun loop(): Boolean // return false top stop, true or continue (can't get kotlin to do allow only `return;` without removing typing)
+    fun loop(): Boolean // return false top stop, true or continue
 }
 
 interface ITelemetry {
@@ -20,7 +20,8 @@ interface ITelemetry {
 class DrawData(val color: Color, val size: Double)
 
 abstract class OpMode(ppi: Double, private val updateHertz: Double) : IOpMode {
-    var running = false
+    private var running = false
+
     // Rendering
     val ftcDashboard = FTCDashboard(ppi, {
         if (!running) {
