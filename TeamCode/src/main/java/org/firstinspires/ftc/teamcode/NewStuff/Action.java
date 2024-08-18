@@ -5,7 +5,6 @@ import com.kalipsorobotics.fresh.MarkerDetector;
 public abstract class Action {
 
     Action dependentAction;
-    DoneStateAction doneStateAction = new DoneStateAction();
     boolean isDone = false;
 
     boolean getIsDone() {

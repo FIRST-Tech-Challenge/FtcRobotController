@@ -16,7 +16,7 @@ public class MoveTrayClampAction extends Action {
 
     public MoveTrayClampAction(double targetPos, Outtake outtake) {
         this.trayClamp = outtake.clamp;
-        this.dependentAction = doneStateAction;
+        this.dependentAction = new DoneStateAction();
         this.targetPos = targetPos;
     }
 

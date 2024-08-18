@@ -14,7 +14,7 @@ public class ActionSet extends Action {
 
     public ActionSet() {
         actions = new ArrayList<Action>();
-        this.dependentAction = doneStateAction;
+        this.dependentAction = new DoneStateAction();
     }
 
     public void scheduleSequential(Action action) {

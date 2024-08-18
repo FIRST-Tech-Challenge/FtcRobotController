@@ -17,7 +17,7 @@ public class PropDetector extends OpenCvPipeline {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
     }
 
-    public PROP_POSITION position = PROP_POSITION.UNKNOWN;
+    PROP_POSITION position = PROP_POSITION.UNKNOWN;
 
     double avgLeftCr;
     double avgCenterCr;
@@ -39,21 +39,22 @@ public class PropDetector extends OpenCvPipeline {
     }
 
     public PropDetector(Telemetry telemetry, ALLIANCE_COLOR color) {
+        Log.d("vision", "detector: constructing");
         propColor = color;
         this.telemetry = telemetry;
     }
 
     @Override
     public final Mat processFrame(Mat input) {
+        Log.d("vision", "detector: entered detector process frame");
         input.copyTo(workingMatrix);
 
         if (workingMatrix.empty()) {
-            Log.d("vision", "processFrame: empty working matrix");
+            Log.d("vision", "detector: processFrame: empty working matrix");
             return input;
         }
 
-        telemetry.update();
-
+        Log.d("vision", "detector: starting calculations");
         Imgproc.cvtColor(workingMatrix, workingMatrix, Imgproc.COLOR_RGB2YCrCb);
 
         Mat matLeft = workingMatrix.submat(180, 300, 0, 120);
@@ -76,6 +77,10 @@ public class PropDetector extends OpenCvPipeline {
         avgCenterCb = Core.sumElems(matCenter).val[2] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
         avgRightCb = Core.sumElems(matRight).val[2] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
 
+        Log.d("ycbcr", "avg left cr " + avgLeftCr);
+        Log.d("ycbcr", "avg center cr " + avgCenterCr);
+        Log.d("ycbcr", "avg right cr " + avgRightCr);
+
         position = PROP_POSITION.UNDETECTED;
 
         if (propColor == ALLIANCE_COLOR.RED) {
@@ -83,6 +88,7 @@ public class PropDetector extends OpenCvPipeline {
                 if (avgLeftCr > avgRightCr) {
                     if (((160 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
                         position = PROP_POSITION.LEFT;
+                        Log.d("ycbcr", "position should be left");
                     }
                 } else {
                     if (((160 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
@@ -123,7 +129,14 @@ public class PropDetector extends OpenCvPipeline {
                 }
             }
         }
+
+        Log.d("vision", "detector: position is" + position);
+        Log.d("vision", "detector: exiting detector process frame");
         return input;
+    }
+
+    public PROP_POSITION getPropPosition() {
+        return position;
     }
 }
 

@@ -22,7 +22,7 @@ public class TurnDroneLauncherWheelAction extends Action {
 
     public TurnDroneLauncherWheelAction(double targetTicks, DroneLauncher droneLauncher) {
         wheel = droneLauncher.wheel;
-        this.dependentAction = doneStateAction;
+        this.dependentAction = new DoneStateAction();
         this.targetTicks = targetTicks;
     }
 

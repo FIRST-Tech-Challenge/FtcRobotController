@@ -25,7 +25,7 @@ public class MoveLSAction extends Action {
     public MoveLSAction(double targetTicks, Outtake outtake) {
         lsFront = outtake.lsFront;
         lsBack = outtake.lsBack;
-        this.dependentAction = doneStateAction;
+        this.dependentAction = new DoneStateAction();
         this.targetTicks = targetTicks;
     }
 

@@ -14,7 +14,7 @@ public class WaitAction extends Action{
     }
 
     public WaitAction(double targetWaitTimeSeconds) {
-        this.dependentAction = doneStateAction;
+        this.dependentAction = new DoneStateAction();
         this.waitTimeSeconds = targetWaitTimeSeconds;
     }
 
