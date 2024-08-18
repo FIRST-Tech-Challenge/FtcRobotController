@@ -17,7 +17,15 @@ class BezierPoint(
     enum class PointType {
         ANCHOR,
         PREV_HANDLE,
-        NEXT_HANDLE
+        NEXT_HANDLE;
+
+        fun opposite(): PointType {
+            return when (this) {
+                ANCHOR -> ANCHOR
+                PREV_HANDLE -> NEXT_HANDLE
+                NEXT_HANDLE -> PREV_HANDLE
+            }
+        }
     }
 
     fun getType(pointType: PointType): Vec2d? {
@@ -59,5 +67,9 @@ class BezierPoint(
         g2d.color = Color.WHITE
         g2d.stroke = BasicStroke(2.0f)
         Utils.drawPoint(g2d, ppi, anchor, 2.5, false)
+    }
+
+    fun copy(): BezierPoint {
+        return BezierPoint(anchor.copy(), prevHandle?.copy(), nextHandle?.copy(), modified, mirrored, split)
     }
 }

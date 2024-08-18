@@ -4,6 +4,8 @@ import com.millburnx.utils.Vec2d
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.RenderingHints
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
@@ -36,10 +38,14 @@ class PathPlanner(val ppi: Double) : JPanel() {
                 }
 
                 points.add(BezierPoint(clickPoint))
+                addState()
                 repaint()
             }
 
             override fun mouseReleased(e: MouseEvent?) {
+                if (selectedBezier != null) {
+                    addState()
+                }
                 selectedBezier = null
             }
         })
@@ -52,11 +58,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
                 }
                 bezier.modified = true
                 if (!bezier.split && !bezier.mirrored) {
-                    val oppositeType = when (type) {
-                        BezierPoint.PointType.PREV_HANDLE -> BezierPoint.PointType.NEXT_HANDLE
-                        BezierPoint.PointType.NEXT_HANDLE -> BezierPoint.PointType.PREV_HANDLE
-                        else -> return
-                    }
+                    val oppositeType = type.opposite()
                     val oppositePoint = bezier.getType(oppositeType)
                     if (oppositePoint != null) {
                         val distance = oppositePoint.distanceTo(bezier.anchor)
@@ -69,11 +71,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
                 if (bezier.split || !bezier.mirrored) {
                     return;
                 }
-                val oppositeType = when (type) {
-                    BezierPoint.PointType.PREV_HANDLE -> BezierPoint.PointType.NEXT_HANDLE
-                    BezierPoint.PointType.NEXT_HANDLE -> BezierPoint.PointType.PREV_HANDLE
-                    else -> return
-                }
+                val oppositeType = type.opposite()
                 val newDiff = newPoint - bezier.anchor
                 bezier.setType(oppositeType, bezier.anchor - newDiff)
                 return;
@@ -104,12 +102,42 @@ class PathPlanner(val ppi: Double) : JPanel() {
                 repaint()
             }
         })
+
+        addKeyListener(object : KeyAdapter() {
+            override fun keyPressed(e: KeyEvent) {
+                when (e.keyCode) {
+                    KeyEvent.VK_Z -> {
+                        if (e.isControlDown) {
+                            undo()
+                        }
+                    }
+                }
+            }
+        })
+        isFocusable = true
     }
 
     val points: MutableList<BezierPoint> = mutableListOf(
         BezierPoint(Vec2d(0, 0)),
         BezierPoint(Vec2d(0, -12), Vec2d(-12, -12), Vec2d(12, -12)),
     )
+    val stockState = points.map { it.copy() }
+
+    val undoStack: ArrayDeque<List<BezierPoint>> = ArrayDeque()
+
+    fun addState() {
+        undoStack.add(points.map { it.copy() })
+        println("add ${undoStack.size}")
+    }
+
+    fun undo() {
+        if (undoStack.isEmpty()) return;
+        points.clear()
+        undoStack.removeLast()
+        points.addAll(undoStack.lastOrNull() ?: stockState.map { it.copy() })
+        println("del ${undoStack.size}")
+        repaint()
+    }
 
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
