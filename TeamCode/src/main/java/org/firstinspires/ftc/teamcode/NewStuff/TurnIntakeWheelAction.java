@@ -22,7 +22,7 @@ public class TurnIntakeWheelAction extends Action {
 
     public TurnIntakeWheelAction(double targetTicks, Intake intake) {
         intakeWheel = intake.wheelMotor;
-        this.dependentAction = doneStateAction;
+        this.dependentAction = new DoneStateAction();
         this.targetTicks = targetTicks;
     }
 

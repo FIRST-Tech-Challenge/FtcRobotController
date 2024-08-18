@@ -15,29 +15,19 @@ public class PropProcessor implements VisionProcessor {
     private Telemetry telemetry;
     private Mat workingMatrix;
 
-    double avgLeftCb;
-    double avgRightCb;
-    double avgCenterCb;
-
-    double avgLeftCr;
-    double avgCenterCr;
-    double avgRightCr;
-    double avgLeftY;
-    double avgCenterY;
-    double avgRightY;
-
     double counter;
+    final PropDetector detector;
 
     public PropProcessor(Telemetry telemetry, PropDetector.ALLIANCE_COLOR allianceColor) {
-
+        Log.d("vision", "processor: constructing started");
         this.telemetry = telemetry;
         detector = new PropDetector(telemetry, allianceColor);
+        Log.d("vision", "processor: constructing finished");
     }
 
-    public final PropDetector detector;
-
     public PropDetector.PROP_POSITION getPosition() {
-        return detector.position;
+        Log.d("vision", "processor: getPosition entered");
+        return detector.getPropPosition();
     }
 
     @Override
@@ -47,20 +37,13 @@ public class PropProcessor implements VisionProcessor {
 
     @Override
     public Object processFrame(final Mat input, long captureTimeNanos) {
-        avgLeftCb = detector.avgLeftCb;
-        avgCenterCb = detector.avgCenterCb;
-        avgRightCb = detector.avgRightCb;
-        avgLeftCr = detector.avgLeftCr;
-        avgCenterCr = detector.avgCenterCr;
-        avgRightCr = detector.avgRightCr;
-        avgLeftY = detector.avgLeftY;
-        avgCenterY = detector.avgCenterY;
-        avgRightY = detector.avgRightY;
+        Log.d("vision", "processor: entered process frame");
         telemetry.addLine("process frame");
-//        telemetry.update();
+        telemetry.update();
         workingMatrix = detector.processFrame(input);
         counter++;
-        Log.d("vision", String.valueOf(counter));
+        Log.d("vision", "processor: position is" + detector.getPropPosition());
+        Log.d("vision", "processor:" + counter);
         return workingMatrix;
     }
 
@@ -69,6 +52,7 @@ public class PropProcessor implements VisionProcessor {
                             float scaleBmpPxToCanvasPx, float scaleCanvasDensity, final Object userContext) {
         int SUBMAT_WIDTH = 120;
         int SUBMAT_HEIGHT = 120;
+        Log.d("vision", "processor: drawing boxes");
 
         // draw nothing
         Imgproc.rectangle(workingMatrix, new Rect(0, 180, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));

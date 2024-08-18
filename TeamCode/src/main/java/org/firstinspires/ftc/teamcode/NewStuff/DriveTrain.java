@@ -1,7 +1,9 @@
-package com.kalipsorobotics.fresh;
+package org.firstinspires.ftc.teamcode.NewStuff;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
 public class DriveTrain {
     private final OpModeUtilities opModeUtilities;
@@ -84,9 +86,6 @@ public class DriveTrain {
     }
     public DcMotor getTestMotorDeleteLater() {
         return testMotorDeleteLater;
-    }
-    public OpModeUtilities getOpModeUtilities() {
-        return opModeUtilities;
     }
     public void setTestPower(double power) throws InterruptedException {
         getTestMotorDeleteLater().setPower(power);

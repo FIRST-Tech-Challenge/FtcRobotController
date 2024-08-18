@@ -8,11 +8,11 @@ public class CalculateTickInches {
 
     double mmPerInch = 25.4;
 
-    double mmToTicksDriveTrain(double mm) {
+    public double mmToTicksDriveTrain(double mm) {
         return (mm * ticksPerMm);
     }
 
-    double inchToTicksDriveTrain(double inches) {
+    public double inchToTicksDriveTrain(double inches) {
         return (mmToTicksDriveTrain(inches * mmPerInch));
     }
 }
