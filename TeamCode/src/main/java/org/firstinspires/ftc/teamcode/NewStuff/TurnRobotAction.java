@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
+import android.os.SystemClock;
 import android.util.Log;
 
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class TurnRobotAction extends Action {
@@ -9,19 +14,21 @@ public class TurnRobotAction extends Action {
     DriveTrain driveTrain;
     IMU imu;
     double targetDegrees;
+    double prevError;
+    double prevTime;
 
-    public TurnRobotAction(Action dependentAction, double targetDegrees, DriveTrain driveTrain, IMU imu) {
+    public TurnRobotAction(Action dependentAction, double targetDegrees, DriveTrain driveTrain, IMUModule imu) {
         this.dependentAction = dependentAction;
         this.targetDegrees = targetDegrees;
         this.driveTrain = driveTrain;
-        this.imu = imu;
+        this.imu = imu.getIMU();
     }
 
-    public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, IMU imu) {
+    public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, IMUModule imu) {
         this.dependentAction = new DoneStateAction();
         this.targetDegrees = targetDegrees;
         this.driveTrain = driveTrain;
-        this.imu = imu;
+        this.imu = imu.getIMU();
     }
 
     public double getCurrentHeading() {
@@ -30,9 +37,9 @@ public class TurnRobotAction extends Action {
         robotOrientation = imu.getRobotYawPitchRollAngles();
 
         // Loop here if IMU is bad (usually because battery power is low)
-        while ((robotOrientation.getAcquisitionTime() == 0) && opMode.opModeIsActive()) {
+        while ((robotOrientation.getAcquisitionTime() == 0) && driveTrain.getOpModeUtilities().getOpMode().opModeIsActive()) {
             Log.d("imu crash", "getCurrentHeading: acquisition time is 0");
-            driveTrain.
+            driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             robotOrientation = imu.getRobotYawPitchRollAngles();
         }
 
@@ -52,18 +59,18 @@ public class TurnRobotAction extends Action {
         double KD = 2_500_000;
         double ERROR_TOLERANCE = 0.5; //degrees
         double currentHeading = getCurrentHeading();
-        double error = angleWrap(targetAbsDegrees - currentHeading);
+        double error = angleWrap(targetDegrees - currentHeading);
         double errorDer;
         double power;
         double currentTime;
         double minPower = 0.15;
 
         //while start
-        while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
+        if (Math.abs(error) > ERROR_TOLERANCE && driveTrain.getOpModeUtilities().getOpMode().opModeIsActive()) {
             currentHeading = getCurrentHeading();
 
             currentTime = SystemClock.elapsedRealtimeNanos();
-            error = targetAbsDegrees - currentHeading; //error is degrees to goal
+            error = targetDegrees - currentHeading; //error is degrees to goal
             errorDer = (error - prevError) / (currentTime - prevTime);
             power = (KP * error) + (KD * errorDer);
 
@@ -85,17 +92,27 @@ public class TurnRobotAction extends Action {
             }
 
             //cap power
-            power = Range.clip(power, -1 * maxPower, maxPower);
+            power = Range.clip(power, -1, 1);
             // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
 
-            drivetrain.setMotorPower(-1 * power, power, -1 * power, power);
+            driveTrain.setPower(-1 * power, power, -1 * power, power);
             prevError = error;
             prevTime = currentTime;
         }
-        drivetrain.setMotorPower(0, 0, 0, 0);
-        opMode.sleep(100);
+        driveTrain.setPower(0,0,0,0);
+        driveTrain.getOpModeUtilities().getOpMode().sleep(100);
         currentHeading = getCurrentHeading();
-        botHeading = targetAbsDegrees;
+        targetDegrees = 0;
         Log.d("pid", "setHeading: final heading is " + currentHeading);
+    }
+
+    public static double angleWrap (double angle) {
+        double moddedAngle = angle % 360;
+        if (moddedAngle > 180) {
+            return moddedAngle - 360;
+        } else if (moddedAngle <= -180) {
+            return moddedAngle + 360;
+        }
+        return moddedAngle;
     }
 }
