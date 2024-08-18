@@ -1,18 +1,18 @@
 package com.millburnx.purepursuit
 
 import com.millburnx.utils.Circle
-import com.millburnx.utils.Vec2d
 import com.millburnx.utils.Utils
+import com.millburnx.utils.Vec2d
 import kotlin.math.abs
 
 class Robot(size: Vec2d, val lookahead: Double = 14.0) {
     var position = Vec2d(0.0, 0.0)
     var heading = 0.0
-    var speed = 12.0 // inches per second
-    var turnRate = Math.toRadians(180.0) // radians per second
+    private var speed = 12.0 // inches per second
+    private var turnRate = Math.toRadians(180.0) // radians per second
 
-    var power = Vec2d(0.0, 0.0)
-    var anglePower = 0.0
+    private var power = Vec2d(0.0, 0.0)
+    private var anglePower = 0.0
 
     val lookaheadCircle: Circle
         get() = Circle(position, lookahead)

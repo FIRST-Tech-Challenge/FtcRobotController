@@ -30,6 +30,7 @@ android {
 }
 
 dependencies {
+    //noinspection DependencyNotationArgument
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }

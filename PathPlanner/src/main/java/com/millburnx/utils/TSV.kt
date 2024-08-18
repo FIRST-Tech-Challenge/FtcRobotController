@@ -8,23 +8,23 @@ import java.io.File
 class TSV {
     companion object {
         /**
-         * Reads a TSV file and returns the data as a list of rows of strings
+         * Reads a TSV file and returns the data as a list of string rows
          */
         fun read(file: File): List<List<String>> {
             return parse(file.readText())
         }
 
         /**
-         * Reads a TSV file and returns the data as a list of rows of strings, uses buffered reader
+         * Reads a TSV file and returns the data as a list of string rows, uses buffered reader
          */
         fun bufferedRead(file: File): List<List<String>> {
             return parse(file.bufferedReader().use { it.readText() })
         }
 
         /**
-         * Parses a TSV text and returns the data as a list of rows of strings
+         * Parses a TSV text and returns the data as a list of strings rows
          */
-        fun parse(tsv: String): List<List<String>> {
+        private fun parse(tsv: String): List<List<String>> {
             val rows = tsv.split("\n").map { parseRow(it) }
             return rows.filter { row ->
                 row.isNotEmpty() && row.any { it.isNotBlank() }
@@ -34,14 +34,14 @@ class TSV {
         /**
          * Parses a single row of a TSV file
          */
-        fun parseRow(tsv: String): List<String> {
+        private fun parseRow(tsv: String): List<String> {
             return tsv.split("\t")
         }
 
         /**
          * Converts a list of rows to a TSV string
          */
-        fun stringify(data: List<List<Any>>): String {
+        private fun stringify(data: List<List<Any>>): String {
             return data.joinToString("\n") { it.joinToString("\t") }
         }
 
@@ -53,7 +53,7 @@ class TSV {
         }
 
         /**
-         * Writes a list of rows to a TSV file, uses buffered writer
+         * Writes a list of rows to a TSV file, uses a buffered writer
          */
         fun bufferedWrite(file: File, data: List<List<String>>) {
             file.bufferedWriter().use { it.write(stringify(data)) }

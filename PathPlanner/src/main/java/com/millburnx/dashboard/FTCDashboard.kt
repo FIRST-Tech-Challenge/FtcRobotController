@@ -12,7 +12,13 @@ interface IFTCDashboard {
     fun sendTelemetryPacket(telemetryPacket: ITelemetryPacket)
 }
 
-class FTCDashboard(ppi: Double, val start: () -> Unit, val stop: () -> Unit, var reset: () -> Unit, var load: () -> Unit) :
+class FTCDashboard(
+    ppi: Double,
+    val start: () -> Unit,
+    val stop: () -> Unit,
+    var reset: () -> Unit,
+    var load: () -> Unit
+) :
     IFTCDashboard {
     inner class Panel(var ppi: Double) : JPanel() {
         init {

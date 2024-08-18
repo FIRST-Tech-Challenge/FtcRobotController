@@ -1,11 +1,12 @@
 package com.millburnx.purepursuit
 
+import com.millburnx.dashboard.ICanvas
+import com.millburnx.dashboard.TelemetryPacket
 import com.millburnx.utils.Bezier
 import com.millburnx.utils.Intersection
 import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
-import com.millburnx.dashboard.ICanvas
-import com.millburnx.dashboard.TelemetryPacket
+import java.awt.Color
 import java.awt.FileDialog
 import java.io.File
 import kotlin.math.abs
@@ -47,7 +48,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         }
     }
 
-    fun updatePath() {
+    private fun updatePath() {
         beziers = Utils.pathToBeziers(path)
         lastSegment = 0
         lastIntersection = Intersection(path[0], beziers[0])
@@ -58,7 +59,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         ftcDashboard.sendTelemetryPacket(packet)
     }
 
-    fun loadPath() {
+    private fun loadPath() {
         val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.LOAD)
         fileDialog.directory = File("paths").absolutePath
         fileDialog.file = "*.tsv"
@@ -74,7 +75,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         updatePath()
     }
 
-    fun renderPath(canvas: ICanvas) {
+    private fun renderPath(canvas: ICanvas) {
         canvas.drawImage("PathPlanner/src/main/resources/bg.png", 0.0, 0.0, 144.0, 144.0)
 //        canvas
             .setFill("#808080")
@@ -84,16 +85,14 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
         for (bezier in beziers) {
             bezier.draw(canvas)
         }
-//        for (point in path) {
-//            canvas.fillCircle(point.x, point.y, 1.0)
-//        }
+
         var color = 0
         val anchorColor = "#ffffff"
         val prevHandleColor = "#ff00ff"
         val nextHandleColor = "#00ff00"
         val colors = listOf(anchorColor, nextHandleColor, prevHandleColor)
-        for ((index, point) in path.withIndex()) {
-            var colorString = colors[color]
+        for (point in path) {
+            val colorString = colors[color]
             color = (color + 1) % colors.size
             canvas.setFill(colorString)
                 .fillCircle(point.x, point.y, 1.0)
@@ -115,7 +114,7 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
                 return false
             }
             lastIntersection = Intersection(path.last(), beziers.last())
-            canvas.setFill("#00FFFF")
+            canvas.setFill(Color.CYAN.rgb.toString())
                 .fillCircle(lastIntersection.point.x, lastIntersection.point.y, 1.0)
             driveTo(path.last())
             drawRobot(canvas)

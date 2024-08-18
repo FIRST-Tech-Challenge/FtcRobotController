@@ -1,5 +1,6 @@
 package com.millburnx.dashboard
 
+import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
 import java.awt.BasicStroke
 import java.awt.Color
@@ -33,7 +34,7 @@ abstract class CanvasOp(val type: Type) {
 }
 
 // https://github.com/acmerobotics/ftc-dashboard/tree/master/DashboardCore/src/main/java/com/acmerobotics/dashboard/canvas
-class Alpha(val alpha: Double) : CanvasOp(Type.ALPHA) {
+class Alpha(private val alpha: Double) : CanvasOp(Type.ALPHA) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         val prevColor = g2d.color
         g2d.color = Color(prevColor.red, prevColor.green, prevColor.blue, (alpha * 255).toInt())
@@ -43,24 +44,17 @@ class Alpha(val alpha: Double) : CanvasOp(Type.ALPHA) {
 class Circle(
     val x: Double,
     val y: Double,
-    val radius: Double,
-    val stroke: Boolean
+    private val radius: Double,
+    private val stroke: Boolean
 ) : CanvasOp(
     Type.CIRCLE
 ) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
-        val center = Vec2d(x, y) * ppi
-        val r = radius * ppi
-        val origin = center - Vec2d(r, r)
-        if (stroke) {
-            g2d.drawOval(origin.x.toInt(), origin.y.toInt(), (2 * r).toInt(), (2 * r).toInt())
-        } else {
-            g2d.fillOval(origin.x.toInt(), origin.y.toInt(), (2 * r).toInt(), (2 * r).toInt())
-        }
+        Utils.drawPoint(g2d, ppi, Vec2d(x, y), radius * 2, !stroke)
     }
 }
 
-class Fill(val color: String) : CanvasOp(Type.FILL) {
+class Fill(private val color: String) : CanvasOp(Type.FILL) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         val color = Color.decode(color)
         val alpha = g2d.color.alpha
@@ -71,51 +65,46 @@ class Fill(val color: String) : CanvasOp(Type.FILL) {
 class Grid(
     val x: Double,
     val y: Double,
-    val width: Double,
-    val height: Double,
-    val numTicksX: Int,
-    val numTicksY: Int,
-    val theta: Double,
-    val pivotX: Double,
-    val pivotY: Double,
-    val usePageFrame: Boolean
+    private val width: Double,
+    private val height: Double,
+    private val numTicksX: Int,
+    private val numTicksY: Int,
+    private val theta: Double,
+    private val pivotX: Double,
+    private val pivotY: Double,
+    private val usePageFrame: Boolean
 ) : CanvasOp(Type.GRID) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         val ticksX = numTicksX - 1
         val ticksY = numTicksY - 1
         val prevTransform = g2d.transform
         if (usePageFrame) {
-            g2d.transform = AffineTransform();
+            g2d.transform = AffineTransform()
             g2d.translate((panel.width - 144 * ppi) / 2, (panel.height - 144 * ppi) / 2) // center in screen
         }
         g2d.rotate(theta, pivotX * ppi, pivotY * ppi)
         for (i in 0..ticksX) {
             val x = this.x + i * width / ticksX
-            g2d.drawLine(
-                (x * ppi).toInt(),
-                (this.y * ppi).toInt(),
-                (x * ppi).toInt(),
-                ((this.y + height) * ppi).toInt()
-            )
+            Utils.drawLine(g2d, ppi, Vec2d(x, this.y), Vec2d(x, this.y + height))
         }
         for (i in 0..ticksY) {
             val y = this.y + i * height / ticksY
-            g2d.drawLine((this.x * ppi).toInt(), (y * ppi).toInt(), ((this.x + width) * ppi).toInt(), (y * ppi).toInt())
+            Utils.drawLine(g2d, ppi, Vec2d(this.x, y), Vec2d(this.x + width, y))
         }
         g2d.transform = prevTransform
     }
 }
 
 class Image(
-    val path: String,
+    private val path: String,
     val x: Double,
     val y: Double,
-    val width: Double,
-    val height: Double,
-    val theta: Double,
-    val pivotX: Double,
-    val pivotY: Double,
-    val usePageFrame: Boolean
+    private val width: Double,
+    private val height: Double,
+    private val theta: Double,
+    private val pivotX: Double,
+    private val pivotY: Double,
+    private val usePageFrame: Boolean
 ) : CanvasOp(Type.IMAGE) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         val prevTransform = g2d.transform
@@ -130,7 +119,7 @@ class Image(
     }
 }
 
-class Polygon(val xPoints: DoubleArray, val yPoints: DoubleArray, val stroke: Boolean) :
+class Polygon(private val xPoints: DoubleArray, private val yPoints: DoubleArray, private val stroke: Boolean) :
     CanvasOp(Type.POLYGON) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         val xPointsScaled = xPoints.map { it * ppi }.map { it.toInt() }.toIntArray()
@@ -143,7 +132,7 @@ class Polygon(val xPoints: DoubleArray, val yPoints: DoubleArray, val stroke: Bo
     }
 }
 
-class Polyline(val xPoints: DoubleArray, val yPoints: DoubleArray) :
+class Polyline(private val xPoints: DoubleArray, private val yPoints: DoubleArray) :
     CanvasOp(Type.POLYLINE) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         if (xPoints.size != yPoints.size) {
@@ -158,19 +147,19 @@ class Polyline(val xPoints: DoubleArray, val yPoints: DoubleArray) :
     }
 }
 
-class Rotation(val rotation: Double) : CanvasOp(Type.ROTATION) {
+class Rotation(private val rotation: Double) : CanvasOp(Type.ROTATION) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         g2d.rotate(rotation)
     }
 }
 
-class Scale(val scaleX: Double, val scaleY: Double) : CanvasOp(Type.SCALE) {
+class Scale(private val scaleX: Double, private val scaleY: Double) : CanvasOp(Type.SCALE) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         g2d.scale(scaleX, scaleY)
     }
 }
 
-class Stroke(val color: String) : CanvasOp(Type.STROKE) {
+class Stroke(private val color: String) : CanvasOp(Type.STROKE) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         val color = Color.decode(color)
         val alpha = g2d.color.alpha
@@ -178,20 +167,20 @@ class Stroke(val color: String) : CanvasOp(Type.STROKE) {
     }
 }
 
-class StrokeWidth(val width: Int) : CanvasOp(Type.STROKE_WIDTH) {
+class StrokeWidth(private val width: Int) : CanvasOp(Type.STROKE_WIDTH) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         g2d.stroke = BasicStroke(width.toFloat())
     }
 }
 
 class Text(
-    val text: String,
+    private val text: String,
     val x: Double,
     val y: Double,
-    val font: String,
-    val theta: Double,
+    private val font: String,
+    private val theta: Double,
     val stroke: Boolean,
-    val usePageFrame: Boolean
+    private val usePageFrame: Boolean
 ) : CanvasOp(Type.TEXT) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {
         val prevTransform = g2d.transform
