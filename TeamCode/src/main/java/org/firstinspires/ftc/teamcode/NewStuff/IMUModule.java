@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 
-public class IMU {
+public class IMUModule {
     private final OpModeUtilities opModeUtilities;
     IMU imu;
 
-    public IMU(OpModeUtilities opModeUtilities) {
+    public IMUModule(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         setUpHardware();
     }
@@ -22,5 +23,9 @@ public class IMU {
         ));
 
         imu.resetYaw();
+    }
+
+    public IMU getIMU() {
+        return imu;
     }
 }

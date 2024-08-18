@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -86,6 +87,9 @@ public class DriveTrain {
     }
     public DcMotor getTestMotorDeleteLater() {
         return testMotorDeleteLater;
+    }
+    public OpModeUtilities getOpModeUtilities() {
+        return opModeUtilities;
     }
     public void setTestPower(double power) throws InterruptedException {
         getTestMotorDeleteLater().setPower(power);
