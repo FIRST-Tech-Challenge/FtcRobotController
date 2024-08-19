@@ -16,6 +16,11 @@ public class TurnRobotAction extends Action {
     double targetDegrees;
     double prevError;
     double prevTime;
+    double currentHeading;
+    double KP = 0.06;
+    double KD = 2_500_000;
+    double ERROR_TOLERANCE = 0.5; //degrees
+    double error;
 
     public TurnRobotAction(Action dependentAction, double targetDegrees, DriveTrain driveTrain, IMUModule imu) {
         this.dependentAction = dependentAction;
@@ -47,63 +52,64 @@ public class TurnRobotAction extends Action {
         return currentYaw;
     }
 
+    private void refreshError() {
+        error = angleWrap(targetDegrees - currentHeading);
+    }
+
     @Override
     boolean checkDoneCondition() {
-        return false;
+        refreshError();
+        if (error <= ERROR_TOLERANCE) {
+            driveTrain.setPower(0,0,0,0);
+            driveTrain.getOpModeUtilities().getOpMode().sleep(100);
+            currentHeading = getCurrentHeading();
+            targetDegrees = 0;
+            Log.d("pid", "setHeading: final heading is " + currentHeading);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     void update() {
-        YawPitchRollAngles robotOrientation;
-        double KP = 0.06;
-        double KD = 2_500_000;
-        double ERROR_TOLERANCE = 0.5; //degrees
-        double currentHeading = getCurrentHeading();
-        double error = angleWrap(targetDegrees - currentHeading);
         double errorDer;
         double power;
         double currentTime;
         double minPower = 0.15;
 
-        //while start
-        if (Math.abs(error) > ERROR_TOLERANCE && driveTrain.getOpModeUtilities().getOpMode().opModeIsActive()) {
-            currentHeading = getCurrentHeading();
-
-            currentTime = SystemClock.elapsedRealtimeNanos();
-            error = targetDegrees - currentHeading; //error is degrees to goal
-            errorDer = (error - prevError) / (currentTime - prevTime);
-            power = (KP * error) + (KD * errorDer);
-
-                /*
-                Log.d("pid", "setHeading: current heading is " + currentHeading);
-                Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
-                Log.d("pid", "setHeading: time is " + currentTime);
-                Log.d("pid", "setHeading: heading error is " + error);
-                Log.d("pid", "setHeading: errorDer is " + errorDer);
-                Log.d("pid", "setHeading: calculated power is " + power);
-                */
-
-            if (power > 0 && power < minPower) {
-                power = minPower;
-                // Log.d("pid", "setHeading: adjusted power is " + power);
-            } else if (power < 0 && power > -1 * minPower) {
-                power = minPower * -1;
-                // Log.d("pid", "setHeading: adjusted power is " + power);
-            }
-
-            //cap power
-            power = Range.clip(power, -1, 1);
-            // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
-
-            driveTrain.setPower(-1 * power, power, -1 * power, power);
-            prevError = error;
-            prevTime = currentTime;
-        }
-        driveTrain.setPower(0,0,0,0);
-        driveTrain.getOpModeUtilities().getOpMode().sleep(100);
         currentHeading = getCurrentHeading();
-        targetDegrees = 0;
-        Log.d("pid", "setHeading: final heading is " + currentHeading);
+
+        currentTime = SystemClock.elapsedRealtimeNanos();
+        refreshError(); //error is degrees to goal
+        errorDer = (error - prevError) / (currentTime - prevTime);
+        power = (KP * error) + (KD * errorDer);
+
+            /*
+            Log.d("pid", "setHeading: current heading is " + currentHeading);
+            Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
+            Log.d("pid", "setHeading: time is " + currentTime);
+            Log.d("pid", "setHeading: heading error is " + error);
+            Log.d("pid", "setHeading: errorDer is " + errorDer);
+            Log.d("pid", "setHeading: calculated power is " + power);
+            */
+
+        if (power > 0 && power < minPower) {
+            power = minPower;
+            // Log.d("pid", "setHeading: adjusted power is " + power);
+        } else if (power < 0 && power > -1 * minPower) {
+            power = minPower * -1;
+            // Log.d("pid", "setHeading: adjusted power is " + power);
+        }
+
+        //cap power
+        power = Range.clip(power, -0.7, 0.7);
+        // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
+
+        driveTrain.setPower(-1 * power, power, -1 * power, power);
+        prevError = error;
+        prevTime = currentTime;
+
     }
 
     public static double angleWrap (double angle) {

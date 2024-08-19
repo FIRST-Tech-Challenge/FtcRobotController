@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
 public class DriveTrain {
     private final OpModeUtilities opModeUtilities;
-    private final DcMotor testMotorDeleteLater;
+    //private final DcMotor testMotorDeleteLater;
     private final DcMotor fLeft, fRight, bLeft, bRight;
     private final DcMotor backEncoder;
     private final DcMotor rightEncoder;
@@ -43,7 +43,7 @@ public class DriveTrain {
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-        testMotorDeleteLater = opModeUtilities.getHardwareMap().dcMotor.get("testMotor");
+       // testMotorDeleteLater = opModeUtilities.getHardwareMap().dcMotor.get("testMotor");
     }
     public void setFLeftPower(double power) { fLeft.setPower(power); }
     public void setFRightPower(double power) { fRight.setPower(power); }
@@ -85,15 +85,15 @@ public class DriveTrain {
     public DcMotor getbRight() {
         return bRight;
     }
-    public DcMotor getTestMotorDeleteLater() {
+    /*public DcMotor getTestMotorDeleteLater() {
         return testMotorDeleteLater;
-    }
+    }*/
     public OpModeUtilities getOpModeUtilities() {
         return opModeUtilities;
     }
-    public void setTestPower(double power) throws InterruptedException {
+    /*public void setTestPower(double power) throws InterruptedException {
         getTestMotorDeleteLater().setPower(power);
         Thread.sleep(3000);
         getTestMotorDeleteLater().setPower(0);
-    }
+    }*/
 }

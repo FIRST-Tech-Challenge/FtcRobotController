@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class WaitAction extends Action{
 
     double waitTimeSeconds;
-    boolean timerStarted = false;
     ElapsedTime elapsedTime;
 
     public WaitAction(Action dependentAction, double targetWaitTimeSeconds) {
@@ -20,7 +19,7 @@ public class WaitAction extends Action{
 
     @Override
     boolean checkDoneCondition() {
-        if (timerStarted) {
+        if (hasStarted) {
             if (elapsedTime.seconds() >= waitTimeSeconds) {
                 return true;
             }
@@ -31,9 +30,9 @@ public class WaitAction extends Action{
 
     @Override
     void update() {
-        if(!timerStarted) {
+        if(!hasStarted) {
             elapsedTime = new ElapsedTime();
-            timerStarted = true;
+            hasStarted = true;
         }
     }
 }

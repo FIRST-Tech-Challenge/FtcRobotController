@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
-import com.kalipsorobotics.fresh.DriveTrain;
-
 public class MoveRobotStraightInchesAction extends Action {
     private static final double ERROR_TOLERANCE = 50;
     DriveTrain driveTrain;
@@ -9,7 +7,7 @@ public class MoveRobotStraightInchesAction extends Action {
     double targetTicks;
     double currentTicks;
     double error;
-    CalculateTickInches calculateTickInches;
+    CalculateTickInches calculateTickInches = new CalculateTickInches();
 
     MoveRobotStraightInchesAction(Action dependentAction, double targetInches, DriveTrain driveTrain) {
         this.dependentAction = dependentAction;
@@ -41,7 +39,14 @@ public class MoveRobotStraightInchesAction extends Action {
 
     @Override
     void update() {
+
         this.currentTicks = driveTrain.getfLeftTicks();
+
+        if(!hasStarted) {
+            this.targetTicks += currentTicks;
+            hasStarted = true;
+        }
+
         driveTrain.setPower(straightController.calculatePID(currentTicks, targetTicks));
     }
 }

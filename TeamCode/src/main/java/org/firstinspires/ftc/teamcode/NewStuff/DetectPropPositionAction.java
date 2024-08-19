@@ -4,33 +4,34 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.lang.reflect.Field;
+
 public class DetectPropPositionAction extends Action {
     ElapsedTime elapsedTime;
     VisionPortalProcessor visionPortalProcessor;
+    FieldPosition fieldPosition;
     PropDetector.PROP_POSITION position;
-    public enum PROP_LOCATION {
-        INNER, OUTER, CENTER;
-    }
-    PROP_LOCATION propLocation;
     Boolean longPath;
     int visionTimeout = 500; // timeout detection after 2 seconds
     double time;
     boolean timeStarted = false;
 
-    public DetectPropPositionAction(Action dependentAction, VisionPortalProcessor visionProcessor, Boolean longPath) {
+    public DetectPropPositionAction(Action dependentAction, VisionPortalProcessor visionProcessor, FieldPosition fieldPosition, Boolean longPath) {
         elapsedTime = new ElapsedTime();
         this.visionPortalProcessor = visionProcessor;
+        this.fieldPosition = fieldPosition;
         this.dependentAction = dependentAction;
         this.longPath = longPath;
         position = PropDetector.PROP_POSITION.UNKNOWN;
     }
 
-    public DetectPropPositionAction(VisionPortalProcessor visionPortalProcessor, Boolean longPath) {
+    public DetectPropPositionAction(VisionPortalProcessor visionPortalProcessor, FieldPosition fieldPosition, Boolean longPath) {
         Log.d("vision", "action: constructing");
         elapsedTime = new ElapsedTime();
         Log.d("vision", "action: about to set vision portal processor field");
         this.visionPortalProcessor = visionPortalProcessor;
         Log.d("vision", "action: set up vision portal processor field");
+        this.fieldPosition = fieldPosition;
         this.dependentAction = new DoneStateAction();
         this.longPath = longPath;
         position = PropDetector.PROP_POSITION.UNKNOWN;
@@ -42,7 +43,7 @@ public class DetectPropPositionAction extends Action {
         if (position == PropDetector.PROP_POSITION.UNDETECTED || position == PropDetector.PROP_POSITION.UNKNOWN) {
             return false;
         } else {
-            setMarkerLocation(visionPortalProcessor.getIsRedAlliance(), longPath, position);
+            fieldPosition.setMarkerLocation(visionPortalProcessor.getIsRedAlliance(), longPath, position);
             visionPortalProcessor.getVisionPortal().setProcessorEnabled(visionPortalProcessor.getPropProcessor(), false);
             Log.d("vision", "action: finished action");
             return true;
@@ -91,44 +92,7 @@ public class DetectPropPositionAction extends Action {
         visionPortalProcessor.getOpModeUtilities().getTelemetry().update();
     }
 
-    public void setMarkerLocation(boolean isRedAlliance, boolean longPath, PropDetector.PROP_POSITION position) {
-        if (longPath) {
-            if ((position == PropDetector.PROP_POSITION.RIGHT && isRedAlliance)
-                    || (position == PropDetector.PROP_POSITION.LEFT && !isRedAlliance)) {
-
-                propLocation = PROP_LOCATION.INNER;
-
-            } else if ((position == PropDetector.PROP_POSITION.LEFT && isRedAlliance)
-                    || (position == PropDetector.PROP_POSITION.RIGHT && !isRedAlliance)) {
-
-                propLocation = PROP_LOCATION.OUTER;
-
-            } else {
-
-                propLocation = PROP_LOCATION.CENTER;
-
-            }
-        } else {
-            if ((position == PropDetector.PROP_POSITION.RIGHT && isRedAlliance)
-                    || (position == PropDetector.PROP_POSITION.LEFT && !isRedAlliance)) {
-
-                propLocation = PROP_LOCATION.OUTER;
-
-            } else if ((position == PropDetector.PROP_POSITION.LEFT && isRedAlliance)
-                    || (position == PropDetector.PROP_POSITION.RIGHT && !isRedAlliance)) {
-
-                propLocation = PROP_LOCATION.INNER;
-
-            } else {
-
-                propLocation = PROP_LOCATION.CENTER;
-
-            }
-        }
-
-    }
-
-    public PROP_LOCATION getPropLocation() {
-        return propLocation;
+    public FieldPosition.PROP_LOCATION getPropLocation() {
+        return fieldPosition.getPropLocation();
     }
 }

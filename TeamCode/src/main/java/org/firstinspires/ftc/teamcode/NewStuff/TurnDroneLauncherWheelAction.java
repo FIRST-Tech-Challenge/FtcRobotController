@@ -48,6 +48,12 @@ public class TurnDroneLauncherWheelAction extends Action {
     @Override
     void update() {
         this.currentTicks = wheel.getCurrentPosition();
+
+        if(!hasStarted) {
+            this.targetTicks += currentTicks;
+            hasStarted = true;
+        }
+
         wheel.setPower(calculatePower());
     }
 
