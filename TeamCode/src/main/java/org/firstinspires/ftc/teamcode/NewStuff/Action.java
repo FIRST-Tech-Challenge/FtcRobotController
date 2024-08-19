@@ -6,6 +6,7 @@ public abstract class Action {
 
     Action dependentAction;
     boolean isDone = false;
+    boolean hasStarted = false;
 
     boolean getIsDone() {
         return isDone;

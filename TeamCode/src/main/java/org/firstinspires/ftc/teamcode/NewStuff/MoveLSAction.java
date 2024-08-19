@@ -51,6 +51,12 @@ public class MoveLSAction extends Action {
     @Override
     void update() {
         this.currentTicks = lsFront.getCurrentPosition();
+
+        if(!hasStarted) {
+            this.targetTicks += currentTicks;
+            hasStarted = true;
+        }
+
         lsFront.setPower(calculatePower());
         lsBack.setPower(calculatePower());
     }

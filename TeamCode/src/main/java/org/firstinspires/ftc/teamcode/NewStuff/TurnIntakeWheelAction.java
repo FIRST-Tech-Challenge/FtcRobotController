@@ -48,6 +48,11 @@ public class TurnIntakeWheelAction extends Action {
 
     @Override
     void update() {
+        if(!hasStarted) {
+            this.targetTicks += currentTicks;
+            hasStarted = true;
+        }
+
         this.currentTicks = intakeWheel.getCurrentPosition();
         intakeWheel.setPower(calculatePower());
     }
