@@ -40,14 +40,14 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         double rotX = leftX * Math.sin(heading_RADIANS) - leftY * Math.cos(heading_RADIANS);
 
 
-        double denominator = Math.max(Math.abs(leftX) + Math.abs(leftY) + Math.abs(turn), 1);
+        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
 
 
-        driveMotors[0].setPower((rotY + rotX + turn));// / denominator); // Front Left Motor
-        driveMotors[1].setPower((rotY - rotX + turn));// / denominator); // Back Left Motor
-        driveMotors[2].setPower((rotY - rotX - turn));// / denominator); // Back Right Motor
-        driveMotors[3].setPower((rotY + rotX - turn));// / denominator); // Front Right Motor
+        driveMotors[0].setPower((rotY + rotX + turn) / denominator); // Front Left Motor
+        driveMotors[1].setPower((rotY - rotX + turn) / denominator); // Back Left Motor
+        driveMotors[2].setPower((rotY - rotX - turn) / denominator); // Back Right Motor
+        driveMotors[3].setPower((rotY + rotX - turn) / denominator); // Front Right Motor
 
         telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
         telemetry.addData("heading_RADIANS", heading_RADIANS);
@@ -60,6 +60,12 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
 
 
+    }
+    public double getAvgPos(){
+       return driveMotors[0].getCurrentPosition()
+               + driveMotors[1].getCurrentPosition()
+               + driveMotors[2].getCurrentPosition()
+               + driveMotors[3].getCurrentPosition();
     }
 
 }
