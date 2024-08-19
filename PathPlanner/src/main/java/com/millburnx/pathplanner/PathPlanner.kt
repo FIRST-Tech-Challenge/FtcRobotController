@@ -23,26 +23,45 @@ class PathPlanner(val ppi: Double) : JPanel() {
 
         addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
-                if (e.button != MouseEvent.BUTTON1) return
-
                 val clickPoint = Vec2d(e.x, e.y).minus(Vec2d(width / 2, height / 2)).div(ppi)
-                for (point in points) {
-                    for (type in BezierPoint.PointType.entries) {
-                        val threshold = when (type) {
-                            BezierPoint.PointType.ANCHOR -> 20 / ppi
-                            else -> 15 / ppi
+                when (e.button) {
+                    MouseEvent.BUTTON1 -> {
+                        for (point in points) {
+                            for (type in BezierPoint.PointType.entries) {
+                                val threshold = when (type) {
+                                    BezierPoint.PointType.ANCHOR -> 20 / ppi
+                                    else -> 15 / ppi
+                                }
+                                val distance = point.getType(type)?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
+                                if (distance < threshold) {
+                                    selectedBezier = Pair(point, type)
+                                    return
+                                }
+                            }
                         }
-                        val distance = point.getType(type)?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
-                        if (distance < threshold) {
-                            selectedBezier = Pair(point, type)
-                            return
+                        points.add(BezierPoint(clickPoint))
+                        addState()
+                        repaint()
+                    }
+
+                    MouseEvent.BUTTON3 -> {
+                        for (point in points) {
+                            val threshold = 15 / ppi
+                            val distance = point.anchor.distanceTo(clickPoint)
+                            if (distance < threshold) {
+                                points.remove(point)
+                                // remove stray handles
+                                if (points.isNotEmpty()) {
+                                    points.first().prevHandle = null
+                                    points.last().nextHandle = null
+                                }
+                                addState()
+                                repaint()
+                                return
+                            }
                         }
                     }
                 }
-
-                points.add(BezierPoint(clickPoint))
-                addState()
-                repaint()
             }
 
             override fun mouseReleased(e: MouseEvent?) {
