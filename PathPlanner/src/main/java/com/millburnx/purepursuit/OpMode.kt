@@ -88,6 +88,6 @@ abstract class OpMode(ppi: Double, private val updateHertz: Double) : IOpMode {
         }
         lastFrame = currentFrame
         robot.update(deltaTime)
-//        println("Robot: ${robot.position}, ${robot.heading} | $deltaTime $lastFrame")
+        ftcDashboard.panel.deltaTime = deltaTime
     }
 }

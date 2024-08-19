@@ -53,7 +53,7 @@ class Bezier(private val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, private val p3
      * Get a list of intersections between the Bézier curve and a circle
      * @param samples the number of segments to split the Bézier curve into; curve resolution; higher is more accurate but slower
      */
-    fun intersections(circle: Circle, samples: Int = 10): List<Intersection<Bezier>> {
+    fun intersections(circle: Circle, samples: Int = 100): List<Intersection<Bezier>> {
         // bounding check
         val min = Vec2d(
             min(min(p0.x, p1.x), min(p2.x, p3.x)),
@@ -83,7 +83,7 @@ class Bezier(private val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, private val p3
     /**
      * Draw the Bézier curve on an FTC Dashboard canvas
      */
-    fun draw(canvas: ICanvas, samples: Int = 10) {
+    fun draw(canvas: ICanvas, samples: Int = 100) {
         var lastPoint = p0
         for (i in 1..samples) {
             val t = i.toDouble() / samples

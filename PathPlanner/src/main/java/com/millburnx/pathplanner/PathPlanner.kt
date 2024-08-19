@@ -1,6 +1,8 @@
 package com.millburnx.pathplanner
 
 import com.millburnx.utils.Bezier
+import com.millburnx.utils.BezierPoint
+import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
 import java.awt.*
 import java.awt.event.KeyAdapter
@@ -14,7 +16,7 @@ import javax.swing.JPanel
 
 class PathPlanner(val ppi: Double) : JPanel() {
     init {
-        background = Color(0x0e1a25)
+        background = Utils.Colors.bg1
 
         // the bezier point and the actual point (anchor, prevHandle, nextHandle)
         var selectedBezier: Pair<BezierPoint, BezierPoint.PointType>? = null
@@ -232,13 +234,22 @@ class PathPlanner(val ppi: Double) : JPanel() {
             )
         )
         g2d.translate(width / 2, height / 2)
+        // draw grid
+        g2d.color = Utils.Colors.bg2
+        val size = Vec2d(6, 6)
+        for (x in 0..width step width / size.x.toInt()) {
+            g2d.drawLine(x - width / 2, -height / 2, x - width / 2, height / 2)
+        }
+        for (y in 0..height step height / size.y.toInt()) {
+            g2d.drawLine(-width / 2, y - height / 2, width / 2, y - height / 2)
+        }
 
-        val red = Color(0xfb1155)
-        val blue = Color(0x35b8fa)
-        val green = Color(0x11e59c)
-        val yellow = Color(0xf1d454)
-
-        val colors = listOf(red, blue, green, yellow)
+        val colors = listOf(
+            Utils.Colors.red,
+            Utils.Colors.blue,
+            Utils.Colors.green,
+            Utils.Colors.yellow
+        )
 
         var currentColor = 0
         points.windowed(2, 1, false).forEach { (p1, p2) ->

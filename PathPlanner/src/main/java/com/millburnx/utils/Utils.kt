@@ -1,11 +1,30 @@
 package com.millburnx.utils
 
+import java.awt.Color
 import java.awt.Graphics2D
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
 class Utils {
+    class Colors {
+        companion object {
+            // From Freya Holmér
+            val bg0 = Color(0x070b0f)
+            val bg1 = Color(0x0e1a25)
+            val bg2 = Color(0x525c65)
+            val bg3 = Color(0x4f6880)
+            val bg4 = Color(0xa6aeb6)
+
+            val red = Color(0xfb1155)
+            val blue = Color(0x35b8fa)
+            val green = Color(0x11e59c)
+            val yellow = Color(0xf1d454)
+
+            val purple = Color(0x8e10fd)
+        }
+    }
+
     companion object {
         /**
          * Normalize an angle to be between -pi and pi radians (-180 to 180 degrees)

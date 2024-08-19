@@ -1,5 +1,6 @@
 package com.millburnx.dashboard
 
+import java.awt.Color
 import java.awt.Graphics
 import java.awt.GraphicsEnvironment
 import java.awt.RenderingHints
@@ -21,6 +22,8 @@ class FTCDashboard(
 ) :
     IFTCDashboard {
     inner class Panel(var ppi: Double) : JPanel() {
+        var deltaTime = 0.0
+
         init {
             val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
             val fonts = ge.availableFontFamilyNames
@@ -60,12 +63,19 @@ class FTCDashboard(
             val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
             val g2d = bufferedImage.createGraphics()
             g2d.setRenderingHints(RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON))
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g2d.translate(width / 2, height / 2)
             val canvas = currentPacket.fieldOverlay()
             val ops = canvas.getOperations()
             for (op in ops) {
                 op.draw(g2d, ppi, this)
             }
+
+            // fps overlay
+            val fps = 1.0 / deltaTime
+            g2d.color = Color.WHITE
+            g2d.drawString("FPS: $fps", -width / 2 + 10, -height / 2 + 20)
+
             g.drawImage(bufferedImage, 0, 0, null)
         }
     }
