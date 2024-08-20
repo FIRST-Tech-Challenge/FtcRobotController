@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.archive;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -38,12 +37,17 @@ public class PotentiometerCalibration extends LinearOpMode {
 
         while (opModeIsActive()) {
             setup();
+            gimbalPos.setPosition(0);
+            double startTime = clock.milliseconds();
+            while (clock.milliseconds() - startTime < 3000) {
+                // Wait 200 ms
+            }
             for (double i = 0; i < 1; i += 0.001) {
                 if (isStopRequested()) break;
 
                 gimbalPos.setPosition(i);
-                double startTime = clock.milliseconds();
-                while (clock.milliseconds() - startTime < 1000) {
+                startTime = clock.milliseconds();
+                while (clock.milliseconds() - startTime < 300) {
                     // Wait 200 ms
                 }
 
