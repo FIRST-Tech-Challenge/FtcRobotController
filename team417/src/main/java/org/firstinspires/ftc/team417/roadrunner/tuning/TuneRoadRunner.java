@@ -280,7 +280,7 @@ class Settings {
             type = TuneRoadRunner.Type.OPTICAL;
             opticalAngularScalar = drive.opticalTracker.getAngularScalar();
             opticalLinearScalar = drive.opticalTracker.getLinearScalar();
-            opticalOffset = drive.opticalTracker.getOffset();
+            opticalOffset = drive.opticalTracker.getOffset(); // @@@ Yeah, this doesn't work
         } else if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
             type = TuneRoadRunner.Type.ALL_WHEEL;
         } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
@@ -399,8 +399,8 @@ public class TuneRoadRunner extends LinearOpMode {
         // waiting.
         boolean drivePrompt(String message) {
             boolean success = false;
-            message(message);
             while (opModeIsActive() && !cancel()) {
+                message(message);
                 if (accept()) {
                     success = true;
                     break;
@@ -582,8 +582,11 @@ public class TuneRoadRunner extends LinearOpMode {
         assert(drive.opticalTracker != null);
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
-        SparkFunOTOS.Pose2D offset = drive.opticalTracker.getOffset();
-        double oldHeading = offset.h;
+        // Reset the current OTOS settings:
+        SparkFunOTOS.Pose2D oldOffset = drive.opticalSettings.offset;
+        double oldLinearScalar = drive.opticalSettings.linearScalar;
+        drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(oldOffset.x, oldOffset.y, 0));
+        drive.opticalTracker.setLinearScalar(1.0);
 
         if (ui.drivePrompt("In this test, you'll push the robot forward in a straight line "
                 + "along a field wall for exactly 4 tiles. To start, align the robot by hand "
@@ -595,16 +598,19 @@ public class TuneRoadRunner extends LinearOpMode {
 
             drive.opticalTracker.resetTracking();
             while (opModeIsActive() && !ui.accept()) {
-                if (ui.cancel())
+                if (ui.cancel()) {
+                    // Restore original settings:
+                    drive.opticalTracker.setOffset(oldOffset);
+                    drive.opticalTracker.setLinearScalar(oldLinearScalar);
                     return; // ====>
-
+                }
+                    
                 SparkFunOTOS.Pose2D pose = drive.opticalTracker.getPosition();
                 distance = Math.hypot(pose.x, pose.y);
-                heading = Math.atan2(pose.y, pose.x); // Rise over run
+                heading = -Math.atan2(pose.y, pose.x); // Rise over run
 
                 ui.message("Push forward exactly 4 tiles (96\") along a field wall.\n\n"
                     + String.format("&ensp;Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h))
-                    + String.format("&ensp;Sensor offset: (%.2f, %.2f, %.2f)\n", offset.x, offset.y, Math.toDegrees(offset.h))
                     + String.format("&ensp;Effective distance: %.2f\"\n", distance)
                     + String.format("&ensp;Heading angle: %.2f\u00b0\n", Math.toDegrees(heading))
                     + "\nPress A when you're finished pushing, B to cancel");
@@ -614,39 +620,59 @@ public class TuneRoadRunner extends LinearOpMode {
             if (distance == 0)
                 distance = 0.001;
 
-            double oldLinearScalar = drive.opticalTracker.getLinearScalar();
-            double newLinearScalar = (96.0 / distance) * oldLinearScalar; // Undo the applied scalar
+            double newLinearScalar = (96.0 / distance);
             double linearScalarChange = Math.abs((oldLinearScalar - newLinearScalar)
                     / oldLinearScalar * 100.0); // Percentage
 
-            double newHeading = normalizeAngle(heading + oldHeading); // Undo the applied heading
-            double headingChange = normalizeAngle(Math.abs(oldHeading - newHeading));
+            double newHeading = normalizeAngle(heading);
+            double headingChange = normalizeAngle(Math.abs(oldOffset.h - newHeading));
 
-            if ((newLinearScalar < SparkFunOTOS.MIN_SCALAR) || (newLinearScalar > SparkFunOTOS.MAX_SCALAR)) {
-                ui.prompt(String.format("The measured distance of %.1f\" is not close enough to "
-                        + "the expected distance of 96\". Either something is wrong with the sensor "
-                        + "or you didn't push for 4 tiles."
-                        + "\n\nAborted, press A to continue.", distance));
+            if (newLinearScalar < SparkFunOTOS.MIN_SCALAR) {
+                String message = String.format("The measured distance of %.1f\" is not close enough to "
+                        + "the expected distance of 96\". It can't measure more than %.1f\". "
+                        + "Either you didn't push straight for 4 tiles or something is wrong "
+                        + "with the sensor. ", distance, 96 / SparkFunOTOS.MIN_SCALAR);
+                message += "Maybe the distance of the sensor to the tile is less than 10.0 mm? ";
+                ui.prompt(message + "\n\nAborted, press A to continue");
+            } else if (newLinearScalar > SparkFunOTOS.MAX_SCALAR) {
+                String message = String.format("The measured distance of %.1f\" is not close enough to "
+                        + "the expected distance of 96\". It can't measure less than %.1f\". "
+                        + "Either you didn't push straight for 4 tiles or something is wrong "
+                        + "with the sensor. ", distance, 96.0 / SparkFunOTOS.MAX_SCALAR);
+
+                // If the measured distance is close to zero, don't bother with the following
+                // suggestion:
+                if (newLinearScalar < 1.5) {
+                    message += "Maybe the distance of the sensor to the tile is more than 10.0 mm?";
+                }
+                ui.prompt(message + "\n\nAborted, press A to continue");
             } else {
-                if (ui.prompt(String.format("New offset heading of %.2f\u00b0 is %.1f\u00b0 off from old.\n", Math.toDegrees(newHeading), Math.toDegrees(headingChange))
-                    + String.format("New linear scalar of %.2f is %.1f%% off from old.\n\n", newLinearScalar, linearScalarChange)
+                if (ui.prompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n", Math.toDegrees(newHeading), Math.toDegrees(headingChange))
+                    + String.format("New linear scalar %.3f is %.1f%% off from old.\n\n", newLinearScalar, linearScalarChange)
                     + "Use these results? Press A if they look good, B to cancel.")) {
 
                     settings.opticalLinearScalar = newLinearScalar;
                     settings.opticalOffset.h = newHeading;
                     settings.save();
 
+                    // Apply the new settings to the hardware:
                     drive.opticalTracker.setLinearScalar(newLinearScalar);
-                    drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(offset.x, offset.y, newHeading)); // Using radians
+                    drive.opticalTracker.setOffset(settings.opticalOffset);
 
-                    ui.prompt("Go to the configureSparkFun() routine in MecanumDrive.java (double-tap "
-                            + "left-SHIFT and enter 'configureSparkFun'). Change to these values:\n\n"
-                            + String.format("&ensp;headingOffset = %.3f\n", Math.toDegrees(newHeading))
+                    ui.prompt("Go to the MecanumDrive constructor and change the parameters where "
+                            + "the OTOSSettings object is created as follows:\n"
+                            + String.format("&ensp;orientationDegrees = %.3f\n", Math.toDegrees(newHeading))
                             + String.format("&ensp;linearScalar = %.3f\n", newLinearScalar)
                             + "\nPress A to continue.");
+
+                    return; // ====>
                 }
             }
         }
+
+        // Restore original settings:
+        drive.opticalTracker.setOffset(oldOffset);
+        drive.opticalTracker.setLinearScalar(oldLinearScalar);
     }
 
     // Return a high resolution time count, in seconds:

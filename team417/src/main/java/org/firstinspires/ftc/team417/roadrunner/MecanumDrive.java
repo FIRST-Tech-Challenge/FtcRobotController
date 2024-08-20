@@ -184,8 +184,7 @@ public final class MecanumDrive {
     public final LazyImu lazyImu;
 
     public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
-    /** @noinspection ClassEscapesDefinedScope*/
-    public OTOSSettings opticalSettings = null; // Can be null which means no optical tracking sensor
+    public OTOSSettings opticalSettings = null;
 
     public final Localizer localizer;
     public Pose2d pose;
@@ -299,11 +298,11 @@ public final class MecanumDrive {
         if (isDevBot) {
             opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
             opticalSettings = new OTOSSettings(
-                    90, //
-                    1.024,
-                    1.001,
-                    6,
-                    -3.5);
+                    6.0,        // xInches
+                    -3.5,       // yInches
+                    -87.139,    // orientationDegrees
+                    1.000,      // linearScalar
+                    1.001);     // angularScalar
 
             leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
             leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -350,20 +349,16 @@ public final class MecanumDrive {
     }
 
     // Structure for the settings of the SparkFun Optical Tracking Odometry Sensor.
-    static class OTOSSettings {
-        double orientation; // Radians
-        double linearScalar; // Scalar
-        double angularScalar; // Scalar
-        double xOffset; // Inches
-        double yOffset; // Inches
+    public static class OTOSSettings {
+        public SparkFunOTOS.Pose2D offset; // Inches, inches and radians
+        public double linearScalar; // Scalar
+        public double angularScalar; // Scalar
 
         // Note that the heading is specified in degrees, NOT radians:
-        public OTOSSettings(double orientationInDegrees, double linearScalar, double angularScalar, double xOffset, double yOffset) {
-            this.orientation = Math.toRadians(orientationInDegrees);
+        public OTOSSettings(double xInches, double yInches, double orientationDegrees, double linearScalar, double angularScalar) {
+            this.offset = new SparkFunOTOS.Pose2D(xInches, yInches, Math.toRadians(orientationDegrees));
             this.linearScalar = linearScalar;
             this.angularScalar = angularScalar;
-            this.xOffset = xOffset;
-            this.yOffset = yOffset;
         }
     }
 
@@ -399,17 +394,7 @@ public final class MecanumDrive {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        //
-        // NOTE: setOffset has a bug with sensor orientation so we work around it:
-        Vector2d uncorrectedOffset = new Vector2d(opticalSettings.xOffset, opticalSettings.yOffset);
-        Vector2d correctedOffset = rotateVector(uncorrectedOffset, -opticalSettings.orientation);
-        opticalTracker.setOffset(new SparkFunOTOS.Pose2D(
-                correctedOffset.x, correctedOffset.y, 0));
-
-        SparkFunOTOS.Pose2D checkOffset = opticalTracker.getOffset();
-        System.out.printf("OTOS offset read-back: %.1f, %.1f, %.1f (should be %.1f, %.1f, %.1f)\n",
-                checkOffset.x, checkOffset.y, checkOffset.h,
-                correctedOffset.x, correctedOffset.y, 0.0);
+        opticalTracker.setOffset(opticalSettings.offset);
 
         // Here we can set the linear and angular scalars, which can compensate for
         // scaling issues with the sensor measurements. Note that as of firmware
@@ -451,12 +436,6 @@ public final class MecanumDrive {
         // another source of location information (eg. vision odometry), you can set
         // the OTOS location to match and it will continue to track from there.
         setPose(pose);
-
-
-        opticalTracker.setPosition(new SparkFunOTOS.Pose2D(3, 2, 1));
-        SparkFunOTOS.Pose2D checkPose = opticalTracker.getPosition();
-        System.out.printf("OTOS position read-back: %.1f, %.1f, %.1f (should be 3, 2, 1)\n",
-                checkPose.x, checkPose.y, checkPose.h);
     }
 
     // Set the drive powers for when driving manually via the controller:
@@ -783,7 +762,8 @@ public final class MecanumDrive {
         PoseVelocity2d poseVelocity;
         if (opticalTracker != null) {
             // Use the SparkFun optical tracking sensor to update the pose:
-            pose = getOpticalPosition();
+            SparkFunOTOS.Pose2D position = opticalTracker.getPosition();
+            pose = new Pose2d(position.x, position.y, position.h);
             poseVelocity = getOpticalVelocity();
         } else {
             // Use the wheel odometry to update the pose:
@@ -846,35 +826,20 @@ public final class MecanumDrive {
                 Math.sin(theta) * vector.x + Math.cos(theta) * vector.y);
     }
 
-    // Override the current pose for Road Runner and the optical tracking sensor, correcting for the
-    // orientation of the tracking sensor:
+    // Override the current pose for Road Runner and the optical tracking sensor:
     public void setPose(Pose2d pose) {
         // Set the Road Runner pose:
         this.pose = pose;
 
         // Set the pose on the optical tracking sensor:
         if (opticalTracker != null) {
-            Vector2d correctedPosition = rotateVector(pose.position, -opticalSettings.orientation);
-            double correctedHeading = pose.heading.toDouble() - opticalSettings.orientation;
             opticalTracker.setPosition(new SparkFunOTOS.Pose2D(
-                    correctedPosition.x, correctedPosition.y, correctedHeading));
+                    pose.position.x, pose.position.y, pose.heading.toDouble()));
         }
-    }
-
-    // Get the position pose from the optical tracking sensor, correcting for the orientation of
-    // the sensor:
-    public Pose2d getOpticalPosition() {
-        SparkFunOTOS.Pose2D uncorrectedPose = opticalTracker.getPosition();
-        Vector2d correctedPosition = rotateVector(
-                new Vector2d(uncorrectedPose.x, uncorrectedPose.y),
-                opticalSettings.orientation);
-        double correctedHeading = uncorrectedPose.h + opticalSettings.orientation;
-        return new Pose2d(correctedPosition, correctedHeading);
     }
 
     // Get the velocity pose from the optical tracking sensor:
     public PoseVelocity2d getOpticalVelocity() {
-        // TODO: Fix for sensor orientation
         // TODO: Implement and convert to robot-relative
         return new PoseVelocity2d(new Vector2d(0, 0), 0);
     }
