@@ -1,5 +1,7 @@
 package org.rustlib.rustboard;
 
+import org.rustlib.rustboard.Rustboard.RustboardException;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Objects;
@@ -100,8 +102,16 @@ public class RustboardNode {
     }
 
     static RustboardNode buildFromJson(JsonValue json) {
-        JsonObject data = (JsonObject) json;
-        return new RustboardNode(data.getString(ID_KEY), Type.getType(data.getString(TYPE_KEY)), data.getString(STATE_KEY), new Time(data.getJsonNumber(LAST_UPDATE_KEY).longValue(), true));
+        try {
+            JsonObject data = (JsonObject) json;
+            return new RustboardNode(
+                    data.getString(ID_KEY), Type.getType(data.getString(TYPE_KEY)),
+                    data.getString(STATE_KEY),
+                    data.containsKey(LAST_UPDATE_KEY) ? new Time(data.getJsonNumber(LAST_UPDATE_KEY).longValue(), true) : new Time()
+            );
+        } catch (RuntimeException e) {
+            throw new InvalidNodeJsonException("The following JSON does not conform to the JSON protocol for Rustboard Nodes: \n" + json.toString());
+        }
     }
 
     RustboardNode merge(RustboardNode toCompare) {
@@ -151,5 +161,12 @@ public class RustboardNode {
     @Override
     public String toString() {
         return String.format("id: '%s'\ntype: '%s'\nstate: '%s'", id, type.typeName, state);
+    }
+
+    static class InvalidNodeJsonException extends RustboardException {
+
+        public InvalidNodeJsonException(String message) {
+            super(message);
+        }
     }
 }

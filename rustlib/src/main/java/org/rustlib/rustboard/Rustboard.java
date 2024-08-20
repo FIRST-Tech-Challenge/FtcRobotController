@@ -17,6 +17,7 @@ import static org.rustlib.rustboard.RustboardServer.log;
 import org.java_websocket.WebSocket;
 import org.rustlib.commandsystem.Command;
 import org.rustlib.geometry.Pose2d;
+import org.rustlib.rustboard.RustboardNode.InvalidNodeJsonException;
 import org.rustlib.rustboard.RustboardNode.NoSuchNodeException;
 import org.rustlib.rustboard.RustboardNode.Type;
 import org.rustlib.utils.FileUtils;
@@ -84,7 +85,13 @@ public class Rustboard {
 
     Rustboard(String uuid, JsonArray nodes) {
         this.uuid = uuid;
-        nodes.forEach((JsonValue nodeJson) -> this.nodes.add(RustboardNode.buildFromJson(nodeJson)));
+        nodes.forEach((JsonValue nodeJson) -> {
+            try {
+                this.nodes.add(RustboardNode.buildFromJson(nodeJson));
+            } catch (InvalidNodeJsonException e) {
+                log(e);
+            }
+        });
     }
 
     Rustboard(String uuid, Set<RustboardNode> nodes) {
@@ -128,10 +135,10 @@ public class Rustboard {
     static Rustboard load(String uuid) throws NoSuchRustboardException {
         try {
             return loadRustboard(getLatestRustboardVersion(uuid), uuid);
-        } catch (IOException | NoSuchRustboardException e) {
+        } catch (IOException | RuntimeException e) {
             try {
                 return loadRustboard(getPreviousRustboardVersion(uuid), uuid);
-            } catch (IOException | NoSuchRustboardException e1) {
+            } catch (IOException | RuntimeException e1) {
                 log(e1);
                 if (true) throw new RuntimeException(e1); // TODO: remove after debugging
                 return emptyRustboard(uuid);
@@ -139,11 +146,11 @@ public class Rustboard {
         }
     }
 
-    private static Rustboard loadRustboard(File file, String uuid) throws IOException {
+    private static Rustboard loadRustboard(File file, String uuid) throws IOException, InvalidNodeJsonException {
         if (file.exists()) {
             Builder rustboardBuilder = getBuilder().setUUID(uuid);
             JsonObject json = FileUtils.loadJsonObject(file);
-            JsonArray nodes = json.getJsonArray(RustboardNode.NODE_ARRAY_KEY);
+            JsonArray nodes = Objects.requireNonNull(json.getJsonArray(RustboardNode.NODE_ARRAY_KEY));
             nodes.forEach((JsonValue nodeJson) -> rustboardBuilder.addNode(RustboardNode.buildFromJson(nodeJson)));
             return rustboardBuilder.build();
         } else {
@@ -461,12 +468,6 @@ public class Rustboard {
         }
     }
 
-    static class NoSuchRustboardException extends RuntimeException {
-        NoSuchRustboardException(String uuid) {
-            super(String.format("The rustboard with the id '%s' has no corresponding file", uuid));
-        }
-    }
-
     private static String toFilePath(String fileName) {
         return FileUtils.externalStorage + "\\" + fileName + ".txt";
     }
@@ -481,5 +482,17 @@ public class Rustboard {
 
     public static long loadSavedLong(String fileName, long defaultValue) {
         return FileUtils.loadLong(toFilePath(fileName), defaultValue);
+    }
+
+    public static class RustboardException extends RuntimeException {
+        public RustboardException(String message) {
+            super(message);
+        }
+    }
+
+    static class NoSuchRustboardException extends RustboardException {
+        NoSuchRustboardException(String uuid) {
+            super(String.format("The rustboard with the id '%s' has no corresponding file", uuid));
+        }
     }
 }

@@ -34,15 +34,19 @@ public class HardwareConfiguration {
     }
 
     private static Node getActiveConfigurationXMLNode() {
-        Document preferencesDocument = PreferenceEditor.readPreferences();
-        NodeList strings = preferencesDocument.getElementsByTagName("string");
-        for (int i = 0; i < strings.getLength(); i++) {
-            Node node = strings.item(i);
-            if (Objects.equals(node.getAttributes().getNamedItem("name"), "pref_hardware_config_filename")) {
-                return node;
+        try {
+            Document preferencesDocument = PreferenceEditor.readPreferences();
+            NodeList strings = preferencesDocument.getElementsByTagName("string");
+            for (int i = 0; i < strings.getLength(); i++) {
+                Node node = strings.item(i);
+                if (Objects.equals(node.getAttributes().getNamedItem("name"), "pref_hardware_config_filename")) {
+                    return node;
+                }
             }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e); // TODO: fix
         }
-        return null;
     }
 
     public static File getActiveConfiguration() throws FileNotFoundException, NullPointerException {
@@ -64,7 +68,7 @@ public class HardwareConfiguration {
     }
 
     private HardwareConfiguration getActiveConfig() {
-        Document xml = PreferenceEditor.readPreferences();
+        //Document xml = PreferenceEditor.readPreferences(); // TODO: fix
         return null;
     }
 

@@ -10,6 +10,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.rustlib.core.RobotControllerActivity;
+import org.rustlib.rustboard.Rustboard.RustboardException;
 import org.rustlib.utils.FileUtils;
 
 import java.io.File;
@@ -71,7 +72,7 @@ public class RustboardServer extends WebSocketServer {
     private RustboardServer(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
         setReuseAddr(true);
-        makeDirIfMissing(RUSTBOARD_STORAGE_DIR);
+        FileUtils.makeDirIfMissing(RUSTBOARD_STORAGE_DIR);
         JsonObject defaultMetaData = Json.createObjectBuilder().add("rustboards", Json.createArrayBuilder().build()).build();
         rustboardMetaData = FileUtils.safeLoadJsonObject(RUSTBOARD_METADATA_FILE, defaultMetaData);
         if (rustboardMetaData.containsKey("rustboards")) {
@@ -237,13 +238,13 @@ public class RustboardServer extends WebSocketServer {
             Rustboard.notifyAllClients("Robot received an invalid websocket message");
             warnClientConsoles(e);
             log(e);
-            throw new RuntimeException(e); // TODO: remove after debugging
+            throw new RuntimeException(e.getMessage() + "\n" + message); // TODO: remove after debugging
         }
     }
 
     public void saveLayouts() {
-        makeDirIfMissing(OLD_STORED_RUSTBOARD_DIR);
-        makeDirIfMissing(NEW_STORED_RUSTBOARD_DIR);
+        FileUtils.makeDirIfMissing(OLD_STORED_RUSTBOARD_DIR);
+        FileUtils.makeDirIfMissing(NEW_STORED_RUSTBOARD_DIR);
         JsonObjectBuilder metadataBuilder = Json.createObjectBuilder(rustboardMetaData);
         JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder(rustboardMetaData.getJsonArray("rustboards"));
         metadataBuilder.add("rustboards", rustboardArrayBuilder);
@@ -262,23 +263,9 @@ public class RustboardServer extends WebSocketServer {
         }
     }
 
-    private static void makeDirIfMissing(File file) {
-        if (!file.exists()) {
-            if (!file.mkdir()) {
-                throw new RuntimeException(String.format("Could not make directory '%s'", file.getPath()));
-            }
-        }
-    }
-
     @Override
     public void onError(WebSocket conn, Exception e) {
         log(e);
-    }
-
-    public static class RustboardException extends RuntimeException {
-        public RustboardException(String message) {
-            super(message);
-        }
     }
 
     public Set<WebSocket> getConnectedSockets() {

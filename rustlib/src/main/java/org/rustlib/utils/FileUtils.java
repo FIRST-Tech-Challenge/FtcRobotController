@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -82,7 +83,7 @@ public class FileUtils {
     public static JsonObject safeLoadJsonObject(File file, JsonObject defaultJsonObject) {
         try {
             return loadJsonObject(file);
-        } catch (IOException e) {
+        } catch (IOException | JsonException e) {
             return defaultJsonObject;
         }
     }
@@ -293,5 +294,13 @@ public class FileUtils {
 
         transformer.transform(source, result);
         return stringWriter.toString();
+    }
+
+    public static void makeDirIfMissing(File file) {
+        if (!file.exists()) {
+            if (!file.mkdir()) {
+                throw new RuntimeException(String.format("Could not make directory '%s'", file.getPath()));
+            }
+        }
     }
 }
