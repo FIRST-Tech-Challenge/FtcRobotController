@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Disabled
+
 @TeleOp(name="potentiometer map test")
 public class PotentiometerCalibration extends LinearOpMode {
 
@@ -29,7 +29,7 @@ public class PotentiometerCalibration extends LinearOpMode {
         telemetry.update();
 
         // Ensure the directory exists
-        File directory = new File("/sdcard/potentiometerLogs1000");
+        File directory = new File("/sdcard/potentiometerLogsReversed1000");
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -38,7 +38,7 @@ public class PotentiometerCalibration extends LinearOpMode {
 
         while (opModeIsActive()) {
             setup();
-            for (double i = 1; i > 0; i -= 0.001) {
+            for (double i = 0; i < 1; i += 0.001) {
                 if (isStopRequested()) break;
 
                 gimbalPos.setPosition(i);
@@ -85,7 +85,7 @@ public class PotentiometerCalibration extends LinearOpMode {
 
         // Create the file name with the battery voltage
 
-        String fileName = "/sdcard/potentiometerLogs1000/potentiometer_data_" + formattedVoltage + "V.txt";
+        String fileName = "/sdcard/potentiometerLogsReversed1000/potentiometer_data_" + formattedVoltage + "V.txt";
 
         // File writer setup
         try {
