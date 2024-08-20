@@ -95,8 +95,8 @@ public class Erection {
                 }
 
 
-                telemetry.addData("front erector position", frontElevatorEx.getCurrentPosition());
-                telemetry.addData("back erector position", backElevatorEx.getCurrentPosition());
+                //telemetry.addData("front erector position", frontElevatorEx.getCurrentPosition());
+                //telemetry.addData("back erector position", backElevatorEx.getCurrentPosition());
             } catch (Exception e){
                 telemetry.addData("erectile  disfunction", true);
             }

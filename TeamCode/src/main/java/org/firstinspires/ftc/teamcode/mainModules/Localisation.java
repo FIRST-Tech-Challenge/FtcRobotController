@@ -58,6 +58,7 @@ public class Localisation {
         double poseY = 0;
         double poseZ = 0;
         double isPositionData = 0;
+
         try {
             //try to get telemetry from external computer
             if (!forceOnBoardProcessor && !externalInitError) {
@@ -80,20 +81,18 @@ public class Localisation {
 
             if (isUpdated && aprilTagDetections != null) {
                 for (AprilTagDetection detection : aprilTagDetections) {
+                    isPositionData = 1;
 
                     poseX = detection.ftcPose.x;
                     poseY = detection.ftcPose.y;
                     poseZ = detection.ftcPose.z;
 
 
-
+                    /*
                     robotPosition = calculateRobotPosition(
-                            detection.id,
-                            detection.ftcPose.x,
-                            detection.ftcPose.y,
-                            detection.ftcPose.z,
+                            detection,
                             pitchAngle
-                            );
+                            );*/
                 }
             }
 
@@ -106,20 +105,26 @@ public class Localisation {
                 poseX, poseY, poseZ, isPositionData
         };
     }
-    private double[] calculateRobotPosition(int ID, double poseX, double poseY, double poseZ, double potentiometer) throws Exception{
+    private double[] calculateRobotPosition(AprilTagDetection detection, double potentiometer) throws Exception{
 
-            int[] tagPosition = aprilTagMapping.getTagLocation(ID);
-
-
-            double[] cameraPosition = relativeToCamera(tagPosition[0], tagPosition[1], tagPosition[2], poseX, poseY, poseZ);
+            int[] tagPosition = aprilTagMapping.getTagLocation(detection.id);
 
 
-        return compensateForCameraPosition(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+            double[] cameraPosition = relativeToCamera(tagPosition[0], tagPosition[1], tagPosition[2], detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z);
+
+
+        return compensateForCameraPosition(cameraPosition[0], cameraPosition[1], cameraPosition[2], detection.ftcPose.yaw, potentiometer );
     }
+
+
     private double[] relativeToCamera(int tagX, int tagY, int tagZ, double poseX, double poseY, double poseZ){
         return new double[]{-1, -1, -1};
     }
-    private double[] compensateForCameraPosition(double cameraX, double cameraY, double cameraZ){
+    private double[] compensateForCameraPosition(double cameraX, double cameraY, double cameraZ, double tagRotation, double cameraRotation){
+        double cameraDistanceFromCenter = 19.268;//now finisjed
+
+        double robotRotation = tagRotation + cameraRotation;
+
         return new double[]{-1, -1, -1};
     }
 

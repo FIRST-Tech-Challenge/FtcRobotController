@@ -3,13 +3,15 @@ package org.firstinspires.ftc.teamcode.maps;
 public class AprilTag {
     private String description;
     private int x, y, z;
+    private int rotation;
     private int[] detectionArea;
 
-    public AprilTag(String description, int x, int y, int z, int[] detectionArea) {
+    public AprilTag(String description, int x, int y, int z, int rotation, int[] detectionArea) {
         this.description = description;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.rotation = rotation;
         this.detectionArea = detectionArea;
     }
     @Deprecated
@@ -28,6 +30,7 @@ public class AprilTag {
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +
+                ", rot=" + rotation +
                 '}';
     }
 
@@ -47,6 +50,8 @@ public class AprilTag {
     public int getZ() {
         return z;
     }
+
+    public int getRotation(){return rotation;}
 
     public int[] getDetectionArea() {
         return detectionArea;
