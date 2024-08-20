@@ -2,11 +2,12 @@ package org.rustlib.drive;
 
 import com.google.gson.JsonParseException;
 
-import org.rustlib.config.Loader;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.rustboard.RustboardServer;
+import org.rustlib.utils.FileUtils;
 import org.rustlib.utils.Future;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -59,7 +60,7 @@ public class Path implements Supplier<Path> {
         fileName = fileName.replace(" ", "_") + ".json";
         Builder pathBuilder = Path.getBuilder();
         try {
-            JsonObject path = Loader.loadJsonObject(fileName);
+            JsonObject path = FileUtils.loadJsonObject(fileName);
             double timeout = parseTimeout(path.getString("timeout"));
             JsonArray array = path.getJsonArray("points");
             for (int i = 0; i < array.size(); i++) {
@@ -80,7 +81,7 @@ public class Path implements Supplier<Path> {
                 pathBuilder.addWaypoint(new Waypoint(x, y, followRadius, targetFollowRotation, targetEndRotation, maxVelocity));
             }
             return pathBuilder.setTimeout(timeout).build();
-        } catch (JsonParseException e) {
+        } catch (IOException | JsonParseException e) {
             RustboardServer.log(e.toString());
         }
         return new Path();

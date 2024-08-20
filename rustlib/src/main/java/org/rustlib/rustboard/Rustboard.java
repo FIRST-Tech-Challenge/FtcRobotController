@@ -1,13 +1,25 @@
 package org.rustlib.rustboard;
 
-import static org.rustlib.rustboard.RustboardServer.rustboardStorageDir;
+import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
+import static org.rustlib.rustboard.MessageActions.NOTIFY;
+import static org.rustlib.rustboard.NoticeType.NOTICE_DURATION_KEY;
+import static org.rustlib.rustboard.NoticeType.NOTICE_MESSAGE_KEY;
+import static org.rustlib.rustboard.NoticeType.NOTICE_TYPE_KEY;
+import static org.rustlib.rustboard.RustboardNode.ID_KEY;
+import static org.rustlib.rustboard.RustboardNode.LAST_UPDATE_KEY;
+import static org.rustlib.rustboard.RustboardNode.STATE_KEY;
+import static org.rustlib.rustboard.RustboardNode.TYPE_KEY;
+import static org.rustlib.rustboard.RustboardServer.NEW_STORED_RUSTBOARD_DIR;
+import static org.rustlib.rustboard.RustboardServer.OLD_STORED_RUSTBOARD_DIR;
+import static org.rustlib.rustboard.RustboardServer.RUSTBOARD_STORAGE_DIR;
+import static org.rustlib.rustboard.RustboardServer.log;
 
 import org.java_websocket.WebSocket;
 import org.rustlib.commandsystem.Command;
-import org.rustlib.config.Loader;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.rustboard.RustboardNode.NoSuchNodeException;
 import org.rustlib.rustboard.RustboardNode.Type;
+import org.rustlib.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +39,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 /**
- * All public static methods in this class will be executed on the currently <b>active</b> rustboard.  These method calls will refer back to the RustboardServer singleton to access the currently active rustboard instance and then execute the non-static methods of that instance.  This means that you can only update nodes on the rustboard.
+ * All public static methods in this class will be executed on the currently <b>active</b> rustboard.  These method calls will refer back to the RustboardServer singleton to access the currently active rustboard instance and then execute the non-static methods of that instance.  This means that you can only update nodes on the active rustboard.
  */
 public class Rustboard {
     private static final int defaultNoticeDuration = 6000;
@@ -80,8 +92,8 @@ public class Rustboard {
         this.nodes.addAll(nodes);
     }
 
-    static Rustboard emptyRustboard() {
-        return new Rustboard(null, new HashSet<>());
+    static Rustboard emptyRustboard(String uuid) {
+        return new Rustboard(uuid, new HashSet<>());
     }
 
     Rustboard(Builder builder) {
@@ -115,13 +127,27 @@ public class Rustboard {
 
     static Rustboard load(String uuid) throws NoSuchRustboardException {
         try {
+            return loadRustboard(getLatestRustboardVersion(uuid), uuid);
+        } catch (IOException | NoSuchRustboardException e) {
+            try {
+                return loadRustboard(getPreviousRustboardVersion(uuid), uuid);
+            } catch (IOException | NoSuchRustboardException e1) {
+                log(e1);
+                if (true) throw new RuntimeException(e1); // TODO: remove after debugging
+                return emptyRustboard(uuid);
+            }
+        }
+    }
+
+    private static Rustboard loadRustboard(File file, String uuid) throws IOException {
+        if (file.exists()) {
             Builder rustboardBuilder = getBuilder().setUUID(uuid);
-            JsonObject json = Loader.loadJsonObject(uuid + ".json");
-            JsonArray nodes = json.getJsonArray("nodes");
+            JsonObject json = FileUtils.loadJsonObject(file);
+            JsonArray nodes = json.getJsonArray(RustboardNode.NODE_ARRAY_KEY);
             nodes.forEach((JsonValue nodeJson) -> rustboardBuilder.addNode(RustboardNode.buildFromJson(nodeJson)));
             return rustboardBuilder.build();
-        } catch (RuntimeException e) {
-            throw new NoSuchRustboardException("");
+        } else {
+            throw new NoSuchRustboardException(uuid);
         }
     }
 
@@ -139,38 +165,55 @@ public class Rustboard {
         return new Rustboard(uuid, updatedNodeList);
     }
 
+    private void applyNodeUpdateMessage(JsonObject nodeJson) {
+        String id = nodeJson.getString(ID_KEY);
+        Type type = Type.getType(nodeJson.getString(TYPE_KEY));
+        String state = nodeJson.getString(STATE_KEY);
+        long lastUpdate;
+        try {
+            lastUpdate = nodeJson.getJsonNumber(LAST_UPDATE_KEY).longValue();
+        } catch (NullPointerException e) {
+            lastUpdate = 0;
+        }
+        try {
+            getNode(id, type).remoteUpdateState(state, lastUpdate);
+        } catch (NoSuchNodeException e) {
+            this.nodes.add(new RustboardNode(id, type, state));
+        }
+    }
+
     void onMessage(JsonObject messageJson) {
-        switch (messageJson.getString("action")) {
-            case "update_node":
-                String id = messageJson.getString("node_id");
-                Type type = Type.getType(messageJson.getString("node_type"));
-                String state = messageJson.getString("node_state");
-                try {
-                    getNode(id, type).remoteUpdateState(state, messageJson.getJsonNumber("last_update").longValue());
-                } catch (NoSuchNodeException e) {
-                    this.nodes.add(new RustboardNode(id, type, state));
+        switch (messageJson.getString(MESSAGE_ACTION_KEY)) {
+            case MessageActions.UPDATE_NODE:
+                applyNodeUpdateMessage(messageJson);
+                break;
+            case MessageActions.UPDATE_NODES:
+                JsonArray nodes = messageJson.getJsonArray(RustboardNode.NODE_ARRAY_KEY);
+                for (JsonValue value : nodes) {
+                    JsonObject nodeJson = (JsonObject) value;
+                    applyNodeUpdateMessage(nodeJson);
                 }
                 break;
-            case "save_path":
+            case MessageActions.SAVE_PATH:
                 try {
-                    Loader.writeString(rustboardStorageDir, Objects.requireNonNull(messageJson.get("path")).toString());
+                    FileUtils.writeString(new File(RUSTBOARD_STORAGE_DIR, messageJson.getString(ID_KEY)), Objects.requireNonNull(messageJson.get("path")).toString());
                     notifyClient("Saved path to robot", NoticeType.POSITIVE, 8000);
                 } catch (IOException | NullPointerException e) {
                     notifyClient("Could not save the path to the robot", NoticeType.NEGATIVE, 8000);
-                    RustboardServer.log(e.toString());
+                    log(e.toString());
                 }
                 break;
-            case "save_value":
+            case MessageActions.SAVE_VALUE:
                 try {
-                    Loader.writeString(rustboardStorageDir, Objects.requireNonNull(messageJson.get("value")).toString());
+                    FileUtils.writeString(RUSTBOARD_STORAGE_DIR, Objects.requireNonNull(messageJson.get("value")).toString());
                     notifyClient("Saved value to robot", NoticeType.POSITIVE, 8000);
                 } catch (IOException | NullPointerException e) {
                     notifyClient("Could not save the value to the robot", NoticeType.NEGATIVE, 8000);
-                    RustboardServer.log(e.toString());
+                    log(e.toString());
                 }
                 break;
-            case "click_button":
-                String nodeId = messageJson.getString("nodeID");
+            case MessageActions.CLICK_BUTTON:
+                String nodeId = messageJson.getString(ID_KEY);
                 if (callbacks.containsKey(nodeId)) {
                     clickButton(nodeId);
                 }
@@ -188,10 +231,10 @@ public class Rustboard {
 
     private static JsonObject createNoticeJson(String notice, NoticeType type, int durationMilliseconds) {
         return Json.createObjectBuilder()
-                .add("action", "create_notice")
-                .add("notice_message", notice)
-                .add("notice_type", type.value)
-                .add("notice_duration", durationMilliseconds)
+                .add(MESSAGE_ACTION_KEY, NOTIFY)
+                .add(NOTICE_MESSAGE_KEY, notice)
+                .add(NOTICE_TYPE_KEY, type.value)
+                .add(NOTICE_DURATION_KEY, durationMilliseconds)
                 .build();
     }
 
@@ -386,37 +429,57 @@ public class Rustboard {
         jsonBuilder.add("uuid", uuid);
         JsonArrayBuilder nodeArray = Json.createArrayBuilder();
         nodes.forEach((RustboardNode node) -> nodeArray.add(node.getJsonBuilder()));
-        jsonBuilder.add("nodes", nodeArray);
+        jsonBuilder.add(RustboardNode.NODE_ARRAY_KEY, nodeArray);
         return jsonBuilder.build();
     }
 
     void save(File file) {
         try {
-            Loader.writeJson(file, getJson());
+            FileUtils.writeJson(file, getJson());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static class NoSuchRustboardException extends Exception {
+    private static File getLatestRustboardVersion(String uuid) {
+        return new File(NEW_STORED_RUSTBOARD_DIR, uuid + ".json");
+    }
+
+    private static File getPreviousRustboardVersion(String uuid) {
+        return new File(OLD_STORED_RUSTBOARD_DIR, uuid + ".json");
+    }
+
+    void save() {
+        File newRustboardFile = getLatestRustboardVersion(uuid);
+        try {
+            FileUtils.copyFile(getLatestRustboardVersion(uuid), getPreviousRustboardVersion(uuid));
+        } catch (IOException e) {
+            RustboardServer.log(e);
+            throw new RuntimeException(e); // TODO: remove after debugging
+        } finally {
+            save(newRustboardFile);
+        }
+    }
+
+    static class NoSuchRustboardException extends RuntimeException {
         NoSuchRustboardException(String uuid) {
             super(String.format("The rustboard with the id '%s' has no corresponding file", uuid));
         }
     }
 
     private static String toFilePath(String fileName) {
-        return Loader.externalStorage + "\\" + fileName + ".txt";
+        return FileUtils.externalStorage + "\\" + fileName + ".txt";
     }
 
     public static String loadSavedString(String fileName, String defaultValue) {
-        return Loader.safeLoadString(toFilePath(fileName), defaultValue);
+        return FileUtils.safeReadString(toFilePath(fileName), defaultValue);
     }
 
     public static double loadSavedDouble(String fileName, double defaultValue) {
-        return Loader.loadDouble(toFilePath(fileName), defaultValue);
+        return FileUtils.loadDouble(toFilePath(fileName), defaultValue);
     }
 
     public static long loadSavedLong(String fileName, long defaultValue) {
-        return Loader.loadLong(toFilePath(fileName), defaultValue);
+        return FileUtils.loadLong(toFilePath(fileName), defaultValue);
     }
 }

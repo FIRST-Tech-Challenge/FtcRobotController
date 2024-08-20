@@ -14,6 +14,11 @@ public class RustboardNode {
     public final String id;
     private String state;
     private Time lastUpdate;
+    static final String ID_KEY = "node_id";
+    static final String TYPE_KEY = "node_type";
+    static final String STATE_KEY = "node_state";
+    static final String LAST_UPDATE_KEY = "last_node_update";
+    static final String NODE_ARRAY_KEY = "nodes";
 
     public RustboardNode(String id, Type type, String state, Time lastUpdate) {
         this.id = id;
@@ -35,15 +40,6 @@ public class RustboardNode {
     void remoteUpdateState(Object state, long time) {
         this.state = state.toString();
         lastUpdate = new Time(time, true);
-    }
-
-    JsonObject getSendableData() {
-        return Json.createObjectBuilder()
-                .add("messageType", "node update")
-                .add("nodeID", id)
-                .add("state", state)
-                .add("last_update", lastUpdate.getTimeMS())
-                .build();
     }
 
     String getState() {
@@ -91,21 +87,21 @@ public class RustboardNode {
 
     public static class NoSuchNodeException extends RuntimeException {
         public NoSuchNodeException(String nodeId) {
-            super("These are not the droids you're looking for!\nCould not find a node with id '" + nodeId + "'");
+            super("These are not the droids you're looking for!  Could not find a node with id '" + nodeId + "'");
         }
     }
 
     JsonObjectBuilder getJsonBuilder() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("id", id);
-        builder.add("type", type.typeName);
-        builder.add("state", state);
+        builder.add(ID_KEY, id);
+        builder.add(TYPE_KEY, type.typeName);
+        builder.add(STATE_KEY, state);
         return builder;
     }
 
     static RustboardNode buildFromJson(JsonValue json) {
         JsonObject data = (JsonObject) json;
-        return new RustboardNode(data.getString("id"), Type.getType(data.getString("type")), data.getString("state"), new Time(data.getJsonNumber("last_update").longValue(), true));
+        return new RustboardNode(data.getString(ID_KEY), Type.getType(data.getString(TYPE_KEY)), data.getString(STATE_KEY), new Time(data.getJsonNumber(LAST_UPDATE_KEY).longValue(), true));
     }
 
     RustboardNode merge(RustboardNode toCompare) {

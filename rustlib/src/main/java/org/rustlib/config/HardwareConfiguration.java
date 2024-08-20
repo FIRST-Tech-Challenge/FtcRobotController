@@ -1,6 +1,7 @@
 package org.rustlib.config;
 
 import org.rustlib.core.RobotBase;
+import org.rustlib.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,7 +52,7 @@ public class HardwareConfiguration {
         if (text.contains("LOCAL_STORAGE")) {
             Pattern pattern = Pattern.compile("name&quot;:&quot;(.*?)&quot;");
             Matcher matcher = pattern.matcher(text);
-            return new File(Loader.localStorage, matcher.group(0) + ".xml");
+            return new File(FileUtils.localStorage, matcher.group(0) + ".xml");
         } else {
             throw new FileNotFoundException("Could not locate the active configuration file.");
         }

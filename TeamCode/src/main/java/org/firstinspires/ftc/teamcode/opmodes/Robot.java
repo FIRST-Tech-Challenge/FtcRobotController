@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.rustlib.config.HardwareConfiguration;
+import org.rustlib.config.PreferenceEditor;
 import org.rustlib.core.RobotBase;
 import org.rustlib.geometry.Pose2d;
 import org.rustlib.geometry.Rotation2d;
@@ -16,6 +17,7 @@ public abstract class Robot extends RobotBase {
 
     @Override
     public final void robotInit() {
+        PreferenceEditor.configureNetwork("21865-RC", "@ftc21865");
         HardwareConfiguration.getBuilder()
                 .setConfigurationName("default")
                 .configureControlHub("Control Hub", 0)

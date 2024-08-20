@@ -1,4 +1,4 @@
-package org.rustlib.config;
+package org.rustlib.utils;
 
 import android.os.Environment;
 
@@ -6,11 +6,13 @@ import org.rustlib.rustboard.RustboardServer;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -26,44 +28,61 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-public class Loader {
+public class FileUtils {
     public static final File localStorage = new File(Environment.getExternalStorageDirectory().getPath(), "FIRST");
     public static final File externalStorage = Environment.getExternalStorageDirectory();
 
-    public static String loadString(File file) {
-        StringBuilder data = new StringBuilder();
-        try (FileInputStream input = new FileInputStream(file)) {
-            int character;
-            while ((character = input.read()) != -1) {
-                data.append((char) character);
-            }
-
-            return data.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public static byte[] readBytes(File file) throws IOException {
+        try (RandomAccessFile ramFile = new RandomAccessFile(file, "r")) {
+            byte[] fileBytes = new byte[(int) ramFile.length()];
+            ramFile.readFully(fileBytes);
+            return fileBytes;
         }
     }
 
-    public static String safeLoadString(File file, String defaultString) {
+    public static byte[] safeReadBytes(File file, byte[] defaultContent) {
         try {
-            return loadString(file);
-        } catch (RuntimeException e) {
+            return readBytes(file);
+        } catch (IOException e) {
+            return defaultContent;
+        }
+    }
+
+    public static byte[] safeReadBytes(File file) {
+        return safeReadBytes(file, new byte[0]);
+    }
+
+    public static String readString(File file) throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String currentLine = "";
+            while ((currentLine = reader.readLine()) != null) {
+                content.append(currentLine).append(System.lineSeparator());
+            }
+        }
+        return content.toString();
+    }
+
+    public static String safeReadString(File file, String defaultString) {
+        try {
+            return readString(file);
+        } catch (IOException e) {
             return defaultString;
         }
     }
 
-    public static String safeLoadString(File file) {
-        return safeLoadString(file, "");
+    public static String safeReadString(File file) {
+        return safeReadString(file, "");
     }
 
-    public static JsonObject loadJsonObject(File file) {
-        return getJsonObject(loadString(file));
+    public static JsonObject loadJsonObject(File file) throws IOException {
+        return getJsonObject(readString(file));
     }
 
     public static JsonObject safeLoadJsonObject(File file, JsonObject defaultJsonObject) {
         try {
             return loadJsonObject(file);
-        } catch (RuntimeException e) {
+        } catch (IOException e) {
             return defaultJsonObject;
         }
     }
@@ -72,30 +91,30 @@ public class Loader {
         return safeLoadJsonObject(file, Json.createObjectBuilder().build());
     }
 
-    public static String loadString(String filePath) {
-        return loadString(new File(filePath));
+    public static String readString(String filePath) throws IOException {
+        return readString(new File(filePath));
     }
 
-    public static String safeLoadString(String filePath, String defaultString) {
+    public static String safeReadString(String filePath, String defaultString) {
         try {
-            return loadString(filePath);
-        } catch (RuntimeException e) {
+            return readString(filePath);
+        } catch (IOException e) {
             return defaultString;
         }
     }
 
-    public static String safeLoadString(String filePath) {
-        return safeLoadString(filePath, "");
+    public static String safeReadString(String filePath) {
+        return safeReadString(filePath, "");
     }
 
-    public static JsonObject loadJsonObject(String filePath) {
-        return getJsonObject(loadString(filePath));
+    public static JsonObject loadJsonObject(String filePath) throws IOException {
+        return getJsonObject(readString(filePath));
     }
 
     public static JsonObject safeLoadJsonObject(String filePath, JsonObject defaultJsonObject) {
         try {
             return loadJsonObject(filePath);
-        } catch (RuntimeException e) {
+        } catch (IOException e) {
             return defaultJsonObject;
         }
     }
@@ -110,7 +129,7 @@ public class Loader {
 
     public static double loadDouble(File file, double defaultValue) {
         try {
-            return Double.parseDouble(safeLoadString(file));
+            return Double.parseDouble(safeReadString(file));
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -122,7 +141,7 @@ public class Loader {
 
     public static long loadLong(File file, long defaultValue) {
         try {
-            return Long.parseLong(safeLoadString(file));
+            return Long.parseLong(safeReadString(file));
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -134,7 +153,7 @@ public class Loader {
 
     public static boolean loadBoolean(File file, boolean defaultValue) {
         try {
-            return Boolean.parseBoolean(safeLoadString(file));
+            return Boolean.parseBoolean(safeReadString(file));
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -144,15 +163,24 @@ public class Loader {
         return loadBoolean(new File(filePath), defaultValue);
     }
 
-    public static void writeString(File output, String string) throws IOException {
-        FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath());
-        try (OutputStreamWriter writer = new OutputStreamWriter(fileOut)) {
-            writer.write(string);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public static void writeBytes(File output, byte[] bytes) throws IOException {
+        try (FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath())) {
+            fileOut.write(bytes);
         }
-        if (!output.exists()) {
-            throw new RuntimeException("couldn't create file");
+    }
+
+    public static void safeWriteBytes(File output, byte[] bytes) {
+        try {
+            writeBytes(output, bytes);
+        } catch (IOException e) {
+            RustboardServer.log(e);
+        }
+    }
+
+    public static void writeString(File output, String string) throws IOException {
+        try (FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath())) {
+            OutputStreamWriter writer = new OutputStreamWriter(fileOut);
+            writer.write(string);
         }
     }
 
@@ -160,7 +188,7 @@ public class Loader {
         writeString(output, json.toString());
     }
 
-    public static void write(File output, Object o) throws IOException {
+    public static void writeObjectToString(File output, Object o) throws IOException {
         writeString(output, o.toString());
     }
 
@@ -182,20 +210,69 @@ public class Loader {
 
     public static void safeWrite(File output, Object o) {
         try {
-            write(output, o);
+            writeObjectToString(output, o);
         } catch (IOException e) {
             RustboardServer.log(e);
         }
     }
 
-    public static Document readXML(File file) {
+    public static void copyFile(File source, File target) throws IOException {
+        byte[] contents = readBytes(source);
+        writeBytes(target, contents);
+    }
+
+    public static void safeCopyFile(File source, File target) {
+        try {
+            copyFile(source, target);
+        } catch (IOException e) {
+            RustboardServer.log(e);
+        }
+    }
+
+    public static void clearDir(File dir, boolean recurse) throws IOException {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    if (!file.delete()) {
+                        throw new IOException(String.format("Could not delete '%s'", file.getAbsolutePath()));
+                    }
+                } else if (file.isDirectory() && recurse) {
+                    clearDir(file, true);
+                }
+            }
+        }
+    }
+
+    public static void clearDir(File dir) throws IOException {
+        clearDir(dir, false);
+    }
+
+    public static void safeClearDir(File dir, boolean recurse) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    file.delete();
+                } else if (file.isDirectory() && recurse) {
+                    safeClearDir(file, true);
+                }
+            }
+        }
+    }
+
+    public static void safeClearDir(File dir) {
+        safeClearDir(dir, false);
+    }
+
+    public static Document readXML(File file) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setValidating(true);
             factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(file);
-        } catch (IOException | SAXException | ParserConfigurationException e) {
+        } catch (SAXException | ParserConfigurationException e) {
             throw new RuntimeException(e);
         }
     }

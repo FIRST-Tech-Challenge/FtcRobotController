@@ -1,6 +1,8 @@
 package org.rustlib.rustboard;
 
-import java.util.HashMap;
+import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
+import static org.rustlib.rustboard.MessageActions.UPDATE_NODES;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -21,9 +23,9 @@ public class ClientUpdater implements Runnable {
     public synchronized void run() {
         try {
             JsonObjectBuilder messageBuilder = Json.createObjectBuilder();
-            messageBuilder.add("action", "update_nodes");
+            messageBuilder.add(MESSAGE_ACTION_KEY, UPDATE_NODES);
             JsonArrayBuilder nodes = Json.createArrayBuilder();
-            Map<String, RustboardNode> nodeMap = new HashMap<>(toUpdate); // Copy the map to avoid concurrency issues in iteration
+            Map<String, RustboardNode> nodeMap = new ConcurrentHashMap<>(toUpdate); // Copy the map to avoid concurrency issues in iteration
             Set<String> keySet = nodeMap.keySet();
             if (keySet.size() == 0) {
                 return;
@@ -33,13 +35,10 @@ public class ClientUpdater implements Runnable {
                 nodes.add(node.getJsonBuilder());
                 toUpdate.remove(key);
             }
-            messageBuilder.add("nodes", nodes);
-            //Rustboard.notifyAllClients(messageBuilder.build().toString(), NoticeType.POSITIVE);
-            //RustboardServer.logToClientConsole(messageBuilder.build().toString());
+            messageBuilder.add(RustboardNode.NODE_ARRAY_KEY, nodes);
             RustboardServer.messageActiveRustboard(messageBuilder.build());
         } catch (Exception e) {
-            Rustboard.notifyAllClients(e.toString(), NoticeType.POSITIVE);
-            RustboardServer.logToClientConsole(e.getMessage());
+            RustboardServer.logToClientConsoles(e.getMessage());
         }
     }
 }

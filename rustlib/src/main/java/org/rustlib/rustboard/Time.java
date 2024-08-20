@@ -8,7 +8,7 @@ public class Time {
     private static long offset;
     private long time;
     private boolean locked;
-    private static List<Time> timeRegistry = Collections.synchronizedList(new ArrayList<>());
+    private static final List<Time> timeRegistry = Collections.synchronizedList(new ArrayList<>());
 
     public static long getUTCTime() {
         return System.currentTimeMillis() + offset;
@@ -46,9 +46,5 @@ public class Time {
 
     public long getTimeMS() {
         return time;
-    }
-
-    public static Time buildFromString(String time) {
-        return new Time(Long.parseLong(time), true);
     }
 }
