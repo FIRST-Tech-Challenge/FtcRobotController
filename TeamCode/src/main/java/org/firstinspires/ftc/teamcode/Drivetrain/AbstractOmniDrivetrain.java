@@ -62,10 +62,10 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
     }
     public double getAvgPos(){
-       return driveMotors[0].getCurrentPosition()
+       return (driveMotors[0].getCurrentPosition()
                + driveMotors[1].getCurrentPosition()
                + driveMotors[2].getCurrentPosition()
-               + driveMotors[3].getCurrentPosition();
+               + driveMotors[3].getCurrentPosition() / 4.0 );
     }
 
 }
