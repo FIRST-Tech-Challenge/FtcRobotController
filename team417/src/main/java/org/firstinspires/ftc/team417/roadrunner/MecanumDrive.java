@@ -177,16 +177,16 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     public final VoltageSensor voltageSensor;
 
-    public final LazyImu lazyImu;
+    public LazyImu lazyImu;
 
     public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
     public OTOSSettings opticalSettings = null;
 
-    public final Localizer localizer;
+    public Localizer localizer;
     public Pose2d pose;
     public PoseVelocity2d poseVelocity; // Robot-relative, not field-relative
 
@@ -198,7 +198,7 @@ public final class MecanumDrive {
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
 
     public class DriveLocalizer implements Localizer {
-        public final Encoder leftFront, leftBack, rightBack, rightFront;
+        public Encoder leftFront, leftBack, rightBack, rightFront;
         public final IMU imu;
 
         private int lastLeftFrontPos, lastLeftBackPos, lastRightBackPos, lastRightFrontPos;
@@ -206,12 +206,15 @@ public final class MecanumDrive {
         private boolean initialized;
 
         public DriveLocalizer() {
+            imu = lazyImu.get();
+            configure();
+        }
+
+        void configure() {
             leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
             leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
             rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
-
-            imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
             //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -292,9 +295,26 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        configure(hardwareMap);
+
+        // Enable brake mode on the motors:
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+
+        // Initialize the optical tracking sensor if we have one:
+        initializeOpticalTracker();
+
+        FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    // This is where you configure Road Runner to work with your hardware:
+    void configure(HardwareMap hardwareMap) {
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        //noinspection IfStatementWithIdenticalBranches
         if (isDevBot) {
             opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
             opticalSettings = new OTOSSettings(
@@ -320,32 +340,20 @@ public final class MecanumDrive {
             rightBack = hardwareMap.get(DcMotorEx.class, "???");
             rightFront = hardwareMap.get(DcMotorEx.class, "???");
 
+            // TODO: reverse motor directions if needed
+            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
             leftFront.setDirection(DcMotorEx.Direction.REVERSE);
             leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         }
-
-        // Configure the optical tracking sensor if we have one:
-        configureOpticalTracker();
-
-        // Enable brake mode on the motors:
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // TODO: reverse motor directions if needed
-        //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
+        // TODO: Choose the right kind of localizer
         localizer = new DriveLocalizer();
-
-        FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
     // Structure for the settings of the SparkFun Optical Tracking Odometry Sensor.
@@ -362,9 +370,9 @@ public final class MecanumDrive {
         }
     }
 
-    // Configure the optical tracking sensor if we have one. Derived from configureOtos(). The
+    // Initialize the optical tracking sensor if we have one. Derived from configureOtos(). The
     // pose is the initial pose where the robot will start on the field.
-    private void configureOpticalTracker() {
+    private void initializeOpticalTracker() {
         if (opticalTracker == null)
             return; // ====>
 
@@ -853,7 +861,8 @@ public final class MecanumDrive {
     }
 
     // On every iteration of your robot loop, call 'doActionsWork' to allow Road Runner Actions
-    // to be processed while running TeleOp. Specify the packet if you're drawing on the graph for FTC Dashboard:
+    // to be processed while running TeleOp. Specify the packet if you're drawing on the graph for
+    // FTC Dashboard:
     public boolean doActionsWork(TelemetryPacket packet) {
         LinkedList<Action> deletionList = new LinkedList<>();
         for (Action action: actionList) {

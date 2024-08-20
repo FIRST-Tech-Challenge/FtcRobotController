@@ -659,8 +659,9 @@ public class TuneRoadRunner extends LinearOpMode {
                     drive.opticalTracker.setLinearScalar(newLinearScalar);
                     drive.opticalTracker.setOffset(settings.opticalOffset);
 
-                    ui.prompt("Go to the MecanumDrive constructor and change the parameters where "
-                            + "the OTOSSettings object is created as follows:\n"
+                    ui.prompt("Double-tap SHIFT in Android Studio and enter 'MD.configure' to jump to the "
+                        + "MecanumDrive configure() routine. Change the parameters for "
+                            + "the OTOSSettings object as follows:\n"
                             + String.format("&ensp;orientationDegrees = %.3f\n", Math.toDegrees(newHeading))
                             + String.format("&ensp;linearScalar = %.3f\n", newLinearScalar)
                             + "\nPress A to continue.");
@@ -787,7 +788,14 @@ public class TuneRoadRunner extends LinearOpMode {
     @SuppressLint("DefaultLocale")
     void opticalAngularScaleAndOffset() {
         assert(drive.opticalTracker != null);
-        final double REVOLUTION_COUNT = 1.0;
+
+        // Number of revolutions to use for calculating the positional offset of the sensor
+        // from the robot's center of rotation:
+        final double OFFSET_REVOLUTION_COUNT = 1.0;
+
+        // Number of revolutions to use for calculating the angular scalar (can't be less than
+        // OFFSET_REVOLUTION_COUNT):
+        final double SCALAR_REVOLUTION_COUNT = 10.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
         String results;
@@ -809,12 +817,14 @@ public class TuneRoadRunner extends LinearOpMode {
                     + "\n\nPress A when ready for the robot to rotate, B to cancel"))
             return; // ====>
 
-        ui.message(String.format("Rotating %.1f times...", REVOLUTION_COUNT));
+        ui.message(String.format("Rotating %.1f times...", OFFSET_REVOLUTION_COUNT));
 
         ArrayList<Point> points = new ArrayList<>();
         rampMotorsSpin(drive, true);
 
-        double rotationTarget = REVOLUTION_COUNT * 2 * Math.PI;
+        final double offsetRotationTarget = OFFSET_REVOLUTION_COUNT * 2 * Math.PI;
+        final double scalarRotationTarget = SCALAR_REVOLUTION_COUNT * 2 * Math.PI;
+        final double terminationRotationTarget = Math.max(offsetRotationTarget, scalarRotationTarget);
 
         double farthestDistance = 0;
         Point farthestPoint = new Point(0, 0);
@@ -827,38 +837,40 @@ public class TuneRoadRunner extends LinearOpMode {
         while (opModeIsActive()) {
             SparkFunOTOS.Pose2D position = updateSparkFunRotation();
             double rotationAmount = accumulatedSparkFunRotation - startRotation;
-            if (rotationAmount >= rotationTarget)
+            if (rotationAmount >= terminationRotationTarget)
                 break; // We're done, break out of this loop!
 
-            currentPoint = new Point(position.x, position.y);
-            points.add(currentPoint);
-            double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
-            if (distanceFromOrigin > farthestDistance) {
-                farthestDistance = distanceFromOrigin;
-                farthestPoint = currentPoint;
+            if (rotationAmount < offsetRotationTarget) {
+                currentPoint = new Point(position.x, position.y);
+                points.add(currentPoint);
+                double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
+                if (distanceFromOrigin > farthestDistance) {
+                    farthestDistance = distanceFromOrigin;
+                    farthestPoint = currentPoint;
+                }
+
+                distanceTraveled += Math.hypot(position.x - previousPosition.x, position.y - previousPosition.y);
+                previousPosition = position;
+
+                // Draw the circle:
+                TelemetryPacket packet = new TelemetryPacket();
+                Canvas canvas = packet.fieldOverlay();
+                double[] xPoints = new double[points.size()];
+                double[] yPoints = new double[points.size()];
+                for (int i = 0; i < points.size(); i++) {
+                    xPoints[i] = points.get(i).x;
+                    yPoints[i] = points.get(i).y;
+                }
+                canvas.setStroke("#00ff00");
+                canvas.strokePolyline(xPoints, yPoints);
+                FtcDashboard.getInstance().sendTelemetryPacket(packet);
             }
 
-            distanceTraveled += Math.hypot(position.x - previousPosition.x, position.y - previousPosition.y);
-            previousPosition = position;
-
             // Update the telemetry:
-            double rotationsRemaining = (rotationTarget - rotationAmount) / (2 * Math.PI);
+            double rotationsRemaining = (terminationRotationTarget - rotationAmount) / (2 * Math.PI);
             telemetry.addLine(String.format("%.2f rotations remaining, %d points sampled", rotationsRemaining, points.size()));
             telemetry.addLine("\nPress B to abort.");
             telemetry.update();
-
-            // Draw the circle:
-            TelemetryPacket packet = new TelemetryPacket();
-            Canvas canvas = packet.fieldOverlay();
-            double[] xPoints = new double[points.size()];
-            double[] yPoints = new double[points.size()];
-            for (int i = 0; i < points.size(); i++) {
-                xPoints[i] = points.get(i).x;
-                yPoints[i] = points.get(i).y;
-            }
-            canvas.setStroke("#00ff00");
-            canvas.strokePolyline(xPoints, yPoints);
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
             if (ui.cancel())
                 return; // ====>
@@ -878,7 +890,7 @@ public class TuneRoadRunner extends LinearOpMode {
         double resultX = farthestPoint.x / 2;
         double resultY = farthestPoint.y / 2;
         double farthestPointRadius = farthestDistance / 2;
-        double traveledRadius = distanceTraveled / (2 * REVOLUTION_COUNT * Math.PI);
+        double traveledRadius = distanceTraveled / (2 * OFFSET_REVOLUTION_COUNT * Math.PI);
 
         // Angular scalar results:
         double totalMeasuredRotation = getSparkFunRotation();
@@ -915,9 +927,11 @@ public class TuneRoadRunner extends LinearOpMode {
             settings.opticalAngularScalar = angularScalar;
             settings.save();
 
-            ui.prompt("Go to the configureOtos() routine in MecanumDrive.java and change these values:\n\n"
-                    + String.format("  xOffset = %.2f\n", circleFit.x)
-                    + String.format("  yOffset = %.3f\n", circleFit.y)
+            ui.prompt("Double-tap SHIFT in Android Studio and enter 'MD.configure' to jump to the "
+                    + "MecanumDrive configure() routine. Change the parameters for "
+                    + "the OTOSSettings object as follows:\n"
+                    + String.format("  xInches = %.2f\n", circleFit.x)
+                    + String.format("  yInches = %.3f\n", circleFit.y)
                     + String.format("  angularScalar = %.3f\n", angularScalar)
                     + "\nPress A to continue.");
         }
