@@ -1,7 +1,9 @@
 package com.millburnx.utils
 
 import java.awt.Color
+import java.awt.FileDialog
 import java.awt.Graphics2D
+import java.io.File
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -59,6 +61,23 @@ class Utils {
             val start = start * ppi
             val end = end * ppi
             g2d.drawLine(start.x.toInt(), start.y.toInt(), end.x.toInt(), end.y.toInt())
+        }
+
+        /**
+         * Opens a file dialog to select a file
+         * @param directory The base directory to open the dialog in
+         * @param file The default file to select (or file types if supported)
+         * @param save Whether to open a save dialog or a load dialog
+         * @return The selected file
+         */
+        fun fileDialog(directory: String, file: String, save: Boolean = false): File? {
+            val action = if (save) FileDialog.SAVE else FileDialog.LOAD
+            val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", action)
+            fileDialog.directory = File(directory).absolutePath
+            fileDialog.file = file
+            fileDialog.isVisible = true
+            val file = fileDialog.file ?: return null
+            return File(fileDialog.directory, file)
         }
     }
 }

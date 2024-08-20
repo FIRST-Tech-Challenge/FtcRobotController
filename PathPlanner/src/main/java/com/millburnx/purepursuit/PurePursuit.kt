@@ -7,8 +7,6 @@ import com.millburnx.utils.Intersection
 import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
 import java.awt.Color
-import java.awt.FileDialog
-import java.io.File
 import kotlin.math.abs
 
 class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateHertz) {
@@ -63,23 +61,13 @@ class PurePursuit(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, updateH
     }
 
     private fun loadPath() {
-        val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.LOAD)
-        fileDialog.directory = File("paths").absolutePath
-        fileDialog.file = "*.tsv"
-        fileDialog.isVisible = true
-        val file = fileDialog.file
-        if (file == null) {
-            println("No file selected")
-            return
-        }
-        val pathFile = File(fileDialog.directory, file)
-        val pathList = Vec2d.loadList(pathFile)
+        val file = Utils.fileDialog("paths", "*.tsv") ?: return
+        val pathList = Vec2d.loadList(file)
         path = pathList
         updatePath()
     }
 
     private fun renderPath(canvas: ICanvas) {
-//        canvas.drawImage("PathPlanner/src/main/resources/bg.png", 0.0, 0.0, 144.0, 144.0)
         canvas.setFill(background.rgb.toString())
             .fillRect(-144.0 / 2, -144.0 / 2, 144.0, 144.0)
             .setStroke(Utils.Colors.bg2.rgb.toString())

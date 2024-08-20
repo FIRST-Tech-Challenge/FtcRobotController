@@ -7,7 +7,6 @@ import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
 import java.awt.BasicStroke
 import java.awt.Color
-import java.awt.FileDialog
 import java.awt.FlowLayout
 import java.awt.Font
 import java.awt.Graphics
@@ -18,7 +17,6 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
-import java.io.File
 import javax.swing.JButton
 import javax.swing.JPanel
 
@@ -84,8 +82,10 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
                                         when (type) {
                                             BezierPoint.PointType.ANCHOR -> {
                                                 point.anchor = it
-                                                point.prevHandle?.plus(it - point.anchor)?.let { point.prevHandle = it }
-                                                point.nextHandle?.plus(it - point.anchor)?.let { point.nextHandle = it }
+                                                point.prevHandle?.plus(it - point.anchor)
+                                                    ?.let { it1 -> point.prevHandle = it1 }
+                                                point.nextHandle?.plus(it - point.anchor)
+                                                    ?.let { it1 -> point.nextHandle = it1 }
                                                 if (point.prevHandle != null) {
                                                     point.updateHandles(
                                                         BezierPoint.PointType.PREV_HANDLE,
@@ -214,30 +214,14 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     fun updateButtonBounds() {
         val preferredHeight = buttonPanel.preferredSize.height
         val bounds = Rectangle(0, 0, width, preferredHeight)
-        buttonPanel.setBounds(bounds)
+        buttonPanel.bounds = bounds
         revalidate()
         repaint()
     }
 
     fun loadTSV() {
-        val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.LOAD)
-        fileDialog.directory = File("paths").absolutePath
-        fileDialog.file = "*.tsv"
-        fileDialog.isVisible = true
-        val file = fileDialog.file
-        if (file == null) {
-            println("No file selected")
-            return
-        }
-        val pathFile = File(fileDialog.directory, file)
-        val pathPoints = Vec2d.loadList(pathFile)
-        val newPath: MutableList<BezierPoint> = mutableListOf()
-        for (i in 0..<pathPoints.size step 3) {
-            val anchor = pathPoints[i]
-            val prevHandle = pathPoints.getOrNull(i - 1)
-            val nextHandle = pathPoints.getOrNull(i + 1)
-            newPath.add(BezierPoint(anchor, prevHandle, nextHandle, true))
-        }
+        val file = Utils.fileDialog("paths", "*.tsv", false) ?: return
+        val newPath = BezierPoint.loadFromTSV(file)
         points.clear()
         points.addAll(newPath)
         addState()
@@ -245,18 +229,8 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     }
 
     fun saveTSV() {
-        val fileDialog = FileDialog(null as java.awt.Frame?, "Select a file", FileDialog.SAVE)
-        fileDialog.directory = File("paths").absolutePath
-        fileDialog.file = "*.tsv"
-        fileDialog.isVisible = true
-        val file = fileDialog.file
-        if (file == null) {
-            println("No file selected")
-            return
-        }
-        val pathFile = File(fileDialog.directory, file)
-        val points = points.map { listOf(it.prevHandle, it.anchor, it.nextHandle) }.flatten().filterNotNull()
-        Vec2d.saveList(points, pathFile)
+        val file = Utils.fileDialog("paths", "*.tsv", true) ?: return
+        BezierPoint.saveToTSV(file, points)
     }
 
     val points: MutableList<BezierPoint> = mutableListOf(

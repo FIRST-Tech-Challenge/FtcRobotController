@@ -3,6 +3,7 @@ package com.millburnx.utils
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
+import java.io.File
 
 class BezierPoint(
     var anchor: Vec2d,
@@ -12,6 +13,25 @@ class BezierPoint(
     var mirrored: Boolean = true,
     var split: Boolean = false
 ) {
+    companion object {
+        fun saveToTSV(file: File, points: List<BezierPoint>) {
+            val points = points.map { listOf(it.prevHandle, it.anchor, it.nextHandle) }.flatten().filterNotNull()
+            Vec2d.saveList(points, file)
+        }
+
+        fun loadFromTSV(file: File): List<BezierPoint> {
+            val pathPoints = Vec2d.loadList(file)
+            val newPath: MutableList<BezierPoint> = mutableListOf()
+            for (i in 0..<pathPoints.size step 3) {
+                val anchor = pathPoints[i]
+                val prevHandle = pathPoints.getOrNull(i - 1)
+                val nextHandle = pathPoints.getOrNull(i + 1)
+                newPath.add(BezierPoint(anchor, prevHandle, nextHandle, true))
+            }
+            return newPath
+        }
+    }
+
     enum class PointType {
         ANCHOR,
         PREV_HANDLE,
