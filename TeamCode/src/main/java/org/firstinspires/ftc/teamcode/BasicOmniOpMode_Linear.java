@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -67,11 +66,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  */
 
 @TeleOp(name="Patricia", group="Linear OpMode")
-//@Disabledi
+//@Disabled
 public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     // Robot configuration
     private IMU imu = null;
     private DcMotor leftFrontDrive = null;
@@ -83,27 +82,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
     static final double P_TURN_GAIN = 0.02;     // Larger is more responsive, but also less stable
     static final double HEADING_THRESHOLD = 1.0;    // How close must the heading get to the target before moving to next step.
-    static final double COUNTS_PER_MOTOR_REV = 537.7;   // eg: GoBILDA 312 RPM Yellow Jacket
-    static final double DRIVE_GEAR_REDUCTION = 1.0;     // No External Gearing.
-    static final double WHEEL_DIAMETER_INCHES = 3.8;     // For figuring circumference
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double MAX_DRIVE_SPEED = 0.8;     // Max driving speed for better distance accuracy.
     static final double MAX_TURN_SPEED = 0.8;     // Max Turn speed to limit turn rate
 
-    // Execution variables
-    private double driveSpeed = 0;
     private double turnSpeed = 0;
-    private int leftTarget = 0;
-    private int rightTarget = 0;
-    private double targetHeading = 0;
     private double headingError = 0;
-    private double leftFrontPower = 0;
-    private double rightFrontPower = 0;
-    private double leftBackPower = 0;
-    private double rightBackPower = 0;
-    double axial = 0;  // Note: pushing stick forward gives negative value
-    double lateral = 0;
-    double yaw = 0;
 
     @Override
     public void runOpMode() {
@@ -174,22 +156,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 rightBackPower /= max;
             }
 
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
@@ -209,7 +175,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: " + runtime);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addLine("Frogs rule");
@@ -243,10 +209,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     }
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
-        targetHeading = desiredHeading;  // Save for telemetry
 
         // Determine the heading current error
-        headingError = targetHeading - getHeading();
+        headingError = desiredHeading - getHeading();
 
         // Normalize the error to be within +/- 180 degrees
         while (headingError > 180) headingError -= 360;
@@ -257,11 +222,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     }
 
     public void moveRobot(double drive, double turn) {
-        driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
+        // Execution variables
         turnSpeed = turn;      // save this value as a class member so it can be used by telemetry.
 
-        leftFrontPower = drive - turn;
-        rightFrontPower = drive + turn;
+        double leftFrontPower = drive - turn;
+        double rightFrontPower = drive + turn;
 
         // Scale speeds down if either one exceeds +/- 1.0;
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
