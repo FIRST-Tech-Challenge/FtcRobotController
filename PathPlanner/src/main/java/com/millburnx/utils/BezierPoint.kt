@@ -34,7 +34,7 @@ class BezierPoint(
         }
     }
 
-    private fun setType(pointType: PointType, value: Vec2d?) {
+    fun setType(pointType: PointType, value: Vec2d?) {
         when (pointType) {
             PointType.ANCHOR -> anchor = value!!
             PointType.PREV_HANDLE -> prevHandle = value
@@ -71,9 +71,11 @@ class BezierPoint(
         return
     }
 
-    fun draw(g2d: Graphics2D, ppi: Double, prevColor: Color, nextColor: Color) {
+    fun draw(g2d: Graphics2D, ppi: Double, scale: Double, prevColor: Color, nextColor: Color) {
         // draw the previous handle
-        val size = 2.5
+        val size = 2.0 * scale
+        val outlineWidth = 0.2 * scale
+        val handleWidth = 0.2 * scale
         for (type in listOf(PointType.PREV_HANDLE, PointType.NEXT_HANDLE)) {
             val handle = getType(type) ?: continue
             val color = when (type) {
@@ -82,8 +84,10 @@ class BezierPoint(
                 else -> continue
             }
             g2d.color = color
+            g2d.stroke = BasicStroke((handleWidth * ppi).toFloat())
             Utils.drawLine(g2d, ppi, anchor, handle)
             g2d.color = g2d.background
+            g2d.stroke = BasicStroke((outlineWidth * ppi).toFloat())
             Utils.drawPoint(g2d, ppi, handle, size)
             g2d.color = color
             Utils.drawPoint(g2d, ppi, handle, size, false)
@@ -93,7 +97,7 @@ class BezierPoint(
         g2d.color = g2d.background
         Utils.drawPoint(g2d, ppi, anchor, size)
         g2d.color = Color.WHITE
-        g2d.stroke = BasicStroke(2.0f)
+        g2d.stroke = BasicStroke((outlineWidth * ppi).toFloat())
         Utils.drawPoint(g2d, ppi, anchor, size, false)
     }
 

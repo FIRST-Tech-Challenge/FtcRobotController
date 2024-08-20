@@ -1,10 +1,18 @@
 package com.millburnx.pathplanner
 
+import com.millburnx.dashboard.JPopover
 import com.millburnx.utils.Bezier
 import com.millburnx.utils.BezierPoint
 import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
-import java.awt.*
+import java.awt.BasicStroke
+import java.awt.Color
+import java.awt.FileDialog
+import java.awt.FlowLayout
+import java.awt.Font
+import java.awt.Graphics
+import java.awt.Rectangle
+import java.awt.RenderingHints
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
@@ -14,23 +22,41 @@ import java.io.File
 import javax.swing.JButton
 import javax.swing.JPanel
 
-class PathPlanner(val ppi: Double) : JPanel() {
+class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
+    var currentEditPopover: JPopover? = null
+    val buttonPanel: JPanel
+
     init {
         background = Utils.Colors.bg1
 
         // the bezier point and the actual point (anchor, prevHandle, nextHandle)
         var selectedBezier: Pair<BezierPoint, BezierPoint.PointType>? = null
 
+        val currentPanel = this
         addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
+                println("mouse pressed")
                 val clickPoint = Vec2d(e.x, e.y).minus(Vec2d(width / 2, height / 2)).div(ppi)
+                var popupRemoved = false
+                if (currentEditPopover != null) {
+                    remove(currentEditPopover)
+                    currentEditPopover = null
+                    revalidate()
+                    repaint()
+                    popupRemoved = true
+                }
+                val anchorExtraThreshold = 6
+                val handleExtraThreshold = 3
+                val anchorSize = 2.5
+                val handleSize = 2.5
                 when (e.button) {
                     MouseEvent.BUTTON1 -> {
+                        if (popupRemoved) return
                         for (point in points) {
                             for (type in BezierPoint.PointType.entries) {
                                 val threshold = when (type) {
-                                    BezierPoint.PointType.ANCHOR -> 20 / ppi
-                                    else -> 15 / ppi
+                                    BezierPoint.PointType.ANCHOR -> anchorSize / 2 + anchorExtraThreshold / ppi * scale
+                                    else -> handleSize / 2 + handleExtraThreshold / ppi * scale
                                 }
                                 val distance = point.getType(type)?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
                                 if (distance < threshold) {
@@ -44,9 +70,54 @@ class PathPlanner(val ppi: Double) : JPanel() {
                         repaint()
                     }
 
-                    MouseEvent.BUTTON3 -> {
+                    MouseEvent.BUTTON2 -> {
                         for (point in points) {
-                            val threshold = 15 / ppi
+                            for (type in BezierPoint.PointType.entries) {
+                                val threshold = when (type) {
+                                    BezierPoint.PointType.ANCHOR -> anchorSize / 2 + anchorExtraThreshold / ppi * scale
+                                    else -> handleSize / 2 + handleExtraThreshold / ppi * scale
+                                }
+                                val distance = point.getType(type)?.distanceTo(clickPoint) ?: Double.POSITIVE_INFINITY
+                                if (distance < threshold) {
+                                    val editPopover = JPopover(currentPanel, Vec2d(e.x, e.y), point, type, ppi, scale) {
+                                        println("update $it")
+                                        when (type) {
+                                            BezierPoint.PointType.ANCHOR -> {
+                                                point.anchor = it
+                                                point.prevHandle?.plus(it - point.anchor)?.let { point.prevHandle = it }
+                                                point.nextHandle?.plus(it - point.anchor)?.let { point.nextHandle = it }
+                                                if (point.prevHandle != null) {
+                                                    point.updateHandles(
+                                                        BezierPoint.PointType.PREV_HANDLE,
+                                                        point.prevHandle!!
+                                                    )
+                                                } else {
+                                                    point.updateHandles(
+                                                        BezierPoint.PointType.NEXT_HANDLE,
+                                                        point.nextHandle!!
+                                                    )
+                                                }
+                                            }
+
+                                            else -> point.updateHandles(type, it)
+                                        }
+                                        addState()
+                                        repaint()
+                                    }
+                                    add(editPopover, null)
+                                    revalidate()
+                                    repaint()
+                                    currentEditPopover = editPopover
+                                    return
+                                }
+                            }
+                        }
+                    }
+
+                    MouseEvent.BUTTON3 -> {
+                        if (popupRemoved) return
+                        for (point in points) {
+                            val threshold = anchorSize / 2 + anchorExtraThreshold / ppi * scale
                             val distance = point.anchor.distanceTo(clickPoint)
                             if (distance < threshold) {
                                 points.remove(point)
@@ -116,18 +187,36 @@ class PathPlanner(val ppi: Double) : JPanel() {
         })
         isFocusable = true
 
-        val buttonPanel = JPanel()
-        buttonPanel.layout = FlowLayout(FlowLayout.LEFT)
+        layout = null;
 
+        buttonPanel = JPanel()
+        buttonPanel.background = Color(0, 0, 0, 0)
+        buttonPanel.layout = FlowLayout(FlowLayout.CENTER)
+
+        val innerButtonPanel = JPanel()
+        innerButtonPanel.layout = FlowLayout(FlowLayout.CENTER)
         val loadButton = JButton("Load")
+        loadButton.font = Font("Noto Sans", Font.PLAIN, (16 * scale).toInt())
         loadButton.addActionListener { loadTSV() }
-        buttonPanel.add(loadButton)
+        innerButtonPanel.add(loadButton)
 
         val saveButton = JButton("Save")
-        saveButton.addActionListener { saveTSV() }
-        buttonPanel.add(saveButton)
+        saveButton.font = Font("Noto Sans", Font.PLAIN, (16 * scale).toInt())
 
-        add(buttonPanel, BorderLayout.NORTH)
+        saveButton.addActionListener { saveTSV() }
+        innerButtonPanel.add(saveButton)
+        buttonPanel.add(innerButtonPanel)
+
+        updateButtonBounds()
+        add(buttonPanel)
+    }
+
+    fun updateButtonBounds() {
+        val preferredHeight = buttonPanel.preferredSize.height
+        val bounds = Rectangle(0, 0, width, preferredHeight)
+        buttonPanel.setBounds(bounds)
+        revalidate()
+        repaint()
     }
 
     fun loadTSV() {
@@ -271,6 +360,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
         )
 
         var currentColor = 0
+        g2d.stroke = BasicStroke((0.1 * scale * ppi).toFloat())
         points.windowed(2, 1, false).forEach { (p1, p2) ->
             val bezier = Bezier(p1.anchor, p1.nextHandle!!, p2.prevHandle!!, p2.anchor)
             val color = colors[currentColor]
@@ -291,7 +381,7 @@ class PathPlanner(val ppi: Double) : JPanel() {
             val color1 = colors[(currentColor - 1 + colors.size) % colors.size]
             val color2 = colors[currentColor]
             currentColor = (currentColor + 1) % colors.size
-            point.draw(g2d, ppi, color1, color2)
+            point.draw(g2d, ppi, scale, color1, color2)
         }
 
         g.drawImage(bufferedImage, 0, 0, null)
