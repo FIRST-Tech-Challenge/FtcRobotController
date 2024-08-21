@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -271,7 +272,7 @@ class Settings {
     TuneRoadRunner.Type type;
     double opticalAngularScalar;
     double opticalLinearScalar;
-    SparkFunOTOS.Pose2D opticalOffset = null;
+    Pose2D opticalOffset = null;
 
     // Get the settings from the current MecanumDrive object:
     public Settings(MecanumDrive drive) {
@@ -578,14 +579,14 @@ public class TuneRoadRunner extends LinearOpMode {
 
     // Measure the optical linear scale and orientation:
     @SuppressLint("DefaultLocale")
-    void opticalLinearScaleAndOrientation() {
+    void opticalPush() {
         assert(drive.opticalTracker != null);
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
         // Reset the current OTOS settings:
-        SparkFunOTOS.Pose2D oldOffset = drive.opticalSettings.offset;
+        Pose2D oldOffset = drive.opticalSettings.offset;
         double oldLinearScalar = drive.opticalSettings.linearScalar;
-        drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(oldOffset.x, oldOffset.y, 0));
+        drive.opticalTracker.setOffset(new Pose2D(oldOffset.x, oldOffset.y, 0));
         drive.opticalTracker.setLinearScalar(1.0);
 
         if (ui.drivePrompt("In this test, you'll push the robot forward in a straight line "
@@ -604,8 +605,8 @@ public class TuneRoadRunner extends LinearOpMode {
                     drive.opticalTracker.setLinearScalar(oldLinearScalar);
                     return; // ====>
                 }
-                    
-                SparkFunOTOS.Pose2D pose = drive.opticalTracker.getPosition();
+
+                Pose2D pose = drive.opticalTracker.getPosition();
                 distance = Math.hypot(pose.x, pose.y);
                 heading = -Math.atan2(pose.y, pose.x); // Rise over run
 
@@ -694,7 +695,7 @@ public class TuneRoadRunner extends LinearOpMode {
     // rotation
     void rampMotorsSpin(MecanumDrive drive, boolean up) {
         final double RAMP_TIME = 0.5; // Seconds
-        final double SPIN_SPEED = 0.2;
+        final double SPIN_SPEED = 0.5;
 
         double startTime = time();
         while (opModeIsActive()) {
@@ -767,11 +768,11 @@ public class TuneRoadRunner extends LinearOpMode {
     }
 
     // Call this regularly to update the tracked amount of rotation:
-    SparkFunOTOS.Pose2D updateSparkFunRotation() {
+    Pose2D updateSparkFunRotation() {
         if (drive.opticalTracker == null) // Handle case where we're using encoders
             return null;
 
-        SparkFunOTOS.Pose2D position = drive.opticalTracker.getPosition();
+        Pose2D position = drive.opticalTracker.getPosition();
         accumulatedSparkFunRotation += normalizeAngle(position.h - previousSparkFunHeading);
         previousSparkFunHeading = position.h;
         return position;
@@ -784,14 +785,14 @@ public class TuneRoadRunner extends LinearOpMode {
         return accumulatedSparkFunRotation;
     }
 
-    // Measure the angular scale and sensor offset:
+    // This is the robot spin test for calibrating the optical sensor angular scale and offset:
     @SuppressLint("DefaultLocale")
-    void opticalAngularScaleAndOffset() {
+    void opticalSpin() {
         assert(drive.opticalTracker != null);
 
         // Number of revolutions to use for calculating the positional offset of the sensor
         // from the robot's center of rotation:
-        final double OFFSET_REVOLUTION_COUNT = 1.0;
+        final double OFFSET_REVOLUTION_COUNT = 10.0;
 
         // Number of revolutions to use for calculating the angular scalar (can't be less than
         // OFFSET_REVOLUTION_COUNT):
@@ -805,7 +806,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 + "the robot against the wall again."
                 + "\n\nFirst, carefully drive the robot to a wall and align it so that "
                 + "it's facing forward. This marks the start orientation for calibration."
-                + "\n\nDrive the robot, press A when ready, B to cancel"))
+                + "\n\nDrive the robot to the start position, press A when ready, B to cancel"))
             return; // ====>
 
         // Start measuring accumulated rotation:
@@ -829,17 +830,33 @@ public class TuneRoadRunner extends LinearOpMode {
         double farthestDistance = 0;
         Point farthestPoint = new Point(0, 0);
         Point currentPoint = new Point(0, 0);
-        SparkFunOTOS.Pose2D previousPosition = drive.opticalTracker.getPosition();
+        Pose2D previousPosition = drive.opticalTracker.getPosition();
         double distanceTraveled = 0;
+        Pose2D startPosition = drive.opticalTracker.getPosition();
         double startRotation = getSparkFunRotation();
 
+        // Remember the pose at the start of every circle:
+        ArrayList<Pose2D> circleStarts = new ArrayList<>();
+        double nextCircleMarker = startRotation;
+
         // Now rotate the robot:
+        System.out.print("Spin calibration circle starts:\n");
         while (opModeIsActive()) {
-            SparkFunOTOS.Pose2D position = updateSparkFunRotation();
+            Pose2D rawPosition = updateSparkFunRotation();
+            Pose2D position = new Pose2D(
+                    rawPosition.x - startPosition.x, rawPosition.y - startPosition.y, 0);
             double rotationAmount = accumulatedSparkFunRotation - startRotation;
             if (rotationAmount >= terminationRotationTarget)
                 break; // We're done, break out of this loop!
 
+            // Check if we've completed a circle:
+            if (rotationAmount >= nextCircleMarker) {
+                circleStarts.add(position);
+                nextCircleMarker += 2 * Math.PI;
+                System.out.printf("   %.2f, %.2f\n", position.x, position.y);
+            }
+
+            // Check if we need to still sample points:
             if (rotationAmount < offsetRotationTarget) {
                 currentPoint = new Point(position.x, position.y);
                 points.add(currentPoint);
@@ -898,15 +915,16 @@ public class TuneRoadRunner extends LinearOpMode {
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
 
-        results = String.format("Sensor thinks %.2f circles were completed\n", totalMeasuredCircles);
+        results = String.format("Sensor thinks %.2f circles were completed.\n", totalMeasuredCircles);
         results += String.format("Distance traveled: %f, farthestPoint.x: %f, farthestPoint.y: %f, traveledRadius: %f\n",
                 distanceTraveled, farthestPoint.x, farthestPoint.y, traveledRadius);
-        results += String.format("Offset from center of rotation: (%.2f\", %.2f\"), samples: %d",
+        results += String.format("Offset from center of rotation: (%.2f\", %.2f\"), samples: %d\n",
                 resultX, resultY, points.size());
-        results += String.format("Farthest point radius: %.2f, Traveled radius: %.2f", farthestPointRadius, traveledRadius);
+        results += String.format("Farthest point radius: %.2f, Traveled radius: %.2f\n", farthestPointRadius, traveledRadius);
         results += String.format("Error (inches): (%.2f, %.2f)\n", currentPoint.x, currentPoint.y);
         results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", circleFit.x, circleFit.y, circleFit.leastSquaresRadius);
-        results += "\n\n";
+        results += String.format("Angular scalar: %.3f\n", angularScalar);
+        results += "\n";
 
         // Do some sanity checking on the results:
         if ((Math.abs(circleFit.x) > 12) || (Math.abs(circleFit.y) > 12)) {
@@ -1065,7 +1083,7 @@ public class TuneRoadRunner extends LinearOpMode {
     // ramping up the velocity in a straight line. We increase power by 0.1 each second
     // until it reaches 0.9.
     @SuppressLint("DefaultLocale")
-    void autoFeedForwardTuner() {
+    void acceleratingStraightLine() {
         final double VOLTAGE_ADDER_PER_SECOND = 0.1;
         final double MAX_VOLTAGE_FACTOR = 0.9;
         final double MAX_SECONDS = MAX_VOLTAGE_FACTOR / VOLTAGE_ADDER_PER_SECOND + 0.1;
@@ -1102,7 +1120,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 telemetry.addLine("\nPress B to abort.");
                 telemetry.update();
 
-                SparkFunOTOS.Pose2D velocityVector = drive.opticalTracker.getVelocity();
+                Pose2D velocityVector = drive.opticalTracker.getVelocity();
                 double velocity = Math.hypot(velocityVector.x, velocityVector.y);
                 points.add(new Point(velocity, oldVoltageFactor));
                 maxVelocity = Math.max(velocity, maxVelocity);
@@ -1162,7 +1180,7 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
 //        double heading = Math.PI /2; // radians
-//        drive.opticalTracker.setOffset(new SparkFunOTOS.Pose2D(0, 0, heading));
+//        drive.opticalTracker.setOffset(new Pose2D(0, 0, heading));
 //        ui.prompt(String.format("Setting offset to %.2f.\n\nPress A.", heading));
 
         while (opModeIsActive() && !ui.cancel()) {
@@ -1176,8 +1194,8 @@ public class TuneRoadRunner extends LinearOpMode {
             drive.updatePoseEstimate();
 
             TelemetryPacket p = new TelemetryPacket();
-            SparkFunOTOS.Pose2D opticalPose = drive.opticalTracker.getPosition(); // @@@
-            SparkFunOTOS.Pose2D sensorOffset = drive.opticalTracker.getOffset(); // Radians
+            Pose2D opticalPose = drive.opticalTracker.getPosition(); // @@@
+            Pose2D sensorOffset = drive.opticalTracker.getOffset(); // Radians
             Pose2d pose = drive.pose;
             ui.message("Use the controller to drive the robot around.\n\n"
                     + String.format("&ensp;Optical Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", opticalPose.x, opticalPose.y, opticalPose.h)
@@ -1424,9 +1442,9 @@ public class TuneRoadRunner extends LinearOpMode {
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
         if (settings.type == Type.OPTICAL) {
-            tests.add(new Test(this::opticalLinearScaleAndOrientation, "Optical linear scale & orientation"));
-            tests.add(new Test(this::opticalAngularScaleAndOffset, "Optical angular scale & offset"));
-            tests.add(new Test(this::autoFeedForwardTuner, "Auto feed forward tuner"));
+            tests.add(new Test(this::opticalPush, "Push calibrator (optical tracker)"));
+            tests.add(new Test(this::opticalSpin, "Spin calibrator (optical tracker)"));
+            tests.add(new Test(this::acceleratingStraightLine, "Accelerating straight line tuner (feed forward)"));
         } else {
             tests.add(new Test(this::encoderPush, "Push test (encoders and IMU)"));
             tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
