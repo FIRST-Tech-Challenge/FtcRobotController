@@ -38,7 +38,7 @@ public class ClientUpdater implements Runnable {
             messageBuilder.add(RustboardNode.NODE_ARRAY_KEY, nodes);
             RustboardServer.messageActiveRustboard(messageBuilder.build());
         } catch (Exception e) {
-            RustboardServer.logToClientConsoles(e.getMessage());
+            RustboardServer.warnClientConsoles(e);
         }
     }
 }

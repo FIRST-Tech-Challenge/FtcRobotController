@@ -98,6 +98,7 @@ public class RustboardNode {
         builder.add(ID_KEY, id);
         builder.add(TYPE_KEY, type.typeName);
         builder.add(STATE_KEY, state);
+        builder.add(LAST_UPDATE_KEY, lastUpdate.getTimeMS());
         return builder;
     }
 
@@ -160,7 +161,7 @@ public class RustboardNode {
 
     @Override
     public String toString() {
-        return String.format("id: '%s'\ntype: '%s'\nstate: '%s'", id, type.typeName, state);
+        return String.format("id: '%s'\ntype: '%s'\nstate: '%s'\nlast update: %s", id, type.typeName, state, lastUpdate.getTimeMS());
     }
 
     static class InvalidNodeJsonException extends RustboardException {

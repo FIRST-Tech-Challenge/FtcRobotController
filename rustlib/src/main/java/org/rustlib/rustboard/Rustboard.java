@@ -91,9 +91,11 @@ public class Rustboard {
             try {
                 this.nodes.add(RustboardNode.buildFromJson(nodeJson));
             } catch (InvalidNodeJsonException e) {
+                notifyAllClients("Bad node json!");
                 log(e);
             }
         });
+        RustboardServer.logToClientConsoles(getJson().toString());
     }
 
     Rustboard(String uuid, Set<RustboardNode> nodes) {
@@ -107,6 +109,7 @@ public class Rustboard {
 
     Rustboard(Builder builder) {
         this.uuid = builder.uuid;
+        this.nodes.addAll(builder.nodes);
     }
 
     public static Rustboard getActiveRustboard() {
@@ -134,16 +137,14 @@ public class Rustboard {
         this.connection = connection;
     }
 
-    static Rustboard load(String uuid) throws NoSuchRustboardException {
+    static Rustboard load(String uuid) {
         try {
             return loadRustboard(getLatestRustboardVersion(uuid), uuid);
-        } catch (IOException | RuntimeException e) {
+        } catch (Exception e) {
             try {
                 return loadRustboard(getPreviousRustboardVersion(uuid), uuid);
-            } catch (IOException | RuntimeException e1) {
-                log(e1);
-                if (true) throw new RuntimeException(e1); // TODO: remove after debugging
-                return emptyRustboard(uuid);
+            } catch (Exception e1) {
+                throw new RustboardLoadException(String.format("Failed to load rustboard '%s'", uuid));
             }
         }
     }
@@ -164,11 +165,12 @@ public class Rustboard {
         Set<RustboardNode> updatedNodeList = new HashSet<>(nodes);
         for (JsonValue nodeJson : clientNodes) {
             RustboardNode clientNode = RustboardNode.buildFromJson(nodeJson);
-            for (RustboardNode node : nodes) {
-                if (node.equals(clientNode) && !node.strictEquals(clientNode)) {
-                    updatedNodeList.add(node.merge(clientNode));
-                    updatedNodeList.remove(node);
-                }
+            if (nodeExists(clientNode.id, clientNode.type)) {
+                RustboardNode serverNode = getNode(clientNode.id, clientNode.type);
+                updatedNodeList.add(serverNode.merge(clientNode));
+                updatedNodeList.remove(serverNode);
+            } else {
+                updatedNodeList.add(clientNode);
             }
         }
         return new Rustboard(uuid, updatedNodeList);
@@ -500,6 +502,12 @@ public class Rustboard {
 
     public static class RustboardException extends RuntimeException {
         public RustboardException(String message) {
+            super(message);
+        }
+    }
+
+    public static class RustboardLoadException extends RustboardException {
+        public RustboardLoadException(String message) {
             super(message);
         }
     }

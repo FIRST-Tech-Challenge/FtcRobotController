@@ -3,6 +3,7 @@ package org.rustlib.rustboard;
 import static org.rustlib.rustboard.MessageActions.CONSOLE_LOG;
 import static org.rustlib.rustboard.MessageActions.CONSOLE_WARN;
 import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
+import static org.rustlib.rustboard.Rustboard.RustboardLoadException;
 import static org.rustlib.utils.FileUtils.clearDir;
 import static org.rustlib.utils.FileUtils.externalStorage;
 
@@ -10,7 +11,6 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.rustlib.core.RobotBase;
-import org.rustlib.core.RobotControllerActivity;
 import org.rustlib.rustboard.Rustboard.RustboardException;
 import org.rustlib.utils.FileUtils;
 
@@ -59,8 +59,8 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
     private void autoSave() {
         if (!RobotBase.opModeRunning()) {
             saveLayouts();
-            executorService.schedule(this::autoSave, rustboardAutoSavePeriod, TimeUnit.MILLISECONDS);
         }
+        executorService.schedule(this::autoSave, rustboardAutoSavePeriod, TimeUnit.MILLISECONDS);
     }
 
     public Rustboard getActiveRustboard() {
@@ -79,17 +79,21 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
         if (rustboardMetaData.containsKey("rustboards")) {
             JsonArray dataArray = rustboardMetaData.getJsonArray("rustboards");
             for (JsonValue value : dataArray) {
-                JsonObject data = (JsonObject) value;
-                String uuid = data.getString("uuid");
+                JsonObject rustboardDescriptor = (JsonObject) value;
+                String uuid = rustboardDescriptor.getString("uuid");
                 storedRustboardIds.add(uuid);
-                if (data.getBoolean("active")) {
+                if (rustboardDescriptor.getBoolean("active")) {
+                    Rustboard rustboard;
                     try {
-                        activeRustboard = Rustboard.load(uuid);
-                    } catch (Rustboard.NoSuchRustboardException e) {
-                        log(e);
+                        rustboard = Rustboard.load(uuid);
+                    } catch (RustboardLoadException e) {
+                        rustboard = Rustboard.emptyRustboard(uuid);
                     }
+                    activeRustboard = rustboard;
+                    loadedRustboards.put(uuid, rustboard);
                 }
             }
+
         }
         executorService.scheduleAtFixedRate(clientUpdater, 0, 50, TimeUnit.MILLISECONDS);
         executorService.scheduleAtFixedRate(() -> {
@@ -100,7 +104,6 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
             });
         }, pingClientPeriod, pingClientPeriod, TimeUnit.MILLISECONDS);
         executorService.schedule(this::autoSave, 10000, TimeUnit.MILLISECONDS);
-        RobotControllerActivity.onOpModeStop(this::autoSave);
     }
 
     static void messageActiveRustboard(JsonObject json) {
@@ -195,6 +198,11 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
     public void onMessage(WebSocket conn, String message) {
         JsonObject messageJson = FileUtils.readJsonString(message);
         try {
+            logToClientConsoles(FileUtils.readString(new File(NEW_STORED_RUSTBOARD_DIR, activeRustboard.getUuid() + ".json")));
+        } catch (Exception e) {
+
+        }
+        try {
             switch (messageJson.getString(MESSAGE_ACTION_KEY)) {
                 case MessageActions.CLIENT_DETAILS:
                     Time.calibrateUTCTime(messageJson.getJsonNumber("utc_time").longValue());
@@ -202,14 +210,17 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
                     JsonArray clientNodes = messageJson.getJsonArray(RustboardNode.NODE_ARRAY_KEY);
                     Rustboard rustboard;
                     if (loadedRustboards.containsKey(uuid)) {
+                        Rustboard.notifyAllClients("Merged loaded rustboard with client version", NoticeType.POSITIVE);
                         rustboard = loadedRustboards.get(uuid).mergeWithClientRustboard(clientNodes);
                     } else if (storedRustboardIds.contains(uuid)) {
                         try {
                             rustboard = Rustboard.load(uuid).mergeWithClientRustboard(clientNodes);
-                        } catch (Rustboard.NoSuchRustboardException e) {
+                            Rustboard.notifyAllClients("Merging with client nodes");
+                        } catch (Rustboard.RustboardLoadException e) {
                             rustboard = new Rustboard(uuid, clientNodes);
                         }
                     } else {
+                        Rustboard.notifyAllClients("Making a completely new Rustboard instance");
                         rustboard = new Rustboard(uuid, clientNodes);
                     }
                     rustboard.setConnection(conn);
@@ -239,15 +250,20 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
         activeRustboard = rustboard;
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder.add("action", "set_active");
-        rustboard.getConnection().send(builder.build().toString());
+        WebSocket connection = rustboard.getConnection();
+        if (connection != null) {
+            connection.send(builder.build().toString());
+        }
     }
 
     public void saveLayouts() {
         FileUtils.makeDirIfMissing(OLD_STORED_RUSTBOARD_DIR);
         FileUtils.makeDirIfMissing(NEW_STORED_RUSTBOARD_DIR);
-        JsonObjectBuilder metadataBuilder = Json.createObjectBuilder(rustboardMetaData);
+        JsonObjectBuilder metadataBuilder = Json.createObjectBuilder();
+        JsonArray currentRustboardArray = rustboardMetaData.getJsonArray("rustboards");
         JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder();
         loadedRustboards.forEach((uuid, rustboard) -> {
+                    currentRustboardArray.removeIf(rustboardJson -> ((JsonObject) rustboardJson).getString("uuid").equals(uuid));
                     JsonObjectBuilder rustboardDescriptor = Json.createObjectBuilder();
                     rustboardDescriptor.add("uuid", uuid);
                     rustboardDescriptor.add("active", rustboard == activeRustboard);
@@ -255,9 +271,12 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
                     rustboard.save();
                 }
         );
+        currentRustboardArray.forEach(rustboardArrayBuilder::add);
         metadataBuilder.add("rustboards", rustboardArrayBuilder);
         try {
-            FileUtils.writeJson(RUSTBOARD_METADATA_FILE, metadataBuilder.build());
+            JsonObject thing = metadataBuilder.build();
+            FileUtils.writeJson(RUSTBOARD_METADATA_FILE, thing);
+            logToClientConsoles(thing);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
