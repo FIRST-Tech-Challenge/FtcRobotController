@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 class SwerveModule (topMotor: DcMotor, bottomMotor: DcMotor, x: Double, y: Double) {
     var top: DcMotor = topMotor
     var bottom: DcMotor = bottomMotor
+class SwerveModule (val top: DcMotor, val bottom: DcMotor, val x: Double, val y: Double) {
 
     fun resetEncoders(useEncoder: Boolean = true) {
         top.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
