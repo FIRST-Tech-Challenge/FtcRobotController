@@ -15,7 +15,8 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     val drawImage = false
     val backgroundImage = ImageIO.read(javaClass.classLoader.getResource("bg.png"))
     val bezierPoints: MutableList<BezierPoint> = mutableListOf()
-    val historyStack: MutableList<List<BezierPoint>> = mutableListOf()
+    val undoStack: MutableList<List<Change>> = mutableListOf()
+    val redoStack: MutableList<List<Change>> = mutableListOf()
     var currentPopoverRef: JPopover? = null
     private val listeners: PathPlannerListeners = PathPlannerListeners(this)
     val buttonPanel: ButtonPanelWrapper = ButtonPanelWrapper(this)
@@ -25,6 +26,7 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
         addMouseMotionListener(listeners.mouseMotion)
         addKeyListener(listeners.key)
 
+        isFocusable = true
         layout = null
         add(buttonPanel)
 
@@ -101,13 +103,61 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     }
 
     fun addPoint(bezierPoint: BezierPoint) {
-        bezierPoints.add(bezierPoint)
+//        bezierPoints.add(bezierPoint)
+        val change = PointAddition(this, bezierPoint, bezierPoints.size)
+        addChanges(listOf(change))
+        change.apply()
         updateCatmullRom()
         repaint()
     }
 
     fun removePoint(bezierPoint: BezierPoint) {
+        val index = bezierPoints.indexOf(bezierPoint)
+        val change = PointRemoval(this, bezierPoint, index)
+        addChanges(listOf(change))
+        change.apply()
+        updateCatmullRom()
+        repaint()
+    }
+
+    fun _removePoint(bezierPoint: BezierPoint) {
+        val index = bezierPoints.indexOf(bezierPoint)
         bezierPoints.remove(bezierPoint)
+        if (bezierPoints.isEmpty()) return
+        val wasFirst = index == 0
+        val wasLast = index == bezierPoints.size
+        if (wasFirst) {
+            bezierPoints.first().prevHandle = null
+        }
+        if (wasLast) {
+            bezierPoints.last().nextHandle = null
+        }
+    }
+
+    /**
+     * Add a change to the undo stack and clears the redo stack. Does NOT apply the change (mainly because of the point translation/modifications)
+     */
+    fun addChanges(changes: List<Change>) {
+        undoStack.add(changes)
+        redoStack.clear()
+    }
+
+    fun undo() {
+        if (undoStack.isEmpty()) return
+        val change = undoStack.removeLast()
+        println("Undo: $change")
+        change.forEach { it.undo() }
+        redoStack.add(change)
+        updateCatmullRom()
+        repaint()
+    }
+
+    fun redo() {
+        if (redoStack.isEmpty()) return
+        val change = redoStack.removeLast()
+        println("Redo: $change")
+        change.forEach { it.apply() }
+        undoStack.add(change)
         updateCatmullRom()
         repaint()
     }

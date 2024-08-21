@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent
 
 class PathPlannerListeners(pathPlanner: PathPlanner) {
     var selectedPoint: Pair<BezierPoint, BezierPoint.PointType>? = null
+    var selectedCopy: BezierPoint? = null
 
     inner class Mouse(val pathPlanner: PathPlanner) : MouseAdapter() {
         override fun mousePressed(e: MouseEvent) {
@@ -36,6 +37,7 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
                         ), thresholds
                     )
                     selectedPoint = targetPoint
+                    selectedCopy = targetPoint?.first?.copy()
                     println("Selected point: $selectedPoint")
                     if (targetPoint == null) {
                         pathPlanner.addPoint(BezierPoint(fieldPoint))
@@ -54,16 +56,7 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
                         ), thresholds
                     )
                     if (targetPoint != null) {
-                        val index = pathPlanner.bezierPoints.indexOf(targetPoint.first)
-                        val isLast = index == pathPlanner.bezierPoints.size - 1
-                        val isFirst = index == 0
                         pathPlanner.removePoint(targetPoint.first)
-                        if (isLast) {
-                            pathPlanner.bezierPoints.last().nextHandle = null
-                        }
-                        if (isFirst) {
-                            pathPlanner.bezierPoints.first().prevHandle = null
-                        }
                     }
                 }
 
@@ -85,7 +78,22 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
         }
 
         override fun mouseReleased(e: MouseEvent) {
-            selectedPoint = null
+            if (selectedPoint != null) {
+                val type = selectedPoint!!.second
+                val point = selectedPoint!!.first
+                val copy = selectedCopy!!
+                val modification = PointModification(
+                    point,
+                    if (point.modified != copy.modified) point.modified else null,
+                    if (point.mirrored != copy.mirrored) point.mirrored else null,
+                    if (point.split != copy.split) point.split else null
+                )
+                val diff = point.getType(type)!! - copy.getType(type)!!
+                val change = PointTranslation(point, type, diff)
+                pathPlanner.addChanges(listOf(modification, change))
+                selectedPoint = null
+                selectedCopy = null
+            }
         }
     }
 
@@ -116,7 +124,16 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
 
     class Key(val pathPlanner: PathPlanner) : KeyAdapter() {
         override fun keyPressed(e: KeyEvent) {
-            super.keyPressed(e)
+            when (e.keyCode) {
+                KeyEvent.VK_Z -> {
+                    if (!e.isControlDown) return
+                    if (e.isShiftDown) {
+                        pathPlanner.redo()
+                    } else {
+                        pathPlanner.undo()
+                    }
+                }
+            }
         }
     }
 
