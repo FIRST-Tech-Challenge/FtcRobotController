@@ -29,6 +29,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 
+import static java.lang.System.out;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -579,7 +581,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
     // Measure the optical linear scale and orientation:
     @SuppressLint("DefaultLocale")
-    void opticalPush() {
+    void pushCalibrator() {
         assert(drive.opticalTracker != null);
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
@@ -716,15 +718,11 @@ public class TuneRoadRunner extends LinearOpMode {
     static class CenterOfRotation {
         double x;
         double y;
-        double farthestPointRadius;
-        double traveledRadius;
         double leastSquaresRadius;
 
-        public CenterOfRotation(double x, double y, double farthestPointRadius, double traveledRadius, double leastSquaresRadius) {
+        public CenterOfRotation(double x, double y, double leastSquaresRadius) {
             this.x = x;
             this.y = y;
-            this.farthestPointRadius = farthestPointRadius;
-            this.traveledRadius = traveledRadius;
             this.leastSquaresRadius = leastSquaresRadius;
         }
     }
@@ -754,7 +752,7 @@ public class TuneRoadRunner extends LinearOpMode {
             radius = sumR / points.size();
         }
 
-        return new CenterOfRotation(centerX, centerY,0, 0, radius);
+        return new CenterOfRotation(centerX, centerY, radius);
     }
 
     // Persisted state for initiateSparkfunRotation and updateSparkfunRotation:
@@ -765,6 +763,8 @@ public class TuneRoadRunner extends LinearOpMode {
     void initiateSparkFunRotation() {
         assert(drive.opticalTracker != null);
         previousSparkFunHeading = drive.opticalTracker.getPosition().h;
+
+out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading); // @@@
     }
 
     // Call this regularly to update the tracked amount of rotation:
@@ -787,16 +787,16 @@ public class TuneRoadRunner extends LinearOpMode {
 
     // This is the robot spin test for calibrating the optical sensor angular scale and offset:
     @SuppressLint("DefaultLocale")
-    void opticalSpin() {
+    void spinCalibrator() {
         assert(drive.opticalTracker != null);
 
         // Number of revolutions to use for calculating the positional offset of the sensor
         // from the robot's center of rotation:
-        final double OFFSET_REVOLUTION_COUNT = 10.0;
+        final double OFFSET_REVOLUTION_COUNT = 3.0;
 
         // Number of revolutions to use for calculating the angular scalar (can't be less than
         // OFFSET_REVOLUTION_COUNT):
-        final double SCALAR_REVOLUTION_COUNT = 10.0;
+        final double SCALAR_REVOLUTION_COUNT = 3.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
         String results;
@@ -840,7 +840,7 @@ public class TuneRoadRunner extends LinearOpMode {
         double nextCircleMarker = startRotation;
 
         // Now rotate the robot:
-        System.out.print("Spin calibration circle starts:\n");
+        out.print("Spin calibration circle starts:\n");
         while (opModeIsActive()) {
             Pose2D rawPosition = updateSparkFunRotation();
             Pose2D position = new Pose2D(
@@ -853,7 +853,7 @@ public class TuneRoadRunner extends LinearOpMode {
             if (rotationAmount >= nextCircleMarker) {
                 circleStarts.add(position);
                 nextCircleMarker += 2 * Math.PI;
-                System.out.printf("   %.2f, %.2f\n", position.x, position.y);
+                out.printf("   %.2f, %.2f\n", position.x, position.y);
             }
 
             // Check if we need to still sample points:
@@ -898,16 +898,12 @@ public class TuneRoadRunner extends LinearOpMode {
 
         if (!ui.drivePrompt("Now drive the robot to align it at the wall in the same "
                     + "place and orientation as it started."
-                    + "\n\nPress A when done, B to cancel"))
+                    + "\n\nDrive the robot to its wall position, press A when done, B to cancel"))
             return; // ====>
 
-        CenterOfRotation circleFit = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
-
-        // Center of rotation results:
-        double resultX = farthestPoint.x / 2;
-        double resultY = farthestPoint.y / 2;
-        double farthestPointRadius = farthestDistance / 2;
-        double traveledRadius = distanceTraveled / (2 * OFFSET_REVOLUTION_COUNT * Math.PI);
+        // CenterOfRotation circleFit = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
+        CenterOfRotation circleFit = new CenterOfRotation(0, 0, 0);
+                // new CenterOfRotation(3.68, -6.59, 3);
 
         // Angular scalar results:
         double totalMeasuredRotation = getSparkFunRotation();
@@ -915,19 +911,23 @@ public class TuneRoadRunner extends LinearOpMode {
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
 
+out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
+
         results = String.format("Sensor thinks %.2f circles were completed.\n", totalMeasuredCircles);
-        results += String.format("Distance traveled: %f, farthestPoint.x: %f, farthestPoint.y: %f, traveledRadius: %f\n",
-                distanceTraveled, farthestPoint.x, farthestPoint.y, traveledRadius);
-        results += String.format("Offset from center of rotation: (%.2f\", %.2f\"), samples: %d\n",
-                resultX, resultY, points.size());
-        results += String.format("Farthest point radius: %.2f, Traveled radius: %.2f\n", farthestPointRadius, traveledRadius);
-        results += String.format("Error (inches): (%.2f, %.2f)\n", currentPoint.x, currentPoint.y);
         results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", circleFit.x, circleFit.y, circleFit.leastSquaresRadius);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += "\n";
 
+out.printf("Circle fit: %.2f, %.2f\n", circleFit.x, circleFit.y); // @@@
+
         // Do some sanity checking on the results:
         if ((Math.abs(circleFit.x) > 12) || (Math.abs(circleFit.y) > 12)) {
+
+if (Math.abs(circleFit.x) > 12.0)
+    out.printf("Bad x: %.2f\n", Math.abs(circleFit.x));
+if (Math.abs(circleFit.y) > 12.0)
+    out.printf("Bad y: %.2f\n", Math.abs(circleFit.y));
+
             ui.prompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
                     + "Aborted, press A to continue.");
             return; // ====>
@@ -1083,7 +1083,7 @@ public class TuneRoadRunner extends LinearOpMode {
     // ramping up the velocity in a straight line. We increase power by 0.1 each second
     // until it reaches 0.9.
     @SuppressLint("DefaultLocale")
-    void acceleratingStraightLine() {
+    void acceleratingStraightLineTuner() {
         final double VOLTAGE_ADDER_PER_SECOND = 0.1;
         final double MAX_VOLTAGE_FACTOR = 0.9;
         final double MAX_SECONDS = MAX_VOLTAGE_FACTOR / VOLTAGE_ADDER_PER_SECOND + 0.1;
@@ -1442,9 +1442,9 @@ public class TuneRoadRunner extends LinearOpMode {
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
         if (settings.type == Type.OPTICAL) {
-            tests.add(new Test(this::opticalPush, "Push calibrator (optical tracker)"));
-            tests.add(new Test(this::opticalSpin, "Spin calibrator (optical tracker)"));
-            tests.add(new Test(this::acceleratingStraightLine, "Accelerating straight line tuner (feed forward)"));
+            tests.add(new Test(this::pushCalibrator, "Push calibrator (optical tracking)"));
+            tests.add(new Test(this::spinCalibrator, "Spin calibrator (optical tracking)"));
+            tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (feed forward)"));
         } else {
             tests.add(new Test(this::encoderPush, "Push test (encoders and IMU)"));
             tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
