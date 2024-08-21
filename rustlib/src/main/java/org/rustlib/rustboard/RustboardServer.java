@@ -1,8 +1,16 @@
 package org.rustlib.rustboard;
 
+import static org.rustlib.rustboard.JsonKeys.ACTIVE_KEY;
+import static org.rustlib.rustboard.JsonKeys.CONSOLE_INFO_KEY;
+import static org.rustlib.rustboard.JsonKeys.EXCEPTION_MESSAGE_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_ARRAY_KEY;
+import static org.rustlib.rustboard.JsonKeys.RUSTBOARD_ARRAY_KEY;
+import static org.rustlib.rustboard.JsonKeys.UTC_KEY;
+import static org.rustlib.rustboard.JsonKeys.UUID_KEY;
 import static org.rustlib.rustboard.MessageActions.CONSOLE_LOG;
 import static org.rustlib.rustboard.MessageActions.CONSOLE_WARN;
 import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
+import static org.rustlib.rustboard.MessageActions.SET_ACTIVE;
 import static org.rustlib.rustboard.Rustboard.RustboardLoadException;
 import static org.rustlib.utils.FileUtils.clearDir;
 import static org.rustlib.utils.FileUtils.externalStorage;
@@ -74,15 +82,15 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
         super(new InetSocketAddress(port));
         setReuseAddr(true);
         FileUtils.makeDirIfMissing(RUSTBOARD_STORAGE_DIR);
-        JsonObject defaultMetaData = Json.createObjectBuilder().add("rustboards", Json.createArrayBuilder().build()).build();
+        JsonObject defaultMetaData = Json.createObjectBuilder().add(RUSTBOARD_ARRAY_KEY, Json.createArrayBuilder().build()).build();
         rustboardMetaData = FileUtils.safeLoadJsonObject(RUSTBOARD_METADATA_FILE, defaultMetaData);
-        if (rustboardMetaData.containsKey("rustboards")) {
-            JsonArray dataArray = rustboardMetaData.getJsonArray("rustboards");
+        if (rustboardMetaData.containsKey(RUSTBOARD_ARRAY_KEY)) {
+            JsonArray dataArray = rustboardMetaData.getJsonArray(RUSTBOARD_ARRAY_KEY);
             for (JsonValue value : dataArray) {
                 JsonObject rustboardDescriptor = (JsonObject) value;
-                String uuid = rustboardDescriptor.getString("uuid");
+                String uuid = rustboardDescriptor.getString(UUID_KEY);
                 storedRustboardIds.add(uuid);
-                if (rustboardDescriptor.getBoolean("active")) {
+                if (rustboardDescriptor.getBoolean(ACTIVE_KEY)) {
                     Rustboard rustboard;
                     try {
                         rustboard = Rustboard.load(uuid);
@@ -198,29 +206,21 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
     public void onMessage(WebSocket conn, String message) {
         JsonObject messageJson = FileUtils.readJsonString(message);
         try {
-            logToClientConsoles(FileUtils.readString(new File(NEW_STORED_RUSTBOARD_DIR, activeRustboard.getUuid() + ".json")));
-        } catch (Exception e) {
-
-        }
-        try {
             switch (messageJson.getString(MESSAGE_ACTION_KEY)) {
                 case MessageActions.CLIENT_DETAILS:
-                    Time.calibrateUTCTime(messageJson.getJsonNumber("utc_time").longValue());
-                    String uuid = messageJson.getString("uuid");
-                    JsonArray clientNodes = messageJson.getJsonArray(RustboardNode.NODE_ARRAY_KEY);
+                    Time.calibrateUTCTime(messageJson.getJsonNumber(UTC_KEY).longValue());
+                    String uuid = messageJson.getString(UUID_KEY);
+                    JsonArray clientNodes = messageJson.getJsonArray(NODE_ARRAY_KEY);
                     Rustboard rustboard;
                     if (loadedRustboards.containsKey(uuid)) {
-                        Rustboard.notifyAllClients("Merged loaded rustboard with client version", NoticeType.POSITIVE);
                         rustboard = loadedRustboards.get(uuid).mergeWithClientRustboard(clientNodes);
                     } else if (storedRustboardIds.contains(uuid)) {
                         try {
                             rustboard = Rustboard.load(uuid).mergeWithClientRustboard(clientNodes);
-                            Rustboard.notifyAllClients("Merging with client nodes");
-                        } catch (Rustboard.RustboardLoadException e) {
+                        } catch (RustboardLoadException e) {
                             rustboard = new Rustboard(uuid, clientNodes);
                         }
                     } else {
-                        Rustboard.notifyAllClients("Making a completely new Rustboard instance");
                         rustboard = new Rustboard(uuid, clientNodes);
                     }
                     rustboard.setConnection(conn);
@@ -232,7 +232,7 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
                     }
                     break;
                 case MessageActions.EXCEPTION:
-                    throw new RustboardException(messageJson.getString("exception_message"));
+                    throw new RustboardException(messageJson.getString(EXCEPTION_MESSAGE_KEY));
                 default:
                     if (activeRustboard != null) {
                         activeRustboard.onMessage(messageJson);
@@ -249,7 +249,7 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
     private void activateRustboard(Rustboard rustboard) {
         activeRustboard = rustboard;
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("action", "set_active");
+        builder.add(MESSAGE_ACTION_KEY, SET_ACTIVE);
         WebSocket connection = rustboard.getConnection();
         if (connection != null) {
             connection.send(builder.build().toString());
@@ -260,19 +260,19 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
         FileUtils.makeDirIfMissing(OLD_STORED_RUSTBOARD_DIR);
         FileUtils.makeDirIfMissing(NEW_STORED_RUSTBOARD_DIR);
         JsonObjectBuilder metadataBuilder = Json.createObjectBuilder();
-        JsonArray currentRustboardArray = rustboardMetaData.getJsonArray("rustboards");
+        JsonArray currentRustboardArray = rustboardMetaData.getJsonArray(RUSTBOARD_ARRAY_KEY);
         JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder();
         loadedRustboards.forEach((uuid, rustboard) -> {
-                    currentRustboardArray.removeIf(rustboardJson -> ((JsonObject) rustboardJson).getString("uuid").equals(uuid));
+                    currentRustboardArray.removeIf(rustboardJson -> ((JsonObject) rustboardJson).getString(UUID_KEY).equals(uuid));
                     JsonObjectBuilder rustboardDescriptor = Json.createObjectBuilder();
-                    rustboardDescriptor.add("uuid", uuid);
-                    rustboardDescriptor.add("active", rustboard == activeRustboard);
+                    rustboardDescriptor.add(UUID_KEY, uuid);
+                    rustboardDescriptor.add(ACTIVE_KEY, rustboard == activeRustboard);
                     rustboardArrayBuilder.add(rustboardDescriptor);
                     rustboard.save();
                 }
         );
         currentRustboardArray.forEach(rustboardArrayBuilder::add);
-        metadataBuilder.add("rustboards", rustboardArrayBuilder);
+        metadataBuilder.add(RUSTBOARD_ARRAY_KEY, rustboardArrayBuilder);
         try {
             JsonObject thing = metadataBuilder.build();
             FileUtils.writeJson(RUSTBOARD_METADATA_FILE, thing);
@@ -302,7 +302,7 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
     public static void logToClientConsoles(String info) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder.add(MESSAGE_ACTION_KEY, CONSOLE_LOG);
-        builder.add("info", info);
+        builder.add(CONSOLE_INFO_KEY, info);
         getInstance().broadcastToClients(builder.build().toString());
     }
 
@@ -313,7 +313,7 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
     public static void warnClientConsoles(String info) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder.add(MESSAGE_ACTION_KEY, CONSOLE_WARN);
-        builder.add("info", info); // TODO: add constant for info
+        builder.add(CONSOLE_INFO_KEY, info);
         getInstance().broadcastToClients(builder.build().toString());
     }
 

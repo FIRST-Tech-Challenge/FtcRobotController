@@ -1,5 +1,6 @@
 package org.rustlib.rustboard;
 
+import static org.rustlib.rustboard.JsonKeys.NODE_ARRAY_KEY;
 import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
 import static org.rustlib.rustboard.MessageActions.UPDATE_NODES;
 
@@ -35,7 +36,7 @@ public class ClientUpdater implements Runnable {
                 nodes.add(node.getJsonBuilder());
                 toUpdate.remove(key);
             }
-            messageBuilder.add(RustboardNode.NODE_ARRAY_KEY, nodes);
+            messageBuilder.add(NODE_ARRAY_KEY, nodes);
             RustboardServer.messageActiveRustboard(messageBuilder.build());
         } catch (Exception e) {
             RustboardServer.warnClientConsoles(e);

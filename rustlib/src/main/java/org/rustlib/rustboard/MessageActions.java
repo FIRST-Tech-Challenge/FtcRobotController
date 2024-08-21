@@ -1,8 +1,9 @@
 package org.rustlib.rustboard;
 
-class MessageActions {
+final class MessageActions {
     static final String MESSAGE_ACTION_KEY = "action";
     static final String CLIENT_DETAILS = "client_details";
+    static final String SET_ACTIVE = "set_active";
     static final String EXCEPTION = "exception";
     static final String NOTIFY = "create_notice";
     static final String CONSOLE_LOG = "console_log";

@@ -1,15 +1,17 @@
 package org.rustlib.rustboard;
 
+import static org.rustlib.rustboard.JsonKeys.LAST_NODE_UPDATE_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_ARRAY_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_ID_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_STATE_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_TYPE_KEY;
+import static org.rustlib.rustboard.JsonKeys.UUID_KEY;
 import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
 import static org.rustlib.rustboard.MessageActions.NOTIFY;
 import static org.rustlib.rustboard.NoticeType.NEUTRAL;
 import static org.rustlib.rustboard.NoticeType.NOTICE_DURATION_KEY;
 import static org.rustlib.rustboard.NoticeType.NOTICE_MESSAGE_KEY;
 import static org.rustlib.rustboard.NoticeType.NOTICE_TYPE_KEY;
-import static org.rustlib.rustboard.RustboardNode.ID_KEY;
-import static org.rustlib.rustboard.RustboardNode.LAST_UPDATE_KEY;
-import static org.rustlib.rustboard.RustboardNode.STATE_KEY;
-import static org.rustlib.rustboard.RustboardNode.TYPE_KEY;
 import static org.rustlib.rustboard.RustboardServer.NEW_STORED_RUSTBOARD_DIR;
 import static org.rustlib.rustboard.RustboardServer.OLD_STORED_RUSTBOARD_DIR;
 import static org.rustlib.rustboard.RustboardServer.RUSTBOARD_STORAGE_DIR;
@@ -91,7 +93,6 @@ public class Rustboard {
             try {
                 this.nodes.add(RustboardNode.buildFromJson(nodeJson));
             } catch (InvalidNodeJsonException e) {
-                notifyAllClients("Bad node json!");
                 log(e);
             }
         });
@@ -153,7 +154,7 @@ public class Rustboard {
         if (file.exists()) {
             Builder rustboardBuilder = getBuilder().setUUID(uuid);
             JsonObject json = FileUtils.loadJsonObject(file);
-            JsonArray nodes = Objects.requireNonNull(json.getJsonArray(RustboardNode.NODE_ARRAY_KEY));
+            JsonArray nodes = Objects.requireNonNull(json.getJsonArray(NODE_ARRAY_KEY));
             nodes.forEach((JsonValue nodeJson) -> rustboardBuilder.addNode(RustboardNode.buildFromJson(nodeJson)));
             return rustboardBuilder.build();
         } else {
@@ -177,12 +178,12 @@ public class Rustboard {
     }
 
     private void applyNodeUpdateMessage(JsonObject nodeJson) {
-        String id = nodeJson.getString(ID_KEY);
-        Type type = Type.getType(nodeJson.getString(TYPE_KEY));
-        String state = nodeJson.getString(STATE_KEY);
+        String id = nodeJson.getString(NODE_ID_KEY);
+        Type type = Type.getType(nodeJson.getString(NODE_TYPE_KEY));
+        String state = nodeJson.getString(NODE_STATE_KEY);
         long lastUpdate;
         try {
-            lastUpdate = nodeJson.getJsonNumber(LAST_UPDATE_KEY).longValue();
+            lastUpdate = nodeJson.getJsonNumber(LAST_NODE_UPDATE_KEY).longValue();
         } catch (NullPointerException e) {
             lastUpdate = 0;
         }
@@ -199,7 +200,7 @@ public class Rustboard {
                 applyNodeUpdateMessage(messageJson);
                 break;
             case MessageActions.UPDATE_NODES:
-                JsonArray nodes = messageJson.getJsonArray(RustboardNode.NODE_ARRAY_KEY);
+                JsonArray nodes = messageJson.getJsonArray(NODE_ARRAY_KEY);
                 for (JsonValue value : nodes) {
                     JsonObject nodeJson = (JsonObject) value;
                     applyNodeUpdateMessage(nodeJson);
@@ -207,7 +208,7 @@ public class Rustboard {
                 break;
             case MessageActions.SAVE_PATH:
                 try {
-                    FileUtils.writeString(new File(RUSTBOARD_STORAGE_DIR, messageJson.getString(ID_KEY)), Objects.requireNonNull(messageJson.get("path")).toString());
+                    FileUtils.writeString(new File(RUSTBOARD_STORAGE_DIR, messageJson.getString(NODE_ID_KEY)), Objects.requireNonNull(messageJson.get("path")).toString());
                     notifyClient("Saved path to robot", NoticeType.POSITIVE, 8000);
                 } catch (IOException | NullPointerException e) {
                     notifyClient("Could not save the path to the robot", NoticeType.NEGATIVE, 8000);
@@ -224,7 +225,7 @@ public class Rustboard {
                 }
                 break;
             case MessageActions.CLICK_BUTTON:
-                String nodeId = messageJson.getString(ID_KEY);
+                String nodeId = messageJson.getString(NODE_ID_KEY);
                 if (callbacks.containsKey(nodeId)) {
                     clickButton(nodeId);
                 }
@@ -449,10 +450,10 @@ public class Rustboard {
 
     JsonObject getJson() {
         JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
-        jsonBuilder.add("uuid", uuid);
+        jsonBuilder.add(UUID_KEY, uuid);
         JsonArrayBuilder nodeArray = Json.createArrayBuilder();
         nodes.forEach((RustboardNode node) -> nodeArray.add(node.getJsonBuilder()));
-        jsonBuilder.add(RustboardNode.NODE_ARRAY_KEY, nodeArray);
+        jsonBuilder.add(NODE_ARRAY_KEY, nodeArray);
         return jsonBuilder.build();
     }
 
@@ -478,7 +479,6 @@ public class Rustboard {
             FileUtils.copyFile(getLatestRustboardVersion(uuid), getPreviousRustboardVersion(uuid));
         } catch (IOException e) {
             RustboardServer.log(e);
-            throw new RuntimeException(e); // TODO: remove after debugging
         } finally {
             save(newRustboardFile);
         }

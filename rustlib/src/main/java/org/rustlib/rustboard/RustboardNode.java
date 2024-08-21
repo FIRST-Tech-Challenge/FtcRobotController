@@ -1,5 +1,10 @@
 package org.rustlib.rustboard;
 
+import static org.rustlib.rustboard.JsonKeys.LAST_NODE_UPDATE_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_ID_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_STATE_KEY;
+import static org.rustlib.rustboard.JsonKeys.NODE_TYPE_KEY;
+
 import org.rustlib.rustboard.Rustboard.RustboardException;
 
 import java.util.EnumSet;
@@ -16,11 +21,6 @@ public class RustboardNode {
     public final String id;
     private String state;
     private Time lastUpdate;
-    static final String ID_KEY = "node_id";
-    static final String TYPE_KEY = "node_type";
-    static final String STATE_KEY = "node_state";
-    static final String LAST_UPDATE_KEY = "last_node_update";
-    static final String NODE_ARRAY_KEY = "nodes";
 
     public RustboardNode(String id, Type type, String state, Time lastUpdate) {
         this.id = id;
@@ -95,10 +95,10 @@ public class RustboardNode {
 
     JsonObjectBuilder getJsonBuilder() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add(ID_KEY, id);
-        builder.add(TYPE_KEY, type.typeName);
-        builder.add(STATE_KEY, state);
-        builder.add(LAST_UPDATE_KEY, lastUpdate.getTimeMS());
+        builder.add(NODE_ID_KEY, id);
+        builder.add(NODE_TYPE_KEY, type.typeName);
+        builder.add(NODE_STATE_KEY, state);
+        builder.add(LAST_NODE_UPDATE_KEY, lastUpdate.getTimeMS());
         return builder;
     }
 
@@ -106,9 +106,9 @@ public class RustboardNode {
         try {
             JsonObject data = (JsonObject) json;
             return new RustboardNode(
-                    data.getString(ID_KEY), Type.getType(data.getString(TYPE_KEY)),
-                    data.getString(STATE_KEY),
-                    data.containsKey(LAST_UPDATE_KEY) ? new Time(data.getJsonNumber(LAST_UPDATE_KEY).longValue(), true) : new Time()
+                    data.getString(NODE_ID_KEY), Type.getType(data.getString(NODE_TYPE_KEY)),
+                    data.getString(NODE_STATE_KEY),
+                    data.containsKey(LAST_NODE_UPDATE_KEY) ? new Time(data.getJsonNumber(LAST_NODE_UPDATE_KEY).longValue(), true) : new Time()
             );
         } catch (RuntimeException e) {
             throw new InvalidNodeJsonException("The following JSON does not conform to the JSON protocol for Rustboard Nodes: \n" + json.toString());
