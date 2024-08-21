@@ -1,6 +1,5 @@
 package com.millburnx.pathplanner
 
-import com.millburnx.dashboard.JPopover
 import com.millburnx.utils.Bezier
 import com.millburnx.utils.BezierPoint
 import com.millburnx.utils.Utils
@@ -169,6 +168,7 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
             repaint()
         }
         add(currentPopoverRef)
+        revalidate()
         repaint()
     }
 }

@@ -1,4 +1,4 @@
-package com.millburnx.dashboard
+package com.millburnx.pathplanner
 
 import com.millburnx.utils.BezierPoint
 import com.millburnx.utils.Utils
@@ -34,7 +34,7 @@ class JNumber(
     val scale: Double = 1.0,
     val editorFont: Font = Font("Noto Sans", Font.PLAIN, (16 * scale).toInt()),
     val editorBackground: Color = Utils.Colors.bg0,
-    val spacing: Double = 8.0
+    spacing: Double = 8.0
 ) {
     val model = SpinnerNumberModel(value, min, max, step)
     val spinner = object : JSpinner(model) {
@@ -112,7 +112,7 @@ class JPopover(
         constraints.anchor = GridBagConstraints.WEST
         // 2 columns
 
-        var currentPoint = point.getType(type)!!
+        val currentPoint = point.getType(type)!!
 
         font = textFont
         val xLabel = JLabel("X")
@@ -183,6 +183,7 @@ class JPopover(
             updateCallback(currentPoint)
         }
         constraints.gridy++
+        constraints.gridx = 1
         add(splitSwitch, constraints)
 
         val splitLabel = JLabel("Split")
