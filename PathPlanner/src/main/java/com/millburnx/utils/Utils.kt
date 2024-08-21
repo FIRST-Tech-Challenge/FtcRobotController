@@ -3,6 +3,9 @@ package com.millburnx.utils
 import java.awt.Color
 import java.awt.FileDialog
 import java.awt.Graphics2D
+import java.awt.RenderingHints
+import java.awt.Toolkit
+import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -78,6 +81,29 @@ class Utils {
             fileDialog.isVisible = true
             val file = fileDialog.file ?: return null
             return File(fileDialog.directory, file)
+        }
+
+        /**
+         * Creates a buffered image with antialiasing and subpixel rendering enabled
+         * @return A pair containing the buffered image and the graphics object
+         */
+        fun bufferedImage(width: Int, height: Int): Pair<BufferedImage, Graphics2D> {
+            val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+            val g2d = bufferedImage.createGraphics()
+
+            val desktopHints = Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints")
+
+            g2d.setRenderingHints(RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON))
+            g2d.addRenderingHints(RenderingHints(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE))
+            g2d.addRenderingHints(
+                RenderingHints(
+                    RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+                )
+            )
+            desktopHints?.let { g2d.addRenderingHints(desktopHints as RenderingHints) }
+
+            return Pair(bufferedImage, g2d)
         }
     }
 }

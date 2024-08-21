@@ -12,10 +12,8 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
 import java.awt.Rectangle
-import java.awt.RenderingHints
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.image.BufferedImage
 import javax.swing.JCheckBox
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -46,15 +44,7 @@ class JNumber(
         }
 
         override fun paintComponent(g: Graphics) {
-            val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-            val g2d = bufferedImage.createGraphics()
-            g2d.setRenderingHints(RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON))
-            g2d.setRenderingHints(
-                RenderingHints(
-                    RenderingHints.KEY_TEXT_ANTIALIASING,
-                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-                )
-            )
+            val (bufferedImage, g2d) = Utils.bufferedImage(width, height)
 
             g2d.stroke = BasicStroke(borderWidth.toFloat())
             g2d.color = editorBackground
@@ -251,15 +241,8 @@ class JPopover(
     }
 
     override fun paintComponent(g: Graphics) {
-        val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-        val g2d = bufferedImage.createGraphics()
-        g2d.setRenderingHints(RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON))
-        g2d.setRenderingHints(
-            RenderingHints(
-                RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-            )
-        )
+        val (bufferedImage, g2d) = Utils.bufferedImage(width, height)
+
         g2d.stroke = BasicStroke(borderWidth.toFloat())
         g2d.color = popoverBackground
         g2d.fillRoundRect(0, 0, width, height, 10, 10)

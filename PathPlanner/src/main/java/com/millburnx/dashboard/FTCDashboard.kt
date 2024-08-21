@@ -1,10 +1,9 @@
 package com.millburnx.dashboard
 
+import com.millburnx.utils.Utils
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.GraphicsEnvironment
-import java.awt.RenderingHints
-import java.awt.image.BufferedImage
 import javax.swing.JButton
 import javax.swing.JPanel
 import kotlin.math.min
@@ -58,12 +57,9 @@ class FTCDashboard(
         }
 
         override fun paintComponent(g: Graphics) {
-            super.paintComponent(g)
-//            val g2d = graphics as Graphics2D
-            val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-            val g2d = bufferedImage.createGraphics()
-            g2d.setRenderingHints(RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON))
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            val (bufferedImage, g2d) = Utils.bufferedImage(width, height)
+            super.paintComponent(g2d)
+
             g2d.translate(width / 2, height / 2)
             val canvas = currentPacket.fieldOverlay()
             val ops = canvas.getOperations()

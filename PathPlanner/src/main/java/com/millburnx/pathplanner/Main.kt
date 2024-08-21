@@ -15,11 +15,6 @@ fun main(args: Array<String>) {
     val defaultSize = 1080
     val pathPlanner = PathPlanner(0.0, scale)
 
-    System.setProperty("awt.useSystemAAFontSettings", "on");
-    System.setProperty("awt.useSystemAAFontSettings", "lcd");
-    System.setProperty("swing.aatext", "true");
-    System.setProperty("sun.java2d.xrender", "true");
-
     val frame = JFrame("Pure Pursuit")
     frame.size = Dimension(defaultSize, defaultSize)
     frame.layout = null

@@ -6,10 +6,8 @@ import com.millburnx.utils.BezierPoint
 import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
 import java.awt.Graphics
-import java.awt.RenderingHints
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
-import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import javax.swing.JPanel
 
@@ -39,19 +37,8 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     }
 
     override fun paintComponent(g: Graphics) {
-        super.paintComponent(g)
-        val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-        val g2d = bufferedImage.createGraphics()
-        g2d.setRenderingHints(
-            RenderingHints(
-                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON
-            )
-        )
-        g2d.addRenderingHints(
-            RenderingHints(
-                RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-            )
-        )
+        val (bufferedImage, g2d) = Utils.bufferedImage(width, height)
+        super.paintComponent(g2d)
 
         g2d.background = Utils.Colors.bg1
         g2d.clearRect(0, 0, width, height)
@@ -129,7 +116,6 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
         currentPopoverRef = JPopover(this, position, target.first, target.second, ppi, scale) {
             target.first.updateType(target.second, it)
             updateCatmullRom()
-            
             repaint()
         }
         add(currentPopoverRef)
