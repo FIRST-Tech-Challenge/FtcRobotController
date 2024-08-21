@@ -662,12 +662,12 @@ public class TuneRoadRunner extends LinearOpMode {
                     drive.opticalTracker.setLinearScalar(newLinearScalar);
                     drive.opticalTracker.setOffset(settings.opticalOffset);
 
-                    ui.prompt("Double-tap SHIFT in Android Studio and enter 'MD.configure' to jump to the "
+                    ui.prompt("Double-tap the shift key in Android Studio and enter 'MD.configure' to jump to the "
                         + "MecanumDrive configure() routine. Change the parameters for "
-                            + "the OTOSSettings object as follows:\n"
+                            + "the OTOSSettings object as follows:<tt>\n\n"
                             + String.format("&ensp;orientationDegrees = %.3f\n", Math.toDegrees(newHeading))
                             + String.format("&ensp;linearScalar = %.3f\n", newLinearScalar)
-                            + "\nPress A to continue.");
+                            + "\n</tt>Press A to continue.");
 
                     return; // ====>
                 }
@@ -909,26 +909,31 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
 
         // Angular scalar results:
         double totalMeasuredRotation = getSparkFunRotation();
+
+        processRotationResults(center, totalMeasuredRotation);
+    }
+
+    void processRotationResults(CenterOfRotation center, double totalMeasuredRotation) {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
 
-out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
+        out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
-        results = String.format("Sensor thinks %.2f circles were completed.\n", totalMeasuredCircles);
+        String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
         results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", center.x, center.y, center.leastSquaresRadius);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += "\n";
 
-out.printf("Circle fit: %.2f, %.2f\n", center.x, center.y); // @@@
+        out.printf("Circle fit: %.2f, %.2f\n", center.x, center.y); // @@@
 
         // Do some sanity checking on the results:
         if ((Math.abs(center.x) > 12) || (Math.abs(center.y) > 12)) {
 
-if (Math.abs(center.x) > 12.0)
-    out.printf("Bad x: %.2f\n", Math.abs(center.x));
-if (Math.abs(center.y) > 12.0)
-    out.printf("Bad y: %.2f\n", Math.abs(center.y));
+            if (Math.abs(center.x) > 12.0)
+                out.printf("Bad x: %.2f\n", Math.abs(center.x));
+            if (Math.abs(center.y) > 12.0)
+                out.printf("Bad y: %.2f\n", Math.abs(center.y));
 
             ui.prompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
                     + "Aborted, press A to continue.");
@@ -936,8 +941,8 @@ if (Math.abs(center.y) > 12.0)
         }
         if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
             ui.prompt(results + "The measured number of circles is bad. Did you properly align "
-                + "the robot on the wall the same way at both the start and end of this test?\n\n"
-                + "Aborted, press A to continue.");
+                    + "the robot on the wall the same way at both the start and end of this test?\n\n"
+                    + "Aborted, press A to continue.");
             return; // ====>
         }
 
@@ -947,13 +952,13 @@ if (Math.abs(center.y) > 12.0)
             settings.opticalAngularScalar = angularScalar;
             settings.save();
 
-            ui.prompt("Double-tap SHIFT in Android Studio and enter 'MD.configure' to jump to the "
+            ui.prompt("Double-tap the shift key in Android Studio and enter 'MD.configure' to jump to the "
                     + "MecanumDrive configure() routine. Change the parameters for "
-                    + "the OTOSSettings object as follows:\n"
-                    + String.format("  xInches = %.2f\n", center.x)
-                    + String.format("  yInches = %.3f\n", center.y)
-                    + String.format("  angularScalar = %.3f\n", angularScalar)
-                    + "\nPress A to continue.");
+                    + "the OTOSSettings object as follows:<tt>\n\n"
+                    + String.format("&ensp;xInches = %.2f\n", center.x)
+                    + String.format("&ensp;yInches = %.3f\n", center.y)
+                    + String.format("&ensp;angularScalar = %.3f\n", angularScalar)
+                    + "\n</tt>Press A to continue.");
         }
     }
 
