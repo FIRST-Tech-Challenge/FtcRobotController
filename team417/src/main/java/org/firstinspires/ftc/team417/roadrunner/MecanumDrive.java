@@ -318,7 +318,7 @@ public final class MecanumDrive {
         if (isDevBot) {
             opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
             opticalSettings = new OTOSSettings(
-                    6.0,        // xInches
+                    6.0, // xInches
                     -3.5,       // yInches
                     -87.139,    // orientationDegrees
                     1.000,      // linearScalar

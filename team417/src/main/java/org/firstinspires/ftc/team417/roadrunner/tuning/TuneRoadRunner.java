@@ -771,14 +771,14 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
     }
 
     // Call this regularly to update the tracked amount of rotation:
-    Pose2D updateSparkFunRotation() {
+    Point updateSparkFunRotation() {
         if (drive.opticalTracker == null) // Handle case where we're using encoders
             return null;
 
         Pose2D position = drive.opticalTracker.getPosition();
         accumulatedSparkFunRotation += normalizeAngle(position.h - previousSparkFunHeading);
         previousSparkFunHeading = position.h;
-        return position;
+        return new Point(position.x, position.y);
     }
 
     // Get the resulting total rotation amount:
@@ -832,36 +832,47 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
 
         double farthestDistance = 0;
         Point farthestPoint = new Point(0, 0);
-        Point currentPoint = new Point(0, 0);
-        Pose2D previousPosition = drive.opticalTracker.getPosition();
-        double distanceTraveled = 0;
-        Pose2D startPosition = drive.opticalTracker.getPosition();
-        double startRotation = getSparkFunRotation();
 
-        // Remember the pose at the start of every circle:
-        ArrayList<Pose2D> circleStarts = new ArrayList<>();
-        double nextCircleMarker = startRotation;
+        Point originPosition = null; // The origin of the start of every circle
+        double startRotation = getSparkFunRotation();
+        double nextCircleRotationMarker = startRotation;
+        int adjustmentIndex = 0;
 
         // Now rotate the robot:
-        out.print("Spin calibration circle starts:\n");
         while (opModeIsActive()) {
-            Pose2D rawPosition = updateSparkFunRotation();
-            Pose2D position = new Pose2D(
-                    rawPosition.x - startPosition.x, rawPosition.y - startPosition.y, 0);
+            Point rawPosition = updateSparkFunRotation();
             double rotationAmount = accumulatedSparkFunRotation - startRotation;
-            if (rotationAmount >= terminationRotationTarget)
-                break; // We're done, break out of this loop!
 
-            // Check if we've completed a circle:
-            if (rotationAmount >= nextCircleMarker) {
-                circleStarts.add(position);
-                nextCircleMarker += 2 * Math.PI;
-                out.printf("   %.2f, %.2f\n", position.x, position.y);
+            // Check if we're at the start of a new circle:
+            if (rotationAmount >= nextCircleRotationMarker) {
+                int adjustmentCount = points.size() - adjustmentIndex;
+                if (adjustmentCount > 0) {
+                    Point change = rawPosition.subtract(originPosition);
+
+                    // Assume an even distribution and pull in every point:
+                    for (int i = 0; i < adjustmentCount; i++) {
+                        double fraction = (double) i / adjustmentCount;
+                        Point point = points.get(i);
+                        points.set(i, point.subtract(change.multiply(fraction)));
+                    }
+
+                    // Update the adjustment index to prepare for the next circle:
+                    adjustmentIndex = points.size();
+                }
+
+                // Remember the raw position as the start of the new circle:
+                originPosition = rawPosition;
+                nextCircleRotationMarker += 2 * Math.PI;
             }
+
+            // Now that we've potentially done the last adjustment, see if we're all done:
+            if (rotationAmount >= terminationRotationTarget)
+                break; // ====>
 
             // Check if we need to still sample points:
             if (rotationAmount < offsetRotationTarget) {
-                currentPoint = new Point(position.x, position.y);
+                assert originPosition != null;
+                Point currentPoint = rawPosition.subtract(originPosition);
                 points.add(currentPoint);
                 double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
                 if (distanceFromOrigin > farthestDistance) {
@@ -869,10 +880,7 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                     farthestPoint = currentPoint;
                 }
 
-                distanceTraveled += Math.hypot(position.x - previousPosition.x, position.y - previousPosition.y);
-                previousPosition = position;
-
-                // Draw the circle:
+                // Draw the circle on FTC Dashboard:
                 TelemetryPacket packet = new TelemetryPacket();
                 Canvas canvas = packet.fieldOverlay();
                 double[] xPoints = new double[points.size()];
@@ -904,13 +912,10 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                     + "\n\nDrive the robot to its wall position, press A when done, B to cancel"))
             return; // ====>
 
-        CenterOfRotation center = new CenterOfRotation(0, 0, 0);
+        CenterOfRotation center = new CenterOfRotation(0, 0, 0); // @@@ Change back?
         fitCircle(center, points, farthestPoint.x / 2, farthestPoint.y / 2);
 
-        // Angular scalar results:
-        double totalMeasuredRotation = getSparkFunRotation();
-
-        processRotationResults(center, totalMeasuredRotation);
+        processRotationResults(center, getSparkFunRotation());
     }
 
     void processRotationResults(CenterOfRotation center, double totalMeasuredRotation) {
@@ -920,20 +925,23 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
 
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
+        // Undo the offset heading that the OTOS sensor automatically applies:
+        Point offset = new Point(center.x, center.y).rotate(drive.opticalSettings.offset.h);
+
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
-        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", center.x, center.y, center.leastSquaresRadius);
+        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", offset.x, offset.y, center.leastSquaresRadius);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += "\n";
 
-        out.printf("Circle fit: %.2f, %.2f\n", center.x, center.y); // @@@
+        out.printf("Circle fit: %.2f, %.2f\n", offset.x, offset.y); // @@@
 
         // Do some sanity checking on the results:
-        if ((Math.abs(center.x) > 12) || (Math.abs(center.y) > 12)) {
+        if ((Math.abs(offset.x) > 12) || (Math.abs(offset.y) > 12)) {
 
-            if (Math.abs(center.x) > 12.0)
-                out.printf("Bad x: %.2f\n", Math.abs(center.x));
-            if (Math.abs(center.y) > 12.0)
-                out.printf("Bad y: %.2f\n", Math.abs(center.y));
+            if (Math.abs(offset.x) > 12.0)
+                out.printf("Bad x: %.2f\n", Math.abs(offset.x)); // @@@
+            if (Math.abs(offset.y) > 12.0)
+                out.printf("Bad y: %.2f\n", Math.abs(offset.y));
 
             ui.prompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
                     + "Aborted, press A to continue.");
@@ -947,16 +955,16 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         }
 
         if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
-            settings.opticalOffset.x = center.x;
-            settings.opticalOffset.y = center.y;
+            settings.opticalOffset.x = offset.x;
+            settings.opticalOffset.y = offset.y;
             settings.opticalAngularScalar = angularScalar;
             settings.save();
 
             ui.prompt("Double-tap the shift key in Android Studio and enter 'MD.configure' to jump to the "
                     + "MecanumDrive configure() routine. Change the parameters for "
                     + "the OTOSSettings object as follows:<tt>\n\n"
-                    + String.format("&ensp;xInches = %.2f\n", center.x)
-                    + String.format("&ensp;yInches = %.3f\n", center.y)
+                    + String.format("&ensp;xInches = %.2f\n", offset.x)
+                    + String.format("&ensp;yInches = %.3f\n", offset.y)
                     + String.format("&ensp;angularScalar = %.3f\n", angularScalar)
                     + "\n</tt>Press A to continue.");
         }
