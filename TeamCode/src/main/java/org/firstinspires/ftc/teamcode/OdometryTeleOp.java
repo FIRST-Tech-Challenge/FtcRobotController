@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
+import org.firstinspires.ftc.teamcode.mmooover.PoseFromToProcessor;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class OdometryTeleOp extends LinearOpMode {
         DcMotor backRight = hardware.backRight;
 
         EncoderTracking encTrack = new EncoderTracking(hardware);
+        PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
 
         waitForStart();
         if (isStopRequested()) return;
@@ -55,6 +57,9 @@ public class OdometryTeleOp extends LinearOpMode {
             backLeft.setPower(backLeftPower);
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
+
+            double diff = (frontLeftPower + backLeftPower) - (frontRightPower + backRightPower);
+            pftp.update(diff, p);
 
             telemetry.addData("x", p.x());
             telemetry.addData("y", p.y());

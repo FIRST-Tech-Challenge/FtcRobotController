@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
 import org.firstinspires.ftc.teamcode.mmooover.Motion;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
+import org.firstinspires.ftc.teamcode.mmooover.PoseFromToProcessor;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 
 @Autonomous
@@ -39,11 +40,12 @@ public class Pose2PoseTest extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         ElapsedTime targetTime = new ElapsedTime();
         LoopStopwatch ticker = new LoopStopwatch();
+        PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
+        Motion lastAction = null;
         waitForStart();
         targetTime.reset();
         timer.reset();
         boolean wait = false;
-        Pose lastPose = Pose.ORIGIN;
         ticker.clear();
         while (opModeIsActive()) {
             ticker.click();
@@ -51,6 +53,10 @@ public class Pose2PoseTest extends LinearOpMode {
             tracker.step();
             // Gets current pose
             Pose p = tracker.getPose();
+            if (lastAction != null)
+                pftp.update(lastAction.getPowerDifferential(), p);
+            else
+                pftp.update(0, p);
             if (wait) {
                 hardware.driveMotors.setAll(0);
                 if (targetIndex >= targets.length) {
@@ -75,9 +81,10 @@ public class Pose2PoseTest extends LinearOpMode {
                     timer.reset();
                     continue;
                 }
-                double speed = min(max(0.5, linear / 18.0 + 0.1), timer.time() / 2);
-                Motion action = p.to(targets[targetIndex], hardware);
-//                action.apply(hardware.driveMotors, CALIBRATION, speed);
+                double speed = min(max(0.75, linear / 18.0 + 0.1), timer.time() / 2);
+                Motion action = pftp.getMotionToTarget(targets[targetIndex], hardware);
+                action.apply(hardware.driveMotors, CALIBRATION, speed);
+                lastAction = action;
             }
             telemetry.addLine("step " + (targetIndex + 1) + " of " + targets.length);
             telemetry.addLine(String.format("Target hit for %.2fs", targetTime.time()));
@@ -104,5 +111,6 @@ public class Pose2PoseTest extends LinearOpMode {
             telemetry.addLine(String.format("While running: %.2fms per loop", ticker.getAvg() * 1000));
             telemetry.update();
         }
+        pftp.dump();
     }
 }

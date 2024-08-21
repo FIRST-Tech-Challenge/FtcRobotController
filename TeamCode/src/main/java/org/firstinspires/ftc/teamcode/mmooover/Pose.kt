@@ -90,6 +90,15 @@ data class Motion(
         turn.toDouble()
     )
 
+    private var lastFL: Double = 0.0;
+    private var lastFR: Double = 0.0;
+    private var lastBL: Double = 0.0;
+    private var lastBR: Double = 0.0;
+
+    fun getPowerDifferential(): Double {
+        return (lastFR + lastBR) - (lastFL + lastBL)
+    }
+
     /**
      * Apply this Motion to a MotorSet.
      * @param motors target set of motors
@@ -115,6 +124,7 @@ data class Motion(
         fr *= factorD
         bl *= factorD
         br *= factorD
+        lastFL = fl; lastFR = fr; lastBL = bl; lastBR = br
         motors.set(fl, fr, bl, br);
     }
 }
