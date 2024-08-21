@@ -18,8 +18,12 @@ class TestSwerveForward : LinearOpMode() {
         while (opModeIsActive()) {
             power = -gamepad2.right_stick_y.toDouble() / 3.5
 
-            telemetry.addData("A", power)
-            telemetry.update()
+            r.dashboardTelemetry.addData("A", power)
+            r.dashboardTelemetry.addData("LT", r.sl.top.currentPosition)
+            r.dashboardTelemetry.addData("LB", r.sl.bottom.currentPosition)
+            r.dashboardTelemetry.addData("RT", r.sr.top.currentPosition)
+            r.dashboardTelemetry.addData("RB", r.sr.bottom.currentPosition)
+            r.dashboardTelemetry.update()
 
             r.sl.top.power = power
             r.sl.bottom.power = power
