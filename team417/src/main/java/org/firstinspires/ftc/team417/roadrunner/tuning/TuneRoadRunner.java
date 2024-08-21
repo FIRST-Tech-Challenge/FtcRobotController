@@ -697,7 +697,7 @@ public class TuneRoadRunner extends LinearOpMode {
     // rotation
     void rampMotorsSpin(MecanumDrive drive, boolean up) {
         final double RAMP_TIME = 0.5; // Seconds
-        final double SPIN_SPEED = 0.5;
+        final double SPIN_SPEED = 0.3;
 
         double startTime = time();
         while (opModeIsActive()) {
@@ -795,17 +795,17 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
 
         // Number of revolutions to use for calculating the positional offset of the sensor
         // from the robot's center of rotation:
-        final double OFFSET_REVOLUTION_COUNT = 3.0;
+        final double OFFSET_REVOLUTION_COUNT = 2.0;
 
         // Number of revolutions to use for calculating the angular scalar (can't be less than
         // OFFSET_REVOLUTION_COUNT):
-        final double SCALAR_REVOLUTION_COUNT = 3.0;
+        final double SCALAR_REVOLUTION_COUNT = 2.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
         String results;
 
         if (!ui.drivePrompt("In this test, you'll position the robot against a wall, then drive "
-                + "it out so that the robot can rotate in place 10 times, then position "
+                + String.format("it out so that the robot can rotate in place %.1f times, then position ", SCALAR_REVOLUTION_COUNT)
                 + "the robot against the wall again."
                 + "\n\nFirst, carefully drive the robot to a wall and align it so that "
                 + "it's facing forward. This marks the start orientation for calibration."
@@ -824,6 +824,8 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         ui.message(String.format("Rotating %.1f times...", OFFSET_REVOLUTION_COUNT));
 
         ArrayList<Point> points = new ArrayList<>();
+
+        double startRotation = getSparkFunRotation(); // Query rotation before starting ramp-up
         rampMotorsSpin(drive, true);
 
         final double offsetRotationTarget = OFFSET_REVOLUTION_COUNT * 2 * Math.PI;
@@ -834,8 +836,7 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         Point farthestPoint = new Point(0, 0);
 
         Point originPosition = null; // The origin of the start of every circle
-        double startRotation = getSparkFunRotation();
-        double nextCircleRotationMarker = startRotation;
+        double nextCircleRotationMarker = 0;
         int adjustmentIndex = 0;
 
         // Now rotate the robot:
@@ -871,7 +872,6 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
 
             // Check if we need to still sample points:
             if (rotationAmount < offsetRotationTarget) {
-                assert originPosition != null;
                 Point currentPoint = rawPosition.subtract(originPosition);
                 points.add(currentPoint);
                 double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
@@ -900,8 +900,10 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
             telemetry.addLine("\nPress B to abort.");
             telemetry.update();
 
-            if (ui.cancel())
+            if (ui.cancel()) {
+                rampMotorsSpin(drive, false);
                 return; // ====>
+            }
         }
 
         // Stop the rotation:
@@ -915,10 +917,11 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         CenterOfRotation center = new CenterOfRotation(0, 0, 0); // @@@ Change back?
         fitCircle(center, points, farthestPoint.x / 2, farthestPoint.y / 2);
 
-        processRotationResults(center, getSparkFunRotation());
+        processSpinResults(center, getSparkFunRotation());
     }
 
-    void processRotationResults(CenterOfRotation center, double totalMeasuredRotation) {
+    // Process the spin results:
+    void processSpinResults(CenterOfRotation center, double totalMeasuredRotation) {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
@@ -926,7 +929,7 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         // Undo the offset heading that the OTOS sensor automatically applies:
-        Point offset = new Point(center.x, center.y).rotate(drive.opticalSettings.offset.h);
+        Point offset = new Point(center.x, center.y).rotate(-drive.opticalSettings.offset.h);
 
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
         results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", offset.x, offset.y, center.leastSquaresRadius);
