@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.supers
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.SwerveModule
 import org.firstinspires.ftc.teamcode.util.GamepadState
 
+
 // Kotlin is a stupid language made by stupid people, used by stupid people and i hate it and it's not as compatible with java as the feds want you to think.
-class Robot (private var opMode: OpMode) {
+class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
     // Declare all the hardware
     var lt: DcMotor
     var lb: DcMotor
@@ -35,6 +37,11 @@ class Robot (private var opMode: OpMode) {
 
         sl = SwerveModule(lt, lb, 14.35, 0.0)
         sr = SwerveModule(rt, rb, -14.35, 0.0)
+
+        if (resetEncoders) {
+            sl.resetEncoders()
+            sr.resetEncoders()
+        }
 
         // Make sure all the motors are in what should be the default
         for (motor in motors) {
