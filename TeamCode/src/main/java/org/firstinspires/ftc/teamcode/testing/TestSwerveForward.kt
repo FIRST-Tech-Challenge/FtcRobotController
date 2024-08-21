@@ -15,8 +15,8 @@ class TestSwerveForward : LinearOpMode() {
 
         waitForStart()
 
-        while (true) {
-            power = -gamepad1.right_stick_y.toDouble() / 3.5
+        while (opModeIsActive()) {
+            power = -gamepad2.right_stick_y.toDouble() / 3.5
 
             telemetry.addData("A", power)
             telemetry.update()
