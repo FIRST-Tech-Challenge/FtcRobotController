@@ -23,6 +23,10 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
     var gamepadState1: GamepadState = GamepadState()
     var gamepadState2: GamepadState = GamepadState()
 
+    // FTC Dashboard
+    var dashboard: FtcDashboard? = FtcDashboard.getInstance()
+    var dashboardTelemetry = dashboard!!.telemetry
+
     // Set opMode and hardwareMap
     init {
         val hardwareMap: HardwareMap = opMode.hardwareMap
