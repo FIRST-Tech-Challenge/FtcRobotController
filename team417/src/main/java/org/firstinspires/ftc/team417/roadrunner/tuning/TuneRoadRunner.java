@@ -729,7 +729,7 @@ public class TuneRoadRunner extends LinearOpMode {
 
     // Perform a least-squares fit of an array of points to a circle without using matrices,
     // courtesy of Copilot:
-    static CenterOfRotation fitCircle(List<Point> points, double centerX, double centerY) {
+    static void fitCircle(CenterOfRotation center, List<Point> points, double centerX, double centerY) {
         double radius = 0.0;
 
         // Iteratively refine the center and radius
@@ -752,7 +752,10 @@ public class TuneRoadRunner extends LinearOpMode {
             radius = sumR / points.size();
         }
 
-        return new CenterOfRotation(centerX, centerY, radius);
+        // Assign the results:
+        center.x = centerX;
+        center.y = centerY;
+        center.leastSquaresRadius = radius;
     }
 
     // Persisted state for initiateSparkfunRotation and updateSparkfunRotation:
@@ -901,9 +904,8 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                     + "\n\nDrive the robot to its wall position, press A when done, B to cancel"))
             return; // ====>
 
-        // CenterOfRotation circleFit = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
-        CenterOfRotation circleFit = new CenterOfRotation(0, 0, 0);
-                // new CenterOfRotation(3.68, -6.59, 3);
+        CenterOfRotation center = new CenterOfRotation(0, 0, 0);
+        fitCircle(center, points, farthestPoint.x / 2, farthestPoint.y / 2);
 
         // Angular scalar results:
         double totalMeasuredRotation = getSparkFunRotation();
@@ -914,19 +916,19 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
 out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         results = String.format("Sensor thinks %.2f circles were completed.\n", totalMeasuredCircles);
-        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", circleFit.x, circleFit.y, circleFit.leastSquaresRadius);
+        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", center.x, center.y, center.leastSquaresRadius);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += "\n";
 
-out.printf("Circle fit: %.2f, %.2f\n", circleFit.x, circleFit.y); // @@@
+out.printf("Circle fit: %.2f, %.2f\n", center.x, center.y); // @@@
 
         // Do some sanity checking on the results:
-        if ((Math.abs(circleFit.x) > 12) || (Math.abs(circleFit.y) > 12)) {
+        if ((Math.abs(center.x) > 12) || (Math.abs(center.y) > 12)) {
 
-if (Math.abs(circleFit.x) > 12.0)
-    out.printf("Bad x: %.2f\n", Math.abs(circleFit.x));
-if (Math.abs(circleFit.y) > 12.0)
-    out.printf("Bad y: %.2f\n", Math.abs(circleFit.y));
+if (Math.abs(center.x) > 12.0)
+    out.printf("Bad x: %.2f\n", Math.abs(center.x));
+if (Math.abs(center.y) > 12.0)
+    out.printf("Bad y: %.2f\n", Math.abs(center.y));
 
             ui.prompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
                     + "Aborted, press A to continue.");
@@ -940,16 +942,16 @@ if (Math.abs(circleFit.y) > 12.0)
         }
 
         if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
-            settings.opticalOffset.x = circleFit.x;
-            settings.opticalOffset.y = circleFit.y;
+            settings.opticalOffset.x = center.x;
+            settings.opticalOffset.y = center.y;
             settings.opticalAngularScalar = angularScalar;
             settings.save();
 
             ui.prompt("Double-tap SHIFT in Android Studio and enter 'MD.configure' to jump to the "
                     + "MecanumDrive configure() routine. Change the parameters for "
                     + "the OTOSSettings object as follows:\n"
-                    + String.format("  xInches = %.2f\n", circleFit.x)
-                    + String.format("  yInches = %.3f\n", circleFit.y)
+                    + String.format("  xInches = %.2f\n", center.x)
+                    + String.format("  yInches = %.3f\n", center.y)
                     + String.format("  angularScalar = %.3f\n", angularScalar)
                     + "\nPress A to continue.");
         }
