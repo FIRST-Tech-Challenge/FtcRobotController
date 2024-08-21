@@ -1,7 +1,5 @@
 package org.rustlib.control;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.rustlib.utils.MathHelpers;
 
 import java.util.ArrayList;
@@ -11,15 +9,10 @@ public class TrapezoidMotionProfile implements MotionProfile {
     private final double maxVel;
     private final double startPoint;
     private final double endPoint;
-    private double resolution;
+    private final double resolution;
     private final ArrayList<MotionProfileSetpoint> setpoints;
-    private final ElapsedTime timer;
 
     /**
-     * @param maxAccel
-     * @param maxVel
-     * @param startPoint
-     * @param endPoint
      * @param resolution The number of milliseconds in between each point in the generated profile
      */
     public TrapezoidMotionProfile(double maxAccel, double maxVel, double startPoint, double endPoint, double resolution) {
@@ -29,7 +22,6 @@ public class TrapezoidMotionProfile implements MotionProfile {
         this.endPoint = endPoint;
         this.resolution = resolution;
         setpoints = generateProfile();
-        timer = new ElapsedTime();
     }
 
     private ArrayList<MotionProfileSetpoint> generateProfile() {
@@ -65,7 +57,6 @@ public class TrapezoidMotionProfile implements MotionProfile {
 
     /**
      * @param t The timestamp to sample at, in seconds
-     * @return
      */
     public MotionProfileSetpoint sample(double t) {
         double index = 1000 / resolution * t;

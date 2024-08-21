@@ -25,7 +25,7 @@ public class DriveToBackboard extends Command {
 
     @Override
     public void initialize() {
-        Pose2d botPose = drive.getOdometry().getPose();
+        Pose2d botPose = drive.getOdometry().getPosition();
         drive.getBase().setFollowPath(Path.getBuilder().setDefaultRadius(DriveConstants.defaultFollowRadius)
                 .addWaypoint(botPose.x, botPose.y).addWaypoint(Tele.backdropPose.toWaypoint()).build());
         flashLights.schedule();

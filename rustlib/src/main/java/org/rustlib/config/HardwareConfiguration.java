@@ -1,6 +1,7 @@
 package org.rustlib.config;
 
 import org.rustlib.core.RobotBase;
+import org.rustlib.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,15 +34,19 @@ public class HardwareConfiguration {
     }
 
     private static Node getActiveConfigurationXMLNode() {
-        Document preferencesDocument = PreferenceEditor.readPreferences();
-        NodeList strings = preferencesDocument.getElementsByTagName("string");
-        for (int i = 0; i < strings.getLength(); i++) {
-            Node node = strings.item(i);
-            if (Objects.equals(node.getAttributes().getNamedItem("name"), "pref_hardware_config_filename")) {
-                return node;
+        try {
+            Document preferencesDocument = PreferenceEditor.readPreferences();
+            NodeList strings = preferencesDocument.getElementsByTagName("string");
+            for (int i = 0; i < strings.getLength(); i++) {
+                Node node = strings.item(i);
+                if (Objects.equals(node.getAttributes().getNamedItem("name"), "pref_hardware_config_filename")) {
+                    return node;
+                }
             }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e); // TODO: fix
         }
-        return null;
     }
 
     public static File getActiveConfiguration() throws FileNotFoundException, NullPointerException {
@@ -51,7 +56,7 @@ public class HardwareConfiguration {
         if (text.contains("LOCAL_STORAGE")) {
             Pattern pattern = Pattern.compile("name&quot;:&quot;(.*?)&quot;");
             Matcher matcher = pattern.matcher(text);
-            return new File(Loader.localStorage, matcher.group(0) + ".xml");
+            return new File(FileUtils.localStorage, matcher.group(0) + ".xml");
         } else {
             throw new FileNotFoundException("Could not locate the active configuration file.");
         }
@@ -63,7 +68,7 @@ public class HardwareConfiguration {
     }
 
     private HardwareConfiguration getActiveConfig() {
-        Document xml = PreferenceEditor.readPreferences();
+        //Document xml = PreferenceEditor.readPreferences(); // TODO: fix
         return null;
     }
 
@@ -262,15 +267,6 @@ public class HardwareConfiguration {
         @Override
         public Builder configureExpansionHub(String name, int port) { // TODO: finish
             return this;
-        }
-
-        private void addDevice(String elementName, String deviceId, Node parent, XmlAttribute... attributes) {
-            Element child = xml.createElement(elementName);
-            child.setAttribute("name", deviceId);
-            for (XmlAttribute attribute : attributes) {
-                child.setAttribute(attribute.name, attribute.content);
-            }
-            parent.appendChild(child);
         }
 
         private void addHardwareDevice(String id, int port, XmlDevice deviceType, int bus, HubType parentModule) {

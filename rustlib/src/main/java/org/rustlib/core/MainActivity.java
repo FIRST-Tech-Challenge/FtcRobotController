@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 public class MainActivity extends PermissionValidatorWrapper {
     public MainActivity() {
         super();
+        RustboardServer.getInstance().start();
         try {
             Field startApplication = PermissionValidatorWrapper.class.getDeclaredField("startApplication");
             startApplication.setAccessible(true);

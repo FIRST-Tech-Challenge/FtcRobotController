@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PIDController {
     private final ElapsedTime timer;
-    public boolean resetIntegralOnSetPointChange = false;
+    private final boolean integralResetEnabled;
     private double kP;
     private double kI;
     private double kD;
@@ -15,16 +15,25 @@ public class PIDController {
     private double maxIntegralErr = Double.POSITIVE_INFINITY;
     private double lastTimestamp = 0;
 
-    public PIDController(double kP, double kI, double kD) {
+    public PIDController(double kP, double kI, double kD, boolean enableIntegralReset) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+        integralResetEnabled = enableIntegralReset;
         timer = new ElapsedTime();
         timer.reset();
     }
 
+    public PIDController(double kP, double kI, double kD) {
+        this(kP, kI, kD, true);
+    }
+
+    public PIDController(PIDGains pidGains, boolean enableIntegralReset) {
+        this(pidGains.kP, pidGains.kI, pidGains.kD, enableIntegralReset);
+    }
+
     public PIDController(PIDGains pidGains) {
-        this(pidGains.kP, pidGains.kI, pidGains.kD);
+        this(pidGains, true);
     }
 
     public PIDController() {
@@ -88,11 +97,11 @@ public class PIDController {
         double p = kP * error;
         double d = kD * (measurement - lastMeasurement) / dt; // This does essentially the same thing as using de/dt. The only difference is that when the setpoint changes the output won't spike.
         lastMeasurement = measurement;
-        if (lastSetpoint != setpoint && resetIntegralOnSetPointChange) {
+        if (lastSetpoint != setpoint && integralResetEnabled) {
             i = 0;
         }
         lastSetpoint = setpoint;
-        if (Math.abs(error) > Math.abs(minIntegralErr) && Math.abs(error) < Math.abs(maxIntegralErr)) {
+        if (Math.abs(error) > minIntegralErr && Math.abs(error) < maxIntegralErr) {
             i += kI * error * dt;
             return new double[]{p, i, d};
         } else {

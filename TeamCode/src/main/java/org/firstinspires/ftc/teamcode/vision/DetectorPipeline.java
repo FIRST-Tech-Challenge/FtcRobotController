@@ -7,7 +7,7 @@ import org.opencv.imgproc.CLAHE;
 import org.opencv.imgproc.Imgproc;
 import org.rustlib.core.RobotBase;
 import org.rustlib.core.RobotBase.GameElementLocation;
-import org.rustlib.rustboard.RustboardServer;
+import org.rustlib.rustboard.Rustboard;
 import org.rustlib.vision.GameElementDetectorPipeline;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class DetectorPipeline extends GameElementDetectorPipeline {
             propLocation = RobotBase.GameElementLocation.RIGHT;
         }
 
-        RustboardServer.setNodeValue("prop x", propX);
+        Rustboard.updateTelemetryNode("prop x", propX);
         return frame;
     }
 

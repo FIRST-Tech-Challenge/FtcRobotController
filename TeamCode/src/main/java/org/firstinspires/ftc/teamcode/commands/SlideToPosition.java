@@ -16,9 +16,4 @@ public class SlideToPosition extends Command {
     public void initialize() {
         subsystem.setTargetPosition(position);
     }
-
-    @Override
-    public void execute() {
-
-    }
 }

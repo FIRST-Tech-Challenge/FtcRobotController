@@ -1,5 +1,7 @@
 package org.rustlib.drive;
 
+import androidx.annotation.Nullable;
+
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.geometry.Vector2d;
 
@@ -14,7 +16,7 @@ public class Waypoint extends Vector2d implements Supplier<Waypoint> {
 
     public final double maxVelocity;
 
-    public Waypoint(Vector2d vector, double followRadius, Rotation2d targetFollowRotation, Rotation2d targetEndRotation, double maxVelocity) {
+    public Waypoint(Vector2d vector, double followRadius, @Nullable Rotation2d targetFollowRotation, @Nullable Rotation2d targetEndRotation, double maxVelocity) {
         super(vector.x, vector.y);
         this.targetFollowRotation = targetFollowRotation;
         this.targetEndRotation = targetEndRotation;
@@ -26,15 +28,15 @@ public class Waypoint extends Vector2d implements Supplier<Waypoint> {
         this(vector, followRadius, null, null, Double.POSITIVE_INFINITY);
     }
 
-    public Waypoint(double x, double y, double followRadius, Rotation2d targetFollowRotation, Rotation2d targetEndRotation, double maxVelocity) {
+    public Waypoint(double x, double y, double followRadius, @Nullable Rotation2d targetFollowRotation, @Nullable Rotation2d targetEndRotation, double maxVelocity) {
         this(new Vector2d(x, y), followRadius, targetFollowRotation, targetEndRotation, maxVelocity);
     }
 
-    public Waypoint(double x, double y, double followRadius, Rotation2d targetEndRotation, double maxVelocity) {
+    public Waypoint(double x, double y, double followRadius, @Nullable Rotation2d targetEndRotation, double maxVelocity) {
         this(new Vector2d(x, y), followRadius, null, targetEndRotation, maxVelocity);
     }
 
-    public Waypoint(double x, double y, double followRadius, Rotation2d targetFollowRotation, Rotation2d targetEndRotation) {
+    public Waypoint(double x, double y, double followRadius, @Nullable Rotation2d targetFollowRotation, @Nullable Rotation2d targetEndRotation) {
         this(x, y, followRadius, targetFollowRotation, targetEndRotation, Double.POSITIVE_INFINITY);
     }
 
@@ -76,7 +78,7 @@ public class Waypoint extends Vector2d implements Supplier<Waypoint> {
         return this;
     }
 
-    public Waypoint loadWaypoint() { // TODO: write inner code
+    public Waypoint load() { // TODO: write inner code
         return null;
     }
 }

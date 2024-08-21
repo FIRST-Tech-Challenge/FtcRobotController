@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.rustlib.commandsystem.Subsystem;
-import org.rustlib.rustboard.RustboardServer;
+import org.rustlib.rustboard.Rustboard;
 
 public class DroneShooter extends Subsystem {
     public final Servo angleAdjuster;
@@ -16,19 +16,19 @@ public class DroneShooter extends Subsystem {
     }
 
     public void shootAngle() {
-        angleAdjuster.setPosition(RustboardServer.getDoubleValue("shoot angle", 0.38));
+        angleAdjuster.setPosition(Rustboard.getDouble("shoot angle", 0.38));
     }
 
     public void storeAngle() {
-        angleAdjuster.setPosition(RustboardServer.getDoubleValue("store angle", 0.3));
+        angleAdjuster.setPosition(Rustboard.getDouble("store angle", 0.3));
     }
 
     public void releaseAngle() {
-        release.setPosition(RustboardServer.getRustboardLayout("dashboard_0").getDoubleValue("release angle", -0.4));
+        release.setPosition(Rustboard.getDouble("release angle", -0.4));
     }
 
     public void stopAngle() {
-        release.setPosition(RustboardServer.getDoubleValue("stop angle", 0.0));
+        release.setPosition(Rustboard.getDouble("stop angle", 0.0));
     }
 
 }

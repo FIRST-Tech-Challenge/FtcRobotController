@@ -1,9 +1,10 @@
 package org.rustlib.commandsystem;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class Subsystem {
-    ArrayList<Command> requirements = new ArrayList<>();
+    Set<Command> requirements = new HashSet<>();
     Command defaultCommand = null;
 
     public Subsystem() {

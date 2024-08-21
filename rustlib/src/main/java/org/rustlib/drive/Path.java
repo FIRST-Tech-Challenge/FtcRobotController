@@ -2,12 +2,14 @@ package org.rustlib.drive;
 
 import com.google.gson.JsonParseException;
 
-import org.rustlib.config.Loader;
 import org.rustlib.geometry.Rotation2d;
 import org.rustlib.rustboard.RustboardServer;
+import org.rustlib.utils.FileUtils;
 import org.rustlib.utils.Future;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import javax.json.JsonArray;
@@ -19,9 +21,7 @@ public class Path implements Supplier<Path> {
 
     public Path(double timeout, Supplier<Waypoint>... waypoints) {
         this.waypoints = new ArrayList<>();
-        for (Supplier<Waypoint> waypoint : waypoints) {
-            this.waypoints.add(waypoint);
-        }
+        this.waypoints.addAll(Arrays.asList(waypoints));
         this.timeout = timeout;
     }
 
@@ -56,11 +56,11 @@ public class Path implements Supplier<Path> {
         }
     }
 
-    public static Path loadPath(String fileName) {
-        fileName = fileName.replace(" ", "_");
+    public static Path load(String fileName) {
+        fileName = fileName.replace(" ", "_") + ".json";
         Builder pathBuilder = Path.getBuilder();
         try {
-            JsonObject path = Loader.loadJsonObject(fileName);
+            JsonObject path = FileUtils.loadJsonObject(fileName);
             double timeout = parseTimeout(path.getString("timeout"));
             JsonArray array = path.getJsonArray("points");
             for (int i = 0; i < array.size(); i++) {
@@ -80,9 +80,8 @@ public class Path implements Supplier<Path> {
 
                 pathBuilder.addWaypoint(new Waypoint(x, y, followRadius, targetFollowRotation, targetEndRotation, maxVelocity));
             }
-            Path loaded = pathBuilder.setTimeout(timeout).build();
-            return loaded;
-        } catch (JsonParseException e) {
+            return pathBuilder.setTimeout(timeout).build();
+        } catch (IOException | JsonParseException e) {
             RustboardServer.log(e.toString());
         }
         return new Path();
@@ -94,7 +93,7 @@ public class Path implements Supplier<Path> {
         return generatedWaypoints.toArray(new Waypoint[]{});
     }
 
-    public Waypoint[][] generateLineSegments() {
+    Waypoint[][] generateLineSegments() {
         ArrayList<Waypoint[]> segments = new ArrayList<>();
         for (int i = 0; i < waypoints.size() - 1; i++) {
             segments.add(new Waypoint[]{waypoints.get(i).get(), waypoints.get(i + 1).get()});
