@@ -3,7 +3,7 @@ package org.rustlib.core;
 import com.qualcomm.ftccommon.FtcEventLoopBase;
 import com.qualcomm.ftccommon.FtcEventLoopHandler;
 import com.qualcomm.hardware.HardwareFactory;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.DefaultOpMode;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.rustlib.rustboard.RustboardServer;
@@ -19,8 +19,6 @@ public class RobotControllerActivity extends FtcRobotControllerActivity {
     private static WeakReference<RobotControllerActivity> activeInstance = new WeakReference<>(null);
     private static final Set<Runnable> onOpModeStartCallbacks = new HashSet<>();
     private static final Set<Runnable> onOpModeStopCallbacks = new HashSet<>();
-    private final Field isStartedField;
-    private final Field stopRequestedField;
     private static final Timer opModeEventChecker = new Timer();
     private static final int eventCheckPeriod = 10;
 
@@ -31,29 +29,17 @@ public class RobotControllerActivity extends FtcRobotControllerActivity {
     public RobotControllerActivity() {
         activeInstance = new WeakReference<>(this);
         RobotBase.mainActivity = new WeakReference<>(this);
-        try {
-            Class<?> opModeInternalClass = Class.forName("com.qualcomm.robotcore.eventloop.opmode.OpModeInternal");
-            isStartedField = opModeInternalClass.getDeclaredField("isStarted");
-            stopRequestedField = opModeInternalClass.getDeclaredField("stopRequested");
-            isStartedField.setAccessible(true);
-            stopRequestedField.setAccessible(true);
-        } catch (ClassNotFoundException | NoSuchFieldException e) {
-            throw new RuntimeException("Reflection failed: rustlib version incompatible with app version.");
-        }
     }
 
     boolean isOpModeRunning() {
         try {
-            OpMode activeOpMode = eventLoop.getOpModeManager().getActiveOpMode();
-            return (boolean) isStartedField.get(activeOpMode) && !(boolean) stopRequestedField.get(activeOpMode);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            return !(eventLoop.getOpModeManager().getActiveOpMode() instanceof DefaultOpMode); // The DefaultOpMode class runs whenever a user op mode isn't running to shut down the motors
         } catch (NullPointerException e) {
             return false;
         }
     }
 
-    public static boolean opModeRunning() {
+    static boolean opModeRunning() {
         if (activeInstance.get() == null) {
             return false;
         } else {

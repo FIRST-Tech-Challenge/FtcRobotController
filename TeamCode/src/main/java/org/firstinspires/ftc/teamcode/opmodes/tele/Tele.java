@@ -28,6 +28,8 @@ public class Tele extends Robot implements OpModeCore {
     public void opModeLoop() {
         telemetry.addData("heading", drive.getOdometry().getPosition().rotation.getAngleDegrees());
         Rustboard.updateInputNode("input_1", Time.getUTCTime());
+        telemetry.addData("Rustboard", Rustboard.getString("input_1"));
+        telemetry.addData("active rustboard uuid", Rustboard.getActiveRustboard().getUuid());
         //Rustboard.notifyActiveClient("op mode running", NoticeType.POSITIVE);
     }
 }

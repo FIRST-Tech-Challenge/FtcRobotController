@@ -1,14 +1,15 @@
 package org.rustlib.rustboard;
 
+import static org.rustlib.rustboard.MessageActions.CONSOLE_LOG;
+import static org.rustlib.rustboard.MessageActions.CONSOLE_WARN;
 import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
 import static org.rustlib.utils.FileUtils.clearDir;
 import static org.rustlib.utils.FileUtils.externalStorage;
 
-import com.qualcomm.robotcore.util.RobotLog;
-
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.rustlib.core.RobotBase;
 import org.rustlib.core.RobotControllerActivity;
 import org.rustlib.rustboard.Rustboard.RustboardException;
 import org.rustlib.utils.FileUtils;
@@ -32,7 +33,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-public class RustboardServer extends WebSocketServer {
+public class RustboardServer extends WebSocketServer { // TODO: public, but only for now
     public static final int port = 5801;
     static final File RUSTBOARD_STORAGE_DIR = new File(externalStorage, "Rustboard");
     private static final File RUSTBOARD_METADATA_FILE = new File(RUSTBOARD_STORAGE_DIR, "rustboard_metadata.json");
@@ -56,7 +57,7 @@ public class RustboardServer extends WebSocketServer {
     }
 
     private void autoSave() {
-        if (!RobotControllerActivity.opModeRunning()) {
+        if (!RobotBase.opModeRunning()) {
             saveLayouts();
             executorService.schedule(this::autoSave, rustboardAutoSavePeriod, TimeUnit.MILLISECONDS);
         }
@@ -90,19 +91,16 @@ public class RustboardServer extends WebSocketServer {
                 }
             }
         }
-        autoSave();
-        RobotControllerActivity.onOpModeStop(this::autoSave);
         executorService.scheduleAtFixedRate(clientUpdater, 0, 50, TimeUnit.MILLISECONDS);
         executorService.scheduleAtFixedRate(() -> {
             connections.forEach((connection) -> {
-                if (connection.isOpen())
-                    try {
-                        connection.send(pingClientMessage);
-                    } catch (RuntimeException e) {
-                        log(e);
-                    }
+                if (connection != null && connection.isOpen()) {
+                    connection.send(pingClientMessage);
+                }
             });
         }, pingClientPeriod, pingClientPeriod, TimeUnit.MILLISECONDS);
+        executorService.schedule(this::autoSave, 10000, TimeUnit.MILLISECONDS);
+        RobotControllerActivity.onOpModeStop(this::autoSave);
     }
 
     static void messageActiveRustboard(JsonObject json) {
@@ -135,7 +133,6 @@ public class RustboardServer extends WebSocketServer {
         if (instance == null) {
             try {
                 instance = new RustboardServer(port);
-                RobotLog.v("dashboard server started");
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
@@ -186,7 +183,7 @@ public class RustboardServer extends WebSocketServer {
         }
         for (Rustboard rustboard : loadedRustboards.values()) {
             if (rustboard.isConnected()) {
-                activeRustboard = rustboard;
+                activateRustboard(rustboard);
                 break;
             }
         }
@@ -220,12 +217,8 @@ public class RustboardServer extends WebSocketServer {
                     if (isActiveRustboard() && !rustboard.getUuid().equals(activeRustboard.getUuid())) {
                         rustboard.notifyClient("Rustboard queued because another Rustboard is connected", NoticeType.NEUTRAL, 5000);
                     } else {
-                        activeRustboard = rustboard;
-                        JsonObjectBuilder builder = Json.createObjectBuilder();
-                        builder.add("action", "set_active");
-                        rustboard.getConnection().send(builder.build().toString());
+                        activateRustboard(rustboard);
                     }
-
                     break;
                 case MessageActions.EXCEPTION:
                     throw new RustboardException(messageJson.getString("exception_message"));
@@ -242,20 +235,27 @@ public class RustboardServer extends WebSocketServer {
         }
     }
 
+    private void activateRustboard(Rustboard rustboard) {
+        activeRustboard = rustboard;
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder.add("action", "set_active");
+        rustboard.getConnection().send(builder.build().toString());
+    }
+
     public void saveLayouts() {
         FileUtils.makeDirIfMissing(OLD_STORED_RUSTBOARD_DIR);
         FileUtils.makeDirIfMissing(NEW_STORED_RUSTBOARD_DIR);
         JsonObjectBuilder metadataBuilder = Json.createObjectBuilder(rustboardMetaData);
-        JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder(rustboardMetaData.getJsonArray("rustboards"));
-        metadataBuilder.add("rustboards", rustboardArrayBuilder);
+        JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder();
         loadedRustboards.forEach((uuid, rustboard) -> {
                     JsonObjectBuilder rustboardDescriptor = Json.createObjectBuilder();
                     rustboardDescriptor.add("uuid", uuid);
                     rustboardDescriptor.add("active", rustboard == activeRustboard);
                     rustboardArrayBuilder.add(rustboardDescriptor);
-                    rustboard.save(new File(OLD_STORED_RUSTBOARD_DIR, uuid + ".json"));
+                    rustboard.save();
                 }
         );
+        metadataBuilder.add("rustboards", rustboardArrayBuilder);
         try {
             FileUtils.writeJson(RUSTBOARD_METADATA_FILE, metadataBuilder.build());
         } catch (IOException e) {
@@ -272,24 +272,30 @@ public class RustboardServer extends WebSocketServer {
         return connections;
     }
 
-    public void threadSafeBroadcast(String message) {
+    public void broadcastToClients(String message) {
         for (WebSocket connection : connections) {
-            connection.send(message);
+            if (connection.isOpen()) {
+                connection.send(message);
+            }
         }
     }
 
     public static void logToClientConsoles(String info) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("action", MessageActions.CONSOLE_LOG);
+        builder.add(MESSAGE_ACTION_KEY, CONSOLE_LOG);
         builder.add("info", info);
-        getInstance().threadSafeBroadcast(builder.build().toString());
+        getInstance().broadcastToClients(builder.build().toString());
+    }
+
+    public static void logToClientConsoles(Object info) {
+        logToClientConsoles(info.toString());
     }
 
     public static void warnClientConsoles(String info) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("action", MessageActions.CONSOLE_WARN);
-        builder.add("info", info);
-        getInstance().threadSafeBroadcast(builder.build().toString());
+        builder.add(MESSAGE_ACTION_KEY, CONSOLE_WARN);
+        builder.add("info", info); // TODO: add constant for info
+        getInstance().broadcastToClients(builder.build().toString());
     }
 
     public static void warnClientConsoles(Exception e) {

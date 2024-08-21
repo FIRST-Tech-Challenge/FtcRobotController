@@ -56,7 +56,7 @@ public class FileUtils {
     public static String readString(File file) throws IOException {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String currentLine = "";
+            String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 content.append(currentLine).append(System.lineSeparator());
             }
@@ -179,8 +179,7 @@ public class FileUtils {
     }
 
     public static void writeString(File output, String string) throws IOException {
-        try (FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath())) {
-            OutputStreamWriter writer = new OutputStreamWriter(fileOut);
+        try (FileOutputStream fileOut = new FileOutputStream(output.getAbsolutePath()); OutputStreamWriter writer = new OutputStreamWriter(fileOut)) {
             writer.write(string);
         }
     }

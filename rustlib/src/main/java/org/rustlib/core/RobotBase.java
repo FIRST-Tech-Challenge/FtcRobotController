@@ -112,6 +112,10 @@ public abstract class RobotBase extends OpMode {
         return opModeState;
     }
 
+    public static boolean opModeRunning() {
+        return RobotControllerActivity.opModeRunning();
+    }
+
     private static void setBulkCachingOn(LynxModule hub) {
         if (hub != null)
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

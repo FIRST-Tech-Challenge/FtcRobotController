@@ -2,6 +2,7 @@ package org.rustlib.rustboard;
 
 import static org.rustlib.rustboard.MessageActions.MESSAGE_ACTION_KEY;
 import static org.rustlib.rustboard.MessageActions.NOTIFY;
+import static org.rustlib.rustboard.NoticeType.NEUTRAL;
 import static org.rustlib.rustboard.NoticeType.NOTICE_DURATION_KEY;
 import static org.rustlib.rustboard.NoticeType.NOTICE_MESSAGE_KEY;
 import static org.rustlib.rustboard.NoticeType.NOTICE_TYPE_KEY;
@@ -44,6 +45,7 @@ import javax.json.JsonValue;
  */
 public class Rustboard {
     private static final int defaultNoticeDuration = 6000;
+    private static final NoticeType defaultNoticeType = NEUTRAL;
 
     interface SetUUID {
         Builder setUUID(String uuid);
@@ -107,7 +109,7 @@ public class Rustboard {
         this.uuid = builder.uuid;
     }
 
-    static Rustboard getActiveRustboard() {
+    public static Rustboard getActiveRustboard() {
         return RustboardServer.getInstance().getActiveRustboard();
     }
 
@@ -245,43 +247,55 @@ public class Rustboard {
                 .build();
     }
 
-    public void notifyClient(String notice, NoticeType type, int durationMilliseconds) {
+    public void notifyClient(Object notice, NoticeType type, int durationMilliseconds) {
         if (connection != null && connection.isOpen()) {
-            connection.send(createNoticeJson(notice, type, durationMilliseconds).toString());
+            connection.send(createNoticeJson(notice.toString(), type, durationMilliseconds).toString());
         }
     }
 
-    public static void notifyActiveClient(String notice, NoticeType type, int durationMilliseconds) {
-        if (RustboardServer.isActiveRustboard()) {
-            getActiveRustboard().notifyClient(notice, type, durationMilliseconds);
-        }
-    }
-
-    public static void notifyAllClients(String notice, NoticeType type, int durationMilliseconds) {
-        RustboardServer.getInstance().threadSafeBroadcast(createNoticeJson(notice, type, durationMilliseconds).toString());
-    }
-
-    public void notifyClient(String notice, NoticeType type) {
+    public void notifyClient(Object notice, NoticeType type) {
         notifyClient(notice, type, defaultNoticeDuration);
     }
 
-    public static void notifyActiveClient(String notice, NoticeType type) {
-        notifyActiveClient(notice, type, defaultNoticeDuration);
+    public void notifyClient(Object notice, int durationMilliseconds) {
+        notifyClient(notice, defaultNoticeType, durationMilliseconds);
     }
 
-    public static void notifyAllClients(String notice, NoticeType type) {
-        notifyAllClients(notice, type, defaultNoticeDuration);
-    }
-
-    public void notifyClient(String notice) {
+    public void notifyClient(Object notice) {
         notifyClient(notice, NoticeType.NEUTRAL);
     }
 
-    public static void notifyActiveClient(String notice) {
+    public static void notifyActiveClient(Object notice, NoticeType type, int durationMilliseconds) {
+        if (RustboardServer.isActiveRustboard()) {
+            getActiveRustboard().notifyClient(notice.toString(), type, durationMilliseconds);
+        }
+    }
+
+    public static void notifyActiveClient(Object notice, NoticeType type) {
+        notifyActiveClient(notice, type, defaultNoticeDuration);
+    }
+
+    public static void notifyActiveClient(Object notice, int durationMilliseconds) {
+        notifyActiveClient(notice, defaultNoticeType, durationMilliseconds);
+    }
+
+    public static void notifyActiveClient(Object notice) {
         notifyActiveClient(notice, NoticeType.NEUTRAL);
     }
 
-    public static void notifyAllClients(String notice) {
+    public static void notifyAllClients(Object notice, NoticeType type, int durationMilliseconds) {
+        RustboardServer.getInstance().broadcastToClients(createNoticeJson(notice.toString(), type, durationMilliseconds).toString());
+    }
+
+    public static void notifyAllClients(Object notice, NoticeType type) {
+        notifyAllClients(notice, type, defaultNoticeDuration);
+    }
+
+    public static void notifyAllClients(Object notice, int durationMilliseconds) {
+        notifyAllClients(notice, defaultNoticeType, durationMilliseconds);
+    }
+
+    public static void notifyAllClients(Object notice) {
         notifyAllClients(notice, NoticeType.NEUTRAL);
     }
 
@@ -440,7 +454,7 @@ public class Rustboard {
         return jsonBuilder.build();
     }
 
-    void save(File file) {
+    private void save(File file) {
         try {
             FileUtils.writeJson(file, getJson());
         } catch (IOException e) {
