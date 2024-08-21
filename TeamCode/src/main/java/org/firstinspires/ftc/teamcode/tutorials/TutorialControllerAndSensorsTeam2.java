@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name="Tutorial: Controller and Sensors Turns Motor")
+@TeleOp(name="Tutorial: Controller and Sensors Turns Motor 2")
 public class TutorialControllerAndSensorsTeam2 extends OpMode {
     DcMotor motor;
     TouchSensor samuel;
