@@ -1,11 +1,13 @@
 package com.millburnx.utils
 
 import com.millburnx.dashboard.ICanvas
+import java.awt.Color
+import java.awt.Graphics2D
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 
-class Bezier(private val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, private val p3: Vec2d) {
+class Bezier(val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, val p3: Vec2d) {
     companion object {
         /**
          * Generates a cubic bezier from a catmull-rom spline,
@@ -90,6 +92,22 @@ class Bezier(private val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, private val p3
             val point = at(t)
             canvas.strokeLine(lastPoint.x, lastPoint.y, point.x, point.y)
             lastPoint = point
+        }
+    }
+
+    fun g2dDraw(g2d: Graphics2D, ppi: Double, scale: Double, color: Color) {
+        g2d.color = color
+        val samples = 100
+        for (i in 1..samples) {
+            val t = i.toDouble() / samples
+            val point = at(t)
+            val lastPoint = at((i - 1).toDouble() / samples)
+            g2d.drawLine(
+                (lastPoint.x * ppi).toInt(),
+                (lastPoint.y * ppi).toInt(),
+                (point.x * ppi).toInt(),
+                (point.y * ppi).toInt()
+            )
         }
     }
 }

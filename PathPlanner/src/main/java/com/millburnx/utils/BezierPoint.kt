@@ -14,6 +14,10 @@ class BezierPoint(
     var split: Boolean = false
 ) {
     companion object {
+        val pointSize = 2.0
+        val outlineWidth = 0.2
+        val handleWidth = 0.2
+
         fun saveToTSV(file: File, points: List<BezierPoint>) {
             val points = points.map { listOf(it.prevHandle, it.anchor, it.nextHandle) }.flatten().filterNotNull()
             Vec2d.saveList(points, file)
@@ -29,6 +33,34 @@ class BezierPoint(
                 newPath.add(BezierPoint(anchor, prevHandle, nextHandle, true))
             }
             return newPath
+        }
+
+        /**
+         * Return the closest point to the click point within the threshold
+         * @param points The list of points to search
+         * @param clickPoint The clickPoint
+         * @param filter The list of point types to search for
+         * @param thresholds A pair containing the anchor and handle thresholds
+         */
+        fun selectedPoint(
+            points: List<BezierPoint>,
+            clickPoint: Vec2d,
+            filter: List<PointType>,
+            thresholds: Pair<Double, Double>
+        ): Pair<BezierPoint, PointType>? {
+            for (bezierPoint in points) {
+                for (type in filter) {
+                    val threshold = when (type) {
+                        PointType.ANCHOR -> thresholds.first
+                        else -> thresholds.second
+                    } + pointSize / 2 + outlineWidth
+                    val point = bezierPoint.getType(type) ?: continue
+                    if (point.distanceTo(clickPoint) < threshold) {
+                        return Pair(bezierPoint, type)
+                    }
+                }
+            }
+            return null
         }
     }
 
@@ -62,10 +94,19 @@ class BezierPoint(
         }
     }
 
+    fun updateType(pointType: PointType, value: Vec2d) {
+        if (pointType == PointType.ANCHOR) {
+            val diff = value - anchor
+            prevHandle = prevHandle?.plus(diff)
+            nextHandle = nextHandle?.plus(diff)
+            return setType(pointType, value)
+        }
+        updateHandles(pointType, value)
+    }
+
     fun updateHandles(type: PointType, newPoint: Vec2d) {
         if (type == PointType.ANCHOR) {
-            // it's called updateHandles and not updatePoints/updateAnchor for a reason
-            throw IllegalArgumentException("Do not call updateHandle with an anchor point")
+            throw IllegalArgumentException("Do not call updateHandle with an anchor point, use updateType instead")
         }
         modified = true
         if (!split && !mirrored) {
@@ -93,9 +134,9 @@ class BezierPoint(
 
     fun draw(g2d: Graphics2D, ppi: Double, scale: Double, prevColor: Color, nextColor: Color) {
         // draw the previous handle
-        val size = 2.0 * scale
-        val outlineWidth = 0.2 * scale
-        val handleWidth = 0.2 * scale
+        val point = BezierPoint.pointSize * scale
+        val outlineWidth = BezierPoint.outlineWidth * scale
+        val handleWidth = BezierPoint.handleWidth * scale
         for (type in listOf(PointType.PREV_HANDLE, PointType.NEXT_HANDLE)) {
             val handle = getType(type) ?: continue
             val color = when (type) {
@@ -108,17 +149,17 @@ class BezierPoint(
             Utils.drawLine(g2d, ppi, anchor, handle)
             g2d.color = g2d.background
             g2d.stroke = BasicStroke((outlineWidth * ppi).toFloat())
-            Utils.drawPoint(g2d, ppi, handle, size)
+            Utils.drawPoint(g2d, ppi, handle, point)
             g2d.color = color
-            Utils.drawPoint(g2d, ppi, handle, size, false)
+            Utils.drawPoint(g2d, ppi, handle, point, false)
         }
 
         // draw anchor point
         g2d.color = g2d.background
-        Utils.drawPoint(g2d, ppi, anchor, size)
+        Utils.drawPoint(g2d, ppi, anchor, point)
         g2d.color = Color.WHITE
         g2d.stroke = BasicStroke((outlineWidth * ppi).toFloat())
-        Utils.drawPoint(g2d, ppi, anchor, size, false)
+        Utils.drawPoint(g2d, ppi, anchor, point, false)
     }
 
     fun copy(): BezierPoint {

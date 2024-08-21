@@ -31,7 +31,7 @@ fun main(args: Array<String>) {
             pathPlanner.ppi = size / (144.0 / scale) / scale
             pathPlanner.size = Dimension(size, size)
             pathPlanner.location = ((Vec2d(width, height) - Vec2d(size, size)) / 2.0).awt()
-            pathPlanner.updateButtonBounds()
+//            pathPlanner.updateButtonBounds()
             println("X: ${pathPlanner.location.x}, Y: ${pathPlanner.location.y}")
             println("PPI: ${pathPlanner.ppi}")
         }

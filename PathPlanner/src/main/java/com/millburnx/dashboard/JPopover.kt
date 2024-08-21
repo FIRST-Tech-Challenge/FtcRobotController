@@ -41,7 +41,6 @@ class JNumber(
     val model = SpinnerNumberModel(value, min, max, step)
     val spinner = object : JSpinner(model) {
         init {
-            println(layout)
             border = EmptyBorder(padding.y.toInt(), padding.x.toInt(), padding.y.toInt(), padding.x.toInt())
             font = editorFont
         }
@@ -217,6 +216,12 @@ class JPopover(
                 println("Popover clicked") // block bubbling
             }
         })
+    }
+
+    fun closePopover() {
+        parentPanel.remove(this)
+        parentPanel.revalidate()
+        parentPanel.repaint()
     }
 
     fun setPosition(origin: Vec2d) {
