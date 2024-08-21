@@ -162,8 +162,31 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     }
 
     fun addPopover(position: Vec2d, target: Pair<BezierPoint, BezierPoint.PointType>) {
+        var copy = target.first.copy()
         currentPopoverRef = JPopover(this, position, target.first, target.second, ppi, scale) {
-            target.first.updateType(target.second, it)
+//            target.first.updateType(target.second, it)
+            val changes = mutableListOf<Change>()
+            val diff = it - target.first.getType(target.second)!!
+            if (diff.x != 0.0 || diff.y != 0.0) {
+                val change = PointTranslation(target.first, target.second, diff)
+                changes.add(change)
+            }
+            val modifiedChanged = target.first.modified != copy.modified
+            val mirroredChanged = target.first.mirrored != copy.mirrored
+            val splitChanged = target.first.split != copy.split
+            if (modifiedChanged || mirroredChanged || splitChanged) {
+                val modification = PointModification(
+                    target.first,
+                    if (modifiedChanged) target.first.modified else null,
+                    if (mirroredChanged) target.first.mirrored else null,
+                    if (splitChanged) target.first.split else null
+                )
+                changes.add(modification)
+            }
+            if (changes.isEmpty()) return@JPopover
+            addChanges(changes)
+            changes.forEach { it.apply() }
+            copy = target.first.copy()
             updateCatmullRom()
             repaint()
         }

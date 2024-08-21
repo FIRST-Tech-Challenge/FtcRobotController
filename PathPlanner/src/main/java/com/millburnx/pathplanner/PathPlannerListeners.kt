@@ -67,7 +67,9 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
                     }
                     val targetPoint = BezierPoint.selectedPoint(
                         pathPlanner.bezierPoints, fieldPoint, listOf(
-                            BezierPoint.PointType.ANCHOR
+                            BezierPoint.PointType.ANCHOR,
+                            BezierPoint.PointType.PREV_HANDLE,
+                            BezierPoint.PointType.NEXT_HANDLE
                         ), thresholds
                     )
                     if (targetPoint != null) {
