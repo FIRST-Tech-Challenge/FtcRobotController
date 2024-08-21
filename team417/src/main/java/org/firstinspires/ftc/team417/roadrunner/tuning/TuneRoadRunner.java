@@ -715,21 +715,21 @@ public class TuneRoadRunner extends LinearOpMode {
     }
 
     // Structure to describe the center of rotation for the robot:
-    static class CenterOfRotation {
+    static class Circle {
         double x;
         double y;
-        double leastSquaresRadius;
+        double radius;
 
-        public CenterOfRotation(double x, double y, double leastSquaresRadius) {
+        public Circle(double x, double y, double radius) {
             this.x = x;
             this.y = y;
-            this.leastSquaresRadius = leastSquaresRadius;
+            this.radius = radius;
         }
     }
 
     // Perform a least-squares fit of an array of points to a circle without using matrices,
     // courtesy of Copilot:
-    static void fitCircle(CenterOfRotation center, List<Point> points, double centerX, double centerY) {
+    static Circle fitCircle(List<Point> points, double centerX, double centerY) {
         double radius = 0.0;
 
         // Iteratively refine the center and radius
@@ -751,14 +751,10 @@ public class TuneRoadRunner extends LinearOpMode {
             centerY += sumY / points.size();
             radius = sumR / points.size();
         }
-
-        // Assign the results:
-        center.x = centerX;
-        center.y = centerY;
-        center.leastSquaresRadius = radius;
+        return new Circle(centerX, centerY, radius);
     }
 
-    // Persisted state for initiateSparkfunRotation and updateSparkfunRotation:
+    // Persisted state for initiateSparkFunRotation and updateSparkFunRotation:
     double previousSparkFunHeading = 0;
     double accumulatedSparkFunRotation = 0;
 
@@ -788,24 +784,40 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         return accumulatedSparkFunRotation;
     }
 
+    void drawSpinPoints(ArrayList<Point> points, Circle circle) {
+        // Draw the circle on FTC Dashboard:
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas canvas = packet.fieldOverlay();
+        double[] xPoints = new double[points.size()];
+        double[] yPoints = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            xPoints[i] = points.get(i).x;
+            yPoints[i] = points.get(i).y;
+        }
+        canvas.setStroke("#00ff00");
+        canvas.strokePolyline(xPoints, yPoints);
+
+        if (circle != null) {
+            canvas.setStrokeWidth(1);
+            canvas.setStroke("#ff0000");
+            canvas.strokeCircle(circle.x, circle.y, circle.radius);
+        }
+
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+    }
+
     // This is the robot spin test for calibrating the optical sensor angular scale and offset:
     @SuppressLint("DefaultLocale")
     void spinCalibrator() {
         assert(drive.opticalTracker != null);
 
-        // Number of revolutions to use for calculating the positional offset of the sensor
-        // from the robot's center of rotation:
-        final double OFFSET_REVOLUTION_COUNT = 2.0;
-
-        // Number of revolutions to use for calculating the angular scalar (can't be less than
-        // OFFSET_REVOLUTION_COUNT):
-        final double SCALAR_REVOLUTION_COUNT = 2.0;
+        // Number of revolutions to use:
+        final double REVOLUTION_COUNT = 5.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
-        String results;
 
         if (!ui.drivePrompt("In this test, you'll position the robot against a wall, then drive "
-                + String.format("it out so that the robot can rotate in place %.1f times, then position ", SCALAR_REVOLUTION_COUNT)
+                + String.format("it out so that the robot can rotate in place %.1f times, then position ", REVOLUTION_COUNT)
                 + "the robot against the wall again."
                 + "\n\nFirst, carefully drive the robot to a wall and align it so that "
                 + "it's facing forward. This marks the start orientation for calibration."
@@ -821,17 +833,14 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                     + "\n\nPress A when ready for the robot to rotate, B to cancel"))
             return; // ====>
 
-        ui.message(String.format("Rotating %.1f times...", OFFSET_REVOLUTION_COUNT));
+        ui.message(String.format("Rotating %.1f times...", REVOLUTION_COUNT));
 
         ArrayList<Point> points = new ArrayList<>();
 
         double startRotation = getSparkFunRotation(); // Query rotation before starting ramp-up
         rampMotorsSpin(drive, true);
 
-        final double offsetRotationTarget = OFFSET_REVOLUTION_COUNT * 2 * Math.PI;
-        final double scalarRotationTarget = SCALAR_REVOLUTION_COUNT * 2 * Math.PI;
-        final double terminationRotationTarget = Math.max(offsetRotationTarget, scalarRotationTarget);
-
+        final double terminationRotationTarget = REVOLUTION_COUNT * 2 * Math.PI;
         double farthestDistance = 0;
         Point farthestPoint = new Point(0, 0);
 
@@ -849,16 +858,17 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                 int adjustmentCount = points.size() - adjustmentIndex;
                 if (adjustmentCount > 0) {
                     Point change = rawPosition.subtract(originPosition);
+                    out.printf("Circle close off by (%.2f, %.2f)\n", change.x, change.y);
 
-                    // Assume an even distribution and pull in every point:
-                    for (int i = 0; i < adjustmentCount; i++) {
-                        double fraction = (double) i / adjustmentCount;
-                        Point point = points.get(i);
-                        points.set(i, point.subtract(change.multiply(fraction)));
-                    }
-
-                    // Update the adjustment index to prepare for the next circle:
-                    adjustmentIndex = points.size();
+//                    // Assume an even distribution and pull in every point:
+//                    for (int i = 0; i < adjustmentCount; i++) {
+//                        double fraction = (double) i / adjustmentCount;
+//                        Point point = points.get(i);
+//                        points.set(i, point.subtract(change.multiply(fraction)));
+//                    }
+//
+//                    // Update the adjustment index to prepare for the next circle:
+//                    adjustmentIndex = points.size();
                 }
 
                 // Remember the raw position as the start of the new circle:
@@ -871,7 +881,7 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                 break; // ====>
 
             // Check if we need to still sample points:
-            if (rotationAmount < offsetRotationTarget) {
+            if (rotationAmount < terminationRotationTarget) {
                 Point currentPoint = rawPosition.subtract(originPosition);
                 points.add(currentPoint);
                 double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
@@ -880,18 +890,7 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                     farthestPoint = currentPoint;
                 }
 
-                // Draw the circle on FTC Dashboard:
-                TelemetryPacket packet = new TelemetryPacket();
-                Canvas canvas = packet.fieldOverlay();
-                double[] xPoints = new double[points.size()];
-                double[] yPoints = new double[points.size()];
-                for (int i = 0; i < points.size(); i++) {
-                    xPoints[i] = points.get(i).x;
-                    yPoints[i] = points.get(i).y;
-                }
-                canvas.setStroke("#00ff00");
-                canvas.strokePolyline(xPoints, yPoints);
-                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+                drawSpinPoints(points, null);
             }
 
             // Update the telemetry:
@@ -914,14 +913,17 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                     + "\n\nDrive the robot to its wall position, press A when done, B to cancel"))
             return; // ====>
 
-        CenterOfRotation center = new CenterOfRotation(0, 0, 0); // @@@ Change back?
-        fitCircle(center, points, farthestPoint.x / 2, farthestPoint.y / 2);
+        Circle circle = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
 
-        processSpinResults(center, getSparkFunRotation());
+        // Draw results with the fitted circle:
+        drawSpinPoints(points, circle);
+
+        double totalMeasuredRotation = getSparkFunRotation() - startRotation;
+        processSpinResults(circle, totalMeasuredRotation);
     }
 
     // Process the spin results:
-    void processSpinResults(CenterOfRotation center, double totalMeasuredRotation) {
+    void processSpinResults(Circle center, double totalMeasuredRotation) {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
@@ -932,7 +934,7 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         Point offset = new Point(center.x, center.y).rotate(-drive.opticalSettings.offset.h);
 
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
-        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", offset.x, offset.y, center.leastSquaresRadius);
+        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", offset.x, offset.y, center.radius);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += "\n";
 
