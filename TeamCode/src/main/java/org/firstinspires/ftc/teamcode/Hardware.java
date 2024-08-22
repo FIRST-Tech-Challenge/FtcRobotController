@@ -28,6 +28,11 @@ public class Hardware {
 
 
     public Hardware(HardwareMap map) {
+        resetHardwareMap(map);
+
+    }
+    /** for those times when u update the hardware map in the middle of running and require that *fresh* information. */
+    public void resetHardwareMap(HardwareMap map) {
         this.hardwareMap = map;
 
         hardwareMap.get(DcMotorEx.class, "topLeft");
@@ -45,6 +50,5 @@ public class Hardware {
         encoderBottom = new OverflowEncoder(new RawEncoder(motorTL));
         encoderLeft = new OverflowEncoder(new RawEncoder(motorTR));
         encoderRight = new OverflowEncoder(new RawEncoder(motorBL));
-
     }
 }
