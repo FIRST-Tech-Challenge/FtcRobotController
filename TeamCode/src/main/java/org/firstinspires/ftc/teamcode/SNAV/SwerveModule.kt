@@ -39,10 +39,6 @@ class SwerveModule(val top: DcMotor, val bottom: DcMotor, val distanceFromCenter
         return speed/maxSpeed
     }
 
-    fun setTargetAngle(angle: Angle) {
-        targetAngle = angle
-    }
-
     // Get the discrepancy between the two encoders
     fun getAngle(): Angle {
         return Angle((top.currentPosition - bottom.currentPosition) / ticksPerRevolution.toDouble())
