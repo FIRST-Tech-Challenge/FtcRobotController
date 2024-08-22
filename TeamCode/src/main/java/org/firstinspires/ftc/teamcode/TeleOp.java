@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -12,6 +13,7 @@ public class TeleOp extends OpMode {
     private DcMotor backLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
+    private DcMotorEx test;
     private IMU gyro;
 
     double leftOffset, rightOffset, auxOffset;
@@ -28,8 +30,11 @@ public class TeleOp extends OpMode {
     double encoderDistance = 8.5;
     double auxEncoderOffset = -2.48;
 
+    double leftPos, rightPos, auxPos, deltaLeft, deltaHeading, deltaX, deltaY;
+
     @Override
     public void init(){
+
         //Drive Motor Setup - Used the name from FeverDream
         frontLeft = hardwareMap.dcMotor.get("FrontLeftDrive");
         backLeft = hardwareMap.dcMotor.get("BackLeftDrive");
@@ -74,21 +79,12 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-        double leftPos = leftEncoder.getCurrentPosition() / TICKS_PER_INCH;
-        double rightPos = rightEncoder.getCurrentPosition() / TICKS_PER_INCH;
-        double auxPos = auxEncoder.getCurrentPosition() / TICKS_PER_INCH;
+        leftPos = leftEncoder.getCurrentPosition() / TICKS_PER_INCH;
+        rightPos = rightEncoder.getCurrentPosition() / TICKS_PER_INCH;
+        auxPos = auxEncoder.getCurrentPosition() / TICKS_PER_INCH;
 
         if (gamepad1.a) {
-            //if in imu mode
-            gyro.resetYaw();
-
-            //If in DeadWheel mode
-            leftOffset = leftEncoder.getCurrentPosition();
-            rightOffset = rightEncoder.getCurrentPosition();
-
-            lastLeftPos = 0;
-            lastRightPos = 0;
-            lastAuxPos = 0;
+            resetEncoders();
         }
 
         // Offsets the encoders position to zero when zero function is updated.
@@ -117,11 +113,11 @@ public class TeleOp extends OpMode {
         lastAuxPos = auxPos;
 
         //Find the heading in radians - 5225 Position Docs Equations
-        double deltaHeading = (deltaLeft - deltaRight) / encoderDistance;
+        deltaHeading = (deltaLeft - deltaRight) / encoderDistance;
         heading += deltaHeading;
 
-        double deltaX = deltaAux - (auxEncoderOffset * deltaHeading); ///changed to a negative, as show in GM0
-        double deltaY = (deltaLeft + deltaRight) / 2;
+        deltaX = deltaAux - (auxEncoderOffset * deltaHeading); ///changed to a negative, as show in GM0
+        deltaY = (deltaLeft + deltaRight) / 2;
 
         xCoord += deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
         yCoord += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
@@ -157,15 +153,31 @@ public class TeleOp extends OpMode {
         telemetry.addData("Enc Right", rightEncoder.getCurrentPosition());
         telemetry.addData("Enc Aux  ", auxEncoder.getCurrentPosition());
 
+    }
+
+    public void debugData(){
         ///// Debug /////
 
-        //telemetry.addData("leftPos", leftPos);
-        //telemetry.addData("deltaLeft", deltaLeft);
-        //telemetry.addData("lastleftPos", lastLeftPos);
-        //telemetry.addData("dHeading", deltaHeading);
-        //telemetry.addData("heading", heading);
-        //telemetry.addData("deltaX", deltaX);
-        //telemetry.addData("deltaY", deltaY);
-        //double robotHeading = gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        telemetry.addData("leftPos", leftPos);
+        telemetry.addData("deltaLeft", deltaLeft);
+        telemetry.addData("lastleftPos", lastLeftPos);
+        telemetry.addData("dHeading", deltaHeading);
+        telemetry.addData("heading", heading);
+        telemetry.addData("deltaX", deltaX);
+        telemetry.addData("deltaY", deltaY);
+    }
+
+    public void resetEncoders(){
+        //if in imu mode
+        gyro.resetYaw();
+
+        //If in DeadWheel mode
+        leftOffset = leftEncoder.getCurrentPosition();
+        rightOffset = rightEncoder.getCurrentPosition();
+        auxOffset = auxEncoder.getCurrentPosition();
+
+        lastLeftPos = 0;
+        lastRightPos = 0;
+        lastAuxPos = 0;
     }
 }
