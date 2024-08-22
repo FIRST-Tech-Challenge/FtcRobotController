@@ -183,8 +183,8 @@ public final class MecanumDrive {
 
     public LazyImu lazyImu;
 
-    public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
-    public OTOSSettings opticalSettings = null;
+    static public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
+    static public OTOSSettings opticalSettings = null;
 
     public Localizer localizer;
     public Pose2d pose;
@@ -305,9 +305,6 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        // Initialize the optical tracking sensor if we have one:
-        initializeOpticalTracker();
-
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
@@ -316,13 +313,24 @@ public final class MecanumDrive {
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         if (isDevBot) {
-            opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
-            opticalSettings = new OTOSSettings(
-                    6.0, // xInches
-                    -3.5,       // yInches
-                    -87.139,    // orientationDegrees
-                    1.000,      // linearScalar
-                    1.001);     // angularScalar
+            System.out.printf("*** HardwareMap: ");
+            System.out.print(hardwareMap);
+            System.out.print("\n");
+            if (opticalTracker == null) {
+                System.out.printf("*** Creating the SparkFun object!\n");
+
+                opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
+                opticalSettings = new OTOSSettings(
+                        6.0, // xInches
+                        -3.5,       // yInches
+                        -87.139,    // orientationDegrees
+                        1.000,      // linearScalar
+                        1.001);     // angularScalar
+                // Initialize the optical tracking sensor if we have one:
+                initializeOpticalTracker();
+            } else {
+                System.out.printf("*** Reusing the old object!\n");
+            }
 
             leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
             leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");

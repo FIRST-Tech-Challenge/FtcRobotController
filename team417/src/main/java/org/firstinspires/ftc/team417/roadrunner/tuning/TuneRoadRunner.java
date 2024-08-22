@@ -696,29 +696,28 @@ public class TuneRoadRunner extends LinearOpMode {
     // Ramp the motors up or down to or from the target spin speed. Return the amount of
     // rotation
     void rampMotorsSpin(MecanumDrive drive, boolean up) {
-// @@@
-//        final double RAMP_TIME = 0.5; // Seconds
-//        final double SPIN_SPEED = 0.5;
-//
-//        double startTime = time();
-//        while (opModeIsActive()) {
-//            double duration = Math.min(time() - startTime, RAMP_TIME);
-//            double fraction = (up) ? (duration / RAMP_TIME) : (1 - duration / RAMP_TIME);
-//            drive.rightFront.setPower(fraction * SPIN_SPEED);
-//            drive.rightBack.setPower(fraction * SPIN_SPEED);
-//            drive.leftFront.setPower(-fraction * SPIN_SPEED);
-//            drive.leftBack.setPower(-fraction * SPIN_SPEED);
-//
-//            updateRotation();
-//            if (duration == RAMP_TIME)
-//                break; // ===>
-//        }
+        final double RAMP_TIME = 0.5; // Seconds
+        final double SPIN_SPEED = 0.5;
 
-        double speed = (up) ? 0.3 : 0.0;
-        drive.rightFront.setPower(speed);
-        drive.rightBack.setPower(speed);
-        drive.leftFront.setPower(-speed);
-        drive.leftBack.setPower(-speed);
+        double startTime = time();
+        while (opModeIsActive()) {
+            double duration = Math.min(time() - startTime, RAMP_TIME);
+            double fraction = (up) ? (duration / RAMP_TIME) : (1 - duration / RAMP_TIME);
+            drive.rightFront.setPower(fraction * SPIN_SPEED);
+            drive.rightBack.setPower(fraction * SPIN_SPEED);
+            drive.leftFront.setPower(-fraction * SPIN_SPEED);
+            drive.leftBack.setPower(-fraction * SPIN_SPEED);
+
+            updateRotation();
+            if (duration == RAMP_TIME)
+                break; // ===>
+        }
+// @@@
+//        double speed = (up) ? 0.3 : 0.0;
+//        drive.rightFront.setPower(speed);
+//        drive.rightBack.setPower(speed);
+//        drive.leftFront.setPower(-speed);
+//        drive.leftBack.setPower(-speed);
     }
 
     // Structure to describe the center of rotation for the robot:
@@ -818,9 +817,13 @@ public class TuneRoadRunner extends LinearOpMode {
         assert(drive.opticalTracker != null);
 
         // Number of revolutions to use:
-        final double REVOLUTION_COUNT = 1.0;
+        final double REVOLUTION_COUNT = 10.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
+
+        // @@@ Clean this up!
+        drive.opticalTracker.setOffset(new Pose2D(0, 0, 0));
+        drive.opticalTracker.setAngularScalar(0);
 
         if (!ui.drivePrompt("In this test, you'll position the robot against a wall, then drive "
                 + String.format("it out so that the robot can rotate in place %.1f times, then position ", REVOLUTION_COUNT)
@@ -830,7 +833,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 + "\n\nDrive the robot to the start position, press A when ready, B to cancel"))
             return; // ====>
 
-        // Initialize the heading:@@@
+        // Initialize the heading:
         drive.setPose(new Pose2d(0, 0, 0));
 
         // Let the user position the robot:
@@ -875,7 +878,7 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
             if (offsetRotation >= terminationRotation)
                 break; // ====>
 
-            Point currentPoint = rawPosition.subtract(originPosition).rotate(0); // @@@
+            Point currentPoint = rawPosition.subtract(originPosition).rotate(-offsetStartHeading);
             points.add(currentPoint);
             double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
             if (distanceFromOrigin > farthestDistance) {
