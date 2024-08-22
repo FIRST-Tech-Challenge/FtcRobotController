@@ -380,8 +380,10 @@ public class TuneRoadRunner extends LinearOpMode {
                     output += header;
                 }
                 for (int i = 0; i < numStrings; i++) {
-                    String cursor = (i == current) ? "\u27a4" : " ";
-                    output += cursor + menuStrings.getString(i) + "\n";
+                    if (i == current)
+                        output += "<span style='background: #88285a'>\u27a4" + menuStrings.getString(i) + "</span>\n";
+                    else
+                        output += menuStrings.getString(i) + "\n";
                 }
                 telemetry.addLine(output);
                 telemetry.update();
