@@ -1,0 +1,70 @@
+name: DepthAI Core HIL Testing
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+# Only allow latest run on same branch to be tested
+concurrency:
+  group: ci-tests-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+
+  # Testing
+  test:
+    strategy:
+      matrix:
+        os: ['windows', 'macos', 'linux']
+        arch: ['x64']
+        flavor: ['vanilla', 'asan-ubsan', 'tsan']
+        exclude:
+          - os: 'windows'
+            arch: 'x64'
+            flavor: 'tsan'
+      fail-fast: false
+    runs-on: ['self-hosted', 'hil-test', '${{ matrix.os }}', '${{ matrix.arch }}']
+
+    steps:
+    - name: Cache .hunter folder
+      uses: actions/cache@v3
+      with:
+        path: $HOME/.hun2_${{ matrix.flavor }}
+        key: hunter-${{ matrix.os }}-${{ matrix.cmake }}
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    - name: Specify toolchain path
+      if: matrix.flavor == 'vanilla'
+      run: echo "CMAKE_TOOLCHAIN_PATH=" >> $GITHUB_ENV
+    - name: Specify toolchain path
+      if: matrix.flavor != 'vanilla'
+      run: echo "CMAKE_TOOLCHAIN_PATH=$PWD/cmake/toolchain/${{ matrix.flavor }}.cmake" >> $GITHUB_ENV
+
+    - name: Configure, Build and Test
+      if: matrix.os != 'linux'
+      run: |
+        cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -D HUNTER_ROOT=$HOME/.hun2_${{ matrix.flavor }} -D DEPTHAI_BUILD_EXAMPLES=ON -D DEPTHAI_BUILD_TESTS=ON -D DEPTHAI_TEST_EXAMPLES=ON
+        cmake --build build --parallel 4 --config Release
+        cd build
+        ctest -C Release --output-on-failure -L usb --no-tests=error --repeat until-pass:3
+
+    - name: Configure, Build and Test
+      if: matrix.os == 'linux'
+      run: |
+        export DISPLAY=:99
+        xdpyinfo -display $DISPLAY >/dev/null 2>&1 || (Xvfb $DISPLAY &)
+        cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -D HUNTER_ROOT=$HOME/.hun2_${{ matrix.flavor }} -D DEPTHAI_BUILD_EXAMPLES=ON -D DEPTHAI_BUILD_TESTS=ON -D DEPTHAI_TEST_EXAMPLES=ON
+        cmake --build build --parallel 4 --config Release
+        cd build
+        ctest -C Release --output-on-failure -L usb --no-tests=error --repeat until-pass:3

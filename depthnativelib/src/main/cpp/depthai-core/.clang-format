@@ -1,0 +1,14 @@
+BasedOnStyle: Google
+NamespaceIndentation: None
+BreakBeforeBinaryOperators: NonAssignment
+SpaceBeforeParens: Never
+IndentPPDirectives: BeforeHash
+AlignOperands: true
+DerivePointerAlignment: false
+PointerAlignment: Left
+BinPackArguments: false
+BinPackParameters: false
+AllowShortFunctionsOnASingleLine: Empty
+IndentWidth: 4
+ColumnLimit: 160
+AllowShortIfStatementsOnASingleLine: WithoutElse

@@ -1,0 +1,54 @@
+name: DepthAI Core HIL Stability
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+# Only allow latest run on same branch to be tested
+concurrency:
+  group: ci-stability-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+
+  # Testing
+  test:
+    runs-on: ['self-hosted', 'hil-stability', 'linux']
+    timeout-minutes: 1450 # 24h & 10minutes
+    steps:
+    - name: Cache .hunter folder
+      uses: actions/cache@v3
+      with:
+        path: $HOME/.hun_vanilla
+        key: hunter-linux-stability-vanilla
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    # TODO also modify above hunter key to 'asan'
+    # - name: Specify ASAN toolchain path
+    #   run: echo "CMAKE_TOOLCHAIN_PATH=$PWD/cmake/toolchain/asan.cmake" >> $GITHUB_ENV
+
+    # - name: Configure, Build and Test
+    #   run: |
+    #     cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -D HUNTER_ROOT=$HOME/.hun_vanilla -D DEPTHAI_BUILD_TESTS=ON
+    #     cmake --build build --parallel 8 --config Release --target stability_stress_test
+    #     cd build
+    #     ../ci/stability_stress_test_combined.sh
+
+    # Release build
+    - name: Configure, Build and Test
+      run: |
+        cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -D HUNTER_ROOT=$HOME/.hun_vanilla -D DEPTHAI_BUILD_TESTS=ON
+        cmake --build build --parallel 8 --config Release --target stability_stress_test
+        cd build
+        ../ci/stability_stress_test_combined.sh 86400

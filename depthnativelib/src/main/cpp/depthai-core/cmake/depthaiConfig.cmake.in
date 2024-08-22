@@ -1,0 +1,20 @@
+# Get whether library was build as shared or not
+set(DEPTHAI_SHARED_LIBS @BUILD_SHARED_LIBS@)
+
+# Get whether library was build with Backward or not
+set(DEPTHAI_ENABLE_BACKWARD @DEPTHAI_ENABLE_BACKWARD@)
+
+# Specify that this is config mode (Called by find_package)
+set(CONFIG_MODE TRUE)
+
+# Compute the installation prefix relative to this file.
+set(_IMPORT_PREFIX "@DEPTHAI_DEPENDENCIES_INSTALLATION_PATH_REL@")
+
+# Add dependencies file
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Dependencies.cmake")
+
+# Add the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_EXPORT_GROUP@.cmake")
+
+# Cleanup
+set(_IMPORT_PREFIX)

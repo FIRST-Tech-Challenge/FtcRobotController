@@ -1,0 +1,333 @@
+name: DepthAI Core CI/CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+      - gen2
+      - gen2_develop
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - develop
+      - gen2
+      - gen2_develop
+
+jobs:
+
+  style:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    - name: Install format dependencies
+      run: |
+        sudo apt-get install clang-format-10
+
+    - name: configure
+      run: cmake . -Bbuild -DDEPTHAI_CLANG_FORMAT=ON -DCLANG_FORMAT_BIN=clang-format-10
+
+    - name: check style
+      run: ci/check_format.sh build
+
+
+  tidy:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install clang-tidy-10
+
+    - name: configure
+      run: cmake . -Bbuild -DDEPTHAI_CLANG_TIDY=ON -DCLANG_TIDY_BIN=clang-tidy-10
+
+    - name: Run clang-tidy
+      run: cmake --build build --parallel 4
+
+
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        cmake: ['3.10.x', ''] # Older version (Ubuntu 18.04) and newest
+        exclude:
+          - os: windows-latest
+            cmake: '3.10.x'
+
+    steps:
+    - name: Cache .hunter folder
+      if: matrix.os != 'windows-latest'
+      uses: actions/cache@v3
+      with:
+        path: ~/.hunter/
+        key: hunter-${{ matrix.os }}-${{ matrix.cmake }}
+    - name: Cache .hunter folder
+      if: matrix.os == 'windows-latest'
+      uses: actions/cache@v3
+      with:
+        path: C:/.hunter/
+        key: hunter-${{ matrix.os }}-${{ matrix.cmake }}
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.13
+      with:
+        cmake-version: ${{ matrix.cmake }}
+
+    - name: Install dependencies
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install opencv
+
+    - name: Install dependencies
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install libopencv-dev
+
+    - name: Install dependencies
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install opencv
+        echo "OpenCV_DIR=C:\tools\opencv\build" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+    - name: Build (old CMake, gcc/Clang)
+      if: matrix.cmake == '3.10.x' && matrix.os != 'windows-latest'
+      run: |
+        cmake -H. -Bbuild -D'CMAKE_BUILD_TYPE=Release' -D'HUNTER_CONFIGURATION_TYPES=Release' -D'DEPTHAI_BUILD_EXAMPLES=ON' -D'DEPTHAI_BUILD_TESTS=ON' ${{ env.CMAKE_ARGS }}
+        cmake --build build --config Release -- -j4
+
+    # CMake binaries unavailable
+    # - name: Build (old CMake, MSVC)
+    #   if: matrix.cmake == '3.10.x' && matrix.os == 'windows-latest'
+    #   run: |
+    #     cmake -H. -Bbuild -D'DEPTHAI_BUILD_EXAMPLES=ON' -D'DEPTHAI_BUILD_TESTS=ON'
+    #     cmake --build build
+
+    - name: Build (newest CMake)
+      if: matrix.cmake != '3.10.x'
+      run: |
+        cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -D HUNTER_CONFIGURATION_TYPES=Release -D DEPTHAI_BUILD_EXAMPLES=ON -D DEPTHAI_BUILD_TESTS=ON ${{ env.CMAKE_ARGS }}
+        cmake --build build --parallel 4 --config Release
+
+  integration:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        build-type: [Debug, Release]
+        shared: [true, false]
+        platform: [x64]
+        include:
+          - platform: Win32
+            os: windows-latest
+            shared: true
+            build-type: Debug
+          - platform: Win32
+            os: windows-latest
+            shared: true
+            build-type: Release
+    steps:
+    - name: Cache .hunter folder
+      if: matrix.os != 'windows-latest'
+      uses: actions/cache@v3
+      with:
+        path: ~/.hunter/
+        key: hunter-${{ matrix.os }}-shared_${{ matrix.shared }}
+    - name: Cache .hunter folder
+      if: matrix.os == 'windows-latest'
+      uses: actions/cache@v3
+      with:
+        path: C:/.hunter/
+        key: hunter-${{ matrix.os }}-shared_${{ matrix.shared }}
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    - name: Install dependencies
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install opencv
+
+    - name: Install dependencies
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install libopencv-dev
+
+    - name: Install dependencies
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install opencv
+        echo "OpenCV_DIR=C:\tools\opencv\build" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "CMAKE_GENERATOR=Visual Studio 17 2022" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "CMAKE_GENERATOR_PLATFORM=${{ matrix.platform }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+    - name: Configure ${{ matrix.build-type }}, shared ${{ matrix.shared }}, ${{ matrix.platform }}
+      run: cmake -S . -B build -D BUILD_SHARED_LIBS=${{ matrix.shared}} -D CMAKE_BUILD_TYPE=${{ matrix.build-type }} -D CMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/depthai_install ${{ env.CMAKE_ARGS }}
+
+    - name: Set path to shared library dll (Windows)
+      if: matrix.os == 'windows-latest'
+      run: echo "$GITHUB_WORKSPACE/depthai_install/bin/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Build and install
+      run: cmake --build build --config ${{ matrix.build-type }} --target install --parallel 4
+
+    - name: Upload Win64 shared library
+      if: matrix.os == 'windows-latest' && matrix.shared && matrix.platform == 'x64'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-prebuilt-win64
+        path: ${{ env.GITHUB_WORKSPACE }}/depthai_install/
+
+    - name: Upload Win32 shared library
+      if: matrix.os == 'windows-latest' && matrix.shared && matrix.platform == 'Win32'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-prebuilt-win32-no-opencv
+        path: ${{ env.GITHUB_WORKSPACE }}/depthai_install/
+
+    - name: Build and test add_subdirectory
+      run: |
+        cmake -S tests/integration/ -B tests/integration/build_add_subdirectory -D TEST_FIND_PACKAGE=OFF ${{ env.CMAKE_ARGS }}
+        cmake --build tests/integration/build_add_subdirectory --config ${{ matrix.build-type }} --parallel 4
+        cd tests/integration/build_add_subdirectory
+        ctest -C ${{ matrix.build-type }} --output-on-failure --no-tests=error
+
+    - name: Build and test find_package (installed)
+      run: |
+        cmake -S tests/integration/ -B tests/integration/build_find_package -D TEST_FIND_PACKAGE=ON -D depthai_DIR=$GITHUB_WORKSPACE/depthai_install/lib/cmake/depthai ${{ env.CMAKE_ARGS }}
+        cmake --build tests/integration/build_find_package --config ${{ matrix.build-type }} --parallel 4
+        cd tests/integration/build_find_package
+        ctest -C ${{ matrix.build-type }} --output-on-failure --no-tests=error
+
+    - name: Build and test find_package (build directory)
+      run: |
+        cmake -S tests/integration/ -B tests/integration/build_find_package_2 -D TEST_FIND_PACKAGE=ON -D depthai_DIR=$GITHUB_WORKSPACE/build ${{ env.CMAKE_ARGS }}
+        cmake --build tests/integration/build_find_package_2 --config ${{ matrix.build-type }} --parallel 4
+        cd tests/integration/build_find_package_2
+        ctest -C ${{ matrix.build-type }} --output-on-failure --no-tests=error
+
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, style, integration]
+    runs-on: ubuntu-latest
+
+    # Clone repository
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    # Get tag version
+    # TODO(themarpe) - Node12, has to be updated
+    - name: Get latest release version number
+      id: tag
+      uses: battila7/get-version-action@v2
+
+    # Check if version matches (TODO)
+    #- name: Check if version matches
+    #   run: |
+
+    - uses: actions/setup-python@v3
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: python3.8 -m pip install git-archive-all
+
+    - name: Download Win64 artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: 'windows-prebuilt-win64'
+        path: depthai-core-${{ steps.tag.outputs.version }}-win64
+
+    - name: Download Win32 artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: 'windows-prebuilt-win32-no-opencv'
+        path: depthai-core-${{ steps.tag.outputs.version }}-win32-no-opencv
+
+    - name: Create release assets
+      run: |
+        git-archive-all depthai-core-${{ steps.tag.outputs.version }}.tar.gz
+        git-archive-all depthai-core-${{ steps.tag.outputs.version }}.zip
+        zip -r depthai-core-${{ steps.tag.outputs.version }}-win64.zip depthai-core-${{ steps.tag.outputs.version }}-win64
+        zip -r depthai-core-${{ steps.tag.outputs.version }}-win32-no-opencv.zip depthai-core-${{ steps.tag.outputs.version }}-win32-no-opencv
+
+    # Create GitHub release
+    - uses: actions/create-release@master
+      id: createRelease
+      name: Create ${{ steps.tag.outputs.version }} depthai-core release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## Features
+
+          ## Bug fixes
+
+          ## Misc
+
+        draft: true
+
+    # Upload release assets
+    - name: Upload source package (zip)
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/depthai-core-${{ steps.tag.outputs.version }}.zip
+        asset_name: depthai-core-${{ steps.tag.outputs.version }}.zip
+        asset_content_type: application/octet-stream
+
+    - name: Upload source package (tar.gz)
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/depthai-core-${{ steps.tag.outputs.version }}.tar.gz
+        asset_name: depthai-core-${{ steps.tag.outputs.version }}.tar.gz
+        asset_content_type: application/octet-stream
+
+    - name: Upload Win64 package (zip)
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/depthai-core-${{ steps.tag.outputs.version }}-win64.zip
+        asset_name: depthai-core-${{ steps.tag.outputs.version }}-win64.zip
+        asset_content_type: application/octet-stream
+
+    - name: Upload Win32 package (zip)
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/depthai-core-${{ steps.tag.outputs.version }}-win32-no-opencv.zip
+        asset_name: depthai-core-${{ steps.tag.outputs.version }}-win32-no-opencv.zip
+        asset_content_type: application/octet-stream

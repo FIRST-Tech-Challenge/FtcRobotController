@@ -1,0 +1,72 @@
+version: 1.0.{build}
+image:
+  - Visual Studio 2013
+  - Visual Studio 2015
+  - Visual Studio 2017
+  - Visual Studio 2019
+platform:
+  - Win32
+  - x64
+configuration:
+  - Debug
+  - Release
+clone_depth: 1
+build:
+  parallel: true
+for:
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2013
+    build:
+      project: msvc\libusb_2013.sln
+
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2015
+          configuration: Debug
+    build:
+      project: msvc\libusb_2015.sln
+
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2015
+          platform: Win32
+          configuration: Release
+    install:
+      - cmd: xcopy /S /I "%APPVEYOR_BUILD_FOLDER%" C:\msys64\home\appveyor\libusb
+      - cmd: xcopy /S /I "%APPVEYOR_BUILD_FOLDER%" C:\cygwin\home\appveyor\libusb
+    build_script:
+      - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\msvc\libusb_2015.sln" /m /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: C:\msys64\usr\bin\bash -l "%APPVEYOR_BUILD_FOLDER%\.private\appveyor_build.sh" MinGW
+      - cmd: C:\cygwin\bin\bash -l "%APPVEYOR_BUILD_FOLDER%\.private\appveyor_build.sh" cygwin
+
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2015
+          platform: x64
+          configuration: Release
+    install:
+      - cmd: xcopy /S /I "%APPVEYOR_BUILD_FOLDER%" C:\msys64\home\appveyor\libusb
+      - cmd: xcopy /S /I "%APPVEYOR_BUILD_FOLDER%" C:\cygwin64\home\appveyor\libusb
+    build_script:
+      - cmd: msbuild "%APPVEYOR_BUILD_FOLDER%\msvc\libusb_2015.sln" /m /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      - cmd: C:\msys64\usr\bin\bash -l "%APPVEYOR_BUILD_FOLDER%\.private\appveyor_build.sh" MinGW
+      - cmd: C:\cygwin64\bin\bash -l "%APPVEYOR_BUILD_FOLDER%\.private\appveyor_build.sh" cygwin
+
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2017
+    build:
+      project: msvc\libusb_2017.sln
+
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2019
+    build:
+      project: msvc\libusb_2019.sln

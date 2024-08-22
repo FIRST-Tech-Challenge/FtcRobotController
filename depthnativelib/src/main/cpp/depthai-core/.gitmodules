@@ -1,0 +1,6 @@
+[submodule "shared/depthai-shared"]
+	path = shared/depthai-shared
+	url = ../depthai-shared.git
+[submodule "shared/depthai-bootloader-shared"]
+	path = shared/depthai-bootloader-shared
+	url = ../depthai-bootloader-shared.git

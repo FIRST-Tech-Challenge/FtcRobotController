@@ -46,7 +46,7 @@ Code is formatted as per the Google Style Guide:
 
 https://google.github.io/styleguide/javaguide.html
 
-With “Sensor” and “Hardware” samples, the code should demonstrate the essential function,
+With “Sensor” and “org.firstinspires.ftc.teamcode.Hardware” samples, the code should demonstrate the essential function,
 and not be embellished with too much additional “clever” code.  If a sensor has special
 addressing needs, or has a variety of modes or outputs, these should be demonstrated as
 simply as possible.
