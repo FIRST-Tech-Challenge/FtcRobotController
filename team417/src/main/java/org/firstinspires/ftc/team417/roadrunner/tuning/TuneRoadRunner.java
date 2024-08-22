@@ -928,6 +928,8 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
 
+        // @@@ Need to inherit the angularScalar value for more precision on the offset
+
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         // Undo the offset heading that the OTOS sensor automatically applies:
