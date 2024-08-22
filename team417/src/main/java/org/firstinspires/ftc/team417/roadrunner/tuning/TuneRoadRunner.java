@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
+import com.wilyworks.common.WilyWorks;
 
 import static java.lang.System.out;
 
@@ -410,12 +411,10 @@ public class TuneRoadRunner extends LinearOpMode {
                     success = true;
                     break;
                 }
-                drive.setDrivePowers(new PoseVelocity2d(
-                        new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
-                        -gamepad1.right_stick_x));
+                processGamepadDriving();
                 updateRotation();
             }
-            drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
+            stopGamepadDriving();
             return success;
         }
 
@@ -448,7 +447,7 @@ public class TuneRoadRunner extends LinearOpMode {
         }
         // The user either pressed Cancel or End:
         drive.abortActions();
-        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
+        stopGamepadDriving();
         return false;
     }
 
@@ -473,6 +472,27 @@ public class TuneRoadRunner extends LinearOpMode {
                 module.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
             }
         }
+    }
+
+    // Shape the stick input for more precision at slow speeds:
+    public double shapeStick(double stickValue) {
+        // Make slow driving easier on the real robot. Don't bother under Wily Works because
+        // then it's too slow:
+        double power = WilyWorks.isSimulating ? 1.0 : 2.0;
+        return Math.signum(stickValue) * Math.abs(Math.pow(stickValue, power));
+    }
+
+    // Poll the gamepad input and set the drive motor power accordingly:
+    public void processGamepadDriving() {
+        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(
+            shapeStick(-gamepad1.left_stick_y),
+            shapeStick(-gamepad1.left_stick_x)),
+            shapeStick(-gamepad1.right_stick_x)));
+    }
+
+    // Stop any robot driving:
+    public void stopGamepadDriving() {
+        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
     }
 
     void encoderPush() {
@@ -1214,7 +1234,7 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
                     new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
                     -gamepad1.right_stick_x);
 
-            drive.setDrivePowers(powers);
+            processGamepadDriving();
             drive.updatePoseEstimate();
 
             TelemetryPacket p = new TelemetryPacket();
