@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.SNAV.SwerveDriveController
 import org.firstinspires.ftc.teamcode.SNAV.SwerveModule
 import org.firstinspires.ftc.teamcode.util.GamepadState
 
@@ -18,6 +19,8 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
     var sl: SwerveModule
     var sr: SwerveModule
     private var motors: Array<DcMotor>
+
+    var driveController: SwerveDriveController
 
     // Declare gamepads
     var gamepadState1: GamepadState = GamepadState()
@@ -41,6 +44,8 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
 
         sl = SwerveModule(lt, lb, 14.35, 5.2, 9, 120, 9, 145.1, 1150, 4.0)
         sr = SwerveModule(rt, rb, 14.35, 5.2, 9, 120, 9, 145.1, 1150, 4.0)
+
+        driveController = SwerveDriveController(sl, sr)
 
         if (resetEncoders) {
             sl.resetEncoders()
