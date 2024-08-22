@@ -19,16 +19,26 @@ import fi.iki.elonen.NanoHTTPD;
 
 public class CameraServer extends NanoHTTPD implements FrameProcessor {
     private static int nextAvailablePort = 10000;
+    private final int port;
     private VisionPortal visionPortal;
     private VisionPortal.Builder visionPortalBuilder = new VisionPortal.Builder();
     private final CameraName camera;
     protected byte[] imgBytes = encode(new Mat());
 
-    public CameraServer(HardwareMap hardwareMap, String cameraName) {
-        super(nextAvailablePort);
-        nextAvailablePort += 1;
+    public CameraServer(HardwareMap hardwareMap, String cameraName, int port) {
+        super(port);
+        this.port = port;
         camera = hardwareMap.get(CameraName.class, cameraName);
         visionPortalBuilder.setCamera(camera).addProcessor(this);
+    }
+
+    public CameraServer(HardwareMap hardwareMap, String cameraName) {
+        this(hardwareMap, cameraName, nextAvailablePort);
+        nextAvailablePort += 1;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     private byte[] encode(Mat mat) {

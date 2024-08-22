@@ -46,7 +46,7 @@ import javax.json.JsonValue;
  * All public static methods in this class will be executed on the currently <b>active</b> rustboard.  These method calls will refer back to the RustboardServer singleton to access the currently active rustboard instance and then execute the non-static methods of that instance.  This means that you can only update nodes on the active rustboard.
  */
 public class Rustboard {
-    private static final int defaultNoticeDuration = 6000;
+    private static final int defaultNoticeDuration = 5000;
     private static final NoticeType defaultNoticeType = NEUTRAL;
 
     interface SetUUID {
@@ -96,7 +96,6 @@ public class Rustboard {
                 log(e);
             }
         });
-        RustboardServer.logToClientConsoles(getJson().toString());
     }
 
     Rustboard(String uuid, Set<RustboardNode> nodes) {
@@ -202,7 +201,7 @@ public class Rustboard {
             case MessageActions.UPDATE_NODES:
                 JsonArray nodes = messageJson.getJsonArray(NODE_ARRAY_KEY);
                 for (JsonValue value : nodes) {
-                    JsonObject nodeJson = (JsonObject) value;
+                    JsonObject nodeJson = value.asJsonObject();
                     applyNodeUpdateMessage(nodeJson);
                 }
                 break;
@@ -457,20 +456,20 @@ public class Rustboard {
         return jsonBuilder.build();
     }
 
-    private void save(File file) {
-        try {
-            FileUtils.writeJson(file, getJson());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private static File getLatestRustboardVersion(String uuid) {
         return new File(NEW_STORED_RUSTBOARD_DIR, uuid + ".json");
     }
 
     private static File getPreviousRustboardVersion(String uuid) {
         return new File(OLD_STORED_RUSTBOARD_DIR, uuid + ".json");
+    }
+
+    private void save(File file) {
+        try {
+            FileUtils.writeJson(file, getJson());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     void save() {

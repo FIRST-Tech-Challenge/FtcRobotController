@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,9 +88,11 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
         if (rustboardMetaData.containsKey(RUSTBOARD_ARRAY_KEY)) {
             JsonArray dataArray = rustboardMetaData.getJsonArray(RUSTBOARD_ARRAY_KEY);
             for (JsonValue value : dataArray) {
-                JsonObject rustboardDescriptor = (JsonObject) value;
+                JsonObject rustboardDescriptor = value.asJsonObject();
                 String uuid = rustboardDescriptor.getString(UUID_KEY);
-                storedRustboardIds.add(uuid);
+                if (uuid != null) {
+                    storedRustboardIds.add(uuid);
+                }
                 if (rustboardDescriptor.getBoolean(ACTIVE_KEY)) {
                     Rustboard rustboard;
                     try {
@@ -260,10 +263,10 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
         FileUtils.makeDirIfMissing(OLD_STORED_RUSTBOARD_DIR);
         FileUtils.makeDirIfMissing(NEW_STORED_RUSTBOARD_DIR);
         JsonObjectBuilder metadataBuilder = Json.createObjectBuilder();
-        JsonArray currentRustboardArray = rustboardMetaData.getJsonArray(RUSTBOARD_ARRAY_KEY);
+        ArrayList<JsonValue> currentRustboardArray = new ArrayList<>(rustboardMetaData.getJsonArray(RUSTBOARD_ARRAY_KEY)); // JsonArrays are immutable, and calling remove() on one won't work.  The solution is to create a mutable arraylist using the JsonArray instance
         JsonArrayBuilder rustboardArrayBuilder = Json.createArrayBuilder();
         loadedRustboards.forEach((uuid, rustboard) -> {
-                    currentRustboardArray.removeIf(rustboardJson -> ((JsonObject) rustboardJson).getString(UUID_KEY).equals(uuid));
+                    currentRustboardArray.removeIf((rustboardJson) -> rustboardJson.asJsonObject().getString(UUID_KEY).equals(uuid));
                     JsonObjectBuilder rustboardDescriptor = Json.createObjectBuilder();
                     rustboardDescriptor.add(UUID_KEY, uuid);
                     rustboardDescriptor.add(ACTIVE_KEY, rustboard == activeRustboard);
@@ -274,9 +277,7 @@ public class RustboardServer extends WebSocketServer { // TODO: public, but only
         currentRustboardArray.forEach(rustboardArrayBuilder::add);
         metadataBuilder.add(RUSTBOARD_ARRAY_KEY, rustboardArrayBuilder);
         try {
-            JsonObject thing = metadataBuilder.build();
-            FileUtils.writeJson(RUSTBOARD_METADATA_FILE, thing);
-            logToClientConsoles(thing);
+            FileUtils.writeJson(RUSTBOARD_METADATA_FILE, metadataBuilder.build());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

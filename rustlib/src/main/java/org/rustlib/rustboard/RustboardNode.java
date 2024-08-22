@@ -35,7 +35,7 @@ public class RustboardNode {
 
     void localUpdateState(Object state) {
         this.state = state.toString();
-        lastUpdate = new Time();
+        lastUpdate = Time.now();
         updateClient();
     }
 
@@ -104,7 +104,7 @@ public class RustboardNode {
 
     static RustboardNode buildFromJson(JsonValue json) {
         try {
-            JsonObject data = (JsonObject) json;
+            JsonObject data = json.asJsonObject();
             return new RustboardNode(
                     data.getString(NODE_ID_KEY), Type.getType(data.getString(NODE_TYPE_KEY)),
                     data.getString(NODE_STATE_KEY),

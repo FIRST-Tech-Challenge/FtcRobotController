@@ -15,6 +15,7 @@ public class Tele extends Robot implements OpModeCore {
 
     @Override
     public void opModeInit() {
+        Rustboard.updateInputNode("input_1", "Hello from the robot");
         if (alliance == Alliance.RED) {
             backdropPose = redBackdropPose;
         }
@@ -26,7 +27,6 @@ public class Tele extends Robot implements OpModeCore {
     @Override
     public void opModeLoop() {
         telemetry.addData("heading", drive.getOdometry().getPosition().rotation.getAngleDegrees());
-        //Rustboard.updateInputNode("input_1", Time.getUTCTime());
         telemetry.addData("Input 1", Rustboard.getString("input_1", ""));
         telemetry.addData("active rustboard uuid", Rustboard.getActiveRustboard().getUuid());
         //Rustboard.notifyActiveClient("op mode running", NoticeType.POSITIVE);
