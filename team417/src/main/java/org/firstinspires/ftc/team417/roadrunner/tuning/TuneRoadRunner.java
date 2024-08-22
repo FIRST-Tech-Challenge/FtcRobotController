@@ -411,7 +411,7 @@ public class TuneRoadRunner extends LinearOpMode {
                 drive.setDrivePowers(new PoseVelocity2d(
                         new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
                         -gamepad1.right_stick_x));
-                updateSparkFunRotation();
+                updateRotation();
             }
             drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
             return success;
@@ -696,22 +696,29 @@ public class TuneRoadRunner extends LinearOpMode {
     // Ramp the motors up or down to or from the target spin speed. Return the amount of
     // rotation
     void rampMotorsSpin(MecanumDrive drive, boolean up) {
-        final double RAMP_TIME = 0.5; // Seconds
-        final double SPIN_SPEED = 0.3;
+// @@@
+//        final double RAMP_TIME = 0.5; // Seconds
+//        final double SPIN_SPEED = 0.5;
+//
+//        double startTime = time();
+//        while (opModeIsActive()) {
+//            double duration = Math.min(time() - startTime, RAMP_TIME);
+//            double fraction = (up) ? (duration / RAMP_TIME) : (1 - duration / RAMP_TIME);
+//            drive.rightFront.setPower(fraction * SPIN_SPEED);
+//            drive.rightBack.setPower(fraction * SPIN_SPEED);
+//            drive.leftFront.setPower(-fraction * SPIN_SPEED);
+//            drive.leftBack.setPower(-fraction * SPIN_SPEED);
+//
+//            updateRotation();
+//            if (duration == RAMP_TIME)
+//                break; // ===>
+//        }
 
-        double startTime = time();
-        while (opModeIsActive()) {
-            double duration = Math.min(time() - startTime, RAMP_TIME);
-            double fraction = (up) ? (duration / RAMP_TIME) : (1 - duration / RAMP_TIME);
-            drive.rightFront.setPower(fraction * SPIN_SPEED);
-            drive.rightBack.setPower(fraction * SPIN_SPEED);
-            drive.leftFront.setPower(-fraction * SPIN_SPEED);
-            drive.leftBack.setPower(-fraction * SPIN_SPEED);
-
-            updateSparkFunRotation();
-            if (duration == RAMP_TIME)
-                break; // ===>
-        }
+        double speed = (up) ? 0.3 : 0.0;
+        drive.rightFront.setPower(speed);
+        drive.rightBack.setPower(speed);
+        drive.leftFront.setPower(-speed);
+        drive.leftBack.setPower(-speed);
     }
 
     // Structure to describe the center of rotation for the robot:
@@ -759,28 +766,27 @@ public class TuneRoadRunner extends LinearOpMode {
     double accumulatedSparkFunRotation = 0;
 
     // Start tracking total amount of rotation:
-    void initiateSparkFunRotation() {
+    double initiateSparkFunRotation() {
         assert(drive.opticalTracker != null);
         previousSparkFunHeading = drive.opticalTracker.getPosition().h;
-
-out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading); // @@@
+        return previousSparkFunHeading;
     }
 
     // Call this regularly to update the tracked amount of rotation:
-    Point updateSparkFunRotation() {
+    void updateRotation() { updateRotationAndGetPose(); }
+    Pose2D updateRotationAndGetPose() {
         if (drive.opticalTracker == null) // Handle case where we're using encoders
             return null;
 
-        Pose2D position = drive.opticalTracker.getPosition();
-        accumulatedSparkFunRotation += normalizeAngle(position.h - previousSparkFunHeading);
-        previousSparkFunHeading = position.h;
-        return new Point(position.x, position.y);
+        Pose2D pose = drive.opticalTracker.getPosition();
+        accumulatedSparkFunRotation += normalizeAngle(pose.h - previousSparkFunHeading);
+        previousSparkFunHeading = pose.h;
+        return pose;
     }
 
-    // Get the resulting total rotation amount:
+    // Get the resulting total rotation amount. You should call updateRotation() before calling
+    // this!
     double getSparkFunRotation() {
-        assert(drive.opticalTracker != null);
-        updateSparkFunRotation();
         return accumulatedSparkFunRotation;
     }
 
@@ -812,7 +818,7 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         assert(drive.opticalTracker != null);
 
         // Number of revolutions to use:
-        final double REVOLUTION_COUNT = 5.0;
+        final double REVOLUTION_COUNT = 1.0;
 
         useDrive(true); // Use MecanumDrive/TankDrive
 
@@ -824,8 +830,8 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                 + "\n\nDrive the robot to the start position, press A when ready, B to cancel"))
             return; // ====>
 
-        // Start measuring accumulated rotation:
-        initiateSparkFunRotation();
+        // Initialize the heading:@@@
+        drive.setPose(new Pose2d(0, 0, 0));
 
         // Let the user position the robot:
         if (!ui.drivePrompt("Now move the robot far enough away from the wall and any objects so "
@@ -833,69 +839,55 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                     + "\n\nPress A when ready for the robot to rotate, B to cancel"))
             return; // ====>
 
-        ui.message(String.format("Rotating %.1f times...", REVOLUTION_COUNT));
-
         ArrayList<Point> points = new ArrayList<>();
 
-        double startRotation = getSparkFunRotation(); // Query rotation before starting ramp-up
+        // Spin-up the robot, starting to measure rotation for the 'scalar' computation at this
+        // point:
+        double scalarStartRotation = initiateSparkFunRotation();
         rampMotorsSpin(drive, true);
 
-        final double terminationRotationTarget = REVOLUTION_COUNT * 2 * Math.PI;
+        final double terminationRotation = REVOLUTION_COUNT * 2 * Math.PI;
         double farthestDistance = 0;
         Point farthestPoint = new Point(0, 0);
 
         Point originPosition = null; // The origin of the start of every circle
-        double nextCircleRotationMarker = 0;
-        int adjustmentIndex = 0;
+        double nextCircleRotation = 0;
 
-        // Now rotate the robot:
+        Pose2D offsetStartPosition = updateRotationAndGetPose();
+        double offsetStartHeading = offsetStartPosition.h;
+        double offsetStartRotation = getSparkFunRotation();
+        Point rawPosition = new Point(offsetStartPosition.x, offsetStartPosition.y);
+
+out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
+
+        // Now do all of the full-speed spins:
         while (opModeIsActive()) {
-            Point rawPosition = updateSparkFunRotation();
-            double rotationAmount = accumulatedSparkFunRotation - startRotation;
+            double offsetRotation = getSparkFunRotation() - offsetStartRotation;
 
             // Check if we're at the start of a new circle:
-            if (rotationAmount >= nextCircleRotationMarker) {
-                int adjustmentCount = points.size() - adjustmentIndex;
-                if (adjustmentCount > 0) {
-                    Point change = rawPosition.subtract(originPosition);
-                    out.printf("Circle close off by (%.2f, %.2f)\n", change.x, change.y);
-
-//                    // Assume an even distribution and pull in every point:
-//                    for (int i = 0; i < adjustmentCount; i++) {
-//                        double fraction = (double) i / adjustmentCount;
-//                        Point point = points.get(i);
-//                        points.set(i, point.subtract(change.multiply(fraction)));
-//                    }
-//
-//                    // Update the adjustment index to prepare for the next circle:
-//                    adjustmentIndex = points.size();
-                }
-
+            if (offsetRotation >= nextCircleRotation) {
                 // Remember the raw position as the start of the new circle:
                 originPosition = rawPosition;
-                nextCircleRotationMarker += 2 * Math.PI;
+                nextCircleRotation += 2 * Math.PI;
             }
 
             // Now that we've potentially done the last adjustment, see if we're all done:
-            if (rotationAmount >= terminationRotationTarget)
+            if (offsetRotation >= terminationRotation)
                 break; // ====>
 
-            // Check if we need to still sample points:
-            if (rotationAmount < terminationRotationTarget) {
-                Point currentPoint = rawPosition.subtract(originPosition);
-                points.add(currentPoint);
-                double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
-                if (distanceFromOrigin > farthestDistance) {
-                    farthestDistance = distanceFromOrigin;
-                    farthestPoint = currentPoint;
-                }
-
-                drawSpinPoints(points, null);
+            Point currentPoint = rawPosition.subtract(originPosition).rotate(0); // @@@
+            points.add(currentPoint);
+            double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
+            if (distanceFromOrigin > farthestDistance) {
+                farthestDistance = distanceFromOrigin;
+                farthestPoint = currentPoint;
             }
 
+            drawSpinPoints(points, null);
+
             // Update the telemetry:
-            double rotationsRemaining = (terminationRotationTarget - rotationAmount) / (2 * Math.PI);
-            telemetry.addLine(String.format("%.2f rotations remaining, %d points sampled", rotationsRemaining, points.size()));
+            double rotationsRemaining = (terminationRotation - offsetRotation) / (2 * Math.PI);
+            telemetry.addLine(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
             telemetry.addLine("\nPress B to abort.");
             telemetry.update();
 
@@ -903,6 +895,10 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
                 rampMotorsSpin(drive, false);
                 return; // ====>
             }
+
+            // Update for next iteration of the loop:
+            Pose2D rawPose = updateRotationAndGetPose();
+            rawPosition = new Point(rawPose.x, rawPose.y);
         }
 
         // Stop the rotation:
@@ -918,7 +914,8 @@ out.printf("Initial SparkFunRotation heading: %.2f\n", previousSparkFunHeading);
         // Draw results with the fitted circle:
         drawSpinPoints(points, circle);
 
-        double totalMeasuredRotation = getSparkFunRotation() - startRotation;
+        updateRotationAndGetPose();
+        double totalMeasuredRotation = getSparkFunRotation() - scalarStartRotation;
         processSpinResults(circle, totalMeasuredRotation);
     }
 
