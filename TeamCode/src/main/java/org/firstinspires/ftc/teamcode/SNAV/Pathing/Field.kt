@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SNAV
+package org.firstinspires.ftc.teamcode.SNAV.Pathing
 
 class Field(val xSize: Int, val ySize: Int) {
     var field: MutableList<MutableList<Int>> = MutableList(ySize) { MutableList(xSize) {0} }

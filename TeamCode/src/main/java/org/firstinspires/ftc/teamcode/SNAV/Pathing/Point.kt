@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.SNAV
+package org.firstinspires.ftc.teamcode.SNAV.Pathing
 
-import java.nio.file.Path
 import java.util.Objects
 
 open class Point(val x: Int, val y: Int) {
