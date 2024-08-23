@@ -43,6 +43,8 @@ class SwerveDriveController(val leftModule: SwerveModule, val rightModule: Swerv
 
         leftModule.targetAngle = Angle(leftAngle)
         rightModule.targetAngle = Angle(rightAngle)
+        leftModule.updateAngle()
+        rightModule.updateAngle()
     }
 
     fun getLocalSpeedPowers(currentRobotAngle: Double): Array<Double> {
