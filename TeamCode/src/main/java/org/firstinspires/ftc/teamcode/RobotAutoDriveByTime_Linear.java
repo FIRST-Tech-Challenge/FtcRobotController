@@ -76,10 +76,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             telemetry.addData("Path", "Move forward: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        leftFrontDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        stopMoving();
     }
 
     private void moveBackward(double secondsToDrive) {
@@ -96,10 +93,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             telemetry.addData("Path", "Move backward: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        leftFrontDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        stopMoving();
     }
 
     private void turnRight(double secondsToDrive) {
@@ -116,10 +110,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             telemetry.addData("Path", "Turn right: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        leftFrontDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        stopMoving();
     }
 
     private void turnLeft(double secondsToDrive) {
@@ -136,6 +127,10 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             telemetry.addData("Path", "Turn left: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
+        stopMoving();
+    }
+
+    private void stopMoving() {
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
