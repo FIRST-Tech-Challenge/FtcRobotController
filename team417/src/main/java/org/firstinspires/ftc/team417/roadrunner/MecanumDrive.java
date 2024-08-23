@@ -177,15 +177,16 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     public final VoltageSensor voltageSensor;
 
-    public final LazyImu lazyImu;
+    public LazyImu lazyImu;
 
-    public final SparkFunOTOS opticalTracker; // Can be null which means no optical tracking sensor
+    static public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
+    static public OTOSSettings opticalSettings = null;
 
-    public final Localizer localizer;
+    public Localizer localizer;
     public Pose2d pose;
     public PoseVelocity2d poseVelocity; // Robot-relative, not field-relative
 
@@ -197,7 +198,7 @@ public final class MecanumDrive {
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
 
     public class DriveLocalizer implements Localizer {
-        public final Encoder leftFront, leftBack, rightBack, rightFront;
+        public Encoder leftFront, leftBack, rightBack, rightFront;
         public final IMU imu;
 
         private int lastLeftFrontPos, lastLeftBackPos, lastRightBackPos, lastRightFrontPos;
@@ -205,12 +206,15 @@ public final class MecanumDrive {
         private boolean initialized;
 
         public DriveLocalizer() {
+            imu = lazyImu.get();
+            configure();
+        }
+
+        void configure() {
             leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
             leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
             rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
-
-            imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
             //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -291,11 +295,42 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        configure(hardwareMap);
+
+        // Enable brake mode on the motors:
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+
+        FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    // This is where you configure Road Runner to work with your hardware:
+    void configure(HardwareMap hardwareMap) {
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        //noinspection IfStatementWithIdenticalBranches
         if (isDevBot) {
-            opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
+            System.out.printf("*** HardwareMap: ");
+            System.out.print(hardwareMap);
+            System.out.print("\n");
+            if (opticalTracker == null) {
+                System.out.printf("*** Creating the SparkFun object!\n");
+
+                opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
+                opticalSettings = new OTOSSettings(
+                        6.0, // xInches
+                        -3.5,       // yInches
+                        -87.139,    // orientationDegrees
+                        1.000,      // linearScalar
+                        1.001);     // angularScalar
+                // Initialize the optical tracking sensor if we have one:
+                initializeOpticalTracker();
+            } else {
+                System.out.printf("*** Reusing the old object!\n");
+            }
 
             leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
             leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -305,8 +340,6 @@ public final class MecanumDrive {
             leftFront.setDirection(DcMotorEx.Direction.REVERSE);
             leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         } else {
-            opticalTracker = null;
-
             // TODO: Create the optical tracking object:
             //   opticalTracking = hardwareMap.get(SparkFunOTOS.class, "optical");
 
@@ -315,43 +348,56 @@ public final class MecanumDrive {
             rightBack = hardwareMap.get(DcMotorEx.class, "???");
             rightFront = hardwareMap.get(DcMotorEx.class, "???");
 
+            // TODO: reverse motor directions if needed
+            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
             leftFront.setDirection(DcMotorEx.Direction.REVERSE);
             leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         }
-
-        // Configure the optical tracking sensor if we have one:
-        if (opticalTracker != null)
-            configureOtos(opticalTracker, pose);
-
-        // Enable brake mode on the motors:
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // TODO: reverse motor directions if needed
-        //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
+        // TODO: Choose the right kind of localizer
         localizer = new DriveLocalizer();
-
-        FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
-    // Configure the optical tracking sensor
-    private void configureOtos(SparkFunOTOS otos, Pose2d pose) {
-        // TODO: Run TuneRoadRunner to calibrate these values:
-        final double headingOffset = 179.9; // Degrees
-        final double xOffset = 5.56; // Inches
-        final double yOffset = 3.39; // Inches
-        final double linearScalar = 0.956;
-        final double angularScalar = 1.0;
+    // Structure for the settings of the SparkFun Optical Tracking Odometry Sensor.
+    public static class OTOSSettings {
+        public SparkFunOTOS.Pose2D offset; // Inches, inches and radians
+        public double linearScalar; // Scalar
+        public double angularScalar; // Scalar
+
+        // Note that the heading is specified in degrees, NOT radians:
+        public OTOSSettings(double xInches, double yInches, double orientationDegrees, double linearScalar, double angularScalar) {
+            this.offset = new SparkFunOTOS.Pose2D(xInches, yInches, Math.toRadians(orientationDegrees));
+            this.linearScalar = linearScalar;
+            this.angularScalar = angularScalar;
+        }
+    }
+
+    // Initialize the optical tracking sensor if we have one. Derived from configureOtos(). The
+    // pose is the initial pose where the robot will start on the field.
+    private void initializeOpticalTracker() {
+        if (opticalTracker == null)
+            return; // ====>
+
+        // Get the hardware and firmware version
+        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
+        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
+        opticalTracker.getVersionInfo(hwVersion, fwVersion);
+        System.out.printf("SparkFun OTOS hardware version: %d.%d, firmware version: %d.%d\n",
+                hwVersion.major, hwVersion.minor, fwVersion.major, fwVersion.minor);
+
+        // Set the desired units for linear and angular measurements. Can be either
+        // meters or inches for linear, and radians or degrees for angular. If not
+        // set, the default is inches and degrees. Note that this setting is not
+        // persisted in the sensor, so you need to set at the start of all your
+        // OpModes if using the non-default value.
+        opticalTracker.setLinearUnit(DistanceUnit.INCH);
+        opticalTracker.setAngularUnit(AngleUnit.RADIANS);
 
         // Assuming you've mounted your sensor to a robot and it's not centered,
         // you can specify the offset for the sensor relative to the center of the
@@ -364,17 +410,7 @@ public final class MecanumDrive {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        otos.setLinearUnit(DistanceUnit.INCH);
-        otos.setAngularUnit(AngleUnit.DEGREES);
-        otos.setOffset(new SparkFunOTOS.Pose2D(xOffset, yOffset, headingOffset));
-
-        // Set the desired units for linear and angular measurements. Can be either
-        // meters or inches for linear, and radians or degrees for angular. If not
-        // set, the default is inches and degrees. Note that this setting is not
-        // persisted in the sensor, so you need to set at the start of all your
-        // OpModes if using the non-default value.
-        otos.setLinearUnit(DistanceUnit.INCH);
-        otos.setAngularUnit(AngleUnit.RADIANS);
+        opticalTracker.setOffset(opticalSettings.offset);
 
         // Here we can set the linear and angular scalars, which can compensate for
         // scaling issues with the sensor measurements. Note that as of firmware
@@ -392,8 +428,8 @@ public final class MecanumDrive {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        otos.setLinearScalar(linearScalar);
-        otos.setAngularScalar(angularScalar);
+        opticalTracker.setLinearScalar(opticalSettings.linearScalar);
+        opticalTracker.setAngularScalar(opticalSettings.angularScalar);
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
@@ -405,22 +441,17 @@ public final class MecanumDrive {
         // to wait until the calibration is complete. If no parameters are provided,
         // it will take 255 samples and wait until done; each sample takes about
         // 2.4ms, so about 612ms total
-        otos.calibrateImu();
+        opticalTracker.calibrateImu();
 
         // Reset the tracking algorithm - this resets the position to the origin,
         // but can also be used to recover from some rare tracking errors
-        otos.resetTracking();
+        opticalTracker.resetTracking();
 
         // After resetting the tracking, the OTOS will report that the robot is at
         // the origin. If your robot does not start at the origin, or you have
         // another source of location information (eg. vision odometry), you can set
         // the OTOS location to match and it will continue to track from there.
-        otos.setPosition(new SparkFunOTOS.Pose2D(pose.position.x, pose.position.y, pose.heading.log()));
-
-        // Get the hardware and firmware version
-        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
-        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
-        otos.getVersionInfo(hwVersion, fwVersion);
+        setPose(pose);
     }
 
     // Set the drive powers for when driving manually via the controller:
@@ -747,12 +778,9 @@ public final class MecanumDrive {
         PoseVelocity2d poseVelocity;
         if (opticalTracker != null) {
             // Use the SparkFun optical tracking sensor to update the pose:
-            SparkFunOTOS.Pose2D opticalPose = opticalTracker.getPosition();
-            pose = new Pose2d(opticalPose.x, opticalPose.y, opticalPose.h);
-
-            // TODO: Change this to use the optical tracking sensor's velocity (remember to
-            //   transform it back to field-relative)
-            poseVelocity = new PoseVelocity2d(new Vector2d(0, 0), 0);
+            SparkFunOTOS.Pose2D position = opticalTracker.getPosition();
+            pose = new Pose2d(position.x, position.y, position.h);
+            poseVelocity = getOpticalVelocity();
         } else {
             // Use the wheel odometry to update the pose:
             Twist2dDual<Time> twist = WilyWorks.localizerUpdate();
@@ -807,6 +835,31 @@ public final class MecanumDrive {
         );
     }
 
+    // Rotate a vector by the prescribed angle:
+    public Vector2d rotateVector(Vector2d vector, double theta) {
+        return new Vector2d(
+                Math.cos(theta) * vector.x - Math.sin(theta) * vector.y,
+                Math.sin(theta) * vector.x + Math.cos(theta) * vector.y);
+    }
+
+    // Override the current pose for Road Runner and the optical tracking sensor:
+    public void setPose(Pose2d pose) {
+        // Set the Road Runner pose:
+        this.pose = pose;
+
+        // Set the pose on the optical tracking sensor:
+        if (opticalTracker != null) {
+            opticalTracker.setPosition(new SparkFunOTOS.Pose2D(
+                    pose.position.x, pose.position.y, pose.heading.toDouble()));
+        }
+    }
+
+    // Get the velocity pose from the optical tracking sensor:
+    public PoseVelocity2d getOpticalVelocity() {
+        // TODO: Implement and convert to robot-relative
+        return new PoseVelocity2d(new Vector2d(0, 0), 0);
+    }
+
     // List of currently running Actions:
     LinkedList<Action> actionList = new LinkedList<>();
 
@@ -815,12 +868,10 @@ public final class MecanumDrive {
         actionList.add(action);
     }
 
-    /** @noinspection unused*/
-    // On every iteration of your robot loop, call 'doActionsWork'. Specify the packet
-    // if you're drawing on the graph for FTC Dashboard:
-    public boolean doActionsWork(Pose2d pose, PoseVelocity2d poseVelocity, TelemetryPacket packet) {
-        this.pose = pose;
-        this.poseVelocity = poseVelocity;
+    // On every iteration of your robot loop, call 'doActionsWork' to allow Road Runner Actions
+    // to be processed while running TeleOp. Specify the packet if you're drawing on the graph for
+    // FTC Dashboard:
+    public boolean doActionsWork(TelemetryPacket packet) {
         LinkedList<Action> deletionList = new LinkedList<>();
         for (Action action: actionList) {
             // Once the Action returns false, the action is done:

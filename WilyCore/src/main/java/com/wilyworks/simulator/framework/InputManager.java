@@ -70,6 +70,7 @@ class KeyDispatcher implements KeyEventDispatcher {
 
     private boolean altActivated; // True if Alt-mode was activating by double-tapping the Alt key
     private double altPressTime; // Time when the Alt key was last pressed for a double-tap; 0 if none
+    private boolean altPressed; // True if the Alt key is currently being pressed
     private boolean ctrlPressed; // True if the Control key is currently being pressed
     private boolean shiftPressed; // True if the Shift key is currently being pressed
 
@@ -86,6 +87,7 @@ class KeyDispatcher implements KeyEventDispatcher {
 
         switch (code) {
             case KeyEvent.VK_ALT:
+                altPressed = pressed;
                 if (pressed) {
                     double time = WilyCore.wallClockTime();
                     if ((altPressTime == 0) || (time - altPressTime > DOUBLE_CLICK_DURATION)) {
@@ -103,7 +105,16 @@ class KeyDispatcher implements KeyEventDispatcher {
             case KeyEvent.VK_CONTROL: ctrlPressed = pressed; break;
             case KeyEvent.VK_SHIFT: shiftPressed = pressed; break;
 
-            case KeyEvent.VK_A: axis[SDL.SDL_CONTROLLER_AXIS_LEFTX] = -axisValue; break;
+            case KeyEvent.VK_A:
+                if (altActivated || altPressed) {
+                    button[SDL.SDL_CONTROLLER_BUTTON_A] = pressed;
+                    axis[SDL.SDL_CONTROLLER_AXIS_LEFTX] = 0;
+                } else {
+                    axis[SDL.SDL_CONTROLLER_AXIS_LEFTX] = -axisValue;
+                    button[SDL.SDL_CONTROLLER_BUTTON_A] = false;
+                }
+                break;
+
             case KeyEvent.VK_D: axis[SDL.SDL_CONTROLLER_AXIS_LEFTX] = axisValue; break;
             case KeyEvent.VK_W: axis[SDL.SDL_CONTROLLER_AXIS_LEFTY] = -axisValue; break;
             case KeyEvent.VK_S: axis[SDL.SDL_CONTROLLER_AXIS_LEFTY] = axisValue; break;
@@ -111,7 +122,8 @@ class KeyDispatcher implements KeyEventDispatcher {
             case KeyEvent.VK_PERIOD: axis[SDL.SDL_CONTROLLER_AXIS_TRIGGERRIGHT] = axisValue; break;
 
             case KeyEvent.VK_LEFT:
-                if (altActivated) {
+            case KeyEvent.VK_KP_LEFT:
+                if (altActivated || altPressed) {
                     button[SDL.SDL_CONTROLLER_BUTTON_DPAD_LEFT] = pressed;
                     axis[SDL.SDL_CONTROLLER_AXIS_RIGHTX] = 0;
                 } else {
@@ -120,7 +132,8 @@ class KeyDispatcher implements KeyEventDispatcher {
                 }
                 break;
             case KeyEvent.VK_RIGHT:
-                if (altActivated) {
+            case KeyEvent.VK_KP_RIGHT:
+                if (altActivated || altPressed) {
                     button[SDL.SDL_CONTROLLER_BUTTON_DPAD_RIGHT] = pressed;
                     axis[SDL.SDL_CONTROLLER_AXIS_RIGHTX] = 0;
                 } else {
@@ -129,7 +142,8 @@ class KeyDispatcher implements KeyEventDispatcher {
                 }
                 break;
             case KeyEvent.VK_UP:
-                if (altActivated) {
+            case KeyEvent.VK_KP_UP:
+                if (altActivated || altPressed) {
                     button[SDL.SDL_CONTROLLER_BUTTON_DPAD_UP] = pressed;
                     axis[SDL.SDL_CONTROLLER_AXIS_RIGHTY] = 0;
                 } else {
@@ -138,7 +152,8 @@ class KeyDispatcher implements KeyEventDispatcher {
                 }
                 break;
             case KeyEvent.VK_DOWN:
-                if (altActivated) {
+            case KeyEvent.VK_KP_DOWN:
+                if (altActivated || altPressed) {
                     button[SDL.SDL_CONTROLLER_BUTTON_DPAD_DOWN] = pressed;
                     axis[SDL.SDL_CONTROLLER_AXIS_RIGHTY] = 0;
                 } else {
@@ -148,7 +163,9 @@ class KeyDispatcher implements KeyEventDispatcher {
                 break;
 
             case KeyEvent.VK_E:
-            case KeyEvent.VK_SPACE: button[SDL.SDL_CONTROLLER_BUTTON_A] = pressed; break;
+            case KeyEvent.VK_SPACE:
+                button[SDL.SDL_CONTROLLER_BUTTON_A] = pressed;
+                break;
             case KeyEvent.VK_B: button[SDL.SDL_CONTROLLER_BUTTON_B] = pressed; break;
             case KeyEvent.VK_X: button[SDL.SDL_CONTROLLER_BUTTON_X] = pressed; break;
             case KeyEvent.VK_Y: button[SDL.SDL_CONTROLLER_BUTTON_Y] = pressed; break;
