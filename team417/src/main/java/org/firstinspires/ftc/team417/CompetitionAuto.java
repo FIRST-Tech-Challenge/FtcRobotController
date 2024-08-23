@@ -11,8 +11,8 @@ import org.firstinspires.ftc.team417.roadrunner.MecanumDrive;
  * This class exposes the competition version of Autonomous. As a general rule, add code to the
  * BaseOpMode class rather than here so that it can be shared between both TeleOp and Autonomous.
  */
-@Autonomous(name="Auton", group="Competition", preselectTeleOp="CompetitionTeleOp")
-public class CompetitionAuton extends BaseOpMode {
+@Autonomous(name="Auto", group="Competition", preselectTeleOp="CompetitionTeleOp")
+public class CompetitionAuto extends BaseOpMode {
     @Override
     public void runOpMode() {
         Pose2d beginPose = new Pose2d(0, 0, 0);
