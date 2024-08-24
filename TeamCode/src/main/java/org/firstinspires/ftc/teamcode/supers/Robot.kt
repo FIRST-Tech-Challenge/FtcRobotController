@@ -46,8 +46,8 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
 
         motors = arrayOf(lt, lb, rt, rb)
 
-        sl = SwerveModule(lt, lb, 14.35, 5.2, 9, 120, 9, 145.1, 1150, 4.0)
-        sr = SwerveModule(rt, rb, 14.35, 5.2, 9, 120, 9, 145.1, 1150, 4.0)
+        sl = SwerveModule(lt, lb, 14.35, 5.2, 36, 120, 20, 145.1, 1150, 4.0)
+        sr = SwerveModule(rt, rb, 14.35, 5.2, 36, 120, 20, 145.1, 1150, 4.0)
 
         driveController = SwerveDriveController(sl, sr)
 
