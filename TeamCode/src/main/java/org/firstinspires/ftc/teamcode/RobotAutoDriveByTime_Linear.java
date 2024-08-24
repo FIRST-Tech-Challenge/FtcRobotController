@@ -10,17 +10,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="Vanilla", group="Robot")
 
 public class RobotAutoDriveByTime_Linear extends LinearOpMode {
-
     // Initialize all variables for the program
+    // Hardware variables
     private IMU imu = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
-
+    // Software variables
     private final ElapsedTime     runtime = new ElapsedTime();
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
+    static final double     DEFAULT_SPEED = 0.6;
 
     @Override
     public void runOpMode() {
@@ -48,7 +47,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Callie and Neha: write autonomous code here! - - - - - - - - - - - - - - - - - - - - - -
+        // Start of autonomous program
         moveForward(0.5);
         moveForward(0.5, 0.8);
         turnLeft(1);
@@ -62,7 +61,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     }
 
     private void moveForward(double secondsToDrive) {
-        moveForward(secondsToDrive, FORWARD_SPEED);
+        moveForward(secondsToDrive, DEFAULT_SPEED);
     }
 
     private void moveForward(double secondsToDrive, double speedToDrive) {
@@ -79,7 +78,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     }
 
     private void moveBackward(double secondsToDrive) {
-        moveBackward(secondsToDrive, FORWARD_SPEED);
+        moveBackward(secondsToDrive, DEFAULT_SPEED);
     }
 
     private void moveBackward(double secondsToDrive, double speedToDrive) {
@@ -96,7 +95,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     }
 
     private void turnRight(double secondsToDrive) {
-        turnRight(secondsToDrive, FORWARD_SPEED);
+        turnRight(secondsToDrive, DEFAULT_SPEED);
     }
 
     private void turnRight(double secondsToDrive, double speedToDrive) {
@@ -113,7 +112,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     }
 
     private void turnLeft(double secondsToDrive) {
-        turnLeft(secondsToDrive, FORWARD_SPEED);
+        turnLeft(secondsToDrive, DEFAULT_SPEED);
     }
 
     private void turnLeft(double secondsToDrive, double speedToDrive) {
