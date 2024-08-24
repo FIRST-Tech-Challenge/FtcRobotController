@@ -4,7 +4,6 @@ import org.firstinspires.ftc.teamcode.SNAV.Util.Angle
 import kotlin.math.cos
 import kotlin.math.sin
 import java.lang.Math.toDegrees
-import java.lang.Math.toRadians
 import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -47,7 +46,7 @@ class SwerveDriveController(val leftModule: SwerveModule, val rightModule: Swerv
         rightModule.updateAngle()
     }
 
-    fun getLocalSpeedPowers(currentRobotAngle: Double): Array<Double> {
+    private fun getLocalSpeedPowers(currentRobotAngle: Double): Array<Double> {
         val speed: Array<Double> = arrayOf(0.0)
         speed[0] = xSpeedPower * cos(currentRobotAngle) + ySpeedPower * sin(currentRobotAngle)
         speed[1] = -xSpeedPower * cos(currentRobotAngle) + ySpeedPower * cos(currentRobotAngle)
