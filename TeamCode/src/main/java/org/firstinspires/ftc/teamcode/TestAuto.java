@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.NewStuff.DetectPropPositionAction;
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
 import org.firstinspires.ftc.teamcode.NewStuff.DroneLauncher;
@@ -48,6 +49,9 @@ public class TestAuto extends LinearOpMode {
         Log.d("vision", "opmode: made action");
 
         waitForStart();
+
+        Log.d("auto", "heading is" + imuModule.getIMU().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        Log.d("auto", "current lcoation is " + driveTrain.getfLeftTicks());
 
         GoToPropAction goToProp = new GoToPropAction(detectMarkerPos, fieldPosition, driveTrain, imuModule, visionPortalProcessor, isRedAlliance);
 

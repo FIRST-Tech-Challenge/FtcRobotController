@@ -30,26 +30,31 @@ public class GoToPropAction extends Action{
         this.visionPortalProcessor = visionPortalProcessor;
         this.fieldPosition = fieldPosition;
         this.isRedAlliance = isRedAlliance;
-
-        initActionSet();
     }
 
     public void initActionSet() {
         Log.d("goprop", "init action set");
 
         propLocation = fieldPosition.getPropLocation();
+        Log.d("goprop", "location is " + fieldPosition.getPropLocation());
 
         if(propLocation == FieldPosition.PROP_LOCATION.INNER) {
+            Log.d("goprop", "init action set to inner");
             actionInner = new ActionSet();
         } else if (propLocation == FieldPosition.PROP_LOCATION.OUTER) {
+            Log.d("goprop", "init action set to outer");
             actionOuter = new ActionSet();
         } else {
+            Log.d("goprop", "init action set to center");
             actionCenter = new ActionSet();
         }
+
+        Log.d("goprop", "finish init action set");
     }
 
     public void initPaths() {
         int polarity = visionPortalProcessor.getIsRedAlliance() ? -1 : 1;
+        Log.d("goprop", "init polarity");
 
         if (propLocation == FieldPosition.PROP_LOCATION.INNER) {
             Log.d("goprop", "start scheduling");
@@ -131,6 +136,7 @@ public class GoToPropAction extends Action{
     void update() {
         Log.d("goprop", "updating");
         if(!hasStarted) {
+            initActionSet();
             Log.d("goprop", "init paths");
             initPaths();
             hasStarted = true;
