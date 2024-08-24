@@ -22,7 +22,6 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     static final double     FORWARD_SPEED = 0.6;
     static final double     TURN_SPEED    = 0.5;
 
-
     @Override
     public void runOpMode() {
         // Define all the hardware
@@ -73,7 +72,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightBackDrive.setPower(speedToDrive);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            telemetry.addData("Path", "Move forward: %4.1f S Elapsed", runtime.seconds());
+            telemetry.addData("Move forward: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
         stopMoving();
@@ -90,7 +89,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightBackDrive.setPower(-speedToDrive);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            telemetry.addData("Path", "Move backward: %4.1f S Elapsed", runtime.seconds());
+            telemetry.addData("Move backward: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
         stopMoving();
@@ -107,7 +106,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightBackDrive.setPower(-speedToDrive);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            telemetry.addData("Path", "Turn right: %4.1f S Elapsed", runtime.seconds());
+            telemetry.addData("Turn right: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
         stopMoving();
@@ -124,7 +123,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightBackDrive.setPower(speedToDrive);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            telemetry.addData("Path", "Turn left: %4.1f S Elapsed", runtime.seconds());
+            telemetry.addData("Turn left: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
         stopMoving();

@@ -47,16 +47,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -98,7 +88,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 rightBackPower /= max;
             }
 
-
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
@@ -114,7 +103,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 turnToHeading(90.0);
             if (gamepad1.dpad_right)
                 turnToHeading(-90.0);
-
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime);
@@ -145,13 +133,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Pivot in place by applying the turning correction
             moveRobot(0, turnSpeed);
-
         }
-
     }
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
-
         // Determine the heading current error
         headingError = desiredHeading - getHeading();
 
@@ -190,11 +175,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
         rightBackDrive.setPower(rightFrontPower);
-
     }
-    /**
-     * read the Robot heading directly from the IMU (in degrees)
-     */
+
+    // read the Robot heading directly from the IMU (in degrees)
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
