@@ -23,7 +23,7 @@ public class BasicAutonomous extends LinearOpMode {
 
         while (opModeIsActive()){
             moveFoward(0.1,1);
-            moveFoward(0.1,1);
+            moveFoward(0.1,2);
         }
 
 
