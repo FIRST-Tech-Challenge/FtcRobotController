@@ -26,9 +26,9 @@ class PointTranslation(val bezierPoint: BezierPoint, val type: BezierPoint.Point
 
 class PointModification(
     val bezierPoint: BezierPoint,
-    val modified: Boolean?,
-    val mirrored: Boolean?,
-    val split: Boolean?
+    val modified: Boolean? = null,
+    val mirrored: Boolean? = null,
+    val split: Boolean? = null
 ) : Change {
     // Mostly for redoing the change, same/linked reasoning to PointTranslation
     override fun apply() {

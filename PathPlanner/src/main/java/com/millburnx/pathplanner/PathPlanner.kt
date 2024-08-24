@@ -2,13 +2,21 @@ package com.millburnx.pathplanner
 
 import com.millburnx.utils.Bezier
 import com.millburnx.utils.BezierPoint
+import com.millburnx.utils.GridBagHelper
+import com.millburnx.utils.JCheckbox
+import com.millburnx.utils.JNumber
+import com.millburnx.utils.JPopover
 import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
+import java.awt.Color
+import java.awt.Font
 import java.awt.Graphics
+import java.awt.GridBagLayout
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.imageio.ImageIO
 import javax.swing.JPanel
+import kotlin.math.round
 
 class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     val drawImage = false
@@ -27,6 +35,8 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
 
         isFocusable = true
         layout = null
+        font = Font("Noto Sans", Font.PLAIN, (16 * scale).toInt())
+        foreground = Color.white
         add(buttonPanel)
 
         addComponentListener(object : ComponentAdapter() {
@@ -162,36 +172,80 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
     }
 
     fun addPopover(position: Vec2d, target: Pair<BezierPoint, BezierPoint.PointType>) {
-        var copy = target.first.copy()
-        currentPopoverRef = JPopover(this, position, target.first, target.second, ppi, scale) {
-//            target.first.updateType(target.second, it)
-            val changes = mutableListOf<Change>()
-            val diff = it - target.first.getType(target.second)!!
-            if (diff.x != 0.0 || diff.y != 0.0) {
-                val change = PointTranslation(target.first, target.second, diff)
-                changes.add(change)
-            }
-            val modifiedChanged = target.first.modified != copy.modified
-            val mirroredChanged = target.first.mirrored != copy.mirrored
-            val splitChanged = target.first.split != copy.split
-            if (modifiedChanged || mirroredChanged || splitChanged) {
-                val modification = PointModification(
-                    target.first,
-                    if (modifiedChanged) target.first.modified else null,
-                    if (mirroredChanged) target.first.mirrored else null,
-                    if (splitChanged) target.first.split else null
-                )
-                changes.add(modification)
-            }
-            if (changes.isEmpty()) return@JPopover
-            addChanges(changes)
-            changes.forEach { it.apply() }
-            copy = target.first.copy()
+        val bezierPoint = target.first
+        val type = target.second
+        val point = bezierPoint.getType(type)!!
+
+        val popover = JPopover(this, scale)
+        val wrapper = JPanel()
+        wrapper.background = Utils.Colors.bg0
+        wrapper.font = font
+        popover.add(wrapper)
+
+        wrapper.layout = GridBagLayout()
+        val gridBag = GridBagHelper(wrapper, 2)
+        gridBag.constraints.insets = Vec2d(8).insets()
+
+        val xLabel = Utils.jLabel("X", font, foreground)
+        val xNumber = JNumber(wrapper, scale, -144.0 / 2, 144.0 / 2, 1.0, point.x)
+        xNumber.spinner.addChangeListener() {
+            val value = xNumber.model.number.toDouble()
+            val diff = value - bezierPoint.getType(type)!!.x
+            if (round(diff * 100) / 100 == 0.0) return@addChangeListener
+            println("X: ${xNumber.model.number.toDouble()}")
+            val translation = PointTranslation(bezierPoint, type, Vec2d(diff, 0.0))
+            addChanges(listOf(translation))
+            translation.apply()
             updateCatmullRom()
             repaint()
         }
-        add(currentPopoverRef)
-        revalidate()
-        repaint()
+
+        val yLabel = Utils.jLabel("Y", font, foreground)
+        val yNumber = JNumber(wrapper, scale, -144.0 / 2, 144.0 / 2, 1.0, point.y)
+        yNumber.spinner.addChangeListener() {
+            val value = yNumber.model.number.toDouble()
+            val diff = value - bezierPoint.getType(type)!!.y
+            if (round(diff * 100) / 100 == 0.0) return@addChangeListener
+            println("Y: ${yNumber.model.number.toDouble()}")
+            val translation = PointTranslation(bezierPoint, type, Vec2d(0.0, diff))
+            addChanges(listOf(translation))
+            translation.apply()
+            updateCatmullRom()
+            repaint()
+        }
+
+        gridBag.addAll(listOf(xLabel, xNumber.spinner, yLabel, yNumber.spinner))
+
+        val splitLabel = Utils.jLabel("Split", font, foreground)
+        val split = JCheckbox(scale, checked = bezierPoint.split)
+        split.addActionListener {
+            if (split.isSelected == bezierPoint.split) return@addActionListener
+            println("Split: ${split.isSelected}")
+            val modification = PointModification(bezierPoint, split = split.isSelected)
+            addChanges(listOf(modification))
+            modification.apply()
+            updateCatmullRom()
+            repaint()
+        }
+        split.isEnabled = !bezierPoint.mirrored
+
+        val mirrorLabel = Utils.jLabel("Mirror", font, foreground)
+        val mirror = JCheckbox(scale, checked = bezierPoint.mirrored)
+        mirror.addActionListener {
+            if (mirror.isSelected == bezierPoint.mirrored) return@addActionListener
+            println("Mirror: ${mirror.isSelected}")
+            split.isEnabled = !mirror.isSelected
+            val modification = PointModification(bezierPoint, mirrored = mirror.isSelected)
+            addChanges(listOf(modification))
+            modification.apply()
+            updateCatmullRom()
+            repaint()
+        }
+
+        gridBag.addAll(listOf(mirrorLabel, mirror, splitLabel, split))
+
+        popover.add()
+        popover.show(position)
+        currentPopoverRef = popover
     }
 }

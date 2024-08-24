@@ -1,14 +1,19 @@
 package com.millburnx.utils
 
+import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.FileDialog
+import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.Toolkit
 import java.awt.image.BufferedImage
 import java.io.File
+import javax.swing.JLabel
 import kotlin.math.atan2
+import kotlin.math.ceil
 import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.sin
 
 class Utils {
@@ -104,6 +109,43 @@ class Utils {
             desktopHints?.let { g2d.addRenderingHints(desktopHints as RenderingHints) }
 
             return Pair(bufferedImage, g2d)
+        }
+
+        /**
+         * Draws a rounded panel with a border
+         */
+        fun drawRoundedPanel(
+            g2d: Graphics2D, scale: Double, size: Vec2d, bgColor: Color, radius: Double,
+            borderColor: Color = Colors.bg2, borderWidth: Float = 0f
+        ) {
+            val radius = (radius * scale).toInt()
+
+            g2d.color = bgColor
+            g2d.fillRoundRect(0, 0, size.x.toInt(), size.y.toInt(), radius, radius)
+
+            if (borderWidth <= 0) return
+            val borderWidth = (borderWidth * scale).toFloat()
+
+            g2d.stroke = BasicStroke(borderWidth)
+            g2d.color = borderColor
+            g2d.drawRoundRect(
+                ceil(borderWidth / 2).toInt(),
+                ceil(borderWidth / 2).toInt(),
+                floor(size.x - borderWidth).toInt(),
+                floor(size.y - borderWidth).toInt(),
+                radius,
+                radius
+            )
+        }
+
+        /**
+         * Creates a JLabel with the specified text, font, and color
+         */
+        fun jLabel(text: String, font: Font, color: Color): JLabel {
+            val label = JLabel(text)
+            label.font = font
+            label.foreground = color
+            return label
         }
     }
 }

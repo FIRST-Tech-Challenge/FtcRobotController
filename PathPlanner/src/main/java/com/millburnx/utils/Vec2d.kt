@@ -1,5 +1,6 @@
 package com.millburnx.utils
 
+import java.awt.Dimension
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -13,11 +14,12 @@ class Vec2d(val x: Double, val y: Double) {
     constructor(x: Float, y: Float) : this(x.toDouble(), y.toDouble())
     constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
 
-    constructor(x: Double) : this(x, x)
-    constructor(x: Float) : this(x.toDouble())
-    constructor(x: Int) : this(x.toDouble())
+    constructor(v: Double) : this(v, v)
+    constructor(v: Float) : this(v.toDouble())
+    constructor(v: Int) : this(v.toDouble())
 
     constructor(point: java.awt.Point) : this(point.x.toDouble(), point.y.toDouble())
+    constructor(size: Dimension) : this(size.width, size.height)
 
     operator fun plus(other: Vec2d) = Vec2d(x + other.x, y + other.y)
     operator fun plus(other: Double) = Vec2d(x + other, y + other)
@@ -97,6 +99,20 @@ class Vec2d(val x: Double, val y: Double) {
      */
     fun awt(): java.awt.Point {
         return java.awt.Point(x.toInt(), y.toInt())
+    }
+
+    /**
+     * Converts the point to a java.awt inset
+     */
+    fun insets(): java.awt.Insets {
+        return java.awt.Insets(y.toInt(), x.toInt(), y.toInt(), x.toInt())
+    }
+
+    /**
+     * Converts the point to a java.awt dimension
+     */
+    fun dimension(): java.awt.Dimension {
+        return java.awt.Dimension(x.toInt(), y.toInt())
     }
 
     /**

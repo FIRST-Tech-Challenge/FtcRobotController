@@ -25,7 +25,7 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
             when (e.button) {
                 MouseEvent.BUTTON1 -> {
                     if (pathPlanner.currentPopoverRef != null) {
-                        pathPlanner.currentPopoverRef?.closePopover()
+                        pathPlanner.currentPopoverRef?.remove()
                         pathPlanner.currentPopoverRef = null
                         return
                     }
@@ -46,7 +46,7 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
 
                 MouseEvent.BUTTON3 -> {
                     if (pathPlanner.currentPopoverRef != null) {
-                        pathPlanner.currentPopoverRef?.closePopover()
+                        pathPlanner.currentPopoverRef?.remove()
                         pathPlanner.currentPopoverRef = null
                         return
                     }
@@ -62,7 +62,7 @@ class PathPlannerListeners(pathPlanner: PathPlanner) {
 
                 MouseEvent.BUTTON2 -> {
                     if (pathPlanner.currentPopoverRef != null) {
-                        pathPlanner.currentPopoverRef?.closePopover()
+                        pathPlanner.currentPopoverRef?.remove()
                         pathPlanner.currentPopoverRef = null
                     }
                     val targetPoint = BezierPoint.selectedPoint(
