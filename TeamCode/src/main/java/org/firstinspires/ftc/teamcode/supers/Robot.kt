@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.supers
 
 import com.acmerobotics.dashboard.FtcDashboard
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.teamcode.SNAV.SwerveDriveController
 import org.firstinspires.ftc.teamcode.SNAV.SwerveModule
 import org.firstinspires.ftc.teamcode.util.GamepadState
@@ -19,6 +21,8 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
     var sl: SwerveModule
     var sr: SwerveModule
     private var motors: Array<DcMotor>
+
+    var imu: IMU
 
     var driveController: SwerveDriveController
 
@@ -58,6 +62,12 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
+
+        // IMU (Used until odometry)
+        imu = hardwareMap.get(IMU::class.java, "imu")
+        val parameters: IMU.Parameters = IMU.Parameters(RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP))
+
+        imu.initialize(parameters)
     }
 }
 
