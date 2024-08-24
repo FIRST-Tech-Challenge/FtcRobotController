@@ -26,10 +26,10 @@ class TestSwerveForward : LinearOpMode() {
             r.dashboardTelemetry.update()
 
             r.sl.top.power = power
-            r.sl.bottom.power = power
+            r.sl.bottom.power = -power
 
             r.sr.top.power = power
-            r.sr.bottom.power = power
+            r.sr.bottom.power = -power
         }
 
     }
