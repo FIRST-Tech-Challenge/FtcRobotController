@@ -52,6 +52,7 @@ public class TestAuto extends LinearOpMode {
 //        odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
 
         fieldPosition.setWantedAprTagId(PropDetector.PROP_POSITION.RIGHT, PropDetector.ALLIANCE_COLOR.RED);
+        Log.d("auto", "wanted april tag id is " + fieldPosition.getWantedAprTagId());
 
         Log.d("vision", "opmode: making action");
 

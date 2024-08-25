@@ -43,18 +43,20 @@ public class AlignRobotToAprilTagXAction extends Action {
             Log.d("alignx", "no tags detected");
         }
 
-        if (myAprilTagDetections.size() != 0) {
+        if (myAprilTagDetections.size() > 0) {
             Log.d("alignx", "tags detected");
             Log.d("alignx", "detections size is " + myAprilTagDetections.size());
 
             for (AprilTagDetection detection : myAprilTagDetections) {
-                distanceToMove = ((fieldPosition.wantedAprTagId - detection.id) * distanceBetweenId) - detection.ftcPose.x;
+                distanceToMove = ((fieldPosition.getWantedAprTagId() - detection.id) * distanceBetweenId) - detection.ftcPose.x;
                 Log.d("alignx", "distance to move is " + distanceToMove);
                 avgDistanceToMove += distanceToMove;
             }
         }
 
-        avgDistanceToMove /= myAprilTagDetections.size();
+        if(myAprilTagDetections.size() > 0) {
+            avgDistanceToMove /= myAprilTagDetections.size();
+        }
         Log.d("alignx", "avg distance to move is " + avgDistanceToMove);
 
         return avgDistanceToMove;
