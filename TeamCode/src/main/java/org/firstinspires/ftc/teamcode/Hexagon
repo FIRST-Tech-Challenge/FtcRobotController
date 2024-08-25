@@ -1,0 +1,59 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+@Autonomous(name="Robot: Auto Hexagon", group="Autonomous")
+public class SquareAutoRun extends LinearOpMode {
+    private DcMotor frontLeft = null;
+    private DcMotor frontRight = null;
+    private DcMotor backLeft = null;
+    private DcMotor backRight = null;
+
+    @Override
+    public void runOpMode() {
+        // Initialize the hardware variables.
+        frontLeft = hardwareMap.get(DcMotor.class, "Left_front");
+        frontRight = hardwareMap.get(DcMotor.class, "Right_front");
+        backLeft = hardwareMap.get(DcMotor.class, "Left_rear");
+        backRight = hardwareMap.get(DcMotor.class, "Right_rear");
+        backRight.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+
+        waitForStart();
+
+        if (opModeIsActive()) {
+            for (int i = 0; i < 5; i++) {
+                // Move forward
+                frontLeft.setPower(1);
+                frontRight.setPower(1);
+                backLeft.setPower(1);
+                backRight.setPower(1);
+                sleep(4000);
+
+                // Stop moving forward
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
+                sleep(500); // Short pause before turning
+
+                // Turn to 120 degrees
+                frontLeft.setPower(1);
+                frontRight.setPower(-1);
+                backLeft.setPower(1);
+                backRight.setPower(-1);
+                sleep(650);
+
+                // Stop turning
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
+                sleep(500);
+            }
+        }
+    }
+}
+
