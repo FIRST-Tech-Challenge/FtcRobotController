@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
 
 import android.annotation.SuppressLint;
 
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.mmooover.Easing;
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
 import org.firstinspires.ftc.teamcode.mmooover.Motion;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
@@ -42,11 +44,19 @@ public class Pose2PoseTest extends LinearOpMode {
         LoopStopwatch ticker = new LoopStopwatch();
         PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
         Motion lastAction = null;
+        Easing easingFunction = new Easing(
+                Easing.linear(2.0),
+                Easing.linear(1/16.0),
+                Easing.LimitMode.SCALE
+        );
+
         waitForStart();
+
         targetTime.reset();
         timer.reset();
         boolean wait = false;
         ticker.clear();
+
         while (opModeIsActive()) {
             ticker.click();
             // Updates pose
@@ -81,8 +91,13 @@ public class Pose2PoseTest extends LinearOpMode {
                     timer.reset();
                     continue;
                 }
-                double speed = min(max(0.75, linear / 18.0 + 0.1), timer.time() / 2);
                 Motion action = pftp.getMotionToTarget(targets[targetIndex], hardware);
+                double dToTarget = sqrt(action.forward() * action.forward() + action.right() * action.right() + action.turn() * action.turn());
+                double speed = easingFunction.ease(
+                        timer.time(),
+                        dToTarget,
+                        0.75
+                );
                 action.apply(hardware.driveMotors, CALIBRATION, speed);
                 lastAction = action;
             }
