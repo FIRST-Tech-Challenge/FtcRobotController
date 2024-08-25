@@ -113,7 +113,7 @@ public class Location extends LinearOpMode {
             telemetry.addData("Right dead wheel position", rightOdometry.getCurrentPosition());
             telemetry.addData("Strafe dead wheel position", perpOdemetry.getCurrentPosition());
             telemetry.addData("Rotation", getRotation());
-            telemetry.addData("Position (Dead wheel, TODO: work while turning)", getPositionOdometryPods());
+            telemetry.addData("Position (Dead wheel, TODO: fix while turning)", getPositionOdometryPods());
             telemetry.addData("Position (April tags)", getPositionAprils());
             telemetry.update();
         }
