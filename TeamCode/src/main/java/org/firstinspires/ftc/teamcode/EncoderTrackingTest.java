@@ -15,7 +15,7 @@ import java.util.List;
 @TeleOp
 public class EncoderTrackingTest extends LinearOpMode {
     private static final double ticksPerRotation = 8192.0;
-    private static final double radiusInches = 0.69;
+    private static final double radiusInches = 0.70;
     private static final double trackWidth = 14 + 7 / 16.; // distance between two parallel encoders
     private static final double forwardOffset = -(6 + 3 / 4.);
 

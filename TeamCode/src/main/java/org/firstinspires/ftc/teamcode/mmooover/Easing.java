@@ -13,6 +13,9 @@ public class Easing {
     public static Function<Double, Double> linear(double m) {
         return d -> m * d;
     }
+    public static Function<Double, Double> power(double pow, double across) {
+        return d -> Math.pow(d / across, pow);
+    }
 
     private static double clamp(double a, double min, double max) {
         return Math.max(Math.min(a, max), min);

@@ -19,7 +19,7 @@ public interface TriOdoProvider {
      * Radius of the encoder wheels.
      * @return Radius in inches
      */
-    default double getEncoderWheelRadius() { return 0.69; }
+    default double getEncoderWheelRadius() { return 0.70; }
 
     /**
      * Distance between the two parallel encoders.

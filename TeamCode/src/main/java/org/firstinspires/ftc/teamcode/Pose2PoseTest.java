@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
 import org.firstinspires.ftc.teamcode.mmooover.Motion;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import org.firstinspires.ftc.teamcode.mmooover.PoseFromToProcessor;
+import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 
 @Autonomous
@@ -44,9 +45,11 @@ public class Pose2PoseTest extends LinearOpMode {
         LoopStopwatch ticker = new LoopStopwatch();
         PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
         Motion lastAction = null;
+        Speed2Power speed2Power = new Speed2Power(0.15);
         Easing easingFunction = new Easing(
                 Easing.linear(2.0),
-                Easing.linear(1/16.0),
+                Easing.linear(1/12.0),
+//                Easing.power(3.0, 12.0),
                 Easing.LimitMode.SCALE
         );
 
@@ -92,13 +95,17 @@ public class Pose2PoseTest extends LinearOpMode {
                     continue;
                 }
                 Motion action = pftp.getMotionToTarget(targets[targetIndex], hardware);
-                double dToTarget = sqrt(action.forward() * action.forward() + action.right() * action.right() + action.turn() * action.turn());
+                double dToTarget = sqrt(
+                        action.forward() * action.forward()
+                                + action.right() * action.right()
+                                + action.turn() * action.turn());
                 double speed = easingFunction.ease(
                         timer.time(),
                         dToTarget,
                         0.75
                 );
-                action.apply(hardware.driveMotors, CALIBRATION, speed);
+                double power = speed2Power.speed2power(speed);
+                action.apply(hardware.driveMotors, CALIBRATION, power);
                 lastAction = action;
             }
             telemetry.addLine("step " + (targetIndex + 1) + " of " + targets.length);
