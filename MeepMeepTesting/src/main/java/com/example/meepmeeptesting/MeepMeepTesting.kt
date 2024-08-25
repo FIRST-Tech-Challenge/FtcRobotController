@@ -5,6 +5,7 @@ import com.noahbres.meepmeep.MeepMeep
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity
 
+// Do not attempt to build MEEP MEEP project.
 object MeepMeepTesting {
     @JvmStatic
     fun main(args: Array<String>) {

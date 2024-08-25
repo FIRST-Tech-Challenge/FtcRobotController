@@ -1,7 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'com.chaquo.python'
 }
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('gradle-local.properties').newDataInputStream())
+def pathToPython = properties.getProperty("org.aa.pythonInterpreterPath")
 
 android {
     namespace 'com.example.depthnativelib'
@@ -17,6 +22,12 @@ android {
                 cppFlags ""
             }
         }
+        ndk {
+            //noinspection ChromeOsAbiSupport
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+        multiDexEnabled true
+
     }
 
     buildTypes {
@@ -43,9 +54,18 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}//    implementation 'androidx.appcompat:appcompat:1.7.0'
+
+chaquopy {
+    defaultConfig {
+//        buildPython(org.aa.pythonInterpreterPath)
+        buildPython(pathToPython)
+//        pip {
+//            install("depthai-sdk")
+//        }
+    }
 }
