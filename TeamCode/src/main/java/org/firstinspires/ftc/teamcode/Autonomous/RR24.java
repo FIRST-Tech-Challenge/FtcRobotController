@@ -67,7 +67,7 @@ public class RR24 {
                 .build();
 
         spikey[1] = robot.roadrun.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(12.5, -32.5, toRadians(-91)))
+                .lineToLinearHeading(new Pose2d(12.5, -33.5, toRadians(-91)))
                 .lineToLinearHeading(new Pose2d(12.5, -40.5, toRadians(-91)))
                 .build();
 
@@ -87,6 +87,7 @@ public class RR24 {
                     .addTemporalMarker(()->robot.dropServo(1))
 
                     .build();
+
 
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
                     .setReversed(false)
@@ -341,7 +342,7 @@ public class RR24 {
         robot.queuer.addDelay(0.7);
         robot.grabAuto();
         if(i==0)
-            robot.louAuto(false);
+            robot.lowAuto(false);
         else
             robot.lowAuto(false);
         robot.drop(46);

@@ -27,7 +27,7 @@ public class Lift extends RFDualMotor {
   private int iterateHeight = 6;
   public static double max = 1800,
       min = -15,
-      RESISTANCE = 700,
+      RESISTANCE = 640,
       kS = 0.06,
       kV = 3.2786E-4,
       kA = 6E-5,
@@ -62,9 +62,9 @@ public class Lift extends RFDualMotor {
 
   /** Stores different states of lift. */
   public enum LiftPositionStates {
-    HIGH_SET_LINE(1550, false),
+    HIGH_SET_LINE(1600, false),
     MID_SET_LINE(1050, false),
-    LOW_SET_LINE(850, false),
+    LOW_SET_LINE(800, false),
     AT_ZERO(0, true);
 
     double position;

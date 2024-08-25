@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
  */
 @Config
 public class Launcher extends RFServo {
-    public static double SHOOT_POSITION = 0.1, OTHER_POSITION = 0.9;
+    public static double SHOOT_POSITION = 0.1, OTHER_POSITION = 1;
     boolean isLoaded = false;
 
     /**

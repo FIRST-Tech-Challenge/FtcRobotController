@@ -421,7 +421,7 @@ public class Intake extends RFMotor {
       pixeled = false;
       stopped = false;
     }
-    if(REVERSING.getState()&&Magazine.pixels == 2 && time-reverseTime>0.3){
+    if(REVERSING.getState()&&Magazine.pixels == 2 && time-reverseTime>0.4){
       stopIntake();
       stopped = false;
     }

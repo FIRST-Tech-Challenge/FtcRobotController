@@ -278,7 +278,7 @@ public class RFAprilCam {
             packet.put("offtehda2", offtheda2*180/PI);
             packet.put("predictedThea2", (theda2+offtheda2)*180/PI + 180);
             packet.put("angle", Angle.normDelta((theda1+offtheda1+theda2+offtheda2)*.5+PI));
-            camPoseError = camPoseError.plus(new Pose2d(c1, (((theda1+offtheda1+theda2+offtheda2)*.5+PI)))).minus(currentPose);
+            camPoseError = camPoseError.plus(new Pose2d(c1, currentPose.getHeading()/*(((theda1+offtheda1+theda2+offtheda2)*.5+PI)))*/)).minus(currentPose);
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample) ;
             LOGGER.log("camPoseError" + camPoseError);
           } else {
@@ -300,7 +300,7 @@ public class RFAprilCam {
             packet.put("offtehda2", offtheda2*180/PI);
             packet.put("predictedThea2", (theda2+offtheda2)*180/PI + 180);
             packet.put("angle", Angle.normDelta((theda1+offtheda1+theda2+offtheda2)*.5+PI));
-            camPoseError = camPoseError.plus(new Pose2d(c2, (((theda1+offtheda1+theda2+offtheda2)*.5+PI)))).minus(currentPose);
+            camPoseError = camPoseError.plus(new Pose2d(c2, currentPose.getHeading()/*(((theda1+offtheda1+theda2+offtheda2)*.5+PI)))*/)).minus(currentPose);
             LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample) ;
             LOGGER.log("camPoseError" + camPoseError);
           }

@@ -490,6 +490,7 @@ public class BradBot extends BasicRobot {
                 lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
                 claw.flipTo(Claw.clawTargetStates.CLOSE);
                 intake.stopIntake();
+                intaked=false;
             }
             //      lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
             //      Lift.LiftMovingStates.AT_ZERO.clearTargets();
@@ -586,7 +587,7 @@ public class BradBot extends BasicRobot {
                         if(height==6){
                             intake.intakeAutoHeight(5);
                         }else
-                            intake.intakeAutoHeight(min(height,(int)intake.getHeight()+offset));
+                            intake.intakeAutoHeight(max(min(height,(int)intake.getHeight()+offset),height-1));
                     }
                 }
                 if(time>25){

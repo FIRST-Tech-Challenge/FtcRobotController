@@ -208,13 +208,14 @@ public class CVMaster {
   public void switchToApril() {
     //    webcam.stopRecordingPipeline();
     //    webcam.stopStreaming();
-    cam = new RFAprilCam(isLogi);
+//    cam = new RFAprilCam(isLogi);
+    stop();
     isStreaming = false;
   }
 
   public void stop() {
     webcam.stopStreaming();
-    cam.stop();
+//    cam.stop();
   }
 
   /**
@@ -231,8 +232,8 @@ public class CVMaster {
     if (isTeleop && isStreaming) {
       stop();
     }
-    if (!isStreaming) {
-      cam.update();
-    }
+//    if (!isStreaming) {
+//      cam.update();
+//    }
   }
 }

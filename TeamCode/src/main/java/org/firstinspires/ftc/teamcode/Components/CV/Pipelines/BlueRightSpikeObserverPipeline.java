@@ -28,11 +28,11 @@ public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
             p21x = 1030,
             p21y = 360,
             p22x = 1100,
-            p22y = 420,
+            p22y = 390,
             p31x = 600,
-            p31y = 340,
+            p31y = 330,
             p32x = 670,
-            p32y = 400,
+            p32y = 390,
             threshhold = 0.3,
 
     // h3u and s3u: 71 and 90

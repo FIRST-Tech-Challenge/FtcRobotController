@@ -218,7 +218,7 @@ public class BR24 {
         robot.hoverArm();
     }
     public void waitForStart(){
-        CONST = -.005;
+        CONST = .02;
         funnyIMUOffset=0;
         while (!op.isStarted() || op.isStopRequested()) {
             bark = robot.getSpikePos();
@@ -361,7 +361,7 @@ public class BR24 {
         robot.queuer.addDelay(0.7);
         robot.grabAuto();
         if(i==0)
-            robot.louAuto(false);
+            robot.lowAuto(false);
         else
             robot.lowAuto(false);
         robot.drop(46);
