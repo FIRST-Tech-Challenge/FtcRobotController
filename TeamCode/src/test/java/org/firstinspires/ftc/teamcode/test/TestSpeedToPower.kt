@@ -24,4 +24,13 @@ class TestSpeedToPower {
         FloatUtil.assertClose(oneThresh.speed2power(-1.0), -1.0)
         FloatUtil.assertClose(oneThresh.speed2power(-.1), -1.0)
     }
+    @Test
+    fun nearZeroAlways0() {
+        FloatUtil.assertClose(zeroThresh.speed2power(0.0), 0.0)
+        FloatUtil.assertClose(zeroThresh.speed2power(0.000000001), 0.0)
+        FloatUtil.assertClose(zeroThresh.speed2power(-0.000000001), 0.0)
+        FloatUtil.assertClose(oneThresh.speed2power(0.0), 0.0)
+        FloatUtil.assertClose(oneThresh.speed2power(0.000000001), 0.0)
+        FloatUtil.assertClose(oneThresh.speed2power(-0.000000001), 0.0)
+    }
 }
