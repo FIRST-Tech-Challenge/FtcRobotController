@@ -59,7 +59,7 @@ public class TurnRobotAction extends Action {
     @Override
     boolean checkDoneCondition() {
         refreshError();
-        if (error <= ERROR_TOLERANCE) {
+        if (Math.abs(error) <= ERROR_TOLERANCE) {
             driveTrain.setPower(0,0,0,0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             currentHeading = getCurrentHeading();

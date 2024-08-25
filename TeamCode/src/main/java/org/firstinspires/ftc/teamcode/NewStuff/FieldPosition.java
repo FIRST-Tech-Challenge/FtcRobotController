@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
+import android.util.Log;
+
 import java.lang.reflect.Field;
 
 public class FieldPosition {
@@ -10,12 +12,21 @@ public class FieldPosition {
         RED, BLUE;
     }
 
+    int wantedAprTagId;
+
 
     public enum PROP_LOCATION {
         INNER, OUTER, CENTER;
     }
 
     PROP_LOCATION propLocation;
+    Boolean isRedAlliance;
+    Boolean longPath;
+
+    public FieldPosition(Boolean isRedAlliance, Boolean longPath) {
+        this.isRedAlliance = isRedAlliance;
+        this.longPath = longPath;
+    }
 
     public ALLIANCE_COLOR getAllianceColor() {
         return allianceColor;
@@ -25,7 +36,7 @@ public class FieldPosition {
         this.allianceColor = allianceColor;
     }
 
-    public void setMarkerLocation(boolean isRedAlliance, boolean longPath, PropDetector.PROP_POSITION position) {
+    public void setMarkerLocation(PropDetector.PROP_POSITION position) {
         if (longPath) {
             if ((position == PropDetector.PROP_POSITION.RIGHT && isRedAlliance)
                     || (position == PropDetector.PROP_POSITION.LEFT && !isRedAlliance)) {
@@ -60,6 +71,47 @@ public class FieldPosition {
             }
         }
 
+    }
+
+    public void setWantedAprTagId(PropDetector.PROP_POSITION position, PropDetector.ALLIANCE_COLOR allianceColor) {
+
+        if (allianceColor == PropDetector.ALLIANCE_COLOR.RED) {
+            switch (position) {
+                case CENTER:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 5);
+                    wantedAprTagId = 5;
+                    break;
+                case RIGHT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 6);
+                    wantedAprTagId = 6;
+                    break;
+                case LEFT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 4);
+                    wantedAprTagId = 4;
+                    break;
+                default:
+                    Log.d("vision", "setWantedAprTagId: enter default. tag = " + 5);
+                    wantedAprTagId = 5;
+            }
+        } else {
+            switch (position) {
+                case CENTER:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 2);
+                    wantedAprTagId = 2;
+                    break;
+                case RIGHT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 3);
+                    wantedAprTagId = 3;
+                    break;
+                case LEFT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 1);
+                    wantedAprTagId = 1;
+                    break;
+                default:
+                    Log.d("vision", "setWantedAprTagId: enter default. tag = " + 2);
+                    wantedAprTagId = 2;
+            }
+        }
     }
 
     public PROP_LOCATION getPropLocation() {

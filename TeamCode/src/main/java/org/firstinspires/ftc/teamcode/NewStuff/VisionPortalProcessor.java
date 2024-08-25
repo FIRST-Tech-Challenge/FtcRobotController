@@ -62,4 +62,7 @@ public class VisionPortalProcessor {
     public PropProcessor getPropProcessor() {
         return propProcessor;
     }
+    public AprilTagProcessor getAprilTagProcessor() {
+        return aprilTagProcessor;
+    }
 }

@@ -38,9 +38,9 @@ public class PIDController {
 
         if (Math.abs(currentPos) < rampUpTicks) {
             if (targetPos > currentPos) {
-                power = 0.3 + (0.7 * (currentPos / rampUpTicks));
+                power = 0.3 + (0.55 * (currentPos / rampUpTicks));
             } else {
-                power = -0.3 + (0.7 * (currentPos / rampUpTicks));
+                power = -0.3 + (0.55 * (currentPos / rampUpTicks));
             }
 
             // set up for next loop

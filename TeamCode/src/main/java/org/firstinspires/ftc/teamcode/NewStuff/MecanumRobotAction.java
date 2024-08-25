@@ -18,8 +18,8 @@ public class MecanumRobotAction extends Action {
         this.dependentAction = dependentAction;
         this.targetTicks = calculateTickInches.inchToTicksDriveTrain(inches);
         this.driveTrain = driveTrain;
-        fLeftMecanumController = new PIDController("fl mecanum", 0.005, 0.0000005, 0.4, true);
-        bRightMecanumController = new PIDController("br mecanum", 0.005, 0.0000005, 0.4, true);
+        fLeftMecanumController = new PIDController("fl mecanum", 0.001, 0.0000005, 0.4, true);
+        bRightMecanumController = new PIDController("br mecanum", 0.001, 0.0000005, 0.4, true);
     }
 
     public MecanumRobotAction(double inches, DriveTrain driveTrain) {
@@ -36,7 +36,14 @@ public class MecanumRobotAction extends Action {
 
     @Override
     boolean checkDoneCondition() {
-        return false;
+        refreshError();
+        if(Math.abs(error) <= ERROR_TOLERANCE_IN_TICKS) {
+            driveTrain.setPower(0, 0, 0, 0); // stop, to be safe
+            driveTrain.getOpModeUtilities().getOpMode().sleep(100);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -59,10 +66,6 @@ public class MecanumRobotAction extends Action {
             currentTicks = driveTrain.getfLeftTicks();
             power = fLeftMecanumController.calculatePID(currentTicks, targetTicks);
             driveTrain.setPower(power, -1 * power, -1 * power, power);
-
         }
-
-        driveTrain.setPower(0, 0, 0, 0); // stop, to be safe
-        driveTrain.getOpModeUtilities().getOpMode().sleep(100);
     }
 }

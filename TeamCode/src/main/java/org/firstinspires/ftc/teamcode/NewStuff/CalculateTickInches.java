@@ -12,7 +12,15 @@ public class CalculateTickInches {
         return (mm * ticksPerMm);
     }
 
+    public double ticksToMmDriveTrain(double ticks) {
+        return (ticks / ticksPerMm);
+    }
+
     public double inchToTicksDriveTrain(double inches) {
         return (mmToTicksDriveTrain(inches * mmPerInch));
+    }
+
+    public double ticksToInchesDriveTrain(double ticks) {
+        return (ticksToMmDriveTrain(ticks / mmPerInch));
     }
 }

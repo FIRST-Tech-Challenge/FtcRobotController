@@ -43,7 +43,13 @@ public class DetectPropPositionAction extends Action {
         if (position == PropDetector.PROP_POSITION.UNDETECTED || position == PropDetector.PROP_POSITION.UNKNOWN) {
             return false;
         } else {
-            fieldPosition.setMarkerLocation(visionPortalProcessor.getIsRedAlliance(), longPath, position);
+            fieldPosition.setMarkerLocation(position);
+            if (fieldPosition.isRedAlliance) {
+                fieldPosition.setWantedAprTagId(position, PropDetector.ALLIANCE_COLOR.RED);
+            } else {
+                fieldPosition.setWantedAprTagId(position, PropDetector.ALLIANCE_COLOR.BLUE);
+            }
+
             visionPortalProcessor.getVisionPortal().setProcessorEnabled(visionPortalProcessor.getPropProcessor(), false);
             Log.d("vision", "action: finished action");
             return true;
