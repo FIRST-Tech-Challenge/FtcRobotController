@@ -18,15 +18,13 @@ import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
-// This is a test
-
 /** Base class that contains common methods and other configuration. */
 public abstract class Base extends LinearOpMode {
     private static final double LIFT_VEL = 1500;
     public static final double GOAL_ENCODERS = 2000;
     private TfodProcessor tfod;
     private static final ElapsedTime runtime = new ElapsedTime();
-    // All non-primitive datatypes initialize to null on default.
+    // All non-primitive data types initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelLockingServo, trayTiltingServo;
     public TouchSensor touchSensor;
@@ -110,7 +108,7 @@ public abstract class Base extends LinearOpMode {
             rb = hardwareMap.get(DcMotorEx.class, "rightBack");
         } catch (IllegalArgumentException e) {except("At least one drive train motor is not connected, so all will be disabled"); lf = lb = rf = rb = null;}
         // If given an error, the motor is already null
-        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (IllegalArgumentException e){except("carWashMotor (liftMotor) not conected");}
+        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (IllegalArgumentException e){except("carWashMotor (liftMotor) not connected");}
         try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (IllegalArgumentException e){except("pixelLiftingMotor not connected");}
         try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (IllegalArgumentException e){except("droneServo not connected");}
         try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (IllegalArgumentException e){except("pixelBackServo not connected");}
@@ -510,9 +508,8 @@ public abstract class Base extends LinearOpMode {
      * @return Information about the tag detected. **/
     @Nullable
     public AprilTagDetection tagDetections(int id, double timeout) {
-        double ms = (timeout);
         AprilTagDetection a;
-        double t = runtime.milliseconds() + ms;
+        double t = runtime.milliseconds() + timeout;
         while (opModeIsActive() && (runtime.milliseconds() < t)) {
             a = tagDetections(id);
             if (a != null) {
