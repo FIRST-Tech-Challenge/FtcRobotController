@@ -117,4 +117,7 @@ public class FieldPosition {
     public PROP_LOCATION getPropLocation() {
         return propLocation;
     }
+    public int getWantedAprTagId() {
+        return wantedAprTagId;
+    }
 }
