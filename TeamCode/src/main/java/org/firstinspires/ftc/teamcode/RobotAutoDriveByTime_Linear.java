@@ -48,11 +48,22 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         waitForStart();
 
         // Start of autonomous program
-        moveForward(0.5);
-        moveForward(0.5, 0.8);
-        turnLeft(1);
-        moveBackward(1.2);
-        turnRight(.4);
+       turnLeft(2);
+       turnRight(0.3);
+       moveBackward(0.5);
+       moveForward(0.5);
+       moveBackward(0.5);
+       moveForward(0.5);
+       turnLeft(0.7);
+       turnRight(0.7);
+       for(int i=0; i < 2; i++)
+        {
+            turnLeft(2);
+            moveForward(0.3);
+            moveBackward(0.3);
+            turnRight(2);
+        }
+
         // End of autonomous program
 
         telemetry.addData("Path", "Complete");
