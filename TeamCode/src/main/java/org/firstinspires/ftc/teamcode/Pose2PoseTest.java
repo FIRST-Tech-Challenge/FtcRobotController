@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 
 @Autonomous
 public class Pose2PoseTest extends LinearOpMode {
-    public static final double ACCEPT_DIST = 1.0; // inch. euclidean distance
+    public static final double ACCEPT_DIST = .25; // inch. euclidean distance
     public static final double ACCEPT_TURN = degrees(5); // radian.
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.33, 1.0);
@@ -45,7 +45,7 @@ public class Pose2PoseTest extends LinearOpMode {
         LoopStopwatch ticker = new LoopStopwatch();
         PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
         Motion lastAction = null;
-        Speed2Power speed2Power = new Speed2Power(0.15);
+        Speed2Power speed2Power = new Speed2Power(0.2);
         Easing easingFunction = new Easing(
                 Easing.linear(2.0),
                 Easing.linear(1/12.0),
@@ -106,6 +106,9 @@ public class Pose2PoseTest extends LinearOpMode {
                 );
                 double power = speed2Power.speed2power(speed);
                 action.apply(hardware.driveMotors, CALIBRATION, power);
+                telemetry.addData("forward", action.forward());
+                telemetry.addData("right", action.right());
+                telemetry.addData("turn (deg)", Math.toDegrees(action.turn()));
                 lastAction = action;
             }
             telemetry.addLine("step " + (targetIndex + 1) + " of " + targets.length);
