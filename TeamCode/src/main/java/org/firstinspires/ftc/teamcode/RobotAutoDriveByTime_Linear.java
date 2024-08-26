@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 @Autonomous(name="Vanilla", group="Robot")
 
 public class RobotAutoDriveByTime_Linear extends LinearOpMode {
@@ -39,15 +42,21 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw();
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");    //
+        telemetry.addData("Status", "Ready to run");
         telemetry.update();
+
+        telemetry.addData("Current Yaw", "%.0f", getHeading());
+        telemetry.update();
+        sleep(5000);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Start of autonomous program
+        /*
        turnLeft(2);
        turnRight(0.3);
        moveBackward(0.5);
@@ -63,12 +72,22 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             moveBackward(0.3);
             turnRight(2);
         }
+       */
+       turnLeftToHeading(45, .7);
+       sleep(2000);
+       turnLeftToHeading(90, .7);
+       sleep(2000);
+       turnRightToHeading(45, .7);
+       sleep(2000);
+       turnRightToHeading(0, .7);
+       sleep(5000);
 
         // End of autonomous program
 
         telemetry.addData("Path", "Complete");
+        telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.update();
-        sleep(1000);
+        sleep(5000);
     }
 
     private void moveForward(double secondsToDrive) {
@@ -144,5 +163,35 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
+    }
+
+    public double getHeading() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
+    }
+    private void turnLeftToHeading(double targetYaw, double speedToDrive) {
+        leftFrontDrive.setPower(-speedToDrive);
+        rightFrontDrive.setPower(speedToDrive);
+        leftBackDrive.setPower(-speedToDrive);
+        rightBackDrive.setPower(speedToDrive);
+
+        while (getHeading() < targetYaw) {
+            telemetry.addData("Current Yaw", "%.0f", getHeading());
+            telemetry.update();
+        }
+        stopMoving();
+    }
+
+    private void turnRightToHeading(double targetYaw, double speedToDrive) {
+        leftFrontDrive.setPower(speedToDrive);
+        rightFrontDrive.setPower(-speedToDrive);
+        leftBackDrive.setPower(speedToDrive);
+        rightBackDrive.setPower(-speedToDrive);
+
+        while (getHeading() > targetYaw) {
+            telemetry.addData("Current Yaw", "%.0f", getHeading());
+            telemetry.update();
+        }
+        stopMoving();
     }
 }
