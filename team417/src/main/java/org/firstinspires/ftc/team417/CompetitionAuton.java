@@ -16,7 +16,7 @@ public class CompetitionAuton extends BaseOpMode {
     @Override
     public void runOpMode() {
         Pose2d beginPose = new Pose2d(0, 0, 0);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, beginPose);
 
         waitForStart();
 

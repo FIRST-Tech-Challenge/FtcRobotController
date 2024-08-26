@@ -22,7 +22,7 @@ public class CompetitionTeleOp extends BaseOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, new Pose2d(0, 0, 0));
 
         waitForStart();
 

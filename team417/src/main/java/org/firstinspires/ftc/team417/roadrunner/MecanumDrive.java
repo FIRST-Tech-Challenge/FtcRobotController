@@ -50,12 +50,14 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import com.wilyworks.common.WilyWorks;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -63,6 +65,7 @@ import org.firstinspires.ftc.team417.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.team417.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.team417.roadrunner.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.team417.roadrunner.messages.PoseMessage;
+import org.firstinspires.ftc.team417.roadrunner.tuning.TuneRoadRunner;
 import org.firstinspires.inspection.InspectionState;
 
 import java.util.Arrays;
@@ -86,7 +89,7 @@ public final class MecanumDrive {
             lateralVelGain = 0.0;
             headingVelGain = 0.0; // shared with turn
 
-            if (isDevBot) {
+            if ((isDevBot) || (WilyWorks.isSimulating)) { // @@@ Make robot name a Wily Works option
                 // IMU orientation
                 logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
                 usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
@@ -105,6 +108,14 @@ public final class MecanumDrive {
                 axialGain = 20.0;
                 lateralGain = 8.0;
                 headingGain = 8.0; // shared with turn
+
+                // SparkFun OTOS settings:
+                otos.offset.x = 6.0; // Inches
+                otos.offset.y = -3.5; // Inches
+                otos.offset.h = Math.toRadians(-87.139); // Convert degrees to radians
+                otos.linearScalar = 1.000; // Scalar
+                otos.angularScalar = 1.001; // Scalar
+
             } else {
                 // IMU orientation
                 logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
@@ -152,6 +163,8 @@ public final class MecanumDrive {
         public double axialGain;
         public double lateralGain;
         public double headingGain;
+
+        public OTOSSettings otos = new OTOSSettings();
     }
 
     public static String getBotName() {
@@ -183,8 +196,7 @@ public final class MecanumDrive {
 
     public LazyImu lazyImu;
 
-    static public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
-    static public OTOSSettings opticalSettings = null;
+    public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
 
     public Localizer localizer;
     public Pose2d pose;
@@ -210,7 +222,7 @@ public final class MecanumDrive {
             configure();
         }
 
-        void configure() {
+        void configure() { // @@@ Revert this?
             leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
             leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
             rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
@@ -284,7 +296,7 @@ public final class MecanumDrive {
         }
     }
 
-    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad, Pose2d pose) {
         this.pose = pose;
 
         WilyWorks.setStartPose(pose, new PoseVelocity2d(new Vector2d(0, 0), 0));
@@ -306,31 +318,18 @@ public final class MecanumDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+
+        // Now that configuration is complete, verify the parameters:
+        TuneRoadRunner.verifyConfigurationParameters(this, telemetry, gamepad);
     }
 
     // This is where you configure Road Runner to work with your hardware:
-    void configure(HardwareMap hardwareMap) {
+    public void configure(HardwareMap hardwareMap) {
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         if (isDevBot) {
-            System.out.printf("*** HardwareMap: ");
-            System.out.print(hardwareMap);
-            System.out.print("\n");
-            if (opticalTracker == null) {
-                System.out.printf("*** Creating the SparkFun object!\n");
-
-                opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
-                opticalSettings = new OTOSSettings(
-                        6.0, // xInches
-                        -3.5,       // yInches
-                        -87.139,    // orientationDegrees
-                        1.000,      // linearScalar
-                        1.001);     // angularScalar
-                // Initialize the optical tracking sensor if we have one:
-                initializeOpticalTracker();
-            } else {
-                System.out.printf("*** Reusing the old object!\n");
-            }
+            opticalTracker = hardwareMap.get(SparkFunOTOS.class, "optical");
+            initializeOpticalTracker();
 
             leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
             leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -366,16 +365,12 @@ public final class MecanumDrive {
 
     // Structure for the settings of the SparkFun Optical Tracking Odometry Sensor.
     public static class OTOSSettings {
-        public SparkFunOTOS.Pose2D offset; // Inches, inches and radians
-        public double linearScalar; // Scalar
-        public double angularScalar; // Scalar
-
-        // Note that the heading is specified in degrees, NOT radians:
-        public OTOSSettings(double xInches, double yInches, double orientationDegrees, double linearScalar, double angularScalar) {
-            this.offset = new SparkFunOTOS.Pose2D(xInches, yInches, Math.toRadians(orientationDegrees));
-            this.linearScalar = linearScalar;
-            this.angularScalar = angularScalar;
-        }
+        // Inches, inches and radians:
+        public SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        // Scalar:
+        public double linearScalar;
+        // Scalar:
+        public double angularScalar;
     }
 
     // Initialize the optical tracking sensor if we have one. Derived from configureOtos(). The
@@ -410,7 +405,7 @@ public final class MecanumDrive {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        opticalTracker.setOffset(opticalSettings.offset);
+        opticalTracker.setOffset(PARAMS.otos.offset);
 
         // Here we can set the linear and angular scalars, which can compensate for
         // scaling issues with the sensor measurements. Note that as of firmware
@@ -428,8 +423,8 @@ public final class MecanumDrive {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        opticalTracker.setLinearScalar(opticalSettings.linearScalar);
-        opticalTracker.setAngularScalar(opticalSettings.angularScalar);
+        opticalTracker.setLinearScalar(PARAMS.otos.linearScalar);
+        opticalTracker.setAngularScalar(PARAMS.otos.angularScalar);
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration

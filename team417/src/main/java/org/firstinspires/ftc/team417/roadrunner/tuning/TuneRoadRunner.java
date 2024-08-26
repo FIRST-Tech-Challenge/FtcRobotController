@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 import com.wilyworks.common.WilyWorks;
@@ -273,18 +274,13 @@ class TickTracker {
 class Settings {
     String robotName;
     TuneRoadRunner.Type type;
-    double opticalAngularScalar;
-    double opticalLinearScalar;
-    Pose2D opticalOffset = null;
+    MecanumDrive.Params PARAMS;
 
     // Get the settings from the current MecanumDrive object:
     public Settings(MecanumDrive drive) {
         robotName = MecanumDrive.getBotName();
         if (drive.opticalTracker != null) {
             type = TuneRoadRunner.Type.OPTICAL;
-            opticalAngularScalar = drive.opticalTracker.getAngularScalar();
-            opticalLinearScalar = drive.opticalTracker.getLinearScalar();
-            opticalOffset = drive.opticalTracker.getOffset(); // @@@ Yeah, this doesn't work
         } else if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
             type = TuneRoadRunner.Type.ALL_WHEEL;
         } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
@@ -292,6 +288,13 @@ class Settings {
         } else {
             type = TuneRoadRunner.Type.TWO_DEAD;
         }
+        PARAMS = drive.PARAMS;
+    }
+
+    // Return a deep-copy clone of the current Settings object:
+    public Settings clone() {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(this), Settings.class);
     }
 
     // Save the current settings to the preferences database:
@@ -299,27 +302,55 @@ class Settings {
         Preferences preferences = Preferences.userNodeForPackage(Settings.class);
         Gson gson = new Gson();
         String json = gson.toJson(this);
-
         preferences.put("settings", json);
     }
 
-    // Compare the current settings to the last saved settings. Returns a string of the
-    // results; returns null if there is no settings mismatch found.
+    // Compare the saved and current values for a configuration parameter. If they're different,
+    // return a string that tells the user
+    String comparison = "";
+    void compare(String parameter, String format, double saved, double current) {
+        // @@@ What about heading in degrees?
+        String savedString = String.format(format, saved);
+        String currentString = String.format(format, current);
+        if (!savedString.equals(currentString)) {
+            comparison += String.format("%s = %s; // Was %s", parameter, saved, current);
+        }
+    }
+
+    // Compare the current settings to the last saved settings. Returns a string that
+    // describes how to fix the code if there are any mismatches. It may be an empty string.
     public String compareToSaved() {
         // Load the saved settings from the preferences database:
         Preferences preferences = Preferences.userNodeForPackage(Settings.class);
         Gson gson = new Gson();
         String json = preferences.get("settings", "");
-        Settings savedSettings = gson.fromJson(json, Settings.class);
+        Settings saved = gson.fromJson(json, Settings.class);
 
         // Now compare to the current settings:
-        if (savedSettings == null)
-            return null; // No saved settings were found
-        if (!savedSettings.robotName.equals(robotName))
-            return null; // Different robots, so discard
-        if (savedSettings.type != type)
-            return null; // Different drive types, so discard
-        return null;
+        if ((saved == null) || (saved.PARAMS == null))
+            return ""; // No saved settings were found
+        if (!saved.robotName.equals(robotName))
+            return ""; // Different robots, so discard
+        if (saved.type != type)
+            return ""; // Different drive types, so discard
+
+        comparison = "";
+        compare("PARAMS.otos.offset.x", "0.3f", saved.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
+        compare("PARAMS.otos.offset.y", "0.3f", saved.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
+        compare("PARAMS.otos.offset.h", "0.3f", saved.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
+        compare("PARAMS.otos.linearScalar", "0.3f", saved.PARAMS.otos.linearScalar, PARAMS.otos.linearScalar);
+        compare("PARAMS.otos.angularScalar", "0.3f", saved.PARAMS.otos.angularScalar, PARAMS.otos.angularScalar);
+        return comparison;
+    }
+
+    public String getChanges() {
+        String comparison = compareToSaved();
+        if (comparison.isEmpty())
+            return comparison;
+
+        return "Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
+                + "MecanumDrive Params constructor, then updating as follows:\n\n"
+                + comparison;
     }
 }
 
@@ -608,8 +639,8 @@ public class TuneRoadRunner extends LinearOpMode {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
         // Reset the current OTOS settings:
-        Pose2D oldOffset = drive.opticalSettings.offset;
-        double oldLinearScalar = drive.opticalSettings.linearScalar;
+        Pose2D oldOffset = drive.PARAMS.otos.offset;
+        double oldLinearScalar = drive.PARAMS.otos.linearScalar;
         drive.opticalTracker.setOffset(new Pose2D(oldOffset.x, oldOffset.y, 0));
         drive.opticalTracker.setLinearScalar(1.0);
 
@@ -645,21 +676,25 @@ public class TuneRoadRunner extends LinearOpMode {
             if (distance == 0)
                 distance = 0.001;
 
-            double newLinearScalar = (96.0 / distance);
-            double linearScalarChange = Math.abs((oldLinearScalar - newLinearScalar)
+            Settings newSettings = settings.clone();
+            newSettings.PARAMS.otos.linearScalar = (96.0 / distance);
+            newSettings.PARAMS.otos.offset.h = normalizeAngle(heading);
+
+            double linearScalarChange = Math.abs((oldLinearScalar - newSettings.PARAMS.otos.linearScalar)
                     / oldLinearScalar * 100.0); // Percentage
+            double headingChange = normalizeAngle(Math.abs(oldOffset.h - newSettings.PARAMS.otos.offset.h));
 
-            double newHeading = normalizeAngle(heading);
-            double headingChange = normalizeAngle(Math.abs(oldOffset.h - newHeading));
-
-            if (newLinearScalar < SparkFunOTOS.MIN_SCALAR) {
+            String codeChanges = settings.getChanges();
+            if (codeChanges.isEmpty()) {
+                ui.prompt("The results match your current settings.\n\nPress A to continue.");
+            } else if (newSettings.PARAMS.otos.linearScalar < SparkFunOTOS.MIN_SCALAR) {
                 String message = String.format("The measured distance of %.1f\" is not close enough to "
                         + "the expected distance of 96\". It can't measure more than %.1f\". "
                         + "Either you didn't push straight for 4 tiles or something is wrong "
                         + "with the sensor. ", distance, 96 / SparkFunOTOS.MIN_SCALAR);
                 message += "Maybe the distance of the sensor to the tile is less than 10.0 mm? ";
                 ui.prompt(message + "\n\nAborted, press A to continue");
-            } else if (newLinearScalar > SparkFunOTOS.MAX_SCALAR) {
+            } else if (newSettings.PARAMS.otos.linearScalar > SparkFunOTOS.MAX_SCALAR) {
                 String message = String.format("The measured distance of %.1f\" is not close enough to "
                         + "the expected distance of 96\". It can't measure less than %.1f\". "
                         + "Either you didn't push straight for 4 tiles or something is wrong "
@@ -667,38 +702,40 @@ public class TuneRoadRunner extends LinearOpMode {
 
                 // If the measured distance is close to zero, don't bother with the following
                 // suggestion:
-                if (newLinearScalar < 1.5) {
+                if (newSettings.PARAMS.otos.linearScalar < 1.5) {
                     message += "Maybe the distance of the sensor to the tile is more than 10.0 mm?";
                 }
                 ui.prompt(message + "\n\nAborted, press A to continue");
-            } else {
-                if (ui.prompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n", Math.toDegrees(newHeading), Math.toDegrees(headingChange))
-                    + String.format("New linear scalar %.3f is %.1f%% off from old.\n\n", newLinearScalar, linearScalarChange)
+            } else if (ui.prompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n",
+                        Math.toDegrees(newSettings.PARAMS.otos.offset.h), Math.toDegrees(headingChange))
+                    + String.format("New linear scalar %.3f is %.1f%% off from old.\n\n",
+                        newSettings.PARAMS.otos.linearScalar, linearScalarChange)
                     + "Use these results? Press A if they look good, B to cancel.")) {
 
-                    settings.opticalLinearScalar = newLinearScalar;
-                    settings.opticalOffset.h = newHeading;
-                    settings.save();
-
-                    // Apply the new settings to the hardware:
-                    drive.opticalTracker.setLinearScalar(newLinearScalar);
-                    drive.opticalTracker.setOffset(settings.opticalOffset);
-
-                    ui.prompt("Double-tap the shift key in Android Studio and enter 'MD.configure' to jump to the "
-                        + "MecanumDrive configure() routine. Change the parameters for "
-                            + "the OTOSSettings object as follows:<tt>\n\n"
-                            + String.format("&ensp;orientationDegrees = %.3f\n", Math.toDegrees(newHeading))
-                            + String.format("&ensp;linearScalar = %.3f\n", newLinearScalar)
-                            + "\n</tt>Press A to continue.");
-
-                    return; // ====>
-                }
+                applyNewSettings(newSettings, codeChanges);
+                return; // ====>
             }
         }
 
         // Restore original settings:
         drive.opticalTracker.setOffset(oldOffset);
         drive.opticalTracker.setLinearScalar(oldLinearScalar);
+    }
+
+    // Remember the new settings and set them to the hardware:
+    public void applyNewSettings(Settings newSettings, String changes) {
+        settings = newSettings;
+        settings.save();
+        ui.prompt(changes + "\n\nPress A to continue.");
+
+        // Update the current hardware settings:
+        drive.PARAMS = newSettings.PARAMS;
+        drive.configure(hardwareMap);
+    }
+
+    // Reset the settings back to the current settings:
+    public void resetSettings() {
+        drive.configure(hardwareMap);
     }
 
     // Return a high resolution time count, in seconds:
@@ -955,7 +992,7 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         // Undo the offset heading that the OTOS sensor automatically applies:
-        Point offset = new Point(center.x, center.y).rotate(-drive.opticalSettings.offset.h);
+        Point offset = new Point(center.x, center.y).rotate(-drive.PARAMS.otos.offset.h);
 
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
         results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", offset.x, offset.y, center.radius);
@@ -983,19 +1020,16 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
             return; // ====>
         }
 
-        if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
-            settings.opticalOffset.x = offset.x;
-            settings.opticalOffset.y = offset.y;
-            settings.opticalAngularScalar = angularScalar;
-            settings.save();
+        Settings newSettings = settings.clone();
+        newSettings.PARAMS.otos.offset.x = offset.x;
+        newSettings.PARAMS.otos.offset.y = offset.y;
+        newSettings.PARAMS.otos.angularScalar = angularScalar;
 
-            ui.prompt("Double-tap the shift key in Android Studio and enter 'MD.configure' to jump to the "
-                    + "MecanumDrive configure() routine. Change the parameters for "
-                    + "the OTOSSettings object as follows:<tt>\n\n"
-                    + String.format("&ensp;xInches = %.2f\n", offset.x)
-                    + String.format("&ensp;yInches = %.3f\n", offset.y)
-                    + String.format("&ensp;angularScalar = %.3f\n", angularScalar)
-                    + "\n</tt>Press A to continue.");
+        String changes = newSettings.getChanges();
+        if (changes.isEmpty()) {
+            ui.prompt("The results match your current settings.\n\nPress A to continue.");
+        } else if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
+            applyNewSettings(newSettings, changes);
         }
     }
 
@@ -1456,14 +1490,8 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
 
         // Initialize member fields:
         ui = new Ui();
-        drive = new MecanumDrive(hardwareMap, defaultPose);
+        drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, defaultPose);
         settings = new Settings(drive);
-        String comparison = settings.compareToSaved();
-        if (comparison != null) {
-            ui.prompt("Did you forget to update your code?\n"
-                    + comparison
-                    + "\n\nPress B to ignore");
-        }
 
         String configuration = "Mecanum drive, ";
         if (settings.type == Type.OPTICAL) {
@@ -1517,6 +1545,44 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
 
             tests.get(selection).method.invoke();   // Invoke the chosen test
             drive.setPose(defaultPose);             // Reset pose for next test
+        }
+    }
+
+    // Compare the current MecanumDrive configuration parameters to the tuned setetings that
+    // were saved:
+    static public void verifyConfigurationParameters(MecanumDrive drive, Telemetry telemetry, Gamepad gamepad) {
+        if ((telemetry == null) || (gamepad == null))
+            return;
+
+        Settings currentSettings = new Settings(drive);
+        String comparison = currentSettings.compareToSaved();
+        if (!comparison.isEmpty()) {
+            telemetry.clear();
+            telemetry.addLine("The current configuration settings don't match the last "
+                    + "results saved in TuneRoadRunner. Double-tap the shift key in Android "
+                    + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
+                    + "then update as follows:\n\n"
+                    + comparison
+                    + "\n\nPlease update your code and restart now. Or, to continue "
+                    + "anways, triple-tap the start button on the gamepad to delete the tuning "
+                    + "results and proceed.");
+            telemetry.update();
+
+            // Wait for a triple-tap of the start button:
+            for (int i = 0; i < 3; i++) {
+                try {
+                    while (!gamepad.start)
+                        Thread.sleep(1);
+                    while (gamepad.start)
+                        Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            // If we reached this point, the user has chosen to ignore the last tuning results.
+            // Override those results with the current settings:
+            currentSettings.save();
         }
     }
 }

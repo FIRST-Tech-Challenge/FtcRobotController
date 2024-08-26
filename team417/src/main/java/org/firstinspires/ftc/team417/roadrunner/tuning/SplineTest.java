@@ -13,7 +13,7 @@ public final class SplineTest extends LinearOpMode {
     public void runOpMode() {
         Pose2d beginPose = new Pose2d(0, 0, 0);
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-            MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+            MecanumDrive drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, beginPose);
 
             waitForStart();
 
