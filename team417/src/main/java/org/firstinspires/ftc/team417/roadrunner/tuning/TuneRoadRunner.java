@@ -21,6 +21,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.google.gson.Gson;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -271,13 +272,13 @@ class TickTracker {
 /**
  * Class for remembering all of the tuned settings.
  */
-class Settings {
+class TuneSettings {
     String robotName;
     TuneRoadRunner.Type type;
     MecanumDrive.Params PARAMS;
 
     // Get the settings from the current MecanumDrive object:
-    public Settings(MecanumDrive drive) {
+    public TuneSettings(MecanumDrive drive) {
         robotName = MecanumDrive.getBotName();
         if (drive.opticalTracker != null) {
             type = TuneRoadRunner.Type.OPTICAL;
@@ -292,14 +293,14 @@ class Settings {
     }
 
     // Return a deep-copy clone of the current Settings object:
-    public Settings clone() {
+    public TuneSettings getClone() {
         Gson gson = new Gson();
-        return gson.fromJson(gson.toJson(this), Settings.class);
+        return gson.fromJson(gson.toJson(this), TuneSettings.class);
     }
 
     // Save the current settings to the preferences database:
     public void save() {
-        Preferences preferences = Preferences.userNodeForPackage(Settings.class);
+        Preferences preferences = Preferences.userNodeForPackage(TuneSettings.class);
         Gson gson = new Gson();
         String json = gson.toJson(this);
         preferences.put("settings", json);
@@ -308,49 +309,68 @@ class Settings {
     // Compare the saved and current values for a configuration parameter. If they're different,
     // return a string that tells the user
     String comparison = "";
-    void compare(String parameter, String format, double saved, double current) {
+    void compare(String parameter, String format, double oldValue, double newValue) {
         // @@@ What about heading in degrees?
-        String savedString = String.format(format, saved);
-        String currentString = String.format(format, current);
-        if (!savedString.equals(currentString)) {
-            comparison += String.format("%s = %s; // Was %s", parameter, saved, current);
+        String oldString = String.format(format, oldValue);
+        String newString = String.format(format, newValue);
+        if (!oldString.equals(newString)) {
+            comparison += String.format("&ensp;%s = %s; // Was %s", parameter, newString, oldString);
         }
+    }
+
+    // Validate that the settings are valid and apply to the current robot:
+    TuneSettings getSavedSettings() {
+        // Load the saved settings from the preferences database:
+        Preferences preferences = Preferences.userNodeForPackage(TuneSettings.class);
+        Gson gson = new Gson();
+        String json = preferences.get("settings", "");
+        TuneSettings savedSettings = gson.fromJson(json, TuneSettings.class);
+
+        // Now compare to the current settings:
+        if ((savedSettings == null) || (savedSettings.PARAMS == null))
+            return null; // No saved settings were found
+        if (!savedSettings.robotName.equals(robotName))
+            return null; // Different robots, so discard
+        if (savedSettings.type != type)
+            return null; // Different drive types, so discard
+        return savedSettings;
     }
 
     // Compare the current settings to the last saved settings. Returns a string that
     // describes how to fix the code if there are any mismatches. It may be an empty string.
-    public String compareToSaved() {
-        // Load the saved settings from the preferences database:
-        Preferences preferences = Preferences.userNodeForPackage(Settings.class);
-        Gson gson = new Gson();
-        String json = preferences.get("settings", "");
-        Settings saved = gson.fromJson(json, Settings.class);
-
-        // Now compare to the current settings:
-        if ((saved == null) || (saved.PARAMS == null))
-            return ""; // No saved settings were found
-        if (!saved.robotName.equals(robotName))
-            return ""; // Different robots, so discard
-        if (saved.type != type)
-            return ""; // Different drive types, so discard
-
+    public String compare(TuneSettings oldSettings) {
         comparison = "";
-        compare("PARAMS.otos.offset.x", "0.3f", saved.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
-        compare("PARAMS.otos.offset.y", "0.3f", saved.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
-        compare("PARAMS.otos.offset.h", "0.3f", saved.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
-        compare("PARAMS.otos.linearScalar", "0.3f", saved.PARAMS.otos.linearScalar, PARAMS.otos.linearScalar);
-        compare("PARAMS.otos.angularScalar", "0.3f", saved.PARAMS.otos.angularScalar, PARAMS.otos.angularScalar);
+
+        compare("maxWheelVel", "%.2f", oldSettings.PARAMS.maxWheelVel, PARAMS.maxWheelVel);
+        compare("minProfileAccel", "%.2f", oldSettings.PARAMS.minProfileAccel, PARAMS.minProfileAccel);
+        compare("maxProfileAccel", "%.2f", oldSettings.PARAMS.maxProfileAccel, PARAMS.maxProfileAccel);
+        compare("maxAngVel", "%.2f", oldSettings.PARAMS.maxAngVel, PARAMS.maxAngVel);
+        compare("maxAngAccel", "%.2f", oldSettings.PARAMS.maxAngAccel, PARAMS.maxAngAccel);
+        compare("axialVelGain", "%.2f", oldSettings.PARAMS.axialVelGain, PARAMS.axialVelGain);
+        compare("lateralVelGain", "%.2f", oldSettings.PARAMS.lateralVelGain, PARAMS.lateralVelGain);
+        compare("headingVelGain", "%.2f", oldSettings.PARAMS.headingVelGain, PARAMS.headingVelGain);
+        compare("axialGain", "%.2f", oldSettings.PARAMS.axialGain, PARAMS.axialGain);
+        compare("lateralGain", "%.2f", oldSettings.PARAMS.lateralGain, PARAMS.lateralGain);
+        compare("headingGain", "%.2f", oldSettings.PARAMS.headingGain, PARAMS.headingGain);
+        compare("kS", "%.2f", oldSettings.PARAMS.kS, PARAMS.kS);
+        compare("kV", "%.2f", oldSettings.PARAMS.kV, PARAMS.kV);
+        compare("kA", "%.2f", oldSettings.PARAMS.kA, PARAMS.kA);
+        compare("otos.offset.x", "%.3f", oldSettings.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
+        compare("otos.offset.y", "%.3f", oldSettings.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
+        compare("otos.offset.h", "%.3f", oldSettings.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
+        compare("otos.linearScalar", "%.3f", oldSettings.PARAMS.otos.linearScalar, PARAMS.otos.linearScalar);
+        compare("otos.angularScalar", "%.3f", oldSettings.PARAMS.otos.angularScalar, PARAMS.otos.angularScalar);
         return comparison;
     }
 
-    public String getChanges() {
-        String comparison = compareToSaved();
+    public String getChanges(TuneSettings oldSettings) {
+        String comparison = compare(oldSettings);
         if (comparison.isEmpty())
             return comparison;
 
         return "Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
                 + "MecanumDrive Params constructor, then updating as follows:\n\n"
-                + comparison;
+                + "<tt>comparison</tt>";
     }
 }
 
@@ -362,7 +382,7 @@ public class TuneRoadRunner extends LinearOpMode {
     // Member fields referenced by every test:
     Ui ui;
     MecanumDrive drive;
-    Settings settings;
+    TuneSettings settings;
 
     // Constants:
     public static int DISTANCE = 72;
@@ -676,7 +696,7 @@ public class TuneRoadRunner extends LinearOpMode {
             if (distance == 0)
                 distance = 0.001;
 
-            Settings newSettings = settings.clone();
+            TuneSettings newSettings = settings.getClone();
             newSettings.PARAMS.otos.linearScalar = (96.0 / distance);
             newSettings.PARAMS.otos.offset.h = normalizeAngle(heading);
 
@@ -684,7 +704,7 @@ public class TuneRoadRunner extends LinearOpMode {
                     / oldLinearScalar * 100.0); // Percentage
             double headingChange = normalizeAngle(Math.abs(oldOffset.h - newSettings.PARAMS.otos.offset.h));
 
-            String codeChanges = settings.getChanges();
+            String codeChanges = newSettings.getChanges(settings);
             if (codeChanges.isEmpty()) {
                 ui.prompt("The results match your current settings.\n\nPress A to continue.");
             } else if (newSettings.PARAMS.otos.linearScalar < SparkFunOTOS.MIN_SCALAR) {
@@ -723,14 +743,16 @@ public class TuneRoadRunner extends LinearOpMode {
     }
 
     // Remember the new settings and set them to the hardware:
-    public void applyNewSettings(Settings newSettings, String changes) {
-        settings = newSettings;
-        settings.save();
-        ui.prompt(changes + "\n\nPress A to continue.");
+    public void applyNewSettings(TuneSettings newSettings, String changes) {
+        if (!changes.isEmpty()) {
+            settings = newSettings;
+            settings.save();
+            ui.prompt(changes + "\n\nPress A to continue.");
 
-        // Update the current hardware settings:
-        drive.PARAMS = newSettings.PARAMS;
-        drive.configure(hardwareMap);
+            // Update the current hardware settings:
+            drive.PARAMS = newSettings.PARAMS;
+            drive.configure(hardwareMap);
+        }
     }
 
     // Reset the settings back to the current settings:
@@ -1020,12 +1042,12 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
             return; // ====>
         }
 
-        Settings newSettings = settings.clone();
+        TuneSettings newSettings = settings.getClone();
         newSettings.PARAMS.otos.offset.x = offset.x;
         newSettings.PARAMS.otos.offset.y = offset.y;
         newSettings.PARAMS.otos.angularScalar = angularScalar;
 
-        String changes = newSettings.getChanges();
+        String changes = newSettings.getChanges(settings);
         if (changes.isEmpty()) {
             ui.prompt("The results match your current settings.\n\nPress A to continue.");
         } else if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
@@ -1491,7 +1513,12 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         // Initialize member fields:
         ui = new Ui();
         drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, defaultPose);
-        settings = new Settings(drive);
+        settings = new TuneSettings(drive);
+
+TuneSettings newSettings = settings.getClone();
+newSettings.PARAMS.kS = 3.14;
+String changes = newSettings.getChanges(settings);
+applyNewSettings(newSettings, changes);
 
         String configuration = "Mecanum drive, ";
         if (settings.type == Type.OPTICAL) {
@@ -1548,41 +1575,46 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         }
     }
 
-    // Compare the current MecanumDrive configuration parameters to the tuned setetings that
-    // were saved:
-    static public void verifyConfigurationParameters(MecanumDrive drive, Telemetry telemetry, Gamepad gamepad) {
+    // Check if the robot code setting the MecanumDrive configuration parameters is up to date
+    // with the last results from tuning:
+    /** @noinspection BusyWait*/
+    static public void verifyCodeMatchesTuneResults(MecanumDrive drive, Telemetry telemetry, Gamepad gamepad) {
         if ((telemetry == null) || (gamepad == null))
             return;
 
-        Settings currentSettings = new Settings(drive);
-        String comparison = currentSettings.compareToSaved();
-        if (!comparison.isEmpty()) {
-            telemetry.clear();
-            telemetry.addLine("The current configuration settings don't match the last "
-                    + "results saved in TuneRoadRunner. Double-tap the shift key in Android "
-                    + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
-                    + "then update as follows:\n\n"
-                    + comparison
-                    + "\n\nPlease update your code and restart now. Or, to continue "
-                    + "anways, triple-tap the start button on the gamepad to delete the tuning "
-                    + "results and proceed.");
-            telemetry.update();
+        TuneSettings currentSettings = new TuneSettings(drive);
+        TuneSettings savedSettings = currentSettings.getSavedSettings();
+        if (savedSettings != null) {
+            String comparison = savedSettings.compare(currentSettings);
+            if (!comparison.isEmpty()) {
+                telemetry.clear();
+                telemetry.addLine("The current configuration settings don't match the last "
+                        + "results saved in TuneRoadRunner. Double-tap the shift key in Android "
+                        + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
+                        + "then update as follows:\n\n"
+                        + comparison
+                        + "\n\nPlease update your code and restart now. Or, to delete the tuning "
+                        + "results and proceed anyway, triple-tap the start button on the gamepad.");
+                telemetry.update();
 
-            // Wait for a triple-tap of the start button:
-            for (int i = 0; i < 3; i++) {
-                try {
-                    while (!gamepad.start)
-                        Thread.sleep(1);
-                    while (gamepad.start)
-                        Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                // Wait for a triple-tap of the start button:
+                for (int i = 0; i < 3; i++) {
+                    try {
+                        while (!gamepad.start)
+                            Thread.sleep(1);
+                        while (gamepad.start)
+                            Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
 
-            // If we reached this point, the user has chosen to ignore the last tuning results.
-            // Override those results with the current settings:
-            currentSettings.save();
+                // If we reached this point, the user has chosen to ignore the last tuning results.
+                // Override those results with the current settings:
+                currentSettings.save();
+                telemetry.clear();
+                telemetry.update();
+            }
         }
     }
 }

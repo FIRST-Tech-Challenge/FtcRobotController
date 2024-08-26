@@ -320,7 +320,7 @@ public final class MecanumDrive {
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 
         // Now that configuration is complete, verify the parameters:
-        TuneRoadRunner.verifyConfigurationParameters(this, telemetry, gamepad);
+        TuneRoadRunner.verifyCodeMatchesTuneResults(this, telemetry, gamepad);
     }
 
     // This is where you configure Road Runner to work with your hardware:
