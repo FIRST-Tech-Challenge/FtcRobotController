@@ -1,0 +1,68 @@
+apply plugin: "java"
+apply plugin: "maven-publish"
+apply plugin: "checkstyle"
+
+java {
+    // TODO: add javadoc jar
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.google.code.gson:gson:2.8.6"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.9.1"
+
+    testImplementation "org.nanohttpd:nanohttpd-websocket:2.3.1"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifact jar
+                artifact sourcesJar
+
+                groupId = "com.acmerobotics.dashboard"
+                artifactId = "core"
+                version dashboard_version
+
+                pom {
+                    description = "Web dashboard designed for FTC"
+                    name = "FTC Dashboard"
+                    url = "https://github.com/acmerobotics/ftc-dashboard"
+
+                    licenses {
+                        license {
+                            name = "The MIT License"
+                            url = "https://opensource.org/licenses/MIT"
+                            distribution = "repo"
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = "rbrott"
+                            name = "Ryan Brott"
+                            email = "rcbrott@gmail.com"
+                        }
+                    }
+
+                    scm {
+                        url = "https://github.com/acmerobotics/ftc-dashboard"
+                    }
+                }
+            }
+        }
+    }
+}

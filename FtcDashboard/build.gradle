@@ -1,0 +1,13 @@
+buildscript {
+    ext.dashboard_version = '0.4.15'
+    ext.checkstyle_version = '8.18'
+}
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
