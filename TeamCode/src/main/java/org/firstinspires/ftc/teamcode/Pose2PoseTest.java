@@ -24,7 +24,7 @@ public class Pose2PoseTest extends LinearOpMode {
     public static final double ACCEPT_DIST = 1.0; // inch. euclidean distance
     public static final double ACCEPT_TURN = degrees(5); // radian.
     // power biases
-    public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0);
+    public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.33, 1.0);
 
     private static double degrees(double deg) {
         return deg * Math.PI / 180;
