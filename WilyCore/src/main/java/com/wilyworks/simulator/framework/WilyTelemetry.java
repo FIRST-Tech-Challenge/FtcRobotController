@@ -408,9 +408,12 @@ class Layout {
         }
 
         buffer.append(text, previousSearchEnd, text.length());
-        lineBreaks.add(new LineBreak(text.length(), 0)); // @@@ Needed?
-        lineBreaks.add(new LineBreak(Integer.MAX_VALUE, 0)); // Terminator
-        renderText(graphics, buffer, attributes, lineBreaks);
+
+        // The layout code can't take empty strings:
+        if (buffer.length() > 0) {
+            lineBreaks.add(new LineBreak(Integer.MAX_VALUE, 0)); // Terminator
+            renderText(graphics, buffer, attributes, lineBreaks);
+        }
     }
 }
 

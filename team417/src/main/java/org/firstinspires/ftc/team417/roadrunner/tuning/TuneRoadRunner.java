@@ -21,7 +21,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.google.gson.Gson;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -271,6 +270,7 @@ class TickTracker {
 
 /**
  * Class for remembering all of the tuned settings.
+ * @noinspection AccessStaticViaInstance
  */
 class TuneSettings {
     String robotName;
@@ -352,9 +352,9 @@ class TuneSettings {
         compare("axialGain", "%.2f", oldSettings.PARAMS.axialGain, PARAMS.axialGain);
         compare("lateralGain", "%.2f", oldSettings.PARAMS.lateralGain, PARAMS.lateralGain);
         compare("headingGain", "%.2f", oldSettings.PARAMS.headingGain, PARAMS.headingGain);
-        compare("kS", "%.2f", oldSettings.PARAMS.kS, PARAMS.kS);
-        compare("kV", "%.2f", oldSettings.PARAMS.kV, PARAMS.kV);
-        compare("kA", "%.2f", oldSettings.PARAMS.kA, PARAMS.kA);
+        compare("kS", "%.5f", oldSettings.PARAMS.kS, PARAMS.kS);
+        compare("kV", "%.5f", oldSettings.PARAMS.kV, PARAMS.kV);
+        compare("kA", "%.5f", oldSettings.PARAMS.kA, PARAMS.kA);
         compare("otos.offset.x", "%.3f", oldSettings.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
         compare("otos.offset.y", "%.3f", oldSettings.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
         compare("otos.offset.h", "%.3f", oldSettings.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
@@ -369,12 +369,12 @@ class TuneSettings {
             return comparison;
 
         return "Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
-                + "MecanumDrive Params constructor, then updating as follows:\n\n"
-                + "<tt>comparison</tt>";
+                + "MecanumDrive Params constructor, then update as follows:\n\n"
+                + "<tt>" + comparison + "</tt>";
     }
 }
 
-/** @noinspection UnnecessaryUnicodeEscape*/
+/** @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance , ClassEscapesDefinedScope */
 @TeleOp
 public class TuneRoadRunner extends LinearOpMode {
     enum Type { OPTICAL, ALL_WHEEL, TWO_DEAD, THREE_DEAD }
@@ -435,7 +435,7 @@ public class TuneRoadRunner extends LinearOpMode {
                     if (i == current)
                         output += "<span style='background: #88285a'>\u27a4" + menuStrings.getString(i) + "</span>\n";
                     else
-                        output += menuStrings.getString(i) + "\n";
+                        output += "\u25e6" + menuStrings.getString(i) + "\n";
                 }
                 telemetry.addLine(output);
                 telemetry.update();
@@ -1004,6 +1004,7 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
     }
 
     // Process the spin results:
+    @SuppressLint("DefaultLocale")
     void processSpinResults(Circle center, double totalMeasuredRotation) {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
@@ -1276,12 +1277,9 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         }
     }
 
+    @SuppressLint("DefaultLocale")
     void driveTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
-
-//        double heading = Math.PI /2; // radians
-//        drive.opticalTracker.setOffset(new Pose2D(0, 0, heading));
-//        ui.prompt(String.format("Setting offset to %.2f.\n\nPress A.", heading));
 
         while (opModeIsActive() && !ui.cancel()) {
             // @@@ Make it an exponent!
@@ -1294,14 +1292,12 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
             drive.updatePoseEstimate();
 
             TelemetryPacket p = new TelemetryPacket();
-            Pose2D opticalPose = drive.opticalTracker.getPosition(); // @@@
-            Pose2D sensorOffset = drive.opticalTracker.getOffset(); // Radians
+            Pose2D sensorOffset = drive.PARAMS.otos.offset;
             Pose2d pose = drive.pose;
             ui.message("Use the controller to drive the robot around.\n\n"
-                    + String.format("&ensp;Optical Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", opticalPose.x, opticalPose.y, opticalPose.h)
-                    + String.format("&ensp;RoadRun Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", pose.position.x, pose.position.y, pose.heading.toDouble())
-                    + String.format("&ensp;Sensor Offset: (%.2f\", %.2f\", %.2f\u00b0)\n", sensorOffset.x, sensorOffset.y, sensorOffset.h)
-                    + String.format("&ensp;Sensor scalars: %.3f, %.3f\n", drive.opticalTracker.getLinearScalar(), drive.opticalTracker.getAngularScalar())
+                    + String.format("&ensp;Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", pose.position.x, pose.position.y, pose.heading.toDouble())
+                    + String.format("&ensp;Sensor offset: (%.2f\", %.2f\", %.2f\u00b0)\n", sensorOffset.x, sensorOffset.y, sensorOffset.h)
+                    + String.format("&ensp;Sensor scalars: %.3f, %.3f\n", drive.PARAMS.otos.linearScalar, drive.PARAMS.otos.angularScalar)
                     + "\nPress B when done.");
 
             Canvas c = p.fieldOverlay();
@@ -1588,13 +1584,14 @@ applyNewSettings(newSettings, changes);
             String comparison = savedSettings.compare(currentSettings);
             if (!comparison.isEmpty()) {
                 telemetry.clear();
-                telemetry.addLine("The current configuration settings don't match the last "
+                telemetry.addLine("YOUR CODE IS OUT OF DATE"
+                        + "\n\nThe code's configuration parameters don't match the last "
                         + "results saved in TuneRoadRunner. Double-tap the shift key in Android "
                         + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
                         + "then update as follows:\n\n"
                         + comparison
-                        + "\n\nPlease update your code and restart now. Or, to delete the tuning "
-                        + "results and proceed anyway, triple-tap the start button on the gamepad.");
+                        + "\n\nPlease update your code and restart now. Or, to proceed anyway and "
+                        + "delete the tuning results, triple-tap the start button on the gamepad.");
                 telemetry.update();
 
                 // Wait for a triple-tap of the start button:
