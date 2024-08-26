@@ -27,6 +27,9 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
+    configurations {
+        all*.exclude module: 'gson' // This removes all other versions of `support-v4` if gets duplicated from all the artifacts.
+    }
 }
 
 dependencies {
@@ -35,13 +38,9 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:ftc:0.1.12"
     implementation "com.acmerobotics.roadrunner:core:1.0.0"
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
-//    implementation "com.acmerobotics.dashboard:dashboard:0.4.14"
     implementation 'org.ftclib.ftclib:core:2.1.1'
 
     implementation project(':depthnativelib')
-//    implementation (project(':FtcDashboard')) {
-//        exclude group: "com.google.code.gson"
-//    }
     implementation project(':FtcDashboard:DashboardCore')
     implementation project(':FtcDashboard:FtcDashboard')
 }
