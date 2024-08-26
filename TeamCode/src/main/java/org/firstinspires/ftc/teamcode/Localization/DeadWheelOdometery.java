@@ -23,7 +23,7 @@ public class DeadWheelOdometery {
     public static double forwardOffset = 200; //TODO: convert to inches
     public ElapsedTime dt = new ElapsedTime(); //[s]
 
-    public void initialize(HardwareMap hardwareMap, DcMotorEx motor0, DcMotorEx motor1, DcMotorEx motor3) {
+    public DeadWheelOdometery(HardwareMap hardwareMap, DcMotorEx motor0, DcMotorEx motor1, DcMotorEx motor3) {
         hwMap = hardwareMap;
         leftEncoder = motor0;
         centerEncoder = motor1;
