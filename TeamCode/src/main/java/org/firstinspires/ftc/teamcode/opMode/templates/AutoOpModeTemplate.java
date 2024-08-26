@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opMode.templates;
 
-import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.driveTrain.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.opModes.OpModeTemplate;
 
 public class AutoOpModeTemplate extends OpModeTemplate {

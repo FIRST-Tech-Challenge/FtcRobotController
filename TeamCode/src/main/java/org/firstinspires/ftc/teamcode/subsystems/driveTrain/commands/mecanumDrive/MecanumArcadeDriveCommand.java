@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.commands.driveTrain.mecanumDrive;
+package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands.mecanumDrive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
-import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.driveTrain.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
 public class MecanumArcadeDriveCommand extends SympleCommandBase<MecanumDriveSubsystem> {

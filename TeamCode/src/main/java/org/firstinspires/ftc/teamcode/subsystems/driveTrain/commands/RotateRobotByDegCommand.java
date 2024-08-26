@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.commands.driveTrain;
+package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands;
 
 import com.arcrobotics.ftclib.controller.PController;
 
-import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.driveTrain.IDriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
-public class RotateRobotByDegCommand extends SympleCommandBase<DriveTrainBaseSubsystem> {
+public class RotateRobotByDegCommand extends SympleCommandBase<IDriveTrainSubsystem> {
     public static final double defaultKp = 0.05f;
     private static final double MAX_POWER = 0.8f;
 
@@ -16,7 +16,7 @@ public class RotateRobotByDegCommand extends SympleCommandBase<DriveTrainBaseSub
     private int timesDone = 0;
     private double STARTING_ANGLE;
 
-    public RotateRobotByDegCommand(DriveTrainBaseSubsystem driveBaseSubsystem, double degToRotate, double kp) {
+    public RotateRobotByDegCommand(IDriveTrainSubsystem driveBaseSubsystem, double degToRotate, double kp) {
         super(driveBaseSubsystem);
 
         this.pController = new PController(kp);
@@ -24,7 +24,7 @@ public class RotateRobotByDegCommand extends SympleCommandBase<DriveTrainBaseSub
         this.degToRotate = degToRotate;
     }
 
-    public RotateRobotByDegCommand(DriveTrainBaseSubsystem driveBaseSubsystem, double degToRotate) {
+    public RotateRobotByDegCommand(IDriveTrainSubsystem driveBaseSubsystem, double degToRotate) {
         this(driveBaseSubsystem, degToRotate, defaultKp);
     }
 

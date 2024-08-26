@@ -1,16 +1,15 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.driveTrain;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.RobotController;
 import org.firstinspires.ftc.teamcode.maps.MotorMap;
-import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubsystemBase;
 
 import java.util.HashMap;
 
-public class MecanumDriveSubsystem extends SympleSubsystemBase implements DriveTrainBaseSubsystem {
+public class MecanumDriveSubsystem extends SympleSubsystemBase implements IDriveTrainSubsystem {
     private final HashMap<MotorNames, MotorEx> motors = new HashMap<>();
 
     public MecanumDriveSubsystem(RobotController robotController) {

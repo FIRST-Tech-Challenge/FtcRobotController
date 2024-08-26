@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import org.firstinspires.ftc.teamcode.RobotConfig;
+import org.firstinspires.ftc.teamcode.subsystems.driveTrain.DriveConstants;
 
 public class MathUtil {
     public static double countsToDeg(int counts, double maxCounts) {
@@ -12,6 +12,6 @@ public class MathUtil {
     }
 
     public static double encoderTicksToMeter(double ticks) {
-        return ticks * RobotConfig.DriveTrain.METERS_PER_TICK;
+        return ticks * DriveConstants.METERS_PER_TICK;
     }
 }

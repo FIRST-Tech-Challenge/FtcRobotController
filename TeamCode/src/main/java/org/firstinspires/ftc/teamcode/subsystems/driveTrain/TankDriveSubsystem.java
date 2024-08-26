@@ -1,19 +1,18 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.driveTrain;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.RobotController;
-import org.firstinspires.ftc.teamcode.subsystems.bases.DriveTrainBaseSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubsystemBase;
 
 // THIS CODE IS OUTDATED AND DIDN'T GET TESTED ON THE NEW ROBOT!
-public class TankDriveBaseSubsystem extends SympleSubsystemBase implements DriveTrainBaseSubsystem {
+public class TankDriveSubsystem extends SympleSubsystemBase implements IDriveTrainSubsystem {
     private boolean invert = false;
 
     private final MotorEx leftMotor, rightMotor;
 
-    public TankDriveBaseSubsystem(RobotController robotController) {
+    public TankDriveSubsystem(RobotController robotController) {
         super(robotController);
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Getting motors");
         this.rightMotor = new MotorEx(robotController.getHardwareMap(), "right_wheels");
