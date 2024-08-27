@@ -746,7 +746,7 @@ public class LooneyTuner extends LinearOpMode {
         setHardware();
     }
 
-    // Remember the new parameters:
+    // Prompt the user for how to set the new parameters and save them to the registry:
     public void setParameters(TuneParameters newParameters) {
         String comparison = newParameters.compare(parameters);
         if (comparison.isEmpty()) {
@@ -1250,19 +1250,15 @@ public class LooneyTuner extends LinearOpMode {
 //                canvas.setScale(144.0 / maxVelocity, 144.0 / MAX_VOLTAGE_FACTOR);
 
                 // The canvas coordinates go from -72 to 72 so scale appropriately:
-                double xOffset = 0; // -70;
                 double xScale = 140 / maxVelocity;
-                double yOffset = 0; // -70;
                 double yScale = 140 / MAX_VOLTAGE_FACTOR;
-
-    out.printf("xScale: %.3f, yScale: %.3f\n", xScale, yScale);
 
                 double[] xPoints = new double[points.size()];
                 double[] yPoints = new double[points.size()];
                 for (int i = 0; i < points.size(); i++) {
                     // Velocity along the x axis, voltage along the y axis:
-                    xPoints[i] = points.get(i).x * xScale + xOffset;
-                    yPoints[i] = points.get(i).y * yScale + yOffset;
+                    xPoints[i] = points.get(i).x * xScale;
+                    yPoints[i] = points.get(i).y * yScale;
                 }
 
                 canvas.setStroke("#00ff00");
@@ -1273,18 +1269,28 @@ public class LooneyTuner extends LinearOpMode {
                 // Draw the best-fit line:
                 canvas.setStrokeWidth(1);
                 canvas.setStroke("#ff0000");
-                canvas.strokeLine(0 + xOffset, bestFitLine.intercept + yOffset,
-                        200 + xOffset, bestFitLine.intercept + yOffset + 200 * bestFitLine.slope);
-
-    out.printf("best fit: (%.2f, %.2f) to (%.2f, %.2f)\n",
-            0 + xOffset, bestFitLine.intercept * yScale + yOffset,
-            100 * xScale + xOffset, bestFitLine.intercept * yScale + yOffset + (100 * bestFitLine.slope) * yScale); // @@@
+                canvas.strokeLine(0, bestFitLine.intercept * yScale,
+                        200 * xScale, (bestFitLine.intercept + 200 * bestFitLine.slope) * yScale);
 
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-                ui.prompt("Check out the graph on FTC Dashboard!\n\nPress A to continue.");
+                TuneParameters newParameters = parameters.getClone();
+                newParameters.PARAMS.kS = bestFitLine.intercept;
+                newParameters.PARAMS.kV = bestFitLine.slope;
+
+    out.printf("Intercept: %.3f, Slope: %.3f\n", bestFitLine.intercept, bestFitLine.slope);
+
+                if (ui.prompt("Check out the graph on FTC Dashboard!\n\n"
+                    + String.format("New kS: %.03f, old kS: %.03f\n", newParameters.PARAMS.kS, parameters.PARAMS.kS)
+                    + String.format("New kV: %.03f, old kV: %.03f\n", newParameters.PARAMS.kV, parameters.PARAMS.kV)
+                    + "\nIf these look good, press A to accept, B to cancel.")) {
+
+                    setParameters(newParameters);
+                }
             }
         }
+
+        setHardware();
     }
 
     @SuppressLint("DefaultLocale")
