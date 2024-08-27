@@ -1174,16 +1174,16 @@ public class LooneyTuner extends LinearOpMode {
     // until it reaches 0.9.
     @SuppressLint("DefaultLocale")
     void acceleratingStraightLineTuner() {
-        final double VOLTAGE_ADDER_PER_SECOND = 0.2;
+        final double VOLTAGE_ADDER_PER_SECOND = 0.3;
         final double MAX_VOLTAGE_FACTOR = 0.9;
         final double MAX_SECONDS = MAX_VOLTAGE_FACTOR / VOLTAGE_ADDER_PER_SECOND + 0.1;
 
-        useDrive(false); // Don't use MecanumDrive/TankDrive
+        useDrive(true); // Set the brakes
         assert(drive.opticalTracker != null);
 
-        if (ui.drivePrompt("Place the robot on the field with as much space in front of it as possible. "
+        if (ui.drivePrompt("Drive the robot to a spot on the field with as much space in front of it as possible. "
                 + "The robot will drive forward in a straight line, starting slowly but getting "
-                + "faster and faster. Be ready to press B to stop the robot if it gets close to "
+                + "faster and faster. Be ready to press B to stop the robot when it gets close to "
                 + "hitting something!"
                 + "\n\nDrive the robot to a good spot, press A to start, B to cancel.")) {
 
@@ -1227,48 +1227,57 @@ public class LooneyTuner extends LinearOpMode {
             if (oldVoltageFactor < MAX_VOLTAGE_FACTOR) {
                 ui.prompt("The robot didn't hit top speed before the test was aborted."
                         + "\n\nPress A to continue.");
-                return; // ====>
-            }
-            if (maxVelocity == 0) {
+            } else if (maxVelocity == 0) {
                 ui.prompt("The optical tracking sensor returned only zero velocities. "
                         + "Is it working properly?"
                         + "\n\nAborted, press A to continue.");
-                return; // ====>
+            } else {
+                // Draw the results to the FTC dashboard:
+                TelemetryPacket packet = new TelemetryPacket();
+                Canvas canvas = packet.fieldOverlay();
+
+                canvas.setRotation(-Math.PI/2);
+
+                // Set a solid white background:
+                canvas.setFill("#ffffff");
+                canvas.fillRect(-72, -72, 144, 144);
+                canvas.strokeLine(-72, -72, 72, 72);
+
+                // The canvas coordinates go from -72 to 72 so scale appropriately:
+                double xOffset = -70;
+                double xScale = 140 / maxVelocity;
+                double yOffset = -70;
+                double yScale = 140 / MAX_VOLTAGE_FACTOR;
+
+    out.printf("xScale: %.3f, yScale: %.3f\n", xScale, yScale);
+
+                double[] xPoints = new double[points.size()];
+                double[] yPoints = new double[points.size()];
+                for (int i = 0; i < points.size(); i++) {
+                    // Velocity along the x axis, voltage along the y axis:
+                    xPoints[i] = points.get(i).x * xScale + xOffset;
+                    yPoints[i] = points.get(i).y * yScale + yOffset;
+                }
+
+                canvas.setStroke("#00ff00");
+                canvas.strokePolyline(xPoints, yPoints);
+
+                BestFitLine bestFitLine = fitLine(points);
+
+                // Draw the best-fit line:
+                canvas.setStrokeWidth(1);
+                canvas.setStroke("#ff0000");
+                canvas.strokeLine(0 + xOffset, bestFitLine.intercept + yOffset,
+                        200 + xOffset, bestFitLine.intercept + yOffset + 200 * bestFitLine.slope);
+
+    out.printf("best fit: (%.2f, %.2f) to (%.2f, %.2f)\n",
+            0 + xOffset, bestFitLine.intercept + yOffset,
+            100 + xOffset, bestFitLine.intercept + yOffset + 100 * bestFitLine.slope); // @@@
+
+                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
+                ui.prompt("Check out the graph on FTC Dashboard!\n\nPress A to continue.");
             }
-
-            // Draw the results to the FTC dashboard:
-            TelemetryPacket packet = new TelemetryPacket();
-            Canvas canvas = packet.fieldOverlay();
-
-            // The canvas coordinates go from -1.0 to 1.0 so scale appropriately:
-            double xOffset = -0.9;
-            double xScale = 1.8 / maxVelocity;
-            double yOffset = -0.9;
-            double yScale = 1.8 / MAX_VOLTAGE_FACTOR;
-
-            double[] xPoints = new double[points.size()];
-            double[] yPoints = new double[points.size()];
-            for (int i = 0; i < points.size(); i++) {
-                // Velocity along the x axis, voltage along the y axis:
-                xPoints[i] = points.get(i).x * xScale + xOffset;
-                yPoints[i] = points.get(i).y * yScale + yOffset;
-            }
-
-            canvas.setStroke("#00ff00");
-            canvas.strokePolyline(xPoints, yPoints);
-
-            BestFitLine bestFitLine = fitLine(points);
-
-            // Draw the best-fit line:
-            canvas.setStrokeWidth(1);
-            canvas.setStroke("#ff0000");
-            canvas.strokeLine(0 + xOffset, bestFitLine.intercept + yOffset,
-            100 + xOffset, bestFitLine.intercept + yOffset + 100 * bestFitLine.slope);
-
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-            ui.prompt("Check out the graph!"
-                    + "\n\nPress A to continue.");
         }
     }
 
