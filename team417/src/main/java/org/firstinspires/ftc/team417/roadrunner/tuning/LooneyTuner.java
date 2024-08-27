@@ -1168,6 +1168,8 @@ public class LooneyTuner extends LinearOpMode {
             telemetry.addLine("Press B to cancel");
             telemetry.update();
 
+            // Reset the pose - again - because the user has driven around in drivePrompt:
+            drive.setPose(new Pose2d(0, 0, 0));
             Action action = drive.actionBuilder(drive.pose)
                     .setTangent(Math.toRadians(60))
                     .splineToLinearHeading(new Pose2d(24, 0, Math.toRadians(90)), Math.toRadians(-60))
@@ -1222,10 +1224,10 @@ public class LooneyTuner extends LinearOpMode {
             tests.add(new Test(this::spinCalibrator, "Spin calibrator (tracking)"));
             tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
-            tests.add(new Test(this::manualFeedforwardTuner, "ManualFeedforwardTuner (kV and kA)"));
-            tests.add(new Test(this::manualFeedbackTunerAxial, "ManualFeedbackTuner (axialGain)"));
-            tests.add(new Test(this::manualFeedbackTunerLateral, "ManualFeedbackTuner (lateralGain)"));
-            tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
+            tests.add(new Test(this::manualFeedforwardTuner, "Interactive feed forward tuner (kV and kA)"));
+            tests.add(new Test(this::manualFeedbackTunerAxial, "Interactive PID tuner (axialGain)"));
+            tests.add(new Test(this::manualFeedbackTunerLateral, "Interactive PID tuner (lateralGain)"));
+            tests.add(new Test(this::manualFeedbackTunerHeading, "Interactive PID (headingGain)"));
             tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
         }
 
@@ -1287,7 +1289,7 @@ public class LooneyTuner extends LinearOpMode {
                 // If we reached this point, the user has chosen to ignore the last tuning results.
                 // Override those results with the current settings:
                 currentSettings.save();
-                telemetry.clear();
+                telemetry.addLine("Looney Tuner results deleted!");
                 telemetry.update();
             }
         }
