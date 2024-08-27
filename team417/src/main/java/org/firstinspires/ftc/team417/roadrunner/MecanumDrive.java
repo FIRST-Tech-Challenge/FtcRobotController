@@ -76,40 +76,33 @@ import java.util.List;
 public final class MecanumDrive {
     public static class Params {
         Params() {
-            // path profile parameters (in inches)
             maxWheelVel = 50;
             minProfileAccel = -30;
             maxProfileAccel = 50;
 
-            // turn profile parameters (in radians)
-            maxAngVel = Math.PI; // shared with path
+            maxAngVel = Math.PI;
             maxAngAccel = Math.PI;
 
             axialVelGain = 0.0;
             lateralVelGain = 0.0;
-            headingVelGain = 0.0; // shared with turn
+            headingVelGain = 0.0;
 
-            if ((isDevBot) || (WilyWorks.isSimulating)) { // @@@ Make robot name a Wily Works option
-                // IMU orientation
+            if (isDevBot) {
                 logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
                 usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
-                // drive model parameters
                 inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
                 lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
                 trackWidthTicks = 690.3255416844875;
 
-                // feedforward parameters (in tick units)
                 kS = 0.6298460597755153; // Voltage
                 kV = 0.004317546531109388;
                 kA = 0;
 
-                // path controller gains
                 axialGain = 20.0;
                 lateralGain = 8.0;
                 headingGain = 8.0; // shared with turn
 
-                // SparkFun OTOS settings:
                 otos.offset.x = 6.4; // Inches
                 otos.offset.y = 3.037; // Inches
                 otos.offset.h = Math.toRadians(-88.955); // Convert degrees to radians
@@ -117,53 +110,48 @@ public final class MecanumDrive {
                 otos.angularScalar = 0.992; // Scalar
 
             } else {
-                // IMU orientation
                 logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
                 usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
-                // drive model parameters
                 inPerTick = 1;
                 lateralInPerTick = inPerTick;
                 trackWidthTicks = 0;
 
-                // feedforward parameters (in tick units)
                 kS = 0;
                 kV = 0;
                 kA = 0;
 
-                // path controller gains
                 axialGain = 0.0;
                 lateralGain = 0.0;
-                headingGain = 0.0; // shared with turn
+                headingGain = 0.0;
             }
-
         }
 
-        public double maxWheelVel;
-        public double minProfileAccel;
-        public double maxProfileAccel;
+        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection; // IMU orientation
+        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection; // IMU orientation
 
-        public double maxAngVel;
-        public double maxAngAccel;
+        public double maxWheelVel; // Maximum velocity a wheel can achieve, inches/s
+        public double minProfileAccel; // How fast the robot can accelerate, in inches/s/s
+        public double maxProfileAccel; // How fast the robot can decelerate, in inches/s/s
 
-        public double axialVelGain;
-        public double lateralVelGain;
-        public double headingVelGain;
+        public double maxAngVel; // Maximum angular velocity, radians/s
+        public double maxAngAccel; // How fast the robot can accelerate and decelerate turning, radians/s/s
 
-        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection;
-        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection;
+        public double inPerTick; // Inches-per-tick for encoders (set to 1.0 if using Optical Tracking)
+        public double lateralInPerTick; // Lateral inches-per-tick for encoders
+        public double trackWidthTicks; // Diameter of the circle that a wheel travels to turn the robot 360 degrees, in ticks
 
-        public double inPerTick;
-        public double lateralInPerTick;
-        public double trackWidthTicks;
+        public double kS; // Feed-forward voltage to overcome static friction
+        public double kV; // Feed-forward voltage factor to achieve target velocity, in tick units
+        public double kA; // Feed-forward voltage factor to achieve target acceleration, in tick units
 
-        public double kS;
-        public double kV;
-        public double kA;
+        public double axialGain; // Path controller proportional gain, scalar
+        public double lateralGain; // Path controller proportional gain, scalar
+        public double headingGain; // Path controller proportional gain, scalar
 
-        public double axialGain;
-        public double lateralGain;
-        public double headingGain;
+        public double axialVelGain; // Path controller derivative gain, scalar
+        public double lateralVelGain; // Path controller derivative gain, scalar
+        public double headingVelGain; // Path controller derivative gain, scalar
 
         public Otos otos = new Otos();
 
@@ -211,7 +199,6 @@ public final class MecanumDrive {
 
     public Localizer localizer;
     public Pose2d pose;
-    public PoseVelocity2d poseVelocity; // Robot-relative, not field-relative
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
@@ -831,8 +818,8 @@ public final class MecanumDrive {
         );
     }
 
-    // Rotate a vector by the prescribed angle:
-    public Vector2d rotateVector(Vector2d vector, double theta) {
+    /** @noinspection unused*/ // Rotate a vector by a prescribed angle:
+    static public Vector2d rotateVector(Vector2d vector, double theta) {
         return new Vector2d(
                 Math.cos(theta) * vector.x - Math.sin(theta) * vector.y,
                 Math.sin(theta) * vector.x + Math.cos(theta) * vector.y);

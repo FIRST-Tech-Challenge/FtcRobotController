@@ -2,13 +2,13 @@
  * Looney Tuner is a parameters tuner for robots using Road Runner.
  */
 
-// @@@ Change from Start to Back
-// @@@ Suppress mismatch when running on the simulator
+// @@@ Fix inPerTick
 // @@@ Get rid of non-OTOS code
 // @@@ Add saving of parameters after PID tuning
 // @@@ Revert changes to return to stock Quick Start code
-// @@@ Add support for changing robot name
 // @@@ Allow tuners to inherit current OTOS settings
+// @@@ Add LED support
+// @@@ Add stick support to menus
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
@@ -791,8 +791,7 @@ public class LooneyTuner extends LinearOpMode {
         return angle;
     }
 
-    // Ramp the motors up or down to or from the target spin speed. Return the amount of
-    // rotation
+    // Ramp the motors up or down to or from the target spin speed.
     void rampMotorsSpin(MecanumDrive drive, boolean up) {
         final double RAMP_TIME = 0.5; // Seconds
         final double SPIN_SPEED = 0.5;
@@ -810,12 +809,6 @@ public class LooneyTuner extends LinearOpMode {
             if (duration == RAMP_TIME)
                 break; // ===>
         }
-// @@@
-//        double speed = (up) ? 0.3 : 0.0;
-//        drive.rightFront.setPower(speed);
-//        drive.rightBack.setPower(speed);
-//        drive.leftFront.setPower(-speed);
-//        drive.leftBack.setPower(-speed);
     }
 
     // Structure to describe the center of rotation for the robot:
@@ -1027,8 +1020,6 @@ public class LooneyTuner extends LinearOpMode {
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
 
-        // @@@ Need to inherit the angularScalar value for more precision on the offset
-
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         // Undo the offset heading that the OTOS sensor automatically applies:
@@ -1097,46 +1088,6 @@ public class LooneyTuner extends LinearOpMode {
             }
         }
     }
-
-    /* @@@
-    class LeastSquaresAlgorithm {
-        public static void main(String[] args) {
-            // Sample data points (x, y)
-            double[] xValues = {0, 1, 2, 3};
-            double[] yValues = {-1, 0.2, 0.9, 2.1};
-
-            // Calculate the means of x and y
-            double xMean = calculateMean(xValues);
-            double yMean = calculateMean(yValues);
-
-            // Calculate the sum of (xi - xMean) * (yi - yMean) and (xi - xMean)^2
-            double numerator = 0;
-            double denominator = 0;
-            for (int i = 0; i < xValues.length; i++) {
-                double diffX = xValues[i] - xMean;
-                double diffY = yValues[i] - yMean;
-                numerator += diffX * diffY;
-                denominator += diffX * diffX;
-            }
-
-            // Calculate the slope (m) and intercept (c)
-            double slope = numerator / denominator;
-            double intercept = yMean - slope * xMean;
-
-            System.out.println("Slope: " + slope);
-            System.out.println("Intercept: " + intercept);
-        }
-
-        // Helper method to calculate the mean of an array
-        private static double calculateMean(double[] values) {
-            double sum = 0;
-            for (double value : values) {
-                sum += value;
-            }
-            return sum / values.length;
-        }
-    }
-     */ // @@@
 
     /**
      * Structure for describing the best-fit-line for a set of points.
@@ -1591,8 +1542,9 @@ public class LooneyTuner extends LinearOpMode {
     // with the last results from tuning:
     /** @noinspection BusyWait*/
     static public void verifyCodeMatchesTuneResults(MecanumDrive drive, Telemetry telemetry, Gamepad gamepad) {
-        if ((telemetry == null) || (gamepad == null))
-            return;
+        // There's no point in complaining about mismatches when running under the simulator:
+        if (WilyWorks.isSimulating)
+            return; // ====>
 
         TuneParameters currentSettings = new TuneParameters(drive);
         TuneParameters savedSettings = currentSettings.getSavedSettings();
@@ -1607,15 +1559,15 @@ public class LooneyTuner extends LinearOpMode {
                         + "then update as follows:\n\n"
                         + comparison
                         + "\nPlease update your code and restart now. Or, to proceed anyway and "
-                        + "delete the tuning results, triple-tap the start button on the gamepad.");
+                        + "delete the tuning results, triple-tap the BACK button on the gamepad.");
                 telemetry.update();
 
                 // Wait for a triple-tap of the start button:
                 for (int i = 0; i < 3; i++) {
                     try {
-                        while (!gamepad.start)
+                        while (!gamepad.back)
                             Thread.sleep(1);
-                        while (gamepad.start)
+                        while (gamepad.back)
                             Thread.sleep(1);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
