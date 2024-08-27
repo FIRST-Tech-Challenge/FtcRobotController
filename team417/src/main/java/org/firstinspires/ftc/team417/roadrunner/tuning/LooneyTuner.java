@@ -275,13 +275,13 @@ class TickTracker {
  * Class for remembering all of the tuned settings.
  * @noinspection AccessStaticViaInstance
  */
-class TuneSettings {
+class TuneParameters {
     String robotName;
     LooneyTuner.Type type;
     MecanumDrive.Params PARAMS;
 
     // Get the settings from the current MecanumDrive object:
-    public TuneSettings(MecanumDrive drive) {
+    public TuneParameters(MecanumDrive drive) {
         robotName = MecanumDrive.getBotName();
         if (drive.opticalTracker != null) {
             type = LooneyTuner.Type.OPTICAL;
@@ -296,14 +296,14 @@ class TuneSettings {
     }
 
     // Return a deep-copy clone of the current Settings object:
-    public TuneSettings getClone() {
+    public TuneParameters getClone() {
         Gson gson = new Gson();
-        return gson.fromJson(gson.toJson(this), TuneSettings.class);
+        return gson.fromJson(gson.toJson(this), TuneParameters.class);
     }
 
     // Save the current settings to the preferences database:
     public void save() {
-        Preferences preferences = Preferences.userNodeForPackage(TuneSettings.class);
+        Preferences preferences = Preferences.userNodeForPackage(TuneParameters.class);
         Gson gson = new Gson();
         String json = gson.toJson(this);
         preferences.put("settings", json);
@@ -322,12 +322,12 @@ class TuneSettings {
     }
 
     // Validate that the settings are valid and apply to the current robot:
-    TuneSettings getSavedSettings() {
+    TuneParameters getSavedSettings() {
         // Load the saved settings from the preferences database:
-        Preferences preferences = Preferences.userNodeForPackage(TuneSettings.class);
+        Preferences preferences = Preferences.userNodeForPackage(TuneParameters.class);
         Gson gson = new Gson();
         String json = preferences.get("settings", "");
-        TuneSettings savedSettings = gson.fromJson(json, TuneSettings.class);
+        TuneParameters savedSettings = gson.fromJson(json, TuneParameters.class);
 
         // Now compare to the current settings:
         if ((savedSettings == null) || (savedSettings.PARAMS == null))
@@ -341,7 +341,7 @@ class TuneSettings {
 
     // Compare the current settings to the last saved settings. Returns a string that
     // describes how to fix the code if there are any mismatches. It may be an empty string.
-    public String compare(TuneSettings oldSettings) {
+    public String compare(TuneParameters oldSettings) {
         comparison = "";
 
         compare("maxWheelVel", "%.2f", oldSettings.PARAMS.maxWheelVel, PARAMS.maxWheelVel);
@@ -366,7 +366,7 @@ class TuneSettings {
         return comparison;
     }
 
-    public String getChanges(TuneSettings oldSettings) {
+    public String getChanges(TuneParameters oldSettings) {
         String comparison = compare(oldSettings);
         if (comparison.isEmpty())
             return comparison;
@@ -385,7 +385,7 @@ public class LooneyTuner extends LinearOpMode {
     // Member fields referenced by every test:
     Ui ui;
     MecanumDrive drive;
-    TuneSettings settings;
+    TuneParameters parameters;
 
     // Constants:
     public static int DISTANCE = 72;
@@ -676,12 +676,12 @@ public class LooneyTuner extends LinearOpMode {
             double heading = 0;
 
             drive.opticalTracker.resetTracking();
-            while (opModeIsActive() && !ui.accept()) {
-                if (ui.cancel()) {
-                    // Restore original settings:
-                    drive.opticalTracker.setOffset(oldOffset);
-                    drive.opticalTracker.setLinearScalar(oldLinearScalar);
-                    return; // ====>
+
+            boolean success = false;
+            while (opModeIsActive() && !ui.cancel()) {
+                if (ui.accept()) {
+                    success = true;
+                    break; // ====>
                 }
 
                 Pose2D pose = drive.opticalTracker.getPosition();
@@ -695,71 +695,70 @@ public class LooneyTuner extends LinearOpMode {
                     + "\nPress A when you're finished pushing, B to cancel");
             }
 
-            // Avoid divide-by-zeroes on aborts:
-            if (distance == 0)
-                distance = 0.001;
+            if (success) {
+                // Avoid divide-by-zeroes on aborts:
+                if (distance == 0)
+                    distance = 0.001;
 
-            TuneSettings newSettings = settings.getClone();
-            newSettings.PARAMS.otos.linearScalar = (96.0 / distance);
-            newSettings.PARAMS.otos.offset.h = normalizeAngle(heading);
+                TuneParameters newParameters = parameters.getClone();
+                newParameters.PARAMS.otos.linearScalar = (96.0 / distance);
+                newParameters.PARAMS.otos.offset.h = normalizeAngle(heading);
 
-            double linearScalarChange = Math.abs((oldLinearScalar - newSettings.PARAMS.otos.linearScalar)
-                    / oldLinearScalar * 100.0); // Percentage
-            double headingChange = normalizeAngle(Math.abs(oldOffset.h - newSettings.PARAMS.otos.offset.h));
+                double linearScalarChange = Math.abs((oldLinearScalar - newParameters.PARAMS.otos.linearScalar)
+                        / oldLinearScalar * 100.0); // Percentage
+                double headingChange = normalizeAngle(Math.abs(oldOffset.h - newParameters.PARAMS.otos.offset.h));
 
-            String codeChanges = newSettings.getChanges(settings);
-            if (codeChanges.isEmpty()) {
-                ui.prompt("The results match your current settings.\n\nPress A to continue.");
-            } else if (newSettings.PARAMS.otos.linearScalar < SparkFunOTOS.MIN_SCALAR) {
-                String message = String.format("The measured distance of %.1f\" is not close enough to "
-                        + "the expected distance of 96\". It can't measure more than %.1f\". "
-                        + "Either you didn't push straight for 4 tiles or something is wrong "
-                        + "with the sensor. ", distance, 96 / SparkFunOTOS.MIN_SCALAR);
-                message += "Maybe the distance of the sensor to the tile is less than 10.0 mm? ";
-                ui.prompt(message + "\n\nAborted, press A to continue");
-            } else if (newSettings.PARAMS.otos.linearScalar > SparkFunOTOS.MAX_SCALAR) {
-                String message = String.format("The measured distance of %.1f\" is not close enough to "
-                        + "the expected distance of 96\". It can't measure less than %.1f\". "
-                        + "Either you didn't push straight for 4 tiles or something is wrong "
-                        + "with the sensor. ", distance, 96.0 / SparkFunOTOS.MAX_SCALAR);
+                if (newParameters.PARAMS.otos.linearScalar < SparkFunOTOS.MIN_SCALAR) {
+                    String message = String.format("The measured distance of %.1f\" is not close enough to "
+                            + "the expected distance of 96\". It can't measure more than %.1f\". "
+                            + "Either you didn't push straight for 4 tiles or something is wrong "
+                            + "with the sensor. ", distance, 96 / SparkFunOTOS.MIN_SCALAR);
+                    message += "Maybe the distance of the sensor to the tile is less than 10.0 mm? ";
+                    ui.prompt(message + "\n\nAborted, press A to continue");
+                } else if (newParameters.PARAMS.otos.linearScalar > SparkFunOTOS.MAX_SCALAR) {
+                    String message = String.format("The measured distance of %.1f\" is not close enough to "
+                            + "the expected distance of 96\". It can't measure less than %.1f\". "
+                            + "Either you didn't push straight for 4 tiles or something is wrong "
+                            + "with the sensor. ", distance, 96.0 / SparkFunOTOS.MAX_SCALAR);
 
-                // If the measured distance is close to zero, don't bother with the following
-                // suggestion:
-                if (newSettings.PARAMS.otos.linearScalar < 1.5) {
-                    message += "Maybe the distance of the sensor to the tile is more than 10.0 mm?";
+                    // If the measured distance is close to zero, don't bother with the following
+                    // suggestion:
+                    if (newParameters.PARAMS.otos.linearScalar < 1.5) {
+                        message += "Maybe the distance of the sensor to the tile is more than 10.0 mm?";
+                    }
+                    ui.prompt(message + "\n\nAborted, press A to continue");
+                } else {
+                    if (ui.prompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n",
+                            Math.toDegrees(newParameters.PARAMS.otos.offset.h), Math.toDegrees(headingChange))
+                            + String.format("New linear scalar %.3f is %.1f%% off from old.\n\n",
+                            newParameters.PARAMS.otos.linearScalar, linearScalarChange)
+                            + "Use these results? Press A if they look good, B to cancel.")) {
+
+                        setParameters(newParameters);
+                    }
                 }
-                ui.prompt(message + "\n\nAborted, press A to continue");
-            } else if (ui.prompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n",
-                        Math.toDegrees(newSettings.PARAMS.otos.offset.h), Math.toDegrees(headingChange))
-                    + String.format("New linear scalar %.3f is %.1f%% off from old.\n\n",
-                        newSettings.PARAMS.otos.linearScalar, linearScalarChange)
-                    + "Use these results? Press A if they look good, B to cancel.")) {
-
-                applyNewSettings(newSettings, codeChanges);
-                return; // ====>
             }
         }
 
-        // Restore original settings:
-        drive.opticalTracker.setOffset(oldOffset);
-        drive.opticalTracker.setLinearScalar(oldLinearScalar);
+        // Set the hardware to the new (or old) settings:
+        setHardware();
     }
 
-    // Remember the new settings and set them to the hardware:
-    public void applyNewSettings(TuneSettings newSettings, String changes) {
-        if (!changes.isEmpty()) {
-            settings = newSettings;
-            settings.save();
+    // Remember the new parameters:
+    public void setParameters(TuneParameters newParameters) {
+        String changes = newParameters.getChanges(parameters);
+        if (changes.isEmpty()) {
+            ui.prompt("The results match your current settings.\n\nPress A to continue.");
+        } else {
+            drive.PARAMS = newParameters.PARAMS;
+            parameters = newParameters;
+            parameters.save();
             ui.prompt(changes + "\n\nPress A to continue.");
-
-            // Update the current hardware settings:
-            drive.PARAMS = newSettings.PARAMS;
-            drive.configure(hardwareMap);
         }
     }
 
-    // Reset the settings back to the current settings:
-    public void resetSettings() {
+    // Set the hardware to the current parameters:
+    public void setHardware() {
         drive.configure(hardwareMap);
     }
 
@@ -886,6 +885,7 @@ public class LooneyTuner extends LinearOpMode {
         canvas.setStroke("#00ff00");
         canvas.strokePolyline(xPoints, yPoints);
 
+        // Draw the best-fit circle:
         if (circle != null) {
             canvas.setStrokeWidth(1);
             canvas.setStroke("#ff0000");
@@ -905,105 +905,104 @@ public class LooneyTuner extends LinearOpMode {
 
         useDrive(true); // Use MecanumDrive/TankDrive
 
-        // @@@ Clean this up!
+        // Zero these settings for the purpose of this test:
         drive.opticalTracker.setOffset(new Pose2D(0, 0, 0));
         drive.opticalTracker.setAngularScalar(0);
 
-        if (!ui.drivePrompt("In this test, you'll position the robot against a wall, then drive "
+        if (ui.drivePrompt("In this test, you'll position the robot against a wall, then drive "
                 + String.format("it out so that the robot can rotate in place %.1f times, then position ", REVOLUTION_COUNT)
                 + "the robot against the wall again."
                 + "\n\nFirst, carefully drive the robot to a wall and align it so that "
                 + "it's facing forward. This marks the start orientation for calibration."
-                + "\n\nDrive the robot to the start position, press A when ready, B to cancel"))
-            return; // ====>
+                + "\n\nDrive the robot to the start position, press A when ready, B to cancel")) {
 
-        // Initialize the heading:
-        drive.setPose(new Pose2d(0, 0, 0));
+            // Initialize the heading:
+            drive.setPose(new Pose2d(0, 0, 0));
 
-        // Let the user position the robot:
-        if (!ui.drivePrompt("Now move the robot far enough away from the wall and any objects so "
+            // Let the user position the robot:
+            if (ui.drivePrompt("Now move the robot far enough away from the wall and any objects so "
                     + "that it can freely rotate in place."
-                    + "\n\nPress A when ready for the robot to rotate, B to cancel"))
-            return; // ====>
+                    + "\n\nPress A when ready for the robot to rotate, B to cancel")) {
 
-        ArrayList<Point> points = new ArrayList<>();
+                ArrayList<Point> points = new ArrayList<>();
 
-        // Spin-up the robot, starting to measure rotation for the 'scalar' computation at this
-        // point:
-        double scalarStartRotation = initiateSparkFunRotation();
-        rampMotorsSpin(drive, true);
+                // Spin-up the robot, starting to measure rotation for the 'scalar' computation at this
+                // point:
+                double scalarStartRotation = initiateSparkFunRotation();
+                rampMotorsSpin(drive, true);
 
-        final double terminationRotation = REVOLUTION_COUNT * 2 * Math.PI;
-        double farthestDistance = 0;
-        Point farthestPoint = new Point(0, 0);
+                final double terminationRotation = REVOLUTION_COUNT * 2 * Math.PI;
+                double farthestDistance = 0;
+                Point farthestPoint = new Point(0, 0);
 
-        Point originPosition = null; // The origin of the start of every circle
-        double nextCircleRotation = 0;
+                Point originPosition = null; // The origin of the start of every circle
+                double nextCircleRotation = 0;
 
-        Pose2D offsetStartPosition = updateRotationAndGetPose();
-        double offsetStartHeading = offsetStartPosition.h;
-        double offsetStartRotation = getSparkFunRotation();
-        Point rawPosition = new Point(offsetStartPosition.x, offsetStartPosition.y);
+                Pose2D offsetStartPosition = updateRotationAndGetPose();
+                double offsetStartHeading = offsetStartPosition.h;
+                double offsetStartRotation = getSparkFunRotation();
+                Point rawPosition = new Point(offsetStartPosition.x, offsetStartPosition.y);
 
-out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
+                // Now do all of the full-speed spins:
+                boolean success = false;
+                while (opModeIsActive() && !ui.cancel()) {
+                    double offsetRotation = getSparkFunRotation() - offsetStartRotation;
 
-        // Now do all of the full-speed spins:
-        while (opModeIsActive()) {
-            double offsetRotation = getSparkFunRotation() - offsetStartRotation;
+                    // Check if we're at the start of a new circle:
+                    if (offsetRotation >= nextCircleRotation) {
+                        // Remember the raw position as the start of the new circle:
+                        originPosition = rawPosition;
+                        nextCircleRotation += 2 * Math.PI;
+                    }
 
-            // Check if we're at the start of a new circle:
-            if (offsetRotation >= nextCircleRotation) {
-                // Remember the raw position as the start of the new circle:
-                originPosition = rawPosition;
-                nextCircleRotation += 2 * Math.PI;
-            }
+                    // Now that we've potentially done the last adjustment, see if we're all done:
+                    if (offsetRotation >= terminationRotation) {
+                        success = true;
+                        break; // ====>
+                    }
 
-            // Now that we've potentially done the last adjustment, see if we're all done:
-            if (offsetRotation >= terminationRotation)
-                break; // ====>
+                    Point currentPoint = rawPosition.subtract(originPosition).rotate(-offsetStartHeading);
+                    points.add(currentPoint);
+                    double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
+                    if (distanceFromOrigin > farthestDistance) {
+                        farthestDistance = distanceFromOrigin;
+                        farthestPoint = currentPoint;
+                    }
 
-            Point currentPoint = rawPosition.subtract(originPosition).rotate(-offsetStartHeading);
-            points.add(currentPoint);
-            double distanceFromOrigin = Math.hypot(currentPoint.x, currentPoint.y);
-            if (distanceFromOrigin > farthestDistance) {
-                farthestDistance = distanceFromOrigin;
-                farthestPoint = currentPoint;
-            }
+                    drawSpinPoints(points, null);
 
-            drawSpinPoints(points, null);
+                    // Update the telemetry:
+                    double rotationsRemaining = (terminationRotation - offsetRotation) / (2 * Math.PI);
+                    telemetry.addLine(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
+                    telemetry.addLine("\nPress B to abort.");
+                    telemetry.update();
 
-            // Update the telemetry:
-            double rotationsRemaining = (terminationRotation - offsetRotation) / (2 * Math.PI);
-            telemetry.addLine(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
-            telemetry.addLine("\nPress B to abort.");
-            telemetry.update();
+                    // Update for next iteration of the loop:
+                    Pose2D rawPose = updateRotationAndGetPose();
+                    rawPosition = new Point(rawPose.x, rawPose.y);
+                }
 
-            if (ui.cancel()) {
+                // Stop the rotation:
                 rampMotorsSpin(drive, false);
-                return; // ====>
-            }
 
-            // Update for next iteration of the loop:
-            Pose2D rawPose = updateRotationAndGetPose();
-            rawPosition = new Point(rawPose.x, rawPose.y);
+                if ((success) && ui.drivePrompt("Now drive the robot to align it at the wall in the same "
+                        + "place and orientation as it started."
+                        + "\n\nDrive the robot to its wall position, press A when done, B to cancel")) {
+
+                    Circle circle = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
+
+                    // Draw results with the fitted circle:
+                    drawSpinPoints(points, circle);
+
+                    updateRotationAndGetPose();
+                    double totalMeasuredRotation = getSparkFunRotation() - scalarStartRotation;
+                    processSpinResults(circle, totalMeasuredRotation);
+                }
+            }
         }
 
-        // Stop the rotation:
-        rampMotorsSpin(drive, false);
-
-        if (!ui.drivePrompt("Now drive the robot to align it at the wall in the same "
-                    + "place and orientation as it started."
-                    + "\n\nDrive the robot to its wall position, press A when done, B to cancel"))
-            return; // ====>
-
-        Circle circle = fitCircle(points, farthestPoint.x / 2, farthestPoint.y / 2);
-
-        // Draw results with the fitted circle:
-        drawSpinPoints(points, circle);
-
-        updateRotationAndGetPose();
-        double totalMeasuredRotation = getSparkFunRotation() - scalarStartRotation;
-        processSpinResults(circle, totalMeasuredRotation);
+        // Restore the hardware settings:
+        setHardware();
     }
 
     // Process the spin results:
@@ -1025,37 +1024,23 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += "\n";
 
-        out.printf("Circle fit: %.2f, %.2f\n", offset.x, offset.y); // @@@
-
         // Do some sanity checking on the results:
         if ((Math.abs(offset.x) > 12) || (Math.abs(offset.y) > 12)) {
-
-            if (Math.abs(offset.x) > 12.0)
-                out.printf("Bad x: %.2f\n", Math.abs(offset.x)); // @@@
-            if (Math.abs(offset.y) > 12.0)
-                out.printf("Bad y: %.2f\n", Math.abs(offset.y));
-
             ui.prompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
                     + "Aborted, press A to continue.");
-            return; // ====>
-        }
-        if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
+        } else if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
             ui.prompt(results + "The measured number of circles is bad. Did you properly align "
                     + "the robot on the wall the same way at both the start and end of this test?\n\n"
                     + "Aborted, press A to continue.");
-            return; // ====>
-        }
+        } else {
+            TuneParameters newSettings = parameters.getClone();
+            newSettings.PARAMS.otos.offset.x = offset.x;
+            newSettings.PARAMS.otos.offset.y = offset.y;
+            newSettings.PARAMS.otos.angularScalar = angularScalar;
 
-        TuneSettings newSettings = settings.getClone();
-        newSettings.PARAMS.otos.offset.x = offset.x;
-        newSettings.PARAMS.otos.offset.y = offset.y;
-        newSettings.PARAMS.otos.angularScalar = angularScalar;
-
-        String changes = newSettings.getChanges(settings);
-        if (changes.isEmpty()) {
-            ui.prompt("The results match your current settings.\n\nPress A to continue.");
-        } else if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
-            applyNewSettings(newSettings, changes);
+            if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
+                setParameters(newSettings);
+            }
         }
     }
 
@@ -1188,7 +1173,7 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
     // until it reaches 0.9.
     @SuppressLint("DefaultLocale")
     void acceleratingStraightLineTuner() {
-        final double VOLTAGE_ADDER_PER_SECOND = 0.1;
+        final double VOLTAGE_ADDER_PER_SECOND = 0.2;
         final double MAX_VOLTAGE_FACTOR = 0.9;
         final double MAX_SECONDS = MAX_VOLTAGE_FACTOR / VOLTAGE_ADDER_PER_SECOND + 0.1;
 
@@ -1272,6 +1257,12 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
             canvas.strokePolyline(xPoints, yPoints);
 
             BestFitLine bestFitLine = fitLine(points);
+
+            // Draw the best-fit line:
+            canvas.setStrokeWidth(1);
+            canvas.setStroke("#ff0000");
+            canvas.strokeLine(0 + xOffset, bestFitLine.intercept + yOffset,
+            100 + xOffset, bestFitLine.intercept + yOffset + 100 * bestFitLine.slope);
 
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
@@ -1507,18 +1498,18 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         // Initialize member fields:
         ui = new Ui();
         drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, defaultPose);
-        settings = new TuneSettings(drive);
+        parameters = new TuneParameters(drive);
 
         String configuration = "Mecanum drive, ";
-        if (settings.type == Type.OPTICAL) {
+        if (parameters.type == Type.OPTICAL) {
             assert(drive.opticalTracker != null);
             configuration += "optical tracking";
             // Set our preferred units:
             drive.opticalTracker.setAngularUnit(AngleUnit.RADIANS);
             drive.opticalTracker.setLinearUnit(DistanceUnit.INCH);
-        } else if (settings.type == Type.ALL_WHEEL) {
+        } else if (parameters.type == Type.ALL_WHEEL) {
             configuration += "4 wheel encoders";
-        } else if (settings.type == Type.THREE_DEAD) {
+        } else if (parameters.type == Type.THREE_DEAD) {
             configuration += "3 odometry pods";
         } else {
             configuration += "2 odometry pods";
@@ -1529,7 +1520,7 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         // Dynamically build the list of tests:
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
-        if (settings.type == Type.OPTICAL) {
+        if (parameters.type == Type.OPTICAL) {
             tests.add(new Test(this::pushCalibrator, "Push calibrator (optical tracking)"));
             tests.add(new Test(this::spinCalibrator, "Spin calibrator (optical tracking)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (feed forward)"));
@@ -1571,8 +1562,8 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         if ((telemetry == null) || (gamepad == null))
             return;
 
-        TuneSettings currentSettings = new TuneSettings(drive);
-        TuneSettings savedSettings = currentSettings.getSavedSettings();
+        TuneParameters currentSettings = new TuneParameters(drive);
+        TuneParameters savedSettings = currentSettings.getSavedSettings();
         if (savedSettings != null) {
             String comparison = savedSettings.compare(currentSettings);
             if (!comparison.isEmpty()) {
