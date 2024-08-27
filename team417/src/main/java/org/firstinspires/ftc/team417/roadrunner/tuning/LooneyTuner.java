@@ -363,7 +363,7 @@ class TuneParameters {
         compare("lateralGain", "%.2f", oldSettings.PARAMS.lateralGain, PARAMS.lateralGain);
         compare("headingGain", "%.2f", oldSettings.PARAMS.headingGain, PARAMS.headingGain);
         compare("kS", "%.5f", oldSettings.PARAMS.kS, PARAMS.kS);
-        compare("kV", "%.5f", oldSettings.PARAMS.kV, PARAMS.kV);
+        compare("kV", "%.6f", oldSettings.PARAMS.kV, PARAMS.kV);
         compare("kA", "%.5f", oldSettings.PARAMS.kA, PARAMS.kA);
         compare("otos.offset.x", "%.3f", oldSettings.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
         compare("otos.offset.y", "%.3f", oldSettings.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
@@ -758,7 +758,7 @@ public class LooneyTuner extends LinearOpMode {
             ui.prompt("Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
                     + "MecanumDrive Params constructor, then update as follows:\n\n"
                     + comparison
-                    + "\n\nPress A to continue.");
+                    + "\nPress A to continue.");
         }
     }
 
@@ -1274,15 +1274,15 @@ public class LooneyTuner extends LinearOpMode {
 
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-                TuneParameters newParameters = parameters.getClone();
-                newParameters.PARAMS.kS = bestFitLine.intercept;
-                newParameters.PARAMS.kV = bestFitLine.slope;
+                out.printf("Intercept: %.3f, Slope: %.3f, Voltage: %.3f\n", bestFitLine.intercept, bestFitLine.slope, voltage);
 
-    out.printf("Intercept: %.3f, Slope: %.3f\n", bestFitLine.intercept, bestFitLine.slope);
+                TuneParameters newParameters = parameters.getClone();
+                newParameters.PARAMS.kS = bestFitLine.intercept * voltage;
+                newParameters.PARAMS.kV = bestFitLine.slope * voltage * parameters.PARAMS.inPerTick; // @@@ Normalize?
 
                 if (ui.prompt("Check out the graph on FTC Dashboard!\n\n"
-                    + String.format("New kS: %.03f, old kS: %.03f\n", newParameters.PARAMS.kS, parameters.PARAMS.kS)
-                    + String.format("New kV: %.03f, old kV: %.03f\n", newParameters.PARAMS.kV, parameters.PARAMS.kV)
+                    + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.PARAMS.kS, parameters.PARAMS.kS)
+                    + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.PARAMS.kV, parameters.PARAMS.kV)
                     + "\nIf these look good, press A to accept, B to cancel.")) {
 
                     setParameters(newParameters);
@@ -1596,7 +1596,7 @@ public class LooneyTuner extends LinearOpMode {
                         + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
                         + "then update as follows:\n\n"
                         + comparison
-                        + "\n\nPlease update your code and restart now. Or, to proceed anyway and "
+                        + "\nPlease update your code and restart now. Or, to proceed anyway and "
                         + "delete the tuning results, triple-tap the start button on the gamepad.");
                 telemetry.update();
 
