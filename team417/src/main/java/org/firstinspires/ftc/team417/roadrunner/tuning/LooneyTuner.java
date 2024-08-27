@@ -11,6 +11,7 @@
 // @@@ Add stick support to menus
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
 // @@@ Fix lack of intended path in completion test
+// @@@ How to permanently update things like lateralInPerTick?
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -26,11 +27,13 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.google.gson.Gson;
@@ -188,6 +191,9 @@ class TuneParameters {
         compare("kS", "%.5f", oldSettings.PARAMS.kS, PARAMS.kS);
         compare("kV", "%.6f", oldSettings.PARAMS.kV, PARAMS.kV);
         compare("kA", "%.5f", oldSettings.PARAMS.kA, PARAMS.kA);
+        compare("inPerTick", "%.5f", oldSettings.PARAMS.inPerTick, PARAMS.inPerTick);
+        compare("lateralInPerTick", "%.5f", oldSettings.PARAMS.lateralInPerTick, PARAMS.lateralInPerTick);
+        compare("trackWidthTicks", "%.5f", oldSettings.PARAMS.trackWidthTicks, PARAMS.trackWidthTicks);
         compare("otos.offset.x", "%.3f", oldSettings.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
         compare("otos.offset.y", "%.3f", oldSettings.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
         compareRadians("otos.offset.h", "%.3f", oldSettings.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
@@ -195,7 +201,6 @@ class TuneParameters {
         compare("otos.angularScalar", "%.3f", oldSettings.PARAMS.otos.angularScalar, PARAMS.otos.angularScalar);
         return comparison;
     }
-
 }
 
 /**
@@ -964,31 +969,41 @@ public class LooneyTuner extends LinearOpMode {
             // Disable the PID gains so that the distance traveled isn't corrected:
             TuneParameters originalParameters = parameters;
             TuneParameters testParameters = parameters.getClone();
-            testParameters.PARAMS.axialGain = 0;
             testParameters.PARAMS.lateralGain = 0;
-            testParameters.PARAMS.headingGain = 0;
-            testParameters.PARAMS.axialVelGain = 0;
             testParameters.PARAMS.lateralVelGain = 0;
-            testParameters.PARAMS.headingVelGain = 0;
+            testParameters.PARAMS.lateralInPerTick = originalParameters.PARAMS.inPerTick;
+
+            // @@@ Make this a MecanumDrive function?
+            drive.kinematics = new MecanumKinematics(
+                    testParameters.PARAMS.inPerTick * testParameters.PARAMS.trackWidthTicks,
+                    testParameters.PARAMS.inPerTick / testParameters.PARAMS.lateralInPerTick);
+
+            // Point the MecanumDrive to our test PARAMS:
             drive.PARAMS = testParameters.PARAMS;
+
+            // Drive at a slow speed:
+            double maxVelocity = drive.PARAMS.maxWheelVel / 4;
 
             drive.opticalTracker.setPosition(new Pose2D(0, 0, 0));
             if (runCancelableAction(drive.actionBuilder(drive.pose)
-                            .strafeTo(new Vector2d(0, DISTANCE))
+                            .strafeTo(new Vector2d(0, DISTANCE), new TranslationalVelConstraint(maxVelocity))
                             .build())) {
 
                 Pose2D endPose = drive.opticalTracker.getPosition();
                 double actualDistance = Math.hypot(endPose.x, endPose.y);
                 double lateralMultiplier = actualDistance / DISTANCE;
 
-out.printf("(%.2f, %.2f), distance: %.2f", endPose.x, endPose.y, actualDistance);
-
-                if (ui.prompt(String.format("Measured lateral multiplier is %.2f. ", lateralMultiplier)
+                if (ui.prompt(String.format("Measured lateral multiplier is %.3f. ", lateralMultiplier)
                         + "Does that look good?"
                         + "\n\nPress A to accept, B to cancel")) {
                     TuneParameters newParameters = originalParameters.getClone();
                     newParameters.PARAMS.lateralInPerTick
                             = originalParameters.PARAMS.inPerTick * lateralMultiplier;
+
+                    drive.kinematics = new MecanumKinematics(
+                            newParameters.PARAMS.inPerTick * newParameters.PARAMS.trackWidthTicks,
+                            newParameters.PARAMS.inPerTick / newParameters.PARAMS.lateralInPerTick);
+
                     acceptParameters(newParameters);
                     return; // ====>
                 }
@@ -996,6 +1011,9 @@ out.printf("(%.2f, %.2f), distance: %.2f", endPose.x, endPose.y, actualDistance)
 
             // The test failed, reset back to the original PARAMS:
             drive.PARAMS = originalParameters.PARAMS;
+            drive.kinematics = new MecanumKinematics(
+                    originalParameters.PARAMS.inPerTick * originalParameters.PARAMS.trackWidthTicks,
+                    originalParameters.PARAMS.inPerTick / originalParameters.PARAMS.lateralInPerTick);
         }
     }
 

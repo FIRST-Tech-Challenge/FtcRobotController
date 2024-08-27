@@ -176,7 +176,7 @@ public final class MecanumDrive {
 
     public static Params PARAMS = new Params();
 
-    public final MecanumKinematics kinematics = new MecanumKinematics(
+    public MecanumKinematics kinematics = new MecanumKinematics(
             PARAMS.inPerTick * PARAMS.trackWidthTicks, PARAMS.inPerTick / PARAMS.lateralInPerTick);
 
     public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
