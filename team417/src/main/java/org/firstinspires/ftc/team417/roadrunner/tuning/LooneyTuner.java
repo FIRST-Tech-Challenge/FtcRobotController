@@ -1,3 +1,6 @@
+/**
+ * Looney Tuner is a settings parameter tuner for Road Runner.
+ */
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
 import static com.acmerobotics.roadrunner.Profiles.constantProfile;
@@ -274,20 +277,20 @@ class TickTracker {
  */
 class TuneSettings {
     String robotName;
-    TuneRoadRunner.Type type;
+    LooneyTuner.Type type;
     MecanumDrive.Params PARAMS;
 
     // Get the settings from the current MecanumDrive object:
     public TuneSettings(MecanumDrive drive) {
         robotName = MecanumDrive.getBotName();
         if (drive.opticalTracker != null) {
-            type = TuneRoadRunner.Type.OPTICAL;
+            type = LooneyTuner.Type.OPTICAL;
         } else if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-            type = TuneRoadRunner.Type.ALL_WHEEL;
+            type = LooneyTuner.Type.ALL_WHEEL;
         } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-            type = TuneRoadRunner.Type.THREE_DEAD;
+            type = LooneyTuner.Type.THREE_DEAD;
         } else {
-            type = TuneRoadRunner.Type.TWO_DEAD;
+            type = LooneyTuner.Type.TWO_DEAD;
         }
         PARAMS = drive.PARAMS;
     }
@@ -376,7 +379,7 @@ class TuneSettings {
 
 /** @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance , ClassEscapesDefinedScope */
 @TeleOp
-public class TuneRoadRunner extends LinearOpMode {
+public class LooneyTuner extends LinearOpMode {
     enum Type { OPTICAL, ALL_WHEEL, TWO_DEAD, THREE_DEAD }
 
     // Member fields referenced by every test:
@@ -1282,12 +1285,7 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         while (opModeIsActive() && !ui.cancel()) {
-            // @@@ Make it an exponent!
-            // @@@ Add control for specific motors!
-            PoseVelocity2d powers = new PoseVelocity2d(
-                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
-                    -gamepad1.right_stick_x);
-
+            // TODO: Add control for specific motors?
             processGamepadDriving();
             drive.updatePoseEstimate();
 
@@ -1586,7 +1584,7 @@ applyNewSettings(newSettings, changes);
                 telemetry.clear();
                 telemetry.addLine("YOUR CODE IS OUT OF DATE"
                         + "\n\nThe code's configuration parameters don't match the last "
-                        + "results saved in TuneRoadRunner. Double-tap the shift key in Android "
+                        + "results saved in LooneyTuner. Double-tap the shift key in Android "
                         + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
                         + "then update as follows:\n\n"
                         + comparison

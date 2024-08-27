@@ -65,7 +65,7 @@ import org.firstinspires.ftc.team417.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.team417.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.team417.roadrunner.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.team417.roadrunner.messages.PoseMessage;
-import org.firstinspires.ftc.team417.roadrunner.tuning.TuneRoadRunner;
+import org.firstinspires.ftc.team417.roadrunner.tuning.LooneyTuner;
 import org.firstinspires.inspection.InspectionState;
 
 import java.util.Arrays;
@@ -320,7 +320,7 @@ public final class MecanumDrive {
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 
         // Now that configuration is complete, verify the parameters:
-        TuneRoadRunner.verifyCodeMatchesTuneResults(this, telemetry, gamepad);
+        LooneyTuner.verifyCodeMatchesTuneResults(this, telemetry, gamepad);
     }
 
     // This is where you configure Road Runner to work with your hardware:
