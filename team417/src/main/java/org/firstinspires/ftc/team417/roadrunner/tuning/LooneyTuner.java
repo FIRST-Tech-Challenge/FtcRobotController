@@ -10,6 +10,7 @@
 // @@@ Add LED support
 // @@@ Add stick support to menus
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
+// @@@ Fix lack of intended path in completion test
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -40,7 +41,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 import com.wilyworks.common.WilyWorks;
 
@@ -107,201 +107,16 @@ class Point { // Can't derive from vector2d because it's marked as final (by def
 }
 
 /**
- * Class to track encoder ticks.
- * @noinspection UnnecessaryUnicodeEscape
- */
-class TickTracker {
-    enum Correlation {
-        FORWARD, REVERSE, ZERO, NONZERO, POSITIVE, NEGATIVE
-    }
-    enum Mode {
-        FORWARD, LATERAL, ROTATE
-    }
-    Mode mode;
-    IMU imu;
-    double lastYaw; // Last yaw measurement
-    double totalYaw; // Accumulated yaw
-
-    TickTracker(IMU imu, Mode mode) {
-        this.imu = imu;
-        this.mode = mode;
-        this.lastYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
-    ArrayList<Counter> counters = new ArrayList<>();
-    void register(Encoder encoder, String name, Correlation correlation) {
-        counters.add(new Counter(encoder, name, correlation));
-    }
-
-    double averageTicks() {
-        double tickCount = 0;
-        double counterCount = 0;
-        for (Counter counter: counters) {
-            if ((counter.correlation == Correlation.FORWARD) ||
-                (counter.correlation == Correlation.REVERSE)) {
-                counterCount++;
-                tickCount += Math.abs(counter.ticks());
-            }
-        }
-        return tickCount / counterCount;
-    }
-
-    double maxTicks() {
-        double maxCount = 0;
-        for (Counter counter: counters) {
-            maxCount = Math.max(maxCount, Math.abs(counter.ticks()));
-        }
-        return maxCount;
-    }
-
-    boolean report(Telemetry telemetry, String name, String value, String error) {
-        boolean passed = true;
-        if (!error.isEmpty()) {
-            error = ", " + error;
-            passed = false;
-        }
-
-        String icon = error.isEmpty() ? "\u2705" : "\u274C"; // Green box checkmark, red X
-        telemetry.addLine(String.format("%s <b>%s</b>: %s%s", icon, name, value, error));
-        return passed;
-    }
-
-    @SuppressLint("DefaultLocale")
-    boolean reportAll(Telemetry telemetry) {
-        final double ZERO_ERROR = 0.05; // Should be no higher than this of the max
-        final double STRAIGHT_ERROR = 0.90; // Straight should be no lower than this of the max
-        final double ROTATION_ERROR = 0.30; // Rotation should be no lower than this of max
-
-        assert(!counters.isEmpty());
-        boolean passed = true;
-        double maxTicks = maxTicks();
-
-        if (maxTicks < 300) {
-            passed &= report(telemetry, "Ticks so far", String.valueOf(maxTicks), "keep pushing");
-        } else {
-            if (mode == Mode.ROTATE) {
-                double thisYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                double yawDelta = thisYaw - lastYaw;
-                lastYaw = thisYaw;
-
-                while (yawDelta < -180)
-                    yawDelta += 360.0;
-                while (yawDelta >= 180)
-                    yawDelta -= 360.0;
-                totalYaw += yawDelta;
-
-                String error = "";
-                if (Math.abs(totalYaw) < 5) {
-                    error = "Yaw too small, are RevHubOrientationOnRobot flags correct when calling imu.initialize()?";
-                } else if (totalYaw < -5) {
-                    error = "Yaw is negative, you're turning counterclockwise \uD83D\uDD04, right?";
-                }
-                passed &= report(telemetry, "<b>IMU</b>", String.format("%.1f°", totalYaw), error);
-            }
-
-            for (Counter counter : counters) {
-                String error = "";
-                String value = String.format("%.0f (%.1f%%)",
-                        counter.ticks(), 100 * Math.abs(counter.ticks()) / maxTicks);
-                switch (counter.correlation) {
-                    case FORWARD:
-                    case REVERSE:
-                        if (mode == Mode.FORWARD) {
-                            if (Math.abs(counter.ticks()) < maxTicks * ZERO_ERROR) {
-                                error = "is there a bad cable connection?";
-                            } else if (counter.ticks() < 0) {
-                                error = "set " + counter.name + ".setDirection(DcMotorEx.Direction.REVERSE);";
-                            } else if (counter.ticks() < maxTicks * STRAIGHT_ERROR) {
-                                error = "too low, does the wheel have bad contact with field?";
-                            }
-                        } else if (mode == Mode.ROTATE) {
-                            if (Math.abs(counter.ticks()) < maxTicks * ZERO_ERROR) {
-                                error = "is there a bad cable connection?";
-                            } else if ((counter.ticks() < 0) && (counter.correlation == Correlation.FORWARD)) {
-                                error = "should be positive, are left & right encoders swapped?";
-                            } else if ((counter.ticks() > 0) && (counter.correlation == Correlation.REVERSE)) {
-                                error = "should be negative, are left & right encoders swapped?";
-                            } else if (Math.abs(counter.ticks()) < maxTicks * ROTATION_ERROR) {
-                                error = "too low, does the wheel have bad contact with field?";
-                            }
-                        }
-                        break;
-                    case POSITIVE:
-                    case NEGATIVE:
-                        if (mode == Mode.ROTATE) {
-                            if ((counter.ticks() < 0) && (counter.correlation == Correlation.POSITIVE)) {
-                                error = "set " + counter.name + ".setDirection(DcMotorEx.Direction.REVERSE);";
-                            } else if ((counter.ticks() > 0) && (counter.correlation == Correlation.NEGATIVE)) {
-                                error = "set " + counter.name + ".setDirection(DcMotorEx.Direction.REVERSE);";
-                            } else if (Math.abs(counter.ticks()) < maxTicks * ZERO_ERROR) {
-                                error = "too low, does the wheel have bad contact with field, or "
-                                        + "is it too close to center of rotation?";
-                            }
-                        } else {
-                            if (Math.abs(counter.ticks()) < maxTicks * ZERO_ERROR) {
-                                error = "too low";
-                            } else if ((counter.ticks() < 0) && (counter.correlation == Correlation.POSITIVE)) {
-                                error = "should be positive";
-                            } else if ((counter.ticks() > 0) && (counter.correlation == Correlation.NEGATIVE)) {
-                                error = "should be negative";
-                            }
-                        }
-                        break;
-                    case ZERO:
-                        if (Math.abs(counter.ticks()) > maxTicks * 0.05) {
-                            error = "should be near zero given that it's perpendicular to travel";
-                        }
-                        break;
-                    case NONZERO:
-                        if (Math.abs(counter.ticks()) < maxTicks * 0.05) {
-                            error = "shouldn't be close to zero";
-                        }
-                        break;
-                }
-
-                passed &= report(telemetry, counter.name, value, error);
-            }
-        }
-        return passed;
-    }
-
-    static class Counter {
-        Encoder encoder;
-        String name;
-        Correlation correlation;
-        double initialPosition;
-        Counter(Encoder encoder, String name, Correlation correlation) {
-            this.encoder = encoder;
-            this.name = name;
-            this.correlation = correlation;
-            this.initialPosition = encoder.getPositionAndVelocity().position;
-        }
-        double ticks() {
-            return encoder.getPositionAndVelocity().position - initialPosition;
-        }
-    }
-}
-
-/**
  * Class for remembering all of the tuned settings.
  * @noinspection AccessStaticViaInstance
  */
 class TuneParameters {
     String robotName;
-    LooneyTuner.Type type;
     MecanumDrive.Params PARAMS;
 
     // Get the settings from the current MecanumDrive object:
     public TuneParameters(MecanumDrive drive) {
         robotName = MecanumDrive.getBotName();
-        if (drive.opticalTracker != null) {
-            type = LooneyTuner.Type.OPTICAL;
-        } else if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-            type = LooneyTuner.Type.ALL_WHEEL;
-        } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-            type = LooneyTuner.Type.THREE_DEAD;
-        } else {
-            type = LooneyTuner.Type.TWO_DEAD;
-        }
         PARAMS = drive.PARAMS;
     }
 
@@ -351,8 +166,6 @@ class TuneParameters {
             return null; // No saved settings were found
         if (!savedSettings.robotName.equals(robotName))
             return null; // Different robots, so discard
-        if (savedSettings.type != type)
-            return null; // Different drive types, so discard
         return savedSettings;
     }
 
@@ -385,11 +198,13 @@ class TuneParameters {
 
 }
 
-/** @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance , ClassEscapesDefinedScope */
+/**
+ * Looney Tuner's opMode class for running the tuning tests.
+ *
+ * @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance , ClassEscapesDefinedScope
+ */
 @TeleOp
 public class LooneyTuner extends LinearOpMode {
-    enum Type { OPTICAL, ALL_WHEEL, TWO_DEAD, THREE_DEAD }
-
     // Member fields referenced by every test:
     Ui ui;
     MecanumDrive drive;
@@ -403,7 +218,12 @@ public class LooneyTuner extends LinearOpMode {
     interface MenuStrings {
         String getString(int i);
     }
-    /** @noinspection UnnecessaryUnicodeEscape*/
+
+    /**
+     * Class that encapsulates the UI framework.
+     *
+     * @noinspection UnnecessaryUnicodeEscape
+     */
     class Ui {
         // Button press state:
         private final boolean[] buttonPressed = new boolean[5];
@@ -559,112 +379,6 @@ public class LooneyTuner extends LinearOpMode {
     // Stop any robot driving:
     public void stopGamepadDriving() {
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
-    }
-
-    void encoderPush() {
-        useDrive(false); // Don't use MecanumDrive/TankDrive
-        boolean passed = false;
-
-        if (ui.prompt("Push the robot forward in a straight line for two or more tiles (24\")."
-                + "\n\nPress A to start, B when complete")) {
-
-            TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.FORWARD);
-            if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-                MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
-                tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.FORWARD);
-            } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-                ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
-                tracker.register(loc.par0, "par0", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.par1, "par1", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.perp, "perp", TickTracker.Correlation.ZERO);
-            } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
-                TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
-                tracker.register(loc.par, "par", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.perp, "perp", TickTracker.Correlation.ZERO);
-            }
-
-            while (opModeIsActive() && !ui.cancel()) {
-                telemetry.addLine("Push straight forward.\n");
-                passed = tracker.reportAll(telemetry);
-                if (passed)
-                    telemetry.addLine("\nPress B when complete to move to sideways test");
-                else
-                    telemetry.addLine("\nPress B to cancel");
-                telemetry.update();
-            }
-        }
-
-        if (passed) {
-            if (ui.prompt("Push the robot sideways to the left for two or more tiles (24\")."
-                    + "\n\nPress A to start, B when complete")) {
-
-                TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.LATERAL);
-                if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-                    MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
-                    tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.NEGATIVE);
-                    tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.POSITIVE);
-                    tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.NEGATIVE);
-                    tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.POSITIVE);
-                } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-                    ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par0, "par0", TickTracker.Correlation.ZERO);
-                    tracker.register(loc.par1, "par1", TickTracker.Correlation.ZERO);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.FORWARD);
-                } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
-                    TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par, "par", TickTracker.Correlation.ZERO);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.FORWARD);
-                }
-
-                while (opModeIsActive() && !ui.cancel()) {
-                    telemetry.addLine("Push to the left.\n");
-                    passed = tracker.reportAll(telemetry);
-                    if (passed)
-                        telemetry.addLine("\nPress B when complete");
-                    else
-                        telemetry.addLine("\nPress B to cancel");
-                    telemetry.update();
-                }
-            }
-        }
-
-        if (passed) {
-            if (ui.prompt("Rotate the robot counterclockwise at least 90° \uD83D\uDD04 by pushing."
-                    + "\n\nPress A to start, B when complete")) {
-
-                TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.ROTATE);
-                if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-                    MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
-                    tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.FORWARD);
-                    tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.FORWARD);
-                } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-                    ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par0, "par0", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.par1, "par1", TickTracker.Correlation.FORWARD);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.NONZERO);
-                } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
-                    TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
-                    tracker.register(loc.par, "par", TickTracker.Correlation.REVERSE);
-                    tracker.register(loc.perp, "perp", TickTracker.Correlation.NONZERO);
-                }
-
-                while (opModeIsActive() && !ui.cancel()) {
-                    telemetry.addLine("Rotate counterclockwise\uD83D\uDD04.\n");
-                    passed = tracker.reportAll(telemetry);
-                    if (passed)
-                        telemetry.addLine("\nCongratulations, the encoders and IMU passed! "
-                                + "Press B to return to the menu.");
-                    else
-                        telemetry.addLine("\nPress B to cancel");
-                    telemetry.update();
-                }
-            }
-        }
     }
 
     // Measure the optical linear scale and orientation:
@@ -1050,45 +764,6 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
-    @SuppressLint("DefaultLocale")
-    void forwardEncoderTuner() {
-        useDrive(false); // Don't use MecanumDrive/TankDrive
-
-        if (ui.prompt("Push the robot forward in a straight line as far as possible. "
-                + "Measure distance and set inPerTick = <i>inches-traveled</i> / <i>average-ticks</i>."
-                + "\n\nPress A to start, B to cancel")) {
-
-            TickTracker tracker = new TickTracker(drive.lazyImu.get(), TickTracker.Mode.FORWARD);
-            if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-                MecanumDrive.DriveLocalizer loc = (MecanumDrive.DriveLocalizer) drive.localizer;
-                tracker.register(loc.leftFront, "leftFront", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.leftBack, "leftBack", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.rightBack, "rightBack", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.rightFront, "rightFront", TickTracker.Correlation.FORWARD);
-            } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-                ThreeDeadWheelLocalizer loc = (ThreeDeadWheelLocalizer) drive.localizer;
-                tracker.register(loc.par0, "par0", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.par1, "par1", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.perp, "perp", TickTracker.Correlation.ZERO);
-            } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
-                TwoDeadWheelLocalizer loc = (TwoDeadWheelLocalizer) drive.localizer;
-                tracker.register(loc.par, "par", TickTracker.Correlation.FORWARD);
-                tracker.register(loc.perp, "perp", TickTracker.Correlation.ZERO);
-            }
-
-            while (opModeIsActive() && !ui.cancel()) {
-                // Report stuff to telemetry:
-                boolean passed = tracker.reportAll(telemetry);
-                if (passed) {
-                    telemetry.addLine(String.format("\n<b>inPerTick</b> = <i>inches-traveled</i> / %.1f",
-                            tracker.averageTicks()));
-                }
-                telemetry.addLine("\nPress B when complete");
-                telemetry.update();
-            }
-        }
-    }
-
     /**
      * Structure for describing the best-fit-line for a set of points.
      */
@@ -1102,9 +777,7 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
-    /**
-     * Find the best-fit line
-     */
+    // Find the best-fit line.
     BestFitLine fitLine(ArrayList<Point> points) {
         // Calculate the means of x and y
         Point sum = new Point(0, 0);
@@ -1135,8 +808,7 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Automatically calculate the kS and kV terms of the feed-forward approximation by
-    // ramping up the velocity in a straight line. We increase power by 0.1 each second
-    // until it reaches 0.9.
+    // ramping up the velocity in a straight line. We increase power by a fixed increment.
     @SuppressLint("DefaultLocale")
     void acceleratingStraightLineTuner() {
         final double VOLTAGE_ADDER_PER_SECOND = 0.3;
@@ -1254,6 +926,7 @@ public class LooneyTuner extends LinearOpMode {
         setHardware();
     }
 
+    // Drive the robot around.
     @SuppressLint("DefaultLocale")
     void driveTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
@@ -1279,8 +952,9 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
+    // Tune the lateral multiplier.
     @SuppressLint("DefaultLocale")
-    void lateralEncoderTuner() {
+    void lateralTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         if (ui.prompt(String.format("The robot will attempt to strafe left for %d inches. "
@@ -1483,41 +1157,28 @@ public class LooneyTuner extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, defaultPose);
         parameters = new TuneParameters(drive);
 
-        String configuration = "Mecanum drive, ";
-        if (parameters.type == Type.OPTICAL) {
-            assert(drive.opticalTracker != null);
-            configuration += "optical tracking";
-            // Set our preferred units:
-            drive.opticalTracker.setAngularUnit(AngleUnit.RADIANS);
-            drive.opticalTracker.setLinearUnit(DistanceUnit.INCH);
-        } else if (parameters.type == Type.ALL_WHEEL) {
-            configuration += "4 wheel encoders";
-        } else if (parameters.type == Type.THREE_DEAD) {
-            configuration += "3 odometry pods";
-        } else {
-            configuration += "2 odometry pods";
+        if ((drive.opticalTracker != null) &&
+            ((drive.opticalTracker.getAngularUnit() != AngleUnit.RADIANS) ||
+             (drive.opticalTracker.getLinearUnit() != DistanceUnit.INCH))) {
+            ui.prompt("The SparkFun OTOS must be configured for radians and inches.");
+            return; // ====>
         }
-        String navigation = "Use Dpad to navigate, A to select";
-        String heading = String.format("<h4>%s</h4><h2>%s</h2>", configuration, navigation);
+        String heading = "<h2>Use Dpad to navigate, A to select</h2>";
 
         // Dynamically build the list of tests:
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
-        if (parameters.type == Type.OPTICAL) {
-            tests.add(new Test(this::pushCalibrator, "Push calibrator (optical tracking)"));
-            tests.add(new Test(this::spinCalibrator, "Spin calibrator (optical tracking)"));
-            tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (feed forward)"));
-        } else {
-            tests.add(new Test(this::encoderPush, "Push test (encoders and IMU)"));
-            tests.add(new Test(this::forwardEncoderTuner, "Forward encoder tuner (inPerTick)"));
-            // @@@ Call lateralEncoderTuner only if no dead wheels:
-            tests.add(new Test(this::lateralEncoderTuner, "Lateral encoder tuner (lateralInPerTick)"));
+        if (drive.opticalTracker != null) {
+            tests.add(new Test(this::pushCalibrator, "Push calibrator (tracking)"));
+            tests.add(new Test(this::spinCalibrator, "Spin calibrator (tracking)"));
+            tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
+            tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
+            tests.add(new Test(this::manualFeedforwardTuner, "ManualFeedforwardTuner (kV and kA)"));
+            tests.add(new Test(this::manualFeedbackTunerAxial, "ManualFeedbackTuner (axialGain)"));
+            tests.add(new Test(this::manualFeedbackTunerLateral, "ManualFeedbackTuner (lateralGain)"));
+            tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
+            tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
         }
-        tests.add(new Test(this::manualFeedforwardTuner, "ManualFeedforwardTuner (kV and kA)"));
-        tests.add(new Test(this::manualFeedbackTunerAxial, "ManualFeedbackTuner (axialGain)"));
-        tests.add(new Test(this::manualFeedbackTunerLateral, "ManualFeedbackTuner (lateralGain)"));
-        tests.add(new Test(this::manualFeedbackTunerHeading, "ManualFeedbackTuner (headingGain)"));
-        tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
 
         // Remind the user to press Start on the Driver Station, then press A on the gamepad.
         // We require the latter because enabling the gamepad on the DS after it's been booted
