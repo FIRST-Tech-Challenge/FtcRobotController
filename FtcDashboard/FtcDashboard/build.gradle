@@ -14,7 +14,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 26
     }
@@ -26,6 +26,11 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+    sourceSets {
+        configureEach {
+            jniLibs.srcDirs = ['libs']
+        }
     }
 }
 
@@ -110,6 +115,8 @@ dependencies {
     implementation("org.nanohttpd:nanohttpd-websocket:2.3.1") {
         exclude module: "nanohttpd"
     }
+
+    implementation (files("libs/test_name.aar"))
 }
 
 def addPomDependencies(root) {
