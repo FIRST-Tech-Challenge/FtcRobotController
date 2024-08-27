@@ -72,15 +72,28 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             moveBackward(0.3);
             turnRight(2);
         }
-       */
-       turnLeftToHeading(45, .7);
+
+       turnLeftToHeading(90, .2);
+       sleep(2000);
+       turnRightToHeading(0, .2);
+       sleep(2000);
+       turnLeftToHeading(90, .5);
+       sleep(2000);
+       turnRightToHeading(0, .5);
        sleep(2000);
        turnLeftToHeading(90, .7);
        sleep(2000);
-       turnRightToHeading(45, .7);
-       sleep(2000);
        turnRightToHeading(0, .7);
+       sleep(2000);
+       turnLeftToHeading(90, .9);
+       sleep(2000);
+       turnRightToHeading(0, .9);
        sleep(5000);
+*/
+        moveForward(1, 1.0);
+        turnLeftToHeading(179, .2);
+        moveForward(1, 1.0);
+        turnLeftToHeading(179, .2);
 
         // End of autonomous program
 
@@ -95,12 +108,27 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     }
 
     private void moveForward(double secondsToDrive, double speedToDrive) {
-        leftFrontDrive.setPower(speedToDrive);
-        rightFrontDrive.setPower(speedToDrive);
-        leftBackDrive.setPower(speedToDrive);
-        rightBackDrive.setPower(speedToDrive);
+        double targetSpeed = speedToDrive; // Store the original target speed
+        double currentSpeed = 0.0;
+
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
+            double elapsedTime = runtime.seconds();
+
+            // Acceleration phase
+            if (elapsedTime < 1 && currentSpeed < targetSpeed) {
+                currentSpeed = currentSpeed + 0.01; // Increase the speed by 0.01 per second
+            }
+            // Deceleration phase
+            else if (elapsedTime > secondsToDrive - 1 && elapsedTime < secondsToDrive && currentSpeed > 0) {
+                currentSpeed = currentSpeed - 0.01; // Decrease the speed by 0.01 per second
+            }
+
+            leftFrontDrive.setPower(currentSpeed);
+            rightFrontDrive.setPower(currentSpeed);
+            leftBackDrive.setPower(currentSpeed);
+            rightBackDrive.setPower(currentSpeed);
+
             telemetry.addData("Move forward: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
