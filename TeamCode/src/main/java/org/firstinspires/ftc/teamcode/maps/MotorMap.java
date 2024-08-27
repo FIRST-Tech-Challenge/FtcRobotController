@@ -18,9 +18,9 @@ public enum MotorMap {
 
     private final String id;
     private final double maxRPM;
-    private final int ticksPerRev;
+    private final double ticksPerRev;
 
-    MotorMap(String id, int ticksPerRev, double maxRPM) {
+    MotorMap(String id, double ticksPerRev, double maxRPM) {
         this.id = id;
         this.maxRPM = maxRPM;
         this.ticksPerRev = ticksPerRev;
@@ -34,7 +34,7 @@ public enum MotorMap {
         return maxRPM;
     }
 
-    public int getTicksPerRev() {
+    public double getTicksPerRev() {
         return ticksPerRev;
     }
 }

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.util;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +17,7 @@ public class DataLogger {
     @SuppressLint("SdCardPath")
     private static final String DIRECTORY_PATH = "/sdcard/FIRST/SympleLogs";
 
+    @Nullable
     private FileWriter fileWriter;
 
     public DataLogger(String filePrefix, boolean suppress) {
@@ -88,6 +91,12 @@ public class DataLogger {
     private void writeLine(String data) throws IOException {
         if(fileWriter == null) return;
         fileWriter.write(data + System.lineSeparator());
+        flushData();
+    }
+
+    private void flushData() throws IOException {
+        if(fileWriter == null) return;
+        fileWriter.flush();
     }
 
     private String getCurrentTime(String format) {
@@ -102,6 +111,7 @@ public class DataLogger {
     @Override
     protected void finalize() throws Throwable {
         closeFile();
+        flushData();
         super.finalize();
     }
 
