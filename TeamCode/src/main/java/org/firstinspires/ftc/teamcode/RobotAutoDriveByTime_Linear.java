@@ -90,9 +90,11 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
        turnRightToHeading(0, .9);
        sleep(5000);
 */
-        moveForward(1, 1.0);
+        moveForward(1, 0.8);
+        sleep(1000);
         turnLeftToHeading(179, .2);
-        moveForward(1, 1.0);
+        moveForward(1, 0.2);
+        sleep(1000);
         turnLeftToHeading(179, .2);
 
         // End of autonomous program
@@ -102,12 +104,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         telemetry.update();
         sleep(5000);
     }
-
-    private void moveForward(double secondsToDrive) {
-        moveForward(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void moveForward(double secondsToDrive, double speedToDrive) {
+    private void acceleration(double secondsToDrive, double speedToDrive, double leftDriveDirection, double rightDriveDirection) {
         double targetSpeed = speedToDrive; // Store the original target speed
         double currentSpeed = 0.0;
 
@@ -124,63 +121,12 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
                 currentSpeed = currentSpeed - 0.01; // Decrease the speed by 0.01 per second
             }
 
-            leftFrontDrive.setPower(currentSpeed);
-            rightFrontDrive.setPower(currentSpeed);
-            leftBackDrive.setPower(currentSpeed);
-            rightBackDrive.setPower(currentSpeed);
+            leftFrontDrive.setPower(currentSpeed*leftDriveDirection);
+            rightFrontDrive.setPower(currentSpeed*rightDriveDirection);
+            leftBackDrive.setPower(currentSpeed*leftDriveDirection);
+            rightBackDrive.setPower(currentSpeed*rightDriveDirection);
 
             telemetry.addData("Move forward: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        stopMoving();
-    }
-
-    private void moveBackward(double secondsToDrive) {
-        moveBackward(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void moveBackward(double secondsToDrive, double speedToDrive) {
-        leftFrontDrive.setPower(-speedToDrive);
-        rightFrontDrive.setPower(-speedToDrive);
-        leftBackDrive.setPower(-speedToDrive);
-        rightBackDrive.setPower(-speedToDrive);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            telemetry.addData("Move backward: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        stopMoving();
-    }
-
-    private void turnRight(double secondsToDrive) {
-        turnRight(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void turnRight(double secondsToDrive, double speedToDrive) {
-        leftFrontDrive.setPower(speedToDrive);
-        rightFrontDrive.setPower(-speedToDrive);
-        leftBackDrive.setPower(speedToDrive);
-        rightBackDrive.setPower(-speedToDrive);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            telemetry.addData("Turn right: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        stopMoving();
-    }
-
-    private void turnLeft(double secondsToDrive) {
-        turnLeft(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void turnLeft(double secondsToDrive, double speedToDrive) {
-        leftFrontDrive.setPower(-speedToDrive);
-        rightFrontDrive.setPower(speedToDrive);
-        leftBackDrive.setPower(-speedToDrive);
-        rightBackDrive.setPower(speedToDrive);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            telemetry.addData("Turn left: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
         stopMoving();
@@ -193,10 +139,43 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightBackDrive.setPower(0);
     }
 
+    private void moveForward(double secondsToDrive) {
+        moveForward(secondsToDrive, DEFAULT_SPEED);
+    }
+
+    private void moveForward(double secondsToDrive, double speedToDrive) {
+        acceleration(secondsToDrive, speedToDrive, 1, 1);
+    }
+
+    private void moveBackward(double secondsToDrive) {
+        moveBackward(secondsToDrive, DEFAULT_SPEED);
+    }
+
+    private void moveBackward(double secondsToDrive, double speedToDrive) {
+        acceleration(secondsToDrive, speedToDrive, -1, -1);
+    }
+
+    private void turnLeft(double secondsToDrive) {
+        turnLeft(secondsToDrive, DEFAULT_SPEED);
+    }
+
+    private void turnLeft(double secondsToDrive, double speedToDrive) {
+        acceleration(secondsToDrive, speedToDrive, -1, 1);
+    }
+
+    private void turnRight(double secondsToDrive) {
+        turnRight(secondsToDrive, DEFAULT_SPEED);
+    }
+
+    private void turnRight(double secondsToDrive, double speedToDrive) {
+        acceleration(secondsToDrive, speedToDrive, 1, -1);
+    }
+
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
+
     private void turnLeftToHeading(double targetYaw, double speedToDrive) {
         leftFrontDrive.setPower(-speedToDrive);
         rightFrontDrive.setPower(speedToDrive);
