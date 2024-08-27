@@ -236,7 +236,7 @@ public class LooneyTuner extends LinearOpMode {
         // Button press status:
         boolean accept() { return buttonPress(gamepad1.a, 0); }
         boolean cancel() { return buttonPress(gamepad1.b, 1); }
-        boolean reposition() { return buttonPress(gamepad1.x, 2); }
+        // boolean reposition() { return buttonPress(gamepad1.x, 2); }
         boolean up() { return buttonPress(gamepad1.dpad_up, 3); }
         boolean down() { return buttonPress(gamepad1.dpad_down, 4); }
 
@@ -460,7 +460,7 @@ public class LooneyTuner extends LinearOpMode {
                             newParameters.PARAMS.otos.linearScalar, linearScalarChange)
                             + "Use these results? Press A if they look good, B to cancel.")) {
 
-                        setParameters(newParameters);
+                        acceptParameters(newParameters);
                     }
                 }
             }
@@ -471,7 +471,7 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Prompt the user for how to set the new parameters and save them to the registry:
-    public void setParameters(TuneParameters newParameters) {
+    public void acceptParameters(TuneParameters newParameters) {
         String comparison = newParameters.compare(parameters);
         if (comparison.isEmpty()) {
             ui.prompt("The results match your current settings.\n\nPress A to continue.");
@@ -759,7 +759,7 @@ public class LooneyTuner extends LinearOpMode {
             newSettings.PARAMS.otos.angularScalar = angularScalar;
 
             if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
-                setParameters(newSettings);
+                acceptParameters(newSettings);
             }
         }
     }
@@ -918,7 +918,7 @@ public class LooneyTuner extends LinearOpMode {
                     + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.PARAMS.kV, parameters.PARAMS.kV)
                     + "\nIf these look good, press A to accept, B to cancel.")) {
 
-                    setParameters(newParameters);
+                    acceptParameters(newParameters);
                 }
             }
         }
@@ -952,20 +952,50 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
-    // Tune the lateral multiplier.
+    // Tuner for the lateral multiplier on Mecanum drives.
     @SuppressLint("DefaultLocale")
     void lateralTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.prompt(String.format("The robot will attempt to strafe left for %d inches. "
-            + "Measure the actual distance using a tape measure. "
-            + "Multiply 'lateralInPerTick' by <distance-measured> / %d."
-            + "\n\nPress A to start", DISTANCE, DISTANCE))) {
+        if (ui.drivePrompt(String.format("The robot will strafe left for %d inches (%.1f tiles). ", DISTANCE, DISTANCE / 24.0)
+                + "Please ensure that there is sufficient room."
+                + "\n\nDrive the robot to position, press A to start, B to cancel")) {
 
-            runCancelableAction(
-                    drive.actionBuilder(drive.pose)
+            // Disable the PID gains so that the distance traveled isn't corrected:
+            TuneParameters originalParameters = parameters;
+            TuneParameters testParameters = parameters.getClone();
+            testParameters.PARAMS.axialGain = 0;
+            testParameters.PARAMS.lateralGain = 0;
+            testParameters.PARAMS.headingGain = 0;
+            testParameters.PARAMS.axialVelGain = 0;
+            testParameters.PARAMS.lateralVelGain = 0;
+            testParameters.PARAMS.headingVelGain = 0;
+            drive.PARAMS = testParameters.PARAMS;
+
+            drive.opticalTracker.setPosition(new Pose2D(0, 0, 0));
+            if (runCancelableAction(drive.actionBuilder(drive.pose)
                             .strafeTo(new Vector2d(0, DISTANCE))
-                            .build());
+                            .build())) {
+
+                Pose2D endPose = drive.opticalTracker.getPosition();
+                double actualDistance = Math.hypot(endPose.x, endPose.y);
+                double lateralMultiplier = actualDistance / DISTANCE;
+
+out.printf("(%.2f, %.2f), distance: %.2f", endPose.x, endPose.y, actualDistance);
+
+                if (ui.prompt(String.format("Measured lateral multiplier is %.2f. ", lateralMultiplier)
+                        + "Does that look good?"
+                        + "\n\nPress A to accept, B to cancel")) {
+                    TuneParameters newParameters = originalParameters.getClone();
+                    newParameters.PARAMS.lateralInPerTick
+                            = originalParameters.PARAMS.inPerTick * lateralMultiplier;
+                    acceptParameters(newParameters);
+                    return; // ====>
+                }
+            }
+
+            // The test failed, reset back to the original PARAMS:
+            drive.PARAMS = originalParameters.PARAMS;
         }
     }
 
@@ -1109,6 +1139,7 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
+    // Navigate a short spline as a completion test.
     void completionTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
@@ -1223,7 +1254,7 @@ public class LooneyTuner extends LinearOpMode {
                         + "delete the tuning results, triple-tap the BACK button on the gamepad.");
                 telemetry.update();
 
-                // Wait for a triple-tap of the start button:
+                // Wait for a triple-tap of the button:
                 for (int i = 0; i < 3; i++) {
                     try {
                         while (!gamepad.back)
