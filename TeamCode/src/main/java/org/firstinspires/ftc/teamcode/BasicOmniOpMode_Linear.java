@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,6 +21,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private Servo leftArm = null;
+    private Servo rightArm = null;
+    private static final double ARM_DEFAULT = 0.5;
+    private static final double ARM_MIN = 0.0;
+    private static final double ARM_MAX = 1.0;
 
     private final ElapsedTime runtime = new ElapsedTime();
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
@@ -38,6 +44,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftArm = hardwareMap.get(Servo.class, "left_arm");
+        rightArm = hardwareMap.get(Servo.class, "right_arm");
+        double arm_position = ARM_DEFAULT;
+        leftArm.setPosition(arm_position);
+        rightArm.setPosition(arm_position);
 
         // Initialize the IMU configuration
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
@@ -103,6 +114,33 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 turnToHeading(90.0);
             if (gamepad1.dpad_right)
                 turnToHeading(-90.0);
+
+            if (gamepad1.left_bumper) {
+                if (arm_position < ARM_MAX) {
+                    arm_position += 0.001;
+                    leftArm.setPosition(arm_position);
+                }
+            }
+            else if (gamepad1.left_trigger > 0) {
+                if (arm_position > ARM_MIN) {
+                    arm_position -= 0.001;
+                    leftArm.setPosition(ARM_MIN);
+                }
+            }
+
+            if (gamepad1.right_bumper) {
+                if (arm_position < ARM_MAX) {
+                    arm_position += 0.001;
+                    rightArm.setPosition(arm_position);
+                }
+            }
+            else if (gamepad1.right_trigger > 0) {
+                if (arm_position > ARM_MIN) {
+                    arm_position -= 0.001;
+                    rightArm.setPosition(ARM_MIN);
+                }
+            }
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime);
