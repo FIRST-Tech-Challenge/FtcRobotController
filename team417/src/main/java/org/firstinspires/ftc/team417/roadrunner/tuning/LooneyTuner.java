@@ -1,5 +1,5 @@
 /**
- * Looney Tuner is a settings parameter tuner for Road Runner.
+ * Looney Tuner is a parameters tuner for robots using Road Runner.
  */
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -436,9 +436,9 @@ public class LooneyTuner extends LinearOpMode {
                 }
                 for (int i = 0; i < numStrings; i++) {
                     if (i == current)
-                        output += "<span style='background: #88285a'>\u27a4" + menuStrings.getString(i) + "</span>\n";
+                        output += "<span style='background: #88285a'>\u25c6 " + menuStrings.getString(i) + "</span>\n";
                     else
-                        output += "\u25e6" + menuStrings.getString(i) + "\n";
+                        output += "\u25c7 " + menuStrings.getString(i) + "\n";
                 }
                 telemetry.addLine(output);
                 telemetry.update();
@@ -1508,11 +1508,6 @@ out.printf("startHeading: %.2f\n", Math.toDegrees(offsetStartPosition.h));
         ui = new Ui();
         drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, defaultPose);
         settings = new TuneSettings(drive);
-
-TuneSettings newSettings = settings.getClone();
-newSettings.PARAMS.kS = 3.14;
-String changes = newSettings.getChanges(settings);
-applyNewSettings(newSettings, changes);
 
         String configuration = "Mecanum drive, ";
         if (settings.type == Type.OPTICAL) {

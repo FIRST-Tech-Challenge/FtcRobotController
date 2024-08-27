@@ -136,6 +136,7 @@ public final class MecanumDrive {
                 lateralGain = 0.0;
                 headingGain = 0.0; // shared with turn
             }
+
         }
 
         public double maxWheelVel;
@@ -164,7 +165,17 @@ public final class MecanumDrive {
         public double lateralGain;
         public double headingGain;
 
-        public OTOSSettings otos = new OTOSSettings();
+        public Otos otos = new Otos();
+
+        // Structure for the settings of the SparkFun Optical Tracking Odometry Sensor.
+        public static class Otos {
+            // Inches, inches and radians:
+            public SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+            // Scalar:
+            public double linearScalar;
+            // Scalar:
+            public double angularScalar;
+        }
     }
 
     public static String getBotName() {
@@ -361,16 +372,6 @@ public final class MecanumDrive {
 
         // TODO: Choose the right kind of localizer
         localizer = new DriveLocalizer();
-    }
-
-    // Structure for the settings of the SparkFun Optical Tracking Odometry Sensor.
-    public static class OTOSSettings {
-        // Inches, inches and radians:
-        public SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
-        // Scalar:
-        public double linearScalar;
-        // Scalar:
-        public double angularScalar;
     }
 
     // Initialize the optical tracking sensor if we have one. Derived from configureOtos(). The
