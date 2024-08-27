@@ -1,5 +1,7 @@
 package org.firstinspires.inspection;
 
+import com.wilyworks.simulator.WilyCore;
+
 /**
  * {@link InspectionState} contains the inspection state of either a RC or a DS
  */
@@ -15,8 +17,6 @@ public class InspectionState
 
     public static final String NO_VERSION = "";
     public static final int NO_VERSION_CODE = 0;
-
-    //The serialized names save several hundred bytes in the QR code
 
     public String manufacturer = "";
     public String model = "";
@@ -36,7 +36,7 @@ public class InspectionState
     public boolean wifiDirectConnected;
     public int wifiChannel;
     public boolean locationEnabled;
-    public String deviceName = "DevBot";
+    public String deviceName;
     public double batteryFraction;
     public boolean robotControllerInstalled;
     public boolean driverStationInstalled;
@@ -44,9 +44,9 @@ public class InspectionState
     public int minorSdkVersion;
     public int pointSdkVersion;
     public String appBuildTime = "";
-    public long    rxDataCount;
-    public long    txDataCount;
-    public long    bytesPerSecond;
+    public long rxDataCount;
+    public long txDataCount;
+    public long bytesPerSecond;
     public boolean isDefaultPassword;
 
     //----------------------------------------------------------------------------------------------
@@ -57,7 +57,10 @@ public class InspectionState
     {
         // For deserialization, initialize CH OS version to NO_VERSION value.
         // Otherwise, it will be null when the RC is running 5.x
-        this.controlHubOsVersion = NO_VERSION;
+        controlHubOsVersion = NO_VERSION;
+
+        // Return the device name that the user has configured for the simulator:
+        deviceName = WilyCore.config.deviceName;
     }
 
     public void initializeLocal()

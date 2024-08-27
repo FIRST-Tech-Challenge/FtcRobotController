@@ -1,6 +1,16 @@
 /**
  * Looney Tuner is a parameters tuner for robots using Road Runner.
  */
+
+// @@@ Change from Start to Back
+// @@@ Suppress mismatch when running on the simulator
+// @@@ Get rid of non-OTOS code
+// @@@ Add saving of parameters after PID tuning
+// @@@ Revert changes to return to stock Quick Start code
+// @@@ Add support for changing robot name
+// @@@ Allow tuners to inherit current OTOS settings
+// @@@ Add max-velocity/max-acceleration testing for both linear and angular
+
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
 import static com.acmerobotics.roadrunner.Profiles.constantProfile;

@@ -24,7 +24,12 @@ public class WilyWorks {
      * simulator.
      */
     public static class Config {
-        // Set these to the actual dimensions of your robot:
+        // When your code queries the device name when running under Wily Works, this is what
+        // will be returned. You can change it to match your DevBot or competition robot to
+        // test their code paths:
+        public String deviceName = "WilyWorks";
+
+        // Set these to the actual dimensions of your robot, in inches:
         public double robotWidth = 18.0;
         public double robotLength = 18.0;
 
@@ -45,7 +50,11 @@ public class WilyWorks {
         };
 
         public DistanceSensor[] distanceSensors = {
-            // new DistanceSensor("DistanceExample", 1, 2, Math.toRadians(90));
+            // new DistanceSensor("DistanceExample", 1, 2, Math.toRadians(90))
+        };
+
+        public LEDIndicator[] ledIndicators = {
+            // new LEDIndicator("LEDExample", 0, 0)
         };
 
         /**
@@ -97,6 +106,24 @@ public class WilyWorks {
                 this.name = name; this.x = x; this.y = y; this.orientation = orientation;
             }
         }
+
+        /**
+         * Structure used to describe the position of a digital LED indicator on the robot:
+         */
+        static public class LEDIndicator {
+            // Indicator's device name as specified in the robot's configuration:
+            public String name;
+
+            // Sensor position in inches relative to the robot's center of rotation.
+            // Positive 'x' is towards the front of the robot, negative towards the back.
+            // Positive 'y' is towards the left of the robot, negative towards the right:
+            public double x;
+            public double y;
+
+            public LEDIndicator(String name, double x, double y) {
+                this.name = name; this.x = x; this.y = y;
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +138,8 @@ public class WilyWorks {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Implementation
 
-    // Wrap WilyLink initialization with
+    // Get a reference to the WilyCore class if it's present (it will only be present when running
+    // under the simulator, not when running on an actual robot):
     static Class<?> getWilyCore() {
         try {
             return getSystemClassLoader().loadClass("com.wilyworks.simulator.WilyCore");
