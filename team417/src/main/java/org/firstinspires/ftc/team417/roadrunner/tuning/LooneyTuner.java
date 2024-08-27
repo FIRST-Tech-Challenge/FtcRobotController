@@ -527,11 +527,15 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Shape the stick input for more precision at slow speeds:
-    public double shapeStick(double stickValue) {
+    public double shapeStick(double stickValueD) {
+        float stickValue = (float) stickValueD;
         // Make slow driving easier on the real robot. Don't bother under Wily Works because
         // then it's too slow:
-        double power = WilyWorks.isSimulating ? 1.0 : 2.0;
-        return Math.signum(stickValue) * Math.abs(Math.pow(stickValue, power));
+        float power = WilyWorks.isSimulating ? 1.0f : 2.0f;
+        float result = Math.signum(stickValue) * Math.abs((float) Math.pow(stickValue, power));
+        if (stickValue != 0)
+            out.printf("raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
+        return result;
     }
 
     // Poll the gamepad input and set the drive motor power accordingly:
@@ -1236,17 +1240,19 @@ public class LooneyTuner extends LinearOpMode {
                 TelemetryPacket packet = new TelemetryPacket();
                 Canvas canvas = packet.fieldOverlay();
 
-                canvas.setRotation(-Math.PI/2);
-
                 // Set a solid white background:
                 canvas.setFill("#ffffff");
                 canvas.fillRect(-72, -72, 144, 144);
-                canvas.strokeLine(-72, -72, 72, 72);
+
+                // Set the transform:
+                canvas.setRotation(-Math.PI/2);
+                canvas.setTranslation(-72, 72);
+//                canvas.setScale(144.0 / maxVelocity, 144.0 / MAX_VOLTAGE_FACTOR);
 
                 // The canvas coordinates go from -72 to 72 so scale appropriately:
-                double xOffset = -70;
+                double xOffset = 0; // -70;
                 double xScale = 140 / maxVelocity;
-                double yOffset = -70;
+                double yOffset = 0; // -70;
                 double yScale = 140 / MAX_VOLTAGE_FACTOR;
 
     out.printf("xScale: %.3f, yScale: %.3f\n", xScale, yScale);
@@ -1271,8 +1277,8 @@ public class LooneyTuner extends LinearOpMode {
                         200 + xOffset, bestFitLine.intercept + yOffset + 200 * bestFitLine.slope);
 
     out.printf("best fit: (%.2f, %.2f) to (%.2f, %.2f)\n",
-            0 + xOffset, bestFitLine.intercept + yOffset,
-            100 + xOffset, bestFitLine.intercept + yOffset + 100 * bestFitLine.slope); // @@@
+            0 + xOffset, bestFitLine.intercept * yScale + yOffset,
+            100 * xScale + xOffset, bestFitLine.intercept * yScale + yOffset + (100 * bestFitLine.slope) * yScale); // @@@
 
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
