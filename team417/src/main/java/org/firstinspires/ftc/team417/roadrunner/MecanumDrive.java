@@ -110,11 +110,11 @@ public final class MecanumDrive {
                 headingGain = 8.0; // shared with turn
 
                 // SparkFun OTOS settings:
-                otos.offset.x = 6.0; // Inches
-                otos.offset.y = -3.5; // Inches
-                otos.offset.h = Math.toRadians(-87.139); // Convert degrees to radians
-                otos.linearScalar = 1.000; // Scalar
-                otos.angularScalar = 1.001; // Scalar
+                otos.offset.x = 6.4; // Inches
+                otos.offset.y = 3.037; // Inches
+                otos.offset.h = Math.toRadians(-88.955); // Convert degrees to radians
+                otos.linearScalar = 1.056; // Scalar
+                otos.angularScalar = 0.992; // Scalar
 
             } else {
                 // IMU orientation

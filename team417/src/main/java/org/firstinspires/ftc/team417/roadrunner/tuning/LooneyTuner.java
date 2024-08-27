@@ -313,11 +313,18 @@ class TuneParameters {
     // return a string that tells the user
     String comparison = "";
     void compare(String parameter, String format, double oldValue, double newValue) {
-        // @@@ What about heading in degrees?
         String oldString = String.format(format, oldValue);
         String newString = String.format(format, newValue);
         if (!oldString.equals(newString)) {
-            comparison += String.format("&ensp;%s = %s; // Was %s", parameter, newString, oldString);
+            comparison += String.format("&ensp;%s = %s; // Was %s\n", parameter, newString, oldString);
+        }
+    }
+    /** @noinspection SameParameterValue*/
+    void compareRadians(String parameter, String format, double oldValue, double newValue) {
+        String oldString = String.format(format, Math.toDegrees(oldValue));
+        String newString = String.format(format, Math.toDegrees(newValue));
+        if (!oldString.equals(newString)) {
+            comparison += String.format("&ensp;%s = Math.toDegrees(%s);\n&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;// Was Math.toDegrees(%s)\n", parameter, newString, oldString);
         }
     }
 
@@ -360,21 +367,12 @@ class TuneParameters {
         compare("kA", "%.5f", oldSettings.PARAMS.kA, PARAMS.kA);
         compare("otos.offset.x", "%.3f", oldSettings.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
         compare("otos.offset.y", "%.3f", oldSettings.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
-        compare("otos.offset.h", "%.3f", oldSettings.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
+        compareRadians("otos.offset.h", "%.3f", oldSettings.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
         compare("otos.linearScalar", "%.3f", oldSettings.PARAMS.otos.linearScalar, PARAMS.otos.linearScalar);
         compare("otos.angularScalar", "%.3f", oldSettings.PARAMS.otos.angularScalar, PARAMS.otos.angularScalar);
         return comparison;
     }
 
-    public String getChanges(TuneParameters oldSettings) {
-        String comparison = compare(oldSettings);
-        if (comparison.isEmpty())
-            return comparison;
-
-        return "Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
-                + "MecanumDrive Params constructor, then update as follows:\n\n"
-                + "<tt>" + comparison + "</tt>";
-    }
 }
 
 /** @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance , ClassEscapesDefinedScope */
@@ -746,14 +744,17 @@ public class LooneyTuner extends LinearOpMode {
 
     // Remember the new parameters:
     public void setParameters(TuneParameters newParameters) {
-        String changes = newParameters.getChanges(parameters);
-        if (changes.isEmpty()) {
+        String comparison = newParameters.compare(parameters);
+        if (comparison.isEmpty()) {
             ui.prompt("The results match your current settings.\n\nPress A to continue.");
         } else {
             drive.PARAMS = newParameters.PARAMS;
             parameters = newParameters;
             parameters.save();
-            ui.prompt(changes + "\n\nPress A to continue.");
+            ui.prompt("Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
+                    + "MecanumDrive Params constructor, then update as follows:\n\n"
+                    + comparison
+                    + "\n\nPress A to continue.");
         }
     }
 
