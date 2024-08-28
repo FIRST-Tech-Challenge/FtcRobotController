@@ -208,6 +208,7 @@ class TuneParameters {
  *
  * @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance , ClassEscapesDefinedScope
  */
+@SuppressLint("DefaultLocale")
 @TeleOp
 public class LooneyTuner extends LinearOpMode {
     // Member fields referenced by every test:
@@ -387,7 +388,6 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Measure the optical linear scale and orientation:
-    @SuppressLint("DefaultLocale")
     void pushCalibrator() {
         assert(drive.opticalTracker != null);
         useDrive(false); // Don't use MecanumDrive/TankDrive
@@ -623,7 +623,6 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // This is the robot spin test for calibrating the optical sensor angular scale and offset:
-    @SuppressLint("DefaultLocale")
     void spinCalibrator() {
         assert(drive.opticalTracker != null);
 
@@ -752,7 +751,6 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Process the spin results:
-    @SuppressLint("DefaultLocale")
     void processSpinResults(Circle center, double totalMeasuredRotation, double distancePerRevolution) {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
@@ -837,7 +835,6 @@ public class LooneyTuner extends LinearOpMode {
 
     // Automatically calculate the kS and kV terms of the feed-forward approximation by
     // ramping up the velocity in a straight line. We increase power by a fixed increment.
-    @SuppressLint("DefaultLocale")
     void acceleratingStraightLineTuner() {
         final double VOLTAGE_ADDER_PER_SECOND = 0.3;
         final double MAX_VOLTAGE_FACTOR = 0.9;
@@ -955,7 +952,6 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Drive the robot around.
-    @SuppressLint("DefaultLocale")
     void driveTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
@@ -981,7 +977,6 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Tuner for the lateral multiplier on Mecanum drives.
-    @SuppressLint("DefaultLocale")
     void lateralTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
@@ -1042,7 +1037,6 @@ public class LooneyTuner extends LinearOpMode {
 
     // This is a re-implementation of 'manualFeedforwardTuner' so that DISTANCE can be changed
     // from its hardcoded 64".
-    @SuppressLint("DefaultLocale")
     void manualFeedforwardTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
@@ -1123,8 +1117,7 @@ public class LooneyTuner extends LinearOpMode {
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
     }
 
-    @SuppressLint("DefaultLocale")
-    void manualFeedbackTunerAxial() {
+    void interactiveAxialPidTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         if (ui.prompt(String.format("The robot will attempt to drive backwards and forwards for %d inches. "
@@ -1142,8 +1135,7 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
-    @SuppressLint("DefaultLocale")
-    void manualFeedbackTunerLateral() {
+    void interactiveLateralPidTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         if (ui.prompt(String.format("The robot will attempt to strafe left and right for %d inches. "
@@ -1161,7 +1153,7 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
-    void manualFeedbackTunerHeading() {
+    void interactiveHeadingPidTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         if (ui.prompt("The robot will attempt to rotate in place "
@@ -1237,7 +1229,6 @@ public class LooneyTuner extends LinearOpMode {
             ui.prompt("The SparkFun OTOS must be configured for radians and inches.");
             return; // ====>
         }
-        String heading = "<h2>Use Dpad to navigate, A to select</h2>";
 
         // Dynamically build the list of tests:
         ArrayList<Test> tests = new ArrayList<>();
@@ -1248,9 +1239,9 @@ public class LooneyTuner extends LinearOpMode {
             tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
             tests.add(new Test(this::manualFeedforwardTuner, "Interactive feed forward tuner (kV and kA)"));
-            tests.add(new Test(this::manualFeedbackTunerAxial, "Interactive PID tuner (axialGain)"));
-            tests.add(new Test(this::manualFeedbackTunerLateral, "Interactive PID tuner (lateralGain)"));
-            tests.add(new Test(this::manualFeedbackTunerHeading, "Interactive PID tuner (headingGain)"));
+            tests.add(new Test(this::interactiveAxialPidTuner, "Interactive PID tuner (axialGain)"));
+            tests.add(new Test(this::interactiveLateralPidTuner, "Interactive PID tuner (lateralGain)"));
+            tests.add(new Test(this::interactiveHeadingPidTuner, "Interactive PID tuner (headingGain)"));
             tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
         }
 
@@ -1265,6 +1256,7 @@ public class LooneyTuner extends LinearOpMode {
         // Execute our main menu loop:
         int selection = 0;
         while (opModeIsActive()) {
+            String heading = "<h2>Use Dpad to navigate, A to select</h2>";
             selection = ui.menu(heading, selection, true,
                     tests.size(), i -> tests.get(i).description);
 
