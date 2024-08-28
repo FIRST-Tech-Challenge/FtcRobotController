@@ -7,9 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class aUtOnOmOuS extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
-
         waitForStart();
-
         while (opModeIsActive())
         {
             //if you have ligma type this
