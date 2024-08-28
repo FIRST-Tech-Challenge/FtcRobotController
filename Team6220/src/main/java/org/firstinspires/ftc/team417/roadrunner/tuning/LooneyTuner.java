@@ -758,6 +758,7 @@ public class LooneyTuner extends LinearOpMode {
         double trackWidth = distancePerRevolution / Math.PI;
         double trackWidthTicks = trackWidth / drive.PARAMS.inPerTick;
 
+        out.printf("distancePerRevolution: %.2f\n", distancePerRevolution);
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         // Undo the offset heading that the OTOS sensor automatically applies:
@@ -1304,7 +1305,7 @@ public class LooneyTuner extends LinearOpMode {
                 // If we reached this point, the user has chosen to ignore the last tuning results.
                 // Override those results with the current settings:
                 currentSettings.save();
-                telemetry.addLine("Looney Tuner results overridden");
+                telemetry.addLine("Looney Tuner results have been overridden");
                 telemetry.update();
             }
         }
