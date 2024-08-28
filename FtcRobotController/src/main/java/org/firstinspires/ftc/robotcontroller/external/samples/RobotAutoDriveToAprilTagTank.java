@@ -63,7 +63,7 @@ import java.util.concurrent.TimeUnit;
  * The code assumes a Robot Configuration with motors named left_drive and right_drive.
  * The motor directions must be set so a positive power goes forward on both wheels;
  * This sample assumes that the default AprilTag Library (usually for the current season) is being loaded by default
- * so you should choose to approach a valid tag ID (usually starting at 0)
+ * so you should choose to approach a valid tag ID.
  *
  * Under manual control, the left stick will move forward/back, and the right stick will rotate the robot.
  * This is called POV Joystick mode, different than Tank Drive (where each joystick controls a wheel).
@@ -94,8 +94,8 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN =   0.02 ;   //  Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double TURN_GAIN  =   0.01 ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double SPEED_GAIN =   0.02 ;   //  Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double TURN_GAIN  =   0.01 ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.25;  //  Clip the turn speed to this max value (adjust for your robot)
@@ -135,7 +135,7 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
 
         // Wait for the driver to press Start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.addData(">", "Touch START to start OpMode");
         telemetry.update();
         waitForStart();
 
@@ -234,7 +234,7 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
         aprilTag = new AprilTagProcessor.Builder().build();
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // eg: Some typical detection data using a Logitech C920 WebCam
+        // e.g. Some typical detection data using a Logitech C920 WebCam
         // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
         // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
