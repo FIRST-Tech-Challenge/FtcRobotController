@@ -16,7 +16,8 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
-import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.OdometryPodSubsystem;
+//import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
 public class RobotContainer {
@@ -34,6 +35,7 @@ public class RobotContainer {
     // create pointers to robot subsystems
     public static DriveTrain drivesystem;
     public static Gyro gyro;
+    public static OdometryPodSubsystem odometryPod;
 //    public static Claw claw;
 //
 //    public static LinearSlideSubsystem linearSlide;
@@ -94,6 +96,7 @@ public class RobotContainer {
 
         // create systems
         gyro = new Gyro();
+        odometryPod = new OdometryPodSubsystem();
         drivesystem = new DriveTrain();
 //        claw = new Claw();
         // insert other subsystems here
