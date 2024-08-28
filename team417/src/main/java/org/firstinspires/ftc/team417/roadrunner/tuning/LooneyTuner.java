@@ -193,7 +193,7 @@ class TuneParameters {
         compare("kA", "%.5f", oldSettings.PARAMS.kA, PARAMS.kA);
         compare("inPerTick", "%.5f", oldSettings.PARAMS.inPerTick, PARAMS.inPerTick);
         compare("lateralInPerTick", "%.5f", oldSettings.PARAMS.lateralInPerTick, PARAMS.lateralInPerTick);
-        compare("trackWidthTicks", "%.5f", oldSettings.PARAMS.trackWidthTicks, PARAMS.trackWidthTicks);
+        compare("trackWidthTicks", "%.2f", oldSettings.PARAMS.trackWidthTicks, PARAMS.trackWidthTicks);
         compare("otos.offset.x", "%.3f", oldSettings.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
         compare("otos.offset.y", "%.3f", oldSettings.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
         compareRadians("otos.offset.h", "%.3f", oldSettings.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
@@ -368,8 +368,8 @@ public class LooneyTuner extends LinearOpMode {
         // then it's too slow:
         float power = WilyWorks.isSimulating ? 1.0f : 2.0f;
         float result = Math.signum(stickValue) * Math.abs((float) Math.pow(stickValue, power));
-        if (stickValue != 0)
-            out.printf("raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
+//        if (stickValue != 0)
+//            out.printf("raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
         return result;
     }
 
@@ -510,19 +510,19 @@ public class LooneyTuner extends LinearOpMode {
         return angle;
     }
 
-    // Ramp the motors up or down to or from the target spin speed.
-    void rampMotorsSpin(MecanumDrive drive, boolean up) {
+    // Ramp the motors up or down to or from the target spin speed. Turns counter-clockwise.
+    void rampMotorsSpin(MecanumDrive drive, double targetPower) {
         final double RAMP_TIME = 0.5; // Seconds
-        final double SPIN_SPEED = 0.5;
-
+        double startPower = drive.rightFront.getPower();
+        double deltaPower = targetPower - startPower;
         double startTime = time();
         while (opModeIsActive()) {
             double duration = Math.min(time() - startTime, RAMP_TIME);
-            double fraction = (up) ? (duration / RAMP_TIME) : (1 - duration / RAMP_TIME);
-            drive.rightFront.setPower(fraction * SPIN_SPEED);
-            drive.rightBack.setPower(fraction * SPIN_SPEED);
-            drive.leftFront.setPower(-fraction * SPIN_SPEED);
-            drive.leftBack.setPower(-fraction * SPIN_SPEED);
+            double power = (duration / RAMP_TIME) * deltaPower + startPower;
+            drive.rightFront.setPower(power);
+            drive.rightBack.setPower(power);
+            drive.leftFront.setPower(-power);
+            drive.leftBack.setPower(-power);
 
             updateRotation();
             if (duration == RAMP_TIME)
@@ -628,7 +628,14 @@ public class LooneyTuner extends LinearOpMode {
         assert(drive.opticalTracker != null);
 
         // Number of revolutions to use:
-        final double REVOLUTION_COUNT = 10.0;
+        final double REVOLUTION_COUNT = 2.0; // @@@@@@@@@@@@@@@@@
+
+
+
+
+
+        // Speed of the revolutions:
+        final double SPIN_POWER = 0.5;
 
         useDrive(true); // Use MecanumDrive/TankDrive
 
@@ -653,11 +660,20 @@ public class LooneyTuner extends LinearOpMode {
 
                 ArrayList<Point> points = new ArrayList<>();
 
-                // Spin-up the robot, starting to measure rotation for the 'scalar' computation at this
-                // point:
+                // Spin-up the robot, starting to measure rotation for the 'scalar' computation at
+                // this point:
                 double scalarStartRotation = initiateSparkFunRotation();
-                rampMotorsSpin(drive, true);
+                rampMotorsSpin(drive, SPIN_POWER);
 
+                // Prepare for calculating how far the wheels have traveled:
+                double voltage = drive.voltageSensor.getVoltage();
+                double wheelVelocity = (SPIN_POWER * voltage - drive.PARAMS.kS) /
+                        (drive.PARAMS.kV / drive.PARAMS.inPerTick); // Velocity in inches per second
+                double startTime = time();
+
+                out.printf("Velocity: %.2f inches/s\n", wheelVelocity); // @@@
+
+                // Do some preparation for termination:
                 final double terminationRotation = REVOLUTION_COUNT * 2 * Math.PI;
                 double farthestDistance = 0;
                 Point farthestPoint = new Point(0, 0);
@@ -709,8 +725,10 @@ public class LooneyTuner extends LinearOpMode {
                     rawPosition = new Point(rawPose.x, rawPose.y);
                 }
 
+                double endTime = time();
+
                 // Stop the rotation:
-                rampMotorsSpin(drive, false);
+                rampMotorsSpin(drive, 0);
 
                 if ((success) && ui.drivePrompt("Now drive the robot to align it at the wall in the same "
                         + "place and orientation as it started."
@@ -723,7 +741,8 @@ public class LooneyTuner extends LinearOpMode {
 
                     updateRotationAndGetPose();
                     double totalMeasuredRotation = getSparkFunRotation() - scalarStartRotation;
-                    processSpinResults(circle, totalMeasuredRotation);
+                    double distancePerRevolution = wheelVelocity * (endTime - startTime) / REVOLUTION_COUNT;
+                    processSpinResults(circle, totalMeasuredRotation, distancePerRevolution);
                 }
             }
         }
@@ -734,10 +753,12 @@ public class LooneyTuner extends LinearOpMode {
 
     // Process the spin results:
     @SuppressLint("DefaultLocale")
-    void processSpinResults(Circle center, double totalMeasuredRotation) {
+    void processSpinResults(Circle center, double totalMeasuredRotation, double distancePerRevolution) {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
+        double trackWidth = distancePerRevolution / Math.PI;
+        double trackWidthTicks = trackWidth / drive.PARAMS.inPerTick;
 
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
@@ -747,6 +768,7 @@ public class LooneyTuner extends LinearOpMode {
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
         results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", offset.x, offset.y, center.radius);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
+        results += String.format("Track width: %.2f\"\n", trackWidth);
         results += "\n";
 
         // Do some sanity checking on the results:
@@ -762,6 +784,7 @@ public class LooneyTuner extends LinearOpMode {
             newSettings.PARAMS.otos.offset.x = offset.x;
             newSettings.PARAMS.otos.offset.y = offset.y;
             newSettings.PARAMS.otos.angularScalar = angularScalar;
+            newSettings.PARAMS.trackWidthTicks = trackWidthTicks;
 
             if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
                 acceptParameters(newSettings);
@@ -1221,13 +1244,13 @@ public class LooneyTuner extends LinearOpMode {
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
         if (drive.opticalTracker != null) {
             tests.add(new Test(this::pushCalibrator, "Push calibrator (tracking)"));
-            tests.add(new Test(this::spinCalibrator, "Spin calibrator (tracking)"));
+            tests.add(new Test(this::spinCalibrator, "Spin calibrator (tracking and trackWidthTicks)"));
             tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
             tests.add(new Test(this::manualFeedforwardTuner, "Interactive feed forward tuner (kV and kA)"));
             tests.add(new Test(this::manualFeedbackTunerAxial, "Interactive PID tuner (axialGain)"));
             tests.add(new Test(this::manualFeedbackTunerLateral, "Interactive PID tuner (lateralGain)"));
-            tests.add(new Test(this::manualFeedbackTunerHeading, "Interactive PID (headingGain)"));
+            tests.add(new Test(this::manualFeedbackTunerHeading, "Interactive PID tuner (headingGain)"));
             tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
         }
 
@@ -1289,7 +1312,7 @@ public class LooneyTuner extends LinearOpMode {
                 // If we reached this point, the user has chosen to ignore the last tuning results.
                 // Override those results with the current settings:
                 currentSettings.save();
-                telemetry.addLine("Looney Tuner results deleted!");
+                telemetry.addLine("Looney Tuner results overridden");
                 telemetry.update();
             }
         }
