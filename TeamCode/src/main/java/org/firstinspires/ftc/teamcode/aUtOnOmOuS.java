@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name="Main")
 
 public class aUtOnOmOuS extends LinearOpMode {
+
     public void runOpMode() throws InterruptedException {
         waitForStart();
         while (opModeIsActive())
