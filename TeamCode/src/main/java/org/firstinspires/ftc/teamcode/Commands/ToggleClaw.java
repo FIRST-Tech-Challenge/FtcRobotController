@@ -12,13 +12,13 @@ public class ToggleClaw extends CommandBase {
     public ToggleClaw() {
 
         // add subsystem requirements (if any) - for example:
-        addRequirements(RobotContainer.claw);
+        //addRequirements(RobotContainer.claw);
     }
 
     // This method is called once when command is started
     @Override
     public void initialize() {
-    RobotContainer.claw.ClawOpen();
+        //RobotContainer.claw.ClawOpen();
     }
 
     // This method is called periodically while command is active
@@ -38,7 +38,7 @@ public class ToggleClaw extends CommandBase {
     // This method is called once when command is finished.
     @Override
     public void end(boolean interrupted) {
-        RobotContainer.claw.ClawClosed();
+        //RobotContainer.claw.ClawClosed();
     }
 
 }

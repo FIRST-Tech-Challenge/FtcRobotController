@@ -12,13 +12,13 @@ public class CloseClaw extends CommandBase {
     public CloseClaw() {
 
         // add subsystem requirements (if any) - for example:
-        addRequirements(RobotContainer.claw);
+        //addRequirements(RobotContainer.claw);
     }
 
     // This method is called once when command is started
     @Override
     public void initialize() {
-    RobotContainer.claw.ClawClosed();
+    //RobotContainer.claw.ClawClosed();
     }
 
     // This method is called periodically while command is active

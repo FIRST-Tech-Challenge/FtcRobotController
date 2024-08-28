@@ -12,13 +12,13 @@ public class OpenClaw extends CommandBase {
     public OpenClaw() {
 
         // add subsystem requirements (if any) - for example:
-        addRequirements(RobotContainer.claw);
+        //addRequirements(RobotContainer.claw);
     }
 
     // This method is called once when command is started
     @Override
     public void initialize() {
-    RobotContainer.claw.ClawOpen();
+        //RobotContainer.claw.ClawOpen();
     }
 
     // This method is called periodically while command is active
