@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.team417;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 
 import org.firstinspires.ftc.team417.roadrunner.MecanumDrive;
 
@@ -25,5 +28,16 @@ public class CompetitionAuto extends BaseOpMode {
                         .splineTo(new Vector2d(30, 30), Math.PI / 2)
                         .splineTo(new Vector2d(0, 60), Math.PI)
                         .build());
+
+        class DoTelemetry implements Action {
+            public boolean run(TelemetryPacket packet) {
+                if (!opModeIsActive()) return false;
+                telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)",
+                        drive.pose.position.x, drive.pose.position.y,
+                        Math.toDegrees(drive.pose.heading.log())));
+                telemetry.update();
+                return true;
+            }
+        }
     }
 }
