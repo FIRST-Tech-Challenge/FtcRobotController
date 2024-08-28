@@ -36,16 +36,16 @@ public class DriveTrain extends SubsystemBase {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"left_front_drive");
-        leftBackDrive  = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"left_back_drive");
-        rightFrontDrive = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"right_front_drive");
-        rightBackDrive = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"right_back_drive");
+        leftFrontDrive = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"leftFrontDrive");
+        leftBackDrive  = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"leftBackDrive");
+        rightFrontDrive = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"rightFrontDrive");
+        rightBackDrive = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"rightBackDrive");
 
-        // for tiny
-        leftFrontDrive.setInverted(true);
-        leftBackDrive.setInverted(true);
-        rightFrontDrive.setInverted(false);
-        rightBackDrive.setInverted(false);
+        //
+        leftFrontDrive.setInverted(false);
+        leftBackDrive.setInverted(false);
+        rightFrontDrive.setInverted(true);
+        rightBackDrive.setInverted(true);
 
         // set motor speed control PID coefficients
         //leftFrontDrive.setVeloCoefficients(0.0, 0.0, 0.0);

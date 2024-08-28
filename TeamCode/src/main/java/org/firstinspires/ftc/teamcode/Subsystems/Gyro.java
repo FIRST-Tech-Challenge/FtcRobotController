@@ -20,7 +20,7 @@ public class Gyro extends SubsystemBase {
         // create gyro and initialize it
         YawAngleOffset = 0.0;
         gyro = RobotContainer.ActiveOpMode.hardwareMap.get(IMU.class, "imu");
-        gyro.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+        gyro.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.DOWN, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)));
         gyro.resetYaw();
     }
 
