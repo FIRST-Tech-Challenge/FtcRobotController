@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import com.qualcomm.robotcore.hardware.IMU;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp
-public class FirstTeleop extends OpMode {
+@TeleOp(name="GyroDrive")
+public class GyroDrive extends OpMode {
 
     public DcMotor frontLeft, frontRight, backLeft, backRight;
     public DcMotor leftEncoder, rightEncoder, auxEncoder;
