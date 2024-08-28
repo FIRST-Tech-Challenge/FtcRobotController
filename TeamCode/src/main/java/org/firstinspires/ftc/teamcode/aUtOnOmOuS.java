@@ -10,7 +10,7 @@ public class aUtOnOmOuS extends LinearOpMode {
         waitForStart();
         while (opModeIsActive())
         {
-            //if you have ligma type this
+            //this is a little goofy test
         }
     }
 }
