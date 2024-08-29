@@ -1,29 +1,47 @@
-package org.firstinspires.ftc.teamcode.AutoControl;
+package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.Control;
-import org.firstinspires.ftc.teamcode.RobotClass;
+import org.firstinspires.ftc.teamcode.Auto.OpticalSensor;
 
+import java.util.function.BooleanSupplier;
+
+@Autonomous
 public class AutoControl extends OpMode{
     RobotClass robot;
+    OpticalSensor opticalSensor;
+    boolean stop = false;
+    BooleanSupplier isStopRequested = new BooleanSupplier() {
+        @Override
+        public boolean getAsBoolean() {
+            return stop;
+        }
+    };
     @Override
     public void init(){
         robot = new RobotClass(hardwareMap);
-    }
+        opticalSensor = new OpticalSensor(robot);
 
+    }
+    @Override
+    public void start(){
+
+    }
     @Override
     public void loop(){
 
     }
-
     public static final int WHEEL_RADIUS = 2;
     public static final int CPR_OUTPUT_SHAFT_20TO1 = 560;
     public static final double WHEEL_CIRCUMFERENCE_INCH = 2 * Math.PI * WHEEL_RADIUS;
     public static final double TICKS_PER_INCH = CPR_OUTPUT_SHAFT_20TO1 /  WHEEL_CIRCUMFERENCE_INCH;
     private final double kD = .01;
     public void AutoDrive(double targetDistance_INCH, double angle){
+
+        telemetry.addData("motor 0 pos", robot.drivetrain.driveMotors[0].getCurrentPosition());
+        telemetry.update();
 
         angle -= robot.getHeading();
 
@@ -35,9 +53,19 @@ public class AutoControl extends OpMode{
         double error, correction;
         double targetDistance = targetDistance_INCH * TICKS_PER_INCH;
 
-        while(true){
+        robot.drivetrain.driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
+        robot.drivetrain.driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD); //BLM
+        robot.drivetrain.driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
+        robot.drivetrain.driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+
+        while(!isStopRequested.getAsBoolean()){
+
+            //SparkFunOTOS.Pose2D Pose2D = opticalSensor.getPos();
 
             error = targetDistance - robot.drivetrain.driveMotors[0].getCurrentPosition();
+            //(targetDistance - Math.sqrt(Math.pow((targetDistance * Math.cos(angle)
+            //- Pose2D.x), 2) + (Math.pow((targetDistance * Math.sin(angle)) - Pose2D.y, 2))));
+
             correction = kP * error + kI * integralSum + kD * getDerivative(error, targetDistance);
 
             if(Math.abs(error) <  maxErrorAllowed) {
@@ -97,13 +125,12 @@ public class AutoControl extends OpMode{
 
     private double getDerivative(double error, double targetDistance){
         double previousError = error;
-        error = targetDistance - robot.drivetrain.getAvgPos();
+        error = targetDistance - robot.drivetrain.driveMotors[0].getCurrentPosition();
         return(kD * error ) / (previousError + 0.01);
     }
-
     @Override
     public void stop(){
-
+        boolean stop = true;
         if(robot == null) return; // ensures that stop() is not called before initialization
         robot.drivetrain.driveMotors[0].setPower(0);
         robot.drivetrain.driveMotors[1].setPower(0);

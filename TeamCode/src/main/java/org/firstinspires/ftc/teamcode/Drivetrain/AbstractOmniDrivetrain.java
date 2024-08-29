@@ -14,9 +14,9 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         this.impulseRotation = impulseRotation;
 
         driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
-        driveMotors[1].setDirection(DcMotorSimple.Direction.REVERSE); //BLM
+        driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD); //BLM
         driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
-        driveMotors[3].setDirection(DcMotorSimple.Direction.REVERSE); //FRM
+        driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD); //FRM
 
     }
 
@@ -31,7 +31,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         // drive == y strafe == x
 
         //starting value off by 90 degrees; 270 == -90
-        heading_RADIANS += Math.toRadians(90);
+        //heading_RADIANS += Math.toRadians(90);
 
 
         double rotY = leftX * Math.cos(-heading_RADIANS) - leftY * Math.sin(-heading_RADIANS);
@@ -40,14 +40,14 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         double rotX = leftX * Math.sin(heading_RADIANS) - leftY * Math.cos(heading_RADIANS);
 
 
-        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
+        double denominator = 1;//Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
 
 
-        driveMotors[0].setPower((rotY + rotX + turn) / denominator); // Front Left Motor
-        driveMotors[1].setPower((rotY - rotX + turn) / denominator); // Back Left Motor
-        driveMotors[2].setPower((rotY - rotX - turn) / denominator); // Back Right Motor
-        driveMotors[3].setPower((rotY + rotX - turn) / denominator); // Front Right Motor
+        driveMotors[0].setPower((rotY + rotX - turn) / denominator); // Front Left Motor
+        driveMotors[1].setPower((rotY - rotX - turn) / denominator); // Back Left Motor
+        driveMotors[2].setPower((rotY - rotX + turn) / denominator); // Back Right Motor
+        driveMotors[3].setPower((rotY + rotX + turn) / denominator); // Front Right Motor
 
         telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
         telemetry.addData("heading_RADIANS", heading_RADIANS);

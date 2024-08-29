@@ -39,12 +39,14 @@ public class Control extends OpMode {
     public void loop() {
 
     }
+    public void sixDrive(double leftY, double rightY){
+        robot.drivetrain.driveTank(leftY, rightY);
+    }
     public void driveBasic(double forward, double turn){
         robot.drivetrain.driveBasic(forward, turn);
     }
 
-    public void mecanumDrive(double leftY, double leftX, double turn){
-
+    public void mecanumDrive(double leftX, double leftY, double turn){
         robot.drivetrain.mecanumDrive(leftY, leftX, turn, robot.getHeading(), telemetry);
     }
     public void resetIMU(boolean button){

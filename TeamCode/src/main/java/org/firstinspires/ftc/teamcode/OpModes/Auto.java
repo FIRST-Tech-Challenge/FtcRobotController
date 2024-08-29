@@ -1,18 +1,20 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.AutoControl.AutoControl;
-import org.firstinspires.ftc.teamcode.Control;
+import org.firstinspires.ftc.teamcode.AutoControl;
 
-
+@Autonomous
 public abstract class Auto extends AutoControl {
-   AutoControl autoControl = new AutoControl();
-   @Override
-   public void loop() {
-      autoControl.AutoDrive( 10, 0);
-      autoControl.AutoTurn(0);
-   }
-
+    @Override
+    public void start(){
+        super.start();
+        AutoDrive(10, 0);
+        AutoTurn(0);
+        AutoDrive(10, 90);
+        AutoTurn(0);
+        AutoDrive(10, 180);
+        AutoTurn(0);
+        AutoDrive(10, 270);
+    }
 }
