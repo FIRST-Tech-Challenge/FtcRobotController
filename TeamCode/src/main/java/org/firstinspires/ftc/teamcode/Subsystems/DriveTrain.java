@@ -88,7 +88,11 @@ public class DriveTrain extends SubsystemBase {
 
     /** drive robot in field coordinates
      * Inputs: X, y and Rotation speed - all -1 to +1 */
-    public void FieldDrive (double Vx, double Vy, double Omega) {
+    public void FieldDrive (double Vx, double Vy, double Omega){
+        FieldDrive(Vx, Vy, Omega, 1.0);
+    }
+
+    public void FieldDrive (double Vx, double Vy, double Omega, double powerFactor) {
 
         // get angle of vector rotation angle
         // i.e. neg of gyro angle - in rad
@@ -99,12 +103,16 @@ public class DriveTrain extends SubsystemBase {
         double y = Vx*Math.sin(rotAngRad) + Vy*Math.cos(rotAngRad);
 
         // x,y now in robot coordinates - call robot drive
-        RobotDrive(x, y, Omega);
+        RobotDrive(x, y, Omega, powerFactor);
+    }
+
+    public void RobotDrive (double Vx, double Vy, double Omega){
+        RobotDrive(Vx, Vy, Omega, 1.0);
     }
 
     /** drive robot in robot coordinates
      * Inputs: X, y and Rotation speed */
-    public void RobotDrive (double Vx, double Vy, double Omega) {
+    public void RobotDrive (double Vx, double Vy, double Omega, double powerFactor) {
         // resolve individual mecanum speeds
         double leftFrontPower  = Vx + Vy + Omega;
         double rightFrontPower = Vx - Vy - Omega;
@@ -129,10 +137,10 @@ public class DriveTrain extends SubsystemBase {
         //rightFrontDrive.setVelocity(MAX_SPEED_TICKS_PER_SEC*rightFrontPower);
         //leftBackDrive.setVelocity(MAX_SPEED_TICKS_PER_SEC*leftBackPower);
         //rightBackDrive.setVelocity(MAX_SPEED_TICKS_PER_SEC*rightBackPower);
-        leftFrontDrive.set(leftFrontPower);
-        rightFrontDrive.set(rightFrontPower);
-        leftBackDrive.set(leftBackPower);
-        rightBackDrive.set(rightBackPower);
+        leftFrontDrive.set(leftFrontPower * powerFactor);
+        rightFrontDrive.set(rightFrontPower * powerFactor);
+        leftBackDrive.set(leftBackPower * powerFactor);
+        rightBackDrive.set(rightBackPower * powerFactor);
     }
 
     /** returns current speeds of mecanum drive wheels in m/s */

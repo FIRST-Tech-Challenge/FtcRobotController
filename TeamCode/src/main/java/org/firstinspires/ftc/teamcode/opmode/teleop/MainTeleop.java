@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /*
@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When a selection is made from the menu, the corresponding OpMode is executed.
  */
-@TeleOp(name="Base TeleOp", group="OpMode")
+@TeleOp(name="Drive TeleOp", group="OpMode")
 //@Disabled
-public class TeleOp1 extends CommandOpMode {
+public class MainTeleop extends CommandOpMode {
 
     // Initialize all objects, set up subsystems, etc...
     @Override

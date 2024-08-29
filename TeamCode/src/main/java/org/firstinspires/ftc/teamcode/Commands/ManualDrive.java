@@ -14,6 +14,10 @@ public class ManualDrive extends CommandBase {
     private Double m_PIDTarget = null;    // Use Double class so it can be set to null
     private long m_pidDelay = -1;
 
+    double powerFactor;
+    double basePowerFacter = 0.65;
+    double boostPowerFacter = 0.35;
+
 
     // construtcor
     public ManualDrive() {
@@ -37,6 +41,7 @@ public class ManualDrive extends CommandBase {
         double dX= -RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
         double dY= RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
         double omega= 0.6*RobotContainer.ActiveOpMode.gamepad1.right_stick_x;
+        double speedTrigger = RobotContainer.ActiveOpMode.gamepad1.right_trigger;
 
         // for tiny
         //double dX= RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
@@ -78,8 +83,10 @@ public class ManualDrive extends CommandBase {
         // --------- End Correct robot angle for gyro angle wander --------
 
 
+        powerFactor = basePowerFacter + (speedTrigger * boostPowerFacter);
+
         // drive robot
-        RobotContainer.drivesystem.FieldDrive(dX, dY, omega);
+        RobotContainer.drivesystem.FieldDrive(dX, dY, omega, powerFactor);
     }
 
     // This method to return true only when command is to finish. Otherwise return false
