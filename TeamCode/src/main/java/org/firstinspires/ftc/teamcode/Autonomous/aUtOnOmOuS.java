@@ -8,10 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class aUtOnOmOuS extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
+
+        //Runs things once
         waitForStart();
+
         while (opModeIsActive())
         {
-            //this is a little goofy test
+            //Runs here repeatedly
         }
     }
 }
