@@ -971,6 +971,16 @@ public class LooneyTuner extends LinearOpMode {
                     + "\nPress B when done.");
 
             Canvas c = p.fieldOverlay();
+
+            // By default, Road Runner draws the field so positive y goes left, positive x
+            // goes up. Rotate the field clockwise so that positive positive y goes up, positive x
+            // goes right. This rotation is 90 (rather than -90) degrees in page-frame space.
+            // Then draw the grid on top and finally set the transform to rotate all subsequent
+            // rendering.
+            c.drawImage("/dash/centerstage.webp", 0, 0, 144, 144, Math.toRadians(90), 0, 144, true);
+            c.drawGrid(0, 0, 144, 144, 7, 7);
+            c.setRotation(Math.toRadians(-90));
+
             c.setStroke("#3F51B5");
             Drawing.drawRobot(c, drive.pose);
             FtcDashboard.getInstance().sendTelemetryPacket(p);

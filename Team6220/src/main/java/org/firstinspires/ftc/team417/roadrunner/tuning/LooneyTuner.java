@@ -1213,6 +1213,8 @@ public class LooneyTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        out.print("6220!!!\n"); // @@@@@@@@
+
         // Set the display format to use HTML:
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 
