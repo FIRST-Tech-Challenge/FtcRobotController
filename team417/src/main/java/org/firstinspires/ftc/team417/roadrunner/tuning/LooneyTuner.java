@@ -35,7 +35,6 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.google.gson.Gson;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -55,8 +54,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team417.roadrunner.Drawing;
 import org.firstinspires.ftc.team417.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.team417.roadrunner.ThreeDeadWheelLocalizer;
-import org.firstinspires.ftc.team417.roadrunner.TwoDeadWheelLocalizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -242,7 +239,7 @@ public class LooneyTuner extends LinearOpMode {
         // Button press status:
         boolean accept() { return buttonPress(gamepad1.a, 0); }
         boolean cancel() { return buttonPress(gamepad1.b, 1); }
-        // boolean reposition() { return buttonPress(gamepad1.x, 2); }
+        boolean reposition() { return buttonPress(gamepad1.y, 2); }
         boolean up() { return buttonPress(gamepad1.dpad_up, 3); }
         boolean down() { return buttonPress(gamepad1.dpad_down, 4); }
 
@@ -379,8 +376,11 @@ public class LooneyTuner extends LinearOpMode {
         // then it's too slow:
         float power = WilyWorks.isSimulating ? 1.0f : 2.0f;
         float result = Math.signum(stickValue) * Math.abs((float) Math.pow(stickValue, power));
-//        if (stickValue != 0)
-//            out.printf("raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
+
+        // Output spew when weird compiler bug hits because result should never be more than
+        // stickValue:
+        if (result > stickValue)
+            out.printf("raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
         return result;
     }
 
@@ -1045,42 +1045,27 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
-    // This is a re-implementation of 'manualFeedforwardTuner' so that DISTANCE can be changed
-    // from its hardcoded 64".
-    void manualFeedforwardTuner() {
+    // Tune the kV and kA feed forward parameters:
+    void interactiveFeedForwardTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
-        if (!ui.prompt(String.format("The robot will attempt to drive forwards then backwards for %d inches. "
-                + "Tune 'kV' and 'kA' using FTC Dashboard."
-                + "\n\nPress A to start, B to stop", DISTANCE)))
+        String directions = "Tune 'kV' and 'kA' using FTC Dashboard. Follow "
+            + "<a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a>:\n\n"
+            + "\u2022 Press the Graph button in FTC Dashboard and graph <b>vRef</b> (target) against <b>vActual</b>.\n"
+            + "\u2022 Adjust <b>kV</b> to make the horizontal lines as close as possible in height.\n"
+            + "&emsp;<b>kV = vRef / vActual</b>\n"
+            + "\u2022 Adjust <b>kA</b> to shift <b>vActual</b> left and right.\n"
+            + "&emsp;Start <b>kA</b> small, maybe 0.0001, then increase.\n";
+
+        if (!ui.prompt(String.format("The robot will attempt to constantly drive forwards then backwards for %d inches. "
+                + directions + "\n"
+                + "During the test, you can press Y to enter driver-override and reset the robot position.\n"
+                + "\nPress A to start, B to cancel", DISTANCE)))
             return;
 
-        // Taken from TuningOpModes::register:
-        List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
-        List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-        if (drive.localizer instanceof MecanumDrive.DriveLocalizer) {
-            MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
-            leftEncs.add(dl.leftFront);
-            leftEncs.add(dl.leftBack);
-            rightEncs.add(dl.rightFront);
-            rightEncs.add(dl.rightBack);
-        } else if (drive.localizer instanceof ThreeDeadWheelLocalizer) {
-            ThreeDeadWheelLocalizer dl = (ThreeDeadWheelLocalizer) drive.localizer;
-            parEncs.add(dl.par0);
-            parEncs.add(dl.par1);
-            perpEncs.add(dl.perp);
-        } else if (drive.localizer instanceof TwoDeadWheelLocalizer) {
-            TwoDeadWheelLocalizer dl = (TwoDeadWheelLocalizer) drive.localizer;
-            parEncs.add(dl.par);
-            perpEncs.add(dl.perp);
-        } else {
-            throw new IllegalArgumentException("unknown localizer: " + drive.localizer.getClass().getName());
-        }
-
-        List<Encoder> forwardEncsWrapped = new ArrayList<>();
-        forwardEncsWrapped.addAll(leftEncs);
-        forwardEncsWrapped.addAll(rightEncs);
-        forwardEncsWrapped.addAll(parEncs);
+        // Point the MecanumDrive to our test PARAMS and let the user modify that:
+        TuneParameters testParameters = parameters.getClone();
+        drive.PARAMS = testParameters.PARAMS;
 
         // Everything below here is taken from ManualFeedforwardTuner::runOpMode():
         TimeProfile profile = new TimeProfile(constantProfile(
@@ -1089,29 +1074,36 @@ public class LooneyTuner extends LinearOpMode {
                 MecanumDrive.PARAMS.minProfileAccel,
                 MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
 
-        boolean movingForwards = true;
-        double startTs = System.nanoTime() / 1e9;
+        // Trigger a reset the first time into the loop:
+        boolean movingForwards = false;
+        double startTs = 0;
 
         while (opModeIsActive() && !ui.cancel()) {
+            addTelemetry(directions + "\nPress A when done, B to cancel, Y to reposition the robot");
+            updateTelemetry();
+
             TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
 
-            for (int i = 0; i < forwardEncsWrapped.size(); i++) {
-                int v = forwardEncsWrapped.get(i).getPositionAndVelocity().velocity;
-                packet.put(String.format("v%d", i), MecanumDrive.PARAMS.inPerTick * v);
-            }
+            Pose2D velocity = drive.opticalTracker.getVelocity();
+            packet.put("vActual", Math.hypot(velocity.x, velocity.y));
 
-            double ts = System.nanoTime() / 1e9;
+            double ts = time();
             double t = ts - startTs;
             if (t > profile.duration) {
                 movingForwards = !movingForwards;
                 startTs = ts;
+
+                // Reset the start position on every loop (primarily so we reset after
+                // repositioning the robot):
+                if (movingForwards)
+                    drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
             }
 
             DualNum<Time> v = profile.get(t).drop(1);
             if (!movingForwards) {
                 v = v.unaryMinus();
             }
-            packet.put("vref", v.get(0));
+            packet.put("vRef", v.get(0));
 
             MotorFeedforward feedForward = new MotorFeedforward(MecanumDrive.PARAMS.kS,
                     MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
@@ -1120,10 +1112,27 @@ public class LooneyTuner extends LinearOpMode {
             double power = feedForward.compute(v) / drive.voltageSensor.getVoltage();
             drive.setDrivePowers(new PoseVelocity2d(new Vector2d(power, 0.0), 0.0));
 
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+            MecanumDrive.sendTelemetryPacket(packet);
+
+            if (ui.reposition()) {
+                if (!ui.drivePrompt("Drive the robot to reposition it. When you press A, the "
+                    + "robot will resume in the forward direction.\n"
+                        + "\nPress A when ready to resume, B to cancel."))
+                    break; // ====>
+
+                movingForwards = false;
+                startTs = 0;
+            }
+
+            if (ui.accept()) {
+                // Accept the parameters that the user has set:
+                acceptParameters(testParameters);
+                break; // ====>
+            }
         }
 
-        // Set power to zero before exiting:
+        // Reset back to the initial state:
+        drive.PARAMS = parameters.PARAMS;
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
     }
 
@@ -1250,7 +1259,7 @@ public class LooneyTuner extends LinearOpMode {
             tests.add(new Test(this::spinCalibrator, "Spin calibrator (tracking and trackWidthTicks)"));
             tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
-            tests.add(new Test(this::manualFeedforwardTuner, "Interactive feed forward tuner (kV and kA)"));
+            tests.add(new Test(this::interactiveFeedForwardTuner, "Interactive feed forward tuner (kV and kA)"));
             tests.add(new Test(this::interactiveAxialPidTuner, "Interactive PID tuner (axialGain)"));
             tests.add(new Test(this::interactiveLateralPidTuner, "Interactive PID tuner (lateralGain)"));
             tests.add(new Test(this::interactiveHeadingPidTuner, "Interactive PID tuner (headingGain)"));

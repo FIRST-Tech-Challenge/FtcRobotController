@@ -42,12 +42,11 @@ public class CompetitionTeleOp extends BaseOpMode {
             telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
             telemetry.update();
 
-            TelemetryPacket packet = new TelemetryPacket();
+            TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
             packet.fieldOverlay().setStroke("#3F51B5");
             Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+            MecanumDrive.sendTelemetryPacket(packet);
         }
-
     }
 
     public double curveStick(double rawSpeed) {

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -893,5 +894,10 @@ public final class MecanumDrive {
         canvas.setRotation(Math.toRadians(-90));
 
         return packet;
+    }
+
+    // When done with an FTC Dashboard telemetry packet, send it!
+    public static void sendTelemetryPacket(TelemetryPacket packet) {
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 }
