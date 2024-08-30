@@ -13,16 +13,23 @@ public class DeadWheelOdometery {
     public DcMotorEx rightEncoder;
     public static double ticksPerRotation = 2000;
     public static double radius = 24; //TODO: convert to inches
-    public double currentLeftVal = 0; //[ticks]
-    public double currentCenterVal = 0; //[ticks]
-    public double currentRightVal = 0; //[ticks]
-    public double lastLeftVal = 0; //[ticks]
-    public double lastCenterVal = 0; //[ticks]
-    public double lastRightVal = 0; //[ticks]
+    public double currentLeftRawPos = 0; //[ticks]
+    public double currentCenterRawPos = 0; //[ticks]
+    public double currentRightRawPos = 0; //[ticks]
+    public double lastLeftRawPos = 0; //[ticks]
+    public double lastCenterRawPos = 0; //[ticks]
+    public double lastRightRawPos = 0; //[ticks]
+    public double currentLeftVelocity = 0; //[ticks]
+    public double currentCenterVelocity = 0; //[ticks]
+    public double currentRightVelocity = 0; //[ticks]
     public static double trackWidth = 341.15; //TODO: convert to inches
     public static double forwardOffset = 200; //TODO: convert to inches
     public ElapsedTime dt = new ElapsedTime(); //[s]
+    public static double xMult;
+    public static double yMult;
 
+
+    // you should have a public static double xMult, public static double yMult
     public DeadWheelOdometery(HardwareMap hardwareMap, DcMotorEx motor0, DcMotorEx motor1, DcMotorEx motor3) {
         hwMap = hardwareMap;
         leftEncoder = motor0;
@@ -30,24 +37,54 @@ public class DeadWheelOdometery {
         rightEncoder = motor3;
         dt.reset();
     }
-    public void updateEncoderValues(){
-        currentLeftVal = leftEncoder.getCurrentPosition();
-        currentCenterVal = centerEncoder.getCurrentPosition();
-        currentRightVal = rightEncoder.getCurrentPosition();
+
+    // Change this to updateEncoderPositions
+    // Change the phrase 'Val' everywhere to 'RawPos'
+    public void updateEncoderPositions(){
+        currentLeftRawPos = leftEncoder.getCurrentPosition();
+        currentCenterRawPos = centerEncoder.getCurrentPosition();
+        currentRightRawPos = rightEncoder.getCurrentPosition();
     }
+
+    // Write a updateEncoderVelocities
+    // should just be encoderObject.getVelocity()
+
+    public void updateEncoderVelocities(){
+        currentLeftVelocity = leftEncoder.getVelocity();
+        currentCenterVelocity = centerEncoder.getVelocity();
+        currentRightVelocity = rightEncoder.getVelocity();
+    }
+
     public void pushBackValues(){
-        lastLeftVal=currentLeftVal;
-        lastCenterVal=currentCenterVal;
-        lastRightVal=currentRightVal;
+        lastLeftRawPos=currentLeftRawPos;
+        lastCenterRawPos=currentCenterRawPos;
+        lastRightRawPos=currentRightRawPos;
     }
-    public double convertToDistance(double currentVal, double lastVal){
-        return 2*Math.PI*radius*(currentVal-lastVal)/ticksPerRotation;
+
+    // Change this a bit. Make the input a single double rawVal. For example,
+    // now you would do convertToDistance(currentLeftVal - lastLeftVal) for the left position
+    // and for velocity of the left encoder it would be convertToDistance(leftVelocity)
+    public double convertToDistance(double rawVal){
+        return 2*Math.PI*radius*(rawVal)/ticksPerRotation;
     }
-    public SimpleMatrix calculate(double theta){
-        updateEncoderValues();
-        double relativeChangeX = (convertToDistance(currentLeftVal, lastLeftVal) + convertToDistance(currentRightVal, lastRightVal))/2;
-        double changeInHeading = (convertToDistance(currentRightVal, lastRightVal) - convertToDistance(currentLeftVal, lastLeftVal))/trackWidth;
-        double relativeChangeY = convertToDistance(currentCenterVal, lastCenterVal)-forwardOffset*changeInHeading;
+
+    // Add an argument called lastState (SimpleMatrix)
+    // Remove the theta argument and just access it through lastState.get(2, 0)
+    public SimpleMatrix calculate(SimpleMatrix lastState){
+        //Call BOTH updateEncoderPositions() and updateEncoderVelocities() HERE
+        updateEncoderPositions();
+        updateEncoderVelocities();
+
+        double relativeChangeX = (convertToDistance(currentLeftRawPos - lastLeftRawPos) + convertToDistance(currentRightRawPos - lastRightRawPos))/2;
+        double changeInHeading = (convertToDistance(currentRightRawPos - lastRightRawPos) - convertToDistance(currentLeftRawPos - lastLeftRawPos))/trackWidth;
+        double relativeChangeY = convertToDistance(currentCenterRawPos - lastCenterRawPos)-forwardOffset*changeInHeading;
+
+        // Do distance conversions for velocity
+        // These will be encoder velocities with units of in/s
+        // Use the same formula for relativeChangeX for vX, vY is simply going to be you horizontal encoder velocity
+
+        double vX = (convertToDistance(currentLeftVelocity) + convertToDistance(currentRightVelocity))/2;
+
         SimpleMatrix deltaPoseBody = new SimpleMatrix(
                 new double[][]{
                         new double[]{relativeChangeX},
@@ -66,7 +103,19 @@ public class DeadWheelOdometery {
         if (changeInHeading == 0) {
             poseExponentials = SimpleMatrix.identity(3);
         }
-        SimpleMatrix deltaPose = Utils.rotateBodyToGlobal(poseExponentials, theta).mult(deltaPoseBody);
+        SimpleMatrix deltaPose = Utils.rotateBodyToGlobal(poseExponentials, lastState.get(2, 0)).mult(deltaPoseBody);
+        SimpleMatrix state = new SimpleMatrix(
+                new double[][]{
+                        new double[]{Math.sin(changeInHeading) / changeInHeading, (Math.cos(changeInHeading) - 1) / changeInHeading, 0},
+                        new double[]{(Math.cos(changeInHeading) - 1) / changeInHeading, Math.sin(changeInHeading) / changeInHeading, 0},
+                        new double[]{0, 0, 1}
+                }
+        );
+        // Create a new 6x1 state vector (SimpleMatrix)
+        // For the first 3 elements add lastState + deltaPose
+        // for the second 3 elements simply set them to be vX, vY and omega
+        // Return the state
+
         pushBackValues();
         return deltaPose;
     }

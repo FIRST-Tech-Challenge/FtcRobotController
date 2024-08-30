@@ -9,7 +9,7 @@ public class FeedForward {
      *
      * @param kV (double) Voltage constant
      * @param kA (double) Acceleration constant
-     * @param kS (double) Velocity constant
+     * @param kS (double) Static constant
      */
     public FeedForward(double kV, double kA, double kS) {
         this.kV = kV;
