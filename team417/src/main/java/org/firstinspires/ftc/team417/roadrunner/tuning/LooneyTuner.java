@@ -10,8 +10,8 @@
 // @@@ Add LED support
 // @@@ Add stick support to menus
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
-// @@@ Fix lack of intended path in completion test
 // @@@ How to permanently update things like lateralInPerTick?
+// @@@ Figure out fastLoad for all teams.
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -677,7 +677,7 @@ public class LooneyTuner extends LinearOpMode {
                 double farthestDistance = 0;
                 Point farthestPoint = new Point(0, 0);
 
-                Point originPosition = null; // The origin of the start of every circle
+                Point originPosition = new Point(0, 0); // The origin of the start of every circle
                 double nextCircleRotation = 0;
 
                 Pose2D offsetStartPosition = updateRotationAndGetPose();
@@ -1213,6 +1213,8 @@ public class LooneyTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        out.print("417!!!\n"); // @@@@@@@@
+
         // Set the display format to use HTML:
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 

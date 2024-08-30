@@ -857,6 +857,10 @@ public final class MecanumDrive {
     public boolean doActionsWork(TelemetryPacket packet) {
         LinkedList<Action> deletionList = new LinkedList<>();
         for (Action action: actionList) {
+            // Let the Action do any field rendering (such as to draw the path it intends to
+            // traverse):
+            action.preview(packet.fieldOverlay());
+
             // Once the Action returns false, the action is done:
             if (!action.run(packet))
                 // We can't delete an item from a list while we're iterating on that list:
