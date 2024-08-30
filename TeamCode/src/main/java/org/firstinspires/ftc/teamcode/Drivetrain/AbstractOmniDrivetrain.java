@@ -1,15 +1,21 @@
 package org.firstinspires.ftc.teamcode.Drivetrain;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.RobotClass;
+import org.firstinspires.ftc.teamcode.Susbsystem.Drive;
 
 public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
-
+    private static ElapsedTime stopWatch = new ElapsedTime();
+    Drive drive;
     double impulseRotation;
-    public AbstractOmniDrivetrain(DcMotor FLM, DcMotor FRM, DcMotor BLM, DcMotor BRM, double impulseRotation){
+    public AbstractOmniDrivetrain(DcMotor FLM, DcMotor FRM, DcMotor BLM, DcMotor BRM, double impulseRotation, HardwareMap hwmap){
         super(FLM, FRM, BLM, BRM);
+        drive = new Drive(hwmap);
 
         this.impulseRotation = impulseRotation;
 
@@ -34,7 +40,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         //heading_RADIANS += Math.toRadians(90);
 
 
-        double rotY = leftX * Math.cos(-heading_RADIANS) - leftY * Math.sin(-heading_RADIANS);
+        double rotY = leftX * Math.cos(heading_RADIANS) - leftY * Math.sin(heading_RADIANS);
 
         //IF robot strafe or forward movement is inverted after turn 90 degrees inverse either the rotX or rotY
         double rotX = leftX * Math.sin(heading_RADIANS) - leftY * Math.cos(heading_RADIANS);
@@ -43,11 +49,19 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
 
+        drive.DriveCartesian(rotX, rotY, turn);
+        double[] wheelSpeeds = drive.getWheelSpeeds();
+        double[] correctedWheelDrift;
+        if(turn == 0){
+            correctedWheelDrift = drive.correctDrift(wheelSpeeds, heading_RADIANS, stopWatch.milliseconds(), telemetry);
+            stopWatch.reset();
+        }
+        else{
+            correctedWheelDrift = wheelSpeeds;
+            stopWatch.reset();
+        }
 
-        driveMotors[0].setPower((rotY + rotX - turn) / denominator); // Front Left Motor
-        driveMotors[1].setPower((rotY - rotX - turn) / denominator); // Back Left Motor
-        driveMotors[2].setPower((rotY - rotX + turn) / denominator); // Back Right Motor
-        driveMotors[3].setPower((rotY + rotX + turn) / denominator); // Front Right Motor
+        setPower(correctedWheelDrift);
 
         telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
         telemetry.addData("heading_RADIANS", heading_RADIANS);
@@ -67,5 +81,10 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
                + driveMotors[2].getCurrentPosition()
                + driveMotors[3].getCurrentPosition() / 4.0 );
     }
-
+    private void setPower(double[] wheelSpeeds){
+        drive.drivetrain.driveMotors[RobotClass.kFrontLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
+        drive.drivetrain.driveMotors[RobotClass.kFrontRight].setPower(wheelSpeeds[RobotClass.kFrontRight]);
+        drive.drivetrain.driveMotors[RobotClass.kBackLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
+        drive.drivetrain.driveMotors[RobotClass.kBackRight].setPower(wheelSpeeds[RobotClass.kBackRight]);
+    }
 }

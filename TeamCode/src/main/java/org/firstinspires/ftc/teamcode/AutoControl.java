@@ -83,8 +83,7 @@ public class AutoControl extends OpMode{
 
             double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY), 1.0);
 
-            drive.DriveCartesian(rotX, rotY, 0);
-            double[] wheelSpeeds = drive.getWheelSpeeds();
+
 
 
             drive.drivetrain.driveMotors[RobotClass.kFrontLeft].setPower((((rotY + rotX) / denominator)) / correction);
