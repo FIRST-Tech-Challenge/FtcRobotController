@@ -433,7 +433,11 @@ public class WilyCanvas {
                 setUserTransform(g);
             } else if (op instanceof Rotation) {
                 Rotation rotation = (Rotation) op;
-                userRotation = rotation.rotation;
+
+                // Our default is unlike FTC Dashboard's: we have the field oriented so that
+                // positive-x goes to the right, they have it so that positive-x goes up.
+                // Consequently, we add a 90 degrees rotation to any requested rotation:
+                userRotation = Math.toRadians(90) + rotation.rotation;
                 setUserTransform(g);
             } else if (op instanceof Translate) {
                 Translate translate = (Translate) op;

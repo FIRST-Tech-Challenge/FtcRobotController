@@ -274,8 +274,8 @@ public class LooneyTuner extends LinearOpMode {
                     else
                         output += "\u25c7 " + menuStrings.getString(i) + "\n";
                 }
-                telemetry.addLine(output);
-                telemetry.update();
+                addTelemetry(output);
+                updateTelemetry();
                 // Sleep to allow other system processing (and ironically improve responsiveness):
                 sleep(10);
             }
@@ -284,8 +284,8 @@ public class LooneyTuner extends LinearOpMode {
 
         // Show a message:
         void message(String message) {
-            telemetry.addLine(message);
-            telemetry.update();
+            addTelemetry(message);
+            updateTelemetry();
         }
 
         // Show a message and wait for an A or B button press. If accept (A) is pressed, return
@@ -319,12 +319,22 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
+    // Convert telemetry newlines to HTML breaks so that FTC Dashboard renders the text properly:
+    void addTelemetry(String line) {
+        telemetry.addLine(line.replace("\n", "<br>"));
+    }
+
+    // Send the telemetry packet to the Driver Station:
+    void updateTelemetry() {
+        telemetry.update();
+    }
+
     // Run an Action but end it early if Cancel is pressed.
     // Returns True if it ran without cancelling, False if it was cancelled.
     private boolean runCancelableAction(Action action) {
         drive.runParallel(action);
         while (opModeIsActive() && !ui.cancel()) {
-            TelemetryPacket packet = new TelemetryPacket();
+            TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
             ui.message("Press B to stop");
             boolean more = drive.doActionsWork(packet);
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
@@ -601,7 +611,7 @@ public class LooneyTuner extends LinearOpMode {
 
     void drawSpinPoints(ArrayList<Point> points, Circle circle) {
         // Draw the circle on FTC Dashboard:
-        TelemetryPacket packet = new TelemetryPacket();
+        TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
         Canvas canvas = packet.fieldOverlay();
         double[] xPoints = new double[points.size()];
         double[] yPoints = new double[points.size()];
@@ -715,9 +725,9 @@ public class LooneyTuner extends LinearOpMode {
 
                     // Update the telemetry:
                     double rotationsRemaining = (terminationRotation - offsetRotation) / (2 * Math.PI);
-                    telemetry.addLine(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
-                    telemetry.addLine("\nPress B to abort.");
-                    telemetry.update();
+                    addTelemetry(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
+                    addTelemetry("\nPress B to abort.");
+                    updateTelemetry();
 
                     // Update for next iteration of the loop:
                     Pose2D rawPose = updateRotationAndGetPose();
@@ -869,9 +879,9 @@ public class LooneyTuner extends LinearOpMode {
                 drive.leftBack.setPower(newVoltageFactor);
 
                 double percentage = newVoltageFactor / MAX_VOLTAGE_FACTOR * 100;
-                telemetry.addLine(String.format("%.0f%% done.", percentage));
-                telemetry.addLine("\nPress B to abort.");
-                telemetry.update();
+                addTelemetry(String.format("%.0f%% done.", percentage));
+                addTelemetry("\nPress B to abort.");
+                updateTelemetry();
 
                 Pose2D velocityVector = drive.opticalTracker.getVelocity();
                 double velocity = Math.hypot(velocityVector.x, velocityVector.y);
@@ -896,7 +906,7 @@ public class LooneyTuner extends LinearOpMode {
                         + "\n\nAborted, press A to continue.");
             } else {
                 // Draw the results to the FTC dashboard:
-                TelemetryPacket packet = new TelemetryPacket();
+                TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 Canvas canvas = packet.fieldOverlay();
 
                 // Set a solid white background:
@@ -904,7 +914,6 @@ public class LooneyTuner extends LinearOpMode {
                 canvas.fillRect(-72, -72, 144, 144);
 
                 // Set the transform:
-                canvas.setRotation(-Math.PI/2);
                 canvas.setTranslation(-72, 72);
 //                canvas.setScale(144.0 / maxVelocity, 144.0 / MAX_VOLTAGE_FACTOR);
 
@@ -961,7 +970,7 @@ public class LooneyTuner extends LinearOpMode {
             processGamepadDriving();
             drive.updatePoseEstimate();
 
-            TelemetryPacket p = new TelemetryPacket();
+            TelemetryPacket p = MecanumDrive.getTelemetryPacket();
             Pose2D sensorOffset = drive.PARAMS.otos.offset;
             Pose2d pose = drive.pose;
             ui.message("Use the controller to drive the robot around.\n\n"
@@ -971,16 +980,6 @@ public class LooneyTuner extends LinearOpMode {
                     + "\nPress B when done.");
 
             Canvas c = p.fieldOverlay();
-
-            // By default, Road Runner draws the field so positive y goes left, positive x
-            // goes up. Rotate the field clockwise so that positive positive y goes up, positive x
-            // goes right. This rotation is 90 (rather than -90) degrees in page-frame space.
-            // Then draw the grid on top and finally set the transform to rotate all subsequent
-            // rendering.
-            c.drawImage("/dash/centerstage.webp", 0, 0, 144, 144, Math.toRadians(90), 0, 144, true);
-            c.drawGrid(0, 0, 144, 144, 7, 7);
-            c.setRotation(Math.toRadians(-90));
-
             c.setStroke("#3F51B5");
             Drawing.drawRobot(c, drive.pose);
             FtcDashboard.getInstance().sendTelemetryPacket(p);
@@ -1094,7 +1093,7 @@ public class LooneyTuner extends LinearOpMode {
         double startTs = System.nanoTime() / 1e9;
 
         while (opModeIsActive() && !ui.cancel()) {
-            TelemetryPacket packet = new TelemetryPacket();
+            TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
 
             for (int i = 0; i < forwardEncsWrapped.size(); i++) {
                 int v = forwardEncsWrapped.get(i).getPositionAndVelocity().velocity;
@@ -1191,8 +1190,8 @@ public class LooneyTuner extends LinearOpMode {
                 + "It needs half a tile clearance on either side. "
                 + "\n\nDrive the robot to a good spot, press A to start, B to cancel")) {
 
-            telemetry.addLine("Press B to cancel");
-            telemetry.update();
+            addTelemetry("Press B to cancel");
+            updateTelemetry();
 
             // Reset the pose - again - because the user has driven around in drivePrompt:
             drive.setPose(new Pose2d(0, 0, 0));
@@ -1292,13 +1291,16 @@ public class LooneyTuner extends LinearOpMode {
             String comparison = savedSettings.compare(currentSettings);
             if (!comparison.isEmpty()) {
                 telemetry.clear();
-                telemetry.addLine("YOUR CODE IS OUT OF DATE"
-                        + "\n\nThe code's configuration parameters don't match the last "
+                telemetry.addLine("YOUR CODE IS OUT OF DATE");
+                telemetry.addLine();
+                telemetry.addLine("The code's configuration parameters don't match the last "
                         + "results saved in LooneyTuner. Double-tap the shift key in Android "
                         + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
-                        + "then update as follows:\n\n"
-                        + comparison
-                        + "\nPlease update your code and restart now. Or, to proceed anyway and "
+                        + "then update as follows:");
+                telemetry.addLine();
+                telemetry.addLine(comparison);
+                telemetry.addLine();
+                telemetry.addLine("Please update your code and restart now. Or, to proceed anyway and "
                         + "delete the tuning results, triple-tap the BACK button on the gamepad.");
                 telemetry.update();
 

@@ -875,4 +875,23 @@ public final class MecanumDrive {
     public void abortActions() {
         actionList.clear();
     }
+
+    // Create a new telemetry packet to draw stuff on the FTC Dashboard field.
+    public static TelemetryPacket getTelemetryPacket() {
+        TelemetryPacket packet = new TelemetryPacket();
+
+        // Prepare the packet for drawing.
+        //
+        // By default, Road Runner draws the field so positive y goes left, positive x
+        // goes up. Rotate the field clockwise so that positive positive y goes up, positive x
+        // goes right. This rotation is 90 (rather than -90) degrees in page-frame space.
+        // Then draw the grid on top and finally set the transform to rotate all subsequent
+        // rendering.
+        Canvas canvas = packet.fieldOverlay();
+        canvas.drawImage("/dash/centerstage.webp", 0, 0, 144, 144, Math.toRadians(90), 0, 144, true);
+        canvas.drawGrid(0, 0, 144, 144, 7, 7);
+        canvas.setRotation(Math.toRadians(-90));
+
+        return packet;
+    }
 }
