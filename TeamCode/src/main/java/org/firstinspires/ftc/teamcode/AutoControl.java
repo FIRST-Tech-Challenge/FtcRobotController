@@ -5,13 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Auto.OpticalSensor;
+import org.firstinspires.ftc.teamcode.Susbsystem.Drive;
 
 import java.util.function.BooleanSupplier;
 
 @Autonomous
 public class AutoControl extends OpMode{
-    RobotClass robot;
     OpticalSensor opticalSensor;
+    Drive drive;
     boolean stop = false;
     BooleanSupplier isStopRequested = new BooleanSupplier() {
         @Override
@@ -21,8 +22,8 @@ public class AutoControl extends OpMode{
     };
     @Override
     public void init(){
-        robot = new RobotClass(hardwareMap);
-        opticalSensor = new OpticalSensor(robot);
+        drive = new Drive(hardwareMap);
+        opticalSensor = new OpticalSensor(drive);
 
     }
     @Override
@@ -40,10 +41,10 @@ public class AutoControl extends OpMode{
     private final double kD = .01;
     public void AutoDrive(double targetDistance_INCH, double angle){
 
-        telemetry.addData("motor 0 pos", robot.drivetrain.driveMotors[0].getCurrentPosition());
+        telemetry.addData("motor 0 pos", drive.drivetrain.driveMotors[0].getCurrentPosition());
         telemetry.update();
 
-        angle -= robot.getHeading();
+        angle -= drive.getHeading();
 
         double maxErrorAllowed = 1.1 * TICKS_PER_INCH;
         double kP = 0.5;
@@ -53,22 +54,24 @@ public class AutoControl extends OpMode{
         double error, correction;
         double targetDistance = targetDistance_INCH * TICKS_PER_INCH;
 
-        robot.drivetrain.driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
-        robot.drivetrain.driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD); //BLM
-        robot.drivetrain.driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
-        robot.drivetrain.driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+        drive.drivetrain.driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
+        drive.drivetrain.driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD); //BLM
+        drive.drivetrain.driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
+        drive.drivetrain.driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
         while(!isStopRequested.getAsBoolean()){
 
             //SparkFunOTOS.Pose2D Pose2D = opticalSensor.getPos();
 
-            error = targetDistance - robot.drivetrain.driveMotors[0].getCurrentPosition();
+            error = targetDistance - drive.drivetrain.driveMotors[0].getCurrentPosition();
             //(targetDistance - Math.sqrt(Math.pow((targetDistance * Math.cos(angle)
             //- Pose2D.x), 2) + (Math.pow((targetDistance * Math.sin(angle)) - Pose2D.y, 2))));
 
             correction = kP * error + kI * integralSum + kD * getDerivative(error, targetDistance);
 
             if(Math.abs(error) <  maxErrorAllowed) {
+                stop = true;
+                stop();
                 break;
             }
 
@@ -80,20 +83,24 @@ public class AutoControl extends OpMode{
 
             double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY), 1.0);
 
-            robot.drivetrain.driveMotors[0].setPower((((rotY + rotX) / denominator)) / correction);
-            robot.drivetrain.driveMotors[1].setPower((((rotY - rotX) / denominator)) / correction);
-            robot.drivetrain.driveMotors[2].setPower((((rotY - rotX) / denominator)) / correction);
-            robot.drivetrain.driveMotors[3].setPower((((rotY + rotX) / denominator)) / correction);
+            drive.DriveCartesian(rotX, rotY, 0);
+            double[] wheelSpeeds = drive.getWheelSpeeds();
+
+
+            drive.drivetrain.driveMotors[RobotClass.kFrontLeft].setPower((((rotY + rotX) / denominator)) / correction);
+            drive.drivetrain.driveMotors[RobotClass.kBackLeft].setPower((((rotY - rotX) / denominator)) / correction);
+            drive.drivetrain.driveMotors[RobotClass.kFrontRight].setPower((((rotY - rotX) / denominator)) / correction);
+            drive.drivetrain.driveMotors[RobotClass.kBackRight].setPower((((rotY + rotX) / denominator)) / correction);
 
         }
-        robot.drivetrain.setPowerBasic(0.0);
+        drive.drivetrain.setPowerBasic(0.0);
     }
     public void AutoTurn(double angle){
         double loopCounter = 0;
         boolean atTarget = false;
         double angularDistance = 0;
 
-        double initialAngle = robot.getHeading();
+        double initialAngle = drive.getHeading();
 
         do{
             double turnVal = 1;
@@ -101,7 +108,7 @@ public class AutoControl extends OpMode{
 
             if(angle - initialAngle < 0) turnVal = -1; // checks which way it should turn
 
-            double currentAngle = robot.getHeading();
+            double currentAngle = drive.getHeading();
 
             angularDistance = Math.abs(currentAngle - angle);
             if(angularDistance > 180){ // dealing with edge case
@@ -113,10 +120,10 @@ public class AutoControl extends OpMode{
             powerReduce = Math.max(powerReduce, 0.2);
             powerReduce = Math.min(powerReduce, 1);
 
-            robot.drivetrain.driveMotors[0].setPower(turnVal * powerReduce);
-            robot.drivetrain.driveMotors[1].setPower(turnVal * powerReduce);
-            robot.drivetrain.driveMotors[2].setPower(-turnVal * powerReduce);
-            robot.drivetrain.driveMotors[3].setPower(-turnVal * powerReduce);
+            drive.drivetrain.driveMotors[0].setPower(turnVal * powerReduce);
+            drive.drivetrain.driveMotors[1].setPower(turnVal * powerReduce);
+            drive.drivetrain.driveMotors[2].setPower(-turnVal * powerReduce);
+            drive.drivetrain.driveMotors[3].setPower(-turnVal * powerReduce);
 
             if(angularDistance < 1.5) atTarget = true;
         }
@@ -125,16 +132,16 @@ public class AutoControl extends OpMode{
 
     private double getDerivative(double error, double targetDistance){
         double previousError = error;
-        error = targetDistance - robot.drivetrain.driveMotors[0].getCurrentPosition();
+        error = targetDistance - drive.drivetrain.driveMotors[0].getCurrentPosition();
         return(kD * error ) / (previousError + 0.01);
     }
     @Override
     public void stop(){
         boolean stop = true;
-        if(robot == null) return; // ensures that stop() is not called before initialization
-        robot.drivetrain.driveMotors[0].setPower(0);
-        robot.drivetrain.driveMotors[1].setPower(0);
-        robot.drivetrain.driveMotors[2].setPower(0);
-        robot.drivetrain.driveMotors[3].setPower(0);
+        if(drive == null) return; // ensures that stop() is not called before initialization
+        drive.drivetrain.driveMotors[0].setPower(0);
+        drive.drivetrain.driveMotors[1].setPower(0);
+        drive.drivetrain.driveMotors[2].setPower(0);
+        drive.drivetrain.driveMotors[3].setPower(0);
     }
 }

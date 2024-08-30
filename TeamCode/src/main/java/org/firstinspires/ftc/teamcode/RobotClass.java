@@ -30,6 +30,11 @@ public class RobotClass {
     public SparkFunOTOS opticalSensor;
     HardwareMap hwmap;
 
+    public static final int kFrontLeft = 0;
+    public static final int kBackLeft = 1;
+    public static final int kBackRight = 2;
+    public static final int kFrontRight = 3;
+
     public RobotClass(HardwareMap hwmap){
         this.hwmap = hwmap;
 

@@ -40,7 +40,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         double rotX = leftX * Math.sin(heading_RADIANS) - leftY * Math.cos(heading_RADIANS);
 
 
-        double denominator = 1;//Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
+        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
 
 
