@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.Drivetrain;
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotClass;
 import org.firstinspires.ftc.teamcode.Susbsystem.Drive;
 
 public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
-    private static ElapsedTime stopWatch = new ElapsedTime();
     Drive drive;
     double impulseRotation;
     public AbstractOmniDrivetrain(DcMotor FLM, DcMotor FRM, DcMotor BLM, DcMotor BRM, double impulseRotation, HardwareMap hwmap){
@@ -31,6 +30,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
             motor.setPower(power);
         }
     }
+    @SuppressLint("DefaultLocale")
     public void mecanumDrive(double leftY, double leftX, double turn, double heading_RADIANS, Telemetry telemetry){
         //heading_DEGREES -= Math.toDegrees(Math.PI / 2);
 
@@ -53,33 +53,21 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         double[] wheelSpeeds = drive.getWheelSpeeds();
         double[] correctedWheelDrift;
         if(turn == 0){
-            correctedWheelDrift = drive.correctDrift(wheelSpeeds, heading_RADIANS, stopWatch.milliseconds(), telemetry);
-            stopWatch.reset();
+            correctedWheelDrift = drive.correctDrift(wheelSpeeds, telemetry);
         }
         else{
             correctedWheelDrift = wheelSpeeds;
-            stopWatch.reset();
         }
 
         setPower(correctedWheelDrift);
 
         telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
-        telemetry.addData("heading_RADIANS", heading_RADIANS);
         telemetry.addData("drive", leftY);
         telemetry.addData("strafe", leftX);
         telemetry.addData("turn", turn);
         telemetry.addData("denominator", denominator);
+        telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f (speed)",  correctedWheelDrift[0], correctedWheelDrift[1], correctedWheelDrift[2], correctedWheelDrift[3]));
         telemetry.update();
-
-
-
-
-    }
-    public double getAvgPos(){
-       return (driveMotors[0].getCurrentPosition()
-               + driveMotors[1].getCurrentPosition()
-               + driveMotors[2].getCurrentPosition()
-               + driveMotors[3].getCurrentPosition() / 4.0 );
     }
     private void setPower(double[] wheelSpeeds){
         drive.drivetrain.driveMotors[RobotClass.kFrontLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);

@@ -5,14 +5,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Auto.OpticalSensor;
+import org.firstinspires.ftc.teamcode.Camera.AprilTagPipeline;
+import org.firstinspires.ftc.teamcode.OpModes.Auto;
 import org.firstinspires.ftc.teamcode.Susbsystem.Drive;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.function.BooleanSupplier;
 
-@Autonomous
+
 public class AutoControl extends OpMode{
     OpticalSensor opticalSensor;
-    Drive drive;
+    public Drive drive;
+    AprilTagPipeline aprilTagPipeline;
+    Auto auto;
+    public static boolean isFinished = false;
     boolean stop = false;
     BooleanSupplier isStopRequested = new BooleanSupplier() {
         @Override
@@ -22,9 +28,11 @@ public class AutoControl extends OpMode{
     };
     @Override
     public void init(){
-        drive = new Drive(hardwareMap);
-        opticalSensor = new OpticalSensor(drive);
 
+        aprilTagPipeline = new AprilTagPipeline(drive.webcamName, telemetry);
+        drive = new Drive(hardwareMap);
+        auto = new Auto();
+        //opticalSensor = new OpticalSensor(drive);
     }
     @Override
     public void start(){
@@ -32,6 +40,7 @@ public class AutoControl extends OpMode{
     }
     @Override
     public void loop(){
+        aprilTagPipeline.updateAprilTagPipeline();
 
     }
     public static final int WHEEL_RADIUS = 2;

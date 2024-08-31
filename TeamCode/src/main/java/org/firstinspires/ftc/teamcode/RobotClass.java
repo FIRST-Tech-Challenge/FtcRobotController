@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -26,6 +27,7 @@ public class RobotClass {
 
     public final IMU imu;
     public OpenCvWebcam camera1;
+    public WebcamName webcamName;
 
     public SparkFunOTOS opticalSensor;
     HardwareMap hwmap;
@@ -43,21 +45,19 @@ public class RobotClass {
         drivetrain = new MecanumDrive(hwmap.get(DcMotor.class, "frontLeft"),
                                     hwmap.get(DcMotor.class, "backLeft"),
                                     hwmap.get(DcMotor.class, "backRight"),
-                                    hwmap.get(DcMotor.class, "frontRight"));
+                                    hwmap.get(DcMotor.class, "frontRight"), hwmap);
 
         sixDrivetrain = new SixWheelDrivetrain(hwmap.get(DcMotor.class, "frontLeft"),
                                             hwmap.get(DcMotor.class, "backLeft"),
                                             hwmap.get(DcMotor.class, "backRight"),
                                             hwmap.get(DcMotor.class, "frontRight"));
-        //opticalSensor = hwmap.get(SparkFunOTOS.class, "opticalSensor");
-        //WebcamName camera1Name = hwmap.get(WebcamName.class, "Webcam 1");
-        //camera1 = OpenCvCameraFactory.getInstance().createWebcam(camera1Name);
+        opticalSensor = hwmap.get(SparkFunOTOS.class, "opticalSensor");
+        WebcamName webcamName = hwmap.get(WebcamName.class, "Webcam 1");
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD);
 
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-
     }
 
     public double getHeading(){
@@ -65,6 +65,10 @@ public class RobotClass {
 
         return Theta.thirdAngle;
 
+    }
+    public double getRotationRate(){
+        AngularVelocity velocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+        return velocity.zRotationRate;
     }
     public void resetIMU(){
         imu.resetYaw();
