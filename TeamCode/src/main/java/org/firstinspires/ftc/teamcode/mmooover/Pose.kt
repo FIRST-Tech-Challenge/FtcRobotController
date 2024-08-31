@@ -90,10 +90,10 @@ data class Motion(
         turn.toDouble()
     )
 
-    private var lastFL: Double = 0.0;
-    private var lastFR: Double = 0.0;
-    private var lastBL: Double = 0.0;
-    private var lastBR: Double = 0.0;
+    private var lastFL: Double = 0.0
+    private var lastFR: Double = 0.0
+    private var lastBL: Double = 0.0
+    private var lastBR: Double = 0.0
 
     fun getPowerDifferential(): Double {
         return (lastFR + lastBR) - (lastFL + lastBL)

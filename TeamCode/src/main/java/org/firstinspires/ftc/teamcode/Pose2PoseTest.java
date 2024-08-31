@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Double.max;
-import static java.lang.Double.min;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
@@ -22,11 +20,11 @@ import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 @Autonomous
 public class Pose2PoseTest extends LinearOpMode {
     public static final double ACCEPT_DIST = 1.0; // inch. euclidean distance
-    public static final double ACCEPT_TURN = degrees(5); // radian.
+    public static final double ACCEPT_TURN = deg2rad(5);
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0);
 
-    private static double degrees(double deg) {
+    private static double deg2rad(double deg) {
         return deg * Math.PI / 180;
     }
 
@@ -37,7 +35,7 @@ public class Pose2PoseTest extends LinearOpMode {
         EncoderTracking tracker = new EncoderTracking(hardware);
         // Pose targets to go thru
         Pose[] targets = {
-                new Pose(48, 0, degrees(90)),
+                new Pose(48, 0, deg2rad(90))
         };
         int targetIndex = 0;
         ElapsedTime timer = new ElapsedTime();
@@ -94,6 +92,7 @@ public class Pose2PoseTest extends LinearOpMode {
                     timer.reset();
                     continue;
                 }
+                // figure out how to get to the target position
                 Motion action = pftp.getMotionToTarget(targets[targetIndex], hardware);
                 double dToTarget = sqrt(
                         action.forward() * action.forward()
