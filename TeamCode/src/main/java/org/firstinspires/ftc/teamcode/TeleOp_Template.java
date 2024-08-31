@@ -8,8 +8,7 @@ public class TeleOp_Template extends LinearOpMode {
 
     // Object instances are placed here, such as motors, servos, and sensors
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
 
         // Code that needs to be run once is placed here
