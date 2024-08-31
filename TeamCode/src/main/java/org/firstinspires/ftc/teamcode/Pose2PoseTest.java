@@ -17,33 +17,33 @@ import org.firstinspires.ftc.teamcode.mmooover.PoseFromToProcessor;
 import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 
-@Autonomous
+@Autonomous // Appear on the autonomous drop down
 public class Pose2PoseTest extends LinearOpMode {
     public static final double ACCEPT_DIST = 1.0; // inch. euclidean distance
     public static final double ACCEPT_TURN = deg2rad(5);
     // power biases
-    public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0);
+    public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
 
     private static double deg2rad(double deg) {
         return deg * Math.PI / 180;
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint("DefaultLocale") // Android Lint should ignore warnings for DefaultLocale
     @Override
     public void runOpMode() {
         Hardware hardware = new Hardware(hardwareMap);
         EncoderTracking tracker = new EncoderTracking(hardware);
         // Pose targets to go thru
         Pose[] targets = {
-                new Pose(48, 0, deg2rad(90))
+                new Pose(48, 0, deg2rad(180))
         };
-        int targetIndex = 0;
-        ElapsedTime timer = new ElapsedTime();
-        ElapsedTime targetTime = new ElapsedTime();
-        LoopStopwatch ticker = new LoopStopwatch();
-        PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
-        Motion lastAction = null;
-        Speed2Power speed2Power = new Speed2Power(0.15);
+        int targetIndex = 0; // Total poses in the set
+        ElapsedTime timer = new ElapsedTime(); // Set timer object to reference the ElapsedTime object
+        ElapsedTime targetTime = new ElapsedTime(); // Set targetTime to reference the ElapsedTime object
+        LoopStopwatch ticker = new LoopStopwatch(); // Set ticker to reference the LoopStopwatch object
+        PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN); // Set pftp to reference the PFTP object, set pose to (x, y, angle) --> (0, 0, 0)
+        Motion lastAction = null; // Store the previous action as empty (No actions have been recorded yet)
+        Speed2Power speed2Power = new Speed2Power(0.15); // Set a speed2Power corresponding to a speed of 0.15 seconds
         Easing easingFunction = new Easing(
                 Easing.linear(2.0),
                 Easing.linear(1/12.0),
@@ -51,7 +51,7 @@ public class Pose2PoseTest extends LinearOpMode {
                 Easing.LimitMode.SCALE
         );
 
-        waitForStart();
+        waitForStart(); // Wait for start button
 
         targetTime.reset();
         timer.reset();
@@ -132,6 +132,6 @@ public class Pose2PoseTest extends LinearOpMode {
             telemetry.addLine(String.format("While running: %.2fms per loop", ticker.getAvg() * 1000));
             telemetry.update();
         }
-        pftp.dump();
+        pftp.dump(); // Dump all values for Desmos graphing
     }
 }
