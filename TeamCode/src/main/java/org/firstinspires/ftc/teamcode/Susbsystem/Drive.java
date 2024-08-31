@@ -1,49 +1,47 @@
 package org.firstinspires.ftc.teamcode.Susbsystem;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotClass;
 
-public class Drive extends RobotClass {
-    public Drive(HardwareMap hwmap) {
-        super(hwmap);
+public class Drive {
+
+    public static double[] wheelSpeeds = new double[4];
+
+    public static void DriveCartesian(double rotX, double rotY, double rotation){
+
+        wheelSpeeds[RobotClass.kFrontLeft] = (rotY + rotX + rotation);
+        wheelSpeeds[RobotClass.kBackLeft] = (rotY - rotX + rotation);
+        wheelSpeeds[RobotClass.kFrontRight] = (rotY - rotX - rotation);
+        wheelSpeeds[RobotClass.kBackRight] = (rotY + rotX - rotation);
     }
 
-    public final double[] wheelSpeeds = new double[4];
-    public void DriveCartesian(double rotX, double rotY, double rotation){
-        wheelSpeeds[kFrontLeft] = (rotY + rotX + rotation);
-        wheelSpeeds[kBackLeft] = (rotY - rotX + rotation);
-        wheelSpeeds[kFrontRight] = (rotY - rotX - rotation);
-        wheelSpeeds[kBackRight] = (rotY + rotX - rotation);
-    }
-
-    public double[] getWheelSpeeds(){
+    public static double[] getWheelSpeeds(){
         return wheelSpeeds;
     }
-    public double getWheelSpeed(int wheelId){
+    public static double getWheelSpeed(int wheelId){
         return (int) wheelSpeeds[wheelId];
     }
-    public double[] correctDrift(double[] wheelSpeeds, Telemetry telemetry){ //milliseconds
+    public static double[] correctDrift(double[] wheelSpeeds, Telemetry telemetry, double rotationRate){ //milliseconds
 
-        double changeInHeadingPerMillisecond = getRotationRate();
-
-        if(changeInHeadingPerMillisecond < -0.1){
-            wheelSpeeds[kBackRight] *= (1 + changeInHeadingPerMillisecond);
-            wheelSpeeds[kBackLeft] *= (1 + changeInHeadingPerMillisecond);
-            wheelSpeeds[kFrontLeft] *= -(1 + changeInHeadingPerMillisecond);
-            wheelSpeeds[kFrontRight] *= -(1 + changeInHeadingPerMillisecond);
+        if(rotationRate < -0.1){
+            wheelSpeeds[RobotClass.kBackRight] *= (1 + rotationRate);
+            wheelSpeeds[RobotClass.kBackLeft] *= (1 + rotationRate);
+            wheelSpeeds[RobotClass.kFrontLeft] *= -(1 + rotationRate);
+            wheelSpeeds[RobotClass.kFrontRight] *= -(1 + rotationRate);
 
         }
-        if(changeInHeadingPerMillisecond > 0.1){
-            wheelSpeeds[kBackRight] *= -(1 + changeInHeadingPerMillisecond);
-            wheelSpeeds[kBackLeft] *= -(1 + changeInHeadingPerMillisecond);
-            wheelSpeeds[kFrontLeft] *= (1 + changeInHeadingPerMillisecond);
-            wheelSpeeds[kFrontRight] *= (1 + changeInHeadingPerMillisecond);
+        if(rotationRate > 0.1){
+            wheelSpeeds[RobotClass.kBackRight] *= -(1 + rotationRate);
+            wheelSpeeds[RobotClass.kBackLeft] *= -(1 + rotationRate);
+            wheelSpeeds[RobotClass.kFrontLeft] *= (1 + rotationRate);
+            wheelSpeeds[RobotClass.kFrontRight] *= (1 + rotationRate);
 
         }
 
-        telemetry.addData("changeInHeadingPerMillisecond", changeInHeadingPerMillisecond);
+        telemetry.addData("changeInHeadingPerMillisecond", rotationRate);
         return wheelSpeeds;
-
     }
+
 }

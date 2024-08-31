@@ -4,18 +4,19 @@ import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.robot.Robot;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotClass;
 import org.firstinspires.ftc.teamcode.Susbsystem.Drive;
 
 public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
-    Drive drive;
     double impulseRotation;
-    public AbstractOmniDrivetrain(DcMotor FLM, DcMotor FRM, DcMotor BLM, DcMotor BRM, double impulseRotation, HardwareMap hwmap){
+    RobotClass robotClass;
+    public AbstractOmniDrivetrain(DcMotor FLM, DcMotor FRM, DcMotor BLM, DcMotor BRM, double impulseRotation, RobotClass robotClass){
         super(FLM, FRM, BLM, BRM);
-        drive = new Drive(hwmap);
-
+        this.robotClass = robotClass;
         this.impulseRotation = impulseRotation;
 
         driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
@@ -25,11 +26,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
     }
 
-    public void setPowerBasic(double power){
-        for(DcMotor motor : driveMotors){
-            motor.setPower(power);
-        }
-    }
+
     @SuppressLint("DefaultLocale")
     public void mecanumDrive(double leftY, double leftX, double turn, double heading_RADIANS, Telemetry telemetry){
         //heading_DEGREES -= Math.toDegrees(Math.PI / 2);
@@ -48,12 +45,11 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
-
-        drive.DriveCartesian(rotX, rotY, turn);
-        double[] wheelSpeeds = drive.getWheelSpeeds();
+        Drive.DriveCartesian(rotX, rotY, turn);
+        double[] wheelSpeeds = Drive.getWheelSpeeds();
         double[] correctedWheelDrift;
         if(turn == 0){
-            correctedWheelDrift = drive.correctDrift(wheelSpeeds, telemetry);
+            correctedWheelDrift = Drive.correctDrift(wheelSpeeds, telemetry, robotClass.getRotationRate());
         }
         else{
             correctedWheelDrift = wheelSpeeds;
@@ -66,13 +62,13 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         telemetry.addData("strafe", leftX);
         telemetry.addData("turn", turn);
         telemetry.addData("denominator", denominator);
-        telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f (speed)",  correctedWheelDrift[0], correctedWheelDrift[1], correctedWheelDrift[2], correctedWheelDrift[3]));
+      //  telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f (speed)",  correctedWheelDrift[0], correctedWheelDrift[1], correctedWheelDrift[2], correctedWheelDrift[3]));
         telemetry.update();
     }
     private void setPower(double[] wheelSpeeds){
-        drive.drivetrain.driveMotors[RobotClass.kFrontLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
-        drive.drivetrain.driveMotors[RobotClass.kFrontRight].setPower(wheelSpeeds[RobotClass.kFrontRight]);
-        drive.drivetrain.driveMotors[RobotClass.kBackLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
-        drive.drivetrain.driveMotors[RobotClass.kBackRight].setPower(wheelSpeeds[RobotClass.kBackRight]);
+       driveMotors[RobotClass.kFrontLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
+       driveMotors[RobotClass.kFrontRight].setPower(wheelSpeeds[RobotClass.kFrontRight]);
+       driveMotors[RobotClass.kBackLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
+       driveMotors[RobotClass.kBackRight].setPower(wheelSpeeds[RobotClass.kBackRight]);
     }
 }

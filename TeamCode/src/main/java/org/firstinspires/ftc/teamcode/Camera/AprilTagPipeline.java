@@ -20,9 +20,9 @@ public class AprilTagPipeline {
     WebcamName webcamName;
     Telemetry telemetry;
     public AprilTagPipeline(WebcamName webCamName, Telemetry telemetry){
-        initAprilTag();
         this.webcamName = webCamName;
         this.telemetry = telemetry;
+        initAprilTag();
     }
     public void updateAprilTagPipeline(){
         telemetryAprilTag();
@@ -32,12 +32,13 @@ public class AprilTagPipeline {
     }
     private void initAprilTag(){
         aprilTag = new AprilTagProcessor.Builder().setDrawAxes(true).setDrawCubeProjection(true).build();
+
         VisionPortal.Builder builder = new VisionPortal.Builder();
+        telemetry.addData("webcamName", webcamName);
+        telemetry.update();
         builder.setCamera(webcamName);
-        builder.setCameraResolution(new Size(640, 480));
-        builder.enableLiveView(true);
-        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
-        builder.setAutoStopLiveView(true);
+
+        //builder.setCameraResolution(new Size(640, 480));
         builder.addProcessor(aprilTag);
 
         visionPortal = builder.build();
