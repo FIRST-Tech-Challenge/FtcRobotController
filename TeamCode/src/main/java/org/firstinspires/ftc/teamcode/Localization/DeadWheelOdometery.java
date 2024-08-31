@@ -1,18 +1,20 @@
 package org.firstinspires.ftc.teamcode.Localization;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Utils.Utils;
 
+@Config
 public class DeadWheelOdometery {
     public HardwareMap hwMap;
     public DcMotorEx leftEncoder;
     public DcMotorEx centerEncoder;
     public DcMotorEx rightEncoder;
     public static double ticksPerRotation = 2000;
-    public static double radius = 24; //TODO: convert to inches
+    public static double radius = 0.944882; //[in]
     public double currentLeftRawPos = 0; //[ticks]
     public double currentCenterRawPos = 0; //[ticks]
     public double currentRightRawPos = 0; //[ticks]
@@ -22,11 +24,11 @@ public class DeadWheelOdometery {
     public double currentLeftVelocity = 0; //[ticks]
     public double currentCenterVelocity = 0; //[ticks]
     public double currentRightVelocity = 0; //[ticks]
-    public static double trackWidth = 341.15; //TODO: convert to inches
-    public static double forwardOffset = 200; //TODO: convert to inches
+    public static double trackWidth = 13.4311024; //[in]
+    public static double forwardOffset = 7.87402; //[in]
     public ElapsedTime dt = new ElapsedTime(); //[s]
-    public static double xMult;
-    public static double yMult;
+    public static double xMult = 1;
+    public static double yMult = 1;
 
 
     // you should have a public static double xMult, public static double yMult
@@ -41,9 +43,9 @@ public class DeadWheelOdometery {
     // Change this to updateEncoderPositions
     // Change the phrase 'Val' everywhere to 'RawPos'
     public void updateEncoderPositions(){
-        currentLeftRawPos = leftEncoder.getCurrentPosition();
-        currentCenterRawPos = centerEncoder.getCurrentPosition();
-        currentRightRawPos = rightEncoder.getCurrentPosition();
+        currentLeftRawPos = leftEncoder.getCurrentPosition()*xMult;
+        currentCenterRawPos = centerEncoder.getCurrentPosition()*yMult;
+        currentRightRawPos = rightEncoder.getCurrentPosition()*xMult;
     }
 
     // Write a updateEncoderVelocities
@@ -76,7 +78,7 @@ public class DeadWheelOdometery {
         updateEncoderVelocities();
 
         double relativeChangeX = (convertToDistance(currentLeftRawPos - lastLeftRawPos) + convertToDistance(currentRightRawPos - lastRightRawPos))/2;
-        double changeInHeading = (convertToDistance(currentRightRawPos - lastRightRawPos) - convertToDistance(currentLeftRawPos - lastLeftRawPos))/trackWidth;
+        double changeInHeading = (convertToDistance(currentLeftRawPos - lastLeftRawPos) - convertToDistance(currentRightRawPos - lastRightRawPos))/trackWidth;
         double relativeChangeY = convertToDistance(currentCenterRawPos - lastCenterRawPos)-forwardOffset*changeInHeading;
 
         // Do distance conversions for velocity
@@ -106,9 +108,12 @@ public class DeadWheelOdometery {
         SimpleMatrix deltaPose = Utils.rotateBodyToGlobal(poseExponentials, lastState.get(2, 0)).mult(deltaPoseBody);
         SimpleMatrix state = new SimpleMatrix(
                 new double[][]{
-                        new double[]{Math.sin(changeInHeading) / changeInHeading, (Math.cos(changeInHeading) - 1) / changeInHeading, 0},
-                        new double[]{(Math.cos(changeInHeading) - 1) / changeInHeading, Math.sin(changeInHeading) / changeInHeading, 0},
-                        new double[]{0, 0, 1}
+                        new double[]{deltaPose.get(0,0) + lastState.get(0,0)},
+                        new double[]{deltaPose.get(1,0) + lastState.get(1,0)},
+                        new double[]{deltaPose.get(2,0)+lastState.get(2,0)},
+                        new double[]{vX},
+                        new double[]{currentCenterVelocity},
+                        new double[]{0}
                 }
         );
         // Create a new 6x1 state vector (SimpleMatrix)
@@ -117,6 +122,6 @@ public class DeadWheelOdometery {
         // Return the state
 
         pushBackValues();
-        return deltaPose;
+        return state;
     }
 }

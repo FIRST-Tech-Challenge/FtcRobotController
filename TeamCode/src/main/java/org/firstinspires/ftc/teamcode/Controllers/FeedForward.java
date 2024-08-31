@@ -26,5 +26,10 @@ public class FeedForward {
     public double calculate(double desiredVelocity, double desiredAcceleration){
         return kV*desiredVelocity+kA*desiredAcceleration+kS*Math.signum(desiredVelocity);
     }
+    public void setGains(double kV, double kA, double kS){
+        this.kV = kV;
+        this.kA = kA;
+        this.kS = kS;
+    }
 }
 
