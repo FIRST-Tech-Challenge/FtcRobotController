@@ -109,16 +109,16 @@ class Point { // Can't derive from vector2d because it's marked as final (by def
  */
 class TuneParameters {
     String robotName;
-    MecanumDrive.Params PARAMS;
+    MecanumDrive.Params params;
 
     // Get the settings from the current MecanumDrive object:
     public TuneParameters(MecanumDrive drive) {
         robotName = MecanumDrive.getBotName();
-        PARAMS = drive.PARAMS;
+        params = drive.PARAMS;
     }
 
     // Return a deep-copy clone of the current Settings object:
-    public TuneParameters getClone() {
+    public TuneParameters createClone() {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(this), TuneParameters.class);
     }
@@ -159,7 +159,7 @@ class TuneParameters {
         TuneParameters savedSettings = gson.fromJson(json, TuneParameters.class);
 
         // Now compare to the current settings:
-        if ((savedSettings == null) || (savedSettings.PARAMS == null))
+        if ((savedSettings == null) || (savedSettings.params == null))
             return null; // No saved settings were found
         if (!savedSettings.robotName.equals(robotName))
             return null; // Different robots, so discard
@@ -171,28 +171,28 @@ class TuneParameters {
     public String compare(TuneParameters oldSettings) {
         comparison = "";
 
-        compare("maxWheelVel", "%.2f", oldSettings.PARAMS.maxWheelVel, PARAMS.maxWheelVel);
-        compare("minProfileAccel", "%.2f", oldSettings.PARAMS.minProfileAccel, PARAMS.minProfileAccel);
-        compare("maxProfileAccel", "%.2f", oldSettings.PARAMS.maxProfileAccel, PARAMS.maxProfileAccel);
-        compare("maxAngVel", "%.2f", oldSettings.PARAMS.maxAngVel, PARAMS.maxAngVel);
-        compare("maxAngAccel", "%.2f", oldSettings.PARAMS.maxAngAccel, PARAMS.maxAngAccel);
-        compare("axialVelGain", "%.2f", oldSettings.PARAMS.axialVelGain, PARAMS.axialVelGain);
-        compare("lateralVelGain", "%.2f", oldSettings.PARAMS.lateralVelGain, PARAMS.lateralVelGain);
-        compare("headingVelGain", "%.2f", oldSettings.PARAMS.headingVelGain, PARAMS.headingVelGain);
-        compare("axialGain", "%.2f", oldSettings.PARAMS.axialGain, PARAMS.axialGain);
-        compare("lateralGain", "%.2f", oldSettings.PARAMS.lateralGain, PARAMS.lateralGain);
-        compare("headingGain", "%.2f", oldSettings.PARAMS.headingGain, PARAMS.headingGain);
-        compare("kS", "%.5f", oldSettings.PARAMS.kS, PARAMS.kS);
-        compare("kV", "%.6f", oldSettings.PARAMS.kV, PARAMS.kV);
-        compare("kA", "%.5f", oldSettings.PARAMS.kA, PARAMS.kA);
-        compare("inPerTick", "%.5f", oldSettings.PARAMS.inPerTick, PARAMS.inPerTick);
-        compare("lateralInPerTick", "%.5f", oldSettings.PARAMS.lateralInPerTick, PARAMS.lateralInPerTick);
-        compare("trackWidthTicks", "%.2f", oldSettings.PARAMS.trackWidthTicks, PARAMS.trackWidthTicks);
-        compare("otos.offset.x", "%.3f", oldSettings.PARAMS.otos.offset.x, PARAMS.otos.offset.x);
-        compare("otos.offset.y", "%.3f", oldSettings.PARAMS.otos.offset.y, PARAMS.otos.offset.y);
-        compareRadians("otos.offset.h", "%.3f", oldSettings.PARAMS.otos.offset.h, PARAMS.otos.offset.h);
-        compare("otos.linearScalar", "%.3f", oldSettings.PARAMS.otos.linearScalar, PARAMS.otos.linearScalar);
-        compare("otos.angularScalar", "%.3f", oldSettings.PARAMS.otos.angularScalar, PARAMS.otos.angularScalar);
+        compare("maxWheelVel", "%.2f", oldSettings.params.maxWheelVel, params.maxWheelVel);
+        compare("minProfileAccel", "%.2f", oldSettings.params.minProfileAccel, params.minProfileAccel);
+        compare("maxProfileAccel", "%.2f", oldSettings.params.maxProfileAccel, params.maxProfileAccel);
+        compare("maxAngVel", "%.2f", oldSettings.params.maxAngVel, params.maxAngVel);
+        compare("maxAngAccel", "%.2f", oldSettings.params.maxAngAccel, params.maxAngAccel);
+        compare("axialVelGain", "%.2f", oldSettings.params.axialVelGain, params.axialVelGain);
+        compare("lateralVelGain", "%.2f", oldSettings.params.lateralVelGain, params.lateralVelGain);
+        compare("headingVelGain", "%.2f", oldSettings.params.headingVelGain, params.headingVelGain);
+        compare("axialGain", "%.2f", oldSettings.params.axialGain, params.axialGain);
+        compare("lateralGain", "%.2f", oldSettings.params.lateralGain, params.lateralGain);
+        compare("headingGain", "%.2f", oldSettings.params.headingGain, params.headingGain);
+        compare("kS", "%.5f", oldSettings.params.kS, params.kS);
+        compare("kV", "%.6f", oldSettings.params.kV, params.kV);
+        compare("kA", "%.5f", oldSettings.params.kA, params.kA);
+        compare("inPerTick", "%.5f", oldSettings.params.inPerTick, params.inPerTick);
+        compare("lateralInPerTick", "%.5f", oldSettings.params.lateralInPerTick, params.lateralInPerTick);
+        compare("trackWidthTicks", "%.2f", oldSettings.params.trackWidthTicks, params.trackWidthTicks);
+        compare("otos.offset.x", "%.3f", oldSettings.params.otos.offset.x, params.otos.offset.x);
+        compare("otos.offset.y", "%.3f", oldSettings.params.otos.offset.y, params.otos.offset.y);
+        compareRadians("otos.offset.h", "%.3f", oldSettings.params.otos.offset.h, params.otos.offset.h);
+        compare("otos.linearScalar", "%.3f", oldSettings.params.otos.linearScalar, params.otos.linearScalar);
+        compare("otos.angularScalar", "%.3f", oldSettings.params.otos.angularScalar, params.otos.angularScalar);
         return comparison;
     }
 }
@@ -396,7 +396,7 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Measure the optical linear scale and orientation:
-    void pushCalibrator() {
+    void pushTuner() {
         assert(drive.opticalTracker != null);
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
@@ -439,22 +439,22 @@ public class LooneyTuner extends LinearOpMode {
                 if (distance == 0)
                     distance = 0.001;
 
-                TuneParameters newParameters = parameters.getClone();
-                newParameters.PARAMS.otos.linearScalar = (96.0 / distance);
-                newParameters.PARAMS.otos.offset.h = normalizeAngle(heading);
+                TuneParameters newParameters = parameters.createClone();
+                newParameters.params.otos.linearScalar = (96.0 / distance);
+                newParameters.params.otos.offset.h = normalizeAngle(heading);
 
-                double linearScalarChange = Math.abs((oldLinearScalar - newParameters.PARAMS.otos.linearScalar)
+                double linearScalarChange = Math.abs((oldLinearScalar - newParameters.params.otos.linearScalar)
                         / oldLinearScalar * 100.0); // Percentage
-                double headingChange = normalizeAngle(Math.abs(oldOffset.h - newParameters.PARAMS.otos.offset.h));
+                double headingChange = normalizeAngle(Math.abs(oldOffset.h - newParameters.params.otos.offset.h));
 
-                if (newParameters.PARAMS.otos.linearScalar < SparkFunOTOS.MIN_SCALAR) {
+                if (newParameters.params.otos.linearScalar < SparkFunOTOS.MIN_SCALAR) {
                     String message = String.format("The measured distance of %.1f\" is not close enough to "
                             + "the expected distance of 96\". It can't measure more than %.1f\". "
                             + "Either you didn't push straight for 4 tiles or something is wrong "
                             + "with the sensor. ", distance, 96 / SparkFunOTOS.MIN_SCALAR);
                     message += "Maybe the distance of the sensor to the tile is less than 10.0 mm? ";
                     ui.prompt(message + "\n\nAborted, press A to continue");
-                } else if (newParameters.PARAMS.otos.linearScalar > SparkFunOTOS.MAX_SCALAR) {
+                } else if (newParameters.params.otos.linearScalar > SparkFunOTOS.MAX_SCALAR) {
                     String message = String.format("The measured distance of %.1f\" is not close enough to "
                             + "the expected distance of 96\". It can't measure less than %.1f\". "
                             + "Either you didn't push straight for 4 tiles or something is wrong "
@@ -462,15 +462,15 @@ public class LooneyTuner extends LinearOpMode {
 
                     // If the measured distance is close to zero, don't bother with the following
                     // suggestion:
-                    if (newParameters.PARAMS.otos.linearScalar < 1.5) {
+                    if (newParameters.params.otos.linearScalar < 1.5) {
                         message += "Maybe the distance of the sensor to the tile is more than 10.0 mm?";
                     }
                     ui.prompt(message + "\n\nAborted, press A to continue");
                 } else {
                     if (ui.prompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n",
-                            Math.toDegrees(newParameters.PARAMS.otos.offset.h), Math.toDegrees(headingChange))
+                            Math.toDegrees(newParameters.params.otos.offset.h), Math.toDegrees(headingChange))
                             + String.format("New linear scalar %.3f is %.1f%% off from old.\n\n",
-                            newParameters.PARAMS.otos.linearScalar, linearScalarChange)
+                            newParameters.params.otos.linearScalar, linearScalarChange)
                             + "Use these results? Press A if they look good, B to cancel.")) {
 
                         acceptParameters(newParameters);
@@ -489,7 +489,7 @@ public class LooneyTuner extends LinearOpMode {
         if (comparison.isEmpty()) {
             ui.prompt("The results match your current settings.\n\nPress A to continue.");
         } else {
-            MecanumDrive.PARAMS = newParameters.PARAMS;
+            MecanumDrive.PARAMS = newParameters.params;
             parameters = newParameters;
             parameters.save();
             ui.prompt("Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
@@ -640,7 +640,7 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // This is the robot spin test for calibrating the optical sensor angular scale and offset:
-    void spinCalibrator() {
+    void spinTuner() {
         assert(drive.opticalTracker != null);
 
         // Number of revolutions to use:
@@ -768,7 +768,9 @@ public class LooneyTuner extends LinearOpMode {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
-        double trackWidth = distancePerRevolution / Math.PI;
+
+        // 'Track width' is really the radius of the circle needed to make a complete rotation:
+        double trackWidth = distancePerRevolution / (2 * Math.PI);
         double trackWidthTicks = trackWidth / drive.PARAMS.inPerTick;
 
         out.printf("distancePerRevolution: %.2f\n", distancePerRevolution);
@@ -800,11 +802,11 @@ public class LooneyTuner extends LinearOpMode {
                     + "the robot on the wall the same way at both the start and end of this test?\n\n"
                     + "Aborted, press A to continue.");
         } else {
-            TuneParameters newSettings = parameters.getClone();
-            newSettings.PARAMS.otos.offset.x = offset.x;
-            newSettings.PARAMS.otos.offset.y = offset.y;
-            newSettings.PARAMS.otos.angularScalar = angularScalar;
-            newSettings.PARAMS.trackWidthTicks = trackWidthTicks;
+            TuneParameters newSettings = parameters.createClone();
+            newSettings.params.otos.offset.x = offset.x;
+            newSettings.params.otos.offset.y = offset.y;
+            newSettings.params.otos.angularScalar = angularScalar;
+            newSettings.params.trackWidthTicks = trackWidthTicks;
 
             if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
                 acceptParameters(newSettings);
@@ -955,13 +957,13 @@ public class LooneyTuner extends LinearOpMode {
 
                 out.printf("Intercept: %.3f, Slope: %.3f, Voltage: %.3f\n", bestFitLine.intercept, bestFitLine.slope, voltage);
 
-                TuneParameters newParameters = parameters.getClone();
-                newParameters.PARAMS.kS = bestFitLine.intercept * voltage;
-                newParameters.PARAMS.kV = bestFitLine.slope * voltage * parameters.PARAMS.inPerTick; // @@@ Normalize?
+                TuneParameters newParameters = parameters.createClone();
+                newParameters.params.kS = bestFitLine.intercept * voltage;
+                newParameters.params.kV = bestFitLine.slope * voltage * parameters.params.inPerTick; // @@@ Normalize?
 
                 if (ui.prompt("Check out the graph on FTC Dashboard!\n\n"
-                    + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.PARAMS.kS, parameters.PARAMS.kS)
-                    + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.PARAMS.kV, parameters.PARAMS.kV)
+                    + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.params.kS, parameters.params.kS)
+                    + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.params.kV, parameters.params.kV)
                     + "\nIf these look good, press A to accept, B to cancel.")) {
 
                     acceptParameters(newParameters);
@@ -1036,18 +1038,18 @@ public class LooneyTuner extends LinearOpMode {
                 + "\n\nDrive the robot to position, press A to start, B to cancel")) {
 
             // Disable the PID gains so that the distance traveled isn't corrected:
-            TuneParameters testParameters = parameters.getClone();
-            testParameters.PARAMS.lateralGain = 0;
-            testParameters.PARAMS.lateralVelGain = 0;
-            testParameters.PARAMS.lateralInPerTick = parameters.PARAMS.inPerTick;
+            TuneParameters testParameters = parameters.createClone();
+            testParameters.params.lateralGain = 0;
+            testParameters.params.lateralVelGain = 0;
+            testParameters.params.lateralInPerTick = parameters.params.inPerTick;
 
             // @@@ Make this a MecanumDrive function?
             drive.kinematics = new MecanumKinematics(
-                    testParameters.PARAMS.inPerTick * testParameters.PARAMS.trackWidthTicks,
-                    testParameters.PARAMS.inPerTick / testParameters.PARAMS.lateralInPerTick);
+                    testParameters.params.inPerTick * testParameters.params.trackWidthTicks,
+                    testParameters.params.inPerTick / testParameters.params.lateralInPerTick);
 
             // Point the MecanumDrive to our test PARAMS:
-            MecanumDrive.PARAMS = testParameters.PARAMS;
+            MecanumDrive.PARAMS = testParameters.params;
 
             // Drive at a slow speed:
             double maxVelocity = drive.PARAMS.maxWheelVel / 4;
@@ -1064,19 +1066,19 @@ public class LooneyTuner extends LinearOpMode {
                 if (ui.prompt(String.format("Measured lateral multiplier is %.3f. ", lateralMultiplier)
                         + "Does that look good?"
                         + "\n\nPress A to accept, B to cancel")) {
-                    TuneParameters newParameters = parameters.getClone();
-                    newParameters.PARAMS.lateralInPerTick
-                            = parameters.PARAMS.inPerTick * lateralMultiplier;
+                    TuneParameters newParameters = parameters.createClone();
+                    newParameters.params.lateralInPerTick
+                            = parameters.params.inPerTick * lateralMultiplier;
 
                     acceptParameters(newParameters);
                 }
             }
 
             // We're done, undo any temporary state we set:
-            MecanumDrive.PARAMS = parameters.PARAMS;
+            MecanumDrive.PARAMS = parameters.params;
             drive.kinematics = new MecanumKinematics(
-                    parameters.PARAMS.inPerTick * parameters.PARAMS.trackWidthTicks,
-                    parameters.PARAMS.inPerTick / parameters.PARAMS.lateralInPerTick);
+                    parameters.params.inPerTick * parameters.params.trackWidthTicks,
+                    parameters.params.inPerTick / parameters.params.lateralInPerTick);
         }
     }
 
@@ -1088,11 +1090,11 @@ public class LooneyTuner extends LinearOpMode {
         // all lateral gains so that backward and forward behavior is not affected by the
         // PID/Ramsete algorithm. It's okay for the axial and rotation gains to be either zero
         // or non-zero:
-        TuneParameters testParameters = parameters.getClone();
-        testParameters.PARAMS.lateralGain = 0;
-        testParameters.PARAMS.lateralVelGain = 0;
+        TuneParameters testParameters = parameters.createClone();
+        testParameters.params.lateralGain = 0;
+        testParameters.params.lateralVelGain = 0;
 
-        MecanumDrive.PARAMS = testParameters.PARAMS;
+        MecanumDrive.PARAMS = testParameters.params;
 
         String directions = "Tune 'kV' and 'kA' using FTC Dashboard. Follow "
             + "<a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a>:\n\n"
@@ -1173,7 +1175,7 @@ public class LooneyTuner extends LinearOpMode {
         }
 
         // We're done, undo any temporary state we set:
-        MecanumDrive.PARAMS = parameters.PARAMS;
+        MecanumDrive.PARAMS = parameters.params;
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
     }
 
@@ -1257,6 +1259,34 @@ public class LooneyTuner extends LinearOpMode {
         }
     }
 
+    // Simple verification test for 'TrackWidth':
+    void rotationTest() {
+        useDrive(true); // Do use MecanumDrive/TankDrive
+
+        if (ui.drivePrompt("To test 'trackWidthTicks', the robot will turn in-place for two complete "
+                + "rotations.\n\nPress A to start, B to cancel.")) {
+
+            // Disable the rotational PID/Ramsete behavior so that we can test just the
+            // feed-forward rotation:
+            TuneParameters testParameters = parameters.createClone();
+            testParameters.params.headingGain = 0;
+            testParameters.params.headingVelGain = 0;
+            MecanumDrive.PARAMS = testParameters.params;
+
+            Action action = drive.actionBuilder(drive.pose)
+                    .turn(2 * Math.toRadians(360))
+                    .build();
+            runCancelableAction(action);
+
+            ui.prompt("The robot should be facing the same direction as when it started. It it's "
+                + "not, run the spin tuner again to re-tune 'trackWidthTicks'."
+                + "\n\nPress A to continue.");
+
+            // Restore the parameters:
+            MecanumDrive.PARAMS = parameters.params;
+        }
+    }
+
     // Data structures for building a table of tests:
     interface TestMethod {
         void invoke();
@@ -1296,14 +1326,15 @@ public class LooneyTuner extends LinearOpMode {
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new Test(this::driveTest, "Drive test (motors)"));
         if (drive.opticalTracker != null) {
-            tests.add(new Test(this::pushCalibrator, "Push calibrator (tracking)"));
-            tests.add(new Test(this::spinCalibrator, "Spin calibrator (tracking and trackWidthTicks)"));
+            tests.add(new Test(this::pushTuner, "Push tuner (tracking)"));
+            tests.add(new Test(this::spinTuner, "Spin tuner (tracking and trackWidthTicks)"));
             tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
             tests.add(new Test(this::interactiveFeedForwardTuner, "Interactive feed forward tuner (kV and kA)"));
             tests.add(new Test(this::interactiveAxialPidTuner, "Interactive PID tuner (axialGain)"));
             tests.add(new Test(this::interactiveLateralPidTuner, "Interactive PID tuner (lateralGain)"));
             tests.add(new Test(this::interactiveHeadingPidTuner, "Interactive PID tuner (headingGain)"));
+            tests.add(new Test(this::rotationTest, "Rotation test (verify trackWidthTicks)"));
             tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
         }
 
