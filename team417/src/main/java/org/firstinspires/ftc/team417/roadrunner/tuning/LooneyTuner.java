@@ -9,6 +9,7 @@
 // @@@ Add stick support to menus
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
 // @@@ Figure out fastLoad for all teams.
+// @@@ Show old values, amount of change for: lateralInPerTick
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -24,7 +25,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.DualNum;
-import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -269,8 +269,8 @@ public class LooneyTuner extends LinearOpMode {
                     else
                         output += "\u25c7 " + menuStrings.getString(i) + "\n";
                 }
-                addTelemetry(output);
-                updateTelemetry();
+                telemetryAdd(output);
+                telemetryUpdate();
                 // Sleep to allow other system processing (and ironically improve responsiveness):
                 sleep(10);
             }
@@ -279,8 +279,8 @@ public class LooneyTuner extends LinearOpMode {
 
         // Show a message:
         void message(String message) {
-            addTelemetry(message);
-            updateTelemetry();
+            telemetryAdd(message);
+            telemetryUpdate();
         }
 
         // Show a message and wait for an A or B button press. If accept (A) is pressed, return
@@ -315,12 +315,12 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Convert telemetry newlines to HTML breaks so that FTC Dashboard renders the text properly:
-    void addTelemetry(String line) {
+    void telemetryAdd(String line) {
         telemetry.addLine(line.replace("\n", "<br>"));
     }
 
     // Send the telemetry packet to the Driver Station:
-    void updateTelemetry() {
+    void telemetryUpdate() {
         telemetry.update();
     }
 
@@ -644,7 +644,7 @@ public class LooneyTuner extends LinearOpMode {
         assert(drive.opticalTracker != null);
 
         // Number of revolutions to use:
-        final double REVOLUTION_COUNT = 2.0; // @@@@@@@@@@@@@@@@@
+        final double REVOLUTION_COUNT = 10.0;
 
         // Speed of the revolutions:
         final double SPIN_POWER = 0.5;
@@ -728,9 +728,9 @@ public class LooneyTuner extends LinearOpMode {
 
                     // Update the telemetry:
                     double rotationsRemaining = (terminationRotation - offsetRotation) / (2 * Math.PI);
-                    addTelemetry(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
-                    addTelemetry("\nPress B to abort.");
-                    updateTelemetry();
+                    telemetryAdd(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
+                    telemetryAdd("\nPress B to abort.");
+                    telemetryUpdate();
 
                     // Update for next iteration of the loop:
                     Pose2D rawPose = updateRotationAndGetPose();
@@ -788,7 +788,7 @@ public class LooneyTuner extends LinearOpMode {
 
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
         results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", rawOffset.x, rawOffset.y, center.radius);
-        results += String.format("Radius-correct position: (%.2f, %.2f)\n", rawOffset.x, rawOffset.y);
+        results += String.format("Radius-corrected position: (%.2f, %.2f)\n", offset.x, offset.y);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += String.format("Track width: %.2f\"\n", trackWidth);
         results += "\n";
@@ -810,6 +810,11 @@ public class LooneyTuner extends LinearOpMode {
 
             if (ui.prompt(results + "Use these results? Press A if they look good, B to discard them.")) {
                 acceptParameters(newSettings);
+
+                // We changed 'trackWidthTicks' so recreate the kinematics object:
+                drive.recreateKinematics();
+
+                out.printf("new trackWidthTicks: %.2f\n", drive.PARAMS.trackWidthTicks); // @@@
             }
         }
     }
@@ -892,9 +897,9 @@ public class LooneyTuner extends LinearOpMode {
                 drive.leftBack.setPower(newVoltageFactor);
 
                 double percentage = newVoltageFactor / MAX_VOLTAGE_FACTOR * 100;
-                addTelemetry(String.format("%.0f%% done.", percentage));
-                addTelemetry("\nPress B to abort.");
-                updateTelemetry();
+                telemetryAdd(String.format("%.0f%% done.", percentage));
+                telemetryAdd("\nPress B to abort.");
+                telemetryUpdate();
 
                 Pose2D velocityVector = drive.opticalTracker.getVelocity();
                 double velocity = Math.hypot(velocityVector.x, velocityVector.y);
@@ -982,13 +987,14 @@ public class LooneyTuner extends LinearOpMode {
 
         stopMotors();
         while (opModeIsActive() && !ui.cancel()) {
-            addTelemetry(String.format("Testing '%s' motor. ", motorDescriptions[i])
-                + "Press right trigger to control its forward rotation, "
-                + "left trigger for reverse."
-                + "\n\nPress X to test next motor, B to cancel.");
-            updateTelemetry();
+            double power = gamepad1.right_trigger - gamepad1.left_trigger;
+            String description = motorDescriptions[i];
+            telemetryAdd(String.format("This tests every motor individually, now testing '%s'.\n\n", description)
+                + String.format("&emsp;%s.setPower(%.2f)\n\n", description, power)
+                + "Press right trigger for forward, left trigger for reverse, X for next motor, B to cancel.");
+            telemetryUpdate();
 
-            motors[i].setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+            motors[i].setPower(power);
             if (ui.xButton()) {
                 motors[i].setPower(0);
                 i += 1;
@@ -1043,10 +1049,8 @@ public class LooneyTuner extends LinearOpMode {
             testParameters.params.lateralVelGain = 0;
             testParameters.params.lateralInPerTick = parameters.params.inPerTick;
 
-            // @@@ Make this a MecanumDrive function?
-            drive.kinematics = new MecanumKinematics(
-                    testParameters.params.inPerTick * testParameters.params.trackWidthTicks,
-                    testParameters.params.inPerTick / testParameters.params.lateralInPerTick);
+            // Recreate the Kinematics object based on the new settings:
+            drive.recreateKinematics();
 
             // Point the MecanumDrive to our test PARAMS:
             MecanumDrive.PARAMS = testParameters.params;
@@ -1062,23 +1066,20 @@ public class LooneyTuner extends LinearOpMode {
                 Pose2D endPose = drive.opticalTracker.getPosition();
                 double actualDistance = Math.hypot(endPose.x, endPose.y);
                 double lateralMultiplier = actualDistance / DISTANCE;
+                double inchesPerTick = parameters.params.inPerTick * lateralMultiplier;
 
-                if (ui.prompt(String.format("Measured lateral multiplier is %.3f. ", lateralMultiplier)
+                if (ui.prompt(String.format("Measured lateral multiplier is %.3f (%.5f inches per tick). ", lateralMultiplier, inchesPerTick)
                         + "Does that look good?"
                         + "\n\nPress A to accept, B to cancel")) {
                     TuneParameters newParameters = parameters.createClone();
-                    newParameters.params.lateralInPerTick
-                            = parameters.params.inPerTick * lateralMultiplier;
-
+                    newParameters.params.lateralInPerTick = inchesPerTick;
                     acceptParameters(newParameters);
                 }
             }
 
             // We're done, undo any temporary state we set:
             MecanumDrive.PARAMS = parameters.params;
-            drive.kinematics = new MecanumKinematics(
-                    parameters.params.inPerTick * parameters.params.trackWidthTicks,
-                    parameters.params.inPerTick / parameters.params.lateralInPerTick);
+            drive.recreateKinematics();
         }
     }
 
@@ -1097,17 +1098,18 @@ public class LooneyTuner extends LinearOpMode {
         MecanumDrive.PARAMS = testParameters.params;
 
         String directions = "Tune 'kV' and 'kA' using FTC Dashboard. Follow "
-            + "<a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a>:\n\n"
+            + "<u><a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a></u>:\n\n"
             + "\u2022 Press the Graph button in FTC Dashboard and graph <b>vRef</b> (target) against <b>vActual</b>.\n"
             + "\u2022 Adjust <b>kV</b> to make the horizontal lines as close as possible in height.\n"
             + "&emsp;<b>kV = vRef / vActual</b>\n"
             + "\u2022 Adjust <b>kA</b> to shift <b>vActual</b> left and right.\n"
             + "&emsp;Start <b>kA</b> small, maybe 0.0001, then increase.\n";
 
-        if (ui.prompt(String.format("The robot will attempt to constantly drive forwards then backwards for %d inches. "
+        if (ui.drivePrompt(String.format("The robot will constantly drive forwards then backwards for %d inches. "
                 + directions + "\n"
-                + "During the test, you can press Y to enter driver-override and reset the robot position.\n"
-                + "\nPress A to start, B to cancel", DISTANCE))) {
+                + "Make sure %d inches are free in front of the robot to start. "
+                + "During the test, you can press Y to override the robot position.\n"
+                + "\nPress A to start, B to cancel", DISTANCE, DISTANCE))) {
 
             // Everything below here is taken from ManualFeedforwardTuner::runOpMode():
             TimeProfile profile = new TimeProfile(constantProfile(
@@ -1121,13 +1123,13 @@ public class LooneyTuner extends LinearOpMode {
             double startTs = 0;
 
             while (opModeIsActive() && !ui.cancel()) {
-                addTelemetry(directions + "\nPress A when done, B to cancel, Y to reposition the robot");
-                updateTelemetry();
+                telemetryAdd(directions + "\nPress A when done, B to cancel, Y to reposition the robot");
+                telemetryUpdate();
 
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
 
                 Pose2D velocity = drive.opticalTracker.getVelocity();
-                packet.put("vActual", Math.hypot(velocity.x, velocity.y));
+                packet.put("vActual", velocity.x);
 
                 double ts = time();
                 double t = ts - startTs;
@@ -1135,8 +1137,9 @@ public class LooneyTuner extends LinearOpMode {
                     movingForwards = !movingForwards;
                     startTs = ts;
 
-                    // Reset the start position on every loop (primarily so we reset after
-                    // repositioning the robot):
+                    // Reset the start position on every loop. This ensures that getVelocity().x
+                    // is the appropriate velocity to read, and it resets after we reposition
+                    // the robot:
                     if (movingForwards)
                         drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
                 }
@@ -1242,8 +1245,8 @@ public class LooneyTuner extends LinearOpMode {
                 + "It needs half a tile clearance on either side. "
                 + "\n\nDrive the robot to a good spot, press A to start, B to cancel")) {
 
-            addTelemetry("Press B to cancel");
-            updateTelemetry();
+            telemetryAdd("Press B to cancel");
+            telemetryUpdate();
 
             // Reset the pose - again - because the user has driven around in drivePrompt:
             drive.setPose(new Pose2d(0, 0, 0));
@@ -1265,6 +1268,9 @@ public class LooneyTuner extends LinearOpMode {
 
         if (ui.drivePrompt("To test 'trackWidthTicks', the robot will turn in-place for two complete "
                 + "rotations.\n\nPress A to start, B to cancel.")) {
+
+            // Reset after driving around:
+            drive.setPose(defaultPose);
 
             // Disable the rotational PID/Ramsete behavior so that we can test just the
             // feed-forward rotation:
@@ -1331,9 +1337,9 @@ public class LooneyTuner extends LinearOpMode {
             tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
             tests.add(new Test(this::interactiveFeedForwardTuner, "Interactive feed forward tuner (kV and kA)"));
-            tests.add(new Test(this::interactiveAxialPidTuner, "Interactive PID tuner (axialGain)"));
-            tests.add(new Test(this::interactiveLateralPidTuner, "Interactive PID tuner (lateralGain)"));
-            tests.add(new Test(this::interactiveHeadingPidTuner, "Interactive PID tuner (headingGain)"));
+            tests.add(new Test(this::interactiveAxialPidTuner, "Interactive PiD tuner (axialGain)"));
+            tests.add(new Test(this::interactiveLateralPidTuner, "Interactive PiD tuner (lateralGain)"));
+            tests.add(new Test(this::interactiveHeadingPidTuner, "Interactive PiD tuner (headingGain)"));
             tests.add(new Test(this::rotationTest, "Rotation test (verify trackWidthTicks)"));
             tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
         }

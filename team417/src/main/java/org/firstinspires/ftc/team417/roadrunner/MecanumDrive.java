@@ -642,14 +642,14 @@ public final class MecanumDrive {
             rightBack.setPower(rightBackPower);
             rightFront.setPower(rightFrontPower);
 
-            p.put("x", pose.position.x);
-            p.put("y", pose.position.y);
-            p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
+            // p.put("x", pose.position.x);
+            // p.put("y", pose.position.y);
+            // p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
 
-            Pose2d error = txWorldTarget.value().minusExp(pose);
-            p.put("xError", error.position.x);
-            p.put("yError", error.position.y);
-            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+            // Pose2d error = txWorldTarget.value().minusExp(pose);
+            // p.put("xError", error.position.x);
+            // p.put("yError", error.position.y);
+            // p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
             // only draw when active; only one drive action should be active at a time
             Canvas c = p.fieldOverlay();
@@ -817,6 +817,13 @@ public final class MecanumDrive {
                 defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint
         );
+    }
+
+    // Recreate the kinematics object using the current settings:
+    public void recreateKinematics() {
+        kinematics = new MecanumKinematics(
+                PARAMS.inPerTick * PARAMS.trackWidthTicks,
+                PARAMS.inPerTick / PARAMS.lateralInPerTick);
     }
 
     /** @noinspection unused*/ // Rotate a vector by a prescribed angle:
