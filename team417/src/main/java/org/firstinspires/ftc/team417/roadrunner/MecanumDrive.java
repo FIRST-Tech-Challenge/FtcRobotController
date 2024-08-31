@@ -106,8 +106,8 @@ public final class MecanumDrive {
 
                 otos.offset.x = 6.4; // Inches
                 otos.offset.y = 3.037; // Inches
-                otos.offset.h = Math.toRadians(-88.955); // Convert degrees to radians
-                otos.linearScalar = 1.056; // Scalar
+                otos.offset.h = Math.toRadians(-89.362); // Convert degrees to radians
+                otos.linearScalar = 1.049; // Scalar
                 otos.angularScalar = 0.992; // Scalar
 
             } else {

@@ -31,6 +31,7 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.google.gson.Gson;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -1279,8 +1280,13 @@ public class LooneyTuner extends LinearOpMode {
             testParameters.params.headingVelGain = 0;
             MecanumDrive.PARAMS = testParameters.params;
 
+            out.printf("trackWidthTicks: %.2f\n", MecanumDrive.PARAMS.trackWidthTicks); // @@@
+
             Action action = drive.actionBuilder(drive.pose)
-                    .turn(2 * Math.toRadians(360))
+                    .turn(2 * Math.toRadians(360), new TurnConstraints(
+                            MecanumDrive.PARAMS.maxAngVel / 3,
+                           -MecanumDrive.PARAMS.maxAngAccel,
+                            MecanumDrive.PARAMS.maxAngAccel))
                     .build();
             runCancelableAction(action);
 
