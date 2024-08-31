@@ -229,7 +229,7 @@ public class LooneyTuner extends LinearOpMode {
      */
     class Ui {
         // Button press state:
-        private final boolean[] buttonPressed = new boolean[5];
+        private final boolean[] buttonPressed = new boolean[6];
         private boolean buttonPress(boolean pressed, int index) {
             boolean press = pressed && !buttonPressed[index];
             buttonPressed[index] = pressed;
@@ -239,9 +239,10 @@ public class LooneyTuner extends LinearOpMode {
         // Button press status:
         boolean accept() { return buttonPress(gamepad1.a, 0); }
         boolean cancel() { return buttonPress(gamepad1.b, 1); }
-        boolean reposition() { return buttonPress(gamepad1.y, 2); }
-        boolean up() { return buttonPress(gamepad1.dpad_up, 3); }
-        boolean down() { return buttonPress(gamepad1.dpad_down, 4); }
+        boolean xButton() { return buttonPress(gamepad1.x, 2); }
+        boolean yButton() { return buttonPress(gamepad1.y, 3); }
+        boolean up() { return buttonPress(gamepad1.dpad_up, 4); }
+        boolean down() { return buttonPress(gamepad1.dpad_down, 5); }
 
         // Display the menu:
         /** @noinspection SameParameterValue, StringConcatenationInLoop */
@@ -491,7 +492,7 @@ public class LooneyTuner extends LinearOpMode {
         if (comparison.isEmpty()) {
             ui.prompt("The results match your current settings.\n\nPress A to continue.");
         } else {
-            drive.PARAMS = newParameters.PARAMS;
+            MecanumDrive.PARAMS = newParameters.PARAMS;
             parameters = newParameters;
             parameters.save();
             ui.prompt("Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
@@ -520,7 +521,8 @@ public class LooneyTuner extends LinearOpMode {
         return angle;
     }
 
-    // Ramp the motors up or down to or from the target spin speed. Turns counter-clockwise.
+    // Ramp the motors up or down to or from the target spin speed. Turns counter-clockwise
+    // when provided a positive power value.
     void rampMotorsSpin(MecanumDrive drive, double targetPower) {
         final double RAMP_TIME = 0.5; // Seconds
         double startPower = drive.rightFront.getPower();
@@ -538,6 +540,14 @@ public class LooneyTuner extends LinearOpMode {
             if (duration == RAMP_TIME)
                 break; // ===>
         }
+    }
+
+    // Stop all motors:
+    void stopMotors() {
+        drive.rightFront.setPower(0);
+        drive.rightBack.setPower(0);
+        drive.leftFront.setPower(0);
+        drive.leftBack.setPower(0);
     }
 
     // Structure to describe the center of rotation for the robot:
@@ -961,29 +971,57 @@ public class LooneyTuner extends LinearOpMode {
         setHardware();
     }
 
+    // Test the robot motors.
+    void wheelDebugger() {
+        String[] motorDescriptions = { "leftFront", "leftBack", "rightBack", "rightFront" };
+        DcMotorEx[] motors = { drive.leftFront, drive.leftBack, drive.rightBack, drive.rightFront };
+        int i = 0;
+
+        stopMotors();
+        while (opModeIsActive() && !ui.cancel()) {
+            addTelemetry(String.format("Testing '%s' motor. ", motorDescriptions[i])
+                + "Press right trigger to control its forward rotation, "
+                + "left trigger for reverse."
+                + "\n\nPress X to test next motor, B to cancel.");
+            updateTelemetry();
+
+            motors[i].setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+            if (ui.xButton()) {
+                motors[i].setPower(0);
+                i += 1;
+                if (i >= motors.length)
+                    i = 0;
+            }
+        }
+
+        drive.setPose(new Pose2d(0, 0, 0));
+        stopMotors();
+    }
+
     // Drive the robot around.
     void driveTest() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         while (opModeIsActive() && !ui.cancel()) {
-            // TODO: Add control for specific motors?
+            if (ui.xButton())
+                wheelDebugger();
+
             processGamepadDriving();
             drive.updatePoseEstimate();
 
             TelemetryPacket p = MecanumDrive.getTelemetryPacket();
-            Pose2D sensorOffset = drive.PARAMS.otos.offset;
             Pose2d pose = drive.pose;
             ui.message("Use the controller to drive the robot around.\n\n"
                     + String.format("&ensp;Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", pose.position.x, pose.position.y, pose.heading.toDouble())
-                    + String.format("&ensp;Sensor offset: (%.2f\", %.2f\", %.2f\u00b0)\n", sensorOffset.x, sensorOffset.y, sensorOffset.h)
-                    + String.format("&ensp;Sensor scalars: %.3f, %.3f\n", drive.PARAMS.otos.linearScalar, drive.PARAMS.otos.angularScalar)
-                    + "\nPress B when done.");
+                    + "\nPress X to debug motor wheels, B to cancel.");
 
             Canvas c = p.fieldOverlay();
             c.setStroke("#3F51B5");
             Drawing.drawRobot(c, drive.pose);
-            FtcDashboard.getInstance().sendTelemetryPacket(p);
+            MecanumDrive.sendTelemetryPacket(p);
+
         }
+        stopMotors();
     }
 
     // Tuner for the lateral multiplier on Mecanum drives.
@@ -995,11 +1033,10 @@ public class LooneyTuner extends LinearOpMode {
                 + "\n\nDrive the robot to position, press A to start, B to cancel")) {
 
             // Disable the PID gains so that the distance traveled isn't corrected:
-            TuneParameters originalParameters = parameters;
             TuneParameters testParameters = parameters.getClone();
             testParameters.PARAMS.lateralGain = 0;
             testParameters.PARAMS.lateralVelGain = 0;
-            testParameters.PARAMS.lateralInPerTick = originalParameters.PARAMS.inPerTick;
+            testParameters.PARAMS.lateralInPerTick = parameters.PARAMS.inPerTick;
 
             // @@@ Make this a MecanumDrive function?
             drive.kinematics = new MecanumKinematics(
@@ -1007,7 +1044,7 @@ public class LooneyTuner extends LinearOpMode {
                     testParameters.PARAMS.inPerTick / testParameters.PARAMS.lateralInPerTick);
 
             // Point the MecanumDrive to our test PARAMS:
-            drive.PARAMS = testParameters.PARAMS;
+            MecanumDrive.PARAMS = testParameters.PARAMS;
 
             // Drive at a slow speed:
             double maxVelocity = drive.PARAMS.maxWheelVel / 4;
@@ -1024,30 +1061,35 @@ public class LooneyTuner extends LinearOpMode {
                 if (ui.prompt(String.format("Measured lateral multiplier is %.3f. ", lateralMultiplier)
                         + "Does that look good?"
                         + "\n\nPress A to accept, B to cancel")) {
-                    TuneParameters newParameters = originalParameters.getClone();
+                    TuneParameters newParameters = parameters.getClone();
                     newParameters.PARAMS.lateralInPerTick
-                            = originalParameters.PARAMS.inPerTick * lateralMultiplier;
-
-                    drive.kinematics = new MecanumKinematics(
-                            newParameters.PARAMS.inPerTick * newParameters.PARAMS.trackWidthTicks,
-                            newParameters.PARAMS.inPerTick / newParameters.PARAMS.lateralInPerTick);
+                            = parameters.PARAMS.inPerTick * lateralMultiplier;
 
                     acceptParameters(newParameters);
-                    return; // ====>
                 }
             }
 
-            // The test failed, reset back to the original PARAMS:
-            drive.PARAMS = originalParameters.PARAMS;
+            // We're done, undo any temporary state we set:
+            MecanumDrive.PARAMS = parameters.PARAMS;
             drive.kinematics = new MecanumKinematics(
-                    originalParameters.PARAMS.inPerTick * originalParameters.PARAMS.trackWidthTicks,
-                    originalParameters.PARAMS.inPerTick / originalParameters.PARAMS.lateralInPerTick);
+                    parameters.PARAMS.inPerTick * parameters.PARAMS.trackWidthTicks,
+                    parameters.PARAMS.inPerTick / parameters.PARAMS.lateralInPerTick);
         }
     }
 
     // Tune the kV and kA feed forward parameters:
     void interactiveFeedForwardTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
+
+        // Point the MecanumDrive to our test PARAMS and let the user modify that. Also disable
+        // all lateral gains so that backward and forward behavior is not affected by the
+        // PID/Ramsete algorithm. It's okay for the axial and rotation gains to be either zero
+        // or non-zero:
+        TuneParameters testParameters = parameters.getClone();
+        testParameters.PARAMS.lateralGain = 0;
+        testParameters.PARAMS.lateralVelGain = 0;
+
+        MecanumDrive.PARAMS = testParameters.PARAMS;
 
         String directions = "Tune 'kV' and 'kA' using FTC Dashboard. Follow "
             + "<a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a>:\n\n"
@@ -1057,82 +1099,78 @@ public class LooneyTuner extends LinearOpMode {
             + "\u2022 Adjust <b>kA</b> to shift <b>vActual</b> left and right.\n"
             + "&emsp;Start <b>kA</b> small, maybe 0.0001, then increase.\n";
 
-        if (!ui.prompt(String.format("The robot will attempt to constantly drive forwards then backwards for %d inches. "
+        if (ui.prompt(String.format("The robot will attempt to constantly drive forwards then backwards for %d inches. "
                 + directions + "\n"
                 + "During the test, you can press Y to enter driver-override and reset the robot position.\n"
-                + "\nPress A to start, B to cancel", DISTANCE)))
-            return;
+                + "\nPress A to start, B to cancel", DISTANCE))) {
 
-        // Point the MecanumDrive to our test PARAMS and let the user modify that:
-        TuneParameters testParameters = parameters.getClone();
-        drive.PARAMS = testParameters.PARAMS;
+            // Everything below here is taken from ManualFeedforwardTuner::runOpMode():
+            TimeProfile profile = new TimeProfile(constantProfile(
+                    DISTANCE, 0.0,
+                    MecanumDrive.PARAMS.maxWheelVel,
+                    MecanumDrive.PARAMS.minProfileAccel,
+                    MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
 
-        // Everything below here is taken from ManualFeedforwardTuner::runOpMode():
-        TimeProfile profile = new TimeProfile(constantProfile(
-                DISTANCE, 0.0,
-                MecanumDrive.PARAMS.maxWheelVel,
-                MecanumDrive.PARAMS.minProfileAccel,
-                MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
+            // Trigger a reset the first time into the loop:
+            boolean movingForwards = false;
+            double startTs = 0;
 
-        // Trigger a reset the first time into the loop:
-        boolean movingForwards = false;
-        double startTs = 0;
+            while (opModeIsActive() && !ui.cancel()) {
+                addTelemetry(directions + "\nPress A when done, B to cancel, Y to reposition the robot");
+                updateTelemetry();
 
-        while (opModeIsActive() && !ui.cancel()) {
-            addTelemetry(directions + "\nPress A when done, B to cancel, Y to reposition the robot");
-            updateTelemetry();
+                TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
 
-            TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
+                Pose2D velocity = drive.opticalTracker.getVelocity();
+                packet.put("vActual", Math.hypot(velocity.x, velocity.y));
 
-            Pose2D velocity = drive.opticalTracker.getVelocity();
-            packet.put("vActual", Math.hypot(velocity.x, velocity.y));
+                double ts = time();
+                double t = ts - startTs;
+                if (t > profile.duration) {
+                    movingForwards = !movingForwards;
+                    startTs = ts;
 
-            double ts = time();
-            double t = ts - startTs;
-            if (t > profile.duration) {
-                movingForwards = !movingForwards;
-                startTs = ts;
+                    // Reset the start position on every loop (primarily so we reset after
+                    // repositioning the robot):
+                    if (movingForwards)
+                        drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
+                }
 
-                // Reset the start position on every loop (primarily so we reset after
-                // repositioning the robot):
-                if (movingForwards)
-                    drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
-            }
+                DualNum<Time> v = profile.get(t).drop(1);
+                if (!movingForwards) {
+                    v = v.unaryMinus();
+                }
+                packet.put("vRef", v.get(0));
 
-            DualNum<Time> v = profile.get(t).drop(1);
-            if (!movingForwards) {
-                v = v.unaryMinus();
-            }
-            packet.put("vRef", v.get(0));
+                MotorFeedforward feedForward = new MotorFeedforward(MecanumDrive.PARAMS.kS,
+                        MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
+                        MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick);
 
-            MotorFeedforward feedForward = new MotorFeedforward(MecanumDrive.PARAMS.kS,
-                    MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
-                    MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick);
+                double power = feedForward.compute(v) / drive.voltageSensor.getVoltage();
+                drive.setDrivePowers(new PoseVelocity2d(new Vector2d(power, 0.0), 0.0));
 
-            double power = feedForward.compute(v) / drive.voltageSensor.getVoltage();
-            drive.setDrivePowers(new PoseVelocity2d(new Vector2d(power, 0.0), 0.0));
+                MecanumDrive.sendTelemetryPacket(packet);
 
-            MecanumDrive.sendTelemetryPacket(packet);
+                if (ui.yButton()) {
+                    if (!ui.drivePrompt("Drive the robot to reposition it. When you press A, the "
+                            + "robot will resume in the forward direction.\n"
+                            + "\nPress A when ready to resume, B to cancel."))
+                        break; // ====>
 
-            if (ui.reposition()) {
-                if (!ui.drivePrompt("Drive the robot to reposition it. When you press A, the "
-                    + "robot will resume in the forward direction.\n"
-                        + "\nPress A when ready to resume, B to cancel."))
+                    movingForwards = false;
+                    startTs = 0;
+                }
+
+                if (ui.accept()) {
+                    // Accept the parameters that the user has set:
+                    acceptParameters(testParameters);
                     break; // ====>
-
-                movingForwards = false;
-                startTs = 0;
-            }
-
-            if (ui.accept()) {
-                // Accept the parameters that the user has set:
-                acceptParameters(testParameters);
-                break; // ====>
+                }
             }
         }
 
-        // Reset back to the initial state:
-        drive.PARAMS = parameters.PARAMS;
+        // We're done, undo any temporary state we set:
+        MecanumDrive.PARAMS = parameters.PARAMS;
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
     }
 
