@@ -19,6 +19,12 @@ public class AlignRobotToAprilTagXAction extends Action {
 
     MecanumRobotAction mecanum;
 
+    int counter = 0;
+
+    Boolean hasDetected = false;
+
+    double avgDistanceToMove = 0;
+
     public AlignRobotToAprilTagXAction(Action dependentAction, FieldPosition fieldPosition, DriveTrain driveTrain, VisionPortalProcessor visionPortalProcessor) {
         this.dependentAction = dependentAction;
         this.driveTrain = driveTrain;
@@ -33,48 +39,65 @@ public class AlignRobotToAprilTagXAction extends Action {
         this.visionPortalProcessor = visionPortalProcessor;
     }
 
-    public double getDistanceToMoveX () {
+    public void updateDistanceToMoveX () {
+
         double distanceToMove;
-        double avgDistanceToMove = 0;
 
-        myAprilTagDetections = visionPortalProcessor.getAprilTagProcessor().getDetections();
+        if (counter<20) {
+            counter++;
 
-        if (myAprilTagDetections.size() == 0) {
-            Log.d("alignx", "no tags detected");
-        }
+            myAprilTagDetections = visionPortalProcessor.getAprilTagProcessor().getDetections();
 
-        if (myAprilTagDetections.size() > 0) {
-            Log.d("alignx", "tags detected");
-            Log.d("alignx", "detections size is " + myAprilTagDetections.size());
-
-            for (AprilTagDetection detection : myAprilTagDetections) {
-                distanceToMove = ((fieldPosition.getWantedAprTagId() - detection.id) * distanceBetweenId) - detection.ftcPose.x;
-                Log.d("alignx", "distance to move is " + distanceToMove);
-                avgDistanceToMove += distanceToMove;
+            if (myAprilTagDetections.size() == 0) {
+                Log.d("alignx", "no tags detected " + counter);
             }
+
+            if (myAprilTagDetections.size() > 0) {
+
+                hasDetected = true;
+
+                Log.d("alignx", "tags detected");
+                Log.d("alignx", "detections size is " + myAprilTagDetections.size());
+
+                for (AprilTagDetection detection : myAprilTagDetections) {
+                    distanceToMove = ((fieldPosition.getWantedAprTagId() - detection.id) * distanceBetweenId) - detection.ftcPose.x;
+                    Log.d("alignx", "distance to move is " + distanceToMove);
+                    avgDistanceToMove += distanceToMove;
+                }
+
+                avgDistanceToMove /= myAprilTagDetections.size();
+
+            }
+
+            Log.d("alignx", "avg distance to move is " + avgDistanceToMove);
         }
 
-        if(myAprilTagDetections.size() > 0) {
-            avgDistanceToMove /= myAprilTagDetections.size();
-        }
-        Log.d("alignx", "avg distance to move is " + avgDistanceToMove);
-
-        return avgDistanceToMove;
     }
 
     @Override
     boolean checkDoneCondition() {
-        return mecanum.getIsDone();
+        if(hasDetected) {
+            return mecanum.getIsDone();
+        } else{
+            return false;
+        }
     }
 
     @Override
     void update() {
         if (!hasStarted) {
             visionPortalProcessor.getVisionPortal().setProcessorEnabled(visionPortalProcessor.getAprilTagProcessor(), true);
-            mecanum = new MecanumRobotAction(getDistanceToMoveX(), driveTrain);
+            if (hasDetected) {
+                mecanum = new MecanumRobotAction(avgDistanceToMove, driveTrain);
+            }
             hasStarted = true;
         }
 
-        mecanum.update();
+        updateDistanceToMoveX();
+
+        if(hasDetected) {
+            mecanum.update();
+        }
+
     }
 }
