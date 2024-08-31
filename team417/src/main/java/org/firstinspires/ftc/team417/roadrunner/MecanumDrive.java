@@ -614,6 +614,9 @@ public final class MecanumDrive {
 
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
 
+System.out.printf("run() -- axialGain: %.2f, lateralGain: %.2f, headingGain: %.2f\n",
+        PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain); // @@@
+
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
@@ -625,6 +628,7 @@ public final class MecanumDrive {
             WilyWorks.runTo(txWorldTarget.value(), txWorldTarget.velocity().value());
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+
             double voltage = voltageSensor.getVoltage();
 
             final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS,
@@ -641,6 +645,8 @@ public final class MecanumDrive {
             leftBack.setPower(leftBackPower);
             rightBack.setPower(rightBackPower);
             rightFront.setPower(rightFrontPower);
+
+            updateLoopTimeStatistic(p);
 
             // p.put("x", pose.position.x);
             // p.put("y", pose.position.y);
@@ -720,7 +726,10 @@ public final class MecanumDrive {
             WilyWorks.runTo(txWorldTarget.value(), txWorldTarget.velocity().value());
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+
+            updateLoopTimeStatistic(p);
             double voltage = voltageSensor.getVoltage();
+
             final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS,
                     PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
             double leftFrontPower = feedforward.compute(wheelVels.leftFront) / voltage;
@@ -756,6 +765,15 @@ public final class MecanumDrive {
             c.setStroke("#7C4DFF7A");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
         }
+    }
+
+    // Update the loop time, in milliseconds, and show it on FTC Dashboard:
+    double lastLoopTime = nanoTime() * 1e-9; // Seconds
+    void updateLoopTimeStatistic(TelemetryPacket p) {
+        double currentTime = nanoTime() * 1e-9; // Seconds
+        double loopTime = currentTime - lastLoopTime;
+        lastLoopTime = currentTime;
+        p.put("Loop time", loopTime * 1000.0); // Milliseconds
     }
 
     public PoseVelocity2d updatePoseEstimate() {

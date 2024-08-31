@@ -213,7 +213,7 @@ public class LooneyTuner extends LinearOpMode {
 
     // Constants:
     public static int DISTANCE = 72;
-    final Pose2d defaultPose = new Pose2d(0, 0, 0);
+    final Pose2d zeroPose = new Pose2d(0, 0, 0);
 
     // Data structures for the User Interface
     interface MenuStrings {
@@ -298,7 +298,8 @@ public class LooneyTuner extends LinearOpMode {
                 processGamepadDriving();
                 updateRotation();
             }
-            stopGamepadDriving();
+            stopMotors();
+            drive.setPose(zeroPose); // Reset the pose once they stopped
             return success;
         }
 
@@ -333,7 +334,7 @@ public class LooneyTuner extends LinearOpMode {
             TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
             ui.message("Press B to stop");
             boolean more = drive.doActionsWork(packet);
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+            MecanumDrive.sendTelemetryPacket(packet);
             if (!more) {
                 // We successfully completed the Action!
                 return true; // ====>
@@ -341,7 +342,7 @@ public class LooneyTuner extends LinearOpMode {
         }
         // The user either pressed Cancel or End:
         drive.abortActions();
-        stopGamepadDriving();
+        stopMotors();
         return false;
     }
 
@@ -389,11 +390,6 @@ public class LooneyTuner extends LinearOpMode {
             shapeStick(-gamepad1.left_stick_y),
             shapeStick(-gamepad1.left_stick_x)),
             shapeStick(-gamepad1.right_stick_x)));
-    }
-
-    // Stop any robot driving:
-    public void stopGamepadDriving() {
-        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
     }
 
     // Measure the optical linear scale and orientation:
@@ -662,9 +658,6 @@ public class LooneyTuner extends LinearOpMode {
                 + "\n\nFirst, carefully drive the robot to a wall and align it so that "
                 + "it's facing forward. This marks the start orientation for calibration."
                 + "\n\nDrive the robot to the start position, press A when ready, B to cancel")) {
-
-            // Initialize the heading:
-            drive.setPose(new Pose2d(0, 0, 0));
 
             // Let the user position the robot:
             if (ui.drivePrompt("Now move the robot far enough away from the wall and any objects so "
@@ -1004,7 +997,7 @@ public class LooneyTuner extends LinearOpMode {
             }
         }
 
-        drive.setPose(new Pose2d(0, 0, 0));
+        drive.setPose(zeroPose);
         stopMotors();
     }
 
@@ -1016,7 +1009,7 @@ public class LooneyTuner extends LinearOpMode {
             if (ui.xButton())
                 wheelDebugger();
             if (ui.yButton())
-                drive.setPose(new Pose2d(0, 0, 0));
+                drive.setPose(zeroPose);
 
             processGamepadDriving();
             drive.updatePoseEstimate();
@@ -1186,8 +1179,12 @@ public class LooneyTuner extends LinearOpMode {
     void interactiveAxialPidTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.prompt(String.format("The robot will attempt to drive backwards and forwards for %d inches. "
-                + "Tune 'axialGain' so that target and actual align (typical values between 1 and 20)."
+        TuneParameters testParameters = parameters.createClone();
+        MecanumDrive.PARAMS = testParameters.params;
+
+        if (ui.drivePrompt(String.format("The robot will drive backwards and forwards for %d inches. "
+                + "Use FTC Dashboard to tune MecanumDrive.PARAMS.axialGain in the Configuration view "
+                + "so that target and actual align (typical values between 1 and 20)."
                 + "\n\nPress A to start, B to stop", DISTANCE))) {
 
             while (opModeIsActive()) {
@@ -1196,7 +1193,11 @@ public class LooneyTuner extends LinearOpMode {
                         .lineToX(0)
                         .build();
                 if (!runCancelableAction(action))
-                    return; // Exit when cancelled
+                    break;
+            }
+            if (ui.prompt("Happy with your 'axialGain' results?\n\n"
+                    + "Press A to accept, B to cancel")) {
+                acceptParameters(testParameters);
             }
         }
     }
@@ -1204,8 +1205,12 @@ public class LooneyTuner extends LinearOpMode {
     void interactiveLateralPidTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.prompt(String.format("The robot will attempt to strafe left and right for %d inches. "
-                + "Tune 'lateralGain' so that target and actual align (typical values between 1 and 20)."
+        TuneParameters testParameters = parameters.createClone();
+        MecanumDrive.PARAMS = testParameters.params;
+
+        if (ui.drivePrompt(String.format("The robot will strafe left and right for %d inches. "
+                + "Use FTC Dashboard to tune MecanumDrive.PARAMS.lateralGain in the Configuration view "
+                + "so that target and actual align (typical values between 1 and 20)."
                 + "\n\nPress A to start, B to stop", DISTANCE))) {
 
             while (opModeIsActive()) {
@@ -1214,7 +1219,11 @@ public class LooneyTuner extends LinearOpMode {
                         .strafeTo(new Vector2d(0, 0))
                         .build();
                 if (!runCancelableAction(action))
-                    return; // Exit when cancelled
+                    break;
+            }
+            if (ui.prompt("Happy with your 'lateralGain' results?\n\n"
+                    + "Press A to accept, B to cancel")) {
+                acceptParameters(testParameters);
             }
         }
     }
@@ -1222,9 +1231,13 @@ public class LooneyTuner extends LinearOpMode {
     void interactiveHeadingPidTuner() {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (ui.prompt("The robot will attempt to rotate in place "
+        TuneParameters testParameters = parameters.createClone();
+        MecanumDrive.PARAMS = testParameters.params;
+
+        if (ui.drivePrompt("The robot will rotate in place "
                 + "180° clockwise and counterclockwise. "
-                + "Tune 'headingGain' so that target and actual align (typical values between 1 and 20)."
+                + "Use FTC Dashboard to tune MecanumDrive.PARAMS.headingGain in the Configuration view "
+                + "so that target and actual align (typical values between 1 and 20)."
                 + "\n\nPress A to start, B to stop")) {
 
             while (opModeIsActive()) {
@@ -1233,7 +1246,11 @@ public class LooneyTuner extends LinearOpMode {
                         .turn(-Math.PI)
                         .build();
                 if (!runCancelableAction(action))
-                    return; // Exit when cancelled
+                    break;
+            }
+            if (ui.prompt("Happy with your 'headingGain' results?\n\n"
+                    + "Press A to accept, B to cancel")) {
+                acceptParameters(testParameters);
             }
         }
     }
@@ -1249,8 +1266,6 @@ public class LooneyTuner extends LinearOpMode {
             telemetryAdd("Press B to cancel");
             telemetryUpdate();
 
-            // Reset the pose - again - because the user has driven around in drivePrompt:
-            drive.setPose(new Pose2d(0, 0, 0));
             Action action = drive.actionBuilder(drive.pose)
                     .setTangent(Math.toRadians(60))
                     .splineToLinearHeading(new Pose2d(24, 0, Math.toRadians(90)), Math.toRadians(-60))
@@ -1269,9 +1284,6 @@ public class LooneyTuner extends LinearOpMode {
 
         if (ui.drivePrompt("To test 'trackWidthTicks', the robot will turn in-place for two complete "
                 + "rotations.\n\nPress A to start, B to cancel.")) {
-
-            // Reset after driving around:
-            drive.setPose(defaultPose);
 
             // Disable the rotational PID/Ramsete behavior so that we can test just the
             // feed-forward rotation:
@@ -1324,7 +1336,7 @@ public class LooneyTuner extends LinearOpMode {
 
         // Initialize member fields:
         ui = new Ui();
-        drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, defaultPose);
+        drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, zeroPose);
         parameters = new TuneParameters(drive);
 
         if ((drive.opticalTracker != null) &&
@@ -1366,7 +1378,7 @@ public class LooneyTuner extends LinearOpMode {
                     tests.size(), i -> tests.get(i).description);
 
             tests.get(selection).method.invoke();   // Invoke the chosen test
-            drive.setPose(defaultPose);             // Reset pose for next test
+            drive.setPose(zeroPose);                // Reset pose for next test
         }
     }
 
