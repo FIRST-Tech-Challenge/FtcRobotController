@@ -3,14 +3,11 @@
  */
 
 // @@@ Fix inPerTick
-// @@@ Get rid of non-OTOS code
-// @@@ Add saving of parameters after PID tuning
 // @@@ Revert changes to return to stock Quick Start code
 // @@@ Allow tuners to inherit current OTOS settings
 // @@@ Add LED support
 // @@@ Add stick support to menus
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
-// @@@ How to permanently update things like lateralInPerTick?
 // @@@ Figure out fastLoad for all teams.
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
@@ -649,10 +646,6 @@ public class LooneyTuner extends LinearOpMode {
         // Number of revolutions to use:
         final double REVOLUTION_COUNT = 2.0; // @@@@@@@@@@@@@@@@@
 
-
-
-
-
         // Speed of the revolutions:
         final double SPIN_POWER = 0.5;
 
@@ -782,10 +775,18 @@ public class LooneyTuner extends LinearOpMode {
         out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         // Undo the offset heading that the OTOS sensor automatically applies:
-        Point offset = new Point(center.x, center.y).rotate(-drive.PARAMS.otos.offset.h);
+        Point rawOffset = new Point(center.x, center.y).rotate(-drive.PARAMS.otos.offset.h);
+
+        // Our initial origin where we established (0, 0) at the start of every circle is much
+        // less reliable than the best-fit circle center and radius because the former uses
+        // only a single sample point while the latter uses all sample points. Consequently, make
+        // the offset fit the radius while maintaining the same angle to the center of the circle:
+        double theta = Math.atan2(rawOffset.y, rawOffset.x); // Rise-over-run
+        Point offset = new Point(Math.cos(theta) * center.radius, Math.sin(theta) * center.radius);
 
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
-        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", offset.x, offset.y, center.radius);
+        results += String.format("Circle-fit position: (%.2f, %.2f), radius: %.2f\n", rawOffset.x, rawOffset.y, center.radius);
+        results += String.format("Radius-correct position: (%.2f, %.2f)\n", rawOffset.x, rawOffset.y);
         results += String.format("Angular scalar: %.3f\n", angularScalar);
         results += String.format("Track width: %.2f\"\n", trackWidth);
         results += "\n";
@@ -1005,6 +1006,8 @@ public class LooneyTuner extends LinearOpMode {
         while (opModeIsActive() && !ui.cancel()) {
             if (ui.xButton())
                 wheelDebugger();
+            if (ui.yButton())
+                drive.setPose(new Pose2d(0, 0, 0));
 
             processGamepadDriving();
             drive.updatePoseEstimate();
@@ -1013,7 +1016,7 @@ public class LooneyTuner extends LinearOpMode {
             Pose2d pose = drive.pose;
             ui.message("Use the controller to drive the robot around.\n\n"
                     + String.format("&ensp;Pose: (%.2f\", %.2f\", %.2f\u00b0)\n", pose.position.x, pose.position.y, pose.heading.toDouble())
-                    + "\nPress X to debug motor wheels, B to cancel.");
+                    + "\nPress X to debug motor wheels, Y to reset pose, B to cancel.");
 
             Canvas c = p.fieldOverlay();
             c.setStroke("#3F51B5");
