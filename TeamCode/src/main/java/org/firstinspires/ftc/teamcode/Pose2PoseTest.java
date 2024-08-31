@@ -29,6 +29,10 @@ public class Pose2PoseTest extends LinearOpMode {
         return deg * Math.PI / 180;
     }
 
+    private static double rad2deg(double rad) {
+        return rad * 180 / Math.PI;
+    }
+
     @SuppressLint("DefaultLocale") // Android Lint should ignore warnings for DefaultLocale
     @Override
     public void runOpMode() {
@@ -136,7 +140,7 @@ public class Pose2PoseTest extends LinearOpMode {
             telemetry.addData("x", p.x()); // Print y attribute of pose
             telemetry.addData("y", p.y()); // Print x attribute of pose
             telemetry.addData("heading (rad)", p.heading()); // Print the heading in radians
-            telemetry.addData("heading (deg)", p.heading() * 180 / Math.PI); // Print the heading in degrees
+            telemetry.addData("heading (deg)", rad2deg(p.heading())); // Print the heading in degrees
             telemetry.addLine(); // Add space for format
             // Print the loop time for via ticks
             telemetry.addLine(String.format("Loop time: %.2fms", ticker.getAvg() * 1000));
@@ -148,7 +152,7 @@ public class Pose2PoseTest extends LinearOpMode {
             telemetry.addData("x", tracker.getPose().x()); // Print x attribute for pose
             telemetry.addData("y", tracker.getPose().y()); // Print y attribute for pose
             telemetry.addData("heading (rad)", tracker.getPose().heading()); // Print the heading in radians
-            telemetry.addData("heading (deg)", tracker.getPose().heading() * 180 / Math.PI); // Print the heading in degrees
+            telemetry.addData("heading (deg)", rad2deg(tracker.getPose().heading())); // Print the heading in degrees
             telemetry.addLine(String.format("While running: %.2fms per loop", ticker.getAvg() * 1000));
             telemetry.update();
         }
