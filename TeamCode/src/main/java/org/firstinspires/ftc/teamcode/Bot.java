@@ -29,6 +29,8 @@ public class Bot extends RobotDrive{
         intake = (DcMotor) hardwareMap.dcMotor.get("intake"); //port 1 EH - PURPLE
         rr = (DcMotorEx) hardwareMap.dcMotor.get("rr"); // rigging right, port 3 CH - DARK GREEN
         rl = (DcMotorEx) hardwareMap.dcMotor.get("rl"); // rigging left, port 2 CH - LIGHT GREEN
+        rl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         servoTransfer = hardwareMap.servo.get("transfer"); // port 3 EH, Transfer
@@ -58,17 +60,34 @@ public class Bot extends RobotDrive{
 
     //rigging
     public void rig() {
-        // up: 0.7
-        // down:
-        double position = 0.0;
-        if (position != 0.7) {
-            position = 0.7;
-        } else {
-            position = 0.0;
-        }
 
-        servoHL.setPosition(position);
-        servoHR.setPosition(position);
+        double targetServo = 0.73;
+        int targetPos = 1;//Top height for rig
+        if (servoHL.getPosition() < 0.73){
+           rr.setTargetPosition(targetPos);//up
+           rl.setTargetPosition(targetPos);
+           rl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+           rr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+           servoHL.setPosition(targetServo);//servo pos
+           servoHR.setPosition(targetServo);
+           rr.setTargetPosition(0);//down
+           rl.setTargetPosition(0);
+           rl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+           rr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        }
+        else if(servoHL.getPosition() >= 0.73){
+            rr.setTargetPosition(targetPos);//up
+            rl.setTargetPosition(targetPos);
+            rl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            servoHL.setPosition(0);//servo pos
+            servoHR.setPosition(0);
+            rr.setTargetPosition(0);//down
+            rl.setTargetPosition(0);
+            rl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     //intakeonoff
