@@ -41,7 +41,8 @@ public class Pose2PoseTest extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime(); // Set timer object to reference the ElapsedTime object
         ElapsedTime targetTime = new ElapsedTime(); // Set targetTime to reference the ElapsedTime object
         LoopStopwatch ticker = new LoopStopwatch(); // Set ticker to reference the LoopStopwatch object
-        PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN); // Set pftp to reference the PFTP object, set pose to (x, y, angle) --> (0, 0, 0)
+        // Set pftp to reference the PFTP object, set pose to (x, y, angle) --> (0, 0, 0)
+        PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
         Motion lastAction = null; // Store the previous action as empty (No actions have been recorded yet)
         Speed2Power speed2Power = new Speed2Power(0.15); // Set a speed2Power corresponding to a speed of 0.15 seconds
         Easing easingFunction = new Easing(
@@ -53,13 +54,13 @@ public class Pose2PoseTest extends LinearOpMode {
 
         waitForStart(); // Wait for start button
 
-        targetTime.reset();
+        targetTime.reset(); // Restart times to prep for counting
         timer.reset();
         boolean wait = false;
-        ticker.clear();
+        ticker.clear(); // Restart ticks
 
         while (opModeIsActive()) {
-            ticker.click();
+            ticker.click(); // Increment tick
             // Updates pose
             tracker.step();
             // Gets current pose
@@ -103,7 +104,7 @@ public class Pose2PoseTest extends LinearOpMode {
                         dToTarget,
                         0.75
                 );
-                double power = speed2Power.speed2power(speed);
+                double power = speed2Power.speed2power(speed); // Get power required to move at speed "speed"
                 action.apply(hardware.driveMotors, CALIBRATION, power);
                 lastAction = action;
             }
@@ -114,21 +115,22 @@ public class Pose2PoseTest extends LinearOpMode {
             } else {
                 telemetry.addLine("go");
             }
-            telemetry.addData("x", p.x());
-            telemetry.addData("y", p.y());
-            telemetry.addData("heading (rad)", p.heading());
-            telemetry.addData("heading (deg)", p.heading() * 180 / Math.PI);
-            telemetry.addLine();
+            telemetry.addData("x", p.x()); // Print y attribute of pose
+            telemetry.addData("y", p.y()); // Print x attribute of pose
+            telemetry.addData("heading (rad)", p.heading()); // Print the heading in radians
+            telemetry.addData("heading (deg)", p.heading() * 180 / Math.PI); // Print the heading in degrees
+            telemetry.addLine(); // Add space for format
+            // Print the loop time for via ticks
             telemetry.addLine(String.format("Loop time: %.2fms", ticker.getAvg() * 1000));
             telemetry.update();
         }
         while (opModeIsActive()) {
             hardware.driveMotors.setAll(0);
             telemetry.addLine("done");
-            telemetry.addData("x", tracker.getPose().x());
-            telemetry.addData("y", tracker.getPose().y());
-            telemetry.addData("heading (rad)", tracker.getPose().heading());
-            telemetry.addData("heading (deg)", tracker.getPose().heading() * 180 / Math.PI);
+            telemetry.addData("x", tracker.getPose().x()); // Print x attribute for pose
+            telemetry.addData("y", tracker.getPose().y()); // Print y attribute for pose
+            telemetry.addData("heading (rad)", tracker.getPose().heading()); // Print the heading in radians
+            telemetry.addData("heading (deg)", tracker.getPose().heading() * 180 / Math.PI); // Print the heading in degrees
             telemetry.addLine(String.format("While running: %.2fms per loop", ticker.getAvg() * 1000));
             telemetry.update();
         }
