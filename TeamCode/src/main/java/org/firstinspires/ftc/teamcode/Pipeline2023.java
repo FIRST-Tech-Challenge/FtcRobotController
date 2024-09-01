@@ -15,6 +15,8 @@ public class Pipeline2023 extends OpenCvPipeline {
     Mat mask = new Mat();
 
     public static String colorString;
+    public int middleResult;
+    public int rightResult;
 
     private static double colorScale = 0.75;
 
@@ -87,20 +89,19 @@ public class Pipeline2023 extends OpenCvPipeline {
         // 0 - Left
         // 1 - Middle
         // 2 - Right
-        int leftResult = findWhiteCount(mask,0,mask.width()/3);
-        int middleResult = findWhiteCount(mask, mask.width()/3, mask.width()/3);
-        int rightResult = findWhiteCount(mask, mask.width()*2/3, mask.width()/3);
+        middleResult = findWhiteCount(mask, 0, mask.width()*2/3);
+        rightResult = findWhiteCount(mask, mask.width()*2/3, mask.width()/3);
+        int duckieMiddle = 1800;
+        int duckieRight = 2400;
+        if (useBlue) {
+            duckieMiddle = 600;
+            duckieRight = 1200;
+        }
+        if  (rightResult > duckieRight)         return 2;
 
-        if ((leftResult > middleResult) && (leftResult > rightResult)) {
-            return 0;
-        }
+        else if (middleResult > duckieMiddle)    return 1;
 
-        else if  ((rightResult > leftResult) && (rightResult > middleResult)) {
-            return 2;
-        }
-        else {
-            return 1;
-        }
+        else return 0;
     }
 
     private int findWhiteCount(Mat roi,int start,int width) {
@@ -114,7 +115,12 @@ public class Pipeline2023 extends OpenCvPipeline {
         }
         return count;
     }
-
+public int getMiddleResult(){
+        return middleResult;
+}
+public int getRightResult(){
+        return rightResult;
+}
     public int getResultROI()
     {
         return resultROI;

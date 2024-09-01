@@ -59,7 +59,7 @@ public class MecanumDrive2024 extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.11;
+    public static double LATERAL_MULTIPLIER = 1.12;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -75,7 +75,7 @@ public class MecanumDrive2024 extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    //private BNO055IMU imu;
+    ///private BNO055IMU imu;
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
@@ -311,11 +311,13 @@ public class MecanumDrive2024 extends MecanumDrive {
     @Override
     public double getRawExternalHeading() {
         return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        //return 0.0;
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
         return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+        //return 0.0;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

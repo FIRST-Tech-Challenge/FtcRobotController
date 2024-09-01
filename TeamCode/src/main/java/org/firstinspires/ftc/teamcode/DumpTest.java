@@ -38,6 +38,8 @@ public class DumpTest extends LinearOpMode {
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private Servo dump = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
+    private DcMotor arm1 = null;
+
 
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
@@ -79,6 +81,8 @@ public class DumpTest extends LinearOpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
+        arm1 = hardwareMap.get(DcMotor.class, "arm1");
+
         //gripper = hardwareMap.get(Servo.class, "gripper");
         dump = hardwareMap.get(Servo.class, "Dump");
 
@@ -115,7 +119,7 @@ public class DumpTest extends LinearOpMode {
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
         moveUtils.resetEncoders();
 
-        actuatorUtils.initializeActuator(arm, gripper, dump);
+        actuatorUtils.initializeActuator(arm, arm1, gripper, dump, null);
 
 
         Long startTime = System.currentTimeMillis();
@@ -134,72 +138,24 @@ public class DumpTest extends LinearOpMode {
 
 
         waitForStart();
-        actuatorUtils.dumpOpen();
-        sleep(2000);
-        actuatorUtils.dumpClose();
         currTime=System.currentTimeMillis();
         startTime=currTime;
-        if (resultROI == 3) {
+        resultROI = 0;
 
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            done = false;
-            while (!done && opModeIsActive()) {
-                if (currTime - startTime < 100) {
-                    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
-                } else {
-                    telemetry.addData("Time Delta: ", (currTime - startTime));
-                    resultROI = modifyPipeline.getResultROI();
-                    if (resultROI == 0) {
-                        telemetry.addData("Resulting ROI: ", "Left");
-                        done = true;
-                    } else if (resultROI == 1) {
-                        telemetry.addData("Resulting ROI: ", "Middle");
-                        done = true;
-                    } else if (resultROI == 2) {
-                        telemetry.addData("Resulting ROI: ", "Right");
-                        done = true;
-                    } else {
-                        telemetry.addData("Resulting ROI: ", "Something went wrong.");
-                    }
-                }
-                telemetry.update();
-                currTime = System.currentTimeMillis();
 
-            }
 
-        }
+
         telemetry.update();
-        done = true;
+        done = false;
         //lift arm up
-        actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE);
+        //actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE);
         while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
-            switch (resultROI) {
-                case 1:
-                    // Far left
-                    beginAuto();
-                    moveUtils.strafeBuddy(-23);
-                    moveUtils.goStraight(28f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
-                    done=true;
-                    break;
-                case 2:
-                    // Middle
-                    beginAuto();
-                    moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
-                    done=true;
-                    break;
-                case 3:
-                    // Far right
-                    beginAuto();
-                    moveUtils.strafeBuddy(24);
-                    moveUtils.goStraight(28,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
-                    done=true;
-                    break;
-            }
+            actuatorUtils.dumpOpen();
+            sleep(2000);
+            actuatorUtils.dumpClose();
+            sleep(2000);
+
 
             currTime = System.currentTimeMillis();
 

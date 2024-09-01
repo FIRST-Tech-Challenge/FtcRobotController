@@ -12,8 +12,11 @@ public class actuatorUtils {
     private static DcMotor RF = null; //declare right front motor
     private static DcMotor RB = null; //declare right back motor
     private static DcMotor arm = null; //declare arm
+    private static DcMotor arm1 = null; //declare arm
+
     private static Servo gripper = null; //declare gripper
     private static Servo dump = null; //declare dump
+    private static Servo elbow = null; //declare dump
     //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 300; //Minimum so string on arm lift doesn't break and position 0
@@ -41,16 +44,21 @@ public class actuatorUtils {
     }
 
     //Initialize actuators
-    public static void initializeActuator(DcMotor arm, Servo gripper, Servo dump) {
+    public static void initializeActuator(DcMotor arm,DcMotor arm1, Servo gripper, Servo dump, Servo elbow) {
         actuatorUtils.arm = arm;
+        actuatorUtils.arm1 = arm1;
         actuatorUtils.gripper = gripper;
         actuatorUtils.dump = dump;
+        actuatorUtils.elbow = elbow;
 
     }
     public static void initializeActuator(DcMotor arm, Servo gripper) {
         actuatorUtils.arm = arm;
         actuatorUtils.gripper = gripper;
         actuatorUtils.dump = null;
+        arm.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -74,6 +82,7 @@ public class actuatorUtils {
         RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Just a little time to make sure encoders have reset
         //sleep(200);
@@ -112,6 +121,12 @@ public class actuatorUtils {
     public static void gripperOpen(boolean liftDown) throws InterruptedException {
         gripperOpen(liftDown, true);
     }
+    public static void gripperOpen() {
+        gripper.setPosition(0.09);
+    }
+    public static void gripperClose() {
+        gripper.setPosition(0.0);
+    }
     public static void gripperOpen(boolean liftDown, boolean doSleep) throws InterruptedException {
         if (doSleep)
             sleep(500);
@@ -125,15 +140,15 @@ public class actuatorUtils {
         }
     }
 
-    public static void dumpClose() throws InterruptedException {
+    public static void dumpClose()  {
         dump.setPosition(1); //Position that grabs cone tightly
 
     }
 
     //Method to open gripper
 
-    public static void dumpOpen() throws InterruptedException {
-        dump.setPosition(0.21); //Position to open gripper
+    public static void dumpOpen() {
+        dump.setPosition(0.1); //Position to open gripper
     }
     //Method to move arm to pole heights
     public static void armPole(ArmLevel desiredHeight) throws InterruptedException {
@@ -150,6 +165,29 @@ public class actuatorUtils {
         else
             newHeight = ArmLevel.HIGH_POLE;
         armPole(newHeight, true);
+    }
+    public static void armBoard() {
+        arm.setTargetPosition(100);
+        arm1.setTargetPosition(100);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        arm1.setPower(0.5);
+
+    }
+    public static void noArmBoard() {
+        arm.setTargetPosition(0);
+        arm1.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        arm1.setPower(0.5);
+    }
+    public static void noElbowBoard() {
+        elbow.setPosition(1);
+    }
+    public static void elbowBoard() {
+        elbow.setPosition(0.6);
     }
     public static void armPole(ArmLevel desiredHeight, boolean doSleep) throws InterruptedException {
         if (desiredHeight == ArmLevel.LOW_POLE)
