@@ -634,8 +634,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Sleep a specified number of seconds.
      * @param seconds The amount of seconds to sleep. **/
-    public final void s (double seconds){ sleep((long) seconds * 1000);
-    }
+    public final void s (double seconds){ sleep((long) seconds * 1000);}
 
     /** Place the purple pixel. **/
     public void purplePixel() {
@@ -728,7 +727,5 @@ public abstract class Base extends LinearOpMode {
    public void print(String caption, Object content) { print(caption, content, false); }
 
    /** A less space consuming way to update the displayed telemetry. **/
-  public void update() {
-       telemetry.update();
-  }
+  public void update() {telemetry.update();}
 }
