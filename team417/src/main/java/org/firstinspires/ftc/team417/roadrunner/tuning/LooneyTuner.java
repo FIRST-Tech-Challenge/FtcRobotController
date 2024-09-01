@@ -30,6 +30,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -53,6 +54,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team417.roadrunner.Drawing;
 import org.firstinspires.ftc.team417.roadrunner.MecanumDrive;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -1174,6 +1176,120 @@ public class LooneyTuner extends LinearOpMode {
         // We're done, undo any temporary state we set:
         MecanumDrive.PARAMS = parameters.params;
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
+    }
+
+    /**
+     * Class to handle gamepad input of config parameter decimal numbers, with fractions.
+     */
+    class ParamInput {
+        final double INITIAL_DELAY = 0.6;
+        final double REPEAT_DELAY = 0.3;
+
+        String fieldName;
+        Field field;
+        double value;
+        int digit;
+        String message;
+        int lastInput;
+        double nextAdvanceTime;
+
+        ParamInput(MecanumDrive.Params params, String fieldName, int startDigit, String message) {
+            this.fieldName = fieldName;
+            this.digit = startDigit;
+            this.message = message;
+            try {
+                field = params.getClass().getDeclaredField(fieldName);
+                field.setAccessible(true);
+                value = (double) field.get(MecanumDrive.PARAMS);
+            } catch (IllegalAccessException|NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        void update() {
+            telemetryAdd(String.format("Updating %s.\n\n", fieldName)
+                + message
+                + "Move left-stick up or down to change %s's value.\n\n");
+
+            String showValue = String.format("%.3f", value);
+            int digitOffset = (digit > 0) ? 1 - digit : -digit;
+            int digitIndex = showValue.indexOf(".") + digitOffset;
+            showValue = showValue.substring(0, decimalIndex)
+
+
+            telemetryAdd("Press the right shoulder button to make it more precise, left shoulder to be "
+                + "less precise, X to switch variables, B to cancel.");
+            telemetryUpdate();
+
+            int input = (int) (gamepad1.left_stick_y / 0.7);
+            if (input != lastInput) {
+                nextAdvanceTime = time() +
+            }
+
+
+        }
+    }
+
+    // Types of interactive PiD tuners:
+    enum PidTunerType { AXIAL, LATERAL, HEADING }
+
+    // Adjust the Ramsete/PID values:
+    void interactivePidTuner(PidTunerType type) {
+        useDrive(true); // Do use MecanumDrive/TankDrive
+
+        TuneParameters testParameters = parameters.createClone();
+        MecanumDrive.PARAMS = testParameters.params;
+
+        String prompt;
+        String gainName;
+        String velGainName;
+
+        TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
+        if (type == PidTunerType.AXIAL) {
+            prompt = String.format("The robot will drive backwards and forwards for %d inches. "
+                    + "Use FTC Dashboard to tune MecanumDrive.PARAMS.axialGain in the Configuration view "
+                    + "so that target and actual align (typical values between 1 and 20).", DISTANCE);
+            trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
+            gainName = "axialGain";
+            velGainName = "axialVelGain";
+
+        } else if (type == PidTunerType.LATERAL) {
+            prompt = String.format("The robot will strafe left and right for %d inches. "
+                    + "Use FTC Dashboard to tune MecanumDrive.PARAMS.lateralGain in the Configuration view "
+                    + "so that target and actual align (typical values between 1 and 20).", DISTANCE);
+            trajectory = trajectory.strafeTo(new Vector2d(0, DISTANCE)).strafeTo(new Vector2d(0, 0));
+            gainName = "lateralGain";
+            velGainName = "lateralVelGain";
+
+        } else {
+            prompt = String.format("The robot will rotate in place "
+                    + "180° clockwise and counterclockwise. "
+                    + "Use FTC Dashboard to tune MecanumDrive.PARAMS.headingGain in the Configuration view "
+                    + "so that target and actual align (typical values between 1 and 20).", DISTANCE);
+            trajectory = trajectory.turn(Math.PI).turn(-Math.PI);
+            gainName = "headingGain";
+            velGainName = "headingVelGain";
+        }
+        if (ui.drivePrompt(prompt + "\n\nPress A to start, B to cancel")) {
+            ParamInput gainInput = new ParamInput(drive.PARAMS, gainName, 0, "");
+            ParamInput velGainInput = new ParamInput(drive.PARAMS, velGainName, 0, "");
+
+            drive.runParallel(trajectory.build());
+            while (opModeIsActive() && !ui.cancel()) {
+                TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
+                gainInput.update();
+                boolean more = drive.doActionsWork(packet);
+                MecanumDrive.sendTelemetryPacket(packet);
+                if (!more)
+                    // We successfully completed the Action!
+                    break; // ====>
+            }
+            // The user either pressed Cancel or End:
+            drive.abortActions();
+            stopMotors();
+        }
+        if (ui.prompt("Happy with your results?\n\nPress A to accept, B to cancel")) {
+            acceptParameters(testParameters);
+        }
     }
 
     void interactiveAxialPidTuner() {
