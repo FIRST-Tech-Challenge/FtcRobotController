@@ -11,7 +11,6 @@
 // @@@ Figure out fastLoad for all teams.
 // @@@ Show old values, amount of change for: lateralInPerTick
 // @@@ Fix rotation gain adjustment
-// @@@ Fix bad voltage in spin test
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -648,11 +647,8 @@ public class LooneyTuner extends LinearOpMode {
     void spinTuner() {
         assert(drive.opticalTracker != null);
 
-        // Number of revolutions to use:
-        final double REVOLUTION_COUNT = 10.0;
-
-        // Speed of the revolutions:
-        final double SPIN_POWER = 0.5;
+        final double REVOLUTION_COUNT = 10.0; // Number of revolutions to use
+        final double SPIN_POWER = 0.5; // Speed of the revolutions
 
         useDrive(true); // Use MecanumDrive/TankDrive
 
@@ -680,12 +676,9 @@ public class LooneyTuner extends LinearOpMode {
                 rampMotorsSpin(drive, SPIN_POWER);
 
                 // Prepare for calculating how far the wheels have traveled:
-                double voltage = drive.voltageSensor.getVoltage();
-                double wheelVelocity = (SPIN_POWER * voltage - drive.PARAMS.kS) /
-                        (drive.PARAMS.kV / drive.PARAMS.inPerTick); // Velocity in inches per second
+                double voltageSum = 0;
+                int voltageSamples = 0;
                 double startTime = time();
-
-                out.printf("Velocity: %.2f inches/s\n", wheelVelocity); // @@@
 
                 // Do some preparation for termination:
                 final double terminationRotation = REVOLUTION_COUNT * 2 * Math.PI;
@@ -702,10 +695,13 @@ public class LooneyTuner extends LinearOpMode {
 
                 // Now do all of the full-speed spins:
                 boolean success = false;
-                while (opModeIsActive() && !ui.cancel()) {
-                    double offsetRotation = getSparkFunRotation() - offsetStartRotation;
+                do {
+                    // Sample the voltage to compute an average later:
+                    voltageSum += drive.voltageSensor.getVoltage();
+                    voltageSamples++;
 
                     // Check if we're at the start of a new circle:
+                    double offsetRotation = getSparkFunRotation() - offsetStartRotation;
                     if (offsetRotation >= nextCircleRotation) {
                         // Remember the raw position as the start of the new circle:
                         originPosition = rawPosition;
@@ -737,7 +733,7 @@ public class LooneyTuner extends LinearOpMode {
                     // Update for next iteration of the loop:
                     Pose2D rawPose = updateRotationAndGetPose();
                     rawPosition = new Point(rawPose.x, rawPose.y);
-                }
+                } while (opModeIsActive() && !ui.cancel());
 
                 double endTime = time();
 
@@ -754,8 +750,14 @@ public class LooneyTuner extends LinearOpMode {
                     drawSpinPoints(points, circle);
 
                     updateRotationAndGetPose();
+                    double averageVoltage = voltageSum / voltageSamples;
+                    double averageVelocity = (SPIN_POWER * averageVoltage - drive.PARAMS.kS) /
+                            (drive.PARAMS.kV / drive.PARAMS.inPerTick); // Velocity in inches per second
+
+                    out.printf("Average voltage: %.2f, Velocity: %.2f inches/s\n", averageVoltage, averageVelocity); // @@@
+
                     double totalMeasuredRotation = getSparkFunRotation() - scalarStartRotation;
-                    double distancePerRevolution = wheelVelocity * (endTime - startTime) / REVOLUTION_COUNT;
+                    double distancePerRevolution = averageVelocity * (endTime - startTime) / REVOLUTION_COUNT;
                     processSpinResults(circle, totalMeasuredRotation, distancePerRevolution);
                 }
             }
@@ -1318,9 +1320,7 @@ public class LooneyTuner extends LinearOpMode {
 
         TuneParameters testParameters = parameters.createClone();
         MecanumDrive.PARAMS = testParameters.params;
-        String prompt;
-        String gainName;
-        String velGainName;
+        String prompt, gainName, velGainName;
 
         TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
         if (type == PidTunerType.AXIAL) {
