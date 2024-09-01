@@ -50,7 +50,7 @@ public abstract class Base extends LinearOpMode {
             WHEEL_DIAMETER_INCHES = 3.77953;     // Default value
         }
     }
-    static final double     COUNTS_PER_MOTOR_REV    = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0) ;
+    static final double     COUNTS_PER_MOTOR_REV    = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0);
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     TILE_LENGTH             = 23.25;
@@ -557,7 +557,7 @@ public abstract class Base extends LinearOpMode {
      * @return (double) The X coordinate of the team prop. **/
     private double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-        for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {
+        for (int i = 0; i < 5 && currentRecognitions.isEmpty(); i++) {
             sleep(100);
             currentRecognitions = tfod.getRecognitions();
         }
