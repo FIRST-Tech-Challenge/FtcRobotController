@@ -106,17 +106,20 @@ public class Pose2PoseTest extends LinearOpMode {
                         dToTarget,
                         0.75
                 );
-                double power = speed2Power.speed2power(speed); // Get power required to move at speed "speed"
-                action.apply(hardware.driveMotors, CALIBRATION, power);
+                action.apply(hardware.driveMotors, CALIBRATION, speed, speed2Power);
                 telemetry.addData("forward", action.forward());
                 telemetry.addData("right", action.right());
                 telemetry.addData("turn (deg)", Math.toDegrees(action.turn()));
                 String message = String.format(
-                        "##{\"step\":%d,\"pose\":[%.6f,%.6f,%.6f],\"motion\":[%.6f,%.6f,%.6f],\"speed\":%.6f,\"power\":%.6f,\"dToTarget\":%.6f,\"timer\":%.4f,\"avgTickTime\":%.6f}##",
+                        "##%.3f##{\"step\":%d,\"pose\":[%.6f,%.6f,%.6f],\"motion\":[%.6f,%.6f,%.6f],\"speed\":%.6f," +
+                                "\"frontLeft\":%.6f,\"frontRight\":%.6f,\"backLeft\":%.6f,\"backRight\":%.6f," +
+                                "\"dToTarget\":%.6f,\"timer\":%.4f,\"avgTickTime\":%.6f}##",
+                        System.currentTimeMillis() / 1000.0,
                         targetIndex,
                         p.x(), p.y(), p.heading(),
                         action.forward(), action.right(), action.turn(),
-                        speed, power,
+                        speed,
+                        action.getLastFL(), action.getLastFR(), action.getLastBL(), action.getLastBR(),
                         dToTarget, now,
                         ticker.getAvg() * 1000
                 );

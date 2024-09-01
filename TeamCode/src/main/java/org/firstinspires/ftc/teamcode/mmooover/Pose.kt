@@ -90,10 +90,10 @@ data class Motion(
         turn.toDouble()
     )
 
-    private var lastFL: Double = 0.0
-    private var lastFR: Double = 0.0
-    private var lastBL: Double = 0.0
-    private var lastBR: Double = 0.0
+    var lastFL: Double = 0.0; private set
+    var lastFR: Double = 0.0; private set
+    var lastBL: Double = 0.0; private set
+    var lastBR: Double = 0.0; private set
 
     fun getPowerDifferential(): Double {
         return (lastFR + lastBR) - (lastFL + lastBL)
@@ -106,7 +106,7 @@ data class Motion(
      * @param factor overall speed factor. applied after all other calculations.
      */
     @JvmOverloads
-    fun apply(motors: MotorSet, calibration: Calibrate, factor: Number = 1.0) {
+    fun apply(motors: MotorSet, calibration: Calibrate, factor: Number = 1.0, s2p: Speed2Power) {
         val fwBias = calibration.preferForward
         val rtBias = calibration.preferStrafe
         val turnBias = calibration.preferTurn
@@ -124,6 +124,10 @@ data class Motion(
         fr *= factorD
         bl *= factorD
         br *= factorD
+        fl = s2p.speed2power(fl)
+        fr = s2p.speed2power(fr)
+        bl = s2p.speed2power(bl)
+        br = s2p.speed2power(br)
         lastFL = fl; lastFR = fr; lastBL = bl; lastBR = br
         motors.set(fl, fr, bl, br);
     }
