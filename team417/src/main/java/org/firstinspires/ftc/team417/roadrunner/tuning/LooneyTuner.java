@@ -229,7 +229,7 @@ public class LooneyTuner extends LinearOpMode {
      */
     class Ui {
         // Button press state:
-        private final boolean[] buttonPressed = new boolean[6];
+        private final boolean[] buttonPressed = new boolean[8];
         private boolean buttonPress(boolean pressed, int index) {
             boolean press = pressed && !buttonPressed[index];
             buttonPressed[index] = pressed;
@@ -241,20 +241,22 @@ public class LooneyTuner extends LinearOpMode {
         boolean cancel() { return buttonPress(gamepad1.b, 1); }
         boolean xButton() { return buttonPress(gamepad1.x, 2); }
         boolean yButton() { return buttonPress(gamepad1.y, 3); }
-        boolean up() { return buttonPress(gamepad1.dpad_up, 4); }
-        boolean down() { return buttonPress(gamepad1.dpad_down, 5); }
+        boolean dpadUp() { return buttonPress(gamepad1.dpad_up, 4); }
+        boolean dpadDown() { return buttonPress(gamepad1.dpad_down, 5); }
+        boolean leftBumper() { return buttonPress(gamepad1.left_bumper, 6); }
+        boolean rightBumper() { return buttonPress(gamepad1.right_bumper, 7); }
 
         // Display the menu:
         /** @noinspection SameParameterValue, StringConcatenationInLoop */
         int menu(String header, int current, boolean topmost, int numStrings, MenuStrings menuStrings) {
             while (opModeIsActive()) {
                 String output = "";
-                if (up()) {
+                if (dpadUp()) {
                     current--;
                     if (current < 0)
                         current = 0;
                 }
-                if (down()) {
+                if (dpadDown()) {
                     current++;
                     if (current == numStrings)
                         current = numStrings - 1;
@@ -1179,53 +1181,85 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     /**
-     * Class to handle gamepad input of config parameter decimal numbers, with fractions.
+     * Class to handle gamepad input of decimal numbers.
      */
-    class ParamInput {
+    class DecimalInput {
         final double INITIAL_DELAY = 0.6;
         final double REPEAT_DELAY = 0.3;
 
         String fieldName;
+        int digit;
+        int decimalDigits;
+        String showFormat;
+        double minValue;
+        double maxValue;
+        String message;
         Field field;
         double value;
-        int digit;
-        String message;
-        int lastInput;
+        int lastThumbStick;
         double nextAdvanceTime;
 
-        ParamInput(MecanumDrive.Params params, String fieldName, int startDigit, String message) {
+        DecimalInput(Object object, String fieldName, int startDigit, int decimalDigits, double minValue, double maxValue, String message) {
             this.fieldName = fieldName;
             this.digit = startDigit;
+            this.decimalDigits = decimalDigits;
+            this.showFormat = String.format("%%.%df", decimalDigits);
+            this.minValue = minValue;
+            this.maxValue = maxValue;
             this.message = message;
+
             try {
-                field = params.getClass().getDeclaredField(fieldName);
+                field = object.getClass().getDeclaredField(fieldName);
                 field.setAccessible(true);
-                value = (double) field.get(MecanumDrive.PARAMS);
-            } catch (IllegalAccessException|NoSuchFieldException e) {
+                //noinspection DataFlowIssue
+                value = (double) field.get(object);
+            } catch (IllegalAccessException|NoSuchFieldException|NullPointerException e) {
                 throw new RuntimeException(e);
             }
         }
         void update() {
-            telemetryAdd(String.format("Updating %s.\n\n", fieldName)
-                + message
-                + "Move left-stick up or down to change %s's value.\n\n");
+            telemetryAdd(String.format("Updating %s.\n\n", fieldName) + message
+                    + "Move left-stick up or down to change %s's value.\n\n");
 
-            String showValue = String.format("%.3f", value);
-            int digitOffset = (digit > 0) ? 1 - digit : -digit;
-            int digitIndex = showValue.indexOf(".") + digitOffset;
-            showValue = showValue.substring(0, decimalIndex)
-
-
-            telemetryAdd("Press the right shoulder button to make it more precise, left shoulder to be "
-                + "less precise, X to switch variables, B to cancel.");
-            telemetryUpdate();
-
-            int input = (int) (gamepad1.left_stick_y / 0.7);
-            if (input != lastInput) {
-                nextAdvanceTime = time() +
+            if (ui.leftBumper()) {
+                digit = Math.min(digit + 1, 2);
+            }
+            if (ui.rightBumper()) {
+                digit = Math.max(digit - 1, -decimalDigits);
             }
 
+            // Advance the value according to the thumb stick state:
+            int thumbStick = (int) (gamepad1.left_stick_y / 0.7); // -1, 0 or 1
+            if (thumbStick != lastThumbStick) {
+                nextAdvanceTime = time() + INITIAL_DELAY;
+                lastThumbStick = thumbStick;
+                value += lastThumbStick * Math.pow(10, digit);
+            } else if (time() > time()) {
+                nextAdvanceTime = time() + REPEAT_DELAY;
+                value += lastThumbStick * Math.pow(10, digit);
+            }
 
+            // Show the new value:
+            String showValue = String.format(showFormat, value);
+            int digitOffset = (digit > 0) ? 1 - digit : -digit;
+            int digitIndex = showValue.indexOf(".") + digitOffset;
+            digitIndex = Math.max(0, Math.min(digitIndex, showValue.length() - 1));
+            String prefix = showValue.substring(0, digitIndex);
+            String middle = showValue.substring(digitIndex, digitIndex + 1);
+            String suffix = showValue.substring(digitIndex + 1);
+
+            // Highlight the focus digit:
+            middle = "<b>" + middle + "</b>";
+
+            // Blink the underline every half second:
+            if ((((int) (time() * 2)) & 1) != 0) {
+                middle = "<u>" + middle + "</u>";
+            }
+
+            telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
+            telemetryAdd("\n\nPress the right bumper to make it more precise, left bumper "
+                + "less precise, X to switch variables, B to cancel.");
+            telemetryUpdate();
         }
     }
 
@@ -1261,29 +1295,31 @@ public class LooneyTuner extends LinearOpMode {
             velGainName = "lateralVelGain";
 
         } else {
-            prompt = String.format("The robot will rotate in place "
-                    + "180° clockwise and counterclockwise. "
+            prompt = "The robot will rotate in place 180° clockwise and counterclockwise. "
                     + "Use FTC Dashboard to tune MecanumDrive.PARAMS.headingGain in the Configuration view "
-                    + "so that target and actual align (typical values between 1 and 20).", DISTANCE);
+                    + "so that target and actual align (typical values between 1 and 20).";
             trajectory = trajectory.turn(Math.PI).turn(-Math.PI);
             gainName = "headingGain";
             velGainName = "headingVelGain";
         }
         if (ui.drivePrompt(prompt + "\n\nPress A to start, B to cancel")) {
-            ParamInput gainInput = new ParamInput(drive.PARAMS, gainName, 0, "");
-            ParamInput velGainInput = new ParamInput(drive.PARAMS, velGainName, 0, "");
+            int inputIndex = 0;
+            DecimalInput[] inputs = {
+                new DecimalInput(drive.PARAMS, gainName, 0, 3, 0, 20, ""),
+                new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20, "")
+            };
 
+            boolean more = true;
             drive.runParallel(trajectory.build());
-            while (opModeIsActive() && !ui.cancel()) {
+            while (opModeIsActive() && !ui.cancel() && more) {
+                if (ui.xButton())
+                    inputIndex ^= 1; // Toggle the index
+
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
-                gainInput.update();
-                boolean more = drive.doActionsWork(packet);
+                inputs[inputIndex].update(); // Update gain variable
+                more = drive.doActionsWork(packet); // Drive some more
                 MecanumDrive.sendTelemetryPacket(packet);
-                if (!more)
-                    // We successfully completed the Action!
-                    break; // ====>
             }
-            // The user either pressed Cancel or End:
             drive.abortActions();
             stopMotors();
         }
@@ -1471,9 +1507,9 @@ public class LooneyTuner extends LinearOpMode {
             tests.add(new Test(this::lateralTuner, "Lateral tuner (lateralInPerTick)"));
             tests.add(new Test(this::acceleratingStraightLineTuner, "Accelerating straight line tuner (kS and kV)"));
             tests.add(new Test(this::interactiveFeedForwardTuner, "Interactive feed forward tuner (kV and kA)"));
-            tests.add(new Test(this::interactiveAxialPidTuner, "Interactive PiD tuner (axialGain)"));
-            tests.add(new Test(this::interactiveLateralPidTuner, "Interactive PiD tuner (lateralGain)"));
-            tests.add(new Test(this::interactiveHeadingPidTuner, "Interactive PiD tuner (headingGain)"));
+            tests.add(new Test(()->interactivePidTuner(PidTunerType.AXIAL), "Interactive PiD tuner (axialGain)"));
+            tests.add(new Test(()->interactivePidTuner(PidTunerType.LATERAL), "Interactive PiD tuner (lateralGain)"));
+            tests.add(new Test(()->interactivePidTuner(PidTunerType.HEADING), "Interactive PiD tuner (headingGain)"));
             tests.add(new Test(this::rotationTest, "Rotation test (verify trackWidthTicks)"));
             tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
         }
