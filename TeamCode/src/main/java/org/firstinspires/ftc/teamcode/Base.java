@@ -69,6 +69,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Color options for the team prop. Options: red, blue, none **/
     public enum color { red, blue, none }
+
     /** Side of the robot. Options: front, back **/
     public enum side { front, back }
 
