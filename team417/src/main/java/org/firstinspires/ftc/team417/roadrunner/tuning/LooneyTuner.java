@@ -1185,8 +1185,9 @@ public class LooneyTuner extends LinearOpMode {
      */
     class DecimalInput {
         final double INITIAL_DELAY = 0.6;
-        final double REPEAT_DELAY = 0.3;
+        final double REPEAT_DELAY = 0.15;
 
+        Object object;
         String fieldName;
         int digit;
         int decimalDigits;
@@ -1200,6 +1201,7 @@ public class LooneyTuner extends LinearOpMode {
         double nextAdvanceTime;
 
         DecimalInput(Object object, String fieldName, int startDigit, int decimalDigits, double minValue, double maxValue, String message) {
+            this.object = object;
             this.fieldName = fieldName;
             this.digit = startDigit;
             this.decimalDigits = decimalDigits;
@@ -1218,8 +1220,8 @@ public class LooneyTuner extends LinearOpMode {
             }
         }
         void update() {
-            telemetryAdd(String.format("Updating %s.\n\n", fieldName) + message
-                    + "Move left-stick up or down to change %s's value.\n\n");
+            telemetryAdd(String.format("Updating %s. ", fieldName) + message
+                    + String.format("Move the left-stick up or down to change %s's value.\n", fieldName));
 
             if (ui.leftBumper()) {
                 digit = Math.min(digit + 1, 2);
@@ -1229,19 +1231,28 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             // Advance the value according to the thumb stick state:
-            int thumbStick = (int) (gamepad1.left_stick_y / 0.7); // -1, 0 or 1
+            int thumbStick = (int) (gamepad1.left_stick_y / 0.5);
+            thumbStick = Math.max(-1, Math.min(1, thumbStick)); // -1, 0 or 1
             if (thumbStick != lastThumbStick) {
                 nextAdvanceTime = time() + INITIAL_DELAY;
                 lastThumbStick = thumbStick;
                 value += lastThumbStick * Math.pow(10, digit);
-            } else if (time() > time()) {
+            } else if (time() > nextAdvanceTime) {
                 nextAdvanceTime = time() + REPEAT_DELAY;
                 value += lastThumbStick * Math.pow(10, digit);
+            }
+            value = Math.max(minValue, Math.min(maxValue, value)); // Clamp to acceptable ranges
+
+            // Set the value:
+            try {
+                field.setDouble(object, value);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
 
             // Show the new value:
             String showValue = String.format(showFormat, value);
-            int digitOffset = (digit > 0) ? 1 - digit : -digit;
+            int digitOffset = (digit >= 0) ? -digit - 1 : -digit;
             int digitIndex = showValue.indexOf(".") + digitOffset;
             digitIndex = Math.max(0, Math.min(digitIndex, showValue.length() - 1));
             String prefix = showValue.substring(0, digitIndex);
@@ -1249,7 +1260,7 @@ public class LooneyTuner extends LinearOpMode {
             String suffix = showValue.substring(digitIndex + 1);
 
             // Highlight the focus digit:
-            middle = "<b>" + middle + "</b>";
+            middle = "<span style='background: #88285a'>" + middle + "</span>";
 
             // Blink the underline every half second:
             if ((((int) (time() * 2)) & 1) != 0) {
@@ -1257,7 +1268,7 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
-            telemetryAdd("\n\nPress the right bumper to make it more precise, left bumper "
+            telemetryAdd("\nPress the right bumper to make it more precise, left bumper "
                 + "less precise, X to switch variables, B to cancel.");
             telemetryUpdate();
         }
@@ -1308,17 +1319,18 @@ public class LooneyTuner extends LinearOpMode {
                 new DecimalInput(drive.PARAMS, gainName, 0, 3, 0, 20, ""),
                 new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20, "")
             };
-
-            boolean more = true;
-            drive.runParallel(trajectory.build());
-            while (opModeIsActive() && !ui.cancel() && more) {
+            while (opModeIsActive() && !ui.cancel()) {
                 if (ui.xButton())
                     inputIndex ^= 1; // Toggle the index
 
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 inputs[inputIndex].update(); // Update gain variable
-                more = drive.doActionsWork(packet); // Drive some more
+                boolean more = drive.doActionsWork(packet); // Drive some more
                 MecanumDrive.sendTelemetryPacket(packet);
+
+                // If there is no more actions, start a new one!
+                if (!more)
+                    drive.runParallel(trajectory.build());
             }
             drive.abortActions();
             stopMotors();
@@ -1326,6 +1338,7 @@ public class LooneyTuner extends LinearOpMode {
         if (ui.prompt("Happy with your results?\n\nPress A to accept, B to cancel")) {
             acceptParameters(testParameters);
         }
+        MecanumDrive.PARAMS = parameters.params;
     }
 
     void interactiveAxialPidTuner() {
