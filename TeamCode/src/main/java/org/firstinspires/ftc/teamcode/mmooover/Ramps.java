@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-public class Easing {
+public class Ramps {
     public final Function<Double, Double> begin;
     public final Function<Double, Double> end;
     public final LimitMode limitMode;
@@ -25,15 +25,15 @@ public class Easing {
         return d -> clamp(around.apply(d), 0.0, 1.0);
     }
 
-    public Easing(Function<Double, Double> begin, Function<Double, Double> end) {
+    public Ramps(Function<Double, Double> begin, Function<Double, Double> end) {
         this(begin, end, LimitMode.CLIP, true);
     }
 
-    public Easing(Function<Double, Double> begin, Function<Double, Double> end, @NotNull LimitMode limitMode) {
+    public Ramps(Function<Double, Double> begin, Function<Double, Double> end, @NotNull LimitMode limitMode) {
         this(begin, end, limitMode, true);
     }
 
-    public Easing(Function<Double, Double> begin, Function<Double, Double> end, @NotNull LimitMode limitMode, boolean wrap) {
+    public Ramps(Function<Double, Double> begin, Function<Double, Double> end, @NotNull LimitMode limitMode, boolean wrap) {
         boolean wrapBegin = wrap;
         boolean wrapEnd = wrap;
         if (begin == null) {

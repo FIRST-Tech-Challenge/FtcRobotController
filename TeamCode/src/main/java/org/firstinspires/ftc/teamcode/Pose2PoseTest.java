@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.mmooover.Easing;
+import org.firstinspires.ftc.teamcode.mmooover.Ramps;
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
 import org.firstinspires.ftc.teamcode.mmooover.Motion;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
@@ -45,11 +45,11 @@ public class Pose2PoseTest extends LinearOpMode {
         PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
         Motion lastAction = null; // Store the previous action as empty (No actions have been recorded yet)
         Speed2Power speed2Power = new Speed2Power(0.2); // Set a speed2Power corresponding to a speed of 0.15 seconds
-        Easing easingFunction = new Easing(
-                Easing.linear(2.0),
-                Easing.linear(1/12.0),
+        Ramps ramps = new Ramps(
+                Ramps.linear(2.0),
+                Ramps.linear(1/12.0),
 //                Easing.power(3.0, 12.0),
-                Easing.LimitMode.SCALE
+                Ramps.LimitMode.SCALE
         );
 
         waitForStart(); // Wait for start button
@@ -99,7 +99,7 @@ public class Pose2PoseTest extends LinearOpMode {
                         action.forward() * action.forward()
                                 + action.right() * action.right()
                                 + action.turn() * action.turn());
-                double speed = easingFunction.ease(
+                double speed = ramps.ease(
                         timer.time(),
                         dToTarget,
                         0.75
