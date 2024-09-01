@@ -10,6 +10,8 @@
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
 // @@@ Figure out fastLoad for all teams.
 // @@@ Show old values, amount of change for: lateralInPerTick
+// @@@ Fix rotation gain adjustment
+// @@@ Fix bad voltage in spin test
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -229,7 +231,7 @@ public class LooneyTuner extends LinearOpMode {
      */
     class Ui {
         // Button press state:
-        private final boolean[] buttonPressed = new boolean[8];
+        private final boolean[] buttonPressed = new boolean[10];
         private boolean buttonPress(boolean pressed, int index) {
             boolean press = pressed && !buttonPressed[index];
             buttonPressed[index] = pressed;
@@ -245,6 +247,8 @@ public class LooneyTuner extends LinearOpMode {
         boolean dpadDown() { return buttonPress(gamepad1.dpad_down, 5); }
         boolean leftBumper() { return buttonPress(gamepad1.left_bumper, 6); }
         boolean rightBumper() { return buttonPress(gamepad1.right_bumper, 7); }
+        boolean leftTrigger() { return buttonPress(gamepad1.left_trigger >= 0.5, 8); }
+        boolean rightTrigger() { return buttonPress(gamepad1.right_trigger >= 0.5, 9); }
 
         // Display the menu:
         /** @noinspection SameParameterValue, StringConcatenationInLoop */
@@ -1085,61 +1089,71 @@ public class LooneyTuner extends LinearOpMode {
     void interactiveFeedForwardTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
-        // Point the MecanumDrive to our test PARAMS and let the user modify that. Also disable
-        // all lateral gains so that backward and forward behavior is not affected by the
+        // Disable all lateral gains so that backward and forward behavior is not affected by the
         // PID/Ramsete algorithm. It's okay for the axial and rotation gains to be either zero
         // or non-zero:
         TuneParameters testParameters = parameters.createClone();
         testParameters.params.lateralGain = 0;
         testParameters.params.lateralVelGain = 0;
-
         MecanumDrive.PARAMS = testParameters.params;
 
-        String directions = "Tune 'kV' and 'kA' using FTC Dashboard. Follow "
-            + "<u><a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a></u>:\n\n"
-            + "\u2022 Press the Graph button in FTC Dashboard and graph <b>vRef</b> (target) against <b>vActual</b>.\n"
-            + "\u2022 Adjust <b>kV</b> to make the horizontal lines as close as possible in height.\n"
-            + "&emsp;<b>kV = vRef / vActual</b>\n"
-            + "\u2022 Adjust <b>kA</b> to shift <b>vActual</b> left and right.\n"
-            + "&emsp;Start <b>kA</b> small, maybe 0.0001, then increase.\n";
+        int inputIndex = 0;
+        DecimalInput[] inputs = {
+            new DecimalInput(drive.PARAMS, "kV", -1, 3, 0.01, 20),
+            new DecimalInput(drive.PARAMS, "kA", -4, 5, 0, 1),
+        };
+        String[] instructions = {
+            "Adjust <b>kV</b> to make the horizontal lines as close as possible in height. " +
+                "Move the left stick up or down to change <b>kV</b>'s value. " +
+                "Remember, <b>kV = vRef / vActual</b>. " +
+                "If there are no horizontal lines, decrease the maximum velocity using the left trigger. ",
+            "Adjust <b>kA</b> to shift <b>vActual</b> left and right so the angled lines overlap. " +
+                "Move the left stick up or down to change <b>kA</b>'s value. ",
+        };
 
         if (ui.drivePrompt(String.format("The robot will constantly drive forwards then backwards for %d inches. "
-                + directions + "\n"
+                + "Tune 'kV' and 'kA' using FTC Dashboard. Follow "
+                + "<u><a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a></u>.\n\n"
                 + "Make sure %d inches are free in front of the robot to start. "
                 + "During the test, you can press Y to override the robot position.\n"
                 + "\nPress A to start, B to cancel", DISTANCE, DISTANCE))) {
 
-            // Everything below here is taken from ManualFeedforwardTuner::runOpMode():
-            TimeProfile profile = new TimeProfile(constantProfile(
-                    DISTANCE, 0.0,
-                    MecanumDrive.PARAMS.maxWheelVel,
-                    MecanumDrive.PARAMS.minProfileAccel,
-                    MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
-
             // Trigger a reset the first time into the loop:
             boolean movingForwards = false;
             double startTs = 0;
+            double maxVelocityFactor = 1.0;
+            TimeProfile profile = null;
 
             while (opModeIsActive() && !ui.cancel()) {
-                telemetryAdd(directions + "\nPress A when done, B to cancel, Y to reposition the robot");
-                telemetryUpdate();
+                // Query the new kV or kA value from the user:
+                String instruction = instructions[inputIndex]
+                        + String.format("Max velocity will be %.0f%% when the next cycle starts.\n",
+                            maxVelocityFactor * 100.0);
+                inputs[inputIndex].update(instruction,
+                        ", Y to reposition, triggers to change max velocity");
 
-                TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
-
+                // Update the velocity:
                 Pose2D velocity = drive.opticalTracker.getVelocity();
+                TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 packet.put("vActual", velocity.x);
 
                 double ts = time();
                 double t = ts - startTs;
-                if (t > profile.duration) {
+                if ((profile == null) || (t > profile.duration)) {
                     movingForwards = !movingForwards;
                     startTs = ts;
 
                     // Reset the start position on every loop. This ensures that getVelocity().x
                     // is the appropriate velocity to read, and it resets after we reposition
                     // the robot:
-                    if (movingForwards)
+                    if (movingForwards) {
+                        profile = new TimeProfile(constantProfile(
+                                DISTANCE, 0.0,
+                                MecanumDrive.PARAMS.maxWheelVel * maxVelocityFactor,
+                                MecanumDrive.PARAMS.minProfileAccel,
+                                MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
                         drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
+                    }
                 }
 
                 DualNum<Time> v = profile.get(t).drop(1);
@@ -1147,6 +1161,7 @@ public class LooneyTuner extends LinearOpMode {
                     v = v.unaryMinus();
                 }
                 packet.put("vRef", v.get(0));
+                MecanumDrive.sendTelemetryPacket(packet);
 
                 MotorFeedforward feedForward = new MotorFeedforward(MecanumDrive.PARAMS.kS,
                         MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
@@ -1155,8 +1170,12 @@ public class LooneyTuner extends LinearOpMode {
                 double power = feedForward.compute(v) / drive.voltageSensor.getVoltage();
                 drive.setDrivePowers(new PoseVelocity2d(new Vector2d(power, 0.0), 0.0));
 
-                MecanumDrive.sendTelemetryPacket(packet);
-
+                if (ui.leftTrigger())
+                    maxVelocityFactor = Math.max(maxVelocityFactor - 0.1, 0.2);
+                if (ui.rightTrigger())
+                    maxVelocityFactor = Math.min(maxVelocityFactor + 0.1, 1.0);
+                if (ui.xButton())
+                    inputIndex ^= 1;
                 if (ui.yButton()) {
                     if (!ui.drivePrompt("Drive the robot to reposition it. When you press A, the "
                             + "robot will resume in the forward direction.\n"
@@ -1166,18 +1185,22 @@ public class LooneyTuner extends LinearOpMode {
                     movingForwards = false;
                     startTs = 0;
                 }
-
                 if (ui.accept()) {
-                    // Accept the parameters that the user has set:
-                    acceptParameters(testParameters);
-                    break; // ====>
+                    // Make sure that the user does both kV and kA:
+                    if (inputIndex == 0)
+                        inputIndex = 1;
+                    else {
+                        if (ui.prompt("Happy with your results?\n\nPress A to accept, B to cancel"))
+                            acceptParameters(testParameters);
+                        break; // ====>
+                    }
                 }
             }
         }
 
         // We're done, undo any temporary state we set:
         MecanumDrive.PARAMS = parameters.params;
-        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
+        stopMotors();
     }
 
     /**
@@ -1194,17 +1217,16 @@ public class LooneyTuner extends LinearOpMode {
         String showFormat; // Format string precomputed from decimalDigits
         double minValue; // Clamp ranges
         double maxValue;
-        String message; // Supplemental message
         Field field; // Reference to the field being modified
         double value; // Current value
-        int lastThumbStick; // Last quantized thumbstick input (-1, 0 or 1)
+        int lastThumbStick; // Last quantized thumb-stick input (-1, 0 or 1)
         double nextAdvanceTime; // Time at which to advance the value
 
         // Take a reference to the object and the name of its field to be updated. We use reflection
         // to make the calling code's life a little easier. 'startDigit' dictates the starting
         // focus, 'decimalDigits' is the number of decimal digits to support, 'minValue' and
-        // 'maxValue' specify the acceptable ranges, and 'message' is a supplemental message.
-        DecimalInput(Object object, String fieldName, int startDigit, int decimalDigits, double minValue, double maxValue, String message) {
+        // 'maxValue' specify the acceptable ranges.
+        DecimalInput(Object object, String fieldName, int startDigit, int decimalDigits, double minValue, double maxValue) {
             this.object = object;
             this.fieldName = fieldName;
             this.digit = startDigit;
@@ -1212,7 +1234,6 @@ public class LooneyTuner extends LinearOpMode {
             this.showFormat = String.format("%%.%df", decimalDigits);
             this.minValue = minValue;
             this.maxValue = maxValue;
-            this.message = message;
 
             try {
                 field = object.getClass().getDeclaredField(fieldName);
@@ -1225,9 +1246,12 @@ public class LooneyTuner extends LinearOpMode {
         }
 
         // Update the variable according to the latest gamepad input.
-        void update() {
-            telemetryAdd(String.format("Updating <b>%s</b>. ", fieldName) + message
+        void update(String instructions, String buttonMessage) {
+            if (instructions.isEmpty())
+                telemetryAdd(String.format("Updating <b>%s</b>. ", fieldName)
                     + "Move the left stick up or down to change its value.\n");
+            else
+                telemetryAdd(instructions);
 
             if (ui.leftBumper()) {
                 digit = Math.min(digit + 1, 2);
@@ -1279,8 +1303,8 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
-            telemetryAdd("\nPress the right bumper to make it more precise, left bumper "
-                + "less precise, X to switch variables, A when done, B to cancel.");
+            telemetryAdd(String.format("\nPress the bumpers to move the cursor, "
+                + "X to switch variables%s, A when done, B to cancel.", buttonMessage));
             telemetryUpdate();
         }
     }
@@ -1326,12 +1350,12 @@ public class LooneyTuner extends LinearOpMode {
         if (ui.drivePrompt(prompt + "\n\nPress A to start, B to cancel")) {
             int inputIndex = 0;
             DecimalInput[] inputs = {
-                new DecimalInput(drive.PARAMS, gainName, 0, 3, 0, 20, ""),
-                new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20, "")
+                new DecimalInput(drive.PARAMS, gainName, 0, 3, 0, 20),
+                new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20),
             };
             while (opModeIsActive() && !ui.cancel()) {
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
-                inputs[inputIndex].update(); // Update gain variable
+                inputs[inputIndex].update("", ""); // Update gain variable
                 boolean more = drive.doActionsWork(packet); // Drive some more
                 MecanumDrive.sendTelemetryPacket(packet);
 
