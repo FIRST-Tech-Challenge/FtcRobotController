@@ -39,9 +39,19 @@ public abstract class Base extends LinearOpMode {
      - This is gearing DOWN for less speed and more torque.
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
-    static final double     COUNTS_PER_MOTOR_REV    = ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;
+    public String           hubName                 = hardwareMap.get(String.class, "Control Hub");
+    static double           WHEEL_DIAMETER_INCHES;
+    {
+        if ("Control Hub 1".equals(hubName)) {
+            WHEEL_DIAMETER_INCHES = 3.77953;     // For figuring out circumference
+        } else if ("Control Hub 2".equals(hubName)) {
+            WHEEL_DIAMETER_INCHES = 5.511811;     // For figuring out circumference
+        } else {
+            WHEEL_DIAMETER_INCHES = 3.77953;     // Default value
+        }
+    }
+    static final double     COUNTS_PER_MOTOR_REV    = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0) ;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
-    static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
