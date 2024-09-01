@@ -404,9 +404,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Converts an amount of tiles on the game board to an amount of inches.
      * @param tiles The value of tiles to be converted. **/
-    public double tilesToInches(double tiles) {
-        return tiles * TILE_LENGTH;
-    }
+    public double tilesToInches(double tiles) {return tiles * TILE_LENGTH;}
 
     /** Makes the car wash outtake for 1 second. **/
     public void ejectPixel(double time) {
