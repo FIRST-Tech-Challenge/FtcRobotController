@@ -491,7 +491,7 @@ public class LooneyTuner extends LinearOpMode {
     public void acceptParameters(TuneParameters newParameters) {
         String comparison = newParameters.compare(parameters);
         if (comparison.isEmpty()) {
-            ui.prompt("The results match your current settings.\n\nPress A to continue.");
+            ui.prompt("The new results match your current settings.\n\nPress A to continue.");
         } else {
             MecanumDrive.PARAMS = newParameters.params;
             parameters = newParameters;
@@ -1132,7 +1132,7 @@ public class LooneyTuner extends LinearOpMode {
                         + String.format("Max velocity will be %.0f%% when the next cycle starts.\n",
                             maxVelocityFactor * 100.0);
                 inputs[inputIndex].update(instruction,
-                        ", Y to reposition, triggers to change max velocity");
+                        "X to reposition, Y to switch variables, triggers to change max velocity, ");
 
                 // Update the velocity:
                 Pose2D velocity = drive.opticalTracker.getVelocity();
@@ -1176,9 +1176,9 @@ public class LooneyTuner extends LinearOpMode {
                     maxVelocityFactor = Math.max(maxVelocityFactor - 0.1, 0.2);
                 if (ui.rightTrigger())
                     maxVelocityFactor = Math.min(maxVelocityFactor + 0.1, 1.0);
-                if (ui.xButton())
+                if (ui.yButton())
                     inputIndex ^= 1;
-                if (ui.yButton()) {
+                if (ui.xButton()) {
                     if (!ui.drivePrompt("Drive the robot to reposition it. When you press A, the "
                             + "robot will resume in the forward direction.\n"
                             + "\nPress A when ready to resume, B to cancel."))
@@ -1249,11 +1249,8 @@ public class LooneyTuner extends LinearOpMode {
 
         // Update the variable according to the latest gamepad input.
         void update(String instructions, String buttonMessage) {
-            if (instructions.isEmpty())
-                telemetryAdd(String.format("Updating <b>%s</b>. ", fieldName)
-                    + "Move the left stick up or down to change its value.\n");
-            else
-                telemetryAdd(instructions);
+            telemetryAdd(instructions + String.format("Inputting <b>%s</b>. ", fieldName)
+                + "Move the left stick up or down to change its value.\n");
 
             if (ui.leftBumper()) {
                 digit = Math.min(digit + 1, 2);
@@ -1306,7 +1303,7 @@ public class LooneyTuner extends LinearOpMode {
 
             telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
             telemetryAdd(String.format("\nPress the bumpers to move the cursor, "
-                + "X to switch variables%s, A when done, B to cancel.", buttonMessage));
+                + "%sA when done, B to cancel.", buttonMessage));
             telemetryUpdate();
         }
     }
@@ -1324,25 +1321,25 @@ public class LooneyTuner extends LinearOpMode {
 
         TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
         if (type == PidTunerType.AXIAL) {
-            prompt = String.format("The robot will drive backwards and forwards for %d inches. "
-                    + "Use FTC Dashboard to tune MecanumDrive.PARAMS.axialGain in the Configuration view "
-                    + "so that target and actual align (typical values between 1 and 20).", DISTANCE);
+            prompt = String.format("The robot will drive backwards and then forwards for %d inches. ", DISTANCE)
+                    + "Tune the gains so that the target and actual trajectories align. "
+                    + "axialGain is most important while axialVelGain can often be left as zero. ";
             trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
             gainName = "axialGain";
             velGainName = "axialVelGain";
 
         } else if (type == PidTunerType.LATERAL) {
-            prompt = String.format("The robot will strafe left and right for %d inches. "
-                    + "Use FTC Dashboard to tune MecanumDrive.PARAMS.lateralGain in the Configuration view "
-                    + "so that target and actual align (typical values between 1 and 20).", DISTANCE);
+            prompt = String.format("The robot will strafe left and then right for %d inches. ", DISTANCE)
+                    + "Tune the gains so that the target and actual trajectories align. "
+                    + "lateralGain is most important while lateralVelGain can often be left as zero. ";
             trajectory = trajectory.strafeTo(new Vector2d(0, DISTANCE)).strafeTo(new Vector2d(0, 0));
             gainName = "lateralGain";
             velGainName = "lateralVelGain";
 
         } else {
-            prompt = "The robot will rotate in place 180° clockwise and counterclockwise. "
-                    + "Use FTC Dashboard to tune MecanumDrive.PARAMS.headingGain in the Configuration view "
-                    + "so that target and actual align (typical values between 1 and 20).";
+            prompt = "The robot will rotate in place 180° clockwise and then counterclockwise. "
+                    + "Tune the gains so that the target and actual trajectories align. "
+                    + "headingGain is most important while headingVelGain can often be left as zero. ";
             trajectory = trajectory.turn(Math.PI).turn(-Math.PI);
             gainName = "headingGain";
             velGainName = "headingVelGain";
@@ -1353,17 +1350,35 @@ public class LooneyTuner extends LinearOpMode {
                 new DecimalInput(drive.PARAMS, gainName, 0, 3, 0, 20),
                 new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20),
             };
+            drive.runParallel(trajectory.build());
             while (opModeIsActive() && !ui.cancel()) {
+                // Drive some more:
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
-                inputs[inputIndex].update("", ""); // Update gain variable
-                boolean more = drive.doActionsWork(packet); // Drive some more
+                boolean more = drive.doActionsWork(packet);
                 MecanumDrive.sendTelemetryPacket(packet);
 
-                // If there is no more actions, start a new one!
-                if (!more)
-                    drive.runParallel(trajectory.build());
+                // Get the latest input from the gamepad:
+                String buttonMessage = "Y to switch variables, ";
+                String instructions = "";
+                if (!more) {
+                    instructions = "Now that this run is done, be sure to compare the end position "
+                        + "to its starting position. If you're satisfied, press A to be done, otherwise "
+                        + "press X to do another run.\n\n";
+                    buttonMessage = "X to start another run, " + buttonMessage;
+                }
+                inputs[inputIndex].update(instructions, buttonMessage);
 
-                if (ui.xButton())
+                // If there is no more actions, let the X button start a new one!
+                if ((ui.xButton()) && (!more)) {
+                    if (type == PidTunerType.HEADING) {
+                        // An apparent Road Runner build prevents the trajectory from being reused:
+                        drive.runParallel(drive.actionBuilder(zeroPose).turn(Math.PI).turn(-Math.PI).build());
+                    } else {
+                        drive.runParallel(trajectory.build());
+                    }
+                }
+
+                if (ui.yButton())
                     inputIndex ^= 1; // Toggle the index
 
                 if (ui.accept()) {
@@ -1523,7 +1538,7 @@ public class LooneyTuner extends LinearOpMode {
                 telemetry.addLine();
                 telemetry.addLine("The code's configuration parameters don't match the last "
                         + "results saved in LooneyTuner. Double-tap the shift key in Android "
-                        + "Studio, enter 'MD.Params' to jump to the MecanumDrive Params constructor, "
+                        + "Studio, enter '<b>md.params</b>' to jump to the MecanumDrive Params constructor, "
                         + "then update as follows:");
                 telemetry.addLine();
                 telemetry.addLine(comparison);
