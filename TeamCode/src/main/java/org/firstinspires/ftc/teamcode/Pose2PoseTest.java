@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -35,7 +36,7 @@ public class Pose2PoseTest extends LinearOpMode {
         EncoderTracking tracker = new EncoderTracking(hardware);
         // Pose targets to go thru
         Pose[] targets = {
-                new Pose(48, 0, deg2rad(180))
+                new Pose(48, 0, deg2rad(90))
         };
         int targetIndex = 0; // Total poses in the set
         ElapsedTime timer = new ElapsedTime(); // Set timer object to reference the ElapsedTime object
@@ -99,8 +100,9 @@ public class Pose2PoseTest extends LinearOpMode {
                         action.forward() * action.forward()
                                 + action.right() * action.right()
                                 + action.turn() * action.turn());
+                double now = timer.time();
                 double speed = ramps.ease(
-                        timer.time(),
+                        now,
                         dToTarget,
                         0.75
                 );
@@ -109,6 +111,16 @@ public class Pose2PoseTest extends LinearOpMode {
                 telemetry.addData("forward", action.forward());
                 telemetry.addData("right", action.right());
                 telemetry.addData("turn (deg)", Math.toDegrees(action.turn()));
+                String message = String.format(
+                        "##{\"step\":%d,\"pose\":[%.6f,%.6f,%.6f],\"motion\":[%.6f,%.6f,%.6f],\"speed\":%.6f,\"power\":%.6f,\"dToTarget\":%.6f,\"timer\":%.4f,\"avgTickTime\":%.6f}##",
+                        targetIndex,
+                        p.x(), p.y(), p.heading(),
+                        action.forward(), action.right(), action.turn(),
+                        speed, power,
+                        dToTarget, now,
+                        ticker.getAvg() * 1000
+                );
+                Log.d("DataDump", message);
                 lastAction = action;
             }
             telemetry.addLine("step " + (targetIndex + 1) + " of " + targets.length);
