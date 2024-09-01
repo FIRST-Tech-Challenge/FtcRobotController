@@ -49,6 +49,7 @@ class PoseFromToProcessor(origin: Pose) {
         last = nextPose
         val xI = powerDiff * duration
         val yI = diff.heading
+        // TODO: this predictor sucks
         deltaHeading = diff.heading
 
         if (abs(xI) > 1e-3 && abs(yI) > 1e-3) {
