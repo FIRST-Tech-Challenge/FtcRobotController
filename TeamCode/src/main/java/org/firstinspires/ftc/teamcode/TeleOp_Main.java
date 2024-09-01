@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name = "Main", group = "CenterStage")
 public class TeleOp_Main extends Base {
 
-    // Declare OpMode members for each of the 4 motors.
     boolean wasX = false;
     boolean wasLT = false;
     double axial = 0.0;

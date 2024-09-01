@@ -25,8 +25,6 @@ public class Auto_BlueBackFull extends Base {
         drive(-2);
         turn(-90, dir.left);
         drive(tilesToInches(-1));
-//        turn(-90);
-//        drive(tilesToInches(-1));
         setSpeed(1000);
         strafe(15, dir.left);
         for (int i = 0; i < 3; i++) {

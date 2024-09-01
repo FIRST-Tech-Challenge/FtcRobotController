@@ -39,9 +39,21 @@ public abstract class Base extends LinearOpMode {
      - This is gearing DOWN for less speed and more torque.
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
-    static final double     COUNTS_PER_MOTOR_REV    = ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;
+    public String           hubName                 = hardwareMap.get(String.class, "Control Hub");
+    public static final String SMALL_WHEEL_ROBOT_NAME = "Control Hub 1";
+    public static final String LARGE_WHEEL_ROBOT_NAME = "Control Hub 2";
+    static double           WHEEL_DIAMETER_INCHES;
+    {
+        if (SMALL_WHEEL_ROBOT_NAME.equals(hubName)) {
+            WHEEL_DIAMETER_INCHES = 3.77953;     // For figuring out circumference
+        } else if (LARGE_WHEEL_ROBOT_NAME.equals(hubName)) {
+            WHEEL_DIAMETER_INCHES = 5.511811;     // For figuring out circumference
+        } else {
+            WHEEL_DIAMETER_INCHES = 3.77953;     // Default value
+        }
+    }
+    static final double     COUNTS_PER_MOTOR_REV    = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0);
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
-    static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
@@ -393,9 +405,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Converts an amount of tiles on the game board to an amount of inches.
      * @param tiles The value of tiles to be converted. **/
-    public double tilesToInches(double tiles) {
-        return tiles * TILE_LENGTH;
-    }
+    public double tilesToInches(double tiles) {return tiles * TILE_LENGTH;}
 
     /** Makes the car wash outtake for 1 second. **/
     public void ejectPixel(double time) {
@@ -548,7 +558,7 @@ public abstract class Base extends LinearOpMode {
      * @return (double) The X coordinate of the team prop. **/
     private double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-        for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {
+        for (int i = 0; i < 5 && currentRecognitions.isEmpty(); i++) {
             sleep(100);
             currentRecognitions = tfod.getRecognitions();
         }
@@ -623,8 +633,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Sleep a specified number of seconds.
      * @param seconds The amount of seconds to sleep. **/
-    public final void s (double seconds){ sleep((long) seconds * 1000);
-    }
+    public final void s (double seconds){ sleep((long) seconds * 1000);}
 
     /** Place the purple pixel. **/
     public void purplePixel() {
@@ -717,7 +726,5 @@ public abstract class Base extends LinearOpMode {
    public void print(String caption, Object content) { print(caption, content, false); }
 
    /** A less space consuming way to update the displayed telemetry. **/
-  public void update() {
-       telemetry.update();
-  }
+  public void update() {telemetry.update();}
 }
