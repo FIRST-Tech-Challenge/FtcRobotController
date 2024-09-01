@@ -1184,22 +1184,26 @@ public class LooneyTuner extends LinearOpMode {
      * Class to handle gamepad input of decimal numbers.
      */
     class DecimalInput {
-        final double INITIAL_DELAY = 0.6;
-        final double REPEAT_DELAY = 0.15;
+        final double INITIAL_DELAY = 0.6; // Seconds after initial press before starting to repeat
+        final double ADVANCE_DELAY = 0.15; // Seconds after any repeat to repeat again
 
-        Object object;
-        String fieldName;
-        int digit;
-        int decimalDigits;
-        String showFormat;
-        double minValue;
+        Object object; // Object being modified
+        String fieldName; // Name of the field in the object being modified
+        int digit; // Focus digit (1 is tens, 0 is ones, -1 is tenths, etc.)
+        int decimalDigits; // Number of digits to show after the decimal
+        String showFormat; // Format string precomputed from decimalDigits
+        double minValue; // Clamp ranges
         double maxValue;
-        String message;
-        Field field;
-        double value;
-        int lastThumbStick;
-        double nextAdvanceTime;
+        String message; // Supplemental message
+        Field field; // Reference to the field being modified
+        double value; // Current value
+        int lastThumbStick; // Last quantized thumbstick input (-1, 0 or 1)
+        double nextAdvanceTime; // Time at which to advance the value
 
+        // Take a reference to the object and the name of its field to be updated. We use reflection
+        // to make the calling code's life a little easier. 'startDigit' dictates the starting
+        // focus, 'decimalDigits' is the number of decimal digits to support, 'minValue' and
+        // 'maxValue' specify the acceptable ranges, and 'message' is a supplemental message.
         DecimalInput(Object object, String fieldName, int startDigit, int decimalDigits, double minValue, double maxValue, String message) {
             this.object = object;
             this.fieldName = fieldName;
@@ -1219,15 +1223,20 @@ public class LooneyTuner extends LinearOpMode {
                 throw new RuntimeException(e);
             }
         }
+
+        // Update the variable according to the latest gamepad input.
         void update() {
-            telemetryAdd(String.format("Updating %s. ", fieldName) + message
-                    + String.format("Move the left-stick up or down to change %s's value.\n", fieldName));
+            telemetryAdd(String.format("Updating <b>%s</b>. ", fieldName) + message
+                    + "Move the left stick up or down to change its value.\n");
 
             if (ui.leftBumper()) {
                 digit = Math.min(digit + 1, 2);
             }
             if (ui.rightBumper()) {
                 digit = Math.max(digit - 1, -decimalDigits);
+            }
+            if ((digit > 0) && (Math.pow(10, digit) > Math.abs(value))) {
+                digit--;
             }
 
             // Advance the value according to the thumb stick state:
@@ -1238,10 +1247,12 @@ public class LooneyTuner extends LinearOpMode {
                 lastThumbStick = thumbStick;
                 value += lastThumbStick * Math.pow(10, digit);
             } else if (time() > nextAdvanceTime) {
-                nextAdvanceTime = time() + REPEAT_DELAY;
+                nextAdvanceTime = time() + ADVANCE_DELAY;
                 value += lastThumbStick * Math.pow(10, digit);
             }
-            value = Math.max(minValue, Math.min(maxValue, value)); // Clamp to acceptable ranges
+
+            // Clamp new value to acceptable range:
+            value = Math.max(minValue, Math.min(maxValue, value));
 
             // Set the value:
             try {
@@ -1269,7 +1280,7 @@ public class LooneyTuner extends LinearOpMode {
 
             telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
             telemetryAdd("\nPress the right bumper to make it more precise, left bumper "
-                + "less precise, X to switch variables, B to cancel.");
+                + "less precise, X to switch variables, A when done, B to cancel.");
             telemetryUpdate();
         }
     }
@@ -1283,7 +1294,6 @@ public class LooneyTuner extends LinearOpMode {
 
         TuneParameters testParameters = parameters.createClone();
         MecanumDrive.PARAMS = testParameters.params;
-
         String prompt;
         String gainName;
         String velGainName;
@@ -1320,9 +1330,6 @@ public class LooneyTuner extends LinearOpMode {
                 new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20, "")
             };
             while (opModeIsActive() && !ui.cancel()) {
-                if (ui.xButton())
-                    inputIndex ^= 1; // Toggle the index
-
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 inputs[inputIndex].update(); // Update gain variable
                 boolean more = drive.doActionsWork(packet); // Drive some more
@@ -1331,93 +1338,20 @@ public class LooneyTuner extends LinearOpMode {
                 // If there is no more actions, start a new one!
                 if (!more)
                     drive.runParallel(trajectory.build());
+
+                if (ui.xButton())
+                    inputIndex ^= 1; // Toggle the index
+
+                if (ui.accept()) {
+                    if (ui.prompt("Happy with your results?\n\nPress A to accept, B to cancel"))
+                        acceptParameters(testParameters);
+                    break; // ====>
+                }
             }
             drive.abortActions();
             stopMotors();
         }
-        if (ui.prompt("Happy with your results?\n\nPress A to accept, B to cancel")) {
-            acceptParameters(testParameters);
-        }
         MecanumDrive.PARAMS = parameters.params;
-    }
-
-    void interactiveAxialPidTuner() {
-        useDrive(true); // Do use MecanumDrive/TankDrive
-
-        TuneParameters testParameters = parameters.createClone();
-        MecanumDrive.PARAMS = testParameters.params;
-
-        if (ui.drivePrompt(String.format("The robot will drive backwards and forwards for %d inches. "
-                + "Use FTC Dashboard to tune MecanumDrive.PARAMS.axialGain in the Configuration view "
-                + "so that target and actual align (typical values between 1 and 20)."
-                + "\n\nPress A to start, B to stop", DISTANCE))) {
-
-            while (opModeIsActive()) {
-                Action action = drive.actionBuilder(new Pose2d(0, 0, 0))
-                        .lineToX(DISTANCE)
-                        .lineToX(0)
-                        .build();
-                if (!runCancelableAction(action))
-                    break;
-            }
-            if (ui.prompt("Happy with your 'axialGain' results?\n\n"
-                    + "Press A to accept, B to cancel")) {
-                acceptParameters(testParameters);
-            }
-        }
-    }
-
-    void interactiveLateralPidTuner() {
-        useDrive(true); // Do use MecanumDrive/TankDrive
-
-        TuneParameters testParameters = parameters.createClone();
-        MecanumDrive.PARAMS = testParameters.params;
-
-        if (ui.drivePrompt(String.format("The robot will strafe left and right for %d inches. "
-                + "Use FTC Dashboard to tune MecanumDrive.PARAMS.lateralGain in the Configuration view "
-                + "so that target and actual align (typical values between 1 and 20)."
-                + "\n\nPress A to start, B to stop", DISTANCE))) {
-
-            while (opModeIsActive()) {
-                Action action = drive.actionBuilder(drive.pose)
-                        .strafeTo(new Vector2d(0, DISTANCE))
-                        .strafeTo(new Vector2d(0, 0))
-                        .build();
-                if (!runCancelableAction(action))
-                    break;
-            }
-            if (ui.prompt("Happy with your 'lateralGain' results?\n\n"
-                    + "Press A to accept, B to cancel")) {
-                acceptParameters(testParameters);
-            }
-        }
-    }
-
-    void interactiveHeadingPidTuner() {
-        useDrive(true); // Do use MecanumDrive/TankDrive
-
-        TuneParameters testParameters = parameters.createClone();
-        MecanumDrive.PARAMS = testParameters.params;
-
-        if (ui.drivePrompt("The robot will rotate in place "
-                + "180° clockwise and counterclockwise. "
-                + "Use FTC Dashboard to tune MecanumDrive.PARAMS.headingGain in the Configuration view "
-                + "so that target and actual align (typical values between 1 and 20)."
-                + "\n\nPress A to start, B to stop")) {
-
-            while (opModeIsActive()) {
-                Action action = drive.actionBuilder(drive.pose)
-                        .turn(Math.PI)
-                        .turn(-Math.PI)
-                        .build();
-                if (!runCancelableAction(action))
-                    break;
-            }
-            if (ui.prompt("Happy with your 'headingGain' results?\n\n"
-                    + "Press A to accept, B to cancel")) {
-                acceptParameters(testParameters);
-            }
-        }
     }
 
     // Navigate a short spline as a completion test.
