@@ -53,32 +53,10 @@ public class RobotHardware {
     private DcMotor rbMotor;
     private DcMotor lfMotor;
     private DcMotor lbMotor;
-    private DcMotor armMotorL   = null;
-    private DcMotor armMotorR   = null;
-    private DcMotor leftHand    = null;
-    private DcMotor rightHand   = null;
     private double ticksPerRotationOfLeft;
     private double ticksPerRotationOfRight;
 
-    private Servo   elbowServo  = null;
-    private Servo   grabberServo= null;
-    private Servo   launcher    = null;
-
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double GRABBER_SPEED   =  0.10 ;
-    public static final double ELBOW_SPEED     =  0.03 ;  // sets rate to move servo
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
-
-    public static final double LAUNCHER_MIN     = 0.0;
-    public static final double LAUNCHER_MAX     = 0.4;
-    public static final double ELBOW_MIN        = 0.05;
-    public static final double ELBOW_MAX        = 0.80;
-    public static final double GRABBER_MIN        = 0.25;
-    public static final double GRABBER_MAX        = 0.60;
-
-    private static double elbowDrive           = 0.5;
-    private static double grabberDrive         = 0.0;
 
     //camera
     private Camera camera;
@@ -93,7 +71,6 @@ public class RobotHardware {
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
-    private View relativeLayout;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware (LinearOpMode opmode) {
