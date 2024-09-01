@@ -14,7 +14,6 @@ public class TeleMain extends LinearOpMode {
         You can put things here that need to be initialized
         Usually variables would go here
         For example creating string = ">:)";
-
         */
         waitForStart();
 
