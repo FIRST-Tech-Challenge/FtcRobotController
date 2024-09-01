@@ -40,11 +40,13 @@ public abstract class Base extends LinearOpMode {
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
     public String           hubName                 = hardwareMap.get(String.class, "Control Hub");
+    public static final String SMALL_WHEEL_ROBOT_NAME = "Control Hub 1";
+    public static final String LARGE_WHEEL_ROBOT_NAME = "Control Hub 2";
     static double           WHEEL_DIAMETER_INCHES;
     {
-        if ("Control Hub 1".equals(hubName)) {
+        if (SMALL_WHEEL_ROBOT_NAME.equals(hubName)) {
             WHEEL_DIAMETER_INCHES = 3.77953;     // For figuring out circumference
-        } else if ("Control Hub 2".equals(hubName)) {
+        } else if (LARGE_WHEEL_ROBOT_NAME.equals(hubName)) {
             WHEEL_DIAMETER_INCHES = 5.511811;     // For figuring out circumference
         } else {
             WHEEL_DIAMETER_INCHES = 3.77953;     // Default value
