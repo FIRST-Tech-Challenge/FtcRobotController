@@ -16,11 +16,11 @@ public class OdometryPodSubsystem extends SubsystemBase {
     // Local objects and variables here
 
     public static double TICKS_PER_REV = 2000;
-    public static double WHEEL_RADIUS = 24; // mm
+    public static double WHEEL_RADIUS = 0.024; // m
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 315; // mm; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 100; // mm; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 0.315; // m; distance between the left and right wheels
+    public static double FORWARD_OFFSET = 0.100; // m; offset of the lateral wheel
 
     private MotorEx leftEncoderPod = null;
     private MotorEx rightEncoderPod = null;

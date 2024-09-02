@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RobotContainer;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
  * When a selection is made from the menu, the corresponding OpMode is executed.
  */
 @TeleOp(name="Base TeleOp", group="OpMode")
-//@Disabled
+@Disabled
 public class TeleOp1 extends CommandOpMode {
 
     // Initialize all objects, set up subsystems, etc...
