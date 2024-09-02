@@ -1414,8 +1414,8 @@ public class LooneyTuner extends LinearOpMode {
         if (ui.drivePrompt(prompt + "\n\nPress "+A+" to start, "+B+" to cancel")) {
             int inputIndex = 0;
             DecimalInput[] inputs = {
-                new DecimalInput(drive.PARAMS, gainName, 0, 3, 0, 20),
-                new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20),
+                new DecimalInput(drive.PARAMS, gainName, -1, 3, 0, 20),
+                new DecimalInput(drive.PARAMS, velGainName, -1, 3, 0, 20),
             };
             int queuedXbuttons = 0;
 
@@ -1424,7 +1424,11 @@ public class LooneyTuner extends LinearOpMode {
                 // Drive some more:
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 boolean more = drive.doActionsWork(packet);
-                MecanumDrive.sendTelemetryPacket(packet);
+
+                // Don't send the packet if the actions are all done because that will erase
+                // the positions from the field:
+                if (more)
+                    MecanumDrive.sendTelemetryPacket(packet);
 
                 // Get the latest input from the gamepad:
                 String buttonMessage = Y+" to switch variables, ";
@@ -1442,8 +1446,25 @@ public class LooneyTuner extends LinearOpMode {
                 if (ui.xButton())
                     queuedXbuttons++; // Let the x-button be queued up
 
-                // If there is no more actions, let the X button start a new one.
-                if (!more) {
+                if (more) {
+                    if (ui.cancel()) {
+                        // Cancel the current cycle while remaining in this test:
+                        drive.abortActions();
+                    }
+                } else {
+                    if (ui.accept()) {
+                        if (ui.prompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel")) {
+                            acceptParameters(testParameters);
+                            break; // ====>
+                        }
+                    }
+                    if (ui.cancel()) {
+                        if (ui.prompt("Are you sure you want to discard your current input?\n\n"
+                                + "Press "+A+" to discard, "+B+" to cancel."))
+                            break; // ====>
+                    }
+
+                    // If there is no more actions, let the X button start a new one.
                     updateGamepadDriving();
                     if (queuedXbuttons > 0) {
                         queuedXbuttons--;
@@ -1461,10 +1482,6 @@ public class LooneyTuner extends LinearOpMode {
             drive.abortActions();
             stopMotors();
 
-            if (ui.accept()) {
-                if (ui.prompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel"))
-                    acceptParameters(testParameters);
-            }
         }
         MecanumDrive.PARAMS = parameters.params;
     }

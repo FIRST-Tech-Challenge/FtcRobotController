@@ -614,9 +614,6 @@ public final class MecanumDrive {
 
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
 
-System.out.printf("run() -- axialGain: %.2f, lateralGain: %.2f, headingGain: %.2f\n",
-        PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain); // @@@
-
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
