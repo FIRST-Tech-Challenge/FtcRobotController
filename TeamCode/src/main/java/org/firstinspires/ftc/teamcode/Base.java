@@ -64,7 +64,7 @@ public abstract class Base extends LinearOpMode {
     static final double     CAR_WASH_POWER          = 1.0;
     private static final int WAIT_TIME              = 100;
                  double     velocity                = 2000;
-    spike pos; // Team prop position
+    public spike pos; // Team prop position
     public double x;
     public VisionPortal visionPortal;
     public String tfodModelName;
@@ -570,12 +570,11 @@ public abstract class Base extends LinearOpMode {
             x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            print(""," ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            update();
         }   // end for() loop
-        update();
         return x;
     }   // end method detectProp()
 

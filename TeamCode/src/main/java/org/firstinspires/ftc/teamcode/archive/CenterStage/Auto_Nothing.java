@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode;import com.qualcomm.robotcore.eventloop.opmode.*;
+package org.firstinspires.ftc.teamcode.archive.CenterStage;import com.qualcomm.robotcore.eventloop.opmode.*;
+
 @Autonomous(name = "Nothing", group = "CenterStage", preselectTeleOp = "Main")
 public class Auto_Nothing extends LinearOpMode {
     public void runOpMode() {

@@ -1,8 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.archive.CenterStage;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Autonomous(name = "Red Back 28", group = "CenterStage", preselectTeleOp = "Main")
+import org.firstinspires.ftc.teamcode.Base;
+
+//@Autonomous(name = "Red Back 28", group = "CenterStage", preselectTeleOp = "Main")
+@Disabled
 public class Auto_RedBackLimited extends Base {
     @Override
     public void runOpMode() {

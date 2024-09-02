@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.archive.CenterStage;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
+
+import org.firstinspires.ftc.teamcode.Base;
+
 //@Autonomous(name = "Red Front 50", group = "CenterStage", preselectTeleOp = "Main")
 @Disabled
 public class Auto_RedFrontFull extends Base {

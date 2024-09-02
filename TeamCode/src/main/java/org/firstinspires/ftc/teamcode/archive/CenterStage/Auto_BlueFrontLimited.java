@@ -1,12 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.archive.CenterStage;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Autonomous(name = "Blue Back 28", group = "CenterStage", preselectTeleOp = "Main")
-public class Auto_BlueBackLimited extends Base {
+import org.firstinspires.ftc.teamcode.Base;
+
+//@Autonomous(name = "Blue Front 28", group = "CenterStage", preselectTeleOp = "Main")
+@Disabled
+public class Auto_BlueFrontLimited extends Base {
     @Override
     public void runOpMode() {
-        stageSide = side.back;
+        stageSide = side.front;
         color teamColor = color.blue;
         setup(teamColor);
 
@@ -14,6 +18,7 @@ public class Auto_BlueBackLimited extends Base {
         // ------Main Code------
         // ---------------------
 
+        s(1);
         pos = findPos();
 //        int ID = setID(pos, teamColor);
         telemetry.addData("Team Prop X", x);
@@ -21,21 +26,22 @@ public class Auto_BlueBackLimited extends Base {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(-90);
-        drive(tilesToInches(-1));
-        turn(-90);
-        drive(tilesToInches(2));
-        turn(-90);
-        drive(tilesToInches(0.5));
-        ejectPixel(3000);
+        turn(90);
+        s(2);
+        drive(70);
         setSpeed(1000);
-        drive(tilesToInches(0.2));
+        drive(15);
+        setSpeed(2000);
+        ejectPixel(3000);
+        drive(5);
 
 
-//        drive(tilesToInches(-2.1));
+//        drive(-2);
 //        turn(90);
+//        s(3);
+//        drive(70);
 //        setSpeed(1000);
-//        drive(tilesToInches(1.7));
+//        drive(15);
 //        setSpeed(2000);
 //        ejectPixel();
 
