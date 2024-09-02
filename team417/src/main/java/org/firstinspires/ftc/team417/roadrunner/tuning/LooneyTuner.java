@@ -1172,6 +1172,8 @@ public class LooneyTuner extends LinearOpMode {
     void interactiveFeedForwardTuner() {
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
+        final int THIS_DISTANCE = 72; // @@@
+
         // Disable all lateral gains so that backward and forward behavior is not affected by the
         // PID/Ramsete algorithm. It's okay for the axial and rotation gains to be either zero
         // or non-zero:
@@ -1199,20 +1201,13 @@ public class LooneyTuner extends LinearOpMode {
                 + "<u><a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a></u>.\n\n"
                 + "Make sure %d inches are free in front of the robot to start. "
                 + "During the test, you can press "+Y+" to override the robot position.\n"
-                + "\nPress "+A+" to start, "+B+" to cancel", DISTANCE, DISTANCE))) {
+                + "\nPress "+A+" to start, "+B+" to cancel", THIS_DISTANCE, THIS_DISTANCE))) {
 
             // Trigger a reset the first time into the loop:
+            double startTime = 0;
             double maxVelocityFactor = 1.0;
-
-            // Everything below here is taken from ManualFeedforwardTuner::runOpMode():
-            TimeProfile profile = new TimeProfile(constantProfile(
-                    DISTANCE, 0.0,
-                    MecanumDrive.PARAMS.maxWheelVel,
-                    MecanumDrive.PARAMS.minProfileAccel,
-                    MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
-
-            boolean movingForwards = true;
-            double startTs = System.nanoTime() / 1e9;
+            TimeProfile profile = null;
+            boolean movingForwards = false;
 
             while (opModeIsActive() && !ui.cancel()) {
                 // Query the new kV or kA value from the user:
@@ -1227,11 +1222,24 @@ public class LooneyTuner extends LinearOpMode {
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 packet.put("vActual", velocity.x);
 
-                double ts = System.nanoTime() / 1e9;
-                double t = ts - startTs;
-                if (t > profile.duration) {
+                double t = time() - startTime;
+                if ((profile == null) || (t > profile.duration)) {
                     movingForwards = !movingForwards;
-                    startTs = ts;
+                    startTime = time();
+                    t = 0;
+
+                    if ((profile == null) || (movingForwards)) {
+                        profile = new TimeProfile(constantProfile(
+                                THIS_DISTANCE, 0.0,
+                                MecanumDrive.PARAMS.maxWheelVel * maxVelocityFactor,
+                                MecanumDrive.PARAMS.minProfileAccel,
+                                MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
+
+                        // Reset the start position on every cycle. This ensures that getVelocity().x
+                        // is the appropriate velocity to read, and it resets after we reposition
+                        // the robot:
+                        drive.setPose(new Pose2d(-THIS_DISTANCE / 2.0, 0, 0));
+                    }
                 }
 
                 DualNum<Time> v = profile.get(t).drop(1);
@@ -1260,8 +1268,8 @@ public class LooneyTuner extends LinearOpMode {
                             + "\nPress "+A+" when ready to resume, "+B+" to cancel."))
                         break; // ====>
 
-                    movingForwards = true;
-                    startTs = ts;
+                    movingForwards = false;
+                    profile = null;
                 }
                 if (ui.accept()) {
                     // Make sure that the user does both kV and kA:
@@ -1297,7 +1305,7 @@ public class LooneyTuner extends LinearOpMode {
         double maxValue;
         Field field; // Reference to the field being modified
         double value; // Current value
-        int lastTrigger; // Last quantized thumb-stick input (-1, 0 or 1)
+        int lastInput; // Last quantized thumb-stick input (-1, 0 or 1)
         double nextAdvanceTime; // Time at which to advance the value
 
         // Take a reference to the object and the name of its field to be updated. We use reflection
@@ -1326,7 +1334,7 @@ public class LooneyTuner extends LinearOpMode {
         // Update the variable according to the latest gamepad input.
         void update(String instructions, String buttonMessage) {
             telemetryAdd(instructions + String.format("Inputting <b>%s</b>. ", fieldName)
-                + "Press the triggers to change its value.\n");
+                + "Press Dpad up/down to change its value.\n");
 
             if (ui.dpadLeft()) {
                 digit = Math.min(digit + 1, 2);
@@ -1339,16 +1347,14 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             // Advance the value according to the thumb stick state:
-            double effectiveTrigger = gamepad1.right_trigger - gamepad1.left_trigger;
-            int trigger = (int) (effectiveTrigger / 0.5);
-            trigger = Math.max(-1, Math.min(1, trigger)); // -1, 0 or 1
-            if (trigger != lastTrigger) {
+            int input = ui.dpadUp() ? 1 : (ui.dpadDown() ? -1 : 0); // -1, 0 or 1
+            if (input != lastInput) {
                 nextAdvanceTime = time() + INITIAL_DELAY;
-                lastTrigger = trigger;
-                value += lastTrigger * Math.pow(10, digit);
+                lastInput = input;
+                value += lastInput * Math.pow(10, digit);
             } else if (time() > nextAdvanceTime) {
                 nextAdvanceTime = time() + ADVANCE_DELAY;
-                value += lastTrigger * Math.pow(10, digit);
+                value += lastInput * Math.pow(10, digit);
             }
 
             // Clamp new value to acceptable range:
@@ -1379,7 +1385,7 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
-            telemetryAdd(String.format("\nDpad to move the cursor, "
+            telemetryAdd(String.format("\nDpad left/right to move the cursor, "
                 + "%s"+A+" when done, "+B+" to cancel.", buttonMessage));
             telemetryUpdate();
         }
