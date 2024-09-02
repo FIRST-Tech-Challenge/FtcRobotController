@@ -1197,7 +1197,7 @@ public class LooneyTuner extends LinearOpMode {
                         + String.format("Max velocity will be %.0f%% when the next cycle starts.\n\n",
                             maxVelocityFactor * 100.0);
                 inputs[inputIndex].update(instruction,
-                        "X to reposition, Y to switch variables, triggers to change max velocity, ");
+                        X+" to reposition, "+Y+" to switch variables, triggers to change max velocity, ");
 
                 // Update the velocity:
                 Pose2D velocity = drive.opticalTracker.getVelocity();
@@ -1369,7 +1369,7 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
-            telemetryAdd(String.format("\nMove the left stick to move the cursor, "
+            telemetryAdd(String.format("\nLeft stick to move the cursor, "
                 + "%s"+A+" when done, "+B+" to cancel.", buttonMessage));
             telemetryUpdate();
         }

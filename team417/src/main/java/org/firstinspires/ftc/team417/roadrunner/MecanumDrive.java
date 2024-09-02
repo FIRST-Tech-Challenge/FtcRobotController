@@ -100,9 +100,9 @@ public final class MecanumDrive {
                 kV = 0.004317546531109388;
                 kA = 0;
 
-                axialGain = 20.0;
-                lateralGain = 8.0;
-                headingGain = 8.0; // shared with turn
+                axialGain = 0.0;
+                lateralGain = 0.0;
+                headingGain = 0.0; // shared with turn
 
                 otos.offset.x = 6.4; // Inches
                 otos.offset.y = 3.037; // Inches
