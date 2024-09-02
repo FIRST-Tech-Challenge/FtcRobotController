@@ -161,19 +161,19 @@ class TuneParameters {
     }
 
     // Validate that the settings are valid and apply to the current robot:
-    TuneParameters getSavedSettings() {
+    TuneParameters getSavedParameters() {
         // Load the saved settings from the preferences database:
         Preferences preferences = Preferences.userNodeForPackage(TuneParameters.class);
         Gson gson = new Gson();
         String json = preferences.get("settings", "");
-        TuneParameters savedSettings = gson.fromJson(json, TuneParameters.class);
+        TuneParameters savedParameters = gson.fromJson(json, TuneParameters.class);
 
         // Now compare to the current settings:
-        if ((savedSettings == null) || (savedSettings.params == null))
+        if ((savedParameters == null) || (savedParameters.params == null))
             return null; // No saved settings were found
-        if (!savedSettings.robotName.equals(robotName))
+        if (!savedParameters.robotName.equals(robotName))
             return null; // Different robots, so discard
-        return savedSettings;
+        return savedParameters;
     }
 
     // Compare the current settings to the last saved settings. Returns a string that
@@ -223,7 +223,8 @@ public class LooneyTuner extends LinearOpMode {
     // Member fields referenced by every test:
     Ui ui;
     MecanumDrive drive;
-    TuneParameters parameters;
+    TuneParameters currentParameters;
+    TuneParameters originalParameters;
 
     // Constants:
     public static int DISTANCE = 48; // Standard test driving distance, in inches
@@ -238,10 +239,12 @@ public class LooneyTuner extends LinearOpMode {
             return; // ====>
 
         TuneParameters currentSettings = new TuneParameters(drive);
-        TuneParameters savedSettings = currentSettings.getSavedSettings();
+        TuneParameters savedSettings = currentSettings.getSavedParameters();
         if (savedSettings != null) {
             String comparison = savedSettings.compare(currentSettings);
             if (!comparison.isEmpty()) {
+                // There is no way to query the current display format so we have to assume it
+                // could be either HTML or non-HTML.
                 telemetry.clear();
                 telemetry.addLine("YOUR CODE IS OUT OF DATE");
                 telemetry.addLine();
@@ -251,7 +254,6 @@ public class LooneyTuner extends LinearOpMode {
                         + "then update as follows:");
                 telemetry.addLine();
                 telemetry.addLine(comparison);
-                telemetry.addLine();
                 telemetry.addLine("Please update your code and restart now. Or, to proceed anyway and "
                         + "delete the tuning results, triple-tap the BACK button on the gamepad.");
                 telemetry.update();
@@ -503,7 +505,7 @@ public class LooneyTuner extends LinearOpMode {
                 if (distance == 0)
                     distance = 0.001;
 
-                TuneParameters newParameters = parameters.createClone();
+                TuneParameters newParameters = currentParameters.createClone();
                 newParameters.params.otos.linearScalar = (96.0 / distance);
                 newParameters.params.otos.offset.h = normalizeAngle(heading);
 
@@ -549,14 +551,28 @@ public class LooneyTuner extends LinearOpMode {
 
     // Prompt the user for how to set the new parameters and save them to the registry:
     public void acceptParameters(TuneParameters newParameters) {
-        String comparison = newParameters.compare(parameters);
+        String comparison = newParameters.compare(currentParameters);
         if (comparison.isEmpty()) {
             ui.prompt("The new results match your current settings.\n\nPress "+A+" to continue.");
         } else {
             MecanumDrive.PARAMS = newParameters.params;
-            parameters = newParameters;
-            parameters.save();
-            ui.prompt("Double-tap the shift key in Android Studio, enter 'MD.Params' to jump to the "
+            currentParameters = newParameters;
+            currentParameters.save();
+            ui.prompt("Double-tap the shift key in Android Studio, enter 'md.params' to jump to the "
+                    + "MecanumDrive Params constructor, then update as follows:\n\n"
+                    + comparison
+                    + "\nPress "+A+" to continue.");
+        }
+    }
+
+    // Show all of the parameters that have been updated in this run:
+    public void showUpdatedParameters() {
+        String comparison = currentParameters.compare(originalParameters);
+        if (comparison.isEmpty()) {
+            ui.prompt("There are no changes from your current settings.\n\nPress "+A+" to continue.");
+        } else {
+            ui.prompt("Here are all of the parameter updates from your current run. "
+                    + "Double-tap the shift key in Android Studio, enter 'md.params' to jump to the "
                     + "MecanumDrive Params constructor, then update as follows:\n\n"
                     + comparison
                     + "\nPress "+A+" to continue.");
@@ -867,7 +883,7 @@ public class LooneyTuner extends LinearOpMode {
                     + "the robot on the wall the same way at both the start and end of this test?\n\n"
                     + "Aborted, press "+A+" to continue.");
         } else {
-            TuneParameters newSettings = parameters.createClone();
+            TuneParameters newSettings = currentParameters.createClone();
             newSettings.params.otos.offset.x = offset.x;
             newSettings.params.otos.offset.y = offset.y;
             newSettings.params.otos.angularScalar = angularScalar;
@@ -1031,13 +1047,13 @@ public class LooneyTuner extends LinearOpMode {
 
                 out.printf("Intercept: %.3f, Slope: %.3f, Voltage: %.3f\n", bestFitLine.intercept, bestFitLine.slope, voltage);
 
-                TuneParameters newParameters = parameters.createClone();
+                TuneParameters newParameters = currentParameters.createClone();
                 newParameters.params.kS = bestFitLine.intercept * voltage;
-                newParameters.params.kV = bestFitLine.slope * voltage * parameters.params.inPerTick; // @@@ Normalize?
+                newParameters.params.kV = bestFitLine.slope * voltage * currentParameters.params.inPerTick; // @@@ Normalize?
 
                 if (ui.prompt("Check out the graph on FTC Dashboard!\n\n"
-                    + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.params.kS, parameters.params.kS)
-                    + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.params.kV, parameters.params.kV)
+                    + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.params.kS, currentParameters.params.kS)
+                    + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.params.kV, currentParameters.params.kV)
                     + "\nIf these look good, press "+A+" to accept, "+B+" to cancel.")) {
 
                     acceptParameters(newParameters);
@@ -1113,10 +1129,10 @@ public class LooneyTuner extends LinearOpMode {
                 + "\n\nDrive the robot to position, press "+A+" to start, "+B+" to cancel")) {
 
             // Disable the PID gains so that the distance traveled isn't corrected:
-            TuneParameters testParameters = parameters.createClone();
+            TuneParameters testParameters = currentParameters.createClone();
             testParameters.params.lateralGain = 0;
             testParameters.params.lateralVelGain = 0;
-            testParameters.params.lateralInPerTick = parameters.params.inPerTick;
+            testParameters.params.lateralInPerTick = currentParameters.params.inPerTick;
 
             // Recreate the Kinematics object based on the new settings:
             drive.recreateKinematics();
@@ -1135,19 +1151,19 @@ public class LooneyTuner extends LinearOpMode {
                 Pose2D endPose = drive.opticalTracker.getPosition();
                 double actualDistance = Math.hypot(endPose.x, endPose.y);
                 double lateralMultiplier = actualDistance / DISTANCE;
-                double inchesPerTick = parameters.params.inPerTick * lateralMultiplier;
+                double inchesPerTick = currentParameters.params.inPerTick * lateralMultiplier;
 
                 if (ui.prompt(String.format("Measured lateral multiplier is %.3f (%.5f inches per tick). ", lateralMultiplier, inchesPerTick)
                         + "Does that look good?"
                         + "\n\nPress "+A+" to accept, "+B+" to cancel")) {
-                    TuneParameters newParameters = parameters.createClone();
+                    TuneParameters newParameters = currentParameters.createClone();
                     newParameters.params.lateralInPerTick = inchesPerTick;
                     acceptParameters(newParameters);
                 }
             }
 
             // We're done, undo any temporary state we set:
-            MecanumDrive.PARAMS = parameters.params;
+            MecanumDrive.PARAMS = currentParameters.params;
             drive.recreateKinematics();
         }
     }
@@ -1159,14 +1175,14 @@ public class LooneyTuner extends LinearOpMode {
         // Disable all lateral gains so that backward and forward behavior is not affected by the
         // PID/Ramsete algorithm. It's okay for the axial and rotation gains to be either zero
         // or non-zero:
-        TuneParameters testParameters = parameters.createClone();
+        TuneParameters testParameters = currentParameters.createClone();
         testParameters.params.lateralGain = 0;
         testParameters.params.lateralVelGain = 0;
         MecanumDrive.PARAMS = testParameters.params;
 
         int inputIndex = 0;
         DecimalInput[] inputs = {
-            new DecimalInput(drive.PARAMS, "kV", -1, 3, 0.01, 20),
+            new DecimalInput(drive.PARAMS, "kV", -3, 6, 0.000001, 20),
             new DecimalInput(drive.PARAMS, "kA", -4, 5, 0, 1),
         };
         String[] instructions = {
@@ -1186,10 +1202,17 @@ public class LooneyTuner extends LinearOpMode {
                 + "\nPress "+A+" to start, "+B+" to cancel", DISTANCE, DISTANCE))) {
 
             // Trigger a reset the first time into the loop:
-            double startTime = 0;
             double maxVelocityFactor = 1.0;
-            TimeProfile profile = null;
-            boolean movingForwards = false;
+
+            // Everything below here is taken from ManualFeedforwardTuner::runOpMode():
+            TimeProfile profile = new TimeProfile(constantProfile(
+                    DISTANCE, 0.0,
+                    MecanumDrive.PARAMS.maxWheelVel,
+                    MecanumDrive.PARAMS.minProfileAccel,
+                    MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
+
+            boolean movingForwards = true;
+            double startTs = System.nanoTime() / 1e9;
 
             while (opModeIsActive() && !ui.cancel()) {
                 // Query the new kV or kA value from the user:
@@ -1204,24 +1227,11 @@ public class LooneyTuner extends LinearOpMode {
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 packet.put("vActual", velocity.x);
 
-                double t = time() - startTime;
-                if ((profile == null) || (t > profile.duration)) {
+                double ts = System.nanoTime() / 1e9;
+                double t = ts - startTs;
+                if (t > profile.duration) {
                     movingForwards = !movingForwards;
-                    startTime = time();
-                    t = 0;
-
-                    if ((profile == null) || (movingForwards)) {
-                        profile = new TimeProfile(constantProfile(
-                                DISTANCE, 0.0,
-                                MecanumDrive.PARAMS.maxWheelVel * maxVelocityFactor,
-                                MecanumDrive.PARAMS.minProfileAccel,
-                                MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
-
-                        // Reset the start position on every cycle. This ensures that getVelocity().x
-                        // is the appropriate velocity to read, and it resets after we reposition
-                        // the robot:
-                        drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
-                    }
+                    startTs = ts;
                 }
 
                 DualNum<Time> v = profile.get(t).drop(1);
@@ -1250,8 +1260,8 @@ public class LooneyTuner extends LinearOpMode {
                             + "\nPress "+A+" when ready to resume, "+B+" to cancel."))
                         break; // ====>
 
-                    profile = null;
-                    movingForwards = false;
+                    movingForwards = true;
+                    startTs = ts;
                 }
                 if (ui.accept()) {
                     // Make sure that the user does both kV and kA:
@@ -1267,7 +1277,7 @@ public class LooneyTuner extends LinearOpMode {
         }
 
         // We're done, undo any temporary state we set:
-        MecanumDrive.PARAMS = parameters.params;
+        MecanumDrive.PARAMS = currentParameters.params;
         stopMotors();
     }
 
@@ -1382,7 +1392,7 @@ public class LooneyTuner extends LinearOpMode {
     void interactivePidTuner(PidTunerType type) {
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        TuneParameters testParameters = parameters.createClone();
+        TuneParameters testParameters = currentParameters.createClone();
         MecanumDrive.PARAMS = testParameters.params;
         String prompt, gainName, velGainName;
 
@@ -1483,7 +1493,7 @@ public class LooneyTuner extends LinearOpMode {
             stopMotors();
 
         }
-        MecanumDrive.PARAMS = parameters.params;
+        MecanumDrive.PARAMS = currentParameters.params;
     }
 
     // Navigate a short spline as a completion test.
@@ -1518,7 +1528,7 @@ public class LooneyTuner extends LinearOpMode {
 
             // Disable the rotational PID/Ramsete behavior so that we can test just the
             // feed-forward rotation:
-            TuneParameters testParameters = parameters.createClone();
+            TuneParameters testParameters = currentParameters.createClone();
             testParameters.params.headingGain = 0;
             testParameters.params.headingVelGain = 0;
             MecanumDrive.PARAMS = testParameters.params;
@@ -1538,7 +1548,7 @@ public class LooneyTuner extends LinearOpMode {
                 + "\n\nPress "+A+" to continue.");
 
             // Restore the parameters:
-            MecanumDrive.PARAMS = parameters.params;
+            MecanumDrive.PARAMS = currentParameters.params;
         }
     }
 
@@ -1568,7 +1578,8 @@ public class LooneyTuner extends LinearOpMode {
         // Initialize member fields:
         ui = new Ui();
         drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, zeroPose);
-        parameters = new TuneParameters(drive);
+        currentParameters = new TuneParameters(drive);
+        originalParameters = currentParameters.createClone();
 
         if ((drive.opticalTracker != null) &&
             ((drive.opticalTracker.getAngularUnit() != AngleUnit.RADIANS) ||
@@ -1591,6 +1602,7 @@ public class LooneyTuner extends LinearOpMode {
             tests.add(new Test(()->interactivePidTuner(PidTunerType.HEADING), "Interactive PiD tuner (headingGain)"));
             tests.add(new Test(this::rotationTest, "Rotation test (verify trackWidthTicks)"));
             tests.add(new Test(this::completionTest, "Completion test (overall verification)"));
+            tests.add(new Test(this::showUpdatedParameters, "Show accumulated parameter changes"));
         }
 
         // Remind the user to press Start on the Driver Station, then press A on the gamepad.

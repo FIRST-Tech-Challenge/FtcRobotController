@@ -100,9 +100,9 @@ public final class MecanumDrive {
                 kV = 0.004317546531109388;
                 kA = 0;
 
-                axialGain = 0.0;
-                lateralGain = 0.0;
-                headingGain = 0.0; // shared with turn
+                axialGain = 3.2;
+                lateralGain = 0.30;
+                headingGain = 3.30; // shared with turn
 
                 otos.offset.x = 6.4; // Inches
                 otos.offset.y = 3.037; // Inches
@@ -160,10 +160,8 @@ public final class MecanumDrive {
         public static class Otos {
             // Inches, inches and radians:
             public SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
-            // Scalar:
-            public double linearScalar;
-            // Scalar:
-            public double angularScalar;
+            public double linearScalar; // Scalar
+            public double angularScalar; // Scalar
         }
     }
 
