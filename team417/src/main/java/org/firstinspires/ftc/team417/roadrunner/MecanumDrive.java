@@ -364,7 +364,7 @@ public final class MecanumDrive {
 
     // Initialize the optical tracking sensor if we have one. Derived from configureOtos(). The
     // pose is the initial pose where the robot will start on the field.
-    private void initializeOpticalTracker() {
+    public void initializeOpticalTracker() {
         if (opticalTracker == null)
             return; // ====>
 

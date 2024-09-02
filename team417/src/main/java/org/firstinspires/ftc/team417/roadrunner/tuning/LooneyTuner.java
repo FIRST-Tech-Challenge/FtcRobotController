@@ -541,7 +541,7 @@ public class LooneyTuner extends LinearOpMode {
         }
 
         // Set the hardware to the new (or old) settings:
-        setHardware();
+        setOtosHardware();
     }
 
     // Prompt the user for how to set the new parameters and save them to the registry:
@@ -561,8 +561,8 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Set the hardware to the current parameters:
-    public void setHardware() {
-        drive.configure(hardwareMap);
+    public void setOtosHardware() {
+        drive.initializeOpticalTracker();
     }
 
     // Return a high resolution time count, in seconds:
@@ -655,6 +655,7 @@ public class LooneyTuner extends LinearOpMode {
     // Start tracking total amount of rotation:
     double initiateSparkFunRotation() {
         assert(drive.opticalTracker != null);
+        accumulatedSparkFunRotation = 0;
         previousSparkFunHeading = drive.opticalTracker.getPosition().h;
         return previousSparkFunHeading;
     }
@@ -821,7 +822,7 @@ public class LooneyTuner extends LinearOpMode {
         }
 
         // Restore the hardware settings:
-        setHardware();
+        setOtosHardware();
     }
 
     // Process the spin results:
@@ -924,6 +925,7 @@ public class LooneyTuner extends LinearOpMode {
     // Automatically calculate the kS and kV terms of the feed-forward approximation by
     // ramping up the velocity in a straight line. We increase power by a fixed increment.
     void acceleratingStraightLineTuner() {
+        final double VELOCITY_EPSILON = 2.0;
         final double VOLTAGE_ADDER_PER_SECOND = 0.3;
         final double MAX_VOLTAGE_FACTOR = 0.9;
         final double MAX_SECONDS = MAX_VOLTAGE_FACTOR / VOLTAGE_ADDER_PER_SECOND + 0.1;
@@ -933,13 +935,13 @@ public class LooneyTuner extends LinearOpMode {
 
         if (ui.drivePrompt("Drive the robot to a spot on the field with as much space in front of it as possible. "
                 + "The robot will drive forward in a straight line, starting slowly but getting "
-                + "faster and faster. Be ready to press B to stop the robot when it gets close to "
+                + "faster and faster. Be ready to press "+B+" to stop the robot when it gets close to "
                 + "hitting something!"
-                + "\n\nDrive the robot to a good spot, press A to start, B to cancel.")) {
+                + "\n\nDrive the robot to a good spot, press "+A+" to start, "+B+" to cancel.")) {
 
             ArrayList<Point> points = new ArrayList<>();
             double startTime = time();
-            double oldVoltageFactor = 0;
+            double oldPowerFactor = 0;
             double maxVelocity = 0;
             double voltage = drive.voltageSensor.getVoltage();
 
@@ -947,25 +949,30 @@ public class LooneyTuner extends LinearOpMode {
             while (opModeIsActive() && !ui.cancel() && ((time() - startTime) < MAX_SECONDS)) {
 
                 // Increase power by 0.1 each second until it reaches 0.9:
-                double newVoltageFactor = (time() - startTime) * VOLTAGE_ADDER_PER_SECOND;
-                newVoltageFactor = Math.min(newVoltageFactor, MAX_VOLTAGE_FACTOR);
+                double newPowerFactor = (time() - startTime) * VOLTAGE_ADDER_PER_SECOND;
+                newPowerFactor = Math.min(newPowerFactor, MAX_VOLTAGE_FACTOR);
 
-                drive.rightFront.setPower(newVoltageFactor);
-                drive.rightBack.setPower(newVoltageFactor);
-                drive.leftFront.setPower(newVoltageFactor);
-                drive.leftBack.setPower(newVoltageFactor);
+                drive.rightFront.setPower(newPowerFactor);
+                drive.rightBack.setPower(newPowerFactor);
+                drive.leftFront.setPower(newPowerFactor);
+                drive.leftBack.setPower(newPowerFactor);
 
-                double percentage = newVoltageFactor / MAX_VOLTAGE_FACTOR * 100;
+                double percentage = newPowerFactor / MAX_VOLTAGE_FACTOR * 100;
                 telemetryAdd(String.format("%.0f%% done.", percentage));
                 telemetryAdd("\nPress B to abort.");
                 telemetryUpdate();
 
                 Pose2D velocityVector = drive.opticalTracker.getVelocity();
                 double velocity = Math.hypot(velocityVector.x, velocityVector.y);
-                points.add(new Point(velocity, oldVoltageFactor));
-                maxVelocity = Math.max(velocity, maxVelocity);
 
-                oldVoltageFactor = newVoltageFactor;
+                // Discard zero velocities that will happen when the provided power isn't
+                // enough yet to overcome static friction:
+                if (velocity > VELOCITY_EPSILON) {
+                    points.add(new Point(velocity, oldPowerFactor));
+                    maxVelocity = Math.max(velocity, maxVelocity);
+                }
+
+                oldPowerFactor = newPowerFactor;
             }
 
             // Stop the robot:
@@ -974,7 +981,7 @@ public class LooneyTuner extends LinearOpMode {
             drive.leftFront.setPower(0);
             drive.leftBack.setPower(0);
 
-            if (oldVoltageFactor < MAX_VOLTAGE_FACTOR) {
+            if (oldPowerFactor < MAX_VOLTAGE_FACTOR) {
                 ui.prompt("The robot didn't hit top speed before the test was aborted."
                         + "\n\nPress A to continue.");
             } else if (maxVelocity == 0) {
@@ -1035,7 +1042,7 @@ public class LooneyTuner extends LinearOpMode {
             }
         }
 
-        setHardware();
+        setOtosHardware();
     }
 
     // Test the robot motors.
@@ -1378,7 +1385,7 @@ public class LooneyTuner extends LinearOpMode {
         TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
         if (type == PidTunerType.AXIAL) {
             prompt = String.format("The robot will drive backwards and then forwards for %d inches. ", DISTANCE)
-                    + "Tune the gains so that the target and actual trajectories align. "
+                    + "Tune the gains so that the target and actual trajectories shown in FTC Dashboard align. "
                     + "axialGain is most important while axialVelGain can often be left as zero. ";
             trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
             gainName = "axialGain";
@@ -1386,7 +1393,7 @@ public class LooneyTuner extends LinearOpMode {
 
         } else if (type == PidTunerType.LATERAL) {
             prompt = String.format("The robot will strafe left and then right for %d inches. ", DISTANCE)
-                    + "Tune the gains so that the target and actual trajectories align. "
+                    + "Tune the gains so that the target and actual trajectories shown in FTC Dashboard align. "
                     + "lateralGain is most important while lateralVelGain can often be left as zero. ";
             trajectory = trajectory.strafeTo(new Vector2d(0, DISTANCE)).strafeTo(new Vector2d(0, 0));
             gainName = "lateralGain";
@@ -1394,7 +1401,7 @@ public class LooneyTuner extends LinearOpMode {
 
         } else {
             prompt = "The robot will rotate in place 180° clockwise and then counterclockwise. "
-                    + "Tune the gains so that the target and actual trajectories align. "
+                    + "Tune the gains so that the target and actual trajectories shown in FTC Dashboard align. "
                     + "headingGain is most important while headingVelGain can often be left as zero. ";
             trajectory = trajectory.turn(Math.PI).turn(-Math.PI);
             gainName = "headingGain";
