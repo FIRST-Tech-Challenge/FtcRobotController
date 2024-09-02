@@ -220,6 +220,54 @@ public class LooneyTuner extends LinearOpMode {
     public static int DISTANCE = 72;
     final Pose2d zeroPose = new Pose2d(0, 0, 0);
 
+    // Check if the robot code setting the MecanumDrive configuration parameters is up to date
+    // with the last results from tuning:
+    /** @noinspection BusyWait*/
+    static public void verifyCodeMatchesTuneResults(MecanumDrive drive, Telemetry telemetry, Gamepad gamepad) {
+        // There's no point in complaining about mismatches when running under the simulator:
+        if (WilyWorks.isSimulating)
+            return; // ====>
+
+        TuneParameters currentSettings = new TuneParameters(drive);
+        TuneParameters savedSettings = currentSettings.getSavedSettings();
+        if (savedSettings != null) {
+            String comparison = savedSettings.compare(currentSettings);
+            if (!comparison.isEmpty()) {
+                telemetry.clear();
+                telemetry.addLine("YOUR CODE IS OUT OF DATE");
+                telemetry.addLine();
+                telemetry.addLine("The code's configuration parameters don't match the last "
+                        + "results saved in Looney Tuner. Double-tap the shift key in Android "
+                        + "Studio, enter '<b>md.params</b>' to jump to the MecanumDrive Params constructor, "
+                        + "then update as follows:");
+                telemetry.addLine();
+                telemetry.addLine(comparison);
+                telemetry.addLine();
+                telemetry.addLine("Please update your code and restart now. Or, to proceed anyway and "
+                        + "delete the tuning results, triple-tap the BACK button on the gamepad.");
+                telemetry.update();
+
+                // Wait for a triple-tap of the button:
+                for (int i = 0; i < 3; i++) {
+                    try {
+                        while (!gamepad.back)
+                            Thread.sleep(1);
+                        while (gamepad.back)
+                            Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                // If we reached this point, the user has chosen to ignore the last tuning results.
+                // Override those results with the current settings:
+                currentSettings.save();
+                telemetry.addLine("Looney Tuner results have been overridden");
+                telemetry.update();
+            }
+        }
+    }
+
     // Data structures for the User Interface
     interface MenuStrings {
         String getString(int i);
@@ -1275,7 +1323,7 @@ public class LooneyTuner extends LinearOpMode {
             // Clamp new value to acceptable range:
             value = Math.max(minValue, Math.min(maxValue, value));
 
-            // Set the value:
+            // Set the value into the class:
             try {
                 field.setDouble(object, value);
             } catch (IllegalAccessException e) {
@@ -1515,54 +1563,6 @@ public class LooneyTuner extends LinearOpMode {
 
             tests.get(selection).method.invoke();   // Invoke the chosen test
             drive.setPose(zeroPose);                // Reset pose for next test
-        }
-    }
-
-    // Check if the robot code setting the MecanumDrive configuration parameters is up to date
-    // with the last results from tuning:
-    /** @noinspection BusyWait*/
-    static public void verifyCodeMatchesTuneResults(MecanumDrive drive, Telemetry telemetry, Gamepad gamepad) {
-        // There's no point in complaining about mismatches when running under the simulator:
-        if (WilyWorks.isSimulating)
-            return; // ====>
-
-        TuneParameters currentSettings = new TuneParameters(drive);
-        TuneParameters savedSettings = currentSettings.getSavedSettings();
-        if (savedSettings != null) {
-            String comparison = savedSettings.compare(currentSettings);
-            if (!comparison.isEmpty()) {
-                telemetry.clear();
-                telemetry.addLine("YOUR CODE IS OUT OF DATE");
-                telemetry.addLine();
-                telemetry.addLine("The code's configuration parameters don't match the last "
-                        + "results saved in LooneyTuner. Double-tap the shift key in Android "
-                        + "Studio, enter '<b>md.params</b>' to jump to the MecanumDrive Params constructor, "
-                        + "then update as follows:");
-                telemetry.addLine();
-                telemetry.addLine(comparison);
-                telemetry.addLine();
-                telemetry.addLine("Please update your code and restart now. Or, to proceed anyway and "
-                        + "delete the tuning results, triple-tap the BACK button on the gamepad.");
-                telemetry.update();
-
-                // Wait for a triple-tap of the button:
-                for (int i = 0; i < 3; i++) {
-                    try {
-                        while (!gamepad.back)
-                            Thread.sleep(1);
-                        while (gamepad.back)
-                            Thread.sleep(1);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                // If we reached this point, the user has chosen to ignore the last tuning results.
-                // Override those results with the current settings:
-                currentSettings.save();
-                telemetry.addLine("Looney Tuner results have been overridden");
-                telemetry.update();
-            }
         }
     }
 }
