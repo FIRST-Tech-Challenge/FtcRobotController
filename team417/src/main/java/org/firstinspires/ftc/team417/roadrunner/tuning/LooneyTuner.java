@@ -3,6 +3,10 @@
  */
 
 // Short-term:
+// @@@ Nested menus
+// @@@ Stick for decimal input
+// @@@ Fix ramp distance bug/feature
+// @@@ Disabled menus
 // @@@ Fix inPerTick
 // @@@ Allow tuners to inherit current OTOS settings
 // @@@ Add stick support to menus
@@ -211,13 +215,18 @@ class TuneParameters {
 @SuppressLint("DefaultLocale")
 @TeleOp
 public class LooneyTuner extends LinearOpMode {
+    final String A = "\ud83c\udd50"; // Symbol for the gamepad A button
+    final String B = "\ud83c\udd51"; // Symbol for the gamepad B button
+    final String X = "\ud83c\udd67"; // Symbol for the gamepad X button
+    final String Y = "\ud83c\udd68"; // Symbol for the gamepad Y button
+
     // Member fields referenced by every test:
     Ui ui;
     MecanumDrive drive;
     TuneParameters parameters;
 
     // Constants:
-    public static int DISTANCE = 72;
+    public static int DISTANCE = 72; // Standard test driving distance, in inches
     final Pose2d zeroPose = new Pose2d(0, 0, 0);
 
     // Check if the robot code setting the MecanumDrive configuration parameters is up to date
@@ -1153,7 +1162,7 @@ public class LooneyTuner extends LinearOpMode {
         String[] instructions = {
             "Adjust <b>kV</b> to make the horizontal lines as close as possible in height. " +
                 "Move the left stick up or down to change <b>kV</b>'s value. " +
-                "Remember, <b>kV = vRef / vActual</b>. " +
+                "Remember, <b>kV = vRef / vActual</b>.\n\n" +
                 "If there are no horizontal lines, decrease the maximum velocity using the left trigger. ",
             "Adjust <b>kA</b> to shift <b>vActual</b> left and right so the angled lines overlap. " +
                 "Move the left stick up or down to change <b>kA</b>'s value. ",
@@ -1167,15 +1176,15 @@ public class LooneyTuner extends LinearOpMode {
                 + "\nPress A to start, B to cancel", DISTANCE, DISTANCE))) {
 
             // Trigger a reset the first time into the loop:
-            boolean movingForwards = false;
-            double startTs = 0;
+            double startTime = 0;
             double maxVelocityFactor = 1.0;
             TimeProfile profile = null;
+            boolean movingForwards = false;
 
             while (opModeIsActive() && !ui.cancel()) {
                 // Query the new kV or kA value from the user:
                 String instruction = instructions[inputIndex]
-                        + String.format("Max velocity will be %.0f%% when the next cycle starts.\n",
+                        + String.format("Max velocity will be %.0f%% when the next cycle starts.\n\n",
                             maxVelocityFactor * 100.0);
                 inputs[inputIndex].update(instruction,
                         "X to reposition, Y to switch variables, triggers to change max velocity, ");
@@ -1185,21 +1194,22 @@ public class LooneyTuner extends LinearOpMode {
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 packet.put("vActual", velocity.x);
 
-                double ts = time();
-                double t = ts - startTs;
+                double t = time() - startTime;
                 if ((profile == null) || (t > profile.duration)) {
                     movingForwards = !movingForwards;
-                    startTs = ts;
+                    startTime = time();
+                    t = 0;
 
-                    // Reset the start position on every loop. This ensures that getVelocity().x
-                    // is the appropriate velocity to read, and it resets after we reposition
-                    // the robot:
-                    if (movingForwards) {
+                    if ((profile == null) || (movingForwards)) {
                         profile = new TimeProfile(constantProfile(
                                 DISTANCE, 0.0,
                                 MecanumDrive.PARAMS.maxWheelVel * maxVelocityFactor,
                                 MecanumDrive.PARAMS.minProfileAccel,
                                 MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
+
+                        // Reset the start position on every cycle. This ensures that getVelocity().x
+                        // is the appropriate velocity to read, and it resets after we reposition
+                        // the robot:
                         drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
                     }
                 }
@@ -1230,8 +1240,8 @@ public class LooneyTuner extends LinearOpMode {
                             + "\nPress A when ready to resume, B to cancel."))
                         break; // ====>
 
+                    profile = null;
                     movingForwards = false;
-                    startTs = 0;
                 }
                 if (ui.accept()) {
                     // Make sure that the user does both kV and kA:
@@ -1526,7 +1536,7 @@ public class LooneyTuner extends LinearOpMode {
         if ((drive.opticalTracker != null) &&
             ((drive.opticalTracker.getAngularUnit() != AngleUnit.RADIANS) ||
              (drive.opticalTracker.getLinearUnit() != DistanceUnit.INCH))) {
-            ui.prompt("The SparkFun OTOS must be configured for radians and inches.");
+            ui.prompt("The SparkFun OTOS must be present and configured for radians and inches.");
             return; // ====>
         }
 
@@ -1552,12 +1562,12 @@ public class LooneyTuner extends LinearOpMode {
         // invoke a menu option:
         ui.message("<big><big><big><big><big><big><big><big><b>Press \u25B6");
         waitForStart();
-        ui.prompt("<big><big><big><big><big><big><big><b>Press Gamepad A or B");
+        ui.prompt("<big><big><big><big><big><big><big><b>Press Gamepad "+A+" or "+B);
 
         // Execute our main menu loop:
         int selection = 0;
         while (opModeIsActive()) {
-            String heading = "<h2>Use Dpad to navigate, A to select</h2>";
+            String heading = "<h2>Use Dpad to navigate, "+A+" to select</h2>";
             selection = ui.menu(heading, selection, true,
                     tests.size(), i -> tests.get(i).description);
 
