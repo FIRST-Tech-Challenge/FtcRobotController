@@ -39,12 +39,12 @@ public abstract class Base extends LinearOpMode {
      - This is gearing DOWN for less speed and more torque.
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
-    try {
-        public String           hubName                 = hardwareMap.get(String.class, "Control Hub");
-        public static final String SMALL_WHEEL_ROBOT_NAME = "Expansion Hub 2";
-        public static final String LARGE_WHEEL_ROBOT_NAME = "Control Hub";
-        static double           WHEEL_DIAMETER_INCHES;
-        {
+    {
+        try {
+            public String           hubName                 = hardwareMap.get(String.class, "Control Hub");
+            public static final String SMALL_WHEEL_ROBOT_NAME = "Expansion Hub 2";
+            public static final String LARGE_WHEEL_ROBOT_NAME = "Control Hub";
+            static double           WHEEL_DIAMETER_INCHES;
             print("Hub Name", hubName);
             if (SMALL_WHEEL_ROBOT_NAME.equals(hubName)) {
                 WHEEL_DIAMETER_INCHES = 3.77953;     // For figuring out circumference
@@ -53,10 +53,10 @@ public abstract class Base extends LinearOpMode {
             } else {
                 WHEEL_DIAMETER_INCHES = 3.77953;     // Default value
             }
+        } catch Exception e {
+            telemetry.addData("Error", e);
+            telemetry.update()
         }
-    } catch Exception e {
-        telemetry.addData("Error", e);
-        telemetry.update()
     }
     static final double     COUNTS_PER_MOTOR_REV    = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0);
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
