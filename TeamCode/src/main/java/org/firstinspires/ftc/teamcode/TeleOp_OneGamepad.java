@@ -35,6 +35,7 @@ public class TeleOp_OneGamepad extends Base {
         }
 
         while (opModeIsActive()) {
+            // Slows down movement for better handling the more the right trigger is held down
             slowdownMultiplier = (1.0 - gamepad1.right_trigger);
 
             axial = ((-gamepad1.left_stick_y * SPEED_MULTIPLIER) * slowdownMultiplier);
@@ -63,6 +64,7 @@ public class TeleOp_OneGamepad extends Base {
             lb.setPower(leftBackPower);
             rb.setPower(rightBackPower);
 
+            // Logic for moving pixel lift
             if (pixelLiftingMotor != null) {
                 if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
                     pixelLiftingMotor.setPower(0);
@@ -94,6 +96,7 @@ public class TeleOp_OneGamepad extends Base {
                 }
             }
 
+            // Logic for turning car wash on and off
             if (carWashMotor != null) {
                 if (!gamepad1.a && !gamepad1.b) {
                     carWashMotor.setPower(0);
@@ -108,6 +111,7 @@ public class TeleOp_OneGamepad extends Base {
                 }
             }
 
+            // Logic for pixel box rotation
             if (trayTiltingServo != null) {
                 boolean isLT = (gamepad2.left_trigger > 0.25);
                 if (isLT && !wasLT) {
@@ -122,6 +126,7 @@ public class TeleOp_OneGamepad extends Base {
                 wasLT = isLT;
             }
 
+            // Logic for back pixel locking servo
             if (pixelBackServo != null) {
                 if (gamepad2.y && !wasY) {
                     if (pixelBackServo.getPosition() > BACK_BOUNDS[1] - 0.05 && pixelBackServo.getPosition() < BACK_BOUNDS[1] + 0.05) {
@@ -135,6 +140,7 @@ public class TeleOp_OneGamepad extends Base {
                 wasY = gamepad2.y;
             }
 
+            // Logic for front pixel locking servo
             if (pixelLockingServo != null) {
                 if (gamepad2.x && !wasX) {
                     if (pixelLockingServo.getPosition() > 0.83 - 0.05 && pixelLockingServo.getPosition() < 0.83 + 0.05) {
@@ -148,6 +154,7 @@ public class TeleOp_OneGamepad extends Base {
                 wasX = gamepad2.x;
             }
 
+            // Logic for drone servo
             if (droneServo != null) {
                 if (gamepad1.left_bumper && gamepad1.right_bumper) {
                     droneServo.setPosition(0);
@@ -155,6 +162,7 @@ public class TeleOp_OneGamepad extends Base {
             }
         }
 
+        // Logic for touch sensor
         if (touchSensor != null) {
             if (!wasTS) {
                 if (touchSensor.isPressed()) {

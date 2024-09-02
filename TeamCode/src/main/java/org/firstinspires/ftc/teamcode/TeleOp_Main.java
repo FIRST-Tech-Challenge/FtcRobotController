@@ -31,6 +31,7 @@ public class TeleOp_Main extends Base {
         if (pixelLockingServo != null) { pixelLockingServo.setPosition(1); }
 
         while (opModeIsActive()) {
+            // Slows down movement for better handling the more the right trigger is held down
             slowdownMultiplier = (1.0 - gamepad1.right_trigger);
 //            if (gamepad1.left_stick_button || gamepad1.right_stick_button) { slowdownMultiplier *= 0.5; }
 
@@ -60,8 +61,11 @@ public class TeleOp_Main extends Base {
                 rf.setPower(rightFrontPower);
                 lb.setPower(leftBackPower);
                 rb.setPower(rightBackPower);
+            } else {
+                print("WARNING:", "At least one drivetrain motor disconnected");
             }
 
+            // Logic to raise or lower the lift
             if (pixelLiftingMotor != null) {
                 addTelemetry("Current position: " + pixelLiftingMotor.getCurrentPosition());
                 if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
@@ -93,6 +97,7 @@ public class TeleOp_Main extends Base {
                 }
             }
 
+            // Logic to start and stop car wash
             if (carWashMotor != null) {
                 if (!gamepad2.a && !gamepad2.b) {
                     carWashMotor.setPower(0);
@@ -107,6 +112,7 @@ public class TeleOp_Main extends Base {
                 }
             }
 
+            // Logic to tilt the pixel box back and forth
             if (trayTiltingServo != null) {
                 isLT = (gamepad2.left_trigger > 0.25);
                 if (isLT && !wasLT) {
@@ -121,20 +127,15 @@ public class TeleOp_Main extends Base {
                 wasLT = isLT;
             }
 
+            // Logic to lock pixel(s) in the box
             if (pixelLockingServo != null) {
                 if (gamepad2.x) {
                     pixelLockingServo.setPosition(1);
-//                    if (pixelLockingServo.getPosition() > 0.9 && pixelLockingServo.getPosition() < 1.1) {
-//                        pixelLockingServo.setPosition(0);
-//                        addTelemetry("Set pixelFrontServo to 0");
-//                    } else {
-//                        pixelLockingServo.setPosition(1);
-//                        addTelemetry("Set pixelFrontServo to 1");
-//                    }
                 } else { pixelLockingServo.setPosition(0); }
                 wasX = gamepad2.x;
             }
 
+            // Logic to launch drone
             if (droneServo != null) {
                 if (gamepad2.left_bumper && gamepad2.right_bumper) {
                     droneServo.setPosition(0);
@@ -156,9 +157,21 @@ public class TeleOp_Main extends Base {
                 wasTS = false;
             }
         }
+        updateAll();
     }
+
+    /**
+     * Adds telemetry data from the last action
+     * @param message Message to be sent
+     */
     public void addTelemetry(String message){
-        telemetry.addData("Last Action",message);
+        telemetry.addData("Last Action", message);
+    }
+
+    /**
+     * Adds information messages to telemetry and updates it
+     */
+    public void updateAll() {
         telemetry.addData("Pixel Lifting Motor Position", pixelLiftingMotor.getCurrentPosition());
         if(trayTiltingServo == null) {
             telemetry.addData("Tray Tilting Servo", "Disconnected");
@@ -170,5 +183,6 @@ public class TeleOp_Main extends Base {
             telemetry.addData("Touch Sensor", "Disconnected");
         }
         telemetry.update();
+
     }
 }

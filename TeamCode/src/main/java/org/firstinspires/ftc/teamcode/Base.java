@@ -106,8 +106,7 @@ public abstract class Base extends LinearOpMode {
             tfodModelName = "Prop_Red.tflite";
         } else if (teamColor == color.blue){
             tfodModelName = "Prop_Blue.tflite";
-        }
-        else if (useCam){
+        } else if (useCam){
             print("Warning","teamColor not specified");
             useCam = false;
         }
@@ -119,8 +118,8 @@ public abstract class Base extends LinearOpMode {
         imu.resetYaw();
 
         // The following try catch statements "check" if a motor is connected. If it isn't, it sets
-        // that motor's value to null. Later, we check if that value is null. If it is, then we
-        // don't try to run the motor.
+        // that motor's value to null. Later, we check if that value is null. If it is, we don't
+        // run the motor.
         try {
             lf = hardwareMap.get(DcMotorEx.class, "leftFront");
             lb = hardwareMap.get(DcMotorEx.class, "leftBack");
