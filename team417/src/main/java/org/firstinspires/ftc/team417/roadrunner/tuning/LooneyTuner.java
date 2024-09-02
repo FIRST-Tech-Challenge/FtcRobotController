@@ -2,15 +2,17 @@
  * Looney Tuner is a parameters tuner for robots using Road Runner.
  */
 
+// Short-term:
 // @@@ Fix inPerTick
-// @@@ Revert changes to return to stock Quick Start code
 // @@@ Allow tuners to inherit current OTOS settings
-// @@@ Add LED support
 // @@@ Add stick support to menus
-// @@@ Add max-velocity/max-acceleration testing for both linear and angular
 // @@@ Figure out fastLoad for all teams.
 // @@@ Show old values, amount of change for: lateralInPerTick
-// @@@ Fix rotation gain adjustment
+//
+// Long-term:
+// @@@ Revert changes to return to stock Quick Start code
+// @@@ Add LED support
+// @@@ Add max-velocity/max-acceleration testing for both linear and angular
 
 package org.firstinspires.ftc.team417.roadrunner.tuning;
 
@@ -204,7 +206,7 @@ class TuneParameters {
 /**
  * Looney Tuner's opMode class for running the tuning tests.
  *
- * @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance , ClassEscapesDefinedScope
+ * @noinspection UnnecessaryUnicodeEscape, AccessStaticViaInstance, ClassEscapesDefinedScope
  */
 @SuppressLint("DefaultLocale")
 @TeleOp
@@ -225,8 +227,6 @@ public class LooneyTuner extends LinearOpMode {
 
     /**
      * Class that encapsulates the UI framework.
-     *
-     * @noinspection UnnecessaryUnicodeEscape
      */
     class Ui {
         // Button press state:
@@ -787,7 +787,7 @@ public class LooneyTuner extends LinearOpMode {
         // less reliable than the best-fit circle center and radius because the former uses
         // only a single sample point while the latter uses all sample points. Consequently, make
         // the offset fit the radius while maintaining the same angle to the center of the circle:
-        double theta = Math.atan2(rawOffset.y, rawOffset.x); // Rise-over-run
+        double theta = rawOffset.atan2();
         Point offset = new Point(Math.cos(theta) * center.radius, Math.sin(theta) * center.radius);
 
         String results = String.format("Sensor thinks %.2f circles were completed.\n\n", totalMeasuredCircles);
@@ -817,8 +817,6 @@ public class LooneyTuner extends LinearOpMode {
 
                 // We changed 'trackWidthTicks' so recreate the kinematics object:
                 drive.recreateKinematics();
-
-                out.printf("new trackWidthTicks: %.2f\n", drive.PARAMS.trackWidthTicks); // @@@
             }
         }
     }
