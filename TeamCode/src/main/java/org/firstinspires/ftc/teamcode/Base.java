@@ -39,17 +39,23 @@ public abstract class Base extends LinearOpMode {
      - This is gearing DOWN for less speed and more torque.
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
-    public String           hubName                 = hardwareMap.get(String.class, "Control Hub");
-    public static final String SMALL_WHEEL_ROBOT_NAME = "Control Hub 1";
-    public static final String LARGE_WHEEL_ROBOT_NAME = "Control Hub 2";
-    static double           WHEEL_DIAMETER_INCHES;
     {
-        if (SMALL_WHEEL_ROBOT_NAME.equals(hubName)) {
-            WHEEL_DIAMETER_INCHES = 3.77953;     // For figuring out circumference
-        } else if (LARGE_WHEEL_ROBOT_NAME.equals(hubName)) {
-            WHEEL_DIAMETER_INCHES = 5.511811;     // For figuring out circumference
-        } else {
-            WHEEL_DIAMETER_INCHES = 3.77953;     // Default value
+        try {
+            public String           hubName                 = hardwareMap.get(String.class, "Control Hub");
+            public static final String SMALL_WHEEL_ROBOT_NAME = "Expansion Hub 2";
+            public static final String LARGE_WHEEL_ROBOT_NAME = "Control Hub";
+            static double           WHEEL_DIAMETER_INCHES;
+            print("Hub Name", hubName);
+            if (SMALL_WHEEL_ROBOT_NAME.equals(hubName)) {
+                WHEEL_DIAMETER_INCHES = 3.77953;     // For figuring out circumference
+            } else if (LARGE_WHEEL_ROBOT_NAME.equals(hubName)) {
+                WHEEL_DIAMETER_INCHES = 5.511811;     // For figuring out circumference
+            } else {
+                WHEEL_DIAMETER_INCHES = 3.77953;     // Default value
+            }
+        } catch Exception e {
+            telemetry.addData("Error", e);
+            telemetry.update()
         }
     }
     static final double     COUNTS_PER_MOTOR_REV    = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0);
@@ -81,6 +87,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Color options for the team prop. Options: red, blue, none **/
     public enum color { red, blue, none }
+
     /** Side of the robot. Options: front, back **/
     public enum side { front, back }
 
@@ -160,6 +167,7 @@ public abstract class Base extends LinearOpMode {
 
 
         print("Status", "Initialized");
+        print("Hub Name", hubName);
         update();
 
         allianceColor = teamColor;
@@ -404,9 +412,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Converts an amount of tiles on the game board to an amount of inches.
      * @param tiles The value of tiles to be converted. **/
-    public double tilesToInches(double tiles) {
-        return tiles * TILE_LENGTH;
-    }
+    public double tilesToInches(double tiles) {return tiles * TILE_LENGTH;}
 
     /** Makes the car wash outtake for 1 second. **/
     public void ejectPixel(double time) {
@@ -633,8 +639,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Sleep a specified number of seconds.
      * @param seconds The amount of seconds to sleep. **/
-    public final void s (double seconds){ sleep((long) seconds * 1000);
-    }
+    public final void s (double seconds){ sleep((long) seconds * 1000);}
 
     /** Place the purple pixel. **/
     public void purplePixel() {
@@ -727,7 +732,5 @@ public abstract class Base extends LinearOpMode {
    public void print(String caption, Object content) { print(caption, content, false); }
 
    /** A less space consuming way to update the displayed telemetry. **/
-  public void update() {
-       telemetry.update();
-  }
+  public void update() {telemetry.update();}
 }
