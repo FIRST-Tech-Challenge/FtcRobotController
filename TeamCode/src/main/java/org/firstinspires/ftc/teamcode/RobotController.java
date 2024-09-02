@@ -18,9 +18,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
+import top.symple.symplegraphdisplay.GraphSettings;
 import top.symple.symplegraphdisplay.SympleGraphDisplay;
 
 public class RobotController {
+    private static final GraphSettings DEFAULT_SYMPLE_GRAPH_DISPLAY_SETTINGS = new GraphSettings();
+
     public final GamepadEx driverController;
     public final GamepadEx actionController;
 
@@ -49,7 +52,7 @@ public class RobotController {
         this.dataLogger.addData(DataLogger.DataType.INFO, "RobotController: resetting robot");
         FtcDashboard.getInstance().stopCameraStream();
         SympleGraphDisplay.getInstance().reset();
-        SympleGraphDisplay.getInstance().setUpdateTime(0.05);
+        SympleGraphDisplay.getInstance().setSetting(DEFAULT_SYMPLE_GRAPH_DISPLAY_SETTINGS);
         CommandScheduler.getInstance().reset();
 
         // create the op mode template

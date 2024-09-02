@@ -21,6 +21,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.15'
 
-    implementation 'top.symple:symplegraphdisplay:1.0.0'
+    implementation 'top.symple:symplegraphdisplay:1.1.0'
 }
 
