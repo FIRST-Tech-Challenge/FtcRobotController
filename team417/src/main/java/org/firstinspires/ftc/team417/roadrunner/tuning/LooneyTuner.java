@@ -226,7 +226,7 @@ public class LooneyTuner extends LinearOpMode {
     TuneParameters parameters;
 
     // Constants:
-    public static int DISTANCE = 72; // Standard test driving distance, in inches
+    public static int DISTANCE = 48; // Standard test driving distance, in inches
     final Pose2d zeroPose = new Pose2d(0, 0, 0);
 
     // Check if the robot code setting the MecanumDrive configuration parameters is up to date
@@ -304,8 +304,8 @@ public class LooneyTuner extends LinearOpMode {
         boolean yButton() { return buttonPress(gamepad1.y, 3); }
         boolean dpadUp() { return buttonPress(gamepad1.dpad_up, 4); }
         boolean dpadDown() { return buttonPress(gamepad1.dpad_down, 5); }
-        boolean stickLeft() { return buttonPress(gamepad1.left_stick_x <= -ANALOG_THRESHOLD, 6); }
-        boolean stickRight() { return buttonPress(gamepad1.left_stick_x >= ANALOG_THRESHOLD, 7); }
+        boolean dpadLeft() { return buttonPress(gamepad1.dpad_left, 6); }
+        boolean dpadRight() { return buttonPress(gamepad1.dpad_right, 7); }
         boolean leftTrigger() { return buttonPress(gamepad1.left_trigger >= ANALOG_THRESHOLD, 8); }
         boolean rightTrigger() { return buttonPress(gamepad1.right_trigger >= ANALOG_THRESHOLD, 9); }
 
@@ -362,7 +362,7 @@ public class LooneyTuner extends LinearOpMode {
                     success = true;
                     break;
                 }
-                processGamepadDriving();
+                updateGamepadDriving();
                 updateRotation();
             }
             stopMotors();
@@ -452,7 +452,7 @@ public class LooneyTuner extends LinearOpMode {
     }
 
     // Poll the gamepad input and set the drive motor power accordingly:
-    public void processGamepadDriving() {
+    public void updateGamepadDriving() {
         drive.setDrivePowers(new PoseVelocity2d(new Vector2d(
             shapeStick(-gamepad1.left_stick_y),
             shapeStick(-gamepad1.left_stick_x)),
@@ -1086,7 +1086,7 @@ public class LooneyTuner extends LinearOpMode {
             if (ui.yButton())
                 drive.setPose(zeroPose);
 
-            processGamepadDriving();
+            updateGamepadDriving();
             drive.updatePoseEstimate();
 
             TelemetryPacket p = MecanumDrive.getTelemetryPacket();
@@ -1171,11 +1171,11 @@ public class LooneyTuner extends LinearOpMode {
         };
         String[] instructions = {
             "Adjust <b>kV</b> to make the horizontal lines as close as possible in height. " +
-                "Move the left stick up or down to change <b>kV</b>'s value. " +
+                "Press the triggers to change <b>kV</b>'s value. " +
                 "Remember, <b>kV = vRef / vActual</b>.\n\n" +
                 "If there are no horizontal lines, decrease the maximum velocity using the left trigger. ",
             "Adjust <b>kA</b> to shift <b>vActual</b> left and right so the angled lines overlap. " +
-                "Move the left stick up or down to change <b>kA</b>'s value. ",
+                "Press the triggers to change <b>kA</b>'s value. ",
         };
 
         if (ui.drivePrompt(String.format("The robot will constantly drive forwards then backwards for %d inches. "
@@ -1318,10 +1318,10 @@ public class LooneyTuner extends LinearOpMode {
             telemetryAdd(instructions + String.format("Inputting <b>%s</b>. ", fieldName)
                 + "Press the triggers to change its value.\n");
 
-            if (ui.stickLeft()) {
+            if (ui.dpadLeft()) {
                 digit = Math.min(digit + 1, 2);
             }
-            if (ui.stickRight()) {
+            if (ui.dpadRight()) {
                 digit = Math.max(digit - 1, -decimalDigits);
             }
             if ((digit > 0) && (Math.pow(10, digit) > Math.abs(value))) {
@@ -1369,7 +1369,7 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
-            telemetryAdd(String.format("\nLeft stick to move the cursor, "
+            telemetryAdd(String.format("\nDpad to move the cursor, "
                 + "%s"+A+" when done, "+B+" to cancel.", buttonMessage));
             telemetryUpdate();
         }
@@ -1388,7 +1388,7 @@ public class LooneyTuner extends LinearOpMode {
 
         TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
         if (type == PidTunerType.AXIAL) {
-            prompt = String.format("The robot will drive backwards and then forwards for %d inches. ", DISTANCE)
+            prompt = String.format("The robot will drive forwards and then backwards for %d inches. ", DISTANCE)
                     + "Tune the gains so that the target and actual trajectories shown in FTC Dashboard align. "
                     + "axialGain is most important while axialVelGain can often be left as zero. ";
             trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
@@ -1417,6 +1417,8 @@ public class LooneyTuner extends LinearOpMode {
                 new DecimalInput(drive.PARAMS, gainName, 0, 3, 0, 20),
                 new DecimalInput(drive.PARAMS, velGainName, 0, 3, 0, 20),
             };
+            int queuedXbuttons = 0;
+
             drive.runParallel(trajectory.build());
             while (opModeIsActive() && !ui.cancel()) {
                 // Drive some more:
@@ -1429,33 +1431,40 @@ public class LooneyTuner extends LinearOpMode {
                 String instructions = "";
                 if (!more) {
                     instructions = "Now that this run is done, be sure to compare the end position "
-                        + "to its starting position. If you're satisfied, press "+A+" to be done, otherwise "
+                        + "to its starting position. If you're satisfied, press "+B+" to be done, otherwise "
                         + "press "+X+" to do another run.\n\n";
                     buttonMessage = X+" to start another run, " + buttonMessage;
                 }
                 inputs[inputIndex].update(instructions, buttonMessage);
 
-                // If there is no more actions, let the X button start a new one!
-                if ((ui.xButton()) && (!more)) {
-                    if (type == PidTunerType.HEADING) {
-                        // An apparent Road Runner build prevents the trajectory from being reused:
-                        drive.runParallel(drive.actionBuilder(zeroPose).turn(Math.PI).turn(-Math.PI).build());
-                    } else {
-                        drive.runParallel(trajectory.build());
-                    }
-                }
-
                 if (ui.yButton())
                     inputIndex ^= 1; // Toggle the index
+                if (ui.xButton())
+                    queuedXbuttons++; // Let the x-button be queued up
 
-                if (ui.accept()) {
-                    if (ui.prompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel"))
-                        acceptParameters(testParameters);
-                    break; // ====>
+                // If there is no more actions, let the X button start a new one.
+                if (!more) {
+                    updateGamepadDriving();
+                    if (queuedXbuttons > 0) {
+                        queuedXbuttons--;
+                        stopMotors();
+                        drive.setPose(zeroPose);
+                        if (type == PidTunerType.HEADING) {
+                            // An apparent Road Runner build prevents a trajectory from being reused:
+                            drive.runParallel(drive.actionBuilder(zeroPose).turn(Math.PI).turn(-Math.PI).build());
+                        } else {
+                            drive.runParallel(trajectory.build());
+                        }
+                    }
                 }
             }
             drive.abortActions();
             stopMotors();
+
+            if (ui.accept()) {
+                if (ui.prompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel"))
+                    acceptParameters(testParameters);
+            }
         }
         MecanumDrive.PARAMS = parameters.params;
     }
