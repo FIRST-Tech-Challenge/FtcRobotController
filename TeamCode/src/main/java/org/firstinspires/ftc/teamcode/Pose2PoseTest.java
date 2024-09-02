@@ -21,13 +21,9 @@ import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 @Autonomous // Appear on the autonomous drop down
 public class Pose2PoseTest extends LinearOpMode {
     public static final double ACCEPT_DIST = .25; // inch. euclidean distance
-    public static final double ACCEPT_TURN = deg2rad(5);
+    public static final double ACCEPT_TURN = Math.toRadians(5);
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.33, 1.0); // Calibration factors for strafe, forward, and turn.
-
-    private static double deg2rad(double deg) {
-        return deg * Math.PI / 180;
-    }
 
     @SuppressLint("DefaultLocale") // Android Lint should ignore warnings for DefaultLocale
     @Override
@@ -36,7 +32,7 @@ public class Pose2PoseTest extends LinearOpMode {
         EncoderTracking tracker = new EncoderTracking(hardware);
         // Pose targets to go thru
         Pose[] targets = {
-                new Pose(48, 0, deg2rad(90))
+                new Pose(48, 0, Math.toRadians(90))
         };
         int targetIndex = 0; // Total poses in the set
         ElapsedTime timer = new ElapsedTime(); // Set timer object to reference the ElapsedTime object
@@ -136,7 +132,7 @@ public class Pose2PoseTest extends LinearOpMode {
             telemetry.addData("x", p.x()); // Print y attribute of pose
             telemetry.addData("y", p.y()); // Print x attribute of pose
             telemetry.addData("heading (rad)", p.heading()); // Print the heading in radians
-            telemetry.addData("heading (deg)", p.heading() * 180 / Math.PI); // Print the heading in degrees
+            telemetry.addData("heading (deg)", Math.toDegrees(p.heading())); // Print the heading in degrees
             telemetry.addLine(); // Add space for format
             // Print the loop time for via ticks
             telemetry.addLine(String.format("Loop time: %.2fms", ticker.getAvg() * 1000));
@@ -148,7 +144,7 @@ public class Pose2PoseTest extends LinearOpMode {
             telemetry.addData("x", tracker.getPose().x()); // Print x attribute for pose
             telemetry.addData("y", tracker.getPose().y()); // Print y attribute for pose
             telemetry.addData("heading (rad)", tracker.getPose().heading()); // Print the heading in radians
-            telemetry.addData("heading (deg)", tracker.getPose().heading() * 180 / Math.PI); // Print the heading in degrees
+            telemetry.addData("heading (deg)", Math.toDegrees(tracker.getPose().heading())); // Print the heading in degrees
             telemetry.addLine(String.format("While running: %.2fms per loop", ticker.getAvg() * 1000));
             telemetry.update();
         }
