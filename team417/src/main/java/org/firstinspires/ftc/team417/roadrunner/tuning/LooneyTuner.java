@@ -348,10 +348,11 @@ class Gui {
                     output.append("\u00b7");
                 output.append(menuStack.get(i).description);
             }
-            output.append("\n"+LooneyTuner.A+" to select, "+LooneyTuner.B+" to exit");
+            output.append(", "+LooneyTuner.A+" to select, "+LooneyTuner.B+" to exit");
         }
         output.append("</h2>");
 
+        // Process dpad up and down with auto-repeat and clamping:
         MenuWidget menu = (MenuWidget) menuStack.get(menuStack.size() - 1);
         int input = gamepad.dpad_up ? -1 : (gamepad.dpad_down ? 1 : 0); // -1, 0 or 1
         if (input != lastInput) {
@@ -362,10 +363,7 @@ class Gui {
             nextAdvanceTime = time() + ADVANCE_DELAY;
             menu.current += lastInput;
         }
-        if (menu.current < 0)
-            menu.current = 0;
-        if (menu.current == menu.widgets.size())
-            menu.current = menu.widgets.size() - 1;
+        menu.current = Math.max(0, Math.min(menu.widgets.size() - 1, menu.current));
 
         // Now output the options:
         for (int i = 0; i < menu.widgets.size(); i++) {
