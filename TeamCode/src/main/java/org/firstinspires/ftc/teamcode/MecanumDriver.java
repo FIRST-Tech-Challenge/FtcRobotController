@@ -47,7 +47,7 @@ public class MecanumDriver extends OpMode {
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
-    public final boolean isFieldCentric = false;
+    public final boolean isFieldCentric = true;
 
     @Override
     public void init() {
@@ -81,7 +81,7 @@ public class MecanumDriver extends OpMode {
         robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
-        robotController.tuneHeadingCorrection(gamepad1, telemetry);
+        // robotController.tuneHeadingCorrection(gamepad1, telemetry);
         robotController.sendTelemetry(telemetry);
     }
 

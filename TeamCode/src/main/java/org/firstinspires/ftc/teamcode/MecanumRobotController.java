@@ -29,9 +29,9 @@ public class MecanumRobotController {
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
-    public static double Kp = 0.064;
-    public static double Kd = 0.00;
-    public static double Ki = 0.000001;
+    public static double Kp = 0.07;
+    public static double Kd = 0.002;
+    public static double Ki = 0.00;
 
     private final DcMotor backLeft;
     private final DcMotor backRight;
