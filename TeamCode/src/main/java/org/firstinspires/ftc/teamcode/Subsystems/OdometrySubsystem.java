@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
@@ -10,11 +13,12 @@ public class OdometrySubsystem extends SubsystemBase {
 
     // Local objects and variables here
 
-    double previousLeftPos;
-    double previousRightPos;
-    double previousFrontPos;
-    double fieldX = 0.0;
-    double fieldY = 0.0;
+    private double previousLeftPos;
+    private double previousRightPos;
+    private double previousFrontPos;
+    private double fieldX = 0.0;
+    private double fieldY = 0.0;
+    private double fieldAngle = 0.0;
 
     /** Place code here to initialize subsystem */
     public OdometrySubsystem() {
@@ -55,7 +59,7 @@ public class OdometrySubsystem extends SubsystemBase {
         // equation that tells us how much the robot has moved laterally
         double LateralChange = (frontChangePos - RobotContainer.odometryPod.FORWARD_OFFSET * Math.sin(theta));// Lateral means left to right
 
-        double IMUHeading = -Math.toRadians(RobotContainer.gyro.getYawAngle());
+        double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
         double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
 
@@ -65,13 +69,27 @@ public class OdometrySubsystem extends SubsystemBase {
 
         fieldY += fieldLateralChange;// += means is equal to and add fieldLateralChange to itself
 
+        fieldAngle = IMUHeading;
+
         RobotContainer.ActiveOpMode.telemetry.addData("fieldX",fieldX);
         RobotContainer.ActiveOpMode.telemetry.addData("fieldY",fieldY);
 
-        RobotContainer.ActiveOpMode.telemetry.update();
 
     }
 
     // place special subsystem methods here
+    public Pose2d getCurrentPos() {
+       return new Pose2d(fieldX,fieldY,new Rotation2d(fieldAngle));
+    }
 
+    public void setCurrentPos(Pose2d pos){
+        fieldX = pos.getX();
+        fieldY = pos.getY();
+        fieldAngle = pos.getHeading();
+        RobotContainer.gyro.setYawAngle(Math.toDegrees(fieldAngle));
+    }
+
+    public void resetCurrentPos(){
+        setCurrentPos(new Pose2d(0,0,new Rotation2d(0)));
+    }
 }

@@ -37,6 +37,8 @@ public class OdometryPodSubsystem extends SubsystemBase {
         rightEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap, "rightEncoder");
         frontEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap, "frontEncoder");
 
+        leftEncoderPod.setInverted(true);
+
         leftEncoder = leftEncoderPod.encoder;
         rightEncoder = rightEncoderPod.encoder;
         frontEncoder = frontEncoderPod.encoder;
