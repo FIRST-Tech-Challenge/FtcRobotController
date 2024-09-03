@@ -538,7 +538,7 @@ public final class MecanumDrive {
 
         MecanumKinematics.WheelVelocities<Time> assistVels = kinematics.inverse(command);
 
-        double voltage = voltageSensor.getVoltage();
+        double voltage = getVoltage();
         final MotorFeedforward feedforward = new MotorFeedforward(
                 PARAMS.kS, PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
 
@@ -624,7 +624,7 @@ public final class MecanumDrive {
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 
-            double voltage = voltageSensor.getVoltage();
+            double voltage = getVoltage();
 
             final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS,
                     PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
@@ -723,7 +723,7 @@ public final class MecanumDrive {
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 
             updateLoopTimeStatistic(p);
-            double voltage = voltageSensor.getVoltage();
+            double voltage = getVoltage();
 
             final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS,
                     PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
@@ -856,6 +856,19 @@ public final class MecanumDrive {
             opticalTracker.setPosition(new SparkFunOTOS.Pose2D(
                     pose.position.x, pose.position.y, pose.heading.toDouble()));
         }
+    }
+
+    // Get the current voltage, amortized for performance:
+    double previousVoltageSeconds = 0;
+    double previousVoltageRead = 0;
+    public double getVoltage() {
+        final double UPDATE_INTERVAL = 0.2; // Minimum duration between hardware reads, in seconds
+        double currentSeconds = nanoTime() * 1e-9;
+        if (currentSeconds - previousVoltageSeconds > UPDATE_INTERVAL) {
+            previousVoltageSeconds = currentSeconds;
+            previousVoltageRead = voltageSensor.getVoltage();
+        }
+        return previousVoltageRead;
     }
 
     // Get the velocity pose from the optical tracking sensor:

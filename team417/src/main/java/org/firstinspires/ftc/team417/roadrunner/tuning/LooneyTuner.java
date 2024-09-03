@@ -4,13 +4,14 @@
 
 // Short-term:
 // @@@ Fix ramp distance bug/feature
-// @@@ Fix inPerTick
 // @@@ Allow tuners to inherit current OTOS settings
-// @@@ Figure out fastLoad for all teams.
+// @@@ Figure out fastLoad for all teams
 // @@@ Show old values, amount of change for: lateralInPerTick
 // @@@ Optimize voltage performance
+// @@@ Fix velocity gains
 //
 // Long-term:
+// @@@ Do something about inPerTick
 // @@@ Revert changes to return to stock Quick Start code
 // @@@ Add LED support
 // @@@ Add max-velocity/max-acceleration testing for both linear and angular
@@ -1822,17 +1823,17 @@ public class LooneyTuner extends LinearOpMode {
             gui.addRunnable("Interactive feed forward tuner (kV and kA)", this::interactiveFeedForwardTuner,
                 ()->params.otos.linearScalar != 0 && params.kS != 0);
             gui.addRunnable("Interactive PiD tuner (axialGain)", ()->interactivePidTuner(PidTunerType.AXIAL),
-                ()->params.otos.linearScalar != 0 && params.kA != 0);
+                ()->params.otos.linearScalar != 0 && params.kS != 0);
             gui.addRunnable("Interactive PiD tuner (lateralGain)", ()->interactivePidTuner(PidTunerType.LATERAL),
-                ()->params.otos.linearScalar != 0 && params.lateralInPerTick != 0 && params.kA != 0);
+                ()->params.otos.linearScalar != 0 && params.lateralInPerTick != 0 && params.kS != 0);
             gui.addRunnable("Interactive PiD tuner (headingGain)", ()->interactivePidTuner(PidTunerType.HEADING),
-                ()->params.otos.linearScalar != 0 && params.trackWidthTicks != 0 && params.kA != 0);
+                ()->params.otos.linearScalar != 0 && params.trackWidthTicks != 0 && params.kS != 0);
             gui.addRunnable("Completion test (overall verification)", this::completionTest,
                 ()->params.axialGain != 0 && params.lateralGain != 0 && params.headingGain != 0);
 
-            // More:
-            gui.addRunnable("More::Show accumulated parameter changes", this::showUpdatedParameters);
-            gui.addRunnable("More::Rotation test (verify trackWidthTicks)", this::rotationTest,
+            // Extras:
+            gui.addRunnable("Extras::Show accumulated parameter changes", this::showUpdatedParameters);
+            gui.addRunnable("Extras::Rotation test (verify trackWidthTicks)", this::rotationTest,
                     ()->params.trackWidthTicks != 0);
         }
 
