@@ -216,10 +216,14 @@ class TuneParameters {
 class Gui {
     static final double ANALOG_THRESHOLD = 0.5; // Threshold to consider an analog button pressed
     static private final String DESCRIPTOR_SEPARATOR = "::";
+    static final double INITIAL_DELAY = 0.6; // Seconds after initial press before starting to repeat
+    static final double ADVANCE_DELAY = 0.1; // Seconds after any repeat to repeat again
     private static Gui gui; // Points to our own  singleton object
     Telemetry telemetry; // Telemetry object used for output
     Gamepad gamepad; // Gamepad to use for settings control
     ArrayList<Widget> menuStack = new ArrayList<>(); // Stack of menus, the last is the current
+    int lastInput; // Last quantized input (-1, 0 or 1)
+    double nextAdvanceTime; // Time at which to advance the value
 
     abstract private static class Widget {
         String description;
@@ -306,10 +310,10 @@ class Gui {
     boolean cancel() { return buttonPress(gamepad.b, 1); }
     boolean xButton() { return buttonPress(gamepad.x, 2); }
     boolean yButton() { return buttonPress(gamepad.y, 3); }
-    boolean dpadUp() { return buttonPress(gamepad.dpad_up, 4); }
-    boolean dpadDown() { return buttonPress(gamepad.dpad_down, 5); }
-    boolean dpadLeft() { return buttonPress(gamepad.dpad_left, 6); }
-    boolean dpadRight() { return buttonPress(gamepad.dpad_right, 7); }
+    boolean up() { return buttonPress(gamepad.dpad_up, 4); }
+    boolean down() { return buttonPress(gamepad.dpad_down, 5); }
+    boolean left() { return buttonPress(gamepad.dpad_left, 6); }
+    boolean right() { return buttonPress(gamepad.dpad_right, 7); }
     boolean leftTrigger() { return buttonPress(gamepad.left_trigger >= ANALOG_THRESHOLD, 8); }
     boolean rightTrigger() { return buttonPress(gamepad.right_trigger >= ANALOG_THRESHOLD, 9); }
 
@@ -322,6 +326,11 @@ class Gui {
 
         // Create the root settings menu:
         menuStack.add(new MenuWidget(""));
+    }
+
+    // Return a high resolution time count, in seconds:
+    public static double time() {
+        return nanoTime() * 1e-9;
     }
 
     // Update loop for Settings. If true is returned, the caller should not use gamepad input
@@ -341,31 +350,31 @@ class Gui {
             }
             output.append("\n"+LooneyTuner.A+" to select, "+LooneyTuner.B+" to exit");
         }
-
         output.append("</h2>");
 
         MenuWidget menu = (MenuWidget) menuStack.get(menuStack.size() - 1);
-        if (dpadUp()) {
-            menu.current--;
-            if (menu.current < 0)
-                menu.current = 0;
+        int input = gamepad.dpad_up ? -1 : (gamepad.dpad_down ? 1 : 0); // -1, 0 or 1
+        if (input != lastInput) {
+            nextAdvanceTime = time() + INITIAL_DELAY;
+            lastInput = input;
+            menu.current += lastInput;
+        } else if (time() > nextAdvanceTime) {
+            nextAdvanceTime = time() + ADVANCE_DELAY;
+            menu.current += lastInput;
         }
-        if (dpadDown()) {
-            menu.current++;
-            if (menu.current == menu.widgets.size())
-                menu.current = menu.widgets.size() - 1;
-        }
+        if (menu.current < 0)
+            menu.current = 0;
+        if (menu.current == menu.widgets.size())
+            menu.current = menu.widgets.size() - 1;
 
         // Now output the options:
         for (int i = 0; i < menu.widgets.size(); i++) {
             Widget widget = menu.widgets.get(i);
             if (i != menu.current)
                 output.append("\u25c7 " + widget.string() + "\n");
-            else {
-                // Draw the highlight:
-                String enabled = widget.isEnabled.getAsBoolean() ? "\u25c6 " : "\u2a2f ";
-                output.append("<span style='background: #88285a'>" + enabled + widget.string() + "</span>\n");
-            }
+            else
+                // Highlight current item:
+                output.append("<span style='background: #88285a'>\u25c6 " + widget.string() + "</span>\n");
         }
 
         telemetry.addLine(output.toString());
@@ -385,8 +394,8 @@ class Gui {
             }
         } else if (widget instanceof ListWidget) {
             ListWidget listWidget = (ListWidget) widget;
-            boolean left = dpadLeft();
-            boolean right = dpadRight();
+            boolean left = left();
+            boolean right = right();
             if (left || right) {
                 if (left) {
                     listWidget.index--;
@@ -593,7 +602,7 @@ public class LooneyTuner extends LinearOpMode {
         // Show a message and wait for an A or B button press. If accept (A) is pressed, return
         // success. if cancel (B) is pressed, return failure. The robot CANNOT be driven while
         // waiting.
-        boolean prompt(String message) {
+        boolean staticPrompt(String message) {
             while (opModeIsActive() && !gui.cancel()) {
                 message(message);
                 if (gui.accept())
@@ -737,7 +746,7 @@ public class LooneyTuner extends LinearOpMode {
                             + "Either you didn't push straight for 4 tiles or something is wrong "
                             + "with the sensor. ", distance, 96 / SparkFunOTOS.MIN_SCALAR);
                     message += "Maybe the distance of the sensor to the tile is less than 10.0 mm? ";
-                    dialogs.prompt(message + "\n\nAborted, press "+A+" to continue");
+                    dialogs.staticPrompt(message + "\n\nAborted, press "+A+" to continue");
                 } else if (newParameters.params.otos.linearScalar > SparkFunOTOS.MAX_SCALAR) {
                     String message = String.format("The measured distance of %.1f\" is not close enough to "
                             + "the expected distance of 96\". It can't measure less than %.1f\". "
@@ -749,9 +758,9 @@ public class LooneyTuner extends LinearOpMode {
                     if (newParameters.params.otos.linearScalar < 1.5) {
                         message += "Maybe the distance of the sensor to the tile is more than 10.0 mm?";
                     }
-                    dialogs.prompt(message + "\n\nAborted, press "+A+" to continue");
+                    dialogs.staticPrompt(message + "\n\nAborted, press "+A+" to continue");
                 } else {
-                    if (dialogs.prompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n",
+                    if (dialogs.staticPrompt(String.format("New offset heading %.3f\u00b0 is %.1f\u00b0 off from old.\n",
                             Math.toDegrees(newParameters.params.otos.offset.h), Math.toDegrees(headingChange))
                             + String.format("New linear scalar %.3f is %.1f%% off from old.\n\n",
                             newParameters.params.otos.linearScalar, linearScalarChange)
@@ -771,12 +780,12 @@ public class LooneyTuner extends LinearOpMode {
     public void acceptParameters(TuneParameters newParameters) {
         String comparison = newParameters.compare(currentParameters);
         if (comparison.isEmpty()) {
-            dialogs.prompt("The new results match your current settings.\n\nPress "+A+" to continue.");
+            dialogs.staticPrompt("The new results match your current settings.\n\nPress "+A+" to continue.");
         } else {
             MecanumDrive.PARAMS = newParameters.params;
             currentParameters = newParameters;
             currentParameters.save();
-            dialogs.prompt("Double-tap the shift key in Android Studio, enter 'md.params' to jump to the "
+            dialogs.staticPrompt("Double-tap the shift key in Android Studio, enter 'md.params' to jump to the "
                     + "MecanumDrive Params constructor, then update as follows:\n\n"
                     + comparison
                     + "\nPress "+A+" to continue.");
@@ -787,9 +796,9 @@ public class LooneyTuner extends LinearOpMode {
     public void showUpdatedParameters() {
         String comparison = currentParameters.compare(originalParameters);
         if (comparison.isEmpty()) {
-            dialogs.prompt("There are no changes from your current settings.\n\nPress "+A+" to continue.");
+            dialogs.staticPrompt("There are no changes from your current settings.\n\nPress "+A+" to continue.");
         } else {
-            dialogs.prompt("Here are all of the parameter updates from your current run. "
+            dialogs.staticPrompt("Here are all of the parameter updates from your current run. "
                     + "Double-tap the shift key in Android Studio, enter 'md.params' to jump to the "
                     + "MecanumDrive Params constructor, then update as follows:\n\n"
                     + comparison
@@ -1094,10 +1103,10 @@ public class LooneyTuner extends LinearOpMode {
 
         // Do some sanity checking on the results:
         if ((Math.abs(offset.x) > 12) || (Math.abs(offset.y) > 12)) {
-            dialogs.prompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
+            dialogs.staticPrompt(results + "The results are bad, the calculated center-of-rotation is bogus.\n\n"
                     + "Aborted, press "+A+" to continue.");
         } else if  ((angularScalar < SparkFunOTOS.MIN_SCALAR) || (angularScalar > SparkFunOTOS.MAX_SCALAR)) {
-            dialogs.prompt(results + "The measured number of circles is bad. Did you properly align "
+            dialogs.staticPrompt(results + "The measured number of circles is bad. Did you properly align "
                     + "the robot on the wall the same way at both the start and end of this test?\n\n"
                     + "Aborted, press "+A+" to continue.");
         } else {
@@ -1107,7 +1116,7 @@ public class LooneyTuner extends LinearOpMode {
             newSettings.params.otos.angularScalar = angularScalar;
             newSettings.params.trackWidthTicks = trackWidthTicks;
 
-            if (dialogs.prompt(results + "Use these results? Press "+A+" if they look good, "+B+" to discard them.")) {
+            if (dialogs.staticPrompt(results + "Use these results? Press "+A+" if they look good, "+B+" to discard them.")) {
                 acceptParameters(newSettings);
 
                 // We changed 'trackWidthTicks' so recreate the kinematics object:
@@ -1219,10 +1228,10 @@ public class LooneyTuner extends LinearOpMode {
             drive.leftBack.setPower(0);
 
             if (oldPowerFactor < MAX_VOLTAGE_FACTOR) {
-                dialogs.prompt("The robot didn't hit top speed before the test was aborted."
+                dialogs.staticPrompt("The robot didn't hit top speed before the test was aborted."
                         + "\n\nPress "+A+" to continue.");
             } else if (maxVelocity == 0) {
-                dialogs.prompt("The optical tracking sensor returned only zero velocities. "
+                dialogs.staticPrompt("The optical tracking sensor returned only zero velocities. "
                         + "Is it working properly?"
                         + "\n\nAborted, press "+A+" to continue.");
             } else {
@@ -1269,7 +1278,7 @@ public class LooneyTuner extends LinearOpMode {
                 newParameters.params.kS = bestFitLine.intercept * voltage;
                 newParameters.params.kV = bestFitLine.slope * voltage * currentParameters.params.inPerTick; // @@@ Normalize?
 
-                if (dialogs.prompt("Check out the graph on FTC Dashboard!\n\n"
+                if (dialogs.staticPrompt("Check out the graph on FTC Dashboard!\n\n"
                     + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.params.kS, currentParameters.params.kS)
                     + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.params.kV, currentParameters.params.kV)
                     + "\nIf these look good, press "+A+" to accept, "+B+" to cancel.")) {
@@ -1371,7 +1380,7 @@ public class LooneyTuner extends LinearOpMode {
                 double lateralMultiplier = actualDistance / DISTANCE;
                 double inchesPerTick = currentParameters.params.inPerTick * lateralMultiplier;
 
-                if (dialogs.prompt(String.format("Measured lateral multiplier is %.3f (%.5f inches per tick). ", lateralMultiplier, inchesPerTick)
+                if (dialogs.staticPrompt(String.format("Measured lateral multiplier is %.3f (%.5f inches per tick). ", lateralMultiplier, inchesPerTick)
                         + "Does that look good?"
                         + "\n\nPress "+A+" to accept, "+B+" to cancel")) {
                     TuneParameters newParameters = currentParameters.createClone();
@@ -1494,7 +1503,7 @@ public class LooneyTuner extends LinearOpMode {
                     if (inputIndex == 0)
                         inputIndex = 1;
                     else {
-                        if (dialogs.prompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel"))
+                        if (dialogs.staticPrompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel"))
                             acceptParameters(testParameters);
                         break; // ====>
                     }
@@ -1523,7 +1532,7 @@ public class LooneyTuner extends LinearOpMode {
         double maxValue;
         Field field; // Reference to the field being modified
         double value; // Current value
-        int lastInput; // Last quantized thumb-stick input (-1, 0 or 1)
+        int lastInput; // Last quantized input (-1, 0 or 1)
         double nextAdvanceTime; // Time at which to advance the value
 
         // Take a reference to the object and the name of its field to be updated. We use reflection
@@ -1554,10 +1563,10 @@ public class LooneyTuner extends LinearOpMode {
             telemetryAdd(instructions + String.format("Inputting <b>%s</b>. ", fieldName)
                 + "Press Dpad up/down to change its value.\n");
 
-            if (gui.dpadLeft()) {
+            if (gui.left()) {
                 digit = Math.min(digit + 1, 2);
             }
-            if (gui.dpadRight()) {
+            if (gui.right()) {
                 digit = Math.max(digit - 1, -decimalDigits);
             }
             if ((digit > 0) && (Math.pow(10, digit) > Math.abs(value))) {
@@ -1565,7 +1574,7 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             // Advance the value according to the thumb stick state:
-            int input = gui.dpadUp() ? 1 : (gui.dpadDown() ? -1 : 0); // -1, 0 or 1
+            int input = gui.up() ? 1 : (gui.down() ? -1 : 0); // -1, 0 or 1
             if (input != lastInput) {
                 nextAdvanceTime = time() + INITIAL_DELAY;
                 lastInput = input;
@@ -1687,13 +1696,13 @@ public class LooneyTuner extends LinearOpMode {
                     }
                 } else {
                     if (gui.accept()) {
-                        if (dialogs.prompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel")) {
+                        if (dialogs.staticPrompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel")) {
                             acceptParameters(testParameters);
                             break; // ====>
                         }
                     }
                     if (gui.cancel()) {
-                        if (dialogs.prompt("Are you sure you want to discard your current input?\n\n"
+                        if (dialogs.staticPrompt("Are you sure you want to discard your current input?\n\n"
                                 + "Press "+A+" to discard, "+B+" to cancel."))
                             break; // ====>
                     }
@@ -1767,7 +1776,7 @@ public class LooneyTuner extends LinearOpMode {
                     .build();
             runCancelableAction(action);
 
-            dialogs.prompt("The robot should be facing the same direction as when it started. It it's "
+            dialogs.staticPrompt("The robot should be facing the same direction as when it started. It it's "
                 + "not, run the spin tuner again to re-tune 'trackWidthTicks'."
                 + "\n\nPress "+A+" to continue.");
 
@@ -1796,7 +1805,7 @@ public class LooneyTuner extends LinearOpMode {
         if ((drive.opticalTracker != null) &&
             ((drive.opticalTracker.getAngularUnit() != AngleUnit.RADIANS) ||
              (drive.opticalTracker.getLinearUnit() != DistanceUnit.INCH))) {
-            dialogs.prompt("The SparkFun OTOS must be present and configured for radians and inches.");
+            dialogs.staticPrompt("The SparkFun OTOS must be present and configured for radians and inches.");
             return; // ====>
         }
 
@@ -1835,7 +1844,7 @@ public class LooneyTuner extends LinearOpMode {
         // invoke a menu option:
         dialogs.message("<big><big><big><big><big><big><big><big><b>Press \u25B6");
         waitForStart();
-        dialogs.prompt("<big><big><big><big><big><big><big><b>Press Gamepad "+A+" or "+B);
+        dialogs.staticPrompt("<big><big><big><big><big><big><big><b>Press Gamepad "+A+" or "+B);
 
         while (opModeIsActive())
             gui.update();
