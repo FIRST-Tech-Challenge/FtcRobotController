@@ -223,6 +223,7 @@ class Gui {
 
     abstract private static class Widget {
         String description;
+        BooleanSupplier isEnabled;
         Widget(String descriptor) {
             // The description comes after the last separator:
             int lastIndex = descriptor.lastIndexOf(DESCRIPTOR_SEPARATOR);
@@ -230,6 +231,7 @@ class Gui {
                 descriptor = descriptor.substring(lastIndex + DESCRIPTOR_SEPARATOR.length());
             }
             description = descriptor;
+            isEnabled = ()->true; // Default is to be enabled
         }
         abstract public String string();
     }
@@ -240,7 +242,7 @@ class Gui {
             super(descriptor);
         }
         public String string() {
-            return "\uD83D\uDCC1 " + description + "..."; // Folder symbol
+            return description + "..."; // "\uD83D\uDCC1 is Folder symbol
         }
     }
     private static class ToggleWidget extends Widget {
@@ -269,9 +271,7 @@ class Gui {
         public ActivationWidget(String descriptor, Function<Boolean, String> callback) {
             super(descriptor); this.callback = callback;
         }
-        public String string() {
-            return "\u2757 " + callback.apply(false); // red exclamation mark
-        }
+        public String string() { return "\u2757 " + callback.apply(false); } // red exclamation mark
     }
     private static class StatsWidget extends Widget {
         Supplier<String> callback;
@@ -282,15 +282,14 @@ class Gui {
     }
     private static class RunWidget extends Widget {
         Runnable runnable;
-        BooleanSupplier enableCheck;
-        public RunWidget(String descriptor, Runnable runnable, BooleanSupplier enableCheck) {
-            super(descriptor); this.runnable = runnable; this.enableCheck = enableCheck;
+        public RunWidget(String descriptor, Runnable runnable, BooleanSupplier isEnabled) {
+            super(descriptor);
+            this.runnable = runnable;
+            if (isEnabled != null)
+                this.isEnabled = isEnabled;
         }
         public String string() {
-            if ((enableCheck == null) || (enableCheck.getAsBoolean()))
-                return "o " + description;
-            else
-                return "x <font color='#808080'>" + description + "</font>";
+            return isEnabled.getAsBoolean() ? description : "<font color='#808080'>" + description + "</font>";
         }
     }
 
@@ -322,7 +321,7 @@ class Gui {
         this.gamepad = gamepad;
 
         // Create the root settings menu:
-        menuStack.add(new MenuWidget("Settings"));
+        menuStack.add(new MenuWidget(""));
     }
 
     // Update loop for Settings. If true is returned, the caller should not use gamepad input
@@ -332,11 +331,17 @@ class Gui {
 
         // Add a header with submenu names:
         output.append("<h2>");
-        for (int i = 0; i < menuStack.size(); i++) {
-            if (i > 0)
-                output.append("·");
-            output.append(menuStack.get(i).description);
+        if (menuStack.size() <= 1) {
+            output.append("Dpad to navigate, "+LooneyTuner.A+" to select");
+        } else {
+            for (int i = 1; i < menuStack.size(); i++) {
+                if (i > 1)
+                    output.append("\u00b7");
+                output.append(menuStack.get(i).description);
+            }
+            output.append("\n"+LooneyTuner.A+" to select, "+LooneyTuner.B+" to exit");
         }
+
         output.append("</h2>");
 
         MenuWidget menu = (MenuWidget) menuStack.get(menuStack.size() - 1);
@@ -353,11 +358,16 @@ class Gui {
 
         // Now output the options:
         for (int i = 0; i < menu.widgets.size(); i++) {
-            if (i == menu.current) // Draw the highlight:
-                output.append("<span style='background: #88285a'>--&gt;" + menu.widgets.get(i).string() + "</span>\n");
-            else
-                output.append(menu.widgets.get(i).string() + "\n");
+            Widget widget = menu.widgets.get(i);
+            if (i != menu.current)
+                output.append("\u25c7 " + widget.string() + "\n");
+            else {
+                // Draw the highlight:
+                String enabled = widget.isEnabled.getAsBoolean() ? "\u25c6 " : "\u2a2f ";
+                output.append("<span style='background: #88285a'>" + enabled + widget.string() + "</span>\n");
+            }
         }
+
         telemetry.addLine(output.toString());
 
         Widget widget = menu.widgets.get(menu.current);
@@ -374,21 +384,21 @@ class Gui {
                 toggleOption.callback.accept(toggleOption.value);
             }
         } else if (widget instanceof ListWidget) {
-            ListWidget listOption = (ListWidget) widget;
+            ListWidget listWidget = (ListWidget) widget;
             boolean left = dpadLeft();
             boolean right = dpadRight();
             if (left || right) {
                 if (left) {
-                    listOption.index--;
-                    if (listOption.index < 0)
-                        listOption.index = 0;
+                    listWidget.index--;
+                    if (listWidget.index < 0)
+                        listWidget.index = 0;
                 }
                 if (right) {
-                    listOption.index++;
-                    if (listOption.index >= listOption.list.length)
-                        listOption.index = listOption.list.length - 1;
+                    listWidget.index++;
+                    if (listWidget.index >= listWidget.list.length)
+                        listWidget.index = listWidget.list.length - 1;
                 }
-                listOption.callback.accept(listOption.index, listOption.list[listOption.index]);
+                listWidget.callback.accept(listWidget.index, listWidget.list[listWidget.index]);
             }
         } else if (widget instanceof ActivationWidget) {
             if (accept()) {
@@ -404,10 +414,10 @@ class Gui {
                 menuStack.add(widget);
             }
         } else if (widget instanceof RunWidget) {
-            RunWidget runOption = (RunWidget) widget;
+            RunWidget runWidget = (RunWidget) widget;
             if (accept()) {
-                if ((runOption.enableCheck == null) || (runOption.enableCheck.getAsBoolean())) {
-                    runOption.runnable.run();
+                if ((runWidget.isEnabled == null) || (runWidget.isEnabled.getAsBoolean())) {
+                    runWidget.runnable.run();
                 }
             }
         }
@@ -486,10 +496,10 @@ class Gui {
 @SuppressLint("DefaultLocale")
 @TeleOp
 public class LooneyTuner extends LinearOpMode {
-    final String A = "\ud83c\udd50"; // Symbol for the gamepad A button
-    final String B = "\ud83c\udd51"; // Symbol for the gamepad B button
-    final String X = "\ud83c\udd67"; // Symbol for the gamepad X button
-    final String Y = "\ud83c\udd68"; // Symbol for the gamepad Y button
+    static final String A = "\ud83c\udd50"; // Symbol for the gamepad A button
+    static final String B = "\ud83c\udd51"; // Symbol for the gamepad B button
+    static final String X = "\ud83c\udd67"; // Symbol for the gamepad X button
+    static final String Y = "\ud83c\udd68"; // Symbol for the gamepad Y button
 
     // Member fields referenced by every test:
     Gui gui;
@@ -1813,9 +1823,9 @@ public class LooneyTuner extends LinearOpMode {
             gui.addRunnable("Completion test (overall verification)", this::completionTest,
                 ()->params.axialGain != 0 && params.lateralGain != 0 && params.headingGain != 0);
 
-            // Extra:
-            gui.addRunnable("Extra::Show accumulated parameter changes", this::showUpdatedParameters);
-            gui.addRunnable("Extra::Rotation test (verify trackWidthTicks)", this::rotationTest,
+            // More:
+            gui.addRunnable("More::Show accumulated parameter changes", this::showUpdatedParameters);
+            gui.addRunnable("More::Rotation test (verify trackWidthTicks)", this::rotationTest,
                     ()->params.trackWidthTicks != 0);
         }
 
