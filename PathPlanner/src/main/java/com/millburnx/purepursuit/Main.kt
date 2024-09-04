@@ -5,7 +5,7 @@ import javax.swing.JFrame
 
 fun main() {
     val ppi = 7.0
-    val purePursuit = PurePursuit(ppi)
+    val purePursuit = PurePursuitOpMode(ppi)
 
     val frame = JFrame("Pure Pursuit")
     frame.size = Dimension((144 * ppi).toInt(), (144 * ppi).toInt())
