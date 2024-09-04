@@ -14,6 +14,7 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -27,6 +28,9 @@ android {
         }
         jniLibs.useLegacyPackaging true
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 repositories {
@@ -38,11 +42,14 @@ repositories {
 dependencies {
     //noinspection DependencyNotationArgument
     implementation project(':FtcRobotController')
-    implementation 'org.ftclib.ftclib:core:2.1.1' // core ftclib
+    implementation 'org.ftclib.ftclib:core:2.1.1'
+    implementation 'androidx.core:core-ktx:1.13.1'// core ftclib
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     implementation "com.acmerobotics.roadrunner:ftc:0.1.12"
     implementation "com.acmerobotics.roadrunner:core:1.0.0"
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.14"
+
+    implementation project(':PathPlanner')
 }
