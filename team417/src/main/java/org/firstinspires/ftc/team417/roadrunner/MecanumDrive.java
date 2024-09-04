@@ -774,10 +774,30 @@ public final class MecanumDrive {
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d poseVelocity;
         if (opticalTracker != null) {
-            // Use the SparkFun optical tracking sensor to update the pose:
-            SparkFunOTOS.Pose2D position = opticalTracker.getPosition();
-            pose = new Pose2d(position.x, position.y, position.h);
-            poseVelocity = getOpticalVelocity();
+            // Get the current pose and current pose velocity from the optical tracking sensor.
+            // Reads over the I2C bus are very slow so for performance we query the velocity only
+            // if we'll actually need it - i.e., if using non-zero velocity gains:
+            SparkFunOTOS.Pose2D position = new SparkFunOTOS.Pose2D(0, 0, 0);
+            SparkFunOTOS.Pose2D velocity = new SparkFunOTOS.Pose2D(0, 0, 0);
+            if ((PARAMS.axialVelGain == 0) && (PARAMS.lateralVelGain == 0) && (PARAMS.headingVelGain == 0)) {
+                position = opticalTracker.getPosition();
+            } else {
+                SparkFunOTOS.Pose2D acceleration = new SparkFunOTOS.Pose2D(0, 0, 0);
+
+                // Note that this single call is faster than separate calls to getPosition()
+                // and getVelocity(), even if we don't use the acceleration:
+                opticalTracker.getPosVelAcc(position, velocity, acceleration);
+            }
+
+            // Road Runner requires the pose to be field-relative while the velocity has to be
+            // robot-relative, but the optical tracking sensor reports everything as field-
+            // relative. As such, convert the velocity to be robot-relative by rotating it
+            // by the negative of the robot's current heading:
+            double rotation = -position.h;
+            poseVelocity = new PoseVelocity2d(
+                    new Vector2d(Math.cos(rotation) * velocity.x - Math.sin(rotation) * velocity.y,
+                                 Math.sin(rotation) * velocity.x + Math.cos(rotation) * velocity.y),
+                        velocity.h + rotation);
         } else {
             // Use the wheel odometry to update the pose:
             Twist2dDual<Time> twist = WilyWorks.localizerUpdate();
@@ -862,19 +882,13 @@ public final class MecanumDrive {
     double previousVoltageSeconds = 0;
     double previousVoltageRead = 0;
     public double getVoltage() {
-        final double UPDATE_INTERVAL = 0.2; // Minimum duration between hardware reads, in seconds
+        final double UPDATE_INTERVAL = 0.1; // Minimum duration between hardware reads, in seconds
         double currentSeconds = nanoTime() * 1e-9;
         if (currentSeconds - previousVoltageSeconds > UPDATE_INTERVAL) {
             previousVoltageSeconds = currentSeconds;
             previousVoltageRead = voltageSensor.getVoltage();
         }
         return previousVoltageRead;
-    }
-
-    // Get the velocity pose from the optical tracking sensor:
-    public PoseVelocity2d getOpticalVelocity() {
-        // TODO: Implement and convert to robot-relative
-        return new PoseVelocity2d(new Vector2d(0, 0), 0);
     }
 
     // List of currently running Actions:
