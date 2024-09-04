@@ -8,6 +8,37 @@ import org.firstinspires.ftc.masters.CSCons;
 
 public class DriveTrain implements Component{
 
+    /*
+
+             Y m
+       |-------------|
+      FL?           FR?
+     |- -|         |- -|
+     | \ |---------| / |     ---
+     |- -|         |- -|      |                    ^
+       |             |        |                    |  Vx
+       |             |        |    X m         <---|      ↺ w
+       |             |        |                  Vy
+       |             |        |
+     |- -|         |- -|      |   ---
+     | / |---------| \ |     ---   |  D m
+     |- -|         |- -|          ---
+      BL?           BR?
+     L = X/2
+     W = Y/2
+     R = D/2
+
+     Vx and Vy are the measured velocities of the robot
+     at full motor power
+     */
+
+    private double L = 0.177425;
+    private double W = 0.156525;
+    private double R = 0.047999;
+    private double Vx = 0;
+    private double Vy = 0;
+
+
     private DcMotor leftFrontMotor = null;
     private DcMotor rightFrontMotor = null;
     private DcMotor leftRearMotor = null;
@@ -63,6 +94,13 @@ public class DriveTrain implements Component{
 
     }
 
+//    public double[] kinematics(double vx, double vy, double w) {
+//        double t1 = (vx + vy - (L + W) * w)/R;
+//        double t2 = (vx - vy + (L + W) * w)/R;
+//        double t3 = (vx - vy - (L + W) * w)/R;
+//        double t4 = (vx + vy + (L + W) * w)/R;
+//    }
+
     // Drive using gamepad (THIS IS THE PREFERRED METHOD TO USE)
     public void drive(Gamepad gamepad) {
         cartesianDrive(gamepad.left_stick_x, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
@@ -81,16 +119,43 @@ public class DriveTrain implements Component{
                 cartesianDrive(0, 0, gamepad.right_trigger - gamepad.left_trigger);
                 break;
             case XY:
-                polarDrive(gamepad.left_stick_x, -gamepad.left_stick_y);
+                cartesianDrive(gamepad.left_stick_x, -gamepad.left_stick_y, 0);
                 break;
             case XT:
-                polarDrive(gamepad.left_stick_x, gamepad.right_trigger - gamepad.left_trigger);
+                cartesianDrive(gamepad.left_stick_x, 0, gamepad.right_trigger - gamepad.left_trigger);
                 break;
             case YT:
                 cartesianDrive(0, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
                 break;
             case XYT:
                 cartesianDrive(gamepad.left_stick_x, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+        }
+
+    }
+
+    public void driveNoMultiplier(Gamepad gamepad, RestrictTo axis){
+        switch(axis){
+            case X:
+                cartesianDriveNoMultiplier(gamepad.left_stick_x, 0, 0);
+                break;
+            case Y:
+                cartesianDriveNoMultiplier(0, -gamepad.left_stick_y, 0);
+                break;
+            case T:
+                cartesianDriveNoMultiplier(0, 0, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+            case XY:
+                cartesianDriveNoMultiplier(gamepad.left_stick_x, -gamepad.left_stick_y, 0);
+                break;
+            case XT:
+                cartesianDriveNoMultiplier(gamepad.left_stick_x, 0, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+            case YT:
+                cartesianDriveNoMultiplier(0, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
+                break;
+            case XYT:
+                cartesianDriveNoMultiplier(Math.pow(gamepad.left_stick_x, 3), -Math.pow(gamepad.left_stick_y, 3), Math.pow(gamepad.right_trigger - gamepad.left_trigger, 4));
                 break;
         }
 
@@ -137,6 +202,48 @@ public class DriveTrain implements Component{
         rightFrontMotor.setPower(rightFrontPower);
         rightRearMotor.setPower(rightRearPower);
     }
+
+    public void cartesianDriveNoMultiplier(double x, double y, double t) {
+
+        //        float threshold = 0.1;
+        //
+        //        if (Math.abs(t) < threshold)
+        //        {
+        //            t = 0;
+        //        }
+
+        if (Math.abs(y) < 0.2) {
+            y = 0;
+        }
+        if (Math.abs(x) < 0.2) {
+            x = 0;
+        }
+
+        double leftFrontPower = y + x + t;
+        double leftRearPower = y - x + t;
+        double rightFrontPower = y - x - t;
+        double rightRearPower = y + x - t;
+
+        //if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
+
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(t), 1);
+        double max;
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
+        max = Math.max(max, Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(rightRearPower));
+
+        leftFrontPower /= denominator;
+        leftRearPower /= denominator;
+        rightFrontPower /= denominator;
+        rightRearPower /= denominator;
+        //}
+
+        leftFrontMotor.setPower(leftFrontPower);
+        leftRearMotor.setPower(leftRearPower);
+        rightFrontMotor.setPower(rightFrontPower);
+        rightRearMotor.setPower(rightRearPower);
+    }
+
 
     // Angle based driving
     public void polarDrive(double theta, double t){
