@@ -3,11 +3,11 @@
  */
 
 // Short-term:
+// @@@ No preview in Wily Works with completion test
 // @@@ Fix ramp distance bug/feature
-// @@@ Figure out fastLoad for all teams
 // @@@ Show old values, amount of change for: lateralInPerTick
 // @@@ Add velocity test to extras
-// @@@ Cleanup the PID routines (no auto-run, common height, add error graphing)
+// @@@ Figure out fastLoad for all teams
 //
 // Long-term:
 // @@@ Do something about inPerTick
@@ -219,8 +219,7 @@ class Gui {
     static final double INITIAL_DELAY = 0.6; // Seconds after initial press before starting to repeat
     static final double ADVANCE_DELAY = 0.1; // Seconds after any repeat to repeat again
     private static Gui gui; // Points to our own  singleton object
-    Telemetry telemetry; // Telemetry object used for output
-    Gamepad gamepad; // Gamepad to use for settings control
+    Gamepad gamepad; // Gamepad to use for control
     ArrayList<Widget> menuStack = new ArrayList<>(); // Stack of menus, the last is the current
     int lastInput; // Last quantized input (-1, 0 or 1)
     double nextAdvanceTime; // Time at which to advance the value
@@ -318,13 +317,11 @@ class Gui {
     boolean rightTrigger() { return buttonPress(gamepad.right_trigger >= ANALOG_THRESHOLD, 9); }
 
     // Constructor:
-    public Gui(Telemetry telemetry, Gamepad gamepad) {
+    public Gui(Gamepad gamepad) {
         Gui.gui = this;
-
-        this.telemetry = telemetry;
         this.gamepad = gamepad;
 
-        // Create the root settings menu:
+        // Create the root menu:
         menuStack.add(new MenuWidget(""));
     }
 
@@ -333,9 +330,8 @@ class Gui {
         return nanoTime() * 1e-9;
     }
 
-    // Update loop for Settings. If true is returned, the caller should not use gamepad input
-    // because the Settings UI is active:
-    void update() {
+    // Update loop for the Gui.
+    String update() {
         StringBuilder output = new StringBuilder();
 
         // Add a header with submenu names:
@@ -374,8 +370,6 @@ class Gui {
                 // Highlight current item:
                 output.append("<span style='background: #88285a'>\u25c6 " + widget.string() + "</span>\n");
         }
-
-        telemetry.addLine(output.toString());
 
         Widget widget = menu.widgets.get(menu.current);
         if (cancel()) {
@@ -429,7 +423,7 @@ class Gui {
             }
         }
 
-        telemetry.update();
+        return output.toString();
     }
 
     // Add a new option to the appropriate spot in the menu hierarchy:
@@ -464,13 +458,13 @@ class Gui {
         menu.widgets.add(newWidget);
     }
 
-    // Add a toggleable option to the Settings menu:
+    // Add a toggleable option to the menu:
     /** @noinspection unused*/
     public static void addToggle(String descriptor, boolean initialValue, Consumer<Boolean> callback) {
         callback.accept(initialValue);
         gui.add(descriptor, new ToggleWidget(descriptor, initialValue, callback));
     }
-    // Add a list option to the Settings menu:
+    // Add a list option to the menu:
     /** @noinspection unused*/
     public static void addList(String descriptor, String[] list, int initialIndex, BiConsumer<Integer, String> callback) {
         callback.accept(initialIndex, list[initialIndex]);
@@ -1630,7 +1624,7 @@ public class LooneyTuner extends LinearOpMode {
         if (type == PidTunerType.AXIAL) {
             prompt = String.format("The robot will drive forwards and then backwards for %d inches. ", DISTANCE)
                     + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
-                    + "axialGain is most important while axialVelGain can often be left as zero. ";
+                    + "Tune <b>axialGain</b> first. <b>axialVelGain</b> can often be left as zero. ";
             trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
             gainName = "axialGain";
             velGainName = "axialVelGain";
@@ -1638,7 +1632,7 @@ public class LooneyTuner extends LinearOpMode {
         } else if (type == PidTunerType.LATERAL) {
             prompt = String.format("The robot will strafe left and then right for %d inches. ", DISTANCE)
                     + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
-                    + "lateralGain is most important while lateralVelGain can often be left as zero. ";
+                    + "Tune <b>lateralGain</b> first. <b>lateralVelGain</b> can often be left as zero. ";
             trajectory = trajectory.strafeTo(new Vector2d(0, DISTANCE)).strafeTo(new Vector2d(0, 0));
             gainName = "lateralGain";
             velGainName = "lateralVelGain";
@@ -1646,7 +1640,7 @@ public class LooneyTuner extends LinearOpMode {
         } else {
             prompt = "The robot will rotate in place 180° clockwise and then counterclockwise. "
                     + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
-                    + "headingGain is most important while headingVelGain can often be left as zero. ";
+                    + "Tune <b>headingGain</b> first. <b>headingVelGain</b> can often be left as zero. ";
             trajectory = trajectory.turn(Math.PI).turn(-Math.PI);
             gainName = "headingGain";
             velGainName = "headingVelGain";
@@ -1809,7 +1803,7 @@ public class LooneyTuner extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // Initialize member fields:
-        gui = new Gui(telemetry, gamepad1);
+        gui = new Gui(gamepad1);
         dialogs = new Dialogs();
         drive = new MecanumDrive(hardwareMap, telemetry, gamepad1, zeroPose);
         currentParameters = new TuneParameters(drive);
@@ -1859,7 +1853,9 @@ public class LooneyTuner extends LinearOpMode {
         waitForStart();
         dialogs.staticPrompt("<big><big><big><big><big><big><big><b>Press Gamepad "+A+" or "+B);
 
-        while (opModeIsActive())
-            gui.update();
+        while (opModeIsActive()) {
+            telemetryAdd(gui.update());
+            telemetryUpdate();
+        }
     }
 }

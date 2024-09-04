@@ -594,6 +594,7 @@ public final class MecanumDrive {
             if (beginTs < 0) {
                 beginTs = Actions.now();
                 t = 0;
+                resetLoopTimeStatistic();
             } else {
                 t = Actions.now() - beginTs;
             }
@@ -695,6 +696,7 @@ public final class MecanumDrive {
             if (beginTs < 0) {
                 beginTs = Actions.now();
                 t = 0;
+                resetLoopTimeStatistic();
             } else {
                 t = Actions.now() - beginTs;
             }
@@ -769,12 +771,15 @@ public final class MecanumDrive {
     }
 
     // Update the loop time, in milliseconds, and show it on FTC Dashboard:
-    double lastLoopTime = nanoTime() * 1e-9; // Seconds
+    double lastLoopTime; // Seconds
     void updateLoopTimeStatistic(TelemetryPacket p) {
         double currentTime = nanoTime() * 1e-9; // Seconds
         double loopTime = currentTime - lastLoopTime;
         lastLoopTime = currentTime;
         p.put("Loop time", loopTime * 1000.0); // Milliseconds
+    }
+    void resetLoopTimeStatistic() {
+        lastLoopTime = nanoTime() * 1e-9;
     }
 
     public PoseVelocity2d updatePoseEstimate() {
