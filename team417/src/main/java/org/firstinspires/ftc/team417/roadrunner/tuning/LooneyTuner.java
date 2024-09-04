@@ -4,11 +4,10 @@
 
 // Short-term:
 // @@@ Fix ramp distance bug/feature
-// @@@ Allow tuners to inherit current OTOS settings
 // @@@ Figure out fastLoad for all teams
 // @@@ Show old values, amount of change for: lateralInPerTick
-// @@@ Optimize voltage performance
-// @@@ Fix velocity gains
+// @@@ Add velocity test to extras
+// @@@ Cleanup the PID routines (no auto-run, common height, add error graphing)
 //
 // Long-term:
 // @@@ Do something about inPerTick
@@ -923,8 +922,8 @@ public class LooneyTuner extends LinearOpMode {
         return accumulatedSparkFunRotation;
     }
 
+    // Draw the spin sample points, plus the optional best-fit circle, on FTC Dashboard:
     void drawSpinPoints(ArrayList<Point> points, Circle circle) {
-        // Draw the circle on FTC Dashboard:
         TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
         Canvas canvas = packet.fieldOverlay();
         double[] xPoints = new double[points.size()];
@@ -1025,9 +1024,8 @@ public class LooneyTuner extends LinearOpMode {
                         farthestPoint = currentPoint;
                     }
 
-                    drawSpinPoints(points, null);
-
                     // Update the telemetry:
+                    drawSpinPoints(points, null);
                     double rotationsRemaining = (terminationRotation - offsetRotation) / (2 * Math.PI);
                     telemetryAdd(String.format("%.2f rotations remaining, %d samples", rotationsRemaining, points.size()));
                     telemetryAdd("\nPress "+B+" to abort.");
@@ -1075,6 +1073,9 @@ public class LooneyTuner extends LinearOpMode {
         double totalMeasuredCircles = totalMeasuredRotation / (2 * Math.PI);
         double integerCircles = Math.round(totalMeasuredCircles);
         double angularScalar = integerCircles / totalMeasuredCircles;
+
+        // Now that we have measured the angular scalar, we can correct the distance-per-revolution:
+        distancePerRevolution *= angularScalar;
 
         // 'Track width' is really the radius of the circle needed to make a complete rotation:
         double trackWidth = distancePerRevolution / (2 * Math.PI);
@@ -1409,9 +1410,9 @@ public class LooneyTuner extends LinearOpMode {
         MecanumDrive.PARAMS = testParameters.params;
 
         int inputIndex = 0;
-        DecimalInput[] inputs = {
-            new DecimalInput(drive.PARAMS, "kV", -3, 6, 0.000001, 20),
-            new DecimalInput(drive.PARAMS, "kA", -4, 5, 0, 1),
+        NumericInput[] inputs = {
+            new NumericInput(drive.PARAMS, "kV", -3, 6, 0.000001, 20),
+            new NumericInput(drive.PARAMS, "kA", -4, 5, 0, 1),
         };
         String[] instructions = {
             "Adjust <b>kV</b> to make the horizontal lines as close as possible in height. " +
@@ -1440,8 +1441,8 @@ public class LooneyTuner extends LinearOpMode {
                 String instruction = instructions[inputIndex]
                         + String.format("Max velocity will be %.0f%% when the next cycle starts.\n\n",
                             maxVelocityFactor * 100.0);
-                inputs[inputIndex].update(instruction,
-                        X+" to reposition, "+Y+" to switch variables, triggers to change max velocity, ");
+                inputs[inputIndex].update();
+                // @@@ X+" to reposition, "+Y+" to switch variables, triggers to change max velocity, ");
 
                 // Update the velocity:
                 Pose2D velocity = drive.opticalTracker.getVelocity();
@@ -1518,7 +1519,7 @@ public class LooneyTuner extends LinearOpMode {
     /**
      * Class to handle gamepad input of decimal numbers.
      */
-    class DecimalInput {
+    class NumericInput {
         final double INITIAL_DELAY = 0.6; // Seconds after initial press before starting to repeat
         final double ADVANCE_DELAY = 0.15; // Seconds after any repeat to repeat again
 
@@ -1538,7 +1539,7 @@ public class LooneyTuner extends LinearOpMode {
         // to make the calling code's life a little easier. 'startDigit' dictates the starting
         // focus, 'decimalDigits' is the number of decimal digits to support, 'minValue' and
         // 'maxValue' specify the acceptable ranges.
-        DecimalInput(Object object, String fieldName, int startDigit, int decimalDigits, double minValue, double maxValue) {
+        NumericInput(Object object, String fieldName, int startDigit, int decimalDigits, double minValue, double maxValue) {
             this.object = object;
             this.fieldName = fieldName;
             this.digit = startDigit;
@@ -1558,9 +1559,9 @@ public class LooneyTuner extends LinearOpMode {
         }
 
         // Update the variable according to the latest gamepad input.
-        void update(String instructions, String buttonMessage) {
-            telemetryAdd(instructions + String.format("Inputting <b>%s</b>. ", fieldName)
-                + "Press Dpad up/down to change its value.\n");
+        void update() {
+            telemetryAdd(String.format("Inputting <b>%s</b>. ", fieldName)
+                + "Press Dpad up/down to change its value, right/left to move the cursor.\n");
 
             if (gui.left()) {
                 digit = Math.min(digit + 1, 2);
@@ -1610,10 +1611,7 @@ public class LooneyTuner extends LinearOpMode {
                 middle = "<u>" + middle + "</u>";
             }
 
-            telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>", prefix, middle, suffix));
-            telemetryAdd(String.format("\nDpad left/right to move the cursor, "
-                + "%s"+A+" when done, "+B+" to cancel.", buttonMessage));
-            telemetryUpdate();
+            telemetryAdd(String.format("<big><big>&emsp;%s%s%s</big></big>\n", prefix, middle, suffix));
         }
     }
 
@@ -1631,7 +1629,7 @@ public class LooneyTuner extends LinearOpMode {
         TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
         if (type == PidTunerType.AXIAL) {
             prompt = String.format("The robot will drive forwards and then backwards for %d inches. ", DISTANCE)
-                    + "Tune the gains so that the target and actual trajectories shown in FTC Dashboard align. "
+                    + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
                     + "axialGain is most important while axialVelGain can often be left as zero. ";
             trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
             gainName = "axialGain";
@@ -1639,7 +1637,7 @@ public class LooneyTuner extends LinearOpMode {
 
         } else if (type == PidTunerType.LATERAL) {
             prompt = String.format("The robot will strafe left and then right for %d inches. ", DISTANCE)
-                    + "Tune the gains so that the target and actual trajectories shown in FTC Dashboard align. "
+                    + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
                     + "lateralGain is most important while lateralVelGain can often be left as zero. ";
             trajectory = trajectory.strafeTo(new Vector2d(0, DISTANCE)).strafeTo(new Vector2d(0, 0));
             gainName = "lateralGain";
@@ -1647,7 +1645,7 @@ public class LooneyTuner extends LinearOpMode {
 
         } else {
             prompt = "The robot will rotate in place 180° clockwise and then counterclockwise. "
-                    + "Tune the gains so that the target and actual trajectories shown in FTC Dashboard align. "
+                    + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
                     + "headingGain is most important while headingVelGain can often be left as zero. ";
             trajectory = trajectory.turn(Math.PI).turn(-Math.PI);
             gainName = "headingGain";
@@ -1655,45 +1653,59 @@ public class LooneyTuner extends LinearOpMode {
         }
         if (dialogs.drivePrompt(prompt + "\n\nPress "+A+" to start, "+B+" to cancel")) {
             int inputIndex = 0;
-            DecimalInput[] inputs = {
-                new DecimalInput(drive.PARAMS, gainName, -1, 3, 0, 20),
-                new DecimalInput(drive.PARAMS, velGainName, -1, 3, 0, 20),
+            NumericInput[] numericInputs = {
+                new NumericInput(drive.PARAMS, gainName, -1, 3, 0, 20),
+                new NumericInput(drive.PARAMS, velGainName, -1, 3, 0, 20),
             };
             int queuedXbuttons = 0;
 
-            drive.runParallel(trajectory.build());
-            while (opModeIsActive() && !gui.cancel()) {
+            while (opModeIsActive()) {
                 // Drive some more:
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 boolean more = drive.doActionsWork(packet);
 
-                // Don't send the packet if the actions are all done because that will erase
-                // the positions from the field:
-                if (more)
-                    MecanumDrive.sendTelemetryPacket(packet);
+                // Process the gamepad numeric input:
+                numericInputs[inputIndex].update();
 
-                // Get the latest input from the gamepad:
-                String buttonMessage = Y+" to switch variables, ";
-                String instructions = "";
-                if (!more) {
-                    instructions = "Now that this run is done, be sure to compare the end position "
-                        + "to its starting position. If you're satisfied, press "+B+" to be done, otherwise "
-                        + "press "+X+" to do another run.\n\n";
-                    buttonMessage = X+" to start another run, " + buttonMessage;
+                // Compute the relevant error:
+                double error;
+                String errorString;
+                if (type == PidTunerType.AXIAL) {
+                    error = drive.pose.position.x - drive.targetPose.position.x;
+                    errorString = String.format("%.2f\"", error);
+                } else if (type == PidTunerType.LATERAL) {
+                    error = drive.pose.position.y - drive.targetPose.position.y;
+                    errorString = String.format("%.2f\"", error);
+                } else {
+                    error = Math.toDegrees(drive.pose.heading.toDouble()
+                                         - drive.targetPose.heading.toDouble());
+                    errorString = String.format("%.2f\u00b0", error);
                 }
-                inputs[inputIndex].update(instructions, buttonMessage);
 
-                if (gui.yButton())
-                    inputIndex ^= 1; // Toggle the index
+                telemetryAdd("Last measured error: " + errorString + "\n");
+                packet.put("Error", error); // Make the error graphable
+
                 if (gui.xButton())
-                    queuedXbuttons++; // Let the x-button be queued up
+                    queuedXbuttons++; // Let the x-button be queued up even while running
 
                 if (more) {
+                    telemetryAdd("Press "+B+" to cancel");
+                    telemetryUpdate();
+
+                    // Only send the packet if there's more to the trajectory, otherwise the
+                    // field view will be erased once the trajectory terminates:
+                    MecanumDrive.sendTelemetryPacket(packet);
+
                     if (gui.cancel()) {
                         // Cancel the current cycle while remaining in this test:
                         drive.abortActions();
+                        queuedXbuttons = 0;
                     }
                 } else {
+                    telemetryAdd("Press "+A+" when done, "+B
+                            +" to cancel, "+X+" to start a run, "+Y+" to switch gain variables");
+                    telemetryUpdate();
+
                     if (gui.accept()) {
                         if (dialogs.staticPrompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel")) {
                             acceptParameters(testParameters);
@@ -1705,6 +1717,8 @@ public class LooneyTuner extends LinearOpMode {
                                 + "Press "+A+" to discard, "+B+" to cancel."))
                             break; // ====>
                     }
+                    if (gui.yButton())
+                        inputIndex ^= 1; // Toggle the index
 
                     // If there is no more actions, let the X button start a new one.
                     updateGamepadDriving();

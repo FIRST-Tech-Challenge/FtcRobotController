@@ -194,10 +194,10 @@ public final class MecanumDrive {
 
     public LazyImu lazyImu;
 
-    public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
-
     public Localizer localizer;
-    public Pose2d pose;
+    public Pose2d pose; // Actual pose
+    public Pose2d targetPose; // Target pose
+    public SparkFunOTOS opticalTracker = null; // Can be null which means no optical tracking sensor
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
@@ -622,6 +622,9 @@ public final class MecanumDrive {
             // Enlighten Wily Works as to where we should be:
             WilyWorks.runTo(txWorldTarget.value(), txWorldTarget.velocity().value());
 
+            // Remember the target pose:
+            targetPose = txWorldTarget.value();
+
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 
             double voltage = getVoltage();
@@ -720,6 +723,9 @@ public final class MecanumDrive {
             // Enlighten Wily Works as to where we should be:
             WilyWorks.runTo(txWorldTarget.value(), txWorldTarget.velocity().value());
 
+            // Remember the target pose:
+            targetPose = txWorldTarget.value();
+
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 
             updateLoopTimeStatistic(p);
@@ -798,6 +804,7 @@ public final class MecanumDrive {
                     new Vector2d(Math.cos(rotation) * velocity.x - Math.sin(rotation) * velocity.y,
                                  Math.sin(rotation) * velocity.x + Math.cos(rotation) * velocity.y),
                         velocity.h + rotation);
+            pose = new Pose2d(position.x, position.y, position.h);
         } else {
             // Use the wheel odometry to update the pose:
             Twist2dDual<Time> twist = WilyWorks.localizerUpdate();
@@ -870,6 +877,7 @@ public final class MecanumDrive {
     public void setPose(Pose2d pose) {
         // Set the Road Runner pose:
         this.pose = pose;
+        this.targetPose = pose;
 
         // Set the pose on the optical tracking sensor:
         if (opticalTracker != null) {
