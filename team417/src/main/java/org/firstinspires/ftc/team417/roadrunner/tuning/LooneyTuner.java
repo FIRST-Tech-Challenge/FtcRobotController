@@ -183,35 +183,35 @@ class TuneParameters {
     public String compare(TuneParameters oldSettings) {
         comparison = "";
 
-        compare("maxWheelVel", "%.2f", oldSettings.params.maxWheelVel, params.maxWheelVel);
-        compare("minProfileAccel", "%.2f", oldSettings.params.minProfileAccel, params.minProfileAccel);
-        compare("maxProfileAccel", "%.2f", oldSettings.params.maxProfileAccel, params.maxProfileAccel);
-        compare("maxAngVel", "%.2f", oldSettings.params.maxAngVel, params.maxAngVel);
-        compare("maxAngAccel", "%.2f", oldSettings.params.maxAngAccel, params.maxAngAccel);
-        compare("axialVelGain", "%.2f", oldSettings.params.axialVelGain, params.axialVelGain);
-        compare("lateralVelGain", "%.2f", oldSettings.params.lateralVelGain, params.lateralVelGain);
-        compare("headingVelGain", "%.2f", oldSettings.params.headingVelGain, params.headingVelGain);
-        compare("axialGain", "%.2f", oldSettings.params.axialGain, params.axialGain);
-        compare("lateralGain", "%.2f", oldSettings.params.lateralGain, params.lateralGain);
-        compare("headingGain", "%.2f", oldSettings.params.headingGain, params.headingGain);
-        compare("kS", "%.5f", oldSettings.params.kS, params.kS);
-        compare("kV", "%.6f", oldSettings.params.kV, params.kV);
-        compare("kA", "%.5f", oldSettings.params.kA, params.kA);
         compare("inPerTick", "%.5f", oldSettings.params.inPerTick, params.inPerTick);
         compare("lateralInPerTick", "%.5f", oldSettings.params.lateralInPerTick, params.lateralInPerTick);
         compare("trackWidthTicks", "%.2f", oldSettings.params.trackWidthTicks, params.trackWidthTicks);
+        compare("kS", "%.5f", oldSettings.params.kS, params.kS);
+        compare("kV", "%.6f", oldSettings.params.kV, params.kV);
+        compare("kA", "%.5f", oldSettings.params.kA, params.kA);
+        compare("axialGain", "%.2f", oldSettings.params.axialGain, params.axialGain);
+        compare("axialVelGain", "%.2f", oldSettings.params.axialVelGain, params.axialVelGain);
+        compare("lateralGain", "%.2f", oldSettings.params.lateralGain, params.lateralGain);
+        compare("lateralVelGain", "%.2f", oldSettings.params.lateralVelGain, params.lateralVelGain);
+        compare("headingGain", "%.2f", oldSettings.params.headingGain, params.headingGain);
+        compare("headingVelGain", "%.2f", oldSettings.params.headingVelGain, params.headingVelGain);
         compare("otos.offset.x", "%.3f", oldSettings.params.otos.offset.x, params.otos.offset.x);
         compare("otos.offset.y", "%.3f", oldSettings.params.otos.offset.y, params.otos.offset.y);
         compareRadians("otos.offset.h", "%.3f", oldSettings.params.otos.offset.h, params.otos.offset.h);
         compare("otos.linearScalar", "%.3f", oldSettings.params.otos.linearScalar, params.otos.linearScalar);
         compare("otos.angularScalar", "%.3f", oldSettings.params.otos.angularScalar, params.otos.angularScalar);
+        compare("maxWheelVel", "%.2f", oldSettings.params.maxWheelVel, params.maxWheelVel);
+        compare("minProfileAccel", "%.2f", oldSettings.params.minProfileAccel, params.minProfileAccel);
+        compare("maxProfileAccel", "%.2f", oldSettings.params.maxProfileAccel, params.maxProfileAccel);
+        compare("maxAngVel", "%.2f", oldSettings.params.maxAngVel, params.maxAngVel);
+        compare("maxAngAccel", "%.2f", oldSettings.params.maxAngAccel, params.maxAngAccel);
         return comparison;
     }
 }
 
 /**
  * Class for encapsulating all Gui operations.
- * @noinspection StringConcatenationInsideStringBufferAppend, UnnecessaryUnicodeEscape
+ * @noinspection StringConcatenationInsideStringBufferAppend, UnnecessaryUnicodeEscape, unused
  */
 class Gui {
     static final double ANALOG_THRESHOLD = 0.5; // Threshold to consider an analog button pressed
@@ -510,7 +510,6 @@ public class LooneyTuner extends LinearOpMode {
     TuneParameters originalParameters;
 
     // Constants:
-    public static int DISTANCE = 48; // Standard test driving distance, in inches
     final Pose2d zeroPose = new Pose2d(0, 0, 0);
 
     // Check if the robot code setting the MecanumDrive configuration parameters is up to date
@@ -529,16 +528,16 @@ public class LooneyTuner extends LinearOpMode {
                 // There is no way to query the current display format so we have to assume it
                 // could be either HTML or non-HTML.
                 telemetry.clear();
-                telemetry.addLine("YOUR CODE IS OUT OF DATE");
+                telemetry.addLine("YOUR CODE IS OUT OF SYNC WITH LOONEY TUNER");
                 telemetry.addLine();
                 telemetry.addLine("The code's configuration parameters don't match the last "
-                        + "results saved in Looney Tuner. Double-tap the shift key in Android "
+                        + "results saved in Looney Tuner. To use the Looney Tuner results, double-tap the shift key in Android "
                         + "Studio, enter '<b>md.params</b>' to jump to the MecanumDrive Params constructor, "
                         + "then update as follows:");
                 telemetry.addLine();
                 telemetry.addLine(comparison);
                 telemetry.addLine("Please update your code and restart now. Or, to proceed anyway and "
-                        + "delete the tuning results, triple-tap the BACK button on the gamepad.");
+                        + "delete the Looney Tuner results, triple-tap the BACK button on the gamepad.");
                 telemetry.update();
 
                 // Wait for a triple-tap of the button:
@@ -1165,42 +1164,34 @@ public class LooneyTuner extends LinearOpMode {
     // Automatically calculate the kS and kV terms of the feed-forward approximation by
     // ramping up the velocity in a straight line. We increase power by a fixed increment.
     void acceleratingStraightLineTuner() {
-        final double VELOCITY_EPSILON = 2.0;
-        final double VOLTAGE_ADDER_PER_SECOND = 0.3;
-        final double MAX_VOLTAGE_FACTOR = 0.9;
-        final double MAX_SECONDS = MAX_VOLTAGE_FACTOR / VOLTAGE_ADDER_PER_SECOND + 0.1;
+        final int DISTANCE = 72; // Test distance in inches
+
+        final double VELOCITY_EPSILON = 2.0; // Inches/s
+        final double POWER_FACTOR_ADDER_PER_SECOND = 0.1;
+        final double MIN_POWER_FACTOR = 0.05;
+        final double MAX_POWER_FACTOR = 0.9;
 
         useDrive(true); // Set the brakes
         assert(drive.opticalTracker != null);
 
-        if (dialogs.drivePrompt("Drive the robot to a spot on the field with as much space in front of it as possible. "
-                + "The robot will drive forward in a straight line, starting slowly but getting "
-                + "faster and faster. Be ready to press "+B+" to stop the robot when it gets close to "
-                + "hitting something!"
+        if (dialogs.drivePrompt(String.format("The robot will drive forward for up to %d inches. ", DISTANCE)
+                + "It will start slowly but get faster and faster. "
                 + "\n\nDrive the robot to a good spot, press "+A+" to start, "+B+" to cancel.")) {
 
             ArrayList<Point> points = new ArrayList<>();
             double startTime = time();
-            double oldPowerFactor = 0;
-            double maxVelocity = 0;
-            double voltage = drive.voltageSensor.getVoltage();
+            double maxVelocity = 0; // Inches/s
+            double maxPower = 0; // Volts
+            boolean success = false;
+            while (opModeIsActive()) {
+                // Slowly ramp up the voltage. Increase power by the specified power adder:
+                double scaledPower = (time() - startTime) * POWER_FACTOR_ADDER_PER_SECOND;
+                double powerFactor = scaledPower + MIN_POWER_FACTOR;
 
-            // Slowly ramp up the voltage:
-            while (opModeIsActive() && !gui.cancel() && ((time() - startTime) < MAX_SECONDS)) {
-
-                // Increase power by 0.1 each second until it reaches 0.9:
-                double newPowerFactor = (time() - startTime) * VOLTAGE_ADDER_PER_SECOND;
-                newPowerFactor = Math.min(newPowerFactor, MAX_VOLTAGE_FACTOR);
-
-                drive.rightFront.setPower(newPowerFactor);
-                drive.rightBack.setPower(newPowerFactor);
-                drive.leftFront.setPower(newPowerFactor);
-                drive.leftBack.setPower(newPowerFactor);
-
-                double percentage = newPowerFactor / MAX_VOLTAGE_FACTOR * 100;
-                telemetryAdd(String.format("%.0f%% done.", percentage));
-                telemetryAdd("\nPress "+B+" to abort.");
-                telemetryUpdate();
+                drive.rightFront.setPower(powerFactor);
+                drive.rightBack.setPower(powerFactor);
+                drive.leftFront.setPower(powerFactor);
+                drive.leftBack.setPower(powerFactor);
 
                 Pose2D velocityVector = drive.opticalTracker.getVelocity();
                 double velocity = Math.hypot(velocityVector.x, velocityVector.y);
@@ -1208,76 +1199,87 @@ public class LooneyTuner extends LinearOpMode {
                 // Discard zero velocities that will happen when the provided power isn't
                 // enough yet to overcome static friction:
                 if (velocity > VELOCITY_EPSILON) {
-                    points.add(new Point(velocity, oldPowerFactor));
+                    double power = powerFactor * drive.voltageSensor.getVoltage();
+                    maxPower = Math.max(power, maxPower);
+                    points.add(new Point(velocity, power));
                     maxVelocity = Math.max(velocity, maxVelocity);
                 }
+                // We're done if we've reach the maximum target voltage:
+                if (powerFactor > MAX_POWER_FACTOR) {
+                    success = true;
+                    break;
+                }
+                // We're also done if we've gone far enough:
+                Pose2D position = drive.opticalTracker.getPosition();
+                double distance = Math.hypot(position.x, position.y);
+                if (distance > DISTANCE) {
+                    success = true;
+                    break;
+                }
 
-                oldPowerFactor = newPowerFactor;
+                telemetryAdd(String.format("Power: %.1f, inches: %.1f\n\n", powerFactor, distance));
+                telemetryAdd("Press "+B+" to abort.");
+                telemetryUpdate();
             }
 
             // Stop the robot:
-            drive.rightFront.setPower(0);
-            drive.rightBack.setPower(0);
-            drive.leftFront.setPower(0);
-            drive.leftBack.setPower(0);
+            stopMotors();
+            if (success) {
+                if (maxVelocity == 0) {
+                    dialogs.staticPrompt("The optical tracking sensor returned only zero velocities. "
+                            + "Is it working properly?"
+                            + "\n\nAborted, press "+A+" to continue.");
+                } else {
+                    // Draw the results to the FTC dashboard:
+                    TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
+                    Canvas canvas = packet.fieldOverlay();
 
-            if (oldPowerFactor < MAX_VOLTAGE_FACTOR) {
-                dialogs.staticPrompt("The robot didn't hit top speed before the test was aborted."
-                        + "\n\nPress "+A+" to continue.");
-            } else if (maxVelocity == 0) {
-                dialogs.staticPrompt("The optical tracking sensor returned only zero velocities. "
-                        + "Is it working properly?"
-                        + "\n\nAborted, press "+A+" to continue.");
-            } else {
-                // Draw the results to the FTC dashboard:
-                TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
-                Canvas canvas = packet.fieldOverlay();
+                    // Set a solid white background:
+                    canvas.setFill("#ffffff");
+                    canvas.fillRect(-72, -72, 144, 144);
 
-                // Set a solid white background:
-                canvas.setFill("#ffffff");
-                canvas.fillRect(-72, -72, 144, 144);
+                    // Set the transform:
+                    canvas.setTranslation(-72, 72);
+                    //                canvas.setScale(144.0 / maxVelocity, 144.0 / MAX_VOLTAGE_FACTOR);
 
-                // Set the transform:
-                canvas.setTranslation(-72, 72);
-//                canvas.setScale(144.0 / maxVelocity, 144.0 / MAX_VOLTAGE_FACTOR);
+                    // The canvas coordinates go from -72 to 72 so scale appropriately:
+                    double xScale = 140 / maxVelocity;
+                    double yScale = 140 / maxPower;
 
-                // The canvas coordinates go from -72 to 72 so scale appropriately:
-                double xScale = 140 / maxVelocity;
-                double yScale = 140 / MAX_VOLTAGE_FACTOR;
+                    double[] xPoints = new double[points.size()];
+                    double[] yPoints = new double[points.size()];
+                    for (int i = 0; i < points.size(); i++) {
+                        // Velocity along the x axis, voltage along the y axis:
+                        xPoints[i] = points.get(i).x * xScale;
+                        yPoints[i] = points.get(i).y * yScale;
+                    }
 
-                double[] xPoints = new double[points.size()];
-                double[] yPoints = new double[points.size()];
-                for (int i = 0; i < points.size(); i++) {
-                    // Velocity along the x axis, voltage along the y axis:
-                    xPoints[i] = points.get(i).x * xScale;
-                    yPoints[i] = points.get(i).y * yScale;
-                }
+                    canvas.setStroke("#00ff00");
+                    canvas.strokePolyline(xPoints, yPoints);
 
-                canvas.setStroke("#00ff00");
-                canvas.strokePolyline(xPoints, yPoints);
+                    BestFitLine bestFitLine = fitLine(points);
 
-                BestFitLine bestFitLine = fitLine(points);
+                    // Draw the best-fit line:
+                    canvas.setStrokeWidth(1);
+                    canvas.setStroke("#ff0000");
+                    canvas.strokeLine(0, bestFitLine.intercept * yScale,
+                            200 * xScale, (bestFitLine.intercept + 200 * bestFitLine.slope) * yScale);
 
-                // Draw the best-fit line:
-                canvas.setStrokeWidth(1);
-                canvas.setStroke("#ff0000");
-                canvas.strokeLine(0, bestFitLine.intercept * yScale,
-                        200 * xScale, (bestFitLine.intercept + 200 * bestFitLine.slope) * yScale);
+                    FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+                    out.printf("Intercept: %.3f, Slope: %.3f\n", bestFitLine.intercept, bestFitLine.slope);
 
-                out.printf("Intercept: %.3f, Slope: %.3f, Voltage: %.3f\n", bestFitLine.intercept, bestFitLine.slope, voltage);
+                    TuneParameters newParameters = currentParameters.createClone();
+                    newParameters.params.kS = bestFitLine.intercept;
+                    newParameters.params.kV = bestFitLine.slope * currentParameters.params.inPerTick;
 
-                TuneParameters newParameters = currentParameters.createClone();
-                newParameters.params.kS = bestFitLine.intercept * voltage;
-                newParameters.params.kV = bestFitLine.slope * voltage * currentParameters.params.inPerTick; // @@@ Normalize?
+                    if (dialogs.staticPrompt("Check out the graph on FTC Dashboard!\n\n"
+                            + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.params.kS, currentParameters.params.kS)
+                            + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.params.kV, currentParameters.params.kV)
+                            + "\nIf these look good, press " + A + " to accept, " + B + " to cancel.")) {
 
-                if (dialogs.staticPrompt("Check out the graph on FTC Dashboard!\n\n"
-                    + String.format("&ensp;New kS: %.03f, old kS: %.03f\n", newParameters.params.kS, currentParameters.params.kS)
-                    + String.format("&ensp;New kV: %.06f, old kV: %.06f\n", newParameters.params.kV, currentParameters.params.kV)
-                    + "\nIf these look good, press "+A+" to accept, "+B+" to cancel.")) {
-
-                    acceptParameters(newParameters);
+                        acceptParameters(newParameters);
+                    }
                 }
             }
         }
@@ -1343,6 +1345,8 @@ public class LooneyTuner extends LinearOpMode {
 
     // Tuner for the lateral multiplier on Mecanum drives.
     void lateralTuner() {
+        final int DISTANCE = 48; // Test distance in inches
+
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         if (dialogs.drivePrompt(String.format("The robot will strafe left for %d inches (%.1f tiles). ", DISTANCE, DISTANCE / 24.0)
@@ -1568,7 +1572,7 @@ public class LooneyTuner extends LinearOpMode {
             }
 
             // Advance the value according to the thumb stick state:
-            int input = gui.up() ? 1 : (gui.down() ? -1 : 0); // -1, 0 or 1
+            int input = gui.gamepad.dpad_up ? 1 : (gui.gamepad.dpad_down ? -1 : 0); // -1, 0 or 1
             if (input != lastInput) {
                 nextAdvanceTime = time() + INITIAL_DELAY;
                 lastInput = input;
@@ -1614,6 +1618,8 @@ public class LooneyTuner extends LinearOpMode {
 
     // Adjust the Ramsete/PID values:
     void interactivePidTuner(PidTunerType type) {
+        final int DISTANCE = 48; // Test distance in inches
+
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         TuneParameters testParameters = currentParameters.createClone();
@@ -1671,12 +1677,13 @@ public class LooneyTuner extends LinearOpMode {
                     error = drive.pose.position.y - drive.targetPose.position.y;
                     errorString = String.format("%.2f\"", error);
                 } else {
-                    error = Math.toDegrees(drive.pose.heading.toDouble()
-                                         - drive.targetPose.heading.toDouble());
+                    error = Math.toDegrees(normalizeAngle(drive.pose.heading.toDouble()
+                                                        - drive.targetPose.heading.toDouble()));
                     errorString = String.format("%.2f\u00b0", error);
                 }
 
-                telemetryAdd("Last measured error: " + errorString + "\n");
+                telemetryAdd("Press "+X+" to test this new value.\n");
+                telemetryAdd("Last measured error was " + errorString + ".\n");
                 packet.put("Error", error); // Make the error graphable
 
                 if (gui.xButton())

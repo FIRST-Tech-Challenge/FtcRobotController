@@ -84,31 +84,30 @@ public final class MecanumDrive {
             maxAngVel = Math.PI;
             maxAngAccel = Math.PI;
 
-            axialVelGain = 0.0;
-            lateralVelGain = 0.0;
-            headingVelGain = 0.0;
-
             if (isDevBot) {
                 logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
                 usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
                 inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
                 lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
-                trackWidthTicks = 690.3255416844875;
+                trackWidthTicks = 663.97;
 
-                kS = 0.6298460597755153; // Voltage
-                kV = 0.004317546531109388;
+                kS = 0.49327; // Voltage
+                kV = 0.004225;
                 kA = 0;
 
-                axialGain = 3.2;
-                lateralGain = 0.30;
-                headingGain = 3.30; // shared with turn
+                axialGain      = 10.00;
+                axialVelGain   = 1.80;
+                lateralGain    = 8.00;
+                lateralVelGain = 0.10;
+                headingGain    = 9.30;
+                headingVelGain = 0.0;
 
-                otos.offset.x = 6.4; // Inches
-                otos.offset.y = 3.037; // Inches
+                otos.offset.x = 6.408; // Inches
+                otos.offset.y = 3.160; // Inches
                 otos.offset.h = Math.toRadians(-89.362); // Convert degrees to radians
                 otos.linearScalar = 1.049; // Scalar
-                otos.angularScalar = 0.992; // Scalar
+                otos.angularScalar = 1.001; // Scalar
 
             } else {
                 logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
@@ -122,9 +121,12 @@ public final class MecanumDrive {
                 kV = 0;
                 kA = 0;
 
-                axialGain = 0.0;
-                lateralGain = 0.0;
-                headingGain = 0.0;
+                axialGain      = 0.0;
+                axialVelGain   = 0.0;
+                lateralGain    = 0.0;
+                lateralVelGain = 0.0;
+                headingGain    = 0.0;
+                headingVelGain = 0.0;
             }
         }
 
