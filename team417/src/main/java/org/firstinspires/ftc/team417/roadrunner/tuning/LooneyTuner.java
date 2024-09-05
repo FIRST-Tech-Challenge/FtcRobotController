@@ -145,12 +145,14 @@ class TuneParameters {
 
     // Compare the saved and current values for a configuration parameter. If they're different,
     // return a string that tells the user
+    boolean useHtml = false;
     String comparison = "";
     void compare(String parameter, String format, double oldValue, double newValue) {
         String oldString = String.format(format, oldValue);
         String newString = String.format(format, newValue);
         if (!oldString.equals(newString)) {
-            comparison += String.format("&ensp;%s = %s; // Was %s\n", parameter, newString, oldString);
+            comparison += (useHtml) ? "&ensp" : "    ";
+            comparison += String.format("%s = %s; // Was %s\n", parameter, newString, oldString);
         }
     }
     /** @noinspection SameParameterValue*/
@@ -158,7 +160,10 @@ class TuneParameters {
         String oldString = String.format(format, Math.toDegrees(oldValue));
         String newString = String.format(format, Math.toDegrees(newValue));
         if (!oldString.equals(newString)) {
-            comparison += String.format("&ensp;%s = Math.toRadians(%s);\n&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;// Was Math.toRadians(%s)\n", parameter, newString, oldString);
+            comparison += (useHtml) ? "&ensp" : "    ";
+            comparison += String.format("%s = Math.toRadians(%s);\n", parameter, newString);
+            comparison += (useHtml) ? "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" : "                          ";
+            comparison += String.format("// Was Math.toRadians(%s)\n", oldString);
         }
     }
 
@@ -180,8 +185,9 @@ class TuneParameters {
 
     // Compare the current settings to the last saved settings. Returns a string that
     // describes how to fix the code if there are any mismatches. It may be an empty string.
-    public String compare(TuneParameters oldSettings) {
-        comparison = "";
+    public String compare(TuneParameters oldSettings, boolean useHtml) {
+        this.useHtml = useHtml;
+        this.comparison = "";
 
         compare("inPerTick", "%.5f", oldSettings.params.inPerTick, params.inPerTick);
         compare("lateralInPerTick", "%.5f", oldSettings.params.lateralInPerTick, params.lateralInPerTick);
@@ -523,7 +529,7 @@ public class LooneyTuner extends LinearOpMode {
         TuneParameters currentSettings = new TuneParameters(drive);
         TuneParameters savedSettings = currentSettings.getSavedParameters();
         if (savedSettings != null) {
-            String comparison = savedSettings.compare(currentSettings);
+            String comparison = savedSettings.compare(currentSettings, false);
             if (!comparison.isEmpty()) {
                 // There is no way to query the current display format so we have to assume it
                 // could be either HTML or non-HTML.
@@ -774,7 +780,7 @@ public class LooneyTuner extends LinearOpMode {
 
     // Prompt the user for how to set the new parameters and save them to the registry:
     public void acceptParameters(TuneParameters newParameters) {
-        String comparison = newParameters.compare(currentParameters);
+        String comparison = newParameters.compare(currentParameters, true);
         if (comparison.isEmpty()) {
             dialogs.staticPrompt("The new results match your current settings.\n\nPress "+A+" to continue.");
         } else {
@@ -790,7 +796,7 @@ public class LooneyTuner extends LinearOpMode {
 
     // Show all of the parameters that have been updated in this run:
     public void showUpdatedParameters() {
-        String comparison = currentParameters.compare(originalParameters);
+        String comparison = currentParameters.compare(originalParameters, true);
         if (comparison.isEmpty()) {
             dialogs.staticPrompt("There are no changes from your current settings.\n\nPress "+A+" to continue.");
         } else {
