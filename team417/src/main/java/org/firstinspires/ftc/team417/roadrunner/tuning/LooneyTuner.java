@@ -151,7 +151,7 @@ class TuneParameters {
         String oldString = String.format(format, oldValue);
         String newString = String.format(format, newValue);
         if (!oldString.equals(newString)) {
-            comparison += (useHtml) ? "&ensp" : "    ";
+            comparison += (useHtml) ? "&ensp;" : "    ";
             comparison += String.format("%s = %s; // Was %s\n", parameter, newString, oldString);
         }
     }
@@ -160,7 +160,7 @@ class TuneParameters {
         String oldString = String.format(format, Math.toDegrees(oldValue));
         String newString = String.format(format, Math.toDegrees(newValue));
         if (!oldString.equals(newString)) {
-            comparison += (useHtml) ? "&ensp" : "    ";
+            comparison += (useHtml) ? "&ensp;" : "    ";
             comparison += String.format("%s = Math.toRadians(%s);\n", parameter, newString);
             comparison += (useHtml) ? "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" : "                          ";
             comparison += String.format("// Was Math.toRadians(%s)\n", oldString);
@@ -1224,7 +1224,7 @@ public class LooneyTuner extends LinearOpMode {
                 }
 
                 double remaining = Math.max(0, DISTANCE - distance);
-                telemetryAdd(String.format("Inches remaining: %.1f, Power: %.1f\n\n", remaining, powerFactor));
+                telemetryAdd(String.format("Inches remaining: %.1f, power: %.1f\n", remaining, powerFactor));
                 telemetryAdd("Press "+B+" to abort.");
                 telemetryUpdate();
             }
@@ -1364,11 +1364,11 @@ public class LooneyTuner extends LinearOpMode {
             testParameters.params.lateralVelGain = 0;
             testParameters.params.lateralInPerTick = 1.0;
 
-            // Recreate the Kinematics object based on the new settings:
-            drive.recreateKinematics();
-
             // Point the MecanumDrive to our test PARAMS:
             MecanumDrive.PARAMS = testParameters.params;
+
+            // Now recreate the Kinematics object based on the new settings:
+            drive.recreateKinematics();
 
             // Drive at a slow speed:
             double maxVelocity = drive.PARAMS.maxWheelVel / 4;
@@ -1383,7 +1383,7 @@ public class LooneyTuner extends LinearOpMode {
                 double lateralMultiplier = actualDistance / DISTANCE;
                 double inchesPerTick = currentParameters.params.inPerTick * lateralMultiplier;
 
-                if (lateralMultiplier < 0.1) {
+                if (lateralMultiplier < 0.25) {
                     dialogs.staticPrompt("The measured distance is too low to be correct. "
                             + "Did it not move, or is the distance sensor not working properly?"
                             + "\n\nPress "+A+"to continue.");
@@ -1871,14 +1871,14 @@ public class LooneyTuner extends LinearOpMode {
         gui.addRunnable("Drive test (motors)", this::driveTest);
         if (drive.opticalTracker != null) {
             // Basic tuners:
-            gui.addRunnable("Push tuner (linearScalar, offset heading)", this::pushTuner);
+            gui.addRunnable("Push tuner (OTOS orientation, linearScalar)", this::pushTuner);
             gui.addRunnable("Accelerating straight line tuner (kS and kV)", this::acceleratingStraightLineTuner,
                 ()->drive.PARAMS.otos.linearScalar != 0);
             gui.addRunnable("Interactive feed forward tuner (kV and kA)", this::interactiveFeedForwardTuner,
                 ()->drive.PARAMS.otos.linearScalar != 0 && drive.PARAMS.kS != 0 && drive.PARAMS.kV != 0);
             gui.addRunnable("Lateral tuner (lateralInPerTick)", this::lateralTuner,
                     ()->drive.PARAMS.otos.linearScalar != 0 && drive.PARAMS.kS != 0 && drive.PARAMS.kV != 0);
-            gui.addRunnable("Spin tuner (angularScalar, offset position)", this::spinTuner,
+            gui.addRunnable("Spin tuner (OTOS angularScalar, offset)", this::spinTuner,
                     ()->drive.PARAMS.otos.linearScalar != 0 && drive.PARAMS.kS != 0 && drive.PARAMS.kV != 0);
             gui.addRunnable("Interactive PiD tuner (axialGain)", ()->interactivePidTuner(PidTunerType.AXIAL),
                 ()->drive.PARAMS.otos.linearScalar != 0 && drive.PARAMS.kS != 0 && drive.PARAMS.kV != 0);
