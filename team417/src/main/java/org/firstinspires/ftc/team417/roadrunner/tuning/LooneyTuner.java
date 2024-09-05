@@ -672,7 +672,7 @@ public class LooneyTuner extends LinearOpMode {
         // Output spew when weird compiler bug hits because result should never be more than
         // stickValue:
         if (Math.abs(result) > Math.abs(stickValue))
-            out.printf("raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
+            out.printf("LooneyTuner: raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
         return result;
     }
 
@@ -964,7 +964,7 @@ public class LooneyTuner extends LinearOpMode {
                 + "\n\nDrive the robot to the start position, press "+A+" when ready, "+B+" to cancel")) {
 
             // Let the user position the robot:
-            if (dialogs.drivePrompt("Now move the robot far enough away from the wall and any objects so "
+            if (dialogs.drivePrompt("Now move the robot far enough away from the wall (and any objects) so "
                     + "that it can freely rotate in place."
                     + "\n\nPress "+A+" when ready for the robot to rotate, "+B+" to cancel")) {
 
@@ -1053,8 +1053,6 @@ public class LooneyTuner extends LinearOpMode {
                     double averageVelocity = (SPIN_POWER * averageVoltage - drive.PARAMS.kS) /
                             (drive.PARAMS.kV / drive.PARAMS.inPerTick); // Velocity in inches per second
 
-                    out.printf("Average voltage: %.2f, Velocity: %.2f inches/s\n", averageVoltage, averageVelocity); // @@@
-
                     double totalMeasuredRotation = getSparkFunRotation() - scalarStartRotation;
                     double distancePerRevolution = averageVelocity * (endTime - startTime) / REVOLUTION_COUNT;
                     processSpinResults(circle, totalMeasuredRotation, distancePerRevolution);
@@ -1078,9 +1076,6 @@ public class LooneyTuner extends LinearOpMode {
         // 'Track width' is really the radius of the circle needed to make a complete rotation:
         double trackWidth = distancePerRevolution / (2 * Math.PI);
         double trackWidthTicks = trackWidth / drive.PARAMS.inPerTick;
-
-        out.printf("distancePerRevolution: %.2f\n", distancePerRevolution);
-        out.printf("totalMeasuredRotation: %.2f, total circles: %.2f\n", totalMeasuredRotation, totalMeasuredCircles);
 
         // Undo the offset heading that the OTOS sensor automatically applies:
         Point rawOffset = new Point(center.x, center.y).rotate(-drive.PARAMS.otos.offset.h);
@@ -1272,8 +1267,6 @@ public class LooneyTuner extends LinearOpMode {
                             200 * xScale, (bestFitLine.intercept + 200 * bestFitLine.slope) * yScale);
 
                     FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-                    out.printf("Intercept: %.3f, Slope: %.3f\n", bestFitLine.intercept, bestFitLine.slope);
 
                     TuneParameters newParameters = currentParameters.createClone();
                     newParameters.params.kS = bestFitLine.intercept;
@@ -1674,30 +1667,26 @@ public class LooneyTuner extends LinearOpMode {
 
         TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
         if (type == PidTunerType.AXIAL) {
-            prompt = "The robot will drive forwards and then backwards " + testDistance(DISTANCE) + ". "
-                    + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
-                    + "Tune <b>axialGain</b> first. <b>axialVelGain</b> can often be left as zero. ";
+            prompt = "The robot will drive forwards and then backwards " + testDistance(DISTANCE) + ". ";
             trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
             gainName = "axialGain";
             velGainName = "axialVelGain";
 
         } else if (type == PidTunerType.LATERAL) {
-            prompt = "The robot will strafe left and then right for %d inches. " + testDistance(DISTANCE) + ". "
-                    + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
-                    + "Tune <b>lateralGain</b> first. <b>lateralVelGain</b> can often be left as zero. ";
+            prompt = "The robot will strafe left and then right " + testDistance(DISTANCE) + ". ";
             trajectory = trajectory.strafeTo(new Vector2d(0, DISTANCE)).strafeTo(new Vector2d(0, 0));
             gainName = "lateralGain";
             velGainName = "lateralVelGain";
 
         } else {
-            prompt = "The robot will rotate in place 180° clockwise and then counterclockwise. "
-                    + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
-                    + "Tune <b>headingGain</b> first. <b>headingVelGain</b> can often be left as zero. ";
+            prompt = "The robot will rotate in place 180° clockwise and then counterclockwise. ";
             trajectory = trajectory.turn(Math.PI).turn(-Math.PI);
             gainName = "headingGain";
             velGainName = "headingVelGain";
         }
-        if (dialogs.drivePrompt(prompt + "\n\nPress "+A+" to start, "+B+" to cancel")) {
+        if (dialogs.drivePrompt(prompt + "Tune the values to minimize error and make the target "
+                + "and actual trajectories shown in FTC Dashboard align.\n\n"
+                + "Press "+A+" to start, "+B+" to cancel")) {
             int inputIndex = 0;
             NumericInput[] numericInputs = {
                 new NumericInput(drive.PARAMS, gainName, -1, 3, 0, 20),
@@ -1728,14 +1717,19 @@ public class LooneyTuner extends LinearOpMode {
                     errorString = String.format("%.2f\u00b0", error);
                 }
 
-                telemetryAdd("Press "+X+" to test this new value.\n");
-                telemetryAdd("Last measured error was " + errorString + ".\n");
+                String tuningHint = (inputIndex == 0)
+                    ? "Tune to minimize measured error and get circles to align. "
+                    : "Tune to minimize oscillations. ";
+
+                telemetryAdd(tuningHint + "Press "+X+" to test this value.\n");
+
                 packet.put("Error", error); // Make the error graphable
 
                 if (gui.xButton())
                     queuedXButtons++; // Let the x-button be queued up even while running
 
                 if (more) {
+                    telemetryAdd("Current error: " + errorString + ".\n");
                     telemetryAdd("Press "+B+" to cancel");
                     telemetryUpdate();
 
@@ -1749,6 +1743,7 @@ public class LooneyTuner extends LinearOpMode {
                         queuedXButtons = 0;
                     }
                 } else {
+                    telemetryAdd("Last error: " + errorString + ".\n");
                     telemetryAdd("Press "+X+" to run, "+A+" when done, "+B
                             +" to cancel, "+Y+" to switch gain variables");
                     telemetryUpdate();
@@ -1827,8 +1822,6 @@ public class LooneyTuner extends LinearOpMode {
             testParameters.params.headingVelGain = 0;
             MecanumDrive.PARAMS = testParameters.params;
 
-            out.printf("trackWidthTicks: %.2f\n", MecanumDrive.PARAMS.trackWidthTicks); // @@@
-
             Action action = drive.actionBuilder(drive.pose)
                     .turn(2 * Math.toRadians(360), new TurnConstraints(
                             MecanumDrive.PARAMS.maxAngVel / 3,
@@ -1848,8 +1841,6 @@ public class LooneyTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        out.print("417!!!\n"); // @@@@@@@@
-
         // Set the display format to use HTML:
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 
