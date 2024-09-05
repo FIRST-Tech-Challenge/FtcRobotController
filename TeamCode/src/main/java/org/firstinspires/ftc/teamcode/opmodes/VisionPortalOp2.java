@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.subsystems.Apriltag;
 import org.firstinspires.ftc.teamcode.common.subsystems.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.Arrays;
@@ -23,7 +22,7 @@ public class VisionPortalOp2 extends CommandOpMode {
     @Override
     public void initialize() {
         aprilTag = new Apriltag();
-        visionPortal = new VisionPortal("camera1", Arrays.asList(aprilTag.getProcessor()));
+        visionPortal = new VisionPortal(hardwareMap, "camera1", Arrays.asList(aprilTag.getProcessor()));
         tel = FtcDashboard.getInstance().getTelemetry();
     }
 

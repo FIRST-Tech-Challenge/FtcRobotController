@@ -17,7 +17,7 @@ class VisionPortalOp: CommandOpMode() {
     var tel: Telemetry? = null
     override fun initialize() {
         aprilTag = Apriltag()
-        visionPortal = VisionPortal("camera1", listOf(aprilTag) as List<VisionProcessor>)
+        visionPortal = VisionPortal(hardwareMap, "camera1", listOf(aprilTag) as List<VisionProcessor>)
         tel = FtcDashboard.getInstance().telemetry
     }
 
