@@ -239,8 +239,8 @@ class Gui {
         abstract public String string();
     }
     private static class MenuWidget extends Widget {
-        ArrayList<Widget> widgets = new ArrayList<>(); // List of options in this menu
-        int current; // Index in options that has the UI focus
+        ArrayList<Widget> widgets = new ArrayList<>(); // List of widgets in this menu
+        int current; // Index in widgets that has the UI focus
         public MenuWidget(String descriptor) {
             super(descriptor);
         }
@@ -361,7 +361,7 @@ class Gui {
         }
         menu.current = Math.max(0, Math.min(menu.widgets.size() - 1, menu.current));
 
-        // Now output the options:
+        // Now output the widgets:
         for (int i = 0; i < menu.widgets.size(); i++) {
             Widget widget = menu.widgets.get(i);
             if (i != menu.current)
@@ -379,10 +379,10 @@ class Gui {
             }
         }
         else if (widget instanceof ToggleWidget) {
-            ToggleWidget toggleOption = (ToggleWidget) widget;
+            ToggleWidget toggleWidget = (ToggleWidget) widget;
             if (accept()) {
-                toggleOption.value = !toggleOption.value;
-                toggleOption.callback.accept(toggleOption.value);
+                toggleWidget.value = !toggleWidget.value;
+                toggleWidget.callback.accept(toggleWidget.value);
             }
         } else if (widget instanceof ListWidget) {
             ListWidget listWidget = (ListWidget) widget;
@@ -403,8 +403,8 @@ class Gui {
             }
         } else if (widget instanceof ActivationWidget) {
             if (accept()) {
-                ActivationWidget activationOption = (ActivationWidget) widget;
-                activationOption.callback.apply(true);
+                ActivationWidget activationWidget = (ActivationWidget) widget;
+                activationWidget.callback.apply(true);
             }
         } else if (widget instanceof StatsWidget) {
             if (accept()) {
@@ -426,7 +426,7 @@ class Gui {
         return output.toString();
     }
 
-    // Add a new option to the appropriate spot in the menu hierarchy:
+    // Add a new widget to the appropriate spot in the menu hierarchy:
     private void add(String descriptor, Widget newWidget) {
         MenuWidget menu = (MenuWidget) menuStack.get(0); // Root menu
 
@@ -458,19 +458,19 @@ class Gui {
         menu.widgets.add(newWidget);
     }
 
-    // Add a toggleable option to the menu:
+    // Add a toggleable widget to the menu:
     /** @noinspection unused*/
     public static void addToggle(String descriptor, boolean initialValue, Consumer<Boolean> callback) {
         callback.accept(initialValue);
         gui.add(descriptor, new ToggleWidget(descriptor, initialValue, callback));
     }
-    // Add a list option to the menu:
+    // Add a list widget to the menu:
     /** @noinspection unused*/
     public static void addList(String descriptor, String[] list, int initialIndex, BiConsumer<Integer, String> callback) {
         callback.accept(initialIndex, list[initialIndex]);
         gui.add(descriptor, new ListWidget(descriptor, initialIndex, list, callback));
     }
-    // Add an option that can only be activated:
+    // Add a widget that can only be activated:
     /** @noinspection unused*/
     public static void addActivation(String descriptor, Function<Boolean, String> callback) {
         callback.apply(true);
@@ -480,7 +480,7 @@ class Gui {
     public static void addStats(String descriptor, Supplier<String> callback) {
         gui.add(descriptor, new StatsWidget(descriptor, callback));
     }
-    // Add an option that can be run:
+    // Add a widget that can be run:
     public static void addRunnable(String descriptor, Runnable callback, BooleanSupplier isEnabled) {
         gui.add(descriptor, new RunWidget(descriptor, callback, isEnabled));
     }
@@ -601,6 +601,11 @@ public class LooneyTuner extends LinearOpMode {
             }
             return false;
         }
+    }
+
+    // Return a string that represents the distance the test will run:
+    String testDistance(int distance) {
+        return String.format("%d inches (%.1f tiles)", distance, distance / 24.0);
     }
 
     // Convert telemetry newlines to HTML breaks so that FTC Dashboard renders the text properly:
@@ -1174,7 +1179,7 @@ public class LooneyTuner extends LinearOpMode {
         useDrive(true); // Set the brakes
         assert(drive.opticalTracker != null);
 
-        if (dialogs.drivePrompt(String.format("The robot will drive forward for up to %d inches. ", DISTANCE)
+        if (dialogs.drivePrompt("The robot will drive forward for up to " + testDistance(DISTANCE) + ". "
                 + "It will start slowly but get faster and faster. "
                 + "\n\nDrive the robot to a good spot, press "+A+" to start, "+B+" to cancel.")) {
 
@@ -1349,7 +1354,7 @@ public class LooneyTuner extends LinearOpMode {
 
         useDrive(true); // Do use MecanumDrive/TankDrive
 
-        if (dialogs.drivePrompt(String.format("The robot will strafe left for %d inches (%.1f tiles). ", DISTANCE, DISTANCE / 24.0)
+        if (dialogs.drivePrompt("The robot will strafe left for " + testDistance(DISTANCE) + ". "
                 + "Please ensure that there is sufficient room."
                 + "\n\nDrive the robot to position, press "+A+" to start, "+B+" to cancel")) {
 
@@ -1395,9 +1400,8 @@ public class LooneyTuner extends LinearOpMode {
 
     // Tune the kV and kA feed forward parameters:
     void interactiveFeedForwardTuner() {
+        final int DISTANCE = 72; // Test distance in inches
         useDrive(false); // Don't use MecanumDrive/TankDrive
-
-        final int THIS_DISTANCE = 72; // @@@
 
         // Disable all lateral gains so that backward and forward behavior is not affected by the
         // PID/Ramsete algorithm. It's okay for the axial and rotation gains to be either zero
@@ -1408,54 +1412,121 @@ public class LooneyTuner extends LinearOpMode {
         MecanumDrive.PARAMS = testParameters.params;
 
         int inputIndex = 0;
-        NumericInput[] inputs = {
+        NumericInput[] numericInputs = {
             new NumericInput(drive.PARAMS, "kV", -3, 6, 0.000001, 20),
             new NumericInput(drive.PARAMS, "kA", -4, 5, 0, 1),
         };
-        String[] instructions = {
-            "Adjust <b>kV</b> to make the horizontal lines as close as possible in height. " +
-                "Press the triggers to change <b>kV</b>'s value. " +
-                "Remember, <b>kV = vRef / vActual</b>.\n\n" +
-                "If there are no horizontal lines, decrease the maximum velocity using the left trigger. ",
-            "Adjust <b>kA</b> to shift <b>vActual</b> left and right so the angled lines overlap. " +
-                "Press the triggers to change <b>kA</b>'s value. ",
-        };
 
-        if (dialogs.drivePrompt(String.format("The robot will constantly drive forwards then backwards for %d inches. "
+        if (dialogs.drivePrompt("The robot will drive forwards then backwards for " + testDistance(DISTANCE) + ". "
                 + "Tune 'kV' and 'kA' using FTC Dashboard. Follow "
                 + "<u><a href='https://learnroadrunner.com/feedforward-tuning.html#tuning'>LearnRoadRunner's guide</a></u>.\n\n"
-                + "Make sure %d inches are free in front of the robot to start. "
-                + "During the test, you can press "+Y+" to override the robot position.\n"
-                + "\nPress "+A+" to start, "+B+" to cancel", THIS_DISTANCE, THIS_DISTANCE))) {
+                + "Press "+A+" to start, "+B+" to cancel")) {
 
             // Trigger a reset the first time into the loop:
             double startTime = 0;
             double maxVelocityFactor = 1.0;
             TimeProfile profile = null;
             boolean movingForwards = false;
+            int queuedXButtons = 0;
 
-            while (opModeIsActive() && !gui.cancel()) {
-                // Query the new kV or kA value from the user:
-                String instruction = instructions[inputIndex]
-                        + String.format("Max velocity will be %.0f%% when the next cycle starts.\n\n",
-                            maxVelocityFactor * 100.0);
-                inputs[inputIndex].update();
-                // @@@ X+" to reposition, "+Y+" to switch variables, triggers to change max velocity, ");
+            while (opModeIsActive()) {
+                // Process the gamepad numeric input:
+                numericInputs[inputIndex].update();
 
-                // Update the velocity:
-                Pose2D velocity = drive.opticalTracker.getVelocity();
-                TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
-                packet.put("vActual", velocity.x);
+                if (inputIndex == 0) {
+                    telemetryAdd("Adjust <b>kV</b> to make the horizontal lines as close as possible in height. " +
+                            "Remember, <b>kV = vRef / vActual</b>.\n\n" +
+                            "If there are no horizontal lines, decrease the maximum velocity using the left trigger.\n");
+                } else {
+                    telemetryAdd("Adjust <b>kA</b> to shift <b>vActual</b> left and right so the angled lines overlap.\n");
+                }
 
-                double t = time() - startTime;
-                if ((profile == null) || (t > profile.duration)) {
-                    movingForwards = !movingForwards;
-                    startTime = time();
-                    t = 0;
+                if (gui.xButton())
+                    queuedXButtons++; // Let the x-button be queued up even while running
 
-                    if ((profile == null) || (movingForwards)) {
+                // If there's a profile, that means we're actively moving:
+                if (profile != null) {
+                    telemetryAdd("Press " + B + " to cancel");
+                    telemetryUpdate();
+
+                    Pose2D velocity = drive.opticalTracker.getVelocity();
+                    TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
+                    packet.put("vActual", velocity.x);
+
+                    double t = time() - startTime;
+                    if (t > profile.duration) {
+                        if (movingForwards) {
+                            movingForwards = false;
+                            startTime = time();
+                        } else {
+                            profile = null;
+                            continue; // ====>
+                        }
+                    }
+
+                    DualNum<Time> v = profile.get(t).drop(1);
+                    if (!movingForwards) {
+                        v = v.unaryMinus();
+                    }
+                    packet.put("vRef", v.get(0));
+                    MecanumDrive.sendTelemetryPacket(packet);
+
+                    MotorFeedforward feedForward = new MotorFeedforward(MecanumDrive.PARAMS.kS,
+                            MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
+                            MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick);
+
+                    double power = feedForward.compute(v) / drive.voltageSensor.getVoltage();
+                    drive.setDrivePowers(new PoseVelocity2d(new Vector2d(power, 0.0), 0.0));
+
+                    if (gui.cancel()) {
+                        // Cancel the current cycle but remain in this test:
+                        stopMotors();
+                        queuedXButtons = 0;
+                        profile = null;
+                    }
+                } else {
+                    telemetryAdd(String.format("Max velocity set to %.0f%%. Change using triggers.\n",
+                            maxVelocityFactor * 100.0));
+
+                    telemetryAdd("Press "+X+"to run, "+A+" when done, "+B+" to cancel, "
+                            +Y+" to switch gain variables");
+                    telemetryUpdate();
+
+                    updateGamepadDriving();
+
+                    if (gui.accept()) {
+                        // Make sure that the user does both kV and kA:
+                        if (inputIndex == 0)
+                            inputIndex = 1;
+                        else {
+                            if (dialogs.staticPrompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel")) {
+
+                                // Reset the state that we zeroed to run the test:
+                                testParameters.params.lateralGain = currentParameters.params.lateralGain;
+                                testParameters.params.lateralVelGain = currentParameters.params.lateralVelGain;
+                                acceptParameters(testParameters);
+                            }
+                            break; // ====>
+                        }
+                    }
+                    if (gui.cancel()) {
+                        if (dialogs.staticPrompt("Are you sure you want to discard your current input?\n\n"
+                                + "Press "+A+" to discard, "+B+" to cancel."))
+                            break; // ====>
+                    }
+                    if (gui.leftTrigger())
+                        maxVelocityFactor = Math.max(maxVelocityFactor - 0.1, 0.2);
+                    if (gui.rightTrigger())
+                        maxVelocityFactor = Math.min(maxVelocityFactor + 0.1, 1.0);
+                    if (gui.yButton())
+                        inputIndex ^= 1;
+                    if (queuedXButtons > 0) {
+                        queuedXButtons--;
+                        stopMotors(); // Stop the user's driving
+                        movingForwards = true;
+                        startTime = time();
                         profile = new TimeProfile(constantProfile(
-                                THIS_DISTANCE, 0.0,
+                                DISTANCE, 0.0,
                                 MecanumDrive.PARAMS.maxWheelVel * maxVelocityFactor,
                                 MecanumDrive.PARAMS.minProfileAccel,
                                 MecanumDrive.PARAMS.maxProfileAccel).baseProfile);
@@ -1463,47 +1534,7 @@ public class LooneyTuner extends LinearOpMode {
                         // Reset the start position on every cycle. This ensures that getVelocity().x
                         // is the appropriate velocity to read, and it resets after we reposition
                         // the robot:
-                        drive.setPose(new Pose2d(-THIS_DISTANCE / 2.0, 0, 0));
-                    }
-                }
-
-                DualNum<Time> v = profile.get(t).drop(1);
-                if (!movingForwards) {
-                    v = v.unaryMinus();
-                }
-                packet.put("vRef", v.get(0));
-                MecanumDrive.sendTelemetryPacket(packet);
-
-                MotorFeedforward feedForward = new MotorFeedforward(MecanumDrive.PARAMS.kS,
-                        MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
-                        MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick);
-
-                double power = feedForward.compute(v) / drive.voltageSensor.getVoltage();
-                drive.setDrivePowers(new PoseVelocity2d(new Vector2d(power, 0.0), 0.0));
-
-                if (gui.leftTrigger())
-                    maxVelocityFactor = Math.max(maxVelocityFactor - 0.1, 0.2);
-                if (gui.rightTrigger())
-                    maxVelocityFactor = Math.min(maxVelocityFactor + 0.1, 1.0);
-                if (gui.yButton())
-                    inputIndex ^= 1;
-                if (gui.xButton()) {
-                    if (!dialogs.drivePrompt("Drive the robot to reposition it. When you press "+A+", the "
-                            + "robot will resume in the forward direction.\n"
-                            + "\nPress "+A+" when ready to resume, "+B+" to cancel."))
-                        break; // ====>
-
-                    movingForwards = false;
-                    profile = null;
-                }
-                if (gui.accept()) {
-                    // Make sure that the user does both kV and kA:
-                    if (inputIndex == 0)
-                        inputIndex = 1;
-                    else {
-                        if (dialogs.staticPrompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel"))
-                            acceptParameters(testParameters);
-                        break; // ====>
+                        drive.setPose(new Pose2d(-DISTANCE / 2.0, 0, 0));
                     }
                 }
             }
@@ -1619,7 +1650,6 @@ public class LooneyTuner extends LinearOpMode {
     // Adjust the Ramsete/PID values:
     void interactivePidTuner(PidTunerType type) {
         final int DISTANCE = 48; // Test distance in inches
-
         useDrive(true); // Do use MecanumDrive/TankDrive
 
         TuneParameters testParameters = currentParameters.createClone();
@@ -1628,7 +1658,7 @@ public class LooneyTuner extends LinearOpMode {
 
         TrajectoryActionBuilder trajectory = drive.actionBuilder(zeroPose);
         if (type == PidTunerType.AXIAL) {
-            prompt = String.format("The robot will drive forwards and then backwards for %d inches. ", DISTANCE)
+            prompt = "The robot will drive forwards and then backwards " + testDistance(DISTANCE) + ". "
                     + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
                     + "Tune <b>axialGain</b> first. <b>axialVelGain</b> can often be left as zero. ";
             trajectory = trajectory.lineToX(DISTANCE).lineToX(0);
@@ -1636,7 +1666,7 @@ public class LooneyTuner extends LinearOpMode {
             velGainName = "axialVelGain";
 
         } else if (type == PidTunerType.LATERAL) {
-            prompt = String.format("The robot will strafe left and then right for %d inches. ", DISTANCE)
+            prompt = "The robot will strafe left and then right for %d inches. " + testDistance(DISTANCE) + ". "
                     + "Tune the gains to minimize error and make the target and actual trajectories shown in FTC Dashboard align. "
                     + "Tune <b>lateralGain</b> first. <b>lateralVelGain</b> can often be left as zero. ";
             trajectory = trajectory.strafeTo(new Vector2d(0, DISTANCE)).strafeTo(new Vector2d(0, 0));
@@ -1657,10 +1687,10 @@ public class LooneyTuner extends LinearOpMode {
                 new NumericInput(drive.PARAMS, gainName, -1, 3, 0, 20),
                 new NumericInput(drive.PARAMS, velGainName, -1, 3, 0, 20),
             };
-            int queuedXbuttons = 0;
+            int queuedXButtons = 0;
 
             while (opModeIsActive()) {
-                // Drive some more:
+                // Drive:
                 TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
                 boolean more = drive.doActionsWork(packet);
 
@@ -1687,7 +1717,7 @@ public class LooneyTuner extends LinearOpMode {
                 packet.put("Error", error); // Make the error graphable
 
                 if (gui.xButton())
-                    queuedXbuttons++; // Let the x-button be queued up even while running
+                    queuedXButtons++; // Let the x-button be queued up even while running
 
                 if (more) {
                     telemetryAdd("Press "+B+" to cancel");
@@ -1698,14 +1728,16 @@ public class LooneyTuner extends LinearOpMode {
                     MecanumDrive.sendTelemetryPacket(packet);
 
                     if (gui.cancel()) {
-                        // Cancel the current cycle while remaining in this test:
+                        // Cancel the current cycle but remain in this test:
                         drive.abortActions();
-                        queuedXbuttons = 0;
+                        queuedXButtons = 0;
                     }
                 } else {
-                    telemetryAdd("Press "+A+" when done, "+B
-                            +" to cancel, "+X+" to start a run, "+Y+" to switch gain variables");
+                    telemetryAdd("Press "+X+" to run, "+A+" when done, "+B
+                            +" to cancel, "+Y+" to switch gain variables");
                     telemetryUpdate();
+
+                    updateGamepadDriving();
 
                     if (gui.accept()) {
                         if (dialogs.staticPrompt("Happy with your results?\n\nPress "+A+" to accept, "+B+" to cancel")) {
@@ -1722,10 +1754,9 @@ public class LooneyTuner extends LinearOpMode {
                         inputIndex ^= 1; // Toggle the index
 
                     // If there is no more actions, let the X button start a new one.
-                    updateGamepadDriving();
-                    if (queuedXbuttons > 0) {
-                        queuedXbuttons--;
-                        stopMotors();
+                    if (queuedXButtons > 0) {
+                        queuedXButtons--;
+                        stopMotors(); // Stop the user's driving
                         drive.setPose(zeroPose);
                         if (type == PidTunerType.HEADING) {
                             // An apparent Road Runner build prevents a trajectory from being reused:
