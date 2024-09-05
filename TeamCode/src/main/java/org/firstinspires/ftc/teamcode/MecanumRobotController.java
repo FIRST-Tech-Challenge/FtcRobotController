@@ -28,6 +28,7 @@ public class MecanumRobotController {
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
+    public static final double INCHES_LEFT_TO_SLOW_DOWN = 10;
     public static double Kp = 0.07;
     public static double Kd = 0.002;
     public static double Ki = 0.00;
@@ -198,11 +199,12 @@ public class MecanumRobotController {
             strafe = Math.sin(direction * (Math.PI / 180));
         }
 
-        double moveCountMult = FORWARD_COUNTS_PER_INCH + (STRAFE_COUNTS_PER_INCH - FORWARD_COUNTS_PER_INCH) *
-                (Math.abs(Math.sin((direction) * (Math.PI / 180))));
+        double moveCountMult = Math.sqrt(Math.pow(Math.cos(direction * (Math.PI / 180)) * (1.0 / FORWARD_COUNTS_PER_INCH), 2) +
+                                Math.pow(Math.sin(direction * (Math.PI / 180)) * (1.0 / STRAFE_COUNTS_PER_INCH), 2));
 
-        int forwardCounts = (int)(forward * distance * moveCountMult);
-        int strafeCounts = (int)(strafe * distance * moveCountMult);
+        int forwardCounts = (int)(forward * distance / moveCountMult);
+        int strafeCounts = (int)(strafe * distance / moveCountMult);
+
 
         int backLeftTarget = backLeft.getCurrentPosition() - forwardCounts + strafeCounts;
         int backRightTarget = backRight.getCurrentPosition() - forwardCounts + strafeCounts;
@@ -225,10 +227,18 @@ public class MecanumRobotController {
                                         Math.abs(backRightTarget - backRight.getCurrentPosition()) +
                                         Math.abs(frontLeftTarget - frontLeft.getCurrentPosition()) +
                                         Math.abs(frontRightTarget - frontRight.getCurrentPosition())) / 4.0;
+            double distanceToDestinationInches = Math.sqrt(Math.pow(Math.cos(direction) *
+                    (distanceToDestination / FORWARD_COUNTS_PER_INCH), 2) + Math.pow(Math.sin(direction) *
+                    (distanceToDestination / STRAFE_COUNTS_PER_INCH), 2));
             robot.telemetry.addData("Current Action", "Distance Driving");
-            robot.telemetry.addData("Distance To Target", distanceToDestination / moveCountMult);
+            robot.telemetry.addData("Distance To Target", distanceToDestination * moveCountMult);
             robot.telemetry.addData("", "");
-            move(speed, 0.0, 0.0, 0.0);
+            if (distanceToDestinationInches <= INCHES_LEFT_TO_SLOW_DOWN) {
+                move(speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, 0.0);
+                robot.telemetry.addData("Slowing", "Down");
+            } else {
+                move(speed, 0.0, 0.0, 0.0);
+            }
         }
 
         // Stop movement and switch modes

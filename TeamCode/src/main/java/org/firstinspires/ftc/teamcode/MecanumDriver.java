@@ -82,6 +82,8 @@ public class MecanumDriver extends OpMode {
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
         // robotController.tuneHeadingCorrection(gamepad1, telemetry);
+        telemetry.addData("Left Trigger", gamepad1.left_trigger);
+        telemetry.addData("Right Trigger", gamepad1.right_trigger);
         robotController.sendTelemetry(telemetry);
     }
 
