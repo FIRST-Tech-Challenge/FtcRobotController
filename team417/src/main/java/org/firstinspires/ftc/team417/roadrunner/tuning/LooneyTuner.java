@@ -532,7 +532,7 @@ public class LooneyTuner extends LinearOpMode {
                 telemetry.addLine();
                 telemetry.addLine("The code's configuration parameters don't match the last "
                         + "results saved in Looney Tuner. To use the Looney Tuner results, double-tap the shift key in Android "
-                        + "Studio, enter '<b>md.params</b>' to jump to the MecanumDrive Params constructor, "
+                        + "Studio, enter 'md.params' to jump to the MecanumDrive Params constructor, "
                         + "then update as follows:");
                 telemetry.addLine();
                 telemetry.addLine(comparison);
@@ -781,7 +781,7 @@ public class LooneyTuner extends LinearOpMode {
             MecanumDrive.PARAMS = newParameters.params;
             currentParameters = newParameters;
             currentParameters.save();
-            dialogs.staticPrompt("Double-tap the shift key in Android Studio, enter 'md.params' to jump to the "
+            dialogs.staticPrompt("Double-tap the shift key in Android Studio, enter '<b>md.params</b>' to jump to the "
                     + "MecanumDrive Params constructor, then update as follows:\n\n"
                     + comparison
                     + "\nPress "+A+" to continue.");
@@ -1434,11 +1434,13 @@ public class LooneyTuner extends LinearOpMode {
                 numericInputs[inputIndex].update();
 
                 if (inputIndex == 0) {
-                    telemetryAdd("Adjust <b>kV</b> to make the horizontal lines as close as possible in height. " +
-                            "Remember, <b>kV = vRef / vActual</b>.\n\n" +
-                            "If there are no horizontal lines, decrease the maximum velocity using the left trigger.\n");
+                    telemetryAdd("Graph <b>vActual</b> and <b>vRef</b> using FTC Dashboard. "
+                            + "Adjust <b>kV</b> to make the horizontal lines as close as possible in height. "
+                            + "Remember, <b>kV = vRef / vActual</b>.\n\n"
+                            + "If there are no horizontal lines, decrease the maximum velocity using the left trigger.\n");
                 } else {
-                    telemetryAdd("Adjust <b>kA</b> to shift <b>vActual</b> left and right so the angled lines overlap.\n");
+                    telemetryAdd("Graph <b>vActual</b> and <b>vRef</b> using FTC Dashboard. "
+                            + "Adjust <b>kA</b> to shift <b>vActual</b> left and right so the angled lines overlap.\n");
                 }
 
                 if (gui.xButton())

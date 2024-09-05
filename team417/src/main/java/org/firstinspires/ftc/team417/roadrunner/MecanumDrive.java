@@ -93,8 +93,8 @@ public final class MecanumDrive {
                 trackWidthTicks = 663.97;
 
                 kS = 0.49327; // Voltage
-                kV = 0.004225;
-                kA = 0;
+                kV = 0.004125;
+                kA = 0.00030;
 
                 axialGain      = 10.00;
                 axialVelGain   = 1.80;
