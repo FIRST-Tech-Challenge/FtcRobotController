@@ -686,7 +686,7 @@ public class LooneyTuner extends LinearOpMode {
 
     // Measure the optical linear scale and orientation:
     void pushTuner() {
-        assert(drive.opticalTracker != null);
+        final int DISTANCE = 96; // Test distance in inches
         useDrive(false); // Don't use MecanumDrive/TankDrive
 
         // Reset the current OTOS settings:
@@ -696,7 +696,7 @@ public class LooneyTuner extends LinearOpMode {
         drive.opticalTracker.setLinearScalar(1.0);
 
         if (dialogs.drivePrompt("In this test, you'll push the robot forward in a straight line "
-                + "along a field wall for exactly 4 tiles. To start, align the robot by hand "
+                + "along a field wall for exactly "+testDistance(DISTANCE)+". To start, align the robot by hand "
                 + "at its starting point along a wall. "
                 + "\n\nPress "+A+" when in position, "+B+" to cancel.")) {
 
@@ -716,7 +716,7 @@ public class LooneyTuner extends LinearOpMode {
                 distance = Math.hypot(pose.x, pose.y);
                 heading = -Math.atan2(pose.y, pose.x); // Rise over run
 
-                dialogs.message("Push forward exactly 4 tiles (96\") along a field wall.\n\n"
+                dialogs.message("Push forward exactly "+testDistance(DISTANCE)+" along a field wall.\n\n"
                     + String.format("&ensp;Sensor reading: (%.1f\", %.1f\", %.1f\u00b0)\n", pose.x, pose.y, Math.toDegrees(pose.h))
                     + String.format("&ensp;Effective distance: %.2f\"\n", distance)
                     + String.format("&ensp;Heading angle: %.2f\u00b0\n", Math.toDegrees(heading))
@@ -729,7 +729,7 @@ public class LooneyTuner extends LinearOpMode {
                     distance = 0.001;
 
                 TuneParameters newParameters = currentParameters.createClone();
-                newParameters.params.otos.linearScalar = (96.0 / distance);
+                newParameters.params.otos.linearScalar = (DISTANCE / distance);
                 newParameters.params.otos.offset.h = normalizeAngle(heading);
 
                 double linearScalarChange = Math.abs((oldLinearScalar - newParameters.params.otos.linearScalar)
@@ -738,16 +738,16 @@ public class LooneyTuner extends LinearOpMode {
 
                 if (newParameters.params.otos.linearScalar < SparkFunOTOS.MIN_SCALAR) {
                     String message = String.format("The measured distance of %.1f\" is not close enough to "
-                            + "the expected distance of 96\". It can't measure more than %.1f\". "
-                            + "Either you didn't push straight for 4 tiles or something is wrong "
-                            + "with the sensor. ", distance, 96 / SparkFunOTOS.MIN_SCALAR);
+                            + "the expected distance of %d\". It can't measure more than %.1f\". "
+                            + "Either you didn't push straight for "+testDistance(DISTANCE)+" or something is wrong "
+                            + "with the sensor. ", distance, DISTANCE, DISTANCE / SparkFunOTOS.MIN_SCALAR);
                     message += "Maybe the distance of the sensor to the tile is less than 10.0 mm? ";
                     dialogs.staticPrompt(message + "\n\nAborted, press "+A+" to continue");
                 } else if (newParameters.params.otos.linearScalar > SparkFunOTOS.MAX_SCALAR) {
                     String message = String.format("The measured distance of %.1f\" is not close enough to "
-                            + "the expected distance of 96\". It can't measure less than %.1f\". "
-                            + "Either you didn't push straight for 4 tiles or something is wrong "
-                            + "with the sensor. ", distance, 96.0 / SparkFunOTOS.MAX_SCALAR);
+                            + "the expected distance of %d\". It can't measure less than %.1f\". "
+                            + "Either you didn't push straight for "+testDistance(DISTANCE)+" or something is wrong "
+                            + "with the sensor. ", distance, DISTANCE, DISTANCE / SparkFunOTOS.MAX_SCALAR);
 
                     // If the measured distance is close to zero, don't bother with the following
                     // suggestion:
@@ -1861,21 +1861,21 @@ public class LooneyTuner extends LinearOpMode {
         gui.addRunnable("Drive test (motors)", this::driveTest);
         if (drive.opticalTracker != null) {
             // Basic tuners:
-            gui.addRunnable("Push tuner (tracking)", this::pushTuner);
-            gui.addRunnable("Spin tuner (tracking and trackWidthTicks)", this::spinTuner,
-                ()->params.otos.linearScalar != 0);
+            gui.addRunnable("Push tuner (linearScalar, offset heading)", this::pushTuner);
             gui.addRunnable("Lateral tuner (lateralInPerTick)", this::lateralTuner,
                 ()->params.otos.linearScalar != 0);
             gui.addRunnable("Accelerating straight line tuner (kS and kV)", this::acceleratingStraightLineTuner,
                 ()->params.otos.linearScalar != 0);
             gui.addRunnable("Interactive feed forward tuner (kV and kA)", this::interactiveFeedForwardTuner,
-                ()->params.otos.linearScalar != 0 && params.kS != 0);
+                ()->params.otos.linearScalar != 0 && params.kS != 0 && params.kV != 0);
+            gui.addRunnable("Spin tuner (angularScalar, offset position)", this::spinTuner,
+                    ()->params.otos.linearScalar != 0 && params.kS != 0 && params.kV != 0);
             gui.addRunnable("Interactive PiD tuner (axialGain)", ()->interactivePidTuner(PidTunerType.AXIAL),
-                ()->params.otos.linearScalar != 0 && params.kS != 0);
+                ()->params.otos.linearScalar != 0 && params.kS != 0 && params.kV != 0);
             gui.addRunnable("Interactive PiD tuner (lateralGain)", ()->interactivePidTuner(PidTunerType.LATERAL),
-                ()->params.otos.linearScalar != 0 && params.lateralInPerTick != 0 && params.kS != 0);
+                ()->params.otos.linearScalar != 0 && params.lateralInPerTick != 0 && params.kS != 0 && params.kV != 0);
             gui.addRunnable("Interactive PiD tuner (headingGain)", ()->interactivePidTuner(PidTunerType.HEADING),
-                ()->params.otos.linearScalar != 0 && params.trackWidthTicks != 0 && params.kS != 0);
+                ()->params.otos.linearScalar != 0 && params.trackWidthTicks != 0 && params.kS != 0 && params.kV != 0);
             gui.addRunnable("Completion test (overall verification)", this::completionTest,
                 ()->params.axialGain != 0 && params.lateralGain != 0 && params.headingGain != 0);
 
