@@ -158,7 +158,7 @@ class TuneParameters {
         String oldString = String.format(format, Math.toDegrees(oldValue));
         String newString = String.format(format, Math.toDegrees(newValue));
         if (!oldString.equals(newString)) {
-            comparison += String.format("&ensp;%s = Math.toDegrees(%s);\n&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;// Was Math.toDegrees(%s)\n", parameter, newString, oldString);
+            comparison += String.format("&ensp;%s = Math.toRadians(%s);\n&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;// Was Math.toRadians(%s)\n", parameter, newString, oldString);
         }
     }
 
@@ -1418,15 +1418,16 @@ public class LooneyTuner extends LinearOpMode {
 
         int inputIndex = 0;
         NumericInput[] numericInputs = {
-            new NumericInput(drive.PARAMS, "kV", -3, 6, 0.000001, 20),
-            new NumericInput(drive.PARAMS, "kA", -4, 5, 0, 1),
+            new NumericInput(drive.PARAMS, "kV", -2, 6, 0.000001, 20),
+            new NumericInput(drive.PARAMS, "kA", -3, 5, 0, 1),
         };
 
-        // Register the variables now so that they can be registered for graphing in FTC Dashboard
-        // even before the first test is run:
+        // Register the variables with non-zero results now so that they can be registered for
+        // graphing in FTC Dashboard even before the first test is run:
         TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
-        packet.put("vRef", 0);
-        packet.put("vActual", 0);
+        packet.put("\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af", "\u23af");
+        packet.put("vRef", 0.001);
+        packet.put("vActual", 0.001);
         MecanumDrive.sendTelemetryPacket(packet);
 
         if (dialogs.drivePrompt("The robot will drive forwards then backwards for " + testDistance(DISTANCE) + ". "
@@ -1463,9 +1464,10 @@ public class LooneyTuner extends LinearOpMode {
                     telemetryAdd("Press " + B + " to cancel");
                     telemetryUpdate();
 
-                    Pose2D velocity = drive.opticalTracker.getVelocity();
+                    Pose2D velocityPose = drive.opticalTracker.getVelocity();
+                    double velocity = Math.signum(velocityPose.x) * Math.hypot(velocityPose.x, velocityPose.y);
                     packet = MecanumDrive.getTelemetryPacket();
-                    packet.put("vActual", velocity.x);
+                    packet.put("vActual", velocity);
 
                     double t = time() - startTime;
                     if (t > profile.duration) {
@@ -1502,7 +1504,7 @@ public class LooneyTuner extends LinearOpMode {
                     telemetryAdd(String.format("Max velocity set to <b>%.0f%%</b>. Change using triggers.\n",
                             maxVelocityFactor * 100.0));
 
-                    telemetryAdd("Press "+X+"to run, "+A+" when done, "+B+" to cancel, "
+                    telemetryAdd("Press "+X+" to run, "+A+" when done, "+B+" to cancel, "
                             +Y+" to switch gain variables");
                     telemetryUpdate();
 
@@ -1603,7 +1605,7 @@ public class LooneyTuner extends LinearOpMode {
 
         // Update the variable according to the latest gamepad input.
         void update() {
-            telemetryAdd(String.format("Inputting <b>%s</b>. ", fieldName)
+            telemetryAdd(String.format("Here's the current value for <b>%s</b>. ", fieldName)
                 + "Press Dpad up/down to change its value, right/left to move the cursor.\n");
 
             if (gui.left()) {
