@@ -671,7 +671,7 @@ public class LooneyTuner extends LinearOpMode {
 
         // Output spew when weird compiler bug hits because result should never be more than
         // stickValue:
-        if (result > stickValue)
+        if (Math.abs(result) > Math.abs(stickValue))
             out.printf("raw stick: %.2f, shaped: %.2f, power: %.2f, signum: %.2f\n", stickValue, result, power, Math.signum(stickValue));
         return result;
     }

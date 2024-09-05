@@ -810,7 +810,8 @@ public final class MecanumDrive {
             poseVelocity = new PoseVelocity2d(
                     new Vector2d(Math.cos(rotation) * velocity.x - Math.sin(rotation) * velocity.y,
                                  Math.sin(rotation) * velocity.x + Math.cos(rotation) * velocity.y),
-                        velocity.h + rotation);
+                        velocity.h);
+
             pose = new Pose2d(position.x, position.y, position.h);
         } else {
             // Use the wheel odometry to update the pose:
