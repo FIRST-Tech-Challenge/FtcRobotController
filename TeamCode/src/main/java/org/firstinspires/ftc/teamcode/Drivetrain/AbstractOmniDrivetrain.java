@@ -3,8 +3,6 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotClass;
@@ -46,7 +44,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
         Drive.DriveCartesian(rotX, rotY, turn);
-        double[] wheelSpeeds = Drive.getWheelSpeeds();
+        double[] wheelSpeeds = Drive.getWheelSpeedsMecanum();
         double[] correctedWheelDrift;
         if(turn == 0){
             correctedWheelDrift = Drive.correctDrift(wheelSpeeds, telemetry, robotClass.getRotationRate());
@@ -62,6 +60,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         telemetry.addData("strafe", leftX);
         telemetry.addData("turn", turn);
         telemetry.addData("denominator", denominator);
+        telemetry.addData("RotationRate", robotClass.getRotationRate());
       //  telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f (speed)",  correctedWheelDrift[0], correctedWheelDrift[1], correctedWheelDrift[2], correctedWheelDrift[3]));
         telemetry.update();
     }

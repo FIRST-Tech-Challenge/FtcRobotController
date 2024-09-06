@@ -79,10 +79,24 @@ public class RobotClass {
         imu.resetYaw();
     }
     public void setDirection(){
+
         drivetrain.driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD);
         drivetrain.driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD);
         drivetrain.driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE);
         drivetrain.driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+
+    }
+    public void setMotorsMode(DcMotor.RunMode runMode){
+        drivetrain.driveMotors[0].setMode(runMode);
+        drivetrain.driveMotors[1].setMode(runMode);
+        drivetrain.driveMotors[2].setMode(runMode);
+        drivetrain.driveMotors[3].setMode(runMode);
+    }
+    public void stopAndReset(){
+        drivetrain.driveMotors[0].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //drivetrain.driveMotors[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //drivetrain.driveMotors[2].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //drivetrain.driveMotors[3].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 }

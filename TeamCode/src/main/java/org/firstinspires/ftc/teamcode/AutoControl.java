@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Auto.OpticalSensor;
@@ -28,25 +31,46 @@ public class AutoControl extends OpMode{
     @Override
     public void init(){
         robot = new RobotClass(hardwareMap);
-        aprilTagPipeline = new AprilTagPipeline(robot.webcamName, telemetry);
-
-        //opticalSensor = new OpticalSensor(drive);
+        robot.stopAndReset();
         robot.setDirection();
+
+
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        //aprilTagPipeline = new AprilTagPipeline(robot.webcamName, telemetry);
+        telemetry.addData("motor 0 pos", robot.drivetrain.driveMotors[0].getCurrentPosition());
+        telemetry.addData("motor 1 pos", robot.drivetrain.driveMotors[1].getCurrentPosition());
+        telemetry.addData("motor 2 pos", robot.drivetrain.driveMotors[2].getCurrentPosition());
+        telemetry.addData("motor 3 pos", robot.drivetrain.driveMotors[3].getCurrentPosition());
+        telemetry.update();
+        //opticalSensor = new OpticalSensor(drive);
+
     }
 
     @Override
     public void loop(){
-        aprilTagPipeline.updateAprilTagPipeline();
+        //aprilTagPipeline.updateAprilTagPipeline();
+        telemetry.addData("motor 0 pos", robot.drivetrain.driveMotors[0].getCurrentPosition());
+        telemetry.addData("motor 1 pos", robot.drivetrain.driveMotors[1].getCurrentPosition());
+        telemetry.addData("motor 2 pos", robot.drivetrain.driveMotors[2].getCurrentPosition());
+        telemetry.addData("motor 3 pos", robot.drivetrain.driveMotors[3].getCurrentPosition());
+        telemetry.update();
+
+        AutoDrive(10,0);
     }
     public static final int WHEEL_RADIUS = 2;
     public static final int CPR_OUTPUT_SHAFT_20TO1 = 560;
     public static final double WHEEL_CIRCUMFERENCE_INCH = 2 * Math.PI * WHEEL_RADIUS;
     public static final double TICKS_PER_INCH = CPR_OUTPUT_SHAFT_20TO1 /  WHEEL_CIRCUMFERENCE_INCH;
     private final double kD = .01;
+    @SuppressLint("DefaultLocale")
     public void AutoDrive(double targetDistance_INCH, double angle){
 
-        telemetry.addData("motor 0 pos", robot.drivetrain.driveMotors[0].getCurrentPosition());
-        telemetry.update();
+        angle = Math.toRadians(angle);
 
         angle -= robot.getHeading();
 
@@ -57,41 +81,64 @@ public class AutoControl extends OpMode{
         double integralSum = 0;
         double error, correction;
         double targetDistance = targetDistance_INCH * TICKS_PER_INCH;
-
-
+        double[] wheelSpeeds = new double[4];
 
         while(!isStopRequested.getAsBoolean()){
-
             //SparkFunOTOS.Pose2D Pose2D = opticalSensor.getPos();
-
-            error = targetDistance - robot.drivetrain.driveMotors[0].getCurrentPosition();
+            telemetry.addData("targetDistance", targetDistance);
+            telemetry.addData("maxErrorAllowed", maxErrorAllowed);
+            telemetry.addLine(String.format("MotorPos %d %d %d %d",
+                    robot.drivetrain.driveMotors[RobotClass.kFrontLeft].getCurrentPosition(),
+                    robot.drivetrain.driveMotors[RobotClass.kFrontRight].getCurrentPosition(),
+                    robot.drivetrain.driveMotors[RobotClass.kBackLeft].getCurrentPosition(),
+                    robot.drivetrain.driveMotors[RobotClass.kBackRight].getCurrentPosition()));
+            telemetry.update();
+            error = targetDistance - robot.drivetrain.driveMotors[RobotClass.kFrontLeft].getCurrentPosition();
             //(targetDistance - Math.sqrt(Math.pow((targetDistance * Math.cos(angle)
             //- Pose2D.x), 2) + (Math.pow((targetDistance * Math.sin(angle)) - Pose2D.y, 2))));
 
-            correction = kP * error + kI * integralSum + kD * getDerivative(error, targetDistance);
+            //correction = kP * error + kI * integralSum + kD * getDerivative(error, targetDistance);
 
-            if(Math.abs(error) <  maxErrorAllowed) {
+            if(Math.abs(error) < maxErrorAllowed) {
+                telemetry.addLine("ended");
+                telemetry.update();
                 stop = true;
                 stop();
                 break;
             }
 
-            double x = error * Math.cos(angle);
-            double y = error * Math.sin(angle);
+            double x = Math.cos(angle);
+            double y = -Math.sin(angle);
 
-            double rotY = x * Math.cos(-angle) - y * Math.sin(-angle);
-            double rotX = x * Math.sin(angle) - y * Math.cos(angle);
-
+            double powerGroupY = (x * Math.cos(angle) - y * Math.sin(angle));
+            double powerGroupX = (x * Math.sin(angle) - y * Math.cos(angle));
+            double rotY;
+            double rotX;
+            if(error > 0){
+                rotY = -powerGroupY;
+                rotX = -powerGroupX;
+            }
+            else{
+                rotY = powerGroupY;
+                rotX = powerGroupX;
+            }
             double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY), 1.0);
 
+            wheelSpeeds[RobotClass.kFrontLeft] = (rotY + rotX) / 3 / denominator;
+            wheelSpeeds[RobotClass.kBackLeft] = (rotY - rotX) / 3/ denominator;
+            wheelSpeeds[RobotClass.kFrontRight] = (rotY - rotX) / 3 / denominator;
+            wheelSpeeds[RobotClass.kBackRight] = (rotY + rotX) / 3 / denominator;
 
+            telemetry.addData("rotY", rotY);
+            telemetry.addData("rotX", rotX);
+            telemetry.addData("denominator", denominator);
+            telemetry.addData("correction", 0);// correction);
+            telemetry.addData("error", error);
+            telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f", wheelSpeeds[0], wheelSpeeds[1], wheelSpeeds[2], wheelSpeeds[3]));
 
+            Drive.normalizeRanges(wheelSpeeds);
 
-            robot.drivetrain.driveMotors[RobotClass.kFrontLeft].setPower((((rotY + rotX) / denominator)) / correction);
-            robot.drivetrain.driveMotors[RobotClass.kBackLeft].setPower((((rotY - rotX) / denominator)) / correction);
-            robot.drivetrain.driveMotors[RobotClass.kFrontRight].setPower((((rotY - rotX) / denominator)) / correction);
-            robot.drivetrain.driveMotors[RobotClass.kBackRight].setPower((((rotY + rotX) / denominator)) / correction);
-
+            setPower(wheelSpeeds);
         }
 
     }
@@ -144,4 +191,11 @@ public class AutoControl extends OpMode{
         robot.drivetrain.driveMotors[2].setPower(0);
         robot.drivetrain.driveMotors[3].setPower(0);
     }
+    private void setPower(double[] wheelSpeeds){
+        robot.drivetrain.driveMotors[RobotClass.kFrontLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
+        robot.drivetrain.driveMotors[RobotClass.kFrontRight].setPower(wheelSpeeds[RobotClass.kFrontRight]);
+        robot.drivetrain.driveMotors[RobotClass.kBackLeft].setPower(wheelSpeeds[RobotClass.kFrontLeft]);
+        robot.drivetrain.driveMotors[RobotClass.kBackRight].setPower(wheelSpeeds[RobotClass.kBackRight]);
+    }
+
 }
