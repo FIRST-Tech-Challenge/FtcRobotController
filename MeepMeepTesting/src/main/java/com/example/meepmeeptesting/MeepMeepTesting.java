@@ -13,19 +13,20 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                        drive.trajectorySequenceBuilder(new Pose2d(16, -64, Math.toRadians(90)))
+                                .forward(32)
+                                .turn(Math.toRadians(-90))
                                 .forward(30)
-                                .turn(Math.toRadians(90))
-                                .forward(30)
-                                .turn(Math.toRadians(90))
-                                .forward(30)
-                                .turn(Math.toRadians(90))
-                                .forward(30)
-                                .turn(Math.toRadians(90))
+                                .waitSeconds(10)
+                                /*
+                                 .turn(Math.toRadians(-90))
+                                .strafeLeft(15)
+                                .waitSeconds(10)
+                                 */
                                 .build()
                 );
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
+        meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
