@@ -11,24 +11,34 @@ import org.firstinspires.ftc.teamcode.common.subsystems.VisionPortal
 @Config
 @TeleOp(name = "Vision")
 class VisionPortalOp : CommandOpMode() {
-    var visionPortal: VisionPortal? = null
-    var aprilTag: Apriltag? = null
-    var tel: Telemetry? = null
+    lateinit var visionPortal: VisionPortal
+    lateinit var aprilTag: Apriltag
+    lateinit var tel: Telemetry
 
     override fun initialize() {
         aprilTag = Apriltag()
         visionPortal = VisionPortal(hardwareMap, "camera1", listOf(aprilTag!!.processor))
         tel = FtcDashboard.getInstance().telemetry
+
+        initCheck()
+    }
+
+    fun initCheck() {
+        require(::visionPortal.isInitialized) { "Vision Portal is not initialized" }
+        require(::aprilTag.isInitialized) { "AprilTag is not initialized" }
+        require(::tel.isInitialized) { "Telemetry is not initialized" }
     }
 
     override fun run() {
+        initCheck()
         super.run()
-        val tags = aprilTag!!.getTags()
+
+        val tags = aprilTag.getTags()
 
         for (tag in tags) {
             val poseData = "${tag.ftcPose.x}, ${tag.ftcPose.y}, ${tag.ftcPose.z}"
-            tel!!.addData(tag.id.toString(), poseData)
+            tel.addData(tag.id.toString(), poseData)
         }
-        tel!!.update()
+        tel.update()
     }
 }
