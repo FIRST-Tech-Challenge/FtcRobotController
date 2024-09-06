@@ -37,7 +37,7 @@ public class CompetitionTeleOp extends BaseOpMode {
 
             drive.updatePoseEstimate();
 
-            telemetry.addLine("Running TeleOp!");
+            telemetry.addLine("Running 417's TeleOp!");
             telemetry.update();
 
             TelemetryPacket packet = MecanumDrive.getTelemetryPacket();
