@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
@@ -13,10 +14,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 public class DriveSubsystem extends SubsystemBase {
     public MotorEx leftFront, leftRear, rightRear, rightFront;
 
-    private IMU imu;
+    public IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
-    public static final double TRACKWIDTH = 12;
+    public static final double TRACK_WIDTH = 12;
     public static final double CENTER_WHEEL_OFFSET = 0; // distance between center of rotation of the robot and the center odometer
     public static final double WHEEL_DIAMETER = 2.0;
     public static final double TICKS_PER_REV = 8192;
@@ -65,7 +66,7 @@ public class DriveSubsystem extends SubsystemBase {
                 leftOdom::getDistance,
                 rightOdom::getDistance,
                 centerOdom::getDistance,
-                TRACKWIDTH, CENTER_WHEEL_OFFSET
+                TRACK_WIDTH, CENTER_WHEEL_OFFSET
         );
 
         // change to reflect starting field position
@@ -84,6 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
         rightFront.set(frontRightPower);
         rightRear.set(backRightPower);
     }
+
     public void updatePos() {
         odometry.updatePose();
     }

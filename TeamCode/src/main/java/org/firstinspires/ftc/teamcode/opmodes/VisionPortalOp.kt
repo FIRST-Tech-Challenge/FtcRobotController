@@ -7,17 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.common.subsystems.Apriltag
 import org.firstinspires.ftc.teamcode.common.subsystems.VisionPortal
-import org.firstinspires.ftc.vision.VisionProcessor
 
 @Config
 @TeleOp(name = "Vision")
-class VisionPortalOp: CommandOpMode() {
+class VisionPortalOp : CommandOpMode() {
     var visionPortal: VisionPortal? = null
     var aprilTag: Apriltag? = null
     var tel: Telemetry? = null
+
     override fun initialize() {
         aprilTag = Apriltag()
-        visionPortal = VisionPortal(hardwareMap, "camera1", listOf(aprilTag) as List<VisionProcessor>)
+        visionPortal = VisionPortal(hardwareMap, "camera1", listOf(aprilTag!!.processor))
         tel = FtcDashboard.getInstance().telemetry
     }
 
