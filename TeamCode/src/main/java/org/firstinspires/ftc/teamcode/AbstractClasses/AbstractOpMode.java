@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.AbstractClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.roboctopi.cuttlefishftcbridge.opmodeTypes.GamepadOpMode;
 
-public abstract class AbstractOpMode extends LinearOpMode {
+public abstract class AbstractOpMode extends GamepadOpMode {
     private AbstractRobot robot;
     public abstract AbstractRobot instantiateRobot();
 

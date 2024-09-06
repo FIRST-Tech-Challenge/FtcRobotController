@@ -23,7 +23,7 @@ public abstract class AbstractRobot {
     public CuttleMotor rightFrontMotor;
     public CuttleMotor rightBackMotor ;
     public CuttleMotor leftBackMotor  ;
-    MecanumController chassis;
+    public MecanumController chassis;
 
     public void onInit(){
         leftFrontMotor  = ctrlHub.getMotor(1);

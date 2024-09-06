@@ -16,4 +16,16 @@ public class NikitaSucks extends AbstractTeleOp {
 
         return robot;
     }
+
+    @Override
+    public void onInit() {
+
+    }
+
+    @Override
+    public void main() {
+
+    }
+
+
 }
