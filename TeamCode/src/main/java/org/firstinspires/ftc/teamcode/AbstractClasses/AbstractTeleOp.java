@@ -11,17 +11,12 @@ import com.roboctopi.cuttlefishftcbridge.devices.*;
 import com.roboctopi.cuttlefish.controller.*;
 import com.roboctopi.cuttlefishftcbridge.opmodeTypes.GamepadOpMode;
 
-public abstract class AbstractTeleOp extends GamepadOpMode {
+public abstract class AbstractTeleOp extends AbstractOpMode {
 
     PeppyFeetFiend robot = new PeppyFeetFiend(this);
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-
-    }
-
-    public void mainLoop(){
-        robot.chassis.setVec(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.left_stick_x));
+    public void onInit(){
+        super.onInit();
     }
 
     public abstract AbstractRobot instantiateRobot();

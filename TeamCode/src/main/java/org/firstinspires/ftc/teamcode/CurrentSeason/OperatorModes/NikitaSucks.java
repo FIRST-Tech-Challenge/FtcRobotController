@@ -14,18 +14,18 @@ public class NikitaSucks extends AbstractTeleOp {
     @Override
     public AbstractRobot instantiateRobot() {
         robot = new PeppyFeetFiend(this);
-
         return robot;
     }
 
     @Override
     public void onInit() {
-
+        super.onInit();
+        instantiateRobot();
     }
 
     @Override
     public void main() {
-        robot.chassis.setVec(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.left_stick_x));
+        robot.drive.setVec(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.left_stick_x));
     }
 
 

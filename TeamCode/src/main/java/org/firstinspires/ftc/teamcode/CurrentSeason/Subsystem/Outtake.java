@@ -12,7 +12,6 @@ public class Outtake extends AbstractSubsystem {
 
     public Outtake(AbstractRobot robot) {
         super(robot);
-        //lSlideMotor = robot.hardwareMap.get(DcMotor.class, lsm);
 
     }
 

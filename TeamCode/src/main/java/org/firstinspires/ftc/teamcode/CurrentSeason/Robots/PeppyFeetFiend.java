@@ -11,11 +11,12 @@ public class PeppyFeetFiend extends AbstractRobot {
     public MecanumController drive;
     public Intake intake;
     public Outtake outtake;
-    //public CurveLibrary curveLibrary;
+
+
     public PeppyFeetFiend(OpMode opMode) {
         super(opMode);
 
-        drive = new MecanumController(super.rightFrontMotor, super.rightBackMotor, super.leftFrontMotor, super.leftBackMotor);
+        //drive = new MecanumController(super.rightFrontMotor, super.rightBackMotor, super.leftFrontMotor, super.leftBackMotor);
         outtake = new Outtake(this);
         intake = new Intake(this);
     }

@@ -16,8 +16,6 @@ import java.io.IOException;
 
 public class Intake extends AbstractSubsystem {
     PeppyFeetFiend robot;
-    public DcMotor intakeMotor;
-    public Toggle intake_toggle = new Toggle(false);
     public Intake(AbstractRobot robot) {
         super(robot);
         this.robot = (PeppyFeetFiend) robot;
@@ -26,7 +24,6 @@ public class Intake extends AbstractSubsystem {
 
     @Override
     public void init() {
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
