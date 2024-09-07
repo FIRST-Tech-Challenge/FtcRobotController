@@ -36,37 +36,50 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * This file contains a basic example of a Linear "OpMode" class. An OpMode is a 'program' that runs in either
+ * the autonomous (auto) or the tele-op period of an FTC match. The names of OpModes appear on the menu
  * of the FTC Driver Station. When a selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * This particular tele-op OpMode just executes a basic Mecanum drive for a four wheel robot.
  * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
 @TeleOp(name="NU: Mecanum TeleOp", group="Linear OpMode")
 public class NUMecanumTeleOp extends LinearOpMode {
 
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    // Declare OpMode members (ex. motors, servos, sensors, ...)
+    private ElapsedTime runtime = new ElapsedTime(); // the time the robot has been enabled
 
+    // Drivetrain Motors
+    private DcMotor frontLeftMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backRightMotor;
+
+    /*
+     * runOpMode() is a method. This can be thought of as the main method of the robot code.
+     * This method is called once when the driver presses INIT right before the start of a match
+     * Here, the components of the robot (motors, servos, ...) are initialized to the hardware map,
+     * and are configured to be ready for the match. Then, when the match starts, the code enters
+     * main loop. The code in this loop will run repeatedly for the entirety of the match. In the
+     * loop is where the motors are assigned power (in tele-op, an example would be controlling
+     * the drivetrain with the game pad). At the end of the match, the robot is stopped
+     * and the loop is escaped.
+     */
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        // Declare our motors
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
+        // Initialize the hardware variables.
+        // This is where we connect (metaphorically) the physical hardware to their Objects in code.
+        // Note that the strings used here as parameters to 'get' must correspond to the names
+        // assigned during the robot configuration step (using the FTC Robot Controller app on the phone).
+        frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -82,9 +95,18 @@ public class NUMecanumTeleOp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            double ly = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double lx = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            // Game Pad (the controller) Values
+
+            // Forward/Backward control
+            // Up on the Y stick is a negative value so we need to negate it (We want Up to be positive)
+            double ly = -gamepad1.left_stick_y;
+            // Strafe left/right control
+            // We can counteract imperfect strafing with the multiplicand. Test without it to see the difference.
+            double lx = gamepad1.left_stick_x * 1.1;
+            // Rotation control
+            // Right on the X stick (positive value) is for turning clockwise.
             double rx = gamepad1.right_stick_x;
+
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
