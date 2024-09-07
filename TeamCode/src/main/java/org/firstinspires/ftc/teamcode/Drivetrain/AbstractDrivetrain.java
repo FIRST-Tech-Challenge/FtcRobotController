@@ -8,11 +8,11 @@ import org.firstinspires.ftc.teamcode.Susbsystem.Drive;
 
 public abstract class AbstractDrivetrain {
     public DcMotor[] driveMotors;
-    public AbstractDrivetrain(DcMotor FLM, DcMotor FRM, DcMotor BLM, DcMotor BRM){
+    public AbstractDrivetrain(DcMotor FLM, DcMotor BLM, DcMotor FRM, DcMotor BRM){
 
         //FLM == "Front Left Motor" etc.
 
-        driveMotors = new DcMotor[]{FLM, BLM, BRM, FRM};
+        driveMotors = new DcMotor[]{FLM, BLM, BRM, BRM};
         driveMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
         driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD);
         driveMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);

@@ -3,6 +3,7 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotClass;
@@ -12,15 +13,19 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
     double impulseRotation;
     RobotClass robotClass;
-    public AbstractOmniDrivetrain(DcMotor FLM, DcMotor FRM, DcMotor BLM, DcMotor BRM, double impulseRotation, RobotClass robotClass){
-        super(FLM, FRM, BLM, BRM);
+    int frontLeft = RobotClass.kFrontLeft;
+    int frontRight = RobotClass.kFrontRight;
+    int backLeft = RobotClass.kBackLeft;
+    int backRight = RobotClass.kBackRight;
+    public AbstractOmniDrivetrain(DcMotor FLM, DcMotor BLM, DcMotor FRM, DcMotor BRM, double impulseRotation, RobotClass robotClass){
+        super(FLM, BLM, FRM, BRM);
         this.robotClass = robotClass;
         this.impulseRotation = impulseRotation;
 
-        driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
-        driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD); //BLM
-        driveMotors[2].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
-        driveMotors[3].setDirection(DcMotorSimple.Direction.FORWARD); //FRM
+        driveMotors[frontLeft].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
+        driveMotors[backLeft].setDirection(DcMotorSimple.Direction.FORWARD); //BLM
+        driveMotors[backRight].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
+        driveMotors[frontRight].setDirection(DcMotorSimple.Direction.FORWARD); //FRM
 
     }
 
@@ -37,23 +42,16 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
         double rotY = leftX * Math.cos(heading_RADIANS) - leftY * Math.sin(heading_RADIANS);
 
-        //IF robot strafe or forward movement is inverted after turn 90 degrees inverse either the rotX or rotY
         double rotX = leftX * Math.sin(heading_RADIANS) - leftY * Math.cos(heading_RADIANS);
 
 
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
-        Drive.DriveCartesian(rotX, rotY, turn);
-        double[] wheelSpeeds = Drive.getWheelSpeedsMecanum();
-        double[] correctedWheelDrift;
-        if(turn == 0){
-            correctedWheelDrift = Drive.correctDrift(wheelSpeeds, telemetry, robotClass.getRotationRate());
-        }
-        else{
-            correctedWheelDrift = wheelSpeeds;
-        }
 
-        setPower(correctedWheelDrift);
+        driveMotors[RobotClass.kFrontLeft].setPower((rotY + rotX - turn) / denominator);
+        driveMotors[RobotClass.kBackLeft].setPower((rotY - rotX - turn) / denominator);
+        driveMotors[RobotClass.kBackRight].setPower((rotY - rotX + turn) / denominator);
+        driveMotors[RobotClass.kFrontRight].setPower((rotY + rotX + turn) / denominator);
 
         telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
         telemetry.addData("drive", leftY);

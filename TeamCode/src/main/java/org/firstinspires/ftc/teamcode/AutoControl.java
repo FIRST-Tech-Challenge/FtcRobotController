@@ -136,7 +136,7 @@ public class AutoControl extends OpMode{
             telemetry.addData("error", error);
             telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f", wheelSpeeds[0], wheelSpeeds[1], wheelSpeeds[2], wheelSpeeds[3]));
 
-            Drive.normalizeRanges(wheelSpeeds);
+            //Drive.normalizeRanges(wheelSpeeds);
 
             setPower(wheelSpeeds);
         }
