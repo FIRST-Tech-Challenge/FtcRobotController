@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
 
+/** @noinspection FieldCanBeLocal, unused */
 public class Wrist {
     public static double position = 0;
     public final Servo wristServo;

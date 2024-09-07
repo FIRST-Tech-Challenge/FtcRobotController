@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
 
+/** @noinspection FieldCanBeLocal, unused */
 public class LinearActuator {
     public final DcMotor actuatorMotor;
     public final Servo actuatorServo;

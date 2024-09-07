@@ -5,8 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.magic.ShutdownManager;
 
-@Autonomous(name = "Blue Front", group = "Autonomous")
-public class BlueFront extends LinearOpMode {
+/** @noinspection unused */
+@Autonomous(name = "Blue Right", group = "Autonomous")
+public class BlueRight extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -17,7 +18,7 @@ public class BlueFront extends LinearOpMode {
         shutdownManager.scheduleShutdownCheck();
         try {
             if (opModeIsActive()) {
-                auto.run("blue front");
+                auto.run("blue right");
             }
         } catch (RuntimeException e) {
             /* The ShutdownManager has thrown a RuntimeException because the opmode has been stopped from the driver hub.

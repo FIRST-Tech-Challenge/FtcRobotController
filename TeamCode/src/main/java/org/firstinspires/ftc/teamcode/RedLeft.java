@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.magic.ShutdownManager;
 
-@Autonomous(name = "Red Front", group = "Autonomous")
-public class RedFront extends LinearOpMode {
-    private BaseRobot baseRobot;
+/** @noinspection unused */
+@Autonomous(name = "Red Left", group = "Autonomous")
+public class RedLeft extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        baseRobot = new BaseRobot(hardwareMap, gamepad1, gamepad2, telemetry);
+        BaseRobot baseRobot = new BaseRobot(hardwareMap, gamepad1, gamepad2, telemetry);
         MainAuto auto = new MainAuto(baseRobot, "red");
         ShutdownManager shutdownManager = new ShutdownManager(this, baseRobot, auto);
 
@@ -19,7 +19,7 @@ public class RedFront extends LinearOpMode {
         shutdownManager.scheduleShutdownCheck();
         try {
             if (opModeIsActive()) {
-                auto.run("red front");
+                auto.run("red left");
             }
         } catch (RuntimeException e) {
             /* The ShutdownManager has thrown a RuntimeException because the opmode has been stopped from the driver hub.

@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.BaseRobot;
 import java.util.ArrayList;
 import java.util.List;
 
+/** @noinspection FieldCanBeLocal, unused */
 public class Extender {
     private static final List<Double> positions = new ArrayList<>();
     private static int currentPositionIndex = 0;

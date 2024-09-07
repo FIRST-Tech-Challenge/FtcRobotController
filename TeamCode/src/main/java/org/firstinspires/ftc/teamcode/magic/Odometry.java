@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
 
+/** @noinspection FieldCanBeLocal, unused */
 public class Odometry {
     // Constants for encoder counts per revolution and wheel diameter
     final double COUNTS_PER_REVOLUTION = 100; // Example value, adjust based on your motor encoders

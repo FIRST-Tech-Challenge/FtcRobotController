@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import java.lang.reflect.Field;
 
+/** @noinspection unused */
 public class Settings {
 
     public static final double dpad_sensitivity = 0.3;
@@ -12,8 +13,6 @@ public class Settings {
     // control preferences
     public static final int playerCount = 2;
     public static final double left_stick_sensitivity = 1.0;
-    public static final double lateral_offset = (double) 11 / 12;
-    public static final double forward_offset = (double) 9 / 12;
 
 
     public static String getDisabledFlags() {
@@ -26,9 +25,7 @@ public class Settings {
                 if (!field.getBoolean(null)) {
                     enabledFlags.append(field.getName()).append(", ");
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            } catch (IllegalAccessException ignored) {}
         }
 
         return enabledFlags.toString();
@@ -46,8 +43,6 @@ public class Settings {
 
         // mechanisms
         public static final boolean ARM = true;
-        public static final boolean DRONE = true;
-        public static final boolean COLOR = true;
 
         // magic
         public static final boolean ODOMETRY = true;

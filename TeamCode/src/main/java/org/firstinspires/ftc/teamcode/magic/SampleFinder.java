@@ -6,13 +6,14 @@ import org.firstinspires.ftc.teamcode.BaseRobot;
 
 import java.util.Objects;
 
-public class BoxFinder {
+/** @noinspection FieldCanBeLocal, unused, RedundantSuppression */
+public class SampleFinder {
 
     private final ColorSensor colorSensor;
     private final String color;
     private final BaseRobot baseRobot;
 
-    public BoxFinder(BaseRobot baseRobot, String color) {
+    public SampleFinder(BaseRobot baseRobot, String color) {
         this.color = color.toLowerCase();
         this.baseRobot = baseRobot;
         colorSensor = baseRobot.hardwareMap.get(ColorSensor.class, "color");
