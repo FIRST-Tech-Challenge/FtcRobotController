@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,12 +16,12 @@ import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 import java.util.HashMap;
 import java.util.Map;
 
+/** @noinspection FieldCanBeLocal, unused, RedundantSuppression */
 public class BaseRobot {
     public final Map<String, DcMotor> motors = new HashMap<>();
     public final Map<String, Servo> servos = new HashMap<>();
     public final Map<String, Object> sensors = new HashMap<>();
     public final ElapsedTime runtime = new ElapsedTime();
-    public final boolean USE_WEBCAM = true;
     public final DcMotor frontLeftMotor;
     public final DcMotor frontRightMotor;
     public final DcMotor rearLeftMotor;
@@ -33,14 +32,7 @@ public class BaseRobot {
     public final LinearActuator linearActuator;
     public final Telemetry telemetry;
     public final Logger logger;
-    private final double wristPower = 0.0;
-    private final boolean extenderActive = false;
-    private final String previousArmMode = "none";
-    public DcMotor armMotor;
-    public ColorSensor colorSensor;
-    public Servo droneServo;
     public Arm arm;
-    public Settings settings;
     public Odometry odometry;
     private boolean extenderReleased = true;
     private boolean clawReleasedR = true;
@@ -78,13 +70,6 @@ public class BaseRobot {
 
         if (Settings.Deploy.ARM) {
             arm = new Arm(this);
-        }
-
-
-        if (Settings.Deploy.DRONE) {
-            droneServo = hardwareMap.get(Servo.class, "drone");
-            servos.put("drone", droneServo);
-            droneServo.scaleRange(0, 1);
         }
 
 
@@ -182,15 +167,6 @@ public class BaseRobot {
     }
 
     public void gamepadAuxiliary() {
-        // BACK: Launch drone
-        if (Settings.Deploy.DRONE) {
-            if (auxGamepad.back) {
-                droneServo.setPosition(droneServo.getPosition() + 0.2);
-            } else {
-                droneServo.setPosition(droneServo.getPosition() - 0.4);
-            }
-        }
-
         // Arm manager, the main auxiliary function
         // Y: Extend arm upwards | X: Retract arm
         // RT: Open right claw | LT: Open left claw
@@ -250,14 +226,6 @@ public class BaseRobot {
             actuatorReleased = true;
         }
     }
-
-    public void driveAuto(double strafePower, double drivePower, double rotation, double duration) {
-        double start = runtime.seconds();
-        while (runtime.seconds() - start < duration) {
-            mecanumDrive(drivePower, strafePower, rotation);
-        }
-    }
-
 
     private void setMode(DcMotor.RunMode mode) {
         // Set motor mode for all motors

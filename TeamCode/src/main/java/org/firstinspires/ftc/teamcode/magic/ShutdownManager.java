@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.MainAuto;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/** @noinspection FieldCanBeLocal, unused */
 public class ShutdownManager {
     private final LinearOpMode linearOpMode;
     private final BaseRobot baseRobot;
@@ -23,7 +24,7 @@ public class ShutdownManager {
     }
 
     public void scheduleShutdownCheck() {
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 if (!linearOpMode.opModeIsActive()) {

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
 
+/** @noinspection FieldCanBeLocal, unused */
 public class Claw {
     public final Servo clawServoL;
     public final Servo clawServoR;
