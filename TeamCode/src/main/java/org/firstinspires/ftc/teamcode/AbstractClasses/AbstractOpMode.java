@@ -30,10 +30,10 @@ public abstract class AbstractOpMode extends GamepadOpMode {
         CuttleRevHub ctrlHub = new CuttleRevHub(hardwareMap,CuttleRevHub.HubTypes.CONTROL_HUB);
 
 
-        leftFrontMotor  = ctrlHub.getMotor(1);
-        rightFrontMotor = ctrlHub.getMotor(2);
-        leftBackMotor   = ctrlHub.getMotor(3);
-        rightBackMotor  = ctrlHub.getMotor(4);
+        leftFrontMotor  = ctrlHub.getMotor(0);
+        rightFrontMotor = ctrlHub.getMotor(1);
+        leftBackMotor   = ctrlHub.getMotor(2);
+        rightBackMotor  = ctrlHub.getMotor(3);
 
         leftBackMotor .setDirection(Direction.REVERSE);
         leftFrontMotor.setDirection(Direction.REVERSE);
