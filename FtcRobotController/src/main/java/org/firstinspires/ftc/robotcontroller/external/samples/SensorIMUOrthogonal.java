@@ -55,7 +55,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  * (X/Y, X/Z or Y/Z) and that the Hub has only been rotated in a range of 90 degree increments.
  *
  * Note: if your Hub is mounted on a surface angled at some non-90 Degree multiple (like 30) look at
- *       the alternative SensorImuNonOrthogonal sample in this folder.
+ *       the alternative SensorIMUNonOrthogonal sample in this folder.
  *
  * This "Orthogonal" requirement means that:
  *
@@ -98,6 +98,9 @@ public class SensorIMUOrthogonal extends LinearOpMode
          * The first parameter specifies the direction the printed logo on the Hub is pointing.
          * The second parameter specifies the direction the USB connector on the Hub is pointing.
          * All directions are relative to the robot, and left/right is as-viewed from behind the robot.
+         *
+         * If you are using a REV 9-Axis IMU, you can use the Rev9AxisImuOrientationOnRobot class instead of the
+         * RevHubOrientationOnRobot class, which has an I2cPortFacingDirection instead of a UsbFacingDirection.
          */
 
         /* The next two lines define Hub orientation.
