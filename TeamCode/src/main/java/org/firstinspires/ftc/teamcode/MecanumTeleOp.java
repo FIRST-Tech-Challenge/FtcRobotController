@@ -8,11 +8,15 @@ public class MecanumTeleOp extends OpMode {
 
     Robot robot = new Robot();
 
+    linear linear = new linear();
+
     //Code to run ONCE after the driver hits INIT
     @Override
     public void init() {
         robot.init(hardwareMap);
+        linear.init(hardwareMap);
     }
+
 
     //Code to run REPEATEDLY after the driver hits INIT
     @Override

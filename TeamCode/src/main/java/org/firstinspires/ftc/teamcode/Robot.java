@@ -28,7 +28,7 @@ public class Robot {
         left_front.setDirection(DcMotorSimple.Direction.FORWARD);
         right_front.setDirection(DcMotorSimple.Direction.REVERSE);
         left_back.setDirection(DcMotorSimple.Direction.FORWARD);
-        right_back.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
         left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
