@@ -8,7 +8,7 @@ project("depthaiandroid")
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libusb)
 
-add_library(depthaiandroid SHARED native-lib.cpp)
+add_library(depthaiandroid SHARED depthnativelib.cpp)
 
 find_library(log-lib log)
 
