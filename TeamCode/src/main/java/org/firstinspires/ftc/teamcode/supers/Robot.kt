@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
-import org.firstinspires.ftc.teamcode.SNAV.SwerveDriveController
-import org.firstinspires.ftc.teamcode.SNAV.SwerveModule
+import org.firstinspires.ftc.teamcode.snav.SwerveDriveController
+import org.firstinspires.ftc.teamcode.snav.SwerveModule
 import org.firstinspires.ftc.teamcode.util.GamepadState
 
 
@@ -46,8 +46,8 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
 
         motors = arrayOf(lt, lb, rt, rb)
 
-        sl = SwerveModule(lt, lb, 14.35, 5.2, 36, 120, 20, 145.1, 1150, 4.0)
-        sr = SwerveModule(rt, rb, 14.35, 5.2, 36, 120, 20, 145.1, 1150, 4.0)
+        sl = SwerveModule(lt, lb, 14.35, 5.2, 40, 120, 20, 145.1, 1150, 4.0)
+        sr = SwerveModule(rt, rb, 14.35, 5.2, 40, 120, 20, 145.1, 1150, 4.0)
 
         driveController = SwerveDriveController(sl, sr)
 
