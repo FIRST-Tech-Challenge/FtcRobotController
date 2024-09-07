@@ -25,7 +25,10 @@ public class Robot {
         left_back = hwMap.get(DcMotorEx.class, "left_back");
         right_back = hwMap.get(DcMotorEx.class, "right_back");
 
+        left_front.setDirection(DcMotorSimple.Direction.FORWARD);
         right_front.setDirection(DcMotorSimple.Direction.REVERSE);
+        left_back.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_back.setDirection(DcMotorSimple.Direction.FORWARD);
 
         left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -33,7 +36,8 @@ public class Robot {
         right_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void setDriveVelocities(int[] velocities) {
+    // Key: velocities = [left_front, right_front, left_back, right_back]
+    public void setDriveVelocities(double[] velocities) {
         left_front.setVelocity(velocities[0]);
         right_front.setVelocity(velocities[1]);
         left_back.setVelocity(velocities[2]);
