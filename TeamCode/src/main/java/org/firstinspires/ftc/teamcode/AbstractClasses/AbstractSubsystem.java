@@ -11,9 +11,7 @@ import java.io.IOException;
 
 public abstract class AbstractSubsystem {
     public AbstractRobot robot;
-    //public Gamepad gamepad1, gamepad2;
     public final Telemetry telemetry;
-    public boolean usesConfig = false;
     public AbstractSubsystem(AbstractRobot robot) {
         this.robot = robot;
         this.telemetry = robot.telemetry;
