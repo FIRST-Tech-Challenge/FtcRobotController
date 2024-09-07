@@ -2,10 +2,18 @@ package org.firstinspires.ftc.teamcode.AbstractClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public abstract class AbstractTeleOp extends LinearOpMode {
-    @Override
-    public void runOpMode() throws InterruptedException {
+import org.firstinspires.ftc.teamcode.AbstractClasses.*;
+import org.firstinspires.ftc.teamcode.CurrentSeason.Robots.PeppyFeetFiend;
 
-    }
-    public abstract void instantiateRobot();
+import com.roboctopi.cuttlefish.utils.Direction;
+import com.roboctopi.cuttlefish.utils.Pose;
+import com.roboctopi.cuttlefishftcbridge.devices.*;
+import com.roboctopi.cuttlefish.controller.*;
+import com.roboctopi.cuttlefishftcbridge.opmodeTypes.GamepadOpMode;
+
+public abstract class AbstractTeleOp extends AbstractOpMode {
+
+    PeppyFeetFiend robot = new PeppyFeetFiend(this);
+
+    public abstract AbstractRobot instantiateRobot();
 }
