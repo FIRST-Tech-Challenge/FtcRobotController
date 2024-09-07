@@ -12,7 +12,7 @@ public class linear extends OpMode {
     @Override
     public void init() {
         linear_motion = hardwareMap.get(DcMotorEx.class, "linear_motion");
-
+        linear_motion.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
@@ -23,9 +23,8 @@ public class linear extends OpMode {
         else if (gamepad1.dpad_down){
             linear_motion.setPower(-.3);
         }
-
-    }
-
-    public void init(HardwareMap hardwareMap) {
+        else {
+            linear_motion.setPower(0);
+        }
     }
 }
