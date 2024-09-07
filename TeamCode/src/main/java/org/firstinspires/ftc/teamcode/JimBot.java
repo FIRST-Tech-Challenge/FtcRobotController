@@ -5,11 +5,20 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp
 public class JimBot extends LinearOpMode {
@@ -19,6 +28,8 @@ public class JimBot extends LinearOpMode {
     Servo FLServo, BLServo, BRServo, FRServo;
 
     ElapsedTime turnTime = new ElapsedTime();
+
+    IMU imu;
 
 
     @Override
@@ -35,11 +46,13 @@ public class JimBot extends LinearOpMode {
             else if(angle!=0)
                 rotate(angle);
             else{
-                FRMotor.setPower(0);
+                FLMotor.setPower(0);
                 BLMotor.setPower(0);
                 BRMotor.setPower(0);
                 FRMotor.setPower(0);
             }
+            if(gamepad1.a==true)
+                moveHome();
 
         }
 
@@ -47,6 +60,13 @@ public class JimBot extends LinearOpMode {
 
 
     public void initRobot() {
+
+        //init imu and stuff stolen from SensorIMUOrthogonal in external samples
+        imu = hardwareMap.get(IMU.class,"imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         // Maps the motor objects to the physical ports
         FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
@@ -156,6 +176,23 @@ public class JimBot extends LinearOpMode {
         BLMotor.setPower(angle);
         BRMotor.setPower(angle);
         FRMotor.setPower(angle);
+
+    }
+
+
+    //uses imu
+    public void moveHome(){
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double yawAngle = orientation.getYaw(AngleUnit.DEGREES);
+        telemetry.addData("Yaw angle", yawAngle);
+        rotate(yawAngle);
+    }
+
+    public void moveToSpecimen(){
+
+    }
+
+    public void moveToStore(){
 
     }
 
