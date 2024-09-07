@@ -26,4 +26,11 @@ public abstract class AbstractRobot {
         subsystems = new ArrayList<>();
 
     }
+    public void driverLoop()
+    {
+        for(AbstractSubsystem  system : subsystems)
+        {
+            system.driverLoop();
+        }
+    }
 }

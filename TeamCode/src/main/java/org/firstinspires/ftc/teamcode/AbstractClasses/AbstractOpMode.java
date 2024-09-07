@@ -27,7 +27,7 @@ public abstract class AbstractOpMode extends GamepadOpMode {
     }
 
     public void onInit() {
-        CuttleRevHub ctrlHub = new CuttleRevHub(hardwareMap,CuttleRevHub.HubTypes.CONTROL_HUB);
+        ctrlHub = new CuttleRevHub(hardwareMap,CuttleRevHub.HubTypes.CONTROL_HUB);
 
 
         leftFrontMotor  = ctrlHub.getMotor(0);

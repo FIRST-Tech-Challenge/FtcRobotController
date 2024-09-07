@@ -30,6 +30,7 @@ public class NikitaSucks extends AbstractTeleOp {
     @Override
     public void mainLoop() {
         super.drive.setVec(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.right_stick_x));
+        robot.driverLoop();
     }
 
 
