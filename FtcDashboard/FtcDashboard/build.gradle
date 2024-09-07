@@ -27,11 +27,6 @@ android {
     lintOptions {
         abortOnError false
     }
-    sourceSets {
-        configureEach {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
 }
 
 node {
@@ -115,8 +110,6 @@ dependencies {
     implementation("org.nanohttpd:nanohttpd-websocket:2.3.1") {
         exclude module: "nanohttpd"
     }
-
-    implementation (files("libs/test_name.aar"))
 }
 
 def addPomDependencies(root) {
