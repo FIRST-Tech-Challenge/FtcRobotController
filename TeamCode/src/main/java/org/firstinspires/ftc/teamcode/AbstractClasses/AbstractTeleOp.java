@@ -15,9 +15,5 @@ public abstract class AbstractTeleOp extends AbstractOpMode {
 
     PeppyFeetFiend robot = new PeppyFeetFiend(this);
 
-    public void onInit(){
-        super.onInit();
-    }
-
     public abstract AbstractRobot instantiateRobot();
 }
