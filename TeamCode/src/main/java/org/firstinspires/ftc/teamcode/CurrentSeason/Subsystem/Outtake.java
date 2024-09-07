@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode.CurrentSeason.Subsystem;
 
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.AbstractClasses.AbstractRobot;
 import org.firstinspires.ftc.teamcode.AbstractClasses.AbstractSubsystem;
-import org.opencv.core.Point;
 
 public class Outtake extends AbstractSubsystem {
 
