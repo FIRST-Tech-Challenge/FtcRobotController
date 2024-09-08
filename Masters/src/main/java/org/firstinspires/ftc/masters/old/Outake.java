@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.masters.components;
+package org.firstinspires.ftc.masters.old;
 
-import static org.firstinspires.ftc.masters.CSCons.servo1Down;
-import static org.firstinspires.ftc.masters.CSCons.servo1Up;
-import static org.firstinspires.ftc.masters.CSCons.servo2Down;
-import static org.firstinspires.ftc.masters.CSCons.servo2Up;
+import static org.firstinspires.ftc.masters.old.CSCons.servo1Down;
+import static org.firstinspires.ftc.masters.old.CSCons.servo1Up;
+import static org.firstinspires.ftc.masters.old.CSCons.servo2Down;
+import static org.firstinspires.ftc.masters.old.CSCons.servo2Up;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -13,10 +14,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.masters.components.Component;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Outake implements Component{
+@Disabled
+public class Outake implements Component {
 
     boolean hanging = false;
 

@@ -1,17 +1,18 @@
-package org.firstinspires.ftc.masters.components;
+package org.firstinspires.ftc.masters.old;
 
-import static org.firstinspires.ftc.masters.CSCons.transferPush;
-import static org.firstinspires.ftc.masters.CSCons.transferUp;
+import static org.firstinspires.ftc.masters.old.CSCons.transferPush;
+import static org.firstinspires.ftc.masters.old.CSCons.transferUp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Disabled
 public class Transfer {
 
     private CSCons.TransferStatus currentTransferStatus;
