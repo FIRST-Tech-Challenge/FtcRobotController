@@ -17,7 +17,7 @@ public class TuneFeedForwardGains extends LinearOpMode{
     // Use FTCDashboard
     FtcDashboard dashboard;
     double state=0;
-    public static double maxAcceleration = 0;
+    public static double acceleration = 0;
     public static double t = 2000;
     @Override
     public void runOpMode() {
@@ -49,10 +49,10 @@ public class TuneFeedForwardGains extends LinearOpMode{
         while (opModeIsActive()) {
             drivetrain.localize();
             if (state == 0){
-                speeds.set(0,0,speeds.get(0,0)+maxAcceleration);
-                speeds.set(1,0,speeds.get(1,0)+maxAcceleration);
-                speeds.set(2,0,speeds.get(2,0)+maxAcceleration);
-                speeds.set(3,0,speeds.get(3,0)+maxAcceleration);
+                speeds.set(0,0,speeds.get(0,0)+acceleration*looptime.milliseconds());
+                speeds.set(1,0,speeds.get(1,0)+acceleration*looptime.milliseconds());
+                speeds.set(2,0,speeds.get(2,0)+acceleration*looptime.milliseconds());
+                speeds.set(3,0,speeds.get(3,0)+acceleration*looptime.milliseconds());
                 drivetrain.setWheelSpeedAcceleration(speeds,accelerations);
                 if (lapTime.milliseconds()>t/2){
                     state++;
@@ -70,10 +70,10 @@ public class TuneFeedForwardGains extends LinearOpMode{
                 }
             }
             else if (state == 2){
-                speeds.set(0,0,speeds.get(0,0)-maxAcceleration);
-                speeds.set(1,0,speeds.get(1,0)-maxAcceleration);
-                speeds.set(2,0,speeds.get(2,0)-maxAcceleration);
-                speeds.set(3,0,speeds.get(3,0)-maxAcceleration);
+                speeds.set(0,0,speeds.get(0,0)-acceleration*looptime.milliseconds());
+                speeds.set(1,0,speeds.get(1,0)-acceleration*looptime.milliseconds());
+                speeds.set(2,0,speeds.get(2,0)-acceleration*looptime.milliseconds());
+                speeds.set(3,0,speeds.get(3,0)-acceleration*looptime.milliseconds());
                 drivetrain.setWheelSpeedAcceleration(speeds,accelerations);
                 if (lapTime.milliseconds()>t){
                     state++;
@@ -91,10 +91,10 @@ public class TuneFeedForwardGains extends LinearOpMode{
                 }
             }
             else if (state == 4) {
-                speeds.set(0, 0, speeds.get(0, 0) + maxAcceleration);
-                speeds.set(1, 0, speeds.get(1, 0) + maxAcceleration);
-                speeds.set(2, 0, speeds.get(2, 0) + maxAcceleration);
-                speeds.set(3, 0, speeds.get(3, 0) + maxAcceleration);
+                speeds.set(0, 0, speeds.get(0, 0) -acceleration*looptime.milliseconds());
+                speeds.set(1, 0, speeds.get(1, 0) -acceleration*looptime.milliseconds());
+                speeds.set(2, 0, speeds.get(2, 0) -acceleration*looptime.milliseconds());
+                speeds.set(3, 0, speeds.get(3, 0)-acceleration*looptime.milliseconds());
                 drivetrain.setWheelSpeedAcceleration(speeds, accelerations);
                     if (lapTime.milliseconds() > t) {
                         state = 1;
