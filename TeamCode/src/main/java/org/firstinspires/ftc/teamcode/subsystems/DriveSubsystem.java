@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.RobotOpMode.MIN_POWER;
+import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.MIN_POWER;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
