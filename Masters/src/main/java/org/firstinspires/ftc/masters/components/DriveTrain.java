@@ -155,7 +155,7 @@ public class DriveTrain implements Component{
                 cartesianDriveNoMultiplier(0, -gamepad.left_stick_y, gamepad.right_trigger - gamepad.left_trigger);
                 break;
             case XYT:
-                cartesianDriveNoMultiplier(Math.pow(gamepad.left_stick_x, 3), -Math.pow(gamepad.left_stick_y, 3), Math.pow(gamepad.right_trigger - gamepad.left_trigger, 4));
+                cartesianDriveNoMultiplier(Math.pow(gamepad.left_stick_x, 3), -Math.pow(gamepad.left_stick_y, 3), Math.pow(gamepad.right_trigger - gamepad.left_trigger, 3));
                 break;
         }
 
