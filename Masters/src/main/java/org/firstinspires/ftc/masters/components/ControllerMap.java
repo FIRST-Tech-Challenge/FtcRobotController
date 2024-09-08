@@ -5,8 +5,17 @@ public class ControllerMap {
         A,
         B,
         X,
-        Y
+        Y,
 
+
+    }
+
+    public enum Easing {
+        QUAD_IN,
+        QUAD_OUT,
+        QUAD_IN_OUT,
+        CUBE,
+        QUARTs
     }
 
     private class KeyBind {
