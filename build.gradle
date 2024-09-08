@@ -3,7 +3,7 @@
  *
  * It is extraordinarily rare that you will ever need to edit this file.
  */
-// FTC Version 10.0, AA Version 0.0 : 0.0
+// FTC Version 10.0, AA Version 0.0 : 0.0.0
 buildscript {
     repositories {
         mavenCentral()
