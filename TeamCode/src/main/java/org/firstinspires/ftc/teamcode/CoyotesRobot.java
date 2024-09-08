@@ -11,22 +11,24 @@ public class CoyotesRobot {
     private boolean autoSleepEnabled;
 
     private DriveSystem driveSystem;
+    private ArmSystem armSystem;
 
-    public Hardware(OpMode opMode) {
+    public Hardware(OpMode opMode, DriveSystem driveSystem, ArmSystem armSystem) {
         this.opMode = opMode;
 
         autoSleepEnabled = true;
 
         init();
 
-        driveSystem = new DriveSystem();
+        this.driveSystem = driveSystem;
+        this.armSystem = armSystem;
     }
 
     /**
      * Initializes all the robot's hardware(motors, servos, sensors, etc.)
      */
     public void init() {
-
+        
     }
 
     /**

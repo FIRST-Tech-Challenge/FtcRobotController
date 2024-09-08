@@ -10,7 +10,9 @@ public class TeleOp extends OpMode {
 
     @Override
     public void init() {
-        robot = new CoyotesRobot(this);
+        meccanumDrive = new MeccanumDrive();
+        armSystem = new ArmSystem();
+        robot = new CoyotesRobot(this, meccanumDrive);
     }
 
     @Override
