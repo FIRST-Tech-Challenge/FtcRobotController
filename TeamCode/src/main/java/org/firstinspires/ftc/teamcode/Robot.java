@@ -11,10 +11,10 @@ public class Robot {
     public DcMotor rightBack;
 
     public Robot(){
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotor.class, "leftRear");
-        rightBack = hardwareMap.get(DcMotor.class, "rightRear");
+        leftFront = hardwareMap.get(DcMotor.class, "left_front_drive");
+        rightFront = hardwareMap.get(DcMotor.class, "right_front_drive");
+        leftBack = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightBack = hardwareMap.get(DcMotor.class, "right_back_drive");
     }
 
 

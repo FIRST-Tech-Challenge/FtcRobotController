@@ -13,10 +13,10 @@ public class BasicAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException{
-        robot.leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        robot.rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        robot.leftBack  = hardwareMap.get(DcMotor.class, "leftRear");
-        robot.rightBack = hardwareMap.get(DcMotor.class, "rightRear");
+        robot.leftFront = hardwareMap.get(DcMotor.class, "left_front_drive");
+        robot.rightFront = hardwareMap.get(DcMotor.class, "right_front_drive");
+        robot.leftBack  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        robot.rightBack = hardwareMap.get(DcMotor.class, "right_back_drive");
 
 
         waitForStart();
