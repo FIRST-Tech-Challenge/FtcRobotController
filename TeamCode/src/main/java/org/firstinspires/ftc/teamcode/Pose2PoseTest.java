@@ -32,7 +32,10 @@ public class Pose2PoseTest extends LinearOpMode {
         EncoderTracking tracker = new EncoderTracking(hardware);
         // Pose targets to go thru
         Pose[] targets = {
-                new Pose(48, 0, Math.toRadians(90))
+                new Pose(48, 0, Math.toRadians(90)),
+                new Pose(48, 48, Math.toRadians(180)),
+                new Pose(0, 48, Math.toRadians(270)),
+                new Pose(0, 0, Math.toRadians(360))
         };
         int targetIndex = 0; // Total poses in the set
         ElapsedTime timer = new ElapsedTime(); // Set timer object to reference the ElapsedTime object
