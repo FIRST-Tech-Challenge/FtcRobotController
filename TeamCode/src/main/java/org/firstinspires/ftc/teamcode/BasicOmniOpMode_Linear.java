@@ -29,7 +29,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
-    static final double P_TURN_GAIN = 0.02;     // Larger is more responsive, but also less stable
+    static final double P_TURN_GAIN = 0.01;     // On 9/8 this looks like a good value
     static final double HEADING_THRESHOLD = 1.0;    // How close must the heading get to the target before moving to next step.
     static final double MAX_TURN_SPEED = 0.8;     // Max Turn speed to limit turn rate
     private double turnSpeed = 0;
@@ -113,7 +113,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if (gamepad1.dpad_left)
                 turnToHeading(90.0);
             if (gamepad1.dpad_right)
-                turnToHeading(-90.0);
+                turnToHeading(-135.0); // Turn to face the basket
 
             if (gamepad1.left_bumper) {
                 if (arm_position < ARM_MAX) {
