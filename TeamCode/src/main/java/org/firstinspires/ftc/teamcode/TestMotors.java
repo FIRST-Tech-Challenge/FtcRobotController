@@ -35,25 +35,25 @@ public class TestMotors extends OpMode {
 
         // Test DriveTrain Motors
         if (gamepad1.x){
-            robot.left_back.setPower(1);
+            robot.driveTrain.left_back.setPower(1);
         }
         else if (gamepad1.b){
-            robot.right_front.setPower(1);
+            robot.driveTrain.right_front.setPower(1);
         }
         else if (gamepad1.y){
-            robot.left_front.setPower(1);
+            robot.driveTrain.left_front.setPower(1);
         }
         else if (gamepad1.a){
-            robot.right_back.setPower(1);
+            robot.driveTrain.right_back.setPower(1);
         }
         else{
-            robot.brake();
+            robot.driveTrain.brake();
         }
 
-        telemetry.addData("Left Back", robot.left_back.getVelocity());
-        telemetry.addData("Right Front", robot.right_front.getVelocity());
-        telemetry.addData("Left Front", robot.left_front.getVelocity());
-        telemetry.addData("Right Back", robot.right_back.getVelocity());
+        telemetry.addData("Left Back", robot.driveTrain.left_back.getVelocity());
+        telemetry.addData("Right Front", robot.driveTrain.right_front.getVelocity());
+        telemetry.addData("Left Front", robot.driveTrain.left_front.getVelocity());
+        telemetry.addData("Right Back", robot.driveTrain.right_back.getVelocity());
 
         //Test Arm and Claw
 //        if(gamepad1.dpad_up) {

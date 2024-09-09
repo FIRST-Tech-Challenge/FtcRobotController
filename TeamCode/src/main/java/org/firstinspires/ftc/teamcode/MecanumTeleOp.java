@@ -8,13 +8,11 @@ public class MecanumTeleOp extends OpMode {
 
     Robot robot = new Robot();
 
-    linear linear = new linear();
 
     //Code to run ONCE after the driver hits INIT
     @Override
     public void init() {
         robot.init(hardwareMap);
-        linear.init(hardwareMap);
     }
 
 
@@ -36,12 +34,20 @@ public class MecanumTeleOp extends OpMode {
     @Override
     public void loop() {
         double[] driveVelocities =
-                robot.drive(
+                robot.driveTrain.drive(
                         gamepad1.left_stick_x,
                         gamepad1.left_stick_y,
                         gamepad1.right_stick_x);
 
-        robot.setDriveVelocities(driveVelocities);
+        robot.driveTrain.setDriveVelocities(driveVelocities);
+
+        if (gamepad1.dpad_up) {
+            robot.linear.linear_motion.setPower(0.3);
+        } else if (gamepad1.dpad_down) {
+            robot.linear.linear_motion.setPower(-0.3);
+        } else {
+            robot.linear.linear_motion.setPower(0);
+        }
     }
 
 
