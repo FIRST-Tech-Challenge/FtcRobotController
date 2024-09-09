@@ -10,11 +10,7 @@ public class CoyotesRobot {
     // Will automatically sleep by default
     private boolean autoSleepEnabled;
 
-<<<<<<< HEAD
     private MeccanumDrive meccanumDrive;
-=======
-    private DriveSystem driveSystem;
->>>>>>> template/main
     private ArmSystem armSystem;
 
     public Hardware(OpMode opMode, DriveSystem driveSystem, ArmSystem armSystem) {
