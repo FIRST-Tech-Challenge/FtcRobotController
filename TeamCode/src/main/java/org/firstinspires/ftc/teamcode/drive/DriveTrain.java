@@ -51,7 +51,7 @@ public class DriveTrain extends LinearOpMode{
                 multiplier = 0.6;
 
             }else multiplier = 1;
-            leftFront.setPower(frontLeftPower *multiplier );
+            leftFront.setPower(frontLeftPower *multiplier);
             leftRear.setPower(backLeftPower *multiplier);
             rightFront.setPower(frontRightPower *multiplier);
             rightRear.setPower(backRightPower *multiplier);
