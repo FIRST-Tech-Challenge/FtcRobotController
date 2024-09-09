@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
+import org.firstinspires.ftc.teamcode.hardware;
+
 public class CoyotesRobot {
     private OpMode opMode;
 
