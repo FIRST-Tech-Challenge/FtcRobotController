@@ -8,17 +8,13 @@ import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.lang.reflect.Array;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.function.DoubleSupplier;
 
 public class DriveSubsystem extends SubsystemBase {
     private final DcMotor lF, rF, lB, rB, eL, eB, eR;
-    private final double INCHES_PER_TICK = 0.0018912d; // Come on Carter MAKE IT NOT MAGIC!!!!!!!!!
+    private final double INCHES_PER_TICK = 0.0018912d;
     public final ElapsedTime elapsedTime;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 

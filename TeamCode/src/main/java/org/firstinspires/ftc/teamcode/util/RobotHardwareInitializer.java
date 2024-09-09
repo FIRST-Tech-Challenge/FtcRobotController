@@ -214,6 +214,7 @@ public class RobotHardwareInitializer {
         return out;
     }
 
+    @Deprecated
     public static HashMap<Intake, CRServo> initializeIntake(final OpMode opMode) {
         CRServo left = null;
         CRServo right = null;
@@ -231,6 +232,7 @@ public class RobotHardwareInitializer {
         return out;
     }
 
+    @Deprecated
     public static Servo initializeLauncher(final OpMode opMode) {
         try {
             return opMode.hardwareMap.get(Servo.class, "launcher");
@@ -240,6 +242,7 @@ public class RobotHardwareInitializer {
         return null;
     }
 
+    @Deprecated
     public static DcMotorEx initializeWrist(final OpMode opMode) {
         try {
             DcMotorEx motor = opMode.hardwareMap.get(DcMotorEx.class, "wrist"); // port 2
@@ -250,6 +253,7 @@ public class RobotHardwareInitializer {
         return null;
     }
 
+    @Deprecated
     public static Servo initializeFinger(final OpMode opMode) {
         try {
             Servo servo = opMode.hardwareMap.get(Servo.class, "finger_servo");
@@ -261,6 +265,7 @@ public class RobotHardwareInitializer {
         return null;
     }
 
+    @Deprecated
     public static Servo initializePixelPooper(final OpMode opMode) {
         try {
             Servo servo = opMode.hardwareMap.get(Servo.class, "pixel_pooper");
