@@ -9,6 +9,7 @@ buildscript {
         mavenCentral()
         google()
     }
+
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
         classpath 'com.android.tools.build:gradle:7.2.0'
