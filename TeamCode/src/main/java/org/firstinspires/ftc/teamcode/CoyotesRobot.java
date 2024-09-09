@@ -10,7 +10,7 @@ public class CoyotesRobot {
     // Will automatically sleep by default
     private boolean autoSleepEnabled;
 
-    private DriveSystem driveSystem;
+    private MeccanumDrive meccanumDrive;
     private ArmSystem armSystem;
 
     public Hardware(OpMode opMode, DriveSystem driveSystem, ArmSystem armSystem) {
@@ -55,12 +55,12 @@ public class CoyotesRobot {
     public void autoSleep(DcMotor... motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
-        // does nothing if it isn't a LinearOpMode
+        // Does nothing if it isn't in LinearOpMode
         if (linearOp == null) {
             return;
         }
 
-        // while any of the motors are still running
+        // While any of the motors are still running
         while (Arrays.stream(motors).anyMatch(motor -> motor.isBusy())) {
             linearOp.sleep(1);
         }

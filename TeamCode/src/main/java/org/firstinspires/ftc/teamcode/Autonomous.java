@@ -14,7 +14,7 @@ public class Autonomous extends LinearOpMode {
     public void runOpMode() {
         robot = new CoyotesRobot(this);
 
-        // wait until the player press the start button
+        // Wait until the player press the start button
         waitForStart();
     }
 } 
