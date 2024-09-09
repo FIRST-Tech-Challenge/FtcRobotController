@@ -12,7 +12,7 @@ public class Intake {
     public final Gamepad gamepad1;
     public HardwareMap hardwareMap;
     public static volatile double OUTTAKE = -0.5;
-    public static volatile double INTAKE = 0.5;
+    public static volatile double INTAKE = 0.6;
 
     public Intake(OpMode opMode) {
         this.hardwareMap = opMode.hardwareMap;
