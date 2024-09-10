@@ -47,7 +47,11 @@ public class AprilTagIDDetector extends OpMode {
     public void init_loop(){
         currentDetections = aprilTagProcessor.getDetections();
         for (AprilTagDetection detection : currentDetections){
+            telemetry.addLine(String.valueOf(detection.robotPose));
             telemetry.addLine(String.valueOf(detection.id));
+            telemetry.addLine(String.valueOf(detection.ftcPose));
+            telemetry.addLine(String.valueOf(detection.rawPose));
+            telemetry.addLine(String.valueOf(detection.center));
             if (detection.ftcPose != null) {
                 try {
                     poseX = detection.ftcPose.x;
@@ -57,8 +61,7 @@ public class AprilTagIDDetector extends OpMode {
                     telemetry.addLine(e.toString());
                 }
             }
-            telemetry.addLine(Arrays.toString(library.getAllTags()));
-            telemetry.addData("Null: ", detection.metadata == null);
+            telemetry.addData("Metadata is null: ", detection.metadata == null);
         }
         telemetry.addData("AprilTag Count: ", aprilTagsCount);
         telemetry.addData("Time: " , main_timer.time());
