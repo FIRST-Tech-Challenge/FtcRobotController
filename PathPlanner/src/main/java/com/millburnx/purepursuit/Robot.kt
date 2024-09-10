@@ -45,4 +45,6 @@ class Robot(size: Vec2d, val lookahead: Double = 14.0) {
         position += rotated * dt
         heading = Utils.normalizeAngle(heading + anglePower * dt)
     }
+
+    fun toPair(): Pair<Vec2d, Double> = position to heading
 }

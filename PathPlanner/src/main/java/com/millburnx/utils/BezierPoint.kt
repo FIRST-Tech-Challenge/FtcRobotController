@@ -14,9 +14,9 @@ class BezierPoint(
     var split: Boolean = false
 ) {
     companion object {
-        val pointSize = 2.0
-        val outlineWidth = 0.2
-        val handleWidth = 0.2
+        const val pointSize = 2.0
+        const val outlineWidth = 0.2
+        const val handleWidth = 0.2
 
         fun saveToTSV(file: File, points: List<BezierPoint>) {
             val points = points.map { listOf(it.prevHandle, it.anchor, it.nextHandle) }.flatten().filterNotNull()
@@ -134,9 +134,9 @@ class BezierPoint(
 
     fun draw(g2d: Graphics2D, ppi: Double, scale: Double, prevColor: Color, nextColor: Color) {
         // draw the previous handle
-        val point = BezierPoint.pointSize * scale
-        val outlineWidth = BezierPoint.outlineWidth * scale
-        val handleWidth = BezierPoint.handleWidth * scale
+        val point = pointSize * scale
+        val outlineWidth = outlineWidth * scale
+        val handleWidth = handleWidth * scale
         for (type in listOf(PointType.PREV_HANDLE, PointType.NEXT_HANDLE)) {
             val handle = getType(type) ?: continue
             val color = when (type) {

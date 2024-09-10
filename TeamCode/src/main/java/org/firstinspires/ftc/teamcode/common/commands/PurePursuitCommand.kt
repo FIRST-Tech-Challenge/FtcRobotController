@@ -31,18 +31,18 @@ class PurePursuitCommand(
         val pose = drive.pos
         val position = Vec2d(pose.x, pose.y)
         val heading = pose.heading
-        val targetPoint = purePursuit.calc(position, heading)
+        val targetPoint = purePursuit.calc(position, heading).target
 
         val powerX = pidX.calc(targetPoint.x, position.x)
         val powerY = pidX.calc(targetPoint.y, position.y)
-        val angleDiff = Util.getAngleDiff(position, heading, targetPoint)
+        val angleDiff = Util.getAngleDiff((position to heading), targetPoint)
         val powerH = pidX.calc(angleDiff, heading)
 
         drive.robotCentric(powerX, powerY, powerH)
     }
 
     override fun end(interrupted: Boolean) {
-        drive.robotCentric(0.0,0.0,0.0)
+        drive.robotCentric(0.0, 0.0, 0.0)
     }
 
     override fun isFinished(): Boolean {

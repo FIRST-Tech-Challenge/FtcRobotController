@@ -67,7 +67,7 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
         }
         g2d.translate(width / 2, height / 2)
 
-        bezierPoints.zipWithNext() { p1, p2 ->
+        bezierPoints.zipWithNext { p1, p2 ->
             Bezier(p1.anchor, p1.nextHandle!!, p2.prevHandle!!, p2.anchor)
         }.forEach {
             it.g2dDraw(g2d, ppi, scale, Utils.Colors.green)
@@ -129,7 +129,7 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
         repaint()
     }
 
-    fun _removePoint(bezierPoint: BezierPoint) {
+    fun removePointPure(bezierPoint: BezierPoint) {
         val index = bezierPoints.indexOf(bezierPoint)
         bezierPoints.remove(bezierPoint)
         if (bezierPoints.isEmpty()) return
@@ -188,7 +188,7 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
 
         val xLabel = Utils.jLabel("X", font, foreground)
         val xNumber = JNumber(wrapper, scale, -144.0 / 2, 144.0 / 2, 1.0, point.x)
-        xNumber.spinner.addChangeListener() {
+        xNumber.spinner.addChangeListener {
             val value = xNumber.model.number.toDouble()
             val diff = value - bezierPoint.getType(type)!!.x
             if (round(diff * 100) / 100 == 0.0) return@addChangeListener
@@ -202,7 +202,7 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
 
         val yLabel = Utils.jLabel("Y", font, foreground)
         val yNumber = JNumber(wrapper, scale, -144.0 / 2, 144.0 / 2, 1.0, point.y)
-        yNumber.spinner.addChangeListener() {
+        yNumber.spinner.addChangeListener {
             val value = yNumber.model.number.toDouble()
             val diff = value - bezierPoint.getType(type)!!.y
             if (round(diff * 100) / 100 == 0.0) return@addChangeListener

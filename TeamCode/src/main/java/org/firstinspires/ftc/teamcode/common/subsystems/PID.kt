@@ -16,8 +16,8 @@ class PID(
     private var integralSum: Double = 0.0
 
     private val a: Double = 0.8
-    private var previousFilterEstimate: Double = 0.0;
-    private var currentFilterEstimate: Double = 0.0;
+    private var previousFilterEstimate: Double = 0.0
+    private var currentFilterEstimate: Double = 0.0
 
     private val deltaTimer: ElapsedTime = ElapsedTime()
 
@@ -26,10 +26,10 @@ class PID(
     }
 
     fun calc(target: Double, current: Double): Double {
-        val error = target- current
+        val error = target - current
         val errorChange = error - lastError
 
-        currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange
+        currentFilterEstimate = (a * previousFilterEstimate) + (1 - a) * errorChange
         previousFilterEstimate = currentFilterEstimate
 
         val derivative = currentFilterEstimate / deltaTimer.seconds()

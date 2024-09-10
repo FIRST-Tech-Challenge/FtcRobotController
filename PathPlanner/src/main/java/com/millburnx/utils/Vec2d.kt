@@ -111,8 +111,8 @@ class Vec2d(val x: Double, val y: Double) {
     /**
      * Converts the point to a java.awt dimension
      */
-    fun dimension(): java.awt.Dimension {
-        return java.awt.Dimension(x.toInt(), y.toInt())
+    fun dimension(): Dimension {
+        return Dimension(x.toInt(), y.toInt())
     }
 
     /**

@@ -134,7 +134,7 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
         val remainingSegments = beziers.subList(lastSegment, beziers.size)
         val intersections = remainingSegments.flatMap { it.intersections(robot.lookaheadCircle) }
         // closest by angle from current heading
-        val closestIntersection = intersections.minByOrNull { abs(getAngleDiff(it.point)) }
+        val closestIntersection = intersections.minByOrNull { abs(PurePursuit.getAngleDiff(robot.toPair(), it.point)) }
         for (intersection in intersections) {
             val segmentIndex = beziers.indexOf(intersection.line)
             val color = colors[segmentIndex % colors.size]
@@ -171,17 +171,12 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
     }
 
     private fun driveTo(point: Vec2d) {
-        val angleDiff = getAngleDiff(point)
+        val angleDiff = PurePursuit.getAngleDiff(robot.toPair(), point)
         val forwardPower = robot.position.distanceTo(point) / robot.lookahead
         drive(
             forwardPower,
             0.0,
             angleDiff
         ) // robot never strafes in pp since pp is a differential drive algorithm
-    }
-
-    private fun getAngleDiff(point: Vec2d): Double {
-        val angle = Utils.normalizeAngle(robot.position.angleTo(point))
-        return Utils.normalizeAngle(angle - robot.heading)
     }
 }

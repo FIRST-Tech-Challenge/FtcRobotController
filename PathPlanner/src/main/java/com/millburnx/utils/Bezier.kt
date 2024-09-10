@@ -9,6 +9,10 @@ import kotlin.math.pow
 
 class Bezier(val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, val p3: Vec2d) {
     companion object {
+        fun fromLine(p0: Vec2d, p1: Vec2d): Bezier {
+            return Bezier(p0, p0.lerp(p1, 1.0 / 3), p1.lerp(p0, 1.0 / 3), p1)
+        }
+
         /**
          * Generates a cubic bezier from a catmull-rom spline,
          * @param p0 the point before the start of the curve

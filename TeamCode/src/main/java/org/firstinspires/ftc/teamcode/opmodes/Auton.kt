@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.command.CommandOpMode
-import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.geometry.Pose2d
 import com.millburnx.utils.Vec2d
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp

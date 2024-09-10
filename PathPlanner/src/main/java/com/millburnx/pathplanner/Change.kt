@@ -54,7 +54,7 @@ class PointAddition(val pathPlanner: PathPlanner, val bezierPoint: BezierPoint, 
     }
 
     override fun undo() {
-        pathPlanner._removePoint(bezierPoint)
+        pathPlanner.removePointPure(bezierPoint)
     }
 
     override fun toString(): String {
@@ -69,7 +69,7 @@ class PointRemoval(val pathPlanner: PathPlanner, val bezierPoint: BezierPoint, v
     val wasLast = index == pathPlanner.bezierPoints.size - 1
 
     override fun apply() {
-        pathPlanner._removePoint(bezierPoint)
+        pathPlanner.removePointPure(bezierPoint)
     }
 
     override fun undo() {
