@@ -9,13 +9,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.Arrays;
 import java.util.List;
 
 @Autonomous
 public class AprilTagIDDetector extends OpMode {
     private AprilTagProcessor aprilTagProcessor;
+    private AprilTagLibrary library = getCurrentGameTagLibrary();
     public int aprilTagsCount = 0;
     private VisionPortal visionPortal;
     public WebcamName webcamName;
@@ -44,15 +48,17 @@ public class AprilTagIDDetector extends OpMode {
         currentDetections = aprilTagProcessor.getDetections();
         for (AprilTagDetection detection : currentDetections){
             telemetry.addLine(String.valueOf(detection.id));
-            if (detection.rawPose != null) {
+            if (detection.ftcPose != null) {
                 try {
-                    poseX = detection.rawPose.x;
-                    poseY = detection.rawPose.y;
-                    poseZ = detection.rawPose.z;
+                    poseX = detection.ftcPose.x;
+                    poseY = detection.ftcPose.y;
+                    poseZ = detection.ftcPose.z;
                 } catch (Exception e) {
                     telemetry.addLine(e.toString());
                 }
             }
+            telemetry.addLine(Arrays.toString(library.getAllTags()));
+            telemetry.addData("Null: ", detection.metadata == null);
         }
         telemetry.addData("AprilTag Count: ", aprilTagsCount);
         telemetry.addData("Time: " , main_timer.time());
