@@ -33,13 +33,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
@@ -51,6 +48,9 @@ import java.util.concurrent.TimeUnit;
  * detect a number of predefined objects and AprilTags in the 36h11 family, can
  * recognize colors, and can be trained to detect custom objects. See this website for
  * documentation: https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336
+ *
+ * For detailed instructions on how a HuskyLens is used in FTC, please see this tutorial:
+ * https://ftc-docs.firstinspires.org/en/latest/devices/huskylens/huskylens.html
  * 
  * This sample illustrates how to detect AprilTags, but can be used to detect other types
  * of objects by changing the algorithm. It assumes that the HuskyLens is configured with
@@ -110,6 +110,8 @@ public class SensorHuskyLens extends LinearOpMode {
          * Users, should, in general, explicitly choose the algorithm they want to use
          * within the OpMode by calling selectAlgorithm() and passing it one of the values
          * found in the enumeration HuskyLens.Algorithm.
+         *
+         * Other algorithm choices for FTC might be: OBJECT_RECOGNITION, COLOR_RECOGNITION or OBJECT_CLASSIFICATION.
          */
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
@@ -141,6 +143,15 @@ public class SensorHuskyLens extends LinearOpMode {
             telemetry.addData("Block count", blocks.length);
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addData("Block", blocks[i].toString());
+                /*
+                 * Here inside the FOR loop, you could save or evaluate specific info for the currently recognized Bounding Box:
+                 * - blocks[i].width and blocks[i].height   (size of box, in pixels)
+                 * - blocks[i].left and blocks[i].top       (edges of box)
+                 * - blocks[i].x and blocks[i].y            (center location)
+                 * - blocks[i].id                           (Color ID)
+                 *
+                 * These values have Java type int (integer).
+                 */
             }
 
             telemetry.update();
