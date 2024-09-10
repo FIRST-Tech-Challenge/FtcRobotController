@@ -33,7 +33,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     private Servo leftArm = null;
     private Servo rightArm = null;
-    // NEHA when the claw is attached to the servo, we will need different values for ARM_MIN and ARM_MAX so we don't break the claw.
+    // NEHA when the claw is attached to the servo, we will need different values for ARM_MIN and ARM_MAX so we don't break the claw
     private static final double ARM_DEFAULT = 0.5;
     private static final double ARM_MIN = 0.0;
     private static final double ARM_MAX = 1.0;
