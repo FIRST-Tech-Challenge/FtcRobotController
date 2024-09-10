@@ -1,3 +1,8 @@
+/**
+ * Code is based on https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
+ * Mechanum drive TeleOp
+ */
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
