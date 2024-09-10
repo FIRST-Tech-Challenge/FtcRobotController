@@ -33,6 +33,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     private Servo leftArm = null;
     private Servo rightArm = null;
+    // NEHA when the claw is attached to the servo, we will need different values for ARM_MIN and ARM_MAX so we don't break the claw
     private static final double ARM_DEFAULT = 0.5;
     private static final double ARM_MIN = 0.0;
     private static final double ARM_MAX = 1.0;
@@ -132,6 +133,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if (gamepad1.dpad_right)
                 turnToHeading(-135.0); // Turn to face the basket
 
+            // NEHA this is sample code for controlling the servo. Use this to write code to open and close the claw.
             if (gamepad1.left_bumper) {
                 if (arm_position < ARM_MAX) {
                     arm_position += 0.001;
@@ -170,6 +172,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.addData("Turn Speed", "%4.2f", turnSpeed);
         telemetry.addData("Degrees to turn", "%4.2f", degreesToTurn);
+        // NEHA you should add logging so we can see the arm position and figure out the default values. You will use getPosition()
 
         telemetry.update();
     }
