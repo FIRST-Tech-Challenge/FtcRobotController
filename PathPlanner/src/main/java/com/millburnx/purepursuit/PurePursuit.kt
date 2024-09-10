@@ -1,10 +1,13 @@
 package com.millburnx.purepursuit
 
+import com.millburnx.dashboard.ICanvas
+import com.millburnx.dashboard.ITelemetryPacket
 import com.millburnx.utils.Bezier
 import com.millburnx.utils.Circle
 import com.millburnx.utils.Intersection
 import com.millburnx.utils.Utils
 import com.millburnx.utils.Vec2d
+import java.awt.Color
 import kotlin.math.abs
 
 class PurePursuit(
@@ -81,6 +84,52 @@ class PurePursuit(
             val (aPoint, aAngle) = a
             val diff = Utils.normalizeAngle(aPoint.angleTo(b))
             return Utils.normalizeAngle(diff - aAngle)
+        }
+
+        fun render(data: PurePursuitData, packet: ITelemetryPacket, addTelemetry: Boolean = true) {
+            val (target, isDone, path, remainingPath, intersections) = data
+            if (addTelemetry) {
+                packet.put("pure_pursuit/target", target)
+                packet.put("pure_pursuit/is_done", isDone)
+                packet.put("pure_pursuit/path", path)
+                packet.put("pure_pursuit/remaining_path", remainingPath)
+                packet.put("pure_pursuit/intersections", intersections)
+            }
+            val canvas = packet.fieldOverlay()
+            val colors = listOf(Utils.Colors.red, Utils.Colors.blue, Utils.Colors.green, Utils.Colors.yellow)
+            renderPath(canvas, path, colors)
+            renderIntersections(canvas, intersections, target, colors)
+        }
+
+        fun renderPath(canvas: ICanvas, path: List<Bezier>, colors: List<Color>) {
+            var color = 0
+            for (bezier in path) {
+                val currentColor = colors[color % colors.size]
+                val colorString = String.format("#%06x", currentColor.rgb)
+                canvas.setStroke(colorString)
+                bezier.draw(canvas)
+                color++
+            }
+        }
+
+        fun renderIntersections(
+            canvas: ICanvas,
+            intersections: List<Intersection<Bezier>>,
+            target: Vec2d,
+            colors: List<Color>
+        ) {
+            var color = 0
+            for (intersection in intersections) {
+                val currentColor = if (intersection.point == target) {
+                    colors[color % colors.size]
+                } else {
+                    Color.WHITE
+                }
+                val colorString = String.format("#%06x", currentColor.rgb)
+                canvas.setFill(colorString)
+                    .fillCircle(intersection.point.x, intersection.point.y, 1.0)
+                color++
+            }
         }
     }
 }

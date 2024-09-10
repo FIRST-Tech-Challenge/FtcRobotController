@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Util
 class PurePursuitCommand(
     val drive: DriveSubsystem,
     val path: List<Vec2d>,
-    val lookahead: Double = 14.0
+    val lookahead: Double = 14.0,
 ) : CommandBase() {
     val purePursuit = PurePursuit(path, lookahead)
     val pidX = PID(1.0, 0.0, 0.0)
