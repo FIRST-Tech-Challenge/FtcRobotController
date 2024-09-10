@@ -12,6 +12,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 //newest file as of 2024/09/07
+
+/*Details of the robot as follow:
+    - distance from right odom wheel to left odom wheel: 0.023m
+    - distance from back odom wheel to center of x-axis: 0.235m
+    - wheel diameter:
+    -
+
+ */
+
 @TeleOp
 public class Odometry_Testing extends LinearOpMode {
 
@@ -40,9 +49,11 @@ public class Odometry_Testing extends LinearOpMode {
         odom_l.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom_r.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom_h.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odom_l.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        odom_r.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        odom_h.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //using WITHOUT encoder as we just need encoder value.
+        odom_l.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        odom_r.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        odom_h.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //
 
         double prev_encoder_l = 0, prev_encoder_r = 0, prev_encoder_h = 0, prev_ang = 0, current_ang ;
         double delta_encoder_l, delta_encoder_r, delta_encoder_h, delta_local_x, delta_local_y, delta_global_x, delta_global_y, delta_ang;
@@ -69,10 +80,12 @@ public class Odometry_Testing extends LinearOpMode {
             delta_encoder_r = encoder_r - prev_encoder_r;
             delta_encoder_h = encoder_h - prev_encoder_h;
             delta_ang = current_ang - prev_ang;
+            //current_ang = Math.toRadians((encoder_r-encoder_l)/0.05)
+            // (r-l) divided by distance (METRES) between the encoder wheels
 
             // Calculate local changes
             delta_local_x = (delta_encoder_l + delta_encoder_r) / 2;
-            delta_local_y = delta_encoder_h - (delta_ang * disM_encoderHtoCenter);
+                delta_local_y = delta_encoder_h - (delta_ang * disM_encoderHtoCenter);
 
             // Convert local changes to global coordinates
            // current_ang = 0;
