@@ -21,9 +21,12 @@ public class AprilTagIDDetector extends OpMode {
     public StringBuilder idsFound;
     public ElapsedTime main_timer;
     List<AprilTagDetection> currentDetections;
-    public double poseX;
-    public double poseY;
-    public double poseZ;
+    public double poseX = 0;
+    public boolean xDetected = false;
+    public double poseY = 0;
+    public boolean yDetected = false;
+    public double poseZ = 0;
+    public boolean zDetected = false;
 
     @Override
     public void init() {
@@ -40,9 +43,14 @@ public class AprilTagIDDetector extends OpMode {
         currentDetections = aprilTagProcessor.getDetections();
         for (AprilTagDetection detection : currentDetections){
             telemetry.addLine(String.valueOf(detection.id));
-            poseX = detection.rawPose.x;
-            poseY = detection.rawPose.y;
-            poseZ = detection.rawPose.z;
+            try {
+                poseX = detection.rawPose.x;
+                poseY = detection.rawPose.y;
+                poseZ = detection.rawPose.z;
+            }
+            catch (Exception e){
+                telemetry.addLine(e.toString());
+            }
         }
         telemetry.addData("AprilTag Count: ", aprilTagsCount);
         telemetry.addData("Time: " , main_timer.time());
