@@ -44,6 +44,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
     static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate
     static final double MIN_TURN_SPEED = 0.15;     // Min Turn speed to limit turn rate
+
     private double turnSpeed = 0;
     private double degreesToTurn = 0;
 
@@ -129,7 +130,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if (gamepad1.dpad_left)
                 turnToHeading(90);
             if (gamepad1.dpad_right)
-                turnToHeading(-135.0);
+                turnToHeading(-135.0); // Turn to face the basket
 
             if (gamepad1.left_bumper) {
                 if (arm_position < ARM_MAX) {
