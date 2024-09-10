@@ -7,21 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
-import org.firstinspires.ftc.teamcode.commands.GateCommand;
-import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
-import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
-import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
-import org.firstinspires.ftc.teamcode.commands.ThrowAirplaneCommand;
-import org.firstinspires.ftc.teamcode.commands.WristPositionCommand;
-import org.firstinspires.ftc.teamcode.commands.ZeroWristPositionCommand;
-import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.GateSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
@@ -38,20 +24,8 @@ public class DriveCommandOpMode extends CommandOpMode {
     private DoubleSupplier slowdownMultiplier, forwardBack, leftRight, rotation;
 
     private DriveSubsystem driveSubsystem;
-    private ArmSubsystem armSubsystem;
-    private WristSubsystem wristSubsystem;
-    private FingerSubsystem fingerSubsystem;
-    private IntakeSubsystem intakeSubsystem;
-    private LauncherSubsystem launcherSubsystem;
-    private GateSubsystem gateSubsystem;
-
 
     private DefaultDrive driveCommand;
-    private MoveArmCommand moveArmCommand;
-    private MoveWristCommand moveWristCommand;
-    private WristPositionCommand zeroWristCommand;
-    private MoveFingerCommand moveFingerCommand;
-    private IntakeCommand intakeCommand;
 
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriverOP");
@@ -69,11 +43,6 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         assert driveMotors != null;
         driveSubsystem = new DriveSubsystem(driveMotors);
-        armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
-        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this), false);
-        fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
-        launcherSubsystem = new LauncherSubsystem(RobotHardwareInitializer.initializeLauncher(this));
-        gateSubsystem = new GateSubsystem(RobotHardwareInitializer.initializeGateServos(this));
 
         dbp.info("Subsystems built.");
         dbp.send(false);
@@ -102,58 +71,11 @@ public class DriveCommandOpMode extends CommandOpMode {
             return end;
         };
 
-
-
         driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
-        moveArmCommand = new MoveArmCommand(armSubsystem,
-                () -> armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
-                () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
-        moveWristCommand = new MoveWristCommand(wristSubsystem,
-                backwardWristSupplier, forwardWristSupplier);
-        moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
-                () -> {
-                    double quantity = (armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +
-                            (armerController.getButton(GamepadKeys.Button.X) ? 1 : 0);
-                    if(quantity == 0) {
-                        return 0;
-                    }
-                    return quantity/2.5d;
-                },
-                () -> {
-                    double quantity = (armerController.getButton(GamepadKeys.Button.B) ? 1 : 0) +
-                            (armerController.getButton(GamepadKeys.Button.Y) ? 1 : 0);
-                    if(quantity == 0) {
-                        return 0;
-                    }
-                    return quantity/2.5d;
-                });
-        armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-                .whenPressed(new ThrowAirplaneCommand(launcherSubsystem));
-        /*
-        armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.OPEN));
-        armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.CLOSED));
-         */
-        armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new WristPositionCommand(wristSubsystem, true, moveWristCommand));
-        armerController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new WristPositionCommand(wristSubsystem, false, moveWristCommand));
-        armerController.getGamepadButton(GamepadKeys.Button.BACK)
-                .whenPressed(new ZeroWristPositionCommand(wristSubsystem));
-
 
         register(driveSubsystem);
-        register(armSubsystem);
-        register(wristSubsystem);
-        register(fingerSubsystem);
-        register(launcherSubsystem);
-        register(gateSubsystem);
 
         driveSubsystem.setDefaultCommand(driveCommand);
-        armSubsystem.setDefaultCommand(moveArmCommand);
-        wristSubsystem.setDefaultCommand(moveWristCommand);
-        fingerSubsystem.setDefaultCommand(moveFingerCommand);
 
         dbp.info("Subsystems registered.");
         dbp.send(false);

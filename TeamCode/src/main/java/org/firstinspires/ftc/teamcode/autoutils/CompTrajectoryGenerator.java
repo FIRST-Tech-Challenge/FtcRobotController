@@ -1,35 +1,22 @@
 package org.firstinspires.ftc.teamcode.autoutils;
 
-import static java.sql.Types.OTHER;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.commands.WristPositionCommand;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
-import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Other;
 
 import java.util.HashMap;
 
 /** @noinspection rawtypes*/
+@Deprecated
 public class CompTrajectoryGenerator {
 
     private final SampleMecanumDrive DRIVE;
@@ -106,99 +93,6 @@ public class CompTrajectoryGenerator {
 
         DRIVE.setPoseEstimate(pose);
     }
-
-    /**
-     * Initializes a pre-made field trajectory based off the given trajectory enum
-     * @param trajectory The trajectory to initialize
-     * @param other The hashmap of all the other robot parts (Hand, Arm, Intake, etc.)
-     * @param PARK_LEFT Whether to have the trajectory sequence return the sequence for
-     *                  parking on the left or right side of the field
-     * @return The initialized trajectory if the given trajectory name exists,
-     *         otherwise returns null\
-     * @author Carter Rommelfanger
-     */
-    /*public TrajectorySequence generateFieldTrajectory(@NonNull final trajectories trajectory,
-                                                      final HashMap<Other, DynamicTypeValue> other,
-                                                      final boolean PARK_LEFT) {
-        final TrajectoryAccelerationConstraint accelerationConstraint =
-                SampleMecanumDrive.getAccelerationConstraint(25);
-        final TrajectoryVelocityConstraint velocityConstraint =
-                SampleMecanumDrive.getVelocityConstraint(30,
-                        DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
-
-        final double WAIT_TIME = 2.4288;
-
-        switch (trajectory) {
-            case BLUE_BOTTOM:
-                if (PARK_LEFT) {  
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(0)))
-                        .setConstraints(velocityConstraint, accelerationConstraint)
-                        .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36, 66))
-                        .lineTo(new Vector2d(50, 66))
-                        .build();
-                }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(270)))
-                            .setConstraints(velocityConstraint, accelerationConstraint)
-                            .waitSeconds(WAIT_TIME)
-                            .lineTo(new Vector2d(-36, 10))
-                            .turn(Math.toRadians(90))
-                            .lineTo(new Vector2d(58, 23))
-                            .build();
-
-            case BLUE_TOP:
-                if (PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(12, 70, Math.toRadians(0)))
-                            .setConstraints(velocityConstraint, accelerationConstraint)
-                            .waitSeconds(WAIT_TIME)
-                            .lineTo(new Vector2d(12, 66))
-                            .lineTo(new Vector2d(60, 66))
-                            .build();
-                }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(12, 70, Math.toRadians(270)))
-                        .setConstraints(velocityConstraint, accelerationConstraint)
-                        .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(12, 27))
-                        .lineTo(new Vector2d(50, 27))
-                        .build();
-
-            case RED_BOTTOM:
-                if (PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, -70, Math.toRadians(90)))
-                            .setConstraints(velocityConstraint, accelerationConstraint)
-                            .waitSeconds(WAIT_TIME)
-                            .lineTo(new Vector2d(-36, -20))
-                            .turn(Math.toRadians(-90))
-                            .lineTo(new Vector2d(58, -20))
-                            .build();
-                }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, -70, Math.toRadians(0)))
-                        .setConstraints(velocityConstraint, accelerationConstraint)
-                        .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36, -66))
-                        .lineTo(new Vector2d(50, -66))
-                        .build();
-
-            case RED_TOP:
-                if (PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(12,  -70, Math.toRadians(90)))
-                            .setConstraints(velocityConstraint, accelerationConstraint)
-                            .waitSeconds(WAIT_TIME)
-                            .lineTo(new Vector2d(12, -15))
-                            .turn(Math.toRadians(-90))
-                            .lineTo(new Vector2d(60, -15))
-                            .build();
-                }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(12, -70, Math.toRadians(0)))
-                        .setConstraints(velocityConstraint, accelerationConstraint)
-                        .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(12, -66))
-                        .lineTo(new Vector2d(60, -66))
-                        .build();
-            default:
-                return null;
-        }
-    }*/
 
     int wallDistance = 47;
     final double WAIT_TIME = 2.4288;
@@ -367,6 +261,7 @@ public class CompTrajectoryGenerator {
         }*/
     }
 
+    @Deprecated
     private enum PlacePixelState {
         START,
         ROTATE_ARM_WRIST,
@@ -374,100 +269,5 @@ public class CompTrajectoryGenerator {
         RELEASE_FINGERS,
         RESET_ARM, // optional. can be used to move the arm down if we need to
         FINISH
-    }
-
-    public void placePixelOnBoard() {
-        // TODO: test if placing pixel on board works
-        boolean running = true;
-        boolean keepFingerPinched = true;
-
-        HashMap<RobotHardwareInitializer.Arm, DcMotor> arms = new HashMap<>(2);
-        ArrayTypeValue<DcMotor> armArray = (ArrayTypeValue<DcMotor>) OTHER.get(Other.ARM);
-
-        arms.put(RobotHardwareInitializer.Arm.ARM1, armArray.get(0));
-        arms.put(RobotHardwareInitializer.Arm.ARM2, armArray.get(1));
-
-        // Zero out the wrist
-        WristSubsystem wristSubsystem = new WristSubsystem((DcMotorEx) OTHER.get(Other.WRIST).getValue(), false);
-        wristSubsystem.zero();
-
-        ArmSubsystem armSubsystem = new ArmSubsystem(arms);
-        FingerSubsystem fingerSubsystem = new FingerSubsystem((Servo) OTHER.get(Other.FINGER).getValue());
-
-        ElapsedTime elapsedTime = new ElapsedTime();
-        PlacePixelState state = PlacePixelState.START;
-        while (running) {
-            if (keepFingerPinched) {
-                fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.CLOSED);
-            } else {
-                fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.OPEN);
-            }
-
-            switch (state) {
-                case START:
-                    // Pinch Fingers
-                    keepFingerPinched = true;
-                    // Pinch fingers for half a second
-                    if (elapsedTime.seconds() > .5) {
-                        state = PlacePixelState.ROTATE_ARM_WRIST;
-                        elapsedTime.reset();
-                    }
-                    break;
-                case ROTATE_ARM_WRIST:
-                    // Move the arm to the back of the board
-
-                    // Move wrist to the board position slowly
-                    if (elapsedTime.seconds() >= .6) {
-                        wristSubsystem.setWristPosition(WristPositionCommand.getBoardTargetPosition(), .5f);
-                    }
-
-                    armSubsystem.positionMoveArm(ArmSubsystem.ArmPosition.BOARD.getPosition());
-
-                    //boolean atBack = //armSubsystem.getArmMotor1().getCurrentPosition() >= ArmSubsystem.ArmPosition.BOARD.getPosition();
-                    boolean atBack = !(armSubsystem.getArmMotor1().isBusy());
-
-                    // Check if it got to the board
-                    // It reached the board
-
-                    // If the arm is positioned at the back of the board, release the fingers
-                    if (atBack) {
-                        state = PlacePixelState.ARM_ADJUSTMENT;
-                        elapsedTime.reset();
-                    }
-                    break;
-                case ARM_ADJUSTMENT:
-                    // im sorry for this
-                    while (elapsedTime.seconds() < 1.3) {
-                        armSubsystem.manualMoveArm(.65);
-                    }
-                    armSubsystem.manualMoveArm(0);
-
-                    state = PlacePixelState.RELEASE_FINGERS;
-                    elapsedTime.reset();
-                    break;
-                case RELEASE_FINGERS:
-                    // Drop the pixels on the board
-                    keepFingerPinched = false;
-
-                    // After the pixels have had time to drop, begin to parks
-                    if (elapsedTime.milliseconds() > 1500) {
-                        state = PlacePixelState.RESET_ARM;
-                        elapsedTime.reset();
-                    }
-                    break;
-                case RESET_ARM:
-                    // optionally move the arm down a bit more so its not in a weird position
-                    while (elapsedTime.seconds() < 1) {
-                        armSubsystem.manualMoveArm(-1);
-                    }
-                    armSubsystem.manualMoveArm(0);
-                    elapsedTime.reset();
-                    state = PlacePixelState.FINISH;
-                    break;
-                case FINISH:
-                    running = false;
-                    break;
-            }
-        }
     }
 }

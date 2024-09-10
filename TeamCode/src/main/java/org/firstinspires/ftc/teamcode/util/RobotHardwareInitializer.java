@@ -12,8 +12,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
-import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
-import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
 
 import java.util.HashMap;
 
@@ -43,24 +41,8 @@ public class RobotHardwareInitializer {
     }
 
     public enum Other {
-        ARM,
-        INTAKE,
-        LAUNCHER,
-        FINGER,
-        WRIST,
         COLOR_SENSOR,
         WEBCAM,
-        PIXEL_POOPER
-    }
-
-    public enum Intake {
-        LEFT,
-        RIGHT
-    }
-
-    public enum Gate {
-        LEFT,
-        RIGHT
     }
 
     public static final String FRONT_LEFT_DRIVE = "fl_drv";
@@ -71,9 +53,6 @@ public class RobotHardwareInitializer {
     public static final String LEFT_ENCODER = FRONT_LEFT_DRIVE;
     public static final String RIGHT_ENCODER = FRONT_RIGHT_DRIVE;
     public static final String BACK_ENCODER = BACK_LEFT_DRIVE;
-
-    public static final String LEFT_GATE = "gateLeft";
-    public static final String RIGHT_GATE = "gateRight";
 
     public static HashMap<DriveMotor, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
         DcMotor leftFrontDrive;
@@ -126,155 +105,25 @@ public class RobotHardwareInitializer {
         return motorMap;
     }
 
-    public static HashMap<Gate, Servo> initializeGateServos(final OpMode opMode) {
-        HashMap<Gate, Servo> servos = new HashMap<>();
-
-        Servo left = null;
-        Servo right = null;
-        try {
-            left = opMode.hardwareMap.get(Servo.class, LEFT_GATE);
-            right = opMode.hardwareMap.get(Servo.class, RIGHT_GATE);
-        } catch (Exception e) {
-            Error(e, opMode);
-        }
-
-        servos.put(Gate.LEFT, left);
-        servos.put(Gate.RIGHT, right);
-        return servos;
-    }
-
     /** @noinspection rawtypes*/
     public static HashMap<Other, DynamicTypeValue> initializeAllOtherSystems(final OpMode opMode) {
         HashMap<Other, DynamicTypeValue> out = new HashMap<>();
-        // Init Arm
-        HashMap<Arm, DcMotor> tmp = initializeArm(opMode);
-        final DcMotor ARM1 = tmp.get(Arm.ARM1);
-        final DcMotor ARM2 = tmp.get(Arm.ARM2);
-        DcMotor[] tmp2 = new DcMotor[2];
-        tmp2[0] = ARM1;
-        tmp2[1] = ARM2;
-        out.put(Other.ARM, new ArrayTypeValue<>(tmp2));
-
-        // Init Wrist
-        out.put(Other.WRIST, new MotorTypeValue(initializeWrist(opMode)));
-
-        // Init Finger
-        out.put(Other.FINGER, new ServoTypeValue(initializeFinger(opMode)));
-
-        // Init Launcher
-        out.put(Other.LAUNCHER, new ServoTypeValue(initializeLauncher(opMode)));
 
         // Init Color Sensor
         //out.put(Other.COLOR_SENSOR, new ColorSensorTypeValue(initializeColorSensor(opMode)));
 
-        // Init Pixel Pooper
-        out.put(Other.PIXEL_POOPER, new ServoTypeValue(initializePixelPooper(opMode)));
-
-        /*
-        // Init Intake
-        HashMap<Intake, CRServo> tmp3 = initializeIntake(opMode);
-        final CRServo LEFT = tmp3.get(Intake.LEFT);
-        final CRServo RIGHT = tmp3.get(Intake.RIGHT);
-        CRServo[] tmp4 = new CRServo[2];
-        tmp4[0] = LEFT;
-        tmp4[1] = RIGHT;
-        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp4));]
-         */
-
         // Init Webcam
-        HashMap<Cameras, WebcamName> tmp5 = initializeCamera(opMode);
-        assert tmp5 != null;
-        out.put(Other.WEBCAM, new ArrayTypeValue<>(tmp5.values().toArray()));
+        HashMap<Cameras, WebcamName> tmp = initializeCamera(opMode);
+        assert tmp != null;
+        out.put(Other.WEBCAM, new ArrayTypeValue<>(tmp.values().toArray()));
 
         return out;
     }
 
+    @Deprecated
     public enum Arm {
         ARM1,
         ARM2
-    }
-
-    public static HashMap<Arm, DcMotor> initializeArm(final OpMode opMode) {
-        DcMotor arm = null;
-        DcMotor arm2 = null;
-        try {
-            arm = opMode.hardwareMap.get(DcMotor.class, "arm1");
-            arm.setDirection(DcMotorSimple.Direction.FORWARD);
-
-            arm2 = opMode.hardwareMap.get(DcMotor.class, "arm2");
-            arm2.setDirection(DcMotorSimple.Direction.FORWARD);
-        } catch (Exception e) {
-            Error(e, opMode);
-        }
-
-        HashMap<Arm, DcMotor> out = new HashMap<>();
-        out.put(Arm.ARM1, arm);
-        out.put(Arm.ARM2, arm2);
-
-        return out;
-    }
-
-    @Deprecated
-    public static HashMap<Intake, CRServo> initializeIntake(final OpMode opMode) {
-        CRServo left = null;
-        CRServo right = null;
-
-        try {
-            left = opMode.hardwareMap.get(CRServo.class, "intakeLeft");
-            right = opMode.hardwareMap.get(CRServo.class, "intakeRight");
-        } catch (Exception e) {
-            Error(e, opMode);
-        }
-
-        HashMap<Intake, CRServo> out = new HashMap<>();
-        out.put(Intake.LEFT, left);
-        out.put(Intake.RIGHT, right);
-        return out;
-    }
-
-    @Deprecated
-    public static Servo initializeLauncher(final OpMode opMode) {
-        try {
-            return opMode.hardwareMap.get(Servo.class, "launcher");
-        } catch (Exception e) {
-            Error(e, opMode);
-        }
-        return null;
-    }
-
-    @Deprecated
-    public static DcMotorEx initializeWrist(final OpMode opMode) {
-        try {
-            DcMotorEx motor = opMode.hardwareMap.get(DcMotorEx.class, "wrist"); // port 2
-            return motor;
-        } catch(Exception e) {
-            Error(e, opMode);
-        }
-        return null;
-    }
-
-    @Deprecated
-    public static Servo initializeFinger(final OpMode opMode) {
-        try {
-            Servo servo = opMode.hardwareMap.get(Servo.class, "finger_servo");
-            servo.setDirection(Servo.Direction.FORWARD);
-            return servo;
-        } catch(Exception e) {
-            Error(e, opMode);
-        }
-        return null;
-    }
-
-    @Deprecated
-    public static Servo initializePixelPooper(final OpMode opMode) {
-        try {
-            Servo servo = opMode.hardwareMap.get(Servo.class, "pixel_pooper");
-            servo.setDirection(Servo.Direction.FORWARD);
-            return servo;
-        } catch(Exception e) {
-            Error(e, opMode);
-        }
-        return null;
     }
 
     public static ColorSensor initializeColorSensor(final OpMode opMode) {
