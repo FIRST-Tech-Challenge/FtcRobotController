@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
@@ -43,13 +44,14 @@ public class AprilTagIDDetector extends OpMode {
         currentDetections = aprilTagProcessor.getDetections();
         for (AprilTagDetection detection : currentDetections){
             telemetry.addLine(String.valueOf(detection.id));
-            try {
-                poseX = detection.rawPose.x;
-                poseY = detection.rawPose.y;
-                poseZ = detection.rawPose.z;
-            }
-            catch (Exception e){
-                telemetry.addLine(e.toString());
+            if (detection.rawPose != null) {
+                try {
+                    poseX = detection.rawPose.x;
+                    poseY = detection.rawPose.y;
+                    poseZ = detection.rawPose.z;
+                } catch (Exception e) {
+                    telemetry.addLine(e.toString());
+                }
             }
         }
         telemetry.addData("AprilTag Count: ", aprilTagsCount);
