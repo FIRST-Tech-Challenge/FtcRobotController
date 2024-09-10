@@ -11,8 +11,6 @@ public class MecanumDrive extends OpMode {
 
     @Override
     public void init() {
-        gamepad1.rumbleBlips(3);
-        telemetry.addData("Gamepad ID:", gamepad1.getGamepadId());
         frontLeftMotor = hardwareMap.get(DcMotor.class, "fl");
         frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
