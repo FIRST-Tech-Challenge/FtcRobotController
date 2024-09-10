@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.2024_2025_DIVE.Camera.TensorFlow;
+package org.firstinspires.ftc.teamcode.JackBurr.Camera.TensorFlow;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -57,6 +57,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
+     * errors are here
      */
     private TfodProcessor tfod;
 
