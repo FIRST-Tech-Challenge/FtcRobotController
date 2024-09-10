@@ -53,6 +53,8 @@ public class Bot {
         rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set Direction of each Motors
+        // switch REVERSE and FORWARD if controls are opposite
+        // This is set for Mechanum drive
         leftMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -67,7 +69,7 @@ public class Bot {
      * @param frontRightPower
      * @param backRightPower
      */
-    private setDriveTrain(
+    public setDriveTrain(
             double frontLeftPower, double backLeftPower,
             double frontRightPower, double backRightPower
     ) {
