@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.magic;
+package org.firstinspires.ftc.teamcode.systems;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.BaseRobot;

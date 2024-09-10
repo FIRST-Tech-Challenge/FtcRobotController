@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.magic.ShutdownManager;
+import org.firstinspires.ftc.teamcode.systems.ShutdownManager;
 
 /** @noinspection unused */
 @Autonomous(name = "Blue Left", group = "Autonomous")

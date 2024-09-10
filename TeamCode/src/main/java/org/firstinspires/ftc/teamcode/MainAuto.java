@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.magic.Logger;
-import org.firstinspires.ftc.teamcode.magic.SampleFinder;
+import org.firstinspires.ftc.teamcode.systems.Logger;
+import org.firstinspires.ftc.teamcode.systems.SampleFinder;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extender;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 

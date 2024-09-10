@@ -7,8 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.magic.Logger;
-import org.firstinspires.ftc.teamcode.magic.Odometry;
+import org.firstinspires.ftc.teamcode.systems.DynamicInput;
+import org.firstinspires.ftc.teamcode.systems.Logger;
+import org.firstinspires.ftc.teamcode.systems.Odometry;
 import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.LinearActuator;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
@@ -26,8 +27,7 @@ public class BaseRobot {
     public final DcMotor frontRightMotor;
     public final DcMotor rearLeftMotor;
     public final DcMotor rearRightMotor;
-    public final Gamepad primaryGamepad;
-    public final Gamepad auxGamepad;
+    public final DynamicInput input;
     public final HardwareMap hardwareMap;
     public final LinearActuator linearActuator;
     public final Telemetry telemetry;
@@ -41,8 +41,7 @@ public class BaseRobot {
 
     public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
-        this.primaryGamepad = primaryGamepad;
-        this.auxGamepad = auxGamepad;
+        this.input = new DynamicInput(primaryGamepad, auxGamepad);
         this.telemetry = telemetry;
         this.logger = new Logger(this);
         // Initialize and configure the motors
@@ -120,45 +119,11 @@ public class BaseRobot {
 
 
     public void gamepadPrimary() {
-        /*
-            Defaults
-         */
-        double dpadPower = Settings.dpad_sensitivity;
-        double bumperPower = Settings.bumper_sensitivity;
-        double rotation = 0.0;
+        DynamicInput.DirectionalOutput directionalOutput = input.getDirectionalOutput();
 
-        /*
-            Left joystick sets the power of the wheels
-         */
-        double strafePower = primaryGamepad.left_stick_x;
-        double drivePower = -primaryGamepad.left_stick_y;
-
-        /*
-            Bumpers rotate the robot
-         */
-        if (primaryGamepad.right_bumper) {
-            rotation += bumperPower;
-        }
-        if (primaryGamepad.left_bumper) {
-            rotation -= bumperPower;
-        }
-        
-       
-        /*
-            D-pad does fine-tuned movement at a constant rate in a single direction
-         */
-        if (primaryGamepad.dpad_up) {
-            drivePower += dpadPower;
-        }
-        if (primaryGamepad.dpad_down) {
-            drivePower -= dpadPower;
-        }
-        if (primaryGamepad.dpad_left) {
-            strafePower -= dpadPower;
-        }
-        if (primaryGamepad.dpad_right) {
-            strafePower += dpadPower;
-        }
+        double rotation = directionalOutput.rotation;
+        double strafePower = directionalOutput.x;
+        double drivePower = directionalOutput.y;
 
         /*
             Drives the motors based on the given power/rotation
@@ -172,21 +137,21 @@ public class BaseRobot {
         // RT: Open right claw | LT: Open left claw
         if (Settings.Deploy.ARM) {
             if (extenderReleased) {
-                if (auxGamepad.x) {
+                if (input.pressed().retractActuator) {
                     extenderReleased = false;
                     arm.extender.retract();
-                } else if (auxGamepad.y) {
+                } else if (input.pressed().extendActuator) {
                     extenderReleased = false;
                     arm.extender.extend();
-                } else if (auxGamepad.a) {
+                } else if (input.pressed().groundActuator) {
                     extenderReleased = false;
                     arm.extender.ground();
                 }
-            } else if (!auxGamepad.a && !auxGamepad.x && !auxGamepad.y) {
+            } else if (input.pressed().actuatorBusy) {
                 extenderReleased = true;
             }
 
-            if (auxGamepad.right_trigger > 0.1) {
+            if (input.pressed().clawRight) {
                 if (clawReleasedR) {
                     clawReleasedR = false;
                     arm.claw.setRightServo(!arm.claw.openedR);
@@ -194,7 +159,7 @@ public class BaseRobot {
             } else {
                 clawReleasedR = true;
             }
-            if (auxGamepad.left_trigger > 0.1) {
+            if (input.pressed().clawLeft) {
                 if (clawReleasedL) {
                     clawReleasedL = false;
                     arm.claw.setLeftServo(!arm.claw.openedL);
@@ -205,24 +170,24 @@ public class BaseRobot {
 
             // UP: Set the wrist to up
             // DOWN: Set the wrist to down
-            if (auxGamepad.right_bumper) {
+            if (input.pressed().wristUp) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            } else if (auxGamepad.left_bumper) {
+            } else if (input.pressed().wristDown) {
                 arm.wrist.setPosition(Wrist.Position.BOARD);
             }
         }
 
-        if (auxGamepad.dpad_up) {
+        if (input.pressed().ascendActuatorExtend) {
             linearActuator.extend();
-        } else if (auxGamepad.dpad_down) {
+        } else if (input.pressed().ascendActuatorRetract) {
             linearActuator.retract();
         } else {
             linearActuator.stop();
         }
-        if (auxGamepad.dpad_right && actuatorReleased) {
+        if (input.pressed().ascendActuatorChange && actuatorReleased) {
             linearActuator.changePosition();
             actuatorReleased = false;
-        } else if (!auxGamepad.dpad_right) {
+        } else if (!input.pressed().ascendActuatorChange) {
             actuatorReleased = true;
         }
     }

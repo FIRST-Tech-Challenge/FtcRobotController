@@ -4,16 +4,16 @@ import java.lang.reflect.Field;
 
 /** @noinspection unused */
 public class Settings {
-
-    public static final double dpad_sensitivity = 0.3;
-    public static final double bumper_sensitivity = 0.8;
     // makes strafing faster or slower
     public static final double strafe_power_coefficient = 1.2;
     public static final double tileLengthFeet = 2;
-    // control preferences
-    public static final int playerCount = 2;
-    public static final double left_stick_sensitivity = 1.0;
 
+    public static class DefaultGamepadSettings {
+        public double left_stick_sensitivity = 1.0;
+        public double dpad_sensitivity = 0.3;
+        public double bumper_sensitivity = 0.8;
+        public double trigger_threshold = 0.1;
+    }
 
     public static String getDisabledFlags() {
         StringBuilder enabledFlags = new StringBuilder();
