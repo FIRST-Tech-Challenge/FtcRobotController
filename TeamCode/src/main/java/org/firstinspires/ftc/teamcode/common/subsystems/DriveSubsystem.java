@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
@@ -11,21 +12,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+@Config
 public class DriveSubsystem extends SubsystemBase {
     public MotorEx leftFront, leftRear, rightRear, rightFront;
 
     public IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
-    public static final double TRACK_WIDTH = 12;
-    public static final double CENTER_WHEEL_OFFSET = 0; // distance between center of rotation of the robot and the center odometer
-    public static final double WHEEL_DIAMETER = 2.0;
-    public static final double TICKS_PER_REV = 8192;
-    public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
+    public static double TRACK_WIDTH = 12.375;
+    public static double CENTER_WHEEL_OFFSET = 0.5; // distance between center of rotation of the robot and the center odometer
+    public static double WHEEL_DIAMETER = 1.425;
+    public static double TICKS_PER_REV = 8192;
+    public static double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
     public Motor.Encoder leftOdom, rightOdom, centerOdom;
     public HolonomicOdometry odometry;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
+        DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
+
         imu = hardwareMap.get(IMU.class, "imu");
 
         leftFront = new MotorEx(hardwareMap, "frontLeft");
@@ -52,8 +56,8 @@ public class DriveSubsystem extends SubsystemBase {
         ));
         imu.initialize(parameters);
 
-        leftOdom = rightFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
-        rightOdom = rightRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        leftOdom = rightRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        rightOdom = leftFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
         centerOdom = leftRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
 
         rightOdom.setDirection(Motor.Direction.REVERSE);
@@ -70,7 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
         );
 
         // change to reflect starting field position
-        odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(0)));
+        odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(Math.toRadians(0))));
     }
 
     public void robotCentric(double power, double strafe, double turn) {

@@ -40,6 +40,9 @@ public class MainTelelop extends CommandOpMode {
 
         pos = drive.getPos();
 
+        telemetry.addData("left", drive.leftOdom.getPosition());
+        telemetry.addData("center", drive.centerOdom.getPosition());
+        telemetry.addData("right", drive.rightOdom.getPosition());
         tel.drawField(pos, dash);
         telemetry.update();
     }

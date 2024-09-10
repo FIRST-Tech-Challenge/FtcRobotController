@@ -31,7 +31,7 @@ class Auton : CommandOpMode() {
         tel = Telemetry()
         dash = FtcDashboard.getInstance()
 
-        schedule(PurePursuitCommand(drive, path))
+        schedule(PurePursuitCommand(drive, path, dash!!.telemetry))
     }
 
     override fun run() {

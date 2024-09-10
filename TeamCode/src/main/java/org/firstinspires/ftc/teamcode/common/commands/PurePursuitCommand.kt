@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common.commands
 import com.arcrobotics.ftclib.command.CommandBase
 import com.millburnx.purepursuit.PurePursuit
 import com.millburnx.utils.Vec2d
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.common.subsystems.DriveSubsystem
 import org.firstinspires.ftc.teamcode.common.subsystems.PID
 import org.firstinspires.ftc.teamcode.common.utils.Util
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Util
 class PurePursuitCommand(
     val drive: DriveSubsystem,
     val path: List<Vec2d>,
+    val telemetry: Telemetry,
     val lookahead: Double = 14.0,
 ) : CommandBase() {
     val purePursuit = PurePursuit(path, lookahead)
@@ -38,7 +40,10 @@ class PurePursuitCommand(
         val angleDiff = Util.getAngleDiff((position to heading), targetPoint)
         val powerH = pidX.calc(angleDiff, heading)
 
-        drive.robotCentric(powerX, powerY, powerH)
+//        drive.robotCentric(powerX, powerY, powerH)
+        telemetry.addData("powerX", powerX)
+        telemetry.addData("powerY", powerY)
+        telemetry.addData("powerH", powerH)
     }
 
     override fun end(interrupted: Boolean) {
