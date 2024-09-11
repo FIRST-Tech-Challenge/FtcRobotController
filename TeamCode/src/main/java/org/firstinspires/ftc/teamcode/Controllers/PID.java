@@ -21,7 +21,7 @@ public class PID {
         ePrev = 0;
     }
 
-    public double calculate(double currentState, double target) {
+    public double calculate(double target, double currentState) {
         double error = target - currentState;
         double dt = timer.seconds();
         eIntegralSum += (error - ePrev) * dt;
