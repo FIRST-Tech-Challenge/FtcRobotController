@@ -85,7 +85,10 @@ public class DeadWheelOdometery {
         // These will be encoder velocities with units of in/s
         // Use the same formula for relativeChangeX for vX, vY is simply going to be you horizontal encoder velocity
 
-        double vX = (convertToDistance(currentLeftVelocity) + convertToDistance(currentRightVelocity))/2;
+        double xVelocity = (convertToDistance(currentLeftVelocity) + convertToDistance(currentRightVelocity))/2;
+        double angularVelocity = (convertToDistance(currentLeftVelocity) - convertToDistance(currentRightVelocity))/trackWidth;
+        double yVelocity = convertToDistance(currentCenterVelocity)-forwardOffset*angularVelocity;
+
 
         SimpleMatrix deltaPoseBody = new SimpleMatrix(
                 new double[][]{
@@ -111,9 +114,9 @@ public class DeadWheelOdometery {
                         new double[]{deltaPose.get(0,0) + lastState.get(0,0)},
                         new double[]{deltaPose.get(1,0) + lastState.get(1,0)},
                         new double[]{deltaPose.get(2,0)+lastState.get(2,0)},
-                        new double[]{vX},
-                        new double[]{currentCenterVelocity},
-                        new double[]{0}
+                        new double[]{xVelocity},
+                        new double[]{yVelocity},
+                        new double[]{angularVelocity}
                 }
         );
         // Create a new 6x1 state vector (SimpleMatrix)
