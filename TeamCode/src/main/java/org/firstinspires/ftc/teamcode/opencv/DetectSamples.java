@@ -42,7 +42,6 @@ public class DetectSamples extends OpenCvPipeline {
         return input;
     }
 
-
     private Mat preprocessFrame(Mat frame) {
         Mat hsvFrame = new Mat();
         Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_RGB2YCrCb);
@@ -70,6 +69,7 @@ public class DetectSamples extends OpenCvPipeline {
             if (area > maxArea) {
                 maxArea = area;
                 largestContour = contour;
+
             }
         }
 
