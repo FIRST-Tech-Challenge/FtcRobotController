@@ -41,24 +41,26 @@ public class Bot {
     public void init(HardwareMap map){
 
         //Connecting declared motors to classes of DcMotors and respected names
-        leftMotorFront = map.get(DcMotor.class, 'left_front');
-        leftMotorBack = map.get(DcMotor.class, 'left-back');
-        rightMotorFront = map.get(DcMotor.class, 'right-front');
-        rightMotorBack = map.get(DcMotor.class, 'right-back');
+        leftMotorFront = map.get(DcMotor.class, "left_front");
+        leftMotorBack = map.get(DcMotor.class, "left_back");
+        rightMotorFront = map.get(DcMotor.class, "right_front");
+        rightMotorBack = map.get(DcMotor.class, "right_back");
 
         //Set RunModes for Encoder Usage
+        /*
         leftMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+         */
 
         //Set Direction of each Motors
         // switch REVERSE and FORWARD if controls are opposite
         // This is set for Mechanum drive
-        leftMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftMotorFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightMotorFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightMotorBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
     }
 
@@ -69,7 +71,7 @@ public class Bot {
      * @param frontRightPower
      * @param backRightPower
      */
-    public setDriveTrain(
+    public void setDriveTrain(
             double frontLeftPower, double backLeftPower,
             double frontRightPower, double backRightPower
     ) {
