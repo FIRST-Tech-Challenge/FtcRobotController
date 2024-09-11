@@ -24,8 +24,10 @@ public class CenterStageAprilTags extends OpMode {
     public void init() {
       int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
       camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-      FtcDashboard.getInstance().startCameraStream(camera, 0);
       AprilTagProcessor processor = AprilTagProcessor.easyCreateWithDefaults();
+      WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+      VisionPortal vp = VisionPortal.easyCreateWithDefaults(webcamName, processor);
+      FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
     @Override
