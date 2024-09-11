@@ -38,7 +38,7 @@ public class AprilTagsWithDashboard extends OpMode {
     public void init() {
       processor = AprilTagProcessor.easyCreateWithDefaults();
       WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-      VisionPortal vp = VisionPortal.easyCreateWithDefaults(webcamName, processor);
+      vp = VisionPortal.easyCreateWithDefaults(webcamName, processor);
     }
 
     @Override

@@ -8,7 +8,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.List;
 
 @Autonomous
@@ -19,14 +21,11 @@ public class AprilTagIDDetector extends OpMode {
     public double x = -999;
     public double y = -999;
     public double z = -999;
-    public double roundX;
-    public double roundY;
-    public double roundZ;
     @Override
     public void init() {
         processor = AprilTagProcessor.easyCreateWithDefaults();
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        VisionPortal vp = VisionPortal.easyCreateWithDefaults(webcamName, processor);
+        vp = VisionPortal.easyCreateWithDefaults(webcamName, processor);
     }
 
     @Override
@@ -37,13 +36,16 @@ public class AprilTagIDDetector extends OpMode {
                 x = detection.rawPose.x;
                 y = detection.rawPose.y;
                 z = detection.rawPose.z;
-                roundX = Math.round(x*100)/100;
-                roundY = Math.round(y*100)/100;
-                roundZ = Math.round(z*100)/100;
                 telemetry.addLine("Tag ID: " + String.valueOf(detection.id));
-                telemetry.addLine(String.valueOf(roundX));
-                telemetry.addLine(String.valueOf(roundY));
-                telemetry.addLine(String.valueOf(roundZ));
+                if (x != -999) {
+                    telemetry.addLine(String.format("%.3f %n", String.valueOf(x)));
+                }
+                if (y != -999) {
+                    telemetry.addLine(String.format("%.3f %n", String.valueOf(y)));
+                }
+                if (z != -999) {
+                    telemetry.addLine(String.format("%.3f %n", String.valueOf(z)));
+                }
             }
             catch (Exception e) {
                 telemetry.addLine(e.getMessage());
