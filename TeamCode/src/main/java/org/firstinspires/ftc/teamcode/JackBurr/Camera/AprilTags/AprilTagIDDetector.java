@@ -38,13 +38,13 @@ public class AprilTagIDDetector extends OpMode {
                 z = detection.rawPose.z;
                 telemetry.addLine("Tag ID: " + String.valueOf(detection.id));
                 if (x != -999) {
-                    telemetry.addLine(String.format("%.3f %n", String.valueOf(x)));
+                    telemetry.addLine(String.format("%.3f %n", x));
                 }
                 if (y != -999) {
-                    telemetry.addLine(String.format("%.3f %n", String.valueOf(y)));
+                    telemetry.addLine(String.format("%.3f %n", y));
                 }
                 if (z != -999) {
-                    telemetry.addLine(String.format("%.3f %n", String.valueOf(z)));
+                    telemetry.addLine(String.format("%.3f %n", z));
                 }
             }
             catch (Exception e) {
