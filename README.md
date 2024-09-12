@@ -1,6 +1,6 @@
 ## NOTICE
 
-This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
+This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
@@ -58,6 +58,78 @@ Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspire
 The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
 
 # Release Information
+
+## Version 10.0  (20240828-111152)
+
+### Breaking Changes
+* Java classes and Blocks for TensorFlow Object Detection have been removed.
+* `AngularVelocity.unit` which was of type `AngleUnit` has been renamed `AngularVelocity.angleUnit` of type `UnnormalizedAngleUnit`
+
+### Enhancements
+* Sample for REV Digital Indicator has been added - ConceptRevLED
+* Adds support for the [Sparkfun QWIIC LED Stick](https://www.sparkfun.com/products/18354)
+  * To connect it directly, you need this [cable](https://www.sparkfun.com/products/25596)
+* Adds ConceptLEDStick OpMode
+* Adds Blocks for colors black, blue, cyan, dkgray, gray, green, ltgray, magenta, red, white, and yellow.
+* Adds an "evaluate but ignore result" Block that executes the connected block and ignores the result. Allows you to call a function and ignore the return value.
+* Adds I2C driver for Maxbotix Maxsonar I2CXL sonar rangefinder
+* Adds Blocks for setPwmEnable, setPwmDisable, and isPwmEnabled for servos and CR servos.
+* In the Blocks editor: a \n in the ExportToBlocks annotation's comment field is displayed as a line break.
+* Telemetry has new method setNumDecimalPlaces
+* Telemetry now formats doubles and floats (not inside objects, just by themselves)
+* Adds support for the Limelight 3A.
+* Adds initial support for the REV Servo Hub
+  * Both the Robot Controller and Driver Station need to be updated to version 10.0 in order for Servo Hubs to be
+    configurable as Servo Hubs. If the app on either device is outdated, the Servo Hub will show up as an Expansion Hub,
+    and some functionality will not work as expected. You should wait to create a configuration that includes a Servo Hub
+    until both the Driver Station and Robot Controller apps have been updated to version 10.0.
+  * Updating the Servo Hub's firmware and changing its address can only be done using the REV Hardware Client at this time
+* Adds support for the REV 9-Axis IMU (REV-31-3332)
+  * The REV 9-Axis IMU is only supported by the [Universal IMU interface](https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html)
+  * Adds `Rev9AxisImuOrientationOnRobot` Java class.
+  * If you mentally substitute this IMU's I2C port for the Control Hub's USB ports, `RevHubOrientationOnRobot` is also compatible with this sensor
+  * Adds Blocks for Rev9AxisImuOrientationOnRobot, including RevHubImuOrientationOnRobot.xyzOrientation and  RevHubImuOrientationOnRobot.zyxOrientation.
+  * Adds Blocks samples SensorRev9AxisIMUOrthogonal and SensorRev9AxisIMUNonOrthogonal.
+* Improves Blocks support for RevHubImuOrientationOnRobot.
+  * Adds Blocks for RevHubImuOrientationOnRobot.xyzOrientation and  RevHubImuOrientationOnRobot.zyxOrientation.
+  * Adds Blocks samples SensorHubIMUOrthogonal (replaces SensorIMU) and SensorHubIMUNonOrthogonal.
+* Updates EasyOpenCV, AprilTag, OpenCV, and `libjpeg-turbo` versions
+* Adds Blocks for max and min that take two numbers.
+* Adds Blocks OpModes ConceptRevSPARKMini, RobotAutoDriveByEncoder, RobotAutoDriveByGyro, RobotAutoDriveByTime, RobotAutoDriveToAprilTagOmni, and RobotAutoDriveToAprilTagTank.
+* Two OpModes with the same name now automatically get renamed with the name followed by a "-" and the class name allowing them to both be on the device.
+* Shows the name of the active configuration on the Manage page of the Robot Controller Console
+* Updated AprilTag Library for INTO THE DEEP. Notably, `getCurrentGameTagLibrary()` now returns INTO THE DEEP tags.
+* Adds Blocks for Telemetry.setMsTransmissionInterval and Telemetry.getMsTransmissionInterval.
+* Adds Blocks sample SensorOctoQuad.
+
+### Bug Fixes
+* Fixes a bug where the RevBlinkinLedDriver Blocks were under Actuators in the Blocks editor toolbox. They are now Other Devices.
+* Fixes a bug where `Exception`s thrown in user code after a stop was requested by the Driver Station would be silently eaten
+* Fixed a bug where if you asked for `AngularVelocity` in a unit different than the device reported it in, it would normalize it between -PI and PI for radians, and -180 and 180 for degrees.
+
+## Version 9.2 (20240701-085519)
+
+### Important Notes
+* Java classes and Blocks for TensorFlow Object Detection have been deprecated and will be removed in Version 10.0.
+* The samples that use TensorFlow Object Detection have been removed.
+
+### Enhancements
+* Adds explanatory text to failed items on the inspection activities.  To view the explanatory text tap the red warning icon for a failed item.
+* In the Blocks editor: added a new kind of variable set block that sets the variable and also returns the new value.
+* Changes the way that camera controls behave for a SwitchableCamera. Now, each method (such as getExposure, getMinExposure, getMaxExposure, setExposure for ExposureControl) acts on the currently active camera.
+* Adds support for the REV USB PS4 Compatible Gamepad (REV-31-2983)
+* Adds ConceptAprilTagMultiPortal OpMode
+* Adds support for OctoQuad Quadrature Encoder & Pulse Width Interface Module
+* Adds the ExportAprilTagLibraryToBlocks annotation that indicates that a static method that returns an AprilTagLibrary is exported to the Blocks programming environment. The corresponding block will appear in the Blocks toolbox along with the built-in tag libraries.
+* Adds Blocks OpMode ConceptAprilTagOptimizeExposure.
+* Adds support for the SparkFun Optical Tracking Odometry sensor.
+
+### Bug Fixes
+* Fixes https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/942 where visionPortal.close() can cause an IndexOutOfBoundsError.
+* Fixes a bug in the blocks editor where collapsed function blocks show a warning "Collapsed blocks contain warnings." when the Blocks OpMode is reopened.
+* Fixes a bug where the blocks editor wouldn't warn you that you have unsaved changes when you try to leave. This bug was introduced due to a behavior change in Chrome 119.
+* [Issue #764](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/764) - Get gain control returns a null pointer for a switchable camera
+* Fixes a bug where the correct deadzone for certain gamepads was not applied when Advanced Gamepad Features was enabled
 
 ## Version 9.1 (20240215-115542)
 
