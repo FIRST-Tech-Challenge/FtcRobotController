@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import java.util.Base64;
 
 public class Drivetrain {
     public DcMotor fL;
@@ -18,6 +21,7 @@ public class Drivetrain {
         bL = map.dcMotor.get("frontRight");
         fR = map.dcMotor.get("backLeft");
         bR = map.dcMotor.get("backRight");
+        encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
 
         fL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -31,8 +35,6 @@ public class Drivetrain {
 
         fR.setDirection(DcMotor.Direction.REVERSE);
         bR.setDirection(DcMotor.Direction.REVERSE);
-
-        encoder = map.get()
     }
 
     public double getPosition() {
