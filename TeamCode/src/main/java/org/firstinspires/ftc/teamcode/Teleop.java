@@ -16,19 +16,25 @@ public class Teleop extends LinearOpMode {
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
-    private DcMotor arm = null;
+    //Thr two joints on the arm
+    private DcMotor jointOne = null;
+    private DcMotor jointTwo = null;
     private Servo claw = null;
+    //the two servos for the wrist
     private Servo horizontalWrist = null;
     private Servo verticalWrist = null;
     
     
     public void runOpMode(){
-        //these are functions(go down)
+        //control hub
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        arm = hardwareMap.get(DcMotor.class, "arm");
+
+        //expansion hub
+        jointOne = hardwareMap.get(DcMotor.class, "jointOne");
+        jointTwo = hardwareMap.get(DcMotor.class, "jointTwo");
         claw = hardwareMap.get(Servo.class, "claw");
         horizontalWrist = hardwareMap.get(Servo.class, "horizontalWrist");
         verticalWrist = hardwareMap.get(Servo.class, "verticalWrist");
@@ -40,31 +46,50 @@ public class Teleop extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-        arm.setDirection(DcMotor.Direction.REVERSE);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //TODO change the joints directions
+        jointOne.setDirection(DcMotor.Direction.REVERSE);
+        jointTwo.setDirection(DcMotor.Direction.REVERSE);
+        jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         
         waitForStart();
         while(opModeIsActive()){
-            telemetry.addData("Arm Position: ", arm.getCurrentPosition());
+            telemetry.addData("First joints Position: ", jointOne.getCurrentPosition());
+            telemetry.addData("Second joints Position: ", jointTwo.getCurrentPosition());
             telemetry.update();
-            double vertical = 0.4 * gamepad1.left_stick_y;
-            double strafe = -0.4 * gamepad1.left_stick_x;
-            double turn = -0.35 * gamepad1.right_stick_x;
+            //The first gamepad controls the movement
+            if(((gamepad1.left_stick_x != 0)||(gamepad1.left_stick_y != 0))  ||  ((gamepad1.right_stick_x != 0)||(gamepad1.right_stick_y != 0))){
+                double vertical = 0.4 * gamepad1.left_stick_y;
+                double strafe = -0.4 * gamepad1.left_stick_x;
+                double turn = -0.35 * gamepad1.right_stick_x;
+                robotMovement(vertical, strafe, turn);
+            }
+            double manualArmDeadband = 0.3;
+            double jointOnePower = gamepad2.right_stick_y;
+            double jointTwoPower = gamepad2.right_stick_y;
+            newArm(manualArmDeadband, jointOnePower, jointTwoPower);
+
+
+            //The second gamepad controls the arm
+//            if((gamepad2.left_trigger != 0) || (gamepad2.right_trigger != 0)) {
+//                double manualArmPower = gamepad2.right_trigger - gamepad2.left_trigger;
+//                double manualArmDeadband = 0.3;
+//               boolean manualMode = false;
+//                armMovement(manualArmPower, manualArmDeadband, manualMode);
+//            }
+
+
+
             double position1= 100;
             double position2 = 100;
             if(gamepad1.a) {
-                claw(10);
+                claw(100);
             }
-            robotMovement(vertical, strafe, turn);
-            if((gamepad2.left_stick_button) || (gamepad2.right_stick_button)){
+            if((gamepad1.left_stick_button) || (gamepad1.right_stick_button)){
                 brake();
             }
             
-            
-            double manualArmPower = gamepad1.right_trigger - gamepad1.left_trigger;
-            double manualArmDeadband = 0.3;
-            boolean manualMode = false;
-            armMovement(manualArmPower, manualArmDeadband, manualMode);
+
         }
     }
 
@@ -93,22 +118,32 @@ public class Teleop extends LinearOpMode {
         
         //This is the arm movement code we made earlier
         //the variables are defined in "while(opModeIsActive())"
-        public void armMovement(double manualArmPower, double manualArmDeadband, boolean manualMode) {
-            if (Math.abs(manualArmPower) > manualArmDeadband) {
-                arm.setPower(manualArmPower);
-                if (!manualMode) {
-                    arm.setTargetPosition(arm.getCurrentPosition());
-                    arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    arm.setPower(0.0);
-                    manualMode = true;
-                } else {
-                    arm.setTargetPosition(arm.getCurrentPosition());
-                    arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    arm.setPower(0.3);
-                    manualMode = false;
-                }
-            } else if (Math.abs(manualArmPower) < manualArmDeadband) {
-                arm.setPower(0.1);
+//        public void armMovement(double manualArmPower, double manualArmDeadband, boolean manualMode) {
+//            if (Math.abs(manualArmPower) > manualArmDeadband) {
+//                arm.setPower(manualArmPower);
+//                if (!manualMode) {
+//                    arm.setTargetPosition(arm.getCurrentPosition());
+//                    arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                    arm.setPower(0.0);
+//                    manualMode = true;
+//                } else {
+//                    arm.setTargetPosition(arm.getCurrentPosition());
+//                    arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                    arm.setPower(0.3);
+//                    manualMode = false;
+//                }
+//            } else if (Math.abs(manualArmPower) < manualArmDeadband) {
+//                arm.setPower(0.1);
+//            }
+//        }
+
+
+        public void newArm(double manualArmDeadband, double jointOnePower, double jointTwoPower){
+            //when the right stick is pushed, it moves the robots first join back and forth
+            if(gamepad2.right_stick_y > manualArmDeadband){
+                jointOne.setPower(jointOnePower);
+            } else if (gamepad2.right_stick_x > manualArmDeadband){
+                jointTwo.setPower(jointTwoPower);
             }
         }
 }
