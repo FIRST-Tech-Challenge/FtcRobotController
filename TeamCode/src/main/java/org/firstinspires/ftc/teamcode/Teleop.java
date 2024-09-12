@@ -55,10 +55,22 @@ public class Teleop extends LinearOpMode {
             telemetry.update();
             //The first gamepad controls the movement
             if (((gamepad1.left_stick_x != 0) || (gamepad1.left_stick_y != 0)) || ((gamepad1.right_stick_x != 0) || (gamepad1.right_stick_y != 0))) {
-                double vertical = 0.4 * gamepad1.left_stick_y;
-                double strafe = -0.4 * gamepad1.left_stick_x;
-                double turn = -0.35 * gamepad1.right_stick_x;
-                robotMovement(vertical, strafe, turn);
+                if(gamepad1.x){
+                    double vertical = 0.6 * gamepad1.left_stick_y;
+                    double strafe = -0.6 * gamepad1.left_stick_x;
+                    double turn = -0.55 * gamepad1.right_stick_x;
+                    robotMovement(vertical, strafe, turn);
+                }else if(gamepad1.y){
+                    double vertical = 0.2 * gamepad1.left_stick_y;
+                    double strafe = -0.2 * gamepad1.left_stick_x;
+                    double turn = -0.15 * gamepad1.right_stick_x;
+                    robotMovement(vertical, strafe, turn);
+                }else {
+                    double vertical = 0.4 * gamepad1.left_stick_y;
+                    double strafe = -0.4 * gamepad1.left_stick_x;
+                    double turn = -0.35 * gamepad1.right_stick_x;
+                    robotMovement(vertical, strafe, turn);
+                }
             }
             if ((gamepad2.left_stick_button) || (gamepad2.right_stick_button)) {
                 brake();
