@@ -41,6 +41,8 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
 
+        HashMap<RobotHardwareInitializer.Arm, DcMotor> armMotors = RobotHardwareInitializer.initializeArm(this);
+
         assert driveMotors != null;
         driveSubsystem = new DriveSubsystem(driveMotors);
 

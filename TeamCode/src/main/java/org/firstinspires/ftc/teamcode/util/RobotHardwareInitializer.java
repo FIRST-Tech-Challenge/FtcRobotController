@@ -120,10 +120,35 @@ public class RobotHardwareInitializer {
         return out;
     }
 
-    @Deprecated
     public enum Arm {
         ARM1,
-        ARM2
+        ARM2,
+        ARM3
+    }
+
+    public static HashMap<Arm, DcMotor> initializeArm(final OpMode opMode) {
+        DcMotor arm = null;
+        DcMotor arm2 = null;
+        DcMotor arm3 = null;
+        try {
+            arm = opMode.hardwareMap.get(DcMotor.class, "arm1");
+            arm.setDirection(DcMotorSimple.Direction.FORWARD);
+
+            arm2 = opMode.hardwareMap.get(DcMotor.class, "arm2");
+            arm2.setDirection(DcMotorSimple.Direction.FORWARD);
+
+            arm3 = opMode.hardwareMap.get(DcMotor.class, "arm3");
+            arm3.setDirection(DcMotorSimple.Direction.FORWARD);
+        } catch (Exception e) {
+            Error(e, opMode);
+        }
+
+        HashMap<Arm, DcMotor> out = new HashMap<>();
+        out.put(Arm.ARM1, arm);
+        out.put(Arm.ARM2, arm2);
+        out.put(Arm.ARM3, arm3);
+
+        return out;
     }
 
     public static ColorSensor initializeColorSensor(final OpMode opMode) {

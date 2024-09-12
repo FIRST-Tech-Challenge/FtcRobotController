@@ -7,12 +7,12 @@ import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
-public class MoveArmCommand extends CommandBase {
+public class MoveBucketArmCommand extends CommandBase {
 
     ArmSubsystem subsystem;
     DoubleSupplier frontwardSupplier, backwardSupplier;
 
-    public MoveArmCommand(ArmSubsystem subsystem, DoubleSupplier frontwardSupplier,
+    public MoveBucketArmCommand(ArmSubsystem subsystem, DoubleSupplier frontwardSupplier,
                           DoubleSupplier backwardSupplier) {
         Objects.requireNonNull(subsystem);
 
