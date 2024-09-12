@@ -29,7 +29,7 @@ public class MoveBucketArmCommand extends CommandBase {
         double power = frontwardSupplier.getAsDouble()-backwardSupplier.getAsDouble();
 
         if (power == 0) {
-            subsystem.haltArm();
+            subsystem.haltAllArms();
         } else {
             // subsystem.manualMoveArm(power);
             // Todo: Work on this
