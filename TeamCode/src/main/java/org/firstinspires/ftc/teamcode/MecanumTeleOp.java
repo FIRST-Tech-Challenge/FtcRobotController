@@ -47,6 +47,7 @@ public class MecanumTeleOp extends OpMode {
         } else if (gamepad1.dpad_down) {
             robot.linear_L.linear_motion_left.setPower(-1);
             robot.linear_R.linear_motion_right.setPower(-1);
+
         } else {
             robot.linear_L.linear_motion_left.setPower(0);
             robot.linear_R.linear_motion_right.setPower(0);
