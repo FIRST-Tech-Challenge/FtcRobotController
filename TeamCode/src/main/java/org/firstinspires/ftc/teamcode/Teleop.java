@@ -80,12 +80,10 @@ public class Teleop extends LinearOpMode {
 
 
 
-            double position1= 100;
-            double position2 = 100;
-            if(gamepad1.a) {
-                claw(100);
-            }
-            if((gamepad1.left_stick_button) || (gamepad1.right_stick_button)){
+            int position1= 100;
+            int position2 = 100;
+            wrist(position1,position2);
+            if((gamepad2.left_stick_button) || (gamepad2.right_stick_button)){
                 brake();
             }
             
@@ -97,7 +95,12 @@ public class Teleop extends LinearOpMode {
         claw.setPosition(position1);
     }
     private void wrist(int position1, int position2){
-
+        if(gamepad2.a) {
+            horizontalWrist.setPosition(position1);
+        }
+        if(gamepad2.b){
+            verticalWrist.setPosition((position2));
+        }
     }
         //sets all motor power to 0
         public void brake(){
