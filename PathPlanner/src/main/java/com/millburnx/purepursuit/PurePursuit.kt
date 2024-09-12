@@ -1,5 +1,7 @@
 package com.millburnx.purepursuit
 
+import com.acmerobotics.dashboard.canvas.Canvas
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.millburnx.dashboard.ICanvas
 import com.millburnx.dashboard.ITelemetryPacket
 import com.millburnx.utils.Bezier
@@ -86,7 +88,7 @@ class PurePursuit(
             return Utils.normalizeAngle(diff - aAngle)
         }
 
-        fun render(data: PurePursuitData, packet: ITelemetryPacket, addTelemetry: Boolean = true) {
+        fun render(data: PurePursuitData, packet: TelemetryPacket, addTelemetry: Boolean = true) {
             val (target, isDone, path, remainingPath, intersections) = data
             if (addTelemetry) {
                 packet.put("pure_pursuit/target", target)
@@ -101,7 +103,7 @@ class PurePursuit(
             renderIntersections(canvas, intersections, target, colors)
         }
 
-        fun renderPath(canvas: ICanvas, path: List<Bezier>, colors: List<Color>) {
+        fun renderPath(canvas: Canvas, path: List<Bezier>, colors: List<Color>) {
             var color = 0
             for (bezier in path) {
                 val currentColor = colors[color % colors.size]
@@ -113,7 +115,7 @@ class PurePursuit(
         }
 
         fun renderIntersections(
-            canvas: ICanvas,
+            canvas: Canvas,
             intersections: List<Intersection<Bezier>>,
             target: Vec2d,
             colors: List<Color>

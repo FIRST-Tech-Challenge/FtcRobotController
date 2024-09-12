@@ -7,9 +7,13 @@ java {
 }
 repositories {
     mavenCentral()
+    maven { url = 'https://maven.brott.dev/' }
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }
 kotlin {
     jvmToolchain(21)

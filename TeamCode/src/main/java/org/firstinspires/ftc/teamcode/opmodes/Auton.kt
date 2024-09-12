@@ -11,6 +11,12 @@ import org.firstinspires.ftc.teamcode.common.subsystems.DriveSubsystem
 import org.firstinspires.ftc.teamcode.common.utils.Telemetry
 
 @Config
+object AutonConfig {
+    @JvmField var multiF = 0.1
+    @JvmField var multiH = 0.1
+}
+
+@Config
 @TeleOp(name = "Auton")
 class Auton : CommandOpMode() {
     private var drive: DriveSubsystem? = null
@@ -20,9 +26,9 @@ class Auton : CommandOpMode() {
 
     val path = listOf(
         Vec2d(0.0, 0.0),
-        Vec2d(48.0, 0.0),
-        Vec2d(48.0, -48.0),
-        Vec2d(0.0, -48.0),
+        Vec2d(120.0, 0.0),
+        Vec2d(120.0, -120.0),
+        Vec2d(0.0, -120.0),
     )
 
     override fun initialize() {
@@ -31,10 +37,11 @@ class Auton : CommandOpMode() {
         tel = Telemetry()
         dash = FtcDashboard.getInstance()
 
-        schedule(PurePursuitCommand(drive, path, dash!!.telemetry))
+        schedule(PurePursuitCommand(drive, path, dash!!))
     }
 
     override fun run() {
+        drive!!.updatePos()
         super.run()
     }
 }

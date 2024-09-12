@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode.common.commands
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.arcrobotics.ftclib.command.CommandBase
+import com.millburnx.dashboard.ITelemetryPacket
 import com.millburnx.purepursuit.PurePursuit
 import com.millburnx.utils.Vec2d
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.common.subsystems.DriveSubsystem
 import org.firstinspires.ftc.teamcode.common.subsystems.PID
 import org.firstinspires.ftc.teamcode.common.utils.Util
+import org.firstinspires.ftc.teamcode.opmodes.AutonConfig
 
 class PurePursuitCommand(
     val drive: DriveSubsystem,
     val path: List<Vec2d>,
-    val telemetry: Telemetry,
+    val dash: FtcDashboard,
     val lookahead: Double = 14.0,
 ) : CommandBase() {
     val purePursuit = PurePursuit(path, lookahead)
-    val pidX = PID(1.0, 0.0, 0.0)
-    val pidY = PID(1.0, 0.0, 0.0)
+    val pidF = PID(1.0, 0.0, 0.0)
     val pidH = PID(1.0, 0.0, 0.0)
 
     init {
@@ -24,8 +26,7 @@ class PurePursuitCommand(
     }
 
     override fun initialize() {
-        pidX.reset()
-        pidY.reset()
+        pidF.reset()
         pidH.reset()
     }
 
@@ -33,17 +34,18 @@ class PurePursuitCommand(
         val pose = drive.pos
         val position = Vec2d(pose.x, pose.y)
         val heading = pose.heading
-        val targetPoint = purePursuit.calc(position, heading).target
+        val calcResults = purePursuit.calc(position, heading)
+        val targetPoint = calcResults.target
 
-        val powerX = pidX.calc(targetPoint.x, position.x)
-        val powerY = pidX.calc(targetPoint.y, position.y)
+        val powerF = position.distanceTo(targetPoint)
         val angleDiff = Util.getAngleDiff((position to heading), targetPoint)
-        val powerH = pidX.calc(angleDiff, heading)
+        val powerH = angleDiff
 
-//        drive.robotCentric(powerX, powerY, powerH)
-        telemetry.addData("powerX", powerX)
-        telemetry.addData("powerY", powerY)
-        telemetry.addData("powerH", powerH)
+        val packet = TelemetryPacket()
+        PurePursuit.render(calcResults, packet as ITelemetryPacket, true)
+        dash.sendTelemetryPacket(packet)
+
+        drive.robotCentric(powerF * AutonConfig.multiF, 0.0, powerH * AutonConfig.multiH)
     }
 
     override fun end(interrupted: Boolean) {

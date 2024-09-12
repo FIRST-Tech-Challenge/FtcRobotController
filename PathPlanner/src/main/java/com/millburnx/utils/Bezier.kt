@@ -1,5 +1,6 @@
 package com.millburnx.utils
 
+import com.acmerobotics.dashboard.canvas.Canvas
 import com.millburnx.dashboard.ICanvas
 import java.awt.Color
 import java.awt.Graphics2D
@@ -7,7 +8,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 
-class Bezier(val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, val p3: Vec2d) {
+data class Bezier(val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, val p3: Vec2d) {
     companion object {
         fun fromLine(p0: Vec2d, p1: Vec2d): Bezier {
             return Bezier(p0, p0.lerp(p1, 1.0 / 3), p1.lerp(p0, 1.0 / 3), p1)
@@ -89,7 +90,7 @@ class Bezier(val p0: Vec2d, val p1: Vec2d, val p2: Vec2d, val p3: Vec2d) {
     /**
      * Draw the Bézier curve on an FTC Dashboard canvas
      */
-    fun draw(canvas: ICanvas, samples: Int = 100) {
+    fun draw(canvas: Canvas, samples: Int = 100) {
         var lastPoint = p0
         for (i in 1..samples) {
             val t = i.toDouble() / samples

@@ -11,7 +11,7 @@ interface ITelemetryPacket {
 }
 
 class TelemetryPacket : ITelemetryPacket {
-    private val data = mutableMapOf<String, Any>()
+    private val data = sortedMapOf<String, Any>()
     private val lines = mutableListOf<String>()
     internal val timestamp: Long? = null
     private val canvas: ICanvas = Canvas()
