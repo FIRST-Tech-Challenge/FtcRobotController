@@ -50,17 +50,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class RobotTeleopMecanumDrive extends OpMode{
 
     /* Declare OpMode members. */
-    public DcMotor  frontLeft   = null;
-    public DcMotor  frontRight  = null;
-    public DcMotor  rearLeft    = null;
-    public DcMotor  rearRight   = null;
-    static final double     COUNTS_PER_MOTOR_REV    = 537.7;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 3.77953;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-
-    public double driveSpeed = 0.5;
+    public Mecanum drive;
+    static final double DRIVE_SPEED = 1.0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -68,18 +59,10 @@ public class RobotTeleopMecanumDrive extends OpMode{
     @Override
     public void init() {
         // Define and Initialize Motors
-
-        //Drive base
-        frontLeft  = hardwareMap.dcMotor.get("left_front_drive");
-        frontRight = hardwareMap.dcMotor.get("right_front_drive");
-        rearLeft = hardwareMap.dcMotor.get("left_rear_drive");
-        rearRight = hardwareMap.dcMotor.get("right_rear_drive");
-
-        //this needs to be corrected with testing, this is just and example
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        rearLeft.setDirection(DcMotor.Direction.REVERSE);
-        rearRight.setDirection(DcMotor.Direction.FORWARD);
+        drive = new Mecanum(hardwareMap);
+        drive.setTelemetry(telemetry);
+        drive.setDriveSpeed(DRIVE_SPEED);
+        drive.setDebug(true);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press Play.");    //
@@ -87,11 +70,11 @@ public class RobotTeleopMecanumDrive extends OpMode{
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
     @Override
     public void init_loop() {
         telemetry.update();
     }
+    */
 
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -99,37 +82,13 @@ public class RobotTeleopMecanumDrive extends OpMode{
     @Override
     public void start() {}
 
-    public void input() {
-        // Using trig to set the motor speeds so that the bot can move in all directions
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = gamepad1.right_stick_x;
-
-        double leftFrontWheelPower = r * Math.cos(robotAngle) * Math.sqrt(2) + rightX;
-        double rightFrontWheelPower = r * Math.sin(robotAngle) * Math.sqrt(2) - rightX;
-        double leftRearWheelPower = r * Math.sin(robotAngle) * Math.sqrt(2) + rightX;
-        double rightRearWheelPower = r * Math.cos(robotAngle) * Math.sqrt(2) - rightX;
-
-        frontLeft.setPower(leftFrontWheelPower * driveSpeed);
-        frontRight.setPower(rightFrontWheelPower * driveSpeed);
-        rearLeft.setPower(leftRearWheelPower * driveSpeed);
-        rearRight.setPower(rightRearWheelPower * driveSpeed);
-
-        telemetry.addData("leftFront",  "%.2f", leftFrontWheelPower);
-        telemetry.addData("rightFront",  "%.2f", rightFrontWheelPower);
-        telemetry.addData("leftRear",  "%.2f", leftRearWheelPower);
-        telemetry.addData("rightRear", "%.2f", rightRearWheelPower);
-    }
-
-    
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
     public void loop() {
-        input();
-        telemetry.update();
+        drive.update(gamepad1);
     }
 
     /*
