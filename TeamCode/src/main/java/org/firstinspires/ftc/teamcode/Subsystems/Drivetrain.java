@@ -13,7 +13,7 @@ public class Drivetrain {
     public DcMotor bL;
     public DcMotor fR;
     public DcMotor bR;
-    public Encoder encoder;
+    public org.firstinspires.ftc.teamcode.util.Encoder encoder;
     //public IMU imu;
 
     public void init(HardwareMap map) {
@@ -21,7 +21,7 @@ public class Drivetrain {
         bL = map.dcMotor.get("frontRight");
         fR = map.dcMotor.get("backLeft");
         bR = map.dcMotor.get("backRight");
-        encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
+        encoder = new org.firstinspires.ftc.teamcode.util.Encoder(map.get(DcMotorEx.class, "frontLeft"));
 
         fL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
