@@ -10,8 +10,7 @@ which complicates updating the new repository if the template changes. However, 
 To pull from the template, type 
 ```
 git remote add template https://github.com/chsRobotix/TemplateRobotController.git
-git fetch --all
-git merge template/[branch to merge] --allow-unrelated-histories
+git pull template
 ```
 
 > [!Warning]
