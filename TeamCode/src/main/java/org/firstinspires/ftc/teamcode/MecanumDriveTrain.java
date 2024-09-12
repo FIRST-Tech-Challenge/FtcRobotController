@@ -12,7 +12,7 @@ public class MecanumDriveTrain {
     public DcMotorEx left_back;
     public DcMotorEx right_back;
 
-    static final double DRIVE_SPEED = 3500;
+    static final double DRIVE_SPEED = 10000;
     static final double TURN_SPEED_MODIFIER = 0.7;
 
     HardwareMap hardwareMap;

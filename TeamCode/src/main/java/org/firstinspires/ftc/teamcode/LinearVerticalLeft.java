@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class LinearMotion {
+public class LinearVerticalLeft {
 
-    public DcMotorEx linear_motion;
+    public DcMotorEx linear_motion_left;
     HardwareMap hardwareMap;
 
     public void init(HardwareMap ahwMap) {
         hardwareMap = ahwMap;
-        linear_motion = hardwareMap.get(DcMotorEx.class, "linear_motion");
-        linear_motion.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linear_motion_left = hardwareMap.get(DcMotorEx.class, "linear_motion_left");
+        linear_motion_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }
