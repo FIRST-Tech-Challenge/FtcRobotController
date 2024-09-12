@@ -65,8 +65,8 @@ public class Teleop extends LinearOpMode {
                 robotMovement(vertical, strafe, turn);
             }
             double manualArmDeadband = 0.3;
-            double jointOnePower = gamepad2.right_stick_y;
-            double jointTwoPower = gamepad2.right_stick_y;
+            double jointOnePower = 0.3;
+            double jointTwoPower = 0.3;
             newArm(manualArmDeadband, jointOnePower, jointTwoPower);
 
 
@@ -143,10 +143,10 @@ public class Teleop extends LinearOpMode {
 
         public void newArm(double manualArmDeadband, double jointOnePower, double jointTwoPower){
             //when the right stick is pushed, it moves the robots first join back and forth
-            if(gamepad2.right_stick_y > manualArmDeadband){
-                jointOne.setPower(jointOnePower);
-            } else if (gamepad2.right_stick_x > manualArmDeadband){
-                jointTwo.setPower(jointTwoPower);
+            if(Math.abs(gamepad2.right_stick_y) > manualArmDeadband){
+                jointOne.setPower(jointOnePower * gamepad2.right_stick_y);
+            } else if (Math.abs(gamepad2.right_stick_x) > manualArmDeadband){
+                jointTwo.setPower(jointTwoPower * gamepad2.left_stick_x);
             }
         }
 }
