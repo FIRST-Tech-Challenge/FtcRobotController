@@ -33,7 +33,7 @@ public class PIDMoveForward extends LinearOpMode {
         waitForStart();
 
         double targetTicks = targetDistance * (Drivetrain.TICKS_PER_REV / (2 * Math.PI * Drivetrain.WHEEL_RADIUS_INCHES * Drivetrain.GEAR_RATIO));
-        controller.setSetpoint(targetTicks);
+        controller.setSetPoint(targetTicks);
 
         while (opModeIsActive() && !isStopRequested()) {
             double currentTicks = drivetrain.getPosition();
