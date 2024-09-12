@@ -4,7 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class ExampleTeleOp extends LinearOpMode {
+//This class is to be used as a running example of what a basic op mode looks like
+//This class should not be changed in any way
+//This class is meant to be a way to understand possible strategies for creating our own op mode
+
+public class PracticeTeleOp extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
