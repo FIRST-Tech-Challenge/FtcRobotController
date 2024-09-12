@@ -21,7 +21,8 @@ public class TeleOp extends OpMode {
         moveArm();
         moveGrabber();
 
-        telemetry.update(); // call-back to android console
+        // Update the information from the robot
+        telemetry.update();
     }
 
     /**

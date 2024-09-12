@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
+import org.firstinspires.ftc.teamcode.hardware;
+
 public class CoyotesRobot {
     private OpMode opMode;
 
@@ -28,7 +30,7 @@ public class CoyotesRobot {
      * Initializes all the robot's hardware(motors, servos, sensors, etc.)
      */
     public void init() {
-        
+
     }
 
     /**
@@ -36,7 +38,7 @@ public class CoyotesRobot {
      * Returns null if it fails
      *
      * @return a linearOpMode representation of opMode if possible
-     * Else returns null
+     *         Else returns null
      */
     public LinearOpMode getLinearOpMode() {
         try {
@@ -55,7 +57,11 @@ public class CoyotesRobot {
     public void autoSleep(DcMotor... motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
+<<<<<<< HEAD
         // Does nothing if it isn't in LinearOpMode
+=======
+        // Does nothing if it isn't a LinearOpMode
+>>>>>>> a7cf7676ffa13b0e970504180cea917fa21c4687
         if (linearOp == null) {
             return;
         }

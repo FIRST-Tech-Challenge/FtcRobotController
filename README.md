@@ -9,7 +9,9 @@ under "Repository template" select "chsRobotix/TemplateRobotController." By defa
 which complicates updating the new repository if the template changes. However, it also is safer since it prevents pushing to the template. 
 To pull from the template, type 
 ```
-git remote template/[branch to merge] --allow-unrelated-histories
+git remote add template https://github.com/chsRobotix/TemplateRobotController.git
+git fetch --all
+git merge template/[branch to merge] --allow-unrelated-histories
 ```
 
 > [!Warning]
@@ -23,7 +25,7 @@ Keep this fork up to date with FTC's official [FtcRobotController](https://githu
 To do that, go to the GitHub page for [this repository](https://github.com/chsRobotix/TemplateRobotController.git) and click on "Sync fork."
 Alternatively, you can type 
 ```
-git remote add-url upstream https://github.com/FIRST-Tech-Challenge/FtcRobotController.git
+git remote add upstream https://github.com/FIRST-Tech-Challenge/FtcRobotController.git
 git pull upstream master
 ```
 
