@@ -30,7 +30,9 @@ public class Teleop extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         arm = hardwareMap.get(DcMotor.class, "arm");
         claw = hardwareMap.get(Servo.class, "claw");
-        rightClaw = hardwareMap.get(Servo.class, "rightClaw");
+        horizontalWrist = hardwareMap.get(Servo.class, "horizontalWrist");
+        verticalWrist = hardwareMap.get(Servo.class, "verticalWrist");
+
 
 
 
@@ -50,9 +52,11 @@ public class Teleop extends LinearOpMode {
             double turn = -0.35 * gamepad1.right_stick_x;
             double position1= 100;
             double position2 = 100;
-            claw(position1, position2);
+            if(gamepad1.a) {
+                claw(10);
+            }
             robotMovement(vertical, strafe, turn);
-            if((gamepad1.left_stick_button) || (gamepad1.right_stick_button)){
+            if((gamepad2.left_stick_button) || (gamepad2.right_stick_button)){
                 brake();
             }
             
@@ -64,9 +68,11 @@ public class Teleop extends LinearOpMode {
         }
     }
 
-    private void claw(double position1, double position2) {
-        leftClaw.setPosition(position1);
-        rightClaw.setPosition(position2);
+    private void claw(double position1) {
+        claw.setPosition(position1);
+    }
+    private void wrist(int position1, int position2){
+
     }
         //sets all motor power to 0
         public void brake(){
