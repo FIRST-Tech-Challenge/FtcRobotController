@@ -4,12 +4,10 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
-import java.util.Locale;
 
 public class ArmSubsystem extends SubsystemBase {
     private final DcMotor bucketArmMotor; // Bucket arm
