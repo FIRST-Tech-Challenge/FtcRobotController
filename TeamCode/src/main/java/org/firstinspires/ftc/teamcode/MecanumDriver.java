@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -43,6 +45,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MecanumDriver extends OpMode {
     private MecanumRobotController robotController;
     private final ElapsedTime runtime = new ElapsedTime();
+
+    private CRServo servo;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
@@ -62,6 +66,11 @@ public class MecanumDriver extends OpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
+        servo = hardwareMap.get(CRServo.class, "intake");
+
+
+
+
         gyro.resetYaw();
 
         robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
@@ -81,9 +90,13 @@ public class MecanumDriver extends OpMode {
         robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
-        // robotController.tuneHeadingCorrection(gamepad1, telemetry);
+        servo.setPower(1);
+        double servoPosition = Range.clip(gamepad1.right_trigger - gamepad1.left_trigger, 0.0, 1.0);
+
+
         telemetry.addData("Left Trigger", gamepad1.left_trigger);
         telemetry.addData("Right Trigger", gamepad1.right_trigger);
+        telemetry.addData("servoPosition", servoPosition);
         robotController.sendTelemetry(telemetry);
     }
 
