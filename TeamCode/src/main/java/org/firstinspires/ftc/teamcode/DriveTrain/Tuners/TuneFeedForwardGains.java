@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.DriveTrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Controllers.FeedForward;
+import org.firstinspires.ftc.teamcode.Utils.Utils;
 
 @Config
 @Autonomous(name = "Test Feed Forward", group = "Autonomous")
@@ -17,7 +18,7 @@ public class TuneFeedForwardGains extends LinearOpMode{
     // Use FTCDashboard
     FtcDashboard dashboard;
     double state=0;
-    public static double acceleration = 0;
+    public static double maxAcceleration = 0;
     public static double t = 2000;
     @Override
     public void runOpMode() {
@@ -27,19 +28,20 @@ public class TuneFeedForwardGains extends LinearOpMode{
         telemetry = dashboard.getTelemetry();
         ElapsedTime looptime = new ElapsedTime();
         ElapsedTime lapTime = new ElapsedTime();
+        double vK = 0;
+        double lastVk = 0;
+        double aK = 0;
         SimpleMatrix speeds = new SimpleMatrix(
                 new double[][]{
-                        {1},
-                        {1},
-                        {1},
-                        {1}
+                        {vK},
+                        {0},
+                        {0}
 
                 }
         );
         SimpleMatrix accelerations = new SimpleMatrix(
                 new double[][]{
-                        {0},
-                        {0},
+                        {aK},
                         {0},
                         {0}
                 }
@@ -49,37 +51,45 @@ public class TuneFeedForwardGains extends LinearOpMode{
         while (opModeIsActive()) {
             drivetrain.localize();
             if (state == 0){
-                drivetrain.setWheelSpeedAcceleration(speeds,accelerations);
+                vK = lastVk*maxAcceleration*lapTime.milliseconds();
+                lastVk = vK;
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
                 if (lapTime.milliseconds()>t/2){
                     state++;
                     lapTime.reset();
                 }
             } else if (state == 1){
-                drivetrain.setWheelSpeedAcceleration(speeds,accelerations);
-                if (lapTime.milliseconds()>t){
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                if (lapTime.milliseconds()>t/2){
                     state++;
                     lapTime.reset();
                 }
             }
             else if (state == 2){
-                drivetrain.setWheelSpeedAcceleration(speeds,accelerations);
+                vK = lastVk*-maxAcceleration*lapTime.milliseconds();
+                lastVk = vK;
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
                 if (lapTime.milliseconds()>t){
                     state++;
                     lapTime.reset();
                 }
             }  else if (state == 3){
-                drivetrain.setWheelSpeedAcceleration(speeds,accelerations);
-                if (lapTime.milliseconds()>t){
+                vK = lastVk*lapTime.milliseconds();
+                lastVk = vK;
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                if (lapTime.milliseconds()>t/2){
                     state++;
                     lapTime.reset();
                 }
             }
             else if (state == 4) {
-                drivetrain.setWheelSpeedAcceleration(speeds, accelerations);
-                    if (lapTime.milliseconds() > t) {
-                        state = 1;
-                        lapTime.reset();
-                    }
+                vK = lastVk*maxAcceleration*lapTime.milliseconds();
+                lastVk = vK;
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                if (lapTime.milliseconds()>t/2){
+                    state++;
+                    lapTime.reset();
+                }
             }
             looptime.reset();
         }
