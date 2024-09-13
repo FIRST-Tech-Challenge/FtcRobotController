@@ -7,5 +7,5 @@ public abstract class ArmSystem {
 
     public ArmSystem(DcMotor[] armMotors) {
         this.armMotors = armMotors;
-    }   
+    }
 }

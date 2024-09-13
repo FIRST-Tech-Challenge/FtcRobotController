@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.hardware;
 public class CoyotesRobot {
     private OpMode opMode;
 
-    // Whether the robot will automatically sleep after each command
-    // Will automatically sleep by default
+    // Whether the robot will automatically sleep after each command,
+    // by default True
     private boolean autoSleepEnabled;
 
     private MeccanumDrive meccanumDrive;
@@ -66,7 +66,7 @@ public class CoyotesRobot {
             return;
         }
 
-        // While any of the motors are still running
+        // Sleep while any of the motors are still running
         while (Arrays.stream(motors).anyMatch(motor -> motor.isBusy())) {
             linearOp.sleep(1);
         }
