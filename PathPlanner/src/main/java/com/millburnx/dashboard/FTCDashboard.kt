@@ -9,7 +9,7 @@ import javax.swing.JPanel
 import kotlin.math.min
 
 interface IFTCDashboard {
-    fun sendTelemetryPacket(telemetryPacket: ITelemetryPacket)
+    fun sendTelemetryPacket(telemetryPacket: TelemetryPacket)
 }
 
 class FTCDashboard(
@@ -61,9 +61,9 @@ class FTCDashboard(
             super.paintComponent(g2d)
 
             g2d.translate(width / 2, height / 2)
-            val canvas = currentPacket.fieldOverlay()
-            val ops = canvas.getOperations()
-            for (op in ops) {
+            val canvas: Canvas = currentPacket.fieldOverlay()
+            val ops: List<CanvasOp> = canvas.operations
+            for (op: CanvasOp in ops) {
                 op.draw(g2d, ppi, this)
             }
 
@@ -77,8 +77,8 @@ class FTCDashboard(
     }
 
     val panel: Panel = Panel(ppi)
-    private var currentPacket: ITelemetryPacket = TelemetryPacket()
-    override fun sendTelemetryPacket(telemetryPacket: ITelemetryPacket) {
+    private var currentPacket: TelemetryPacket = TelemetryPacket()
+    override fun sendTelemetryPacket(telemetryPacket: TelemetryPacket) {
         currentPacket = telemetryPacket
         panel.repaint()
     }

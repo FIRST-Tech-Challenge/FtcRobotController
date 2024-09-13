@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.common.commands
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.arcrobotics.ftclib.command.CommandBase
-import com.millburnx.dashboard.ITelemetryPacket
 import com.millburnx.purepursuit.PurePursuit
 import com.millburnx.utils.Vec2d
 import org.firstinspires.ftc.teamcode.common.subsystems.DriveSubsystem
 import org.firstinspires.ftc.teamcode.common.subsystems.PID
+import org.firstinspires.ftc.teamcode.common.utils.Telemetry
 import org.firstinspires.ftc.teamcode.common.utils.Util
 import org.firstinspires.ftc.teamcode.opmodes.AutonConfig
 
@@ -39,13 +39,19 @@ class PurePursuitCommand(
 
         val powerF = position.distanceTo(targetPoint)
         val angleDiff = Util.getAngleDiff((position to heading), targetPoint)
-        val powerH = angleDiff
+        val powerH = Math.toDegrees(angleDiff)
 
         val packet = TelemetryPacket()
-        PurePursuit.render(calcResults, packet as ITelemetryPacket, true)
+        packet.put("robot/x", pose.x)
+        packet.put("robot/y", pose.y)
+        packet.put("robot/h", Math.toDegrees(pose.heading))
+        PurePursuit.render(calcResults, packet, true)
+        packet.put("pure_pursuit/power_forward", powerF)
+        packet.put("pure_pursuit/power_heading", powerH)
+        Telemetry.drawRobot(packet.fieldOverlay(), pose)
         dash.sendTelemetryPacket(packet)
 
-        drive.robotCentric(powerF * AutonConfig.multiF, 0.0, powerH * AutonConfig.multiH)
+        drive.robotCentric(powerF, 0.0, powerH, AutonConfig.multiF, AutonConfig.multiH)
     }
 
     override fun end(interrupted: Boolean) {

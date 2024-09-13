@@ -14,8 +14,8 @@ import javax.swing.border.EmptyBorder
 class JPopover(
     val parent: JPanel,
     val scale: Double,
-    val bgColor: Color = Utils.Colors.bg0,
-    val borderColor: Color = Utils.Colors.bg2,
+    val bgColor: Color = Color.decode(Utils.Colors.bg0),
+    val borderColor: Color = Color.decode(Utils.Colors.bg2),
     val borderRadius: Double = 6.0,
     val borderWidth: Float = 1f,
     val padding: Vec2d = Vec2d(16),

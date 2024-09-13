@@ -11,28 +11,6 @@ import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JPanel
 
-// https://acmerobotics.github.io/ftc-dashboard/javadoc/com/acmerobotics/dashboard/canvas/CanvasOp.html
-abstract class CanvasOp(val type: Type) {
-    enum class Type {
-        GRID,
-        TRANSLATE,
-        ROTATION,
-        SCALE,
-        ALPHA,
-        CIRCLE,
-        POLYGON,
-        POLYLINE,
-        STROKE,
-        FILL,
-        STROKE_WIDTH,
-        TEXT,
-        IMAGE
-    }
-
-    // max for centering
-    abstract fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel)
-}
-
 // https://github.com/acmerobotics/ftc-dashboard/tree/master/DashboardCore/src/main/java/com/acmerobotics/dashboard/canvas
 class Alpha(private val alpha: Double) : CanvasOp(Type.ALPHA) {
     override fun draw(g2d: Graphics2D, ppi: Double, panel: JPanel) {

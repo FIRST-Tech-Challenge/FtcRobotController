@@ -9,11 +9,19 @@ import javax.swing.border.EmptyBorder
 import javax.swing.text.NumberFormatter
 
 class JNumber(
-    val parentPanel: JPanel, val scale: Double,
-    min: Double, max: Double, step: Double, value: Double,
-    val bgColor: Color = Utils.Colors.bg0, val fgColor: Color = Color.WHITE,
-    val borderColor: Color = Utils.Colors.bg2, val borderRadius: Double = 6.0, val borderWidth: Float = 1f,
-    val padding: Vec2d = Vec2d(8), val spacing: Double = 8.0
+    val parentPanel: JPanel,
+    val scale: Double,
+    min: Double,
+    max: Double,
+    step: Double,
+    value: Double,
+    val bgColor: Color = Color.decode(Utils.Colors.bg0),
+    val fgColor: Color = Color.WHITE,
+    val borderColor: Color = Color.decode(Utils.Colors.bg2),
+    val borderRadius: Double = 6.0,
+    val borderWidth: Float = 1f,
+    val padding: Vec2d = Vec2d(8),
+    val spacing: Double = 8.0
 ) {
     val model: SpinnerNumberModel = SpinnerNumberModel(value, min, max, step)
     val spinner = object : JSpinner(model) {

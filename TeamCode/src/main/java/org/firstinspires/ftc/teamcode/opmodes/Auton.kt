@@ -12,8 +12,11 @@ import org.firstinspires.ftc.teamcode.common.utils.Telemetry
 
 @Config
 object AutonConfig {
-    @JvmField var multiF = 0.1
-    @JvmField var multiH = 0.1
+    @JvmField
+    var multiF = 0.1
+
+    @JvmField
+    var multiH = 0.1
 }
 
 @Config
@@ -25,10 +28,20 @@ class Auton : CommandOpMode() {
     var dash: FtcDashboard? = null
 
     val path = listOf(
-        Vec2d(0.0, 0.0),
-        Vec2d(120.0, 0.0),
-        Vec2d(120.0, -120.0),
-        Vec2d(0.0, -120.0),
+
+        Vec2d(-31.333333333333332, 57.333333333333336),
+        Vec2d(-39.24444444444445, 50.13333333333333),
+        Vec2d(-53.06666666666667, 42.15555555555556),
+        Vec2d(-55.06666666666667, 35.733333333333334),
+        Vec2d(-57.06666666666667, 29.311111111111114),
+        Vec2d(-43.04444444444445, 26.200000000000003),
+        Vec2d(-43.333333333333336, 18.8),
+        Vec2d(-43.62222222222222, 11.399999999999999),
+        Vec2d(-55.37777777777777, 0.2666666666666675),
+        Vec2d(-56.8, -8.666666666666666),
+        Vec2d(-58.22222222222222, -17.6),
+        Vec2d(-53.51111111111111, -26.08888888888889),
+        Vec2d(-51.86666666666667, -34.8),
     )
 
     override fun initialize() {

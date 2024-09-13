@@ -1,7 +1,6 @@
 package com.millburnx.utils
 
 import com.acmerobotics.dashboard.canvas.Canvas
-import com.millburnx.dashboard.ICanvas
 import java.awt.Color
 import java.awt.Graphics2D
 import kotlin.math.max

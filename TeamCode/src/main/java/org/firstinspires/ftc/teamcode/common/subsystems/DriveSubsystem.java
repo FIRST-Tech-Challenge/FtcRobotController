@@ -24,6 +24,7 @@ public class DriveSubsystem extends SubsystemBase {
     public static double WHEEL_DIAMETER = 1.425;
     public static double TICKS_PER_REV = 8192;
     public static double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
+    public static boolean BREAK = false;
     public Motor.Encoder leftOdom, rightOdom, centerOdom;
     public HolonomicOdometry odometry;
 
@@ -44,10 +45,12 @@ public class DriveSubsystem extends SubsystemBase {
         rightFront = new MotorEx(hardwareMap, "frontRight");
         rightFront.setInverted(false);
 
-        rightRear.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        leftFront.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        Motor.ZeroPowerBehavior stop = BREAK ? Motor.ZeroPowerBehavior.BRAKE : Motor.ZeroPowerBehavior.FLOAT;
+
+        rightRear.setZeroPowerBehavior(stop);
+        rightFront.setZeroPowerBehavior(stop);
+        leftRear.setZeroPowerBehavior(stop);
+        leftFront.setZeroPowerBehavior(stop);
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -74,11 +77,15 @@ public class DriveSubsystem extends SubsystemBase {
         );
 
         // change to reflect starting field position
-        odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(Math.toRadians(0))));
+        odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(-60, 60, new Rotation2d(Math.toRadians(0))));
     }
 
     public void robotCentric(double power, double strafe, double turn) {
-        double denominator = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
+        robotCentric(power, strafe, turn, 1, 1);
+    }
+
+    public void robotCentric(double power, double strafe, double turn, double multiF, double multiH) {
+        double denominator = Math.max(Math.abs(power * 1 / multiF) + Math.abs(strafe * 1 / multiF) + Math.abs(turn * 1 / multiH), Math.max(1, Math.max(1 / multiF, 1 / multiH)));
         double frontLeftPower = (power + strafe + turn) / denominator;
         double backLeftPower = (power - strafe + turn) / denominator;
         double frontRightPower = (power - strafe - turn) / denominator;

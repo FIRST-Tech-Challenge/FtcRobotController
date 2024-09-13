@@ -12,9 +12,9 @@ import javax.swing.border.EmptyBorder
 class JCheckbox(
     val scale: Double,
     val checked: Boolean = false,
-    val bgColor: Color = Utils.Colors.bg0,
-    val filledColor: Color = Utils.Colors.blue,
-    val borderColor: Color = Utils.Colors.bg2,
+    val bgColor: Color = Color.decode(Utils.Colors.bg0),
+    val filledColor: Color = Color.decode(Utils.Colors.blue),
+    val borderColor: Color = Color.decode(Utils.Colors.bg2),
     val borderRadius: Double = 6.0,
     val borderWidth: Float = 1f,
     val padding: Vec2d = Vec2d(2),
@@ -32,7 +32,7 @@ class JCheckbox(
     override fun paintComponent(g: Graphics) {
         val (bufferedImage, g2d) = Utils.bufferedImage(width, height)
         val regularFill = if (isSelected) filledColor else bgColor
-        val disabledFill = if (isSelected) Utils.Colors.bg4 else Utils.Colors.bg2
+        val disabledFill = Color.decode(if (isSelected) Utils.Colors.bg4 else Utils.Colors.bg2)
         val fillColor = if (isEnabled) regularFill else disabledFill
         Utils.drawRoundedPanel(
             g2d, scale, Vec2d(width, height), fillColor, borderRadius, borderColor, borderWidth

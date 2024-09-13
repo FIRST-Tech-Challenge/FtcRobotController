@@ -20,18 +20,18 @@ class Utils {
     class Colors {
         companion object {
             // From Freya Holmér
-            val bg0 = Color(0x070b0f)
-            val bg1 = Color(0x0e1a25)
-            val bg2 = Color(0x525c65)
-            val bg3 = Color(0x4f6880)
-            val bg4 = Color(0xa6aeb6)
+            val bg0 = "#070b0f"
+            val bg1 = "#0e1a25"
+            val bg2 = "#525c65"
+            val bg3 = "#4f6880"
+            val bg4 = "#a6aeb6"
 
-            val red = Color(0xfb1155)
-            val blue = Color(0x35b8fa)
-            val green = Color(0x11e59c)
-            val yellow = Color(0xf1d454)
+            val red = "#fb1155"
+            val blue = "#35b8fa"
+            val green = "#11e59c"
+            val yellow = "#f1d454"
 
-            val purple = Color(0x8e10fd)
+            val purple = "#8e10fd"
         }
     }
 
@@ -116,7 +116,7 @@ class Utils {
          */
         fun drawRoundedPanel(
             g2d: Graphics2D, scale: Double, size: Vec2d, bgColor: Color, radius: Double,
-            borderColor: Color = Colors.bg2, borderWidth: Float = 0f
+            borderColor: Color = Color.decode(Colors.bg2), borderWidth: Float = 0f
         ) {
             val radius = (radius * scale).toInt()
 

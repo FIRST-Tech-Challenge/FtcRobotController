@@ -19,7 +19,7 @@ import javax.swing.JPanel
 import kotlin.math.round
 
 class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
-    val drawImage = false
+    val drawImage = true
     val backgroundImage = ImageIO.read(javaClass.classLoader.getResource("bg.png"))
     val bezierPoints: MutableList<BezierPoint> = mutableListOf()
     val undoStack: MutableList<List<Change>> = mutableListOf()
@@ -51,13 +51,13 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
         val (bufferedImage, g2d) = Utils.bufferedImage(width, height)
         super.paintComponent(g2d)
 
-        g2d.background = Utils.Colors.bg1
+        g2d.background = Color.decode(Utils.Colors.bg1)
         g2d.clearRect(0, 0, width, height)
         if (drawImage) {
             g2d.drawImage(backgroundImage, 0, 0, width, height, null)
         } else {
             val grid = Vec2d(6, 6)
-            g2d.color = Utils.Colors.bg2
+            g2d.color = Color.decode(Utils.Colors.bg2)
             for (i in 0 until width step (width / grid.x).toInt()) {
                 g2d.drawLine(i, 0, i, height)
             }
@@ -70,11 +70,11 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
         bezierPoints.zipWithNext { p1, p2 ->
             Bezier(p1.anchor, p1.nextHandle!!, p2.prevHandle!!, p2.anchor)
         }.forEach {
-            it.g2dDraw(g2d, ppi, scale, Utils.Colors.green)
+            it.g2dDraw(g2d, ppi, scale, Color.decode(Utils.Colors.green))
         }
 
         for (bezierPoint in bezierPoints) {
-            bezierPoint.draw(g2d, ppi, scale, Utils.Colors.red, Utils.Colors.blue)
+            bezierPoint.draw(g2d, ppi, scale, Color.decode(Utils.Colors.red), Color.decode(Utils.Colors.blue))
         }
 
         g.drawImage(bufferedImage, 0, 0, null)
@@ -178,7 +178,7 @@ class PathPlanner(var ppi: Double, val scale: Double) : JPanel() {
 
         val popover = JPopover(this, scale)
         val wrapper = JPanel()
-        wrapper.background = Utils.Colors.bg0
+        wrapper.background = Color.decode(Utils.Colors.bg0)
         wrapper.font = font
         popover.add(wrapper)
 

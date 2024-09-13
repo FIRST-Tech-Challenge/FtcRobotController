@@ -1,6 +1,6 @@
 package com.millburnx.purepursuit
 
-import com.millburnx.dashboard.ICanvas
+import com.acmerobotics.dashboard.canvas.Canvas
 import com.millburnx.dashboard.TelemetryPacket
 import com.millburnx.utils.Bezier
 import com.millburnx.utils.Intersection
@@ -67,16 +67,16 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
         updatePath()
     }
 
-    private fun renderPath(canvas: ICanvas) {
-        canvas.setFill(background.rgb.toString())
+    private fun renderPath(canvas: Canvas) {
+        canvas.setFill(background)
             .fillRect(-144.0 / 2, -144.0 / 2, 144.0, 144.0)
-            .setStroke(Utils.Colors.bg2.rgb.toString())
+            .setStroke(Utils.Colors.bg2)
             .drawGrid(0.0, 0.0, 144.0, 144.0, 7, 7)
             .setStrokeWidth(2)
 
         var color = 0
         for (bezier in beziers) {
-            canvas.setStroke(colors[color % colors.size].rgb.toString())
+            canvas.setStroke(colors[color % colors.size])
             bezier.draw(canvas)
             color++
         }
@@ -90,10 +90,10 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
             val p2 = path[i + 2]
             val p3 = path[i + 3]
 
-            canvas.setStroke(colors[color % colors.size].rgb.toString())
+            canvas.setStroke(colors[color % colors.size])
                 .strokeLine(p0.x, p0.y, p1.x, p1.y)
                 .strokeLine(p2.x, p2.y, p3.x, p3.y)
-                .setFill(background.rgb.toString())
+                .setFill(background)
                 .fillCircle(p0.x, p0.y, anchorSize)
                 .fillCircle(p1.x, p1.y, handleSize)
                 .fillCircle(p2.x, p2.y, handleSize)
@@ -101,7 +101,7 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
                 .setStroke("#FFFFFF")
                 .strokeCircle(p0.x, p0.y, anchorSize)
                 .strokeCircle(p3.x, p3.y, anchorSize)
-                .setStroke(colors[color % colors.size].rgb.toString())
+                .setStroke(colors[color % colors.size])
                 .strokeCircle(p1.x, p1.y, handleSize)
                 .strokeCircle(p2.x, p2.y, handleSize)
 
@@ -138,7 +138,7 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
         for (intersection in intersections) {
             val segmentIndex = beziers.indexOf(intersection.line)
             val color = colors[segmentIndex % colors.size]
-            canvas.setFill(if (intersection == closestIntersection) "#FFFFFF" else color.rgb.toString())
+            canvas.setFill(if (intersection == closestIntersection) "#FFFFFF" else color)
                 .fillCircle(intersection.point.x, intersection.point.y, 1.0)
         }
         val targetIntersection = closestIntersection ?: lastIntersection
@@ -152,7 +152,7 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
         return true
     }
 
-    private fun drawRobot(canvas: ICanvas) {
+    private fun drawRobot(canvas: Canvas) {
         val lookaheadVector = Vec2d(robot.lookahead, 0.0).rotate(robot.heading)
         val lookaheadPoint = robot.position + lookaheadVector
 
@@ -164,7 +164,7 @@ class PurePursuitOpMode(ppi: Double, updateHertz: Double = -1.0) : OpMode(ppi, u
                 copyPositions.map { it.x }.toDoubleArray(),
                 copyPositions.map { it.y }.toDoubleArray()
             )
-            .setFill(Utils.Colors.purple.rgb.toString())
+            .setFill(Utils.Colors.purple)
             .fillCircle(robot.position.x, robot.position.y, 1.0)
             .strokeCircle(robot.position.x, robot.position.y, robot.lookahead)
             .strokeLine(robot.position.x, robot.position.y, lookaheadPoint.x, lookaheadPoint.y)
