@@ -15,8 +15,9 @@ public class Drivetrain {
     public DcMotor bR;
     public Encoder encoder;
     //public static double TICKS_PER_REV = 1;
-    public static double GEAR_RATIO = 26.9;
-    public static double WHEEL_RADIUS_INCHES = 4.09449;
+    public static double GEAR_RATIO = 1;
+    public static double WHEEL_RADIUS_INCHES = 1.88976;
+    public static double TICKS_PER_REV = 537.6;
     //public IMU imu;
 
     public void init(HardwareMap map) {
