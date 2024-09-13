@@ -41,6 +41,8 @@ public class MecanumTeleOp extends OpMode {
 
         robot.driveTrain.setDriveVelocities(driveVelocities);
 
+
+
         if (gamepad1.dpad_up) {
             robot.linear_L.linear_motion_left.setPower(1);
             robot.linear_R.linear_motion_right.setPower(1);
@@ -49,8 +51,8 @@ public class MecanumTeleOp extends OpMode {
             robot.linear_R.linear_motion_right.setPower(-1);
 
         } else {
-            robot.linear_L.linear_motion_left.setPower(0);
-            robot.linear_R.linear_motion_right.setPower(0);
+            robot.linear_L.linear_motion_left.setPower(0.005);
+            robot.linear_R.linear_motion_right.setPower(0.005);
         }
     }
 
