@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,4 +17,4 @@ public class Autonomous extends LinearOpMode {
         // Wait until the player press the start button
         waitForStart();
     }
-} 
+}
