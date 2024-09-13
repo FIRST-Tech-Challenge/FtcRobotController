@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
+import org.firstinspires.ftc.teamcode.hardware;
+
 public class CoyotesRobot {
     private OpMode opMode;
 
@@ -11,15 +13,17 @@ public class CoyotesRobot {
     private boolean autoSleepEnabled;
 
     private MeccanumDrive meccanumDrive;
+    private ArmSystem armSystem;
 
-    public Hardware(OpMode opMode) {
+    public Hardware(OpMode opMode, DriveSystem driveSystem, ArmSystem armSystem) {
         this.opMode = opMode;
+
+        this.driveSystem = driveSystem;
+        this.armSystem = armSystem;
 
         autoSleepEnabled = true;
 
         init();
-
-        driveSystem = new DriveSystem();
     }
 
     /**
@@ -34,7 +38,7 @@ public class CoyotesRobot {
      * Returns null if it fails
      *
      * @return a linearOpMode representation of opMode if possible
-     * Else returns null
+     *         Else returns null
      */
     public LinearOpMode getLinearOpMode() {
         try {

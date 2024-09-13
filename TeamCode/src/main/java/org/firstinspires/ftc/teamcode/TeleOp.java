@@ -10,7 +10,9 @@ public class TeleOp extends OpMode {
 
     @Override
     public void init() {
-        robot = new CoyotesRobot(this);
+        meccanumDrive = new MeccanumDrive();
+        armSystem = new ArmSystem();
+        robot = new CoyotesRobot(this, meccanumDrive);
     }
 
     @Override
@@ -19,7 +21,8 @@ public class TeleOp extends OpMode {
         moveArm();
         moveGrabber();
 
-        telemetry.update(); // call-back to android console
+        // Update the information from the robot
+        telemetry.update();
     }
 
     /**
