@@ -1,18 +1,24 @@
 package org.firstinspires.ftc.teamcode.Drivetrain;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
+
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.ejml.simple.SimpleMatrix;
 
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Localization.DeadWheelOdometery;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
+import org.firstinspires.ftc.teamcode.Utils.Utils;
 
 public class Drivetrain {
     /**
@@ -33,7 +39,15 @@ public class Drivetrain {
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
+    public static double distanceThreshold = 2;
+    public static double angleThreshold = 1;
     public SimpleMatrix prevWheelSpeeds = new SimpleMatrix( new double[][]{
+            new double[]{0},
+            new double[]{0},
+            new double[]{0},
+            new double[]{0}
+    });
+    public SimpleMatrix stopMatrix = new SimpleMatrix( new double[][]{
             new double[]{0},
             new double[]{0},
             new double[]{0},
@@ -121,12 +135,37 @@ public class Drivetrain {
     public void setWheelSpeedAcceleration(SimpleMatrix wheelSpeeds, SimpleMatrix wheelAccelerations){
         setPower(motorController.calculate(wheelSpeeds,wheelAccelerations));
     }
-    public void goToPose(SimpleMatrix desiredPose){
+
+    /*public void goToPose(SimpleMatrix desiredPose){
         SimpleMatrix pose = state.extractMatrix(0,3,0,1);
         SimpleMatrix wheelSpeeds = poseControl.calculate(pose, desiredPose);
         SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
         deltaT.reset();
         setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
         prevWheelSpeeds = wheelSpeeds;
+    }*/
+    public Action goToPose(SimpleMatrix desiredPose) {
+        return new Action() {
+            //private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //if (!initialized) {
+                //    initialized = true;
+                //}
+                localize();
+                SimpleMatrix pose = state.extractMatrix(0,3,0,1);
+                SimpleMatrix wheelSpeeds = poseControl.calculate(pose, desiredPose);
+                SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
+                deltaT.reset();
+                setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
+                prevWheelSpeeds = wheelSpeeds;
+                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold)){
+                    setPower(stopMatrix);
+                }
+                return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold;
+
+            }
+        };
     }
 }

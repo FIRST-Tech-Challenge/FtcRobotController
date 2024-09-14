@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Drivetrain.Tuners;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -56,7 +57,8 @@ public class TunePoseController extends LinearOpMode {
                     }
             );
             drivetrain.localize();
-            drivetrain.goToPose(desiredPose);
+            //drivetrain.goToPose(desiredPose);
+            Actions.runBlocking(drivetrain.goToPose(desiredPose));
             telemetry.addData("x", drivetrain.state.get(0,0));
             telemetry.addData("y", drivetrain.state.get(1,0));
             telemetry.addData("theta", drivetrain.state.get(2,0));
