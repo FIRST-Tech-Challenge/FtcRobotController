@@ -5,7 +5,8 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import static org.firstinspires.ftc.teamcode.JimBot.turnDir.LEFT;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,9 +16,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp
@@ -31,6 +29,9 @@ public class JimBot extends LinearOpMode {
 
     IMU imu;
 
+    static double TRACKWIDTH = 14;//in inches
+    static double WHEELBASE = 15;//in inches
+
 
     @Override
     public void runOpMode() {
@@ -41,17 +42,17 @@ public class JimBot extends LinearOpMode {
         while (opModeIsActive()) {
             double speed = gamepad1.right_trigger + (-gamepad1.left_trigger); // Makes it so that the triggers cancel each other out if both are pulled at the same time
             double angle = gamepad1.right_stick_x;
-            if(speed!=0)
+            if (speed != 0)
                 move(gamepad1.left_stick_x, speed);
-            else if(angle!=0)
+            else if (angle != 0)
                 rotate(angle);
-            else{
+            else {
                 FLMotor.setPower(0);
                 BLMotor.setPower(0);
                 BRMotor.setPower(0);
                 FRMotor.setPower(0);
             }
-            if(gamepad1.a==true)
+            if (gamepad1.a)
                 moveHome();
 
         }
@@ -62,9 +63,9 @@ public class JimBot extends LinearOpMode {
     public void initRobot() {
 
         //init imu and stuff stolen from SensorIMUOrthogonal in external samples
-        imu = hardwareMap.get(IMU.class,"imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
@@ -163,9 +164,9 @@ public class JimBot extends LinearOpMode {
         //oldH = newH;
     }
 
-    public void rotate(double angle){
+    public void rotate(double angle) {
 
-        //set wheels for rotation
+        //set wheels for rotation (Ben's robot has 2x gear ratio so .125 and .375)
         FLServo.setPosition(.25);
         BLServo.setPosition(.75);
         BRServo.setPosition(.25);
@@ -180,20 +181,43 @@ public class JimBot extends LinearOpMode {
     }
 
 
+    /*
+    wheel angle is perpendicular to turn angle
+    turn angle is inverse tan(get angle) of 7.5(half of wheel base length) / (turning distance/2)
+    because it is radius of point we are trying to rotate around
+    speed = -1 to 1
+    turnRad = -1 to 1
+    turnDir = LEFT or RIGHT
+     */
+    public void moveAndRotate(double speed, double turnAmount, turnDir dir) {
+
+        double i_WheelAngle = Math.atan2(WHEELBASE, turnAmount - TRACKWIDTH / 2);
+        double outsideAng = Math.atan2(WHEELBASE, turnAmount + TRACKWIDTH / 2);
+
+
+
+
+    }
+
+
     //uses imu
-    public void moveHome(){
+    public void moveHome() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double yawAngle = orientation.getYaw(AngleUnit.DEGREES);
         telemetry.addData("Yaw angle", yawAngle);
         rotate(yawAngle);
     }
 
-    public void moveToSpecimen(){
+    public void moveToSpecimen() {
 
     }
 
-    public void moveToStore(){
+    public void moveToStore() {
 
+    }
+
+    public enum turnDir {
+        LEFT, RIGHT;
     }
 
 }
