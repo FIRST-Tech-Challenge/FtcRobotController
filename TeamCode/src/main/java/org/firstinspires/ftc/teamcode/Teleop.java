@@ -7,17 +7,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp(name = "Ali's Teleop")
+@TeleOp(name = "Into The Deep Teleop")
 
 public class Teleop extends LinearOpMode {
+    //The wheels
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
-    //Thr two joints on the arm
+
+    //The two joints on the arm
     private DcMotor jointOne = null;
     private DcMotor jointTwo = null;
+
+    //The claw
     private Servo claw = null;
+
     //the two servos for the wrist
     private Servo horizontalWrist = null;
     private Servo verticalWrist = null;
@@ -25,17 +30,18 @@ public class Teleop extends LinearOpMode {
 
     public void runOpMode() {
         //control hub
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");//gamepad1
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");//gamepad1
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");//gamepad1
-        backRight = hardwareMap.get(DcMotor.class, "backRight");//gamepad1
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");//gamepad1 //conf 0
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");//gamepad1 //conf 1
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");//gamepad1  //conf 2
+        backRight = hardwareMap.get(DcMotor.class, "backRight");//gamepad1 //conf 3
 
         //expansion hub
-        jointOne = hardwareMap.get(DcMotor.class, "jointOne");//gamepad2
-        jointTwo = hardwareMap.get(DcMotor.class, "jointTwo");//gamepad2
-        claw = hardwareMap.get(Servo.class, "claw");//gamepad2
-        horizontalWrist = hardwareMap.get(Servo.class, "horizontalWrist");//gamepad2
-        verticalWrist = hardwareMap.get(Servo.class, "verticalWrist");//gamepad2
+        jointOne = hardwareMap.get(DcMotor.class, "jointOne");//gamepad2 //conf 1
+        jointTwo = hardwareMap.get(DcMotor.class, "jointTwo");//gamepad2 //conf 2
+
+        claw = hardwareMap.get(Servo.class, "claw");//gamepad2 //conf 0
+        horizontalWrist = hardwareMap.get(Servo.class, "horizontalWrist");//gamepad2 //conf 1
+        verticalWrist = hardwareMap.get(Servo.class, "verticalWrist");//gamepad2 //conf 2
 
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -54,34 +60,34 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("First joints Position: ", jointOne.getCurrentPosition());
             telemetry.addData("Second joints Position: ", jointTwo.getCurrentPosition());
             telemetry.update();
+
+            double vertical = 0.4 * gamepad1.left_stick_y;
+            double strafe = -0.4 * gamepad1.left_stick_x;
+            double turn = -0.35 * gamepad1.right_stick_x;
+            robotMovement(vertical, strafe, turn);
             //gamepad1
-            if (((gamepad1.left_stick_x != 0) || (gamepad1.left_stick_y != 0)) || ((gamepad1.right_stick_x != 0) || (gamepad1.right_stick_y != 0))) {
-                //Makes robot faster while x button is pressed
-                if(gamepad1.x){
-                    double vertical = 0.6 * gamepad1.left_stick_y;
-                    double strafe = -0.6 * gamepad1.left_stick_x;
-                    double turn = -0.55 * gamepad1.right_stick_x;
-                    robotMovement(vertical, strafe, turn);
-                //Makes robot slower while y button is pressed
-                }else if(gamepad1.y){
-                    double vertical = 0.2 * gamepad1.left_stick_y;
-                    double strafe = -0.2 * gamepad1.left_stick_x;
-                    double turn = -0.15 * gamepad1.right_stick_x;
-                    robotMovement(vertical, strafe, turn);
-                //Base speed when nothing is pressed
-                }else {
-                    double vertical = 0.4 * gamepad1.left_stick_y;
-                    double strafe = -0.4 * gamepad1.left_stick_x;
-                    double turn = -0.35 * gamepad1.right_stick_x;
-                    robotMovement(vertical, strafe, turn);
-                }
-            }
+//            if (((gamepad1.left_stick_x != 0) || (gamepad1.left_stick_y != 0)) || ((gamepad1.right_stick_x != 0) || (gamepad1.right_stick_y != 0))) {
+//                //Makes robot faster while x button is pressed
+//                if(gamepad1.x){
+//                    double vertical = 0.6 * gamepad1.left_stick_y;
+//                    double strafe = -0.6 * gamepad1.left_stick_x;
+//                    double turn = -0.55 * gamepad1.right_stick_x;
+//                //Makes robot slower while y button is pressed
+//                }else if(gamepad1.y){
+//                    double vertical = 0.2 * gamepad1.left_stick_y;
+//                    double strafe = -0.2 * gamepad1.left_stick_x;
+//                    double turn = -0.15 * gamepad1.right_stick_x;
+//                //Base speed when nothing is pressed
+//                }else {
+//
+//                }
+//            }
             if ((gamepad2.left_stick_button) || (gamepad2.right_stick_button)) {
                 brake();
             }
             double manualArmDeadband = 0.3;//Makes sure you don't move the arm with every small movement, makes it so you have to push it a little bit for it to move
-            double jointOnePower = 0.3;
-            double jointTwoPower = 0.3;
+            double jointOnePower = 0.6;
+            double jointTwoPower = 0.6;
             newArm(manualArmDeadband, jointOnePower, jointTwoPower);
 
 
@@ -171,7 +177,13 @@ public class Teleop extends LinearOpMode {
             jointOne.setPower(jointOnePower * gamepad2.right_stick_y);
         //When the right stick is pushed left to right, it moves  the second arm joint
         } else if (Math.abs(gamepad2.right_stick_x) > manualArmDeadband) {
-            jointTwo.setPower(jointTwoPower * gamepad2.left_stick_x);
+            jointTwo.setPower(jointTwoPower * gamepad2.right_stick_x);
+        }else{
+            jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            jointOne.setPower(0.0);
+            jointTwo.setPower(0.0);
         }
     }
 
