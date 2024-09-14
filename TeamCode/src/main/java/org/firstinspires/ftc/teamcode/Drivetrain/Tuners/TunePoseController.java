@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.DriveTrain.Tuners;
+package org.firstinspires.ftc.teamcode.Drivetrain.Tuners;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.DriveTrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
 
 /**
  * THIS IS AN AUTONOMOUS OPMODE WE WILL USE TO TEST

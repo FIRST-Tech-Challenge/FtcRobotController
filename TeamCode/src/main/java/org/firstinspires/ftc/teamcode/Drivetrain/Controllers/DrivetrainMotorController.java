@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.DriveTrain.Controllers;
+package org.firstinspires.ftc.teamcode.Drivetrain.Controllers;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Controllers.FeedForward;
-import org.firstinspires.ftc.teamcode.DriveTrain.Drivetrain;
 
 @Config
 public class DrivetrainMotorController {

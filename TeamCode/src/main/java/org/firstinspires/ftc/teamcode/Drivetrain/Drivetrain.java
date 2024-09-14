@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.DriveTrain;
+package org.firstinspires.ftc.teamcode.Drivetrain;
 
 import java.util.List;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
 
-import org.firstinspires.ftc.teamcode.DriveTrain.Controllers.DrivetrainMotorController;
+import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Localization.DeadWheelOdometery;
-import org.firstinspires.ftc.teamcode.DriveTrain.Controllers.PoseController;
+import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
 
 public class Drivetrain {
     /**

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.DriveTrain.Controllers;
+package org.firstinspires.ftc.teamcode.Drivetrain.Controllers;
 
 import com.acmerobotics.dashboard.config.Config;
 

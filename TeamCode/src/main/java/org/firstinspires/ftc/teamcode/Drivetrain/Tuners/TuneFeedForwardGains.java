@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.DriveTrain.Tuners;
+package org.firstinspires.ftc.teamcode.Drivetrain.Tuners;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.DriveTrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Controllers.FeedForward;
+import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Utils.Utils;
 
 @Config
