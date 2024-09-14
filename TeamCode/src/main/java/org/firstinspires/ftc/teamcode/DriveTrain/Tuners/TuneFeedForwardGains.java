@@ -18,7 +18,7 @@ public class TuneFeedForwardGains extends LinearOpMode{
     // Use FTCDashboard
     FtcDashboard dashboard;
     double state=0;
-    public static double maxAcceleration = 0;
+    public static double maxAcceleration = 50.0;
     public static double t = 2000;
     @Override
     public void runOpMode() {
@@ -51,41 +51,46 @@ public class TuneFeedForwardGains extends LinearOpMode{
         while (opModeIsActive()) {
             drivetrain.localize();
             if (state == 0){
-                vK = lastVk*maxAcceleration*lapTime.milliseconds();
+                aK = maxAcceleration;
+                vK = lastVk+aK*lapTime.milliseconds();
                 lastVk = vK;
-                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),Utils.inverseKinematics(accelerations));
                 if (lapTime.milliseconds()>t/2){
                     state++;
                     lapTime.reset();
                 }
             } else if (state == 1){
-                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                aK = 0;
+                vK = lastVk+aK*lapTime.milliseconds();
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),Utils.inverseKinematics(accelerations));
                 if (lapTime.milliseconds()>t/2){
                     state++;
                     lapTime.reset();
                 }
             }
             else if (state == 2){
-                vK = lastVk*-maxAcceleration*lapTime.milliseconds();
+                aK = -maxAcceleration;
+                vK = lastVk+aK*lapTime.milliseconds();
                 lastVk = vK;
-                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),Utils.inverseKinematics(accelerations));
                 if (lapTime.milliseconds()>t){
                     state++;
                     lapTime.reset();
                 }
             }  else if (state == 3){
-                vK = lastVk*lapTime.milliseconds();
+                aK = maxAcceleration;
+                vK = lastVk+aK*lapTime.milliseconds();
                 lastVk = vK;
-                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),Utils.inverseKinematics(accelerations));
                 if (lapTime.milliseconds()>t/2){
                     state++;
                     lapTime.reset();
                 }
             }
             else if (state == 4) {
-                vK = lastVk*maxAcceleration*lapTime.milliseconds();
+                vK = lastVk+aK*maxAcceleration*lapTime.milliseconds();
                 lastVk = vK;
-                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),accelerations);
+                drivetrain.setWheelSpeedAcceleration(Utils.inverseKinematics(speeds),Utils.inverseKinematics(accelerations));
                 if (lapTime.milliseconds()>t/2){
                     state++;
                     lapTime.reset();
