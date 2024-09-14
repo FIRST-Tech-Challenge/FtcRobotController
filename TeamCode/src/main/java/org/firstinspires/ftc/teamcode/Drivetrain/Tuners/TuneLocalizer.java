@@ -38,6 +38,17 @@ public class TuneLocalizer extends LinearOpMode {
         ElapsedTime looptime = new ElapsedTime();
 
 
+        telemetry.addLine("Looptime [ms]: " + 0);
+        telemetry.addLine("Left Encoder [ticks]: " + 0);
+        telemetry.addLine("Right Encoder [ticks]: " + 0);
+        telemetry.addLine("Horizontal Encoder [ticks]: " + 0);
+        telemetry.addLine("X [in]: " + 0);
+        telemetry.addLine("Y [in]: " + 0);
+        telemetry.addLine("Theta [deg]: " + 0);
+        telemetry.addLine("XVelocity [in/s]: "+0);
+        telemetry.addLine("YVelocity [in/s]: "+0);
+        telemetry.addLine("angularVelocity [rad/s]: "+0);
+        telemetry.update();
         waitForStart();
 
         looptime.reset();

@@ -47,6 +47,10 @@ public class TuneFeedForwardGains extends LinearOpMode{
                         {0}
                 }
         );
+        telemetry.addData("Robot velocity ", 0);
+        telemetry.addData("Target velocity ", 0);
+        telemetry.addLine("State " + 0);
+        telemetry.update();
         waitForStart();
         looptime.reset();
         lapTime.reset();

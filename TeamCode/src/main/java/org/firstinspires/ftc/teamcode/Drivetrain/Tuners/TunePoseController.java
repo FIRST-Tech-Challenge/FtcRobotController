@@ -37,7 +37,6 @@ public class TunePoseController extends LinearOpMode {
 
         ElapsedTime looptime = new ElapsedTime();
 
-        waitForStart();
         telemetry.addData("x", 0);
         telemetry.addData("y", 0);
         telemetry.addData("theta", 0);
@@ -45,6 +44,7 @@ public class TunePoseController extends LinearOpMode {
         telemetry.addData("desiredY", 0);
         telemetry.addData("desiredTheta", 0);
         telemetry.update();
+        waitForStart();
         looptime.reset();
 
         while (opModeIsActive()) {
