@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.opencv;
-
 import org.opencv.core.Core;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Scalar;
@@ -12,13 +13,17 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class DetectSamples extends OpenCvPipeline {
-    public OpenCvCamera webcam;
+    public /*final*/ OpenCvCamera webcam;
     boolean viewportPaused;
 
-    public DetectSamples(/*OpenCvCamera webcam*/){
+    private final Telemetry telemetry;
+
+    public DetectSamples(/*OpenCvCamera webcam*/ Telemetry telemetry){
         //this.webcam = webcam;
+        this.telemetry = telemetry;
     }
     @Override
     public Mat processFrame(Mat input) {
@@ -28,24 +33,16 @@ public class DetectSamples extends OpenCvPipeline {
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(yellowMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        List<Integer> verticalLineLenghs = new ArrayList<Integer>();
+        List<Double> verticalLineLenghs = new ArrayList<Double>();
         for (MatOfPoint contour : contours) {
             Mat canvas = Mat.zeros(input.size(), input.type());
             Imgproc.drawContours(canvas, contours, -1, new Scalar(255, 255, 255), -1);
+            Core.bitwise_and(input, canvas, canvas);
             Mat edges = new Mat();
             Imgproc.Canny(canvas, edges, 100, 190, 3, true);
-            Mat lines = new Mat();
-            Imgproc.HoughLines(edges, lines, 1, Math.PI / 180, 50, 30, 10);
-            for (int i = 0; i < lines.rows(); i++) {
-                double[] line = lines.get(i, 0);
-                double x1 = line[0], y1 = line[1], x2 = line[2], y2 = line[3];
-
-                // Check if the line is vertical (nearly the same x coordinates)
-                if (Math.abs(x1 - x2) < 20) {  // Adjust threshold for vertical lines
-                    double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    System.out.println("Line from (" + x1 + ", " + y1 + ") to (" + x2 + ", " + y2 + "), Length: " + length + " pixels");
-                }
-            }
+            MatOfInt4 lines = new MatOfInt4();
+            Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180, 0, 0, 0);
+            int[] linesToArray = lines.toArray();
         }
         Imgproc.drawContours(input, contours, -1, new Scalar(255, 255, 255), -1);
         return input;
