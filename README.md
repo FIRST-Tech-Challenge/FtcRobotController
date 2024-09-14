@@ -24,7 +24,7 @@ This repository contains all the code we are using to control our robot for the 
 To set up the repository on your local machine:
 1. Clone the repository using Git:
     ```bash
-    git clone https://github.com/[your-team-name]/CodeMaster.git
+    git clone https://github.com/CapitalRobotics/CodeMaster.git
     ```
 2. Open the project in Android Studio, as it is built for the FTC SDK.
 
