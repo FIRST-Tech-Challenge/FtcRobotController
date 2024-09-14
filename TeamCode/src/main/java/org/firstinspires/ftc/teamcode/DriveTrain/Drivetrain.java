@@ -6,10 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.ejml.simple.SimpleMatrix;
 
 import org.firstinspires.ftc.teamcode.DriveTrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Localization.DeadWheelOdometery;
+import org.firstinspires.ftc.teamcode.DriveTrain.Controllers.PoseController;
 
 public class Drivetrain {
     /**
@@ -28,7 +31,15 @@ public class Drivetrain {
     public DcMotorEx motorRightBack = null;
     public DcMotorEx motorRightFront = null;
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
+    public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
+    public SimpleMatrix prevWheelSpeeds = new SimpleMatrix( new double[][]{
+            new double[]{0},
+            new double[]{0},
+            new double[]{0},
+            new double[]{0}
+    });
+    public ElapsedTime deltaT = new ElapsedTime();
     public Drivetrain(HardwareMap hwMap){
         hardwareMap = hwMap;
         motorController = new DrivetrainMotorController(hwMap);
@@ -76,6 +87,7 @@ public class Drivetrain {
         motorRightFront.setPower(0);
         motorRightBack.setPower(0);
         deadWheelOdo = new DeadWheelOdometery(hwMap, motorRightBack, motorRightFront, motorLeftBack);
+        deltaT.reset();
     }
     public void localize() {
         state = deadWheelOdo.calculate(state);
@@ -108,5 +120,13 @@ public class Drivetrain {
     }
     public void setWheelSpeedAcceleration(SimpleMatrix wheelSpeeds, SimpleMatrix wheelAccelerations){
         setPower(motorController.calculate(wheelSpeeds,wheelAccelerations));
+    }
+    public void goToPose(SimpleMatrix desiredPose){
+        SimpleMatrix pose = state.extractMatrix(0,3,0,1);
+        SimpleMatrix wheelSpeeds = poseControl.calculate(pose, desiredPose);
+        SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
+        deltaT.reset();
+        setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
+        prevWheelSpeeds = wheelSpeeds;
     }
 }

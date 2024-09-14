@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.DriveTrain.Drivetrain;
 
 @Config
 public class DrivetrainMotorController {
-    public static double kA=0;
-    public static double kV=0;
+    public static double kA=0.05;
+    public static double kV=0.75;
     public static double kSlf=0.13;
     public static double kSlb=0.13;
     public static double kSrb=0.13;

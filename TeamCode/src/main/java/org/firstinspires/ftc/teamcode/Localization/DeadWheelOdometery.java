@@ -43,18 +43,18 @@ public class DeadWheelOdometery {
     // Change this to updateEncoderPositions
     // Change the phrase 'Val' everywhere to 'RawPos'
     public void updateEncoderPositions(){
-        currentLeftRawPos = leftEncoder.getCurrentPosition()*xMult;
+        currentLeftRawPos = -leftEncoder.getCurrentPosition()*xMult;
         currentCenterRawPos = centerEncoder.getCurrentPosition()*yMult;
-        currentRightRawPos = rightEncoder.getCurrentPosition()*xMult;
+        currentRightRawPos = -rightEncoder.getCurrentPosition()*xMult;
     }
 
     // Write a updateEncoderVelocities
     // should just be encoderObject.getVelocity()
 
     public void updateEncoderVelocities(){
-        currentLeftVelocity = leftEncoder.getVelocity();
+        currentLeftVelocity = -leftEncoder.getVelocity();
         currentCenterVelocity = centerEncoder.getVelocity();
-        currentRightVelocity = rightEncoder.getVelocity();
+        currentRightVelocity = -rightEncoder.getVelocity();
     }
 
     public void pushBackValues(){

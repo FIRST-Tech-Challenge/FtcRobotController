@@ -10,7 +10,7 @@ public class PID {
     public double eDerivative;
     public double ePrev;
 
-    public ElapsedTime timer;
+    public ElapsedTime timer = new ElapsedTime();
 
     public PID(double kP, double kI, double kD) {
         this.kP = kP;

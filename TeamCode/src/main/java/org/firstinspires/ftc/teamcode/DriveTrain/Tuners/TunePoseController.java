@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.DriveTrain.Drivetrain;
 
 /**
@@ -17,17 +18,16 @@ import org.firstinspires.ftc.teamcode.DriveTrain.Drivetrain;
  * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
  */
 @Config
-@Autonomous(name = "Test Localizer", group = "Autonomous")
-public class TuneLocalizer extends LinearOpMode {
+@Autonomous(name = "Test Pose", group = "Autonomous")
+public class TunePoseController extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
 
     // Use FTCDashboard
     FtcDashboard dashboard;
-
-
-
-
+    public static double desiredX = 0;
+    public static double desiredY = 0;
+    public static double desiredTheta = 0;
     @Override
     public void runOpMode() {
         // Set dashboard
@@ -37,28 +37,33 @@ public class TuneLocalizer extends LinearOpMode {
 
         ElapsedTime looptime = new ElapsedTime();
 
-
         waitForStart();
-
+        telemetry.addData("x", 0);
+        telemetry.addData("y", 0);
+        telemetry.addData("theta", 0);
+        telemetry.addData("desiredX", 0);
+        telemetry.addData("desiredY", 0);
+        telemetry.addData("desiredTheta", 0);
+        telemetry.update();
         looptime.reset();
 
         while (opModeIsActive()) {
+            SimpleMatrix desiredPose = new SimpleMatrix(
+                    new double [][]{
+                            new double[]{desiredX},
+                            new double[]{desiredY},
+                            new double[]{desiredTheta}
+                    }
+            );
             drivetrain.localize();
-
-
-            telemetry.addLine("Looptime [ms]: " + looptime.milliseconds());
-            telemetry.addLine("Left Encoder [ticks]: " + (drivetrain.deadWheelOdo.currentLeftRawPos));
-            telemetry.addLine("Right Encoder [ticks]: " + (drivetrain.deadWheelOdo.currentRightRawPos));
-            telemetry.addLine("Horizontal Encoder [ticks]: " + (drivetrain.deadWheelOdo.currentCenterRawPos));
-            telemetry.addLine("X [in]: " + (drivetrain.state.get(0, 0)));
-            telemetry.addLine("Y [in]: " + (drivetrain.state.get(1, 0)));
-            telemetry.addLine("Theta [deg]: " + Math.toDegrees(drivetrain.state.get(2, 0)));
-            telemetry.addLine("XVelocity [in/s]: "+drivetrain.state.get(3,0));
-            telemetry.addLine("YVelocity [in/s]: "+drivetrain.state.get(4,0));
-            telemetry.addLine("angularVelocity [rad/s]: "+drivetrain.state.get(5,0));
+            drivetrain.goToPose(desiredPose);
+            telemetry.addData("x", drivetrain.state.get(0,0));
+            telemetry.addData("y", drivetrain.state.get(1,0));
+            telemetry.addData("theta", drivetrain.state.get(2,0));
+            telemetry.addData("desiredX", desiredX);
+            telemetry.addData("desiredY", desiredY);
+            telemetry.addData("desiredTheta", desiredTheta);
             telemetry.update();
-
-
             looptime.reset();
         }
     }

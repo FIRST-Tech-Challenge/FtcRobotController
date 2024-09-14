@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.DriveTrain.Controllers;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Utils.Utils;
 
+@Config
 public class PoseController {
     public PID xPID;
     public PID yPID;
     public PID tPID;
-    public static double kPX, kPY, kPTheta = 0;
+    public static double kPX, kPY = 10;
+    public static double kPTheta= 1;
     public static double kIX, kIY, kITheta = 0;
     public static double kDX, kDY, kDTheta = 0;
     public PoseController(){
