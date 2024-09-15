@@ -96,10 +96,10 @@ public class RobotTeleopPOV_Linear extends LinearOpMode {
         rightClaw.setPosition(MID_SERVO);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData(">", "Robot Ready.  Press Play.");    //
+        telemetry.addData(">", "Robot Ready.  Press START.");    //
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
+        // Wait for the game to start (driver presses START)
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
