@@ -18,6 +18,6 @@ public class FileManager {
      * @return
      */
     public static boolean writeToFile(String fileName, String inputString) {
-        String filePath = Environment.getExternalStorage().getPath
+        String filePath = Environment.getExternalStorage().getPath();
     }
 }
