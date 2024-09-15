@@ -8,7 +8,7 @@ public class FileManager {
     // The current String is a placeholder,
     // and is intended to be replaced with the name of the current year's repository.
     */
-    private static final String rootDirectory = "chsRobotix";
+    private static final String rootDirectory = "2024-2025IntoTheDeep";
 
     /**
      * Writes a given String to a file 
