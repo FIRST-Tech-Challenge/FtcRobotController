@@ -6,7 +6,7 @@ public class FileManager {
     /* 
      * The directory that save the current season's storage files.
     // The current String is a placeholder,
-    // and is intended to be replaced with "{start year}-{end year}{season name }"
+    // and is intended to be replaced with the name of the current year's repository.
     */
     private static final String rootDirectory = "chsRobotix";
 
