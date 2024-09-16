@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+//All the things that we are using and borrowing
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,48 +13,50 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Chocolate", group="Linear OpMode")
-
 public class BasicOmniOpMode_Linear extends LinearOpMode {
-
-    // Initialize all variables for the program
-    private IMU imu = null;
+    // Initializing all variables for the program below:
+    // This chunk is everything we're doing to control our wheels
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-    double axial = 0;  // Note: pushing stick forward gives negative value
-    double lateral = 0;
-    double yaw = 0;
-
     double leftFrontPower = 0;
     double rightFrontPower = 0;
     double leftBackPower = 0;
     double rightBackPower = 0;
 
-    private Servo leftArm = null;
-    private Servo rightArm = null;
-    // NEHA when the claw is attached to the servo, we will need different values for ARM_MIN and ARM_MAX so we don't break the claw
-    private static final double ARM_DEFAULT = 0.5;
-    private static final double ARM_MIN = 0.0;
-    private static final double ARM_MAX = 1.0;
+    // This chunk is everything we're doing to control our arms
+    private DcMotor viperSlide = null;
+    private static final double VIPER_POWER_DEFAULT = 0.6;
+    double viperSlidePower = 0;
+
+    private Servo claw = null;
+    private static final double CLAW_DEFAULT = 0.3;
+    private static final double CLAW_MIN = 0.26;
+    private static final double CLAW_MAX = 0.41;
+    double claw_position = CLAW_DEFAULT;
+
+    // Collecting joystick position data
+    double axial = 0;
+    double lateral = 0;
+    double yaw = 0;
 
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Variables for turning
+    private IMU imu = null;
     static final double TURN_SPEED_ADJUSTMENT = 0.015;     // Larger is more responsive, but also less stable
     static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
     static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate
     static final double MIN_TURN_SPEED = 0.15;     // Min Turn speed to limit turn rate
-
     private double turnSpeed = 0;
     private double degreesToTurn = 0;
 
     @Override
+    //Op mode is running when the robot is running. It keeps the robot functioning throughout it's time of activity.
     public void runOpMode() {
 
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
+        // Initialize the hardware variables. Note that the strings used here must correspond to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
@@ -62,17 +65,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftArm = hardwareMap.get(Servo.class, "left_arm");
-        rightArm = hardwareMap.get(Servo.class, "right_arm");
-        double arm_position = ARM_DEFAULT;
-        leftArm.setPosition(arm_position);
-        rightArm.setPosition(arm_position);
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        claw.setPosition(claw_position);
+
+        viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
+        viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Initialize the IMU configuration
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
@@ -84,16 +85,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+        // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            axial = -gamepad1.left_stick_y;
             lateral = gamepad1.left_stick_x;
             yaw = gamepad1.right_stick_x;
 
@@ -109,7 +109,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
-
             if (max > 1.0) {
                 leftFrontPower /= max;
                 rightFrontPower /= max;
@@ -133,36 +132,37 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if (gamepad1.dpad_right)
                 turnToHeading(-135.0); // Turn to face the basket
 
-            // NEHA this is sample code for controlling the servo. Use this to write code to open and close the claw.
-            if (gamepad1.left_bumper) {
-                if (arm_position < ARM_MAX) {
-                    arm_position += 0.001;
-                    leftArm.setPosition(arm_position);
-                }
-            } else if (gamepad1.left_trigger > 0) {
-                if (arm_position > ARM_MIN) {
-                    arm_position -= 0.001;
-                    leftArm.setPosition(ARM_MIN);
-                }
+            if (gamepad1.right_trigger > 0) {
+                viperSlidePower = VIPER_POWER_DEFAULT;
             }
+            else if (gamepad1.left_trigger > 0) {
+                viperSlidePower = -VIPER_POWER_DEFAULT;
+            }
+            else {
+                viperSlidePower = 0;
+            }
+            viperSlide.setPower(viperSlidePower);
 
+            // Control the claw
             if (gamepad1.right_bumper) {
-                if (arm_position < ARM_MAX) {
-                    arm_position += 0.001;
-                    rightArm.setPosition(arm_position);
-                }
-            } else if (gamepad1.right_trigger > 0) {
-                if (arm_position > ARM_MIN) {
-                    arm_position -= 0.001;
-                    rightArm.setPosition(ARM_MIN);
+                if (claw_position < CLAW_MAX) {
+                    claw_position += 0.01;
                 }
             }
+            if (gamepad1.left_bumper) {
+                if (claw_position > CLAW_MIN) {
+                    claw_position -= 0.01;
+                }
+            }
+            claw.setPosition(claw_position);
+
             // Show the elapsed game time and wheel power.
-            telemetryData();
+            logScreenData();
         }
     }
 
-    private void telemetryData() {
+    // Logging all relevant information about the robot in text on the controller hub screen so the driver can see what's going on.
+    private void logScreenData() {
         telemetry.addData("Status", "Run Time: " + runtime);
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
@@ -172,13 +172,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.addData("Turn Speed", "%4.2f", turnSpeed);
         telemetry.addData("Degrees to turn", "%4.2f", degreesToTurn);
-        // NEHA you should add logging so we can see the arm position and figure out the default values. You will use getPosition()
-
+        telemetry.addData("Claw position", "%4.2f", claw_position);
+        telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
         telemetry.update();
     }
 
+    // Turn to the desired heading.
     private void turnToHeading(double heading) {
         degreesToTurn = heading - getHeading();
+
         // Keep looping while we are still active, and not on heading.
         while (opModeIsActive()
                 && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)
@@ -198,11 +200,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             leftBackDrive.setPower(-turnSpeed);
             rightBackDrive.setPower(turnSpeed);
 
-            telemetryData();
+            logScreenData();
         }
     }
 
-    // read the Robot heading directly from the IMU (in degrees)
+    // Read the Robot heading directly from the IMU (in degrees)
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
