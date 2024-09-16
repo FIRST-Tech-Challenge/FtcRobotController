@@ -174,7 +174,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Degrees to turn", "%4.2f", degreesToTurn);
         telemetry.addData("Claw position", "%4.2f", claw_position);
         telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
-
         telemetry.update();
     }
 
