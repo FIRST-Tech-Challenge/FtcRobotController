@@ -35,10 +35,14 @@ public class Blue_Autonomous extends LinearOpMode {
     private static final double halfRW = robotWidth/2;
     private static final double halfRH = robotHeight/2;
 
+
     int red = colorSensor.red();
     int green = colorSensor.green();
     int blue = colorSensor.blue();
     double distance = distanceSensor.getDistance(DistanceUnit.INCH);
+
+    int allienceColor = red;
+    int enemyColor = blue;
 
 
     @Override
@@ -49,6 +53,11 @@ public class Blue_Autonomous extends LinearOpMode {
         setDirection();
 
         waitForStart();
+
+        while(allienceColor < enemyColor){
+            forward(1,0.3);
+        }
+        backward(1,0.3);
 
 
     }
