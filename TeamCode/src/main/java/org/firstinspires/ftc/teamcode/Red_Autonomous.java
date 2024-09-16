@@ -41,6 +41,10 @@ public class Red_Autonomous extends LinearOpMode {
     double distance = distanceSensor.getDistance(DistanceUnit.INCH);
 
 
+    int allienceColor = red;
+    int enemyColor = blue;
+
+
     @Override
     public void runOpMode() {
         initialize();
@@ -49,6 +53,11 @@ public class Red_Autonomous extends LinearOpMode {
         setDirection();
 
         waitForStart();
+
+        while(allienceColor < enemyColor){
+            forward(1,0.3);
+        }
+        backward(1,0.3);
 
 
     }
