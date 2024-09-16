@@ -5,12 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Chassis {
-    DcMotor fl, fr, bl, br;
-    IMU imu;
+    private DcMotor fl, fr, bl, br;
+    private IMU imu;
 
     public Chassis(HardwareMap hardwareMap) {
         // Initialize motors
@@ -28,7 +27,7 @@ public class Chassis {
         fr.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Initialize x
+        // Initialize IMU
         imu = hardwareMap.get(IMU.class, "imu");
 
         // Set up IMU parameters
@@ -38,10 +37,13 @@ public class Chassis {
         ));
         imu.initialize(parameters);
     }
+
+    // Method to reset the robot's yaw angle
     public void resetYaw() {
         imu.resetYaw();
     }
 
+    // Drive method with field-centric control
     public void drive(double x, double y, double rx) {
         // Get the robot's current heading
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -50,8 +52,10 @@ public class Chassis {
         double adjustedX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double adjustedY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        adjustedX = adjustedX * 1.1;  // Counteract imperfect strafing
+        // Optional adjustment to counteract imperfect strafing
+        adjustedX = adjustedX * 1.1;
 
+        // Calculate the motor powers
         double denominator = Math.max(Math.abs(adjustedY) + Math.abs(adjustedX) + Math.abs(rx), 1);
         double frontLeftPower = (adjustedY + adjustedX + rx) / denominator;
         double backLeftPower = (adjustedY - adjustedX + rx) / denominator;
