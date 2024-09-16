@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 //
 @Autonomous
+@Config
 public class PIDMoveForward extends LinearOpMode {
     private PIDController controller;
 
@@ -18,7 +19,7 @@ public class PIDMoveForward extends LinearOpMode {
     public static double I = 0;
     public static double D = 0;
 
-    public static double targetDistance = 24.0; 
+    public static double targetDistance = 3.0;
 
     private Drivetrain drivetrain;
 
@@ -36,8 +37,9 @@ public class PIDMoveForward extends LinearOpMode {
         controller.setSetPoint(targetTicks);
 
         while (opModeIsActive() && !isStopRequested()) {
+            controller.setPID(P, I, D);
             double currentTicks = drivetrain.getPosition();
-            double pid = controller.calculate(currentTicks);
+            double pid = controller.calculate(currentTicks, targetTicks);
 
             drivetrain.move(pid, 0, 0);
 
@@ -50,3 +52,73 @@ public class PIDMoveForward extends LinearOpMode {
         drivetrain.setPowers(0);
     }
 }
+
+
+
+/* Kp = someValue;
+Ki = someValue;
+Kd = someValue;
+
+reference = someValue;
+lastReference = reference;
+integralSum = 0;
+
+lastError = 0;
+
+maxIntegralSum = someValue;
+
+a = 0.8; // a can be anything from 0 < a < 1
+previousFilterEstimate = 0;
+currentFilterEstimate = 0;
+
+// Elapsed timer class from SDK, please use it, it's epic
+ElapsedTime timer = new ElapsedTime();
+
+while (setPointIsNotReached) {
+
+
+// obtain the encoder position
+encoderPosition = armMotor.getPosition();
+// calculate the error
+error = reference - encoderPosition;
+
+errorChange = (error - lastError)
+
+// filter out hight frequency noise to increase derivative performance
+currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
+previousFilterEstimate = currentFilterEstimate;
+
+// rate of change of the error
+derivative = currentFilterEstimate / timer.seconds();
+
+// sum of all error over time
+integralSum = integralSum + (error * timer.seconds());
+
+
+        // max out integral sum
+        if (integralSum > maxIntegralSum) {
+integralSum = maxIntegralSum;
+    }
+
+            if (integralSum < -maxIntegralSum) {
+integralSum = -maxIntegralSum;
+    }
+
+            // reset integral sum upon setpoint changes
+            if (reference != lastReference) {
+integralSum = 0;
+        }
+
+out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+
+        armMotor.setPower(out);
+
+lastError = error;
+
+lastReference = reference;
+
+// reset the timer for next time
+    timer.reset();
+
+}
+*/

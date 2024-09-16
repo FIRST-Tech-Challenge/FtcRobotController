@@ -18,7 +18,7 @@ public class TeleOpp extends LinearOpMode {
         while (opModeIsActive()) {
             double strafe = -gamepad1.left_stick_y;
             double power = gamepad1.left_stick_x;
-            double turn = gamepad1.right_stick_x;
+            double turn = -gamepad1.right_stick_x;
 
             drive.move(power, strafe, turn);
 

@@ -26,6 +26,7 @@ public class Drivetrain {
         fR = map.dcMotor.get("backLeft");
         bR = map.dcMotor.get("backRight");
         encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
+        fL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
 
         fL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
