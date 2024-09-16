@@ -41,8 +41,8 @@ public class Blue_Autonomous extends LinearOpMode {
     int blue = colorSensor.blue();
     double distance = distanceSensor.getDistance(DistanceUnit.INCH);
 
-    int allienceColor = red;
-    int enemyColor = blue;
+    int allienceColor = blue;
+    int enemyColor = red;
 
 
     @Override
