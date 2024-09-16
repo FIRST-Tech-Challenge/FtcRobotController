@@ -1,6 +1,3 @@
-// Hello! Welcome to our FTC 2024 Chocolate Main.
-
-//FTC code package is recognized
 package org.firstinspires.ftc.teamcode;
 
 //All the things that we are using and borrowing
@@ -30,12 +27,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // This chunk is everything we're doing to control our arms
     private DcMotor viperSlide = null;
+    private static final double VIPER_POWER_DEFAULT = 0.6;
     double viperSlidePower = 0;
-    private Servo leftArm = null;
-    private Servo rightArm = null;
-    private static final double ARM_DEFAULT = 0.5;
-    private static final double ARM_MIN = 0.0;
-    private static final double ARM_MAX = 1.0;
+
+    private Servo claw = null;
+    private static final double CLAW_DEFAULT = 0.3;
+    private static final double CLAW_MIN = 0.26;
+    private static final double CLAW_MAX = 0.41;
+    double claw_position = CLAW_DEFAULT;
 
     // Collecting joystick position data
     double axial = 0;
@@ -66,25 +65,19 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftArm = hardwareMap.get(Servo.class, "left_arm");
-        rightArm = hardwareMap.get(Servo.class, "right_arm");
-        double arm_position = ARM_DEFAULT; // NEHA
-        leftArm.setPosition(arm_position);
-        rightArm.setPosition(arm_position);
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        claw.setPosition(claw_position);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-        // Initialize the IMU configuration // NEHA: should go earlier
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP; // NEHA: shouldn't be a seperate line of code
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD; // NEHA: shouldn't be a seperate line of code
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
+        // Initialize the IMU configuration
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // NEHA: should go with the other wheel initialization
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -97,11 +90,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double max; // NEHA: should be up where we initialize all of our other variables
+            double max;
 
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate. // NEHA: we don't know what "POV Mode" means
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             axial = -gamepad1.left_stick_y;
-            lateral = gamepad1.left_stick_x; // NEHA: Michael thinks the robot will be easier to control if you use the triggers to strafe. Let's test it out!
+            lateral = gamepad1.left_stick_x;
             yaw = gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -140,11 +133,28 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 turnToHeading(-135.0); // Turn to face the basket
 
             if (gamepad1.right_trigger > 0) {
-                viperSlidePower = gamepad1.right_trigger;
+                viperSlidePower = VIPER_POWER_DEFAULT;
             }
-            if (gamepad1.left_trigger > 0) {
-                viperSlidePower = gamepad1.left_trigger;
+            else if (gamepad1.left_trigger > 0) {
+                viperSlidePower = -VIPER_POWER_DEFAULT;
             }
+            else {
+                viperSlidePower = 0;
+            }
+            viperSlide.setPower(viperSlidePower);
+
+            // Control the claw
+            if (gamepad1.right_bumper) {
+                if (claw_position < CLAW_MAX) {
+                    claw_position += 0.01;
+                }
+            }
+            if (gamepad1.left_bumper) {
+                if (claw_position > CLAW_MIN) {
+                    claw_position -= 0.01;
+                }
+            }
+            claw.setPosition(claw_position);
 
             // Show the elapsed game time and wheel power.
             logScreenData();
@@ -162,6 +172,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.addData("Turn Speed", "%4.2f", turnSpeed);
         telemetry.addData("Degrees to turn", "%4.2f", degreesToTurn);
+        telemetry.addData("Claw position", "%4.2f", claw_position);
+        telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
 
         telemetry.update();
     }
@@ -193,7 +205,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         }
     }
 
-    // Used to read the Robot heading directly from the IMU (in degrees) // NEHA: We always want to be succinct. We can remove "Used to" and "directly"
+    // Read the Robot heading directly from the IMU (in degrees)
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
