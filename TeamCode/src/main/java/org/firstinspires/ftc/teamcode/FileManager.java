@@ -9,12 +9,8 @@ import java.nio.file.Paths;
 import android.os.Environment;
 
 public class FileManager {
-    /* 
-     * The directory that save the current season's storage files.
-    // The current String is a placeholder,
-    // and is intended to be replaced with the name of the current year's repository.
-    */
-    private static final Path seasonDirectory = Paths.get(Environment.getExternalStorage().getPath() + "/chsRobotix");
+    // The directory that save the current season's storage files.
+    private static final Path seasonDirectory = Paths.get(Environment.getExternalStorage().getPath() + "/2024-2025IntoTheDeep");
 
     /**
      * Writes a given String to a given file within seasonDirectory
