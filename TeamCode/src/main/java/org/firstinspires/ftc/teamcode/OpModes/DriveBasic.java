@@ -15,7 +15,7 @@ public class DriveBasic extends Control {
         double rightX = gamepad1.right_stick_x;
         double rightY = gamepad1.right_stick_y;
 
-        //sixDrive(leftY, rightY);
-        driveBasic(leftY, rightX);
+        sixDrive(leftY, rightY);
+        //driveBasic(leftY, rightX);
     }
 }

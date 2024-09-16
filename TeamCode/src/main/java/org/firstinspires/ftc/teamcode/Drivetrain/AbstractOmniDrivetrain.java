@@ -23,7 +23,7 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         this.impulseRotation = impulseRotation;
 
         driveMotors[frontLeft].setDirection(DcMotorSimple.Direction.FORWARD); //FLM
-        driveMotors[backLeft].setDirection(DcMotorSimple.Direction.FORWARD); //BLM
+        driveMotors[backLeft].setDirection(DcMotorSimple.Direction.REVERSE); //BLM
         driveMotors[backRight].setDirection(DcMotorSimple.Direction.REVERSE); //BRM
         driveMotors[frontRight].setDirection(DcMotorSimple.Direction.FORWARD); //FRM
 
@@ -40,18 +40,18 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
         //heading_RADIANS += Math.toRadians(90);
 
 
-        double rotY = leftX * Math.cos(heading_RADIANS) - leftY * Math.sin(heading_RADIANS);
+        double rotX = leftX * Math.cos(-heading_RADIANS) - leftY * Math.sin(-heading_RADIANS);
 
-        double rotX = leftX * Math.sin(heading_RADIANS) - leftY * Math.cos(heading_RADIANS);
+        double rotY = leftX * Math.sin(-heading_RADIANS) + leftY * Math.cos(-heading_RADIANS);
 
 
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
 
-        driveMotors[RobotClass.kFrontLeft].setPower((rotY + rotX - turn) / denominator);
-        driveMotors[RobotClass.kBackLeft].setPower((rotY - rotX - turn) / denominator);
-        driveMotors[RobotClass.kBackRight].setPower((rotY - rotX + turn) / denominator);
-        driveMotors[RobotClass.kFrontRight].setPower((rotY + rotX + turn) / denominator);
+        driveMotors[RobotClass.kFrontLeft].setPower((rotY + rotX + turn) / denominator);
+        driveMotors[RobotClass.kBackLeft].setPower((rotY - rotX + turn) / denominator);
+        driveMotors[RobotClass.kFrontRight].setPower((rotY - rotX - turn) / denominator);
+        driveMotors[RobotClass.kBackRight].setPower((rotY + rotX - turn) / denominator);
 
         telemetry.addData("heading_DEGREES", Math.toDegrees(heading_RADIANS));
         telemetry.addData("drive", leftY);

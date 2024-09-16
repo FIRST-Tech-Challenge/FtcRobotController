@@ -12,8 +12,8 @@ public abstract class AbstractDrivetrain {
 
         //FLM == "Front Left Motor" etc.
 
-        driveMotors = new DcMotor[]{FLM, BLM, BRM, BRM};
-        driveMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        driveMotors = new DcMotor[]{FLM, BLM, BRM, FRM};
+        driveMotors[0].setDirection(DcMotorSimple.Direction.FORWARD);
         driveMotors[1].setDirection(DcMotorSimple.Direction.FORWARD);
         driveMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
     }
@@ -23,8 +23,8 @@ public abstract class AbstractDrivetrain {
        setPower(wheelSpeeds);
     }
     public void driveTank(double leftY, double rightY){
-        driveMotors[0].setPower(leftY);
-        driveMotors[1].setPower(rightY);
+        driveMotors[0].setPower(rightY);
+        driveMotors[1].setPower(leftY);
         driveMotors[2].setPower(rightY);
         driveMotors[3].setPower(leftY);
     }
