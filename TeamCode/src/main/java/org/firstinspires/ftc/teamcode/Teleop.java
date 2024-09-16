@@ -3,7 +3,9 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -27,6 +29,9 @@ public class Teleop extends LinearOpMode {
     private Servo horizontalWrist = null;
     private Servo verticalWrist = null;
 
+    private ColorSensor colorSensor = null;
+    private DistanceSensor distanceSensor = null;
+
 
     public void runOpMode() {
         //control hub
@@ -34,6 +39,9 @@ public class Teleop extends LinearOpMode {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");//gamepad1 //conf 1
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");//gamepad1  //conf 2
         backRight = hardwareMap.get(DcMotor.class, "backRight");//gamepad1 //conf 3
+
+        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");//conf 0
+        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensoe");//conf 1
 
         //expansion hub
         jointOne = hardwareMap.get(DcMotor.class, "jointOne");//gamepad2 //conf 1
@@ -54,6 +62,10 @@ public class Teleop extends LinearOpMode {
 
         jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        int red = colorSensor.red();
+        int green = colorSensor.green();
+        int blue = colorSensor.blue();
 
         waitForStart();
         while (opModeIsActive()) {
