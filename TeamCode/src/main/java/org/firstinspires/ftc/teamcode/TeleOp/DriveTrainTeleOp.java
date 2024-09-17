@@ -1,15 +1,12 @@
-package org.firstinspires.ftc.teamcode.RoadRunner.drive;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.TeleOp.Intake;
-
 @TeleOp
-public class DriveTrain extends LinearOpMode{
+public class DriveTrainTeleOp extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,11 +19,11 @@ public class DriveTrain extends LinearOpMode{
         DcMotor rightRear =(DcMotor) hardwareMap.get("rightRear");
 
         //setting direction, left or right have to be the same. Ex:
-        //leftFront.setDirection
+        //leftFront.setDirection 
 
         leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.FORWARD;
+        leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //brakes when no power is being given
@@ -38,6 +35,7 @@ public class DriveTrain extends LinearOpMode{
         waitForStart();
         while(opModeIsActive()){
             //y stick value is reversed
+
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
@@ -51,8 +49,8 @@ public class DriveTrain extends LinearOpMode{
             double multiplier;
             if (gamepad1.right_bumper) {
                 multiplier = 0.6;
-
-            }else multiplier = 1;
+            }
+            else multiplier = 1;
             leftFront.setPower(frontLeftPower *multiplier);
             leftRear.setPower(backLeftPower *multiplier);
             rightFront.setPower(frontRightPower *multiplier);
