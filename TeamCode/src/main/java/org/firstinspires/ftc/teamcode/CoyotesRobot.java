@@ -57,11 +57,7 @@ public class CoyotesRobot {
     public void autoSleep(DcMotor... motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
-<<<<<<< HEAD
-        // Does nothing if it isn't in LinearOpMode
-=======
         // Does nothing if it isn't a LinearOpMode
->>>>>>> a7cf7676ffa13b0e970504180cea917fa21c4687
         if (linearOp == null) {
             return;
         }
