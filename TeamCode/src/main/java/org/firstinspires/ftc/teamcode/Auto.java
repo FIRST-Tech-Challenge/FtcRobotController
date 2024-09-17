@@ -3,8 +3,8 @@
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Autonomous")
-public class Autonomous extends LinearOpMode {
+@Autonomous(name = "Auto")
+public class Auto extends LinearOpMode {
     private CoyotesRobot robot;
 
     /**
