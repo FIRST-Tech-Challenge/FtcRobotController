@@ -20,20 +20,27 @@ public class PositionInput extends OpMode {
     public void loop() {
         telemetry.update();
 
-        String positionString;
+        String positionString = null;
         // Green button
         if (gamepad1.a || gamepad2.a) {
-        
+            positionString = StartingPosition.BLUE_NEAR.name();
+
         } else if (gamepad1.b || gamepad2.b) {
             // Red button
+            positionString = StartingPosition.RED_FAR.name();
 
         } else if (gamepad1.x || gamepad2.x) {
             // Blue button
+            positionString = StartingPosition.BLUE_FAR.name();
 
         } else if (gamepad1.y || gamepad2.y) {
             // Orange button
+            positionString = StartingPosition.RED_NEAR.name();
         }
 
-        
+        if (positionString != null) {
+            FileManager.writeToFile(storageFile, positionString);
+            telemetry.addData("Current position: ", FileManager.readFile(storageFile));
+        }
     }
 }
