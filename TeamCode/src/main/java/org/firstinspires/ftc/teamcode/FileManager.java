@@ -1,36 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.io.File;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import android.os.Environment;
+import java.nio.file;
+import java.nio.file.Path;
 
 public class FileManager {
     // The directory that save the current season's storage files.
     private static final Path seasonDirectory = Paths.get(Environment.getExternalStorage().getPath() + "/2024-2025IntoTheDeep");
 
     /**
-     * Writes a given String to a given file within seasonDirectory
-     * 
+     * Writes a String to a text file inside this season's directory.
+     *
      * @param fileName
      * @param inputString
-     * @return Whether the String was successfully written to the file. 
+     * @return Whether the String was successfully written to the file.
      */
-    public static boolean writeToFile(String fileName, String inputString) {
+    public static boolean writeToFile(Path fileName, String inputString) {
         // If this season's directory does not exist, create it.
         if (!Files.exists(seasonDirectory)) {
             Files.createDirectory(seasonDirectory);
         }
 
-        Path writeFile = Paths.get(seasonDirectory, fileName);
+        Path writeFile = seasonDirectory.resolve(fileName);
         try {
             // Create the file if it does not exist
             Files.createFile(writeFile);
 
-        } catch (FileAlreadyExistsException err) { 
+        } catch (FileAlreadyExistsException err) {
             // The file already existing is not a problem.
 
         } catch (IOException err) {
@@ -41,7 +37,20 @@ public class FileManager {
         return true;
     }
 
-    public static String readFromFile(String fileName) {
-        return true;
+    /**
+     * Read a text file inside this season's directory.
+     * 
+     * @param fileName
+     * @return The String contained within the text file.
+     *         If an error occurs, null is returned.
+     */
+    public static String readFromFile(Path fileName) {
+        Path readFile = seasonDirectory.resolve(fileName);
+
+        if (Files.exists(readFile)) {
+            return Files.readString(readFile);
+        }
+
+        return null;
     }
 }
