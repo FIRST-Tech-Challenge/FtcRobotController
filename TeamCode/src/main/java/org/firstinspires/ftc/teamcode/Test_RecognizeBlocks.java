@@ -67,7 +67,6 @@ public class Test_RecognizeBlocks extends LinearOpMode {
     private RevColorSensorV3 colorSensor = null;
 
     enum BlockColor {
-        UNKNOWN,
         RED,
         YELLOW,
         BLUE
