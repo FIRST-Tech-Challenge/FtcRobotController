@@ -10,6 +10,8 @@ public class Robot {
     LinearVerticalLeft linear_L = new LinearVerticalLeft();
     LinearVerticalRight linear_R = new LinearVerticalRight();
 
+    LinearClaw linear_C = new LinearClaw();
+
 
 
     public void init(HardwareMap ahwMap) {
