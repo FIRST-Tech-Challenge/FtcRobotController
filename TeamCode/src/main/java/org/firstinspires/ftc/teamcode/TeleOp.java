@@ -10,9 +10,7 @@ public class TeleOp extends OpMode {
 
     @Override
     public void init() {
-        meccanumDrive = new MeccanumDrive();
-        armSystem = new ArmSystem();
-        robot = new CoyotesRobot(this, meccanumDrive);
+        robot = new CoyotesRobot(this);
     }
 
     @Override
@@ -23,24 +21,5 @@ public class TeleOp extends OpMode {
 
         // Update the information from the robot
         telemetry.update();
-    }
-
-    /**
-     * Controls wheel movement of the robot
-     */
-    public void driveWheels() {
-    }
-
-    /**
-     * Controls arm movement of the robot
-     */
-    public void moveArm() {
-        grabber();
-    }
-
-    /**
-     * Controls the robot's grabber
-     */
-    public void moveGrabber() {
     }
 }

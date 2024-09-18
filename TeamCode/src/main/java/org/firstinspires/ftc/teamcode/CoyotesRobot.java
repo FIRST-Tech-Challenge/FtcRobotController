@@ -9,26 +9,42 @@ public class CoyotesRobot {
     private OpMode opMode;
 
     // Whether the robot will automatically sleep after each command
+    // Only applicable in LinearOpMode
     private boolean autoSleepEnabled;
 
     private DriveSystem driveSystem;
     private ArmSystem armSystem;
 
     public CoyotesRobot(OpMode opMode) {
-        
         this.opMode = opMode;
+        autoSleepEnabled = true;
 
-        init();
-
-        this.driveSystem = new DriveSystem();
-        this.armSystem = new ArmSystem();
+        initDriveSystem();
+        initArmSystem();
     }
 
     /**
-     * Initializes all the robot's hardware(motors, servos, sensors, etc.)
+     * Initiates all hardware needed for the DriveSystem.
      */
-    public void init() {
+    private void initDriveSystem() {
+        /*
+         * Define drive hardware here.
+         * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
+         */
 
+        driveSystem = new DriveSystem();
+    }
+
+    /**
+     * Initiate all hardware needed for the DriveSystem.
+     */
+    private void initArmSystem() {
+        /*
+         * Define arm hardware here.
+         * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
+         */
+
+        armSystem = new ArmSystem();
     }
 
     /**

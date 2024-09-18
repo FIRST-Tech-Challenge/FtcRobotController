@@ -31,4 +31,4 @@ git pull upstream master
 # Contents
 Our team's code is in [./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/).
 It contains an autonomous, teleop, and various helper classes to ease the process of programming the robot. 
-For more details, look at the [README.md](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/README.)
+For more details, look at the [README.md](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/README.MD)
