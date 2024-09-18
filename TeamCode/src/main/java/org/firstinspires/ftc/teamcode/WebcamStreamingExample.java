@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp
+@TeleOp(name = "PipelineWebcamTesting", group = "opencv")
 public class WebcamStreamingExample extends LinearOpMode
 {
     OpenCvWebcam webcam;
@@ -28,7 +28,7 @@ public class WebcamStreamingExample extends LinearOpMode
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        FtcDashboard.getInstance().startCameraStream(webcam, 0); /* TODO: IF FtcDashboard isn't working try adding...
+        dashboard.startCameraStream(webcam, 0); /* TODO: IF FtcDashboard isn't working try adding...
 
         Open build.dependencies.gradle
             in the repositories section:
@@ -41,7 +41,6 @@ public class WebcamStreamingExample extends LinearOpMode
 
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-
 
         FastDetectSamples Pipeline = new FastDetectSamples(telemetry);
         //DetectSamples Pipeline = new DetectSamples(telemetry);
