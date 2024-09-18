@@ -24,6 +24,7 @@ public class AutoApplication extends AutoMain{
             us = Alliance.RED;
             others = Alliance.BLUE;
         }
+        telemetry.update();
     }
 
     @Override

@@ -55,7 +55,7 @@ public class FastDetectSamples extends OpenCvPipeline {
                 linesArray = lines.toArray();
                 for (int i = 0; i < linesArray.length; i += 4) {
                     int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
-                    if (Math.abs(x1 - x2) < 7) { // Adjust threshold for verticality
+                    if (Math.abs(x1 - x2) < 7) { // Adjust threshold for vertically
                         double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2, (y1 + y2) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
