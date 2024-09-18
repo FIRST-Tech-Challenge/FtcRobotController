@@ -1,52 +1,62 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift {
 
     //Adjust able Constants
-    public int LIFT_SPEED = 200; //ticks per call
+    public int LIFT_SPEED = 20; //ticks per call
     public double POWER = 1;
     public int MEDIUM_HEIGHT = 1000;
     public int HIGH_HEIGHT = 2000;
 
     //Internal variables
-    private DcMotor lift;
+    private DcMotor liftLeft, liftRight;
     private int targetPosition;
 
 
     public Lift(HardwareMap hw){
-        this(hw, "lift");
+        this(hw, "liftLeft", "liftRight");
     }
 
-    public Lift(HardwareMap hw, String name){
-        this.lift = hw.get(DcMotor.class, name);
-
-        resetLift();
+    public Lift(HardwareMap hw, String nameLeft, String nameRight){
+        this.liftLeft = hw.get(DcMotor.class, nameLeft);
+        this.liftRight = hw.get(DcMotor.class, nameRight);
+        this.liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        resetLift(liftLeft);
+        resetLift(liftRight);
     }
 
-    public void moveLift(double power){
+    public int moveLift(double power){
         targetPosition += (power * LIFT_SPEED);
-        lift.setTargetPosition(targetPosition);
+        liftLeft.setTargetPosition(targetPosition);
+        liftRight.setTargetPosition(targetPosition);
+        return targetPosition;
     }
 
+    public int currentPos(){
+        return liftLeft.getCurrentPosition();
+    }
     public void goToMedium(){
-        lift.setTargetPosition(MEDIUM_HEIGHT);
+        liftLeft.setTargetPosition(MEDIUM_HEIGHT);
+        liftRight.setTargetPosition(MEDIUM_HEIGHT);
     }
 
     public void goToHigh(){
-        lift.setTargetPosition(HIGH_HEIGHT);
+        liftLeft.setTargetPosition(HIGH_HEIGHT);
+        liftRight.setTargetPosition(HIGH_HEIGHT);
     }
 
     public int getCurrentPosition(){
-        return lift.getCurrentPosition();
+        return liftLeft.getCurrentPosition();
     }
-    public void resetLift(){
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        targetPosition = lift.getCurrentPosition();
-        lift.setTargetPosition(targetPosition);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(POWER);
+    public void resetLift(DcMotor liftMotor){
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        targetPosition = liftMotor.getCurrentPosition();
+        liftMotor.setTargetPosition(targetPosition);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(POWER);
     }
 }

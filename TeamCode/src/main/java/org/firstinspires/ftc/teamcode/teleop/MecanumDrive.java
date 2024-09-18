@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.SparkOdo;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 public class MecanumDrive extends LinearOpMode {
 
     private DcMotor frontLeft, backLeft, frontRight, backRight;
+
+    private Lift lift;
     private double maxSpeed;
     private GamepadEvents controller1;
     private boolean fieldCentricActive;
@@ -46,6 +49,8 @@ public class MecanumDrive extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class,"BLM");
         frontRight = hardwareMap.get(DcMotor.class,"FRM");
         backRight = hardwareMap.get(DcMotor.class,"BRM");
+
+        lift = new Lift(hardwareMap);
 
         //Motor/Deadwheel Encoders Initialization
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,6 +85,9 @@ public class MecanumDrive extends LinearOpMode {
         //Start phase
         //This is the event loop
         while (!isStopRequested()) {
+            int target = lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+            telemetry.addData("TargetPos: ",target);
+            telemetry.addData("CurrentPos:", lift.currentPos());
 
             //Input checks
             double forward = controller1.left_stick_y;
