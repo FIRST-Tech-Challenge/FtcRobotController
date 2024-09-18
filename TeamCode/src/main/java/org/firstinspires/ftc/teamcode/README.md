@@ -3,6 +3,10 @@
 It is a class to instatiate the robot and perform basic tasks(e.g. drive the robot forward).
 Both Autonomous and TeleOp instantiate a CoyotesRobot.
 The CoyotesRobot uses objects instantiated from the classes in [hardware](./hardware).
+The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's CoyotesRobot.
+> [!Important]
+> DO NOT PUT THE HARDWARE NAMES IN THIS REPOSITORY. THIS IS THE TEMPLATE.
+> THEY SHOULD BE PUT IN THE CURRENT SEASON'S REPOSITORY.
 
 # [Hardware](./hardware/)
 
@@ -19,7 +23,7 @@ An abstract class to control the robot's arm system.
 
 A subclass of ArmSystem that controls a jointed arm system with a claw.
 Not really a crane in the conventional sense.
-If you can think of a better name for it, then rename it. 
+If you can think of a better name for it, then rename it.
 
 ## [DriveSystem](./hardware/DriveSystem.java)
 
