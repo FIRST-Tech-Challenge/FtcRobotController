@@ -70,20 +70,20 @@ public class Mecanum {
     public void updateForTime(Vector2 direction, double seconds) {
         this.timer.reset();
         while (this.timer.milliseconds() - this.timer.time() < seconds) {
-            update(direction);
+            update(direction, 0);
         }
     }
 
     public void update(Gamepad gamepad) {
-        this.update(new Vector2(gamepad.left_stick_x, gamepad.left_stick_y));
+        this.update(new Vector2(gamepad.left_stick_x, gamepad.left_stick_y), gamepad.right_stick_x);
     }
 
-    public void update(Vector2 direction) {
+    public void update(Vector2 direction, double desiredRotation) {
         direction = direction.normalize();
 
         double r = Math.hypot(direction.x, direction.y);
         double robotAngle = Math.atan2(-direction.y, direction.x) - Math.PI / 4;
-        double rightX = direction.x;
+        double rightX = desiredRotation;
 
         double leftFrontWheelPower = r * Math.cos(robotAngle) * Math.sqrt(2) + rightX;
         double rightFrontWheelPower = r * Math.sin(robotAngle) * Math.sqrt(2) - rightX;
