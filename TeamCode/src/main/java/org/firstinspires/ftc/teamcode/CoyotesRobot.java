@@ -8,22 +8,20 @@ import org.firstinspires.ftc.teamcode.hardware;
 public class CoyotesRobot {
     private OpMode opMode;
 
-    // Whether the robot will automatically sleep after each command,
-    // by default True
+    // Whether the robot will automatically sleep after each command
     private boolean autoSleepEnabled;
 
     private DriveSystem driveSystem;
     private ArmSystem armSystem;
 
-    public Hardware(OpMode opMode, DriveSystem driveSystem, ArmSystem armSystem) {
+    public CoyotesRobot(OpMode opMode) {
+        
         this.opMode = opMode;
-
-        autoSleepEnabled = true;
 
         init();
 
-        this.driveSystem = driveSystem;
-        this.armSystem = armSystem;
+        this.driveSystem = new DriveSystem();
+        this.armSystem = new ArmSystem();
     }
 
     /**
