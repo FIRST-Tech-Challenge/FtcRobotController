@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-//All the things that we are using and borrowing
+//All the things that we are use and borrow
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Chocolate", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
-    // Initializing all variables for the program below:
+    // Initialize all variables for the program below:
     // This chunk is everything we're doing to control our wheels
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -35,15 +35,18 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private static final double CLAW_MIN = 0.26;
     private static final double CLAW_MAX = 0.41;
     double claw_position = CLAW_DEFAULT;
+    private static final int VIPER_MAX = 3000;
+    private static final int VIPER_MIN = 0;
+    private static final int VIPER_DEFAULT = 0;
 
-    // Collecting joystick position data
+    // Collect joystick position data
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
 
     private final ElapsedTime runtime = new ElapsedTime();
 
-    // Variables for turning
+    // Variables for turns
     private IMU imu = null;
     static final double TURN_SPEED_ADJUSTMENT = 0.015;     // Larger is more responsive, but also less stable
     static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
@@ -53,7 +56,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private double degreesToTurn = 0;
 
     @Override
-    //Op mode is running when the robot is running. It keeps the robot functioning throughout it's time of activity.
+    //Op mode is running when the robot is running. It makes the robot run the whole time.
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond to the names assigned during the robot configuration step on the DS or RC devices.
@@ -132,10 +135,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if (gamepad1.dpad_right)
                 turnToHeading(-135.0); // Turn to face the basket
 
-            if (gamepad1.right_trigger > 0) {
+            if (gamepad1.right_trigger > 0 && viperSlide.getCurrentPosition() < VIPER_MAX) {
                 viperSlidePower = VIPER_POWER_DEFAULT;
             }
-            else if (gamepad1.left_trigger > 0) {
+            else if (gamepad1.left_trigger > 0  && viperSlide.getCurrentPosition() > VIPER_MIN) {
                 viperSlidePower = -VIPER_POWER_DEFAULT;
             }
             else {
@@ -174,6 +177,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Degrees to turn", "%4.2f", degreesToTurn);
         telemetry.addData("Claw position", "%4.2f", claw_position);
         telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
+        telemetry.addData("Viper Slide Position", "%d", viperSlide.getCurrentPosition());
         telemetry.update();
     }
 
