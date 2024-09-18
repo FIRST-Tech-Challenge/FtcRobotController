@@ -15,8 +15,10 @@ public class CoyotesRobot {
     private MeccanumDrive meccanumDrive;
     private ArmSystem armSystem;
 
-    public Hardware(OpMode opMode, DriveSystem driveSystem, ArmSystem armSystem) {
+    public CoyotesRobot(OpMode opMode, DriveSystem driveSystem, ArmSystem armSystem) {
         this.opMode = opMode;
+
+
 
         this.driveSystem = driveSystem;
         this.armSystem = armSystem;
