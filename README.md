@@ -1,3 +1,5 @@
+## Please Switch to the goBILDA-Odometry-Driver Branch to use this reository. The master branch contains only the FTC SDK.
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
