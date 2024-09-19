@@ -39,12 +39,6 @@ public class Control extends OpMode {
     public void loop() {
 
     }
-    public void sixDrive(double leftY, double rightY){
-        robot.drivetrain.driveTank(leftY, rightY);
-    }
-    public void driveBasic(double forward, double turn){
-        robot.drivetrain.driveBasic(forward, turn);
-    }
 
     public void mecanumDrive(double leftX, double leftY, double turn){
         robot.drivetrain.mecanumDrive(leftY, leftX, turn, robot.getHeading(), telemetry);
@@ -59,9 +53,9 @@ public class Control extends OpMode {
     @Override
     public void stop(){
         if(robot == null) return; // ensures that stop() is not called before initialization
-        robot.drivetrain.driveMotors[0].setPower(0);
-        robot.drivetrain.driveMotors[1].setPower(0);
-        robot.drivetrain.driveMotors[2].setPower(0);
-        robot.drivetrain.driveMotors[3].setPower(0);
+        robot.driveMotors.get(RobotClass.MOTORS.FRONT_LEFT).setPower(0);
+        robot.driveMotors.get(RobotClass.MOTORS.FRONT_RIGHT).setPower(0);
+        robot.driveMotors.get(RobotClass.MOTORS.BACK_LEFT).setPower(0);
+        robot.driveMotors.get(RobotClass.MOTORS.BACK_RIGHT).setPower(0);
     }
 }
