@@ -15,10 +15,6 @@ public class Drive {
     public static double[] wheelSpeedsSixWheel = new double[4];
 
     public static Map<RobotClass.MOTORS, Double> DriveCartesian(double rotX, double rotY, double rotation){
-//        driveMotors[RobotClass.kFrontLeft].setPower((rotY + rotX - turn) / denominator);
-//        driveMotors[RobotClass.kBackLeft].setPower((rotY - rotX - turn) / denominator);
-//        driveMotors[RobotClass.kBackRight].setPower((rotY - rotX + turn) / denominator);
-//        driveMotors[RobotClass.kFrontRight].setPower((rotY + rotX + turn) / denominator);
 
         Map<RobotClass.MOTORS, Double> wheelSpeedsMecanum = new HashMap<>();
 

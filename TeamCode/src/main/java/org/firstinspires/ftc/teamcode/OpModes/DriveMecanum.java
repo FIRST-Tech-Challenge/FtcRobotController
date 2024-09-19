@@ -13,7 +13,9 @@ public class DriveMecanum extends Control {
         double leftX = gamepad1.left_stick_x;// < .05 ? 0 : gamepad1.left_stick_x;
         double turn = gamepad1.left_trigger - gamepad1.right_trigger;
 
+
         mecanumDrive(leftY, leftX, turn);
         resetIMU(gamepad1.back);
+        switchDriveMode(gamepad1.start);
     }
 }

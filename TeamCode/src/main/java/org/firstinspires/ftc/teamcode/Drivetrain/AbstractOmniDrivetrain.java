@@ -33,22 +33,14 @@ public abstract class AbstractOmniDrivetrain {
 
     @SuppressLint("DefaultLocale")
     public void mecanumDrive(double leftY, double leftX, double turn, double heading_RADIANS, Telemetry telemetry) {
-        //heading_DEGREES -= Math.toDegrees(Math.PI / 2);
-
         // drive == y strafe == x
 
         //starting value off by 90 degrees; 270 == -90
         //heading_RADIANS += Math.toRadians(90);
-
-
         double rotX = leftX * Math.cos(-heading_RADIANS) - leftY * Math.sin(-heading_RADIANS);
-
         double rotY = leftX * Math.sin(-heading_RADIANS) + leftY * Math.cos(-heading_RADIANS);
-
-
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(turn), 1);
         // normalizes ranges from 0 to 1
-
         driveMotors.get(RobotClass.MOTORS.FRONT_LEFT).setPower((rotY + rotX + turn) / denominator);
         driveMotors.get(RobotClass.MOTORS.BACK_LEFT).setPower((rotY - rotX + turn) / denominator);
         driveMotors.get(RobotClass.MOTORS.FRONT_RIGHT).setPower((rotY - rotX - turn) / denominator);
@@ -60,7 +52,7 @@ public abstract class AbstractOmniDrivetrain {
         telemetry.addData("turn", turn);
         telemetry.addData("denominator", denominator);
         telemetry.addData("RotationRate", robotClass.getRotationRate());
-        //  telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f (speed)",  correctedWheelDrift[0], correctedWheelDrift[1], correctedWheelDrift[2], correctedWheelDrift[3]));
+        // telemetry.addLine(String.format("wheelSpeeds %6.1f %6.1f %6.1f %6.1f (speed)",  correctedWheelDrift[0], correctedWheelDrift[1], correctedWheelDrift[2], correctedWheelDrift[3]));
         telemetry.update();
     }
 
