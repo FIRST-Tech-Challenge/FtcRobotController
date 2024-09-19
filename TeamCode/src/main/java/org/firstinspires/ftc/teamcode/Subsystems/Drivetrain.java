@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -22,8 +23,8 @@ public class Drivetrain {
 
     public void init(HardwareMap map) {
         fL = map.dcMotor.get("frontLeft");
-        bL = map.dcMotor.get("frontRight");
-        fR = map.dcMotor.get("backLeft");
+        bL = map.dcMotor.get("backLeft");
+        fR = map.dcMotor.get("frontRight");
         bR = map.dcMotor.get("backRight");
         encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
         fL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
@@ -38,18 +39,29 @@ public class Drivetrain {
         fR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        fR.setDirection(DcMotor.Direction.REVERSE);
-        bR.setDirection(DcMotor.Direction.REVERSE);
+        fR.setDirection(DcMotorSimple.Direction.REVERSE);
+        bR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
     }
 
     public double getPosition() {
-        return encoder.getCurrentPosition();
+        return -encoder.getCurrentPosition();
+    }
+
+    public void moveMoveMOVE(double power){
+        double fLPow = power;
+        double bLPow = power;
+        double fRPow = power;
+        double bRPow = power;
+        setPowers(fLPow,bLPow,fRPow,bRPow);
     }
 
     // left joystick controls forward/backward and strafe, right controls turning
     public void move(double power, double strafe, double turn) {
         // normalize so doesn't exceed 1
-        double norm = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
+        //double norm = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
+        double norm = 20;
         double fLPow = power + strafe + turn;
         double bLPow = power - strafe + turn;
         double fRPow = power - strafe - turn;

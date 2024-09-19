@@ -19,7 +19,7 @@ public class PIDMoveForward extends LinearOpMode {
     public static double I = 0;
     public static double D = 0;
 
-    public static double targetDistance = 3.0;
+    public static double targetTicks = 4000;
 
     private Drivetrain drivetrain;
 
@@ -33,14 +33,14 @@ public class PIDMoveForward extends LinearOpMode {
 
         waitForStart();
 
-        double targetTicks = targetDistance * (Drivetrain.TICKS_PER_REV / (2 * Math.PI * Drivetrain.WHEEL_RADIUS_INCHES * Drivetrain.GEAR_RATIO));
+        //double targetTicks = targetDistance * (Drivetrain.TICKS_PER_REV / (2 * Math.PI * Drivetrain.WHEEL_RADIUS_INCHES * Drivetrain.GEAR_RATIO));
         controller.setSetPoint(targetTicks);
+
 
         while (opModeIsActive() && !isStopRequested()) {
             controller.setPID(P, I, D);
             double currentTicks = drivetrain.getPosition();
             double pid = controller.calculate(currentTicks, targetTicks);
-
             drivetrain.move(pid, 0, 0);
 
             telemetry.addData("Current Position (ticks)", currentTicks);
