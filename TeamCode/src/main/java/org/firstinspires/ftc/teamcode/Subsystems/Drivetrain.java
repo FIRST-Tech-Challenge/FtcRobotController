@@ -56,7 +56,7 @@ public class Drivetrain {
         double bRPow = power;
         setPowers(fLPow,bLPow,fRPow,bRPow);
     }
-
+//o
     // left joystick controls forward/backward and strafe, right controls turning
     public void move(double power, double strafe, double turn) {
         // normalize so doesn't exceed 1
