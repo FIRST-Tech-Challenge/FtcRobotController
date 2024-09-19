@@ -75,7 +75,7 @@ public class Hardware {
      * <p>
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
-    public void init()    {
+    public void init()      {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         leftFrontDrive  = myOpMode.hardwareMap.get(DcMotor.class, "left_back_motor");
         rightFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "left_front_motor");
