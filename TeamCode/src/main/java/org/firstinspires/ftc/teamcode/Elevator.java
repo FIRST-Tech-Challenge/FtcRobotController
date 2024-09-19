@@ -25,7 +25,7 @@ public class Elevator {
     }
 
     public void update(Gamepad gamepad) {
-        double power = (gamepad.dpad_up || gamepad.dpad_down ? 1 : 0);
+        double power = ((gamepad.dpad_up || gamepad.dpad_down) ? 1 : 0);
         if(gamepad.dpad_down){
             changeDirection(DcMotor.Direction.REVERSE);
         } else {
