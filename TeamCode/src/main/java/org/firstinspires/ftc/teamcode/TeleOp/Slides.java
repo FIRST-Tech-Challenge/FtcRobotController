@@ -21,7 +21,7 @@ public class Slides {
     //This determines where slides will stop depending on what the driver wants
     public static int HIGH = 450;
     public static int MID =358;
-    public static int LOW =231;
+    public static int LOW =2;
     int position;
     //
     private HardwareMap hardwareMap;
