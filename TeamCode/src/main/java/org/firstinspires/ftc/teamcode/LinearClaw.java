@@ -15,5 +15,6 @@ public class LinearClaw {
         linear_claw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //linear_motion_claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //linear_motion_right.setDirection(DcMotorEx.Direction.REVERSE);
     }
 }

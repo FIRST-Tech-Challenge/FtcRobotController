@@ -53,16 +53,17 @@ public class MecanumTeleOp extends OpMode {
         }
 
             else if (gamepad1.dpad_right){
-                robot.linear_C.linear_claw.setPower(0.3);
+                robot.linear_C.linear_claw.setPower(1);
             } else if (gamepad1.dpad_left){
-                robot.linear_C.linear_claw.setPower(-0.3);
+                robot.linear_C.linear_claw.setPower(-1);
 
         }
 
 
         else {
             robot.linear_L.linear_motion_left.setPower(0.005);
-            robot.linear_R.linear_motion_right.setPower(0.005);
+            //robot.linear_R.linear_motion_right.setPower(0.005);
+            robot.linear_C.linear_claw.setPower(0);
         }
     }
 

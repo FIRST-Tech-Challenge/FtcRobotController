@@ -9,7 +9,6 @@ public class Robot {
     MecanumDriveTrain driveTrain = new MecanumDriveTrain();
     LinearVerticalLeft linear_L = new LinearVerticalLeft();
     LinearVerticalRight linear_R = new LinearVerticalRight();
-
     LinearClaw linear_C = new LinearClaw();
 
 
@@ -19,6 +18,8 @@ public class Robot {
         driveTrain.init(hardwareMap);
         linear_L.init(hardwareMap);
         linear_R.init(hardwareMap);
+        linear_C.init(hardwareMap);
+
 
     }
 
