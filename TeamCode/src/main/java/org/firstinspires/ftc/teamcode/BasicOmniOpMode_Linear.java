@@ -71,10 +71,9 @@ import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
 @Disabled
 public class BasicOmniOpMode_Linear extends LinearOpMode {
-
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    Drivebase driveBase = new Drivebase(hardwareMap);
+    Drivebase driveBase = new Drivebase(hardwareMap, this::opModeIsActive);
 
     @Override
     public void runOpMode() {
@@ -93,13 +92,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+
+
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double max;
-
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;

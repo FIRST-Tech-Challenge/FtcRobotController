@@ -29,15 +29,24 @@
 
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import static org.firstinspires.ftc.teamcode.Utility.Config.HUB_FACING;
+import static org.firstinspires.ftc.teamcode.Utility.Config.TURNING_P_GAIN;
 
 /*
  * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
@@ -60,32 +69,42 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Drivebase {
 
+    private final Supplier<Boolean> opModeIsActive;
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    static private DcMotor FLDrive = null;
-    static private DcMotor FRDrive = null;
-    static private DcMotor BLDrive = null;
-    static private DcMotor BRDrive = null;
-    static private DcMotor armMotor = null;
-    static private Servo   leftHand = null;
-    static private Servo   rightHand = null;
+    private DcMotor FLDrive = null;
+    private DcMotor FRDrive = null;
+    private DcMotor BLDrive = null;
+    private DcMotor BRDrive = null;
+    private final IMU imu;
+    private DcMotor armMotor = null;
+    private Servo   leftHand = null;
+    private Servo   rightHand = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
+    public final double MID_SERVO       =  0.5 ;
+    public final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
+    public final double ARM_UP_POWER    =  0.45 ;
+    public final double ARM_DOWN_POWER  = -0.45 ;
+    public final static double COUNTS_PER_INCH = 1.0;
+    //Change this number once we do encoder math for the correct number.
+    public final static double ENCODER_PER_INCH = 1.0;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
-    public Drivebase (HardwareMap hardwareMap) {
+    public Drivebase(HardwareMap hardwareMap, Supplier<Boolean> opModeIsActive) {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         FLDrive = myOpMode.hardwareMap.get(DcMotor.class, "FLDrive");
         FRDrive = myOpMode.hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = myOpMode.hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = myOpMode.hardwareMap.get(DcMotor.class, "BRDrive");
         armMotor = myOpMode.hardwareMap.get(DcMotor.class, "arm");
+
+        imu = hardwareMap.get(IMU.class, "IMU");
+        imu.initialize(new IMU.Parameters(HUB_FACING));
+
+        this.opModeIsActive = opModeIsActive;
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -112,36 +131,143 @@ public class Drivebase {
     }
 
     /**
-     * Calculates the left/right motor powers required to achieve the requested
-     * robot motions: Drive (Axial motion) and Turn (Yaw motion).
-     * Then sends these power levels to the motors.
+     * For use in teleop, controlled by a controller.
      *
-     * @param axial     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param lateral   FWD/Rev driving power (-1.0 to 1.0) +ve is right
-     * @param yaw      Right/Left turning power (-1.0 to 1.0) +ve is CW
+     * @param yInput    Driving input. Negative is back, positive is forward. [-1, 1].
+     * @param xInput    Strafing input. Negative is left, positive is right. [-1, 1].
+     * @param turnInput Turning input. Negative is ccw, positive is clockwise. [-1, 1].
      */
-    public void driveRobot(double axial, double lateral, double yaw) {
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-        double FLDrivePower  = axial + lateral + yaw;
-        double FRDrivePower = axial - lateral - yaw;
-        double BLDrivePower   = axial - lateral + yaw;
-        double BRDrivePower  = axial + lateral - yaw;
+    public void driveRobot(double yInput, double xInput, double turnInput) {
+        double frontLeft = yInput + xInput + turnInput;
+        double frontRight = yInput - xInput - turnInput;
+        double backLeft = yInput - xInput + turnInput;
+        double backRight = yInput + xInput - turnInput;
 
-        // Scale the values so neither exceed +/- 1.0
-        double frontMax = Math.max(Math.abs(FLDrivePower), Math.abs(FRDrivePower));
-        double backMax = Math.max(Math.abs(BLDrivePower), Math.abs(BRDrivePower));
+        double clamp = maxOf(1, frontLeft, frontRight, backLeft, backRight);
 
-        if (frontMax > 1.0 && backMax > 1.0)
-        {
-            FLDrivePower /= frontMax;
-            FRDrivePower /= frontMax;
-            BLDrivePower /= backMax;
-            BRDrivePower /= backMax;
+        setDrivePowers(
+                frontLeft / clamp,
+                frontRight / clamp,
+                backLeft / clamp,
+                backRight / clamp
+        );
+    }
+
+    /*
+     *  Method to perform a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Move runs out of time
+     *  3) Driver stops the OpMode running.
+     */
+    public void autoDriveForward(double speed, double inchesForward) {
+        int newFLTarget;
+        int newFRTarget;
+        int newBLTarget;
+        int newBRTarget;
+
+        // Determine new target position, and pass to motor controller
+        newFLTarget = FLDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+        newFRTarget = FRDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+        newBLTarget = BLDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+        newBRTarget = BRDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+        FLDrive.setTargetPosition(newFLTarget);
+        FRDrive.setTargetPosition(newFRTarget);
+        BLDrive.setTargetPosition(newBLTarget);
+        BRDrive.setTargetPosition(newBRTarget);
+
+
+        // Turn On RUN_TO_POSITION
+        FLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        FLDrive.setPower(Math.abs(speed));
+        FRDrive.setPower(Math.abs(speed));
+        BLDrive.setPower(Math.abs(speed));
+        BRDrive.setPower(Math.abs(speed));
+
+        // keep looping while we are still active, and there is time left, and both motors are running.
+        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+        // its target position, the motion will stop.  This is "safer" in the event that the robot will
+        // always end the motion as soon as possible.
+        // However, if you require that BOTH motors have finished their moves before the robot continues
+        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+        while (FLDrive.isBusy() && FRDrive.isBusy()) {
+            // Display it for the driver.
+                telemetry.addData("Running to", " %7d :%7d", newFLTarget, newFRTarget);
+                telemetry.addData("Currently at", " at %7d :%7d", FLDrive.getCurrentPosition(), FRDrive.getCurrentPosition());
+                telemetry.update();
         }
 
-        // Use existing function to drive all wheels.
-        setDrivePower(FLDrivePower, FRDrivePower, BLDrivePower, BRDrivePower);
+        // Stop all motion;
+        FLDrive.setPower(0);
+        FRDrive.setPower(0);
+        BLDrive.setPower(0);
+        FRDrive.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void driveSideways(double power, double inches) {
+        //Make it to where encoders reset.
+        FLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double target = inches * ENCODER_PER_INCH;
+        setMotorTargets((int) target, (int) -target, (int) -target, (int) target);
+
+        setMotorModes(DcMotor.RunMode.RUN_TO_POSITION);
+        setDrivePowers(power);
+        waitForMotors(telemetry);
+
+        setDrivePowers(0);
+    }
+    /**
+     * For auto. Turns to a specified angle, without resetting the heading.
+     *
+     * @param angle     How many degrees to turn. [-180, 180].
+     * @param power     How fast to turn. (0, 1].
+     * @param telemetry Pass this if you want this method to log to telemetry.
+     * @see Drivebase#driveSideways
+     * @see Drivebase#autoDriveForward
+     * @see Drivebase#turnToAngle
+     */
+    public void turnToAngle(double angle, double power, @Nullable Telemetry telemetry) {
+        setMotorModes(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while (opModeIsActive.get() && Math.abs(getHeading() - angle) > 1) {
+            final double adjustedPower = power * getTurningCorrection(angle);
+
+            setDrivePowers(adjustedPower, -adjustedPower, adjustedPower, -adjustedPower);
+
+            if (telemetry == null) continue;
+            addTelemetry(telemetry);
+        }
+
+        setDrivePowers(0);
+    }
+
+    /**
+     * Ensures that an angle is within [-180, 180].
+     * @param n Angle in degrees.
+     * @return Angle wrapped into [-180, 180].
+     */
+    private static double wrapAngle(double n) {
+        double x = (n % 360 + 360) % 360;
+        return x < 180 ? x : x - 360;
+    }
+
+    private double getTurningCorrection(double angle) {
+        return Range.clip(wrapAngle(angle - getHeading()) * TURNING_P_GAIN, -1, 1);
     }
 
     /**
@@ -152,12 +278,62 @@ public class Drivebase {
      * @param BLDrivePower
      * @param BRDrivePower
      */
-    public void setDrivePower(double FLDrivePower, double FRDrivePower, double BLDrivePower, double BRDrivePower) {
+    public void setDrivePowers(double FLDrivePower, double FRDrivePower, double BLDrivePower, double BRDrivePower) {
         // Output the values to the motor drives.
         FLDrive.setPower(FLDrivePower);
         FRDrive.setPower(FRDrivePower);
         BLDrive.setPower(BLDrivePower);
         BRDrive.setPower(BRDrivePower);
+    }
+
+    public void setDrivePowers(double power) {
+        // Output the values to the motor drives.
+        FLDrive.setPower(power);
+        FRDrive.setPower(power);
+        BLDrive.setPower(power);
+        BRDrive.setPower(power);
+    }
+    /**
+     * Waits until the motors are finished moving, or the driver presses stop.
+     *
+     * @param telemetry Pass this if you want to log to telemetry.
+     */
+    private void waitForMotors(@Nullable Telemetry telemetry) {
+        while (opModeIsActive.get() && (FLDrive.isBusy() || FRDrive.isBusy() || BLDrive.isBusy() || BRDrive.isBusy())) {
+            if (telemetry == null) continue;
+            addTelemetry(telemetry);
+        }
+    }
+
+    private void setMotorTargets(int fltarget, int frtarget, int bltarget, int brtarget) {
+        FLDrive.setTargetPosition(fltarget);
+        FRDrive.setTargetPosition(frtarget);
+        BLDrive.setTargetPosition(bltarget);
+        BRDrive.setTargetPosition(brtarget);
+    }
+
+    private void setMotorModes(DcMotor.RunMode mode) {
+        FLDrive.setMode(mode);
+        FRDrive.setMode(mode);
+        BLDrive.setMode(mode);
+        BRDrive.setMode(mode);
+    }
+
+    /**
+     * @return The robot heading in degrees.
+     */
+    private double getHeading() {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
+    /**
+     * @param doubles Numbers to look over.
+     * @return The maximum number.
+     */
+    private double maxOf(double... doubles) {
+        double max = -Double.MAX_VALUE;
+        for (double x : doubles) if (x > max) max = x;
+        return max;
     }
 
     /**
@@ -174,7 +350,7 @@ public class Drivebase {
      *
      * @param offset
      */
-    static public void setHandPositions(double offset) {
+    public void setHandPositions(double offset) {
         offset = Range.clip(offset, -0.5, 0.5);
         leftHand.setPosition(MID_SERVO + offset);
         rightHand.setPosition(MID_SERVO - offset);
