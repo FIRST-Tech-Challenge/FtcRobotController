@@ -35,6 +35,7 @@ public class RobotV1 extends OpMode {
     @Override
     public void loop() {
         run_motors();
+        arm.setPower(gamepad1.left_stick_y);
     }
 
     public void run_motors(){
