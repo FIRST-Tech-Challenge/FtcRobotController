@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.JackBurr.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
 
@@ -15,6 +16,11 @@ public class RobotV1 extends OpMode {
     public DcMotor frontRight; //PORT 1
     public DcMotor backLeft; //PORT 2
     public DcMotor backRight; // PORT 0
+
+    public double ARM_POWER = 0.4;
+    public int MOVEMENT_DISTANCE = 25;
+    public ElapsedTime armTimer = new ElapsedTime();
+
 
     @Override
     public void init() {
@@ -36,6 +42,19 @@ public class RobotV1 extends OpMode {
     public void loop() {
         run_motors();
         arm.setPower(gamepad1.left_stick_y);
+        if (gamepad1.left_stick_y == 0){
+            arm.hold(ARM_POWER);
+        }
+        if (armTimer.seconds() > 0.3){
+            if (gamepad1.dpad_up){
+                arm.moveTo(arm.getPos() + MOVEMENT_DISTANCE, ARM_POWER, true);
+                armTimer.reset();
+            }
+            else if (gamepad1.dpad_down){
+                arm.moveTo(arm.getPos() - MOVEMENT_DISTANCE, ARM_POWER, true);
+                armTimer.reset();
+            }
+        }
     }
 
     public void run_motors(){

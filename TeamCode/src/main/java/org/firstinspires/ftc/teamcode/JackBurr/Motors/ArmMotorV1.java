@@ -20,22 +20,31 @@ public class ArmMotorV1 {
         position = arm.getCurrentPosition();
     }
 
-    public void setPower(double power){
-        arm.setPower(power);
+    public int getPos(){
+        return position;
     }
 
-    public void moveTo(int pos, int power, boolean wait){
+    public void setPower(double power){
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setPower(power);
+        position = arm.getCurrentPosition();
+    }
+
+    public void moveTo(int pos, double power, boolean wait){
         double current_position = arm.getCurrentPosition();
         if (current_position > position){
             setPower(-power);
-            arm.setTargetPosition(position);
+            arm.setTargetPosition(pos);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else if (current_position < position){
             setPower(power);
-            arm.setTargetPosition(position);
+            arm.setTargetPosition(pos);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         position = pos;
+    }
+    public void hold(double power){
+        moveTo(position, power, false);
     }
 }
