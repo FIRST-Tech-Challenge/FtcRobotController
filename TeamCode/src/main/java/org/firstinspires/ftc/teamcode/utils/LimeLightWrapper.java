@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 public class LimeLightWrapper implements LocalizerInterface{
-
     public double weight = 0.33;
 
     Limelight3A limelight;
