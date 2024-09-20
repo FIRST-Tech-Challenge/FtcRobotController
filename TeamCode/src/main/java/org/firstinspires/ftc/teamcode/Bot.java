@@ -18,6 +18,8 @@ public class Bot {
     private DcMotor rightMotorFront;
     private DcMotor leftMotorBack;
     private DcMotor rightMotorBack;
+    private DcMotor rightLift;
+    private DcMotor leftLift;
 
     //Statistics for measurements
     static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
@@ -41,10 +43,12 @@ public class Bot {
     public void init(HardwareMap map){
 
         //Connecting declared motors to classes of DcMotors and respected names
-        leftMotorFront = map.get(DcMotor.class, "left_front");
-        leftMotorBack = map.get(DcMotor.class, "left_back");
-        rightMotorFront = map.get(DcMotor.class, "right_front");
-        rightMotorBack = map.get(DcMotor.class, "right_back");
+//        leftMotorFront = map.get(DcMotor.class, "left_front");
+//        leftMotorBack = map.get(DcMotor.class, "left_back");
+//        rightMotorFront = map.get(DcMotor.class, "right_front");
+//        rightMotorBack = map.get(DcMotor.class, "right_back");
+        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
+        rightLift = map.get(DcMotor.class, "right_lift");
 
         //Set RunModes for Encoder Usage
         /*
@@ -57,10 +61,12 @@ public class Bot {
         //Set Direction of each Motors
         // switch REVERSE and FORWARD if controls are opposite
         // This is set for Mechanum drive
-        leftMotorFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
+//        leftMotorFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//        leftMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
+//        rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
+//        rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);//this is because the motors are probalby faceing each other
 
     }
 
@@ -71,15 +77,21 @@ public class Bot {
      * @param frontRightPower
      * @param backRightPower
      */
-    public void setDriveTrain(
-            double frontLeftPower, double backLeftPower,
-            double frontRightPower, double backRightPower
-    ) {
-        leftMotorFront.setPower(frontLeftPower);
-        leftMotorBack.setPower(backLeftPower);
-        rightMotorFront.setPower(frontRightPower);
-        rightMotorBack.setPower(backRightPower);
-    }
+//    public void setDriveTrain(
+//            double frontLeftPower, double backLeftPower,
+//            double frontRightPower, double backRightPower
+//    ) {
+//        leftMotorFront.setPower(frontLeftPower);
+//        leftMotorBack.setPower(backLeftPower);
+//        rightMotorFront.setPower(frontRightPower);
+//        rightMotorBack.setPower(backRightPower);
+//    }
 
+    public void setLift(
+            double liftPower
+    ){
+        leftLift.setPower(liftPower);
+        rightLift.setPower(liftPower);
+    }
 
 }
