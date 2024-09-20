@@ -51,7 +51,7 @@ public class WinchControl {
 
         hookServo = _opMode.hardwareMap.get(Servo.class, "hook_servo");
 
-        pos_pid.init_pid(.005,0,0);  //Position controller to control elevator to a specific position.
+        pos_pid.init_pid(.0005,0,0);  //Position controller to control elevator to a specific position.
     }
 
     public int getCurrentPostion() {
@@ -75,7 +75,7 @@ public class WinchControl {
             elevatorCommand = cmd;
         }
 
-        RobotLog.i(String.format("Winch encoder %d",winch_motor.getCurrentPosition()));
+//        RobotLog.i(String.format("Winch encoder %d",winch_motor.getCurrentPosition()));
         winch_motor.setPower(elevatorCommand);
     }
 
@@ -114,8 +114,8 @@ public class WinchControl {
                 maxCmd,
                 dt);
 
-        RobotLog.i(String.format("setPoint %.2f, actual postition: %d, dt: %.2f",
-                hold_position_setpoint,winch_motor.getCurrentPosition(),dt));
+//        RobotLog.i(String.format("setPoint %.2f, actual postition: %d, dt: %.2f",
+//                hold_position_setpoint,winch_motor.getCurrentPosition(),dt));
 
         winch_motor.setPower(elevCmd);
     }

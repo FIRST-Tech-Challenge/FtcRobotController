@@ -84,6 +84,7 @@ public class AutoRedIn_Final extends LinearOpMode {
         //initializes the Driving portion of the robot
 
         robot.initializeRobot();
+        robot.resetIMU();
         if ( initimpliments == true ) {
             robot.initializeImplements();
             //NOTE:  We reset everything because this is beginning of match
@@ -127,7 +128,10 @@ public class AutoRedIn_Final extends LinearOpMode {
                 robot.moveRobotAuto(robot.LEFT, 0.5, 15);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 11);
                 robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
-                robot.moveRobotAuto(robot.REVERSE, .5,11.5);
+                ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 11.5);/// REPLACED WITH DISTANCE MEASURE
+                robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 13,4,sensorRange);
+                /////////////////////////////////////////////////////
                 robot.moveRobotAuto(robot.LEFT, 0.3, 4);
 
                 if ( initimpliments == true ) {
@@ -168,7 +172,10 @@ public class AutoRedIn_Final extends LinearOpMode {
                 robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
                 robot.moveRobotAuto(robot.FORWARD, 0.5, 6);
                 robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
-                robot.moveRobotAuto(robot.REVERSE, 0.3, 36);
+                ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 36);/// REPLACED WITH DISTANCE MEASURE
+                robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 40,4,sensorRange);
+                /////////////////////////////////////////////////////
                 robot.moveRobotAuto(robot.RIGHT, 0.3, 3);
 
                 if ( initimpliments == true ) {
@@ -191,8 +198,8 @@ public class AutoRedIn_Final extends LinearOpMode {
             //Now we know that the pixel is at the last location so just go there and drop pixel
 
             robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
-            robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
-            robot.moveRobotAuto(robot.LEFT, 0.3, 4);
+            robot.moveRobotAuto(robot.REVERSE, 0.3, 3);
+            robot.moveRobotAuto(robot.LEFT, 0.3, 3);
             if ( initimpliments == true ) {
                 robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
                 robot.sweeperCommand(1.0);
@@ -201,7 +208,10 @@ public class AutoRedIn_Final extends LinearOpMode {
             }
             robot.moveRobotAuto(robot.FORWARD, 0.75, 25);
             robot.rotateRobotAuto2(robot.TURN_LEFT, 180, 0.5);
-            robot.moveRobotAuto(robot.REVERSE,.3,11);
+            ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 11);/// REPLACED WITH DISTANCE MEASURE
+            robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 13,4,sensorRange);
+            /////////////////////////////////////////////////////
             robot.moveRobotAuto(robot.RIGHT,.3,1);
             if ( initimpliments == true ) {
                 robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION-400);

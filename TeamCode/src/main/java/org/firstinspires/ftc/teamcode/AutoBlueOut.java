@@ -70,6 +70,7 @@ public class AutoBlueOut extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Robot2024((this));
         robot.initializeRobot();
+        robot.resetIMU();
       //  robot.initializeImplements();
         telemetry.addData("Status", "Initialized");
         sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range2");

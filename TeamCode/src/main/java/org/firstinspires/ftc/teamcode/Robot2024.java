@@ -4,12 +4,15 @@ import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.teamcode.utilities.CASH_Drive_Library;
 import org.firstinspires.ftc.teamcode.utilities.ElevatorControl;
 import org.firstinspires.ftc.teamcode.utilities.IMUUtility;
+import org.firstinspires.ftc.teamcode.utilities.IMUUtility2;
 import org.firstinspires.ftc.teamcode.utilities.SweeperControl;
 import org.firstinspires.ftc.teamcode.utilities.WinchControl;
+import org.firstinspires.ftc.teamcode.utilities.pid_controller;
 
 public class Robot2024<_opMode> {
     public final OpMode _opMode; //holds opmode object
@@ -26,7 +29,7 @@ public class Robot2024<_opMode> {
     public DcMotor rightRearMotor = null;
 
     //Creates a new object for the robot IMU
-    public IMUUtility robotIMU = new IMUUtility();
+    public IMUUtility2 robotIMU = new IMUUtility2();
 
     //Creates a new object for the Drive Library
     public CASH_Drive_Library CASHDriveLibrary = new CASH_Drive_Library();
@@ -103,13 +106,19 @@ public class Robot2024<_opMode> {
         robotIMU.initialize(_opMode,"imu");
         CASHDriveLibrary.imu = robotIMU;
 
+        CASHDriveLibrary.init_rotations_pid();
+        CASHDriveLibrary.init_distanceToWall_pid();
+    }
+
+    public void resetIMU(){
+        robotIMU.resetAngle();
     }
 
     // This intitilizes the elevator and sweeper control.
     // initializeImplements:  For All autonomous programse
     //ONLY USE THIS FOR AUTO PROGRAMS
     public void initializeImplements() {
-       elevatorCode.init(_opMode, "elevator_motor");
+        elevatorCode.init(_opMode, "elevator_motor");
         SweeperCode.init(_opMode, "sweeper_motor");
         winchCode.init(_opMode,"winch_motor");
 
@@ -125,7 +134,7 @@ public class Robot2024<_opMode> {
 
     ////////////////////////////////////////New Navigation Methods////////////////////////////////
     public void moveRobotteli(double leftjoyx, double leftjoyy, double rightjoyx) {
-        CASHDriveLibrary.MoveRobotTeliOp(leftjoyx, leftjoyy, rightjoyx,  true, false);
+        CASHDriveLibrary.MoveRobotTeliOp(leftjoyx, leftjoyy, rightjoyx,  false, false);
     }
 
     //Used to move the robot forward/revers/left/right.  This also uses fore/aft encoder and imu
@@ -135,6 +144,13 @@ public class Robot2024<_opMode> {
         CASHDriveLibrary.EnableEncoders();
 //        CASHDriveLibrary.resetForeAftEncoder();  Use only if fore/aft encoder installed
         CASHDriveLibrary.MoveRobotAuto(direction_deg, power, distance_inch, false, _opMode, false);
+    }
+
+    public void moveRobotAuto_DistanceFromWall(double direction_deg, double power, double distance_inch,
+                                               double distanceFromWall, DistanceSensor distSensor) {
+        CASHDriveLibrary.EnableEncoders();
+        CASHDriveLibrary.MoveRobotAuto_DistanceFromWall(direction_deg, power, distance_inch, false, _opMode, false,
+                distanceFromWall,distSensor);
     }
     //This method is used to rotate the robot by as specified amount of degrees.  It uses the
     //IMU for feedback
@@ -204,6 +220,23 @@ public class Robot2024<_opMode> {
     }
     public void lower_hook(){
         winchCode.reset_hookServo();
+    }
+
+
+    //Teliop Auto controls
+    public void setDesiredOrientation(double desOrenetationOfRobot){
+        CASHDriveLibrary.setTeliopDesiredOrientation(desOrenetationOfRobot);
+    }
+    public void updateRobotRotation(double dt){
+        CASHDriveLibrary.updateRobotRotation(dt);
+    }
+
+
+    public void setDesDistFromWall(double desiredDistFromWall){
+        CASHDriveLibrary.setTeliopDesiredDistanceFromWall(desiredDistFromWall);
+    }
+    public void updateDesDistFromWall(double dt, double distSensor1, double distSensor2){
+        CASHDriveLibrary.updateTeliopDesDistFromWall(dt,distSensor1, distSensor2);
     }
 }
 

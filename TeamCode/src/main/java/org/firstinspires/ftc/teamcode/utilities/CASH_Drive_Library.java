@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 
 public class CASH_Drive_Library {
     public OpMode _opMode;
@@ -29,7 +30,7 @@ public class CASH_Drive_Library {
     public DcMotor rightRearMotor;
     public DcMotor foreAftEncoder;
     public ColorSensor floorColorSensor;
-    public IMUUtility imu;
+    public IMUUtility2 imu;
 
     public DistanceSensor rightFreightDetector;
     public DistanceSensor leftFreightDetector;
@@ -52,12 +53,29 @@ public class CASH_Drive_Library {
     double prev_XCMD = 0;
     double prev_YCMD=0;
     double  prev_TCMD=0;
-    double RATELIMIT=.075;  //NOTE:  This value depends on the loop time of the main loop
-    double DEADBAND = .025;  //Not used yet
+    double RATELIMIT=.175;  //NOTE:  This value depends on the loop time of the main loop
+    double DEADBAND = .002;  //Not used yet
 
     private boolean IsOpModeActive()
     {
         return ((LinearOpMode)_opMode).opModeIsActive();
+    }
+
+
+    //TELIOP AUTO COTNORLS
+    private double desiredOrentation = 0;
+    private double desiredDistanceFromWall = 15;
+
+    private pid_controller rotation_pid = new pid_controller();
+    private pid_controller distToWall_pid = new pid_controller();
+
+    private double WALL_SENSE_SPEED = 0.2;
+
+    public void init_rotations_pid(){
+        rotation_pid.init_pid(.005,0,0);
+    }
+    public void init_distanceToWall_pid(){
+        distToWall_pid.init_pid(.035,0.0,0);
     }
     public void Stop() {
         rightFrontMotor.setPower(0);
@@ -147,13 +165,31 @@ public class CASH_Drive_Library {
     //  Magnitude:  The desired speed you want the robot to go.  1 is max speed.
     public void MoveRobotTeliOp(double directionStick_y,double directionStick_x, double turnStick_x, boolean use_rate_limit, boolean use_exponent_smoothing)
     {
+        if (abs(directionStick_x) > DEADBAND){
+            directionStick_x = directionStick_x;
+        }else{
+            directionStick_x = 0.0;
+        }
+        if (abs(directionStick_y) > DEADBAND)
+        {
+            directionStick_y = directionStick_y;
+        }else{
+            directionStick_y = 0.0;
+        }
+
+        if (abs(turnStick_x)>DEADBAND){
+            turnStick_x = turnStick_x;
+        }else {
+            turnStick_x = 0.0;
+        }
+
         double YCMD, XCMD, TCMD;
 //        XCMD = directionStick_x;
-        XCMD = rateLimitCmds(directionStick_x,prev_XCMD,false,false);
+        XCMD = rateLimitCmds(directionStick_x,prev_XCMD,use_rate_limit,false,RATELIMIT*1.0);
 //        YCMD = directionStick_y;
-        YCMD = rateLimitCmds(directionStick_y,prev_YCMD,false,false);
+        YCMD = rateLimitCmds(directionStick_y,prev_YCMD,use_rate_limit,false,RATELIMIT*1.0);
 //        TCMD = turnStick_x; //rateLimitCmds(turnStick_x,prev_TCMD,use_rate_limit,use_exponent_smoothing);
-        TCMD = rateLimitCmds(turnStick_x,prev_TCMD,use_rate_limit,false);
+        TCMD = rateLimitCmds(turnStick_x,prev_TCMD,use_rate_limit,false,RATELIMIT*1.0);
 
 //        RobotLog.d(String.format("INT THE XCMD GT RL: XCMD: %.03f prev_XCMD: %.03f Diff :  %.03f ",XCMD,prev_XCMD,prev_XCMD-X_sign*RATELIMIT)));
         prev_XCMD = XCMD;
@@ -168,7 +204,7 @@ public class CASH_Drive_Library {
         double fullSpeedFactor = 1.4144;
         angle = Math.atan2(YCMD, XCMD);
         magnitude = Math.sqrt((XCMD * XCMD) + (YCMD * YCMD))*fullSpeedFactor;
-        RobotLog.d(String.format("CASH: X: %.03f Y: %.03f Angle:  %.03f Magnitued: %.03f",directionStick_x,directionStick_y,angle,magnitude));
+//        RobotLog.d(String.format("CASH: X: %.03f Y: %.03f Angle:  %.03f Magnitued: %.03f",directionStick_x,directionStick_y,angle,magnitude));
 
         motorCommands[0] = (Math.sin(angle + (.25 * 3.14)) * magnitude) - TCMD;//LF_motorPower
         motorCommands[1] = (Math.sin(angle - (.25 * 3.14)) * magnitude) + TCMD;//RF_motorPower
@@ -204,7 +240,10 @@ public class CASH_Drive_Library {
         rightFrontMotor.setPower(RFMP);
         rightRearMotor.setPower(RRMP);
 
-        RobotLog.d(String.format("CASH: LF: %.03f, RR: %.03f,RF: %.03f,LR: %.03f",LFMP,RRMP,RFMP,LRMP));
+       // RobotLog.d(String.format("CASH: LF: %.03f, RR: %.03f,RF: %.03f,LR: %.03f",LFMP,RRMP,RFMP,LRMP));
+        RobotLog.d(String.format("FWD: %.03f, Strafe: %.03f, LF: %.03f, RR: %.03f,RF: %.03f,LR: %.03f",
+                directionStick_y,directionStick_x,turnStick_x,
+                leftFrontMotor.getPower(),rightRearMotor.getPower(),rightFrontMotor.getPower(),leftRearMotor.getPower()));
     }
 
     //This moves the robot in autonomous mode with 3 inputs:
@@ -273,7 +312,7 @@ public class CASH_Drive_Library {
                 currentPosition=rightRearMotor.getCurrentPosition();
             }
 
-            RobotLog.i(String.format("Direction: %s TicksNeeded: %03d  CurrentTicks: %03d",direction_deg, desiredTicks,currentPosition));
+//            RobotLog.i(String.format("Direction: %s TicksNeeded: %03d  CurrentTicks: %03d",direction_deg, desiredTicks,currentPosition));
             if(abs(currentPosition) >= abs(desiredTicks)){achievedDistance = true;}
 
 
@@ -282,14 +321,14 @@ public class CASH_Drive_Library {
             {
 
                 double DistToFreight = rightFreightDetector.getDistance(DistanceUnit.MM);
-                RobotLog.i(String.format("Looking For Freight.  Distance is: %03f",DistToFreight));
+//                RobotLog.i(String.format("Looking For Freight.  Distance is: %03f",DistToFreight));
                 if (DistToFreight < 48*25.4)
                 {
                     countsOfDetection = countsOfDetection +1;
-                    RobotLog.i(String.format("Found Freight.  Distance is: %03f and Counts are: %03d",DistToFreight,countsOfDetection));
+//                    RobotLog.i(String.format("Found Freight.  Distance is: %03f and Counts are: %03d",DistToFreight,countsOfDetection));
                     if (countsOfDetection > 4){
                         foundFreight = true;
-                        RobotLog.i(String.format("Yeah we found freight!!!!!.  Stopping Robot and returning true"));
+//                        RobotLog.i(String.format("Yeah we found freight!!!!!.  Stopping Robot and returning true"));
                     }
                 }
 
@@ -304,7 +343,7 @@ public class CASH_Drive_Library {
             {
                 correction = imu.checkDirection();
 //                correction = 0;
-                RobotLog.i(String.format("CORRECTION IS: %f",correction));
+//                RobotLog.i(String.format("CORRECTION IS: %f",correction));
             }    else
             {
                 this.Stop();
@@ -319,7 +358,7 @@ public class CASH_Drive_Library {
             if ( (direction_deg == RIGHT || direction_deg == LEFT)  && useForeAftEncoder)
             {
                 lateralCorrection = -(double)foreAftEncoder.getCurrentPosition()/10000;
-                RobotLog.d(String.format("lateral Correction:  %.03f",lateralCorrection));
+//                RobotLog.d(String.format("lateral Correction:  %.03f",lateralCorrection));
             }
 
             motorCommands[0] = (Math.sin(direction_rad + (.25 * 3.14)) * speed) - correction + lateralCorrection;//LF_motorPower
@@ -362,13 +401,186 @@ public class CASH_Drive_Library {
 
     }
 
+
+
+    //This moves the robot in autonomous mode with 3 inputs:
+    //direction:  angle in degrees you want the robot to translate. 0 degrees is out the right of
+    //the robot.  90 degrees is out the front of the robot
+    //speed:  0 to 1 where 1 is max speed in the direction above
+    public boolean MoveRobotAuto_DistanceFromWall(double direction_deg, double raw_speed,
+                                                  double desired_dist_inch,boolean lookForFreight,
+                                                  OpMode opmode, boolean useForeAftEncoder,
+                                                  double distanceFromWall, DistanceSensor distSensor)
+    {
+        double LFMP, RFMP, LRMP, RRMP,correction;
+        double direction_rad = direction_deg * 3.14/180;
+        if (raw_speed > 1)
+        {
+            raw_speed = 1;
+        }
+        else if(raw_speed < 0)
+        {
+            raw_speed = 0;
+        }
+        double fullSpeedFactor = 1.4144;
+        double speed = raw_speed*fullSpeedFactor;
+
+        int desiredTicks = 0;
+        if (direction_deg == FORWARD){
+            desiredTicks = GetTickCountsFromDistance(desired_dist_inch,false);
+//            desiredTicks = GetTickCountsFromForeAftEncoder(desired_dist_inch);
+        }else if (direction_deg == REVERSE){
+            desiredTicks = GetTickCountsFromDistance(desired_dist_inch,false);
+//            desiredTicks = GetTickCountsFromForeAftEncoder(desired_dist_inch);
+        }else if (direction_deg == RIGHT){
+            desiredTicks = GetTickCountsFromDistance(desired_dist_inch,false);
+//            desiredTicks = GetTicksCountForMovement(desired_dist_inch);
+        } else if (direction_deg == LEFT){
+            desiredTicks = GetTickCountsFromDistance(desired_dist_inch,false);
+//            desiredTicks = GetTicksCountForMovement(desired_dist_inch);
+        }
+
+        //Must check that op mode is active for any while loop
+        boolean achievedDistance = false;
+        boolean foundFreight = false;
+        boolean reachedDistFromObject = false;
+
+        //parameters to detect freight
+        double distanceToFreight = 10000;
+        int countsOfDetection = 0;
+        ///
+        int iterations = 0;
+
+
+        while(((LinearOpMode)opmode).opModeIsActive() && (!achievedDistance && !foundFreight && !reachedDistFromObject))
+        {
+            double currentDistFromObject = distSensor.getDistance(DistanceUnit.INCH);
+            //Check if we have reached to desired distance
+            int currentPosition;
+            if (direction_deg == FORWARD){
+                if (useForeAftEncoder){
+                    currentPosition=foreAftEncoder.getCurrentPosition();
+                }else{
+                    currentPosition=rightRearMotor.getCurrentPosition();
+                }
+
+            }else if (direction_deg == REVERSE){
+                if (useForeAftEncoder){
+                    currentPosition=foreAftEncoder.getCurrentPosition();
+                }else{
+                    currentPosition=rightRearMotor.getCurrentPosition();
+                }
+            }else if (direction_deg == RIGHT){
+                currentPosition=rightRearMotor.getCurrentPosition();
+            }else{
+                currentPosition=rightRearMotor.getCurrentPosition();
+            }
+
+//            RobotLog.i(String.format("Direction: %s TicksNeeded: %03d  CurrentTicks: %03d",direction_deg, desiredTicks,currentPosition));
+            if(abs(currentPosition) >= abs(desiredTicks)){achievedDistance = true;}
+
+            if(abs(currentDistFromObject) <= distanceFromWall*3)
+            {
+                speed = WALL_SENSE_SPEED;
+                if (abs(currentDistFromObject) <= distanceFromWall){
+                    reachedDistFromObject = true;
+                }
+            }
+
+            RobotLog.i(String.format("DistanceFromObject: DesiredDistance: %f  currentDistance: %f",distanceFromWall,currentDistFromObject));
+
+
+            //Check if we are looking for freight...run this code
+            if (lookForFreight)
+            {
+
+                double DistToFreight = rightFreightDetector.getDistance(DistanceUnit.MM);
+//                RobotLog.i(String.format("Looking For Freight.  Distance is: %03f",DistToFreight));
+                if (DistToFreight < 48*25.4)
+                {
+                    countsOfDetection = countsOfDetection +1;
+//                    RobotLog.i(String.format("Found Freight.  Distance is: %03f and Counts are: %03d",DistToFreight,countsOfDetection));
+                    if (countsOfDetection > 4){
+                        foundFreight = true;
+//                        RobotLog.i(String.format("Yeah we found freight!!!!!.  Stopping Robot and returning true"));
+                    }
+                }
+
+            }
+
+
+            //This is for rotation correction via IMU.  If the robot starts to turn left or right due
+            // to the floor or some obstacle, it will compensate and straighten itself out.  The below
+            // method returns the amount of correction needed and with the correct sign.
+            correction = 0;
+            if (((LinearOpMode)opmode).opModeIsActive())
+            {
+                correction = imu.checkDirection();
+//                correction = 0;
+//                RobotLog.i(String.format("CORRECTION IS: %f",correction));
+            }    else
+            {
+                this.Stop();
+            }
+
+
+
+            //This uses the fore aft encoder to compensate only for left and right motion.
+            // The encoder can sense if the robot is going forward or reverse while sliding left/right
+            // across the floor.  This helps the robot move left and right in a straight line.
+            double lateralCorrection = 0;
+            if ( (direction_deg == RIGHT || direction_deg == LEFT)  && useForeAftEncoder)
+            {
+                lateralCorrection = -(double)foreAftEncoder.getCurrentPosition()/10000;
+//                RobotLog.d(String.format("lateral Correction:  %.03f",lateralCorrection));
+            }
+
+            motorCommands[0] = (Math.sin(direction_rad + (.25 * 3.14)) * speed) - correction + lateralCorrection;//LF_motorPower
+            motorCommands[1] = (Math.sin(direction_rad - (.25 * 3.14)) * speed) + correction + lateralCorrection;//RF_motorPower
+            motorCommands[2] = (Math.sin(direction_rad - (.25 * 3.14)) * speed) - correction + lateralCorrection;//LR_motorPower
+            motorCommands[3] = (Math.sin(direction_rad + (.25 * 3.14)) * speed) + correction + lateralCorrection;//RR_motorPower
+
+            //Need to find max value so we can scale commands because some may be larger than 1.
+            //RobotLog.d(String.format("CASH: Motor Commands:  %.03f",motorCommands[0]));
+            double maxCommandValue = abs(motorCommands[0]);
+
+            for(int i=1;i < motorCommands.length;i++)
+            {
+                if(abs(motorCommands[i]) > maxCommandValue)
+                {
+                    maxCommandValue = abs(motorCommands[i]);
+                }
+//            RobotLog.d(String.format("CASH: Max Command Value:  %.03f",maxCommandValue));
+            }
+
+            LFMP = motorCommands[0];
+            RFMP = motorCommands[1];
+            LRMP = motorCommands[2];
+            RRMP = motorCommands[3];
+            if (maxCommandValue > 1 )
+            {
+                LFMP = motorCommands[0]/maxCommandValue;
+                RFMP = motorCommands[1]/maxCommandValue;
+                LRMP = motorCommands[2]/maxCommandValue;
+                RRMP = motorCommands[3]/maxCommandValue;
+            }
+            leftFrontMotor.setPower(LFMP);
+            leftRearMotor.setPower(LRMP);
+            rightFrontMotor.setPower(RFMP);
+            rightRearMotor.setPower(RRMP);
+
+        }
+        this.Stop();
+        return foundFreight;
+
+    }
     //This is a method to rotate the robot.  The input is the angle in degrees to rotate the robot
     // relative to the playing field.  If the robot needs to turn right, the desired direction is
     // degrees (z is up and the right hand rule defines the sign).
     public void RotateRobotAuto(double direction,double desiredRotation_deg, double pwr)
     {
         double LFMP, RFMP, LRMP, RRMP, correction;
-        imu.resetAngle();
+//        imu.resetAngle();
         imu.desiredGlobalAngle_d = direction*desiredRotation_deg;
 
         double cmdPower = direction*pwr;
@@ -472,7 +684,7 @@ public class CASH_Drive_Library {
         this.Stop();
     }
 
-    private double rateLimitCmds(double raw_value, double prev_cmd,boolean use_rate_limiting, boolean use_exponential_map)
+    private double rateLimitCmds(double raw_value, double prev_cmd,boolean use_rate_limiting, boolean use_exponential_map,double rateLimit)
     {
 
 
@@ -493,52 +705,113 @@ public class CASH_Drive_Library {
             smoothedCMD = (1.2 * Math.pow(1.043, (abs(raw_value) * 100)) - 1.2 + .2 * (abs(raw_value) * 100))/100;
             double smoothedCMD2 = Math.pow(1.05,(Math.abs(raw_value)-1)*100);
             raw_value = sign_of_cmd*smoothedCMD;
-            RobotLog.d(String.format("RawCMD %f.03  ExpCMD: %f.03", raw_value,smoothedCMD));
+//            RobotLog.d(String.format("RawCMD %f.03  ExpCMD: %f.03", raw_value,smoothedCMD));
 
         }
 //        RobotLog.d(String.format("RawCMD %f.03  ExpCMD: %f.03", raw_value,smoothedCMD));
         double deltaCMD = raw_value - prev_cmd;
         double rateLimitedCmd = raw_value;
 
-        if (use_rate_limiting) {
+        if (use_rate_limiting && abs(raw_value) > DEADBAND) {
 
             if (prev_cmd > 0 && raw_value > prev_cmd)  //positive accel
             {
-                if (abs(raw_value - prev_cmd) > RATELIMIT) {
-                    deltaCMD = RATELIMIT;
+                if (abs(raw_value - prev_cmd) > rateLimit) {
+                    deltaCMD = rateLimit;
                 }
 
             } else if (prev_cmd > 0 && raw_value < prev_cmd)  //positive decel
             {
-                if (abs(raw_value - prev_cmd) > RATELIMIT) {
+                if (abs(raw_value - prev_cmd) > rateLimit) {
 
-                    deltaCMD = -RATELIMIT;
+                    deltaCMD = -rateLimit;
                 }
             }
 
             else if (prev_cmd < 0 && raw_value < prev_cmd)// negative accel
             {
-                if (abs(raw_value - prev_cmd) > RATELIMIT) {
-                    deltaCMD = -RATELIMIT;
+                if (abs(raw_value - prev_cmd) > rateLimit) {
+                    deltaCMD = -rateLimit;
                 }
 
             } else if (prev_cmd < 0 && raw_value > prev_cmd) // negative decel
             {
-                if (abs(raw_value - prev_cmd) > RATELIMIT) {
-                    deltaCMD = RATELIMIT;
+                if (abs(raw_value - prev_cmd) > rateLimit) {
+                    deltaCMD = rateLimit;
                 }
 
-            } else if (prev_cmd == 0 && abs(raw_value) > DEADBAND) {
-                if (raw_value > 0) {
-                    deltaCMD = RATELIMIT;
-                } else {
-                    deltaCMD = -RATELIMIT;
+            }
+            else if (prev_cmd == 0 && abs(raw_value)>DEADBAND) {
+                if (raw_value > DEADBAND) {
+                    deltaCMD = DEADBAND;
+                } else if (raw_value < -DEADBAND) {
+                    deltaCMD = -DEADBAND;
                 }
             }
+//            RobotLog.d(String.format("RateLimit Rotation: RawCMD %f  Delta_ RotationCMD: %f", raw_value,deltaCMD));
+
             rateLimitedCmd = prev_cmd + deltaCMD;
         }
 
         return rateLimitedCmd;
     }
+
+
+
+    //TELIOP MODE AUTO CONTROLS
+    public void setTeliopDesiredOrientation(double desiredRobotDegrees){
+        desiredOrentation = desiredRobotDegrees;
+    }
+    public void updateRobotRotation(double dt){
+        double rotation_cmd = rotation_pid.update(
+                desiredOrentation,
+                -imu.getCurrentAbsoluteAngle(),
+                -.7,
+                .7,
+                dt);
+
+//        RobotLog.d(String.format("Des Orientation %f Actual Orientation: %f  dt is: %f error is: %f, Kp: %f cmd:  %f",
+//                desiredOrentation,-imu.getCurrentAbsoluteAngle(),dt,desiredOrentation-(-imu.getCurrentAbsoluteAngle()),
+//                rotation_pid.getKp(),rotation_cmd));
+
+//        if (Math.abs(rotation_cmd)<0.04)
+//        {
+//            rotation_cmd = 0.0;
+//        }
+        double LFMP = - rotation_cmd;//LF_motorPower
+        double RFMP = + rotation_cmd;//RF_motorPower
+        double LRMP = - rotation_cmd; //LR_motorPower
+        double RRMP = + rotation_cmd; //RR_motorPower
+
+        leftFrontMotor.setPower(LFMP);
+        leftRearMotor.setPower(LRMP);
+        rightFrontMotor.setPower(RFMP);
+        rightRearMotor.setPower(RRMP);
+    }
+
+    public void setTeliopDesiredDistanceFromWall(double desiredDistanceFromTheWall){
+        desiredDistanceFromWall = desiredDistanceFromTheWall;
+    }
+    public void updateTeliopDesDistFromWall(double dt, double dist1, double dist2){
+        double currentDistance = dist1;
+        double desSpeedFwd = distToWall_pid.update(
+                desiredDistanceFromWall,
+                currentDistance,
+                -.75,
+                .75,
+                dt);
+
+        RobotLog.d(String.format("Des dist %f Actual Dist1: %f  Actual Dist2: %f error is: %f, cmd:  %f",
+                desiredDistanceFromWall,dist1,dist2,desiredDistanceFromWall-currentDistance,desSpeedFwd));
+
+        if (Math.abs(desSpeedFwd)<0.024)
+        {
+            desSpeedFwd = 0.0;
+        }
+
+        this.MoveRobotTeliOp(-desSpeedFwd,0,0,false,false);
+
+    }
+
 
 }

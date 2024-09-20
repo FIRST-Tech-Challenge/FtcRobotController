@@ -71,6 +71,7 @@ public class AutoRedOut_Final extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Robot2024((this));
         robot.initializeRobot();
+        robot.resetIMU();
         if ( initimpliments == true ) {
             robot.initializeImplements();
         }
@@ -113,7 +114,10 @@ public class AutoRedOut_Final extends LinearOpMode {
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
                  robot.moveRobotAuto(robot.REVERSE, 1, 65);
                  robot.moveRobotAuto(robot.RIGHT, 0.8, 35);
-                 robot.moveRobotAuto(robot.REVERSE, 0.3, 12);
+                 ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 12);/// REPLACED WITH DISTANCE MEASURE
+                 robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 15,4,sensorRange);
+                 /////////////////////////////////////////////////////
                  if ( initimpliments == true ) {
                      robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                      robot.dump_pixle();
@@ -150,7 +154,10 @@ public class AutoRedOut_Final extends LinearOpMode {
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
                  robot.moveRobotAuto(robot.REVERSE, 0.5, 67);
                  robot.moveRobotAuto(robot.RIGHT, 0.3, 28);
-                 robot.moveRobotAuto(robot.REVERSE, 0.3, 16);
+                 ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 16);/// REPLACED WITH DISTANCE MEASURE
+                 robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 18,4,sensorRange);
+                 /////////////////////////////////////////////////////
                  if ( initimpliments == true ) {
                      robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                      robot.dump_pixle();
@@ -181,7 +188,10 @@ public class AutoRedOut_Final extends LinearOpMode {
              robot.moveRobotAuto(robot.LEFT, 0.3, 25);
              robot.moveRobotAuto(robot.REVERSE, 0.5, 69);
              robot.moveRobotAuto(robot.RIGHT, 0.3, 28);
-             robot.moveRobotAuto(robot.REVERSE, 0.3, 16);
+             ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 16);/// REPLACED WITH DISTANCE MEASURE
+             robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 18,4,sensorRange);
+             /////////////////////////////////////////////////////
              if ( initimpliments == true ) {
                  robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                  robot.dump_pixle();
