@@ -110,12 +110,7 @@ public class PinpointDrive extends MecanumDrive {
 
         FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
 
-        Pose2d velocity = pinpoint.getVelocity();
-        // RR localizer note
-        // "velocity.position" is a little weird
-        // it's because velocity is stored as a roadrunner pose2d right now
-        // maybe not ideal for this, probably I should change it to use a PoseVelocity2d directly instead
-        return new PoseVelocity2d(new Vector2d(velocity.position.x, velocity.position.y),velocity.heading.toDouble());
+        return pinpoint.getVelocity();
     }
 
 
