@@ -7,7 +7,6 @@ import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -16,7 +15,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class FastDetectSamples extends OpenCvPipeline {
     public /*final*/ OpenCvCamera webcam;
@@ -26,37 +24,51 @@ public class FastDetectSamples extends OpenCvPipeline {
 
     private final Telemetry telemetry;
 
-    public FastDetectSamples(/*OpenCvCamera webcam*/ Telemetry telemetry){
-        //this.webcam = webcam;
+    public FastDetectSamples(Telemetry telemetry){
         this.telemetry = telemetry;
     }
+
     public Mat processFrame(Mat input) {
         Mat yellowMask = preprocessFrame(input);
         List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        Mat yosi = Mat.zeros(input.size(), input.type());
-        Imgproc.findContours(yellowMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(yellowMask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         for (MatOfPoint contour : contours) {
             MatOfInt4 lines = new MatOfInt4();
             Mat black = Mat.zeros(input.size(), input.type());
 
             MatOfPoint2f contour_approx = new MatOfPoint2f(contour.toArray());
 
-            Imgproc.approxPolyDP(contour_approx, contour_approx, 0.4, true);
+            Imgproc.approxPolyDP(contour_approx, contour_approx, 8, true);
             MatOfPoint approx = new MatOfPoint(contour_approx.toArray());
             List<MatOfPoint> approxContours = new ArrayList<>();
             approxContours.add(approx);
             Imgproc.cvtColor(black, black, Imgproc.COLOR_RGB2GRAY);
             Imgproc.drawContours(black, approxContours, -1, new Scalar(255, 255, 255), 1);
-            Imgproc.HoughLinesP(black, lines, 2, Math.PI / 180, 15, 10, 25);
+            Imgproc.HoughLinesP(black, lines, 10, Math.PI / 90, 12, 35, 40);
             try {
                 int[] linesArray = lines.toArray();
                 telemetry.addData("Number of lines", linesArray.length / 4);
-                linesArray = lines.toArray();
+
                 for (int i = 0; i < linesArray.length; i += 4) {
                     int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
-                    if (Math.abs(x1 - x2) < 7) { // Adjust threshold for vertically
-                        double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
+                    boolean check = true;
+                    for (int j = 0; j < linesArray.length; j += 4){
+                        if (x1 < linesArray[j] && y1 < linesArray[j+1] && x2 > linesArray[j+2] && y2 > linesArray[j+3]){
+                            check = false;
+                        }
+                        if (x2 < linesArray[j]){
+                            if (y2 < linesArray[j+1]){
+                                check = false;
+                                break;
+                            }
+                        }
+                    }
+
+
+
+                    if (Math.abs(x1 - x2) != length / 5 && check) { // Adjust threshold for vertically
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2, (y1 + y2) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
                         telemetry.addData("Vertical Line Length", length);

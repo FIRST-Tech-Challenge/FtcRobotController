@@ -28,7 +28,7 @@ public class WebcamStreamingExample extends LinearOpMode
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        dashboard.startCameraStream(webcam, 0); /* TODO: IF FtcDashboard isn't working try adding...
+        dashboard.startCameraStream(webcam, 3); /* TODO: IF FtcDashboard isn't working try adding...
 
         Open build.dependencies.gradle
             in the repositories section:
@@ -43,6 +43,7 @@ public class WebcamStreamingExample extends LinearOpMode
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         FastDetectSamples Pipeline = new FastDetectSamples(telemetry);
+        //DetectSamples Pipeline = new DetectSamples(telemetry);
         //DetectSamples Pipeline = new DetectSamples(telemetry);
         webcam.setPipeline(Pipeline);
 
@@ -77,7 +78,7 @@ public class WebcamStreamingExample extends LinearOpMode
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -145,7 +146,7 @@ public class WebcamStreamingExample extends LinearOpMode
              * excess CPU cycles for no reason. (By default, telemetry is only sent to the DS at 4Hz
              * anyway). Of course in a real OpMode you will likely not want to do this.
              */
-            sleep(100);
+            sleep(200);
         }
     }
 
