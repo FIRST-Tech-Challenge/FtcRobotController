@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 
-@Autonomous(name = "BlueMiddleChamber")
+@Autonomous(name = "BlueMiddleChamber", group = "BlueAutos")
 public class BlueMiddleChamber extends LinearOpMode {
     public void runOpMode() {
         Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive);
