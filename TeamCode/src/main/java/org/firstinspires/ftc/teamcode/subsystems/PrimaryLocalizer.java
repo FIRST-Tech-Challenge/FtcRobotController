@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-
-import org.firstinspires.ftc.teamcode.roadrunner.Localizer;
 import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 
 /**
@@ -32,11 +28,12 @@ public class PrimaryLocalizer implements LocalizerInterface {
     /**
      * @return [double] Returns weight of all combined localizers.
      */
-    @Override //Unncessary for this particular localizer, but can be used to check total weight
+    @Override //Unnecessary for this particular localizer, but can be used to check total weight
     public double getWeight() {return totalWeight;}
 
 
-    /**Currently, this simply takes in the position (in Pose2d form) from all localizers
+    /**
+     * Currently, this simply takes in the position (in Pose2d form) from all localizers.
      * Each localizer is then multipled with it's associated weight.
      * @return [Pose2d] Returns a Pose2d that reflects the position of the robot.
      */

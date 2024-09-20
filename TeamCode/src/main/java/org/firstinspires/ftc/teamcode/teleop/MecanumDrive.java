@@ -56,7 +56,7 @@ public class MecanumDrive extends LinearOpMode {
         while (!isStopRequested()) {
             int target = lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
             telemetry.addData("TargetPos: ",target);
-            telemetry.addData("CurrentPos:", lift.currentPos());
+            telemetry.addData("CurrentPos:", lift.getPosition());
 
             //Input checks
             double forward = controller1.left_stick_y;
