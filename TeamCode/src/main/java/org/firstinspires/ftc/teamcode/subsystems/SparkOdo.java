@@ -2,49 +2,68 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 
-public class SparkOdo {
+public class SparkOdo implements LocalizerInterface {
 
-    //Offsets in terms of inches
-    public double X_OFFSET = 0;
-    public double Y_OFFSET = 0;
+    public double weight = 0.33;
     private SparkFunOTOS odo;
-    private Telemetry telemetry;
 
     private SparkFunOTOS.Pose2D lastPos, totalDist;
 
-    public SparkOdo(HardwareMap hw, Telemetry telemetry){
-        this(hw, telemetry, "spark");
+    /**
+     * Quick Constructor for Spark Odo Class
+     * @param hw [HardwareMap] Hardware map required to initialize sensors.
+     */
+    public SparkOdo(HardwareMap hw){
+        this(hw, "spark");
     }
 
-    public SparkOdo(HardwareMap hw, Telemetry telemetry, String name){
+    /**
+     * Constructor for Spark Odo Class
+     * @param hw [HardwareMap] Hardware map required to initialize sensors
+     * @param name [String] Name used in configuration for spark odo
+     */
+    public SparkOdo(HardwareMap hw, String name){
         odo = hw.get(SparkFunOTOS.class, name);
-        this.telemetry = telemetry;
         configureOtos();
         lastPos = odo.getPosition();
         totalDist = new SparkFunOTOS.Pose2D();
     }
 
-    // Reset the tracking if the user requests it
+    /**
+     * Reset the tracking if the user requests it
+     */
     public void resetOdo(){
         odo.resetTracking();
     }
-    // Re-calibrate the IMU if the user requests it
+
+    /**
+     * Re-calibrate the IMU if the user requests it
+     */
     public void calibrateOdo(){
         odo.calibrateImu();
     }
 
+    /**
+     * @return [Pose2D] Returns data related to position and orientation
+     */
     public SparkFunOTOS.Pose2D getPos(){
         return odo.getPosition();
     }
 
-    //Will be used to track total distance throught to be traveled vs actual distance traveled
+    /**
+     * Will be used to track total distance throught to be traveled vs actual distance traveled
+     * This is primarily a tester function, will be made private/deleted in the future
+     * @return [Pose2D] Returns total distance/rotation traveled
+     */
     public SparkFunOTOS.Pose2D updateTotalDist(){
         SparkFunOTOS.Pose2D currentPos = getPos();
         //Get Delta X
@@ -58,6 +77,9 @@ public class SparkOdo {
     }
 
 
+    /**
+     * Helper function to set up the Spark Odometry
+     */
     private void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
         telemetry.update();
@@ -138,5 +160,23 @@ public class SparkOdo {
         telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
         telemetry.update();
+    }
+
+    /**
+     * @return [double] Returns a weight associated with the localizer
+     */
+    @Override
+    public double getWeight() {
+        return weight;
+    }
+
+    /**
+     * Not to be confused with getPos(). getPos() returns a Pose2D, this returns a Pose2d.
+     * @return [Pose2d] Returns position and orientation data
+     */
+    @Override
+    public Pose2d getPosition() {
+        SparkFunOTOS.Pose2D result = getPos();
+        return new Pose2d(result.x, result.y, result.h);
     }
 }

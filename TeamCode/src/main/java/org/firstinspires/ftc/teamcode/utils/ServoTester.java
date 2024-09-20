@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(name = "ServoTester")
 public class ServoTester extends LinearOpMode {
-
     GamepadEvents controller1;
     CRServo CRservo;
 
