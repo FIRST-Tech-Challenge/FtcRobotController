@@ -18,6 +18,7 @@ public class OpticalSensor extends AutoControl {
 
     public SparkFunOTOS.Pose2D getPos(){
         return opticalSensor.getPosition();
+
     }
     private void configureOtos(){
         opticalSensor.setLinearUnit(DistanceUnit.INCH);
@@ -32,7 +33,12 @@ public class OpticalSensor extends AutoControl {
 
         SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
+
+        opticalSensor.setAngularScalar(1.0);
+        opticalSensor.setLinearScalar(1.0);
+
         opticalSensor.getVersionInfo(hwVersion, fwVersion);
+
     }
     
 }

@@ -54,7 +54,7 @@ public class RobotClass {
 
         drivetrain = new MecanumDrive(driveMotors, this);
 
-        //opticalSensor = hwmap.get(SparkFunOTOS.class, "opticalSensor");
+        opticalSensor = hwmap.get(SparkFunOTOS.class, "opticalSensor");
         webcamName = hwmap.get(WebcamName.class, "Webcam 1");
         camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
@@ -66,9 +66,7 @@ public class RobotClass {
 
     public double getHeading() {
         Orientation Theta = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
-
         return Theta.thirdAngle;
-
     }
 
     public double getRotationRate() {
@@ -81,12 +79,10 @@ public class RobotClass {
     }
 
     public void setDirection() {
-
         driveMotors.get(MOTORS.FRONT_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
         driveMotors.get(MOTORS.BACK_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
         driveMotors.get(MOTORS.FRONT_RIGHT).setDirection(DcMotorSimple.Direction.FORWARD);
         driveMotors.get(MOTORS.BACK_RIGHT).setDirection(DcMotorSimple.Direction.FORWARD);
-
     }
 
 
