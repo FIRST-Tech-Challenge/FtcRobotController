@@ -42,8 +42,8 @@ public class ElevatorControl {
     private double LOWERSNUBFACTOR = 0.25;// The factor that we slow the command down by when retracting
 
     public int PIXLE_DELIVER_POSITION = 250;
-    public int MID_POSITION = 1500;
-    public int HIGH_POSITION = 2000;
+    public int MID_POSITION = 1000;
+    public int HIGH_POSITION = 1500;
 
     //Schultz Additions
     //  Added PID controller that will be used to control the teliop to a position the elevator to desired position
@@ -123,7 +123,7 @@ public class ElevatorControl {
                 (  elevator_motor.getCurrentPosition() > desiredPos && cmd < 0) ) )
         {
 
-            RobotLog.d(String.format("COMMAND: %.03f DESIRED POSITION :  %d ",cmd,desiredPos));
+//            RobotLog.d(String.format("COMMAND: %.03f DESIRED POSITION :  %d ",cmd,desiredPos));
         }
         this.raiseLowerElevator_T(0);
     }
@@ -180,8 +180,8 @@ public class ElevatorControl {
                 maxCmd,
                 dt);
 
-        RobotLog.i(String.format("setPoint %.2f, actual postition: %d, dt: %.2f",
-                hold_position_setpoint,elevator_motor.getCurrentPosition(),dt));
+//        RobotLog.i(String.format("setPoint %.2f, actual postition: %d, dt: %.2f",
+//                hold_position_setpoint,elevator_motor.getCurrentPosition(),dt));
 
         elevator_motor.setPower(elevCmd);
     }
@@ -194,12 +194,12 @@ public class ElevatorControl {
     //Pixle Bucket Controls.
     //Dump_pixle - rotates the bucket so pixle drops out of bucket.
     public void dump_pixle() {
-        bucket.setPosition(.3);
-//       RobotLog.d(String.format("inrobot.dumpbucket"));
+        bucket.setPosition(.45);
+       RobotLog.d(String.format("inrobot.dumpbucket"));
     }
     //Reset_bucket - returns the bucket to position to receive another pixle
     public void reset_pixle_bucket() {
-        bucket.setPosition(1);
+        bucket.setPosition(.87);
     }
 
 

@@ -102,15 +102,17 @@ public class StopUsingDistancSensor extends LinearOpMode {
             //First step is to reset the bucket so that it is held into position.
             robot.reset_pixle_bucket();
 //            robot.moveRobotAuto(robot.REVERSE, 0.3, 18);
-            robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.1, 60,10,sensorRange);
-
+            robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 60,8,sensorRange);
+            robot.sweeperCommand(0);
             sleep(500);
-            robot.raiseElevatorToPosition_Autonomous(.5,400);
+            robot.raiseElevatorToPosition_Autonomous(.5,robot.ELEVATOR_MID_POSITION);
             sleep(500);
             robot.dump_pixle();
-            sleep(1500);
+            sleep(2000);
             robot.reset_pixle_bucket();
             robot.raiseElevatorToPosition_Autonomous(-.5,0);
+
+            robot.sweeperCommand(1.0);
 
             //Get Ave Distance from distance sensor
             double Average = getAverageDistanceFromSensor(sensorRange);

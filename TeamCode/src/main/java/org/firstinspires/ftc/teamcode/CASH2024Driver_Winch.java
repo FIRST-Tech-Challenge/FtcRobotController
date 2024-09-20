@@ -156,7 +156,7 @@ public class CASH2024Driver_Winch extends OpMode
 
 
         if (loopTime.milliseconds() > 20) {
-            RobotLog.i(String.format("looptime: %.6f",loopTime.milliseconds()));
+//            RobotLog.i(String.format("looptime: %.6f",loopTime.milliseconds()));
             loopTime.reset();
 
             if (in > .1) {
@@ -250,15 +250,15 @@ public class CASH2024Driver_Winch extends OpMode
             //schultz update
             if (low_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(0);
-                RobotLog.i(String.format("In Lower."));
+//                RobotLog.i(String.format("In Lower."));
 //            AutoElevatorActive = true;
             } else if (mid_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_MID_POSITION);
-                RobotLog.i(String.format("In Middle"));
+//                RobotLog.i(String.format("In Middle"));
 //            AutoElevatorActive = true;
             } else if (high_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_HIGH_POSITION);
-                RobotLog.i(String.format("In High"));
+//                RobotLog.i(String.format("In High"));
 //            AutoElevatorActive = true;
             }
 

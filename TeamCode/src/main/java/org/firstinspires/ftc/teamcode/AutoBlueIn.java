@@ -103,7 +103,10 @@ public class AutoBlueIn extends LinearOpMode {
                      robot.moveRobotAuto(robot.RIGHT, 0.5, 15);
                      robot.moveRobotAuto(robot.REVERSE, 0.5, 12);
                      robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
-                     robot.moveRobotAuto(robot.REVERSE, 0.5, 12);
+                     ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 12);/// REPLACED WITH DISTANCE MEASURE
+                     robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 15,8,sensorRange);
+                     /////////////////////////////////////////////////////
 //                    robot.rollSweeperOut(0.5);
 //                    robot.raiseElevatorToPosition(1, 1000);
 //                    robot.dump_bucket();
@@ -137,7 +140,11 @@ public class AutoBlueIn extends LinearOpMode {
 //                 robot.raise_bucket();
 //                 robot.rollSweeperOut(0.5);
                  robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
-                 robot.moveRobotAuto(robot.REVERSE, 0.3, 32);
+
+                 ///////////////////CHANGED//////////////////
+//                                     robot.moveRobotAuto(robot.REVERSE, 0.3, 32);
+                 robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 35,8,sensorRange);
+                 /////////////////////////////////////////////////////
 //                 robot.rollSweeperOut(0.5);
 //                 robot.raiseElevatorToPosition(1, 1000);
 //                 robot.dump_bucket();
@@ -156,7 +163,10 @@ public class AutoBlueIn extends LinearOpMode {
 //             robot.rollSweeperOut(0.5);
              robot.moveRobotAuto(robot.REVERSE, 0.3, 17);
              robot.rotateRobotAuto2(robot.TURN_RIGHT, 180, 0.5);
-             robot.moveRobotAuto(robot.REVERSE, 0.3, 30);
+             ///////////////////CHANGED//////////////////
+//                     robot.moveRobotAuto(robot.REVERSE, 0.5, 30);/// REPLACED WITH DISTANCE MEASURE
+             robot.moveRobotAuto_DistanceFromWall(robot.REVERSE, 0.5, 36,8,sensorRange);
+             /////////////////////////////////////////////////////
 //             robot.raiseElevatorToPosition(1, 1000);
 //             robot.dump_bucket();
 //             sleep(1000);

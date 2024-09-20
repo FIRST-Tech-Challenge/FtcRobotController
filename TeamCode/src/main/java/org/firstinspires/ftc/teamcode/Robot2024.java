@@ -134,7 +134,7 @@ public class Robot2024<_opMode> {
 
     ////////////////////////////////////////New Navigation Methods////////////////////////////////
     public void moveRobotteli(double leftjoyx, double leftjoyy, double rightjoyx) {
-        CASHDriveLibrary.MoveRobotTeliOp(leftjoyx, leftjoyy, rightjoyx,  true, false);
+        CASHDriveLibrary.MoveRobotTeliOp(leftjoyx, leftjoyy, rightjoyx,  false, false);
     }
 
     //Used to move the robot forward/revers/left/right.  This also uses fore/aft encoder and imu

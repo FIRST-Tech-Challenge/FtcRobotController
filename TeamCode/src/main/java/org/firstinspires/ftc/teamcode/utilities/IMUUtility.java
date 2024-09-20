@@ -103,7 +103,7 @@ public class IMUUtility {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double deltaAngle = angles.secondAngle - lastAngles.thirdAngle;
-        RobotLog.i(String.format("Prev Angle %f Current angle %f",lastAngles.thirdAngle,angles.thirdAngle));
+//        RobotLog.i(String.format("Prev Angle %f Current angle %f",lastAngles.thirdAngle,angles.thirdAngle));
 
         if (deltaAngle < -180)
             deltaAngle += 360;

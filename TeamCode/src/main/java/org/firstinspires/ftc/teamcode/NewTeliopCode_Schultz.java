@@ -157,7 +157,7 @@ public class NewTeliopCode_Schultz extends OpMode
         if (fieldCentric){
             if (gamepad1.options) {
 //                robot.robotIMU.resetYaw();
-//                robot.robotIMU.imu.resetYaw();
+                robot.robotIMU.imu.resetYaw();
                 telemetry.addLine("REST YAW");
                 telemetry.update();
             }
@@ -298,15 +298,15 @@ public class NewTeliopCode_Schultz extends OpMode
             //schultz update
             if (low_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(0);
-                RobotLog.i(String.format("In Lower."));
+//                RobotLog.i(String.format("In Lower."));
 //            AutoElevatorActive = true;
             } else if (mid_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_MID_POSITION);
-                RobotLog.i(String.format("In Middle"));
+//                RobotLog.i(String.format("In Middle"));
 //            AutoElevatorActive = true;
             } else if (high_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_HIGH_POSITION);
-                RobotLog.i(String.format("In High"));
+//                RobotLog.i(String.format("In High"));
 //            AutoElevatorActive = true;
             }
 
@@ -355,7 +355,7 @@ public class NewTeliopCode_Schultz extends OpMode
 //            robot.moveRobotteli(drive_y, drive_x, turn_x);
 
             double desiredRobotAngle = 90; //degrees
-            double desiredDistanceFromWall = 10; //inch
+            double desiredDistanceFromWall = 4; //inch
             if (autoStop && !inAutoStop)
             {
                 inAutoStop = true;
@@ -373,12 +373,12 @@ public class NewTeliopCode_Schultz extends OpMode
             if (inAutoStop)
             {
 //                robot.updateRobotRotation(loopTime.seconds());
-                if ( Math.abs(desiredRobotAngle - (-robot.robotIMU.getCurrentAbsoluteAngle())) < 5 ){
+                if ( Math.abs(desiredRobotAngle - (-robot.robotIMU.getCurrentAbsoluteAngle())) < 5  || true ){
                     robot.updateDesDistFromWall(loopTime.seconds(),sensorRange.getDistance(DistanceUnit.INCH),sensorRange2.getDistance(DistanceUnit.INCH));
 //                    robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_MID_POSITION);
 //                    robot.elevatorUpdate(0.02+loopTime.seconds());
                 }else {
-                    robot.updateRobotRotation(loopTime.seconds());
+                    //  robot.updateRobotRotation(loopTime.seconds());
                 }
 
             }
@@ -403,7 +403,7 @@ public class NewTeliopCode_Schultz extends OpMode
             double currentAngle= robot.robotIMU.getCurrentAbsoluteAngle();
             double currentAngle2= robot.robotIMU.getCurrentAbsoluteAngle2();
             double currentAngle3= robot.robotIMU.getCurrentAbsoluteAngle3();
-            RobotLog.i(String.format("current Angle1: %.2f  Angle12: %.2f   Angle3: %.2f",currentAngle,currentAngle2,currentAngle3));
+//            RobotLog.i(String.format("current Angle1: %.2f  Angle12: %.2f   Angle3: %.2f",currentAngle,currentAngle2,currentAngle3));
 
             loopTime.reset();
         }
