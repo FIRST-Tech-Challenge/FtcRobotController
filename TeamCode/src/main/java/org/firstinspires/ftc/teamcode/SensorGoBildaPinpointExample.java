@@ -23,6 +23,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -157,7 +158,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
 
 
             /*
-            gets the current Position (x & y in mm, and heading in degrees) of the robot, and prints it.
+            gets the current Position (x & y in inches, and heading in radians) of the robot, and prints it.
              */
             Pose2d pos = odo.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, pos.heading.toDouble());
@@ -165,10 +166,10 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
 
 
             /*
-            gets the current Velocity (x & y in mm/sec and heading in degrees/sec) and prints it.
+            gets the current Velocity (x & y in inches/sec and heading in radians/sec) and prints it.
              */
-            Pose2d vel = odo.getVelocity();
-            String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.position.x, vel.position.y, vel.heading.toDouble());
+            PoseVelocity2d vel = odo.getVelocity();
+            String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.linearVel.x, vel.linearVel.y, vel.angVel);
             telemetry.addData("Velocity", velocity);
 
             telemetry.addData("X Encoder:", odo.getEncoderX()); //gets the raw data from the X encoder
