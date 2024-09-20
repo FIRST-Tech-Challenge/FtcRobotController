@@ -81,6 +81,8 @@ android {
         //
         versionCode vCode
         versionName vName
+
+        buildConfigField "String", "BUILD_NUMBER", "\"${project.hasProperty('buildNumber') ? project.buildNumber : '0'}\""
     }
 
     // http://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html

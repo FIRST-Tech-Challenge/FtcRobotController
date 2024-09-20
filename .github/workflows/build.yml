@@ -56,7 +56,7 @@ jobs:
         echo "ARTIFACT_NAME=${{ env.TEAM_NAME }}-${{ env.TEAM_NUMBER }}-${{ env.BUILD_NUMBER }}" >> $GITHUB_ENV
 
     - name: Build with Gradle
-      run: ./gradlew assembleRelease
+      run: ./gradlew assembleRelease -PbuildNumber=${{ env.BUILD_NUMBER }}
 
     - name: Move apk to root and rename it
       run: |
