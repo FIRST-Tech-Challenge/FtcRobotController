@@ -1,0 +1,69 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Build Robot Controller App
+
+env:
+  TEAM_NAME: Botsmiths
+  TEAM_NUMBER: 18693
+  MAJOR_VERSION: 0
+  MINOR_VERSION: 0
+  BUILD_NUMBER: Updated-Later-In-Build
+  ARTIFACT_NAME: Updated-Later-In-Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 11.
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'microsoft'
+        java-version: '11'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Set BUILD_NUMBER environment variable
+      run: |
+        DATE=$(date +'%y%m')
+        echo "BUILD_NUMBER=${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${DATE}.${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+
+    - name: Set ARTIFACT_NAME environment variable
+      run: |
+        echo "ARTIFACT_NAME=${{ env.TEAM_NAME }}-${{ env.TEAM_NUMBER }}-${{ env.BUILD_NUMBER }}" >> $GITHUB_ENV
+
+    - name: Build with Gradle
+      run: ./gradlew assembleRelease
+
+    - name: Move apk to root and rename it
+      run: |
+        mv **/build/outputs/apk/release/TeamCode-release.apk ${{ env.ARTIFACT_NAME }}.apk
+
+    - name: Pubish apk as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        path: ${{ env.ARTIFACT_NAME }}.apk
