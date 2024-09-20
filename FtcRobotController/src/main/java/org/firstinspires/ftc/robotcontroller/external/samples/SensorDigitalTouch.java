@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
+/* Copyright (c) 2024 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -30,60 +30,49 @@
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 /*
- * Demonstrates an empty iterative OpMode
+ * This OpMode demonstrates how to use a digital channel.
+ *
+ * The OpMode assumes that the digital channel is configured with a name of "digitalTouch".
+ *
+ * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: NullOp", group = "Concept")
+@TeleOp(name = "Sensor: digital channel", group = "Sensor")
 @Disabled
-public class ConceptNullOp extends OpMode {
+public class SensorDigitalTouch extends LinearOpMode {
+    DigitalChannel digitalTouch;  // Digital channel Object
 
-  private ElapsedTime runtime = new ElapsedTime();
+    @Override
+    public void runOpMode() {
 
-  /**
-   * This method will be called once, when the INIT button is pressed.
-   */
-  @Override
-  public void init() {
-    telemetry.addData("Status", "Initialized");
-  }
+        // get a reference to our touchSensor object.
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
 
-  /**
-   * This method will be called repeatedly during the period between when
-   * the INIT button is pressed and when the START button is pressed (or the
-   * OpMode is stopped).
-   */
-  @Override
-  public void init_loop() {
-  }
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        telemetry.addData("DigitalTouchSensorExample", "Press start to continue...");
+        telemetry.update();
 
-  /**
-   * This method will be called once, when the START button is pressed.
-   */
-  @Override
-  public void start() {
-    runtime.reset();
-  }
+        // wait for the start button to be pressed.
+        waitForStart();
 
-  /**
-   * This method will be called repeatedly during the period between when
-   * the START button is pressed and when the OpMode is stopped.
-   */
-  @Override
-  public void loop() {
-    telemetry.addData("Status", "Run Time: " + runtime.toString());
-  }
+        // while the OpMode is active, loop and read the digital channel.
+        // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
+        while (opModeIsActive()) {
 
-  /**
-   * This method will be called once, when this OpMode is stopped.
-   * <p>
-   * Your ability to control hardware from this method will be limited.
-   */
-  @Override
-  public void stop() {
+            // button is pressed if value returned is LOW or false.
+            // send the info back to driver station using telemetry function.
+            if (digitalTouch.getState() == false) {
+                telemetry.addData("Button", "PRESSED");
+            } else {
+                telemetry.addData("Button", "NOT PRESSED");
+            }
 
-  }
+            telemetry.update();
+        }
+    }
 }
