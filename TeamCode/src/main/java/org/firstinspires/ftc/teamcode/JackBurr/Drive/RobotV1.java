@@ -4,9 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
+
 @TeleOp
 public class RobotV1 extends OpMode {
     public RobotV1Config config = new RobotV1Config();
+    public ArmMotorV1 arm = new ArmMotorV1(hardwareMap, "arm");
 
     public DcMotor frontLeft; //PORT 3
     public DcMotor frontRight; //PORT 1
