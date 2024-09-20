@@ -47,9 +47,16 @@ public class AutoControl extends OpMode{
 
     @Override
     public void start(){
-        AutoTurn(180);
-        //AutoDrive(6, 45);
-        //simpleDriveForward();
+//        AutoTurn(30);
+//        AutoDrive(20,90);
+//        AutoTurn(30 + 120);
+//        AutoDrive(20,90);
+//        AutoTurn(270);
+//        AutoDrive(20,90);
+//        AutoTurn(0);
+        AutoTurn(270);
+        AutoTurn(90);
+        stop();
     }
 
     @Override
@@ -60,6 +67,17 @@ public class AutoControl extends OpMode{
     private final double kD = .01;
     @SuppressLint("DefaultLocale")
     public void AutoDrive(double targetDistance_INCH, double angle){
+
+        robot.stopAndReset();
+        while(robot.driveMotors.get(RobotClass.MOTORS.FRONT_LEFT).isBusy()){
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
         angle = Math.toRadians(angle);
         //angle -= robot.getHeading();
 
@@ -79,30 +97,19 @@ public class AutoControl extends OpMode{
 
             //correction = kP * error + kI * integralSum + kD * getDerivative(error, targetDistance);
             if(Math.abs(error) < maxErrorAllowed) {
-                stop = true;
-                stop();
                 break;
             }
-            //@ 45 x = 0.707106
-            //@ 45 y = 0.707106
-            //@ 90 x = 0
-            //@ 90 y = 1
+
             double x = Math.cos(angle);
             double y = Math.sin(angle);
 
-            //double powerGroupX = (Math.cos(-angle) - Math.sin(-angle));
-            //double powerGroupY = (Math.sin(-angle) + Math.cos(-angle));
-
             double rotY = y;
             double rotX = x;
-//            if(error < 0){
-//                rotY = -powerGroupY;
-//                rotX = -powerGroupX;
-//            }
-//            else{
-//                rotY = powerGroupY;
-//                rotX = powerGroupX;
-//            }
+            if(error < 0){
+                rotY = -rotY;
+                rotX = -rotX;
+            }
+
             double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY), 1.0);
 
             wheelSpeeds.put(RobotClass.MOTORS.FRONT_LEFT, (rotY + rotX) / 2.0 / denominator );
@@ -131,27 +138,26 @@ public class AutoControl extends OpMode{
     }
 
     public void AutoTurn(double angle){
-        double loopCounter = 0;
+
         boolean atTarget = false;
         double angularDistance = 0;
 
-        double initialAngle = robot.getHeading();
+        double initialAngle = Math.toDegrees(robot.getHeading());
 
         do{
-            double turnVal = 1;
+            int turnVal = 1;
             if(angle - initialAngle < 0) turnVal = -1; // checks which way it should turn
 
             double currentAngle = Math.toDegrees(robot.getHeading());
-
             angularDistance = Math.abs(currentAngle - angle);
             if(angularDistance > 180){ // dealing with edge case
-                turnVal *= -1;
+                turnVal = -1;
                 angularDistance = 360 - angularDistance;
             }
 
-            double powerReduce = angularDistance / (angle / 1.5);
+            double powerReduce = angularDistance / 90;
 
-            powerReduce = Math.max(powerReduce, 0.15);
+            powerReduce = Math.max(powerReduce, 0.2);
             powerReduce = Math.min(powerReduce, 0.9);
 
             wheelSpeeds.put(RobotClass.MOTORS.FRONT_LEFT, -turnVal * powerReduce);
@@ -167,23 +173,17 @@ public class AutoControl extends OpMode{
 
             UpdateWheelPowers();
 
-            if(angularDistance < 1.5) atTarget = true;
+            if(angularDistance < 0.5) atTarget = true;
         }
         while(!atTarget);
-        stop();
+        simplePower(0);
     }
-    public void simpleDriveForward(){
-        wheelSpeeds.put(RobotClass.MOTORS.FRONT_LEFT, 0.3);
-        wheelSpeeds.put(RobotClass.MOTORS.BACK_LEFT, 0.3);
-        wheelSpeeds.put(RobotClass.MOTORS.BACK_RIGHT, 0.3);
-        wheelSpeeds.put(RobotClass.MOTORS.FRONT_RIGHT, 0.3);
+    public void simplePower(double power){
+        wheelSpeeds.put(RobotClass.MOTORS.FRONT_LEFT, power);
+        wheelSpeeds.put(RobotClass.MOTORS.BACK_LEFT, power);
+        wheelSpeeds.put(RobotClass.MOTORS.BACK_RIGHT, power);
+        wheelSpeeds.put(RobotClass.MOTORS.FRONT_RIGHT, power);
         UpdateWheelPowers();
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        stop();
     }
 
     public void stopMotors(){

@@ -23,7 +23,7 @@ public class Control extends OpMode {
         GLOBAL,
         LOCAL
     }
-    public static DriveMode driveMode = DriveMode.GLOBAL;
+    public DriveMode driveMode = DriveMode.GLOBAL;
     public enum FieldSide{
         BLUE_LEFT,
         BLUE_RIGHT,
@@ -34,6 +34,7 @@ public class Control extends OpMode {
     @Override
     public void init() {
         robot = new RobotClass(hardwareMap);
+        robot.setDirection();
         //robot.drivetrain.setDriveDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -56,20 +57,26 @@ public class Control extends OpMode {
         }
         robot.resetIMU();
     }
-    public void switchDriveMode(boolean button){
-        if (!button){
-            return;
-        }
-        switch(driveMode){
-            case GLOBAL:
-                driveMode = DriveMode.LOCAL;
-                telemetry.addLine("LOCAL DRIVE");
-            case LOCAL:
-                driveMode = DriveMode.GLOBAL;
-                telemetry.addLine("GLOBAL DRIVE");
 
+    private boolean firstPress = true;
+    public void switchDriveMode(boolean button){
+
+        if(!button){
+            firstPress = true;
         }
-        telemetry.update();
+        if(button && firstPress){
+            firstPress = false;
+            switch(driveMode){
+                case GLOBAL:
+                    driveMode = DriveMode.LOCAL;
+                    break;
+                case LOCAL:
+                    driveMode = DriveMode.GLOBAL;
+                    break;
+            }
+        }
+
+
     }
 
     @Override
@@ -79,5 +86,8 @@ public class Control extends OpMode {
         robot.driveMotors.get(RobotClass.MOTORS.FRONT_RIGHT).setPower(0);
         robot.driveMotors.get(RobotClass.MOTORS.BACK_LEFT).setPower(0);
         robot.driveMotors.get(RobotClass.MOTORS.BACK_RIGHT).setPower(0);
+    }
+    private void callCount(){
+
     }
 }
