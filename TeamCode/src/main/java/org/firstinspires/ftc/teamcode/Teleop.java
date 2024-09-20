@@ -1,6 +1,5 @@
-//to find is control f
-//This is the basic teleop code we can use for every robot with little modification
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -8,132 +7,104 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.Random;
 
 @TeleOp(name = "Into The Deep Teleop")
-
 public class Teleop extends LinearOpMode {
-    //The wheels
+    // Motors for the wheels
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
 
-    //The two joints on the arm
+    // Motors for the arm joints
     private DcMotor jointOne = null;
     private DcMotor jointTwo = null;
 
-    //The claw
+    // Servos for the claw and wrist
     private Servo claw = null;
-
-    //the two servos for the wrist
     private Servo horizontalWrist = null;
     private Servo verticalWrist = null;
 
+    // Sensors
     private ColorSensor colorSensor = null;
     private DistanceSensor distanceSensor = null;
 
+    private final String[] puns = {"The robot comedian’s act was electric—it really generated a charge of laughter.", "Why did the robot break up with his GPS? It couldn't find a path to love.", "Did you hear about the robot that drank oil instead of water? It had a well-oiled system.", "The robot chef was wired for success—it always knew the best byte size for recipes.", "When the cleaning robot went on strike, it really swept the nation.", "It’s frowned upon to call a robot lazy; they prefer the term ‘power-saving mode.’", "The robot dance crew had some serious circuit moves.", "The robot politician always had a binary solution to every problem.", "That robot jazz band really knows how to improvise on the fly.", "When the robot detective retired, they dismantled the case files.", "The robot professor was an expert in artificial intelligence—it had a lot of bytes of knowledge.", "The robot penguin struggled to stay afloat in the digital world.", "The robot athlete had a drive to win in every circuit.", "Why did the robot open an ice cream shop? It wanted to serve up some byte-sized treats.", "The robot construction worker always nailed the job—it had a real ‘transformer’ in skills.", "The robot artist painted with such precision, it was truly an embodiment of pixel perfection.", "The robot gardener’s favorite task was to ‘reboot’ the garden beds.", "That robot banker can really save up ‘data‘ on making smart investments.", "The robot baker’s specialty was making ‘chip’ cookies that were out of this world.", "The robot ghosts managed to scare the circuits out of the unsuspecting humans.", "Why did the robot break up with his GPS? It couldn't find a path to love.", "The robot comedian’s act was electric—it really generated a charge of laughter.", "Did you hear about the robot that drank oil instead of water? It had a well-oiled system.", "The robot chef was wired for success—it always knew the best byte size for recipes.", "When the cleaning robot went on strike, it really swept the nation.", "It’s frowned upon to call a robot lazy; they prefer the term ‘power-saving mode.’", "The robot dance crew had some serious circuit moves.", "The robot politician always had a binary solution to every problem.", "That robot jazz band really knows how to improvise on the fly.", "When the robot detective retired, they dismantled the case files.", "The robot professor was an expert in artificial intelligence—it had a lot of bytes of knowledge.", "The robot penguin struggled to stay afloat in the digital world.", "The robot athlete had a drive to win in every circuit.", "Why did the robot open an ice cream shop? It wanted to serve up some byte-sized treats.", "The robot construction worker always nailed the job—it had a real ‘transformer’ in skills.", "The robot artist painted with such precision, it was truly an embodiment of pixel perfection.", "The robot gardener’s favorite task was to ‘reboot’ the garden beds.", "That robot banker can really save up ‘data‘ on making smart investments.", "The robot baker’s specialty was making ‘chip’ cookies that were out of this world.", "The robot ghosts managed to scare the circuits out of the unsuspecting humans.", "When the robot couldn't find a date, it said, “Looks like I’m stuck in a love circuit.”", "The robot chef was known for his electrifying grill skills, he was truly a “current” chef.", "The robot comedian’s performance was riveting, it really had the audience “wired” up.", "After the robot dance party, everyone agreed it was a “bot” of fun.", "The robot that loved to garden was always planting “byte”-size seeds.", "When the robot got a virus, it was a bit “malware”-functioning.", "The robot detective was on a “wire-tap” to solve the mystery.", "The robot magician’s disappearing act was truly “unbe-“bot”-able.", "The robot musician was a “transistor” in the making of music.", "The robot librarian organized its data with “byte”-sized information.", "The robot athlete was “circuit”-ing the track for the upcoming race.", "When the robot went to the beach, it made sure to wear its “transistor” hat.", "The robot banker saved all its money in a “circuit” account.", "The robot painter’s artwork was truly “mechanical.”", "The robot chef’s secret ingredient was a “transistor”-y flavor.", "The robot astronaut’s mission was to explore the “universe” of possibilities.", "The robot tailor was known for its precise “stitching” skills.", "The robot architect designed a “transformer”-ational building.", "The robot pirate sailed the “circuit”-ous seas in search of treasure.", "The robot poet’s words were truly “electric.”"};
 
+    private final Random random = new Random();
+
+    private final String randomPun = puns[random.nextInt(puns.length)];
+
+    @Override
     public void runOpMode() {
-        //control hub
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");//gamepad1 //conf 0
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");//gamepad1 //conf 1
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");//gamepad1  //conf 2
-        backRight = hardwareMap.get(DcMotor.class, "backRight");//gamepad1 //conf 3
+        // Initialize hardware
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");//conf 0
-        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensoe");//conf 1
+        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
-        //expansion hub
-        jointOne = hardwareMap.get(DcMotor.class, "jointOne");//gamepad2 //conf 1
-        jointTwo = hardwareMap.get(DcMotor.class, "jointTwo");//gamepad2 //conf 2
+        jointOne = hardwareMap.get(DcMotor.class, "jointOne");
+        jointTwo = hardwareMap.get(DcMotor.class, "jointTwo");
 
-        claw = hardwareMap.get(Servo.class, "claw");//gamepad2 //conf 0
-        horizontalWrist = hardwareMap.get(Servo.class, "horizontalWrist");//gamepad2 //conf 1
-        verticalWrist = hardwareMap.get(Servo.class, "verticalWrist");//gamepad2 //conf 2
+        claw = hardwareMap.get(Servo.class, "claw");
+        horizontalWrist = hardwareMap.get(Servo.class, "horizontalWrist");
+        verticalWrist = hardwareMap.get(Servo.class, "verticalWrist");
 
-
+        // Set motor directions
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-        //TODO change the joints directions
         jointOne.setDirection(DcMotor.Direction.REVERSE);
         jointTwo.setDirection(DcMotor.Direction.REVERSE);
 
+        // Set zero power behavior for arm motors
         jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        int red = colorSensor.red();
-        int green = colorSensor.green();
-        int blue = colorSensor.blue();
+        jointTwo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addData("First joints Position: ", jointOne.getCurrentPosition());
-            telemetry.addData("Second joints Position: ", jointTwo.getCurrentPosition());
+            // Update telemetry data
+            telemetry.addData("Pun of the Day: ", randomPun);
+            telemetry.addData("First Joint Position", jointOne.getCurrentPosition());
+            telemetry.addData("Second Joint Position", jointTwo.getCurrentPosition());
             telemetry.update();
 
+            // Control robot movement
             double vertical = 0.4 * gamepad1.left_stick_y;
             double strafe = -0.4 * gamepad1.left_stick_x;
             double turn = -0.35 * gamepad1.right_stick_x;
             robotMovement(vertical, strafe, turn);
-            //gamepad1
-//            if (((gamepad1.left_stick_x != 0) || (gamepad1.left_stick_y != 0)) || ((gamepad1.right_stick_x != 0) || (gamepad1.right_stick_y != 0))) {
-//                //Makes robot faster while x button is pressed
-//                if(gamepad1.x){
-//                    double vertical = 0.6 * gamepad1.left_stick_y;
-//                    double strafe = -0.6 * gamepad1.left_stick_x;
-//                    double turn = -0.55 * gamepad1.right_stick_x;
-//                //Makes robot slower while y button is pressed
-//                }else if(gamepad1.y){
-//                    double vertical = 0.2 * gamepad1.left_stick_y;
-//                    double strafe = -0.2 * gamepad1.left_stick_x;
-//                    double turn = -0.15 * gamepad1.right_stick_x;
-//                //Base speed when nothing is pressed
-//                }else {
-//
-//                }
-//            }
-            if ((gamepad2.left_stick_button) || (gamepad2.right_stick_button)) {
+
+            // Emergency brake
+            if (gamepad2.left_stick_button || gamepad2.right_stick_button) {
                 brake();
             }
-            double manualArmDeadband = 0.3;//Makes sure you don't move the arm with every small movement, makes it so you have to push it a little bit for it to move
+
+            // Arm control with deadband
+            double manualArmDeadband = 0.3;
             double jointOnePower = 0.6;
             double jointTwoPower = 0.6;
             newArm(manualArmDeadband, jointOnePower, jointTwoPower);
 
-
-            //The second gamepad controls the arm
-//            if((gamepad2.left_trigger != 0) || (gamepad2.right_trigger != 0)) {
-//                double manualArmPower = gamepad2.right_trigger - gamepad2.left_trigger;
-//                double manualArmDeadband = 0.3;
-//               boolean manualMode = false;
-//                armMovement(manualArmPower, manualArmDeadband, manualMode);
-//            }
-
-
-            //Opening and closing for horizontal wrist
+            // Wrist and claw control (placeholders)
             int Hpos1 = 100;
             int Hpos2 = 0;
-            //opening and closing for vertical wrist
             int Vpos1 = 100;
             int Vpos2 = 0;
             wrist(Hpos1, Hpos2, Vpos1, Vpos2);
+
             int open = 100;
             int close = 0;
-            claw(open,close);
-
-
-
+            claw(open, close);
         }
     }
 
-//    private void claw(double position1) {
-//        claw.setPosition(position1);
-//    }
-
-    //gamepad1
-    //moves robot chassis
+    // Moves the robot chassis
     public void robotMovement(double vertical, double strafe, double turn) {
         frontLeft.setPower(-vertical - strafe - turn);
         frontRight.setPower(-vertical + strafe + turn);
@@ -141,8 +112,7 @@ public class Teleop extends LinearOpMode {
         backRight.setPower(vertical - strafe + turn);
     }
 
-    //gamepad1
-    //emergency brakes
+    // Emergency brake function
     public void brake() {
         frontLeft.setPower(0.0);
         frontRight.setPower(0.0);
@@ -150,76 +120,38 @@ public class Teleop extends LinearOpMode {
         backRight.setPower(0.0);
     }
 
-    //gamepad2
-    //controls wrist
+    // Controls the wrist servos (placeholder)
     private void wrist(int Hpos1, int Hpos2, int Vpos1, int Vpos2) {
-        //For the wrist to move up and down
-        //moves wrist to the right
-        if (gamepad2.dpad_right) {
-            horizontalWrist.setPosition(Hpos1);
-        //moves wrist to the left
-        } else if (gamepad2.dpad_left) {
-            horizontalWrist.setPosition(Hpos2);
-        }
-
-        //For the wrist to move up and down
-        //Moves wrist up
-        if (gamepad2.dpad_up) {
-            verticalWrist.setPosition(Vpos1);
-        //Moves wrist down
-        } else if (gamepad2.dpad_down) {
-            verticalWrist.setPosition(Vpos2);
-        }
+        // TODO: Implement wrist control logic
     }
 
-
+    // Controls the claw servo (placeholder)
     private void claw(int open, int close) {
-        if (gamepad2.a) {
-            claw.setPosition(open);
-        }else if (gamepad2.b) {
-            claw.setPosition(close);
-        }
+        // TODO: Implement claw control logic
     }
 
-    //Gamepad2
-    //For a double jointed arm that works with the right joystick
+    // Controls arm (placeholder)
     public void newArm(double manualArmDeadband, double jointOnePower, double jointTwoPower) {
-        //when the right stick is pushed up and down, it moves the bottom arm joint
-        if (Math.abs(gamepad2.right_stick_y) > manualArmDeadband) {
-            jointOne.setPower(jointOnePower * gamepad2.right_stick_y);
-        //When the right stick is pushed left to right, it moves  the second arm joint
-        } else if (Math.abs(gamepad2.right_stick_x) > manualArmDeadband) {
-            jointTwo.setPower(jointTwoPower * gamepad2.right_stick_x);
-        }else{
-            jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            jointOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            jointOne.setPower(0.0);
-            jointTwo.setPower(0.0);
-        }
+        // TODO: Implement arm control logic
     }
 
-
-    //This is the arm movement code we made earlier
-    //the variables are defined in "while(opModeIsActive())"
-//        public void armMovement(double manualArmPower, double manualArmDeadband, boolean manualMode) {
-//            if (Math.abs(manualArmPower) > manualArmDeadband) {
-//                arm.setPower(manualArmPower);
-//                if (!manualMode) {
-//                    arm.setTargetPosition(arm.getCurrentPosition());
-//                    arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                    arm.setPower(0.0);
-//                    manualMode = true;
-//                } else {
-//                    arm.setTargetPosition(arm.getCurrentPosition());
-//                    arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                    arm.setPower(0.3);
-//                    manualMode = false;
-//                }
-//            } else if (Math.abs(manualArmPower) < manualArmDeadband) {
-//                arm.setPower(0.1);
-//            }
-//        }
-
-
+    // This is the previously commented-out arm movement code
+    //public void armMovement(double manualArmPower, double manualArmDeadband, boolean manualMode) {
+    //    if (Math.abs(manualArmPower) > manualArmDeadband) {
+    //        jointOne.setPower(manualArmPower);
+    //        if (!manualMode) {
+    //            jointOne.setTargetPosition(jointOne.getCurrentPosition());
+    //            jointOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    //            jointOne.setPower(0.0);
+    //            manualMode = true;
+    //        } else {
+    //            jointOne.setTargetPosition(jointOne.getCurrentPosition());
+    //            jointOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    //            jointOne.setPower(0.3);
+    //            manualMode = false;
+    //        }
+    //    } else if (Math.abs(manualArmPower) < manualArmDeadband) {
+    //        jointOne.setPower(0.1);
+    //    }
+    //}
 }
