@@ -237,17 +237,17 @@ public class Drivebase {
      * For auto. Turns to a specified angle, without resetting the heading.
      *
      * @param angle     How many degrees to turn. [-180, 180].
-     * @param power     How fast to turn. (0, 1].
+     * @param speed     How fast to turn. (0, 1].
      * @param telemetry Pass this if you want this method to log to telemetry.
      * @see Drivebase#driveSideways
      * @see Drivebase#autoDriveForward
      * @see Drivebase#turnToAngle
      */
-    public void turnToAngle(double angle, double power, @Nullable Telemetry telemetry) {
+    public void turnToAngle(double speed, double angle, @Nullable Telemetry telemetry) {
         setMotorModes(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (opModeIsActive.get() && Math.abs(getHeading() - angle) > 1) {
-            final double adjustedPower = power * getTurningCorrection(angle);
+            final double adjustedPower = speed * getTurningCorrection(angle);
 
             setDrivePowers(adjustedPower, -adjustedPower, adjustedPower, -adjustedPower);
 
