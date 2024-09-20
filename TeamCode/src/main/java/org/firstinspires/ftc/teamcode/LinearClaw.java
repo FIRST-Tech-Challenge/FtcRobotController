@@ -9,6 +9,8 @@ public class LinearClaw {
     public DcMotorEx linear_claw;
     HardwareMap hardwareMap;
 
+
+
     public void init(HardwareMap ahwMap) {
         hardwareMap = ahwMap;
         linear_claw = hardwareMap.get(DcMotorEx.class, "linear_motion_claw");
