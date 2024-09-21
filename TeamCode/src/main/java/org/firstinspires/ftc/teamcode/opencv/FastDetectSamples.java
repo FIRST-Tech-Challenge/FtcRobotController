@@ -52,7 +52,7 @@ public class FastDetectSamples extends OpenCvPipeline {
                             temp.width -= noise;
                             temp.height -= noise;
                             Rect temp1 = new Rect(points[i], points[j+1]);
-                            Rect temp2 = new Rect(points[i+1], points[j+1]);
+                            Rect temp2 = new Rect(points[j+1], points[i+1]);
                             if (temp1.area() > temp2.area()){
                                 if (temp.area() < temp1.area()){
                                     temp = temp1;
@@ -71,7 +71,7 @@ public class FastDetectSamples extends OpenCvPipeline {
                             temp.width -= noise;
                             temp.height -= noise;
                             Rect temp1 = new Rect(points[i], points[j]);
-                            Rect temp2 = new Rect(points[i+1], points[j]);
+                            Rect temp2 = new Rect(points[j], points[i+1]);
                             if (temp1.area() > temp2.area()){
                                 if (temp.area() < temp1.area()){
                                     temp = temp1;
@@ -87,8 +87,8 @@ public class FastDetectSamples extends OpenCvPipeline {
                 }
                 max_points[lines] = temp.x;
                 max_points[lines+1] = temp.y;
-                max_points[lines+2] = temp.x + temp.width - noise;
-                max_points[lines+3] = temp.y + temp.height - noise;
+                max_points[lines+2] = temp.x + temp.width;
+                max_points[lines+3] = temp.y + temp.height;
                 lines += 4;
             }
         }
