@@ -38,21 +38,21 @@ public class Chassis {
         imu.initialize(parameters);
     }
 
-    // Method to reset the robot's yaw angle
+    // Method to reset the robot's yaw angle (for if you get lost)
     public void resetYaw() {
         imu.resetYaw();
     }
 
     // Drive method with field-centric control
     public void drive(double x, double y, double rx) {
-        // Get the robot's current heading
+        // Get the robot's current heading (heading = where the robot is faced)
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Adjust the input values for field-centric control
         double adjustedX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double adjustedY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        // Optional adjustment to counteract imperfect strafing
+        // (kinda) Optional adjustment to counteract imperfect strafing
         adjustedX = adjustedX * 1.1;
 
         // Calculate the motor powers
