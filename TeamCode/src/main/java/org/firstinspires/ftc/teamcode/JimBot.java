@@ -32,6 +32,8 @@ public class JimBot extends LinearOpMode {
     static double TRACKWIDTH = 14;//in inches
     static double WHEELBASE = 15;//in inches
 
+    mekanism mek = new mekanism();
+
 
     @Override
     public void runOpMode() {
