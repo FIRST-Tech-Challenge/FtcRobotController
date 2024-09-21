@@ -32,7 +32,6 @@ public class FastDetectSamples extends OpenCvPipeline {
     }
 
 
-
     public static int[] cleanLines(int[] lst, int noise){
         Point[] points = new Point[lst.length/2];
         int[] max_points = new int[lst.length];
@@ -40,12 +39,12 @@ public class FastDetectSamples extends OpenCvPipeline {
         int lines = 0;
 
         for (int i = 0; i < points.length; i++){
-            points[i] = new Point(lst[2*i], lst[2*i+1]);
+            points[i] = new Point(lst[2*i], lst[(2*i)+1]);
         }
 
         for (int i = 0; i < points.length; i += 2){
             if (indices[i/2] != -1){
-                Rect temp = new Rect(points[i], points[i+1]);
+                Yosi temp = new Yosi(points[i], points[i+1]);
                 temp.width += noise;
                 temp.height += noise;
                 for (int j = i + 2; j < points.length; j += 2){
@@ -54,8 +53,8 @@ public class FastDetectSamples extends OpenCvPipeline {
                         if (!temp.contains(points[j+1])){
                             temp.width -= noise;
                             temp.height -= noise;
-                            Rect temp1 = new Rect(points[i], points[j+1]);
-                            Rect temp2 = new Rect(points[j+1], points[i+1]);
+                            Yosi temp1 = new Yosi(points[i], points[j+1]);
+                            Yosi temp2 = new Yosi(points[j+1], points[i+1]);
                             if (temp1.area() > temp2.area()){
                                 if (temp.area() < temp1.area()){
                                     temp = temp1;
@@ -73,8 +72,8 @@ public class FastDetectSamples extends OpenCvPipeline {
                         if (!temp.contains(points[j])){
                             temp.width -= noise;
                             temp.height -= noise;
-                            Rect temp1 = new Rect(points[i], points[j]);
-                            Rect temp2 = new Rect(points[j], points[i+1]);
+                            Yosi temp1 = new Yosi(points[i], points[j]);
+                            Yosi temp2 = new Yosi(points[j], points[i+1]);
                             if (temp1.area() > temp2.area()){
                                 if (temp.area() < temp1.area()){
                                     temp = temp1;
@@ -90,8 +89,8 @@ public class FastDetectSamples extends OpenCvPipeline {
                 }
                 max_points[lines] = temp.x;
                 max_points[lines+1] = temp.y;
-                max_points[lines+2] = temp.x + temp.width;
-                max_points[lines+3] = temp.y + temp.height;
+                max_points[lines+2] = temp.x + temp.width - noise;
+                max_points[lines+3] = temp.y + temp.height - noise;
                 lines += 4;
             }
         }
@@ -134,11 +133,11 @@ public class FastDetectSamples extends OpenCvPipeline {
                 for (int i = 0; i < linesArray.length; i += 4) {
                     int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
                     double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
+                    //if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2.0, (y1 + y2) / 2.0), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
                         telemetry.addData("Vertical Line Length", length);
-                        }
+                        //}
                 }
             }
         }
