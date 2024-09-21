@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.opencv.DetectSamples;
 import org.firstinspires.ftc.teamcode.opencv.FastDetectSamples;
@@ -22,6 +25,8 @@ public class WebcamStreamingExample extends LinearOpMode
 {
     OpenCvWebcam webcam;
     FtcDashboard dashboard = FtcDashboard.getInstance();
+    Telemetry dashboardTelemetry = dashboard.getTelemetry();
+    TelemetryPacket packet = new TelemetryPacket();
 
     @Override
     public void runOpMode()
@@ -42,6 +47,8 @@ public class WebcamStreamingExample extends LinearOpMode
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
+        telemetry = new MultipleTelemetry(telemetry, dashboardTelemetry);
+
         FastDetectSamples Pipeline = new FastDetectSamples(telemetry);
         //DetectSamples Pipeline = new DetectSamples(telemetry);
         //DetectSamples Pipeline = new DetectSamples(telemetry);
@@ -56,6 +63,7 @@ public class WebcamStreamingExample extends LinearOpMode
          *
          * If you really want to open synchronously, the old method is still available.
          */
+
         webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -89,7 +97,6 @@ public class WebcamStreamingExample extends LinearOpMode
                  */
             }
         });
-
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
@@ -139,6 +146,7 @@ public class WebcamStreamingExample extends LinearOpMode
                  */
                 webcam.stopStreaming();
                 //webcam.closeCameraDevice();
+
             }
 
             /*
