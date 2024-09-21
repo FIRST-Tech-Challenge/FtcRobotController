@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class LimeLightWrapper {
     Limelight3A limelight;
+    //The position of each april tag on the field 
     public static final Vector2d[] APRIL_TAG_POSITIONS = new Vector2d[]{
 
     };
@@ -18,27 +19,28 @@ public class LimeLightWrapper {
     public LimeLightWrapper(Limelight3A limelight3A) {
         limelight = limelight3A;
     }
-
+    //starts up the limelight with the first pipeline
     public void start() {
         limelight.pipelineSwitch(0);
         limelight.start();
     }
-
+    //starts up the limelight with a set pipeline
     public void start(int pipeline) {
         limelight.pipelineSwitch(pipeline);
         limelight.start();
     }
-
+//gets all the valid inputs that the limelight finds
     public LLResult getVaildResult() {
         LLResult result = limelight.getLatestResult();
         if (result != null) {
             if (result.isValid()) {
+                //only returns good results 
                 return result;
             }
         }
         return null;
     }
-
+//gets the distance using just the botpose
     public Pose3D distanceFromTag() {
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
@@ -46,7 +48,7 @@ public class LimeLightWrapper {
         }
         return null;
     }
-
+//gets the distance using the botpose and the yaw
     public Pose3D distanceFromTag(double yaw) {
         LLResult result = limelight.getLatestResult();
         limelight.updateRobotOrientation(yaw);
@@ -55,6 +57,7 @@ public class LimeLightWrapper {
         }
         return null;
     }
+    //takes a pose3d from a distance from the tag and localizes it based on which April tag it is 
     public Pose3D localize(int i,Pose3D pose3D) {
         Vector2d vector2d = APRIL_TAG_POSITIONS[i];
         double x = vector2d.x+pose3D.getPosition().x;
