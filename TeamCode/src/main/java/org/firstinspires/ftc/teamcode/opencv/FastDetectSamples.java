@@ -33,7 +33,7 @@ public class FastDetectSamples extends OpenCvPipeline {
     public static int[] cleanLines(int[] lst, int noise){
         Point[] points = new Point[lst.length/2];
         int[] max_points = new int[lst.length];
-        int index = 0;
+        int lines = 0;
 
         for (int i = 0; i < points.length; i++){
             points[i] = new Point(lst[2*i], lst[2*i+1]);
@@ -41,9 +41,13 @@ public class FastDetectSamples extends OpenCvPipeline {
 
         for (int i = 0; i < points.length; i += 2){
             Rect temp = new Rect(points[i], points[i+1]);
-            for (int j = i+2; j < points.length; j += 2){
+            temp.width += noise;
+            temp.height += noise;
+            for (int j = i + 2; j < points.length; j += 2){
                 if (temp.contains(points[j])){
                     if (!temp.contains(points[j+1])){
+                        temp.width -= noise;
+                        temp.height -= noise;
                         Rect temp1 = new Rect(points[i], points[j+1]);
                         Rect temp2 = new Rect(points[i+1], points[j+1]);
                         if (temp1.area() > temp2.area()){
@@ -54,10 +58,14 @@ public class FastDetectSamples extends OpenCvPipeline {
                         else if (temp.area() < temp2.area()){
                             temp = temp2;
                         }
+                        temp.width += noise;
+                        temp.height += noise;
                     }
                 }
                 else if (temp.contains(points[j+1])){
                     if (temp.contains(points[j])){
+                        temp.width -= noise;
+                        temp.height -= noise;
                         Rect temp1 = new Rect(points[i], points[j]);
                         Rect temp2 = new Rect(points[i+1], points[j]);
                         if (temp1.area() > temp2.area()){
@@ -68,17 +76,19 @@ public class FastDetectSamples extends OpenCvPipeline {
                         else if (temp.area() < temp2.area()){
                             temp = temp2;
                         }
+                        temp.width += noise;
+                        temp.height += noise;
                     }
                 }
             }
-            max_points[index] = temp.x;
-            max_points[index+1] = temp.y;
-            max_points[index+2] = temp.x + temp.width;
-            max_points[index+3] = temp.y + temp.height;
-            index += 4;
+            max_points[lines] = temp.x;
+            max_points[lines+1] = temp.y;
+            max_points[lines+2] = temp.x + temp.width - noise;
+            max_points[lines+3] = temp.y + temp.height - noise;
+            lines += 4;
         }
 
-        int[] result = new int[index];
+        int[] result = new int[lines];
         for (int i = 0; i < result.length; i++){
             result[i] = max_points[i];
         }
@@ -105,7 +115,7 @@ public class FastDetectSamples extends OpenCvPipeline {
             Imgproc.drawContours(black, approxContours, -1, new Scalar(255, 255, 255), 1);
             Imgproc.HoughLinesP(black, lines, 10, Math.PI / 90, 12, 35, 40);
             try {
-                int[] linesArray = cleanLines(lines.toArray(), 0); //cleanLines were added during testing, noise isn't working yet
+                int[] linesArray = cleanLines(lines.toArray(), 5);
 
                 telemetry.addData("Number of lines", linesArray.length / 4);
 
