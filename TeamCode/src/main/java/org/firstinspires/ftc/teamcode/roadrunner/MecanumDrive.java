@@ -52,34 +52,30 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class MecanumDrive {
+public final class MecanumDrive
+{
+
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+              RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+              RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
-        public double inPerTick = 0.00293404511094358075755414739502;  //0.00296842806652392383515858247999;   //2.9330258713109614256528511034246e-4;   //340.9496;
-        public double lateralInPerTick = 0.002055927767517244;  //inPerTick;
-        // programed public double trackWidthTicks = 5189.953903584068;   //5148.577885532566;
-
-        //hand calculated
-        public double trackWidthTicks =5623.6354166666666666666666666594;
+        public double inPerTick = 0.00293764705;
+        public double lateralInPerTick = .00227471024138651056;
+        public double trackWidthTicks = 4037.330655170419;
 
         // feedforward parameters (in tick units)
-        //public double kS = 1.518926060192379;
-        //public double kV = 0.0005515580045321988;
-
-        public double kS = 1.5766079430542752;  //1.4275458963909462;
-        public double kV = 0.0005429663575045573;   //0.0005664916230509027;
-        public double kA = 0.000056;
+        public double kS = 1.1799891957204;
+        public double kV = 0.0004087247214;
+        public double kA = 0.00003;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 30; //50;
+        public double maxWheelVel = 50;
         public double minProfileAccel = -30;
         public double maxProfileAccel = 50;
 
@@ -88,14 +84,58 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.5;
-        public double lateralGain = 2.0;
-        public double headingGain = 9.0; // shared with turn
+        public double axialGain = 0.0;
+        public double lateralGain = 0.0;
+        public double headingGain = 0.0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
     }
+
+//    public static class Params {
+//        // IMU orientation
+//        // TODO: fill in these values based on
+//        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
+//        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+//                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+//        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+//                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+//
+//        // drive model parameters
+//        public double inPerTick = 0.00293404511094358075755414739502;  //0.00296842806652392383515858247999;   //2.9330258713109614256528511034246e-4;   //340.9496;
+//        public double lateralInPerTick = 0.002055927767517244;  //inPerTick;
+//        // programed public double trackWidthTicks = 5189.953903584068;   //5148.577885532566;
+//
+//        //hand calculated
+//        public double trackWidthTicks =5623.6354166666666666666666666594;
+//
+//        // feedforward parameters (in tick units)
+//        //public double kS = 1.518926060192379;
+//        //public double kV = 0.0005515580045321988;
+//
+//        public double kS = 1.5766079430542752;  //1.4275458963909462;
+//        public double kV = 0.0005429663575045573;   //0.0005664916230509027;
+//        public double kA = 0.000056;
+//
+//        // path profile parameters (in inches)
+//        public double maxWheelVel = 30; //50;
+//        public double minProfileAccel = -30;
+//        public double maxProfileAccel = 50;
+//
+//        // turn profile parameters (in radians)
+//        public double maxAngVel = Math.PI; // shared with path
+//        public double maxAngAccel = Math.PI;
+//
+//        // path controller gains
+//        public double axialGain = 0.5;
+//        public double lateralGain = 2.0;
+//        public double headingGain = 9.0; // shared with turn
+//
+//        public double axialVelGain = 0.0;
+//        public double lateralVelGain = 0.0;
+//        public double headingVelGain = 0.0; // shared with turn
+//    }
 
     public static Params PARAMS = new Params();
 
