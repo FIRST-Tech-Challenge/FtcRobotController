@@ -54,6 +54,8 @@ public class TuneFeedForwardGains extends LinearOpMode{
         telemetry.addData("Robot velocity ", 0);
         telemetry.addData("Target velocity ", 0);
         telemetry.addLine("State " + 0);
+        packet.fieldOverlay();
+        dashboard.sendTelemetryPacket(packet);
         telemetry.update();
         waitForStart();
         looptime.reset();
@@ -82,7 +84,8 @@ public class TuneFeedForwardGains extends LinearOpMode{
             packet.fieldOverlay()
                     .setRotation(drivetrain.state.get(2,0))
                     .setFill("blue")
-                    .fillRect(drivetrain.state.get(0,0), drivetrain.state.get(1,0), 40, 40);
+                    .fillRect(drivetrain.state.get(0,0), drivetrain.state.get(1,0), 15, 15);
+            dashboard.sendTelemetryPacket(packet);
             telemetry.update();
             if (lapTime.seconds() > deltaT) {
                 reverse = !reverse;
