@@ -7,6 +7,7 @@ import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -28,6 +29,66 @@ public class FastDetectSamples extends OpenCvPipeline {
         this.telemetry = telemetry;
     }
 
+
+    public static int[] cleanLines(int[] lst, int noise){
+        Point[] points = new Point[lst.length/2];
+        int[] max_points = new int[lst.length];
+        int index = 0;
+
+        for (int i = 0; i < points.length; i++){
+            points[i] = new Point(lst[2*i], lst[2*i+1]);
+        }
+
+        for (int i = 0; i < points.length; i += 2){
+            Rect temp = new Rect(points[i], points[i+1]);
+            for (int j = i+2; j < points.length; j += 2){
+                if (temp.contains(points[j])){
+                    if (!temp.contains(points[j+1])){
+                        Rect temp1 = new Rect(points[i], points[j+1]);
+                        Rect temp2 = new Rect(points[i+1], points[j+1]);
+                        if (temp1.area() > temp2.area()){
+                            if (temp.area() < temp1.area()){
+                                temp = temp1;
+                            }
+                        }
+                        else if (temp.area() < temp2.area()){
+                            temp = temp2;
+                        }
+                    }
+                }
+                else if (temp.contains(points[j+1])){
+                    if (temp.contains(points[j])){
+                        Rect temp1 = new Rect(points[i], points[j]);
+                        Rect temp2 = new Rect(points[i+1], points[j]);
+                        if (temp1.area() > temp2.area()){
+                            if (temp.area() < temp1.area()){
+                                temp = temp1;
+                            }
+                        }
+                        else if (temp.area() < temp2.area()){
+                            temp = temp2;
+                        }
+                    }
+                }
+            }
+            max_points[index] = temp.x;
+            max_points[index+1] = temp.y;
+            max_points[index+2] = temp.x + temp.width;
+            max_points[index+3] = temp.y + temp.height;
+            index += 4;
+        }
+
+        int[] result = new int[index];
+        for (int i = 0; i < result.length; i++){
+            result[i] = max_points[i];
+        }
+        return result;
+    }
+
+
+
+
+
     public Mat processFrame(Mat input) {
         Mat yellowMask = preprocessFrame(input);
         List<MatOfPoint> contours = new ArrayList<>();
@@ -46,14 +107,15 @@ public class FastDetectSamples extends OpenCvPipeline {
             Imgproc.drawContours(black, approxContours, -1, new Scalar(255, 255, 255), 1);
             Imgproc.HoughLinesP(black, lines, 10, Math.PI / 90, 12, 35, 40);
             try {
-                int[] linesArray = lines.toArray();
+                int[] linesArray = cleanLines(lines.toArray(), 0); //cleanLines were added during testing, noise isn't working yet
+
                 telemetry.addData("Number of lines", linesArray.length / 4);
 
                 for (int i = 0; i < linesArray.length; i += 4) {
                     int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
                     double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 
-                    boolean check = true;
+                    /*boolean check = true;
                     for (int j = 0; j < linesArray.length; j += 4){
                         if (x1 < linesArray[j] && y1 < linesArray[j+1] && x2 > linesArray[j+2] && y2 > linesArray[j+3]){
                             check = false;
@@ -64,11 +126,11 @@ public class FastDetectSamples extends OpenCvPipeline {
                                 break;
                             }
                         }
-                    }
+                    }*/
 
 
 
-                    if (Math.abs(x1 - x2) != length / 5 && check) { // Adjust threshold for vertically
+                    if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2, (y1 + y2) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
                         telemetry.addData("Vertical Line Length", length);
