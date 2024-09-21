@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Config
-public abstract class Robot {
+public class Robot {
     private IMU imu;
     private double TargetAngle = 0;
     private double RobotAngle = 0;
@@ -24,7 +25,7 @@ public abstract class Robot {
     private double slide;
     private double turn;
 
-    private MecanumDriveTrain driveTrain;
+    public MecanumDriveTrain driveTrain;
     private double RobotX, RobotY;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -41,6 +42,10 @@ public abstract class Robot {
 
     private boolean resettingImu = false;
     private double AutoStartAngle = 0;
+
+    public void init(HardwareMap hardwareMap){
+        driveTrain = new MecanumDriveTrain(hardwareMap);
+    }
 
     public void IMU_Update() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
