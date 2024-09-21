@@ -15,25 +15,28 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FastDetectSamples extends OpenCvPipeline {
+
     public /*final*/ OpenCvCamera webcam;
     boolean viewportPaused;
 
-    public double fov = 78;
-
     private final Telemetry telemetry;
+
+    //public final int fov = 78;
 
     public FastDetectSamples(Telemetry telemetry){
         this.telemetry = telemetry;
     }
 
 
+
     public static int[] cleanLines(int[] lst, int noise){
         Point[] points = new Point[lst.length/2];
         int[] max_points = new int[lst.length];
-        int[] indecies = new int[lst.length/4];
+        int[] indices = new int[lst.length/4];
         int lines = 0;
 
         for (int i = 0; i < points.length; i++){
@@ -41,13 +44,13 @@ public class FastDetectSamples extends OpenCvPipeline {
         }
 
         for (int i = 0; i < points.length; i += 2){
-            if (indecies[i/2] != -1){
+            if (indices[i/2] != -1){
                 Rect temp = new Rect(points[i], points[i+1]);
                 temp.width += noise;
                 temp.height += noise;
                 for (int j = i + 2; j < points.length; j += 2){
                     if (temp.contains(points[j])){
-                        indecies[j/2] = -1;
+                        indices[j/2] = -1;
                         if (!temp.contains(points[j+1])){
                             temp.width -= noise;
                             temp.height -= noise;
@@ -66,7 +69,7 @@ public class FastDetectSamples extends OpenCvPipeline {
                         }
                     }
                     else if (temp.contains(points[j+1])){
-                        indecies[j/2] = -1;
+                        indices[j/2] = -1;
                         if (!temp.contains(points[j])){
                             temp.width -= noise;
                             temp.height -= noise;
@@ -93,11 +96,7 @@ public class FastDetectSamples extends OpenCvPipeline {
             }
         }
 
-        int[] result = new int[lines];
-        for (int i = 0; i < result.length; i++){
-            result[i] = max_points[i];
-        }
-        return result;
+        return Arrays.copyOf(max_points, lines);
     }
 
 
@@ -121,7 +120,7 @@ public class FastDetectSamples extends OpenCvPipeline {
             Imgproc.HoughLinesP(black, lines, 10, Math.PI / 90, 12, 35, 40);
             boolean check = false;
             try {
-                int[] linesArray = lines.toArray();
+                lines.toArray();
                 check = true;
             }
             catch (Exception e) {
@@ -147,13 +146,15 @@ public class FastDetectSamples extends OpenCvPipeline {
         return input;
 
     }
+
+
+
     private Mat preprocessFrame(Mat frame) {
         Mat hsvFrame = new Mat();
         Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_RGB2YCrCb);
 
-        Scalar lowerYellow = new Scalar(0, 138, 0);
-        Scalar upperYellow = new Scalar(255, 200, 100);
-
+        Scalar lowerYellow = new Scalar(177, 144, 1); //0, 138, 0
+        Scalar upperYellow = new Scalar(226, 172, 28); //255, 200, 100
 
         Mat yellowMask = new Mat();
         Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
@@ -163,6 +164,9 @@ public class FastDetectSamples extends OpenCvPipeline {
 
         return yellowMask;
     }
+
+
+
     @Override
     public void onViewportTapped()
     {
