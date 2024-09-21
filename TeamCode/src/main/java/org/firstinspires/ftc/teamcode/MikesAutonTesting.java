@@ -181,7 +181,7 @@ public class MikesAutonTesting extends LinearOpMode {
                         (leftFrontDrive.getCurrentPosition() < newDriveTarget)) {
 
                     // Display it for the driver.
-                    telemetry.addData("Running to", " %7d :%7d", newLeftTarget, newRightTarget);
+                    telemetry.addData("Running to", " %7d :%7d", newDriveTarget);
                     telemetry.addData("Currently at", " at %7d :%7d",
                             leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
                             rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
@@ -196,7 +196,7 @@ public class MikesAutonTesting extends LinearOpMode {
                         (leftFrontDrive.getCurrentPosition() > newDriveTarget)) {
 
                     // Display it for the driver.
-                    telemetry.addData("Running to", " %7d :%7d", newLeftTarget, newRightTarget);
+                    telemetry.addData("Running to", " %7d :%7d", newDriveTarget);
                     telemetry.addData("Currently at", " at %7d :%7d",
                             leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
                             rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
