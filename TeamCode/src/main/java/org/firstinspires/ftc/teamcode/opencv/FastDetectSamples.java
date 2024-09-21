@@ -33,6 +33,7 @@ public class FastDetectSamples extends OpenCvPipeline {
     public static int[] cleanLines(int[] lst, int noise){
         Point[] points = new Point[lst.length/2];
         int[] max_points = new int[lst.length];
+        int[] indecies = new int[lst.length/4];
         int lines = 0;
 
         for (int i = 0; i < points.length; i++){
@@ -40,52 +41,56 @@ public class FastDetectSamples extends OpenCvPipeline {
         }
 
         for (int i = 0; i < points.length; i += 2){
-            Rect temp = new Rect(points[i], points[i+1]);
-            temp.width += noise;
-            temp.height += noise;
-            for (int j = i + 2; j < points.length; j += 2){
-                if (temp.contains(points[j])){
-                    if (!temp.contains(points[j+1])){
-                        temp.width -= noise;
-                        temp.height -= noise;
-                        Rect temp1 = new Rect(points[i], points[j+1]);
-                        Rect temp2 = new Rect(points[i+1], points[j+1]);
-                        if (temp1.area() > temp2.area()){
-                            if (temp.area() < temp1.area()){
-                                temp = temp1;
-                            }
-                        }
-                        else if (temp.area() < temp2.area()){
-                            temp = temp2;
-                        }
-                        temp.width += noise;
-                        temp.height += noise;
-                    }
-                }
-                else if (temp.contains(points[j+1])){
+            if (indecies[i/2] != -1){
+                Rect temp = new Rect(points[i], points[i+1]);
+                temp.width += noise;
+                temp.height += noise;
+                for (int j = i + 2; j < points.length; j += 2){
                     if (temp.contains(points[j])){
-                        temp.width -= noise;
-                        temp.height -= noise;
-                        Rect temp1 = new Rect(points[i], points[j]);
-                        Rect temp2 = new Rect(points[i+1], points[j]);
-                        if (temp1.area() > temp2.area()){
-                            if (temp.area() < temp1.area()){
-                                temp = temp1;
+                        indecies[j/2] = -1;
+                        if (!temp.contains(points[j+1])){
+                            temp.width -= noise;
+                            temp.height -= noise;
+                            Rect temp1 = new Rect(points[i], points[j+1]);
+                            Rect temp2 = new Rect(points[i+1], points[j+1]);
+                            if (temp1.area() > temp2.area()){
+                                if (temp.area() < temp1.area()){
+                                    temp = temp1;
+                                }
                             }
+                            else if (temp.area() < temp2.area()){
+                                temp = temp2;
+                            }
+                            temp.width += noise;
+                            temp.height += noise;
                         }
-                        else if (temp.area() < temp2.area()){
-                            temp = temp2;
+                    }
+                    else if (temp.contains(points[j+1])){
+                        indecies[j/2] = -1;
+                        if (!temp.contains(points[j])){
+                            temp.width -= noise;
+                            temp.height -= noise;
+                            Rect temp1 = new Rect(points[i], points[j]);
+                            Rect temp2 = new Rect(points[i+1], points[j]);
+                            if (temp1.area() > temp2.area()){
+                                if (temp.area() < temp1.area()){
+                                    temp = temp1;
+                                }
+                            }
+                            else if (temp.area() < temp2.area()){
+                                temp = temp2;
+                            }
+                            temp.width += noise;
+                            temp.height += noise;
                         }
-                        temp.width += noise;
-                        temp.height += noise;
                     }
                 }
+                max_points[lines] = temp.x;
+                max_points[lines+1] = temp.y;
+                max_points[lines+2] = temp.x + temp.width - noise;
+                max_points[lines+3] = temp.y + temp.height - noise;
+                lines += 4;
             }
-            max_points[lines] = temp.x;
-            max_points[lines+1] = temp.y;
-            max_points[lines+2] = temp.x + temp.width - noise;
-            max_points[lines+3] = temp.y + temp.height - noise;
-            lines += 4;
         }
 
         int[] result = new int[lines];
@@ -114,7 +119,7 @@ public class FastDetectSamples extends OpenCvPipeline {
             Imgproc.cvtColor(black, black, Imgproc.COLOR_RGB2GRAY);
             Imgproc.drawContours(black, approxContours, -1, new Scalar(255, 255, 255), 1);
             Imgproc.HoughLinesP(black, lines, 10, Math.PI / 90, 12, 35, 40);
-            try {
+            //try {
                 int[] linesArray = cleanLines(lines.toArray(), 5);
 
                 telemetry.addData("Number of lines", linesArray.length / 4);
@@ -139,14 +144,14 @@ public class FastDetectSamples extends OpenCvPipeline {
 
                     if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
-                        Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2, (y1 + y2) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
+                        Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2.0, (y1 + y2) / 2.0), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
                         telemetry.addData("Vertical Line Length", length);
                         }
                 }
-            }
-            catch (Exception e) {
+            //}
+            /*catch (Exception e) {
                 telemetry.addData("No lines found", "");
-            }
+            }*/
 
         }
         telemetry.update();
