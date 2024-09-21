@@ -119,7 +119,15 @@ public class FastDetectSamples extends OpenCvPipeline {
             Imgproc.cvtColor(black, black, Imgproc.COLOR_RGB2GRAY);
             Imgproc.drawContours(black, approxContours, -1, new Scalar(255, 255, 255), 1);
             Imgproc.HoughLinesP(black, lines, 10, Math.PI / 90, 12, 35, 40);
-            //try {
+            boolean check = false;
+            try {
+                int[] linesArray = lines.toArray();
+                check = true;
+            }
+            catch (Exception e) {
+                telemetry.addData("No lines found", "");
+            }
+            if (check) {
                 int[] linesArray = cleanLines(lines.toArray(), 5);
 
                 telemetry.addData("Number of lines", linesArray.length / 4);
@@ -127,32 +135,13 @@ public class FastDetectSamples extends OpenCvPipeline {
                 for (int i = 0; i < linesArray.length; i += 4) {
                     int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
                     double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-
-                    /*boolean check = true;
-                    for (int j = 0; j < linesArray.length; j += 4){
-                        if (x1 < linesArray[j] && y1 < linesArray[j+1] && x2 > linesArray[j+2] && y2 > linesArray[j+3]){
-                            check = false;
-                        }
-                        if (x2 < linesArray[j]){
-                            if (y2 < linesArray[j+1]){
-                                check = false;
-                                break;
-                            }
-                        }
-                    }*/
-
-
                     if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2.0, (y1 + y2) / 2.0), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
                         telemetry.addData("Vertical Line Length", length);
                         }
                 }
-            //}
-            /*catch (Exception e) {
-                telemetry.addData("No lines found", "");
-            }*/
-
+            }
         }
         telemetry.update();
         return input;
