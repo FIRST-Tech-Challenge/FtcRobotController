@@ -66,8 +66,6 @@ public class FastDetectSamples extends OpenCvPipeline {
                         }
                     }
 
-
-
                     if (Math.abs(x1 - x2) != length / 5 && check) { // Adjust threshold for vertically
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2, (y1 + y2) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
