@@ -7,7 +7,6 @@ import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -25,6 +24,8 @@ public class FastDetectSamples extends OpenCvPipeline {
 
     private final Telemetry telemetry;
 
+    static int[] linesArray;
+
     //public final int fov = 78;
 
     public FastDetectSamples(Telemetry telemetry){
@@ -32,70 +33,40 @@ public class FastDetectSamples extends OpenCvPipeline {
     }
 
 
-    public static int[] cleanLines(int[] lst, int noise){
-        Point[] points = new Point[lst.length/2];
-        int[] max_points = new int[lst.length];
-        int[] indices = new int[lst.length/4];
-        int lines = 0;
 
-        for (int i = 0; i < points.length; i++){
-            points[i] = new Point(lst[2*i], lst[(2*i)+1]);
-        }
+    public static void cleanLines(int noise){
+        int[] result = new int[linesArray.length];
+        int[] indices = new int[linesArray.length/4];
+        int values = 0;
 
-        for (int i = 0; i < points.length; i += 2){
+        for (int i = 0; i < linesArray.length; i += 4){
             if (indices[i/2] != -1){
-                Yosi temp = new Yosi(points[i], points[i+1]);
-                temp.width += noise;
-                temp.height += noise;
-                for (int j = i + 2; j < points.length; j += 2){
-                    if (temp.contains(points[j])){
+                Rectangle outer = new Rectangle(linesArray[i], linesArray[i+1], linesArray[i+2], linesArray[i+3]);
+                outer.width += noise;
+                outer.height += noise;
+                for (int j = i + 2; j < linesArray.length; j += 4){
+                    if (outer.contains(linesArray[j], linesArray[j+1])){
                         indices[j/2] = -1;
-                        if (!temp.contains(points[j+1])){
-                            temp.width -= noise;
-                            temp.height -= noise;
-                            Yosi temp1 = new Yosi(points[i], points[j+1]);
-                            Yosi temp2 = new Yosi(points[j+1], points[i+1]);
-                            if (temp1.area() > temp2.area()){
-                                if (temp.area() < temp1.area()){
-                                    temp = temp1;
-                                }
-                            }
-                            else if (temp.area() < temp2.area()){
-                                temp = temp2;
-                            }
-                            temp.width += noise;
-                            temp.height += noise;
+                        if (!outer.contains(linesArray[j+2], linesArray[j+3])){
+                            outer = outer.fit(outer, i, j + 2, noise);
                         }
                     }
-                    else if (temp.contains(points[j+1])){
+                    else if (outer.contains(linesArray[j+2], linesArray[j+3])){
                         indices[j/2] = -1;
-                        if (!temp.contains(points[j])){
-                            temp.width -= noise;
-                            temp.height -= noise;
-                            Yosi temp1 = new Yosi(points[i], points[j]);
-                            Yosi temp2 = new Yosi(points[j], points[i+1]);
-                            if (temp1.area() > temp2.area()){
-                                if (temp.area() < temp1.area()){
-                                    temp = temp1;
-                                }
-                            }
-                            else if (temp.area() < temp2.area()){
-                                temp = temp2;
-                            }
-                            temp.width += noise;
-                            temp.height += noise;
+                        if (!outer.contains(linesArray[j], linesArray[j+1])){
+                            outer = outer.fit(outer, i, j, noise);
                         }
                     }
                 }
-                max_points[lines] = temp.x;
-                max_points[lines+1] = temp.y;
-                max_points[lines+2] = temp.x + temp.width - noise;
-                max_points[lines+3] = temp.y + temp.height - noise;
-                lines += 4;
+                result[values] = outer.x;
+                result[values+1] = outer.y;
+                result[values+2] = outer.x + outer.width - noise;
+                result[values+3] = outer.y + outer.height - noise;
+                values += 4;
             }
         }
 
-        return Arrays.copyOf(max_points, lines);
+        linesArray =  Arrays.copyOf(result, values);
     }
 
 
@@ -117,30 +88,24 @@ public class FastDetectSamples extends OpenCvPipeline {
             Imgproc.cvtColor(black, black, Imgproc.COLOR_RGB2GRAY);
             Imgproc.drawContours(black, approxContours, -1, new Scalar(255, 255, 255), 1);
             Imgproc.HoughLinesP(black, lines, 10, Math.PI / 90, 12, 35, 40);
-            boolean check = false;
+
+            linesArray = new int[0];
             try {
-                lines.toArray();
-                check = true;
+                linesArray = lines.toArray();
             }
             catch (Exception e) {
                 telemetry.addData("No lines found", "");
             }
-            if (check) {
-                //int[] linesArray = lines.toArray();
-                int[] linesArray = cleanLines(lines.toArray(), 5);
 
+            cleanLines(5);
+            telemetry.addData("Number of lines", linesArray.length / 4);
 
-                telemetry.addData("Number of lines", linesArray.length / 4);
-
-                for (int i = 0; i < linesArray.length; i += 4) {
-                    int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
-                    double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
-                        Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
-                        Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2.0, (y1 + y2) / 2.0), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
-                        telemetry.addData("Vertical Line Length", length);
-                        }
-                }
+            for (int i = 0; i < linesArray.length; i += 4) {
+                int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
+                double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
+                Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2.0, (y1 + y2) / 2.0), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
+                telemetry.addData("Vertical Line Length", length);
             }
         }
         telemetry.update();
@@ -152,14 +117,18 @@ public class FastDetectSamples extends OpenCvPipeline {
 
     private Mat preprocessFrame(Mat frame) {
         Mat hsvFrame = new Mat();
+
+        //why this color format?
         Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_RGB2YCrCb);
 
-        Scalar lowerYellow = new Scalar(0, 138, 0); //0, 138, 0
-        Scalar upperYellow = new Scalar(255, 200, 100); //255, 200, 100
-
         Mat yellowMask = new Mat();
-        Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
+
+        //why these values?
+        Core.inRange(hsvFrame, new Scalar(0, 138, 0), new Scalar(255, 200, 100), yellowMask);
+
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+
+        //what does this do?
         Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_OPEN, kernel);
         Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_CLOSE, kernel);
 
