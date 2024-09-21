@@ -126,18 +126,20 @@ public class FastDetectSamples extends OpenCvPipeline {
                 telemetry.addData("No lines found", "");
             }
             if (check) {
+                //int[] linesArray = lines.toArray();
                 int[] linesArray = cleanLines(lines.toArray(), 5);
+
 
                 telemetry.addData("Number of lines", linesArray.length / 4);
 
                 for (int i = 0; i < linesArray.length; i += 4) {
                     int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
                     double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    //if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
+                    if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2.0, (y1 + y2) / 2.0), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
                         telemetry.addData("Vertical Line Length", length);
-                        //}
+                        }
                 }
             }
         }
@@ -152,8 +154,8 @@ public class FastDetectSamples extends OpenCvPipeline {
         Mat hsvFrame = new Mat();
         Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_RGB2YCrCb);
 
-        Scalar lowerYellow = new Scalar(177, 144, 1); //0, 138, 0
-        Scalar upperYellow = new Scalar(226, 172, 28); //255, 200, 100
+        Scalar lowerYellow = new Scalar(0, 138, 0); //0, 138, 0
+        Scalar upperYellow = new Scalar(255, 200, 100); //255, 200, 100
 
         Mat yellowMask = new Mat();
         Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
