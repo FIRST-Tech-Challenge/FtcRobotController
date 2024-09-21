@@ -51,7 +51,15 @@ public class TeleOpMode extends OpMode {
         } else if (gamepad2.dpad_down) {
             arm.setArmPosition(0);  // Lower position
         }
-
+        
+        // Rotation control using gamepad2
+        if (gamepad2.left_bumper) {
+            arm.rotateArm(0.5);  // Rotate arm clockwise
+        } else if (gamepad2.right_bumper) {
+            arm.rotateArm(-0.5);  // Rotate arm counterclockwise
+        } else {
+            arm.rotateArm(0);  // Stop rotation
+        }
 
         // Intake control using gamepad2
         if (gamepad2.right_trigger > 0.1) {

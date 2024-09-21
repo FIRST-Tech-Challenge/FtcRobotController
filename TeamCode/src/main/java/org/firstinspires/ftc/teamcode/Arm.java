@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDF;
 
 
 public class Arm {
+
+    private DcMotor rotationMotor;
     private DcMotor armMotor;
     private PIDF pidController;
 
@@ -22,6 +24,10 @@ public class Arm {
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Initialize motor
+        rotationMotor = hardwareMap.get(DcMotor.class, "rotationMotor");
+        rotationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize PIDF controller with tuned values
         pidController = new PIDF(kP, kI, kD, kF);
@@ -45,6 +51,9 @@ public class Arm {
         armMotor.setPower(power);
     }
 
+    public void rotateArm(double power) {
+        rotationMotor.setPower(power);
+    }
     // Check if the arm is at the target position
     public boolean atTargetPosition() {
         return pidController.atSetPoint();
