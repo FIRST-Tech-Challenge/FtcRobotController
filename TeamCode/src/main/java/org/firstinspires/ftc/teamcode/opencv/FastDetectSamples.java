@@ -87,8 +87,6 @@ public class FastDetectSamples extends OpenCvPipeline {
 
 
 
-
-
     public Mat processFrame(Mat input) {
         Mat yellowMask = preprocessFrame(input);
         List<MatOfPoint> contours = new ArrayList<>();
@@ -128,13 +126,8 @@ public class FastDetectSamples extends OpenCvPipeline {
                         }
                     }*/
 
-<<<<<<< HEAD
-
 
                     if (Math.abs(x1 - x2) != length / 5) { // Adjust threshold for vertically
-=======
-                    if (Math.abs(x1 - x2) != length / 5 && check) { // Adjust threshold for vertically
->>>>>>> 42b792136999a9852098efacd0ac34f428d99675
                         Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
                         Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2, (y1 + y2) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
                         telemetry.addData("Vertical Line Length", length);
