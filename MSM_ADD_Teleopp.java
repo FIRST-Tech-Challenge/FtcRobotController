@@ -1,5 +1,3 @@
-public class MSM_ADD_Teleopp {
-}
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
