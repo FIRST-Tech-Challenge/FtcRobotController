@@ -19,7 +19,7 @@ public class ClawTest extends LinearOpMode {
     to test claw be spinning
      */
 
-    DcMotor Claw, Slide;
+    DcMotor Claw, Slide, BIS;
 
     public void runOpMode() {
 
@@ -39,6 +39,7 @@ public class ClawTest extends LinearOpMode {
             }
             jacobsintake(graber);
             slide(slidePow);
+            BIS.setPower(-gamepad1.right_stick_y);
         }
     }
 
@@ -50,6 +51,9 @@ public class ClawTest extends LinearOpMode {
         Slide.setMode(RUN_USING_ENCODER);
         Slide.setZeroPowerBehavior(BRAKE);
         Slide.setDirection(FORWARD);
+        BIS = hardwareMap.get(DcMotor.class, "Ben is stupid");
+        BIS.setZeroPowerBehavior(BRAKE);
+        BIS.setDirection(FORWARD);
     }
 
     public void jacobsintake(double graber) {
