@@ -28,19 +28,19 @@ public class PinpointDrive extends MecanumDrive {
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
         The X pod offset refers to how far sideways from the tracking point the
         X (forward) odometry pod is. Left of the center is a positive number,
-        right of center is a negative number. the Y pod offset refers to how far forwards from
-        the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
+        right of the center is a negative number. The Y pod offset refers to how far forwards from
+        the tracking point the Y (strafe) odometry pod is: forward of the center is a positive number,
         backwards is a negative number.
          */
-        //these are tuned for 3110-0002-0001 Product Insight #1
+        //These are tuned for 3110-0002-0001 Product Insight #1
         // RR localizer note: These units are inches, presets are converted from mm (which is why they are inexact)
         public double xOffset = -3.3071;
         public double yOffset = -6.6142;
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
-        the goBILDA_SWINGARM_POD, or the goBILDA_4_BAR_POD.
-        If you're using another kind of odometry pod, input the number of ticks per millimeter of that pod.
+        the goBILDA_SWINGARM_POD or the goBILDA_4_BAR_POD.
+        If you're using another kind of odometry pod, input the number of ticks per millimeter for that pod.
 
         RR LOCALIZER NOTE: this is ticks per MILLIMETER, NOT inches per tick.
         This value should be more than one; the value for the Gobilda 4 Bar Pod is approximately 20.
