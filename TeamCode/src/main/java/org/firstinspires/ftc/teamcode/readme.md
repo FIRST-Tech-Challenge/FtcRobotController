@@ -1,21 +1,3 @@
-HARDWARE MAP:
-
-
-
-DcMotor     |       frontRightMotor     |       Port Number
-DcMotor     |       frontLeftMotor      |       Port Number    
-DcMotor     |       backRightMotor      |       Port Number
-DcMotor     |       backLeftMotor       |       Port Number
-
-
-
-
-
-
-
-
-
-
 ## TeamCode Module
 
 Welcome!
