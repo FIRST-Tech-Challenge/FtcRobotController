@@ -91,15 +91,8 @@ public class TestingHardwareMap extends TeamHardwareMap {
      * Get all DcMotors associated with driving
      * @return Array of DcMotors, in order of FrontRight | FrontLeft | BackRight | BackLeft
      */
-    public static DcMotor[] GetDriveMotors(HardwareMap hardwareMap) {
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
-
-        return new DcMotor[] {frontRightMotor, frontLeftMotor, backRightMotor, backLeftMotor};
+    public DcMotor[] GetDriveMotors() {
+        return new DcMotor[] {FrontRightMotor, FrontLeftMotor, BackRightMotor, BackLeftMotor};
 
     }
 }

@@ -12,12 +12,15 @@ import org.firstinspires.ftc.teamcode.Mecanum;
  */
 @TeleOp(name="Basic: Movement Test Linear OpMode", group="Linear OpMode")
 public class MovementTestTeleOp extends LinearOpMode {
+
+    private TestingHardwareMap teamHardwareMap;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        DcMotor[] motors = TestingHardwareMap.GetDriveMotors(hardwareMap);
+        DcMotor[] motors = teamHardwareMap.GetDriveMotors();
         Mecanum m = Mecanum.Init(motors[0], motors[1], motors[2], motors[3]);
 
         waitForStart();
