@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
@@ -8,54 +10,64 @@ public class AlignRobotToAprilTagYAction extends Action {
 
     DriveTrain driveTrain;
     FieldPosition fieldPosition;
-    VisionPortalProcessor visionPortalProcessor;
+    VisionPortalManager visionPortalManager;
 
     List<AprilTagDetection> myAprilTagDetections;
 
     MoveRobotStraightInchesAction straight;
 
-    public AlignRobotToAprilTagYAction(Action dependentAction, FieldPosition fieldPosition, DriveTrain driveTrain, VisionPortalProcessor visionPortalProcessor) {
+    public AlignRobotToAprilTagYAction(Action dependentAction, FieldPosition fieldPosition, DriveTrain driveTrain, VisionPortalManager visionPortalManager) {
         this.dependentAction = dependentAction;
         this.driveTrain = driveTrain;
         this.fieldPosition = fieldPosition;
-        this.visionPortalProcessor = visionPortalProcessor;
+        this.visionPortalManager = visionPortalManager;
     }
 
-    public AlignRobotToAprilTagYAction(FieldPosition fieldPosition, DriveTrain driveTrain, VisionPortalProcessor visionPortalProcessor) {
+    public AlignRobotToAprilTagYAction(FieldPosition fieldPosition, DriveTrain driveTrain, VisionPortalManager visionPortalManager) {
         this.dependentAction = new DoneStateAction();
         this.driveTrain = driveTrain;
         this.fieldPosition = fieldPosition;
-        this.visionPortalProcessor = visionPortalProcessor;
+        this.visionPortalManager = visionPortalManager;
     }
 
     public double getDistanceToMoveY () {
         double distanceToBoard;
         double avgDistanceToBoard = 0;
 
-        myAprilTagDetections = visionPortalProcessor.getAprilTagProcessor().getDetections();
+        myAprilTagDetections = visionPortalManager.getAprilTagProcessor().getDetections();
 
-        for (AprilTagDetection detection : myAprilTagDetections) {
-            distanceToBoard = detection.ftcPose.y;
-            avgDistanceToBoard += distanceToBoard;
+        if (myAprilTagDetections.size() > 0) {
+
+            for (AprilTagDetection detection : myAprilTagDetections) {
+                distanceToBoard = detection.ftcPose.y;
+                avgDistanceToBoard += distanceToBoard;
+            }
+
+            avgDistanceToBoard /= myAprilTagDetections.size();
+            Log.d("yaction", "avg distance is " + avgDistanceToBoard);
+
         }
-
-        avgDistanceToBoard /= myAprilTagDetections.size();
-
         return avgDistanceToBoard;
     }
 
     @Override
     boolean checkDoneCondition() {
-        return straight.getIsDone();
+        if(straight.getIsDone()) {
+            driveTrain.setPower(0);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     void update() {
         if (!hasStarted) {
-            visionPortalProcessor.getVisionPortal().setProcessorEnabled(visionPortalProcessor.getAprilTagProcessor(), false);
-            straight = new MoveRobotStraightInchesAction(getDistanceToMoveY(), driveTrain);
+            straight = new MoveRobotStraightInchesAction(-getDistanceToMoveY() + 3, driveTrain);
+            hasStarted = true;
         }
 
-        straight.update();
+        straight.updateCheckDone();
+
     }
 }

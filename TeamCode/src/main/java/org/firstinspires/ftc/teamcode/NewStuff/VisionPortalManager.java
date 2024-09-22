@@ -3,16 +3,11 @@ package org.firstinspires.ftc.teamcode.NewStuff;
 import android.util.Log;
 import android.util.Size;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.NewStuff.PropDetector;
-import org.firstinspires.ftc.teamcode.NewStuff.PropProcessor;
-import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-public class VisionPortalProcessor {
+public class VisionPortalManager {
 
     private PropProcessor propProcessor;
     private AprilTagProcessor aprilTagProcessor;
@@ -22,7 +17,7 @@ public class VisionPortalProcessor {
 
     boolean isRedAlliance;
 
-    public VisionPortalProcessor(OpModeUtilities opModeUtilities, boolean isRedAlliance) {
+    public VisionPortalManager(OpModeUtilities opModeUtilities, boolean isRedAlliance) {
         this.opModeUtilities = opModeUtilities;
         this.isRedAlliance = isRedAlliance;
         setUpVisionPortal();

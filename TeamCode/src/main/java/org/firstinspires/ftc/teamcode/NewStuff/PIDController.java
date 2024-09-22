@@ -39,6 +39,8 @@ public class PIDController {
         if (Math.abs(currentPos) < rampUpTicks) {
             if (targetPos > currentPos) {
                 power = 0.3 + (0.55 * (currentPos / rampUpTicks));
+            } else if (targetPos == currentPos) {
+                power = 0;
             } else {
                 power = -0.3 + (0.55 * (currentPos / rampUpTicks));
             }
@@ -90,6 +92,7 @@ public class PIDController {
             } else {
                 return inches * IN_TO_TICK + SLIDING_DISTANCE;
             }
+
         } else {
             return inches * 51;
         }
