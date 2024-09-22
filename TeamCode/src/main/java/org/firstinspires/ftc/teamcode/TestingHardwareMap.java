@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  * Class to provide a helpful abstraction layer for accessing the HardwareMap
  */
 public class TestingHardwareMap {
-
     /*
         | FRW               | Front Right Wheel     | Expansion Hub Motor 0   |
         | FLW               | Front Left Wheel      | Control Hub Motor 0     |
