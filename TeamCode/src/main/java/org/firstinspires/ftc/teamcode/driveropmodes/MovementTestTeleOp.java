@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.hardwaremaps.TestingHardwareMap;
 import org.firstinspires.ftc.teamcode.Mecanum;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -17,12 +16,6 @@ import java.util.stream.IntStream;
  */
 @TeleOp(name="Basic: Movement Test Linear OpMode", group="Linear OpMode")
 public class MovementTestTeleOp extends LinearOpMode {
-
-    enum MoveDir {
-        FORWARD,
-        BACKWARD
-    }
-
     private TestingHardwareMap teamHardwareMap;
 
     @Override
@@ -51,7 +44,7 @@ public class MovementTestTeleOp extends LinearOpMode {
 
             m.Move(current_gp);
 
-            if(gamepad1.left_bumper && !prev_gp.left_bumper) {
+            if(current_gp.left_bumper && !prev_gp.left_bumper) {
                 dir = -dir;
                 telemetry.addData("Current motor direction", dir);
             }
