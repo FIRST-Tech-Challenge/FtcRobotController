@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.examples.TeleOpEnhancements;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
 
 @TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
@@ -11,6 +13,8 @@ public class TeleOpMode extends OpMode {
     Arm arm;
     Intake intake;
     TeleOpEnhancements TPE;
+    Vector driveVector;
+    Vector headingVector;
 
     double y;
     double x;
@@ -25,18 +29,20 @@ public class TeleOpMode extends OpMode {
         TPE = new TeleOpEnhancements();
         TPE.init(); // Initialize TPE and its components
 
-        // Verify TPE initialization
-        if (TPE.follower != null) {
-            TPE.follower.startTeleopDrive();
-        } else {
-            telemetry.addData("Error", "TPE Follower is not initialized.");
-        }
+        driveVector = new Vector();
+        headingVector = new Vector();
+
     }
 
     @Override
     public void loop() {
+        driveVector.setOrthogonalComponents(-applyResponseCurve(gamepad1.left_stick_y), -applyResponseCurve(gamepad1.left_stick_x));
+        driveVector.setMagnitude(MathFunctions.clamp(driveVector.getMagnitude(), 0, 1));
+        driveVector.rotateVector(TPE.follower.getPose().getHeading());
 
-        TPE.follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+        headingVector.setComponents(-gamepad1.left_stick_x, TPE.follower.getPose().getHeading());
+
+        TPE.follower.setMovementVectors(TPE.follower.getCentripetalForceCorrection(), headingVector, driveVector);
         TPE.follower.update();
 
         // Drivetrain control
