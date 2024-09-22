@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.driveropmodes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.hardwaremaps.TestingHardwareMap;
 import org.firstinspires.ftc.teamcode.Mecanum;
@@ -17,10 +18,16 @@ import java.util.stream.IntStream;
 @TeleOp(name="Basic: Movement Test Linear OpMode", group="Linear OpMode")
 public class MovementTestTeleOp extends LinearOpMode {
 
+    enum MoveDir {
+        FORWARD,
+        BACKWARD
+    }
+
     private TestingHardwareMap teamHardwareMap;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry.addLine("Testing Hardware Map Linear Op Mode");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -28,6 +35,10 @@ public class MovementTestTeleOp extends LinearOpMode {
         Mecanum m = Mecanum.Init(motors[0], motors[1], motors[2], motors[3]);
 
         int current_motor_selected;
+        int dir = 1;
+
+        Gamepad current_gp = new Gamepad();
+        Gamepad prev_gp = new Gamepad();
 
         waitForStart();
         teamHardwareMap.Runtime.reset();
@@ -35,11 +46,21 @@ public class MovementTestTeleOp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            m.Move(gamepad1);
+            prev_gp.copy(current_gp);
+            current_gp.copy(gamepad1);
+
+            m.Move(current_gp);
+
+            if(gamepad1.left_bumper && !prev_gp.left_bumper) {
+                dir = -dir;
+                telemetry.addData("Current motor direction", dir);
+            }
+
+            int final_dir = dir;
 
             if(gamepad1.right_bumper) {
                 Arrays.stream(motors)
-                        .forEach(x -> x.setPower(1));
+                        .forEach(x -> x.setPower(final_dir));
             } else {
                 Arrays.stream(motors)
                         .forEach(x -> x.setPower(0));
@@ -60,7 +81,8 @@ public class MovementTestTeleOp extends LinearOpMode {
             if(current_motor_selected != -1) {
                 int sel = current_motor_selected;
                 IntStream.range(0, motors.length)
-                        .forEach(x -> motors[x].setPower(x == sel ? 1 : 0));
+                        .forEach(x -> motors[x].setPower(x == sel ? final_dir : 0));
+                telemetry.addData("Moving Motor: ", sel);
             }
         }
 
