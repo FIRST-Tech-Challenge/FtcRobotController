@@ -16,12 +16,6 @@ public class Outtake {
     public Servo hook;
     public Servo pigeonHeadServo;
 
-    LinearOpMode opMode;
-    private double CLAMP_OPEN_POS = 0.471;
-    private double CLAMP_CLOSE_POS = 0.57;
-    private double TRAY_INTAKE_POS = 0.3;
-    private double TRAY_OUTTAKE_POS = 0;
-
     private double PIGEON_HEAD_DEFAULT_POS = 0.5;
 
     private double PIGEON_HEAD_ANGLE_MAX = PIGEON_HEAD_DEFAULT_POS + 0.18;
@@ -48,9 +42,16 @@ public class Outtake {
         lsBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lsBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
         lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+    }
+
+    public OpModeUtilities getOpModeUtilities() {
+        return opModeUtilities;
     }
 
     /*

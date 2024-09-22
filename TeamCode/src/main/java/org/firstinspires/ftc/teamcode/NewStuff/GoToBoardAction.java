@@ -1,18 +1,13 @@
 package org.firstinspires.ftc.teamcode.NewStuff;
 
 import android.util.Log;
-import android.view.animation.AccelerateInterpolator;
 
-import com.kalipsorobotics.fresh.Vision;
-
-import java.lang.reflect.Field;
-
-public class GoToPropAction extends Action{
+public class GoToBoardAction extends Action{
 
     CalculateTickInches calculateTickInches;
     DriveTrain driveTrain;
     IMUModule imuModule;
-    VisionPortalProcessor visionPortalProcessor;
+    VisionPortalManager visionPortalManager;
     FieldPosition fieldPosition;
     FieldPosition.PROP_LOCATION propLocation;
 
@@ -23,27 +18,27 @@ public class GoToPropAction extends Action{
     ActionSet actionOuter;
     ActionSet actionCenter;
 
-    public GoToPropAction(FieldPosition fieldPosition, DriveTrain driveTrain, IMUModule imuModule, VisionPortalProcessor visionPortalProcessor, boolean isRedAlliance) {
+    public GoToBoardAction(FieldPosition fieldPosition, DriveTrain driveTrain, IMUModule imuModule, VisionPortalManager visionPortalManager, boolean isRedAlliance) {
         this.dependentAction = new DoneStateAction();
         this.driveTrain = driveTrain;
         this.imuModule = imuModule;
-        this.visionPortalProcessor = visionPortalProcessor;
+        this.visionPortalManager = visionPortalManager;
         this.fieldPosition = fieldPosition;
         this.isRedAlliance = isRedAlliance;
     }
 
-    public GoToPropAction(Action detectPropPositionAction, FieldPosition fieldPosition, DriveTrain driveTrain, IMUModule imuModule, VisionPortalProcessor visionPortalProcessor, boolean isRedAlliance) {
+    public GoToBoardAction(Action detectPropPositionAction, FieldPosition fieldPosition, DriveTrain driveTrain, IMUModule imuModule, VisionPortalManager visionPortalManager, boolean isRedAlliance) {
         this.dependentAction = detectPropPositionAction;
         this.driveTrain = driveTrain;
         this.imuModule = imuModule;
-        this.visionPortalProcessor = visionPortalProcessor;
+        this.visionPortalManager = visionPortalManager;
         this.fieldPosition = fieldPosition;
         this.isRedAlliance = isRedAlliance;
     }
 
     public void initActionSet() {
 
-        int polarity = visionPortalProcessor.getIsRedAlliance() ? -1 : 1;
+        int polarity = visionPortalManager.getIsRedAlliance() ? -1 : 1;
         Log.d("goprop", "init polarity");
 
         Log.d("goprop", "init action set");

@@ -5,26 +5,22 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.NewStuff.ActionSet;
 import org.firstinspires.ftc.teamcode.NewStuff.AlignRobotToAprilTagXAction;
 import org.firstinspires.ftc.teamcode.NewStuff.AlignRobotToAprilTagYAction;
 import org.firstinspires.ftc.teamcode.NewStuff.DetectPropPositionAction;
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
 import org.firstinspires.ftc.teamcode.NewStuff.DroneLauncher;
+import org.firstinspires.ftc.teamcode.NewStuff.DropPixelAction;
 import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
-import org.firstinspires.ftc.teamcode.NewStuff.GoToPropAction;
+import org.firstinspires.ftc.teamcode.NewStuff.GoToBoardAction;
 import org.firstinspires.ftc.teamcode.NewStuff.IMUModule;
 import org.firstinspires.ftc.teamcode.NewStuff.Intake;
-import org.firstinspires.ftc.teamcode.NewStuff.MoveRobotStraightInchesAction;
+import org.firstinspires.ftc.teamcode.NewStuff.MecanumRobotAction;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 import org.firstinspires.ftc.teamcode.NewStuff.Outtake;
 import org.firstinspires.ftc.teamcode.NewStuff.PropDetector;
-import org.firstinspires.ftc.teamcode.NewStuff.TurnRobotAction;
-import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalProcessor;
-
-import java.lang.reflect.Field;
+import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
 
 @Autonomous
 public class TestAuto extends LinearOpMode {
@@ -45,7 +41,7 @@ public class TestAuto extends LinearOpMode {
         FieldPosition fieldPosition = new FieldPosition(isRedAlliance, longPath);
 
         Log.d("vision", "opmode: making portal processor");
-        VisionPortalProcessor visionPortalProcessor = new VisionPortalProcessor(opModeUtilities, isRedAlliance);
+        VisionPortalManager visionPortalManager = new VisionPortalManager(opModeUtilities, isRedAlliance);
         Log.d("vision", "opmode: made portal processor");
         driveTrain = new DriveTrain(opModeUtilities);
 //        robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry);
@@ -56,18 +52,26 @@ public class TestAuto extends LinearOpMode {
 
         Log.d("vision", "opmode: making action");
 
+        visionPortalManager.getVisionPortal().setProcessorEnabled(visionPortalManager.getAprilTagProcessor(), false);
+        visionPortalManager.getVisionPortal().setProcessorEnabled(visionPortalManager.getPropProcessor(), false);
+
+
         ActionSet outer = new ActionSet();
 
+        outer.scheduleSequential(new DetectPropPositionAction(visionPortalManager, fieldPosition, false));
+        outer.scheduleSequential(new GoToBoardAction(fieldPosition, driveTrain, imuModule, visionPortalManager, isRedAlliance));
         // first detect marker
-        outer.scheduleSequential(new AlignRobotToAprilTagXAction(fieldPosition,driveTrain,visionPortalProcessor));
+        outer.scheduleSequential(new AlignRobotToAprilTagXAction(fieldPosition,driveTrain, visionPortalManager));
         // then go to prop
-        outer.scheduleSequential(new AlignRobotToAprilTagYAction(fieldPosition,driveTrain,visionPortalProcessor));
+        outer.scheduleSequential(new AlignRobotToAprilTagYAction(fieldPosition,driveTrain,visionPortalManager));
+        outer.scheduleSequential(new DropPixelAction(outtake));
 
         //todo combine both into a single action
 
-        // DetectPropPositionAction detectMarkerPos = new DetectPropPositionAction(visionPortalProcessor, fieldPosition, false);
+
         //TurnDroneLauncherWheelAction droneLauncherWheelAction = new TurnDroneLauncherWheelAction(0, droneLauncher);
         // Log.d("vision", "opmode: made action");
+
 
         // Log.d("auto", "heading is" + imuModule.getIMU().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         // Log.d("auto", "current lcoation is " + driveTrain.getfLeftTicks());
@@ -76,7 +80,7 @@ public class TestAuto extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() /* && !outer.getIsDone() */) {
             outer.updateCheckDone();
         }
     }

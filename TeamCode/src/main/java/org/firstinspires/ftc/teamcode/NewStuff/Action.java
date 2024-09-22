@@ -8,7 +8,7 @@ public abstract class Action {
     boolean isDone = false;
     boolean hasStarted = false;
 
-    boolean getIsDone() {
+    public boolean getIsDone() {
         return isDone;
     }
     void setDependentAction(Action newAction) {

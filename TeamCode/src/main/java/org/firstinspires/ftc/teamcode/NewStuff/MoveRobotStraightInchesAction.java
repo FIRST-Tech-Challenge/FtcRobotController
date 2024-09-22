@@ -57,6 +57,8 @@ public class MoveRobotStraightInchesAction extends Action {
             hasStarted = true;
         }
 
-        driveTrain.setPower(straightController.calculatePID(currentTicks, targetTicks));
+        if(!isDone){
+            driveTrain.setPower(straightController.calculatePID(currentTicks, targetTicks));
+        }
     }
 }

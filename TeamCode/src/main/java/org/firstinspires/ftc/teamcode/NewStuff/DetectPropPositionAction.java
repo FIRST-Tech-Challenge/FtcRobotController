@@ -4,11 +4,9 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.lang.reflect.Field;
-
 public class DetectPropPositionAction extends Action {
     ElapsedTime elapsedTime;
-    VisionPortalProcessor visionPortalProcessor;
+    VisionPortalManager visionPortalManager;
     FieldPosition fieldPosition;
     PropDetector.PROP_POSITION position;
     Boolean longPath;
@@ -16,20 +14,20 @@ public class DetectPropPositionAction extends Action {
     double time;
     boolean timeStarted = false;
 
-    public DetectPropPositionAction(Action dependentAction, VisionPortalProcessor visionProcessor, FieldPosition fieldPosition, Boolean longPath) {
+    public DetectPropPositionAction(Action dependentAction, VisionPortalManager visionProcessor, FieldPosition fieldPosition, Boolean longPath) {
         elapsedTime = new ElapsedTime();
-        this.visionPortalProcessor = visionProcessor;
+        this.visionPortalManager = visionProcessor;
         this.fieldPosition = fieldPosition;
         this.dependentAction = dependentAction;
         this.longPath = longPath;
         position = PropDetector.PROP_POSITION.UNKNOWN;
     }
 
-    public DetectPropPositionAction(VisionPortalProcessor visionPortalProcessor, FieldPosition fieldPosition, Boolean longPath) {
+    public DetectPropPositionAction(VisionPortalManager visionPortalManager, FieldPosition fieldPosition, Boolean longPath) {
         Log.d("vision", "action: constructing");
         elapsedTime = new ElapsedTime();
         Log.d("vision", "action: about to set vision portal processor field");
-        this.visionPortalProcessor = visionPortalProcessor;
+        this.visionPortalManager = visionPortalManager;
         Log.d("vision", "action: set up vision portal processor field");
         this.fieldPosition = fieldPosition;
         this.dependentAction = new DoneStateAction();
@@ -50,7 +48,7 @@ public class DetectPropPositionAction extends Action {
                 fieldPosition.setWantedAprTagId(position, PropDetector.ALLIANCE_COLOR.BLUE);
             }
 
-            visionPortalProcessor.getVisionPortal().setProcessorEnabled(visionPortalProcessor.getPropProcessor(), false);
+            visionPortalManager.getVisionPortal().setProcessorEnabled(visionPortalManager.getPropProcessor(), false);
             Log.d("vision", "action: finished action");
             return true;
         }
@@ -64,7 +62,7 @@ public class DetectPropPositionAction extends Action {
             Log.d("vision","action: started detecting");
             time = elapsedTime.milliseconds();
             position = PropDetector.PROP_POSITION.UNDETECTED;
-            visionPortalProcessor.getVisionPortal().setProcessorEnabled(visionPortalProcessor.getPropProcessor(), true);
+            visionPortalManager.getVisionPortal().setProcessorEnabled(visionPortalManager.getPropProcessor(), true);
             timeStarted = true;
         }
 
@@ -72,9 +70,9 @@ public class DetectPropPositionAction extends Action {
         int i =  0;
         if (position == PropDetector.PROP_POSITION.UNDETECTED || position == PropDetector.PROP_POSITION.UNKNOWN) {
             i++;
-            Log.d("vision", "action: " + i + " undetected marker, keep looking" + visionPortalProcessor.getVisionPortal().getCameraState());
-            position = visionPortalProcessor.getPropProcessor().getPosition();
-            Log.d("vision", "action: get position is" + visionPortalProcessor.getPropProcessor().getPosition());
+            Log.d("vision", "action: " + i + " undetected marker, keep looking" + visionPortalManager.getVisionPortal().getCameraState());
+            position = visionPortalManager.getPropProcessor().getPosition();
+            Log.d("vision", "action: get position is" + visionPortalManager.getPropProcessor().getPosition());
             //Log.d("color detection", String.valueOf(propProcessor.avgCenterCb));
             //Log.d("color detection", String.valueOf(markerProcessor.avgRightCb));
             //Log.d("color detection", String.valueOf(propProcessor.avgCenterCr));
@@ -94,8 +92,8 @@ public class DetectPropPositionAction extends Action {
 
         //print position
         Log.d("vision", "action: done process, detected position: " + position);
-        visionPortalProcessor.getOpModeUtilities().getTelemetry().addData("position", position);
-        visionPortalProcessor.getOpModeUtilities().getTelemetry().update();
+        visionPortalManager.getOpModeUtilities().getTelemetry().addData("position", position);
+        visionPortalManager.getOpModeUtilities().getTelemetry().update();
     }
 
     public FieldPosition.PROP_LOCATION getPropLocation() {
