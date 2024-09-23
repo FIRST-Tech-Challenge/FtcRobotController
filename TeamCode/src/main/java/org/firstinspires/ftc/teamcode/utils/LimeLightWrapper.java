@@ -7,12 +7,23 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class LimeLightWrapper {
     Limelight3A limelight;
     //The position of each april tag on the field 
     public static final Vector2d[] APRIL_TAG_POSITIONS = new Vector2d[]{
+            //11
+            new Vector2d(-72,-48),
+            //12
+            new Vector2d(0,72),
+            //13
+            new Vector2d(72,-48),
+            //14
+            new Vector2d(72,48),
+            //15
+            new Vector2d(0,-72),
+            //16
+            new Vector2d(-72,48)
 
     };
 
@@ -57,9 +68,9 @@ public class LimeLightWrapper {
         }
         return null;
     }
-    //takes a pose3d from a distance from the tag and localizes it based on which April tag it is 
+    //takes a pose3d from a distance from the tag and localizes it based on which April tag it is
     public Pose3D localize(int i,Pose3D pose3D) {
-        Vector2d vector2d = APRIL_TAG_POSITIONS[i];
+        Vector2d vector2d = APRIL_TAG_POSITIONS[i-11];
         double x = vector2d.x+pose3D.getPosition().x;
         double y = vector2d.y+pose3D.getPosition().y;
         double z = 0;
