@@ -62,7 +62,7 @@ public class TestingHardwareMap extends TeamHardwareMap {
         motor.setDirection(dir);
     }
 
-    private void ConfigureOdometerMotor(DcMotorEx motor, string name, DcMotorSimple.Direction dir) {
+    private void ConfigureOdometerMotor(DcMotorEx motor, string name) {
         motor = hardwareMap.get(DcMotorEx.class, name);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
