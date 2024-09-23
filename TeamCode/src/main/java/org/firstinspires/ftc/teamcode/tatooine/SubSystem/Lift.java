@@ -15,10 +15,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 public class Lift {
     DcMotorEx liftMotor = null;
     Telemetry telemetry;
-    private boolean didntFinishedHanging = true;
+    private boolean FinishedHangingNot = true;
     private double power = 0;
     private static boolean isDebug = false;
-    private boolean initialized = false;
+
 
     public Lift(OpMode opMode, boolean isDebug) {
         telemetry = opMode.telemetry;
@@ -46,6 +46,7 @@ public class Lift {
             }
         }
         return new setPowerAction();
+
     }
 
     public void resetEncoders() {
@@ -60,12 +61,12 @@ public class Lift {
         this.liftMotor = liftMotor;
     }
 
-    public boolean isDidntFinishedHanging() {
-        return didntFinishedHanging;
+    public boolean isFinishedHangingNot() {
+        return FinishedHangingNot;
     }
 
-    public void setDidntFinishedHanging(boolean didntFinishedHanging) {
-        this.didntFinishedHanging = didntFinishedHanging;
+    public void setFinishedHangingNot(boolean finishedHangingNot) {
+        this.FinishedHangingNot = finishedHangingNot;
     }
 
     public double getPower() {
@@ -87,28 +88,33 @@ public class Lift {
     public class setPowerAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            while (liftMotor.getCurrentPosition() >= 0 && !initialized) {
+            while (liftMotor.getCurrentPosition() >= 0 && !FinishedHangingNot) {
                 liftMotor.setPower(1);
                 if (isDebug) {
                     telemetryPacket.put("liftUp", true);
+                    telemetryPacket.put("power", liftMotor.getPower());
+                    telemetry.addData("liftUp", true);
+                    telemetry.addData("Power",liftMotor.getPower());
                 }
             }
-            while (liftMotor.getCurrentPosition() <= 0 && !initialized) {
+            while (liftMotor.getCurrentPosition() <= 0 && !FinishedHangingNot) {
                 liftMotor.setPower(-1);
                 if (isDebug) {
-                    telemetryPacket.put("firstAscend", true);
+                    telemetry.addData("firstAscend", true);
                 }
             }
-            while (liftMotor.getCurrentPosition() <= 0 && !initialized) {
+            while (liftMotor.getCurrentPosition() <= 0 && !FinishedHangingNot) {
                 liftMotor.setPower(1);
                 if (isDebug) {
                     telemetryPacket.put("liftUpSecondTime", true);
+                    telemetry.addData("liftUpSecondTime", true);
                 }
             }
             if (isDebug) {
                 telemetryPacket.put("secondAscend", true);
+                telemetry.addData("secondAscend", true);
             }
-            if (!initialized) {
+            if (!FinishedHangingNot) {
                 liftMotor.setPower(-1);
             }
             return true;
