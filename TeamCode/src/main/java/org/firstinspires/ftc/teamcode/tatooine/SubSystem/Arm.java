@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 
 public class Arm {
 
+    //TODO change values to real ones (touch grass)
     private final double ANGLE_TOLERANCE = 0;//deg
     private final double EXTEND_TOLERANCE = 0;//mm
     private final double EXTEND_CPR = 0;
@@ -21,12 +23,14 @@ public class Arm {
     private final double SPOOL_DIM = 0;//mm
     private final double angle = 0;
     private final double length = 0;
-    private Telemetry telemetry;
-    private boolean isDebug;
+    private final double AMP_LIMIT = 0;
+
     private PIDFController anglePID = new PIDFController(0, 0, 0, 0);
     private PIDFController extendPID = new PIDFController(0, 0, 0, 0);
     private DcMotorEx angleMotor;
     private DcMotorEx extendMotor;
+    private Telemetry telemetry;
+    private boolean isDebug;
 
     public Arm(OpMode opMode, boolean isDebug) {
 
@@ -39,6 +43,26 @@ public class Arm {
 
         extendPID.setTolerance(EXTEND_TOLERANCE);
         anglePID.setTolerance(ANGLE_TOLERANCE);
+
+    }
+    public void init(){
+        //TODO change directions if needed
+        //angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //extendMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        resetEncoders();
+
+    }
+    public void resetEncoders(){
+        resetExtendEncoder();
+        resetAngleEncoder();
+    }
+    public void resetExtendEncoder(){
+        extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void resetAngleEncoder(){
+        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public double getAngle() {

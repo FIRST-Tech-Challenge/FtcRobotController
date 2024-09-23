@@ -18,7 +18,7 @@ public class Lift {
     private boolean FinishedHangingNot = true;
     private double power = 0;
     private boolean isDebug = false;
-    private final double ampLimit = 0;
+    private final double AMP_LIMIT = 0;
 
 
     public Lift(OpMode opMode, boolean isDebug) {
@@ -32,7 +32,6 @@ public class Lift {
 
     public void init() {
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetEncoders();
         if (isDebug) {
             telemetry.addData("LiftInit", true);
@@ -40,7 +39,7 @@ public class Lift {
     }
 
     public Action hanging() {
-        if (liftMotor.getCurrent(CurrentUnit.AMPS) <= ampLimit && power < 0) {
+        if (liftMotor.getCurrent(CurrentUnit.AMPS) <= AMP_LIMIT && power < 0) {
             resetEncoders();
             if (isDebug) {
                 telemetry.addData("LiftEncoder", liftMotor.getCurrentPosition());
@@ -52,6 +51,7 @@ public class Lift {
 
     public void resetEncoders() {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public DcMotorEx getLiftMotor() {
