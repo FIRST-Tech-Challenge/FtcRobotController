@@ -52,7 +52,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
     
     public void drive(double forward, double strafe, double turn) {
-        Constants.DriveConstants.FIELD_CENTRIC ? driveFieldCentric(forward, strafe, turn) : driveRobotCentric(forward, strafe, turn);
+        if(Constants.DriveConstants.FIELD_CENTRIC) driveFieldCentric(forward, strafe, turn); else driveRobotCentric(forward, strafe, turn);
     }
 
     private void driveFieldCentric(double forward, double strafe, double turn) {
