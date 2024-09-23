@@ -1,5 +1,3 @@
-## Please Switch to the goBILDA-Odometry-Driver Branch to use this reository. The master branch contains only the FTC SDK.
-
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
@@ -13,11 +11,11 @@ commonly associated with Dead Wheel Odometry systems. It reads two encoders, and
 system of sensors to determine the robot's current heading, X position, and Y position.
 
 ## How to use? 
-If you are already an Android Studio team, and are using git, you can add this repo as a git remote, and this will allow you to easily pull just the three files which this repo adds to the SDK. GoBildaPinpointDriver, SensorGoBildaPinpointExample, and Pose2D. You can add a remote to Android Studio by going to Git, then Manage Remotes in the navigation bar. Once you've added this Remote, click on the branch icon near the name of your curent project and find the new remote. There should be a branch called "goBILDA-Odometry-Driver", select that, and select "Pull into (yourbranch) using merge". There may be a conflict with the readme file, just accept your's. And you'll be off to the races!
+If you are already an Android Studio team, and are using git, you can add this repo as a git remote, and this will allow you to easily pull just the two files which this repo adds to the SDK. GoBildaPinpointDriver and SensorGoBildaPinpointExample. You can add a remote to Android Studio by going to Git, then Manage Remotes in the navigation bar. Once you've added this Remote, click on the branch icon near the name of your curent project and find the new remote. There should be a branch called "goBILDA-Odometry-Driver", select that, and select "Pull into (yourbranch) using merge". There may be a conflict with the readme file, just accept your's. And you'll be off to the races!
 
-If you do not already have a github project for your team/season, you can clone this repository. Just make sure to note that only the branch titled "goBILDA-Odometry-Driver" has the driver and example files.
+If you do not already have a github project for your team/season, you can clone this repository. Just make sure to note that only the branch titled "goBILDA-Odometry-Driver" has the driver and example file.
 
-If you would like to just download the driver files and example code, you can find them here: just click the download button in the top right and put those three files in your teamcode folder.
+If you would like to just download the driver files and example code, you can find them here: just click the download button in the top right and put those two files in your teamcode folder.
 
 ### Direct link to driver and example files:
 https://github.com/goBILDA-Official/goBILDA-Pinpoint-Odometry-Computer-FTC-Driver/tree/goBILDA-Odometry-Driver/TeamCode/src/main/java/org/firstinspires/ftc/teamcode
