@@ -18,14 +18,14 @@ public class AutonomousWithSensors extends LinearOpMode {
         // then it runs the rest of the program
 
         //forward
-//        robot.bleft.setVelocity(-400);
-//        robot.fleft.setVelocity(400);
-//        robot.fright.setVelocity(400);
-//        robot.bright.setVelocity(-400);
-//        sleep(2000);
-        robot.strafeL(1000, 500);
+        robot.bleft.setVelocity(-400);
+        robot.fleft.setVelocity(400);
+        robot.fright.setVelocity(400);
+        robot.bright.setVelocity(-400);
         sleep(2000);
-        robot.strafeR(1000, 500);
+//        robot.strafeL(1000, 500);
+//        sleep(2000);
+//        robot.strafeR(1000, 500);
         /*robot.goStraight(920, 250);
         robot.newTurnFunction(-93);
         robot.goStraight(900, 200);

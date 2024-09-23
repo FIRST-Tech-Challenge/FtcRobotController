@@ -1,24 +1,34 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUNew;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
+import com.qualcomm.robotcore.hardware.IMU.Parameters;
+
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class RobotInitialize {
 
     // Initialization Phase
 
     // Create servo variables
-    Servo pitch;
+    //Servo pitch;
     //Servo lClaw;
     //Servo rClaw;
 
@@ -30,8 +40,9 @@ public class RobotInitialize {
 
 
     // Create empty gyroscope variable
-    BNO055IMU gyroScope;
-    BNO055IMU.Parameters settings;
+    BHI260IMU gyroScope;
+    BHI260IMU.Parameters settings;
+
     Orientation lastAngles = new Orientation();
     double globalAngle;
 
@@ -54,7 +65,7 @@ public class RobotInitialize {
         fleft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 // map the servos to the hardware map
-        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
+//        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
         //lClaw = opMode.hardwareMap.get(Servo.class, "lClaw");
         //rClaw = opMode.hardwareMap.get(Servo.class, "rClaw");
 
@@ -74,19 +85,25 @@ public class RobotInitialize {
         bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Initialize Gyroscope
-        gyroScope = opMode.hardwareMap.get(BNO055IMU.class, "gyroScope");
-        settings = new BNO055IMU.Parameters();
-        settings.mode = BNO055IMU.SensorMode.IMU;
-        settings.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        settings.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        settings.loggingEnabled = false;
+        gyroScope = opMode.hardwareMap.get(BHI260IMU.class, "gyroScope");
+
+        //1st approach (works for orthogonal mounting): RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
+
+        RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(new Orientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,0));
+        settings = new BHI260IMU.Parameters(ori);
+        AngularVelocity angularVelocity = gyroScope.getRobotAngularVelocity(AngleUnit.DEGREES);
+        YawPitchRollAngles orientation = gyroScope.getRobotYawPitchRollAngles();
+//        settings.mode= BHI260IMU.SensorMode.IMU;
+//        settings.angleUnit = BHI260IMU.AngleUnit.DEGREES;
+//        settings.accelUnit = BHI260IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        settings.loggingEnabled = false;
         gyroScope.initialize(settings);
 
-        while (!gyroScope.isGyroCalibrated()) {
-            //Wait
-            opMode.telemetry.addLine("GYRO WAITING...");
-            opMode.telemetry.update();
-        }
+//        while (!gyroScope.isCalibrated()){
+//            //Wait
+//            opMode.telemetry.addLine("GYRO WAITING...");
+//            opMode.telemetry.update();
+//        }
     }
 
 //    public void makeSquare() {
@@ -101,7 +118,8 @@ public class RobotInitialize {
 //    }
 
     private double getAngle() {
-        Orientation angles = gyroScope.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = gyroScope.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        Orientation angles = gyroScope.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
         if (deltaAngle < -180)
             deltaAngle += 360;
