@@ -14,10 +14,10 @@ public class Test extends LinearOpMode {
         EasyGamepad easyGamepad1 = new EasyGamepad(gamepad1);
         EasyGamepad easyGamepad2 = new EasyGamepad(gamepad2);
         while (opModeIsActive()){
-            easyGamepad1 = new EasyGamepad(gamepad1);
-            easyGamepad1 = new EasyGamepad(gamepad2);
+            easyGamepad1.update(gamepad1);
+            easyGamepad2.update(gamepad2);
             Actions.runBlocking(
-                    intake.setPowerAction(1)
+                    intake.intake()
             );
         }
     }

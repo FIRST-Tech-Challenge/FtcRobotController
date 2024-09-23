@@ -19,5 +19,17 @@ public class MathUtil {
         }
         return input;
     }
+    public static double convertTicksToDistance(double CPR,double diameter,double ticks) {
+        double circumference = Math.PI * diameter;
+        double revolutions = ticks/CPR;
+        double distance = circumference * revolutions;
+        return distance;
+    }
+    public static double convertDistanceToTicks(double CPR,double diameter,double distance) {
+        double circumference = Math.PI * diameter;
+        double revolutions = distance/circumference;
+        double ticks = revolutions*CPR;
+        return ticks;
+    }
 }
 

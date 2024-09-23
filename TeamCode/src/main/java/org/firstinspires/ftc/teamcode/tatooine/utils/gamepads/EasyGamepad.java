@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.tatooine.utils.gamepads;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class EasyGamepad{
-
     boolean triangleTap = false;
     boolean circleTap = false;
     boolean crossTap = false;
@@ -124,6 +123,9 @@ public class EasyGamepad{
     public boolean wasLeftBumperDoubleTapped(){
         getLeftBumper();
         return leftBumperTap;
+    }
+    public void update(Gamepad gamepad){
+        this.gamepad.copy(gamepad);
     }
     public double getRightStickXPower (){
         return  gamepad.right_stick_x;
