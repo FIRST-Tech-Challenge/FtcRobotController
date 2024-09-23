@@ -31,5 +31,11 @@ public class MathUtil {
         double ticks = revolutions*CPR;
         return ticks;
     }
+    public static double convertTicksToDegries(double CPR,double ticks){
+        double revolutions = ticks/CPR;
+        double angle = revolutions * 360;
+        double angleNormalized = angle % 360;
+        return angleNormalized;
+    }
 }
 

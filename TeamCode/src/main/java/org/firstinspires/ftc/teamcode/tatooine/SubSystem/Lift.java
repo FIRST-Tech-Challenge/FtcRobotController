@@ -41,7 +41,29 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
+    public DcMotorEx getLiftMotor() {
+        return liftMotor;
+    }
 
+    public void setLiftMotor(DcMotorEx liftMotor) {
+        this.liftMotor = liftMotor;
+    }
+
+    public boolean isDidntFinishedHanging() {
+        return didntFinishedHanging;
+    }
+
+    public void setDidntFinishedHanging(boolean didntFinishedHanging) {
+        this.didntFinishedHanging = didntFinishedHanging;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public void setPower(double power) {
+        this.power = power;
+    }
 
     public class setPowerAction implements Action{
         @Override
@@ -54,7 +76,6 @@ public class Lift {
             }
             liftMotor.setPower(-1);
                 return true;
-
         }
     }
 }
