@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 
-import static org.firstinspires.ftc.teamcode.TeleOp.Intake.INTAKE;
-import static org.firstinspires.ftc.teamcode.TeleOp.Intake.OUTTAKE;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -22,6 +20,8 @@ public class Slides {
     public static int HIGH = 450;
     public static int MID =358;
     public static int LOW =2;
+    public static int INTAKE = 0;
+
     int position;
     //
     private HardwareMap hardwareMap;
@@ -53,9 +53,51 @@ public class Slides {
         leftSlide.setPower(1);
         rightSlide.setPower(1);
         //
-        rightSlide.setTargetPosition((int) INTAKE);
-        leftSlide.setTargetPosition((int) OUTTAKE);
+        rightSlide.setTargetPosition(INTAKE);
+        leftSlide.setTargetPosition(INTAKE);
+    }
+    public void teleOp() {
+        if (gamepad2.dpad_up) slidesHighBasket();
+        else if (gamepad2.dpad_right) slidesLowBasket();
+        else if (gamepad2.dpad_left) slidesLowChamber();
+        else reset();
+        slideManual();
+        if (rightSlide.getCurrentPosition() ==0 && leftSlide.getCurrentPosition() == 0) {
+            gamepad2.rumble(10);
+        }
 
+    }
+    public void slidesHighBasket() {
+        rightSlide.setTargetPosition(HIGH);
+        leftSlide.setTargetPosition(HIGH);
 
+    }
+    public void slidesLowBasket() {
+        //Use this for high chamber
+        rightSlide.setTargetPosition(MID);
+        leftSlide.setTargetPosition(MID);
+
+    }
+    public void slidesLowChamber() {
+        rightSlide.setTargetPosition(LOW);
+        leftSlide.setTargetPosition(LOW);
+
+    }
+    public void reset() {
+        rightSlide.setTargetPosition(INTAKE);
+        leftSlide.setTargetPosition(INTAKE);
+
+    }
+    public void slideManual() {
+        int multiplier = (int) -gamepad2.left_stick_y;
+
+        if (-1 >= gamepad2.left_stick_y
+                && gamepad2.left_stick_y <=1
+                && gamepad2.left_stick_y !=0)
+
+            for (int i = 50; i < 1000; i++ ) {
+                leftSlide.setTargetPosition(multiplier * i++);
+                rightSlide.setTargetPosition(multiplier * i++);
+        }
     }
 }
