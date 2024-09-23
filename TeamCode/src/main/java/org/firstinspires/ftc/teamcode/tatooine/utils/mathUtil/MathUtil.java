@@ -37,5 +37,11 @@ public class MathUtil {
         double angleNormalized = angle % 360;
         return angleNormalized;
     }
+    public static double convertDegriesToTicks(double CPR, double angle){
+        double revolutions = angle/360;
+        double ticks = revolutions *CPR;
+        return ticks;
+
+    }
 }
 
