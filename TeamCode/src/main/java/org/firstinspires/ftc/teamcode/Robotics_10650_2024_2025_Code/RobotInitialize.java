@@ -2,20 +2,12 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMUNew;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.IMU.Parameters;
 
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -201,7 +193,7 @@ public class RobotInitialize {
     }
      */
 
-    // Incomplete
+    // Possibly complete (need to test to determine)
     public void strafeR(int distance, int velocity){
         int relativeDistance = distance + getPosStrafeR();
         // Go forwards or backwards
@@ -217,7 +209,7 @@ public class RobotInitialize {
                 bleft.setVelocity(-velocity);
                 bright.setVelocity(velocity);
                 opMode.telemetry.addData("position", getPosStrafeR());
-                opMode.telemetry.addData("relative istance", relativeDistance);
+                opMode.telemetry.addData("relative distance", relativeDistance);
                 opMode.telemetry.addData("old pos", getAverageEncoderValue());
                 opMode.telemetry.addData("must be greater than 10", Math.abs(getPosStrafeR() - relativeDistance));
                 opMode.telemetry.update();
