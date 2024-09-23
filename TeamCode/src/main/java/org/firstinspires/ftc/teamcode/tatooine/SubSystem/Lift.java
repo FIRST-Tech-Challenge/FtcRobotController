@@ -17,13 +17,9 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
 
 public class Lift {
     DcMotorEx liftMotor = null;
-    PIDFController pidf = new PIDFController(0,0,0,0);
-
-    private int level = 0;
-
-    private double[] levels = {0,1000,2000,3000};
-
+    private boolean didntFinishedHanging = true;
     private double power = 0;
+
 
     public Lift (HardwareMap hardwareMap){
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
@@ -35,12 +31,10 @@ public class Lift {
         resetEncoders();
     }
 
-    public Action setPowerByPIDAndLevels(int level){
-        this.level = level;
-        if(liftMotor.getCurrent(CurrentUnit.AMPS)<=5 && level==0 && power<0){
+    public Action hanging(){
+        if(liftMotor.getCurrent(CurrentUnit.AMPS)<=5 && power<0) {
             resetEncoders();
         }
-        power = pidf.calculate(liftMotor.getCurrentPosition(),levels[level]);
         return new setPowerAction();
     }
     public void resetEncoders(){
@@ -52,8 +46,15 @@ public class Lift {
     public class setPowerAction implements Action{
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            liftMotor.setPower(power);
-            return true;
+            while (liftMotor.getCurrentPosition()>=0) {
+                liftMotor.setPower(-1);
+            }
+            while (liftMotor.getCurrentPosition()<=0){
+                liftMotor.setPower(1);
+            }
+            liftMotor.setPower(-1);
+                return true;
+
         }
     }
 }
