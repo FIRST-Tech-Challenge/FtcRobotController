@@ -8,36 +8,47 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
 
 public class Lift {
     DcMotorEx liftMotor = null;
+    Telemetry telemetry;
     private boolean didntFinishedHanging = true;
     private double power = 0;
+    private static boolean isDebug = false;
+    private boolean initialized = false;
 
-
-    public Lift (HardwareMap hardwareMap){
-        liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+    public Lift(OpMode opMode, boolean isDebug) {
+        telemetry = opMode.telemetry;
+        this.isDebug = isDebug;
+        liftMotor = opMode.hardwareMap.get(DcMotorEx.class, "liftMotor");
+        if (isDebug) {
+            opMode.telemetry.addData("LiftConstructor", true);
+        }
     }
 
-    public void init(){
+    public void init() {
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetEncoders();
+        if (isDebug) {
+            telemetry.addData("LiftInit", true);
+        }
     }
 
-    public Action hanging(){
-        if(liftMotor.getCurrent(CurrentUnit.AMPS)<=5 && power<0) {
+    public Action hanging() {
+        if (liftMotor.getCurrent(CurrentUnit.AMPS) <= 5 && power < 0) {
             resetEncoders();
+            if (isDebug) {
+                telemetry.addData("LiftEncoder", liftMotor.getCurrentPosition());
+            }
         }
         return new setPowerAction();
     }
-    public void resetEncoders(){
+
+    public void resetEncoders() {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -65,17 +76,43 @@ public class Lift {
         this.power = power;
     }
 
-    public class setPowerAction implements Action{
+    public Telemetry getTelemetry() {
+        return telemetry;
+    }
+
+    public void setTelemetry(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+
+    public class setPowerAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            while (liftMotor.getCurrentPosition()>=0) {
+            while (liftMotor.getCurrentPosition() >= 0 && !initialized) {
+                liftMotor.setPower(1);
+                if (isDebug) {
+                    telemetryPacket.put("liftUp", true);
+                }
+            }
+            while (liftMotor.getCurrentPosition() <= 0 && !initialized) {
+                liftMotor.setPower(-1);
+                if (isDebug) {
+                    telemetryPacket.put("firstAscend", true);
+                }
+            }
+            while (liftMotor.getCurrentPosition() <= 0 && !initialized) {
+                liftMotor.setPower(1);
+                if (isDebug) {
+                    telemetryPacket.put("liftUpSecondTime", true);
+                }
+            }
+            if (isDebug) {
+                telemetryPacket.put("secondAscend", true);
+            }
+            if (!initialized) {
                 liftMotor.setPower(-1);
             }
-            while (liftMotor.getCurrentPosition()<=0){
-                liftMotor.setPower(1);
-            }
-            liftMotor.setPower(-1);
-                return true;
+            return true;
+
         }
     }
 }
