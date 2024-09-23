@@ -17,7 +17,8 @@ public class Lift {
     Telemetry telemetry;
     private boolean FinishedHangingNot = true;
     private double power = 0;
-    private static boolean isDebug = false;
+    private boolean isDebug = false;
+    private final double ampLimit = 0;
 
 
     public Lift(OpMode opMode, boolean isDebug) {
@@ -39,7 +40,7 @@ public class Lift {
     }
 
     public Action hanging() {
-        if (liftMotor.getCurrent(CurrentUnit.AMPS) <= 5 && power < 0) {
+        if (liftMotor.getCurrent(CurrentUnit.AMPS) <= ampLimit && power < 0) {
             resetEncoders();
             if (isDebug) {
                 telemetry.addData("LiftEncoder", liftMotor.getCurrentPosition());
