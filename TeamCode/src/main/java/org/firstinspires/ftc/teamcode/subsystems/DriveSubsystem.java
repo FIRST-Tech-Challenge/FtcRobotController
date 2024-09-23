@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -9,12 +12,11 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import org.firstinspires.ftc.teamcode;
+import org.firstinspires.ftc.teamcode.*;
 
 public class DriveSubsystem extends SubsystemBase {
 
     private HardwareMap hardwareMap;
-    private Telemetry telemetry;
 
     private final DcMotorEx frontLeftMotor;
     private final DcMotorEx frontRightMotor;
@@ -24,10 +26,10 @@ public class DriveSubsystem extends SubsystemBase {
     private final BHI260IMU imu;
 
     private double speedMultiplier = 1.0;
+    private boolean fieldCentric = true;
 
-    public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+    public DriveSubsystem(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
         
         imu = hardwareMap.get(BHI260IMU.class, Constants.DriveConstants.IMU_NAME);
         imu.initialize(Constants.DriveConstants.IMU_PARAMETERS);
@@ -52,28 +54,32 @@ public class DriveSubsystem extends SubsystemBase {
     }
     
     public void drive(double forward, double strafe, double turn) {
-        if(Constants.DriveConstants.FIELD_CENTRIC) driveFieldCentric(forward, strafe, turn); else driveRobotCentric(forward, strafe, turn);
+        if(fieldCentric) driveFieldCentric(forward, strafe, turn); else driveRobotCentric(forward, strafe, turn);
     }
 
     private void driveFieldCentric(double forward, double strafe, double turn) {
+        turn = -turn;
+
         double gyroRadians = Math.toRadians(-getHeading());
         double fieldCentricStrafe = strafe * Math.cos(gyroRadians) - forward * Math.sin(gyroRadians);
         double fieldCentricDrive = strafe * Math.sin(gyroRadians) + forward * Math.cos(gyroRadians);
 
-        frontLeftMotor.setPower(Range.clip((fieldCentricDrive - fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
+        frontLeftMotor.setPower(Range.clip((fieldCentricDrive + fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
         frontRightMotor.setPower(Range.clip((fieldCentricDrive - fieldCentricStrafe - turn), -1, 1) * speedMultiplier);
-        backLeftMotor.setPower(Range.clip((fieldCentricDrive + fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
+        backLeftMotor.setPower(Range.clip((fieldCentricDrive - fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
         backRightMotor.setPower(Range.clip((fieldCentricDrive + fieldCentricStrafe - turn), -1, 1) * speedMultiplier);
     }
 
     private void driveRobotCentric(double forward, double strafe, double turn) {
+        turn = -turn;
+
         forward = Math.abs(forward) >= Constants.DriveConstants.DEADZONE ? forward : 0;
         strafe = Math.abs(strafe) >= Constants.DriveConstants.DEADZONE ? strafe : 0;
         turn = Math.abs(turn) >= Constants.DriveConstants.DEADZONE ? turn : 0;
 
-        frontLeftMotor.setPower(Range.clip((forward - strafe + turn), -1, 1) * speedMultiplier);
+        frontLeftMotor.setPower(Range.clip((forward + strafe + turn), -1, 1) * speedMultiplier);
         frontRightMotor.setPower(Range.clip((forward - strafe - turn), -1, 1) * speedMultiplier);
-        backLeftMotor.setPower(Range.clip((forward + strafe + turn), -1, 1) * speedMultiplier);
+        backLeftMotor.setPower(Range.clip((forward - strafe + turn), -1, 1) * speedMultiplier);
         backRightMotor.setPower(Range.clip((forward + strafe - turn), -1, 1) * speedMultiplier);
     }
 
@@ -100,5 +106,4 @@ public class DriveSubsystem extends SubsystemBase {
     private double getHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
-   
 }
