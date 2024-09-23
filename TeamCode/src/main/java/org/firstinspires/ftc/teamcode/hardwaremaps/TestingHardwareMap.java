@@ -44,47 +44,30 @@ public class TestingHardwareMap extends TeamHardwareMap {
      */
     @Override
     protected void initialise() {
-        FrontRightMotor = hardwareMap.get(DcMotorEx.class, "FRW");
-        FrontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Necessary ?
-        FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        ConfigureMovementMotor(FrontRightMotor, "FRW", DcMotorSimple.Direction.REVERSE);
+        ConfigureMovementMotor(FrontLeftMotor, "FLW", DcMotorSimple.Direction.FORWARD);
+        ConfigureMovementMotor(BackRightMotor, "BRW", DcMotorSimple.Direction.REVERSE);
+        ConfigureMovementMotor(BackLeftMotor, "BLW", DcMotorSimple.Direction.FORWARD);
 
-        FrontLeftMotor = hardwareMap.get(DcMotorEx.class, "FLW");
-        FrontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Necessary ?
-        FrontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        ConfigureOdometerMotor(RightOdometerMotor, "RIGHT_ODOMETER");
+        ConfigureOdometerMotor(LeftOdometerMotor, "LEFT_ODOMETER");
+        ConfigureOdometerMotor(CentreOdometerMotor, "CENTRE_ODOMETER");
+    }
 
-        BackRightMotor = hardwareMap.get(DcMotorEx.class, "BRW");
-        BackRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Necessary ?
-        BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+    private void ConfigureMovementMotor(DcMotorEx motor, string name, DcMotorSimple.Direction dir) {
+        motor = hardwareMap.get(DcMotorEx.class, name);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Necessary ?
+        motor.setDirection(dir);
+    }
 
-        BackLeftMotor = hardwareMap.get(DcMotorEx.class, "BLW");
-        BackLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Necessary ?
-        BackLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        RightOdometerMotor = hardwareMap.get(DcMotorEx.class, "RIGHT_ODOMETER");
-        RightOdometerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightOdometerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RightOdometerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RightOdometerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        LeftOdometerMotor = hardwareMap.get(DcMotorEx.class, "LEFT_ODOMETER");
-        LeftOdometerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LeftOdometerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LeftOdometerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LeftOdometerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        CentreOdometerMotor = hardwareMap.get(DcMotorEx.class, "CENTRE_ODOMETER");
-        CentreOdometerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        CentreOdometerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        CentreOdometerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        CentreOdometerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+    private void ConfigureOdometerMotor(DcMotorEx motor, string name, DcMotorSimple.Direction dir) {
+        motor = hardwareMap.get(DcMotorEx.class, name);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
