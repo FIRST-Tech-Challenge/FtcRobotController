@@ -79,8 +79,8 @@ public class Drivebase {
     private final DcMotor BRDrive;
     private final IMU imu;
     private final DcMotor armMotor;
-    private final Servo leftHand;
-    private final Servo rightHand;
+    private final Servo clawWrist;
+    private final Servo clawFingers;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public final double MID_SERVO = 0.5;
@@ -120,10 +120,10 @@ public class Drivebase {
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-        leftHand = hardwareMap.servo.get("left_hand");
-        rightHand = hardwareMap.servo.get("right_hand");
-        leftHand.setPosition(MID_SERVO);
-        rightHand.setPosition(MID_SERVO);
+        clawWrist = hardwareMap.servo.get("clawWrist");
+        clawFingers = hardwareMap.servo.get("clawFingers");
+        clawWrist.setPosition(MID_SERVO);
+        clawFingers.setPosition(MID_SERVO);
     }
 
     /**
@@ -354,10 +354,17 @@ public class Drivebase {
      *
      * @param offset
      */
-    public void setHandPositions(double offset) {
+    public void liftClaw(double offset) {
         offset = Range.clip(offset, -0.5, 0.5);
-        leftHand.setPosition(MID_SERVO + offset);
-        rightHand.setPosition(MID_SERVO - offset);
+        clawWrist.setPosition(MID_SERVO + offset);
+    }
+
+    public void moveFingers(double offset) {
+        offset = Range.clip(offset, -0.5, 0.5);
+        clawFingers.setPosition(MID_SERVO - offset);
+    }
+    public void liftArm() {
+
     }
 
     public void addTelemetry(Telemetry telemetry) {
