@@ -47,7 +47,12 @@ public class MovementTestTeleOp extends LinearOpMode {
             current_gp.copy(gamepad1);
 
             // Give gamepad to mecanum to move wheels
-            m.Move(current_gp);
+            double[] powers = m.Move(current_gp);
+
+            telemetry.addData("FRW Power", powers[0]);
+            telemetry.addData("FLW Power", powers[1]);
+            telemetry.addData("BRW Power", powers[2]);
+            telemetry.addData("BLW Power", powers[3]);
 
             // If pressing left bump for first time then change dir
             if(current_gp.left_bumper && !prev_gp.left_bumper) {
