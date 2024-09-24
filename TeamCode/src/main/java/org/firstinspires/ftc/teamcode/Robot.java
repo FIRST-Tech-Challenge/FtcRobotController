@@ -14,12 +14,14 @@ public class Robot {
 
 
 
+
     public void init(HardwareMap ahwMap) {
         hardwareMap = ahwMap;
         driveTrain.init(hardwareMap);
         linear_L.init(hardwareMap);
         linear_R.init(hardwareMap);
         linear_C.init(hardwareMap);
+        //left_claw.init(hardwareMap);
 
 
 

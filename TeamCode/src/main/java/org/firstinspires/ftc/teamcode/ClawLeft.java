@@ -8,12 +8,10 @@ public class ClawLeft{
     HardwareMap hardwareMap;
 
 
-    public void init() {
+    public void init(HardwareMap ahwMap) {
         servo_left = hardwareMap.get(Servo.class, "left_servo");
+        hardwareMap = ahwMap;
+
     }
-
-
-
-
 
 }

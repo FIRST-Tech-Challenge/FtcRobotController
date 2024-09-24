@@ -11,12 +11,18 @@ public class LinearClaw {
 
 
 
+
     public void init(HardwareMap ahwMap) {
         hardwareMap = ahwMap;
         linear_claw = hardwareMap.get(DcMotorEx.class, "linear_motion_claw");
         linear_claw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //linear_motion_claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //linear_motion_right.setDirection(DcMotorEx.Direction.REVERSE);
+        linear_claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
+
+    public void loop(){
+
+    }
+
 }

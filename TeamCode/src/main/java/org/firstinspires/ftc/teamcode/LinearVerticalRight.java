@@ -18,7 +18,7 @@ public class LinearVerticalRight {
         linear_motion_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         linear_motion_right.setDirection(DcMotorEx.Direction.REVERSE);
 
-        linear_motion_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //linear_motion_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 

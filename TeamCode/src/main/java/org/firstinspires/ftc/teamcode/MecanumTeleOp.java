@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="TeleOp Program", group="TeleOp")
 public class MecanumTeleOp extends OpMode {
 
     Robot robot = new Robot();
+    double ticks = 1425;
+    double target;
 
 
     //Code to run ONCE after the driver hits INIT
@@ -43,35 +46,50 @@ public class MecanumTeleOp extends OpMode {
 
 
 
+
         if (gamepad1.dpad_up) {
             robot.linear_L.linear_motion_left.setPower(1);
-            robot.linear_R.linear_motion_right.setPower(1);
+            robot.linear_R.linear_motion_right.setPower(0.95);
         } else if (gamepad1.dpad_down) {
             robot.linear_L.linear_motion_left.setPower(-1);
-            robot.linear_R.linear_motion_right.setPower(-1);
+            robot.linear_R.linear_motion_right.setPower(-0.95);
 
         }
 
             else if (gamepad1.dpad_right){
-                robot.linear_C.linear_claw.setPower(1);
+                encoder(20,1);
             } else if (gamepad1.dpad_left){
-                robot.linear_C.linear_claw.setPower(-1);
+                encoder(-20, 1);
 
-        } else if (gamepad1.a){
+        } /*else if (gamepad1.a){
                 robot.left_claw.servo_left.setPosition(1);
         } else if (gamepad1.b){
-                robot.left_claw.servo_left.setPosition(0);
-        }
+                robot.left_claw.servo_left.setPosition(-1);
+        } */
 
 
         else {
             robot.linear_L.linear_motion_left.setPower(0.005);
-            //robot.linear_R.linear_motion_right.setPower(0.005);
+
+            robot.linear_R.linear_motion_right.setPower(0.005);
             robot.linear_C.linear_claw.setPower(0);
+
+
         }
 
 
     }
 
+    public void encoder(int turnage, double power){
+        target = ticks/((double)turnage/100);
+        robot.linear_C.linear_claw.setTargetPosition((int) target);
+        robot.linear_C.linear_claw.setPower(power);
+        robot.linear_C.linear_claw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+
 
 }
+
+
+
