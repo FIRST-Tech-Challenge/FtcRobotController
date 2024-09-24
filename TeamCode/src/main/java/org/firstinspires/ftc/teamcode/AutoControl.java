@@ -36,7 +36,15 @@ public class AutoControl extends OpMode{
 
     @Override
     public void start(){
-        autoUtils.AutoTurn(270);
+        autoUtils.AutoTurn(30, telemetry);
+        autoUtils.AutoDrive(20,90);
+        autoUtils.AutoTurn(150, telemetry);
+        autoUtils.AutoDrive(20,90);
+        autoUtils.AutoTurn(270, telemetry);
+        autoUtils.AutoDrive(20,90);
+        autoUtils.AutoTurn(0, telemetry);
+
+
         stop();
     }
 

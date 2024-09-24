@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.Susbsystem;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.AutoControl;
 import org.firstinspires.ftc.teamcode.RobotClass;
 
@@ -103,31 +105,47 @@ public class AutoUtils {
 
     }
 
-    public void AutoTurn(double targetAngle){
+    public void AutoTurn(double targetAngle, Telemetry telemetry){
 
         boolean atTarget = false;
         double angularDistance = 0;
+        int turnVal = 0;
 
-        double initialAngle = Math.toDegrees(robot.getHeading());
-        if(initialAngle < 0){
-            initialAngle += 360;
-        }
 
         do{
 
-            int turnVal = 1;
-            if(targetAngle - initialAngle < 0) turnVal = -1; // checks which way it should turn
+
+
             double currentAngle = Math.toDegrees(robot.getHeading());
-            if(currentAngle < 0){
+
+            if(currentAngle < 180){
                 currentAngle += 360;
             }
-            angularDistance = Math.abs(currentAngle - targetAngle);
 
-            if(angularDistance > 360){ // dealing with edge case
-                turnVal = -1;
-                angularDistance = 360 - angularDistance;
+            if(currentAngle <= targetAngle){
+                if(targetAngle - currentAngle <= 180){
+                    //Rotate Clockwise
+                    angularDistance = targetAngle - currentAngle;
+                    turnVal = 1;
+                }
+                else{
+                    //Rotate Counter-Clockwise
+                    angularDistance = 360 - targetAngle + currentAngle;
+                    turnVal = -1;
+                }
             }
-
+            else{//If currentAngle > targetAngle so the opposite of the other if statement
+                if(currentAngle - targetAngle < 180){
+                    //Rotate Counter-Clockwise
+                    angularDistance = currentAngle - targetAngle;
+                    turnVal = -1;
+                }
+                else{
+                    //Rotate Clockwise
+                    angularDistance = 360 - currentAngle + targetAngle;
+                    turnVal = 1;
+                }
+            }
             double powerReduce = angularDistance / 90;
 
             powerReduce = Math.max(powerReduce, 0.2);
@@ -138,18 +156,18 @@ public class AutoUtils {
             wheelSpeeds.put(RobotClass.MOTORS.BACK_RIGHT, turnVal * powerReduce);
             wheelSpeeds.put(RobotClass.MOTORS.FRONT_RIGHT, turnVal * powerReduce);
 
-//            telemetry.addData("angularDistance", angularDistance);
-//            telemetry.addData("turnVal", turnVal);
-//            telemetry.addData("currentAngle", currentAngle);
-//            telemetry.addData("powerReduce", powerReduce);
-//            telemetry.update();
+            telemetry.addData("turnVal", turnVal);
+            telemetry.addData("currentAngle", currentAngle);
+            telemetry.addData("angularDistance", angularDistance);
+            telemetry.addData("powerReduce", powerReduce);
+            telemetry.update();
 
             UpdateWheelPowers();
 
             if(angularDistance < 0.5) atTarget = true;
         }
         while(!atTarget && !stopRequested);
-        simplePower(0);
+        stopMotors();
     }
     public void simplePower(double power){
         wheelSpeeds.put(RobotClass.MOTORS.FRONT_LEFT, power);
@@ -160,17 +178,28 @@ public class AutoUtils {
     }
 
     public void stopMotors(){
+        setStopWheelBehavior();
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         wheelSpeeds.put(RobotClass.MOTORS.FRONT_LEFT, 0.0);
         wheelSpeeds.put(RobotClass.MOTORS.BACK_LEFT, 0.0);
         wheelSpeeds.put(RobotClass.MOTORS.BACK_RIGHT, 0.0);
         wheelSpeeds.put(RobotClass.MOTORS.FRONT_RIGHT, 0.0);
         UpdateWheelPowers();
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        stop();
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        setCoastWheelBehavior();
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private double getDerivative(double error, double targetDistance){
@@ -183,5 +212,17 @@ public class AutoUtils {
         robot.driveMotors.get(RobotClass.MOTORS.FRONT_RIGHT).setPower(wheelSpeeds.get(RobotClass.MOTORS.FRONT_RIGHT));
         robot.driveMotors.get(RobotClass.MOTORS.BACK_LEFT).setPower(wheelSpeeds.get(RobotClass.MOTORS.BACK_LEFT));
         robot.driveMotors.get(RobotClass.MOTORS.BACK_RIGHT).setPower(wheelSpeeds.get(RobotClass.MOTORS.BACK_RIGHT));
+    }
+    public void setStopWheelBehavior(){
+        robot.driveMotors.get(RobotClass.MOTORS.FRONT_LEFT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.driveMotors.get(RobotClass.MOTORS.FRONT_RIGHT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.driveMotors.get(RobotClass.MOTORS.BACK_LEFT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.driveMotors.get(RobotClass.MOTORS.BACK_RIGHT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void setCoastWheelBehavior(){
+        robot.driveMotors.get(RobotClass.MOTORS.FRONT_LEFT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.driveMotors.get(RobotClass.MOTORS.FRONT_RIGHT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.driveMotors.get(RobotClass.MOTORS.BACK_LEFT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.driveMotors.get(RobotClass.MOTORS.BACK_RIGHT).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 }

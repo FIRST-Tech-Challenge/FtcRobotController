@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Control extends OpMode {
     //TODO: Limiting switch on screw lift
-    RobotClass robot;
+    public RobotClass robot;
     /*
         define global enums here
          v
@@ -23,8 +23,10 @@ public class Control extends OpMode {
         GLOBAL,
         LOCAL
     }
+
     public DriveMode driveMode = DriveMode.GLOBAL;
-    public enum FieldSide{
+
+    public enum FieldSide {
         BLUE_LEFT,
         BLUE_RIGHT,
         RED_LEFT,
@@ -43,30 +45,35 @@ public class Control extends OpMode {
 
     }
 
-    public void mecanumDrive(double leftX, double leftY, double turn){
+    public void mecanumDrive(double leftX, double leftY, double turn) {
 
         double heading;
-        if(driveMode == DriveMode.GLOBAL) {heading = robot.getHeading();}
-        else {heading = 0;}
+        if (driveMode == DriveMode.GLOBAL) {
+            heading = robot.getHeading();
+        } else {
+            heading = 0;
+        }
 
         robot.drivetrain.mecanumDrive(leftY, leftX, turn, heading, telemetry);
     }
-    public void resetIMU(boolean button){
-        if (!button){
+
+    public void resetIMU(boolean button) {
+        if (!button) {
             return;
         }
         robot.resetIMU();
     }
 
     private boolean firstPress = true;
-    public void switchDriveMode(boolean button){
 
-        if(!button){
+    public void switchDriveMode(boolean button) {
+
+        if (!button) {
             firstPress = true;
         }
-        if(button && firstPress){
+        if (button && firstPress) {
             firstPress = false;
-            switch(driveMode){
+            switch (driveMode) {
                 case GLOBAL:
                     driveMode = DriveMode.LOCAL;
                     break;
@@ -80,14 +87,15 @@ public class Control extends OpMode {
     }
 
     @Override
-    public void stop(){
-        if(robot == null) return; // ensures that stop() is not called before initialization
+    public void stop() {
+        if (robot == null) return; // ensures that stop() is not called before initialization
         robot.driveMotors.get(RobotClass.MOTORS.FRONT_LEFT).setPower(0);
         robot.driveMotors.get(RobotClass.MOTORS.FRONT_RIGHT).setPower(0);
         robot.driveMotors.get(RobotClass.MOTORS.BACK_LEFT).setPower(0);
         robot.driveMotors.get(RobotClass.MOTORS.BACK_RIGHT).setPower(0);
     }
-    private void callCount(){
+
+    private void callCount() {
 
     }
 }

@@ -54,7 +54,7 @@ public class RobotClass {
 
         drivetrain = new MecanumDrive(driveMotors, this);
 
-        opticalSensor = hwmap.get(SparkFunOTOS.class, "opticalSensor");
+        //opticalSensor = hwmap.get(SparkFunOTOS.class, "opticalSensor");
         webcamName = hwmap.get(WebcamName.class, "Webcam 1");
         camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
