@@ -1,33 +1,28 @@
 package org.firstinspires.ftc.teamcode.tatooine.SubSystem;
 
 
-import android.drm.DrmStore;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake  {
     CRServo intake = null;
-    private double power;
+    private double power = 0;
+    private boolean buttonPressed = false;
 
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(CRServo.class, "intake");
     }
-    //no action
-    public void setPower(double power) {
-        intake.setPower(power);
+    public Action intake(boolean buttonPressed){
+        this.buttonPressed = buttonPressed;
+        power = 1;
+        return new SetPowerAction();
     }
-    //uses action and i chose to not give it a constent power(a power that the user give)
-    public Action setPowerAction(double power){
-        this.power = power;
+    public Action outtake(){
+        power = -1;
         return new SetPowerAction();
     }
 
@@ -35,7 +30,7 @@ public class Intake  {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             intake.setPower(power);
-            return power>0;
+            return true;
         }
     }
 }
