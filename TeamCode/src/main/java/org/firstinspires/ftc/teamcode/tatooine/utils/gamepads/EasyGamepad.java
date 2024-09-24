@@ -49,13 +49,13 @@ public class EasyGamepad{
         return gamepad.dpad_up;
     }
 
-    public boolean getLeftBumper(){
+    public boolean getL1(){
         if(!leftBumperTap){leftBumperTap = true;}
         else{leftBumperTap = true;}
         return gamepad.left_bumper;
     }
 
-    public boolean getRightBumper(){
+    public boolean getR1(){
         if(!rightBumperTap){rightBumperTap = true;}
         else{rightBumperTap = true;}
         return gamepad.right_bumper;
@@ -117,12 +117,12 @@ public class EasyGamepad{
         getDPadLeft();
         return dPadLeftTap;
     }
-    public boolean wasRightBumperDoubleTapped(){
-        getRightBumper();
+    public boolean wasR1DoubleTapped(){
+        getR1();
         return rightBumperTap;
     }
-    public boolean wasLeftBumperDoubleTapped(){
-        getLeftBumper();
+    public boolean wasL1DoubleTapped(){
+        getL1();
         return leftBumperTap;
     }
     public double getRightStickXPower (){
@@ -137,10 +137,10 @@ public class EasyGamepad{
     public double getLeftStickYPower (){
         return  gamepad.left_stick_y;
     }
-    public double getRightTrigger (){
+    public double getR2 (){
         return  gamepad.right_trigger;
     }
-    public double getLeftTrigger (){
+    public double getL2 (){
         return  gamepad.left_trigger;
     }
 }
