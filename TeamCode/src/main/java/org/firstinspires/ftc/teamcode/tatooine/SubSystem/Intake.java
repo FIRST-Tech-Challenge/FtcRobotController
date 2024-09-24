@@ -11,11 +11,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake  {
     CRServo intake = null;
     private double power = 0;
+    private boolean buttonPressed = false;
 
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(CRServo.class, "intake");
     }
-    public Action intake(){
+    public Action intake(boolean buttonPressed){
+        this.buttonPressed = buttonPressed;
         power = 1;
         return new SetPowerAction();
     }
