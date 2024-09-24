@@ -27,9 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -63,9 +62,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
-@Disabled
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+@TeleOp(name="Teleop", group="A_DriveCode")
+public class Teleop extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -73,27 +71,17 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private static double driveSlowScale = 0.3;
+    private static double DriveScale = 1;
 
     @Override
     public void runOpMode() {
 
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
 
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -153,10 +141,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftFrontDrive.setPower(leftFrontPower * DriveScale);
+            rightFrontDrive.setPower(rightFrontPower * DriveScale);
+            leftBackDrive.setPower(leftBackPower * DriveScale);
+            rightBackDrive.setPower(rightBackPower * DriveScale);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
