@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -73,10 +74,10 @@ public class RobotHardware {
          wheel that runs backward. Keep testing until ALL the wheels move the robot forward when you push the left
          joystick forward.
          */
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Define and initialize ALL installed sensors (note: need to use reference to the actual OpMode).
         imu = myOpMode.hardwareMap.get(IMU.class, "imu");
@@ -88,7 +89,7 @@ public class RobotHardware {
          hub is pointing. All directions are relative to the robot, and left/right is as-viewed from behind the robot.
          */
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
         // Ensure the robot is stationary. Reset the encoders and set the motors to BREAK mode
