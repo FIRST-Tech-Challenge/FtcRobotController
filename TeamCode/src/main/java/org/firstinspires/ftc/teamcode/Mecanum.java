@@ -42,7 +42,7 @@ public class Mecanum {
      * Analyses gamepad and sets power of motors appropriately
      * @param gp Gamepad object
      */
-    public int[] Move(Gamepad gp) {
+    public double[] Move(Gamepad gp) {
         double y = -gp.left_stick_y;
         double x = gp.left_stick_x * 1.1;
         double rx = gp.right_stick_x;
