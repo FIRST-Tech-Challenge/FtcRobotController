@@ -40,27 +40,21 @@ public class TestingHardwareMap extends TeamHardwareMap {
         super(hardwaremap);
     }
 
-    /**
-     * Sets up the following hardware bindings;
-     * FrontRightMotor,
-     * FrontLeftMotor,
-     * BackRightMotor,
-     * BackLeftMotor,
-     * RightOdometerMotor,
-     * LeftOdometerMotor,
-     * CentreOdometerMotor
-     */
 
     @Override
     protected void initialise() {
+        // Setup and configure all drive motors
         ConfigureMovementMotor(FrontRightMotor, "FRW", DcMotorSimple.Direction.REVERSE);
         ConfigureMovementMotor(FrontLeftMotor, "FLW", DcMotorSimple.Direction.FORWARD);
         ConfigureMovementMotor(BackRightMotor, "BRW", DcMotorSimple.Direction.REVERSE);
         ConfigureMovementMotor(BackLeftMotor, "BLW", DcMotorSimple.Direction.FORWARD);
 
-        ConfigureOdometerMotor(RightOdometerMotor, "RIGHT_ODOMETER");
-        ConfigureOdometerMotor(LeftOdometerMotor, "LEFT_ODOMETER");
-        ConfigureOdometerMotor(CentreOdometerMotor, "CENTRE_ODOMETER");
+        // Odometers are not yet attached to robot
+        // So dont setup to prevent errors
+
+        // ConfigureOdometerMotor(RightOdometerMotor, "RIGHT_ODOMETER");
+        // ConfigureOdometerMotor(LeftOdometerMotor, "LEFT_ODOMETER");
+        // ConfigureOdometerMotor(CentreOdometerMotor, "CENTRE_ODOMETER");
     }
 
     private void ConfigureMovementMotor(DcMotorEx motor, string name, DcMotorSimple.Direction dir) {
