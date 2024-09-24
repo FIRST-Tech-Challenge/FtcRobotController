@@ -15,6 +15,8 @@ public class CoyotesRobot {
     private MeccanumDrive meccanumDrive;
     private ArmSystem armSystem;
 
+    private DigitalChannel positionSwitch;
+
     public CoyotesRobot(OpMode opMode) {
         this.opMode = opMode;
         autoSleepEnabled = true;
@@ -32,11 +34,11 @@ public class CoyotesRobot {
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        driveSystem = new DriveSystem();
+        driveSystem = new MeccanumDrive();
     }
 
     /**
-     * Initiate all hardware needed for the DriveSystem.
+     * Initiate all hardware needed for the ArmSystem.
      */
     private void initArmSystem() {
         /*
