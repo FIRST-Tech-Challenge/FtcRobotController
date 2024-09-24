@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
@@ -30,6 +30,7 @@ public class Arm {
     private DcMotorEx angleMotor;
     private DcMotorEx extendMotor;
     private Telemetry telemetry;
+    private TouchSensor touchSensor = null;
     private boolean isDebug;
 
     public Arm(OpMode opMode, boolean isDebug) {
@@ -40,27 +41,30 @@ public class Arm {
 
         angleMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AngleMotor");
         extendMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "ExtendMotor");
+        touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
 
         extendPID.setTolerance(EXTEND_TOLERANCE);
         anglePID.setTolerance(ANGLE_TOLERANCE);
-
     }
-    public void init(){
+
+    public void init() {
         //TODO change directions if needed
         //angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //extendMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
-
     }
-    public void resetEncoders(){
+
+    public void resetEncoders() {
         resetExtendEncoder();
         resetAngleEncoder();
     }
-    public void resetExtendEncoder(){
+
+    public void resetExtendEncoder() {
         extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public void resetAngleEncoder(){
+
+    public void resetAngleEncoder() {
         angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -131,9 +135,36 @@ public class Arm {
         return EXTEND_TOLERANCE;
     }
 
+    public TouchSensor getTouchSensor() {
+        return touchSensor;
+    }
+
+    public void setTouchSensor(TouchSensor touchSensor) {
+        this.touchSensor = touchSensor;
+    }
+
+    public double getAMP_LIMIT() {
+        return AMP_LIMIT;
+    }
+
+    public double getSPOOL_DIM() {
+        return SPOOL_DIM;
+    }
+
+    public double getANGLE_CPR() {
+        return ANGLE_CPR;
+    }
+
+    public double getEXTEND_CPR() {
+        return EXTEND_CPR;
+    }
+
     public Action setAngle(double angle) {
         moveAngle move = new moveAngle();
         move.setGoal(angle);
+        if (touchSensor.isPressed()) {
+            resetAngleEncoder();
+        }
         if (isDebug) {
             telemetry.addData("the new ang ", angle);
         }
@@ -190,6 +221,5 @@ public class Arm {
             return !anglePID.atSetPoint();
         }
     }
-
 
 }
