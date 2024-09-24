@@ -11,13 +11,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class TestingHardwareMap extends TeamHardwareMap {
     /*
         -----------------------------------------------------------------------
-        | FRW               | Front Right Wheel     | Expansion Hub Motor 0   |
-        | FLW               | Front Left Wheel      | Control Hub Motor 0     |
-        | BRW               | Back Right Wheel      | Expansion Hub Motor 1   |
-        | BLW               | Back Left Wheel       | Expansion Hub Motor 1   |
-        | RIGHT_ODOMETER    | Right Odometer        | Expansion Hub Motor 3   |
-        | LEFT_ODOMETER     | Left Odometer         | Control Hub Motor 3     |
-        | CENTRE_ODOMETER   | Centre Odometer       | Expansion Hub Motor 2   |
+        | FRW               | Front Right Wheel     | Control Hub Motor 0     |
+        -----------------------------------------------------------------------
+        | FLW               | Front Left Wheel      | Control Hub Motor 1     |
+        -----------------------------------------------------------------------
+        | BRW               | Back Right Wheel      | Control Hub Motor 2     |
+        -----------------------------------------------------------------------
+        | BLW               | Back Left Wheel       | Control Hub Motor 3     |
+        -----------------------------------------------------------------------
+        | RIGHT_ODOMETER    | Right Odometer        | None                    |
+        -----------------------------------------------------------------------
+        | LEFT_ODOMETER     | Left Odometer         | None                    |
+        -----------------------------------------------------------------------
+        | CENTRE_ODOMETER   | Centre Odometer       | None                    |
         -----------------------------------------------------------------------
      */
 
