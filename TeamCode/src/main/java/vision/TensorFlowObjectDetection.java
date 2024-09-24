@@ -1,5 +1,5 @@
 package vision;
-
+/*
 import com.google.blocks.ftcrobotcontroller.runtime.obsolete.VuforiaLocalizerAccess;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,7 +20,7 @@ import java.util.List;
  *
  * Totally my code
  */
-
+/*
 @TeleOp
 public class TensorFlowObjectDetection extends LinearOpMode {
 
@@ -51,41 +51,42 @@ public class TensorFlowObjectDetection extends LinearOpMode {
     };
 
     /* The variable to store our instance of the TensorFlow Object Detection processor.
-     */
+
     private TfodProcessor tfod;
 
     /**
      * The variable to store our instance of the vision portal.
      */
-    private VisionPortal visionPortal;
+/*
+private VisionPortal visionPortal;
 
-    @Override
-    public void runOpMode() {
+@Override
+public void runOpMode() {
 
         if (gamepad2.a && !but2Acheck) {
-            visionPortal.close();
-            button2A += 1;
-            but2Acheck = true;
+        visionPortal.close();
+        button2A += 1;
+        but2Acheck = true;
         }
         if (!gamepad2.a) {
-            but2Acheck = false;
+        but2Acheck = false;
         }
 
         if (!but2Acheck) {
-            selectedmodel = button2A-button2B;
+        selectedmodel = button2A-button2B;
         }
 
         if (gamepad2.b && !but2Bcheck) {
-            visionPortal.close();
-            button2B += 1;
-            but2Bcheck = true;
+        visionPortal.close();
+        button2B += 1;
+        but2Bcheck = true;
         }
         if (!gamepad2.b) {
-            but2Bcheck = false;
+        but2Bcheck = false;
         }
 
         if (!but2Bcheck) {
-            selectedmodel = button2A-button2B;
+        selectedmodel = button2A-button2B;
         }
 
         initTfod();
@@ -97,24 +98,24 @@ public class TensorFlowObjectDetection extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+        while (opModeIsActive()) {
 
-                telemetryTfod();
+        telemetryTfod();
 
-                // Push telemetry to the Driver Station.
-                telemetry.update();
+        // Push telemetry to the Driver Station.
+        telemetry.update();
 
-                // Share the CPU.
-                sleep(20);
-            }
+        // Share the CPU.
+        sleep(20);
+        }
         }
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
-    }   // end runOpMode()
+        }   // end runOpMode()
 
-    private void telemetryTfod() {
+private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
@@ -122,31 +123,33 @@ public class TensorFlowObjectDetection extends LinearOpMode {
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            double imagecentreX = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double imagecentreY = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+        double imagecentreX = (recognition.getLeft() + recognition.getRight()) / 2 ;
+        double imagecentreY = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            telemetry.addData("Camera 1"," ");
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", imagecentreX, imagecentreY);
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        telemetry.addData("Camera 1"," ");
+        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+        telemetry.addData("- Position", "%.0f / %.0f", imagecentreX, imagecentreY);
+        telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection processor.
-     */
-    private void initTfod() {
+        }
+*/
+/**
+ * Initialize the TensorFlow Object Detection processor.
+ */
+/*
+private void initTfod() {
 
         // Create the TensorFlow processor the easy way.
         tfod = TfodProcessor.easyCreateWithDefaults();
 
         tfod = new TfodProcessor.Builder()
-                .setModelAssetName("T-T.tflite")
-                .setModelLabels(LABELS)
-                .build();
+        .setModelAssetName("T-T.tflite")
+        .setModelLabels(LABELS)
+        .build();
 
         // Create the vision portal the easy way.
         visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
 
-    }   // end method initTfod()
-}   // end class
+        }   // end method initTfod()
+        }   // end class
+*/
