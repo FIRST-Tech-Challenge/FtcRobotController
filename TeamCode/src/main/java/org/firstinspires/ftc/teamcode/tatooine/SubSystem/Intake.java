@@ -30,7 +30,7 @@ public class Intake  {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             intake.setPower(power);
-            return true;
+            return buttonPressed;
         }
     }
 }
