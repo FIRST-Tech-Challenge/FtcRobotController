@@ -14,13 +14,18 @@ public class ArmMotorV1 {
         this.name_ = configName;
     }
 
-    public void init(){
+    public DcMotor init(){
         arm = hwMap.get(DcMotor.class, name_);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         position = arm.getCurrentPosition();
+        return arm;
     }
 
-    public int getPos(){
+    public int get_encoder_pos(){
+        return arm.getCurrentPosition();
+    }
+
+    public int get_target_position(){
         return position;
     }
 
