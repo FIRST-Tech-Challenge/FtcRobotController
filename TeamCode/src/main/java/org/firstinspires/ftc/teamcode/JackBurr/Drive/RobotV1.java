@@ -16,9 +16,10 @@ public class RobotV1 extends OpMode {
     public DcMotor frontRight; //PORT 1
     public DcMotor backLeft; //PORT 2
     public DcMotor backRight; // PORT 0
+    public DcMotor slidesMotor; //EXPANSION HUB PORT _
 
-    public double ARM_POWER = 0.4;
-    public int MOVEMENT_DISTANCE = 25;
+    public double ARM_POWER = config.ARM_POWER;
+    public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
     public ElapsedTime armTimer = new ElapsedTime();
 
 
@@ -28,23 +29,24 @@ public class RobotV1 extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, config.FRONT_RIGHT);
         backLeft = hardwareMap.get(DcMotor.class, config.BACK_LEFT);
         backRight = hardwareMap.get(DcMotor.class, config.BACK_RIGHT);
+        slidesMotor = hardwareMap.get(DcMotor.class, config.SLIDES);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slidesMotor.setDirection(config.SLIDES_DIRECTION);
     }
 
     @Override
     public void loop() {
         run_motors();
-        arm.setPower(gamepad1.left_stick_y);
-        if (gamepad1.left_stick_y == 0){
-            arm.hold(ARM_POWER);
-        }
+        arm.hold(ARM_POWER);
         if (armTimer.seconds() > 0.3){
             if (gamepad1.dpad_up){
                 arm.moveTo(arm.get_target_position() + MOVEMENT_DISTANCE, ARM_POWER, true);
