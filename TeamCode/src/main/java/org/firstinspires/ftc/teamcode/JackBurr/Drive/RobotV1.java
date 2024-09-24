@@ -47,11 +47,11 @@ public class RobotV1 extends OpMode {
         }
         if (armTimer.seconds() > 0.3){
             if (gamepad1.dpad_up){
-                arm.moveTo(arm.getPos() + MOVEMENT_DISTANCE, ARM_POWER, true);
+                arm.moveTo(arm.get_target_position() + MOVEMENT_DISTANCE, ARM_POWER, true);
                 armTimer.reset();
             }
             else if (gamepad1.dpad_down){
-                arm.moveTo(arm.getPos() - MOVEMENT_DISTANCE, ARM_POWER, true);
+                arm.moveTo(arm.get_target_position() - MOVEMENT_DISTANCE, ARM_POWER, true);
                 armTimer.reset();
             }
         }
