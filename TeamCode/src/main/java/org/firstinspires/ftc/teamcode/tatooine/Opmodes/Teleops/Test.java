@@ -43,10 +43,10 @@ public class Test extends LinearOpMode {
             runningActions = newActions;
             dash.sendTelemetryPacket(packet);
 
-            drive.fieldDrive(new Pose2d(new Vector2d(easyGamepad1.getLeftStickXPower(),easyGamepad2.getLeftStickYPower()),easyGamepad1.getRightTrigger()-easyGamepad1.getLeftTrigger()));
+            drive.fieldDrive(new Pose2d(new Vector2d(easyGamepad1.getLeftStickXPower(),easyGamepad2.getLeftStickYPower()),easyGamepad1.getR2()-easyGamepad1.getL2()));
             if (gamepad1.a) {
                 runningActions.add(
-                        intake.intake(easyGamepad1.getRightBumper())
+                        intake.intake(easyGamepad1.getR1())
                 );
             }
 
