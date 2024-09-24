@@ -18,7 +18,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
     - distance from back odom wheel to center of x-axis: 0.235m
     - wheel diameter:
     -
-
  */
 
 @TeleOp
@@ -53,6 +52,7 @@ public class Odometry_Testing extends LinearOpMode {
         odom_l.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         odom_r.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         odom_h.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //
 
         double prev_encoder_l = 0, prev_encoder_r = 0, prev_encoder_h = 0, prev_ang = 0, current_ang ;
