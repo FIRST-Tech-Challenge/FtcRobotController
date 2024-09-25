@@ -11,16 +11,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-//newest file as of 2024/09/07
+//newest file as of 2024/09/25
 
 /*Details of the robot as follow:
     - distance from right odom wheel to left odom wheel: 0.023m
     - distance from back odom wheel to center of x-axis: 0.235m
     - wheel diameter:
     -
-
  */
-
 @TeleOp
 public class Odometry_Testing extends LinearOpMode {
 
@@ -57,8 +55,8 @@ public class Odometry_Testing extends LinearOpMode {
 
         double prev_encoder_l = 0, prev_encoder_r = 0, prev_encoder_h = 0, prev_ang = 0, current_ang ;
         double delta_encoder_l, delta_encoder_r, delta_encoder_h, delta_local_x, delta_local_y, delta_global_x, delta_global_y, delta_ang;
-        double global_xM = 0, global_yM = 0; // change all the x and y stuff later
-        double disM_encoderHtoCenter = 0.235; // Distance from the horizontal encoder to the center of the robot in meters
+        double global_xM = 0, global_yM = 0;
+        double disM_encoderHtoCenter = 0.235; // Distance from the horizontal encoder to the center of the robot in meters, allegedly
 
         waitForStart();
         runtime.reset();
@@ -73,7 +71,7 @@ public class Odometry_Testing extends LinearOpMode {
             telemetry.addData("h", encoder_h);
 
             // Get current angle from IMU
-            current_ang = Math.toRadians(-getAngle()); //degrees to radians (either ways of calculating current angle work[imu or encoder])
+            current_ang = Math.toRadians(getAngle()); //IMU angle
            // current_ang = Math.toRadians((encoder_r-encoder_l)/0.023); //(r-l) divided by distance (METRES) between the encoder wheels
 
 
@@ -85,17 +83,13 @@ public class Odometry_Testing extends LinearOpMode {
             //current_ang = Math.toRadians((encoder_r-encoder_l)/0.05)
             // (r-l) divided by distance (METRES) between the encoder wheels
 
-            // Calculate local changes; switch X and Y later
+            // Calculate local changes
             delta_local_x = (delta_encoder_l + delta_encoder_r) / 2;
             delta_local_y = delta_encoder_h - (delta_ang * disM_encoderHtoCenter);
 
-             // Convert local changes to global coordinates
-            //prev
-            // delta_global_x = delta_local_x * Math.cos(current_ang) - delta_local_y * Math.sin(current_ang);
-            // delta_global_y = delta_local_x * Math.sin(current_ang) + delta_local_y * Math.cos(current_ang);
-
-            delta_global_x = delta_local_x * Math.cos(current_ang) - delta_local_y * Math.sin(current_ang);
-            delta_global_y = delta_local_x * Math.sin(current_ang) + delta_local_y * Math.cos(current_ang);
+             // Convert local changes to global coordinates; Note X and Y are switched
+            delta_global_y = delta_local_x * Math.cos(current_ang) - delta_local_y * Math.sin(current_ang);
+            delta_global_x = delta_local_x * Math.sin(current_ang) + delta_local_y * Math.cos(current_ang);
 
             // Update global positions
             global_xM += delta_global_x;
@@ -144,6 +138,7 @@ public class Odometry_Testing extends LinearOpMode {
 
         lastAngles = angles;
 
-        return globalAngle;
+        //angle is negative on purpose
+        return -globalAngle;
     }
 }
