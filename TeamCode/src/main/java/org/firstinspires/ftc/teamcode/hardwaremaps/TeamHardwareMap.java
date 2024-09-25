@@ -13,5 +13,5 @@ public abstract class TeamHardwareMap {
         initialise();
     }
 
-    protected abstract void initialise();
+    public abstract void initialise();
 }

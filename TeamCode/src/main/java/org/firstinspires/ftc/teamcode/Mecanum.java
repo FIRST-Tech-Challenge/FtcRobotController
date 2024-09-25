@@ -8,10 +8,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  Class designed to provide helper methods to operate mecanum wheels
  */
 public class Mecanum {
-    private DcMotor fl;
-    private DcMotor fr;
-    private DcMotor bl;
-    private DcMotor br;
+    private DcMotorSimple fl;
+    private DcMotorSimple fr;
+    private DcMotorSimple bl;
+    private DcMotorSimple br;
+
+    public double PowerMultiplier = 1;
 
     /**
      * Creates the Mecanum object. Sets private fields and configures motor directions.
@@ -21,7 +23,7 @@ public class Mecanum {
      * @param backLeft Back Left Motor Object
      * @return A new Mecanum object
      */
-    public static Mecanum Init(DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft) {
+    public static Mecanum Init(DcMotorSimple frontRight, DcMotorSimple frontLeft, DcMotorSimple backRight, DcMotorSimple backLeft) {
         Mecanum m = new Mecanum();
         m.fl = frontLeft;
         m.fr = frontRight;
@@ -32,8 +34,8 @@ public class Mecanum {
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
         // See the note about this earlier on this page.
-        m.fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        m.br.setDirection(DcMotorSimple.Direction.REVERSE);
+        // m.fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        // m.br.setDirection(DcMotorSimple.Direction.REVERSE);
         return m;
     }
 
@@ -43,8 +45,10 @@ public class Mecanum {
      * @param gp Gamepad object
      */
     public double[] Move(Gamepad gp) {
+        assert PowerMultiplier > 0 && PowerMultiplier <= 1 : "Power mulitplier should be between 0 and 1";
+
         double y = -gp.left_stick_y;
-        double x = gp.left_stick_x * 1.1;
+        double x = gp.left_stick_x;
         double rx = gp.right_stick_x;
 
         // Denominator is the largest motor power (absolute value) or 1
@@ -56,11 +60,11 @@ public class Mecanum {
         double backRightPower = (y + x - rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
 
-        fr.setPower(frontRightPower);
-        fl.setPower(frontLeftPower);
-        br.setPower(backRightPower);
-        bl.setPower(backLeftPower);
+        fr.setPower(frontRightPower * PowerMultiplier);
+        fl.setPower(frontLeftPower * PowerMultiplier);
+        br.setPower(backRightPower * PowerMultiplier);
+        bl.setPower(backLeftPower * PowerMultiplier);
 
-        return { frontRightPower, frontLeftPower, backRightPower, backLeftPower };
+        return new double[]{ frontRightPower, frontLeftPower, backRightPower, backLeftPower };
     }
 }
