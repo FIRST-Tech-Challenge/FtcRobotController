@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,9 +22,9 @@ public class DemoRobot extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     //Declare the wheels
     //test
-    private DcMotor LB = null; //Located on Control Hub- Motor port 2
-    private DcMotor RB = null; //Located on Control Hub- Motor port 3
-
+    private DcMotor LB = null; //Located on Control Hub- Motor port 0
+    private DcMotor RB = null; //Located on Control Hub- Motor port 1
+    private DcMotor ARM = null; // located on Control Hub- Motor port 2
     private double PowerFactor = 0.8f; //Max power available for wheels
 
     /*
@@ -38,7 +39,7 @@ public class DemoRobot extends OpMode {
         // step (using the FTC Robot Controller app on the phone).
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
-
+        ARM = hardwareMap.get(DcMotor.class, "ARM");
 
         //gripper sensor for pulling arm down
         //touch  = hardwareMap.get(TouchSensor .class, "Touch");
@@ -48,7 +49,7 @@ public class DemoRobot extends OpMode {
 
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
-
+        ARM.setDirection(DcMotor.Direction.FORWARD);
    }
 
     /*
@@ -63,25 +64,25 @@ public class DemoRobot extends OpMode {
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double LBPower;
-        double RBPower;
 
         //Code for gamepad1
         //Code for throttling the power factor
-        PowerFactor = (1 - gamepad1.right_trigger) *.8f;
+        PowerFactor = .8f;
 
         //Code for mecanum wheels
         double leftY = gamepad1.left_stick_y * PowerFactor;
         double rightY = gamepad1.right_stick_y * PowerFactor;
+        double ARMPower = (gamepad1.right_trigger - gamepad1.left_trigger) * PowerFactor;
 
         // Send calculated power to wheels
         LB.setPower(leftY);
         RB.setPower(rightY);
+        ARM.setPower(ARMPower);
 
         //Send telemetry data of the motor power for wheels
         telemetry.addData("Left Back Motor","Speed: "+ leftY);
         telemetry.addData("Right Back Motor","Speed: "+ rightY);
-
+        telemetry.addData("ARM Motor", "Speed: "+ ARMPower);
         telemetry.update();
     }
 
