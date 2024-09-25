@@ -345,7 +345,7 @@ public class Drivebase {
      *
      * @param power driving power (-1.0 to 1.0)
      */
-    public void setArmPower(double power) {
+    public void liftArm(double power) {
         armMotor.setPower(power);
     }
 
@@ -362,9 +362,6 @@ public class Drivebase {
     public void moveFingers(double offset) {
         offset = Range.clip(offset, -0.5, 0.5);
         clawFingers.setPosition(MID_SERVO - offset);
-    }
-    public void liftArm() {
-
     }
 
     public void addTelemetry(Telemetry telemetry) {
