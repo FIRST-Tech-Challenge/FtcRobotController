@@ -29,6 +29,18 @@ public class Robot {
     }
 
     public void configureTeleOpBindings() {
+        
+        /* Controls:
+        * Driver:
+        *   Forward -> left y axis
+        *   Strafe -> left x axis
+        *   Turn -> right x axis
+        *
+        *   Reduce Speed -> right trigger
+        *   Reset Gyro -> back button
+        *   Enable/Disable Field Centric -> start button
+        */ 
+
         CommandScheduler.getInstance().reset();
         CommandScheduler.getInstance().cancelAll();
 
@@ -43,6 +55,9 @@ public class Robot {
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
         resetGyro.whenActive(() -> driveSubsystem.resetGyro());
+
+        Trigger setFieldCentric = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.START));
+        setFieldCentric.whenActive(() -> driveSubsystem.setFieldCentricOnOff());
     }
 
     public void run() {
