@@ -13,16 +13,24 @@ public class AutonomousWithSensors extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot = new RobotInitialize(this);
+//        telemetry.addData("wait for start", "ye");
+//        telemetry.update();
 
-        waitForStart(); // Waits for a person to press start on the control hub
+        waitForStart();
+//        telemetry.addData("after start", "ye");
+//        telemetry.update();
+        // Waits for a person to press start on the control hub
         // then it runs the rest of the program
+        robot.strafeL(200, 200);
+        robot.strafeR(200, 200);
 
         //forward
-        robot.bleft.setVelocity(-400);
-        robot.fleft.setVelocity(400);
-        robot.fright.setVelocity(400);
-        robot.bright.setVelocity(-400);
+//        robot.bleft.setVelocity(-400);
+//        robot.fleft.setVelocity(400);
+//        robot.fright.setVelocity(400);
+//        robot.bright.setVelocity(-400);
         sleep(2000);
+        robot.newTurnFunction(90);
 //        robot.strafeL(1000, 500);
 //        sleep(2000);
 //        robot.strafeR(1000, 500);

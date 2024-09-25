@@ -91,7 +91,7 @@ public class RobotInitialize {
 //        settings.loggingEnabled = false;
         gyroScope.initialize(settings);
 
-//        while (!gyroScope.isCalibrated()){
+//        while (!gyroScope.){
 //            //Wait
 //            opMode.telemetry.addLine("GYRO WAITING...");
 //            opMode.telemetry.update();
@@ -204,10 +204,10 @@ public class RobotInitialize {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
-                fleft.setVelocity(-velocity);
+                fleft.setVelocity(velocity);
                 fright.setVelocity(velocity);
                 bleft.setVelocity(-velocity);
-                bright.setVelocity(velocity);
+                bright.setVelocity(-velocity);
                 opMode.telemetry.addData("position", getPosStrafeR());
                 opMode.telemetry.addData("relative distance", relativeDistance);
                 opMode.telemetry.addData("old pos", getAverageEncoderValue());
@@ -231,9 +231,8 @@ public class RobotInitialize {
                 //setMotorVelocity(Math.abs(velocity));
                 fleft.setVelocity(velocity);
                 fright.setVelocity(-velocity);
-                bleft.setVelocity(velocity);
-                bright.setVelocity(-velocity);
-                bright.getCurrentPosition();
+                bleft.setVelocity(-velocity);
+                bright.setVelocity(velocity);
             }
         }
         stopMotors();
