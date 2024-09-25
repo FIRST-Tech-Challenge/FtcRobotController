@@ -15,9 +15,17 @@ public class CoyotesRobot {
     private MeccanumDrive meccanumDrive;
     private ArmSystem armSystem;
 
+    // Whether the robot is on red or blue team
+    private DigitalChannel colorSwitch;
+    // Whether the robot is far or near
+    private DigitalChannel sideSwitch;
+
     public CoyotesRobot(OpMode opMode) {
         this.opMode = opMode;
         autoSleepEnabled = true;
+
+        colorSwitch = opMode.hardwareMap.get(DigitalChannel.class, "color_switch");
+        sideSwitch = opMode.hardwareMap.get(DigitalChannel.class, "side_switch");
 
         initDriveSystem();
         initArmSystem();
