@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
 
-public class OpModeTeleOpBase extends LinearOpMode {
+@TeleOp(name = "Teleop", group = "Furious Frog")
+public class OpModeTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Make sure your ID's match your configuration

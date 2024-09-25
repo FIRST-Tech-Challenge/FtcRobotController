@@ -4,6 +4,7 @@ import android.util.Size;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -15,16 +16,15 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
+@Autonomous(name = "AutonFuriousFrog", group = "Furious Frogs")
 public class TimeBasedAutoBase extends LinearOpMode {
 
     public final ElapsedTime runtime = new ElapsedTime();
-    private TfodProcessor tfod;
+//    private TfodProcessor tfod;
     private VisionPortal visionPortal;
     DcMotor armMotor = null;
     Servo clawServoR,clawServoL ;
@@ -54,14 +54,6 @@ public class TimeBasedAutoBase extends LinearOpMode {
             }
         }
 
-    }
-
-
-    public void park() {
-        log("do nothing", "do nothing", 10);
-    }
-    public void goToBackStage() {
-        log("do nothing", "do nothing", 10);
     }
 
     private void backStageStuff() {
@@ -239,51 +231,51 @@ public class TimeBasedAutoBase extends LinearOpMode {
     private int getStripe() {
 
         int stripe = 0;
-
-//        visionPortal.resumeStreaming();
-        telemetry.addData(" > Camera Status", visionPortal.getCameraState());
-        telemetry.update();
-        sleep(500);
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
-        //      visionPortal.stopStreaming();
-        telemetry.addData(" > Camera Status", visionPortal.getCameraState());
-        telemetry.update();
-        sleep(1000);
-
-        telemetry.addData(" > currentRecognitions.size()", currentRecognitions.size());
-        telemetry.update();
-        sleep(1000);
-
-        if (currentRecognitions.size() == 1) {
-            //find location, move robot and place purple pixel
-
-            Recognition recognition = currentRecognitions.get(0);
-            telemetry.addData("recognition",
-                    String.format("recognition right %s, left %s, top %s,bottom %s ", recognition.getRight(),
-                            recognition.getLeft(), recognition.getTop(), recognition.getBottom()));
-            telemetry.update();
-            sleep(1000);
-
-            double x = (recognition.getLeft() + recognition.getRight()) / 2;
-            double y = (recognition.getTop() + recognition.getBottom()) / 2;
-
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", x, y);
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-
-            sleep(1000);
-
-            visionPortal.stopStreaming();
-        } else {
-            telemetry.addData("recognition", "none");
-            sleep(1000);
-            telemetry.update();
-            //move robot to backstage
-        }
-
-        telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
-        telemetry.update();
-
+//
+////        visionPortal.resumeStreaming();
+//        telemetry.addData(" > Camera Status", visionPortal.getCameraState());
+//        telemetry.update();
+//        sleep(500);
+//        List<Recognition> currentRecognitions = tfod.getRecognitions();
+//        //      visionPortal.stopStreaming();
+//        telemetry.addData(" > Camera Status", visionPortal.getCameraState());
+//        telemetry.update();
+//        sleep(1000);
+//
+//        telemetry.addData(" > currentRecognitions.size()", currentRecognitions.size());
+//        telemetry.update();
+//        sleep(1000);
+//
+//        if (currentRecognitions.size() == 1) {
+//            //find location, move robot and place purple pixel
+//
+//            Recognition recognition = currentRecognitions.get(0);
+//            telemetry.addData("recognition",
+//                    String.format("recognition right %s, left %s, top %s,bottom %s ", recognition.getRight(),
+//                            recognition.getLeft(), recognition.getTop(), recognition.getBottom()));
+//            telemetry.update();
+//            sleep(1000);
+//
+//            double x = (recognition.getLeft() + recognition.getRight()) / 2;
+//            double y = (recognition.getTop() + recognition.getBottom()) / 2;
+//
+//            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+//            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+//            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+//
+//            sleep(1000);
+//
+//            visionPortal.stopStreaming();
+//        } else {
+//            telemetry.addData("recognition", "none");
+//            sleep(1000);
+//            telemetry.update();
+//            //move robot to backstage
+//        }
+//
+//        telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
+//        telemetry.update();
+//
         return stripe;
     }
     private void initIMUmodule(){
@@ -345,20 +337,79 @@ public class TimeBasedAutoBase extends LinearOpMode {
     }
 
     private void initTfod() {
-
-        tfod = TfodProcessor.easyCreateWithDefaults();
-
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "webcam"))
-                .setCameraResolution(new Size(640, 480))
-                .addProcessor(tfod)
-                .build();
-
-        telemetry.addData("vision portal", "start");
-        telemetry.update();
-        sleep(1000);
+//
+//        tfod = TfodProcessor.easyCreateWithDefaults();
+//
+//        visionPortal = new VisionPortal.Builder()
+//                .setCamera(hardwareMap.get(WebcamName.class, "webcam"))
+//                .setCameraResolution(new Size(640, 480))
+//                .addProcessor(tfod)
+//                .build();
+//
+//        telemetry.addData("vision portal", "start");
+//        telemetry.update();
+//        sleep(1000);
 
     }
+
+    public void goToBackStage() {
+        // move forward till center line
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 0.4) {
+            move(0, 1, 0);
+        }
+        stopChassis();
+
+        //rotate
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 1.44) {
+            move(0, 0, -1);
+        }
+        stopChassis();
+
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 1.8) {
+            move(0, 1, 0);
+        }
+        stopChassis();
+
+        //strafe a little
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 1.2) {
+            move(-1, 0, 0);
+        }
+        stopChassis();
+
+        runtime.reset();
+
+    }
+    public void park() {
+        runtime.reset();
+
+        while (opModeIsActive() && (runtime.seconds() < .7)) {
+            move(0, -1, 0);
+        }
+        stopChassis();
+
+
+        runtime.reset();
+
+        while (opModeIsActive() && (runtime.seconds() < 1.6)) {
+            move(1, 0, 0);
+        }
+        stopChassis();
+
+
+        runtime.reset();
+
+        while (opModeIsActive() && (runtime.seconds() < .45)) {
+            move(0, 1, 0);
+        }
+        stopChassis();
+
+
+    }
+
 
 }
 
