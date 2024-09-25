@@ -91,6 +91,10 @@ public class DriveSubsystem extends SubsystemBase {
         imu.resetYaw();
     }
 
+    public void setFieldCentricOnOff(){
+        fieldCentric = !fieldCentric; 
+    }
+
     public void resetEncoders() {
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
