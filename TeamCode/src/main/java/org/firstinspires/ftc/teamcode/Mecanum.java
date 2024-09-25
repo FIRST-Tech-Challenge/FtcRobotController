@@ -49,10 +49,8 @@ public class Mecanum {
         leftRearDrive = hardwareMap.dcMotor.get(LEFT_REAR_DRIVE_NAME);
         rightRearDrive = hardwareMap.dcMotor.get(RIGHT_REAR_DRIVE_NAME);
 
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftRearDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightRearDrive.setDirection(DcMotor.Direction.FORWARD);
     }
 
     public void setTelemetry(Telemetry telemetry) {
@@ -78,12 +76,12 @@ public class Mecanum {
         this.update(new Vector2(gamepad.left_stick_x, gamepad.left_stick_y), gamepad.right_stick_x);
     }
 
-    public void update(Vector2 direction, double desiredRotation) {
+    public void update(Vector2 direction, double desiredAxis) {
         direction = direction.normalize();
 
         double r = Math.hypot(direction.x, direction.y);
         double robotAngle = Math.atan2(-direction.y, direction.x) - Math.PI / 4;
-        double rightX = desiredRotation;
+        double rightX = desiredAxis;
 
         double leftFrontWheelPower = r * Math.cos(robotAngle) * Math.sqrt(2) + rightX;
         double rightFrontWheelPower = r * Math.sin(robotAngle) * Math.sqrt(2) - rightX;
@@ -100,6 +98,7 @@ public class Mecanum {
             telemetry.addData("rightFront", "%.2f", rightFrontWheelPower);
             telemetry.addData("leftRear", "%.2f", leftRearWheelPower);
             telemetry.addData("rightRear", "%.2f", rightRearWheelPower);
+            telemetry.addData("desiredAxis", "%.2f", rightX);
         }
     }
 }

@@ -18,6 +18,9 @@ public class Vector2 {
     }
     public Vector2 normalize() {
         double magnitude = getMagnitude();
+        if (magnitude == 0) {
+            return new Vector2(0, 0);
+        }
         return new Vector2(this.x / magnitude, this.y / magnitude);
     }
 }
