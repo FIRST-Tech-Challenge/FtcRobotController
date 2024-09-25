@@ -78,12 +78,12 @@ public class CompetitionTeleop2024 extends OpMode {
         RF = hardwareMap.get(DcMotor.class, "RF");
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        arm1 = hardwareMap.get(DcMotor.class, "arm1");
-        gripper = hardwareMap.get(Servo.class, "gripper");
-        elbow = hardwareMap.get(Servo.class, "elbow");
-        plane = hardwareMap.get(Servo.class, "plane");
-        plane.setPosition(0.0);
+        // arm = hardwareMap.get(DcMotor.class, "arm");
+        // arm1 = hardwareMap.get(DcMotor.class, "arm1");
+        // gripper = hardwareMap.get(Servo.class, "gripper");
+        //elbow = hardwareMap.get(Servo.class, "elbow");
+        //  plane = hardwareMap.get(Servo.class, "plane");
+        //plane.setPosition(0.0);
         //elbow.setPosition(0.0);
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(
@@ -112,14 +112,14 @@ public class CompetitionTeleop2024 extends OpMode {
         RB.setDirection(DcMotor.Direction.REVERSE);
 
         //Reverse the arm direction so it moves in the proper direction
-        arm.setDirection(DcMotor.Direction.REVERSE);
-        arm1.setDirection(DcMotor.Direction.REVERSE);
+        //arm.setDirection(DcMotor.Direction.REVERSE);
+        //arm1.setDirection(DcMotor.Direction.REVERSE);
         //Set arm up to use encoders
-        arm.setPower(0);
-        arm1.setPower(0);
+        //arm.setPower(0);
+        //arm1.setPower(0);
         //Set arm up to brake
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       // arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -176,7 +176,7 @@ public class CompetitionTeleop2024 extends OpMode {
         telemetry.addData("Left Back Motor","Speed: "+ LBPower);
         telemetry.addData("Right Front Motor","Speed: "+RFPower);
         telemetry.addData("Right Back Motor","Speed: "+ RBPower);
-        telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
+        //telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
         telemetry.addData("Initial Heading", "Heading: "+initHeading);
 
         //Code for gamepad2
@@ -190,7 +190,9 @@ public class CompetitionTeleop2024 extends OpMode {
 
 
 
+        /*
         //Moves the arm up
+
         if (gamepad2.left_trigger >= .1)
         {
             arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -262,8 +264,12 @@ public class CompetitionTeleop2024 extends OpMode {
             telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);
         telemetry.update();
+
     //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
-}
+    */
+    }
+
+
 
     /*
      * Code to run ONCE after the driver hits STOP
