@@ -12,15 +12,19 @@ public class Robot {
     LinearClaw linear_C = new LinearClaw();
     ClawLeft left_claw = new ClawLeft();
 
+    //DriveTrain2 dT = new DriveTrain2();
+
 
 
 
     public void init(HardwareMap ahwMap) {
         hardwareMap = ahwMap;
-        driveTrain.init(hardwareMap);
+        //driveTrain.init(hardwareMap);
         linear_L.init(hardwareMap);
         linear_R.init(hardwareMap);
         linear_C.init(hardwareMap);
+        //dT.init(hardwareMap);
+
         //left_claw.init(hardwareMap);
 
 
