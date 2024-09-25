@@ -1,18 +1,25 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 /** Subsystem */
+@Config   // EXAMPLE - use @Config to add public variables to dashboard for realtime updating
 public class OdometrySubsystem extends SubsystemBase {
 
-    // Local objects and variables here
+    // for Dashboard demo purposes only!
+    // values on dashboard for edit must be public and static
+    public static double parameter1= 20.0;
+    public static int parameter2 = 7;
+    private static int parameter3 = 12;
 
+    // Local objects and variables here
     private double previousLeftPos;
     private double previousRightPos;
     private double previousFrontPos;
@@ -74,7 +81,8 @@ public class OdometrySubsystem extends SubsystemBase {
         RobotContainer.ActiveOpMode.telemetry.addData("fieldX",fieldX);
         RobotContainer.ActiveOpMode.telemetry.addData("fieldY",fieldY);
 
-
+        // update FTC dashboard with latest odometry info
+        UpdateDashBoard();
     }
 
     // place special subsystem methods here
@@ -92,4 +100,42 @@ public class OdometrySubsystem extends SubsystemBase {
     public void resetCurrentPos(){
         setCurrentPos(new Pose2d(0,0,new Rotation2d(0)));
     }
+
+
+    // Updates dashboard with robot odometry info
+    private void UpdateDashBoard()
+    {
+        // SAMPLE CODE ONLY - Students to make their own code
+
+        // Update field
+        // Note: many options available to draw things on field
+        // robot position, apriltags, other lines, circles, polygons, text, etc.
+
+        TelemetryPacket field = new TelemetryPacket();
+        field.fieldOverlay()
+                .drawGrid(0, 0, 144, 144, 7, 7)
+                .fillText("Origin", 0, 0, "4px Arial", Math.toRadians(90), false)
+                .fillCircle(0,0, 1);
+                //.setRotation(Math.toRadians(90))
+                //.strokeRect(x,y,width,height)
+                //.drawImage("/dash/ftc.jpg", 24, 24, 18, 18, Math.toRadians(90), 24, 24, false);
+        RobotContainer.DashBoard.sendTelemetryPacket(field);
+
+        // Show data on dashboard
+        double value1 = 1.0;
+        double value2 = 5.0;
+
+        // Method #1
+        RobotContainer.DBTelemetry.addData("Value 1a", value1);
+        RobotContainer.DBTelemetry.addData("Value 2a", value2);
+        RobotContainer.DBTelemetry.update();
+
+        // Method #2
+        TelemetryPacket data = new TelemetryPacket();
+        data.put("Value 1b", value1);
+        data.put("Value 2b", value2);
+        RobotContainer.DashBoard.sendTelemetryPacket(data);
+    }
+
+
 }
