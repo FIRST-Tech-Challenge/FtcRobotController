@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.JackBurr.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
 
 @TeleOp
-public class RobotV1 extends OpMode {
+public class DriveOnly extends OpMode {
     public RobotV1Config config = new RobotV1Config();
     public ArmMotorV1 arm = new ArmMotorV1(hardwareMap, "arm", telemetry);
 
@@ -18,19 +17,10 @@ public class RobotV1 extends OpMode {
     public DcMotor backLeft; //PORT 1
     public DcMotor backRight; // PORT 3
     public DcMotor slidesMotor; //EXPANSION HUB PORT _
-    public Servo intakeServo;
-    public int servodirection = 0;
-    public DcMotor armMotor;
+
     public double ARM_POWER = config.ARM_POWER;
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
-    public ElapsedTime buttonTimer = new ElapsedTime();
-    public int SLIDES_DOWN = -386;
-    public int SLIDES_UP = -709;
-    public int SLIDESPOS = SLIDES_DOWN;
-    public int ARM_DOWN = -40;
-    public int ARM_UP= -184;
-    public int ARMPOS = ARM_DOWN;
-
+    public ElapsedTime armTimer = new ElapsedTime();
 
 
     @Override
@@ -41,8 +31,6 @@ public class RobotV1 extends OpMode {
         backLeft = hardwareMap.get(DcMotor.class, config.BACK_LEFT);
         backRight = hardwareMap.get(DcMotor.class, config.BACK_RIGHT);
         slidesMotor = hardwareMap.get(DcMotor.class, config.SLIDES);
-        slidesMotor = hardwareMap.get(DcMotor.class, "slides");
-        intakeServo = hardwareMap.get(Servo.class, "intake_servo");
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -54,48 +42,26 @@ public class RobotV1 extends OpMode {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slidesMotor.setDirection(config.SLIDES_DIRECTION);
-        armMotor = hardwareMap.get(DcMotor.class, "arm");
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
     }
 
     @Override
     public void loop() {
         run_motors();
-        arm_goto(ARMPOS);
-        slides_goto(SLIDESPOS);
-
-        telemetry.addLine(String.valueOf(SLIDESPOS));
-        intakeServo.setPosition(servodirection);
-        if(buttonTimer.seconds() > 0.3 && gamepad1.b){
-            servodirection = switch_servo_dir();
-            buttonTimer.reset();
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.x){
-            if (SLIDESPOS == SLIDES_DOWN){
-                SLIDESPOS = SLIDES_UP;
-            }
-            else {
-                SLIDESPOS = SLIDES_DOWN;
-            }
-            buttonTimer.reset();
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.y){
-            if (ARMPOS == ARM_DOWN){
-                ARMPOS = ARM_UP;
-            }
-            else {
-                ARMPOS = ARM_DOWN;
-            }
-            buttonTimer.reset();
-        }
     }
 
     public void run_motors(){
-        double y = -gamepad1.left_stick_y;
-        double x = -gamepad1.left_stick_x;
-        double rx = -gamepad1.right_stick_x;
-        drive(y, x, rx);
+        if (config.ARE_MOTORS_UPSIDE_DOWN) {
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double x = -gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
+            double rx = -gamepad1.right_stick_x; //This is reversed for our turning
+            drive(y, x, rx);
+        }
+        else {
+            double y = -gamepad1.left_stick_y;
+            double x = -gamepad1.left_stick_x;
+            double rx = -gamepad1.right_stick_x;
+            drive(y, x, rx);
+        }
 
     }
     public void drive(double y, double x, double rx) {
@@ -108,25 +74,5 @@ public class RobotV1 extends OpMode {
         backLeft.setPower(backLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
-    }
-
-    public int switch_servo_dir(){
-        if(servodirection == 1){
-            return 0;
-        }
-        else {
-            return 1;
-        }
-    }
-
-    public void slides_goto(int pos){
-        slidesMotor.setPower(0.6);
-        slidesMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slidesMotor.setTargetPosition(pos);
-    }
-    public void arm_goto(int pos){
-        armMotor.setPower(1);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setTargetPosition(pos);
     }
 }

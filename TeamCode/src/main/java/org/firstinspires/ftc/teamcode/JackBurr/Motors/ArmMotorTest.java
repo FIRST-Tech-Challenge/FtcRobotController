@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 public class ArmMotorTest extends OpMode {
-    ArmMotorV1 arm = new ArmMotorV1(hardwareMap, "arm_motor");
+    ArmMotorV1 arm = new ArmMotorV1(hardwareMap, "arm_motor", telemetry);
     public DcMotor arm_motor;
     @Override
     public void init() {
-        arm_motor = arm.init();
+        arm_motor = arm.init(hardwareMap);
     }
 
     @Override

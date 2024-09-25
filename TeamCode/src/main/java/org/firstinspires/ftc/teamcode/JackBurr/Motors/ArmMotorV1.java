@@ -4,21 +4,27 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class ArmMotorV1 {
     public HardwareMap hwMap;
     public DcMotor arm;
     public String name_;
+    public Telemetry telem_;
     public int position;
 
-    public ArmMotorV1(HardwareMap hardwareMap, String configName){
+    public ArmMotorV1(HardwareMap hardwareMap, String configName, Telemetry telem){
         this.hwMap = hardwareMap;
         this.name_ = configName;
+        this.telem_ = telem;
     }
 
-    public DcMotor init(){
-        arm = hwMap.get(DcMotor.class, name_);
+    public DcMotor init(HardwareMap hwMap){
+        telem_.addLine(name_);
+        arm =  hwMap.get(DcMotor.class, name_);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         position = arm.getCurrentPosition();
+        this.hwMap = hwMap;
         return arm;
     }
 

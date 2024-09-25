@@ -8,24 +8,27 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp
 public class IntakeServoTest extends OpMode {
     public Servo servo;
+    public int pos;
     public ElapsedTime servoTimer = new ElapsedTime();
     public ElapsedTime buttonTimer = new ElapsedTime();
+
     @Override
     public void init() {
+        servo = hardwareMap.get(Servo.class, "intake_servo");
         servo.setDirection(Servo.Direction.FORWARD);
     }
 
     @Override
     public void loop() {
-        servo.setPosition(1);
-        if (gamepad1.b && buttonTimer.seconds() > 0.3){
+        servo.setPosition(pos);
+        if (gamepad1.b && buttonTimer.seconds() > 0.3 && pos == 0){
             buttonTimer.reset();
-            servoTimer.reset();
-            servo.setPosition(0);
-            while (servoTimer.seconds() < 0.7){
-                //wait
-            }
-            servo.setPosition(1);
+            pos = 1;
+        }
+        else if (gamepad1.b && buttonTimer.seconds() > 0.3 && pos == 1){
+            buttonTimer.reset();
+            pos = 0;
         }
     }
 }
+
