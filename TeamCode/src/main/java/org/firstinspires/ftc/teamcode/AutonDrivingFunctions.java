@@ -34,8 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
  * The code is structured as a LinearOpMode
@@ -62,9 +60,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Matt", group="Robot")
+@Autonomous(name="Mike", group="Robot")
 //@Disabled
-public class MikesAutonTesting extends LinearOpMode {
+public class AutonDrivingFunctions extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null;
@@ -82,8 +80,7 @@ public class MikesAutonTesting extends LinearOpMode {
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     COUNTS_PER_INCH         = 1.0;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
@@ -99,10 +96,10 @@ public class MikesAutonTesting extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -127,7 +124,7 @@ public class MikesAutonTesting extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        forwardDrive(DRIVE_SPEED,  24, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        driveForward(DRIVE_SPEED,  500, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
 //        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
 //        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
@@ -144,29 +141,29 @@ public class MikesAutonTesting extends LinearOpMode {
      *  2) Move runs out of time
      *  3) Driver stops the OpMode running.
      */
-    public void forwardDrive(double speed,
-                             double distance,
+    public void driveForward(double speed,
+                             double forwardInches,
                              double timeoutS) {
-        int newDriveTarget;
+        int newFrontLeftTarget;
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newDriveTarget = leftFrontDrive.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
+            newFrontLeftTarget = leftFrontDrive.getCurrentPosition() + (int)(forwardInches * COUNTS_PER_INCH);
 
-            //We will not be using the target position.
-            //leftFrontDrive.setTargetPosition(newDriveTarget);
-
-            // Motors should already be in run_using_encoder mode
-            //leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // Turn On RUN_TO_POSITION
+            //leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-
+            leftFrontDrive.setPower(Math.abs(speed));
+            leftBackDrive.setPower(Math.abs(speed));
+            rightFrontDrive.setPower(Math.abs(speed));
+            rightBackDrive.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -174,46 +171,14 @@ public class MikesAutonTesting extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            if (distance > 0) {
-                leftFrontDrive.setPower(Math.abs(speed));
-                leftBackDrive.setPower(Math.abs(speed));
-                rightFrontDrive.setPower(Math.abs(speed));
-                rightBackDrive.setPower(Math.abs(speed));
-                while (opModeIsActive() &&
-                        (runtime.seconds() < timeoutS) &&
-                        (leftFrontDrive.getCurrentPosition() < newDriveTarget)) {
+            while (opModeIsActive() &&
+                   (runtime.seconds() < timeoutS) &&
+                    (newFrontLeftTarget > leftFrontDrive.getCurrentPosition())){
 
-                    // Display it for the driver.
-                    telemetry.addData("Running to", " %7d :%7d", newDriveTarget);
-                    telemetry.addData("Currently at", " at %7d :%7d",
-                            leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
-                            rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-                    telemetry.update();
-                }
-            }
-            // If we are moving backwards, the current position will start out greater than the target
-            // position. The only difference between this portion and the one above is ">" instead of "<"
-            // We also set the power to negative speed, since we want to move backwards.
-            if (distance < 0){
-                leftFrontDrive.setPower(-speed);
-                leftBackDrive.setPower(-speed);
-                rightFrontDrive.setPower(-speed);
-                rightBackDrive.setPower(-speed);
-                while (opModeIsActive() &&
-                        (runtime.seconds() < timeoutS) &&
-                        (leftFrontDrive.getCurrentPosition() > newDriveTarget)) {
-
-                    // Display it for the driver.
-                    telemetry.addData("Running to", " %7d :%7d", newDriveTarget);
-                    telemetry.addData("Currently at", " at %7d :%7d",
-                            leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
-                            rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-                    telemetry.update();
-                }
-            }
 
 
             }
+
             // Stop all motion;
             leftFrontDrive.setPower(0);
             leftBackDrive.setPower(0);
@@ -228,6 +193,5 @@ public class MikesAutonTesting extends LinearOpMode {
 
             sleep(250);   // optional pause after each move.
         }
-
     }
-
+}

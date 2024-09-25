@@ -29,12 +29,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -62,11 +66,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Matt", group="Robot")
+@Autonomous(name="Gryo", group="Robot")
 //@Disabled
-public class MikesAutonTesting extends LinearOpMode {
+public class MikesAutonTestingGyros extends LinearOpMode {
 
     /* Declare OpMode members. */
+    // The IMU sensor object
+    IMU imu;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -89,6 +95,22 @@ public class MikesAutonTesting extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        // Retrieve and initialize the IMU.
+        // This sample expects the IMU to be in a REV Hub and named "imu".
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        //* To Do:  EDIT these two lines to match YOUR mounting configuration.
+        //        */
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+
 
         // Initialize the drive system variables.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
@@ -131,6 +153,7 @@ public class MikesAutonTesting extends LinearOpMode {
 //        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
 //        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
+        getYaw();
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
@@ -228,6 +251,11 @@ public class MikesAutonTesting extends LinearOpMode {
 
             sleep(250);   // optional pause after each move.
         }
+    public void getYaw(){
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+    }
     }
 
