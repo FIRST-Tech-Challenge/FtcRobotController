@@ -40,11 +40,11 @@ public class CoyotesRobot {
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        driveSystem = new DriveSystem();
+        driveSystem = new MeccanumDrive();
     }
 
     /**
-     * Initiate all hardware needed for the DriveSystem.
+     * Initiate all hardware needed for the ArmSystem.
      */
     private void initArmSystem() {
         /*

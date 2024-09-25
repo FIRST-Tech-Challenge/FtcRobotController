@@ -16,7 +16,7 @@ public class Auto extends LinearOpMode {
     public void runOpMode() {
         robot = new CoyotesRobot(this);
 
-        startingPosition = ;
+        startingPosition = StartingPosition.RED_NEAR;
 
         // Wait until the player press the start button
         waitForStart();
