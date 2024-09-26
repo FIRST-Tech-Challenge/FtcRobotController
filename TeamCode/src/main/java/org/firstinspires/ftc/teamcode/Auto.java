@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class Auto extends LinearOpMode {
     private CoyotesRobot robot;
 
+    private TeamColor teamColor;
+    private TeamSide teamSide;
+
     /**
      * Automatically runs after pressing the "Init" button on the Control Hub
      */
