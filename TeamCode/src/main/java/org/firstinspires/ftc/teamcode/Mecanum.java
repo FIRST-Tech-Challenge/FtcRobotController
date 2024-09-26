@@ -25,17 +25,12 @@ public class Mecanum {
      */
     public static Mecanum Init(DcMotorSimple frontRight, DcMotorSimple frontLeft, DcMotorSimple backRight, DcMotorSimple backLeft) {
         Mecanum m = new Mecanum();
+
         m.fl = frontLeft;
         m.fr = frontRight;
         m.br = backRight;
         m.bl = backLeft;
 
-        // Reverse the right side motors. This may be wrong for your setup.
-        // If your robot moves backwards when commanded to go forwards,
-        // reverse the left side instead.
-        // See the note about this earlier on this page.
-        // m.fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        // m.br.setDirection(DcMotorSimple.Direction.REVERSE);
         return m;
     }
 
@@ -44,8 +39,11 @@ public class Mecanum {
      * Analyses gamepad and sets power of motors appropriately
      * @param gp Gamepad object
      */
-    public double[] Move(Gamepad gp) {
-        assert PowerMultiplier > 0 && PowerMultiplier <= 1 : "Power mulitplier should be between 0 and 1";
+    public double[] Move(Gamepad gp, Telemetry t) {
+        if(!(PowerMultiplier > 0 && PowerMultiplier <= 1)) {
+            t.addLine("Power Multiplier should be between 0 and 1");
+            return new double [] { };
+        }
 
         double y = -gp.left_stick_y;
         double x = gp.left_stick_x;
