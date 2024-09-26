@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.teamcode.hardware;
 
-public class CoyotesRobot {
+public class Hardware {
     private OpMode opMode;
 
     // Whether the robot will automatically sleep after each command
     // Only applicable in LinearOpMode
     private boolean autoSleepEnabled;
 
-    private MeccanumDrive meccanumDrive;
+    private MecanumSystem MecanumSystem;
     private ArmSystem armSystem;
 
     // Whether the robot is on red or blue team
@@ -32,19 +32,19 @@ public class CoyotesRobot {
     }
 
     /**
-     * Initiates all hardware needed for the DriveSystem.
+     * Initiates all hardware needed for the WheelsSystem.
      */
-    private void initDriveSystem() {
+    private void initWheelsSystem() {
         /*
-         * Define drive hardware here.
+         * Define wheels system hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        meccanumDrive = new MeccanumDrive();
+        wheelsSystem = new WheelsSystem();
     }
 
     /**
-     * Initiate all hardware needed for the ArmSystem.
+     * Initiate all hardware needed for the WheelsSystem.
      */
     private void initArmSystem() {
         /*

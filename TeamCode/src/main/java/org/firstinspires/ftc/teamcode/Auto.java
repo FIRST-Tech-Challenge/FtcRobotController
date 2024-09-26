@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "Auto")
 public class Auto extends LinearOpMode {
-    private CoyotesRobot robot;
+    private Hardware hardware;
 
     // Red or blue team
     private TeamColor teamColor;
@@ -17,7 +17,7 @@ public class Auto extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        robot = new CoyotesRobot(this);
+        robot = new Hardware(this);
     
         teamColor = (robot.colorSwitch.getState()) ? TeamColor.RED : TeamColor.BLUE;
         teamSide = (robot.sideSwitch.getState()) ? TeamSide.FAR : TeamSide.NEAR;
