@@ -12,8 +12,15 @@ public class Mecanum {
     private DcMotorSimple fr;
     private DcMotorSimple bl;
     private DcMotorSimple br;
-
+    
+    /**
+      * Multiplier for speer applied to all mecanum wheels
+    */
+    
     public double PowerMultiplier = 1;
+    
+
+
 
     /**
      * Creates the Mecanum object. Sets private fields and configures motor directions.
