@@ -15,8 +15,18 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-
         // Update the information from the robot
         telemetry.update();
+
+        /*
+         * Drive robot based on joystick input from gamepad1
+         * Right stick moves the robot forwards, backwards and sideways.
+         * Left stick rotates it.
+         */
+        hardware.getMecanumSystem().drive(
+                gamepad1.right_stick_x,
+                gamepad1.right_stick_y,
+                gamepad1.left_stick_x
+        );
     }
 }
