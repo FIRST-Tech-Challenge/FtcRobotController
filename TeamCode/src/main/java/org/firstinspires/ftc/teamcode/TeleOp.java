@@ -108,8 +108,6 @@ public class TeleOp extends LinearOpMode {
             // Send telemetry messages to explain controls and show robot status
             telemetry.addData("Drive", "Left Stick");
             telemetry.addData("Turn", "Right Stick");
-            telemetry.addData("Arm Up/Down", "Y & A Buttons");
-            telemetry.addData("Hand Open/Closed", "Left and Right Bumpers");
             telemetry.addData("-", "-------");
 
             telemetry.addData("Drive Power", "%.2f", drive);
