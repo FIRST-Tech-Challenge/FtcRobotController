@@ -26,6 +26,7 @@ public class Main extends LinearOpMode {
                 sleep(2500);
                 motor.setPower(0);
                 break;
+                // useless
             }
         }
     }
