@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class Auto extends LinearOpMode {
     private CoyotesRobot robot;
 
+    // Red or blue team
     private TeamColor teamColor;
+    // Far or near
     private TeamSide teamSide;
 
     /**
