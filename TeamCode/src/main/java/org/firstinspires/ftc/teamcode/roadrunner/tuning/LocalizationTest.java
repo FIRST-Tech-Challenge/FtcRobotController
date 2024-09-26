@@ -28,7 +28,7 @@ public class LocalizationTest extends LinearOpMode {
                         new Vector2d(
 
                                 //strafe
-                                //Left and right are a problem as they spin
+
                                 -gamepad1.left_stick_y,
                                 gamepad1.left_stick_x
                         ),
