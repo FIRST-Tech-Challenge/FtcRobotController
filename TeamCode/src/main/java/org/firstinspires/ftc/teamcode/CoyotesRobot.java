@@ -40,7 +40,7 @@ public class CoyotesRobot {
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        driveSystem = new MeccanumDrive();
+        meccanumDrive = new MeccanumDrive();
     }
 
     /**

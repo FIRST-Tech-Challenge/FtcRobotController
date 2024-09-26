@@ -16,10 +16,13 @@ public class Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot = new CoyotesRobot(this);
-
-        startingPosition = StartingPosition.RED_NEAR;
+    
+        teamColor = (robot.colorSwitch.getState()) ? TeamColor.RED : TeamColor.BLUE;
+        teamSide = (robot.sideSwitch.getState()) ? TeamSide.FAR : TeamSide.NEAR;
 
         // Wait until the player press the start button
         waitForStart();
+
+        
     }
 }
