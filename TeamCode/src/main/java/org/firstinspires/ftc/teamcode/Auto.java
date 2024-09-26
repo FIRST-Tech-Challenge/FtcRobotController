@@ -17,7 +17,7 @@ public class Auto extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        robot = new Hardware(this);
+        hardware = new Hardware(this);
     
         teamColor = (robot.colorSwitch.getState()) ? TeamColor.RED : TeamColor.BLUE;
         teamSide = (robot.sideSwitch.getState()) ? TeamSide.FAR : TeamSide.NEAR;
