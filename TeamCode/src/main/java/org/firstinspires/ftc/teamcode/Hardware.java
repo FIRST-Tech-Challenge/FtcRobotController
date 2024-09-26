@@ -12,7 +12,7 @@ public class Hardware {
     // Only applicable in LinearOpMode
     private boolean autoSleepEnabled;
 
-    private MecanumSystem MecanumSystem;
+    private MecanumSystem mecanumSystem;
     private ArmSystem armSystem;
 
     // Whether the robot is on red or blue team
@@ -20,14 +20,14 @@ public class Hardware {
     // Whether the robot is far or near
     private DigitalChannel sideSwitch;
 
-    public CoyotesRobot(OpMode opMode) {
+    public Hardware(OpMode opMode) {
         this.opMode = opMode;
         autoSleepEnabled = true;
 
         colorSwitch = opMode.hardwareMap.get(DigitalChannel.class, "color_switch");
         sideSwitch = opMode.hardwareMap.get(DigitalChannel.class, "side_switch");
 
-        initDriveSystem();
+        initWheelsSystem();
         initArmSystem();
     }
 
@@ -39,10 +39,14 @@ public class Hardware {
          * Define wheels system hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
+        DcMotor frontLeftMotor = opMode.hardwareMap.get("front_left_wheel");
+        DcMotor frontRightMotor = opMode.hardwareMap.get("front_right_wheel");
+        DcMotor backLeftMotor = opMode.hardwareMap.get("back_left_wheel");
+        DcMotor backRightMotor = opMode.hardwareMap.get("back_right_wheel");
 
-        wheelsSystem = new WheelsSystem();
+        mecanumSystem = new MecanumSystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
     }
-
+    
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
