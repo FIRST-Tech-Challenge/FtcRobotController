@@ -18,9 +18,6 @@ public class Mecanum {
     */
     
     public double PowerMultiplier = 1;
-    
-
-
 
     /**
      * Creates the Mecanum object. Sets private fields and configures motor directions.
