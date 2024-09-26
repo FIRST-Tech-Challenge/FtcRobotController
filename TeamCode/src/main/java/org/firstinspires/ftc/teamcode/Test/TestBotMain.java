@@ -37,21 +37,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-/*
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When a selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
-
-
-
 @TeleOp(name="Test Bot Main", group="Test")
 public class TestBotMain extends LinearOpMode {
 
@@ -63,7 +48,7 @@ public class TestBotMain extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
 
-
+    private DcMotor grabberMotor;
 
 
 
@@ -72,13 +57,12 @@ public class TestBotMain extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        grabberMotor = hardwareMap.get(DcMotor.class, "grabberMotor");
 
         double direction = 1;
 
@@ -127,6 +111,25 @@ public class TestBotMain extends LinearOpMode {
 
             frontRight.setPower(frontRightPower / s);
             backRight.setPower(backRightPower / s);
+
+            // grabber
+
+            if(gamepad1.right_trigger != 0) {
+                grabberMotor.setTargetPosition(1);
+                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            else if(gamepad1.left_trigger != 0) {
+                grabberMotor.setTargetPosition(0);
+                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
+                telemetry.update();
+
+            }
+            else {
+                grabberMotor.setPower(0);
+            }
+
+
         }
     }
 }
