@@ -25,7 +25,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     double leftBackPower = 0;
     double rightBackPower = 0;
 
-    // This chunk controls our arms
+    // This chunk controls our arms // Neha: we need to add code for the motor that lifts the arm. It is a DcMotor so the code will look
+                                    // similar to the code for the viper slide.
     private DcMotor viperSlide = null;
     private static final double VIPER_POWER_DEFAULT = 0.6;
     double viperSlidePower = 0;
@@ -50,7 +51,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private IMU imu = null;
     static final double TURN_SPEED_ADJUSTMENT = 0.015;     // Larger is more responsive, but also less stable
     static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
-    static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate
+    static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate // Neha: Make the comments line up vertically
     static final double MIN_TURN_SPEED = 0.15;     // Min Turn speed to limit turn rate
     private double turnSpeed = 0;
     private double degreesToTurn = 0;
@@ -80,7 +81,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // Neha: This should go with the other wheel initialization above.
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -95,7 +96,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
 
-            // Get input from the joysticks
+            // Get input from the joysticks // We need to create a function for the joystick input and wheel speed
             axial = -gamepad1.left_stick_y;
             lateral = gamepad1.left_stick_x;
             yaw = gamepad1.right_stick_x;
