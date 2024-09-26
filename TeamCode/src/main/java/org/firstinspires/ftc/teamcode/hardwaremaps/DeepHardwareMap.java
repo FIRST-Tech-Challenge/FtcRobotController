@@ -43,16 +43,12 @@ public class DeepHardwareMap extends TeamHardwareMap {
 
     @Override
     public void initialise() {
-        // FrontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // FrontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // FrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Necessary ?
         // Setup and configure all drive motors
         // ConfigureMovementMotor(FrontRightMotor, "FRW", DcMotorSimple.Direction.REVERSE);
-        FrontRightMotor = ConfigureMovementMotor(FrontLeftMotor, "FRW", DcMotorSimple.Direction.FORWARD);
-        FrontLeftMotor = ConfigureMovementMotor(FrontLeftMotor, "FLW", DcMotorSimple.Direction.REVERSE);
+        FrontRightMotor = ConfigureMovementMotor(FrontLeftMotor, "FRW", DcMotorSimple.Direction.REVERSE);
+        FrontLeftMotor = ConfigureMovementMotor(FrontLeftMotor, "FLW", DcMotorSimple.Direction.FORWARD);
         BackRightMotor = ConfigureMovementMotor(BackRightMotor, "BRW", DcMotorSimple.Direction.REVERE);
         BackLeftMotor = ConfigureMovementMotor(BackLeftMotor, "BLW", DcMotorSimple.Direction.REVERSE);
-
 
         // Odometers are not yet attached to robot
         // So dont setup to prevent errors
