@@ -2,9 +2,6 @@
 
 - https://en.m.wikipedia.org/wiki/Kalman_filter
 
-
-
-
 ## TeamCode Module
 
 Welcome!

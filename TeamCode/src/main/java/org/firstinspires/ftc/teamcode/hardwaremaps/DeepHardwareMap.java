@@ -27,60 +27,39 @@ public class DeepHardwareMap extends TeamHardwareMap {
         -----------------------------------------------------------------------
      */
 
-    public DcMotorSimple FrontRightMotor;
-    public DcMotorSimple FrontLeftMotor;
-    public DcMotorSimple BackRightMotor;
-    public DcMotorSimple BackLeftMotor;
+    // Setup and configure all drive motors
+    public DcMotorSimple FrontRightMotor = ConfigureMovementMotor("FRW", DcMotorSimple.Direction.REVERSE);
+    public DcMotorSimple FrontLeftMotor = ConfigureMovementMotor("FLW", DcMotorSimple.Direction.REVERSE);
+    public DcMotorSimple BackRightMotor = ConfigureMovementMotor("BRW", DcMotorSimple.Direction.REVERSE);
+    public DcMotorSimple BackLeftMotor = ConfigureMovementMotor("BLW", DcMotorSimple.Direction.REVERSE);
 
-    public DcMotorEx RightOdometerMotor;
-    public DcMotorEx LeftOdometerMotor;
-    public DcMotorEx CentreOdometerMotor;
+    // Setup and configure all odometers
+    // public DcMotorEx RightOdometerMotor = ConfigureOdometerMotor("RIGHT_ODOMETER");
+    // public DcMotorEx LeftOdometerMotor = ConfigureOdometerMotor("LEFT_ODOMETER");
+    // public DcMotorEx CentreOdometerMotor = ConfigureOdometerMotor("CENTRE_ODOMETER");
 
     public DeepHardwareMap(HardwareMap hardwaremap) {
         super(hardwaremap);
     }
 
-
     @Override
     public void initialise() {
-        // Setup and configure all drive motors
-        // ConfigureMovementMotor(FrontRightMotor, "FRW", DcMotorSimple.Direction.REVERSE);
-        FrontRightMotor = ConfigureMovementMotor(FrontLeftMotor, "FRW", DcMotorSimple.Direction.REVERSE);
-        FrontLeftMotor = ConfigureMovementMotor(FrontLeftMotor, "FLW", DcMotorSimple.Direction.FORWARD);
-        BackRightMotor = ConfigureMovementMotor(BackRightMotor, "BRW", DcMotorSimple.Direction.REVERE);
-        BackLeftMotor = ConfigureMovementMotor(BackLeftMotor, "BLW", DcMotorSimple.Direction.REVERSE);
-
-        // Odometers are not yet attached to robot
-        // So dont setup to prevent errors
-
-        // ConfigureOdometerMotor(RightOdometerMotor, "RIGHT_ODOMETER");
-        // ConfigureOdometerMotor(LeftOdometerMotor, "LEFT_ODOMETER");
-        // ConfigureOdometerMotor(CentreOdometerMotor, "CENTRE_ODOMETER");
+        // Any additional configuration options here
+        FrontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    private DcMotorSimple ConfigureMovementMotor(DcMotorSimple motor, String name, DcMotorSimple.Direction dir) {
-        motor = hardwareMap.get(DcMotorSimple.class, name);
-        // motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Necessary ?
+    private DcMotorSimple ConfigureMovementMotor(String name, DcMotorSimple.Direction dir) {
+        DcMotorSimple motor = hardwareMap.get(DcMotorSimple.class, name);
         motor.setDirection(dir);
         return motor;
     }
 
-    private void ConfigureOdometerMotor(DcMotorEx motor, String name) {
-        motor = hardwareMap.get(DcMotorEx.class, name);
+    private DcMotorEx ConfigureOdometerMotor(String name) {
+        DcMotorEx motor = hardwareMap.get(DcMotorEx.class, name);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
-    }
-
-    /**
-     * Get all DcMotors associated with driving
-     * @return Array of DcMotors, in order of FrontRight | FrontLeft | BackRight | BackLeft
-     */
-    public DcMotorSimple[] GetDriveMotors() {
-        return new DcMotorSimple[] {FrontRightMotor, FrontLeftMotor, BackRightMotor, BackLeftMotor};
-
+        return motor;
     }
 }

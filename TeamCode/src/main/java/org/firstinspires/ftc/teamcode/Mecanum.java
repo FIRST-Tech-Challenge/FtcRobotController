@@ -8,15 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  Class designed to provide helper methods to operate mecanum wheels
  */
 public class Mecanum {
-    private DcMotorSimple fl;
-    private DcMotorSimple fr;
-    private DcMotorSimple bl;
-    private DcMotorSimple br;
-    
-    /**
-      * Multiplier for speer applied to all mecanum wheels
-    */
-    
+    private DcMotorSimple fr, fl, br, bl;
+
     public double PowerMultiplier = 1;
 
     /**
@@ -27,14 +20,13 @@ public class Mecanum {
      * @param backLeft Back Left Motor Object
      * @return A new Mecanum object
      */
-    public static Mecanum Init(DcMotorSimple frontRight, DcMotorSimple frontLeft, DcMotorSimple backRight, DcMotorSimple backLeft) {
+    public static Mecanum Init(DcMotorSimple frontRight, DcMotorSimple frontLeft, DcMotorSimple backRight, DcMotorSimple backLeft, double power) {
         Mecanum m = new Mecanum();
-
         m.fl = frontLeft;
         m.fr = frontRight;
         m.br = backRight;
         m.bl = backLeft;
-
+        m.PowerMultiplier = power;
         return m;
     }
 
@@ -43,12 +35,7 @@ public class Mecanum {
      * Analyses gamepad and sets power of motors appropriately
      * @param gp Gamepad object
      */
-    public double[] Move(Gamepad gp, Telemetry t) {
-        if(!(PowerMultiplier > 0 && PowerMultiplier <= 1)) {
-            t.addLine("Power Multiplier should be between 0 and 1");
-            return new double [] { };
-        }
-
+    public double[] Move(Gamepad gp) {
         double y = -gp.left_stick_y;
         double x = gp.left_stick_x;
         double rx = gp.right_stick_x;
