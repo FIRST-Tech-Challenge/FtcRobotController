@@ -4,9 +4,20 @@ It is a class to instatiate the robot and perform basic tasks(e.g. drive the rob
 Both Autonomous and TeleOp instantiate a CoyotesRobot.
 The CoyotesRobot uses objects instantiated from the classes in [hardware](./hardware).
 The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's CoyotesRobot.
+
 > [!Important]
 > DO NOT PUT THE HARDWARE NAMES IN THIS REPOSITORY. THIS IS THE TEMPLATE.
 > THEY SHOULD BE PUT IN THE CURRENT SEASON'S REPOSITORY.
+
+# [FileManager.java](./FileManager.java)
+
+Reads and writes text files in external storage.
+
+# [TeamColor.java](./TeamColor.java)
+An enum that states whether the robot is on red or blue side.
+
+# [TeamSide.java](./TeamSide.java)
+An enum that states whether the robot is on far or near side. 
 
 # [Hardware](./hardware/)
 
