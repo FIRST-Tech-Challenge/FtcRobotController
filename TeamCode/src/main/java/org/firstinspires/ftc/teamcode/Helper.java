@@ -58,7 +58,7 @@ public class Helper {
      * @param powers Array of powers of motors. Commonly returned from Mecanum.Move()
      * @param telemetry Telemetry object from OpMode for logging
      */
-    public static void ReportMecanumMotorSpeed(double[] powers, Telemetry telemetry) {
+    public static void ReportAllMotorSpeed(double[] powers, Telemetry telemetry) {
         telemetry.addData("Front Right Motor Power", powers[0]);
         telemetry.addData("Front Left Motor Power", powers[1]);
         telemetry.addData("Back Right Motor Power", powers[2]);
@@ -70,7 +70,7 @@ public class Helper {
      * @param hardwareMap DeepHardwareMap currently in use
      * @param telemetry Telemetry object from OpMode for logging
      */
-    public static void ReportMecanumMotorSpeed(DeepHardwareMap hardwareMap, Telemetry telemetry) {
+    public static void ReportAllMotorSpeed(DeepHardwareMap hardwareMap, Telemetry telemetry) {
         telemetry.addData("Front Right Motor Power", hardwareMap.FrontRightMotor.getPower());
         telemetry.addData("Front Left Motor Power", hardwareMap.FrontLeftMotor.getPower());
         telemetry.addData("Back Right Motor Power", hardwareMap.BackRightMotor.getPower());

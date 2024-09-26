@@ -49,7 +49,7 @@ public class MecanumMovementTeleOp extends LinearOpMode {
 
             // Give gamepad to mecanum to move wheels
             // Display on telemetry
-            Helper.ReportMecanumMotorSpeed(m.Move(gamepad1), telemetry);
+            Helper.ReportAllMotorSpeed(m.Move(gamepad1), telemetry);
             telemetry.update();
         }
     }
