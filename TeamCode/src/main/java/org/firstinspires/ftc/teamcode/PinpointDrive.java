@@ -97,9 +97,9 @@ public class PinpointDrive extends MecanumDrive {
             // Potential alternate solution: timestamp the pose set and backtrack it based on speed?
             pinpoint.setPosition(pose);
         }
-        pinpoint.bulkUpdate(); // RR LOCALIZER NOTE: this is not ideal for loop times.
+        pinpoint.updatePoseAndVelocity(); // RR LOCALIZER NOTE: this is not ideal for loop times.
         // Driver needs update to be optimized
-        pose = pinpoint.getPosition();
+        pose = pinpoint.getPositionRR();
         lastPinpointPose = pose;
 
         // RR standard
@@ -110,7 +110,7 @@ public class PinpointDrive extends MecanumDrive {
 
         FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
 
-        return pinpoint.getVelocity();
+        return pinpoint.getVelocityRR();
     }
 
 
