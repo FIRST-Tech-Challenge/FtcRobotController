@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name="Vanilla", group="Robot")
+@Autonomous(name="Vanilla", group="Robot") // Neha: there should not be a blank line after this
 
 public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     // Initialize all variables for the program
@@ -54,18 +54,18 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw();
 
-        // Send telemetry message to signify robot waiting;
+        // Send telemetry message to signify robot waiting; // Neha: How does this data look on the screen? Can you improve it?
         telemetry.addData("Status", "Ready to run");
         telemetry.update();
 
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.update();
-        //sleep(5000);
+        //sleep(5000); // Neha: delete this line completely.
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-/*
+/*      // Neha: What is this? Should we delete it?
         moveForward(1.2, 0.8);
         strafeLeft(0.5, 0.8);
         moveBackward(0.6);
@@ -79,8 +79,9 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         moveBackward(1.4, 0.4);
         */
 
+        // Neha: Use all of the single-parameter methods if possible.
         moveForward(2.3);
-        strafeLeft(0.5); //strafing to 1st block
+        strafeLeft(0.5); //strafing to 1st block // Neha: make all of the comments line up vertically
         moveBackward(2.1,0.4 ); //moving first block backward
         turnRightToHeading(-20, 0.4);//turning to the red line to angle the block
         moveBackward(1.1, 0.4);//moving the block backward into zone
@@ -90,15 +91,15 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         strafeLeft(1.2, 0.4);//strafing left to 2nd block
         moveBackward(2, 0.2);//moving to red zone
         turnRightToHeading(20, 0.4);//turning to face the red zone
-        moveBackward(1.5, 0.2);//placing block in red zone
+        moveBackward(1.5, 0.2);//placing block in red zone // Neha: you have too many blank lines after this
 
 
         // End of autonomous program
         telemetry.addData("Path", "Complete");
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.update();
-        sleep(5000);
-    }
+        sleep(5000); // I don't know why we have this. We should probably delete it
+    } // There should be a blank line after this
     private void acceleration(double secondsToDrive, double speedToDrive,
                               double leftFrontDriveDirection, double rightFrontDriveDirection,
                               double leftBackDriveDirection, double rightBackDriveDirection){
@@ -110,7 +111,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             double elapsedTime = runtime.seconds();
 
             // Acceleration phase
-            if (elapsedTime < 1 && currentSpeed < targetSpeed) {
+            if (elapsedTime < 1 && currentSpeed < targetSpeed) { // Neha: we need to fix this. Ask me to explain.
                 currentSpeed = currentSpeed + 0.01; // Increase the speed by 0.01 per second
             }
             // Deceleration phase
@@ -168,7 +169,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         acceleration(secondsToDrive, speedToDrive, 1, -1, 1, -1);
     }
 
-    private void strafeLeft(double secondsToDrive) {
+    private void strafeLeft(double secondsToDrive) { // Neha: the two versions of strafeLeft need to be next to each other. Like the turnLeft and turnRight methods above.
         strafeLeft(secondsToDrive, DEFAULT_SPEED);
     }
 
@@ -181,7 +182,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     }
     private void strafeRight(double secondsToDrive, double speedToDrive) {
         acceleration(secondsToDrive, speedToDrive, 1, -1, -1, 1);
-    }
+    } // Neha: Remove the extra line after this
 
 
     public double getHeading() {
@@ -189,7 +190,9 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         return orientation.getYaw(AngleUnit.DEGREES);
     }
 
-    private void turnLeftToHeading(double targetYaw, double speedToDrive) {
+    // Neha: create overloads for this method to use the default speed
+    private void turnLeftToHeading(double targetYaw, double speedToDrive) { // Neha: You have seen that this doesn't work well. You have code for turning that
+                                                                            // works well in the other program. You can copy it here.
         leftFrontDrive.setPower(-speedToDrive);
         rightFrontDrive.setPower(speedToDrive);
         leftBackDrive.setPower(-speedToDrive);
@@ -202,7 +205,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         stopMoving();
     }
 
-    private void turnRightToHeading(double targetYaw, double speedToDrive) {
+    private void turnRightToHeading(double targetYaw, double speedToDrive) { // Neha: Same change as turnLeftToHeading()
         leftFrontDrive.setPower(speedToDrive);
         rightFrontDrive.setPower(-speedToDrive);
         leftBackDrive.setPower(speedToDrive);
@@ -213,7 +216,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             telemetry.update();
         }
         stopMoving();
-    }
+    } // Neha: remove the extra line after this.
 
 }
 
