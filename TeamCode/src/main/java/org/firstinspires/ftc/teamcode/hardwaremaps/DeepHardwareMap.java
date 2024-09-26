@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class DeepHardwareMap extends TeamHardwareMap {
     /*
         -----------------------------------------------------------------------
-        | FRW               | Front Right Wheel     | Control Hub Motor 0     |
+        | FRW               | Front Right Wheel     | Control Hub Motor 3     |
         --------------------+-----------------------+--------------------------
-        | FLW               | Front Left Wheel      | Control Hub Motor 1     |
+        | FLW               | Front Left Wheel      | Control Hub Motor 2     |
         --------------------+-----------------------+--------------------------
-        | BRW               | Back Right Wheel      | Control Hub Motor 2     |
+        | BRW               | Back Right Wheel      | Control Hub Motor 0     |
         --------------------+-----------------------+--------------------------
-        | BLW               | Back Left Wheel       | Control Hub Motor 3     |
+        | BLW               | Back Left Wheel       | Control Hub Motor 1     |
         --------------------+-----------------------+--------------------------
         | RIGHT_ODOMETER    | Right Odometer        | None                    |
         --------------------+-----------------------+--------------------------
