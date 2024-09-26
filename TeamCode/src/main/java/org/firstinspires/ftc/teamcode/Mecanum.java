@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  Class designed to provide helper methods to operate mecanum wheels
  */
@@ -30,12 +32,16 @@ public class Mecanum {
         return m;
     }
 
-
     /**
      * Analyses gamepad and sets power of motors appropriately
      * @param gp Gamepad object
      */
-    public double[] Move(Gamepad gp) {
+    public double[] Move(Gamepad gp, Telemetry telemetry) {
+        if(!(PowerMultiplier > 0 && PowerMultiplier <= 1)) {
+            telemetry.addLine("Power Multiplier should be between 0 and 1");
+            return new double [] { 0, 0, 0, 0 };
+        }
+
         double y = -gp.left_stick_y;
         double x = gp.left_stick_x;
         double rx = gp.right_stick_x;
