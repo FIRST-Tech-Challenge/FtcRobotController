@@ -10,14 +10,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Autonomous(name = "Main")
 public class Main extends LinearOpMode {
     //INIT
-    DcMotorEx motor;
+    DcMotor motor;
 
     @Override
     public void runOpMode() {
         waitForStart();
         if (opModeIsActive()) {
             // Pre-run
-            motor = hardwareMap.get(DcMotorEx.class, "motor0");
+            motor = hardwareMap.get(DcMotor.class, "motor0");
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             //motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
