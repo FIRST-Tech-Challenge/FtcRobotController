@@ -85,36 +85,30 @@ public class MeepMeepTesting {
               .build());
 
       myBotDaniel.runAction(myBotDaniel.getDrive().actionBuilder(new Pose2d(0,-55,Math.toRadians(90)))
-              .splineToSplineHeading(new Pose2d(-50, -50, Math.toRadians(225)), Math.toRadians(225))
-              .setTangent(Math.toRadians(225))
-              .lineToY(-56) //basket location
-              .strafeToSplineHeading(new Vector2d(-35, -35), Math.toRadians(270))
-              .setTangent(Math.toRadians(90))
-              .lineToY(-0)
-              .setTangent(Math.toRadians(180))
-              .lineToX(-46)  //first sample pickup
-              .setTangent(Math.toRadians(270))
-              .splineToLinearHeading(new Pose2d(-56, -56, Math.toRadians(225)), Math.toRadians(225)) //end of 1st lap
+              .splineToSplineHeading(new Pose2d(-57, -55, Math.toRadians(225)), Math.toRadians(225)) //basket position
+              .setTangent(Math.toRadians(225)).setReversed(true)
+              .splineToSplineHeading(new Pose2d(-40, -36, Math.toRadians(270)), Math.toRadians(90))
+              .splineToConstantHeading(new Vector2d(-40, -14), Math.toRadians(90))// beginning of loop back
+              .splineToSplineHeading(new Pose2d(-52, -14, Math.toRadians(270)), Math.toRadians(180))
+              .splineToConstantHeading(new Vector2d(-54, -26), Math.toRadians(270)) //first sample pickup
+              .splineToSplineHeading(new Pose2d(-64, -46, Math.toRadians(225)), Math.toRadians(225)) //end of first lap
 
-              .setTangent(Math.toRadians(45))
-              .splineToLinearHeading(new Pose2d(-45, -0, Math.toRadians(270)), Math.toRadians(90))
-              .setTangent(Math.toRadians(180))
-              .lineToX(-55)  //second sample pickup
-              .setTangent(Math.toRadians(270))
-//              .strafeToSplineHeading(new Vector2d(-50, -50),Math.toRadians(225)) //these three lines are alternate backup path
-//              .setTangent(Math.toRadians(225))
-//              .lineToY(-56) //end of 2nd lap
-              .splineToLinearHeading(new Pose2d(-56, -56, Math.toRadians(225)), Math.toRadians(225)) //end of 2nd lap
+              .setTangent(Math.toRadians(225)).setReversed(true)
+              .splineToSplineHeading(new Pose2d(-48, -36, Math.toRadians(270)), Math.toRadians(90))
+              .splineToConstantHeading(new Vector2d(-48, -14), Math.toRadians(90))// beginning of loop back
+              .splineToSplineHeading(new Pose2d(-60, -14, Math.toRadians(270)), Math.toRadians(180))
+              .splineToConstantHeading(new Vector2d(-64, -26), Math.toRadians(270)) //second sample pickup
+              .splineToSplineHeading(new Pose2d(-64, -45, Math.toRadians(225)), Math.toRadians(225)) //end of second lap
 
-              .setTangent(Math.toRadians(90))
-              .splineToLinearHeading(new Pose2d(-54, -0, Math.toRadians(270)), Math.toRadians(90))
-              .setTangent(Math.toRadians(180))
-              .lineToX(-61)
-              .setTangent(Math.toRadians(270))
-              .lineToY(-50) //end of 3rd lap
+              .setTangent(Math.toRadians(225)).setReversed(true)
+              .splineToSplineHeading(new Pose2d(-52, -36, Math.toRadians(270)), Math.toRadians(90))
+              .splineToConstantHeading(new Vector2d(-52, -14), Math.toRadians(90))// beginning of loop back
+              .splineToSplineHeading(new Pose2d(-68, -14, Math.toRadians(270)), Math.toRadians(180))
+              .splineToConstantHeading(new Vector2d(-72, -22), Math.toRadians(270)) //third sample pickup
+              .splineToConstantHeading(new Vector2d(-72, -45), Math.toRadians(270)) //end of third lap
 
               .setTangent(Math.toRadians(90))
-              .splineToConstantHeading(new Vector2d(-24, -10), Math.toRadians(0))
+              .splineToConstantHeading(new Vector2d(-24, -6), Math.toRadians(0))
               .build());
 
 
