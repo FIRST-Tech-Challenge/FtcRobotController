@@ -65,7 +65,7 @@ public class Teleop extends LinearOpMode {
                 backLeftPower /= max;
                 backRightPower /= max;
             }
-           // bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+            bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
         }
     }
 }
