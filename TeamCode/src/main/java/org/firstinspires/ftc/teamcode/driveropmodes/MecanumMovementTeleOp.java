@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.hardwaremaps.DeepHardwareMap;
 import org.firstinspires.ftc.teamcode.Mecanum;
 
-import org.firstinspires.ftc.teamcode.Helper;
+import static org.firstinspires.ftc.teamcode.Helper.*;
 
 /**
  * Class for testing of simple Mecanum movement
@@ -31,7 +31,7 @@ public class MecanumMovementTeleOp extends LinearOpMode {
                 );
 
         // Make sure all motors are behaving properly
-        Helper.ReportDriveMotorStatus(teamHardwareMap, telemetry);
+        ReportDriveMotorStatus(teamHardwareMap, telemetry);
 
         telemetry.update();
         waitForStart();
@@ -40,9 +40,8 @@ public class MecanumMovementTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Give gamepad to mecanum to move wheels
-            // Display on telemetry
-            Helper.ReportAllMotorSpeed(m.Move(gamepad1), telemetry);
-            telemetry.update();
+            m.Move(gamepad1);
+            ReportAllMotorSpeed(teamHardwareMap, telemetry);
         }
     }
 }
