@@ -40,7 +40,6 @@ public class ManualMovementTeleOp extends LinearOpMode {
         // Make sure all motors are behaving properly
         ReportDriveMotorStatus(deepHardwareMap, telemetry);
 
-        telemetry.update();
         waitForStart();
 
         if (isStopRequested()) return;
@@ -100,7 +99,6 @@ public class ManualMovementTeleOp extends LinearOpMode {
                         .forEach(x -> motors[x].setPower(x == sel ? final_dir : 0));
             }
 
-            telemetry.update();
         }
     }
 }
