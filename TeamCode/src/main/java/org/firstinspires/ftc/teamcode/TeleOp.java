@@ -8,9 +8,16 @@ import com.qualcomm.robotcore.util.Range;
 public class TeleOp extends OpMode {
     private Hardware hardware;
 
+    // Whether the kill switch has been pressed once within the past 500 ms
+    private boolean killSwitchPressedOnce;
+    // Times how long it has been since the inital press on the back button
+    private ElapsedTime killSwitchTimer = new ElapsedTime();
+
     @Override
     public void init() {
         hardware = new Hardware(this);
+
+        killSwitchPressedOnce = false;
     }
 
     @Override
@@ -28,5 +35,27 @@ public class TeleOp extends OpMode {
                 gamepad1.right_stick_y,
                 gamepad1.left_stick_x
         );
+
+        // Initial press on kill switch
+        if (gamepad1.back || gamepad2.back && !killSwitchPressedOnce) {
+            killSwitchPressedOnce = true;
+            // Restart the timer
+            killSwitchTimer.reset();
+
+        } else if (gamepad1.back || gamepad2.back && !killSwitchPressedOnce) {
+            // Second press on kill switch
+            killAllMotors();
+
+        } else if (killSwitchTimer.milliseconds() > 500) {
+            // If it has been more than 500 since the back button was pressed
+            killSwitchPressedOnce = false;
+        }
+    }
+
+    /**
+     * Stop all motors and servos from moving.
+     */
+    public void killAllMotors() {
+        
     }
 }
