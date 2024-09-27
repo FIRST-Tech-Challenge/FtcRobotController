@@ -27,6 +27,8 @@ public class DeepHardwareMap {
         -----------------------------------------------------------------------
      */
 
+    private HardwareMap hardwareMap;
+
     // Setup and configure all drive motors
     public DcMotorSimple FrontRightMotor = ConfigureMovementMotor("FRW", DcMotorSimple.Direction.REVERSE);
     public DcMotorSimple FrontLeftMotor = ConfigureMovementMotor("FLW", DcMotorSimple.Direction.REVERSE);
@@ -39,6 +41,7 @@ public class DeepHardwareMap {
     // public DcMotorEx CentreOdometerMotor = ConfigureOdometerMotor("CENTRE_ODOMETER");
 
     public DeepHardwareMap(HardwareMap hardwaremap) {
+        hardwareMap = hardwaremap;
         initialise();
     }
 
