@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
 import org.firstinspires.ftc.teamcode.Subsystems.OdometryPodSubsystem;
@@ -48,6 +49,7 @@ public class RobotContainer {
     public static OdometrySubsystem odometry;
     // public static Claw claw;
     // public static LinearSlideSubsystem linearSlide;
+    public static Camera DanyCamy;
 
     // Robot initialization for teleop - Run this once at start of teleop
     public static void Init_TeleOp(CommandOpMode mode) {
@@ -109,8 +111,10 @@ public class RobotContainer {
         odometryPod = new OdometryPodSubsystem();
         odometry = new OdometrySubsystem();
         drivesystem = new DriveTrain();
+        DanyCamy = new Camera();
         // insert other subsystems here
         // claw = new Claw();
+
     }
 
 
