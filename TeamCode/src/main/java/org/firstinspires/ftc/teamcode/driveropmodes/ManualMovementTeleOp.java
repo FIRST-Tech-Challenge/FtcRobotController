@@ -1,17 +1,20 @@
 package org.firstinspires.ftc.teamcode.driveropmodes;
 
+import static org.firstinspires.ftc.teamcode.Helper.CopyButtonsFromGamepad;
+import static org.firstinspires.ftc.teamcode.Helper.GamepadColour;
+import static org.firstinspires.ftc.teamcode.Helper.ReportAllMotorSpeed;
+import static org.firstinspires.ftc.teamcode.Helper.ReportDriveMotorStatus;
+import static org.firstinspires.ftc.teamcode.Helper.SetGamepadLight;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.hardwaremaps.DeepHardwareMap;
-import static org.firstinspires.ftc.teamcode.Helper.*;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
-import java.lang.Math;
 
 /**
  * Class for testing of manual movement
@@ -76,9 +79,9 @@ public class ManualMovementTeleOp extends LinearOpMode {
             int final_dir = dir;
 
             // -2 indicates no change has happened so ignore everything
-            allmotor_active = false;
             // If pressing bumper set motor power to right state
-            if(gamepad1.right_bumper) allmotor_active = true;
+            allmotor_active = gamepad1.right_bumper;
+
             // If released bumper set motor power to 0
             if(prev_gp.right_bumper && !current_gp.right_bumper) allmotor_active = false;
 
@@ -109,7 +112,8 @@ public class ManualMovementTeleOp extends LinearOpMode {
                 IntStream.range(0, motors.length)
                         .forEach(x -> motors[x].setPower(x == sel ? final_dir : 0));
             }
-            ReportAllMotorSpeed(teamHardwareMap, telemetry);
+
+            ReportAllMotorSpeed(deepHardwareMap, telemetry);
         }
     }
 }

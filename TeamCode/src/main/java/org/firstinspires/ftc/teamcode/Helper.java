@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardwaremaps.DeepHardwareMap;
-
 
 /**
  * A helper class that provides commonly used functions, primarily for OpModes
@@ -29,7 +27,6 @@ public class Helper {
         DARK_YELLOW(102, 102, 0),
         DARK_GREEN(0, 102, 0),
         DARK_BLUE(0, 0, 102),
-        DARK_YELLOW(102, 102, 0),
         DARK_CYAN(0, 102, 102),
         
         LIGHT_RED(255, 153, 153),

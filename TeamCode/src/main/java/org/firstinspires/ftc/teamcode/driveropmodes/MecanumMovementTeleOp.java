@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.driveropmodes;
 
+import static org.firstinspires.ftc.teamcode.Helper.ReportAllMotorSpeed;
+import static org.firstinspires.ftc.teamcode.Helper.ReportDriveMotorStatus;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.hardwaremaps.DeepHardwareMap;
 import org.firstinspires.ftc.teamcode.Mecanum;
-
-import static org.firstinspires.ftc.teamcode.Helper.*;
+import org.firstinspires.ftc.teamcode.hardwaremaps.DeepHardwareMap;
 
 /**
  * Class for testing of simple Mecanum movement
