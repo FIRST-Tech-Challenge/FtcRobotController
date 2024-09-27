@@ -21,11 +21,7 @@ public class MecanumMovementTeleOp extends LinearOpMode {
         // Create hardware map
         DeepHardwareMap teamHardwareMap = new DeepHardwareMap(hardwareMap);
 
-        // Gamepads to use for rising edge detector
-        Gamepad current_gp = new Gamepad();
-        Gamepad prev_gp = new Gamepad();
-
-        // Power is 0.5
+        // Init mecanum with a power of 0.5
         Mecanum m = Mecanum.Init(
                 teamHardwareMap.FrontRightMotor,
                 teamHardwareMap.FrontLeftMotor,
@@ -43,10 +39,6 @@ public class MecanumMovementTeleOp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            // Copy both gamepads
-            prev_gp.copy(current_gp);
-            current_gp.copy(gamepad1);
-
             // Give gamepad to mecanum to move wheels
             // Display on telemetry
             Helper.ReportAllMotorSpeed(m.Move(gamepad1), telemetry);
