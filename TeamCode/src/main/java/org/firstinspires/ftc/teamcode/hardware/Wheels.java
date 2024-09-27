@@ -15,4 +15,21 @@ public abstract class Wheels {
      * @return A set that contains every DcMotor included by this wheels system.
      */
     public abstract HashSet<DcMotor> getAllMotors();
+
+    /**
+     * Drive the wheels.
+     * 
+     * @param drive Forward input
+     * @param turn Turn input
+     */
+    public abstract void drive(double drivePower, double y);
+
+    /**
+     * Drive the wheels.
+     * 
+     * @param x Sideways input
+     * @param y Forward input
+     * @param rotate Rotation input
+     */
+    public abstract void drive(double x, double y, double rotate);
 }

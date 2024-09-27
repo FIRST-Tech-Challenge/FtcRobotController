@@ -49,7 +49,20 @@ public class Mecanum extends Wheels {
     }
 
     /**
-     * Controls the robot's driving
+     * Drive the mecanum wheels.
+     * 
+     * @param x      Sideways movement of the robot
+     *               Negative values are leftwards, postive values are rightwards
+     * @param y      Forwards/backward movement of the robot
+     *               Negative values are backwards, positive values are forwards
+     */
+    @Override
+    public void drive(double x, double y) {
+        drive(x, y, 0);
+    }
+
+    /**
+     * Drive the mecanum wheels.
      * 
      * @param x      Sideways movement of the robot
      *               Negative values are leftwards, postive values are rightwards
@@ -58,6 +71,7 @@ public class Mecanum extends Wheels {
      * @param rotate Rotation of the robot
      *               Negative is counterclockwise, positive is clockwise
      */
+    @Override
     public void drive(double x, double y, double rotate) {
         frontLeftMotor.setPower(y - x - rotate);
         frontRightMotor.setPower(y + x + rotate);
