@@ -18,6 +18,17 @@ import java.lang.Math;
  */
 @TeleOp(name="Manual Movement", group="Linear OpMode")
 public class ManualMovementTeleOp extends LinearOpMode {
+
+    // -----------------------------------------
+    // | A / Cross    | Front Right Wheel      |
+    // | B / Circle   | Front Left Wheel       |
+    // | X / Square   | Back Right Wheel       |
+    // | Y / Triangle | Back Left Wheel        |
+    // | Right Bumper | All Wheels             |
+    // | Left Bumper  | Change Wheel Direction |
+    // |----------------------------------------
+
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
