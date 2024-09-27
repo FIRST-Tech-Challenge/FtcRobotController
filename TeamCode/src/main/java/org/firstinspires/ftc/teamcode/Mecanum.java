@@ -40,8 +40,10 @@ public class Mecanum {
      * @param gp Gamepad object
      */
     public double[] Move(Gamepad gp, Telemetry telemetry) {
+        // If invalid power multiplier range is provided then just set value to 1
         if(!(PowerMultiplier > 0 && PowerMultiplier <= 1)) {
             telemetry.addLine("Power Multiplier should be between 0 and 1");
+            telemetry.addLine("Power Multiplier defaulting to 1");
             telemetry.update();
             PowerMultiplier = 1;
         }
