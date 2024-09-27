@@ -59,6 +59,14 @@ public class Hardware {
         arm = new Arm();
     }
 
+    public Wheels getWheels() {
+        return wheels;
+    }
+
+    public Arm getArm() {
+        return arm;
+    }
+
     /**
      * Attempts to cast the opMode to a LinearOpMode
      * Returns null if it fails
