@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -18,6 +20,8 @@ public class Bot {
     private DcMotor rightMotorFront;
     private DcMotor leftMotorBack;
     private DcMotor rightMotorBack;
+    private CRServo topIntake;
+    private CRServo bottomIntake;
 
     //Statistics for measurements
     static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
@@ -62,6 +66,9 @@ public class Bot {
         rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        //Servos for intake on the map
+        topIntake = map.get(CRServo.class, "top_intake");
+        bottomIntake = map.get(CRServo.class, "bottom_intake");
     }
 
     /**
@@ -80,6 +87,11 @@ public class Bot {
         rightMotorFront.setPower(frontRightPower);
         rightMotorBack.setPower(backRightPower);
     }
-
+    public void setIntakePosition(
+            double intakePower
+    ) {
+        topIntake.setPower(intakePower);
+        bottomIntake.setPower(-intakePower);
+    }
 
 }
