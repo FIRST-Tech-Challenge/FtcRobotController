@@ -66,6 +66,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
     double oldTime = 0;
 
 
+
     @Override
     public void runOpMode() {
 
@@ -132,7 +133,10 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             Request a bulk update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
              */
-            odo.bulkUpdate();
+            double beforeI2cRead = getRuntime();
+            odo.updateOnlyPos();
+            double afterI2cRead = getRuntime();
+            double i2cReadTime = afterI2cRead- beforeI2cRead;
 
 
             if (gamepad1.a){
@@ -162,6 +166,8 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
 
+            double heading = odo.getHeading();
+
 
             /*
             gets the current Velocity (x & y in mm/sec and heading in degrees/sec) and prints it.
@@ -170,9 +176,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Velocity", velocity);
 
-            telemetry.addData("X Encoder:", odo.getEncoderX()); //gets the raw data from the X encoder
-            telemetry.addData("Y Encoder:",odo.getEncoderY()); //gets the raw data from the Y encoder
-            telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
 
             /*
             Gets the Pinpoint device status. Pinpoint can reflect a few states. But we'll primarily see
@@ -184,6 +187,10 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             FAULT_Y_POD_NOT_DETECTED - The device does not detect a Y pod plugged in
             */
             telemetry.addData("Status", odo.getDeviceStatus());
+
+            telemetry.addData("I²C read time",i2cReadTime);
+
+            telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
 
             telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
             telemetry.update();
