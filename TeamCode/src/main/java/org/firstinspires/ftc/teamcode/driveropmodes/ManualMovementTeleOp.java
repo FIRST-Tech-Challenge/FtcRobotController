@@ -35,7 +35,7 @@ public class ManualMovementTeleOp extends LinearOpMode {
         // Some variables needed
         int motor_index;
         int dir = 1;
-        int allmotor_active;
+        boolean allmotor_active;
 
         // Make sure all motors are behaving properly
         ReportDriveMotorStatus(deepHardwareMap, telemetry);
@@ -66,13 +66,13 @@ public class ManualMovementTeleOp extends LinearOpMode {
             int final_dir = dir;
 
             // -2 indicates no change has happened so ignore everything
-            allmotor_active = -2;
+            allmotor_active = false;
             // If pressing bumper set motor power to right state
-            if(gamepad1.right_bumper) allmotor_active = final_dir;
+            if(gamepad1.right_bumper) allmotor_active = true;
             // If released bumper set motor power to 0
-            if(prev_gp.right_bumper && !current_gp.right_bumper) allmotor_active = 0;
+            if(prev_gp.right_bumper && !current_gp.right_bumper) allmotor_active = false;
 
-            if(allmotor_active != -2) {
+            if(!allmotor_active) {
                 // Set all motors to right setting
                 Arrays.stream(motors)
                         .forEach(x -> x.setPower(final_dir));
@@ -80,7 +80,7 @@ public class ManualMovementTeleOp extends LinearOpMode {
 
             // Not sure if this is useful at all
             // No need to evaluate the rest of loop if motors are going
-            if(Math.Abs(allmotor_active) == 1) {
+            if(allmotor_active) {
                 continue;
             }
 
