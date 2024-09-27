@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.os.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
