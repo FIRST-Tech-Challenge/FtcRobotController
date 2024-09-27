@@ -16,6 +16,7 @@ public class Mecanum {
         backLeftMotor;
 
     public double PowerMultiplier = 1;
+    public Telemetry telemetry = null;
 
     /**
      * Creates the Mecanum object. Sets private fields and configures motor directions.
@@ -39,12 +40,14 @@ public class Mecanum {
      * Analyses gamepad and sets power of motors appropriately
      * @param gp Gamepad object
      */
-    public double[] Move(Gamepad gp, Telemetry telemetry) {
+    public void Move(Gamepad gp) {
         // If invalid power multiplier range is provided then just set value to 1
         if(!(PowerMultiplier > 0 && PowerMultiplier <= 1)) {
-            telemetry.addLine("Power Multiplier should be between 0 and 1");
-            telemetry.addLine("Power Multiplier defaulting to 1");
-            telemetry.update();
+            if(telemetry != null) {
+                telemetry.addLine("Power Multiplier should be between 0 and 1");
+                telemetry.addLine("Power Multiplier defaulting to 1");
+                telemetry.update();
+            }
             PowerMultiplier = 1;
         }
 
@@ -66,7 +69,5 @@ public class Mecanum {
         frontLeftMotor.setPower(frontLeftPower * PowerMultiplier);
         backRightMotor.setPower(backRightPower * PowerMultiplier);
         backLeftMotor.setPower(backLeftPower * PowerMultiplier);
-
-        return new double[]{ frontRightPower, frontLeftPower, backRightPower, backLeftPower };
     }
 }
