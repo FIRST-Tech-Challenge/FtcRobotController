@@ -98,7 +98,7 @@ public class ManualMovementTeleOp extends LinearOpMode {
                 IntStream.range(0, motors.length)
                         .forEach(x -> motors[x].setPower(x == sel ? final_dir : 0));
             }
-
+            ReportAllMotorSpeed(teamHardwareMap, telemetry);
         }
     }
 }
