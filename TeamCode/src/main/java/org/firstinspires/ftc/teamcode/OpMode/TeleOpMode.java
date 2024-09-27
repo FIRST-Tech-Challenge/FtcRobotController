@@ -27,6 +27,6 @@ public class TeleOpMode extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-        }//feaijfewoij
+        }
     }
 }
