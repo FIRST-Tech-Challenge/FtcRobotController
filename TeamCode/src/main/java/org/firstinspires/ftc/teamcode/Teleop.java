@@ -23,8 +23,24 @@ public class Teleop extends LinearOpMode {
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = -gamepad1.left_stick_x; // Counteract imperfect strafing
             double pivot = -gamepad1.right_stick_x;
+
             double rightLiftTrigger = gamepad1.right_trigger; //rightTrigger is raising the lift
             double leftLiftTrigger = gamepad1.left_trigger; //leftTrigger is lowering the lift
+
+
+            //when x button is pressed, rotates one way
+            if (gamepad1.x) {
+                bot.setIntakePosition(1.0);
+            }
+            //when y button is pressed, rotates the opposite way
+            else if (gamepad1.y) {
+                bot.setIntakePosition(-1.0);
+            }
+            //when no button is pressed, nothing rotates
+            else {
+                bot.setIntakePosition(0.0);
+            }
+
             double frontLeftPower = y + x + pivot;
             double backLeftPower =  y - x + pivot;
             double frontRightPower = y - x - pivot;
