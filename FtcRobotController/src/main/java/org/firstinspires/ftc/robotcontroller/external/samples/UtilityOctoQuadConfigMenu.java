@@ -167,7 +167,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
 
         optionProgramToFlash = new TelemetryMenu.OptionElement()
         {
-            String name = "Program Settings to FLASH";
+            final String name = "Program Settings to FLASH";
             long lastClickTime = 0;
 
             @Override
@@ -202,7 +202,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
 
         optionSendToRAM = new TelemetryMenu.OptionElement()
         {
-            String name = "Send Settings to RAM";
+            final String name = "Send Settings to RAM";
             long lastClickTime = 0;
 
             @Override
@@ -306,7 +306,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
         private boolean lbPrev;
 
         private int selectedIdx = 0;
-        private Stack<Integer> selectedIdxStack = new Stack<>();
+        private final Stack<Integer> selectedIdxStack = new Stack<>();
 
         private final Telemetry telemetry;
 
@@ -499,8 +499,8 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
 
         public static class MenuElement extends Element
         {
-            private String name;
-            private ArrayList<Element> children = new ArrayList<>();
+            private final String name;
+            private final ArrayList<Element> children = new ArrayList<>();
 
             /**
              * Create a new MenuElement; may either be the root menu, or a submenu (set isRoot accordingly)
@@ -686,7 +686,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
 
         static class BooleanOption extends OptionElement
         {
-            private String name;
+            private final String name;
             private boolean val = true;
 
             private String customTrue;
@@ -751,7 +751,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
          */
         public static class StaticItem extends OptionElement
         {
-            private String name;
+            private final String name;
 
             public StaticItem(String name)
             {
@@ -767,7 +767,7 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
 
         public static abstract class StaticClickableOption extends OptionElement
         {
-            private String name;
+            private final String name;
 
             public StaticClickableOption(String name)
             {
