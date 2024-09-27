@@ -7,16 +7,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name="Vanilla", group="Robot") // Neha: there should not be a blank line after this
-
+@Autonomous(name="Vanilla", group="Robot")
 public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     // Initialize all variables for the program
     // Hardware variables
-    private IMU imu = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -29,6 +28,14 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     // Software variables
     private final ElapsedTime     runtime = new ElapsedTime();
     static final double     DEFAULT_SPEED = 0.6;
+
+    private IMU imu = null;
+    static final double TURN_SPEED_ADJUSTMENT = 0.015;     // Larger is more responsive, but also less stable
+    static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
+    static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate
+    static final double MIN_TURN_SPEED = 0.15;     // Min Turn speed to limit turn rate
+    private double turnSpeed = 0;
+    private double degreesToTurn = 0;
 
     @Override
     public void runOpMode() {
@@ -54,52 +61,36 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw();
 
-        // Send telemetry message to signify robot waiting; // Neha: How does this data look on the screen? Can you improve it?
-        telemetry.addData("Status", "Ready to run");
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Ready");
         telemetry.update();
 
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.update();
-        //sleep(5000); // Neha: delete this line completely.
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-/*      // Neha: What is this? Should we delete it?
-        moveForward(1.2, 0.8);
-        strafeLeft(0.5, 0.8);
-        moveBackward(0.6);
-        turnRightToHeading(-3, 0.8);
-        moveBackward(1.7, 0.4);
-        moveForward(0.4, 0.8);
-        turnRightToHeading(-1,0.5);
-        moveForward(0.6, 0.8);
-        turnLeftToHeading(0.5, 0.3);
-        strafeLeft(0.9, 0.4);
-        moveBackward(1.4, 0.4);
-        */
-
-        // Neha: Use all of the single-parameter methods if possible.
+        //NEHA From NEHA. Parameter Specify bean.java
         moveForward(2.3);
-        strafeLeft(0.5); //strafing to 1st block // Neha: make all of the comments line up vertically
-        moveBackward(2.1,0.4 ); //moving first block backward
-        turnRightToHeading(-20, 0.4);//turning to the red line to angle the block
-        moveBackward(1.1, 0.4);//moving the block backward into zone
-        turnLeftToHeading(20, 0.4);//turning to 0 degrees
-        strafeRight(1.4, 0.4);//strafing before going forward
-        moveForward(2.3, 0.4);//moving to 2nd block
-        strafeLeft(1.2, 0.4);//strafing left to 2nd block
-        moveBackward(2, 0.2);//moving to red zone
-        turnRightToHeading(20, 0.4);//turning to face the red zone
-        moveBackward(1.5, 0.2);//placing block in red zone // Neha: you have too many blank lines after this
-
+        strafeLeft(0.5);                        //strafing to 1st block
+        moveBackward(2.1 );                     //moving first block backward
+        turnRightToHeading(-20);                    //turning to the red line to angle the block
+        moveBackward(1.1);                      //moving the block backward into zone
+        turnLeftToHeading(20);                      //turning to 0 degrees
+        strafeRight(1.4);                       //strafing before going forward
+        moveForward(2.3);                       //moving to 2nd block
+        strafeLeft(1.2);                        //strafing left to 2nd block
+        moveBackward(2, 0.2);       //moving to red zone
+        turnRightToHeading(20);                     //turning to face the red zone
+        moveBackward(1.5, 0.2);     //placing block in red zone
 
         // End of autonomous program
         telemetry.addData("Path", "Complete");
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.update();
-        sleep(5000); // I don't know why we have this. We should probably delete it
-    } // There should be a blank line after this
+    }
+
     private void acceleration(double secondsToDrive, double speedToDrive,
                               double leftFrontDriveDirection, double rightFrontDriveDirection,
                               double leftBackDriveDirection, double rightBackDriveDirection){
@@ -110,8 +101,12 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
             double elapsedTime = runtime.seconds();
 
+            // Driving less than a second
+            if(secondsToDrive < 1){
+                currentSpeed = speedToDrive;
+            }
             // Acceleration phase
-            if (elapsedTime < 1 && currentSpeed < targetSpeed) { // Neha: we need to fix this. Ask me to explain.
+            if (elapsedTime < 1 && currentSpeed < targetSpeed) {
                 currentSpeed = currentSpeed + 0.01; // Increase the speed by 0.01 per second
             }
             // Deceleration phase
@@ -169,54 +164,84 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         acceleration(secondsToDrive, speedToDrive, 1, -1, 1, -1);
     }
 
-    private void strafeLeft(double secondsToDrive) { // Neha: the two versions of strafeLeft need to be next to each other. Like the turnLeft and turnRight methods above.
+    private void strafeLeft(double secondsToDrive) {
         strafeLeft(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void strafeRight(double secondsToDrive) {
-        strafeRight(secondsToDrive, DEFAULT_SPEED);
     }
 
     private void strafeLeft(double secondsToDrive, double speedToDrive) {
         acceleration(secondsToDrive, speedToDrive, -1, 1, 1, -1);
     }
+    private void strafeRight(double secondsToDrive) {
+        strafeRight(secondsToDrive, DEFAULT_SPEED);
+    }
+
     private void strafeRight(double secondsToDrive, double speedToDrive) {
         acceleration(secondsToDrive, speedToDrive, 1, -1, -1, 1);
-    } // Neha: Remove the extra line after this
-
+    }
 
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
 
-    // Neha: create overloads for this method to use the default speed
-    private void turnLeftToHeading(double targetYaw, double speedToDrive) { // Neha: You have seen that this doesn't work well. You have code for turning that
-                                                                            // works well in the other program. You can copy it here.
-        leftFrontDrive.setPower(-speedToDrive);
-        rightFrontDrive.setPower(speedToDrive);
-        leftBackDrive.setPower(-speedToDrive);
-        rightBackDrive.setPower(speedToDrive);
-
-        while (getHeading() < targetYaw) {
-            telemetry.addData("Current Yaw", "%.0f", getHeading());
-            telemetry.update();
-        }
-        stopMoving();
+    private void turnLeftToHeading(double targetYaw) {
+        turnLeftToHeading(targetYaw, DEFAULT_SPEED);
     }
 
-    private void turnRightToHeading(double targetYaw, double speedToDrive) { // Neha: Same change as turnLeftToHeading()
-        leftFrontDrive.setPower(speedToDrive);
-        rightFrontDrive.setPower(-speedToDrive);
-        leftBackDrive.setPower(speedToDrive);
-        rightBackDrive.setPower(-speedToDrive);
+    // Turn left to desired heading.
+    private void turnLeftToHeading(double heading, double speedToDrive) {
+        degreesToTurn = heading - getHeading();
 
-        while (getHeading() > targetYaw) {
-            telemetry.addData("Current Yaw", "%.0f", getHeading());
-            telemetry.update();
+    while (opModeIsActive()
+                && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)
+            && (gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0)) {
+
+        degreesToTurn = heading - getHeading();
+        if(degreesToTurn < -180) degreesToTurn += 360;
+        if(degreesToTurn > 180) degreesToTurn -= 360;
+
+        // Clip the speed to the maximum permitted value
+        turnSpeed = Range.clip(degreesToTurn*TURN_SPEED_ADJUSTMENT, -MAX_TURN_SPEED, MAX_TURN_SPEED);
+        if(turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
+        if(turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
+
+        leftFrontDrive.setPower(-turnSpeed);
+        rightFrontDrive.setPower(turnSpeed);
+        leftBackDrive.setPower(-turnSpeed);
+        rightBackDrive.setPower(turnSpeed);
+
+    }
+}
+
+    private void turnRightToHeading(double targetYaw) {
+        turnRightToHeading(targetYaw, DEFAULT_SPEED);
+    }
+
+    // Turn right to desired heading.
+    private void turnRightToHeading(double heading, double speedToDrive) {
+        degreesToTurn = heading - getHeading();
+
+        while (opModeIsActive()
+                && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)
+                && (gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0)) {
+
+            degreesToTurn = heading - getHeading();
+            if(degreesToTurn < -180) degreesToTurn += 360;
+            if(degreesToTurn > 180) degreesToTurn -= 360;
+
+            // Clip the speed to the maximum permitted value
+            turnSpeed = Range.clip(degreesToTurn*TURN_SPEED_ADJUSTMENT, -MAX_TURN_SPEED, MAX_TURN_SPEED);
+            if(turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
+            if(turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
+
+            leftFrontDrive.setPower(turnSpeed);
+            rightFrontDrive.setPower(-turnSpeed);
+            leftBackDrive.setPower(turnSpeed);
+            rightBackDrive.setPower(-turnSpeed);
+
         }
-        stopMoving();
-    } // Neha: remove the extra line after this.
+    }
+
 
 }
 

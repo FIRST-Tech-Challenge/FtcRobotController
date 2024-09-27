@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 // All the things that we use and borrow
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+    import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+    import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+    import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+    import com.qualcomm.robotcore.hardware.DcMotor;
+    import com.qualcomm.robotcore.hardware.IMU;
+    import com.qualcomm.robotcore.hardware.Servo;
+    import com.qualcomm.robotcore.util.ElapsedTime;
+    import com.qualcomm.robotcore.util.Range;
+    import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+    import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Chocolate", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
@@ -25,8 +25,20 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     double leftBackPower = 0;
     double rightBackPower = 0;
 
-    // This chunk controls our arms // Neha: we need to add code for the motor that lifts the arm. It is a DcMotor so the code will look
-                                    // similar to the code for the viper slide.
+    // Collect joystick position data
+    double axial = 0;
+    double lateral = 0;
+    double yaw = 0;
+
+    // This chunk controls our vertical
+    private DcMotor vertical = null;
+    private static final double VERTICAL_POWER_DEFAULT = 0.6;
+    double verticalPower = 0;
+    private static final int VERTICAL_MAX = 3000;
+    private static final int VERTICAL_MIN = 0;
+    private static final int VERTICAL_DEFAULT = 0;
+
+    // This chunk controls our viper slide
     private DcMotor viperSlide = null;
     private static final double VIPER_POWER_DEFAULT = 0.6;
     double viperSlidePower = 0;
@@ -34,16 +46,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private static final int VIPER_MIN = 0;
     private static final int VIPER_DEFAULT = 0;
 
+    // This chunk controls our claw
     private Servo claw = null;
     private static final double CLAW_DEFAULT = 0.3;
     private static final double CLAW_MIN = 0.26;
     private static final double CLAW_MAX = 0.41;
     double claw_position = CLAW_DEFAULT;
-
-    // Collect joystick position data
-    double axial = 0;
-    double lateral = 0;
-    double yaw = 0;
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -51,7 +59,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private IMU imu = null;
     static final double TURN_SPEED_ADJUSTMENT = 0.015;     // Larger is more responsive, but also less stable
     static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
-    static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate // Neha: Make the comments line up vertically
+    static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate
     static final double MIN_TURN_SPEED = 0.15;     // Min Turn speed to limit turn rate
     private double turnSpeed = 0;
     private double degreesToTurn = 0;
@@ -69,22 +77,24 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(claw_position);
+        vertical = hardwareMap.get(DcMotor.class, "vertical");
+        vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        claw.setPosition(claw_position);
 
         // Initialize the IMU configuration
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // Neha: This should go with the other wheel initialization above.
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -96,7 +106,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
 
-            // Get input from the joysticks // We need to create a function for the joystick input and wheel speed
+            // Get input from the joysticks
             axial = -gamepad1.left_stick_y;
             lateral = gamepad1.left_stick_x;
             yaw = gamepad1.right_stick_x;
@@ -125,15 +135,17 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            // Gyro turns on dpad presses
-            if (gamepad1.dpad_up)
-                turnToHeading(0.0);
-            if (gamepad1.dpad_down)
-                turnToHeading(180.0);
-            if (gamepad1.dpad_left)
-                turnToHeading(90);
-            if (gamepad1.dpad_right)
-                turnToHeading(-135.0); // Turn to face the basket
+            // Control the vertical
+            if (gamepad1.dpad_up && vertical.getCurrentPosition() < VERTICAL_MAX) {
+                verticalPower = VERTICAL_POWER_DEFAULT;
+            }
+            else if (gamepad1.dpad_down && vertical.getCurrentPosition() > VERTICAL_MIN) {
+                verticalPower = -VERTICAL_POWER_DEFAULT;
+            }
+            else {
+                verticalPower = 0;
+            }
+            vertical.setPower(verticalPower);
 
             // Control the viper slide
             if (gamepad1.right_trigger > 0 && viperSlide.getCurrentPosition() < VIPER_MAX) {
