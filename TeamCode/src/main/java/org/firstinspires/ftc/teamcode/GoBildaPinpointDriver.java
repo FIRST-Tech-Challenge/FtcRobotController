@@ -289,8 +289,8 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
             yPosition     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 4, 8),  ByteOrder.LITTLE_ENDIAN);
             hOrientation  = byteArrayToFloat(Arrays.copyOfRange  (bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
             xVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 12,16), ByteOrder.LITTLE_ENDIAN);
-            yVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 20,24), ByteOrder.LITTLE_ENDIAN);
-            hVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 24,28), ByteOrder.LITTLE_ENDIAN);
+            yVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 16,20), ByteOrder.LITTLE_ENDIAN);
+            hVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 20,24), ByteOrder.LITTLE_ENDIAN);
 
         }
 
