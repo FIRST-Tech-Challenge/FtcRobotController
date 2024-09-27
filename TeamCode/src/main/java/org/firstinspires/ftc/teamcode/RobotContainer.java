@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
 import org.firstinspires.ftc.teamcode.Subsystems.OdometryPodSubsystem;
@@ -46,6 +47,7 @@ public class RobotContainer {
     public static Gyro gyro;
     public static OdometryPodSubsystem odometryPod;
     public static OdometrySubsystem odometry;
+    public static Camera camera1;
     // public static Claw claw;
     // public static LinearSlideSubsystem linearSlide;
 
@@ -109,6 +111,7 @@ public class RobotContainer {
         odometryPod = new OdometryPodSubsystem();
         odometry = new OdometrySubsystem();
         drivesystem = new DriveTrain();
+        camera1 = new Camera();
         // insert other subsystems here
         // claw = new Claw();
     }
