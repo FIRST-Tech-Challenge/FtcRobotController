@@ -1,38 +1,51 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import java.util.HashSet;
+
 import com.qualcomm.robotcore.hardware.*;
 
-public class MecanumSystem extends WheelsSystem {
+public class MecanumSystem extends MotorsSystem {
     /* The DcMotors powering the wheels */
-    private DcMotor frontLeftWheel;
-    private DcMotor frontRightWheel;
-    private DcMotor backLeftWheel;
-    private DcMotor backRightWheel;
+    private DcMotor frontLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor backRightMotor;
 
     private double wheelGearRatio = 0.0;
 
-    public MecanumSystem(DcMotor frontLeftWheel, DcMotor frontRightWheel, DcMotor backLeftWheel, DcMotor backRightWheel) {
-        this.frontLeftWheel = frontLeftWheel;
-        this.frontRightWheel = frontRightWheel;
-        this.backLeftWheel = backLeftWheel;
-        this.backRightWheel = backRightWheel;
+    public MecanumSystem(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
+        this.frontLeftMotor = frontLeftMotor;
+        this.frontRightMotor = frontRightMotor;
+        this.backLeftMotor = backLeftMotor;
+        this.backRightMotor = backRightMotor;
 
         /*
          * Set the directions of the motors
-         * The right and left motors are reveresed of each other 
+         * The right and left motors run in opposite directions of each other 
          */
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    public void setWheelPower(double wheelPower) {
+    public void setMotorPower(double wheelPower) {
         this.wheelPower = wheelPower;
     }
 
-    public double getWheelPower() {
+    public double getMotorPower() {
         return wheelPower;
+    }
+
+    @Override
+    public HashSet<DcMotor> getAllMotors() {
+        HashSet<DcMotor> motors = new HashSet<>();
+        motors.add(frontLeftMotor);
+        motors.add(frontRightMotor);
+        motors.add(backLeftMotor);
+        motors.add(backRightMotor);
+        
+        return motors;
     }
 
     /**
