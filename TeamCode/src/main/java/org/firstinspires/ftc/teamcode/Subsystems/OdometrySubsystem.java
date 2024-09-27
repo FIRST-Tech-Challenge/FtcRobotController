@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 /** Subsystem */
-@Config   // EXAMPLE - use @Config to add public variables to dashboard for realtime updating
+@Config // EXAMPLE - use @Config to add public variables to dashboard for realtime updating
 public class OdometrySubsystem extends SubsystemBase {
 
     // for Dashboard demo purposes only!

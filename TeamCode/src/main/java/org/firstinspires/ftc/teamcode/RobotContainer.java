@@ -50,6 +50,7 @@ public class RobotContainer {
     public static Camera camera1;
     // public static Claw claw;
     // public static LinearSlideSubsystem linearSlide;
+    public static Camera DanyCamy;
 
     // Robot initialization for teleop - Run this once at start of teleop
     public static void Init_TeleOp(CommandOpMode mode) {
@@ -114,6 +115,7 @@ public class RobotContainer {
         camera1 = new Camera();
         // insert other subsystems here
         // claw = new Claw();
+
     }
 
 
