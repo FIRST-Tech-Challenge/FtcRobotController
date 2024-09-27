@@ -27,7 +27,7 @@ public class DeepHardwareMap {
         -----------------------------------------------------------------------
      */
 
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
 
     // Setup and configure all drive motors
     public DcMotorSimple FrontRightMotor = ConfigureMovementMotor("FRW", DcMotorSimple.Direction.REVERSE);
