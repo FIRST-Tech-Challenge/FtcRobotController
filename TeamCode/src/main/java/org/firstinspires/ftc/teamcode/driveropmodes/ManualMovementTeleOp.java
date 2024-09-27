@@ -106,6 +106,5 @@ public class ManualMovementTeleOp extends LinearOpMode {
 
             telemetry.update();
         }
-
     }
 }
