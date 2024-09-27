@@ -12,33 +12,33 @@ public class Hardware {
     // Only applicable in LinearOpMode
     private boolean autoSleepEnabled;
 
-    private WheelsSystem wheelsSystem;
-    private ArmSystem armSystem;
+    private Wheels wheels;
+    private Arm arm;
 
     public Hardware(OpMode opMode) {
         this.opMode = opMode;
         autoSleepEnabled = true;
 
-        initWheelsSystem();
-        initArmSystem();
+        initWheels();
+        intArm();
     }
 
     /**
      * Initiates all hardware needed for the WheelsSystem.
      */
-    private void initWheelsSystem() {
+    private void initWheels() {
         /*
          * Define wheels system hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        wheelsSystem = new WheelsSystem();
+        wheels = new Wheels();
     }
 
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
-    private void initArmSystem() {
+    private void initArm() {
         /*
          * Define arm hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
