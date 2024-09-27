@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.Helper.*;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
+import java.lang.Math;
 
 /**
  * Class for testing of manual movement
@@ -36,7 +37,6 @@ public class ManualMovementTeleOp extends LinearOpMode {
         int dir = 1;
         int fulldir;
 
-
         // Make sure all motors are behaving properly
         ReportDriveMotorStatus(deepHardwareMap, telemetry);
 
@@ -50,12 +50,13 @@ public class ManualMovementTeleOp extends LinearOpMode {
             // prev_gp has state of last loop
             prev_gp.copy(current_gp);
             prev_buttons = CopyButtonsFromGamepad(prev_gp);
+
             current_gp.copy(gamepad1);
             curr_buttons = CopyButtonsFromGamepad(current_gp);
 
             // If pressing left bump for first time then change dir
             if(current_gp.left_bumper && !prev_gp.left_bumper) {
-                // Inverse direction
+                // Change Direction
                 dir *= -1;
                 SetGamepadLight(gamepad1, dir == 1 ? GamepadColour.GREEN : GamepadColour.BLUE);
                 telemetry.addData("Current motor direction", dir == 1 ? "Forward" : "Backward");
@@ -75,12 +76,11 @@ public class ManualMovementTeleOp extends LinearOpMode {
                 // Set all motors to right setting
                 Arrays.stream(motors)
                         .forEach(x -> x.setPower(final_dir));
-                // No need to evaluate the rest of loop if all motors are going
             }
 
             // Not sure if this is useful at all
             // No need to evaluate the rest of loop if motors are going
-            if(fulldir == 1 || fulldir == -1) {
+            if(Math.Abs(fulldir) == 1) {
                 continue;
             }
 
