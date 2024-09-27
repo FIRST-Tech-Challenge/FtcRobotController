@@ -25,6 +25,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -59,12 +60,12 @@ For support, contact tech@gobilda.com
 
 @TeleOp(name="goBILDA® PinPoint Odometry Example", group="Linear OpMode")
 //@Disabled
+
 public class SensorGoBildaPinpointExample extends LinearOpMode {
 
-    GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
+    static GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
 
     double oldTime = 0;
-
 
 
     @Override
@@ -118,7 +119,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         telemetry.addData("X offset", odo.getXOffset());
         telemetry.addData("Y offset", odo.getYOffset());
         telemetry.addData("Device Version Number:", odo.getDeviceVersion());
-        telemetry.addData("Device SCalar", odo.getYawScalar());
+        telemetry.addData("Device Scalar", odo.getYawScalar());
         telemetry.update();
 
         // Wait for the game to start (driver presses START)
@@ -134,7 +135,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             from the device in a single I2C read.
              */
             double beforeI2cRead = getRuntime();
-            odo.updateOnlyPos();
+            odo.update();
             double afterI2cRead = getRuntime();
             double i2cReadTime = afterI2cRead- beforeI2cRead;
 
@@ -149,7 +150,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
 
             /*
             This code prints the loop frequency of the REV Control Hub. This frequency is effected
-            by I2C reads/writes. So it's good to keep an eye on. This code calculates the amount
+            by I²C reads/writes. So it's good to keep an eye on. This code calculates the amount
             of time each cycle takes and finds the frequency (number of updates per second) from
             that cycle time.
              */
@@ -165,9 +166,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             Pose2D pos = odo.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
-
-            double heading = odo.getHeading();
-
 
             /*
             gets the current Velocity (x & y in mm/sec and heading in degrees/sec) and prints it.
@@ -194,5 +192,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
 
             telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
             telemetry.update();
+
         }
     }}
+
