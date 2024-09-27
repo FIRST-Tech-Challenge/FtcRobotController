@@ -26,7 +26,7 @@ public class ManualMovementTeleOp extends LinearOpMode {
     // | Y / Triangle | Back Left Wheel        |
     // | Right Bumper | All Wheels             |
     // | Left Bumper  | Change Wheel Direction |
-    // |----------------------------------------
+    // -----------------------------------------
 
 
     @Override
