@@ -43,7 +43,7 @@ public class Mecanum {
         if(!(PowerMultiplier > 0 && PowerMultiplier <= 1)) {
             telemetry.addLine("Power Multiplier should be between 0 and 1");
             telemetry.update();
-            PowerMultiplier = 0;
+            PowerMultiplier = 1;
         }
 
         double y = -gp.left_stick_y;
