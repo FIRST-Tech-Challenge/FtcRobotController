@@ -72,17 +72,13 @@ public class ManualMovementTeleOp extends LinearOpMode {
             // If released bumper set motor power to 0
             if(prev_gp.right_bumper && !current_gp.right_bumper) allmotor_active = false;
 
-            if(!allmotor_active) {
+            if(allmotor_active) {
                 // Set all motors to right setting
                 Arrays.stream(motors)
                         .forEach(x -> x.setPower(final_dir));
-            }
-
-            // Not sure if this is useful at all
-            // No need to evaluate the rest of loop if motors are going
-            if(allmotor_active) {
                 continue;
             }
+
 
             // Assume no buttons are being pressed
             motor_index = -1;
