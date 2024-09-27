@@ -1,8 +1,8 @@
-# [Hardware](./CoyotesRobot.java)
+# [Hardware](./Hardware.java)
 
-It is a class to instatiate the robot and perform basic tasks(e.g. drive the robot forward).
-Both Autonomous and TeleOp instantiate a CoyotesRobot.
-The CoyotesRobot uses objects instantiated from the classes in [hardware](./hardware).
+It is a class to instantiate the robot and perform basic tasks(e.g. drive the robot forward).
+Both Autonomous and TeleOp instantiate a Hardware object.
+The Hardware class uses objects instantiated from the classes in [hardware](./hardware).
 The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's CoyotesRobot.
 
 > [!Important]
@@ -26,20 +26,20 @@ The classes are meant to separate and organize the various systems of the robot(
 Some of the classes are abstract and are meant to be used as superclasses.
 Being abstract classes rather than interfaces prevents multiple implementing.
 
-## [ArmSystem](./hardware/ArmSystem.java)
+## [Arm](./hardware/Arm.java)
 
 An abstract class to control the robot's arm system.
 
-## [CraneSystem](./hardware/CraneSystem.java)
+## [Crane](./hardware/Crane.java)
 
-A subclass of ArmSystem that controls a jointed arm system with a claw.
+A subclass of Arm that controls a jointed arm with a claw and lazy susan.
 Not really a crane in the conventional sense.
 If you can think of a better name for it, then rename it.
 
-## [DriveSystem](./hardware/DriveSystem.java)
+## [Wheels](./hardware/Wheels.java)
 
-A abstract class for the robot's drive system(i.e. the wheels and motors).
+A abstract class for the robot's wheels,
 
-## [MeccanumDrive](./hardware/MeccanumDrive.java)
+## [Mecanum](./hardware/Mecanum.java)
 
-A subclass of DriveSystem for controlling the driving of a four-wheel meccanum wheel system.
+A subclass of the Wheels class for controlling the driving of a four meccanum wheel system.

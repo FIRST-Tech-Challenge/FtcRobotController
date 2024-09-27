@@ -27,8 +27,8 @@ public class Hardware {
         colorSwitch = opMode.hardwareMap.get(DigitalChannel.class, "color_switch");
         sideSwitch = opMode.hardwareMap.get(DigitalChannel.class, "side_switch");
 
-        initWheelsSystem();
-        initArmSystem();
+        initWheels();
+        initArm();
     }
 
     /**
