@@ -47,6 +47,7 @@ public class RobotContainer {
     public static Gyro gyro;
     public static OdometryPodSubsystem odometryPod;
     public static OdometrySubsystem odometry;
+    public static Camera camera1;
     // public static Claw claw;
     // public static LinearSlideSubsystem linearSlide;
     public static Camera DanyCamy;
@@ -111,7 +112,7 @@ public class RobotContainer {
         odometryPod = new OdometryPodSubsystem();
         odometry = new OdometrySubsystem();
         drivesystem = new DriveTrain();
-        DanyCamy = new Camera();
+        camera1 = new Camera();
         // insert other subsystems here
         // claw = new Claw();
 
