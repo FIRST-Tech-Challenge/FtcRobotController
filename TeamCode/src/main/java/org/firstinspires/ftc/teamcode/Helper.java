@@ -73,18 +73,7 @@ public class Helper {
         telemetry.addData("Front Left Motor", hardwareMap.FrontLeftMotor == null ? "Fault" : "Operational");
         telemetry.addData("Back Right Motor", hardwareMap.BackRightMotor == null ? "Fault" : "Operational");
         telemetry.addData("Back Left Motor", hardwareMap.BackLeftMotor == null ? "Fault" : "Operational");
-    }
-
-    /**
-     * Logs current power of all values provided
-     * @param powers Array of powers of motors. Commonly returned from Mecanum.Move()
-     * @param telemetry Telemetry object from OpMode for logging
-     */
-    public static void ReportAllMotorSpeed(double[] powers, Telemetry telemetry) {
-        telemetry.addData("Front Right Motor Power", powers[0]);
-        telemetry.addData("Front Left Motor Power", powers[1]);
-        telemetry.addData("Back Right Motor Power", powers[2]);
-        telemetry.addData("Back Left Motor Power", powers[3]);
+        telemetry.update();
     }
 
     /**
@@ -97,6 +86,7 @@ public class Helper {
         telemetry.addData("Front Left Motor Power", hardwareMap.FrontLeftMotor.getPower());
         telemetry.addData("Back Right Motor Power", hardwareMap.BackRightMotor.getPower());
         telemetry.addData("Back Left Motor Power", hardwareMap.BackLeftMotor.getPower());
+        telemetry.update();
     }
 
     /**
