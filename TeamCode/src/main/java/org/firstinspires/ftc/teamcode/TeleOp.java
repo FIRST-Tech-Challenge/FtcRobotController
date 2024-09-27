@@ -27,7 +27,7 @@ public class TeleOp extends OpMode {
          * Right stick moves the robot forwards, backwards and sideways.
          * Left stick rotates it.
          */
-        hardware.getMecanumSystem().drive(
+        hardware.getWheels().drive(
                 gamepad1.right_stick_x,
                 gamepad1.right_stick_y,
                 gamepad1.left_stick_x
@@ -56,5 +56,7 @@ public class TeleOp extends OpMode {
         // Text output to log is persistent, unliked telemetry.addData()
         telemetry.log().add("KILL SWITCH HAS BEEN ACTIVATED!");
 
+        wheels.getAllMotors().forEach(motor -> motor.setPower(0));
+        arm.getAllMotors().forEach(motor -> motor.setPower(0));
     }
 }
