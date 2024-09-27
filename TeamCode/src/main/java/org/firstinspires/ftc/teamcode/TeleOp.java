@@ -22,9 +22,6 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-        // Update the information from the robot
-        telemetry.update();
-
         /*
          * Drive robot based on joystick input from gamepad1
          * Right stick moves the robot forwards, backwards and sideways.
@@ -56,6 +53,8 @@ public class TeleOp extends OpMode {
      * Stop all motors and servos from moving.
      */
     public void killAllMotors() {
-        
+        // Text output to log is persistent, unliked telemetry.addData()
+        telemetry.log().add("KILL SWITCH HAS BEEN ACTIVATED!");
+
     }
 }
