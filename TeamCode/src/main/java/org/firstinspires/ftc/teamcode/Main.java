@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Autonomous(name = "Main")
