@@ -136,6 +136,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
              */
             double beforeI2cRead = getRuntime();
             odo.update();
+            //odo.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
             double afterI2cRead = getRuntime();
             double i2cReadTime = afterI2cRead- beforeI2cRead;
 

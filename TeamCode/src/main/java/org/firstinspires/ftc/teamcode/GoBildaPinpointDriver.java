@@ -25,7 +25,9 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.DeviceManager;
 import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
@@ -39,6 +41,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Locale;
 
 
 @I2cDeviceType
@@ -74,6 +77,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         super.registerArmingStateCallback(false);
     }
 
+
     @Override
     public Manufacturer getManufacturer() {
         return Manufacturer.Other;
@@ -89,7 +93,6 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     public String getDeviceName() {
         return "goBILDA® Pinpoint Odometry Computer";
     }
-
 
 
     //Register map of the i2c device
@@ -151,8 +154,6 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
 
     public enum readData {
         ONLY_UPDATE_HEADING,
-        ONLY_UPDATE_POSITION,
-        UPDATE_POSITION_AND_VELOCITY;
     }
 
 
@@ -262,38 +263,25 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         deviceStatus  = byteArrayToInt(Arrays.copyOfRange  (bArr, 0, 4),  ByteOrder.LITTLE_ENDIAN);
         loopTime      = byteArrayToInt(Arrays.copyOfRange  (bArr, 4, 8),  ByteOrder.LITTLE_ENDIAN);
         xEncoderValue = byteArrayToInt(Arrays.copyOfRange  (bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
-        yEncoderValue = byteArrayToInt(Arrays.copyOfRange  (bArr, 12, 16),ByteOrder.LITTLE_ENDIAN);
-        xPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 16, 20),ByteOrder.LITTLE_ENDIAN);
-        yPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 20, 24),ByteOrder.LITTLE_ENDIAN);
-        hOrientation  = byteArrayToFloat(Arrays.copyOfRange(bArr, 24, 28),ByteOrder.LITTLE_ENDIAN);
-        xVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr,28,32),  ByteOrder.LITTLE_ENDIAN);
-        yVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr,32,36),  ByteOrder.LITTLE_ENDIAN);
-        hVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr,36,40),  ByteOrder.LITTLE_ENDIAN);
+        yEncoderValue = byteArrayToInt(Arrays.copyOfRange  (bArr, 12,16), ByteOrder.LITTLE_ENDIAN);
+        xPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 16,20), ByteOrder.LITTLE_ENDIAN);
+        yPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 20,24), ByteOrder.LITTLE_ENDIAN);
+        hOrientation  = byteArrayToFloat(Arrays.copyOfRange(bArr, 24,28), ByteOrder.LITTLE_ENDIAN);
+        xVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 28,32), ByteOrder.LITTLE_ENDIAN);
+        yVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 32,36), ByteOrder.LITTLE_ENDIAN);
+        hVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 36,40), ByteOrder.LITTLE_ENDIAN);
     }
 
-    public void update(readData data){
-        if (data == readData.ONLY_UPDATE_HEADING){
-            hOrientation = byteArrayToFloat(deviceClient.read(Register.H_ORIENTATION.bVal,4), ByteOrder.LITTLE_ENDIAN);
+    /**
+     * Call this once per loop to read new data from the Odometry Computer. This is an override of the update() function
+     * which allows a narrower range of data to be read from the device for faster read times. Currently ONLY_UPDATE_HEADING
+     * is supported.
+     * @param data GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING
+     */
+    public void update(readData data) {
+        if (data == readData.ONLY_UPDATE_HEADING) {
+            hOrientation = byteArrayToFloat(deviceClient.read(Register.H_ORIENTATION.bVal, 4), ByteOrder.LITTLE_ENDIAN);
         }
-
-        if (data == readData.ONLY_UPDATE_POSITION){
-            byte[] bArr   = deviceClient.read(Register.X_POSITION.bVal,12);
-            xPosition     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 0, 4),  ByteOrder.LITTLE_ENDIAN);
-            yPosition     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 4, 8),  ByteOrder.LITTLE_ENDIAN);
-            hOrientation  = byteArrayToFloat(Arrays.copyOfRange  (bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
-        }
-
-        if (data == readData.UPDATE_POSITION_AND_VELOCITY){
-            byte[] bArr   = deviceClient.read(Register.X_POSITION.bVal,24);
-            xPosition     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 0, 4),  ByteOrder.LITTLE_ENDIAN);
-            yPosition     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 4, 8),  ByteOrder.LITTLE_ENDIAN);
-            hOrientation  = byteArrayToFloat(Arrays.copyOfRange  (bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
-            xVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 12,16), ByteOrder.LITTLE_ENDIAN);
-            yVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 16,20), ByteOrder.LITTLE_ENDIAN);
-            hVelocity     = byteArrayToFloat(Arrays.copyOfRange  (bArr, 20,24), ByteOrder.LITTLE_ENDIAN);
-
-        }
-
     }
 
     /**
