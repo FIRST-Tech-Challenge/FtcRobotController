@@ -7,4 +7,10 @@ public abstract class WheelsSystem {
     public WheelsSystem() {
 
     }
+
+    /**
+     * 
+     * @return A DcMotor[] that contains every DcMotor included by the Wheels
+     */
+    public abstract DcMotor[] getAllMotors();
 }
