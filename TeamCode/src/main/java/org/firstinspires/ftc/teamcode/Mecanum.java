@@ -10,7 +10,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  Class designed to provide helper methods to operate mecanum wheels
  */
 public class Mecanum {
-    private DcMotorSimple fr, fl, br, bl;
+    private DcMotorSimple frontRightMotor, 
+        frontLeftMotor, 
+        backRightMotor, 
+        backLeftMotor;
 
     public double PowerMultiplier = 1;
 
@@ -24,10 +27,10 @@ public class Mecanum {
      */
     public static Mecanum Init(DcMotorSimple frontRight, DcMotorSimple frontLeft, DcMotorSimple backRight, DcMotorSimple backLeft, double power) {
         Mecanum m = new Mecanum();
-        m.fr = frontRight;
-        m.fl = frontLeft;
-        m.br = backRight;
-        m.bl = backLeft;
+        m.frontRightMotor = frontRight;
+        m.frontLeftMotor = frontLeft;
+        m.backRightMotor = backRight;
+        m.backLeftMotor = backLeft;
         m.PowerMultiplier = power;
         return m;
     }
@@ -39,6 +42,7 @@ public class Mecanum {
     public double[] Move(Gamepad gp, Telemetry telemetry) {
         if(!(PowerMultiplier > 0 && PowerMultiplier <= 1)) {
             telemetry.addLine("Power Multiplier should be between 0 and 1");
+            telemetry.update();
             return new double [] { 0, 0, 0, 0 };
         }
 
@@ -55,10 +59,10 @@ public class Mecanum {
         double backRightPower = (y + x - rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
 
-        fr.setPower(frontRightPower * PowerMultiplier);
-        fl.setPower(frontLeftPower * PowerMultiplier);
-        br.setPower(backRightPower * PowerMultiplier);
-        bl.setPower(backLeftPower * PowerMultiplier);
+        frontRightMotor.setPower(frontRightPower * PowerMultiplier);
+        frontLeftMotor.setPower(frontLeftPower * PowerMultiplier);
+        backRightMotor.setPower(backRightPower * PowerMultiplier);
+        backLeftMotor.setPower(backLeftPower * PowerMultiplier);
 
         return new double[]{ frontRightPower, frontLeftPower, backRightPower, backLeftPower };
     }
