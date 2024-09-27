@@ -48,6 +48,7 @@ public class Mecanum {
             PowerMultiplier = 1;
         }
 
+        // Y values need to be inverted
         double y = -gp.left_stick_y;
         double x = gp.left_stick_x;
         double rx = gp.right_stick_x;
