@@ -22,14 +22,14 @@ public abstract class Wheels {
      * @param drive Forward input
      * @param turn Turn input
      */
-    public abstract void drive(double drivePower, double y);
+    public abstract void drive(double drivePower, double turn);
 
     /**
      * Drive the wheels.
      * 
      * @param x Sideways input
      * @param y Forward input
-     * @param rotate Rotation input
+     * @param turn Rotation input
      */
-    public abstract void drive(double x, double y, double rotate);
+    public abstract void drive(double x, double y, double turn);
 }
