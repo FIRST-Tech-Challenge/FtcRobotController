@@ -24,8 +24,8 @@ public class Mecanum {
      */
     public static Mecanum Init(DcMotorSimple frontRight, DcMotorSimple frontLeft, DcMotorSimple backRight, DcMotorSimple backLeft, double power) {
         Mecanum m = new Mecanum();
-        m.fl = frontLeft;
         m.fr = frontRight;
+        m.fl = frontLeft;
         m.br = backRight;
         m.bl = backLeft;
         m.PowerMultiplier = power;
