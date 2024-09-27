@@ -13,7 +13,7 @@ To pull from the template, type
 
 ```
 git remote add template https://github.com/chsRobotix/TemplateRobotController.git
-git pull template
+git pull template main
 ```
 
 > [!Warning]
