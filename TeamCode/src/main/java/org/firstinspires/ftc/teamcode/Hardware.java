@@ -12,8 +12,8 @@ public class Hardware {
     // Only applicable in LinearOpMode
     private boolean autoSleepEnabled;
 
-    private MecanumSystem mecanumSystem;
-    private ArmSystem armSystem;
+    private Mecanum mecanum;
+    private Arm arm;
 
     // Whether the robot is on red or blue team
     private DigitalChannel colorSwitch;
@@ -34,7 +34,7 @@ public class Hardware {
     /**
      * Initiates all hardware needed for the WheelsSystem.
      */
-    private void initWheelsSystem() {
+    private void initWheels() {
         /*
          * Define wheels system hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
@@ -44,19 +44,19 @@ public class Hardware {
         DcMotor backLeftMotor = opMode.hardwareMap.get("back_left_wheel");
         DcMotor backRightMotor = opMode.hardwareMap.get("back_right_wheel");
 
-        mecanumSystem = new MecanumSystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
+        mecanum = new Mecanum(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
     }
     
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
-    private void initArmSystem() {
+    private void initArm() {
         /*
          * Define arm hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        armSystem = new ArmSystem();
+        arm = new Arm();
     }
 
     /**

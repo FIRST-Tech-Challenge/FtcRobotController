@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 import com.qualcomm.robotcore.hardware.*;
 
-public class MecanumSystem extends MotorsSystem {
+public class Mecanum extends Wheels {
     /* The DcMotors powering the wheels */
     private DcMotor frontLeftMotor;
     private DcMotor frontRightMotor;
@@ -13,7 +13,7 @@ public class MecanumSystem extends MotorsSystem {
 
     private double wheelGearRatio = 0.0;
 
-    public MecanumSystem(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
+    public Mecanum(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
         this.frontLeftMotor = frontLeftMotor;
         this.frontRightMotor = frontRightMotor;
         this.backLeftMotor = backLeftMotor;
