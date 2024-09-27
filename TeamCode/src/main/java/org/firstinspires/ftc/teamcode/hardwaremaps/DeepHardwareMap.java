@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 /**
  * Class to provide a helpful abstraction layer for accessing the HardwareMap
  */
-public class DeepHardwareMap extends TeamHardwareMap {
+public class DeepHardwareMap {
     /*
         -----------------------------------------------------------------------
         | FRW               | Front Right Wheel     | Control Hub Motor 3     |
@@ -39,10 +39,9 @@ public class DeepHardwareMap extends TeamHardwareMap {
     // public DcMotorEx CentreOdometerMotor = ConfigureOdometerMotor("CENTRE_ODOMETER");
 
     public DeepHardwareMap(HardwareMap hardwaremap) {
-        super(hardwaremap);
+        initialise();
     }
 
-    @Override
     public void initialise() {
         // Any additional configuration options here
         FrontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
