@@ -4,7 +4,7 @@ Download android studio 2021.2 or later.
 
 ## Downloading the Project
 
-- Download Andriod Studio
+- Download Android Studio
 - Clone repo
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git clone https://github.com/FIRST-Tech-Challenge/FtcRobotController.git</p>
