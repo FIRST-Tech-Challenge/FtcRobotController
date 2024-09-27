@@ -19,6 +19,14 @@ public class TeleOpMode extends LinearOpMode {
         bottomLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottomRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        while (opModeInInit()) {
+
+        }
+
         waitForStart();
+
+        while (opModeIsActive()) {
+
+        }
     }
 }
