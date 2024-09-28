@@ -30,7 +30,7 @@ public class TankTeleop extends LinearOpMode {
         rightFront  = hardwareMap.get(DcMotor.class, "rightFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
-        testServo = hardwareMap.get(CRServo.class, "droneServo");
+        testServo = hardwareMap.get(CRServo.class, "liftMotor2");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
