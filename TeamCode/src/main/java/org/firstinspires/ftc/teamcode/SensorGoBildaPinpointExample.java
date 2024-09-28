@@ -25,6 +25,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -63,7 +64,7 @@ For support, contact tech@gobilda.com
 //@Disabled
 public class SensorGoBildaPinpointExample extends LinearOpMode {
 
-    GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
+    GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
 
     double oldTime = 0;
 
@@ -74,7 +75,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"odo");
 
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
@@ -134,7 +135,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             Request a bulk update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
              */
-            odo.bulkUpdate();
+            odo.update();
 
 
             if (gamepad1.a){

@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -47,7 +48,7 @@ public class PinpointDrive extends MecanumDrive {
         To get this value from inPerTick, first convert the value to millimeters (multiply by 25.4)
         and then take its inverse (one over the value)
          */
-        public double encoderResolution = GoBildaPinpointDriver.goBILDA_4_BAR_POD;
+        public double encoderResolution = GoBildaPinpointDriverRR.goBILDA_4_BAR_POD;
 
         /*
         Set the direction that each of the two odometry pods count. The X (forward) pod should
@@ -59,18 +60,20 @@ public class PinpointDrive extends MecanumDrive {
     }
 
     public static Params PARAMS = new Params();
-    public GoBildaPinpointDriver pinpoint;
+    public GoBildaPinpointDriverRR pinpoint;
     private Pose2d lastPinpointPose = pose;
 
     public PinpointDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
 
         // RR localizer note: don't love this conversion (change driver?)
         pinpoint.setOffsets(DistanceUnit.MM.fromInches(PARAMS.xOffset), DistanceUnit.MM.fromInches(PARAMS.yOffset));
 
 
         pinpoint.setEncoderResolution(PARAMS.encoderResolution);
+
+        pinpoint.setEncoderDirections(PARAMS.xDirection, PARAMS.yDirection);
 
         /*
         Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary
@@ -97,8 +100,7 @@ public class PinpointDrive extends MecanumDrive {
             // Potential alternate solution: timestamp the pose set and backtrack it based on speed?
             pinpoint.setPosition(pose);
         }
-        pinpoint.updatePoseAndVelocity(); // RR LOCALIZER NOTE: this is not ideal for loop times.
-        // Driver needs update to be optimized
+        pinpoint.update();
         pose = pinpoint.getPositionRR();
         lastPinpointPose = pose;
 
