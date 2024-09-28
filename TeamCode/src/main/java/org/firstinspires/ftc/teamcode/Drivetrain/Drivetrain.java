@@ -18,6 +18,7 @@ import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Localization.DeadWheelOdometery;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
+import org.firstinspires.ftc.teamcode.Localization.TwoWheelOdo;
 import org.firstinspires.ftc.teamcode.Utils.Utils;
 
 public class Drivetrain {
@@ -27,7 +28,8 @@ public class Drivetrain {
     HardwareMap hardwareMap = null;
 
     public SimpleMatrix state = new SimpleMatrix(6, 1);
-    public DeadWheelOdometery deadWheelOdo;
+    public TwoWheelOdo twoWheelOdo;
+
     public DrivetrainMotorController motorController;
     /**
      * Drive motors
@@ -65,10 +67,10 @@ public class Drivetrain {
         motorLeftBack = hardwareMap.get(DcMotorEx.class, "lbm");
         motorRightBack = hardwareMap.get(DcMotorEx.class, "rbm");
         motorRightFront = hardwareMap.get(DcMotorEx.class, "rfm");
-        motorLeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorRightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
         motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -100,11 +102,11 @@ public class Drivetrain {
         motorLeftBack.setPower(0);
         motorRightFront.setPower(0);
         motorRightBack.setPower(0);
-        deadWheelOdo = new DeadWheelOdometery(hwMap, motorRightBack, motorRightFront, motorLeftBack);
+        twoWheelOdo = new TwoWheelOdo(hardwareMap);
         deltaT.reset();
     }
     public void localize() {
-        state = deadWheelOdo.calculate(state);
+        state = twoWheelOdo.calculate();
     }
     public void setPower(SimpleMatrix powers) {
         double u0 = powers.get(0, 0);
@@ -156,13 +158,14 @@ public class Drivetrain {
                 localize();
                 SimpleMatrix pose = state.extractMatrix(0,3,0,1);
                 SimpleMatrix wheelSpeeds = poseControl.calculate(pose, desiredPose);
-                SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
+//                SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
+                SimpleMatrix wheelAccelerations = new SimpleMatrix(4, 1);
                 deltaT.reset();
                 setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
                 prevWheelSpeeds = wheelSpeeds;
-                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold)){
-                    setPower(stopMatrix);
-                }
+//                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold)){
+//                    setPower(stopMatrix);
+//                }
                 return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold;
 
             }

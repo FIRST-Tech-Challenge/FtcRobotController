@@ -20,8 +20,9 @@ public class TuneFeedForwardGains extends LinearOpMode{
     Drivetrain drivetrain = null;
     // Use FTCDashboard
     FtcDashboard dashboard;
-    public static double maxAcceleration = 75.0;
-    public static double maxVelocity = 30;
+    public static double maxAcceleration = 50.0;
+    public static double maxVelocity = 60;
+    public static double maxDistance = 84;
     @Override
     public void runOpMode() {
         // Set dashboard
@@ -31,8 +32,8 @@ public class TuneFeedForwardGains extends LinearOpMode{
         TelemetryPacket packet = new TelemetryPacket();
         ElapsedTime looptime = new ElapsedTime();
         ElapsedTime lapTime = new ElapsedTime();
-        MotionProfiling motionProfile = new MotionProfiling(24,maxVelocity,maxAcceleration,maxAcceleration,false);
-        MotionProfiling reverseMotionProfile = new MotionProfiling(24,maxVelocity,maxAcceleration,maxAcceleration,true);
+        MotionProfiling motionProfile = new MotionProfiling(maxDistance,maxVelocity,maxAcceleration,maxAcceleration,false);
+        MotionProfiling reverseMotionProfile = new MotionProfiling(maxDistance,maxVelocity,maxAcceleration,maxAcceleration,true);
         boolean reverse = false;
         double deltaT = reverseMotionProfile.getTime();
         double velocity = maxVelocity;
@@ -54,8 +55,8 @@ public class TuneFeedForwardGains extends LinearOpMode{
         telemetry.addData("Robot velocity ", 0);
         telemetry.addData("Target velocity ", 0);
         telemetry.addLine("State " + 0);
-        packet.fieldOverlay();
-        dashboard.sendTelemetryPacket(packet);
+        /*packet.fieldOverlay();
+        dashboard.sendTelemetryPacket(packet);*/
         telemetry.update();
         waitForStart();
         looptime.reset();
@@ -81,11 +82,12 @@ public class TuneFeedForwardGains extends LinearOpMode{
             looptime.reset();
             telemetry.addData("Robot velocity ", drivetrain.state.get(3,0));
             telemetry.addData("Target velocity ",  velocity);
-            packet.fieldOverlay()
+            /*packet.fieldOverlay()
                     .setRotation(drivetrain.state.get(2,0))
                     .setFill("blue")
                     .fillRect(drivetrain.state.get(0,0), drivetrain.state.get(1,0), 15, 15);
             dashboard.sendTelemetryPacket(packet);
+            */
             telemetry.update();
             if (lapTime.seconds() > deltaT) {
                 reverse = !reverse;

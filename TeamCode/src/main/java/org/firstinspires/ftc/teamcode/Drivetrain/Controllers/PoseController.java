@@ -11,10 +11,13 @@ public class PoseController {
     public PID xPID;
     public PID yPID;
     public PID tPID;
-    public static double kPX, kPY = 10;
-    public static double kPTheta= 1;
+    public static double kPX, kPY = 2.5;
+    public static double kPTheta= 0.1;
     public static double kIX, kIY, kITheta = 0;
     public static double kDX, kDY, kDTheta = 0;
+
+    // TODO: removew
+    public double testvY = 0;
     public PoseController(){
         xPID = new PID(kPX, kIX, kDX);
         yPID = new PID(kPY, kIY, kDY);
@@ -35,6 +38,9 @@ public class PoseController {
         double vY = yPID.calculate(errorRobot.get(1, 0),0);
         double omega = tPID.calculate(Utils.angleWrap(desiredPose.get(2, 0) - pose.get(2, 0)),0);
 
+
+        // TODO: remove
+        testvY = vY;
         SimpleMatrix vRobot = new SimpleMatrix (
                 new double[][] {
                         new double[]{vX},
