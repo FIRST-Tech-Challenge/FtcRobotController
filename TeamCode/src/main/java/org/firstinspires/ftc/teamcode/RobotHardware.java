@@ -53,11 +53,13 @@ public class RobotHardware {
     private DcMotor rbMotor;
     private DcMotor lfMotor;
     private DcMotor lbMotor;
+    private DcMotor viperSlideMotor;
     private double ticksPerRotationOfLeft;
     private double ticksPerRotationOfRight;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-
+    private static final int TARGET_POSITION_VS = 1000;
+    private static final double VS_SPEED = 0.5;
     //camera
     private Camera camera;
     private static final boolean USE_WEBCAM = true;
@@ -89,6 +91,9 @@ public class RobotHardware {
         rbMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorRB");
         lfMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorLF");
         lbMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorLB");
+        viperSlideMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorvs");
+        setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
 
         myOpMode.telemetry.addData("Status", "Hardware Initialized");
@@ -113,11 +118,11 @@ public class RobotHardware {
         // Camera Configuration
         // -----------------------------------------------------------------------------------------
 
-        myVisionPortal = new VisionPortal.Builder()
+        /*myVisionPortal = new VisionPortal.Builder()
                     .setCamera(myOpMode.hardwareMap.get(WebcamName.class, "webcam1"))
                     .addProcessors( aprilTag)
                     .build();
-
+*/
     }   // end initDoubleVision()
 
     public AprilTagProcessor getAprilTag(){
@@ -180,7 +185,13 @@ public class RobotHardware {
             rfMotor.setDirection(DcMotor.Direction.FORWARD);
             rbMotor.setDirection(DcMotor.Direction.FORWARD);
         }
+    }
 
+    public void setViperSlideDirectionForward(){
+        viperSlideMotor.setDirection(DcMotor.Direction.FORWARD);
+    }
+    public void setViperSlideDirectionReverse(){
+        viperSlideMotor.setDirection(DcMotor.Direction.REVERSE);
     }
     public void reverseMotors(){
         setMotorDirection(MotorDirection.BACKWARD);
@@ -241,6 +252,23 @@ public class RobotHardware {
         rbMotor.setPower(num);
         lfMotor.setPower(num);
         lbMotor.setPower(-num);
+    }
+
+    public void setViperSlideMotorMode (DcMotor.RunMode mode){
+        viperSlideMotor.setMode(mode);
+    }
+
+    public void setViperSlideMotorTargetPosition (){
+        viperSlideMotor.setTargetPosition(TARGET_POSITION_VS);
+    }
+
+    public void setViperSlideMotorPower (){
+        viperSlideMotor.setPower(VS_SPEED);
+
+    }
+    public void setViperSlideMotorPowerZero (){
+        viperSlideMotor.setPower(0);
+
     }
 
     /**

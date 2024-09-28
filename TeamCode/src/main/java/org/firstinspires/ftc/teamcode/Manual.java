@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -34,12 +35,28 @@ public class Manual  extends LinearOpMode{
 
             telemetryAprilTag();
 
+            robot.setViperSlideMotorTargetPosition();
+            robot.setViperSlideMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if(gamepad1.left_stick_y > 0){
+                robot.setViperSlideDirectionForward();
+                telemetry.addData("Status", "Left Joystick Moved up");
+                robot.setViperSlideMotorPower();
+            }
+            if(gamepad1.left_stick_y < 0){
+                robot.setViperSlideDirectionReverse();
+                telemetry.addData("Status", "Left Joystick Moved down");
+                robot.setViperSlideMotorPower();
+            }
+            if(gamepad1.left_stick_y==0){
+                robot.setViperSlideMotorPowerZero();
+            }
             if(gamepad2.right_bumper){
                 //robot.goDiagonal(1);
                 robot.goStrafe(-1);
             }
             else if (gamepad2.left_bumper){
                 robot.goStrafe(1);
+
             }
 
             // Pace this loop so hands move at a reasonable speed.
@@ -75,7 +92,7 @@ public class Manual  extends LinearOpMode{
         // Combine drive and turn for blended motion. Use RobotHardware class
         robot.driveRobot(drive, turn);
 
-        telemetry.addData("Drive", "Left Stick");
+        telemetry.addData("Drivexxxxx", "Left Stick");
         telemetry.addData("Turn", "Right Stick");
         telemetry.addData("-", "-------");
 
