@@ -53,8 +53,9 @@ public class RobotInitialize {
         fright = opMode.hardwareMap.get(DcMotorEx.class, "fright");
         bleft = opMode.hardwareMap.get(DcMotorEx.class, "bleft");
 
-        bleft.setDirection(DcMotorSimple.Direction.REVERSE);
         fleft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bright.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 // map the servos to the hardware map
 //        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
@@ -143,12 +144,20 @@ public class RobotInitialize {
                 // Forwards (+ positive relativeDistance value)
                 setMotorVelocity(Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getAverageEncoderValue());
+                opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
+                opMode.telemetry.addData("bright", bright.getCurrentPosition());
+                opMode.telemetry.addData("fright", fright.getCurrentPosition());
+                opMode.telemetry.addData("fleft", fleft.getCurrentPosition());
                 opMode.telemetry.update();
                 //if current position is less than needed
             } else if (getAverageEncoderValue() > relativeDistance) {
                 // Backwards (- negative relativeDistance value)
                 setMotorVelocity(-Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getAverageEncoderValue());
+                opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
+                opMode.telemetry.addData("bright", bright.getCurrentPosition());
+                opMode.telemetry.addData("fright", fright.getCurrentPosition());
+                opMode.telemetry.addData("fleft", fleft.getCurrentPosition());
                 opMode.telemetry.update();
             }
         }
@@ -195,23 +204,23 @@ public class RobotInitialize {
 
     // Possibly complete (need to test to determine)
     public void strafeR(int distance, int velocity){
-        int relativeDistance = distance + getPosStrafeR();
+        int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
         //if difference <10 then stop
-        while (opMode.opModeIsActive() && Math.abs(getPosStrafeR() - relativeDistance) >= 10) {
+        while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
             //if
-            if (getPosStrafeR() < relativeDistance) {
+            if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
                 fleft.setVelocity(velocity);
-                fright.setVelocity(velocity);
-                bleft.setVelocity(-velocity);
+                fright.setVelocity(-velocity);
+                bleft.setVelocity(velocity);
                 bright.setVelocity(-velocity);
-                opMode.telemetry.addData("position", getPosStrafeR());
+                opMode.telemetry.addData("position", getPosStrafe());
                 opMode.telemetry.addData("relative distance", relativeDistance);
                 opMode.telemetry.addData("old pos", getAverageEncoderValue());
-                opMode.telemetry.addData("must be greater than 10", Math.abs(getPosStrafeR() - relativeDistance));
+                opMode.telemetry.addData("must be greater than 10", Math.abs(getPosStrafe() - relativeDistance));
                 opMode.telemetry.update();
             } else{
                 setMotorVelocity(0);
@@ -222,17 +231,24 @@ public class RobotInitialize {
 
     public void strafeL(int distance, int velocity){
         //relative distance is input value + pos
-        int relativeDistance = distance + getPosStrafeL();
+        int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
-        while (opMode.opModeIsActive() && Math.abs(getPosStrafeL() - relativeDistance) >= 10) {
-            if (getPosStrafeL() < relativeDistance) {
+        while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
+            if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
-                fleft.setVelocity(velocity);
-                fright.setVelocity(-velocity);
+                fleft.setVelocity(-velocity);
+                fright.setVelocity(velocity);
                 bleft.setVelocity(-velocity);
                 bright.setVelocity(velocity);
+                opMode.telemetry.addData("reldistance", relativeDistance);
+                opMode.telemetry.addData("getposStrafeR", getPosStrafe());
+                opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
+                opMode.telemetry.addData("bright", bright.getCurrentPosition());
+                opMode.telemetry.addData("fright", fright.getCurrentPosition());
+                opMode.telemetry.addData("fleft", fleft.getCurrentPosition());
+                opMode.telemetry.update();
             }
         }
         stopMotors();
@@ -271,14 +287,14 @@ public class RobotInitialize {
         stopMotors();
     }
     //gets avg magnitudes bc morots are going in diff directions
-    public int getPosStrafeR() {
-        return ((fright.getCurrentPosition()+ bright.getCurrentPosition()-fleft.getCurrentPosition()- bleft.getCurrentPosition())/4);
+    public int getPosStrafe() {
+        return ((Math.abs(fright.getCurrentPosition())+Math.abs(bright.getCurrentPosition())+Math.abs(fleft.getCurrentPosition())+ Math.abs(bleft.getCurrentPosition()))/4);
     }
 
     //
-    public int getPosStrafeL() {
-        return ((-fright.getCurrentPosition()- bright.getCurrentPosition()+fleft.getCurrentPosition()+ bleft.getCurrentPosition())/4);
-    }
+//    public int getPosStrafeL() {
+//        return ((-fright.getCurrentPosition()+ bright.getCurrentPosition()+fleft.getCurrentPosition()- bleft.getCurrentPosition())/4);
+//    }
     // Calculates the average encoder value
     // It takes the left and right motor encoder locations, then averages them
     public int getAverageEncoderValue() {
