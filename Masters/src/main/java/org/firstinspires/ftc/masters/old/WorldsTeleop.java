@@ -1,18 +1,19 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.old;
 
 
-import static org.firstinspires.ftc.masters.CSCons.servo1Down;
-import static org.firstinspires.ftc.masters.CSCons.servo1Up;
-import static org.firstinspires.ftc.masters.CSCons.servo2Down;
-import static org.firstinspires.ftc.masters.CSCons.servo2Up;
-import static org.firstinspires.ftc.masters.CSCons.transferPush;
-import static org.firstinspires.ftc.masters.CSCons.transferUp;
+import static org.firstinspires.ftc.masters.old.CSCons.servo1Down;
+import static org.firstinspires.ftc.masters.old.CSCons.servo1Up;
+import static org.firstinspires.ftc.masters.old.CSCons.servo2Down;
+import static org.firstinspires.ftc.masters.old.CSCons.servo2Up;
+import static org.firstinspires.ftc.masters.old.CSCons.transferPush;
+import static org.firstinspires.ftc.masters.old.CSCons.transferUp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,16 +22,16 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.CSCons.DriveMode;
-import org.firstinspires.ftc.masters.CSCons.HookPosition;
-import org.firstinspires.ftc.masters.CSCons.OuttakePosition;
-import org.firstinspires.ftc.masters.CSCons.OuttakeState;
+import org.firstinspires.ftc.masters.old.CSCons.DriveMode;
+import org.firstinspires.ftc.masters.old.CSCons.HookPosition;
+import org.firstinspires.ftc.masters.old.CSCons.OuttakePosition;
+import org.firstinspires.ftc.masters.old.CSCons.OuttakeState;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-
+@Disabled
 @Config
 @TeleOp(name = "World Teleop", group = "competition")
 public class WorldsTeleop extends LinearOpMode {

@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.masters.components;
+package org.firstinspires.ftc.masters.old;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.CSCons;
+import org.firstinspires.ftc.masters.components.Component;
 
-public class Shooter implements Component{
+@Disabled
+public class Shooter implements Component {
     private HardwareMap hardwareMap = null;
     Servo planeRaise;
     ElapsedTime time=null;

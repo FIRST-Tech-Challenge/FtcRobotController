@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.old;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Config
 public class CSCons {
 

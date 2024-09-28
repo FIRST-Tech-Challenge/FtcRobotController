@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.function.Function;
 
-public class FuzzyPIDControl {
+public class FuzzyPIDController {
     private double Kp;
     private double Ki;
     private double Kd;
@@ -27,6 +27,7 @@ public class FuzzyPIDControl {
 
     // These values may need to be adjusted,
     // they are pulled from section 5 of [1]
+    // dTODO: check these
     private double KpMin = 5000;
     private double KpMax = 6500;
 
@@ -68,8 +69,13 @@ public class FuzzyPIDControl {
             {0, 0, 0, 0, 0, 0, 0}
     };
 
-    private Function<Double, Double>[] deltaErrorMembership= generateFuzzifierMemberships(-0.00798, 0.00798);
-    private Function<Double, Double>[] errorMembership = generateFuzzifierMemberships(-0.00498 , 0.00498);
+    // Error ranges are measured in rads/sec
+    // These may also need to be tuned
+    // Larger values -> larger expected error.
+    private double deltaErrorRange = 0.00798;
+    private double errorRange = 0.00498;
+    private Function<Double, Double>[] deltaErrorMembership= generateFuzzifierMemberships(-deltaErrorRange, deltaErrorRange);
+    private Function<Double, Double>[] errorMembership = generateFuzzifierMemberships(-errorRange, errorRange);
 
     private Function[] defuzzyKpKdMembership = {plateauMembership(0.0, -1.0), plateauMembership(1.0, 1.0)};
     private double[] alphaMemberships = {672.0, 934.0, 1195.0, 1457.0};
@@ -118,7 +124,7 @@ public class FuzzyPIDControl {
 
         double[][] activations = new double[5][5];
 
-        // Note: this code is government regulated
+        // Note: this code is government monitored
         // please do not the code.
         for (int imperium = 0; imperium < 5; imperium++) {
             for (int government = 0; government < 5; government++) {
