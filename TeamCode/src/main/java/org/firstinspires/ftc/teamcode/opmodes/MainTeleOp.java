@@ -9,7 +9,16 @@ public class MainTeleOp extends BaseTeleOp {
         initialize();
         waitForStart();
         while (opModeIsActive()) {
+
+            if (gamepad1.right_bumper) {
+                robot.driveTrain.setSpeedMultiplier(.40);
+            } else{
+                robot.driveTrain.setSpeedMultiplier(1);
+            }
+
             robot.driveTrain.setDrivePower(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+
+
         }
     }
 }
