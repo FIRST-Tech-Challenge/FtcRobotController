@@ -22,20 +22,20 @@ public class Helper {
         YELLOW(255, 255, 0),
         ORANGE(255, 128, 0),
         PINK(255, 0, 127),
-        
+
         DARK_RED(102, 0, 0),
         DARK_YELLOW(102, 102, 0),
         DARK_GREEN(0, 102, 0),
         DARK_BLUE(0, 0, 102),
         DARK_CYAN(0, 102, 102),
-        
+
         LIGHT_RED(255, 153, 153),
         LIGHT_YELLOW(255, 255, 153),
         LIGHT_GREEN(153, 255, 153),
         LIGHT_CYAN(153, 255, 255),
         LILAC(153, 153, 255),
         LIGHT_PINK(255, 153, 204);
-        
+
 
         private final int red;
         private final int green;

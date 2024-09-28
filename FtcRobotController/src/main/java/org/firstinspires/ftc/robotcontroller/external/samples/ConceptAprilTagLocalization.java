@@ -58,6 +58,9 @@ import java.util.List;
  * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the robot, relative to the field origin.
  * This information is provided in the "robotPose" member of the returned "detection".
  *
+ * To learn about the Field Coordinate System that is defined for FTC (and used by this OpMode), see the FTC-DOCS link below:
+ * https://ftc-docs.firstinspires.org/en/latest/game_specific_resources/field_coordinate_system/field-coordinate-system.html
+ *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
@@ -91,9 +94,9 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
      * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
      * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
      */
-    private final Position cameraPosition = new Position(DistanceUnit.INCH,
+    private Position cameraPosition = new Position(DistanceUnit.INCH,
             0, 0, 0, 0);
-    private final YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
             0, -90, 0, 0);
 
     /**

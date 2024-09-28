@@ -9,9 +9,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  Class designed to provide helper methods to operate mecanum wheels
  */
 public class Mecanum {
-    private DcMotorSimple frontRightMotor, 
-        frontLeftMotor, 
-        backRightMotor, 
+    private DcMotorSimple frontRightMotor,
+        frontLeftMotor,
+        backRightMotor,
         backLeftMotor;
 
     public double PowerMultiplier = 1;

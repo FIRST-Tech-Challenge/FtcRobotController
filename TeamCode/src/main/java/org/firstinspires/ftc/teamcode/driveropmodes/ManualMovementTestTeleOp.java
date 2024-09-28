@@ -78,7 +78,7 @@ public class ManualMovementTeleOp extends LinearOpMode {
             // Needs to be final for .forEach  /  WHY ??
             int final_dir = dir;
 
-            
+
             // If pressing bumper set motor power to right state
             allmotor_active = gamepad1.right_bumper;
 
