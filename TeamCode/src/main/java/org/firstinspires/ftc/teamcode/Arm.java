@@ -31,15 +31,15 @@ public class Arm {
         rotationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize PIDF controller with tuned values
-        pidf = new PIDFController(kp, ki, kd, kf);
+        // pidf = new PIDFController(kp, ki, kd, kf);
 
         // Set an initial target position for the arm
-        pidf.setSetPoint(0);  // Start at encoder position 0
+        // pidf.setSetPoint(0);  // Start at encoder position 0
     }
         // Method to set the arm position
         public void drive(int targetPosition){
             // Update the setpoint in the PID controller
-            pidf.setSetPoint(targetPosition);
+            /*** pidf.setSetPoint(targetPosition);
 
             // Get the current position from the encoder
             int currentPosition = armMotor.getCurrentPosition();
@@ -56,5 +56,6 @@ public class Arm {
         // Check if the arm is at the target position
         public boolean atTargetPosition () {
             return pidf.atSetPoint();
+             ***/
         }
     }
