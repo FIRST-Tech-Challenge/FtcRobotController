@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFC;
 
 
 public class Arm {
 
     public DcMotor rotationMotor;
     public DcMotor armMotor;
-    public PIDFController pidf;
+    public PIDFC pidf;
 
 
     // PIDF coefficients (tune these values)
@@ -31,15 +31,15 @@ public class Arm {
         rotationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize PIDF controller with tuned values
-        // pidf = new PIDFController(kp, ki, kd, kf);
+        pidf = new PIDFC(kp, ki, kd, kf);
 
         // Set an initial target position for the arm
-        // pidf.setSetPoint(0);  // Start at encoder position 0
+        pidf.setSetPoint(0);  // Start at encoder position 0
     }
         // Method to set the arm position
         public void drive(int targetPosition){
             // Update the setpoint in the PID controller
-            /*** pidf.setSetPoint(targetPosition);
+            pidf.setSetPoint(targetPosition);
 
             // Get the current position from the encoder
             int currentPosition = armMotor.getCurrentPosition();
@@ -53,9 +53,9 @@ public class Arm {
         public void rotateArm (double power){
             rotationMotor.setPower(power);
         }
-        // Check if the arm is at the target position
+        //Check if the arm is at the target position
         public boolean atTargetPosition () {
             return pidf.atSetPoint();
-             ***/
+
         }
     }
