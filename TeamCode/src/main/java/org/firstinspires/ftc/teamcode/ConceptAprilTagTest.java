@@ -1,4 +1,4 @@
-/* Copyright (c) 2024 Dryw Wade. All rights reserved.
+/* Copyright (c) 2023 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -35,65 +35,41 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
 /*
- * This OpMode illustrates the basics of AprilTag based localization.
+ * This OpMode illustrates the basics of AprilTag recognition and pose estimation,
+ * including Java Builder structures for specifying Vision parameters.
  *
  * For an introduction to AprilTags, see the FTC-DOCS link below:
  * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
  *
  * In this sample, any visible tag ID will be detected and displayed, but only tags that are included in the default
- * "TagLibrary" will be used to compute the robot's location and orientation.  This default TagLibrary contains
+ * "TagLibrary" will have their position and orientation information displayed.  This default TagLibrary contains
  * the current Season's AprilTags and a small set of "test Tags" in the high number range.
  *
- * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the robot, relative to the field origin.
- * This information is provided in the "robotPose" member of the returned "detection".
+ * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the tag, relative to the camera.
+ * This information is provided in the "ftcPose" member of the returned "detection", and is explained in the ftc-docs page linked below.
+ * https://ftc-docs.firstinspires.org/apriltag-detection-values
+ *
+ * To experiment with using AprilTags to navigate, try out these two driving samples:
+ * RobotAutoDriveToAprilTagOmni and RobotAutoDriveToAprilTagTank
+ *
+ * There are many "default" VisionPortal and AprilTag configuration parameters that may be overridden if desired.
+ * These default parameters are shown as comments in the code below.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: AprilTag Localization", group = "Concept")
-public class ConceptAprilTagLocalizationTest extends LinearOpMode {
+@TeleOp(name = "Concept: AprilTag Test", group = "Concept")
+public class ConceptAprilTagTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    /**
-     * Variables to store the position and orientation of the camera on the robot. Setting these
-     * values requires a definition of the axes of the camera and robot:
-     *
-     * Camera axes:
-     * Origin location: Center of the lens
-     * Axes orientation: +x right, +y down, +z forward (from camera's perspective)
-     *
-     * Robot axes (this is typical, but you can define this however you want):
-     * Origin location: Center of the robot at field height
-     * Axes orientation: +x right, +y forward, +z upward
-     *
-     * Position:
-     * If all values are zero (no translation), that implies the camera is at the center of the
-     * robot. Suppose your camera is positioned 5 inches to the left, 7 inches forward, and 12
-     * inches above the ground - you would need to set the position to (-5, 7, 12).
-     *
-     * Orientation:
-     * If all values are zero (no rotation), that implies the camera is pointing straight up. In
-     * most cases, you'll need to set the pitch to -90 degrees (rotation about the x-axis), meaning
-     * the camera is horizontal. Use a yaw of 0 if the camera is pointing forwards, +90 degrees if
-     * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
-     * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
-     */
-    private Position cameraPosition = new Position(DistanceUnit.INCH,
-            0, 0, 0, 0);
-    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-            0, -90, 0, 0);
 
     /**
      * The variable to store our instance of the AprilTag processor.
@@ -116,22 +92,24 @@ public class ConceptAprilTagLocalizationTest extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
 
-            telemetryAprilTag();
+                telemetryAprilTag();
 
-            // Push telemetry to the Driver Station.
-            telemetry.update();
+                // Push telemetry to the Driver Station.
+                telemetry.update();
 
-            // Save CPU resources; can resume streaming when needed.
-            if (gamepad1.dpad_down) {
-                visionPortal.stopStreaming();
-            } else if (gamepad1.dpad_up) {
-                visionPortal.resumeStreaming();
+                // Save CPU resources; can resume streaming when needed.
+                if (gamepad1.dpad_down) {
+                    visionPortal.stopStreaming();
+                } else if (gamepad1.dpad_up) {
+                    visionPortal.resumeStreaming();
+                }
+
+                // Share the CPU.
+                sleep(20);
             }
-
-            // Share the CPU.
-            sleep(20);
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -147,22 +125,21 @@ public class ConceptAprilTagLocalizationTest extends LinearOpMode {
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
 
-                // The following default settings are available to un-comment and edit as needed.
-                .setDrawAxes(false)
-                .setDrawCubeProjection(true)
-                .setDrawTagOutline(false)
-                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                .setCameraPose(cameraPosition, cameraOrientation)
+            // The following default settings are available to un-comment and edit as needed.
+            //.setDrawAxes(false)
+            .setDrawCubeProjection(true)
+            //.setDrawTagOutline(true)
+            //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+            .setTagLibrary(AprilTagGameDatabase.getIntoTheDeepTagLibrary())
+            //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
-                // == CAMERA CALIBRATION ==
-                // If you do not manually specify calibration parameters, the SDK will attempt
-                // to load a predefined calibration for your camera.
-                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
-                // ... these parameters are fx, fy, cx, cy.
+            // == CAMERA CALIBRATION ==
+            // If you do not manually specify calibration parameters, the SDK will attempt
+            // to load a predefined calibration for your camera.
+            .setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+            // ... these parameters are fx, fy, cx, cy.
 
-                .build();
+            .build();
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
         // eg: Some typical detection data using a Logitech C920 WebCam
@@ -186,8 +163,8 @@ public class ConceptAprilTagLocalizationTest extends LinearOpMode {
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
 
-        //Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(true);
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
+        //builder.enableLiveView(true);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
@@ -195,7 +172,7 @@ public class ConceptAprilTagLocalizationTest extends LinearOpMode {
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
         // If set "false", monitor shows camera view without annotations.
-        builder.setAutoStopLiveView(true);
+        //builder.setAutoStopLiveView(false);
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
@@ -207,6 +184,7 @@ public class ConceptAprilTagLocalizationTest extends LinearOpMode {
         //visionPortal.setProcessorEnabled(aprilTag, true);
 
     }   // end method initAprilTag()
+
 
     /**
      * Add telemetry about AprilTag detections.
@@ -220,14 +198,9 @@ public class ConceptAprilTagLocalizationTest extends LinearOpMode {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
-                        detection.robotPose.getPosition().x,
-                        detection.robotPose.getPosition().y,
-                        detection.robotPose.getPosition().z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
-                        detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
-                        detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
-                        detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
@@ -237,6 +210,7 @@ public class ConceptAprilTagLocalizationTest extends LinearOpMode {
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }   // end method telemetryAprilTag()
 

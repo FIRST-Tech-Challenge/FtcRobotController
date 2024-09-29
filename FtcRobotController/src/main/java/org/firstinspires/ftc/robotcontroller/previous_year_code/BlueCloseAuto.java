@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.robotcontroller.previous_year_code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,9 +11,10 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+//import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 @Autonomous
+@Disabled
 public class BlueCloseAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -35,7 +37,7 @@ public class BlueCloseAuto extends LinearOpMode {
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
-    private TfodProcessor tfod;
+    //private TfodProcessor tfod;
 
     /**
      * The variable to store our instance of the vision portal.

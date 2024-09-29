@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //This class is meant to be a way to understand possible strategies for creating our own op mode
 
 //This is a test for pull requests
-
+@TeleOp(name="Practice TeleOp", group = "Concept")
 public class PracticeTeleOp extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -18,6 +20,7 @@ public class PracticeTeleOp extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private CRServo grabberServo = null;
 
     @Override
     public void runOpMode() {
@@ -28,6 +31,7 @@ public class PracticeTeleOp extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        grabberServo = hardwareMap.get(CRServo.class, "grabberServo");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -59,6 +63,7 @@ public class PracticeTeleOp extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
+            double speed = gamepad2.right_stick_y;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -78,6 +83,7 @@ public class PracticeTeleOp extends LinearOpMode {
                 rightFrontPower /= max;
                 leftBackPower   /= max;
                 rightBackPower  /= max;
+                speed /= max;
             }
 
             // This is test code:
@@ -102,11 +108,13 @@ public class PracticeTeleOp extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+            grabberServo.setPower(speed);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Servo", "%4.2f", speed);
             telemetry.update();
         }
     }}
