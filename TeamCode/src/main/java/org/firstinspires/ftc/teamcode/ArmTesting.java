@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-
-@TeleOp(name = "ArmTesting")
+/**
+ * This is the class to test the Arm of our robot.
+ * */
+@TeleOp(name = "ArmTesting", group = "Test Programs")
 public class ArmTesting extends OpMode {
-    private final int GEAR_RATION = 60;
+    private final int GEAR_RATIO = 60;
     private double armVelocity = 1;
 
     private DcMotorEx armMotor;
@@ -23,7 +25,7 @@ public class ArmTesting extends OpMode {
     @Override
     public void loop() {
         double yInput = -gamepad1.left_stick_y;
-        armMotor.setVelocity(yInput * armVelocity * GEAR_RATION);
+        armMotor.setVelocity(yInput * armVelocity * GEAR_RATIO);
 
         if (gamepad1.dpad_up)
             armVelocity += 0.1;
