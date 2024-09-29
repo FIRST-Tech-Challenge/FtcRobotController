@@ -112,7 +112,7 @@ public class RobotContainer {
         odometryPod = new OdometryPodSubsystem();
         odometry = new OdometrySubsystem();
         drivesystem = new DriveTrain();
-        camera1 = new Camera();
+        camera1 = new Camera("CamyCamy");
         // insert other subsystems here
         // claw = new Claw();
 
