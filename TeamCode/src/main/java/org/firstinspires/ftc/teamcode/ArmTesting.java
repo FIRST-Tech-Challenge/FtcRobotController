@@ -32,6 +32,8 @@ public class ArmTesting extends OpMode {
         else if (gamepad1.dpad_down)
             armVelocity -= 0.1;
 
+        telemetry.addData("Arm Velocity", armVelocity);
+
         if (gamepad1.a)
             armClaw.setPosition(0.2);
         else
