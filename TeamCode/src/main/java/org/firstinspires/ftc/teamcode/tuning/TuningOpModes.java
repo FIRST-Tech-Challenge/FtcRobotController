@@ -22,10 +22,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TankDrive;
-import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
-import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TwoDeadWheelLocalizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

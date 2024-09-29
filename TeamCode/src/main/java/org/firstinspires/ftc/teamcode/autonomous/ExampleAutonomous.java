@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.*;
 
 
 @Autonomous(name = "Main")
-public class Main extends LinearOpMode {
+public class ExampleAutonomous extends LinearOpMode {
     //INIT
     DcMotor motor;
 
