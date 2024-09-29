@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Controllers.PID;
-import org.firstinspires.ftc.teamcode.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
 
 @Config
 public class PoseController {
@@ -16,8 +16,6 @@ public class PoseController {
     public static double kIX, kIY, kITheta = 0;
     public static double kDX, kDY, kDTheta = 0;
 
-    // TODO: removew
-    public double testvY = 0;
     public PoseController(){
         xPID = new PID(kPX, kIX, kDX);
         yPID = new PID(kPY, kIY, kDY);
@@ -38,9 +36,6 @@ public class PoseController {
         double vY = yPID.calculate(errorRobot.get(1, 0),0);
         double omega = tPID.calculate(Utils.angleWrap(desiredPose.get(2, 0) - pose.get(2, 0)),0);
 
-
-        // TODO: remove
-        testvY = vY;
         SimpleMatrix vRobot = new SimpleMatrix (
                 new double[][] {
                         new double[]{vX},

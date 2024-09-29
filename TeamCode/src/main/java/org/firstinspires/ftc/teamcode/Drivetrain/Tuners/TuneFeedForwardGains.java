@@ -5,13 +5,11 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
 import org.firstinspires.ftc.teamcode.Utils.MotionProfiling;
-import org.firstinspires.ftc.teamcode.Controllers.TelemetryTracking;
 
 @Config
 @Autonomous(name = "Test Feed Forward", group = "Autonomous")

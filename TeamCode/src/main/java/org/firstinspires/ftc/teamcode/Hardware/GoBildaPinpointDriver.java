@@ -20,14 +20,12 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.Devices;
+package org.firstinspires.ftc.teamcode.Hardware;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.DeviceManager;
 import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
@@ -41,7 +39,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Locale;
 
 
 @I2cDeviceType

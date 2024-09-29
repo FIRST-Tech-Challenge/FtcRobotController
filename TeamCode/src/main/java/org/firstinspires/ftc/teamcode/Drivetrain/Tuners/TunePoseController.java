@@ -65,7 +65,6 @@ public class TunePoseController extends LinearOpMode {
             telemetry.addData("desiredX", desiredX);
             telemetry.addData("desiredY", desiredY);
             telemetry.addData("desiredTheta", desiredTheta);
-            telemetry.addData("vY: ", drivetrain.poseControl.testvY);
             telemetry.update();
             looptime.reset();
         }

@@ -20,30 +20,23 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.Localization;
+package org.firstinspires.ftc.teamcode.Drivetrain.Localization;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.Devices.GoBildaPinpointDriver;
-
-import java.util.Locale;
+import org.firstinspires.ftc.teamcode.Hardware.GoBildaPinpointDriver;
 
 @Config
-public class TwoWheelOdo {
+public class TwoWheelOdometery {
 
     GoBildaPinpointDriver odo;
     public static double xOffset = 138.0;
     public static double yOffset = 0.0;
     HardwareMap hwMap;
-    public TwoWheelOdo(HardwareMap hardwareMap){
+    public TwoWheelOdometery(HardwareMap hardwareMap){
         hwMap = hardwareMap;
         odo = hwMap.get(GoBildaPinpointDriver.class,"odo");
         odo.setOffsets(-xOffset, yOffset); //these are tuned for 3110-0002-0001 Product Insight #1

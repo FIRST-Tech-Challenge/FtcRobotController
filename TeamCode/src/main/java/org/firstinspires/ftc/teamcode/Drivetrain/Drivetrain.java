@@ -16,10 +16,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import org.ejml.simple.SimpleMatrix;
 
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.DrivetrainMotorController;
-import org.firstinspires.ftc.teamcode.Localization.DeadWheelOdometery;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
-import org.firstinspires.ftc.teamcode.Localization.TwoWheelOdo;
-import org.firstinspires.ftc.teamcode.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Drivetrain.Localization.TwoWheelOdometery;
+import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
 
 public class Drivetrain {
     /**
@@ -28,7 +27,7 @@ public class Drivetrain {
     HardwareMap hardwareMap = null;
 
     public SimpleMatrix state = new SimpleMatrix(6, 1);
-    public TwoWheelOdo twoWheelOdo;
+    public TwoWheelOdometery twoWheelOdo;
 
     public DrivetrainMotorController motorController;
     /**
@@ -102,7 +101,7 @@ public class Drivetrain {
         motorLeftBack.setPower(0);
         motorRightFront.setPower(0);
         motorRightBack.setPower(0);
-        twoWheelOdo = new TwoWheelOdo(hardwareMap);
+        twoWheelOdo = new TwoWheelOdometery(hardwareMap);
         deltaT.reset();
     }
     public void localize() {

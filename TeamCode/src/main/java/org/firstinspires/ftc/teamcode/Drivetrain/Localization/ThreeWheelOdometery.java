@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.Localization;
+package org.firstinspires.ftc.teamcode.Drivetrain.Localization;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
 
 @Config
-public class DeadWheelOdometery {
+public class ThreeWheelOdometery {
     public HardwareMap hwMap;
     public DcMotorEx leftEncoder;
     public DcMotorEx centerEncoder;
@@ -32,7 +32,7 @@ public class DeadWheelOdometery {
 
 
     // you should have a public static double xMult, public static double yMult
-    public DeadWheelOdometery(HardwareMap hardwareMap, DcMotorEx motor0, DcMotorEx motor1, DcMotorEx motor3) {
+    public ThreeWheelOdometery(HardwareMap hardwareMap, DcMotorEx motor0, DcMotorEx motor1, DcMotorEx motor3) {
         hwMap = hardwareMap;
         leftEncoder = motor0;
         centerEncoder = motor1;
