@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name = "IntakeSlideTesting", group = "Test Programs")
@@ -11,7 +12,7 @@ public class IntakeSlideTesting extends OpMode {
     private final double GEAR_RATIO = 125/32;
     @Override
     public void init() {
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        armMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "armMotor");
     }
 
     @Override
