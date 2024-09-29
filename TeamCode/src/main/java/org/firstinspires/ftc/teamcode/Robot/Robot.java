@@ -1,34 +1,42 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
 import org.firstinspires.ftc.teamcode.Robot.systems.MecanumDriveTrain;
-import android.view.View;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.resourses.PIDController;
 
 @Config
 public class Robot {
     private IMU imu;
-    private double TargetAngle = 0;
+    
+    //used for how fast the turning input is used.
+    public static double turningInputConstant = 1.0;
+    public static double pCon = 0.1;
+    public static double dCon = 1;
+    
     private double RobotAngle = 0;
     private double drive;
     private double slide;
     private double turn;
-
+    //TODO Make more permanent system to detect turning
+    public boolean turningBoolean;
     public MecanumDriveTrain driveTrain;
+    
     private double RobotX, RobotY;
     private ElapsedTime runtime = new ElapsedTime();
-
+    //TODO Tune the pConstant and d Constant numbers, these are place holders.
+    public PIDController anglePID = new PIDController(pCon,dCon, runtime);
+    
     FtcDashboard dashboard;
     private double robotHeading;
     private double lastTimeAngle;
@@ -43,16 +51,35 @@ public class Robot {
     private boolean resettingImu = false;
     private double AutoStartAngle = 0;
 
+    private double previousLoopTime, secondPreviousLoopTime;
+    
     public void init(HardwareMap hardwareMap){
         driveTrain = new MecanumDriveTrain(hardwareMap);
+        imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
     }
 
+    public double getDeltaTime(){
+        double deltaTime = Math.abs(secondPreviousLoopTime-previousLoopTime);
+        secondPreviousLoopTime = previousLoopTime;
+        previousLoopTime = runtime.nanoseconds();
+        return deltaTime;
+    }
+    
+    // returns the current angle of the robot, this assumes that you are updating your imu / the angle
+    public double getRobotAngle(){
+        return RobotAngle;
+    }
+    
     public void IMU_Update() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         if (orientation.getRoll(AngleUnit.DEGREES) == 0 && orientation.getPitch(AngleUnit.DEGREES) == 0
                 && orientation.getYaw(AngleUnit.DEGREES) == 0) {
             if (!resettingImu) {
-                telemetry.addData("IMU failed?", "Re-initializing!");
+                
                 resettingImu = true;
                 RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
                 RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
@@ -62,42 +89,39 @@ public class Robot {
         } else {
             resettingImu = false;
         }
-        telemetry.addData("resettingIMU", resettingImu);
+        
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
         robotHeading = orientation.getYaw(AngleUnit.RADIANS);
         RobotAngle = orientation.getYaw(AngleUnit.RADIANS);
         RobotAngle += AutoStartAngle;
-        telemetry.addData("Yaw (Z)", "%.2f Rad. (Heading)", RobotAngle);
+        
     }
 
     public void IMUReset() {
-        telemetry.addData("Yaw", "Reset" + "ing\n");
+       
         imu.resetYaw();
-        TargetAngle = 0;
+        anglePID.setTarget(0);
     }
 
     private double lastErrorAngle;
     private boolean IsProgramAutonomous;
-
-    public void ProportionalFeedbackControl() {
-        double currentTime = runtime.time();
-        double derivativeAngle;
-        double error = 0;
-        if (resettingImu)
+    
+    public double radiansToDegrees(double radians){
+        return radians*(180/Math.PI);
+    }
+    
+    public double degreesToRadians(double degrees){
+        return degrees*(Math.PI/180);
+    }
+    
+    public void turnUpdate() {
+        if (resettingImu){
             return;
-        telemetry.addData("target", TargetAngle);
-        error = Wrap((TargetAngle/180)*Math.PI - RobotAngle)*180/Math.PI;
-        derivativeAngle = (error - lastErrorAngle)/(currentTime - lastTimeAngle);
-
-        TargetAngle = (RobotAngle * 180 / Math.PI);
-
-        telemetry.addData("ERROR", error);
-        telemetry.addData("BEFORE", turn);
-        turn -= error * proportionalConstantAngle + (derivativeConstantAngle * derivativeAngle);
-        telemetry.addData("AFTER", turn);
-        lastTimeAngle = currentTime;
-        lastErrorAngle = error;
+        }
+        anglePID.setTarget(RobotAngle);
+        anglePID.update(RobotAngle);
+        
     }
 
     double Wrap(double angle) {
