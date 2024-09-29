@@ -5,18 +5,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
-    DcMotor intakeMotor;
-    Servo pivotServo;  // Servo to control the pivot
+    Servo intakeServo; // Servo to control in the intake(for blocks)
+    Servo pivotServo;  // Servo to control the pivot(for specimens)
 
     // Constructor to initialize intake motor and pivot servo
     public Intake(HardwareMap hardwareMap) {
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
         pivotServo = hardwareMap.get(Servo.class, "pivotServo");  // Initialize the pivot servo
     }
 
     // Method to control the intake motor
     public void setIntakePower(double power) {
-        intakeMotor.setPower(power);
+        intakeServo.setPosition(power);
     }
 
     // Method to set the pivot servo position

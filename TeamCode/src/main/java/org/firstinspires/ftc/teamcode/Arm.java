@@ -3,20 +3,21 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDF;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 
 
 public class Arm {
 
-    private DcMotor rotationMotor;
-    private DcMotor armMotor;
-    private PIDF pidController;
+    public DcMotor rotationMotor;
+    public DcMotor armMotor;
+    public PIDFController pidf;
 
-    // PID coefficients (tune these values)
-    private final double kP = 0.01;
-    private final double kI = 0.0;
-    private final double kD = 0.01;
-    private final double kF = 0.0;
+
+    // PIDF coefficients (tune these values)
+    public static double kp = 0.01;
+    public static double ki = 0.0;
+    public static double kd = 0.01;
+    public static double kf = 0.0;
 
     // Constructor
     public Arm(HardwareMap hardwareMap) {
@@ -30,32 +31,30 @@ public class Arm {
         rotationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize PIDF controller with tuned values
-        pidController = new PIDF(kP, kI, kD, kF);
+        pidf = new PIDFController(kp, ki, kd, kf);
 
         // Set an initial target position for the arm
-        pidController.setSetPoint(0);  // Start at encoder position 0
+        pidf.setSetPoint(0);  // Start at encoder position 0
     }
+        // Method to set the arm position
+        public void drive(int targetPosition){
+            // Update the setpoint in the PID controller
+            pidf.setSetPoint(targetPosition);
 
-    // Method to set the arm position
-    public void setArmPosition(int targetPosition) {
-        // Update the setpoint in the PID controller
-        pidController.setSetPoint(targetPosition);
+            // Get the current position from the encoder
+            int currentPosition = armMotor.getCurrentPosition();
 
-        // Get the current position from the encoder
-        int currentPosition = armMotor.getCurrentPosition();
+            // Calculate the PID output
+            double power = pidf.calculate(currentPosition);
 
-        // Calculate the PID output
-        double power = pidController.calculate(currentPosition);
-
-        // Set the motor power based on the PID output
-        armMotor.setPower(power);
+            // Set the motor power based on the PID output
+            armMotor.setPower(power);
+        }
+        public void rotateArm (double power){
+            rotationMotor.setPower(power);
+        }
+        // Check if the arm is at the target position
+        public boolean atTargetPosition () {
+            return pidf.atSetPoint();
+        }
     }
-
-    public void rotateArm(double power) {
-        rotationMotor.setPower(power);
-    }
-    // Check if the arm is at the target position
-    public boolean atTargetPosition() {
-        return pidController.atSetPoint();
-    }
-}

@@ -42,7 +42,7 @@ public class TeleOpMode extends OpMode {
 
         headingVector.setComponents(-gamepad1.left_stick_x, TPE.follower.getPose().getHeading());
 
-        TPE.follower.setMovementVectors(TPE.follower.getCentripetalForceCorrection(), headingVector, driveVector);
+        //TPE.follower.setMovementVectors(TPE.follower.getCentripetalForceCorrection(), headingVector, driveVector);
         TPE.follower.update();
 
         // Drivetrain control
@@ -53,11 +53,11 @@ public class TeleOpMode extends OpMode {
 
         // Arm control using gamepad2
         if (gamepad2.dpad_up) {
-            arm.setArmPosition(1000);  // target position
+            arm.drive(1000);  // target position
         } else if (gamepad2.dpad_down) {
-            arm.setArmPosition(0);  // Lower position
+            arm.drive(0);  // Lower position
         }
-        
+
         // Rotation control using gamepad2
         if (gamepad2.left_bumper) {
             arm.rotateArm(0.5);  // Rotate arm clockwise

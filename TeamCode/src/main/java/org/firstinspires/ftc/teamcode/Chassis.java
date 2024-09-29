@@ -8,8 +8,8 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Chassis {
-    private DcMotor fl, fr, bl, br;
-    private IMU imu;
+    public DcMotor fl, fr, bl, br;
+    public IMU imu;
 
     public Chassis(HardwareMap hardwareMap) {
         // Initialize motors
@@ -38,7 +38,7 @@ public class Chassis {
         imu.initialize(parameters);
     }
 
-    // Method to reset the robot's yaw angle (for if you get lost)
+    // Method to reset the robot's yaw angle
     public void resetYaw() {
         imu.resetYaw();
     }
@@ -52,7 +52,7 @@ public class Chassis {
         double adjustedX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double adjustedY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        // (kinda) Optional adjustment to counteract imperfect strafing
+        // Optional adjustment to counteract imperfect strafing
         adjustedX = adjustedX * 1.1;
 
         // Calculate the motor powers
