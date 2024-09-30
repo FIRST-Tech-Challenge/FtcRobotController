@@ -15,6 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RobotInitialize {
 
     // Initialization Phase
@@ -133,27 +136,27 @@ public class RobotInitialize {
         // of the average robot encoder reading
         // The relativeDistance is current position plus or minus the value that is being moved
         // RELATIVE DISTANCE MEASUREMENT IN USE
-        int relativeDistance = distance + getAverageEncoderValue();
+        int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
         // It only moves if the distance to the final location is greater than or equal to 10 encoder
         // ticks
-        while (opMode.opModeIsActive() && Math.abs(getAverageEncoderValue() - relativeDistance) >= 10) {
+        while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
             //if the current position is before final position
-            if (getAverageEncoderValue() < relativeDistance) {
+            if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 setMotorVelocity(Math.abs(velocity));
-                opMode.telemetry.addData("Encoder straight", getAverageEncoderValue());
+                opMode.telemetry.addData("Encoder straight", getPosStrafe());
                 opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bright.getCurrentPosition());
                 opMode.telemetry.addData("fright", fright.getCurrentPosition());
                 opMode.telemetry.addData("fleft", fleft.getCurrentPosition());
                 opMode.telemetry.update();
                 //if current position is less than needed
-            } else if (getAverageEncoderValue() > relativeDistance) {
+            } else if (getPosStrafe() > relativeDistance) {
                 // Backwards (- negative relativeDistance value)
                 setMotorVelocity(-Math.abs(velocity));
-                opMode.telemetry.addData("Encoder straight", getAverageEncoderValue());
+                opMode.telemetry.addData("Encoder straight", getPosStrafe());
                 opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bright.getCurrentPosition());
                 opMode.telemetry.addData("fright", fright.getCurrentPosition());
@@ -217,6 +220,10 @@ public class RobotInitialize {
                 fright.setVelocity(-velocity);
                 bleft.setVelocity(velocity);
                 bright.setVelocity(-velocity);
+
+//                while (){
+//
+//                }
                 opMode.telemetry.addData("position", getPosStrafe());
                 opMode.telemetry.addData("relative distance", relativeDistance);
                 opMode.telemetry.addData("old pos", getAverageEncoderValue());
@@ -238,11 +245,14 @@ public class RobotInitialize {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
+//
+                Double[] motorvVelocity = {bleft.getVelocity(), fleft.getVelocity(), bright.getVelocity(), fright.getVelocity()};
                 fleft.setVelocity(-velocity);
                 fright.setVelocity(velocity);
                 bleft.setVelocity(-velocity);
                 bright.setVelocity(velocity);
-                opMode.telemetry.addData("reldistance", relativeDistance);
+                opMode.telemetry.addData("get vel", fleft.getVelocity());
+                opMode.telemetry.addData("get vel", bleft.getVelocity());
                 opMode.telemetry.addData("getposStrafeR", getPosStrafe());
                 opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bright.getCurrentPosition());
@@ -265,23 +275,23 @@ public class RobotInitialize {
         // ABSOLUTE POSITIONING IN USE (will go to exact values)
 
         while (opMode.opModeIsActive() && Math.abs(degrees - getAngle()) >= 0.2) {
-            opMode.telemetry.addData("Encoder turn:", fleft.getCurrentPosition());
+            opMode.telemetry.addData("Encoder turn:", gyroScope.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
             opMode.telemetry.addData("Gyroscope", getAngle());
             opMode.telemetry.update();
 
             if (degrees > getAngle()) {
                 // Turning left (positive gyro value)
                 fleft.setVelocity(-500);
-                bleft.setVelocity(-500);
+                bleft.setVelocity(500);
                 fright.setVelocity(500);
-                bright.setVelocity(500);
+                bright.setVelocity(-500);
             }
             else if (degrees < getAngle()) {
                 // Turning right (negative gyro value)
                 fleft.setVelocity(500);
-                bleft.setVelocity(500);
+                bleft.setVelocity(-500);
                 fright.setVelocity(-500);
-                bright.setVelocity(-500);
+                bright.setVelocity(500);
             }
         }
         stopMotors();

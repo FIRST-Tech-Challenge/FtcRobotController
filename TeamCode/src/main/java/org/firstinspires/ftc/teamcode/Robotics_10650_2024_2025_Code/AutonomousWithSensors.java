@@ -24,14 +24,16 @@ public class AutonomousWithSensors extends LinearOpMode {
         //robot.strafeR(10, 200);
 
         //forward
-       //robot.goStraight(300, 500);
-//        sleep(2000);
+       robot.goStraight(1200, 500);
+       sleep(2000);
+       robot.goStraight(-300, 500);
+       robot.strafeL(2000, 700);
 //        robot.newTurnFunction(90);
-        robot.strafeL(20, 500);
-        robot.strafeR(20, 500);
-        robot.goStraight(20, 500);
-        robot.goStraight(-20, 500);
-        robot.newTurnFunction(90);
+//        robot.strafeL(20, 500);
+//        robot.strafeR(20, 500);
+//        robot.goStraight(60, 500);
+//        robot.goStraight(-60, 500);
+//        robot.newTurnFunction(90);
 
 //        sleep(2000);
 //        robot.strafeR(1000, 500);

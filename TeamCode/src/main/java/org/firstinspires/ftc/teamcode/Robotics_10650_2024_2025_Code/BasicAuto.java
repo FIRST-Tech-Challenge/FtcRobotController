@@ -16,8 +16,6 @@ public class BasicAuto extends LinearOpMode {
         waitForStart(); // Waits for a person to press start on the control hub
         // then it runs the rest of the program
 
-        fleft.setPower(0.3); // sets the power of one of the motors
-
         timerFunction(10000);
 
         // stopFunction();
