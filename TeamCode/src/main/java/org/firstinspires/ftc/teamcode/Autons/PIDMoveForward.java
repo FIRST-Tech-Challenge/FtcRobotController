@@ -20,7 +20,8 @@ public class PIDMoveForward extends LinearOpMode {
     public static double D = 0;
     public static double x_pos = 0;
     public static double y_pos = 0;
-    public static double heading = 0;
+    public static double prevHeading = 0;
+    public static double prevEncoder = 0;
     public static double change = 0;
 
 
@@ -30,24 +31,29 @@ public class PIDMoveForward extends LinearOpMode {
     //change ticks to inches later
     //i am 12 inches
     public void odom() throws InterruptedException {
-        double vertical_ticks = drivetrain.get1Position();
-        double current = drivetrain.getHeading();
-        change = current- heading;
-        if (change == 0) {
-            x_pos += Math.cos(heading)*vertical_ticks;
-            y_pos += Math.sin(heading)*vertical_ticks;
+        // ds= {2rh+sin(theta/2), 2rvsin(theta/2)} {cos(-thetac)  -sin(-thetac),  sin(-thetac) cos(-thetac)}
+        double curHeading = drivetrain.getHeading();
+        double deltaTheta = curHeading - prevHeading;
+        double distance = drivetrain.get1Position() - prevEncoder;
+        prevEncoder = drivetrain.get1Position();
+
+        double thetaChange = prevHeading + deltaTheta / 2;
+        double dv;
+        if (deltaTheta == 0) {
+            dv = distance;
         } else {
-            double arcRadius = vertical_ticks / change;
-            double y_change = 2 * Math.sin(change / 2) * arcRadius;
-            double x_change = 0;
-            double a = heading + change / 2;
-            x_pos += 2 * arcRadius * Math.sin(a) * Math.sin(y_change);
-            y_pos += 2 * arcRadius * Math.cos(a) * Math.sin(y_change);
+            double vertical_radius = distance / deltaTheta;
+            dv = 2 * vertical_radius * Math.sin(deltaTheta / 2);
         }
-        heading = current;
+        double x_change = dv * Math.cos(thetaChange);
+        double y_change = dv * Math.sin(thetaChange);
+        x_pos += x_change;
+        y_pos += y_change;
+        prevHeading = curHeading;
         telemetry.addData("x_pos", x_pos);
         telemetry.addData("y_pos", y_pos);
     }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
