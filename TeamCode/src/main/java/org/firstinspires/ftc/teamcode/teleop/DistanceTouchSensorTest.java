@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import android.text.method.Touch;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -15,16 +17,17 @@ public class DistanceTouchSensorTest extends LinearOpMode {
 
     Mecanum robot;
 
-    DistanceSensor distanceSensor;
+    DigitalChannel distanceSensor;
 
-    TouchSensor touchSensor;
+    RevTouchSensor touchSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Mecanum(hardwareMap);
+//        robot = new Mecanum(hardwareMap);
 
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distance");
-        touchSensor = hardwareMap.get(TouchSensor.class, "touch");
+        distanceSensor = hardwareMap.get(DigitalChannel.class, "distance");
+        distanceSensor.setMode(DigitalChannel.Mode.INPUT);
+        touchSensor = hardwareMap.get(RevTouchSensor.class, "touch");
 
         waitForStart();
 
@@ -34,8 +37,8 @@ public class DistanceTouchSensorTest extends LinearOpMode {
 
 
 
-            telemetry.addData("Distance (Dist Sensor): ",distanceSensor.getDistance(DistanceUnit.INCH));
-            telemetry.addData("Touched (Touch Sensor: ",touchSensor.getValue());
+            telemetry.addData("Distance (Dist Sensor): ",distanceSensor.getState());
+            telemetry.addData("Touched (Touch Sensor): ",touchSensor.getValue());
             telemetry.update();
         }
     }

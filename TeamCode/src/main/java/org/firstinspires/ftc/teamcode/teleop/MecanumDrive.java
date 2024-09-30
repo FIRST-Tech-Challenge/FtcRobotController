@@ -60,8 +60,8 @@ public class MecanumDrive extends LinearOpMode {
 
             //Input checks
             double forward = controller1.left_stick_y;
-            double strafe = -controller1.left_stick_x;
-            double rotate = -controller1.right_stick_x;
+            double strafe = controller1.left_stick_x;
+            double rotate = controller1.right_stick_x;
 
             if (controller1.a.onPress()){
                 //Toggle Field Centric Drive

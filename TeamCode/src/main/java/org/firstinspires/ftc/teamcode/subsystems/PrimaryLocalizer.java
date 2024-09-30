@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+
+import org.firstinspires.ftc.teamcode.roadrunner.Localizer;
 import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 
 /**
@@ -10,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 public class PrimaryLocalizer implements LocalizerInterface {
 
     //Should be equal or be close to 1;
-    private double totalWeight;
+    private double totalWeight = 0;
     private LocalizerInterface[] localizers;
 
     /**
@@ -20,7 +24,7 @@ public class PrimaryLocalizer implements LocalizerInterface {
     public PrimaryLocalizer(LocalizerInterface[] localizers){
         this.localizers = localizers;
         for(LocalizerInterface sensors: localizers){
-            totalWeight = sensors.getWeight();
+            totalWeight += sensors.getWeight();
         }
     }
 
@@ -28,12 +32,11 @@ public class PrimaryLocalizer implements LocalizerInterface {
     /**
      * @return [double] Returns weight of all combined localizers.
      */
-    @Override //Unnecessary for this particular localizer, but can be used to check total weight
+    @Override //Unncessary for this particular localizer, but can be used to check total weight
     public double getWeight() {return totalWeight;}
 
 
-    /**
-     * Currently, this simply takes in the position (in Pose2d form) from all localizers.
+    /**Currently, this simply takes in the position (in Pose2d form) from all localizers
      * Each localizer is then multipled with it's associated weight.
      * @return [Pose2d] Returns a Pose2d that reflects the position of the robot.
      */
@@ -49,6 +52,7 @@ public class PrimaryLocalizer implements LocalizerInterface {
         return new Pose2d( xPos , yPos , heading );
     }
 
+
     /**
      * Returns position and heading data
      * @return [String] Formatted string containing position and heading data.
@@ -56,10 +60,15 @@ public class PrimaryLocalizer implements LocalizerInterface {
     @Override
     public String toString(){
         Pose2d pos = getPosition();
-        return String.format("X: %d\nY: &d\nHeading: %d",
+        return String.format("X: %f\nY: %f\nHeading: %f",
                 pos.position.x,
                 pos.position.y,
-                pos.heading.toDouble());
+                Math.toDegrees(pos.heading.toDouble()));
+    }
+
+
+    public LocalizerInterface[] getLocalizers(){
+        return localizers;
     }
 }
 
