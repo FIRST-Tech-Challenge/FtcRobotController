@@ -6,14 +6,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp (name = "NEW Basic TeleOp")
-public class BasicTeleOp extends LinearOpMode {
+@TeleOp (name = "TeleOp Code")
+public class TeleOpCode extends LinearOpMode {
 // Create servo variables
     Servo pitch;
     Servo Lclaw;
     Servo Rclaw;
 
-    // Create the empty motor variables
+    // Create the motor variables (does not contain any information yet)
     DcMotor fleft;
     DcMotor bright;
     DcMotor fright;
@@ -37,8 +37,6 @@ public class BasicTeleOp extends LinearOpMode {
         bright.setPower(-strafePower + straightMovementPower + turnPower);
         fright.setPower(strafePower + straightMovementPower + turnPower);
         bleft.setPower(strafePower + straightMovementPower - turnPower);
-
-        // Servo setting up
 
         // Makes the pitch servo go all the way up
         // Make sure claw is fully closed before lifting up (set up conditional for this)
@@ -102,12 +100,12 @@ public class BasicTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        // loop
+        // loop while the program is running
+        // waits for controller input then runs the associated code
         while(opModeIsActive()) {
-            // controller code
+            // controller code that is inputted by the drive team
 
             controllerInput();
         }
-
     }
 }
