@@ -52,12 +52,6 @@ public class PrimaryLocalizer implements LocalizerInterface {
         return new Pose2d( xPos , yPos , heading );
     }
 
-    public Pose2d KalmanFilter(){
-
-        return new Pose2d(0,0,0);
-    }
-
-
 
     /**
      * Returns position and heading data
