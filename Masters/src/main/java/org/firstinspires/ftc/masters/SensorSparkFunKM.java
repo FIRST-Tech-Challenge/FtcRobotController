@@ -3,13 +3,11 @@
 
     Copyright (c) 2024 SparkFun Electronics
 */
-package org.firstinspires.ftc.robotcontroller.external.samples;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+package org.firstinspires.ftc.masters;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -24,8 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
-@TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
-public class SensorSparkFunOTOS extends LinearOpMode {
+@TeleOp(name = "SparkFun KM")
+public class SensorSparkFunKM extends LinearOpMode {
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
@@ -64,6 +62,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             // Log the position to the telemetry
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("X coordinate KM", (pos.x / 39370));
+            telemetry.addData("Y coordinate KM", (pos.y / 39370));
             telemetry.addData("Heading angle", pos.h);
 
             // Update the telemetry on the driver station

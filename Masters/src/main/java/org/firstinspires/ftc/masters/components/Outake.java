@@ -79,12 +79,27 @@ public class Outake implements Component{
     public void extend() {
         extendSlide.setPower(1);
     }
+
+    public void extendPower(double power) {
+        extendSlide.setPower(power);
+        telemetry.addData("Pos", extendSlide.getCurrentPosition());
+        telemetry.update();
+    }
+    public void extendPos(int pos) {
+        extendSlide.setTargetPosition(pos);
+        extendSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendSlide.setPower(.7);
+    }
+
     public void retract() {
         extendSlide.setPower(-1);
     }
-    public void stop() {
-        extendSlide.setPower(0);
+    public void rotateStop() {
         rotateSlide.setPower(0);
+    }
+
+    public void extendStop() {
+        extendSlide.setPower(0);
     }
 
     public void open(){ claw.setPosition(open); }
@@ -95,5 +110,13 @@ public class Outake implements Component{
 
     public void rotateUp(){ rotateSlide.setPower(1); }
     public void rotateDown(){ rotateSlide.setPower(-1); }
+
+    public DcMotor getExtendSlide(){
+        return extendSlide;
+    }
+
+    public DcMotor getRotateSlide(){
+        return rotateSlide;
+    }
 
 }
