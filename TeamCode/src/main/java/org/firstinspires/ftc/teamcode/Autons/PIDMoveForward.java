@@ -29,7 +29,7 @@ public class PIDMoveForward extends LinearOpMode {
 
     private Drivetrain drivetrain;
     //change ticks to inches later
-    //i am 12 inches
+    //i am 13 inches
     public void odom() throws InterruptedException {
         // ds= {2rh+sin(theta/2), 2rvsin(theta/2)} {cos(-thetac)  -sin(-thetac),  sin(-thetac) cos(-thetac)}
         double curHeading = drivetrain.getHeading();
