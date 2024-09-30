@@ -3,47 +3,64 @@ package org.firstinspires.ftc.teamcode.utils;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class LimeLightWrapper implements LocalizerInterface{
 
     public double weight = 0.33;
 
     Limelight3A limelight;
+    //The position of each april tag on the field
     public static final Vector2d[] APRIL_TAG_POSITIONS = new Vector2d[]{
+            //11
+            new Vector2d(-72,-48),
+            //12
+            new Vector2d(0,72),
+            //13
+            new Vector2d(72,-48),
+            //14
+            new Vector2d(72,48),
+            //15
+            new Vector2d(0,-72),
+            //16
+            new Vector2d(-72,48)
 
     };
 
     public LimeLightWrapper(Limelight3A limelight3A) {
         limelight = limelight3A;
     }
-
+    //starts up the limelight with the first pipeline
     public void start() {
         limelight.pipelineSwitch(0);
         limelight.start();
     }
-
+    //starts up the limelight with a set pipeline
     public void start(int pipeline) {
         limelight.pipelineSwitch(pipeline);
         limelight.start();
     }
-
+    //gets all the valid inputs that the limelight finds
     public LLResult getVaildResult() {
         LLResult result = limelight.getLatestResult();
         if (result != null) {
             if (result.isValid()) {
+                //only returns good results
                 return result;
             }
         }
         return null;
     }
-
+    public int getAprilTagId(LLResultTypes.FiducialResult fiducialResult) {
+        return fiducialResult.getFiducialId();
+    }
+    //gets the distance using just the botpose
     public Pose3D distanceFromTag() {
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
@@ -51,7 +68,7 @@ public class LimeLightWrapper implements LocalizerInterface{
         }
         return null;
     }
-
+    //gets the distance using the botpose and the yaw
     public Pose3D distanceFromTag(double yaw) {
         LLResult result = limelight.getLatestResult();
         limelight.updateRobotOrientation(yaw);
@@ -61,18 +78,16 @@ public class LimeLightWrapper implements LocalizerInterface{
         return null;
     }
 
-
-    /**TODO: Please add documentation/explanation of what Pose3D is meant to represent
-     *
-     * @param i [int]
-     * @param pose3D [Pose3D]
-     * @return [Pose3D]
-     */
+    //takes a pose3d from a distance from the tag and localizes it based on which April tag it is
     public Pose3D localize(int i,Pose3D pose3D) {
-        Vector2d vector2d = APRIL_TAG_POSITIONS[i];
-        double x = vector2d.x+pose3D.getPosition().x;
-        double y = vector2d.y+pose3D.getPosition().y;
+        Vector2d vector2d = APRIL_TAG_POSITIONS[i-11];
+
+        double x = vector2d.x<0 ? vector2d.x+pose3D.getPosition().x : vector2d.x-pose3D.getPosition().x;
+        double y = vector2d.y<0 ? vector2d.y+pose3D.getPosition().y : vector2d.y-pose3D.getPosition().x;
+        //offestes
         double z = 0;
+        x -= 8.375;
+        y +=1.81;
         return new Pose3D(new Position(DistanceUnit.INCH,x,y,z,pose3D.getPosition().acquisitionTime),pose3D.getOrientation());
     }
 
