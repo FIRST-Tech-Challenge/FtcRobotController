@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.SparkOdo;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 public class MecanumDrive extends LinearOpMode {
 
     private DcMotor frontLeft, backLeft, frontRight, backRight;
+    private Mecanum robot;
 
     private Lift lift;
     private double maxSpeed;
@@ -35,49 +37,16 @@ public class MecanumDrive extends LinearOpMode {
     private int TICKS_PER_INCH = (int)(TICKS_PER_ROT / INCHES_PER_ROTATION); //# of Ticks per Inch of distance
     @Override
     public void runOpMode() throws InterruptedException {
-        //Init phase
-        maxSpeed = 0.5;
-        //Initialize other variables
-        fieldCentricActive = false;
 
+        sparkOdo = new SparkOdo(hardwareMap);
 
-
-        sparkOdo = new SparkOdo(hardwareMap, telemetry);
-
-        //Motor initialization
-        frontLeft = hardwareMap.get(DcMotor.class,"FLM");
-        backLeft = hardwareMap.get(DcMotor.class,"BLM");
-        frontRight = hardwareMap.get(DcMotor.class,"FRM");
-        backRight = hardwareMap.get(DcMotor.class,"BRM");
+        robot = new Mecanum(hardwareMap);
 
         lift = new Lift(hardwareMap);
-
-        //Motor/Deadwheel Encoders Initialization
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //Reverse some motors
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection((DcMotorSimple.Direction.REVERSE));
 
         //Initialize gamepad object
         controller1 = new GamepadEvents(gamepad1);
 
-
-
-        //Initialize the imu object
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        ));
 
         telemetry.addLine("Wait for Start");
         telemetry.update();
@@ -87,7 +56,7 @@ public class MecanumDrive extends LinearOpMode {
         while (!isStopRequested()) {
             int target = lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
             telemetry.addData("TargetPos: ",target);
-            telemetry.addData("CurrentPos:", lift.currentPos());
+            telemetry.addData("CurrentPos:", lift.getPosition());
 
             //Input checks
             double forward = controller1.left_stick_y;
@@ -96,12 +65,12 @@ public class MecanumDrive extends LinearOpMode {
 
             if (controller1.a.onPress()){
                 //Toggle Field Centric Drive
-                fieldCentricActive = !fieldCentricActive;
+                robot.toggleFieldCentric();
             }
 
             if (controller1.b.onPress()){
                 //Reset heading angle (Through IMU or encoders)
-                imu.resetYaw();
+                robot.resetIMU();
             }
 
             if (controller1.y.onPress()){
@@ -112,19 +81,9 @@ public class MecanumDrive extends LinearOpMode {
                 sparkOdo.calibrateOdo();
             }
 
-            if(fieldCentricActive){
-                //Manipulate drive/strafe values
-                double currentRotation = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-                double temp = forward * Math.cos(currentRotation) + strafe * Math.sin(currentRotation);
-                strafe = -forward * Math.sin(currentRotation) + strafe * Math.cos(currentRotation);
-                forward = temp;
-            }
-
             //Activate Motors;
-            frontLeft.setPower((forward + strafe + rotate)*maxSpeed);
-            backLeft.setPower((forward - strafe + rotate)*maxSpeed);
-            frontRight.setPower((forward - strafe - rotate)*maxSpeed);
-            backRight.setPower((forward + strafe - rotate)*maxSpeed);
+            robot.drive(forward , strafe , rotate);
+
 
             //Display Telemetry information
 
