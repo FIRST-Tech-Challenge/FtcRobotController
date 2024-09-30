@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 @Autonomous(name = "AutonomousWithSensors")
-public class AutonomousWithSensors extends LinearOpMode {
+public class AutonomousCode extends LinearOpMode {
 
     RobotInitialize robot;
 

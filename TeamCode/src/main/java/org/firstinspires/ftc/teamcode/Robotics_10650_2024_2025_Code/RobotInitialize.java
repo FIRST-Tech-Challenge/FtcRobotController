@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
-
+// Imports all of the necessary FTC libraries and code
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,11 +15,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+
 public class RobotInitialize {
 
     // Initialization Phase
 
-    // Create servo variables
+    // Create servo variables (currently not available)
     //Servo pitch;
     //Servo lClaw;
     //Servo rClaw;
@@ -40,10 +41,11 @@ public class RobotInitialize {
     Orientation lastAngles = new Orientation();
     double globalAngle;
 
-
+    // Makes an instance of the class LinearOpMode called opMode
     LinearOpMode opMode;
 
-    // Enables the class to be referenced in other classes
+    // Enables the class to be referenced in other classes such as the Autonomous Code
+    // and the TeleOpCode
     public RobotInitialize(LinearOpMode opMode) {
         this.opMode = opMode;
         initialize();
@@ -69,8 +71,6 @@ public class RobotInitialize {
 
         // Resetting the encoders (distance measurement sensors)
         // and then start them again on program start
-
-        // Reset the encoders then start them again
         // Repeat for all motors
         fleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -87,34 +87,28 @@ public class RobotInitialize {
         // Initialize Gyroscope
         gyroScope = opMode.hardwareMap.get(BHI260IMU.class, "gyroScope");
 
-        //1st approach (works for orthogonal mounting): RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
-        // This is now no longer used because it was for the old gyroscope
-
         RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(new Orientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,0));
         settings = new BHI260IMU.Parameters(ori);
         AngularVelocity angularVelocity = gyroScope.getRobotAngularVelocity(AngleUnit.DEGREES);
         YawPitchRollAngles orientation = gyroScope.getRobotYawPitchRollAngles();
-//        settings.mode= BHI260IMU.SensorMode.IMU;
-//        settings.angleUnit = BHI260IMU.AngleUnit.DEGREES;
-//        settings.accelUnit = BHI260IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        settings.loggingEnabled = false;
         gyroScope.initialize(settings);
     }
 
 
-    // Gets the angle that the robot is currently facing in
+    // Gets the angle that the robot is currently facing in from the gyroscope
     private double getAngle() {
         Orientation angles = gyroScope.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 //        Orientation angles = gyroScope.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
         if (deltaAngle < -180)
-            deltaAngle += 360;
+            deltaAngle += 360; // Changes the deltaAngle to be within a range of 0 to 360 degrees
         else if (deltaAngle > 180) {
             deltaAngle -= 360;
         }
 
-        globalAngle += deltaAngle;
-        lastAngles = angles;
+        // Sets the variable globalAngle to itself plus deltaAngle
+        globalAngle += deltaAngle; // gA = gA + deltaAngle
+        lastAngles = angles; // Sets lastAngles equal to
         return globalAngle;
     }
 
@@ -157,44 +151,6 @@ public class RobotInitialize {
         stopMotors();
     }
 
-
-
-    // Makes the robot turn a certain number of degrees
-    // The parameter degrees is the amount of degrees the robot turns
-
-
-    // This is the old turn function with setPower instead of set velocity
-
-    /*
-    public void oldTurnFunction(int degrees) {
-        // When turning left, counterclockwise is a positive gyro value
-        // When turning right, clockwise is a negative gyro value
-        // ABSOLUTE POSITIONING IN USE (will go to exact values)
-
-        while (opModeIsActive() && Math.abs(degrees - getAngle()) >= 0.5) {
-            telemetry.addData("Encoder turn:", fleft.getCurrentPosition());
-            telemetry.addData("Gyroscope", getAngle());
-            telemetry.update();
-
-            if (degrees > getAngle()) {
-                // Turning left (positive gyro value)
-                fleft.setPower(-0.2);
-                bleft.setPower(-0.2);
-                fright.setPower(0.2);
-                bright.setPower(0.2);
-            }
-            else if (degrees < getAngle()) {
-                // Turning right (negative gyro value)
-                fleft.setPower(0.2);
-                bleft.setPower(0.2);
-                fright.setPower(-0.2);
-                bright.setPower(-0.2);
-            }
-        }
-        stopMotors();
-    }
-     */
-
     // Makes the robot strafe right by determining where the robot is currently
     // located and where it is trying to go it does not return anything and
     // has parameters of the distance it needs to travel (measured in encoder ticks)
@@ -203,6 +159,7 @@ public class RobotInitialize {
         int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
         //if difference <10 then stop
+        // 10 is the accuracy tolerance in 10 encoder ticks
         while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
             //if
             if (getPosStrafe() < relativeDistance) {
@@ -282,7 +239,7 @@ public class RobotInitialize {
         }
         stopMotors();
     }
-    //gets avg magnitudes bc morots are going in diff directions
+    //gets average magnitudes because motors are going in different directions
     public int getPosStrafe() {
         return ((Math.abs(fright.getCurrentPosition())+Math.abs(bright.getCurrentPosition())+Math.abs(fleft.getCurrentPosition())+ Math.abs(bleft.getCurrentPosition()))/4);
     }
@@ -308,22 +265,6 @@ public class RobotInitialize {
     public int getRightSideEncoderValues() {
         return ((fright.getCurrentPosition() + bright.getCurrentPosition())/2);
     }
-
-    // Sets the motor power, a decimal (double) between -1 and 1
-    // parameter power is of type double (a decimal) and stores the motor power
-    // to set the power of the motors
-    // This function does not return anything, it has (void)
-
-    // This is the old method of controlling the motor speed
-
-    /*
-    public void setMotorPower(double power) {
-        fleft.setPower(power);
-        fright.setPower(power);
-        bleft.setPower(power);
-        bright.setPower(power);
-    }
-     */
 
     // This sets the movement of the motors to be constant
     // The back wheels are set to negative velocity so the
