@@ -8,7 +8,9 @@ import org.firstinspires.ftc.teamcode.supers.Robot
 @TeleOp(name = "Test Swerve Forward")
 @Config
 class TestSwerveForward : LinearOpMode() {
-    var power: Double = 0.5
+    companion object {
+        @JvmStatic var power: Double = 0.5
+    }
 
     override fun runOpMode() {
         val r = Robot(this)
