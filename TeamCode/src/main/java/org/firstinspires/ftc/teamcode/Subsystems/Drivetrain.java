@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import java.util.Base64;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Drivetrain {
     public DcMotor fL;
@@ -15,11 +14,12 @@ public class Drivetrain {
     public DcMotor fR;
     public DcMotor bR;
     public Encoder encoder;
+    public Encoder encoder2;
     //public static double TICKS_PER_REV = 1;
     public static double GEAR_RATIO = 1;
     public static double WHEEL_RADIUS_INCHES = 1.88976;
     public static double TICKS_PER_REV = 537.6;
-    //public IMU imu;
+    public IMU imu;
 
     public void init(HardwareMap map) {
         fL = map.dcMotor.get("frontLeft");
@@ -27,7 +27,11 @@ public class Drivetrain {
         fR = map.dcMotor.get("frontRight");
         bR = map.dcMotor.get("backRight");
         encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
+        encoder2 = new Encoder(map.get(DcMotorEx.class, "backRight"));
+        imu = map.get(IMU.class, "imu");
+
         fL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        bR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
 
         fL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -42,11 +46,18 @@ public class Drivetrain {
         fR.setDirection(DcMotorSimple.Direction.REVERSE);
         bR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
     }
 
-    public double getPosition() {
+    public double getHeading(){
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+
+    public double get1Position() {
         return -encoder.getCurrentPosition();
+    }
+
+    public double get2Position() {
+        return -encoder2.getCurrentPosition();
     }
 
     public void moveMoveMOVE(double power){
