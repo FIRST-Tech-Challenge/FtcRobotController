@@ -35,17 +35,22 @@ public class RobotInitialize {
     BHI260IMU gyroScope;
     BHI260IMU.Parameters settings;
 
+    // A constructor that makes a new instance of
+    // The orientation class called lastAngles
     Orientation lastAngles = new Orientation();
     double globalAngle;
 
+
     LinearOpMode opMode;
 
+    // Enables the class to be referenced in other classes
     public RobotInitialize(LinearOpMode opMode) {
         this.opMode = opMode;
         initialize();
     }
 
-
+    // The main function that sets all of the hardware to different variables
+    // The motors and the gyroscope are initialized here
     public void initialize() {
         // map the motors to the hardware map
         fleft = opMode.hardwareMap.get(DcMotorEx.class, "fleft");
@@ -65,6 +70,8 @@ public class RobotInitialize {
         // Resetting the encoders (distance measurement sensors)
         // and then start them again on program start
 
+        // Reset the encoders then start them again
+        // Repeat for all motors
         fleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -81,6 +88,7 @@ public class RobotInitialize {
         gyroScope = opMode.hardwareMap.get(BHI260IMU.class, "gyroScope");
 
         //1st approach (works for orthogonal mounting): RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
+        // This is now no longer used because it was for the old gyroscope
 
         RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(new Orientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,0));
         settings = new BHI260IMU.Parameters(ori);
@@ -91,25 +99,10 @@ public class RobotInitialize {
 //        settings.accelUnit = BHI260IMU.AccelUnit.METERS_PERSEC_PERSEC;
 //        settings.loggingEnabled = false;
         gyroScope.initialize(settings);
-
-//        while (!gyroScope.){
-//            //Wait
-//            opMode.telemetry.addLine("GYRO WAITING...");
-//            opMode.telemetry.update();
-//        }
     }
 
-//    public void makeSquare() {
-//        goStraight(500, 500);
-//        newTurnFunction(-90);
-//        goStraight(500, 500);
-//        newTurnFunction(-180);
-//        goStraight(500, 500);
-//        newTurnFunction(-270);
-//        goStraight(500, 500);
-//        newTurnFunction(-360);
-//    }
 
+    // Gets the angle that the robot is currently facing in
     private double getAngle() {
         Orientation angles = gyroScope.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 //        Orientation angles = gyroScope.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -202,7 +195,10 @@ public class RobotInitialize {
     }
      */
 
-    // Possibly complete (need to test to determine)
+    // Makes the robot strafe right by determining where the robot is currently
+    // located and where it is trying to go it does not return anything and
+    // has parameters of the distance it needs to travel (measured in encoder ticks)
+    // and the velocity that it moves (measured in encoder ticks per second)
     public void strafeR(int distance, int velocity){
         int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
@@ -229,6 +225,10 @@ public class RobotInitialize {
         stopMotors();
     }
 
+    // Makes the robot strafe left by determining where the robot is currently
+    // located and where it is trying to go it does not return anything and
+    // has parameters of the distance it needs to travel (measured in encoder ticks)
+    // and the velocity that it moves (measured in encoder ticks per second)
     public void strafeL(int distance, int velocity){
         //relative distance is input value + pos
         int relativeDistance = distance + getPosStrafe();
@@ -254,11 +254,7 @@ public class RobotInitialize {
         stopMotors();
     }
 
-    // This is the new turn function that includes setVelocity
-
-
-
-
+    // This is the new turn function that includes setVelocity instead of setPower
     public void newTurnFunction(int degrees) {
         // When turning left, counterclockwise is a positive gyro value
         // When turning right, clockwise is a negative gyro value
@@ -330,6 +326,9 @@ public class RobotInitialize {
      */
 
     // This sets the movement of the motors to be constant
+    // The back wheels are set to negative velocity so the
+    // robot goes forward when the velocity value is positive and
+    // vice versa for going backwards
     public void setMotorVelocity(double velocity) {
         fleft.setVelocity(velocity);
         fright.setVelocity(velocity);
@@ -337,6 +336,7 @@ public class RobotInitialize {
         bright.setVelocity(-velocity);
     }
 
+    // Stops the motors by setting the velocity to 0
     public void stopMotors() {
         setMotorVelocity(0);
     }
