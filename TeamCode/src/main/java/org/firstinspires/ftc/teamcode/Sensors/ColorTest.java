@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware.Sensors;
+package org.firstinspires.ftc.teamcode.Sensors;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
