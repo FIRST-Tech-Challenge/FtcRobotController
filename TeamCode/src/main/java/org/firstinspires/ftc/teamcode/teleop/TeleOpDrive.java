@@ -41,12 +41,13 @@ public class TeleOpDrive extends OpMode {
         follower.startTeleopDrive();
     }
 
-    /**
-     * This runs the OpMode. This is only drive control with Pedro Pathing live centripetal force
-     * correction.
-     */
     @Override
     public void loop() {
+
+        telemetry.addData("Left Encoder Rotation: ", rightFront.getCurrentPosition());
+        telemetry.addData("Right Encoder Rotation: ", rightRear.getCurrentPosition());
+        telemetry.addData("Strafe Encoder Rotation: ", leftRear.getCurrentPosition());
+        telemetry.update();
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
     }
