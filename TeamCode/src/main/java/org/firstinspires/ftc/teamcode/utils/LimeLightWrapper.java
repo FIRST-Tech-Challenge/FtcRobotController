@@ -75,6 +75,7 @@ public class LimeLightWrapper {
     //takes a pose3d from a distance from the tag and localizes it based on which April tag it is
     public Pose3D localize(int i,Pose3D pose3D) {
         Vector2d vector2d = APRIL_TAG_POSITIONS[i-11];
+
         double x = vector2d.x<0 ? vector2d.x+pose3D.getPosition().x : vector2d.x-pose3D.getPosition().x;
         double y = vector2d.y<0 ? vector2d.y+pose3D.getPosition().y : vector2d.y-pose3D.getPosition().x;
         //offestes
