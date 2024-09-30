@@ -18,9 +18,10 @@ public class PrimaryLocalizerTest extends LinearOpMode {
         //Init Phase
         Mecanum robot = new Mecanum(hardwareMap);
         GamepadEvents controller1 = new GamepadEvents(gamepad1);
+        ThreeEncoderLocalizer threeWheel = new ThreeEncoderLocalizer(hardwareMap);
         LocalizerInterface[] localizerArray = new LocalizerInterface[] {
                 new SparkOdo(hardwareMap),
-                new ThreeEncoderLocalizer(hardwareMap)
+                threeWheel
         };
         PrimaryLocalizer localizer = new PrimaryLocalizer(localizerArray);
 
@@ -32,7 +33,11 @@ public class PrimaryLocalizerTest extends LinearOpMode {
         while(!isStopRequested()){
             robot.drive(controller1.left_stick_y,controller1.left_stick_x,controller1.right_stick_x);
 
+            telemetry.addData("Spark: ", localizer.getLocalizers()[0].toString());
+            telemetry.addData("Deadwheels: ", localizer.getLocalizers()[1].toString());
             telemetry.addLine(localizer.toString());
+            telemetry.addLine();
+            telemetry.addLine(threeWheel.DebugLog());
             telemetry.update();
             controller1.update();
         }

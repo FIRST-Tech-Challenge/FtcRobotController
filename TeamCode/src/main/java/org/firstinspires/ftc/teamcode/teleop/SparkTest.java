@@ -47,8 +47,8 @@ public class SparkTest extends LinearOpMode {
 
             //Drive set up
             double forward = controller1.left_stick_y;
-            double strafe = controller1.left_stick_x;
-            double rotate = controller1.right_stick_x;
+            double strafe = -controller1.left_stick_x;
+            double rotate = -controller1.right_stick_x;
 
             robot.drive(forward, strafe, rotate);
 
@@ -67,11 +67,12 @@ public class SparkTest extends LinearOpMode {
                 odo.calibrateOdo();
             }
 
-            //Spark data output
-
-            telemetry.addData("Total Distance",String.format("X: %d Y: %d R: %d",totalDist.x,totalDist.y,totalDist.h));
-            telemetry.addData("Distance From Start", String.format("X: %d Y: %d R: %d",pos.x,pos.y,pos.h));
+//            String total ="X: " + totalDist.x + "  Y: " + totalDist.y + " R: " + totalDist.h;
+//            String dist = "X: " + pos.x + "  Y: " + pos.y + " R: " + pos.h;
+            telemetry.addData("Total Distance",String.format("X: %f Y: %f R:%.2f", totalDist.x, totalDist.y, totalDist.h));
+            telemetry.addData("Distance From Start", String.format("X: %f Y: %f R:%.2f", pos.x, pos.y, pos.h));
             telemetry.update();
+            controller1.update();
 
         }
     }

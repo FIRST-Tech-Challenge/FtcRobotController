@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 public class PrimaryLocalizer implements LocalizerInterface {
 
     //Should be equal or be close to 1;
-    private double totalWeight;
+    private double totalWeight = 0;
     private LocalizerInterface[] localizers;
 
     /**
@@ -24,7 +24,7 @@ public class PrimaryLocalizer implements LocalizerInterface {
     public PrimaryLocalizer(LocalizerInterface[] localizers){
         this.localizers = localizers;
         for(LocalizerInterface sensors: localizers){
-            totalWeight = sensors.getWeight();
+            totalWeight += sensors.getWeight();
         }
     }
 
@@ -52,6 +52,13 @@ public class PrimaryLocalizer implements LocalizerInterface {
         return new Pose2d( xPos , yPos , heading );
     }
 
+    public Pose2d KalmanFilter(){
+
+        return new Pose2d(0,0,0);
+    }
+
+
+
     /**
      * Returns position and heading data
      * @return [String] Formatted string containing position and heading data.
@@ -59,10 +66,15 @@ public class PrimaryLocalizer implements LocalizerInterface {
     @Override
     public String toString(){
         Pose2d pos = getPosition();
-        return String.format("X: %d\nY: &d\nHeading: %d",
+        return String.format("X: %f\nY: %f\nHeading: %f",
                 pos.position.x,
                 pos.position.y,
-                pos.heading.toDouble());
+                Math.toDegrees(pos.heading.toDouble()));
+    }
+
+
+    public LocalizerInterface[] getLocalizers(){
+        return localizers;
     }
 }
 

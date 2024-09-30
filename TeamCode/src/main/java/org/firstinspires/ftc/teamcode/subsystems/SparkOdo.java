@@ -81,8 +81,8 @@ public class SparkOdo implements LocalizerInterface {
      * Helper function to set up the Spark Odometry
      */
     private void configureOtos() {
-        telemetry.addLine("Configuring OTOS...");
-        telemetry.update();
+//        telemetry.addLine("Configuring OTOS...");
+//        telemetry.update();
 
         // Set the desired units for linear and angular measurements. Can be either
         // meters or inches for linear, and radians or degrees for angular. If not
@@ -155,11 +155,11 @@ public class SparkOdo implements LocalizerInterface {
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
         odo.getVersionInfo(hwVersion, fwVersion);
 
-        telemetry.addLine("OTOS configured! Press start to get position data!");
-        telemetry.addLine();
-        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
-        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
-        telemetry.update();
+//        telemetry.addLine("OTOS configured! Press start to get position data!");
+//        telemetry.addLine();
+//        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
+//        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+//        telemetry.update();
     }
 
     /**
@@ -177,6 +177,14 @@ public class SparkOdo implements LocalizerInterface {
     @Override
     public Pose2d getPosition() {
         SparkFunOTOS.Pose2D result = getPos();
-        return new Pose2d(result.x, result.y, result.h);
+        return new Pose2d(-result.x, result.y, result.h);
+    }
+
+    public String toString(){
+        Pose2d pos = getPosition();
+        return String.format("X: %f\nY: %f\nHeading: %f",
+                pos.position.x,
+                pos.position.y,
+                pos.heading.toDouble());
     }
 }
