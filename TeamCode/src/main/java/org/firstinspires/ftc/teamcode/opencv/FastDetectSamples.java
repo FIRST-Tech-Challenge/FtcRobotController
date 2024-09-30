@@ -37,40 +37,32 @@ public class FastDetectSamples extends OpenCvPipeline {
         Mat yosi = Mat.zeros(input.size(), input.type());
         Imgproc.findContours(yellowMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         for (MatOfPoint contour : contours) {
-            MatOfInt4 lines = new MatOfInt4();
-            Mat black = Mat.zeros(input.size(), input.type());
+            MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
+
+            // Calculate the epsilon (accuracy parameter)
+            double epsilon = 0.02 * Imgproc.arcLength(contour2f, true);
 
             MatOfPoint2f contour_approx = new MatOfPoint2f(contour.toArray());
+            Imgproc.approxPolyDP(contour2f, contour_approx, epsilon, true);
+            MatOfPoint points = new MatOfPoint(contour_approx.toArray());
 
-            Imgproc.approxPolyDP(contour_approx, contour_approx, 0.4, true);
-            MatOfPoint approx = new MatOfPoint(contour_approx.toArray());
-            List<MatOfPoint> approxContours = new ArrayList<>();
-            approxContours.add(approx);
-            Imgproc.cvtColor(black, black, Imgproc.COLOR_RGB2GRAY);
-            Imgproc.drawContours(black, approxContours, -1, new Scalar(255, 255, 255), 1);
-            Imgproc.HoughLinesP(black, lines, 2, Math.PI / 180, 15, 10, 25);
-            try {
-                int[] linesArray = lines.toArray();
-                telemetry.addData("Number of lines", linesArray.length / 4);
-                linesArray = lines.toArray();
-                for (int i = 0; i < linesArray.length; i += 4) {
-                    int x1 = linesArray[i], y1 = linesArray[i + 1], x2 = linesArray[i + 2], y2 = linesArray[i + 3];
-                    if (Math.abs(x1 - x2) < 7) { // Adjust threshold for verticality
-                        double length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                        Imgproc.line(input, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 0, 0), 1);
-                        Imgproc.putText(input, String.valueOf(Math.round(length)), new Point((x1 + x2) / 2, (y1 + y2) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, new Scalar(0, 255, 0), 1);
-                        telemetry.addData("Vertical Line Length", length);
-                        }
+            Point[] vertices = points.toArray();
+
+            for (int i = 0; i < vertices.length; i++) {
+                //telemetry.addData(String.valueOf(i), "");
+                Imgproc.circle(input, vertices[i], 2, new Scalar(0, 255, 0), 1);
+                Point start = vertices[i];
+                Point end = vertices[(i + 1) % vertices.length];
+                double length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2));
+                if (Math.abs(start.x - end.x) < 0.2 * length) {
+                    Imgproc.line(input, start, end, new Scalar(0, 255, 0), 1);
+                    Imgproc.putText(input, Math.round(length) + "", new Point((start.x + end.x) / 2, (start.y + end.y) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 1);
                 }
-            }
-            catch (Exception e) {
-                telemetry.addData("No lines found", "");
             }
 
         }
         telemetry.update();
         return input;
-
     }
     private Mat preprocessFrame(Mat frame) {
         Mat hsvFrame = new Mat();
