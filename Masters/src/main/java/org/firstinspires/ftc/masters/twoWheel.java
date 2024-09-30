@@ -28,15 +28,15 @@ public class twoWheel extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            double yl = gamepad1.left_stick_y * 0.7;
-            double yr = gamepad1.right_stick_y * 0.7;
+            double yl = gamepad1.left_stick_y * 0.5;
+            double yr = gamepad1.right_stick_y * 0.5;
 
             telemetry.addData("yl", yl);
             telemetry.addData("yr", yr);
             telemetry.update();
 
             leftmoter.setPower(-yl);
-            rightmoter.setPower(-yr);
+            rightmoter.setPower(yr);
 
         }
     }
