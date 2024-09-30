@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.SNAV
+package org.firstinspires.ftc.teamcode.snav
 
-import org.firstinspires.ftc.teamcode.SNAV.Util.Angle
+import org.firstinspires.ftc.teamcode.snav.util.Angle
 import kotlin.math.cos
 import kotlin.math.sin
 import java.lang.Math.toDegrees
@@ -33,8 +33,8 @@ class SwerveDriveController(val leftModule: SwerveModule, val rightModule: Swerv
             leftSpeed = sqrt((localXSpeedPower + rotationPower * (leftModule.distanceFromCenter / 2)).pow(2) + localYSpeedPower.pow(2))
             rightSpeed = sqrt((localXSpeedPower - rotationPower * (rightModule.distanceFromCenter / 2)).pow(2) + localYSpeedPower.pow(2))
 
-            leftAngle = atan2(localYSpeedPower + rotationPower * (leftModule.distanceFromCenter / 2), localXSpeedPower)
-            rightAngle = atan2(localYSpeedPower - rotationPower * (leftModule.distanceFromCenter / 2), localXSpeedPower)
+            leftAngle = toDegrees(atan2(localYSpeedPower + rotationPower * (leftModule.distanceFromCenter / 2), localXSpeedPower))
+            rightAngle = toDegrees(atan2(localYSpeedPower - rotationPower * (leftModule.distanceFromCenter / 2), localXSpeedPower))
         }
 
         leftModule.setTranslationalSpeed(leftSpeed)
@@ -47,9 +47,9 @@ class SwerveDriveController(val leftModule: SwerveModule, val rightModule: Swerv
     }
 
     private fun getLocalSpeedPowers(currentRobotAngle: Double): Array<Double> {
-        val speed: Array<Double> = arrayOf(0.0)
-        speed[0] = xSpeedPower * cos(currentRobotAngle) + ySpeedPower * sin(currentRobotAngle)
-        speed[1] = -xSpeedPower * cos(currentRobotAngle) + ySpeedPower * cos(currentRobotAngle)
+        val speed: Array<Double> = arrayOf(0.0, 0.0)
+        speed[0] = xSpeedPower * toDegrees(cos(currentRobotAngle)) + ySpeedPower * toDegrees(sin(currentRobotAngle))
+        speed[1] = -xSpeedPower * toDegrees(cos(currentRobotAngle)) + ySpeedPower * toDegrees(cos(currentRobotAngle))
         return speed
     }
 }

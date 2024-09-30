@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SNAV.Pathing
+package org.firstinspires.ftc.teamcode.snav.pathing
 
 import java.util.Objects
 
