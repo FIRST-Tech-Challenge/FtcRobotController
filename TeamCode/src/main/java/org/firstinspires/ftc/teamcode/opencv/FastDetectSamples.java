@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode.opencv;
 import org.opencv.core.Core;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -16,14 +14,15 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class FastDetectSamples extends OpenCvPipeline {
     public /*final*/ OpenCvCamera webcam;
     boolean viewportPaused;
 
     public double fov = 78;
-
+    public double inchLength = -1;
+    public double focalLength = -1;
+    public double imageWidth = -1;
     private final Telemetry telemetry;
 
     public FastDetectSamples(/*OpenCvCamera webcam*/ Telemetry telemetry){
@@ -34,7 +33,6 @@ public class FastDetectSamples extends OpenCvPipeline {
         Mat yellowMask = preprocessFrame(input);
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
-        Mat yosi = Mat.zeros(input.size(), input.type());
         Imgproc.findContours(yellowMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         for (MatOfPoint contour : contours) {
             MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
@@ -47,7 +45,7 @@ public class FastDetectSamples extends OpenCvPipeline {
             MatOfPoint points = new MatOfPoint(contour_approx.toArray());
 
             Point[] vertices = points.toArray();
-
+            telemetry.addData("Vertices", vertices.length);
             for (int i = 0; i < vertices.length; i++) {
                 //telemetry.addData(String.valueOf(i), "");
                 Imgproc.circle(input, vertices[i], 2, new Scalar(0, 255, 0), 1);
@@ -80,6 +78,16 @@ public class FastDetectSamples extends OpenCvPipeline {
 
         return yellowMask;
     }
+    public double calculateDistance(double pixelLength) {
+        return  inchLength * focalLength / pixelLength;
+    }
+    public double calculateHorizontalAngle(double pixelLength) {
+        return (pixelLength - imageWidth / 2) * fov / imageWidth;
+    }
+    public double calculateVerticalAngle(double pixelLength) {
+        return (pixelLength - imageWidth / 2) * fov / imageWidth; //TODO: find vertical fov to really calculate this
+    }
+
     @Override
     public void onViewportTapped()
     {
