@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "TeleOp")
 public class TeleOp extends OpMode {
@@ -11,18 +10,24 @@ public class TeleOp extends OpMode {
     // The current state of the killSwitch
     private killSwitchState killSwitchState;
     // Times how long it has been since the inital press on the back button
-    private ElapsedTime killSwitchTimer = new ElapsedTime();
+    private ElapsedTime killSwitchTimer;
 
     @Override
     public void init() {
         hardware = new Hardware(this);
 
         killSwitchState = KillSwitchState.OFF;
+        killSwitchTimer = new ElapsedTime();
     }
 
     @Override
     public void loop() {
         checkKillSwitch();
+
+        // Cancel the kill switch if the start button is pressed.
+        if (gamepad1.start || gamepad2.start) {
+            killSwitchState = KillSwitchState.OFF;
+        }
         
         // Prevent any actions if the kill switch is on
         if (killSwitchState == KillSwitchState.ON) {
@@ -72,7 +77,7 @@ public class TeleOp extends OpMode {
         // Text output to log is persistent, unliked telemetry.addData()
         telemetry.log().add("KILL SWITCH HAS BEEN ACTIVATED!");
 
-        wheels.getAllMotors().forEach(motor -> motor.setPower(0));
-        arm.getAllMotors().forEach(motor -> motor.setPower(0));
+        hardware.getWheels().getAllMotors().forEach(motor -> motor.setPower(0));
+        hardware.getArm().getAllMotors().forEach(motor -> motor.setPower(0));
     }
 }

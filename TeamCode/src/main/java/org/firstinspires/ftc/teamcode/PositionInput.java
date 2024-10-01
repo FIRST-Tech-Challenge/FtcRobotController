@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import android.os.Environment;
 import java.nio.file;
 
-import com.apple.eio.FileManager;
-
 @TeleOp(name = "PositionInput")
 public class PositionInput extends OpMode {
     // File name of the storage file,
@@ -42,7 +40,7 @@ public class PositionInput extends OpMode {
             positionString += TeamSide.NEAR.name();
         }
 
-        if (positionString != null) {
+        if (!positionString.equals("")) {
             FileManager.writeToFile(storageFile, positionString);
             telemetry.addData("Current position: ", FileManager.readFile(storageFile));
         }
