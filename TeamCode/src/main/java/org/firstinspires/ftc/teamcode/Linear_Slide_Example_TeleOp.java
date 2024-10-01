@@ -8,21 +8,25 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="Linear Slide Example Teleop", group="Example")
 public class Linear_Slide_Example_TeleOp extends LinearOpMode {
 
-    DcMotor motor;
+    DcMotor motor, claw;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
 
-        motor = hardwareMap.get(DcMotor.class, "motor");
+        motor = hardwareMap.get(DcMotor.class, "Slide");
+        claw = hardwareMap.get(DcMotor.class, "Claw");
 
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         while (opModeIsActive()) {
 
             double power = -gamepad1.left_stick_y;
+            double clawPow = -gamepad1.right_stick_y;
+
+            claw.setPower(clawPow);
 
             if (power > 0 && motor.getCurrentPosition() > 4250)
             {
