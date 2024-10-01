@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
 @TeleOp
 public class RobotV1 extends OpMode {
     public RobotV1Config config = new RobotV1Config();
-    public ArmMotorV1 arm = new ArmMotorV1(hardwareMap, "arm", telemetry);
 
     public DcMotor frontLeft; //PORT 0
     public DcMotor frontRight; //PORT 2
@@ -24,18 +23,17 @@ public class RobotV1 extends OpMode {
     public double ARM_POWER = config.ARM_POWER;
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
     public ElapsedTime buttonTimer = new ElapsedTime();
-    public int SLIDES_DOWN = -386;
-    public int SLIDES_UP = -709;
+    public int SLIDES_DOWN = -123;
+    public int SLIDES_UP = -1250;
     public int SLIDESPOS = SLIDES_DOWN;
-    public int ARM_DOWN = -40;
-    public int ARM_UP= -184;
+    public int ARM_DOWN = -140;
+    public int ARM_UP= -2000;
     public int ARMPOS = ARM_DOWN;
 
 
 
     @Override
     public void init() {
-        arm.init(hardwareMap);
         frontLeft = hardwareMap.get(DcMotor.class, config.FRONT_LEFT);
         frontRight = hardwareMap.get(DcMotor.class, config.FRONT_RIGHT);
         backLeft = hardwareMap.get(DcMotor.class, config.BACK_LEFT);
@@ -56,6 +54,7 @@ public class RobotV1 extends OpMode {
         slidesMotor.setDirection(config.SLIDES_DIRECTION);
         armMotor = hardwareMap.get(DcMotor.class, "arm");
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -64,8 +63,8 @@ public class RobotV1 extends OpMode {
         run_motors();
         arm_goto(ARMPOS);
         slides_goto(SLIDESPOS);
-
-        telemetry.addLine(String.valueOf(SLIDESPOS));
+        telemetry.addLine("ARM POSITION: " + armMotor.getCurrentPosition());
+        telemetry.addLine("SLIDES POSITION: " + slidesMotor.getCurrentPosition());
         intakeServo.setPosition(servodirection);
         if(buttonTimer.seconds() > 0.3 && gamepad1.b){
             servodirection = switch_servo_dir();
@@ -121,12 +120,16 @@ public class RobotV1 extends OpMode {
 
     public void slides_goto(int pos){
         slidesMotor.setPower(0.6);
-        slidesMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slidesMotor.setTargetPosition(pos);
+        slidesMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addLine("SLIDES TARGET: " +  pos);
+
     }
     public void arm_goto(int pos){
+        telemetry.clearAll();
         armMotor.setPower(1);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setTargetPosition(pos);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addLine("ARM TARGET: " +  pos);
     }
 }

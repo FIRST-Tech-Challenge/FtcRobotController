@@ -6,18 +6,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 public class ArmMotorTest extends OpMode {
-    ArmMotorV1 arm = new ArmMotorV1(hardwareMap, "arm_motor", telemetry);
     public DcMotor arm_motor;
     @Override
     public void init() {
-        arm_motor = arm.init(hardwareMap);
+        arm_motor = hardwareMap.get(DcMotor.class, "arm");
+        arm_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public void loop() {
-        arm.setPower(gamepad1.left_stick_y);
-        telemetry.addData("Current Position: ", String.valueOf(arm.get_encoder_pos()));
-        telemetry.addData("Target Position: ", String.valueOf(arm.get_target_position()));
+        arm_motor.setPower(-1);
+        telemetry.addData("Current Position: ", String.valueOf(arm_motor.getCurrentPosition()));
         telemetry.update();
     }
 }
