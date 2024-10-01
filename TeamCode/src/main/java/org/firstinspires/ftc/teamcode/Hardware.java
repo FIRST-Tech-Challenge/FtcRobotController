@@ -1,31 +1,43 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
-import org.firstinspires.ftc.teamcode.hardware;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
+import org.firstinspires.ftc.vision.*;
 
 public class Hardware {
-    private OpMode opMode;
-
+    private final OpMode OP_MODE;
     // Whether the robot will automatically sleep after each command
     // Only applicable in LinearOpMode
     private boolean autoSleepEnabled;
 
-    private Mecanum mecanum;
-    private Arm arm;
+    private final VisionPortal VISION_PORTAL;
+    private static final int RESOLUTION_WIDTH = 100;
+    private static final int RESOLUTION_HEIGHT = 100;
+
+    private final Mecanum MECANUM;
+    private final Arm ARM;
 
     // Whether the robot is on red or blue team
-    private DigitalChannel colorSwitch;
+    private final DigitalChannel COLOR_SWITCH;
     // Whether the robot is far or near
-    private DigitalChannel sideSwitch;
+    private final DigitalChannel SIDE_SWITCH;
 
     public Hardware(OpMode opMode) {
-        this.opMode = opMode;
+        this.OP_MODE = opMode;
         autoSleepEnabled = true;
 
-        colorSwitch = opMode.hardwareMap.get(DigitalChannel.class, "color_switch");
-        sideSwitch = opMode.hardwareMap.get(DigitalChannel.class, "side_switch");
+        VISION_PORTAL = new VisionPortal.Builder()
+                        .setCamera(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"))
+                        .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
+                        .build();
+        
+                        
+
+        COLOR_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "color_switch");
+        SIDE_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "side_switch");
 
         initWheels();
         initArm();
@@ -37,14 +49,14 @@ public class Hardware {
     private void initWheels() {
         /*
          * Define wheels system hardware here.
-         * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
+         * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-        DcMotor frontLeftMotor = opMode.hardwareMap.get("front_left_wheel");
-        DcMotor frontRightMotor = opMode.hardwareMap.get("front_right_wheel");
-        DcMotor backLeftMotor = opMode.hardwareMap.get("back_left_wheel");
-        DcMotor backRightMotor = opMode.hardwareMap.get("back_right_wheel");
+        DcMotor frontLeftMotor = OP_MODE.hardwareMap.get("front_left_wheel");
+        DcMotor frontRightMotor = OP_MODE.hardwareMap.get("front_right_wheel");
+        DcMotor backLeftMotor = OP_MODE.hardwareMap.get("back_left_wheel");
+        DcMotor backRightMotor = OP_MODE.hardwareMap.get("back_right_wheel");
 
-        mecanum = new Mecanum(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
+        MECANUM = new Mecanum(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
     }
     
     /**
@@ -53,30 +65,38 @@ public class Hardware {
     private void initArm() {
         /*
          * Define arm hardware here.
-         * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
+         * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        arm = new Arm();
+        ARM = new Arm();
     }
 
-    public Wheels getWheels() {
-        return wheels;
+    public Mecanum getWheels() {
+        return MECANUM;  
     }
 
     public Arm getArm() {
-        return arm;
+        return ARM;
+    }
+
+    public DigitalChannel getColorSwitch() {
+        return COLOR_SWITCH;
+    }
+
+    public DigitalChannel getSideSwitch() {
+        return SIDE_SWITCH;
     }
 
     /**
-     * Attempts to cast the opMode to a LinearOpMode
+     * Attempts to cast the OP_MODE to a LinearOpMode
      * Returns null if it fails
      *
-     * @return a linearOpMode representation of opMode if possible
+     * @return a linearOpMode representation of OP_MODE if possible
      *         Else returns null
      */
     public LinearOpMode getLinearOpMode() {
         try {
-            return (LinearOpMode) opMode;
+            return (LinearOpMode) OP_MODE;
 
         } catch (ClassCastException e) {
             return null;

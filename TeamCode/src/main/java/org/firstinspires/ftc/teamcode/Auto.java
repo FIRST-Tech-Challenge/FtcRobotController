@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.external.*;
+import com.qualcomm.robotcore.hardware.*;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous(name = "Auto")
 public class Auto extends LinearOpMode {
@@ -19,12 +22,10 @@ public class Auto extends LinearOpMode {
     public void runOpMode() {
         hardware = new Hardware(this);
     
-        teamColor = (robot.colorSwitch.getState()) ? TeamColor.RED : TeamColor.BLUE;
-        teamSide = (robot.sideSwitch.getState()) ? TeamSide.FAR : TeamSide.NEAR;
+        teamColor = (robot.getColorSwitch().getState()) ? TeamColor.RED : TeamColor.BLUE;
+        teamSide = (robot.getSideSwitch().getState()) ? TeamSide.FAR : TeamSide.NEAR;
 
         // Wait until the player press the start button
         waitForStart();
-
-        
     }
 }
