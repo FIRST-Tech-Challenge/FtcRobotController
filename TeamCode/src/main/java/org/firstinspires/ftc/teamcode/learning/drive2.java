@@ -45,6 +45,4 @@ public class drive2 extends LinearOpMode {
 
 
     }
-
-    private void setSpeed(){}
 }
