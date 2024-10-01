@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.Drivetrain.Utils;
 
 import org.ejml.simple.SimpleMatrix;
 public class Utils {
-    public static double r = 50;
-    public static double l = 320 / 2;
-    public static double w = 350 / 2;
+    public static double r = 52;
+    public static double l = 144;
+    public static double w = 135;
     public static SimpleMatrix R(double th) {
         SimpleMatrix rotation = new SimpleMatrix(
                 new double[][]{

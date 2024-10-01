@@ -39,7 +39,7 @@ public class TwoWheelOdometery {
     public TwoWheelOdometery(HardwareMap hardwareMap){
         hwMap = hardwareMap;
         odo = hwMap.get(GoBildaPinpointDriver.class,"odo");
-        odo.setOffsets(-xOffset, yOffset); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setOffsets(-xOffset, yOffset);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         odo.resetPosAndIMU();
