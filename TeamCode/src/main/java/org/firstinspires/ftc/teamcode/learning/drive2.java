@@ -39,7 +39,6 @@ public class drive2 extends LinearOpMode {
             if(gamepad1.right_bumper){
                 SPEED = SPEED * 2.0;
             }
-
             driver.move(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x,SPEED);
         }
 
