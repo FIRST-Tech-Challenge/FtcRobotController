@@ -23,11 +23,11 @@ public class RobotV1 extends OpMode {
     public double ARM_POWER = config.ARM_POWER;
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
     public ElapsedTime buttonTimer = new ElapsedTime();
-    public int SLIDES_DOWN = -123;
-    public int SLIDES_UP = -1250;
+    public int SLIDES_DOWN = -323;
+    public int SLIDES_UP = -750;
     public int SLIDESPOS = SLIDES_DOWN;
     public int ARM_DOWN = -140;
-    public int ARM_UP= -2000;
+    public int ARM_UP= -1004;
     public int ARMPOS = ARM_DOWN;
 
 
