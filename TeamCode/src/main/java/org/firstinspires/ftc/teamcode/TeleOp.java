@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "TeleOp")
 public class TeleOp extends OpMode {
@@ -11,12 +10,13 @@ public class TeleOp extends OpMode {
     // Whether the kill switch has been pressed once within the past 500 ms
     private boolean killSwitchPressedOnce;
     // Times how long it has been since the inital press on the back button
-    private ElapsedTime killSwitchTimer = new ElapsedTime();
+    private ElapsedTime killSwitchTimer;
 
     @Override
     public void init() {
         hardware = new Hardware(this);
 
+        killSwitchTimer = new ElapsedTime();
         killSwitchPressedOnce = false;
     }
 
@@ -56,7 +56,7 @@ public class TeleOp extends OpMode {
         // Text output to log is persistent, unliked telemetry.addData()
         telemetry.log().add("KILL SWITCH HAS BEEN ACTIVATED!");
 
-        wheels.getAllMotors().forEach(motor -> motor.setPower(0));
-        arm.getAllMotors().forEach(motor -> motor.setPower(0));
+        hardware.getWheels().getAllMotors().forEach(motor -> motor.setPower(0));
+        hardware.getArm().getAllMotors().forEach(motor -> motor.setPower(0));
     }
 }

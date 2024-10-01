@@ -13,11 +13,15 @@ The hardware variables(motors, servos, sensors, etc.) should be defined in the c
 
 Reads and writes text files in external storage.
 
-# [TeamColor.java](./TeamColor.java)
+# Enums
+
+## [TeamColor.java](./TeamColor.java)
+
 An enum that states whether the robot is on red or blue side.
 
-# [TeamSide.java](./TeamSide.java)
-An enum that states whether the robot is on far or near side. 
+## [TeamSide.java](./TeamSide.java)
+
+An enum that states whether the robot is on far or near side.
 
 # [Hardware](./hardware/)
 
