@@ -22,17 +22,6 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-        /*
-         * Drive robot based on joystick input from gamepad1
-         * Right stick moves the robot forwards, backwards and sideways.
-         * Left stick rotates it.
-         */
-        hardware.getWheels().drive(
-                gamepad1.right_stick_x,
-                gamepad1.right_stick_y,
-                gamepad1.left_stick_x
-        );
-
         // Initial press on kill switch
         if (gamepad1.back || gamepad2.back && !killSwitchPressedOnce) {
             killSwitchPressedOnce = true;
@@ -47,6 +36,17 @@ public class TeleOp extends OpMode {
             // If it has been more than 500 since the back button was pressed
             killSwitchPressedOnce = false;
         }
+
+        /*
+         * Drive robot based on joystick input from gamepad1
+         * Right stick moves the robot forwards, backwards and sideways.
+         * Left stick rotates it.
+         */
+        hardware.getWheels().drive(
+                gamepad1.right_stick_x,
+                gamepad1.right_stick_y,
+                gamepad1.left_stick_x
+        );
     }
 
     /**
