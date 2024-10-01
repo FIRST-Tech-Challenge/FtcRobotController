@@ -88,6 +88,14 @@ public class RobotV1 extends OpMode {
             }
             buttonTimer.reset();
         }
+        if(buttonTimer.seconds() > 0.3 && gamepad1.dpad_down){
+            arm_down_by(100);
+            buttonTimer.reset();
+        }
+        if(buttonTimer.seconds() > 0.3 && gamepad1.dpad_up){
+            arm_up_by(100);
+            buttonTimer.reset();
+        }
     }
 
     public void run_motors(){
@@ -131,5 +139,12 @@ public class RobotV1 extends OpMode {
         armMotor.setTargetPosition(pos);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         telemetry.addLine("ARM TARGET: " +  pos);
+    }
+
+    public void arm_up_by(int ticks) {
+        ARMPOS = ARMPOS + ticks;
+    }
+    public void arm_down_by(int ticks) {
+        ARMPOS = ARMPOS - ticks;
     }
 }
