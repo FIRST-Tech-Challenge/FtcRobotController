@@ -27,7 +27,7 @@ public class RobotV1 extends OpMode {
     public int SLIDES_UP = -750;
     public int SLIDESPOS = SLIDES_DOWN;
     public int ARM_DOWN = -140;
-    public int ARM_UP= -1004;
+    public int ARM_UP= -1204;
     public int ARMPOS = ARM_DOWN;
 
 
