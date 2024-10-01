@@ -26,7 +26,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 public class LocalizationTest extends LinearOpMode {
         private Limelight3A limelight;
     public IMU imu;
-
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
