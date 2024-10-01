@@ -6,11 +6,11 @@ public class Robot {
 
 
     HardwareMap hardwareMap;
-    MecanumDriveTrain driveTrain = new MecanumDriveTrain();
+    //MecanumDriveTrain driveTrain = new MecanumDriveTrain();
     LinearVerticalLeft linear_L = new LinearVerticalLeft();
     LinearVerticalRight linear_R = new LinearVerticalRight();
     LinearClaw linear_C = new LinearClaw();
-    ClawLeft left_claw = new ClawLeft();
+    //ClawLeft left_claw = new ClawLeft();
 
     //DriveTrain2 dT = new DriveTrain2();
 

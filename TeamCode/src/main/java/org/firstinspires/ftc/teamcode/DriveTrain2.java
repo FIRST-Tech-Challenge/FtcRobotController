@@ -10,10 +10,7 @@ public class DriveTrain2 extends OpMode {
 
     HardwareMap hardwareMap;
 
-    public DcMotorEx left_f;
-    public DcMotorEx right_f;
-    public DcMotorEx left_b;
-    public DcMotorEx right_b;
+
 
     double x = gamepad1.left_stick_x;
     double y = gamepad1.left_stick_y;
@@ -53,4 +50,7 @@ public class DriveTrain2 extends OpMode {
 
 
  */
+
+
+
 
