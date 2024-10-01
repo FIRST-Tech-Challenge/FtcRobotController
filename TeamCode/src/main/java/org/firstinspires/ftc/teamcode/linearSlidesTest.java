@@ -41,7 +41,7 @@ public class linearSlidesTest extends OpMode {
         // remember it is reversed -> init
         if (gamepad2.left_stick_y < -0.1 && linearSlide1.getCurrentPosition()< 3000) {
 
-            linearSlide1.setPower(power);
+            linearSlide1.(power);
             linearSlide2.setPower(power);
         }
 
