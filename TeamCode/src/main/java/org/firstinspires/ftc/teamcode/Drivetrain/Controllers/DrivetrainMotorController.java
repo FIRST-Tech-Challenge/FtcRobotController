@@ -21,6 +21,10 @@ public class DrivetrainMotorController {
     public FeedForward ffLbm;
     public FeedForward ffRbm;
     public FeedForward ffRfm;
+    public double uLf = 0;
+    public double uLb = 0;
+    public double uRb = 0;
+    public double uRf = 0;
     public DrivetrainMotorController(HardwareMap hwmap){
         voltageSensor = hwmap.voltageSensor.iterator().next();
         ffLfm = new FeedForward(kV, kA, kSlf);
@@ -30,10 +34,10 @@ public class DrivetrainMotorController {
     }
     public SimpleMatrix calculate(SimpleMatrix wheelSpeeds, SimpleMatrix wheelAccelerations){
         double voltage = voltageSensor.getVoltage();
-        double uLf = ffLfm.calculate(wheelSpeeds.get(0,0), wheelAccelerations.get(0,0));
-        double uLb = ffLbm.calculate(wheelSpeeds.get(1,0), wheelAccelerations.get(1,0));
-        double uRb = ffRbm.calculate(wheelSpeeds.get(3,0), wheelAccelerations.get(3,0));
-        double uRf = ffRfm.calculate(wheelSpeeds.get(2,0), wheelAccelerations.get(2,0));
+        uLf = ffLfm.calculate(wheelSpeeds.get(0,0), wheelAccelerations.get(0,0));
+        uLb = ffLbm.calculate(wheelSpeeds.get(1,0), wheelAccelerations.get(1,0));
+        uRb = ffRbm.calculate(wheelSpeeds.get(2,0), wheelAccelerations.get(2,0));
+        uRf = ffRfm.calculate(wheelSpeeds.get(3,0), wheelAccelerations.get(3,0));
         SimpleMatrix relativePower = new SimpleMatrix(
                 new double[]{
                         uLf*vMax/voltage,
