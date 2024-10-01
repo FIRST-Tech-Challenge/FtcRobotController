@@ -25,9 +25,7 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.DeviceManager;
 import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
@@ -41,7 +39,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Locale;
 
 
 @I2cDeviceType
@@ -125,13 +122,13 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
 
     //Device Status enum that captures the current fault condition of the device
     public enum DeviceStatus{
-        NOT_READY (0),
-        READY (1),
-        CALIBRATING (1 << 1),
+        NOT_READY                (0),
+        READY                    (1),
+        CALIBRATING              (1 << 1),
         FAULT_X_POD_NOT_DETECTED (1 << 2),
         FAULT_Y_POD_NOT_DETECTED (1 << 3),
-        FAULT_NO_PODS_DETECTED (1 << 2 | 1 << 3),
-        FAULT_IMU_RUNAWAY (1 << 4);
+        FAULT_NO_PODS_DETECTED   (1 << 2 | 1 << 3),
+        FAULT_IMU_RUNAWAY        (1 << 4);
 
         private final int status;
 
@@ -151,7 +148,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         goBILDA_SWINGARM_POD,
         goBILDA_4_BAR_POD;
     }
-
+    //enum that captures a limited scope of read data. More options may be added in future update
     public enum readData {
         ONLY_UPDATE_HEADING,
     }
@@ -257,7 +254,6 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     /**
      * Call this once per loop to read new data from the Odometry Computer. Data will only update once this is called.
      */
-
     public void update(){
         byte[] bArr   = deviceClient.read(Register.BULK_READ.bVal, 40);
         deviceStatus  = byteArrayToInt(Arrays.copyOfRange  (bArr, 0, 4),  ByteOrder.LITTLE_ENDIAN);

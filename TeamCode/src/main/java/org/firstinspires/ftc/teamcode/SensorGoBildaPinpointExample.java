@@ -131,14 +131,16 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         while (opModeIsActive()) {
 
             /*
-            Request a bulk update from the Pinpoint odometry computer. This checks almost all outputs
+            Request an update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
              */
-            double beforeI2cRead = getRuntime();
             odo.update();
+
+            /*
+            Optionally, you can update only the heading of the device. This takes less time to read, but will not
+            pull any other data. Only the heading (which you can pull with getHeading() or in getPosition().
+             */
             //odo.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
-            double afterI2cRead = getRuntime();
-            double i2cReadTime = afterI2cRead- beforeI2cRead;
 
 
             if (gamepad1.a){
@@ -186,8 +188,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             FAULT_Y_POD_NOT_DETECTED - The device does not detect a Y pod plugged in
             */
             telemetry.addData("Status", odo.getDeviceStatus());
-
-            telemetry.addData("I²C read time",i2cReadTime);
 
             telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
 
