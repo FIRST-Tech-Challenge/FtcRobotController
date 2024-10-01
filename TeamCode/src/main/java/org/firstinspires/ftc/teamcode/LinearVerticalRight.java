@@ -16,7 +16,7 @@ public class LinearVerticalRight {
         hardwareMap = ahwMap;
         linear_motion_right = hardwareMap.get(DcMotorEx.class, "linear_motion_right");
         linear_motion_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linear_motion_right.setDirection(DcMotorEx.Direction.REVERSE);
+        //linear_motion_right.setDirection(DcMotorEx.Direction.REVERSE);
 
         //linear_motion_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
