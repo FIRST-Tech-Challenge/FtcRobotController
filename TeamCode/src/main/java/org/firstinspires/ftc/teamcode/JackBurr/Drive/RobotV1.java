@@ -142,9 +142,9 @@ public class RobotV1 extends OpMode {
     }
 
     public void arm_up_by(int ticks) {
-        ARMPOS = ARMPOS + ticks;
+        ARMPOS = ARMPOS - ticks;
     }
     public void arm_down_by(int ticks) {
-        ARMPOS = ARMPOS - ticks;
+        ARMPOS = ARMPOS + ticks;
     }
 }
