@@ -39,62 +39,13 @@ public class Auto extends LinearOpMode{
     }
 
     private void drive(double inches, double power) {
-        double Kp = 1.0;
-        double Ki = 0.0;
-        double Kd = 0.0;
-        int targetPos = (int) (inches/TICKS_PER_INCH);
-        double encoderPos = 0;
-        double error;
-        double integralSum = 0;
-        double lastError = 0;
-        double derivative;
-        double out;
-        ElapsedTime timer = new ElapsedTime();
-
-        while (opModeIsActive() && hw.notInRange(targetPos)) {
-            // obtain the encoder position
-//            encoderPos = hw.odomX.getPosition();
-            // calculate the error
-            error = targetPos - encoderPos;
-
-            // rate of change of the error
-            derivative = (error - lastError) / timer.seconds();
-
-            // sum of all error over time
-            integralSum = integralSum + (error * timer.seconds());
-
-            out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
-
-            hw.setMotorsToPower(out);
-
-            lastError = error;
-            timer.reset();
-        }
-        hw.setMotorsToPower(0);
     }
 
     private void turn(double degrees) {
         turn(degrees, degrees > 0 ? 0.15 : -0.15, 0.50);
     }
 
-    /**
-     * @param degrees - turning right is positive, left is negative
-     */
     private void turn(double degrees, double minPower, double threshold) {
-        double kP = 1.0;
-        double error;
-        double out;
-        degrees = (degrees - 360.0) % 360.0;
-        while(opModeIsActive() && ((hw.getGyroAngle() - threshold) <= degrees) && 
-                (hw.getGyroAngle() + threshold) >= degrees){
-            error = degrees = hw.getGyroAngle();
-            out = (error * kP) + minPower;
-            hw.frontLeft.setPower(out);
-            hw.frontRight.setPower(out);
-            hw.backLeft.setPower(-out);
-            hw.backRight.setPower(-out);
-            hw.telemetryHardware();
-        }
     }
 
     private void strafe(double inches) {
