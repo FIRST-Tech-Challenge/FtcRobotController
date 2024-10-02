@@ -63,6 +63,11 @@ public class Guide extends LinearOpMode {
 
                 .build();
 
+      //  Action TrajectoryScoring3Blue = drive.actionBuilder(drive.pose)
+
+            //    .
+             //   .build();
+
 
 
      /*
