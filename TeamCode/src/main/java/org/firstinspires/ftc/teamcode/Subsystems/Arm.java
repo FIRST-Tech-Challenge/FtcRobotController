@@ -36,22 +36,24 @@ public class Arm {
         armMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
     }
     public void teleOp() {
-        getCurrentPosition();
         if (gamepad2.dpad_up) goOuttakePos();
         else if (gamepad2.dpad_down) goIntakePos();
         else rest();
     }
     public void goOuttakePos() {
         armMotor.setTargetPosition(OUTTAKE);
-
+        periodic();
     }
     public void goIntakePos() {
         armMotor.setTargetPosition(INTAKE);
+        periodic();
     }
     public void rest() {
         armMotor.setTargetPosition(REST);
+        periodic();
     }
-    public void getCurrentPosition() {
+    public void periodic() {
+        telemetry.update();
         telemetry.addData("Arm position is: ", (armMotor.getCurrentPosition()));
     }
 }

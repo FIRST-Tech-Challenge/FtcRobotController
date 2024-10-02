@@ -55,7 +55,7 @@ import static org.firstinspires.ftc.teamcode.RoadRunner.drive.DriveConstants.kV;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive {
+public class Drivetrain extends com.acmerobotics.roadrunner.drive.MecanumDrive {
     public HardwareMap hardwareMap;
     public Gamepad gamepad;
 
@@ -84,7 +84,7 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    public MecanumDrive(OpMode opMode) {
+    public Drivetrain(OpMode opMode) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
         this.hardwareMap = opMode.hardwareMap;
         this.gamepad = opMode.gamepad1;
