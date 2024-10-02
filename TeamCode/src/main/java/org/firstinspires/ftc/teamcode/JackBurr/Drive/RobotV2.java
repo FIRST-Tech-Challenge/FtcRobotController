@@ -25,7 +25,7 @@ public class RobotV2 extends OpMode {
     public ElapsedTime buttonTimer = new ElapsedTime();
     public int SLIDES_DOWN = -223;
     public int SLIDES_LOW_BASKET = -1250;
-    public int SLIDES_HIGH_BASKET = -3010;
+    public int SLIDES_HIGH_BASKET = -2810;
     public int SLIDESPOS = SLIDES_DOWN;
     public int ARM_DOWN = -200;
     public int ARM_LOW_BASKET= -1204;
