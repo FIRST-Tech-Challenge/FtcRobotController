@@ -97,10 +97,10 @@ public class Teleop extends LinearOpMode {
                 bot.setPivotPower(0.0);
             }
 
-            telemetry.addData("Current Length: ", L);
-            telemetry.addData("Angle (Rads): ", L >= H ? Math.asin(H/L):"N/A");
-            telemetry.addData("Horizontal Extension: ", L >= H? Math.sqrt(L*L-H*H):"N/A");
-            telemetry.update();
+//            telemetry.addData("Current Length: ", L);
+//            telemetry.addData("Angle (Rads): ", L >= H ? Math.asin(H/L):"N/A");
+//            telemetry.addData("Horizontal Extension: ", L >= H? Math.sqrt(L*L-H*H):"N/A");
+//            telemetry.update();
         }
     }
 }
