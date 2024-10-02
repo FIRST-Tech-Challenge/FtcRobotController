@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp (name = "TeleOp Code")
+@TeleOp (name = "TeleOpCode")
 public class TeleOpCode extends LinearOpMode {
 // Create servo variables
     Servo pitch;

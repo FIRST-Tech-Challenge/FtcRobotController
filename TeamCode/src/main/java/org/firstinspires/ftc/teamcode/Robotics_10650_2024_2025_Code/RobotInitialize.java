@@ -15,11 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-//<<<<<<< HEAD
-import java.util.ArrayList;
-import java.util.List;
-//=======
-//>>>>>>> 147f788f63f5be8c43e9cafafadeb7468aa70921
+
 
 public class RobotInitialize {
 
