@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.mecanum;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
@@ -10,10 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.ODO.*;
+
 
 @TeleOp
 public class Mecanum_Drive extends LinearOpMode {
     DcMotor FLMotor, FRMotor, BLMotor, BRMotor;
+
+    GoBildaPinpointDriver odo;
 
     @Override
     public void runOpMode() {
@@ -24,7 +28,7 @@ public class Mecanum_Drive extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            moveRobot(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            moveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
         }
 
@@ -51,6 +55,8 @@ public class Mecanum_Drive extends LinearOpMode {
         BLMotor.setZeroPowerBehavior(BRAKE);
         BRMotor.setZeroPowerBehavior(BRAKE);
 
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo.resetPosAndIMU();
     }
 
 
@@ -77,9 +83,11 @@ public class Mecanum_Drive extends LinearOpMode {
 
 
     public void moveFieldCentric(double FBPower, double LRPower, double turnPower) {
-        
+        double[] desireMove = cartesianToPolar(LRPower,FBPower);
+        double heading = odo.getHeading() - desireMove[1];
+        desireMove = cartesianToPolar(desireMove[0],heading);
 
-        moveRobot(0, 0,turnPower);
+        moveRobot(desireMove[1],desireMove[0],turnPower);
     }
 
 
