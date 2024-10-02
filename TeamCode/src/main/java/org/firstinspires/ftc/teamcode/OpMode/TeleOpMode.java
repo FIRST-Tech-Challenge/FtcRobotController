@@ -27,7 +27,14 @@ public class TeleOpMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
+            double rx = gamepad1.right_stick_x;
 
+            frontLeftMotor.setPower(y+x+rx);
+            backLeftMotor.setPower(y-x+rx);
+            frontRightMotor.setPower(y+x-rx);
+            backRightMotor.setPower(y-x-rx);
         }
     }
 }
