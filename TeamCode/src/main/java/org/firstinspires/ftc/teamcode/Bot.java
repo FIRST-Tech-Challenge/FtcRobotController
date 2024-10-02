@@ -135,6 +135,7 @@ public class Bot {
     public void autoPivotArm(
             int targetPosition, double power
     ) {
+        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotMotor.setTargetPosition(targetPosition);
         armPivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armPivotMotor.setPower(power);

@@ -69,9 +69,6 @@ public class Teleop extends LinearOpMode {
             bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
 
             //extend arm controls
-            double maxx = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
-                    Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
-
             if(gamepad1.right_bumper){
                 bot.setExtendPower(1.0);
             } else if (gamepad1.left_bumper){
@@ -79,16 +76,23 @@ public class Teleop extends LinearOpMode {
             } else {
                 bot.setExtendPower(0.0);
             }
-
-            double L = bot.getArmPosition();
-
-            if(L >= H){
-                double theta = Math.asin(H/L);
-                int maxEncoderTicks = 720; //for 180 degrees
-                double proportionOfFullRange = theta / Math.PI;
-                int targetPosition = (int)(proportionOfFullRange * maxEncoderTicks);
-
-                bot.autoPivotArm(targetPosition, 1.0);
+            //auto arm positioning
+//            double L = bot.getArmPosition();
+//
+//            if(L >= H){
+//                double theta = Math.asin(H/L);
+//                int maxEncoderTicks = 720; //for 180 degrees
+//                double proportionOfFullRange = theta / Math.PI;
+//                int targetPosition = (int)(proportionOfFullRange * maxEncoderTicks);
+//
+//                bot.autoPivotArm(targetPosition, 1.0);
+//            } else {
+//                bot.setPivotPower(0.0);
+//            }
+            if(gamepad1.a){
+                bot.setPivotPower(0.75);
+            } else if(gamepad1.b){
+                bot.setPivotPower(-0.75);
             } else {
                 bot.setPivotPower(0.0);
             }
