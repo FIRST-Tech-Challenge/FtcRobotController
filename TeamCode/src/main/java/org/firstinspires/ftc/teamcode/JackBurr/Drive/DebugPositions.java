@@ -17,6 +17,9 @@ public class DebugPositions extends OpMode {
     public DcMotor backLeft; //PORT 1
     public DcMotor backRight; // PORT 3
     public DcMotor slidesMotor; //EXPANSION HUB PORT _
+    public int maxPos1;
+    public int maxPos2;
+
 
     public double ARM_POWER = config.ARM_POWER;
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
@@ -46,10 +49,17 @@ public class DebugPositions extends OpMode {
 
     @Override
     public void loop() {
+        if (arm.get_encoder_pos() > maxPos1){
+            maxPos1 = arm.get_encoder_pos();
+        }
+        if (slidesMotor.getCurrentPosition()  > maxPos2){
+            maxPos2 = slidesMotor.getCurrentPosition();
+        }
         run_motors();
         telemetry.addData("Arm encoder position: ", arm.get_encoder_pos());
-        telemetry.addData("Arm target position: ", arm.get_target_position());
         telemetry.addData("Slides position: ", slidesMotor.getCurrentPosition());
+        telemetry.addData("Arm max position: ", maxPos1);
+        telemetry.addData("Slides max position: ", maxPos2);
         telemetry.update();
     }
 
