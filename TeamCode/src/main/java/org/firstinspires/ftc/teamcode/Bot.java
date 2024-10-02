@@ -229,8 +229,8 @@ public class Bot {
         if (opMode.opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
-            newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
+            newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
+            newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
             newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
             newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
 
