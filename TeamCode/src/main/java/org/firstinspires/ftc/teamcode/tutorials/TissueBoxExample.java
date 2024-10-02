@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.tutorials;
 
 public class TissueBoxExample {
-    int MAX_TISSUES = 100;
+    int MAX_TISSUES = 200;
     int currentTissueCount;
 
     public void init() {
-        MAX_TISSUES = 100;
-        currentTissueCount = 100;
+        MAX_TISSUES = 200;
+        currentTissueCount = 200;
     }
 
     public String getTissue() {
@@ -22,8 +22,6 @@ public class TissueBoxExample {
     }
 
     private void decrementTissues() {
-        currentTissueCount--;
-        currentTissueCount = currentTissueCount - 3;
-        currentTissueCount -= 3;
+        currentTissueCount = currentTissueCount - 2;
     }
 }
