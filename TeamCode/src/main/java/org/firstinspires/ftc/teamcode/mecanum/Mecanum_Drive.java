@@ -30,7 +30,7 @@ public class Mecanum_Drive extends LinearOpMode {
 
     }
 
-    public void initRobot(){
+    public void initRobot() {
         FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
         FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
         BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
@@ -54,7 +54,7 @@ public class Mecanum_Drive extends LinearOpMode {
     }
 
 
-    public void moveRobot(double FBPower, double LRPower, double turnPower){
+    public void moveRobot(double FBPower, double LRPower, double turnPower) {
         double FLPower = FBPower + LRPower + turnPower;
         double FRPower = FBPower - LRPower - turnPower;
         double BLPower = FBPower - LRPower + turnPower;
@@ -73,6 +73,40 @@ public class Mecanum_Drive extends LinearOpMode {
         BLMotor.setPower(BLPower);
         BRMotor.setPower(BRPower);
 
+    }
+
+
+    public void moveFieldCentric(double FBPower, double LRPower, double turnPower) {
+        
+
+        moveRobot(0, 0,turnPower);
+    }
+
+
+    // Converts cartesian coordinates to polar
+    // 0 = r
+    // 1 = theta
+    public double[] cartesianToPolar(double x, double y) {
+        double[] arrayToReturn = new double[2];
+        arrayToReturn[0] = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); // Radius
+        arrayToReturn[1] = Math.atan(y / x) * (Math.PI / 180); // Theta
+
+
+        return arrayToReturn;
+    }
+
+
+    /*
+    Converts polar coordinates to cartesian
+     0 = x
+     1 = y
+    */
+    public double[] polarToCartesian(double r, double theta) {
+        double[] arrayToReturn = new double[2];
+        arrayToReturn[0] = r * Math.cos(theta); // X
+        arrayToReturn[1] = r * Math.sin(theta); // Y
+
+        return arrayToReturn;
     }
 
 }
