@@ -35,10 +35,12 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import androidx.annotation.Nullable;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -78,9 +80,9 @@ public class Drivebase {
     private final DcMotor BLDrive;
     private final DcMotor BRDrive;
     private final IMU imu;
-    private final DcMotor armMotor;
-    private final Servo clawWrist;
-    private final Servo clawFingers;
+    //private final DcMotor armMotor;
+    //private final Servo clawWrist;
+    //private final Servo clawFingers;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public final double MID_SERVO = 0.5;
@@ -88,7 +90,10 @@ public class Drivebase {
     public final double ARM_UP_POWER = 0.45;
     public final double ARM_DOWN_POWER = -0.45;
     // TODO: change this number once we do encoder math for the correct number.
-    public final static double COUNTS_PER_INCH = 1.0;
+    static final double COUNTS_PER_MOTOR_REV = 1440;
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    public final static double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     public final static double ENCODER_PER_INCH = 1.0;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
@@ -98,10 +103,15 @@ public class Drivebase {
         FRDrive = hardwareMap.dcMotor.get("FRDrive");
         BLDrive = hardwareMap.dcMotor.get("BLDrive");
         BRDrive = hardwareMap.dcMotor.get("BRDrive");
-        armMotor = hardwareMap.dcMotor.get("arm");
+        //armMotor = hardwareMap.dcMotor.get("arm");
 
         imu = hardwareMap.get(IMU.class, "IMU");
-        imu.initialize(new IMU.Parameters(HUB_FACING));
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+        imu.initialize(parameters);
+        imu.resetYaw();
+
 
         this.opModeIsActive = opModeIsActive;
 
@@ -120,10 +130,10 @@ public class Drivebase {
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-        clawWrist = hardwareMap.servo.get("clawWrist");
-        clawFingers = hardwareMap.servo.get("clawFingers");
-        clawWrist.setPosition(MID_SERVO);
-        clawFingers.setPosition(MID_SERVO);
+        //clawWrist = hardwareMap.servo.get("clawWrist");
+        //clawFingers = hardwareMap.servo.get("clawFingers");
+        //clawWrist.setPosition(MID_SERVO);
+        //clawFingers.setPosition(MID_SERVO);
     }
 
     /**
@@ -158,62 +168,59 @@ public class Drivebase {
      *  3) Driver stops the OpMode running.
      */
     public void autoDriveForward(double speed, double inchesForward) {
-        int newFLTarget;
-        int newFRTarget;
-        int newBLTarget;
-        int newBRTarget;
+        int newFLTarget = 0;
+        int newFRTarget = 0;
+        int newBLTarget = 0;
+        int newBRTarget = 0;
 
-        FLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Determine new target position, and pass to motor controller
+        if (opModeIsActive.get()) {
+            newFLTarget = FLDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+            newFRTarget = FRDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+            newBLTarget = BLDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+            newBRTarget = BRDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
+            FLDrive.setTargetPosition(newFLTarget);
+            FRDrive.setTargetPosition(newFRTarget);
+            BLDrive.setTargetPosition(newBLTarget);
+            BRDrive.setTargetPosition(newBRTarget);
 
-        newFLTarget = (int) (inchesForward * COUNTS_PER_INCH);
-        newFRTarget = (int) (inchesForward * COUNTS_PER_INCH);
-        newBLTarget = (int) (inchesForward * COUNTS_PER_INCH);
-        newBRTarget = (int) (inchesForward * COUNTS_PER_INCH);
-        FLDrive.setTargetPosition(newFLTarget);
-        FRDrive.setTargetPosition(newFRTarget);
-        BLDrive.setTargetPosition(newBLTarget);
-        BRDrive.setTargetPosition(newBRTarget);
+            // Determine new target position, and pass to motor controller
 
+            // Turn On RUN_TO_POSITION
+            FLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Turn On RUN_TO_POSITION
-        FLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FLDrive.setPower(Math.abs(speed));
+            FRDrive.setPower(Math.abs(speed));
+            BLDrive.setPower(Math.abs(speed));
+            BRDrive.setPower(Math.abs(speed));
 
-        FLDrive.setPower(Math.abs(speed));
-        FRDrive.setPower(Math.abs(speed));
-        BLDrive.setPower(Math.abs(speed));
-        BRDrive.setPower(Math.abs(speed));
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive.get() && (FLDrive.isBusy() || FRDrive.isBusy() || BLDrive.isBusy() || BRDrive.isBusy()) && telemetry != null) {
+                // Display it for the driver.
+                telemetry.addData("Running to", " %7d :%7d", newFLTarget, newFRTarget);
+                telemetry.addData("Currently at", " at %7d :%7d", FLDrive.getCurrentPosition(), FRDrive.getCurrentPosition());
+                telemetry.update();
+            }
 
-        // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-        while (opModeIsActive.get() && (FLDrive.isBusy() || FRDrive.isBusy() || BLDrive.isBusy() || BRDrive.isBusy())) {
-            // Display it for the driver.
-            telemetry.addData("Running to", " %7d :%7d", newFLTarget, newFRTarget);
-            telemetry.addData("Currently at", " at %7d :%7d", FLDrive.getCurrentPosition(), FRDrive.getCurrentPosition());
-            telemetry.update();
+            // Stop all motion;
+            FLDrive.setPower(0);
+            FRDrive.setPower(0);
+            BLDrive.setPower(0);
+            BRDrive.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-
-        // Stop all motion;
-        FLDrive.setPower(0);
-        FRDrive.setPower(0);
-        BLDrive.setPower(0);
-        BRDrive.setPower(0);
-
-        // Turn off RUN_TO_POSITION
-        FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void driveSideways(double speed, double inches) {
@@ -251,8 +258,8 @@ public class Drivebase {
 
             setDrivePowers(adjustedPower, -adjustedPower, adjustedPower, -adjustedPower);
 
-            if (telemetry == null) continue;
-            addTelemetry(telemetry);
+            if (telemetry == null) continue; else addTelemetry(telemetry);
+
         }
 
         setDrivePowers(0);
@@ -304,8 +311,7 @@ public class Drivebase {
      */
     private void waitForMotors(@Nullable Telemetry telemetry) {
         while (opModeIsActive.get() && (FLDrive.isBusy() || FRDrive.isBusy() || BLDrive.isBusy() || BRDrive.isBusy())) {
-            if (telemetry == null) continue;
-            addTelemetry(telemetry);
+            if (telemetry == null) continue; else addTelemetry(telemetry);
         }
     }
 
@@ -345,9 +351,9 @@ public class Drivebase {
      *
      * @param power driving power (-1.0 to 1.0)
      */
-    public void liftArm(double power) {
-        armMotor.setPower(power);
-    }
+    //public void liftArm(double power) {
+        //armMotor.setPower(power);
+    //}
 
     /**
      * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
@@ -356,12 +362,12 @@ public class Drivebase {
      */
     public void liftClaw(double offset) {
         offset = Range.clip(offset, -0.5, 0.5);
-        clawWrist.setPosition(MID_SERVO + offset);
+        //clawWrist.setPosition(MID_SERVO + offset);
     }
 
     public void moveFingers(double offset) {
         offset = Range.clip(offset, -0.5, 0.5);
-        clawFingers.setPosition(MID_SERVO - offset);
+        //clawFingers.setPosition(MID_SERVO - offset);
     }
 
     public void addTelemetry(Telemetry telemetry) {
