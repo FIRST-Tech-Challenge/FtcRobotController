@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class Teleop extends LinearOpMode {
 
         private static final double H = 12.0;
+
+        private static final double MAX_EXTEND = 1200;
+        private static final double MAX_PIVOT = 1200;
     @Override
     public void runOpMode() throws InterruptedException {
         Bot bot = new Bot(this);
@@ -69,9 +72,9 @@ public class Teleop extends LinearOpMode {
             bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
 
             //extend arm controls
-            if(gamepad1.right_bumper){
+            if(gamepad1.right_bumper && bot.getExtendPos() < MAX_EXTEND){
                 bot.setExtendPower(1.0);
-            } else if (gamepad1.left_bumper){
+            } else if (gamepad1.left_bumper && bot.getExtendPos() > 0){
                 bot.setExtendPower(-1.0);
             } else {
                 bot.setExtendPower(0.0);
@@ -89,9 +92,9 @@ public class Teleop extends LinearOpMode {
 //            } else {
 //                bot.setPivotPower(0.0);
 //            }
-            if(gamepad1.a){
+            if(gamepad1.a && bot.getPivotArmPos() < MAX_PIVOT){
                 bot.setPivotPower(0.75);
-            } else if(gamepad1.b){
+            } else if(gamepad1.b && bot.getPivotArmPos() > 0){
                 bot.setPivotPower(-0.75);
             } else {
                 bot.setPivotPower(0.0);
@@ -101,6 +104,9 @@ public class Teleop extends LinearOpMode {
 //            telemetry.addData("Angle (Rads): ", L >= H ? Math.asin(H/L):"N/A");
 //            telemetry.addData("Horizontal Extension: ", L >= H? Math.sqrt(L*L-H*H):"N/A");
 //            telemetry.update();
+            telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
+            telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
+            telemetry.update();
         }
     }
 }

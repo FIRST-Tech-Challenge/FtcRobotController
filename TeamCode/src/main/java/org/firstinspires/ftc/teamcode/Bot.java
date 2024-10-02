@@ -60,35 +60,53 @@ public class Bot {
         leftMotorBack = map.get(DcMotor.class, "left_back");
         rightMotorFront = map.get(DcMotor.class, "right_front");
         rightMotorBack = map.get(DcMotor.class, "right_back");
+
         leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
         rightLift = map.get(DcMotor.class, "right_lift");
-        topIntake = map.get(CRServo.class, "top_intake");
-        bottomIntake = map.get(CRServo.class, "bottom_intake");
+
         extendArmMotor = map.get(DcMotor.class, "extend_arm");
         armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
+        //set encoders to 0 on init
+        leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //Set RunModes for Encoder Usage
-        /*
         leftMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-         */
+
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set Direction of each Motors
         // switch REVERSE and FORWARD if controls are opposite
-        // This is set for Mechanum drive
         leftMotorFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
+
         leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);//this is because the motors are probalby faceing each other
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+
         extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Servos for intake on the map
-
+        topIntake = map.get(CRServo.class, "top_intake");
+        bottomIntake = map.get(CRServo.class, "bottom_intake");
     }
 
     /**
@@ -143,6 +161,14 @@ public class Bot {
 
     public void setPivotPower(double power){
         armPivotMotor.setPower(power);
+    }
+
+    public double getExtendPos(){
+        return extendArmMotor.getCurrentPosition();
+    }
+
+    public double getPivotArmPos(){
+        return armPivotMotor.getCurrentPosition();
     }
 
 
