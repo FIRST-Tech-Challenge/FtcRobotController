@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
 
 @TeleOp
-public class RobotV1 extends OpMode {
-    public RobotV1Config config = new RobotV1Config();
+public class RobotV2 extends OpMode {
+    public RobotV2Config config = new RobotV2Config();
 
     public DcMotor frontLeft; //PORT 0
     public DcMotor frontRight; //PORT 2
@@ -23,11 +23,13 @@ public class RobotV1 extends OpMode {
     public double ARM_POWER = config.ARM_POWER;
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
     public ElapsedTime buttonTimer = new ElapsedTime();
-    public int SLIDES_DOWN = -123;
-    public int SLIDES_UP = -750;
+    public int SLIDES_DOWN = -223;
+    public int SLIDES_LOW_BASKET = -1250;
+    public int SLIDES_HIGH_BASKET = -3010;
     public int SLIDESPOS = SLIDES_DOWN;
-    public int ARM_DOWN = -140;
-    public int ARM_UP= -1204;
+    public int ARM_DOWN = -200;
+    public int ARM_LOW_BASKET= -1204;
+    public int ARM_HIGH_BASKET = -1666;
     public int ARMPOS = ARM_DOWN;
 
     public enum SystemStates{
@@ -35,8 +37,8 @@ public class RobotV1 extends OpMode {
         LOW_BASKET,
         DOWN
     }
-    public SystemStates states = SystemStates.DOWN;
 
+    public SystemStates states = SystemStates.DOWN;
     @Override
     public void init() {
         frontLeft = hardwareMap.get(DcMotor.class, config.FRONT_LEFT);
@@ -60,14 +62,11 @@ public class RobotV1 extends OpMode {
         armMotor = hardwareMap.get(DcMotor.class, "arm");
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        states = SystemStates.DOWN;
     }
 
     @Override
     public void loop() {
-        run_motors();
-        arm_goto(ARMPOS);
-        slides_goto(SLIDESPOS);
         telemetry.addLine("ARM POSITION: " + armMotor.getCurrentPosition());
         telemetry.addLine("SLIDES POSITION: " + slidesMotor.getCurrentPosition());
         intakeServo.setPosition(servodirection);
@@ -76,19 +75,24 @@ public class RobotV1 extends OpMode {
             buttonTimer.reset();
         }
         if(buttonTimer.seconds() > 0.3 && gamepad1.x){
-            if (SLIDESPOS == SLIDES_DOWN){
-                SLIDESPOS = SLIDES_UP;
+            if(states == SystemStates.DOWN) {
+                ARMPOS = ARM_LOW_BASKET;
+                SLIDESPOS = SLIDES_LOW_BASKET;
+                states = SystemStates.LOW_BASKET;
+                telemetry.addLine(states.toString());
             }
-            else {
+            else if (states == SystemStates.LOW_BASKET) {
+                ARMPOS = ARM_HIGH_BASKET;
+                SLIDESPOS = SLIDES_HIGH_BASKET;
+                states = SystemStates.HIGH_BASKET;
+                telemetry.addLine(states.toString());
+            }
+            else{
                 SLIDESPOS = SLIDES_DOWN;
+                ARMPOS = ARM_DOWN;
+                states = SystemStates.DOWN;
+                telemetry.addLine(states.toString());
             }
-            buttonTimer.reset();
-        }
-
-        if(buttonTimer.seconds() > 0.3 && gamepad1.y){
-            ARMPOS = ARM_UP;
-            SLIDESPOS = SLIDES_UP;
-            states = SystemStates.HIGH_BASKET;
             buttonTimer.reset();
         }
         if(buttonTimer.seconds() > 0.3 && gamepad1.dpad_down){
@@ -99,6 +103,9 @@ public class RobotV1 extends OpMode {
             arm_up_by(100);
             buttonTimer.reset();
         }
+        run_motors();
+        arm_goto(ARMPOS);
+        slides_goto(SLIDESPOS);
     }
 
     public void run_motors(){
