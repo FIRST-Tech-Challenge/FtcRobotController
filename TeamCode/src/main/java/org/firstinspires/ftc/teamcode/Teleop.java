@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "TeleOp", group = "TeleOp")
 public class Teleop extends LinearOpMode {
 
+        private static final double H = 12.0;
     @Override
     public void runOpMode() throws InterruptedException {
         Bot bot = new Bot(this);
@@ -68,7 +69,7 @@ public class Teleop extends LinearOpMode {
             bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
 
             //extend arm controls
-            double max = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+            double maxx = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
                     Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
 
             if(gamepad1.right_bumper){

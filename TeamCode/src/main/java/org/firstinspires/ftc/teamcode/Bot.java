@@ -35,7 +35,7 @@ public class Bot {
     //Statistics for measurements
     static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
     private static final int TICKS_PER_REV = 1440;
-    private static final double ARM_GEAR_ARM = 1.0;
+    private static final double ARM_GEAR_RATIO = 1.0;
     private static final double DISTANCE_PER_REV = 10.0;
 
     private ElapsedTime runtime = new ElapsedTime();
