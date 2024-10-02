@@ -19,6 +19,10 @@ public class Slides {
     public static int MID =358;
     public static int LOW =2;
     public static int INTAKE = 0;
+    public static double WHEEL_DIAMETER = 1.77;//in
+    public static double TICKS_PER_REV = 384.539792388;
+    public static double GEAR_RATIO = 1;
+    public static double ticks;
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -96,15 +100,13 @@ public class Slides {
         int multiplier = (int) -gamepad2.left_stick_y;
 
         if (multiplier != 0) {
-            for (int i = 50; i < 1000; i++) {
-                leftSlide.setTargetPosition(multiplier * i++);
-                rightSlide.setTargetPosition(multiplier * i++);
+            for (double i = encoderTicksToInches(5); i < 50; i++) {
+                leftSlide.setTargetPosition((int) (multiplier * i++));
+                rightSlide.setTargetPosition((int) (multiplier * i++));
             }
         }
-    /*
-    -1 >= gamepad2.left_stick_y
-                && gamepad2.left_stick_y <=1
-                && gamepad2.left_stick_y !=0
-     */
+    }
+    public static double encoderTicksToInches(double ticks) {
+        return WHEEL_DIAMETER * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 }

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.Drivetrain;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Drivetrain drive = new Drivetrain(hardwareMap);
+        Drivetrain drive = new Drivetrain(this);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
