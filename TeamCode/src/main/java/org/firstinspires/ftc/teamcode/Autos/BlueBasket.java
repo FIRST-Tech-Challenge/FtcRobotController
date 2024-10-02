@@ -9,13 +9,18 @@ import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 
 @Autonomous(name = "BlueBasket", group = "BlueAutos")
 public class BlueBasket extends LinearOpMode {
+    @Override
     public void runOpMode() {
         Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive);
 
         waitForStart();
 
+        //Testing statement.
+        drivebase.autoDriveForward(0.5, 20);
+
         //Score preloaded specimen into basket.
-        drivebase.autoDriveForward(0.3, 10);
+        //drivebase.autoDriveForward(0.3, 10);
+        /*
         drivebase.turnToAngle(0.3, -90.0, telemetry);
         drivebase.autoDriveForward(0.03, 36);
 
@@ -43,5 +48,6 @@ public class BlueBasket extends LinearOpMode {
         //Park in obs zone.
         drivebase.turnToAngle(0.3, 45, telemetry);
         drivebase.autoDriveForward(0.3, 66.4830805544);
+         */
     }
 }
