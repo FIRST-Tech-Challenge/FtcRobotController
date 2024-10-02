@@ -49,10 +49,10 @@ public class DebugPositions extends OpMode {
 
     @Override
     public void loop() {
-        if (arm.get_encoder_pos() > maxPos1){
+        if (arm.get_encoder_pos() < maxPos1){
             maxPos1 = arm.get_encoder_pos();
         }
-        if (slidesMotor.getCurrentPosition()  > maxPos2){
+        if (slidesMotor.getCurrentPosition()  < maxPos2){
             maxPos2 = slidesMotor.getCurrentPosition();
         }
         run_motors();
