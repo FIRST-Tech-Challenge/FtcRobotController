@@ -20,6 +20,9 @@ public class TeleOpMode extends LinearOpMode {
         bottomLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottomRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        topLeftMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        bottomLeftMotor.setDirection(DcMotorEx.Direction.REVERSE);
+
         while (opModeInInit()) {
 
         }
@@ -27,7 +30,7 @@ public class TeleOpMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y;
+            double y = gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
