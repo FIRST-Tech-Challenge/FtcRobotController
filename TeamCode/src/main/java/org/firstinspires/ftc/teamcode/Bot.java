@@ -128,10 +128,10 @@ public class Bot {
         int newbackLeftTarget;
         int newbackRightTarget;
 
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
         newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
@@ -194,10 +194,10 @@ public class Bot {
             newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (-degrees * COUNTS_PER_INCH * INCHES_PER_DEGREE);
             newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (degrees * COUNTS_PER_INCH * INCHES_PER_DEGREE);
 
-            leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             leftMotorFront.setTargetPosition(newfrontLeftTarget);
             rightMotorFront.setTargetPosition(newfrontRightTarget);
@@ -245,10 +245,10 @@ public class Bot {
             newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
             newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
 
-            leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             leftMotorFront.setTargetPosition(newfrontLeftTarget);
             rightMotorFront.setTargetPosition(newfrontRightTarget);

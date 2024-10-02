@@ -10,8 +10,8 @@ public class Auto extends LinearOpMode {
         robot.init(hardwareMap);
         waitForStart();
 
-    robot.encoderDrive(1,);
-    robot.encoderTurn
+//    robot.encoderDrive(1,);
+//    robot.encoderTurn
 
     }
 }
