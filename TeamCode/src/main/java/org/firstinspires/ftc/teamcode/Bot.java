@@ -27,10 +27,16 @@ public class Bot {
     private CRServo topIntake;
     private CRServo bottomIntake;
 
+    //extend and pivot
+    private DcMotor extendArmMotor;
+    private DcMotor armPivotMotor;
+
 
     //Statistics for measurements
     static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
-
+    private static final int TICKS_PER_REV = 1440;
+    private static final double ARM_GEAR_ARM = 1.0;
+    private static final double DISTANCE_PER_REV = 10.0;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -56,6 +62,10 @@ public class Bot {
         rightMotorBack = map.get(DcMotor.class, "right_back");
         leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
         rightLift = map.get(DcMotor.class, "right_lift");
+        topIntake = map.get(CRServo.class, "top_intake");
+        bottomIntake = map.get(CRServo.class, "bottom_intake");
+        extendArmMotor = map.get(DcMotor.class, "extend_arm");
+        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
         //Set RunModes for Encoder Usage
         /*
@@ -74,10 +84,11 @@ public class Bot {
         rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
         leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);//this is because the motors are probalby faceing each other
+        extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Servos for intake on the map
-        topIntake = map.get(CRServo.class, "top_intake");
-        bottomIntake = map.get(CRServo.class, "bottom_intake");
+
     }
 
     /**
@@ -109,6 +120,28 @@ public class Bot {
     ) {
         topIntake.setPower(intakePower);
         bottomIntake.setPower(-intakePower);
+    }
+
+    public void setExtendPower(double power){
+        extendArmMotor.setPower(power);
+    }
+
+    public double getArmPosition(){
+        int currentTicks = extendArmMotor.getCurrentPosition();
+        double revolutions = (double) currentTicks / TICKS_PER_REV;
+        return revolutions * ARM_GEAR_RATIO * DISTANCE_PER_REV;
+    }
+
+    public void autoPivotArm(
+            int targetPosition, double power
+    ) {
+        armPivotMotor.setTargetPosition(targetPosition);
+        armPivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armPivotMotor.setPower(power);
+    }
+
+    public void setPivotPower(double power){
+        armPivotMotor.setPower(power);
     }
 
 

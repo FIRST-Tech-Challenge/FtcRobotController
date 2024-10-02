@@ -21,7 +21,7 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x; // Counteract imperfect strafing
+            double x = gamepad1.left_stick_x; // Counteract imperfect strafing
             double pivot = -gamepad1.right_stick_x;
 
             double rightLiftTrigger = gamepad1.right_trigger; //rightTrigger is raising the lift
@@ -66,6 +66,36 @@ public class Teleop extends LinearOpMode {
                 backRightPower /= max;
             }
             bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+
+            //extend arm controls
+            double max = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                    Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
+
+            if(gamepad1.right_bumper){
+                bot.setExtendPower(1.0);
+            } else if (gamepad1.left_bumper){
+                bot.setExtendPower(-1.0);
+            } else {
+                bot.setExtendPower(0.0);
+            }
+
+            double L = bot.getArmPosition();
+
+            if(L >= H){
+                double theta = Math.asin(H/L);
+                int maxEncoderTicks = 720; //for 180 degrees
+                double proportionOfFullRange = theta / Math.PI;
+                int targetPosition = (int)(proportionOfFullRange * maxEncoderTicks);
+
+                bot.autoPivotArm(targetPosition, 1.0);
+            } else {
+                bot.setPivotPower(0.0);
+            }
+
+            telemetry.addData("Current Length: ", L);
+            telemetry.addData("Angle (Rads): ", L >= H ? Math.asin(H/L):"N/A");
+            telemetry.addData("Horizontal Extension: ", L >= H? Math.sqrt(L*L-H*H):"N/A");
+            telemetry.update();
         }
     }
 }
