@@ -45,10 +45,10 @@ public class NeuralNetworkLimelight3ABlue extends LinearOpMode {
         backRightMotor = hardwareMap.dcMotor.get("backR");
 
         // frequency that telemetry is sent to driver hub
-        telemetry.setMsTransmissionInterval(5);
+        telemetry.setMsTransmissionInterval(11);
 
         // Switch to neural network pipeline (assuming it's pipeline 1)
-        limelight.pipelineSwitch(1);
+        limelight.pipelineSwitch(0);
 
         // starts looking for data, make sure to call start() or getLatestResult() will return null.
 
@@ -65,7 +65,6 @@ public class NeuralNetworkLimelight3ABlue extends LinearOpMode {
             telemetry.addData("LL Temp", "%.1fC", status.getTemp());
             telemetry.addData("LL CPU", "%.1f%%", status.getCpu());
             telemetry.addData("Pipeline", status.getPipelineIndex());
-
             // get the latest neural network result
             LLResult result = limelight.getLatestResult();
 
@@ -78,17 +77,18 @@ public class NeuralNetworkLimelight3ABlue extends LinearOpMode {
                 for (LLResultTypes.ClassifierResult cr : classifierResults) {
                     telemetry.addData("Class", cr.getClassName());
                     telemetry.addData("Confidence", "%.2f", cr.getConfidence());
-
                     // if the target object is detected, stop the robot
-                    if (cr.getClassName().equals(TARGET_CLASS_NAME_BLUE) || cr.getClassName().equals(TARGET_CLASS_NAME_YELLOW)) {
-                        targetDetected = true;
-                        backLeftMotor.setPower(0);
-                        frontLeftMotor.setPower(0);
-                        frontRightMotor.setPower(0);
-                        backRightMotor.setPower(0);
-                        telemetry.addData("Status", "Target detected! Robot stopped. Rumblinnn");
-                        gamepad1.runRumbleEffect(customRumbleEffect);
-                        break;
+                    if (cr.getConfidence() > 70) {
+                        if (cr.getClassName().equals(TARGET_CLASS_NAME_BLUE) || cr.getClassName().equals(TARGET_CLASS_NAME_YELLOW)) {
+                            targetDetected = true;
+                            backLeftMotor.setPower(0);
+                            frontLeftMotor.setPower(0);
+                            frontRightMotor.setPower(0);
+                            backRightMotor.setPower(0);
+                            telemetry.addData("Status", "Target detected! Robot stopped. Rumblinnn");
+                            gamepad1.runRumbleEffect(customRumbleEffect);
+                            break;
+                        }
                     }
                 }
 

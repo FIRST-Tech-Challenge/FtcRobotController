@@ -81,15 +81,17 @@ public class NeuralNetworkLimelight3ARed extends LinearOpMode{
                     telemetry.addData("Confidence", "%.2f", cr.getConfidence());
 
                     // if the target object is detected, stop the robot
-                    if (cr.getClassName().equals(TARGET_CLASS_NAME_RED) || cr.getClassName().equals(TARGET_CLASS_NAME_YELLOW)) {
-                        targetDetected = true;
-                        backLeftMotor.setPower(0);
-                        frontLeftMotor.setPower(0);
-                        frontRightMotor.setPower(0);
-                        backRightMotor.setPower(0);
-                        telemetry.addData("Status", "Target detected! Robot stopped. Rumblinnn");
-                        gamepad1.runRumbleEffect(customRumbleEffect);
-                        break;
+                    if (cr.getConfidence() > 70) {
+                        if (cr.getClassName().equals(TARGET_CLASS_NAME_RED) || cr.getClassName().equals(TARGET_CLASS_NAME_YELLOW)) {
+                            targetDetected = true;
+                            backLeftMotor.setPower(0);
+                            frontLeftMotor.setPower(0);
+                            frontRightMotor.setPower(0);
+                            backRightMotor.setPower(0);
+                            telemetry.addData("Status", "Target detected! Robot stopped. Rumblinnn");
+                            gamepad1.runRumbleEffect(customRumbleEffect);
+                            break;
+                        }
                     }
                 }
 
