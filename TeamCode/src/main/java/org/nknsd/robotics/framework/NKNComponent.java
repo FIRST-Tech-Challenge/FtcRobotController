@@ -40,7 +40,7 @@ public interface NKNComponent {
                     "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFR", "motorBR"});
             components.add(wheelHandler);
 
-            ChaosMonkey chaosMonkey = new ChaosMonkey(wheelHandler);
+            ChaosMonkey chaosMonkey = new ChaosMonkey(wheelHandler, new String[]{});
             components.add(chaosMonkey);
         }
     }
