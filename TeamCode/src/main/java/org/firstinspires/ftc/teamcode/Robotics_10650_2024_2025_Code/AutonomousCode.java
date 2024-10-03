@@ -25,10 +25,10 @@ public class AutonomousCode extends LinearOpMode {
 
 
         //forward
-       robot.goStraight(1000, 500);
-       robot.strafeR(750, 500); // Continue editing lines 29-31
+       robot.goStraight(850, 500);
+       robot.strafeR(1100, 500); // Continue editing lines 29-31
        robot.goStraight(500, 500);
-       robot.strafeL(1900, 500);
+       robot.strafeL(50, 100);
 
 //        robot.newTurnFuncton(90);
 //        robot.strafeL(20, 500);
