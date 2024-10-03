@@ -46,10 +46,10 @@ public class Mecanum {
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
         ));
-
+        resetIMU();
         //Assign default variables
         fieldCentricActive = false;
     }

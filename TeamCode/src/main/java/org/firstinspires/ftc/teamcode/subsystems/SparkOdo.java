@@ -15,11 +15,14 @@ import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 @Config
 public class SparkOdo implements LocalizerInterface {
 
+    //X+ Axis --> Forward
+    //Y+ Axis --> Left
+
     //Position offset of the Spark:
     public static double X_OFFSET = -2; //Inches
     public static double Y_OFFSET = -0.6; //Inches
 
-    public static double HEADING_OFFSET = 180; //degrees
+    public static double HEADING_OFFSET = 180; //Degrees
     public double weight = 0.33;
     private SparkFunOTOS odo;
 

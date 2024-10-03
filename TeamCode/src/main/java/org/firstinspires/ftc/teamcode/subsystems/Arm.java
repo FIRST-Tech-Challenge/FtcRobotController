@@ -2,37 +2,34 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-//TODO:Reconfigure Arm Class to utilize servos instead
+import com.qualcomm.robotcore.hardware.Servo;
+
 public class Arm {
 
     //Adjustable Constants
-    private int ARM_SPEED = 200; //Ticks
-    private double POWER = 1; //Motor power ranging from [-1, 1], though realistically [0, 1]
+    private double ARM_SPEED = 0.001; //Rotation
 
     //Internal variables
-    private DcMotor armLeft, armRight, arm;
-    private int targetPosition;
+    private Servo armLeft, armRight;
 
 
     public Arm(HardwareMap hw){
         this(hw, "armLeft", "armRight");
     }
     public Arm(HardwareMap hw, String nameLeft, String nameRight){
-        armLeft = hw.get(DcMotor.class, nameLeft);
-        armRight = hw.get(DcMotor.class, nameRight);
-        resetArm();
+        armLeft = hw.get(Servo.class, nameLeft);
+        armRight = hw.get(Servo.class, nameRight);
+        armRight.setDirection(Servo.Direction.REVERSE);
     }
 
     public void changeHeight(double power){
-        targetPosition += (power * ARM_SPEED);
-        arm.setTargetPosition(targetPosition);
+        double newPos = armLeft.getPosition() + (power * ARM_SPEED);
+        armLeft.setPosition(newPos);
+        armRight.setPosition(newPos);
     }
 
-    public void resetArm(){
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        targetPosition = arm.getCurrentPosition();
-        arm.setTargetPosition(targetPosition);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(POWER);
+    public double getPosition(){
+        return armLeft.getPosition();
     }
+
 }

@@ -34,9 +34,11 @@ public class LimeLightWrapper implements LocalizerInterface{
 
     public LimeLightWrapper(Limelight3A limelight3A) {
         limelight = limelight3A;
+        start();
     }
     //starts up the limelight with the first pipeline
     public void start() {
+        limelight.setPollRateHz(100);
         limelight.pipelineSwitch(0);
         limelight.start();
     }
@@ -69,8 +71,8 @@ public class LimeLightWrapper implements LocalizerInterface{
     }
     //gets the distance using the botpose and the yaw
     public Pose3D distanceFromTag(double yaw) {
-        LLResult result = limelight.getLatestResult();
         limelight.updateRobotOrientation(yaw);
+        LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             return result.getBotpose_MT2();
         }

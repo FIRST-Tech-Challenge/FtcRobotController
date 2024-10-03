@@ -50,8 +50,8 @@ public class SparkTest extends LinearOpMode {
 
             //Drive set up
             double forward = controller1.left_stick_y;
-            double strafe = -controller1.left_stick_x;
-            double rotate = -controller1.right_stick_x;
+            double strafe = controller1.left_stick_x;
+            double rotate = controller1.right_stick_x;
 
             robot.drive(forward, strafe, rotate);
 
@@ -72,8 +72,9 @@ public class SparkTest extends LinearOpMode {
 
 //            String total ="X: " + totalDist.x + "  Y: " + totalDist.y + " R: " + totalDist.h;
 //            String dist = "X: " + pos.x + "  Y: " + pos.y + " R: " + pos.h;
-            telemetry.addData("Total Distance",String.format("X: %f Y: %f R:%.2f", totalDist.x, totalDist.y, totalDist.h));
+            telemetry.addData("Total Distance",String.format("X: %f Y: %f R:%.2f", totalDist.x, totalDist.y, Math.toDegrees(totalDist.h)));
             telemetry.addData("Distance From Start", String.format("X: %f Y: %f R:%.2f", pos.x, pos.y, pos.h));
+            telemetry.addData("IMU Yaw: ", robot.getYaw());
             telemetry.update();
             controller1.update();
 
