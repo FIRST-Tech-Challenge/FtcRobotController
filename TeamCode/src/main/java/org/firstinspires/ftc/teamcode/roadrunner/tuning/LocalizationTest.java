@@ -37,8 +37,6 @@ public class LocalizationTest extends LinearOpMode {
                         RevHubOrientationOnRobot.UsbFacingDirection.UP)
         ));
 
-
-
         //rate of data being sent each second
         limelight.setPollRateHz(100);
         limelight.start();
