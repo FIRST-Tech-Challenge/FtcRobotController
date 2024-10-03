@@ -19,10 +19,13 @@ public class FastDetectSamples extends OpenCvPipeline {
     public /*final*/ OpenCvCamera webcam;
     boolean viewportPaused;
 
-    public double fov = 78;
-    public double inchLength = -1;
+    public double h_fov = 78;
+    public double v_hov = 41.4;
+    public double inchLength = 1.5;
     public double focalLength = -1;
-    public double imageWidth = -1;
+    public double imageWidth = 1920;
+    public double imageHeight = 1080;
+    public double sampleZ = -1;
     private final Telemetry telemetry;
 
     public FastDetectSamples(/*OpenCvCamera webcam*/ Telemetry telemetry){
@@ -78,31 +81,22 @@ public class FastDetectSamples extends OpenCvPipeline {
 
         return yellowMask;
     }
-    public double calculateDistance(double pixelLength) {
+    public double calculateX(double pixelLength) {
         return  inchLength * focalLength / pixelLength;
     }
-    public double calculateHorizontalAngle(double pixelLength) {
-        return (pixelLength - imageWidth / 2) * fov / imageWidth;
+    public double calculateY(double verticalAngle, double sampleX) {
+        return  Math.tan(Math.toRadians(verticalAngle)) * sampleX;
     }
-    public double calculateVerticalAngle(double pixelLength) {
-        return (pixelLength - imageWidth / 2) * fov / imageWidth; //TODO: find vertical fov to really calculate this
+    public double calculateHorizontalAngle(double center_x) {
+        return (center_x - imageWidth / 2) * h_fov / imageWidth;
+    }
+    public double calculateVerticalAngle(double center_y) {
+        return (center_y - imageHeight / 2) * v_hov / imageHeight;
     }
 
     @Override
     public void onViewportTapped()
     {
-        /*
-         * The viewport (if one was specified in the constructor) can also be dynamically "paused"
-         * and "resumed". The primary use case of this is to reduce CPU, memory, and power load
-         * when you need your vision pipeline running, but do not require a live preview on the
-         * robot controller screen. For instance, this could be useful if you wish to see the live
-         * camera preview as you are initializing your robot, but you no longer require the live
-         * preview after you have finished your initialization process; pausing the viewport does
-         * not stop running your pipeline.
-         *
-         * Here we demonstrate dynamically pausing/resuming the viewport when the user taps it
-         */
-
         viewportPaused = !viewportPaused;
 
         if(viewportPaused)
