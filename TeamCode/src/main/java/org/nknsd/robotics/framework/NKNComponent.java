@@ -32,6 +32,7 @@ public interface NKNComponent {
 
     void doTelemetry(Telemetry telemetry);
 
+    // What is this? Why is it here? Who added it?
     class SampleNKNProgram extends NKNProgram {
         @Override
         public void createComponents(List<NKNComponent> components) {

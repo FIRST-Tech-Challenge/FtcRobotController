@@ -31,9 +31,11 @@ public class ChaosMonkey implements NKNComponent {
     private long stateStartTime = 0;
 
     private final WheelHandler wheelHandler;
+    private final String[] skipTests;
 
-    public ChaosMonkey(WheelHandler wheelHandler) {
+    public ChaosMonkey(WheelHandler wheelHandler, String[] skipTests) {
         this.wheelHandler = wheelHandler;
+        this.skipTests = skipTests;
     }
 
     @Override
@@ -42,24 +44,29 @@ public class ChaosMonkey implements NKNComponent {
     }
 
     @Override
-    public void init_loop(ElapsedTime runtime, Telemetry telemetry) {
-
-    }
+    public void init_loop(ElapsedTime runtime, Telemetry telemetry) {}
 
     @Override
-    public void start(ElapsedTime runtime, Telemetry telemetry) {
-
-    }
+    public void start(ElapsedTime runtime, Telemetry telemetry) {}
 
     @Override
-    public void stop(ElapsedTime runtime, Telemetry telemetry) {
-
-    }
+    public void stop(ElapsedTime runtime, Telemetry telemetry) {}
 
     @Override
     public String getName() {return "ChaosMonkey";}
 
+    private boolean shouldSkipState(States state) {
+        for (String s: skipTests) {
+            if (s.equals(state.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void runState() {
+        if (shouldSkipState(state)) {return;}
+
         switch (state) {
             case DO_NOTHING:
                 wheelHandler.vectorToMotion(0, 0, 0);
