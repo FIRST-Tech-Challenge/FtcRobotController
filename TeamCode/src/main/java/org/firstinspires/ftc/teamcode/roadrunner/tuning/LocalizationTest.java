@@ -53,17 +53,37 @@ public class LocalizationTest extends LinearOpMode {
             waitForStart();
 
             while (opModeIsActive()) {
+
                 YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+                double robotYaw = orientation.getYaw();
+                limelight.updateRobotOrientation(robotYaw);
                 telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
                     if (result.isValid()) {
                         Pose3D botpose = result.getBotpose();
+                        Pose3D botpose_mt2 = result.getBotpose_MT2();
+
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
                         telemetry.addData("Botpose", botpose.toString());
+
+                        if (botpose != null) {
+                            double x = botpose.getPosition().x;
+                            double y = botpose.getPosition().y;
+                            telemetry.addData("MT1 Location", "(" + x + ", " + y + ")");
+                        }
+                        if (botpose_mt2 != null) {
+                            double x = botpose_mt2.getPosition().x;
+                            double y = botpose_mt2.getPosition().y;
+                            telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
+                        }
+
                     }
+
+
+                }else {
+                    telemetry.addData("Limelight", "No Targets");
                 }
                 drive.setDrivePowers(new PoseVelocity2d(
                         new Vector2d(
