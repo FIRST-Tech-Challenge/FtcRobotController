@@ -8,6 +8,8 @@ import java.security.PublicKey;
 public class Robot2024 {
     Servo gripper;
     DcMotor Shoulder_Motor;
+    double gripper_open_position = 0.0;
+    double gripper_close_position = 0.3;
 
     public Robot2024(Servo gripper, DcMotor Shoulder_Motor) {
         this.gripper = gripper;
@@ -15,11 +17,11 @@ public class Robot2024 {
     }
 
     public void closeGripper(){
-        gripper.setPosition(0);
+        gripper.setPosition(this.gripper_close_position);
     }
 
     public void openGripper(){
-        gripper.setPosition(0.4);
+        gripper.setPosition(this.gripper_close_position);
     }
 
     public void setShoulderPower(double powerLevel){
