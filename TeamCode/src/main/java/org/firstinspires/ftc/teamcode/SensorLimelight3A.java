@@ -104,16 +104,10 @@ public class SensorLimelight3A extends LinearOpMode {
                 double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
                 double parseLatency = result.getParseLatency();
-                telemetry.addData("LL Latency", captureLatency + targetingLatency);
-                telemetry.addData("Parse Latency", parseLatency);
-                telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
+                telemetry.addData("LL Latency", "%.0f", captureLatency + targetingLatency);
+                telemetry.addData("Parse Latency", "%.0f",parseLatency);
                 
                 if (result.isValid()) {
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("txnc", result.getTxNC());
-                    telemetry.addData("ty", result.getTy());
-                    telemetry.addData("tync", result.getTyNC());
-
                     telemetry.addData("Botpose", botpose.toString());
 
                     // Access barcode results
