@@ -44,7 +44,6 @@ public class LocalizationTest extends LinearOpMode {
         limelight.setPollRateHz(100);
         limelight.start();
 
-
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
         limelight.start();
@@ -54,8 +53,6 @@ public class LocalizationTest extends LinearOpMode {
 
             while (opModeIsActive()) {
                 YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
                     if (result.isValid()) {
@@ -69,7 +66,6 @@ public class LocalizationTest extends LinearOpMode {
                         new Vector2d(
 
                                 //strafe
-
                                 -gamepad1.left_stick_y,
                                 gamepad1.left_stick_x
                         ),
@@ -80,7 +76,7 @@ public class LocalizationTest extends LinearOpMode {
 
                 telemetry.addData("x", drive.pose.position.x);
                 telemetry.addData("y", drive.pose.position.y);
-                telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+                telemetry.addData("Yaw (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.update();
 
                 TelemetryPacket packet = new TelemetryPacket();
