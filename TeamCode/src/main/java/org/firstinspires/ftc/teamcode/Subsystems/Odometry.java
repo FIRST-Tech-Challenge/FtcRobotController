@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -11,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /** Subsystem */
 @Config // EXAMPLE - use @Config to add public variables to dashboard for realtime updating
-public class OdometrySubsystem extends SubsystemBase {
+public class Odometry extends SubsystemBase {
 
     // for Dashboard demo purposes only!
     // values on dashboard for edit must be public and static
@@ -28,7 +27,7 @@ public class OdometrySubsystem extends SubsystemBase {
     private double fieldAngle = 0.0;
 
     /** Place code here to initialize subsystem */
-    public OdometrySubsystem() {
+    public Odometry() {
 
     }
 

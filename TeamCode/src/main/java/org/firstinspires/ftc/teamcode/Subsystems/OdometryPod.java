@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 /** Subsystem */
-public class OdometryPodSubsystem extends SubsystemBase {
+public class OdometryPod extends SubsystemBase {
 
     // Local objects and variables here
 
@@ -22,16 +22,16 @@ public class OdometryPodSubsystem extends SubsystemBase {
     public static double LATERAL_DISTANCE = 0.315; // m; distance between the left and right wheels
     public static double FORWARD_OFFSET = 0.100; // m; offset of the lateral wheel
 
-    private MotorEx leftEncoderPod = null;
-    private MotorEx rightEncoderPod = null;
-    private MotorEx frontEncoderPod = null;
+    private MotorEx leftEncoderPod;
+    private MotorEx rightEncoderPod;
+    private MotorEx frontEncoderPod;
 
-    private Encoder leftEncoder = null;
-    private Encoder rightEncoder = null;
-    private Encoder frontEncoder = null;
+    private Encoder leftEncoder;
+    private Encoder rightEncoder;
+    private Encoder frontEncoder;
 
     /** Place code here to initialize subsystem */
-    public OdometryPodSubsystem() {
+    public OdometryPod() {
 
         leftEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"leftEncoder");
         rightEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap, "rightEncoder");

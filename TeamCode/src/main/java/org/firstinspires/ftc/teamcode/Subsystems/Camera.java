@@ -14,10 +14,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 public class Camera extends SubsystemBase {
 
     // Used for managing the AprilTag detection process.
-    private AprilTagProcessor myAprilTagProcessor;
+    private final AprilTagProcessor myAprilTagProcessor;
 
     // Local objects and variables here
-    private VisionPortal CameraPortal;
+    private final VisionPortal CameraPortal;
 
     /** Place code here to initialize subsystem */
     public Camera(String cameraName) {
@@ -42,7 +42,7 @@ public class Camera extends SubsystemBase {
                 .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
-//hello
+
         RobotContainer.DashBoard.startCameraStream(CameraPortal, 0);
 
     }

@@ -2,17 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
@@ -20,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
-import org.firstinspires.ftc.teamcode.Subsystems.OdometryPodSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.OdometrySubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.OdometryPod;
+import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
 //import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
@@ -45,12 +42,12 @@ public class RobotContainer {
     // create pointers to robot subsystems
     public static DriveTrain drivesystem;
     public static Gyro gyro;
-    public static OdometryPodSubsystem odometryPod;
-    public static OdometrySubsystem odometry;
-    public static Camera camera1;
+    public static OdometryPod odometryPod;
+    public static Odometry odometry;
+    public static Camera frontCamera;
     // public static Claw claw;
     // public static LinearSlideSubsystem linearSlide;
-    public static Camera DanyCamy;
+
 
     // Robot initialization for teleop - Run this once at start of teleop
     public static void Init_TeleOp(CommandOpMode mode) {
@@ -109,10 +106,10 @@ public class RobotContainer {
 
         // create systems
         gyro = new Gyro();
-        odometryPod = new OdometryPodSubsystem();
-        odometry = new OdometrySubsystem();
+        odometryPod = new OdometryPod();
+        odometry = new Odometry();
         drivesystem = new DriveTrain();
-        camera1 = new Camera("CamyCamy");
+        frontCamera = new Camera("CamyCamy");
         // insert other subsystems here
         // claw = new Claw();
 
