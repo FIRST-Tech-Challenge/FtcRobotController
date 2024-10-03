@@ -15,6 +15,7 @@ public class GripperTest extends LinearOpMode {
 
 //        Servo servoTest = hardwareMap.get(Servo.class, "launch_servo");
 
+        Robot2024 robot2024 = new Robot2024(Gripper);
 
         waitForStart();
 
@@ -31,9 +32,10 @@ public class GripperTest extends LinearOpMode {
 
             // check to see if we need to move the servo.
             if (gamepad2.b) {
-                closeGripper(Gripper);
+//                closeGripper(Gripper);
+                robot2024.closeGripper();
             } else if (gamepad2.a) {
-               OpenGripper(Gripper);
+               robot2024.openGripper();
             }
         telemetry.addData("Servo Position", Gripper.getPosition());
 //        telemetry.addData("Target Power", tgtPower);
