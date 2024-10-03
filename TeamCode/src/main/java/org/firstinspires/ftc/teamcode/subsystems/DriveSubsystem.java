@@ -60,6 +60,10 @@ public class DriveSubsystem extends SubsystemBase {
     private void driveFieldCentric(double forward, double strafe, double turn) {
         turn = -turn;
 
+        forward = Math.abs(forward) >= Constants.DriveConstants.DEADZONE ? forward : 0;
+        strafe = Math.abs(strafe) >= Constants.DriveConstants.DEADZONE ? strafe : 0;
+        turn = Math.abs(turn) >= Constants.DriveConstants.DEADZONE ? turn : 0;
+
         double gyroRadians = Math.toRadians(-getHeading());
         double fieldCentricStrafe = strafe * Math.cos(gyroRadians) - forward * Math.sin(gyroRadians);
         double fieldCentricDrive = strafe * Math.sin(gyroRadians) + forward * Math.cos(gyroRadians);
