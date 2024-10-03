@@ -137,7 +137,7 @@ public class Teleop extends LinearOpMode {
                 intake_roller_position = 0;
             }
 
-            Intake.setPosition(intake_roller_position);
+            Intake.setPower(intake_roller_position);
 
             /*if(!(arm_move == 0))
             {

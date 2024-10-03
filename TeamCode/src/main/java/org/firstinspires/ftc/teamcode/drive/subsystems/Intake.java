@@ -10,5 +10,7 @@ public class Intake {
         this.Intake = hardwareMap.get(CRServo.class, "Intake");
         this.Intake.setDirection(CRServo.Direction.FORWARD);
     }
-    public void setPosition(double power) {Intake.setPower(power);}
+    public void setPower(double power) {
+        Intake.setPower(power);
+    }
 }
