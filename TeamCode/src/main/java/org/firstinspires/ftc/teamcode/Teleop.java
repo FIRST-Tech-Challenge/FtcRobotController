@@ -88,6 +88,7 @@ public class Teleop extends LinearOpMode {
                 bot.setPivotPower(0.0);
             }
 
+            //Telemetry Data
             telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
             telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
             telemetry.addData("Current Left Lift Pos: ", bot.getLeftLiftPos());

@@ -126,6 +126,10 @@ public class Bot {
        rightMotorBack.setPower(backRightPower);
     }
 
+    /**
+     * Set Lift Power for hang
+     * @param liftPower
+     */
     public void setLift(
             double liftPower
     ){
@@ -133,6 +137,10 @@ public class Bot {
         rightLift.setPower(liftPower);
     }
 
+    /**
+     * Set intake power
+     * @param intakePower
+     */
     public void setIntakePosition(
             double intakePower
     ) {
@@ -140,6 +148,10 @@ public class Bot {
         bottomIntake.setPower(-intakePower);
     }
 
+    /**
+     * Run extention arm
+     * @param power
+     */
     public void setExtendPower(double power){
         extendArmMotor.setPower(power);
     }
@@ -150,6 +162,11 @@ public class Bot {
         return revolutions * ARM_GEAR_RATIO * DISTANCE_PER_REV;
     }
 
+    /**
+     * Run extension arm based on target position
+     * @param targetPosition
+     * @param power
+     */
     public void autoPivotArm(
             int targetPosition, double power
     ) {
@@ -159,20 +176,40 @@ public class Bot {
         armPivotMotor.setPower(power);
     }
 
+    /**
+     * Run Pivot Motor
+     * @param power
+     */
     public void setPivotPower(double power){
         armPivotMotor.setPower(power);
     }
 
+    /**
+     * Get posiiton of extention motor
+     * @return encoder tick of extention motor
+     */
     public double getExtendPos(){
         return extendArmMotor.getCurrentPosition();
     }
 
+    /**
+     * Get position of pivot motor
+     * @return encoder tick of pivot motor
+     */
     public double getPivotArmPos(){
         return armPivotMotor.getCurrentPosition();
     }
 
+    /**
+     * Get position of left lift motor
+     * @return encoder tick of left lift motor
+     */
     public double getLeftLiftPos() { return leftLift.getCurrentPosition();}
 
+    /**
+     * Get position of right lift motor
+     * @return encoder tick of right lift motor
+     */
     public double getRightLiftPos() { return rightLift.getCurrentPosition();}
 
 
