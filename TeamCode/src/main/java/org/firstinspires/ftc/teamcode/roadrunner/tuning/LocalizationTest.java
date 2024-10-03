@@ -19,15 +19,12 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.TwoDeadWheelLocalizer;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 public class LocalizationTest extends LinearOpMode {
-        private Limelight3A limelight;
+    private Limelight3A limelight;
     public IMU imu;
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -39,27 +36,22 @@ public class LocalizationTest extends LinearOpMode {
                         RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                         RevHubOrientationOnRobot.UsbFacingDirection.UP)
         ));
-//
+
 
 
         //rate of data being sent each second
         limelight.setPollRateHz(100);
         limelight.start();
 
-
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
         limelight.start();
-            if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+        if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
             waitForStart();
 
-//                TwoDeadWheelLocalizer deadwheels = new TwoDeadWheelLocalizer(hardwareMap, ,  1);
-
             while (opModeIsActive()) {
                 YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
                     if (result.isValid()) {
@@ -73,7 +65,6 @@ public class LocalizationTest extends LinearOpMode {
                         new Vector2d(
 
                                 //strafe
-
                                 -gamepad1.left_stick_y,
                                 gamepad1.left_stick_x
                         ),
@@ -84,7 +75,7 @@ public class LocalizationTest extends LinearOpMode {
 
                 telemetry.addData("x", drive.pose.position.x);
                 telemetry.addData("y", drive.pose.position.y);
-                telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+                telemetry.addData("Yaw (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.update();
 
                 TelemetryPacket packet = new TelemetryPacket();
