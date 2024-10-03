@@ -16,6 +16,18 @@ public class IntakeHandler implements NKNComponent {
 
     private DcMotor motor; private CRServo servo;
 
+    public enum HandStates {
+        GRIP(1),
+        RELEASE(-1),
+        REST(0);
+
+        public final double power;
+
+        HandStates(double power) {
+            this.power = power;
+        }
+    }
+
     public IntakeHandler(String motorName, String servoName, boolean invertMotor) {
         this.motorName = motorName;
         this.servoName = servoName;
@@ -47,12 +59,16 @@ public class IntakeHandler implements NKNComponent {
     public String getName() {return "IntakeHandler";}
 
     @Override
-    public void loop(ElapsedTime runtime, Telemetry telemetry) {
-
-    }
+    public void loop(ElapsedTime runtime, Telemetry telemetry) {}
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-
+        telemetry.addData("Arm Position", motor.getCurrentPosition());
+        telemetry.addData("Arm Target", motor.getTargetPosition());
     }
+
+    public void controlHand(HandStates targetState) {
+        servo.setPower(targetState.power);
+    }
+
 }
