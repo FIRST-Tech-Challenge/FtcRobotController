@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /*
  * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
@@ -77,16 +78,16 @@ public class Hardware {
      */
     public void init()      {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
-        leftFrontDrive  = myOpMode.hardwareMap.get(DcMotor.class, "left_back_motor");
-        rightFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "left_front_motor");
-        leftBackDrive  = myOpMode.hardwareMap.get(DcMotor.class, "right_back_motor");
-        rightBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_front_motor");
+        leftFrontDrive  = myOpMode.hardwareMap.get(DcMotor.class, "front_left_motor");
+        rightFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "front_right_motor");
+        leftBackDrive  = myOpMode.hardwareMap.get(DcMotor.class, "back_left_motor");
+        rightBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "back_right_motor");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        //leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        //leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -109,10 +110,10 @@ public class Hardware {
      */
     public void driveRobot(double Drive, double Turn, double Strafe) {
         // Combine drive and turn for blended motion.
-        double leftBack = Drive + Turn - Strafe;
-        double rightBack = Drive - Turn + Strafe;
-        double leftFront = Drive + Turn + Strafe;
-        double rightFront = Drive - Turn - Strafe;
+        double leftBack = Drive + Turn + Strafe;
+        double rightBack = Drive - Turn - Strafe;
+        double leftFront = Drive - Turn + Strafe;
+        double rightFront = Drive + Turn - Strafe;
 
 
         // Scale the values so neither exceed +/- 1.0
