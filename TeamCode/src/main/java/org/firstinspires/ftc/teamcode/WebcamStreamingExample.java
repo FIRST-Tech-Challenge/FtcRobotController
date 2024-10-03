@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.opencv.DetectSamples;
+import org.firstinspires.ftc.teamcode.opencv.FastDetectSamples;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -44,7 +45,7 @@ public class WebcamStreamingExample extends LinearOpMode
          * of a frame from the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
-        DetectSamples Pipeline = new DetectSamples(webcam);
+        FastDetectSamples Pipeline = new FastDetectSamples(telemetry);
         webcam.setPipeline(Pipeline);
 
         /*

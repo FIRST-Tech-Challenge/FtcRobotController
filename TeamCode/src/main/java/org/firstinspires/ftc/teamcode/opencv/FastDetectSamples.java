@@ -12,6 +12,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +23,9 @@ public class FastDetectSamples extends OpenCvPipeline {
     public double h_fov = 78;
     public double v_hov = 41.4;
     public double inchLength = 1.5;
-    public double focalLength = -1;
-    public double imageWidth = 1920;
-    public double imageHeight = 1080;
+    public double focalLength = 272;
+    public double imageWidth = 320;
+    public double imageHeight = 240;
     public double sampleZ = -1;
     private final Telemetry telemetry;
 
@@ -49,6 +50,7 @@ public class FastDetectSamples extends OpenCvPipeline {
 
             Point[] vertices = points.toArray();
             telemetry.addData("Vertices", vertices.length);
+            double max = 0, x;
             for (int i = 0; i < vertices.length; i++) {
                 //telemetry.addData(String.valueOf(i), "");
                 Imgproc.circle(input, vertices[i], 2, new Scalar(0, 255, 0), 1);
@@ -56,11 +58,15 @@ public class FastDetectSamples extends OpenCvPipeline {
                 Point end = vertices[(i + 1) % vertices.length];
                 double length = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2));
                 if (Math.abs(start.x - end.x) < 0.2 * length) {
-                    Imgproc.line(input, start, end, new Scalar(0, 255, 0), 1);
-                    Imgproc.putText(input, Math.round(length) + "", new Point((start.x + end.x) / 2, (start.y + end.y) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 1);
+                    if (length > max)
+                        max = length;
+                    //Imgproc.line(input, start, end, new Scalar(0, 255, 0), 1);
+                    //Imgproc.putText(input, Math.round(length) + "", new Point((start.x + end.x) / 2, (start.y + end.y) / 2), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 1);
                 }
             }
-
+            x = calculateX(max);
+            double angle = calculateHorizontalAngle(vertices[0].x);
+            Imgproc.putText(input, Math.round(x) + "," + (calculateY(angle, x)) + "  " + angle, vertices[0], Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 1);
         }
         telemetry.update();
         return input;
@@ -84,8 +90,8 @@ public class FastDetectSamples extends OpenCvPipeline {
     public double calculateX(double pixelLength) {
         return  inchLength * focalLength / pixelLength;
     }
-    public double calculateY(double verticalAngle, double sampleX) {
-        return  Math.tan(Math.toRadians(verticalAngle)) * sampleX;
+    public double calculateY(double horizontalAngle, double sampleX) {
+        return  Math.tan(Math.toRadians(horizontalAngle)) * sampleX;
     }
     public double calculateHorizontalAngle(double center_x) {
         return (center_x - imageWidth / 2) * h_fov / imageWidth;
