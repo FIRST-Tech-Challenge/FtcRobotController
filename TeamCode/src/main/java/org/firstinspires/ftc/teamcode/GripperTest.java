@@ -15,7 +15,7 @@ public class GripperTest extends LinearOpMode {
 
 //        Servo servoTest = hardwareMap.get(Servo.class, "launch_servo");
 
-        Robot2024 robot2024 = new Robot2024(Gripper);
+        Robot2024 robot2024 = new Robot2024(Gripper, Shoulder_Motor);
 
         waitForStart();
 
@@ -26,7 +26,8 @@ public class GripperTest extends LinearOpMode {
 
             double modifier = 0.5;
 
-            Shoulder_Motor.setPower((gamepad2.left_stick_x - gamepad2.left_stick_y - gamepad2.right_stick_x) * modifier);
+//            Shoulder_Motor.setPower((gamepad2.left_stick_x - gamepad2.left_stick_y - gamepad2.right_stick_x) * modifier);
+            robot2024.setShoulderPower((gamepad2.left_stick_x - gamepad2.left_stick_y - gamepad2.right_stick_x) * modifier);
 
 
 
