@@ -52,11 +52,11 @@ public abstract class NKNProgram {
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         for (NKNComponent component:componentList){
             double startTime = runtime.seconds();
-            component.loop(runtime,telemetry);
+            component.loop(runtime, telemetry);
             double duration = runtime.seconds() - startTime;
-            if (duration > .1) {
-                telemetry.addData("HOG", component.getName() + "took "+ duration +"s.");
-            }
+//            if (duration > .1) {
+//                telemetry.addData("HOG", component.getName() + "took "+ duration +"s.");
+//            }
         }
     }
 
@@ -64,5 +64,12 @@ public abstract class NKNProgram {
         for (NKNComponent component:componentList){
             component.stop(runtime,telemetry);
         }
+    }
+
+    public void doTelemetry(Telemetry telemetry) {
+        for (NKNComponent component:componentList){
+            component.doTelemetry(telemetry);
+        }
+        telemetry.update();
     }
 }
