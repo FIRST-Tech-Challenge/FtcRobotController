@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class GripperTest extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor Shoulder_Motor = hardwareMap.dcMotor.get("Shoulder_Motor");
         Shoulder_Motor.setDirection(DcMotorSimple.Direction.FORWARD);
         Servo Gripper = hardwareMap.servo.get("Gripper_Servo");
-
 
         Robot2024 robot2024 = new Robot2024(Gripper, Shoulder_Motor);
 
