@@ -79,19 +79,7 @@ public class Teleop extends LinearOpMode {
             } else {
                 bot.setExtendPower(0.0);
             }
-            //auto arm positioning
-//            double L = bot.getArmPosition();
-//
-//            if(L >= H){
-//                double theta = Math.asin(H/L);
-//                int maxEncoderTicks = 720; //for 180 degrees
-//                double proportionOfFullRange = theta / Math.PI;
-//                int targetPosition = (int)(proportionOfFullRange * maxEncoderTicks);
-//
-//                bot.autoPivotArm(targetPosition, 1.0);
-//            } else {
-//                bot.setPivotPower(0.0);
-//            }
+
             if(gamepad1.a && bot.getPivotArmPos() < MAX_PIVOT){
                 bot.setPivotPower(0.75);
             } else if(gamepad1.b && bot.getPivotArmPos() > 0){
@@ -100,12 +88,10 @@ public class Teleop extends LinearOpMode {
                 bot.setPivotPower(0.0);
             }
 
-//            telemetry.addData("Current Length: ", L);
-//            telemetry.addData("Angle (Rads): ", L >= H ? Math.asin(H/L):"N/A");
-//            telemetry.addData("Horizontal Extension: ", L >= H? Math.sqrt(L*L-H*H):"N/A");
-//            telemetry.update();
             telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
             telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
+            telemetry.addData("Current Left Lift Pos: ", bot.getLeftLiftPos());
+            telemetry.addData("Current Right Lift Pos: ", bot.getRightLiftPos());
             telemetry.update();
         }
     }

@@ -171,5 +171,9 @@ public class Bot {
         return armPivotMotor.getCurrentPosition();
     }
 
+    public double getLeftLiftPos() { return leftLift.getCurrentPosition();}
+
+    public double getRightLiftPos() { return rightLift.getCurrentPosition();}
+
 
 }
