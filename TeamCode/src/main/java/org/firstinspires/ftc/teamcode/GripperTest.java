@@ -31,11 +31,9 @@ public class GripperTest extends LinearOpMode {
 
             // check to see if we need to move the servo.
             if (gamepad2.b) {
-                // move to 0 degrees.
-                Gripper.setPosition(0);
+                closeGripper(Gripper);
             } else if (gamepad2.a) {
-                // move to 90 degrees.
-                Gripper.setPosition(0.4);
+               OpenGripper(Gripper);
             }
         telemetry.addData("Servo Position", Gripper.getPosition());
 //        telemetry.addData("Target Power", tgtPower);
@@ -43,5 +41,14 @@ public class GripperTest extends LinearOpMode {
         telemetry.update();
         }
 
+    }
+    public void closeGripper(Servo gripper){
+        telemetry.addLine("Closing Gripper");
+        gripper.setPosition(0);
+    }
+
+    public void OpenGripper(Servo gripper){
+        telemetry.addLine("Opening Gripper");
+        gripper.setPosition(0.4);
     }
 }
