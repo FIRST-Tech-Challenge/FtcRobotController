@@ -42,10 +42,20 @@ public class DebugTeleop extends OpMode {
         telemetry.addData("Left Bumper", speedDownInput);
         telemetry.addLine();
 
-        double inputAngle = Math.atan2(moveYInput, moveXInput);
-        double movementAngle = Math.toDegrees(inputAngle) - absoluteYaw;
-        double verticalMovePower = Math.cos(Math.toRadians(movementAngle));
-        double horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
+        double verticalMovePower;
+        double horizontalMovePower;
+        double inputAngle;
+        double movementAngle;
+
+        if (moveYInput == 0 && moveXInput == 0) {
+            verticalMovePower = 0;
+            horizontalMovePower = 0;
+        } else {
+            inputAngle = Math.atan2(moveYInput, moveXInput);
+            movementAngle = (Math.toDegrees(inputAngle) - 90) + absoluteYaw;
+            verticalMovePower = Math.cos(Math.toRadians(movementAngle));
+            horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
+        }
 
         telemetry.addLine("--- Field Relative Calculations ---");
         telemetry.addData("Input Angle", inputAngle);
