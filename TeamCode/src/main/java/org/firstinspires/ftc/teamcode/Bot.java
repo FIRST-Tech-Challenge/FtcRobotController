@@ -35,7 +35,7 @@ public class Bot {
     //Statistics for measurements
     static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
     private static final int TICKS_PER_REV = 1440;
-    private static final double ARM_GEAR_RATIO = 1.0;
+    private static final double ARM_GEAR_RATIO = 28/8;
     private static final double DISTANCE_PER_REV = 10.0;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -155,9 +155,7 @@ public class Bot {
      * Run extention arm
      * @param power
      */
-    public void setExtendPower(double power){
-        extendArmMotor.setPower(power);
-    }
+    public void setExtendPower(double power){ extendArmMotor.setPower(power);}
 
     public double getArmPosition(){
         int currentTicks = extendArmMotor.getCurrentPosition();
@@ -183,25 +181,19 @@ public class Bot {
      * Run Pivot Motor
      * @param power
      */
-    public void setPivotPower(double power){
-        armPivotMotor.setPower(power);
-    }
+    public void setPivotPower(double power){ armPivotMotor.setPower(power);}
 
     /**
      * Get posiiton of extention motor
      * @return encoder tick of extention motor
      */
-    public double getExtendPos(){
-        return extendArmMotor.getCurrentPosition();
-    }
+    public double getExtendPos(){ return extendArmMotor.getCurrentPosition();}
 
     /**
      * Get position of pivot motor
      * @return encoder tick of pivot motor
      */
-    public double getPivotArmPos(){
-        return armPivotMotor.getCurrentPosition();
-    }
+    public double getPivotArmPos(){ return armPivotMotor.getCurrentPosition();}
 
     /**
      * Get position of left lift motor
