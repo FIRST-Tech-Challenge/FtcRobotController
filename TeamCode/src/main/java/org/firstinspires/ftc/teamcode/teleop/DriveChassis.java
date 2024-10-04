@@ -16,9 +16,9 @@ public class DriveChassis {
         HardwareMap hardwareMap = opMode.hardwareMap;
 
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBackMotor = hardwareMap.get(DcMotorEx.class, "leftBack");
+        leftBackMotor = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, "rightFront");
-        rightBackMotor = hardwareMap.get(DcMotorEx.class, "rightBack");
+        rightBackMotor = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(
