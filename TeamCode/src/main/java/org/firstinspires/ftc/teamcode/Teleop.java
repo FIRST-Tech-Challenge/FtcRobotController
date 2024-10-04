@@ -27,10 +27,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "TeleOp", group = "TeleOp")
 public class Teleop extends LinearOpMode {
 
-        private static final double H = 12.0;
-
         private static final double MAX_EXTEND = 1200;
         private static final double MAX_PIVOT = 1200;
+
     @Override
     public void runOpMode() throws InterruptedException {
         Bot bot = new Bot(this);
@@ -61,10 +60,12 @@ public class Teleop extends LinearOpMode {
                 bot.setIntakePosition(0.0);
             }
 
+            //mechanum drive equations for powering each motor
             double frontLeftPower = y + x + pivot;
             double backLeftPower =  y - x + pivot;
             double frontRightPower = y - x - pivot;
             double backRightPower = y + x - pivot;
+
             if(rightLiftTrigger > 0.1){
                 bot.setLift(1.0);//this makes it go down
             }
