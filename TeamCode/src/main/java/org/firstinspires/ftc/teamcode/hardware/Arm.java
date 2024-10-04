@@ -1,4 +1,6 @@
-package firstinspires.ftc.teamcode.hardware;
+package org.firstinspires.ftc.teamcode.hardware;
+
+import java.util.HashSet;
 
 import com.qualcomm.robotcore.hardware.*;
 

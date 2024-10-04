@@ -17,7 +17,7 @@ public class FileManager {
      * @param inputString The String that is written to the file
      * @return Whether the String was successfully written to the file.
      * @throws FileAlreadyExistsException Failed to create the output file due to it already existing.
-     * @throws IOException Failed to create or write to the output file. 
+     * @throws IOException Failed to create or write to the output file.
      */
     public static boolean writeToFile(Path fileName, String inputString) throws FileAlreadyExistsException, IOException {
         // If this season's directory does not exist, create it.
@@ -43,7 +43,7 @@ public class FileManager {
 
     /**
      * Read a text file inside this season's directory.
-     * 
+     *
      * @param fileName
      * @return The String contained within the text file.
      *         If an error occurs, null is returned.

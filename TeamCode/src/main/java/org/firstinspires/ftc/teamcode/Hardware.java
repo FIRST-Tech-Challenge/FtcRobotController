@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.vision.*;
 
+import org.firstinspires.ftc.teamcode.hardware.*;
+
 public class Hardware {
     // The opMode to access the hardware map from.
     private final OpMode OP_MODE;
@@ -32,15 +34,13 @@ public class Hardware {
         this.OP_MODE = opMode;
         autoSleepEnabled = true;
 
+        COLOR_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "color_switch");
+        SIDE_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "side_switch");
+
         VISION_PORTAL = new VisionPortal.Builder()
                         .setCamera(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"))
                         .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                         .build();
-        
-                        
-
-        COLOR_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "color_switch");
-        SIDE_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "side_switch");
 
         initWheels();
         initArm();

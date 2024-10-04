@@ -27,6 +27,8 @@ public class Auto extends LinearOpMode {
 
         telemetry.addData("Intial position:", teamColor.name() + ' ' + teamSide.name());
 
+        telemetry.addData("Intial position:", teamColor.name() + ' ' + teamSide.name());
+
         // Wait until the player press the start button
         waitForStart();
     }
