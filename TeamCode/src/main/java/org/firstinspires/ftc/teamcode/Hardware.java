@@ -7,15 +7,19 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.vision.*;
 
 public class Hardware {
+    // The opMode to access the hardware map from.
     private final OpMode OP_MODE;
-    // Whether the robot will automatically sleep after each command
-    // Only applicable in LinearOpMode
+
+    // Whether the robot will automatically sleep after each command.
+    // Only applicable in LinearOpMode.
     private boolean autoSleepEnabled;
 
+    /* Camera variables */
     private final VisionPortal VISION_PORTAL;
     private static final int RESOLUTION_WIDTH = 100;
     private static final int RESOLUTION_HEIGHT = 100;
 
+    /* Robot systems */
     private final Mecanum MECANUM;
     private final Arm ARM;
 
