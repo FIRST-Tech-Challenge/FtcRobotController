@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
 
 @TeleOp(name = "Pedro Pathing TeleOp", group = "Test")
 public class TeleOpDrive extends OpMode {
@@ -20,6 +21,8 @@ public class TeleOpDrive extends OpMode {
     private DcMotorEx leftRear;
     private DcMotorEx rightFront;
     private DcMotorEx rightRear;
+
+    private DashboardPoseTracker dashboardPoseTracker;
 
     /**
      * This initializes the drive motors as well as the Follower and motion Vectors.
