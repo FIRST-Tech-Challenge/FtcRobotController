@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drivetrain;
+package org.firstinspires.ftc.teamcode.teleop;
 
 import androidx.annotation.NonNull;
 
@@ -32,6 +32,8 @@ import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -48,6 +50,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -55,7 +58,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class MecanumDrive {
+@TeleOp(name="MechDrive")
+public class MecanumDrive extends LinearOpMode {
+    @Override
+    public void runOpMode() throws InterruptedException {
+        controller = new GamepadEvents(gamepad1);
+    }
+
     public static class Params {
 
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
@@ -90,6 +99,8 @@ public final class MecanumDrive {
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
+
+        private GamepadEvents controller;
     }
 
     public static Params PARAMS = new Params();
@@ -107,7 +118,7 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+//    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     public final VoltageSensor voltageSensor;
 
@@ -125,19 +136,19 @@ public final class MecanumDrive {
 
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftBack, rightBack, rightFront;
-        public final IMU imu;
+//        public final IMU imu;
 
         private int lastLeftFrontPos, lastLeftBackPos, lastRightBackPos, lastRightFrontPos;
         private Rotation2d lastHeading;
-        private boolean initialized;
+//        private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
+//            leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
+//            leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
+//            rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
+//            rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
 
-            imu = lazyImu.get();
+//            imu = lazyImu.get();
 
 
         }
@@ -156,9 +167,7 @@ public final class MecanumDrive {
 
             Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
 
-            if (!initialized) {
-                initialized = true;
-
+            while(!initialized()) {
                 lastLeftFrontPos = leftFrontPosVel.position;
                 lastLeftBackPos = leftBackPosVel.position;
                 lastRightBackPos = rightBackPosVel.position;
@@ -217,10 +226,10 @@ public final class MecanumDrive {
 
 
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "FLM");
-        leftBack = hardwareMap.get(DcMotorEx.class, "BLM");
-        rightBack = hardwareMap.get(DcMotorEx.class, "BRM");
-        rightFront = hardwareMap.get(DcMotorEx.class, "FRM");
+//        leftFront = hardwareMap.get(DcMotorEx.class, "FLM");
+//        leftBack = hardwareMap.get(DcMotorEx.class, "BLM");
+//        rightBack = hardwareMap.get(DcMotorEx.class, "BRM");
+//        rightFront = hardwareMap.get(DcMotorEx.class, "FRM");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -229,8 +238,8 @@ public final class MecanumDrive {
 
         // TODO: reverse motor directions if needed
         //maybe move this to the controller
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
