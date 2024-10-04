@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.vision.*;
 

@@ -22,8 +22,10 @@ public class Auto extends LinearOpMode {
     public void runOpMode() {
         hardware = new Hardware(this);
     
-        teamColor = (robot.getColorSwitch().getState()) ? TeamColor.RED : TeamColor.BLUE;
-        teamSide = (robot.getSideSwitch().getState()) ? TeamSide.FAR : TeamSide.NEAR;
+        teamColor = (hardware.getColorSwitch().getState()) ? TeamColor.RED : TeamColor.BLUE;
+        teamSide = (hardware.getSideSwitch().getState()) ? TeamSide.FAR : TeamSide.NEAR;
+
+        telemetry.addData("Intial position:", teamColor.name() + ' ' + teamSide.name());
 
         // Wait until the player press the start button
         waitForStart();
