@@ -32,10 +32,10 @@ public class OdometryPod extends SubsystemBase {
 
     /** Place code here to initialize subsystem */
     public OdometryPod() {
-
-        leftEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"leftEncoder");
-        rightEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap, "rightEncoder");
-        frontEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap, "frontEncoder");
+        // change back when we have the digital chicken octoquad working with the pods
+        leftEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap,"leftFrontDrive");//"leftEncoder");
+        rightEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap, "leftBackDrive");//"rightEncoder");
+        frontEncoderPod = new MotorEx(RobotContainer.ActiveOpMode.hardwareMap, "rightFrontDrive");//"frontEncoder");
 
         leftEncoderPod.setInverted(true);
 

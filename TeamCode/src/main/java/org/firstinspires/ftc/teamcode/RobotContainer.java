@@ -17,8 +17,10 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
+import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.Subsystems.OdometryPod;
 import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
+import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 //import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
@@ -44,10 +46,8 @@ public class RobotContainer {
     public static Gyro gyro;
     public static OdometryPod odometryPod;
     public static Odometry odometry;
-    public static Camera frontCamera;
-    // public static Claw claw;
-    // public static LinearSlideSubsystem linearSlide;
-
+    //public static Camera frontCamera;
+    public static LinearSlide linearSlide;
 
     // Robot initialization for teleop - Run this once at start of teleop
     public static void Init_TeleOp(CommandOpMode mode) {
@@ -62,6 +62,16 @@ public class RobotContainer {
         // Note: since reset is very simple command, we can just use 'InstandCommand'
         // instead of creating a full command, just to run one line of java code.
         driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
+
+
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_MEDIUM)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
+
         // driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new ToggleClaw());
 
         // example of binding more complex command to a button. This would be in a separate command file
@@ -109,7 +119,8 @@ public class RobotContainer {
         odometryPod = new OdometryPod();
         odometry = new Odometry();
         drivesystem = new DriveTrain();
-        frontCamera = new Camera("CamyCamy");
+        //frontCamera = new Camera("CamyCamy");
+        linearSlide = new LinearSlide();
         // insert other subsystems here
         // claw = new Claw();
 
