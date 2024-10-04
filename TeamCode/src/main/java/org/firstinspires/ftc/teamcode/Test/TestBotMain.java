@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -48,8 +49,9 @@ public class TestBotMain extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
 
-    private DcMotor grabberMotor;
+//    private DcMotor grabberMotor;
 
+    private Servo axon1;
 
 
     @Override
@@ -62,7 +64,9 @@ public class TestBotMain extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        grabberMotor = hardwareMap.get(DcMotor.class, "grabberMotor");
+//        grabberMotor = hardwareMap.get(DcMotor.class, "grabberMotor");
+
+        axon1 = hardwareMap.get(Servo.class, "axon1");
 
         double direction = 1;
 
@@ -114,21 +118,28 @@ public class TestBotMain extends LinearOpMode {
 
             // grabber
 
-            if(gamepad1.right_trigger != 0) {
-                grabberMotor.setTargetPosition(1);
-                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
-                telemetry.update();
-            }
-            else if(gamepad1.left_trigger != 0) {
-                grabberMotor.setTargetPosition(0);
-                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
-                telemetry.update();
+//            if(gamepad1.right_trigger != 0) {
+//                grabberMotor.setTargetPosition(1);
+//                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
+//                telemetry.update();
+//            }
+//            else if(gamepad1.left_trigger != 0) {
+//                grabberMotor.setTargetPosition(0);
+//                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
+//                telemetry.update();
+//
+//            }
+//            else {
+//                grabberMotor.setPower(0);
+//            }
 
-            }
-            else {
-                grabberMotor.setPower(0);
+            if(gamepad1.a) {
+                axon1.setPosition(1);
             }
 
+            if(gamepad1.b) {
+                axon1.setPosition(0);
+            }
 
         }
     }
