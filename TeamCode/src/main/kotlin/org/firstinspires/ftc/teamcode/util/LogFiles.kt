@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ObjectWriter
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier
@@ -15,7 +14,7 @@ import com.qualcomm.robotcore.util.WebHandlerManager
 import org.firstinspires.ftc.ftccommon.external.WebHandlerRegistrar
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 import org.firstinspires.ftc.teamcode.config.DriveConstants
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.drive.CDMecanumDrive
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer
 import fi.iki.elonen.NanoHTTPD
 import java.io.File
@@ -232,22 +231,19 @@ object LogFiles {
         var maxAngVel: Double = DriveConstants.MAX_ANG_VEL
         var maxAngAccel: Double = DriveConstants.MAX_ANG_ACCEL
 
-        var mecTransP: Double = SampleMecanumDrive.TRANSLATIONAL_PID.kP
-        var mecTransI: Double = SampleMecanumDrive.TRANSLATIONAL_PID.kI
-        var mecTransD: Double = SampleMecanumDrive.TRANSLATIONAL_PID.kD
-        var mecHeadingP: Double = SampleMecanumDrive.HEADING_PID.kP
-        var mecHeadingI: Double = SampleMecanumDrive.HEADING_PID.kI
-        var mecHeadingD: Double = SampleMecanumDrive.HEADING_PID.kD
-        var mecLateralMultiplier: Double = SampleMecanumDrive.LATERAL_MULTIPLIER
+        var mecTransP: Double = CDMecanumDrive.TRANSLATIONAL_PID.kP
+        var mecTransI: Double = CDMecanumDrive.TRANSLATIONAL_PID.kI
+        var mecTransD: Double = CDMecanumDrive.TRANSLATIONAL_PID.kD
+        var mecHeadingP: Double = CDMecanumDrive.HEADING_PID.kP
+        var mecHeadingI: Double = CDMecanumDrive.HEADING_PID.kI
+        var mecHeadingD: Double = CDMecanumDrive.HEADING_PID.kD
+        var mecLateralMultiplier: Double = CDMecanumDrive.LATERAL_MULTIPLIER
 
         var trackingTicksPerRev: Double = StandardTrackingWheelLocalizer.TICKS_PER_REV
         var trackingWheelRadius: Double = StandardTrackingWheelLocalizer.WHEEL_RADIUS
         var trackingGearRatio: Double = StandardTrackingWheelLocalizer.GEAR_RATIO
         var trackingLateralDistance: Double = StandardTrackingWheelLocalizer.LATERAL_DISTANCE
         var trackingForwardOffset: Double = StandardTrackingWheelLocalizer.FORWARD_OFFSET
-
-        var LOGO_FACING_DIR: RevHubOrientationOnRobot.LogoFacingDirection = DriveConstants.LOGO_FACING_DIR
-        var USB_FACING_DIR: RevHubOrientationOnRobot.UsbFacingDirection = DriveConstants.USB_FACING_DIR
 
         var nsTimes: MutableList<Long> = java.util.ArrayList<Long>()
 

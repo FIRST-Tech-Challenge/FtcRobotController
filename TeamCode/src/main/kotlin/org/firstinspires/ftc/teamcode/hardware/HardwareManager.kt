@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.robotcore.hardware.ColorSensor
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.DistanceSensor
 import com.qualcomm.robotcore.hardware.HardwareMap
-import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.TouchSensor
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.teamcode.config.CDConfig
+import org.firstinspires.ftc.teamcode.util.DeadWheelEncoder
 import org.firstinspires.ftc.teamcode.util.Encoder
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil
 
@@ -17,12 +21,18 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     private lateinit var leftRearMotor: DcMotorEx
     private lateinit var rightRearMotor: DcMotorEx
     private lateinit var rightFrontMotor: DcMotorEx
-    lateinit var motors: List<DcMotorEx>
-    lateinit var grabberServo: Servo
-    lateinit var grabberExtendServo: Servo
-    lateinit var leftEncoder: Encoder
-    lateinit var rightEncoder: Encoder
-    lateinit var frontEncoder: Encoder
+
+    lateinit var driveMotors: List<DcMotorEx>
+
+    // Dead wheels
+    var leftEncoder: DeadWheelEncoder? = null
+    var rightEncoder: DeadWheelEncoder? = null
+    var rearEncoder: DeadWheelEncoder? = null
+
+    // Platter sensors
+    var touchSensor: TouchSensor? = null
+    var colorSensor: ColorSensor? = null
+    var distanceSensor: DistanceSensor? = null
 
     init {
         systemCheck(hardware)
@@ -30,7 +40,7 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
         initializeLynxModules(hardware)
         initializeWheelLocalizers(hardware)
         initializeDriveMotors(hardware)
-        initializeServos(hardware)
+        initializeSensors(hardware)
     }
 
     private fun systemCheck(hardware: HardwareMap)  {
@@ -48,15 +58,19 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     }
 
     private fun initializeWheelLocalizers(hardware: HardwareMap) {
-        leftEncoder = Encoder(
-            hardware.get(DcMotorEx::class.java, config.wheelLocalizers.leftEncoder)
-        )
-        rightEncoder = Encoder(
-            hardware.get(DcMotorEx::class.java, config.wheelLocalizers.rightEncoder)
-        )
-        frontEncoder = Encoder(
-            hardware.get(DcMotorEx::class.java, config.wheelLocalizers.frontEncoder)
-        )
+        val leftEncoderMotor = safelyGetHardware<DcMotorEx>(hardware, config.driveMotors.rightRear)
+        val rightEncoderMotor = safelyGetHardware<DcMotorEx>(hardware, config.driveMotors.rightFront)
+        val rearEncoderMotor = safelyGetHardware<DcMotorEx>(hardware, config.driveMotors.leftRear)
+
+        // If any of the encoders are missing, don't initialize any of them
+        if (leftEncoderMotor == null || rightEncoderMotor == null || rearEncoderMotor == null) return
+
+        leftEncoder = DeadWheelEncoder(leftEncoderMotor)
+        rightEncoder = DeadWheelEncoder(rightEncoderMotor)
+        rearEncoder = DeadWheelEncoder(rearEncoderMotor)
+
+        leftEncoder!!.direction = Encoder.Direction.REVERSE
+        rightEncoder!!.direction = Encoder.Direction.REVERSE
     }
 
     private fun initializeDriveMotors(hardware: HardwareMap) {
@@ -65,27 +79,41 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
         rightRearMotor = hardware.get(DcMotorEx::class.java, config.driveMotors.rightRear)
         rightFrontMotor = hardware.get(DcMotorEx::class.java, config.driveMotors.rightFront)
 
-        leftFrontMotor.direction = DcMotorSimple.Direction.FORWARD
-        leftRearMotor.direction = DcMotorSimple.Direction.FORWARD
-        rightRearMotor.direction = DcMotorSimple.Direction.REVERSE
-        rightFrontMotor.direction = DcMotorSimple.Direction.REVERSE
+        leftFrontMotor.direction = DcMotorSimple.Direction.REVERSE
+        leftRearMotor.direction = DcMotorSimple.Direction.REVERSE
+        rightRearMotor.direction = DcMotorSimple.Direction.FORWARD
+        rightFrontMotor.direction = DcMotorSimple.Direction.FORWARD
 
-        motors = listOf(leftFrontMotor, leftRearMotor, rightRearMotor, rightFrontMotor)
+        driveMotors = listOf(leftFrontMotor, leftRearMotor, rightRearMotor, rightFrontMotor)
 
-        for (motor in motors) {
+        for (motor in driveMotors) {
             val motorConfigurationType = motor.motorType.clone()
             motorConfigurationType.achieveableMaxRPMFraction = 1.0
             motor.motorType = motorConfigurationType
 
             // Set zero power behavior
             motor.zeroPowerBehavior = ZeroPowerBehavior.BRAKE
+
+            // Run without encoder since we're using dead wheels
+            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
     }
 
-    private fun initializeServos(hardware: HardwareMap) {
-        // TODO: For example purposes only, replace these with real hardware
-        grabberExtendServo = hardware.get(Servo::class.java, "servoExtend")
-        grabberServo = hardware.get(Servo::class.java, "servoGrab")
+    private fun initializeSensors(hardware: HardwareMap) {
+        touchSensor = safelyGetHardware<TouchSensor>(hardware, "touchSensor")
+        colorSensor = safelyGetHardware<ColorSensor>(hardware, "colorSensor")
+        distanceSensor = safelyGetHardware<DistanceSensor>(hardware, "distanceSensor")
+    }
+
+    private inline fun <reified T> safelyGetHardware(hardware: HardwareMap, deviceName: String?): T? {
+        if (deviceName.isNullOrBlank()) return null
+
+        return try {
+            hardware.get(T::class.java, deviceName)
+        } catch (e: Exception) {
+            // Ignore exception and return null
+            null
+        }
     }
 
     val rawExternalHeading: Double

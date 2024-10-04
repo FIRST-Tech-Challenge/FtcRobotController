@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.localization.Localizer
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint
@@ -34,7 +35,7 @@ import kotlin.math.abs
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-class SampleMecanumDrive(private val hardware: HardwareManager) :
+open class CDMecanumDrive(private val hardware: HardwareManager) :
     MecanumDrive(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER) {
     private val trajectorySequenceRunner: TrajectorySequenceRunner
 
@@ -43,13 +44,19 @@ class SampleMecanumDrive(private val hardware: HardwareManager) :
         Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5
     )
 
-    private val lastEncPositions: MutableList<Int> = java.util.ArrayList<Int>()
-    private val lastEncVels: MutableList<Int> = java.util.ArrayList<Int>()
+    private val lastEncPositions: MutableList<Int> = ArrayList()
+    private val lastEncVels: MutableList<Int> = ArrayList()
+
+    override var localizer = StandardTrackingWheelLocalizer(
+        hardware = hardware,
+        lastEncPositions = lastEncPositions,
+        lastEncVels = lastEncVels
+    ) as Localizer
 
     init {
         // TODO: reverse any motors using DcMotor.setDirection()
-        val lastTrackingEncPositions: List<Int> = java.util.ArrayList<Int>()
-        val lastTrackingEncVels: List<Int> = java.util.ArrayList<Int>()
+        val lastTrackingEncPositions = mutableListOf<Int>()
+        val lastTrackingEncVels = mutableListOf<Int>()
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
@@ -158,7 +165,7 @@ class SampleMecanumDrive(private val hardware: HardwareManager) :
         lastEncPositions.clear()
 
         val wheelPositions: MutableList<Double> = java.util.ArrayList<Double>()
-        for (motor in hardware.motors) {
+        for (motor in hardware.driveMotors) {
             val position: Int = motor.currentPosition
             lastEncPositions.add(position)
             wheelPositions.add(encoderTicksToInches(position.toDouble()))
@@ -169,8 +176,8 @@ class SampleMecanumDrive(private val hardware: HardwareManager) :
     override fun getWheelVelocities(): List<Double> {
         lastEncVels.clear()
 
-        val wheelVelocities: MutableList<Double> = java.util.ArrayList<Double>()
-        for (motor in hardware.motors) {
+        val wheelVelocities = mutableListOf<Double>()
+        for (motor in hardware.driveMotors) {
             val vel = motor.velocity.toInt()
             lastEncVels.add(vel)
             wheelVelocities.add(encoderTicksToInches(vel.toDouble()))
@@ -190,9 +197,9 @@ class SampleMecanumDrive(private val hardware: HardwareManager) :
 
     companion object {
         var TRANSLATIONAL_PID: PIDCoefficients = PIDCoefficients(0.0, 0.0, 0.0)
-        var HEADING_PID: PIDCoefficients = PIDCoefficients(0.0, 0.0, 0.0)
+        var HEADING_PID: PIDCoefficients = PIDCoefficients(8.0, 0.0, 0.0)
 
-        var LATERAL_MULTIPLIER: Double = 1.0
+        var LATERAL_MULTIPLIER: Double = 1.31868
 
         var VX_WEIGHT: Double = 1.0
         var VY_WEIGHT: Double = 1.0

@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.config.CDConfig
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.drive.CDMecanumDrive
 import org.firstinspires.ftc.teamcode.hardware.HardwareManager
 
 /*
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareManager
 class TurnTest : LinearOpMode() {
     @kotlin.Throws(java.lang.InterruptedException::class)
     override fun runOpMode() {
-        val drive = SampleMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
+        val drive = CDMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
 
         waitForStart()
 

@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor
 import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.config.CDConfig
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.drive.CDMecanumDrive
 import org.firstinspires.ftc.teamcode.hardware.HardwareManager
 
 /*
@@ -42,16 +42,9 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareManager
 @Config
 @Autonomous(group = "drive")
 class ManualFeedforwardTuner : LinearOpMode() {
-    private val dashboard: FtcDashboard = FtcDashboard.getInstance()
+    private val dashboard = FtcDashboard.getInstance()
 
-    private lateinit var drive: SampleMecanumDrive
-
-    internal enum class Mode {
-        DRIVER_MODE,
-        TUNING_MODE
-    }
-
-    private var mode: Mode? = null
+    private var drive: CDMecanumDrive? = null
 
     override fun runOpMode() {
         if (RUN_USING_ENCODER) {
@@ -63,11 +56,9 @@ class ManualFeedforwardTuner : LinearOpMode() {
 
         val telemetry: Telemetry = MultipleTelemetry(this.telemetry, dashboard.telemetry)
 
-        drive = SampleMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
+        drive = CDMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
 
         val voltageSensor: VoltageSensor = hardwareMap.voltageSensor.iterator().next()
-
-        mode = Mode.TUNING_MODE
 
         val clock: NanoClock = NanoClock.system()
 
@@ -80,66 +71,41 @@ class ManualFeedforwardTuner : LinearOpMode() {
         if (isStopRequested) return
 
         var movingForwards = true
-        var activeProfile: MotionProfile = generateProfile(true)
-        var profileStart: Double = clock.seconds()
-
+        var activeProfile = generateProfile(true)
+        var profileStart = clock.seconds()
 
         while (!isStopRequested) {
-            telemetry.addData("mode", mode)
+            // calculate and set the motor power
+            val profileTime: Double = clock.seconds() - profileStart
 
-            when (mode) {
-                Mode.TUNING_MODE -> {
-                    if (gamepad1.y) {
-                        mode = Mode.DRIVER_MODE
-                    }
-
-                    // calculate and set the motor power
-                    val profileTime: Double = clock.seconds() - profileStart
-
-                    if (profileTime > activeProfile.duration()) {
-                        // generate a new profile
-                        movingForwards = !movingForwards
-                        activeProfile = generateProfile(movingForwards)
-                        profileStart = clock.seconds()
-                    }
-
-                    val motionState: MotionState = activeProfile[profileTime]
-                    val targetPower: Double =
-                        Kinematics.calculateMotorFeedforward(motionState.v, motionState.a, kV, kA, kStatic)
-
-                    val nominalVoltage = 12.0
-                    val voltage: Double = voltageSensor.voltage
-                    drive.setDrivePower(Pose2d(nominalVoltage / voltage * targetPower, 0.0, 0.0))
-                    drive.updatePoseEstimate()
-
-                    val poseVelo: Pose2d = drive.poseVelocity!!
-                    val currentVelo: Double = poseVelo.x
-
-                    // update telemetry
-                    telemetry.addData("targetVelocity", motionState.v)
-                    telemetry.addData("measuredVelocity", currentVelo)
-                    telemetry.addData("error", motionState.v - currentVelo)
-                }
-
-                Mode.DRIVER_MODE -> {
-                    if (gamepad1.b) {
-                        mode = Mode.TUNING_MODE
-                        movingForwards = true
-                        activeProfile = generateProfile(movingForwards)
-                        profileStart = clock.seconds()
-                    }
-
-                    drive.setWeightedDrivePower(
-                        Pose2d(
-                            (-gamepad1.left_stick_y).toDouble(),
-                            (-gamepad1.left_stick_x).toDouble(),
-                            (-gamepad1.right_stick_x).toDouble()
-                        )
-                    )
-                }
-
-                null -> TODO()
+            if (profileTime > activeProfile.duration()) {
+                // generate a new profile
+                movingForwards = !movingForwards
+                activeProfile = generateProfile(movingForwards)
+                profileStart = clock.seconds()
             }
+
+            val motionState: MotionState = activeProfile[profileTime]
+            val targetPower: Double =
+                Kinematics.calculateMotorFeedforward(motionState.v, motionState.a, kV, kA, kStatic)
+
+            val nominalVoltage = 12.0
+            val voltage: Double = voltageSensor.voltage
+
+            drive?.setDrivePower(Pose2d(nominalVoltage / voltage * targetPower, 0.0, 0.0))
+            drive?.updatePoseEstimate()
+
+            if (drive?.poseVelocity != null) {
+                val currentVelo = drive?.poseVelocity!!.x
+
+                // update telemetry
+                telemetry.addData("targetVelocity", motionState.v)
+                telemetry.addData("measuredVelocity", currentVelo)
+                telemetry.addData("error", motionState.v - currentVelo)
+            } else {
+                telemetry.addData("poseVelocity", false)
+            }
+
             telemetry.update()
         }
     }

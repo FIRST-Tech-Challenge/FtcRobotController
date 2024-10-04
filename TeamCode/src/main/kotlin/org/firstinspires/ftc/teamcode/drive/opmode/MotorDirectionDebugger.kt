@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.config.CDConfig
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.drive.CDMecanumDrive
 import org.firstinspires.ftc.teamcode.hardware.HardwareManager
 
 /**
@@ -47,7 +47,7 @@ class MotorDirectionDebugger : LinearOpMode() {
     override fun runOpMode() {
         val telemetry: Telemetry = MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().telemetry)
 
-        val drive = SampleMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
+        val drive = CDMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
 
         telemetry.addLine("Press play to begin the debugging opmode")
         telemetry.update()

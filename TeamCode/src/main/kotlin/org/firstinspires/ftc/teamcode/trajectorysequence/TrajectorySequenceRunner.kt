@@ -87,6 +87,10 @@ class TrajectorySequenceRunner(
         val packet = TelemetryPacket()
         val fieldOverlay = packet.fieldOverlay()
 
+        if (currentTrajectorySequence == null) {
+            return null
+        }
+
         if (currentSegmentIndex >= currentTrajectorySequence?.size()!!) {
             for (marker in remainingMarkers) {
                 marker.callback.onMarkerReached()
@@ -95,6 +99,8 @@ class TrajectorySequenceRunner(
             remainingMarkers.clear()
 
             currentTrajectorySequence = null
+
+            return null
         }
 
         val now: Double = clock.seconds()

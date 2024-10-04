@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.config.CDConfig
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.drive.CDMecanumDrive
 import org.firstinspires.ftc.teamcode.hardware.HardwareManager
 
 /**
@@ -28,7 +28,7 @@ class MaxAngularVeloTuner : LinearOpMode() {
 
     @kotlin.Throws(java.lang.InterruptedException::class)
     override fun runOpMode() {
-        val drive = SampleMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
+        val drive = CDMecanumDrive(HardwareManager(CDConfig(), hardwareMap))
 
         val telemetry: Telemetry = MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().telemetry)
 

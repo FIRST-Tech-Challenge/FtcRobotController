@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.drive
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.util.Encoder
+import org.firstinspires.ftc.teamcode.hardware.HardwareManager
 
 /*
  * Sample tracking wheel localizer implementation assuming the standard configuration:
@@ -22,7 +20,7 @@ import org.firstinspires.ftc.teamcode.util.Encoder
  */
 @Config
 class StandardTrackingWheelLocalizer(
-    hardwareMap: HardwareMap,
+    hardware: HardwareManager,
     private val lastEncPositions: MutableList<Int>,
     private val lastEncVels: MutableList<Int>
 ) :
@@ -33,31 +31,34 @@ class StandardTrackingWheelLocalizer(
             Pose2d(FORWARD_OFFSET, 0.0, Math.toRadians(90.0)) // front
         )
     ) {
-    private val leftEncoder = Encoder(hardwareMap.get(DcMotorEx::class.java, "leftEncoder"))
-    private val rightEncoder = Encoder(hardwareMap.get(DcMotorEx::class.java, "rightEncoder"))
-    private val frontEncoder = Encoder(hardwareMap.get(DcMotorEx::class.java, "frontEncoder"))
+    private val leftEncoder = hardware.leftEncoder!!
+    private val rightEncoder = hardware.rightEncoder!!
+    private val rearEncoder = hardware.rearEncoder!!
+
+    private var xMultiplier = 0.97637657
+    private var yMultiplier = 1.02772238
 
     override fun getWheelPositions(): List<Double> {
-        val leftPos: Int = leftEncoder.currentPosition
-        val rightPos: Int = rightEncoder.currentPosition
-        val frontPos: Int = frontEncoder.currentPosition
+        val leftPos = leftEncoder.currentPosition
+        val rightPos = rightEncoder.currentPosition
+        val frontPos = rearEncoder.currentPosition
 
         lastEncPositions.clear()
-        lastEncPositions.add(leftPos)
-        lastEncPositions.add(rightPos)
-        lastEncPositions.add(frontPos)
+        lastEncPositions.add(leftPos.toInt())
+        lastEncPositions.add(rightPos.toInt())
+        lastEncPositions.add(frontPos.toInt())
 
         return listOf(
-            encoderTicksToInches(leftPos.toDouble()),
-            encoderTicksToInches(rightPos.toDouble()),
-            encoderTicksToInches(frontPos.toDouble())
+            encoderTicksToInches(leftPos * xMultiplier),
+            encoderTicksToInches(rightPos * xMultiplier),
+            encoderTicksToInches(frontPos * yMultiplier)
         )
     }
 
-    fun wheelVelocities(): List<Double> {
+    override fun getWheelVelocities(): List<Double> {
         val leftVel = leftEncoder.correctedVelocity.toInt()
         val rightVel = rightEncoder.correctedVelocity.toInt()
-        val frontVel = frontEncoder.correctedVelocity.toInt()
+        val frontVel = rearEncoder.correctedVelocity.toInt()
 
         lastEncVels.clear()
         lastEncVels.add(leftVel)
@@ -65,19 +66,19 @@ class StandardTrackingWheelLocalizer(
         lastEncVels.add(frontVel)
 
         return listOf(
-            encoderTicksToInches(leftVel.toDouble()),
-            encoderTicksToInches(rightVel.toDouble()),
-            encoderTicksToInches(frontVel.toDouble())
+            encoderTicksToInches(leftVel.toDouble() * xMultiplier),
+            encoderTicksToInches(rightVel.toDouble() * xMultiplier),
+            encoderTicksToInches(frontVel.toDouble() * yMultiplier)
         )
     }
 
     companion object {
-        var TICKS_PER_REV: Double = 0.0
-        var WHEEL_RADIUS: Double = 2.0 // in
+        var TICKS_PER_REV: Double = 2000.0
+        var WHEEL_RADIUS: Double = 0.6299213 // in
         var GEAR_RATIO: Double = 1.0 // output (wheel) speed / input (encoder) speed
 
-        var LATERAL_DISTANCE: Double = 10.0 // in; distance between the left and right wheels
-        var FORWARD_OFFSET: Double = 4.0 // in; offset of the lateral wheel
+        var LATERAL_DISTANCE: Double = 8.6918432 // in; distance between the left and right wheels
+        var FORWARD_OFFSET: Double = -6.625 // in; offset of the lateral wheel
 
         fun encoderTicksToInches(ticks: Double): Double {
             return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV

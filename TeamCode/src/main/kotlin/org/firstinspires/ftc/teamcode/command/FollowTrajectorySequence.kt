@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.command
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.CommandBase
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.drive.CDMecanumDrive
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 
 class FollowTrajectorySequence(
-    private val mecanumDrive: SampleMecanumDrive,
+    private val mecanumDrive: CDMecanumDrive,
     private val sequence: TrajectorySequence
 ) : CommandBase() {
     override fun initialize() {
