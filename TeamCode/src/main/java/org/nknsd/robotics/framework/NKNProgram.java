@@ -12,11 +12,14 @@ import java.util.List;
 public abstract class NKNProgram {
 
     private final List<NKNComponent> componentList = new LinkedList<>();
+    private final List<NKNComponent> enabledTelemetryList = new LinkedList<>();
+
+
 
     /**
      * Implement this function with your code here to create your components
      */
-    public abstract void createComponents(List<NKNComponent> components);
+    public abstract void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled);
 //    {
         // Construct, link and load
         //      MyComponent myComponent = new MyComponent();
@@ -27,7 +30,7 @@ public abstract class NKNProgram {
 //    }
 
     public void init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
-        createComponents(componentList);
+        createComponents(componentList, enabledTelemetryList);
         for (NKNComponent component:componentList){
             if (!component.init(telemetry,hardwareMap,gamepad1,gamepad2)){
                 telemetry.addData("Status", "Failed on "+component.getName());
@@ -66,9 +69,20 @@ public abstract class NKNProgram {
         }
     }
 
+    private boolean isInTelemetryEnabledList(NKNComponent component) {
+        for (NKNComponent c: enabledTelemetryList) {
+            if (c.equals(component)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void doTelemetry(Telemetry telemetry) {
         for (NKNComponent component:componentList){
-            component.doTelemetry(telemetry);
+            if (isInTelemetryEnabledList(component)) {
+                component.doTelemetry(telemetry);
+            }
         }
         telemetry.update();
     }
