@@ -15,10 +15,12 @@ public class Elevator {
     private double ELEVATOR_MOTOR_POWER = 0.5;
 
     private DcMotor elevatorMotor = null;
+    private Bucket bucket = null;
 
     public Elevator(HardwareMap hardwareMap) {
         elevatorMotor = hardwareMap.dcMotor.get(ELEVATOR_MOTOR_NAME);
         elevatorMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        bucket = new Bucket(hardwareMap);
     }
 
     public void update(Gamepad gamepad) {
@@ -29,6 +31,7 @@ public class Elevator {
             --power;
         }
         update(power);
+        bucket.update(gamepad);
     }
 
     public void update(double power) {
