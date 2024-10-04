@@ -11,6 +11,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "TeleOp", group = "TeleOp")
 public class Teleop extends LinearOpMode {
 
+        private static final double H = 12.0;
+
+        private static final double MAX_EXTEND = 1200;
+        private static final double MAX_PIVOT = 1200;
     @Override
     public void runOpMode() throws InterruptedException {
         Bot bot = new Bot(this);
@@ -21,7 +25,7 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x; // Counteract imperfect strafing
+            double x = gamepad1.left_stick_x; // Counteract imperfect strafing
             double pivot = -gamepad1.right_stick_x;
 
             double rightLiftTrigger = gamepad1.right_trigger; //rightTrigger is raising the lift
@@ -66,6 +70,30 @@ public class Teleop extends LinearOpMode {
                 backRightPower /= max;
             }
             bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+
+            //extend arm controls
+            if(gamepad1.right_bumper && bot.getExtendPos() < MAX_EXTEND){
+                bot.setExtendPower(1.0);
+            } else if (gamepad1.left_bumper && bot.getExtendPos() > 0){
+                bot.setExtendPower(-1.0);
+            } else {
+                bot.setExtendPower(0.0);
+            }
+
+            if(gamepad1.a && bot.getPivotArmPos() < MAX_PIVOT){
+                bot.setPivotPower(0.75);
+            } else if(gamepad1.b && bot.getPivotArmPos() > 0){
+                bot.setPivotPower(-0.75);
+            } else {
+                bot.setPivotPower(0.0);
+            }
+
+            //Telemetry Data
+            telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
+            telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
+            telemetry.addData("Current Left Lift Pos: ", bot.getLeftLiftPos());
+            telemetry.addData("Current Right Lift Pos: ", bot.getRightLiftPos());
+            telemetry.update();
         }
     }
 }
