@@ -40,8 +40,6 @@ public class Teleop extends OpMode {
             maxSpeed -= 0.1;
         speedDownInputLast = speedDownInput;
 
-
-
         double verticalMovePower = moveYInput;
         double horizontalMovePower = moveXInput;
         double turnPower = rotationInput;
@@ -72,6 +70,4 @@ public class Teleop extends OpMode {
         chassis.leftBackMotor.setVelocity(leftBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
         chassis.rightBackMotor.setVelocity(rightBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
     }
-
-
 }
