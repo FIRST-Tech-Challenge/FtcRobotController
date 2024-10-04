@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.utils.Numbers;
 
 public class DebugTeleop extends OpMode {
     private DriveChassis chassis;
 
     private YawPitchRollAngles orientation;
     private double yaw;
+    private double absoluteYaw;
 
     @Override
     public void init() {
@@ -19,6 +21,7 @@ public class DebugTeleop extends OpMode {
     public void loop() {
         orientation = chassis.imu.getRobotYawPitchRollAngles();
         yaw = orientation.getYaw();
+        absoluteYaw = Math.abs(yaw > 0 ? 360 - yaw : yaw);
 
         float moveXInput = gamepad1.left_stick_x;
         float moveYInput = -gamepad1.left_stick_y;
@@ -32,8 +35,11 @@ public class DebugTeleop extends OpMode {
         telemetry.addData("Right Stick", moveXInput + " / " + moveYInput);
         telemetry.addLine();
 
-        double verticalMovePower = moveYInput;
-        double horizontalMovePower = moveXInput;
+        double inputAngle = Math.atan2(moveYInput, moveXInput);
+        double movementAngle = Math.toDegrees(inputAngle) - absoluteYaw;
+        double verticalMovePower = Math.cos(Math.toRadians(movementAngle));
+        double horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
+
         double turnPower = rotationInput;
 
         double leftFPower = verticalMovePower + horizontalMovePower + turnPower;
