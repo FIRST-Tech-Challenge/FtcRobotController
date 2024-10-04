@@ -9,6 +9,8 @@ public class RobotTeleopMecanumDrive extends OpMode{
 
     /* Declare OpMode members. */
     public Mecanum drive;
+    public Drawer drawer;
+    public Elevator elevator;
     static final double DRIVE_SPEED = 1.0;
 
     /*
@@ -21,6 +23,9 @@ public class RobotTeleopMecanumDrive extends OpMode{
         drive.setTelemetry(telemetry);
         drive.setDriveSpeed(DRIVE_SPEED);
         drive.setDebug(true);
+
+        drawer = new Drawer(hardwareMap);
+        elevator = new Elevator(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press Play.");    //
@@ -47,6 +52,8 @@ public class RobotTeleopMecanumDrive extends OpMode{
     @Override
     public void loop() {
         drive.update(gamepad1);
+        drawer.update(gamepad2);
+        elevator.update(gamepad2);
     }
 
     /*

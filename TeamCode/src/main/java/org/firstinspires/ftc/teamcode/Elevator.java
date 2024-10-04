@@ -12,24 +12,21 @@ public class Elevator {
 
     private String ELEVATOR_MOTOR_NAME = "elevatorMotor";
 
-    private double ELEVATOR_MOTOR_POWER = 2.0;
+    private double ELEVATOR_MOTOR_POWER = 0.5;
 
     private DcMotor elevatorMotor = null;
 
     public Elevator(HardwareMap hardwareMap) {
         elevatorMotor = hardwareMap.dcMotor.get(ELEVATOR_MOTOR_NAME);
-    }
-
-    public void changeDirection(DcMotor.Direction direction) {
-        elevatorMotor.setDirection(direction);
+        elevatorMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void update(Gamepad gamepad) {
-        double power = ((gamepad.dpad_up || gamepad.dpad_down) ? 1 : 0);
-        if(gamepad.dpad_down){
-            changeDirection(DcMotor.Direction.REVERSE);
-        } else {
-            changeDirection(DcMotor.Direction.FORWARD);
+        double power = 0;
+        if(gamepad.dpad_up){
+            ++power;
+        } else if (gamepad.dpad_down){
+            --power;
         }
         update(power);
     }
