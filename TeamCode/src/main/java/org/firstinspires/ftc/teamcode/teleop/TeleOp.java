@@ -26,7 +26,7 @@ public class TeleOp extends LinearOpMode {
         double forward = controller.left_stick_y;
         double strafe = -controller.left_stick_x;
         double rotate = -controller.right_stick_x;
-        whule(!initialized())
+        while(startTeleop())
         {
             leftFront.setPower((forward + strafe + rotate));
             leftBack.setPower((forward - strafe + rotate));
