@@ -20,9 +20,12 @@ import org.firstinspires.ftc.teamcode.RoadRunner.messages.ThreeDeadWheelInputsMe
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
-        public double par0YTicks = 0.0; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = 1.0; // y position of the second parallel encoder (in tick units)
-        public double perpXTicks = 0.0; // x position of the perpendicular encoder (in tick units)
+        public double par0YTicks = -10173.64073994219;
+        //public double par0YTicks = -2369.7230641368787; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = 11732.289535553591;
+        //public double par1YTicks = 2427.1598412821827; // y position of the second parallel encoder (in tick units)
+        public double perpXTicks =  -6397.870261062749;
+        //public double perpXTicks = -805.1190472263876; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -35,16 +38,13 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     private boolean initialized;
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
-        // TODO: make sure your config has **motors** with these names (or change them)
-        //   the encoders should be
-        //   plugged into the slot matching the named motor
-        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "LFM")));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "LBM")));
+        //TODO: Sort out if it is front left or back left for perp encoder
+        //MOTORS: front right is par0 (C0), back right is par1 (C3), front left is perp (E0)
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "RBM"))); //left enc
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "LBM"))); //right enc
         perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "RFM")));
 
-
-          par0.setDirection(DcMotorSimple.Direction.REVERSE);
+        perp.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.inPerTick = inPerTick;
 
