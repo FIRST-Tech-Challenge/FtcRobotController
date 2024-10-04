@@ -8,6 +8,22 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+/**
+ * Control Mapping
+ *  GAMEPAD1
+ *      Left Joystick X - Strafe
+ *      Left Joystick Y - Forward Backward
+ *      Right Joystick X - Pivot
+ *      Right Trigger - Lift Raise
+ *      Left Trigger - Lift Lower
+ *      Right Bumper - Extend Arm
+ *      Left Bumper - Retract Arm
+ *      X Button - Intake In
+ *      Y Button - Intake Out
+ *      A Button - Raise Arm
+ *      B Button - Lower Arm
+ */
+
 @TeleOp(name = "TeleOp", group = "TeleOp")
 public class Teleop extends LinearOpMode {
 
