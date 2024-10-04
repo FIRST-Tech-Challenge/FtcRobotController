@@ -105,8 +105,11 @@ public class Bot {
         armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Servos for intake on the map
+        //TODO Rename Intake servos to something better
         topIntake = map.get(CRServo.class, "top_intake");
         bottomIntake = map.get(CRServo.class, "bottom_intake");
+
+        //TODO push off servos for lift
     }
 
     /**
