@@ -13,8 +13,11 @@ public class IntakeHandler implements NKNComponent {
     private final String motorName;
     private final String servoName;
     private final boolean doInvertMotor;
+    private final int minPosition;
+    private final int maxPosition;
 
     private DcMotor motor; private CRServo servo;
+
 
     public enum HandStates {
         GRIP(1),
@@ -28,10 +31,12 @@ public class IntakeHandler implements NKNComponent {
         }
     }
 
-    public IntakeHandler(String motorName, String servoName, boolean invertMotor) {
+    public IntakeHandler(String motorName, String servoName, boolean invertMotor, int minPosition, int maxPosition) {
         this.motorName = motorName;
         this.servoName = servoName;
         this.doInvertMotor = invertMotor;
+        this.minPosition = minPosition;
+        this.maxPosition = maxPosition;
     }
 
     @Override
@@ -63,8 +68,26 @@ public class IntakeHandler implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("Arm Position", motor.getCurrentPosition());
-        telemetry.addData("Arm Target", motor.getTargetPosition());
+        telemetry.addData("Intake Position", motor.getCurrentPosition());
+        telemetry.addData("Intake Target", motor.getTargetPosition());
+        telemetry.addData("Intake Power", motor.getPower());
+    }
+    //normalizes the intake power and position
+    public void moveIntakeTarget(float intakePower, int intakeTarget) {
+        if (intakeTarget < minPosition){
+            intakeTarget = minPosition;
+        } else if (intakeTarget > maxPosition){
+            intakeTarget = maxPosition;
+        }
+        if (intakePower < 0 ){
+            intakePower = 0;
+        } else if (intakePower > 1) {
+            intakePower = 1;
+        }
+
+        motor.setPower(intakePower);
+        motor.setTargetPosition(intakeTarget);
+
     }
 
     public void controlHand(HandStates targetState) {
