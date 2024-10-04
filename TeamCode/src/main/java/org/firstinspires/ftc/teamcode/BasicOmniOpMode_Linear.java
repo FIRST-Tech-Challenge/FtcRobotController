@@ -34,23 +34,25 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor vertical = null;
     private static final double VERTICAL_POWER_DEFAULT = 0.6;
     double verticalPower = 0;
-    private static final int VERTICAL_MAX = 3000;
-    private static final int VERTICAL_MIN = 0;
+    private static final int VERTICAL_MAX = 700;
+    private static final int VERTICAL_MIN = 30;
     private static final int VERTICAL_DEFAULT = 0;
+    int verticalPosition = VERTICAL_DEFAULT;
 
     // This chunk controls our viper slide
     private DcMotor viperSlide = null;
     private static final double VIPER_POWER_DEFAULT = 0.6;
     double viperSlidePower = 0;
     private static final int VIPER_MAX = 3000;
-    private static final int VIPER_MIN = 0;
+    private static final int VIPER_MIN = 50;
     private static final int VIPER_DEFAULT = 0;
+    int viperSlidePosition = VIPER_DEFAULT;
 
     // This chunk controls our claw
     private Servo claw = null;
     private static final double CLAW_DEFAULT = 0.3;
     private static final double CLAW_MIN = 0.26;
-    private static final double CLAW_MAX = 0.41;
+    private static final double CLAW_MAX = 0.5;
     double claw_position = CLAW_DEFAULT;
 
     private final ElapsedTime runtime = new ElapsedTime();
@@ -136,11 +138,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower);
 
             // Control the vertical
+            verticalPosition = vertical.getCurrentPosition();
             if (gamepad1.dpad_up && vertical.getCurrentPosition() < VERTICAL_MAX) {
-                verticalPower = VERTICAL_POWER_DEFAULT;
+                verticalPower = -VERTICAL_POWER_DEFAULT;
             }
             else if (gamepad1.dpad_down && vertical.getCurrentPosition() > VERTICAL_MIN) {
-                verticalPower = -VERTICAL_POWER_DEFAULT;
+                verticalPower = VERTICAL_POWER_DEFAULT;
             }
             else {
                 verticalPower = 0;
@@ -148,11 +151,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             vertical.setPower(verticalPower);
 
             // Control the viper slide
-            if (gamepad1.right_trigger > 0 && viperSlide.getCurrentPosition() < VIPER_MAX) {
-                viperSlidePower = VIPER_POWER_DEFAULT;
-            }
-            else if (gamepad1.left_trigger > 0  && viperSlide.getCurrentPosition() > VIPER_MIN) {
+            viperSlidePosition = -viperSlide.getCurrentPosition();
+            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {
                 viperSlidePower = -VIPER_POWER_DEFAULT;
+            }
+            else if (gamepad1.left_trigger > 0  && viperSlidePosition > VIPER_MIN) {
+                viperSlidePower = VIPER_POWER_DEFAULT;
             }
             else {
                 viperSlidePower = 0;
@@ -160,15 +164,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             viperSlide.setPower(viperSlidePower);
 
             // Control the claw
-            if (gamepad1.right_bumper) {
-                if (claw_position < CLAW_MAX) {
-                    claw_position += 0.01;
-                }
+            if (gamepad1.left_bumper && claw_position < CLAW_MAX) {
+                claw_position += 0.01;
             }
-            if (gamepad1.left_bumper) {
-                if (claw_position > CLAW_MIN) {
-                    claw_position -= 0.01;
-                }
+            if (gamepad1.right_bumper && claw_position > CLAW_MIN) {
+                claw_position -= 0.01;
             }
             claw.setPosition(claw_position);
 
@@ -190,7 +190,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Degrees to turn", "%4.2f", degreesToTurn);
         telemetry.addData("Claw position", "%4.2f", claw_position);
         telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
-        telemetry.addData("Viper Slide Position", "%d", viperSlide.getCurrentPosition());
+        telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
+        telemetry.addData("Viper Slide Vertical", "%d", vertical.getCurrentPosition());
         telemetry.update();
     }
 
