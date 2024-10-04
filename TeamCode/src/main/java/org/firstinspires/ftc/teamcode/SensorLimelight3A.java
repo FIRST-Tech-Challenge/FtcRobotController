@@ -43,7 +43,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
-/*
+/* NEHA: You can delete this. If we need it in the future, we can get it from the samples. Right now this is just distracting from the code that is important.
  * This OpMode illustrates how to use the Limelight3A Vision Sensor.
  *
  * @see <a href="https://limelightvision.io/">Limelight</a>
@@ -73,13 +73,13 @@ public class SensorLimelight3A extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException
     {
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight"); // Neha: Lines 76-89 should not have any blank lines between them.
 
         telemetry.setMsTransmissionInterval(11);
 
         limelight.pipelineSwitch(0);
 
-        /*
+        /* Neha: Remove this three line comment. We dont like multi-line comments because they make it harder to see the code that we care about.
          * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
          */
         limelight.start();
@@ -92,27 +92,31 @@ public class SensorLimelight3A extends LinearOpMode {
             LLStatus status = limelight.getStatus();
             telemetry.addData("Name", "%s", status.getName());
             telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d", status.getTemp(), status.getCpu(),(int)status.getFps());   //Telling us the temperatures, CPU and FPS
-            telemetry.addData("Pipeline", "Index: %d, Type: %s", status.getPipelineIndex(), status.getPipelineType());              //Telling us pipeline value
+            telemetry.addData("Pipeline", "Index: %d, Type: %s", status.getPipelineIndex(), status.getPipelineType());              //Telling us pipeline value // Neha: comments shouldn't have -ing
 
             LLResult result = limelight.getLatestResult();
             if (result != null) {
                 // Access general information
-                Pose3D botpose = result.getBotpose();
+                Pose3D botpose = result.getBotpose(); // Neha: You can move this into the if(result.isValid()) section
+                // Neha: The next 5 lines do a lot that we don't understand. Their purpose is to tell us when there is a problem. Lets re-write this in a way that is helpful.
+                // I put a re-write on line 109. Does it make sense?
                 double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
                 double parseLatency = result.getParseLatency();
                 telemetry.addData("LL Latency", "%.0f", captureLatency + targetingLatency);
                 telemetry.addData("Parse Latency", "%.0f",parseLatency);
 
+                telemetry.addData("Total Latency", "%.0f",result.getCaptureLatency() + result.getTargetingLatency() + result.getParseLatency());
+
                 if (result.isValid()) {
-                    // Access fiducial results
+                    // Access fiducial results // Neha: Do you know what Fiducial results are? Lets remove the term "Fiducial" from comments and telemetry.
                     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                        telemetry.addData("Fiducial ID", "%d", fr.getFiducialId());             // Fiducial ID
+                        telemetry.addData("Fiducial ID", "%d", fr.getFiducialId());             // Fiducial ID // Neha: A better label is "AprilTag ID"
                     }
                     telemetry.addData("X-Location", "%.1f",botpose.getPosition().x);            // Get X-Location from the robot
                     telemetry.addData("Y-Location", "%.1f",botpose.getPosition().y);            // Get Y-Location from the robot
-                    telemetry.addData("Heading", "%.0f",botpose.getOrientation().getYaw());     //Get Heading Value from the robot
+                    telemetry.addData("Heading", "%.0f",botpose.getOrientation().getYaw());     // Get Heading from the robot
                 }
                 else {
                     telemetry.addData("Limelight", "No AprilTags");                             // AprilTags are not detected
