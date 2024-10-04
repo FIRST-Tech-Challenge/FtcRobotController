@@ -90,12 +90,9 @@ public class SensorLimelight3A extends LinearOpMode {
 
         while (opModeIsActive()) {
             LLStatus status = limelight.getStatus();
-            telemetry.addData("Name", "%s",
-                    status.getName());
-            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                    status.getTemp(), status.getCpu(),(int)status.getFps());
-            telemetry.addData("Pipeline", "Index: %d, Type: %s",
-                    status.getPipelineIndex(), status.getPipelineType());
+            telemetry.addData("Name", "%s", status.getName());
+            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d", status.getTemp(), status.getCpu(),(int)status.getFps());   //Telling us the temperatures, CPU and FPS
+            telemetry.addData("Pipeline", "Index: %d, Type: %s", status.getPipelineIndex(), status.getPipelineType());              //Telling us pipeline value
 
             LLResult result = limelight.getLatestResult();
             if (result != null) {
@@ -106,42 +103,20 @@ public class SensorLimelight3A extends LinearOpMode {
                 double parseLatency = result.getParseLatency();
                 telemetry.addData("LL Latency", "%.0f", captureLatency + targetingLatency);
                 telemetry.addData("Parse Latency", "%.0f",parseLatency);
-                
+
                 if (result.isValid()) {
-                    telemetry.addData("Botpose", botpose.toString());
-
-                    // Access barcode results
-                    List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
-                    for (LLResultTypes.BarcodeResult br : barcodeResults) {
-                        telemetry.addData("Barcode", "Data: %s", br.getData());
-                    }
-
-                    // Access classifier results
-                    List<LLResultTypes.ClassifierResult> classifierResults = result.getClassifierResults();
-                    for (LLResultTypes.ClassifierResult cr : classifierResults) {
-                        telemetry.addData("Classifier", "Class: %s, Confidence: %.2f", cr.getClassName(), cr.getConfidence());
-                    }
-
-                    // Access detector results
-                    List<LLResultTypes.DetectorResult> detectorResults = result.getDetectorResults();
-                    for (LLResultTypes.DetectorResult dr : detectorResults) {
-                        telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
-                    }
-
                     // Access fiducial results
                     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                        telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(),fr.getTargetXDegrees(), fr.getTargetYDegrees());
+                        telemetry.addData("Fiducial ID", "%d", fr.getFiducialId());             // Fiducial ID
                     }
-
-                    // Access color results
-                    List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                    for (LLResultTypes.ColorResult cr : colorResults) {
-                        telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
-                    }
+                    telemetry.addData("X-Location", "%.1f",botpose.getPosition().x);            // Get X-Location from the robot
+                    telemetry.addData("Y-Location", "%.1f",botpose.getPosition().y);            // Get Y-Location from the robot
+                    telemetry.addData("Heading", "%.0f",botpose.getOrientation().getYaw());     //Get Heading Value from the robot
                 }
-            } else {
-                telemetry.addData("Limelight", "No data available");
+                else {
+                    telemetry.addData("Limelight", "No AprilTags");                             // AprilTags are not detected
+                }
             }
 
             telemetry.update();
