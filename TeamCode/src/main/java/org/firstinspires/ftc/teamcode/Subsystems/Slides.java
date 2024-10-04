@@ -15,14 +15,14 @@ public class Slides {
     public final DcMotor leftSlide, rightSlide;
     public final Gamepad gamepad2;
     //This determines where slides will stop depending on what the driver wants
-    public static int HIGH = 450;
-    public static int MID =358;
-    public static int LOW =2;
+    private static int HIGH = 450;
+    public static int MID = 100;
+    public static int LOW = 50;
     public static int INTAKE = 0;
-    public static double WHEEL_DIAMETER = 1.77;//in
-    public static double TICKS_PER_REV = 384.539792388;
-    public static double GEAR_RATIO = 1;
-    public static double ticks;
+    private static double WHEEL_DIAMETER = 1.77;//in
+    private static double TICKS_PER_REV = 384.539792388;
+    private static double GEAR_RATIO = 1;
+    private static double ticks;
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -61,7 +61,6 @@ public class Slides {
         else if (gamepad2.dpad_right) slidesLowBasket();
         else if (gamepad2.dpad_left) slidesLowChamber();
         else reset();
-        slideManual();
 
         if (rightSlide.getCurrentPosition() ==0 && leftSlide.getCurrentPosition() == 0) {
             gamepad2.rumble(10);

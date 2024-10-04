@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Slides;
@@ -55,7 +55,6 @@ public class RedRight extends LinearOpMode {
             drive.followTrajectorySequence(cycleGoToSubjects);
             drive.followTrajectorySequence(cycleGrabSubjects);
             drive.followTrajectorySequence(outtakingSubjects);
-
         }
     }
 }
