@@ -51,7 +51,8 @@ public class TestBotMain extends LinearOpMode {
 
 //    private DcMotor grabberMotor;
 
-    private Servo axon1;
+    private Servo axon4;
+    private Servo axon5;
 
 
     @Override
@@ -66,7 +67,8 @@ public class TestBotMain extends LinearOpMode {
 
 //        grabberMotor = hardwareMap.get(DcMotor.class, "grabberMotor");
 
-        axon1 = hardwareMap.get(Servo.class, "axon1");
+        axon4 = hardwareMap.get(Servo.class, "axon4");
+        axon5 = hardwareMap.get(Servo.class, "axon5");
 
         double direction = 1;
 
@@ -133,13 +135,11 @@ public class TestBotMain extends LinearOpMode {
 //                grabberMotor.setPower(0);
 //            }
 
-            if(gamepad1.a) {
-                axon1.setPosition(1);
-            }
-
-            if(gamepad1.b) {
-                axon1.setPosition(0);
-            }
+            telemetry.addData("right trigger: ", gamepad1.right_trigger);
+            telemetry.addData("servo position: ", axon4.getPosition());
+            axon4.getController().setServoPosition(4, gamepad1.right_trigger);
+            axon5.getController().setServoPosition(5, gamepad1.left_trigger);
+            telemetry.update();
 
         }
     }
