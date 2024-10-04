@@ -3,24 +3,41 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
-import org.firstinspires.ftc.teamcode.hardware;
+import org.firstinspires.ftc.teamcode.hardware.*;
 
 public class Hardware {
-    private OpMode opMode;
+    // The opMode to access the hardware map from.
+    private final OpMode OP_MODE;
 
-    // Whether the robot will automatically sleep after each command
-    // Only applicable in LinearOpMode
+    // Whether the robot will automatically sleep after each command.
+    // Only applicable in LinearOpMode.
     private boolean autoSleepEnabled;
 
-    private Wheels wheels;
-    private Arm arm;
+    /* Camera variables */
+    private final VisionPortal VISION_PORTAL;
+    private static final int RESOLUTION_WIDTH = 100;
+    private static final int RESOLUTION_HEIGHT = 100;
+
+    /* Robot systems */
+    private final Wheels WHEELS;
+    private final Arm ARM;
+
+    // Whether the robot is on red or blue team
+    private final DigitalChannel COLOR_SWITCH;
+    // Whether the robot is far or near
+    private final DigitalChannel SIDE_SWITCH;
 
     public Hardware(OpMode opMode) {
-        this.opMode = opMode;
+        this.OP_MODE = opMode;
         autoSleepEnabled = true;
 
+        VISION_PORTAL = new VisionPortal.Builder()
+                .setCamera(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"))
+                .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
+                .build();
+
         initWheels();
-        intArm();
+        initArm();
     }
 
     /**
@@ -32,7 +49,7 @@ public class Hardware {
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        wheels = new Wheels();
+        WHEELS = new Wheels();
     }
 
     /**
@@ -44,15 +61,15 @@ public class Hardware {
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        armSystem = new ArmSystem();
+        ARM = new Arm();
     }
 
     public Wheels getWheels() {
-        return wheels;
+        return WHEELS;
     }
 
     public Arm getArm() {
-        return arm;
+        return ARM;
     }
 
     /**
@@ -64,7 +81,7 @@ public class Hardware {
      */
     public LinearOpMode getLinearOpMode() {
         try {
-            return (LinearOpMode) opMode;
+            return (LinearOpMode) OP_MODE;
 
         } catch (ClassCastException e) {
             return null;

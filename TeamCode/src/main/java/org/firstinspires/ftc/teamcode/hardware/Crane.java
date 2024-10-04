@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import java.util.HashSet;
+
 public class Crane extends Arm {
     public Crane() {
 
@@ -8,7 +10,6 @@ public class Crane extends Arm {
     @Override
     public HashSet<DcMotor> getAllMotors() {
         HashSet<DcMotor> motors = new HashSet<>();
-        
 
         return motors;
     }
