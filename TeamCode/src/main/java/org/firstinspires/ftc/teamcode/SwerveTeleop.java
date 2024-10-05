@@ -3,15 +3,23 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
+//import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 
 @TeleOp(name="2024-25 Swerve Teleop Code", group="Linear OpMode")
 public class SwerveTeleop extends LinearOpMode {
 
+//    public static double P = , I = , D = ;
+//    public static double k = ;
+
+//    public static double WHEEL_RADIUS = ;
+//    public static double GEAR_RATIO = 4*2.88 / // output wheel speed / input motor speed
+//    public static final double TICKS_PER_REV = ; // tickers per revolution
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
@@ -19,6 +27,8 @@ public class SwerveTeleop extends LinearOpMode {
 //    private DcMotor rightBack = null;
 
     private CRServo testServo = null;
+
+//    private AbsoluteAnalogEncoder encoder;
 
     @Override
     public void runOpMode() {
@@ -29,6 +39,12 @@ public class SwerveTeleop extends LinearOpMode {
         leftBack  = hardwareMap.get(DcMotor.class, "liftMotor1");
         rightFront  = hardwareMap.get(DcMotor.class, "intakeMotor");
 //        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
 
         testServo = hardwareMap.get(CRServo.class, "armServo1");
 
@@ -41,6 +57,12 @@ public class SwerveTeleop extends LinearOpMode {
 //        rightBack.setDirection(DcMotor.Direction.FORWARD);
 
         testServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        ((CRServoImplEx) testServo).setPwmRange(new PwmControl.PwmRange(500, 2500, 5000));
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         // Wait for the game to start (driver presses START)
@@ -85,4 +107,9 @@ public class SwerveTeleop extends LinearOpMode {
             telemetry.update();
         }
     }
+
+//    public void read(){
+//        position = encoder.getCurrentPositon();
+//    }
+
 }
