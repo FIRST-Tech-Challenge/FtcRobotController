@@ -1,78 +1,20 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.arcrobotics.ftclib.gamepad.GamepadEx
+import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.opmode.OpModeBase
 
-
+@Suppress("UNUSED")
 @TeleOp(name="CDTeleop")
 class CDTeleop : OpModeBase() {
+    private var driveSpeedScale = DRIVE_SPEED_NORMAL
+
     override fun initialize() {
-        initHardware(false)
-
-        // TODO: Assign gamepad buttons for subsystem commands
-
-//        GamepadButton(accessoryGamepad, GamepadKeys.Button.LEFT_BUMPER).whenPressed(Command {
-//            deposit.goToHeight(
-//                28
-//            )
-//        })
-//        GamepadButton(
-//            accessoryGamepad,
-//            GamepadKeys.Button.RIGHT_BUMPER
-//        ).whenPressed(deposit::teleopDeploy)
-//        GamepadButton(accessoryGamepad, GamepadKeys.Button.A).whenPressed(deposit::retract)
-//        GamepadButton(accessoryGamepad, GamepadKeys.Button.Y).whenPressed(Command {
-//            deposit.goToHeight(
-//                14.0
-//            )
-//        })
-//        GamepadButton(accessoryGamepad, GamepadKeys.Button.X).whenPressed(Command {
-//            deposit.goToHeight(
-//                7.0
-//            )
-//        })
-//        GamepadButton(accessoryGamepad, GamepadKeys.Button.B).whenPressed(Command {
-//            deposit.goToHeight(
-//                10.5
-//            )
-//        })
-//
-//        Trigger { gamepad2.left_trigger > 0.3 }.whenActive { deposit.goToHeight(deposit.getTargetHeight() - 1.5) }
-//        Trigger { gamepad2.right_trigger > 0.3 }.whenActive { deposit.goToHeight(deposit.getTargetHeight() + 1.5) }
-//
-//        GamepadButton(
-//            accessoryGamepad,
-//            GamepadKeys.Button.LEFT_STICK_BUTTON
-//        ).whenPressed(Runnable { Deposit.offset += 0.25 })
-//        GamepadButton(
-//            accessoryGamepad,
-//            GamepadKeys.Button.RIGHT_STICK_BUTTON
-//        ).whenPressed(Runnable { Deposit.offset -= 0.25 })
-//
-//        GamepadButton(
-//            accessoryGamepad,
-//            GamepadKeys.Button.DPAD_LEFT
-//        ).whenPressed(turretCap::decreaseTurret)
-//        GamepadButton(
-//            accessoryGamepad,
-//            GamepadKeys.Button.DPAD_RIGHT
-//        ).whenPressed(turretCap::increaseTurret)
-//
-//        GamepadButton(
-//            accessoryGamepad,
-//            GamepadKeys.Button.DPAD_DOWN
-//        ).whenPressed(turretCap::decreaseTilt)
-//        GamepadButton(
-//            accessoryGamepad,
-//            GamepadKeys.Button.DPAD_UP
-//        ).whenPressed(turretCap::increaseTilt)
-//
-//        GamepadButton(accessoryGamepad, GamepadKeys.Button.START).whenPressed(
-//            Runnable { deposit.disableBlocker = !deposit.disableBlocker })
-//
-//        GamepadButton(accessoryGamepad, GamepadKeys.Button.BACK).whenPressed(
-//            Runnable { turretCap.isFastMode = !turretCap.isFastMode })
+        initHardware()
+        initializeDriverGamepad(driverGamepad)
+        initializeCoDriverGamepad(accessoryGamepad)
     }
 
     override fun run() {
@@ -80,9 +22,9 @@ class CDTeleop : OpModeBase() {
 
         mecanumDrive.setDrivePower(
             Pose2d(
-                -gamepad1.left_stick_y.toDouble(),
-                -gamepad1.left_stick_x.toDouble(),
-                -gamepad1.right_stick_x.toDouble()
+                driverGamepad.leftY * driveSpeedScale,
+                -driverGamepad.leftX * driveSpeedScale,
+                -driverGamepad.rightX * driveSpeedScale
             )
         )
 
@@ -90,11 +32,61 @@ class CDTeleop : OpModeBase() {
 
         // TODO: Assign gamepad buttons for raw commands
 
-//        val rawIntakePower = -gamepad2.left_stick_y.toDouble()
-//        intake.setPower(Math.signum(rawIntakePower) * rawIntakePower * rawIntakePower)
+        writeTelemetry()
+    }
+
+    private fun initializeDriverGamepad(gamepad: GamepadEx) {
+        val speedFastButton = gamepad.getGamepadButton(GamepadKeys.Button.Y)
+        val speedSlowButton = gamepad.getGamepadButton(GamepadKeys.Button.A)
+        val normalDriveButton = gamepad.getGamepadButton(GamepadKeys.Button.B)
+
+        speedFastButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_FAST })
+        speedSlowButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_SLOW })
+        normalDriveButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_NORMAL})
+    }
+
+    private fun initializeCoDriverGamepad(gamepad: GamepadEx) {
+        // TODO: Figure out what belongs here
+    }
+
+    private fun writeTelemetry() {
+        telemetry.addLine()
+        telemetry.addLine("speed mult: $driveSpeedScale")
+        telemetry.addLine()
+
+        // TODO: Refactor this pattern into a helper function
+//        hardware.suspendMotor?.let {
+//            telemetry.addLine("suspend motor pos: ${it.currentPosition}")
+//        } ?: telemetry.addLine("[WARNING] Suspend motor not found")
 //
-//        carousel.setPower(gamepad1.left_trigger - gamepad1.right_trigger)
+//        hardware.viperAngleServo?.let {
+//            telemetry.addLine("viper angle pos: ${it.position}")
+//        } ?: telemetry.addLine("[WARNING] Viper angle servo not found")
 //
-//        turretCap.setExtendPower(-gamepad2.right_stick_y)
+//        hardware.viperPot?.let {
+//            telemetry.addLine("pot voltage: ${it.voltage}")
+//        } ?: telemetry.addLine("[WARNING] Viper potentiometer not found")
+//
+//        hardware.viperMotor?.let {
+//            telemetry.addLine("viper motor pos: ${it.currentPosition}")
+//        } ?: telemetry.addLine("[WARNING] Viper motor not found")
+//
+//        hardware.droneServo?.let {
+//            telemetry.addLine("drone pos: ${it.position}")
+//        } ?: telemetry.addLine("[WARNING] Drone servo not found")
+//
+//        hardware.suspendServo?.let {
+//            telemetry.addLine("suspendServo pos: ${it.position}")
+//        } ?: telemetry.addLine("[WARNING] suspendServo not found")
+
+        telemetry.update()
+    }
+
+    companion object {
+        private const val VARIABLE_INPUT_DEAD_ZONE = 0.05
+
+        private const val DRIVE_SPEED_FAST = 0.9
+        private const val DRIVE_SPEED_NORMAL = 0.75
+        private const val DRIVE_SPEED_SLOW = 0.5
     }
 }

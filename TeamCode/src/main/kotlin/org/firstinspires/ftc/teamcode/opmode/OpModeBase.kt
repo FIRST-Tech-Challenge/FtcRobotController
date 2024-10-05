@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import org.firstinspires.ftc.teamcode.config.CDConfig
@@ -11,18 +12,27 @@ abstract class OpModeBase : CommandOpMode() {
     lateinit var mecanumDrive: CDMecanumDrive
     lateinit var driverGamepad: GamepadEx
     lateinit var accessoryGamepad: GamepadEx
+    lateinit var multiTelemetry: MultipleTelemetry
 
-    fun initHardware(isAuto: Boolean) {
+    fun initHardware() {
         hardware = HardwareManager(CDConfig(), hardwareMap)
         mecanumDrive = CDMecanumDrive(hardware)
+        multiTelemetry = MultipleTelemetry(telemetry)
 
         // Subsystems
-        // deposit = Deposit(hardwareMap, isAuto)
-        // intake = Intake(hardwareMap)
-        // carousel = Carousel(hardwareMap)
-        // turretCap = TurretCap(hardwareMap, isAuto)
-
-        // register(intake, deposit, carousel, turretCap)
+//        deliverySubsystem = try { DeliverySubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
+//        droneSubsystem = try { DroneSubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
+//        intakeSubsystem = try { IntakeSubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
+//        suspendSubsystem = try { SuspendSubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
+//
+//        val subsystems = listOf<Subsystem?>(
+//            deliverySubsystem,
+//            droneSubsystem,
+//            intakeSubsystem,
+//            suspendSubsystem
+//        )
+//
+//        register(*subsystems.filterNotNull().toTypedArray())
 
         driverGamepad = GamepadEx(gamepad1)
         accessoryGamepad = GamepadEx(gamepad2)
@@ -32,7 +42,7 @@ abstract class OpModeBase : CommandOpMode() {
         RED, BLUE;
 
         fun adjust(input: Double): Double {
-            return if (this == RED) input else -input
+            return if (this == BLUE) input else -input
         }
     }
 }
