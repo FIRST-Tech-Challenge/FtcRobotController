@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,33 +26,33 @@ public class MecanumEncoder {
     static final double     DRIVE_SPEED             = 1.0;
     static final double     TURN_SPEED              = 1.0;
 
-    private LinearOpMode opMode;
+    private OpMode opMode;
 
     public enum DriveMode {FieldCentric, BotCentric}
 
-    public MecanumEncoder(LinearOpMode opMode)
+    public MecanumEncoder(OpMode opMode)
     {
         this.opMode = opMode;
     }
 
     public void initHardware(HardwareMap hardwareMap)
     {
-        frontLeft  = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
-        backLeft  = hardwareMap.get(DcMotorEx.class, "backLeft");
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontLeft  = hardwareMap.get(DcMotorEx.class, "flmotor");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frmotor");
+        backLeft  = hardwareMap.get(DcMotorEx.class, "blmotor");
+        backRight = hardwareMap.get(DcMotorEx.class, "brmotor");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE); // REVERSE
+        frontRight.setDirection(DcMotor.Direction.FORWARD); // FORWARD
+        backLeft.setDirection(DcMotor.Direction.REVERSE); // REVERSE
+        backRight.setDirection(DcMotor.Direction.FORWARD); // FORWARD
 
         imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         imu.initialize(parameters);
     }
 
