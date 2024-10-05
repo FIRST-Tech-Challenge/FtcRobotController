@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
 @TeleOp(name = "JimBot Swerve", group = "Swerve")
 public class JimBot extends LinearOpMode {
@@ -25,10 +26,10 @@ public class JimBot extends LinearOpMode {
 
     ElapsedTime turnTime = new ElapsedTime();
 
-    IMU imu;
+    GoBildaPinpointDriver odo;
 
-    static double TRACKWIDTH = 14;//in inches
-    static double WHEELBASE = 15;//in inches
+    static double TRACKWIDTH = 14; //in inches
+    static double WHEELBASE = 15; //in inches
 
     @Override
     public void runOpMode() {
@@ -59,12 +60,11 @@ public class JimBot extends LinearOpMode {
 
     public void initRobot() {
 
-        //init imu and stuff stolen from SensorIMUOrthogonal in external samples
-        imu = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        //init odo
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo.resetPosAndIMU();
+        odo.setOffsets(177.8, 50.8);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         // Maps the motor objects to the physical ports
         FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
@@ -111,6 +111,7 @@ public class JimBot extends LinearOpMode {
         BLServo.setPosition(0.5);
         BRServo.setPosition(0.5);
 
+
     }
 
 
@@ -140,7 +141,6 @@ public class JimBot extends LinearOpMode {
         return arrayToReturn;
     }
 
-    //double oldH = 0;
 
     //oldH newH not used maybe later to have motors wait to turn wheel until Servo is in right position
     public void move(double heading, double power) {
@@ -165,6 +165,7 @@ public class JimBot extends LinearOpMode {
         FRMotor.setPower(power);
         //oldH = newH;
     }
+
 
     public void rotate(double angle) {
 
@@ -202,19 +203,21 @@ public class JimBot extends LinearOpMode {
 
     //uses imu
     public void moveHome() {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double yawAngle = orientation.getYaw(AngleUnit.DEGREES);
-        telemetry.addData("Yaw angle", yawAngle);
-        rotate(yawAngle);
+        double orientation = odo.getHeading();
+        telemetry.addData("Yaw angle", orientation);
+        rotate(orientation);
     }
+
 
     public void moveToSpecimen() {
 
     }
 
+
     public void moveToStore() {
 
     }
+
 
     public enum turnDir {
         LEFT, RIGHT;

@@ -56,6 +56,7 @@ public class Mecanum_Drive extends LinearOpMode {
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         odo.resetPosAndIMU();
+        odo.setOffsets(100,100);
     }
 
 
