@@ -8,7 +8,7 @@ public class Motors {
 
     private DcMotor[] driveTrainMotors;
 
-    public void InitializeMotors() {
+    public void Initialize() {
 
         driveTrainMotors[0]  = hardwareMap.get(DcMotor.class, "LB"); //left back
         driveTrainMotors[1]  = hardwareMap.get(DcMotor.class, "LF"); //left front
