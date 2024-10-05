@@ -66,10 +66,10 @@ public class Drivetrain {
         motorLeftBack = hardwareMap.get(DcMotorEx.class, "lbm");
         motorRightBack = hardwareMap.get(DcMotorEx.class, "rbm");
         motorRightFront = hardwareMap.get(DcMotorEx.class, "rfm");
-        motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
