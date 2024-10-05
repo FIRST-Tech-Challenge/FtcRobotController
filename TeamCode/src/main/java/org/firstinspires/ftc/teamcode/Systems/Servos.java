@@ -13,9 +13,14 @@ public class Servos {
         lower = hardwareMap.get(Servo.class, "L");
         higher = hardwareMap.get(Servo.class, "H");
     }
-    public void moveDatServo(double servoDistHigher, double servoDistLower)
+    public void moveDatServo(double servoDist, int servoNum)
     {
-        higher.setPosition(servoDistHigher);
-        lower.setPosition(servoDistLower);
+        if(servoNum == 1)
+        {
+            higher.setPosition(servoDist);
+        }
+        else {
+            lower.setPosition(servoDist);
+        }
     }
 }
