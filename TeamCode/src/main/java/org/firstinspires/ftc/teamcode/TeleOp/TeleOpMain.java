@@ -20,6 +20,7 @@ public class TeleOpMain extends LinearOpMode {
         Arm arm = new Arm(this);
         Slides slides = new Slides(this);
         claw claw = new claw(this);
+        wrist wrist = new wrist(this);
 
         waitForStart();
         
@@ -27,5 +28,7 @@ public class TeleOpMain extends LinearOpMode {
         intake.teleOp();
         arm.teleOp();
         slides.teleOp();
+        claw.teleOp();
+        wrist.teleOp();
     }
 }
