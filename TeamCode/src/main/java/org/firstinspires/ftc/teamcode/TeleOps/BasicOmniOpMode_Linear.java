@@ -68,15 +68,14 @@ import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
-@Disabled
+@TeleOp(name="Drive", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    Drivebase driveBase = new Drivebase(hardwareMap, this::opModeIsActive);
 
     @Override
     public void runOpMode() {
+        Drivebase driveBase = new Drivebase(hardwareMap, this::opModeIsActive);
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -100,13 +99,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double straightMove   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double horizontalMove =  gamepad1.left_stick_x;
+            double yaw     =  -gamepad1.right_stick_x;
 
             //Check to make sure the joystick is actually being moved instead of it just getting bumped.
-            if (axial > .1 || lateral > .1 || yaw > .1) {
-                driveBase.driveRobot(axial, lateral, yaw);
-            }
+            driveBase.driveRobot(horizontalMove, straightMove, yaw);
         }
     }}

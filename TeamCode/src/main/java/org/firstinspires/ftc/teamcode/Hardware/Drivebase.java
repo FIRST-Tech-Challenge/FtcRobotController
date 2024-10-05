@@ -38,6 +38,7 @@ import androidx.annotation.Nullable;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -115,19 +116,21 @@ public class Drivebase {
 
         this.opModeIsActive = opModeIsActive;
 
+        FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         FLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
-        BLDrive.setDirection(DcMotor.Direction.REVERSE);
+        BLDrive.setDirection(DcMotor.Direction.FORWARD);
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setMotorModes(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         //clawWrist = hardwareMap.servo.get("clawWrist");
@@ -174,6 +177,12 @@ public class Drivebase {
         int newBRTarget = 0;
 
         if (opModeIsActive.get()) {
+            //Resetting encoders
+            FLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
             newFLTarget = FLDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
             newFRTarget = FRDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
             newBLTarget = BLDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
@@ -215,11 +224,11 @@ public class Drivebase {
             BLDrive.setPower(0);
             BRDrive.setPower(0);
 
-            // Turn off RUN_TO_POSITION
-            FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //Turn off RUN_TO_POSITION
+           FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
