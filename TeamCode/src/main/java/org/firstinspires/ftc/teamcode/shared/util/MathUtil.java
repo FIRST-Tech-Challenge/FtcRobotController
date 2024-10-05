@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.mecanum.util;
+package org.firstinspires.ftc.teamcode.shared.util;
 
 public class MathUtil {
     /**

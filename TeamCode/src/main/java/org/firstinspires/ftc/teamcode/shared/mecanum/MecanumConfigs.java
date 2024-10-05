@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.mecanum;
+package org.firstinspires.ftc.teamcode.shared.mecanum;
 
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;

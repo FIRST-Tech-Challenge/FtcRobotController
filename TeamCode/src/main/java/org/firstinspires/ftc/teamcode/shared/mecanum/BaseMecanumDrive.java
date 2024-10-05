@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.mecanum;
+package org.firstinspires.ftc.teamcode.shared.mecanum;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -9,7 +9,7 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+import org.firstinspires.ftc.teamcode.shared.mecanum.MecanumConfigs;
 
 public abstract class BaseMecanumDrive extends SubsystemBase {
 
