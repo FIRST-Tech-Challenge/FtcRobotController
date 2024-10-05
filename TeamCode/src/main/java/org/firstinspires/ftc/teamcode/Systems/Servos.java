@@ -7,12 +7,12 @@ public class Servos {
 
     private Servo[] servos = null;
 
-    public void InitializeServo()
+    public void Initialize()
     {
         servos[0] = hardwareMap.get(Servo.class, "L");
         servos[1] = hardwareMap.get(Servo.class, "H");
     }
-    public void moveDatServo(double position, int servoNum)
+    public void moveServo( int servoNum, double position) //you put in 0-360 degrees, and it converts it into 0-1
     {
         double actualPosition = position/360;
 
