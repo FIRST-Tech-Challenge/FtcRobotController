@@ -27,18 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.arcrobotics.ftclib.controller.PIDController;
 
-import org.firstinspires.ftc.teamcode.drive.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.drive.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.drive.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -73,10 +73,6 @@ public class Teleop extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
     private static Intake Intake= null;
     private static Arm arm1 = null;
     private static Wrist wrist = null;
@@ -87,7 +83,7 @@ public class Teleop extends LinearOpMode {
     private static int newArmPosition = 0;
     public static double arm_move = 0;
     public static int armRotateScale = 200;
-    private static double driveSlowScale = 0.3;
+    private static double driveSlowScale = 0.5;
     private static double DriveScale = 1;
     private static double wrist_move = 0;
     private static double intake_spin = 0;
@@ -96,19 +92,10 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "lfmotor0");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "lbmotor1");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rfmotor2");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rbmotor3");
-
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Intake = new Intake(hardwareMap);
         arm1 = new Arm(hardwareMap);
         wrist = new Wrist(hardwareMap);
-
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         /*PIDController armPID = new PIDController(armkP, armkI, armkD);
         armPID.setTolerance(50, 10);*/
@@ -127,17 +114,25 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
 
+            drive.setWeightedDrivePower(
+                    new Pose2d(
+                            -gamepad1.left_stick_y * DriveScale,
+                            -gamepad1.left_stick_x * DriveScale,
+                            -gamepad1.right_stick_x * DriveScale
+                    )
+            );
+
+            drive.update();
+
             wrist.setPosition(gamepad2.left_bumper? .3 : .66);
 
             if (gamepad2.a){
-                intake_roller_position = intake_roller_position + 0.05;
+                Intake.setPower(0.9);
+            } else if(gamepad2.y){
+                Intake.setPower(-0.9);
+            } else {
+                Intake.setPower(0);
             }
-            if (intake_roller_position > 0.99)
-            {
-                intake_roller_position = 0;
-            }
-
-            Intake.setPower(intake_roller_position);
 
             /*if(!(arm_move == 0))
             {
@@ -152,67 +147,25 @@ public class Teleop extends LinearOpMode {
                 armPID.setSetPoint(newArmPosition);
             }*/
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
 
-            if (gamepad1.y)
+            if (gamepad1.right_bumper)
             {
-                DriveScale = 0.5;
+                DriveScale = driveSlowScale;
             }else
             {
                 DriveScale = 1;
             }
 
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
-
-            if (max > 1.0) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
-            }
-
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
-
-            // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower * DriveScale);
-            rightFrontDrive.setPower(rightFrontPower * DriveScale);
-            leftBackDrive.setPower(leftBackPower * DriveScale);
-            rightBackDrive.setPower(rightBackPower * DriveScale);
             arm1.setPower1(gamepad2.left_stick_y);
 
             // Show the elapsed game time and wheel power.
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("ArmPos1", arm1.getCurrentPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Intake_Roller_Position","%4.2f",  intake_roller_position);
+
             telemetry.update();
         }
     }}

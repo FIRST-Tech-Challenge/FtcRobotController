@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -12,5 +12,9 @@ public class Intake {
     }
     public void setPower(double power) {
         Intake.setPower(power);
+    }
+
+    public void getPower(){
+        Intake.getPower();
     }
 }
