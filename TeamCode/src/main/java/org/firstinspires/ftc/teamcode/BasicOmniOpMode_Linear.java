@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 // All the things that we use and borrow
-    import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-    import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-    import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-    import com.qualcomm.robotcore.hardware.DcMotor;
-    import com.qualcomm.robotcore.hardware.IMU;
-    import com.qualcomm.robotcore.hardware.Servo;
-    import com.qualcomm.robotcore.util.ElapsedTime;
-    import com.qualcomm.robotcore.util.Range;
-    import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-    import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Chocolate", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
@@ -58,13 +59,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Variables for turns
-    private IMU imu = null;
-    static final double TURN_SPEED_ADJUSTMENT = 0.015;     // Larger is more responsive, but also less stable
-    static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
-    static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate
-    static final double MIN_TURN_SPEED = 0.15;     // Min Turn speed to limit turn rate
-    private double turnSpeed = 0;
-    private double degreesToTurn = 0;
+    IMU imu = null;
 
     @Override
     //Op mode runs when the robot runs. It runs the whole time.
@@ -143,10 +138,16 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 verticalPower = -VERTICAL_POWER_DEFAULT;
             }
             else if (gamepad1.dpad_down && vertical.getCurrentPosition() > VERTICAL_MIN) {
-                verticalPower = VERTICAL_POWER_DEFAULT;
+                verticalPower = VERTICAL_POWER_DEFAULT; // Callie: This makes the power go from 0 to 0.6 in an instant.
+                // That isn't great. I recommend you switch to using the trigger to control vertical. Then, you can use the value from the trigger
+                // For example: verticalPower = gamepad1.right_trigger;
+                // that allows the driver to increase/decrease the amount of power slowly.
+                // When you are testing this, disconnect the vertical motor, grab a different motor from the "electrical" box
+                // and attach that. It will allow you to test the code without breaking the robot.
             }
             else {
-                verticalPower = 0;
+                verticalPower = 0; // Callie: You likely need to send a small amount of power to the motor so it can hold the arm up.
+                // I got this idea from the GoBilda website. They apply 0.2 to keep the arm in the air.
             }
             vertical.setPower(verticalPower);
 
@@ -186,40 +187,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Joystick Lateral", "%4.2f", lateral);
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
         telemetry.addData("Current Yaw", "%.0f", getHeading());
-        telemetry.addData("Turn Speed", "%4.2f", turnSpeed);
-        telemetry.addData("Degrees to turn", "%4.2f", degreesToTurn);
         telemetry.addData("Claw position", "%4.2f", claw_position);
         telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
-        telemetry.addData("Viper Slide Vertical", "%d", vertical.getCurrentPosition());
+        telemetry.addData("Viper Slide Vertical", "%d", vertical.getCurrentPosition()); // Callie: This shouldn't have "Viper Slide" in the caption
+                // It should be "Vertical Position". You should also add a line for "Vertical Power".
+
         telemetry.update();
-    }
-
-    // Turn to desired heading.
-    private void turnToHeading(double heading) {
-        degreesToTurn = heading - getHeading();
-
-        // Keep looping while we are still active.
-        while (opModeIsActive()
-                && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)
-                && (gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0)) {
-
-            degreesToTurn = heading - getHeading();
-            if(degreesToTurn < -180) degreesToTurn += 360;
-            if(degreesToTurn > 180) degreesToTurn -= 360;
-
-            // Clip the speed to the maximum permitted value
-            turnSpeed = Range.clip(degreesToTurn*TURN_SPEED_ADJUSTMENT, -MAX_TURN_SPEED, MAX_TURN_SPEED);
-            if(turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
-            if(turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
-
-            leftFrontDrive.setPower(-turnSpeed);
-            rightFrontDrive.setPower(turnSpeed);
-            leftBackDrive.setPower(-turnSpeed);
-            rightBackDrive.setPower(turnSpeed);
-
-            logScreenData();
-        }
     }
 
     // Read the Robot heading in degrees directly from the IMU
