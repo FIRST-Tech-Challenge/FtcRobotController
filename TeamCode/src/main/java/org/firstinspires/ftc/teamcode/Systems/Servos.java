@@ -5,22 +5,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Servos {
 
-    private Servo lower = null;
-    private Servo higher = null;
+    private Servo[] servos = null;
 
     public void InitializeServo()
     {
-        lower = hardwareMap.get(Servo.class, "L");
-        higher = hardwareMap.get(Servo.class, "H");
+        servos[0] = hardwareMap.get(Servo.class, "L");
+        servos[1] = hardwareMap.get(Servo.class, "H");
     }
-    public void moveDatServo(double servoDist, int servoNum)
+    public void moveDatServo(double position, int servoNum)
     {
-        if(servoNum == 1)
-        {
-            higher.setPosition(servoDist);
-        }
-        else {
-            lower.setPosition(servoDist);
-        }
+        double actualPosition = position/360;
+
+        servos[servoNum].setPosition(actualPosition);
     }
 }

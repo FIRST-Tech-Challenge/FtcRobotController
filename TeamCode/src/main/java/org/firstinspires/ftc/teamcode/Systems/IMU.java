@@ -10,8 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 public class IMU {
 
     BHI260IMU imu;
@@ -54,7 +52,7 @@ public class IMU {
 
         float zRotationRate = myRobotAngularVelocity.zRotationRate;
         float xRotationRate = myRobotAngularVelocity.xRotationRate;
-        float yRotationRate = myRobotAngularVelocity.yRotationRate;
+        //float yRotationRate = myRobotAngularVelocity.yRotationRate;
 
 
         if(angle == 0)
@@ -63,7 +61,6 @@ public class IMU {
             return xRotationRate;
 //        if(angle == 2)   //robot is probably not flipping over so no need for roll
 //            return yRotationRate;
-
         else
             return 0;
 

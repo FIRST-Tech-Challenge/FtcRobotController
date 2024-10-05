@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Motors {
 
-    private DcMotor[] driveTrainMotors;
+    private DcMotor[] driveTrainMotors = null;
 
     public void Initialize() {
 
@@ -21,7 +21,7 @@ public class Motors {
         driveTrainMotors[3].setDirection(DcMotor.Direction.FORWARD);
     }
 
-    public void MoveMotor(double power, int motorNumber) { //power is 0-100, motorNumber is 0-3
+    public void MoveMotor(int motorNumber, double power) { //power is 0-100, motorNumber is 0-3
 
         double actualPower = power / 100;
 
