@@ -150,10 +150,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
                 odo.recalibrateIMU(); //recalibrates the IMU without resetting position
             }
 
-            if (gamepad1.y){
-                odo.setPosition(new Pose2D(DistanceUnit.MM,100,100,AngleUnit.DEGREES, 90));
-            }
-
 
             /*
             This code prints the loop frequency of the REV Control Hub. This frequency is effected
