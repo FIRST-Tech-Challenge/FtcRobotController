@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FastDetectSamples extends OpenCvPipeline {
+    public static int[] linesArray;
     public /*final*/ OpenCvCamera webcam;
     boolean viewportPaused;
 
