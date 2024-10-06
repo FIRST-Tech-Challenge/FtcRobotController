@@ -8,6 +8,7 @@ import static com.acmerobotics.roadrunner.ftc.OTOSKt.RRPoseToOTOSPose;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.SparkFunOTOSCorrected;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -64,8 +65,11 @@ public class SparkFunOTOSDrive extends MecanumDrive {
     public SparkFunOTOSCorrected otos;
     private Pose2d lastOtosPose = pose;
 
+    private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
+
     public SparkFunOTOSDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
+        FlightRecorder.write("OTOS_PARAMS",PARAMS);
         otos = hardwareMap.get(SparkFunOTOSCorrected.class,"sensor_otos");
         // RR localizer note:
         // don't change the units, it will stop Dashboard field view from working properly
@@ -132,7 +136,7 @@ public class SparkFunOTOSDrive extends MecanumDrive {
             poseHistory.removeFirst();
         }
 
-        FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
+        estimatedPoseWriter.write(new PoseMessage(pose));
 
         // RR localizer note:
         // OTOS velocity units happen to be identical to Roadrunners, so we don't need any conversion!
