@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
-@TeleOp(name="Gahan TeleOp")
-public class drive3 extends LinearOpMode {
+@TeleOp(name="Ranveers TeleOp")
+public class Drive4 extends LinearOpMode {
     private Drive driver = new Drive();
     private RevHubOrientationOnRobot orientation;
     private IMU imu;
