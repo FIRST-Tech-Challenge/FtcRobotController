@@ -42,10 +42,20 @@ public class Teleop extends OpMode {
             maxSpeed -= 0.1;
         speedDownInputLast = speedDownInput;
 
-        double inputAngle = Math.atan2(moveYInput, moveXInput);
-        double movementAngle = Math.toDegrees(inputAngle) - absoluteYaw;
-        double verticalMovePower = Math.cos(Math.toRadians(movementAngle));
-        double horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
+        double verticalMovePower;
+        double horizontalMovePower;
+        double inputAngle = 0;
+        double movementAngle = 0;
+
+        if (moveYInput == 0 && moveXInput == 0) {
+            verticalMovePower = 0;
+            horizontalMovePower = 0;
+        } else {
+            inputAngle = Math.atan2(moveYInput, moveXInput);
+            movementAngle = (Math.toDegrees(inputAngle) - 90) + absoluteYaw;
+            verticalMovePower = Math.cos(Math.toRadians(movementAngle));
+            horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
+        }
 
         double turnPower = rotationInput;
 

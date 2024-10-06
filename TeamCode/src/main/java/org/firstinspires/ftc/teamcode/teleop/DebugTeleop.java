@@ -46,8 +46,8 @@ public class DebugTeleop extends OpMode {
 
         double verticalMovePower;
         double horizontalMovePower;
-        double inputAngle;
-        double movementAngle;
+        double inputAngle = 0;
+        double movementAngle = 0;
 
         if (moveYInput == 0 && moveXInput == 0) {
             verticalMovePower = 0;
