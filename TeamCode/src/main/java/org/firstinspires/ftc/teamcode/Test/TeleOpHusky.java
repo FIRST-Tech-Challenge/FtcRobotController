@@ -40,21 +40,20 @@ import com.qualcomm.hardware.dfrobot.HuskyLens;
 
 
 
-@TeleOp(name="Test Bot Main", group="Test")
-public class TestBotMain extends LinearOpMode {
+@TeleOp(name="TeleOpHusky", group="Test")
+public class TeleOpHusky extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
+    // motors
     private DcMotor backLeft;
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
 
-//    private DcMotor grabberMotor;
-
-    private Servo axon4;
-    private Servo axon5;
+    // sensors
+    private HuskyLens huskyLens;
 
 
     @Override
@@ -67,12 +66,22 @@ public class TestBotMain extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-//        grabberMotor = hardwareMap.get(DcMotor.class, "grabberMotor");
-
-        axon4 = hardwareMap.get(Servo.class, "axon4");
-        axon5 = hardwareMap.get(Servo.class, "axon5");
-
         double direction = 1;
+
+        // Husky setup
+        huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
+        if (!huskyLens.knock()) {
+            telemetry.addData(">>", "Problem communicating with " + huskyLens.getDeviceName());
+        } else {
+            telemetry.addData(">>", "Press start to continue");
+        }
+
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+        telemetry.update();
+
+        String sampleColor = "NONE";
+
+
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -84,7 +93,7 @@ public class TestBotMain extends LinearOpMode {
             // gamepad 1 controls
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1; // Counteract imperfect strafing
-//
+
             double rx = gamepad1.right_stick_x;
             if(direction == 1) {
                 rx = gamepad1.right_stick_x * -1;
@@ -120,28 +129,31 @@ public class TestBotMain extends LinearOpMode {
             frontRight.setPower(frontRightPower / s);
             backRight.setPower(backRightPower / s);
 
-            // grabber
 
-//            if(gamepad1.right_trigger != 0) {
-//                grabberMotor.setTargetPosition(1);
-//                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
-//                telemetry.update();
-//            }
-//            else if(gamepad1.left_trigger != 0) {
-//                grabberMotor.setTargetPosition(0);
-//                telemetry.addData("grabber", grabberMotor.getCurrentPosition());
-//                telemetry.update();
-//
-//            }
-//            else {
-//                grabberMotor.setPower(0);
-//            }
 
-            telemetry.addData("right trigger: ", gamepad1.right_trigger);
-            telemetry.addData("servo position: ", axon4.getPosition());
-            axon4.getController().setServoPosition(4, gamepad1.right_trigger);
-            axon5.getController().setServoPosition(5, gamepad1.left_trigger);
+            // HuskyLens
+
+            HuskyLens.Block[] blocks = huskyLens.blocks();
+            telemetry.addData("Block count", blocks.length);
+            for (int i = 0; i < blocks.length; i++) {
+                // BLUE
+                if (blocks[i].id == 1 && (blocks[i].x > 120 && blocks[i].x < 200) && blocks[i].width > 120) {
+                    sampleColor = "BLUE";
+                    telemetry.addData("center: ", sampleColor);
+                }
+                // RED
+                if (blocks[i].id == 2 && (blocks[i].x > 120 && blocks[i].x < 200) && blocks[i].width > 120) {
+                    sampleColor = "RED";
+                    telemetry.addData("center: ", sampleColor);
+                }
+                // YELLOW
+                if (blocks[i].id == 3 && (blocks[i].x > 120 && blocks[i].x < 200) && blocks[i].width > 120) {
+                    sampleColor = "YELLOW";
+                    telemetry.addData("center: ", sampleColor);
+                }
+            } //end getting block id
             telemetry.update();
+
 
         }
     }
