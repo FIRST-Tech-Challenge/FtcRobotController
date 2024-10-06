@@ -86,9 +86,9 @@ public class Teleop extends OpMode {
             rightBPower /= max;
         }
 
-        chassis.leftFrontMotor.setPower(leftFPower /** chassis.DRIVE_GEAR_RATIO*/ * maxSpeed);
-        chassis.rightFrontMotor.setPower(rightFPower /** chassis.DRIVE_GEAR_RATIO*/ * maxSpeed);
-        chassis.leftBackMotor.setPower(leftBPower /** chassis.DRIVE_GEAR_RATIO*/ * maxSpeed);
-        chassis.rightBackMotor.setPower(rightBPower /** chassis.DRIVE_GEAR_RATIO*/ * maxSpeed);
+        chassis.leftFrontMotor.setVelocity(leftFPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
+        chassis.rightFrontMotor.setVelocity(rightFPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
+        chassis.leftBackMotor.setVelocity(leftBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
+        chassis.rightBackMotor.setVelocity(rightBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
     }
 }
