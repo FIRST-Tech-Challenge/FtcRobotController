@@ -42,6 +42,9 @@ public class Teleop extends OpMode {
             maxSpeed -= 0.1;
         speedDownInputLast = speedDownInput;
 
+        if (gamepad1.back)
+            chassis.imu.resetYaw();
+
         double verticalMovePower;
         double horizontalMovePower;
         double inputAngle = 0;

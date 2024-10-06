@@ -36,6 +36,9 @@ public class DebugTeleop extends OpMode {
         boolean speedUpInput = gamepad1.right_bumper;
         boolean speedDownInput = gamepad1.left_bumper;
 
+        if (gamepad1.back)
+            chassis.imu.resetYaw();
+
         telemetry.addLine("--- Input ---");
         telemetry.addLine("Gamepad 1");
         telemetry.addData("Left Stick", moveXInput + " / " + moveYInput);
