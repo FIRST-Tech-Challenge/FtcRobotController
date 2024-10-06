@@ -23,10 +23,6 @@ public class TeleOpMode extends LinearOpMode {
         topLeftMotor.setDirection(DcMotorEx.Direction.REVERSE);
         bottomLeftMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
-        while (opModeInInit()) {
-
-        }
-
         waitForStart();
 
         while (opModeIsActive()) {
