@@ -54,12 +54,14 @@ public class RobotHardware {
     private DcMotor lfMotor;
     private DcMotor lbMotor;
     private DcMotor viperSlideMotor;
+    private DcMotor viperSlideMotorTwo;
+    private DcMotor armMotor;
     private double ticksPerRotationOfLeft;
     private double ticksPerRotationOfRight;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     private static final int TARGET_POSITION_VS = 1000;
-    private static final double VS_SPEED = 0.5;
+    private static final double VS_SPEED = 0.2;
     //camera
     private Camera camera;
     private static final boolean USE_WEBCAM = true;
@@ -91,8 +93,14 @@ public class RobotHardware {
         rbMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorRB");
         lfMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorLF");
         lbMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorLB");
+
+        //setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor = myOpMode.hardwareMap.get(DcMotor.class,"motorarm");
+
         viperSlideMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorvs");
+        viperSlideMotorTwo = myOpMode.hardwareMap.get(DcMotor.class,"motorvstwo");
         setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
 
 
@@ -186,13 +194,12 @@ public class RobotHardware {
             rbMotor.setDirection(DcMotor.Direction.FORWARD);
         }
     }
-
     public void setViperSlideDirectionForward(){
         viperSlideMotor.setDirection(DcMotor.Direction.FORWARD);
-    }
+        viperSlideMotorTwo.setDirection(DcMotor.Direction.REVERSE);}
     public void setViperSlideDirectionReverse(){
         viperSlideMotor.setDirection(DcMotor.Direction.REVERSE);
-    }
+        viperSlideMotorTwo.setDirection(DcMotor.Direction.FORWARD);}
     public void reverseMotors(){
         setMotorDirection(MotorDirection.BACKWARD);
     }
@@ -256,19 +263,32 @@ public class RobotHardware {
 
     public void setViperSlideMotorMode (DcMotor.RunMode mode){
         viperSlideMotor.setMode(mode);
+        viperSlideMotorTwo.setMode(mode);
     }
 
     public void setViperSlideMotorTargetPosition (){
         viperSlideMotor.setTargetPosition(TARGET_POSITION_VS);
+        viperSlideMotorTwo.setTargetPosition(TARGET_POSITION_VS);
     }
 
-    public void setViperSlideMotorPower (){
-        viperSlideMotor.setPower(VS_SPEED);
 
+    public void setViperSlideMotorPower (double power){
+        viperSlideMotor.setPower(power);
+        viperSlideMotorTwo.setPower( power);
     }
-    public void setViperSlideMotorPowerZero (){
-        viperSlideMotor.setPower(0);
 
+    // All  of the arm functions for manual below
+    public void setArmPower (){
+        armMotor.setPower(VS_SPEED);
+    }
+    public void setArmMotorPowerZero (){
+armMotor.setPower(0);
+    }
+    public void setArmDirectionForward(){
+        armMotor.setDirection(DcMotor.Direction.FORWARD);
+    }
+    public void setArmDirectionReverse(){
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     /**

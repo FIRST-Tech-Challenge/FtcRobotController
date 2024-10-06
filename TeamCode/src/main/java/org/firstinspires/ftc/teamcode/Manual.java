@@ -38,18 +38,38 @@ public class Manual  extends LinearOpMode{
             robot.setViperSlideMotorTargetPosition();
             robot.setViperSlideMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             if(gamepad1.left_stick_y > 0){
+
                 robot.setViperSlideDirectionForward();
                 telemetry.addData("Status", "Left Joystick Moved up");
-                robot.setViperSlideMotorPower();
+                robot.setViperSlideMotorPower(0.5);
             }
             if(gamepad1.left_stick_y < 0){
                 robot.setViperSlideDirectionReverse();
                 telemetry.addData("Status", "Left Joystick Moved down");
-                robot.setViperSlideMotorPower();
+                robot.setViperSlideMotorPower(0.5);
             }
+
+
+
             if(gamepad1.left_stick_y==0){
-                robot.setViperSlideMotorPowerZero();
+                robot.setViperSlideMotorPower(0);
             }
+            //below is the arm
+           /* if(gamepad1.right_stick_y > 0){
+                robot.setArmDirectionForward();
+                telemetry.addData("Status", "Right Joystick Moved up");
+                robot.setArmPower();
+            }
+            if(gamepad1.right_stick_y < 0){
+                robot.setArmDirectionReverse();
+                telemetry.addData("Status", "Right Joystick Moved down");
+                robot.setArmPower();
+            }
+            if(gamepad1.right_stick_y==0){
+                robot.setArmMotorPowerZero();
+            }
+*/
+
             if(gamepad2.right_bumper){
                 //robot.goDiagonal(1);
                 robot.goStrafe(-1);
