@@ -110,30 +110,31 @@ public class Odometry extends SubsystemBase {
         // Note: many options available to draw things on field
         // robot position, apriltags, other lines, circles, polygons, text, etc.
 
-        TelemetryPacket field = new TelemetryPacket();
-        field.fieldOverlay()
-                .drawGrid(0, 0, 144, 144, 7, 7)
-                .fillText("Origin", 0, 0, "4px Arial", Math.toRadians(90), false)
-                .fillCircle(0,0, 1);
+        // TelemetryPacket field = new TelemetryPacket();
+        // field.fieldOverlay()
+        //         .drawGrid(0, 0, 144, 144, 7, 7)
+        //         .fillText("Origin", 0, 0, "4px Arial", Math.toRadians(90), false)
+        //        .fillCircle(0,0, 1);
                 //.setRotation(Math.toRadians(90))
                 //.strokeRect(x,y,width,height)
                 //.drawImage("/dash/ftc.jpg", 24, 24, 18, 18, Math.toRadians(90), 24, 24, false);
-        RobotContainer.DashBoard.sendTelemetryPacket(field);
+
+        // RobotContainer.DashBoard.sendTelemetryPacket(field);
 
         // Show data on dashboard
-        double value1 = 1.0;
-        double value2 = 5.0;
+        // double value1 = 1.0;
+        // double value2 = 5.0;
 
         // Method #1
-        RobotContainer.DBTelemetry.addData("Value 1a", value1);
-        RobotContainer.DBTelemetry.addData("Value 2a", value2);
-        RobotContainer.DBTelemetry.update();
+        // RobotContainer.DBTelemetry.addData("Value 1a", value1);
+        // RobotContainer.DBTelemetry.addData("Value 2a", value2);
+        // RobotContainer.DBTelemetry.update();
 
         // Method #2
-        TelemetryPacket data = new TelemetryPacket();
-        data.put("Value 1b", value1);
-        data.put("Value 2b", value2);
-        RobotContainer.DashBoard.sendTelemetryPacket(data);
+        // TelemetryPacket data = new TelemetryPacket();
+        // data.put("Value 1b", value1);
+        // data.put("Value 2b", value2);
+        // RobotContainer.DashBoard.sendTelemetryPacket(data);
     }
 
 

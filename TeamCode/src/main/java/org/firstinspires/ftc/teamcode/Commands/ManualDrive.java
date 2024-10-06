@@ -38,15 +38,10 @@ public class ManualDrive extends CommandBase {
     public void execute() {
 
         // get joystick input - for competition
-        double dX= -RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
-        double dY= RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
-        double omega= 0.6*RobotContainer.ActiveOpMode.gamepad1.right_stick_x;
+        double dX = -RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
+        double dY = RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
+        double omega = 0.6 * RobotContainer.ActiveOpMode.gamepad1.right_stick_x;
         double speedTrigger = RobotContainer.ActiveOpMode.gamepad1.right_trigger;
-
-        // for tiny
-        //double dX= RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
-        //double dY= -RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
-        //double omega= -0.6*RobotContainer.ActiveOpMode.gamepad1.right_stick_x;
 
         // implement dead-zoning of joystick inputs
         dX = Math.abs(dX) > 0.05 ? dX : 0;
@@ -67,11 +62,7 @@ public class ManualDrive extends CommandBase {
                     m_headingPID.reset(); // Clear existing integral term as may accumulate while not in use
                 }
 
-                // if we are not moving robot, then apply 0 rotation speed to straighten wheels
-                //if (dX==0.0 && dY==0.0)
-                //    omega = 0.0;
-                //else         // Compute rotational command from PID controller
-                    omega = m_headingPID.calculate(-Utils.AngleDifference(m_PIDTarget, RobotContainer.gyro.getYawAngle()));
+                omega = m_headingPID.calculate(-Utils.AngleDifference(m_PIDTarget, RobotContainer.gyro.getYawAngle()));
             }
         }
         else
@@ -84,6 +75,9 @@ public class ManualDrive extends CommandBase {
 
 
         powerFactor = basePowerFacter + (speedTrigger * boostPowerFacter);
+        // Since the drive was shifted to closed loop (i.e. requested velocities), change joystick input max values
+        // to MAX_SPEED values.
+        powerFactor = powerFactor * RobotContainer.drivesystem.MAX_SPEED;
 
         // drive robot
         RobotContainer.drivesystem.FieldDrive(dX, dY, omega, powerFactor);
