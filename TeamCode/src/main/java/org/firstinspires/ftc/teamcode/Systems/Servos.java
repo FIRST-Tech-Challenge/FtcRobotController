@@ -12,9 +12,9 @@ public class Servos {
         servos[0] = hardwareMap.get(Servo.class, "L");
         servos[1] = hardwareMap.get(Servo.class, "H");
     }
-    public void moveServo( int servoNum, double position) //you put in 0-360 degrees, and it converts it into 0-1
+    public void moveServo(int servoNum, double position) // select a servo and then select a position, you put in 0-360 degrees, and it converts it into 0-1
     {
-        double actualPosition = position/360;
+        double actualPosition = position / 360;
 
         servos[servoNum].setPosition(actualPosition);
     }
