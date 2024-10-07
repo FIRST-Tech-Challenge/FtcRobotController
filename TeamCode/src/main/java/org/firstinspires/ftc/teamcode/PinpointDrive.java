@@ -116,6 +116,7 @@ public class PinpointDrive extends MecanumDrive {
 
         FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
         FlightRecorder.write("PINPOINT_RAW_POSE",new FTCPoseMessage(pinpoint.getPosition()));
+        FlightRecorder.write("PINPOINT_STATUS",pinpoint.getDeviceStatus());
 
         return pinpoint.getVelocityRR();
     }
