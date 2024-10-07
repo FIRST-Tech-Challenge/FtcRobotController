@@ -5,10 +5,13 @@ import java.util.HashSet;
 import com.qualcomm.robotcore.hardware.*;
 
 public abstract class Arm {
-    protected DcMotor[] motors;
+    protected HashSet<DcMotor> motors;
+    protected HashSet<Servo> servo;
 
-    public Arm(DcMotor ...motors) {
+    public Arm(HashSet<DcMotor> motors, HashSet<Servo> servos) {
         this.motors = motors;
+
+        this.servo = servos;
     }
 
     /**
