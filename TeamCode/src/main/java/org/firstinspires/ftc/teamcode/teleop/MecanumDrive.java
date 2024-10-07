@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
             telemetry.update();
             waitForStart();
 
-            while(startTeleOp())
+            while(opModeIsActive())
             {
                 double forward = controller.left_stick_y;
                 double strafe = controller.left_stick_x;
@@ -36,7 +36,6 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
                     robot.resetIMU();
                 }
 
-//            displayTelemetry();
 
                 controller.update();
             }
