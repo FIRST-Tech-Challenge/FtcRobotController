@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * NKNComponent can be extended with your functionality and then loaded into the iterative op mode
  */
 public interface NKNComponent {
+
     /**
      * init() is called once during startup
      *  @return true if successfully started, otherwise false (which stops the init process)

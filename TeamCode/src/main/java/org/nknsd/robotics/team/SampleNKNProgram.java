@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SampleNKNProgram extends NKNProgram {
     @Override
-    public void createComponents(List<NKNComponent> components) {
+    public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         WheelHandler wheelHandler = new WheelHandler(
                 "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFR", "motorBL", "motorFL"}
         );
