@@ -93,7 +93,5 @@ public class WheelHandler implements NKNComponent {
     public void doTelemetry(Telemetry telemetry) {
         String msgString = "[" + motorFL.getPower() + ", " + motorFR.getPower() + ", " + motorBL.getPower() + ", " + motorBR.getPower() + "]";
         telemetry.addData("FL, FR, BL, BR", msgString);
-        String[] msgArray = new String[]{"One", "Two"};
-        telemetry.addData("test", msgArray);
     }
 }
