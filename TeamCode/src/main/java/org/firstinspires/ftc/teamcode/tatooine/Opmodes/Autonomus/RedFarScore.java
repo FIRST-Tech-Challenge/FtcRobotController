@@ -22,18 +22,18 @@ public class RedFarScore extends LinearOpMode {
                 .splineTo(new Vector2d(7.79, -36.70), Math.toRadians(90))
                 .turnTo(Math.toRadians(90))
                 .waitSeconds(1)
-                .strafeToSplineHeading(new Vector2d(12.09+3.5, -59.84),Math.toRadians(90))
-                .strafeToSplineHeading(new Vector2d(-54, -59.84), Math.toRadians(45))
-                .strafeToSplineHeading(new Vector2d(55, -55), Math.toRadians(70))
+                .strafeToSplineHeading(new Vector2d(12.09+3.5, -56),Math.toRadians(90))
+                .turnTo(0)
+                .strafeToSplineHeading(new Vector2d(-50, -57.84), Math.toRadians(0))
+                .strafeToSplineHeading(new Vector2d(55, -53.5), Math.toRadians(70))
                 .waitSeconds(1)
                 .turnTo(Math.toRadians(70))
-                .strafeToSplineHeading(new Vector2d(-54, -59.84), Math.toRadians(45))
-                .strafeToSplineHeading(new Vector2d(55, -55), Math.toRadians(105))
+                .strafeToSplineHeading(new Vector2d(-54, -60), Math.toRadians(0))
+                .strafeToSplineHeading(new Vector2d(55, -52.8), Math.toRadians(105))
                 .waitSeconds(1)
                 .turnTo(Math.toRadians(105))
-                .strafeToSplineHeading(new Vector2d(-54, -59.84), Math.toRadians(45))
-                .strafeToSplineHeading(new Vector2d(55, -55), Math.toRadians(90));
-
+                .strafeToSplineHeading(new Vector2d(-54, -60), Math.toRadians(0))
+                .strafeToSplineHeading(new Vector2d(55, -52), Math.toRadians(90));
 
         Action test = trajectoryAction1.build();
 
