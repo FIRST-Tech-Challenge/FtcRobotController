@@ -58,10 +58,11 @@ public class MechDrive {
     {
         strafe *= -1;
         rotate *= -1;
-        leftFront.setPower((forward + strafe + rotate)*MAX_POWER);
-        leftBack.setPower((forward - strafe + rotate)*MAX_POWER);
-        rightFront.setPower((forward - strafe - rotate)*MAX_POWER);
-        rightBack.setPower((forward + strafe - rotate)*MAX_POWER);
+        leftFront.setPower((forward + strafe + rotate));
+        leftBack.setPower((forward - strafe + rotate));
+        rightFront.setPower((forward - strafe - rotate));
+        rightBack.setPower((forward + strafe - rotate));
+
     }
 
 
