@@ -17,10 +17,10 @@ public class NKNOpMode_Iterative extends OpMode {
     //Time counters are in milliseconds
     private long lastTelemetryCall = 0;
     private final long TELEMETRY_DELAY = 500;
+    // We use these two to delay telemetry outputs to ~500 milliseconds
 
-    // load your program here
+    // Whatever program is attached here will be loaded with all its glorious components
     private final NKNProgram program = new BasicNKNProgram();
-
 
     // Code to run ONCE when the driver hits INIT
     @Override
@@ -47,7 +47,7 @@ public class NKNOpMode_Iterative extends OpMode {
     }
 
     // Code to run REPEATEDLY after the driver hits PLAY
-    //Does NOT handle telemetry
+    // Does NOT handle telemetry
     @Override
     public void loop() {
         program.loop(runtime, telemetry);
@@ -58,6 +58,8 @@ public class NKNOpMode_Iterative extends OpMode {
         }
     }
 
+    // Runs once every ~500 milliseconds
+    // ONLY calls for components to do telemetry
     public void doTelemetry() {
         program.doTelemetry(telemetry);
     }
