@@ -12,6 +12,8 @@ public class jarlsberg extends OpMode{
     DcMotorEx rightBack = null;
     DcMotorEx leftBack = null;
 
+    double max = 0.0;
+
     @Override
     public void init()
     {
@@ -31,10 +33,27 @@ public class jarlsberg extends OpMode{
         float y = -gamepad1.left_stick_y;
         float rx = gamepad1.right_stick_x;
 
-        leftFront.setPower(y+x+rx);
-        rightFront.setPower(y-x-rx);
-        leftBack.setPower(y-x+rx);
-        rightBack.setPower(y+x-rx);
+        double leftFrontPower = y+x+rx;
+        double rightFrontPower = y-x-rx;
+        double leftBackPower = y-x+rx;
+        double rightBackPower = y+x-rx;
+
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower  /= max;
+            rightFrontPower /= max;
+            leftBackPower   /= max;
+            rightBackPower  /= max;
+        }
+
+
+        leftFront.setPower(leftFrontPower);
+        rightFront.setPower(rightFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightBack.setPower(rightBackPower);
 
     }
 
