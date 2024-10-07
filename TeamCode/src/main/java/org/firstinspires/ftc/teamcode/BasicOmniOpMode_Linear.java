@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -81,6 +82,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        vertical.setTargetPosition(0);
+        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -134,22 +138,27 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical
             verticalPosition = vertical.getCurrentPosition();
-            if (gamepad1.dpad_up && vertical.getCurrentPosition() < VERTICAL_MAX) {
-                verticalPower = -VERTICAL_POWER_DEFAULT;
+            if (gamepad1.dpad_up) {
+                vertical.setTargetPosition(VERTICAL_MAX);
+                ((DcMotorEx) vertical).setVelocity(750);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if (gamepad1.dpad_down && vertical.getCurrentPosition() > VERTICAL_MIN) {
-                verticalPower = VERTICAL_POWER_DEFAULT; // Callie: This makes the power go from 0 to 0.6 in an instant.
-                // That isn't great. I recommend you switch to using the trigger to control vertical. Then, you can use the value from the trigger
-                // For example: verticalPower = gamepad1.right_trigger;
-                // that allows the driver to increase/decrease the amount of power slowly.
-                // When you are testing this, disconnect the vertical motor, grab a different motor from the "electrical" box
-                // and attach that. It will allow you to test the code without breaking the robot.
+            else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {
+                vertical.setTargetPosition(VERTICAL_MAX);
+                ((DcMotorEx) vertical).setVelocity(750);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else {
-                verticalPower = 0; // Callie: You likely need to send a small amount of power to the motor so it can hold the arm up.
-                // I got this idea from the GoBilda website. They apply 0.2 to keep the arm in the air.
+            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MIN) {
+                vertical.setTargetPosition(VERTICAL_MIN);
+                ((DcMotorEx) vertical).setVelocity(750);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            vertical.setPower(verticalPower);
+            else if (gamepad1.dpad_down) {
+                vertical.setTargetPosition(VERTICAL_MIN);
+                ((DcMotorEx) vertical).setVelocity(750);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                sleep(1000);
+            }
 
             // Control the viper slide
             viperSlidePosition = -viperSlide.getCurrentPosition();
@@ -190,8 +199,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Claw position", "%4.2f", claw_position);
         telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
-        telemetry.addData("Viper Slide Vertical", "%d", vertical.getCurrentPosition()); // Callie: This shouldn't have "Viper Slide" in the caption
-                // It should be "Vertical Position". You should also add a line for "Vertical Power".
+        telemetry.addData("Vertical Power", "%.0f", verticalPower);
+        telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
 
         telemetry.update();
     }
