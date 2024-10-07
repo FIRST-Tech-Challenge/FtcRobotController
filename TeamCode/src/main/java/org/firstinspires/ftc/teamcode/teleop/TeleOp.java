@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="TeleOp")
 
 public class TeleOp extends LinearOpMode {
-    public GamepadEvents controller;
+    private GamepadEvents controller;
     private MechDrive robot;
 
     public void runOpMode() throws InterruptedException{
