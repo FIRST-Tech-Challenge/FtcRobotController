@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="TeleOp")
 
 public class TeleOp extends LinearOpMode {
-    GamepadEvents controller;
+    public GamepadEvents controller;
     private MechDrive robot;
 
     public void runOpMode() throws InterruptedException{
