@@ -156,7 +156,7 @@ public class TouchesOptimisées extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-        }
+        }//code principal
     }
 
 }

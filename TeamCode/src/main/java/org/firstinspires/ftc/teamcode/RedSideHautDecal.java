@@ -272,7 +272,7 @@ public class RedSideHautDecal extends LinearOpMode {
         while (opModeIsActive()) {
 
             telemetry.addData("Status", "Wating for end");
-            telemetry.update();
+            telemetry.update();//code principal
         }
     }
 }

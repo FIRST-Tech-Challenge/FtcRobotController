@@ -288,7 +288,7 @@ public class ConduiteUneManette extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-        }
+        }//code principal
     }
 
 }
