@@ -76,6 +76,7 @@ public class MecanumTeleOp extends OpMode {
         right_b.setPower( (y + x - rx) / denominator);
 
 
+
         /*
         double[] driveVelocities =
                 robot.driveTrain.drive(
@@ -88,6 +89,8 @@ public class MecanumTeleOp extends OpMode {
 
         robot.linear_L.linear_motion_left.setPower(gamepad2.left_stick_y);
         robot.linear_R.linear_motion_right.setPower(gamepad2.left_stick_y);
+
+        robot.linear_C.linear_claw.setPower(gamepad2.right_stick_y);
 
         //Test encoder for linear_motion_left
 

@@ -17,7 +17,7 @@ public class LinearClaw {
         linear_claw = hardwareMap.get(DcMotorEx.class, "linear_motion_claw");
         linear_claw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linear_claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //linear_claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
