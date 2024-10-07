@@ -37,7 +37,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Ryken Teleop", group="Iterative OpMode")
-@Disabled
 public class bestOpMode extends OpMode
 {
     // Declare OpMode members.
@@ -54,10 +53,10 @@ public class bestOpMode extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        frontLeftMotor  = hardwareMap.dcMotor.get("front_left");
-        frontRightMotor = hardwareMap.dcMotor.get("front_right");
-        backLeftMotor = hardwareMap.dcMotor.get("back_left");
-        backRightMotor = hardwareMap.dcMotor.get("back_right");
+        frontLeftMotor  = hardwareMap.dcMotor.get("frontLeftMotor");
+        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
