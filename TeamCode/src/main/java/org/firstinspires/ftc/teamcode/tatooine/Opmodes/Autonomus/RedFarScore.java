@@ -11,34 +11,28 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
+@Autonomous(name = "RedFarScore")
 
-@Autonomous(name = "RedClose")
-public class RedClose extends LinearOpMode {
+public class RedFarScore extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(-13.72, -61.32, Math.toRadians(90.00));
+        Pose2d beginPose = new Pose2d(12.09+3.5, -59.84, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder trajectoryAction1 = drive.actionBuilder(beginPose)
-                .splineToConstantHeading(new Vector2d(-9.71, -34.78), Math.toRadians(81.42))
+                .splineTo(new Vector2d(7.79, -36.70), Math.toRadians(90))
+                .turnTo(Math.toRadians(90))
                 .waitSeconds(1)
-                .strafeToConstantHeading(new Vector2d(-32, -39))
-                .splineToSplineHeading(new Pose2d(-62, -53, Math.toRadians(45)), Math.toRadians(270))
+                .strafeToSplineHeading(new Vector2d(12.09+3.5, -59.84),Math.toRadians(90))
+                .strafeToSplineHeading(new Vector2d(-54, -59.84), Math.toRadians(45))
+                .strafeToSplineHeading(new Vector2d(55, -55), Math.toRadians(70))
                 .waitSeconds(1)
                 .turnTo(Math.toRadians(70))
+                .strafeToSplineHeading(new Vector2d(-54, -59.84), Math.toRadians(45))
+                .strafeToSplineHeading(new Vector2d(55, -55), Math.toRadians(105))
                 .waitSeconds(1)
-                .turnTo(Math.toRadians(45))
-                .waitSeconds(1)
-                .turnTo(Math.toRadians(85))
-                .waitSeconds(1)
-                .turnTo(Math.toRadians(45))
-                .waitSeconds(1)
-                .turnTo(Math.toRadians(100))
-                .waitSeconds(1)
-                .turnTo(Math.toRadians(45))
-                .splineTo(new Vector2d(-34, 0.07), Math.toRadians(0));
-
-
-        //.splineTo(new Vector2d(-36.70, -63.40), Math.toRadians(202.26));
+                .turnTo(Math.toRadians(105))
+                .strafeToSplineHeading(new Vector2d(-54, -59.84), Math.toRadians(45))
+                .strafeToSplineHeading(new Vector2d(55, -55), Math.toRadians(90));
 
 
         Action test = trajectoryAction1.build();
@@ -48,9 +42,7 @@ public class RedClose extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        new SleepAction(1),
-                        test,
-                        new SleepAction(1)
+                        test
                 )
         );
 
