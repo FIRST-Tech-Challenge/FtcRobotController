@@ -107,9 +107,9 @@ public class QuadDrive extends LinearOpMode {
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
             Power1  = -gamepad1.left_stick_y ;
-            Power2 = -gamepad1.right_stick_y ;
+            Power2 = -gamepad1.right_stick_y*0.8 ;
             Power3 = -gamepad2.left_stick_y;
-            Power4 = -gamepad2.right_stick_y;
+            Power4 = -gamepad2.right_stick_y*0.8;
             //!!!Use if statements to make it so right drive is slower!!!!
             // Send calculated power to wheels
             One.setPower(Power1);
