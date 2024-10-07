@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="TeleOp Program", group="TeleOp")
 public class MecanumTeleOp extends OpMode {
@@ -19,9 +20,9 @@ public class MecanumTeleOp extends OpMode {
     public DcMotorEx right_f;
     public DcMotorEx left_b;
 
+    public Servo specimen_claw;
 
-
-
+    int travel;
     //Code to run ONCE after the driver hits INIT
     @Override
     public void init() {
@@ -32,13 +33,10 @@ public class MecanumTeleOp extends OpMode {
         right_f = hardwareMap.get(DcMotorEx.class, "right_front");
         left_b = hardwareMap.get(DcMotorEx.class, "left_back");
         right_b = hardwareMap.get(DcMotorEx.class, "right_back");
-
+        specimen_claw = hardwareMap.get(Servo.class, "specimen_claw");
 
         right_f.setDirection(DcMotorSimple.Direction.REVERSE);
         right_b.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
-
     }
     //Code to run REPEATEDLY after the driver hits INIT
     @Override
@@ -47,7 +45,8 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("Linear_motion_right", gamepad2.left_stick_x);
         telemetry.update();
 
-
+        telemetry.addData("linear_motion_left_ticks", robot.linear_L.linear_motion_left.getCurrentPosition());
+        telemetry.update();
     }
 
     //Code to run ONCE after the driver hits PLAY
@@ -59,6 +58,8 @@ public class MecanumTeleOp extends OpMode {
     //Code to run REPEATEDLY after the driver hits PLAY
     @Override
     public void loop() {
+
+
 
         double x = -gamepad1.right_stick_x;
         double y = -gamepad1.left_stick_y;
@@ -85,24 +86,28 @@ public class MecanumTeleOp extends OpMode {
         robot.driveTrain.setDriveVelocities(driveVelocities);
         */
 
-
-        //Mecanum Drive Train ---- Test this out
-
-
-        /*
-        if (gamepad1.dpad_up) {
-            robot.linear_L.linear_motion_left.setPower(1);
-            robot.linear_R.linear_motion_right.setPower(0.95);
-        } else if (gamepad1.dpad_down) {
-            robot.linear_L.linear_motion_left.setPower(-1);
-            robot.linear_R.linear_motion_right.setPower(-0.95);
-
-        }
-        */
-
-
         robot.linear_L.linear_motion_left.setPower(gamepad2.left_stick_y);
         robot.linear_R.linear_motion_right.setPower(gamepad2.left_stick_y);
+
+        //Test encoder for linear_motion_left
+
+        if (gamepad1.a){
+            travel = 3000;
+            while (robot.linear_L.linear_motion_left.getCurrentPosition() < travel){
+                robot.linear_L.linear_motion_left.setTargetPosition(travel);
+                robot.linear_L.linear_motion_left.setPower(0.8);
+                robot.linear_L.linear_motion_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+        }
+
+        if (gamepad1.b){
+            travel = 0;
+            while (robot.linear_L.linear_motion_left.getCurrentPosition() > travel){
+                robot.linear_L.linear_motion_left.setTargetPosition(travel);
+                robot.linear_L.linear_motion_left.setPower(-0.8);
+                robot.linear_L.linear_motion_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+        }
 
             if (gamepad1.dpad_right){
                 encoder(20,1);
@@ -116,19 +121,8 @@ public class MecanumTeleOp extends OpMode {
         } else if (gamepad1.b){
                 robot.left_claw.servo_left.setPosition(-1);
         } */
-
-
-        if (gamepad2.a){
-
-        }
-
         else {
-            //robot.linear_L.linear_motion_left.setPower(0.005);
-
-            //robot.linear_R.linear_motion_right.setPower(0.005);
             robot.linear_C.linear_claw.setPower(0);
-
-
         }
 
     }
@@ -142,10 +136,6 @@ public class MecanumTeleOp extends OpMode {
 
 
     }
-
-
-
-
 }
 
 
