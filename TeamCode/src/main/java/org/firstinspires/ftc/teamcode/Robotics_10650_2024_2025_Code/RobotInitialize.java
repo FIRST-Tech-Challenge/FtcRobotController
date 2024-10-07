@@ -22,16 +22,18 @@ public class RobotInitialize {
     // Initialization Phase
 
     // Create servo variables (currently not available)
-    //Servo pitch;
-    //Servo lClaw;
-    //Servo rClaw;
+    // Servo pitch;
+    // Servo lClaw;
+    // Servo rClaw;
 
     // Create the empty normal motor variables
-    DcMotorEx fleft;
-    DcMotorEx bright;
-    DcMotorEx fright;
-    DcMotorEx bleft;
+    DcMotorEx fLeft;
+    DcMotorEx bRight;
+    DcMotorEx fRight;
+    DcMotorEx bLeft;
+    // DcMotorEx liftMotor; (Placeholder for fifth motor)
 
+    // Add servos once they are on the main robot
 
     // Create empty gyroscope variable
     BHI260IMU gyroScope;
@@ -56,16 +58,18 @@ public class RobotInitialize {
     // The motors and the gyroscope are initialized here
     public void initialize() {
         // map the motors to the hardware map
-        fleft = opMode.hardwareMap.get(DcMotorEx.class, "fleft");
-        bright = opMode.hardwareMap.get(DcMotorEx.class, "bright");
-        fright = opMode.hardwareMap.get(DcMotorEx.class, "fright");
-        bleft = opMode.hardwareMap.get(DcMotorEx.class, "bleft");
+        fLeft = opMode.hardwareMap.get(DcMotorEx.class, "fleft");
+        bRight = opMode.hardwareMap.get(DcMotorEx.class, "bright");
+        fRight = opMode.hardwareMap.get(DcMotorEx.class, "fright");
+        bLeft = opMode.hardwareMap.get(DcMotorEx.class, "bleft");
 
-        fleft.setDirection(DcMotorSimple.Direction.REVERSE);
-        bright.setDirection(DcMotorSimple.Direction.REVERSE);
+        // The front left and back right motors are reversed so all wheels go in the same direction
+        // When a positive or negative value is used
+        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-// map the servos to the hardware map
+// map the servos to the hardware map (not currently in use but will be used later)
 //        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
         //lClaw = opMode.hardwareMap.get(Servo.class, "lClaw");
         //rClaw = opMode.hardwareMap.get(Servo.class, "rClaw");
@@ -73,17 +77,26 @@ public class RobotInitialize {
         // Resetting the encoders (distance measurement sensors)
         // and then start them again on program start
         // Repeat for all motors
-        fleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        fright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        bleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        bright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         // Initialize Gyroscope
         gyroScope = opMode.hardwareMap.get(BHI260IMU.class, "gyroScope");
@@ -93,6 +106,7 @@ public class RobotInitialize {
         AngularVelocity angularVelocity = gyroScope.getRobotAngularVelocity(AngleUnit.DEGREES);
         YawPitchRollAngles orientation = gyroScope.getRobotYawPitchRollAngles();
         gyroScope.initialize(settings);
+
     }
 
 
@@ -132,20 +146,20 @@ public class RobotInitialize {
                 // Forwards (+ positive relativeDistance value)
                 setMotorVelocity(Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getPosStrafe());
-                opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
-                opMode.telemetry.addData("bright", bright.getCurrentPosition());
-                opMode.telemetry.addData("fright", fright.getCurrentPosition());
-                opMode.telemetry.addData("fleft", fleft.getCurrentPosition());
+                opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
+                opMode.telemetry.addData("bright", bRight.getCurrentPosition());
+                opMode.telemetry.addData("fright", fRight.getCurrentPosition());
+                opMode.telemetry.addData("fleft", fLeft.getCurrentPosition());
                 opMode.telemetry.update();
                 //if current position is less than needed
             } else if (getPosStrafe() > relativeDistance) {
                 // Backwards (- negative relativeDistance value)
                 setMotorVelocity(-Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getPosStrafe());
-                opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
-                opMode.telemetry.addData("bright", bright.getCurrentPosition());
-                opMode.telemetry.addData("fright", fright.getCurrentPosition());
-                opMode.telemetry.addData("fleft", fleft.getCurrentPosition());
+                opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
+                opMode.telemetry.addData("bright", bRight.getCurrentPosition());
+                opMode.telemetry.addData("fright", fRight.getCurrentPosition());
+                opMode.telemetry.addData("fleft", fLeft.getCurrentPosition());
                 opMode.telemetry.update();
             }
         }
@@ -167,10 +181,10 @@ public class RobotInitialize {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
-                fleft.setVelocity(velocity);
-                fright.setVelocity(-velocity);
-                bleft.setVelocity(velocity);
-                bright.setVelocity(-velocity);
+                fLeft.setVelocity(velocity);
+                fRight.setVelocity(-velocity);
+                bLeft.setVelocity(velocity);
+                bRight.setVelocity(-velocity);
 
 //                while (){
 //
@@ -201,18 +215,18 @@ public class RobotInitialize {
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
 //
-                Double[] motorvVelocity = {bleft.getVelocity(), fleft.getVelocity(), bright.getVelocity(), fright.getVelocity()};
-                fleft.setVelocity(-velocity);
-                fright.setVelocity(velocity);
-                bleft.setVelocity(-velocity);
-                bright.setVelocity(velocity);
-                opMode.telemetry.addData("get vel", fleft.getVelocity());
-                opMode.telemetry.addData("get vel", bleft.getVelocity());
+                Double[] motorvVelocity = {bLeft.getVelocity(), fLeft.getVelocity(), bRight.getVelocity(), fRight.getVelocity()};
+                fLeft.setVelocity(-velocity);
+                fRight.setVelocity(velocity);
+                bLeft.setVelocity(-velocity);
+                bRight.setVelocity(velocity);
+                opMode.telemetry.addData("get vel", fLeft.getVelocity());
+                opMode.telemetry.addData("get vel", bLeft.getVelocity());
                 opMode.telemetry.addData("getposStrafeR", getPosStrafe());
-                opMode.telemetry.addData("bleft", bleft.getCurrentPosition());
-                opMode.telemetry.addData("bright", bright.getCurrentPosition());
-                opMode.telemetry.addData("fright", fright.getCurrentPosition());
-                opMode.telemetry.addData("fleft", fleft.getCurrentPosition());
+                opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
+                opMode.telemetry.addData("bright", bRight.getCurrentPosition());
+                opMode.telemetry.addData("fright", fRight.getCurrentPosition());
+                opMode.telemetry.addData("fleft", fLeft.getCurrentPosition());
                 opMode.telemetry.update();
             }
         }
@@ -232,24 +246,24 @@ public class RobotInitialize {
 
             if (degrees > getAngle()) {
                 // Turning left (positive gyro value)
-                fleft.setVelocity(-500);
-                bleft.setVelocity(500);
-                fright.setVelocity(500);
-                bright.setVelocity(-500);
+                fLeft.setVelocity(-500);
+                bLeft.setVelocity(500);
+                fRight.setVelocity(500);
+                bRight.setVelocity(-500);
             }
             else if (degrees < getAngle()) {
                 // Turning right (negative gyro value)
-                fleft.setVelocity(500);
-                bleft.setVelocity(-500);
-                fright.setVelocity(-500);
-                bright.setVelocity(500);
+                fLeft.setVelocity(500);
+                bLeft.setVelocity(-500);
+                fRight.setVelocity(-500);
+                bRight.setVelocity(500);
             }
         }
         stopMotors();
     }
     //gets average magnitudes because motors are going in different directions
     public int getPosStrafe() {
-        return ((Math.abs(fright.getCurrentPosition())+Math.abs(bright.getCurrentPosition())+Math.abs(fleft.getCurrentPosition())+ Math.abs(bleft.getCurrentPosition()))/4);
+        return ((Math.abs(fRight.getCurrentPosition())+Math.abs(bRight.getCurrentPosition())+Math.abs(fLeft.getCurrentPosition())+ Math.abs(bLeft.getCurrentPosition()))/4);
     }
 
     //
@@ -265,13 +279,13 @@ public class RobotInitialize {
     // Calculates the average left side encoder values
     // It takes the left side encoder location of the left side motors and averages them
     public int getLeftSideEncoderValues() {
-        return ((fleft.getCurrentPosition() + bleft.getCurrentPosition())/2);
+        return ((fLeft.getCurrentPosition() + bLeft.getCurrentPosition())/2);
     }
 
     // Calculates the average right side encoder values
     // It takes the right side encoder location of the right side motors and averages them
     public int getRightSideEncoderValues() {
-        return ((fright.getCurrentPosition() + bright.getCurrentPosition())/2);
+        return ((fRight.getCurrentPosition() + bRight.getCurrentPosition())/2);
     }
 
     // This sets the movement of the motors to be constant
@@ -279,10 +293,10 @@ public class RobotInitialize {
     // robot goes forward when the velocity value is positive and
     // vice versa for going backwards
     public void setMotorVelocity(double velocity) {
-        fleft.setVelocity(velocity);
-        fright.setVelocity(velocity);
-        bleft.setVelocity(-velocity);
-        bright.setVelocity(-velocity);
+        fLeft.setVelocity(velocity);
+        fRight.setVelocity(velocity);
+        bLeft.setVelocity(-velocity);
+        bRight.setVelocity(-velocity);
     }
 
     // Stops the motors by setting the velocity to 0

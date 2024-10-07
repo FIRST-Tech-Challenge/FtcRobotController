@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp (name = "TeleOpCode")
 public class TeleOpCode extends LinearOpMode {
@@ -23,29 +20,43 @@ public class TeleOpCode extends LinearOpMode {
         // loop while the program is running
         // waits for controller input then runs the associated code
         while(opModeIsActive()) {
-            // controller code that is inputted by the drive team
+            // controller inputs that is inputted by the drive team
             controllerInput();
         }
     }
 
     public void controllerInput() {
+        // Gamepad usages (two gamepads in use, one for driving and one for mechanisms):
+
+        // Gamepad1 is used for driving (motor controls)
+        // Gamepad2 is used for mechanism manipulation (moving servos)
+
 
         // Variables that store the different game pad movements for ease of reference later
         float strafePower; // (left stick x-axis movement)
-        strafePower = gamepad1.left_stick_x;
+        strafePower = gamepad1.left_stick_x * 500;
+        telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
         float turnPower; // (right stick x-axis movement)
-        turnPower = gamepad1.right_stick_x;
+        turnPower = gamepad1.right_stick_x * 500;
+        telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
         float straightMovementPower; // (left stick y-axis movement)
-        straightMovementPower = gamepad1.left_stick_y;
+        straightMovementPower = gamepad1.left_stick_y * 500;
+        telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 
-        // Set power of the motors
+
+        // Set velocity of the motors
         // Forward and backward movement (left stick y-axis movement)
         // Left and right turning (right stick x-axis movement)
         // Strafing left and right (left stick x-axis movement)
-        robot.fright.setPower(-strafePower + straightMovementPower - turnPower);
-        robot.bright.setPower(-strafePower + straightMovementPower + turnPower);
-        robot.fright.setPower(strafePower + straightMovementPower + turnPower);
-        robot.bleft.setPower(strafePower + straightMovementPower - turnPower);
+
+        robot.fLeft.setVelocity(strafePower - straightMovementPower + turnPower); // Overall
+        // negative value
+        robot.fRight.setVelocity(-strafePower - straightMovementPower - turnPower); // Overall
+        // positive value
+        robot.bLeft.setVelocity(strafePower + straightMovementPower - turnPower); // Overall
+        // positive value
+        robot.bRight.setVelocity(-strafePower + straightMovementPower + turnPower); // Overall
+        // negative value
 
         // Makes the pitch servo go all the way up
         // Make sure claw is fully closed before lifting up (set up conditional for this)
@@ -83,9 +94,6 @@ public class TeleOpCode extends LinearOpMode {
         }
 
         // Prints to the robot driver station screen
-        telemetry.addData("Test", "This is a test"); // Adds to the list of statements to
-        // print
-        // Prints on the driver station screen
         telemetry.update();
     }
 }
