@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="TeleOp")
 
 public class TeleOp extends LinearOpMode {
-    DcMotorEx leftFront, leftBack, rightBack, rightFront;
     GamepadEvents controller;
     private MechDrive robot;
 
