@@ -7,7 +7,7 @@ import org.nknsd.robotics.team.components.WheelHandler;
 
 import java.util.List;
 
-public class SampleNKNProgram extends NKNProgram {
+public class BasicNKNProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         WheelHandler wheelHandler = new WheelHandler(
