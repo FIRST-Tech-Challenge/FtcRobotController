@@ -13,7 +13,7 @@ public class Arm {
 
 
     public Arm(HardwareMap hardwareMap) {
-        this.arm1 = hardwareMap.get(DcMotorEx.class, "arm1");
+        this.arm1 = hardwareMap.get(DcMotorEx.class, "arm 1");
 
         this.arm1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
