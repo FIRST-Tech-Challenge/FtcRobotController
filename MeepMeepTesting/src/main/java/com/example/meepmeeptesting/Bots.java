@@ -144,7 +144,7 @@ public class Bots {
                         // go to pickup
                         .splineToLinearHeading(
                                 submersiblePickUpPose,
-                                Math.toRadians(270 + redAngleAdjustment)
+                                Math.toRadians(-90 + redAngleAdjustment)
                         )
                         .addDisplacementMarker(() -> {
                             // pick up sample

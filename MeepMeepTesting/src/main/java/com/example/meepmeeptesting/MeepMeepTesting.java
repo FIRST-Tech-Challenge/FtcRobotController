@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.rowlandhall.meepmeep.MeepMeep;
 import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
@@ -62,7 +63,7 @@ public class MeepMeepTesting {
         dropSamplePose = new Pose2d(
                 50 * redPoseAdjustment,
                 50 * redPoseAdjustment,
-                Math.toRadians(45 + redAngleAdjustment)
+                Math.toRadians(180+45 + redAngleAdjustment)
         );
 
         MeepMeep meepMeep = new MeepMeep(600);
@@ -86,7 +87,7 @@ public class MeepMeepTesting {
                 meepMeep.removeEntity(bot);
             }
 
-            RoadRunnerBotEntity newBot = coloredStraysCycleBot(meepMeep, endHeading);
+            RoadRunnerBotEntity newBot = neutralStraysCycleBot(meepMeep, endHeading);
             bots.add(newBot);
             meepMeep.addEntity(newBot);
 
