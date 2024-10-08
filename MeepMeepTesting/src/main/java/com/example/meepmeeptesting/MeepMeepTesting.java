@@ -1,35 +1,41 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.rowlandhall.meepmeep.MeepMeep;
 import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import static com.example.meepmeeptesting.Bots.*;
-
 public class MeepMeepTesting {
+
 
     public enum COLOR {
         RED, BLUE;
     }
 
-    public static COLOR currentColor = COLOR.BLUE;
+    public static COLOR currentColor;
 
     public static Pose2d bucketStartPose;
     public static Pose2d coloredSampleStartPose;
     public static Pose2d submersiblePickUpPose;
     public static Pose2d dropSamplePose;
 
-    public static int redAngleAdjustment = 0;
-    public static int redPoseAdjustment = 1;
+    public static MeepMeep meepMeep;
+
+    public static int redAngleAdjustment;
+    public static int redPoseAdjustment;
+
+    static {
+        currentColor = COLOR.BLUE;
+        redAngleAdjustment = 0;
+        redPoseAdjustment = 1;
+    }
 
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int endHeading = 270;
+        int endHeading = 0;
         String endHeadingInput;
         LinkedList<RoadRunnerBotEntity> bots = new LinkedList<>();
 
@@ -66,7 +72,7 @@ public class MeepMeepTesting {
                 Math.toRadians(180+45 + redAngleAdjustment)
         );
 
-        MeepMeep meepMeep = new MeepMeep(600);
+        meepMeep = new MeepMeep(600);
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_JUICE_DARK)
                 .setDarkMode(true)
@@ -87,7 +93,7 @@ public class MeepMeepTesting {
                 meepMeep.removeEntity(bot);
             }
 
-            RoadRunnerBotEntity newBot = coloredStraysCycleBot(meepMeep, endHeading);
+            RoadRunnerBotEntity newBot = Bots.coloredStraysCycleBot();
             bots.add(newBot);
             meepMeep.addEntity(newBot);
 

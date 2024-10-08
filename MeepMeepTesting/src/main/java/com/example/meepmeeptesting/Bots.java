@@ -1,7 +1,6 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.rowlandhall.meepmeep.MeepMeep;
 import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder;
 import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
@@ -11,8 +10,7 @@ import static com.example.meepmeeptesting.MeepMeepTesting.*;
 public class Bots {
 
 
-    public static RoadRunnerBotEntity coloredStraysCycleBot(MeepMeep meepMeep, int endHeading) {
-
+    public static RoadRunnerBotEntity coloredStraysCycleBot() {
         return new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
@@ -84,7 +82,7 @@ public class Bots {
                         .build());
     }
 
-    public static RoadRunnerBotEntity neutralStraysCycleBot(MeepMeep meepMeep, int endHeading) {
+    public static RoadRunnerBotEntity neutralStraysCycleBot() {
         return new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
@@ -136,7 +134,7 @@ public class Bots {
                         .build());
     }
 
-    public static RoadRunnerBotEntity submersibleCycleBot(MeepMeep meepMeep, int endHeading) {
+    public static RoadRunnerBotEntity submersibleCycleBot() {
         return new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
