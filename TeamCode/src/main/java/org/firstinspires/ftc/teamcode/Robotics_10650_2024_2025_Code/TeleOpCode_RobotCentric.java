@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp (name = "TeleOpCode")
-public class TeleOpCode extends LinearOpMode {
+@TeleOp (name = "TeleOpCode_RobotCentric")
+public class TeleOpCode_RobotCentric extends LinearOpMode {
 
     // Run the initialize function
     RobotInitialize robot;
@@ -34,13 +34,13 @@ public class TeleOpCode extends LinearOpMode {
 
         // Variables that store the different game pad movements for ease of reference later
         float strafePower; // (left stick x-axis movement)
-        strafePower = gamepad1.left_stick_x * 500;
+        strafePower = gamepad1.left_stick_x * 1000;
         telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
         float turnPower; // (right stick x-axis movement)
-        turnPower = gamepad1.right_stick_x * 500;
+        turnPower = gamepad1.right_stick_x * 1000;
         telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
         float straightMovementPower; // (left stick y-axis movement)
-        straightMovementPower = gamepad1.left_stick_y * 500;
+        straightMovementPower = gamepad1.left_stick_y * 1000;
         telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 
 

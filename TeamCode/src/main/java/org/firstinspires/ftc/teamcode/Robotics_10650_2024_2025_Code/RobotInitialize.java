@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Imports all of the necessary FTC libraries and code
+import java.io.*;
+import java.util.*;
+//List importStatements = new ArrayList();
+
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,7 +35,8 @@ public class RobotInitialize {
     DcMotorEx bRight;
     DcMotorEx fRight;
     DcMotorEx bLeft;
-    // DcMotorEx liftMotor; (Placeholder for fifth motor)
+    // DcMotorEx liftExtender; (Placeholder for fifth motor)
+    // DcMotorEx liftPitch; (Placeholder for sixth motor)
 
     // Add servos once they are on the main robot
 
@@ -48,7 +53,7 @@ public class RobotInitialize {
     LinearOpMode opMode;
 
     // Enables the class to be referenced in other classes such as the Autonomous Code
-    // and the TeleOpCode
+    // and the TeleOpCode_RobotCentric
     public RobotInitialize(LinearOpMode opMode) {
         this.opMode = opMode;
         initialize();
@@ -87,7 +92,6 @@ public class RobotInitialize {
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-
         bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -100,13 +104,19 @@ public class RobotInitialize {
 
         // Initialize Gyroscope
         gyroScope = opMode.hardwareMap.get(BHI260IMU.class, "gyroScope");
+        // Possibly change this to the following code comment
+        RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(new Orientation(AxesReference
+                .INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,
+                0));
 
-        RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(new Orientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,0));
+        // new REVHubOrientationOnRobot(REVHubOrientationOnRobot.LogoFacingDirection.<direction
+        // here>, REVHubOrientationOnRobot.UsbFacingDirection.<direction here>));
+
         settings = new BHI260IMU.Parameters(ori);
+        gyroScope.initialize(settings);
         AngularVelocity angularVelocity = gyroScope.getRobotAngularVelocity(AngleUnit.DEGREES);
         YawPitchRollAngles orientation = gyroScope.getRobotYawPitchRollAngles();
-        gyroScope.initialize(settings);
-
+        gyroScope.resetYaw();
     }
 
 
