@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
+import org.firstinspires.ftc.teamcode.core.CThrouxChassis;
 import org.firstinspires.ftc.teamcode.core.CyDogsChassis;
 
 
@@ -20,31 +22,27 @@ public class RedRightOneSpecimen extends LinearOpMode {
 
         // this lets us see how long the op mode has run
 
-        CyDogsChassis myBot = new CyDogsChassis(this);
+        MegalodogChassis myBot = new MegalodogChassis(this);
         // Put code that should run during initialization HERE in this area
-        myBot.BackLeftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        myBot.FrontLeftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        myBot.FrontRightWheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        myBot.BackRightWheel.setDirection(DcMotorSimple.Direction.FORWARD);
+
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
         if (opModeIsActive()) {
             // Put code that should run during the active mode HERE in this area
 
-            // 1: Drive forward, might need to move a little bit backwards
-            myBot.MoveStraight(590,.3,400);
-            // 2: Strafe left a little
-
+            // 1: Strafe left
+            myBot.StrafeLeft(400,.3,1000);
+            // 2: Move forward
+            myBot.MoveStraight(550,.3,500);
             // 3: Hang specimen
 
-            // 4: Touch chamber
-
-            // 5:
-
-            // 6:
-
-
+            // 4: Move backwards
+            myBot.MoveStraight(-470,.3,500);
+            // 5: Strafe Right
+            myBot.StrafeRight(800, 0.3, 1000);
+            // Advanced (from where we drop specimen): Strafe right, grab first sample (closest one)
+            // Rotate right, strafe left, drop sample, move backwards
 
         }
     }

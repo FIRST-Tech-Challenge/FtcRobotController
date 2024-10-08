@@ -11,7 +11,8 @@ public class MegalodogChassis {
     public DcMotor FrontRightWheel;
     public DcMotor BackLeftWheel;
     public DcMotor BackRightWheel;
-    private int WheelDiameter=104;    private LinearOpMode myOpMode;
+    private LinearOpMode myOpMode;
+    private int WheelDiameter=104;
     private int RPM = 435;
     private double ticksPerRevolution=384.5;
     public enum Direction {LEFT, CENTER, RIGHT}
@@ -53,10 +54,10 @@ public class MegalodogChassis {
 
         // > Clear Encoders of prior data
         FrontLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)(WheelDiameter)
-                BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)(WheelDiameter)
-                BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)(WheelDiameter)
-                FrontLeftWheel.setTargetPosition(0);
+        FrontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontLeftWheel.setTargetPosition(0);
         FrontRightWheel.setTargetPosition(0);
         BackLeftWheel.setTargetPosition(0);
         BackRightWheel.setTargetPosition(0);
@@ -147,7 +148,7 @@ public class MegalodogChassis {
         double TicksToTarget;
         double TicksPerSecond;
 
-        TicksToTarget = (mmToTarget / ( * Math.PI)) * (ticksPerRevolution;
+        TicksToTarget = (mmToTarget / (WheelDiameter * Math.PI)) * (ticksPerRevolution);
         TicksPerSecond = ((VelocityPercentage * RPM) / 60) * ticksPerRevolution;
         // myOpMode.telemetry.addData("ticksToTarget", TicksToTarget);
         //myOpMode.telemetry.update();
@@ -197,6 +198,6 @@ public class MegalodogChassis {
         }
         myOpMode.sleep(WaitTime);
     }
-
+}
 
 
