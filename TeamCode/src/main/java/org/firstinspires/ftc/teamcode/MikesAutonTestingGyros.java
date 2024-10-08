@@ -66,7 +66,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Gryo", group="Robot")
+@Autonomous(name="MikeAutonTesting", group="Robot")
 //@Disabled
 public class MikesAutonTestingGyros extends LinearOpMode {
 
@@ -88,10 +88,13 @@ public class MikesAutonTestingGyros extends LinearOpMode {
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     COUNTS_PER_INCH         = 42.5;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
+    double                  CURRENT_YAW             = 0.0;
+    double                  robotDesiredDirection   = 0.0;
+    double                  directionCorrectionModifier = 0.0;
+    double                  directionError          = 0.0;
 
     @Override
     public void runOpMode() {
@@ -109,7 +112,7 @@ public class MikesAutonTestingGyros extends LinearOpMode {
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-
+        imu.resetYaw();
 
 
         // Initialize the drive system variables.
@@ -121,8 +124,8 @@ public class MikesAutonTestingGyros extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
@@ -149,13 +152,11 @@ public class MikesAutonTestingGyros extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        forwardDrive(DRIVE_SPEED,  24, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-//        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-//        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
+        forwardDrive(0.1,100,30);
+        while(opModeIsActive()){
         getYaw();
         telemetry.addData("Path", "Complete");
-        telemetry.update();
+        telemetry.update();}
         sleep(1000);  // pause to display final telemetry message.
     }
 
@@ -178,40 +179,23 @@ public class MikesAutonTestingGyros extends LinearOpMode {
             // Determine new target position, and pass to motor controller
             newDriveTarget = leftFrontDrive.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
 
-            //We will not be using the target position.
-            //leftFrontDrive.setTargetPosition(newDriveTarget);
-
-            // Motors should already be in run_using_encoder mode
-            //leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
             // reset the timeout time and start motion.
             runtime.reset();
 
+            if ((distance > 0)) {
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            if (distance > 0) {
-                leftFrontDrive.setPower(Math.abs(speed));
-                leftBackDrive.setPower(Math.abs(speed));
-                rightFrontDrive.setPower(Math.abs(speed));
-                rightBackDrive.setPower(Math.abs(speed));
                 while (opModeIsActive() &&
                         (runtime.seconds() < timeoutS) &&
                         (leftFrontDrive.getCurrentPosition() < newDriveTarget)) {
+                    getYaw();
+                    directionError = (CURRENT_YAW - robotDesiredDirection);
+                    directionCorrectionModifier = (directionError * 0.01);
+                    telemetry.addData("Modifier", " %7d :%7d", directionCorrectionModifier);
+                    //leftFrontDrive.setPower(Math.abs(speed + directionCorrectionModifier));
+                    //leftBackDrive.setPower(Math.abs(speed + directionCorrectionModifier));
+                   // rightFrontDrive.setPower(Math.abs(speed - directionCorrectionModifier));
+                   // rightBackDrive.setPower(Math.abs(speed - directionCorrectionModifier));
 
-                    // Display it for the driver.
-                    telemetry.addData("Running to", " %7d :%7d", newDriveTarget);
-                    telemetry.addData("Currently at", " at %7d :%7d",
-                            leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
-                            rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-                    telemetry.update();
                 }
             }
             // If we are moving backwards, the current position will start out greater than the target
@@ -243,19 +227,14 @@ public class MikesAutonTestingGyros extends LinearOpMode {
             rightFrontDrive.setPower(0);
             rightBackDrive.setPower(0);
 
-            // Turn off RUN_TO_POSITION
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move.
         }
     public void getYaw(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
-
-        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+        CURRENT_YAW = orientation.getYaw(AngleUnit.DEGREES);
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", CURRENT_YAW);
     }
     }
 

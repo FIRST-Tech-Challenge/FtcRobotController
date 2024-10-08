@@ -29,10 +29,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -60,9 +66,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Mike", group="Robot")
+@Autonomous(name="autonDrivingFunctions", group="Robot")
 //@Disabled
 public class AutonDrivingFunctions extends LinearOpMode {
+
+    IMU imu;
 
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null;
@@ -80,9 +88,13 @@ public class AutonDrivingFunctions extends LinearOpMode {
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = 1.0;
+    static final double     COUNTS_PER_INCH         = 42.5;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
+    double                  CURRENT_YAW             = 0.0;
+    double                  robotDesiredDirection   = 0.0;
+    double                  directionError          = 0.0;
+    double                  directionCorrectionModifier = 0.0;
 
     @Override
     public void runOpMode() {
@@ -93,13 +105,32 @@ public class AutonDrivingFunctions extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        imu.resetYaw();
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        //Set the motors to brake when there is no power
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -124,13 +155,15 @@ public class AutonDrivingFunctions extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveForward(DRIVE_SPEED,  500, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        driveForward(0.5,  100, 35.0);  // S1: Forward 47 Inches with 5 Sec timeout
 //        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
 //        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
+        while (opModeIsActive()){
+            getYaw();
+            telemetry.addData("Path", "Complete");
+            telemetry.update();
+        }
+        sleep(100000);  // pause to display final telemetry message.
     }
 
     /*
@@ -171,12 +204,37 @@ public class AutonDrivingFunctions extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                    (newFrontLeftTarget > leftFrontDrive.getCurrentPosition())){
+            if(forwardInches>0.0) {
+                while (opModeIsActive() &&
+                        (runtime.seconds() < timeoutS) &&
+                        (newFrontLeftTarget > leftFrontDrive.getCurrentPosition())) {
+                    getYaw();
+                    directionError = CURRENT_YAW - robotDesiredDirection;
+                    directionCorrectionModifier = directionError * 0.01;
+                    telemetry.addData("modifier", "%.2f Deg. (Heading)", directionCorrectionModifier);
+                    telemetry.update();
+                    leftFrontDrive.setPower(speed + directionCorrectionModifier);
+                    leftBackDrive.setPower(speed + directionCorrectionModifier);
+                    rightFrontDrive.setPower(speed - directionCorrectionModifier);
+                    rightBackDrive.setPower(speed - directionCorrectionModifier);
 
+                }
+            }
+            else{
+                while (opModeIsActive() &&
+                        (runtime.seconds() < timeoutS) &&
+                        (newFrontLeftTarget < leftFrontDrive.getCurrentPosition())){
+                    getYaw();
+                    directionError = CURRENT_YAW - robotDesiredDirection;
+                    directionCorrectionModifier = directionError * 0.01;
+                    telemetry.addData("modifier", "%.2f Deg. (Heading)", directionCorrectionModifier);
+                    telemetry.update();
+                    leftFrontDrive.setPower(-speed + directionCorrectionModifier);
+                    leftBackDrive.setPower(-speed + directionCorrectionModifier);
+                    rightFrontDrive.setPower(-speed - directionCorrectionModifier);
+                    rightBackDrive.setPower(-speed - directionCorrectionModifier);
 
-
+                }
             }
 
             // Stop all motion;
@@ -193,5 +251,20 @@ public class AutonDrivingFunctions extends LinearOpMode {
 
             sleep(250);   // optional pause after each move.
         }
+    }
+
+    public void turnLeft(double turnSpeed,
+                        double leftAngle){
+    //    leftFrontDrive.setPower(-turnSpeed);
+    //    leftBackDrive.setPower(-turnSpeed);
+    //    rightFrontDrive.setPower(turnSpeed);
+    //    rightBackDrive.setPower(turnSpeed);
+    }
+
+    public void getYaw(){
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        CURRENT_YAW = orientation.getYaw(AngleUnit.DEGREES);
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", CURRENT_YAW);
+        telemetry.update();
     }
 }
