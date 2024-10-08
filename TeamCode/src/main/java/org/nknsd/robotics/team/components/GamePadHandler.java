@@ -13,87 +13,72 @@ public class GamePadHandler implements NKNComponent {
     enum GamepadButtons {
         LEFT_TRIGGER {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return (gamepad.left_trigger > 0.5);
             }
-        },
-        RIGHT_TRIGGER {
+        }, RIGHT_TRIGGER {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return (gamepad.right_trigger > 0.5);
             }
-        },
-        LEFT_BUMPER {
+        }, LEFT_BUMPER {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.left_bumper;
             }
-        },
-        RIGHT_BUMPER {
+        }, RIGHT_BUMPER {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.right_bumper;
             }
-        },
-        DPAD_LEFT {
+        }, DPAD_LEFT {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_left;
             }
-        },
-        DPAD_DOWN {
+        }, DPAD_DOWN {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_down;
             }
-        },
-        DPAD_RIGHT {
+        }, DPAD_RIGHT {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_right;
             }
-        },
-        DPAD_UP {
+        }, DPAD_UP {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_up;
             }
-        },
-        A {
+        }, A {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.a;
             }
-        },
-        B {
+        }, B {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.b;
             }
-        },
-        X {
+        }, X {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.x;
             }
-        },
-        Y {
+        }, Y {
             @Override
-            boolean detect(Gamepad shortVersion) {
-                return false;
+            boolean detect(Gamepad gamepad) {
+                return gamepad.y;
             }
         };
 
-
-        abstract boolean detect(Gamepad shortVersion);
+        abstract boolean detect(Gamepad gamepad);
     }
-
     private final double TRIGGERDEADZONE = 0.5;
-
     // Hashmap of the button to list for, and the event to trigger based on that
     // The key is the button + the name of the event
     private HashMap<String, Runnable> eventListeners;
-
     private Gamepad gamePad1;
     private Gamepad gamePad2;
 
@@ -204,6 +189,4 @@ public class GamePadHandler implements NKNComponent {
         String keyName = button.name() + ":" + gamepadNumber + ":" + eventName;
         eventListeners.remove(keyName);
     }
-
-
 }
