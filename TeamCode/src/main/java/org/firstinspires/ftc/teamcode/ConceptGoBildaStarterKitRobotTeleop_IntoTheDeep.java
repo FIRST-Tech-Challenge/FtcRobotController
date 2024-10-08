@@ -124,10 +124,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     /* Variables that are used to set the arm to a specific position */
     double armPosition = (int)ARM_COLLAPSED_INTO_ROBOT;
     double armPositionFudgeFactor;
-
-
-    // This is a comment I added.
-    // This is another comment in a separate commit.
+    
 
     @Override
     public void runOpMode() {
