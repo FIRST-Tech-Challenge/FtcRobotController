@@ -24,10 +24,10 @@ public class arhanCode extends OpMode {
 
     @Override
     public void init() {
-        backLeft = hardwareMap.get(DcMotor.class, "motorLeft");
-        backRight = hardwareMap.get(DcMotor.class, "motorRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        frontLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "backRight");
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -44,6 +44,13 @@ public class arhanCode extends OpMode {
         else if(y < -0.3)
             moveBackward();
 
+        double x = gamepad1.right_stick_x;
+
+        if(x > 0.3) {
+            goRight();
+        } else if(x < -0.3) {
+            goLeft();
+        }
 
 
         /*double power = gamepad1.right_stick_y; //as you move the joy-con R thing it records how much u move
