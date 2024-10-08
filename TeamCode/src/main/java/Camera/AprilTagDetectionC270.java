@@ -23,7 +23,7 @@ public class AprilTagDetectionC270 extends LinearOpMode {
     AprilTagDetectionPipeline aprilTagPipeline;
 
     static final double FEET_PER_METER = 3.28084;
-
+    // hopefully fixed it
     // Lens intrinsics for Logitech C270
     double fx = 640.0;
     double fy = 640.0;
