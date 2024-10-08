@@ -11,7 +11,8 @@ public class autoTest extends OpMode {
     private DcMotor frontLeft; //making front left motor
     private DcMotor backRight; //making back right motor
     private DcMotor frontRight; //making front right motor
-    private static double powerInput = 1; //making power variable
+    private static double powerInputy = 1; //making power variable for y direction of stick
+    private static double powerInputx = 1: //making power variable for x direction of stick
     private DcMotor intake; //making intake motor
 
     @Override
@@ -29,39 +30,40 @@ public class autoTest extends OpMode {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE); //reversing left side cuz mecanum wheels
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        powerInput = gamepad1.right_stick_y; //mapping power variable to right stick up and down
+        powerInputy = gamepad1.right_stick_y; //mapping power variable to right stick up and down
+        powerInputx = gamepad1.right_stick_x; //mapping power varaible to right stick left and right
     }
     public void goForward() { //go forward
-        backLeft.setPower(powerInput);
-        frontLeft.setPower(powerInput);
-        backRight.setPower(powerInput);
-        frontRight.setPower(powerInput);
+        backLeft.setPower(powerInputy);
+        frontLeft.setPower(powerInputy);
+        backRight.setPower(powerInputy);
+        frontRight.setPower(powerInputy);
     }
     public  void goBackward() { //go backward
-        backLeft.setPower(-1 * powerInput);
-        frontLeft.setPower(-1 * powerInput);
-        backRight.setPower(-1 * powerInput);
-        frontRight.setPower(-1 * powerInput);
+        backLeft.setPower(-1 * powerInputy);
+        frontLeft.setPower(-1 * powerInputy);
+        backRight.setPower(-1 * powerInputy);
+        frontRight.setPower(-1 * powerInputy);
     }
     public void goRight() { //go right
-        frontRight.setPower(-1 * powerInput);
-        frontLeft.setPower((powerInput));
-        backRight.setPower(powerInput);
-        backLeft.setPower(-1 * powerInput);
+        frontRight.setPower(-1 * powerInputy);
+        frontLeft.setPower((powerInputy));
+        backRight.setPower(powerInputy);
+        backLeft.setPower(-1 * powerInputy);
     }
     public void goLeft() { //go left
-        frontLeft.setPower(-1 * powerInput);
-        frontRight.setPower(powerInput);
-        backLeft.setPower(powerInput);
-        backRight.setPower(-1 * powerInput);
+        frontLeft.setPower(-1 * powerInputy);
+        frontRight.setPower(powerInputy);
+        backLeft.setPower(powerInputy);
+        backRight.setPower(-1 * powerInputy);
     }
     public void goForwardRight() { // go foward and right
-        frontLeft.setPower(powerInput);
-        backRight.setPower(powerInput);
+        frontLeft.setPower(powerInputy);
+        backRight.setPower(powerInputy);
     }
     public void goFowardLeft() { //go forward and left
-        frontRight.setPower(powerInput);
-        backLeft.setPower(powerInput);
+        frontRight.setPower(powerInputy);
+        backLeft.setPower(powerInputy);
     }
     public void goBackwardRight() { //go backward and right
         frontLeft.setPower(-1 * powerInput);
