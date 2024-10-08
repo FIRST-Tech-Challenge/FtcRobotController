@@ -13,8 +13,9 @@ public class claw  extends LinearOpMode {
         Servo rClaw = hardwareMap.get(Servo.class, "rClaw");
         Servo lClawClaw = hardwareMap.get(Servo.class, "lClaw");
         waitForStart();
-        while(!isStopRequested()){
-            if(gamepad.a)
-        }
+        //Uncomment when you want to work on this. Armaan commented this out so I could test code.
+//        while(!isStopRequested()){
+//            if(gamepad.a)
+//        }
     }
 }
