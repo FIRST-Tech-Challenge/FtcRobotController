@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.intothedeep;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.core.MegalodogChassis;
+import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
 
 public class Megalodog {
     public int top_bucket=2000;

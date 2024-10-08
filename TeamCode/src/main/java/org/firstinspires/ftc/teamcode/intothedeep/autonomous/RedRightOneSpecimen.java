@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
-import org.firstinspires.ftc.teamcode.core.CThrouxChassis;
-import org.firstinspires.ftc.teamcode.core.CyDogsChassis;
+
 
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
