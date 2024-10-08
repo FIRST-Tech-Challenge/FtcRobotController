@@ -87,7 +87,7 @@ public class MeepMeepTesting {
                 meepMeep.removeEntity(bot);
             }
 
-            RoadRunnerBotEntity newBot = neutralStraysCycleBot(meepMeep, endHeading);
+            RoadRunnerBotEntity newBot = coloredStraysCycleBot(meepMeep, endHeading);
             bots.add(newBot);
             meepMeep.addEntity(newBot);
 

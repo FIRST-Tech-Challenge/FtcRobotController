@@ -40,7 +40,7 @@ public class Bots {
 
                         // go to pickup middle
                         .setTangent(Math.toRadians(180 + redAngleAdjustment))
-                        .splineToSplineHeading(new Pose2d(
+                        .splineToLinearHeading(new Pose2d(
                                         -40 * redPoseAdjustment,
                                         27 * redPoseAdjustment,
                                         Math.toRadians(180 + redAngleAdjustment)
