@@ -33,9 +33,11 @@ public class ChaosMonkey implements NKNComponent {
     private long stateStartTime = 0; // Stores the clock time at which the test started to run, so that we can stop it after the delay
 
     private final WheelHandler wheelHandler;
+    private final String[] skipTests;
 
-    public ChaosMonkey(WheelHandler wheelHandler) {
+    public ChaosMonkey(WheelHandler wheelHandler, String[] skipTests) {
         this.wheelHandler = wheelHandler;
+        this.skipTests = skipTests;
     }
 
     @Override
@@ -53,8 +55,18 @@ public class ChaosMonkey implements NKNComponent {
     @Override
     public String getName() {return "ChaosMonkey";}
 
-    // Here we define what happens in each test.
+    private boolean shouldSkipState(States state) {
+        for (String s: skipTests) {
+            if (s.equals(state.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void runState() {
+        if (shouldSkipState(state)) {return;}
+
         switch (state) {
             case DO_NOTHING:
                 wheelHandler.vectorToMotion(0, 0, 0);
