@@ -5,48 +5,79 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.rowlandhall.meepmeep.MeepMeep;
 import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder;
 import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+// import the poses
+import static com.example.meepmeeptesting.MeepMeepTesting.*;
 
 public class Bots {
-    private static final Pose2d bucketStartPose = new Pose2d(35, 62, Math.toRadians(-90));
-    private static final Pose2d coloredSampleStartPose = new Pose2d(-35, 62, Math.toRadians(-90));
-    private static final Pose2d submersiblePickUpPose = new Pose2d(27, 0, Math.toRadians(180));
-    private static final Pose2d dropSamplePose = new Pose2d(50, 50, Math.toRadians(45));
+
 
     public static RoadRunnerBotEntity coloredStraysCycleBot(MeepMeep meepMeep, int endHeading) {
+
         return new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(bucketStartPose)
-                        .waitSeconds(1)
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(coloredSampleStartPose)
                         // LOOP 1
-                        // go to pickup
-                        .lineToConstantHeading(new Vector2d(48, 43))
+                        // go to pickup right
+                        .lineToSplineHeading(new Pose2d(
+                                -48 * redPoseAdjustment,
+                                42 * redPoseAdjustment,
+                                Math.toRadians(-90 + redAngleAdjustment)
+                        ))
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
 
                         // go to dropoff
-                        .lineToSplineHeading(dropSamplePose)
+                        .setTangent(Math.toRadians(0 + redAngleAdjustment))
+                        .splineToSplineHeading(
+                                dropSamplePose,
+                                Math.toRadians(10 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // drop off sample
                         })
 
-                        // LOOP 2
-                        .lineToLinearHeading(new Pose2d(58, 43, Math.toRadians(-90)))
+                        // go to pickup middle
+                        .setTangent(Math.toRadians(180 + redAngleAdjustment))
+                        .splineToSplineHeading(new Pose2d(
+                                        -40 * redPoseAdjustment,
+                                        27 * redPoseAdjustment,
+                                        Math.toRadians(180 + redAngleAdjustment)
+                                ),
+                                Math.toRadians(235 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
-                        .lineToSplineHeading(dropSamplePose)
+                        // go to dropoff
+                        .setTangent(Math.toRadians(45 + redAngleAdjustment))
+                        .splineToSplineHeading(
+                                dropSamplePose,
+                                Math.toRadians(0 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // drop off sample
                         })
 
-                        // LOOP 3
-                        .lineToLinearHeading(new Pose2d(52, 27, Math.toRadians(0)))
+                        // go to pickup left
+                        .setTangent(Math.toRadians(165 + redAngleAdjustment))
+                        .splineToSplineHeading(new Pose2d(
+                                        -52 * redPoseAdjustment,
+                                        27 * redPoseAdjustment,
+                                        Math.toRadians(180 + redAngleAdjustment)
+                                ),
+                                Math.toRadians(210 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
-                        .lineToSplineHeading(dropSamplePose)
+                        // go to dropoff
+                        .setTangent(Math.toRadians(45 + redAngleAdjustment))
+                        .splineToSplineHeading(
+                                dropSamplePose,
+                                Math.toRadians(0 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // drop off sample
                         })
@@ -58,10 +89,13 @@ public class Bots {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(bucketStartPose)
-                        .waitSeconds(1)
                         // LOOP 1
                         // go to pickup
-                        .lineToConstantHeading(new Vector2d(48, 43))
+                        .lineToSplineHeading(new Pose2d(
+                                48 * redPoseAdjustment,
+                                39 * redPoseAdjustment,
+                                Math.toRadians(-90 + redAngleAdjustment)
+                        ))
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
@@ -73,7 +107,11 @@ public class Bots {
                         })
 
                         // LOOP 2
-                        .lineToLinearHeading(new Pose2d(58, 43, Math.toRadians(-90)))
+                        .lineToLinearHeading(new Pose2d(
+                                58 * redPoseAdjustment,
+                                43 * redPoseAdjustment,
+                                Math.toRadians(-90 + redAngleAdjustment)
+                        ))
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
@@ -83,7 +121,11 @@ public class Bots {
                         })
 
                         // LOOP 3
-                        .lineToLinearHeading(new Pose2d(52, 27, Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(
+                                52 * redPoseAdjustment,
+                                27 * redPoseAdjustment,
+                                Math.toRadians(0 + redAngleAdjustment)
+                        ))
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
@@ -100,41 +142,59 @@ public class Bots {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(bucketStartPose)
                         // go to pickup
-                        .splineToLinearHeading(submersiblePickUpPose, Math.toRadians(270))
+                        .splineToLinearHeading(
+                                submersiblePickUpPose,
+                                Math.toRadians(270 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
                         // go to dropoff
-                        .turn(Math.toRadians(-90))
-                        .splineToLinearHeading(dropSamplePose, Math.toRadians(50))
+//                        .turn(Math.toRadians(-90))
+                        .setTangent(Math.toRadians(90 + redAngleAdjustment))
+                        .splineToLinearHeading(
+                                dropSamplePose,
+                                Math.toRadians(30 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // drop off sample
                         })
 
                         // LOOP 1
                         // go back to pickup
-                        .turn(Math.toRadians(150))
-                        .splineToLinearHeading(submersiblePickUpPose, Math.toRadians(270))
+                        .setTangent(Math.toRadians(180 + 20 + redAngleAdjustment))
+                        .splineToLinearHeading(
+                                submersiblePickUpPose,
+                                Math.toRadians(-110 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
-                        // go back to dropoff
-                        .turn(Math.toRadians(-90))
-                        .splineToLinearHeading(dropSamplePose, Math.toRadians(50))
+                        // go back dropoff
+                        .setTangent(Math.toRadians(90 + redAngleAdjustment))
+                        .splineToLinearHeading(
+                                dropSamplePose,
+                                Math.toRadians(30 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // drop off sample
                         })
 
                         // LOOP 2
                         // go back to pickup
-                        .turn(Math.toRadians(150))
-                        .splineToLinearHeading(submersiblePickUpPose, Math.toRadians(270))
+                        .setTangent(Math.toRadians(180 + 20 + redAngleAdjustment))
+                        .splineToLinearHeading(submersiblePickUpPose,
+                                Math.toRadians(-110 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // pick up sample
                         })
-                        // go back to dropoff
-                        .turn(Math.toRadians(-90))
-                        .splineToLinearHeading(dropSamplePose, Math.toRadians(50))
+                        // go back dropoff
+                        .setTangent(Math.toRadians(90 + redAngleAdjustment))
+                        .splineToLinearHeading(
+                                dropSamplePose,
+                                Math.toRadians(30 + redAngleAdjustment)
+                        )
                         .addDisplacementMarker(() -> {
                             // drop off sample
                         })
