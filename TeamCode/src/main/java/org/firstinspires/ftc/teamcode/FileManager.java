@@ -13,13 +13,16 @@ public class FileManager {
      * Writes a String to a text file inside this season's directory.
      * Creates the file if it does not already exist
      *
-     * @param fileName The name of the file being written to.
+     * @param fileName    The name of the file being written to.
      * @param inputString The String that is written to the file
      * @return Whether the String was successfully written to the file.
-     * @throws FileAlreadyExistsException Failed to create the output file due to it already existing.
-     * @throws IOException Failed to create or write to the output file.
+     * @throws FileAlreadyExistsException Failed to create the output file due to it
+     *                                    already existing.
+     * @throws IOException                Failed to create or write to the output
+     *                                    file.
      */
-    public static boolean writeToFile(Path fileName, String inputString) throws FileAlreadyExistsException, IOException {
+    public static boolean writeToFile(Path fileName, String inputString)
+            throws FileAlreadyExistsException, IOException {
         // If this season's directory does not exist, create it.
         if (!Files.exists(seasonDirectory)) {
             Files.createDirectory(seasonDirectory);

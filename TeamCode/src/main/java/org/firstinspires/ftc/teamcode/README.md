@@ -34,11 +34,9 @@ Being abstract classes rather than interfaces prevents multiple implementing.
 
 An abstract class to control the robot's arm system.
 
-## [Crane](./hardware/Crane.java)
+## [ExtendableArm](./hardware/ExtendableArm.java)
 
-A subclass of `Arm` that controls a jointed arm with a claw and lazy susan.
-Not really a crane in the conventional sense.
-If you can think of a better name for it, then rename it.
+A subclass of `Arm` that controls a rotating, extendable arm.
 
 ## [Wheels](./hardware/Wheels.java)
 

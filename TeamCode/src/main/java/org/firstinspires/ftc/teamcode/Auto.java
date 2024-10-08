@@ -31,5 +31,6 @@ public class Auto extends LinearOpMode {
 
         // Wait until the player press the start button
         waitForStart();
+
     }
 }
