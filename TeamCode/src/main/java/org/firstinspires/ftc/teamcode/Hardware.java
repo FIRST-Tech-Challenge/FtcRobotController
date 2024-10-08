@@ -92,6 +92,13 @@ public class Hardware {
     }
 
     /**
+     * Sleeps the robot any motors are running
+     */
+    public void autoSleep() {
+        autoSleep(super.motors);
+    }        
+
+    /**
      * Sleeps the robot while the given motors are running
      *
      * @param motors the motors that are running

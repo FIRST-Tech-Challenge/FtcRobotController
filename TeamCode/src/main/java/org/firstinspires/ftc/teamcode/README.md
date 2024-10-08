@@ -14,10 +14,12 @@ The hardware variables(motors, servos, sensors, etc.) should be defined in the c
 Reads and writes text files in external storage.
 
 # [TeamColor.java](./TeamColor.java)
+
 An enum that states whether the robot is on red or blue side.
 
 # [TeamSide.java](./TeamSide.java)
-An enum that states whether the robot is on far or near side. 
+
+An enum that states whether the robot is on far or near side.
 
 # [Hardware](./hardware/)
 
@@ -30,11 +32,9 @@ Being abstract classes rather than interfaces prevents multiple implementing.
 
 An abstract class to control the robot's arm system.
 
-## [Crane](./hardware/Crane.java)
+## [ExtendableArm](./hardware/ExtendableArm.java)
 
-A subclass of `Arm` that controls a jointed arm with a claw and lazy susan.
-Not really a crane in the conventional sense.
-If you can think of a better name for it, then rename it.
+A subclass of `Arm` that controls a rotating, extendable arm.
 
 ## [Wheels](./hardware/Wheels.java)
 
