@@ -5,6 +5,7 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 @TeleOp(name="Mecanum_Drive")
 public class MecanumDrive extends LinearOpMode {
 
-    private DcMotor frontLeft, backLeft, frontRight, backRight;
+    private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private Mecanum robot;
 
     private Lift lift;
@@ -57,7 +58,10 @@ public class MecanumDrive extends LinearOpMode {
             int target = lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
             telemetry.addData("TargetPos: ",target);
             telemetry.addData("CurrentPos:", lift.getPosition());
-
+            double inches = ticksToIn(frontLeft.getCurrentPosition());
+            while (ticksToIn(frontRight.getCurrentPosition())<=10) {
+                //run the motor forward8
+            }
             //Input checks
             double forward = controller1.left_stick_y;
             double strafe = controller1.left_stick_x;
@@ -113,13 +117,16 @@ public class MecanumDrive extends LinearOpMode {
         //Always update telemetry, otherwise it will not show up
         telemetry.update();
     }
+    public double ticksToIn(double ticks) {
+        double rev = ticks/537.7;
+        double dy = 4.09*Math.PI;
+        return  rev*dy;
+    }
 
     public void displayDeadwheelData(){
         //FLM = Left Encoder
         //BLM = Center Encoder
         //FRM = Right Encoder
-        telemetry.addData("Forward Distance: ", 1.0 * frontLeft.getCurrentPosition() / TICKS_PER_INCH);
-        telemetry.addData("Strafe Distance", 1.0 * backLeft.getCurrentPosition() / TICKS_PER_INCH);
     }
 
     public void displaySparkData(){

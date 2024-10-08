@@ -60,7 +60,6 @@ public class LiftArmClawTest extends LinearOpMode {
             }
 
             telemetry.addData("Lift Motor Position: ",lift.getPosition());
-            telemetry.addData("Arm Servo Position: ", arm.getPosition());
             telemetry.addData("Claw Servo Position: ",claw.getPosition());
 
             telemetry.update();

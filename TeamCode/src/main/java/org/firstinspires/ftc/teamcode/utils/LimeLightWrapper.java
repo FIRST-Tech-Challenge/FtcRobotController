@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 public class LimeLightWrapper implements LocalizerInterface{
+    public final double M_TO_IN = 39.3700787402;
     public double weight = 0.33;
 
     Limelight3A limelight;
@@ -80,15 +81,11 @@ public class LimeLightWrapper implements LocalizerInterface{
     }
 
     //takes a pose3d from a distance from the tag and localizes it based on which April tag it is
-    public Pose3D localize(int i,Pose3D pose3D) {
-        Vector2d vector2d = APRIL_TAG_POSITIONS[i-11];
+    public Pose3D inToMM(Pose3D pose3D) {
+        int x = (int) (pose3D.getPosition().x*M_TO_IN);
+        int y = (int) (pose3D.getPosition().y*M_TO_IN);
+        int z = (int) (pose3D.getPosition().z*M_TO_IN);
 
-        double x = vector2d.x<0 ? vector2d.x+pose3D.getPosition().x : vector2d.x-pose3D.getPosition().x;
-        double y = vector2d.y<0 ? vector2d.y+pose3D.getPosition().y : vector2d.y-pose3D.getPosition().x;
-        //offestes
-        double z = 0;
-        x -= 8.375;
-        y +=1.81;
         return new Pose3D(new Position(DistanceUnit.INCH,x,y,z,pose3D.getPosition().acquisitionTime),pose3D.getOrientation());
     }
 
