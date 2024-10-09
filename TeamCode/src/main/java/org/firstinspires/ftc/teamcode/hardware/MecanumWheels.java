@@ -6,18 +6,20 @@ import com.qualcomm.robotcore.hardware.*;
 
 public class MecanumWheels extends Wheels {
     /* The DcMotors powering the wheels */
-    private DcMotor frontLeftMotor;
-    private DcMotor frontRightMotor;
-    private DcMotor backLeftMotor;
-    private DcMotor backRightMotor;
+    private DcMotor FRONT_LEFT_MOTOR;
+    private DcMotor FRONT_RIGHT_MOTOR;
+    private DcMotor BACK_LEFT_MOTOR;
+    private DcMotor BACK_RIGHT_MOTOR;
 
     private double wheelGearRatio = -1.0;
 
     public MecanumWheels(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
-        this.frontLeftMotor = frontLeftMotor;
-        this.frontRightMotor = frontRightMotor;
-        this.backLeftMotor = backLeftMotor;
-        this.backRightMotor = backRightMotor;
+        super();
+        
+        this.FRONT_LEFT_MOTOR = frontLeftMotor;
+        this.FRONT_RIGHT_MOTOR = frontRightMotor;
+        this.BACK_LEFT_MOTOR = backLeftMotor;
+        this.BACK_RIGHT_MOTOR = backRightMotor;
 
         super.motors.add(frontLeftMotor);
         super.motors.add(frontRightMotor);
@@ -28,10 +30,10 @@ public class MecanumWheels extends Wheels {
          * Set the directions of the motors
          * The right and left motors run in opposite directions of each other
          */
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        FRONT_LEFT_MOTOR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FRONT_RIGHT_MOTOR.setDirection(DcMotorSimple.Direction.FORWARD);
+        BACK_LEFT_MOTOR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BACK_RIGHT_MOTOR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
@@ -69,7 +71,7 @@ public class MecanumWheels extends Wheels {
      * {@inheritDoc}
     */
     public void driveDistance(double distance) {
-        drive(distance, 0);
+        driveDistance(distance, 0);
     }
 
     /**
