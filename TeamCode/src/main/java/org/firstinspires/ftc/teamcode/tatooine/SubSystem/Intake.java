@@ -14,14 +14,12 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 public class Intake  {
     CRServo intake = null;
     CheckAlliance alliance;
-    ColorSensorOur colorSensorOur = null;
     private double power = 0;
     private boolean buttonPressed = false;
 
 
-    public Intake(HardwareMap hardwareMap) {
+    public Intake(HardwareMap hardwareMap, CheckAlliance alliance) {
         this.alliance = alliance;
-        colorSensorOur = new ColorSensorOur(hardwareMap);
         intake = hardwareMap.get(CRServo.class, "intake");
     }
 
@@ -32,15 +30,6 @@ public class Intake  {
     }
     public Action outtake(boolean buttonPressed){
         power = -1;
-        return new SetPowerAction();
-    }
-    public Action isRightColorFor(boolean isSpecimen) {
-        if (isSpecimen && !colorSensorOur.isRightColorForSpecimen()){
-            power = -1;
-        }
-        else if (!isSpecimen && !colorSensorOur.isRightColorForSample()){
-            power = -1;
-        }
         return new SetPowerAction();
     }
 
