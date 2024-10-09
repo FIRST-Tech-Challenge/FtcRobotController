@@ -2,6 +2,7 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.rowlandhall.meepmeep.MeepMeep;
+import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder;
 import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 import java.util.LinkedList;
@@ -69,7 +70,7 @@ public class MeepMeepTesting {
         dropSamplePose = new Pose2d(
                 50 * redPoseAdjustment,
                 50 * redPoseAdjustment,
-                Math.toRadians(180+45 + redAngleAdjustment)
+                Math.toRadians(180 + 45 + redAngleAdjustment)
         );
 
         meepMeep = new MeepMeep(600);
@@ -88,12 +89,10 @@ public class MeepMeepTesting {
                 System.out.println("exception occurred. try again");
             }
 
-            if (bots.size() > 0) {
-                RoadRunnerBotEntity bot = bots.pop();
-                meepMeep.removeEntity(bot);
-            }
+            RoadRunnerBotEntity newBot = new DefaultBotBuilder(meepMeep)
+                    .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                    .followTrajectorySequence(TrajectorySequences::coloredStraysTS);
 
-            RoadRunnerBotEntity newBot = Bots.coloredStraysCycleBot();
             bots.add(newBot);
             meepMeep.addEntity(newBot);
 
