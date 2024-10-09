@@ -24,6 +24,12 @@ public class JimBot extends LinearOpMode {
 
     Servo FLServo, BLServo, BRServo, FRServo;
 
+    //in case builders are bad is offset center for servo
+    double FLServoOffSet = .00;
+    double FRServoOffSet = .02;
+    double BLServoOffSet = .01;
+    double BRServoOffSet = -.01;
+
     ElapsedTime turnTime = new ElapsedTime();
 
     GoBildaPinpointDriver odo;
@@ -52,7 +58,6 @@ public class JimBot extends LinearOpMode {
             }
             if (gamepad1.a)
                 moveHome();
-
         }
 
     }
@@ -85,9 +90,9 @@ public class JimBot extends LinearOpMode {
         BRMotor.setZeroPowerBehavior(BRAKE);
         FRMotor.setZeroPowerBehavior(BRAKE);
 
-        FLMotor.setDirection(FORWARD);
-        BLMotor.setDirection(FORWARD);
-        BRMotor.setDirection(REVERSE);
+        FLMotor.setDirection(REVERSE);
+        BLMotor.setDirection(REVERSE);
+        BRMotor.setDirection(FORWARD);
         FRMotor.setDirection(REVERSE);
 
 
@@ -99,19 +104,21 @@ public class JimBot extends LinearOpMode {
 
         // Sets the ends of the servos. Hover cursor over function for more info
         // Will need to be tuned later
-        FLServo.scaleRange(0.0, 1.0);
-        BLServo.scaleRange(0.0, 1.0);
-        BRServo.scaleRange(0.0, 1.0);
-        FRServo.scaleRange(0.0, 1.0);
+        //FL Servo center .51
+        //FR Servo center .55
+        //BL Servo center .51
+        //BR Servo center .51
+        FLServo.scaleRange(FLServoOffSet, 1.0 + FLServoOffSet * 2);
+        BLServo.scaleRange(BLServoOffSet, 1.0 + BLServoOffSet * 2);
+        BRServo.scaleRange(BRServoOffSet, 1.0 + BRServoOffSet * 2);
+        FRServo.scaleRange(FRServoOffSet, 1.0 + FRServoOffSet * 2);
 
         double[] test = cartesianToPolar(1, 0);
 
-        FLServo.setPosition(0.5);
-        FRServo.setPosition(0.5);
-        BLServo.setPosition(0.5);
-        BRServo.setPosition(0.5);
-
-
+        FLServo.setPosition(0.50 + FLServoOffSet);
+        FRServo.setPosition(0.50 + FRServoOffSet);
+        BLServo.setPosition(0.51 + BLServoOffSet);
+        BRServo.setPosition(0.51 + BRServoOffSet);
     }
 
 
@@ -152,10 +159,10 @@ public class JimBot extends LinearOpMode {
 
         heading = (heading + 1) / 2;
 
-        FLServo.setPosition(heading);
-        BLServo.setPosition(heading);
-        BRServo.setPosition(heading);
-        FRServo.setPosition(heading);
+        FLServo.setPosition(heading + FLServoOffSet);
+        BLServo.setPosition(heading + BLServoOffSet);
+        BRServo.setPosition(heading + BRServoOffSet);
+        FRServo.setPosition(heading + FRServoOffSet);
 
         //if(turnTime<)
 
