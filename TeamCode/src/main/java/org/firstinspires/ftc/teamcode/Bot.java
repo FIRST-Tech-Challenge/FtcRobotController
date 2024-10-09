@@ -61,6 +61,11 @@ public class Bot {
 //        leftLift = hwMap.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
 //        rightLift = hwMap.get(DcMotor.class, "right_lift");
 
+        leftMotorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightMotorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //Set RunModes for Encoder Usage
         /*
         leftMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -117,28 +122,29 @@ public class Bot {
 
 
     //Drive Encoder
-    static final double COUNTS_PER_MOTOR_REV = 384.5;    // gobilda 5203 motor encoder res
+    static final double COUNTS_PER_MOTOR_REV = 537.7;    // GoBilda 5203 motor encoder res
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // 1:1
     static final double WHEEL_DIAMETER_INCHES = 4.09449;     // For figuring circumference
+    static final double CIRCUMFERENCE = (WHEEL_DIAMETER_INCHES * Math.PI);
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double INCHES_PER_DEGREE = 0.1744;
+            CIRCUMFERENCE;
+    static final double DISTANCE_PER_ENCODER =  CIRCUMFERENCE/COUNTS_PER_MOTOR_REV;
+    static final double COUNTS_PER_DEGREE = COUNTS_PER_MOTOR_REV/360;
+    static final double INCHES_PER_DEGREE = DISTANCE_PER_ENCODER * COUNTS_PER_DEGREE;
 
-    public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
+
+
+
+    public void encoderDrive(double speed, double distance) {
         int newfrontLeftTarget;
         int newfrontRightTarget;
         int newbackLeftTarget;
         int newbackRightTarget;
 
-        leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-        newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
-        newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-        newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+        newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
+        newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
+        newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
+        newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
 
         leftMotorFront.setTargetPosition(newfrontLeftTarget);
         rightMotorFront.setTargetPosition(newfrontRightTarget);
@@ -159,12 +165,11 @@ public class Bot {
         rightMotorBack.setPower(Math.abs(speed));
 
         while (opMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
                 (leftMotorFront.isBusy() || rightMotorFront.isBusy() || leftMotorBack.isBusy() || rightMotorBack.isBusy())) {
-            opMode.telemetry.addData("frontLeftEncoder", newfrontLeftTarget);
-            opMode.telemetry.addData("frontRightEncoder", newfrontRightTarget);
-            opMode.telemetry.addData("backLeftEncoder", newbackLeftTarget);
-            opMode.telemetry.addData("backRightEncoder", newbackRightTarget);
+            opMode.telemetry.addData("frontLeftEncoder", leftMotorFront.getCurrentPosition());
+            opMode.telemetry.addData("frontRightEncoder", rightMotorFront.getCurrentPosition());
+            opMode.telemetry.addData("backLeftEncoder", leftMotorBack.getCurrentPosition());
+            opMode.telemetry.addData("backRightEncoder", rightMotorBack.getCurrentPosition());
             opMode.telemetry.update();
         }
 
@@ -180,31 +185,31 @@ public class Bot {
         rightMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     //Turn Encoder
-    public void encoderTurn(double speed, double degrees, double timeoutS) {
-        int newfrontLeftTarget;
-        int newfrontRightTarget;
-        int newbackLeftTarget;
-        int newbackRightTarget;
+    public void encoderTurn(double speed, double degrees) {
+//        int newfrontLeftTarget;
+//        int newfrontRightTarget;
+//        int newbackLeftTarget;
+//        int newbackRightTarget;
 
-        if (opMode.opModeIsActive()) {
-
+        double turnCircumference = Math.PI * (degrees * 4 / 360) * (WHEEL_DIAMETER_INCHES * 2);
+        int targetCounts = (int) (turnCircumference / DISTANCE_PER_ENCODER);
             // Determine new target position, and pass to motor controller
-            newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (-degrees * COUNTS_PER_INCH * INCHES_PER_DEGREE);
-            newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (degrees * COUNTS_PER_INCH * INCHES_PER_DEGREE);
-            newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (-degrees * COUNTS_PER_INCH * INCHES_PER_DEGREE);
-            newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (degrees * COUNTS_PER_INCH * INCHES_PER_DEGREE);
+//            newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (-degrees * INCHES_PER_DEGREE);
+//            newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (degrees * INCHES_PER_DEGREE);
+//            newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (-degrees * INCHES_PER_DEGREE);
+//            newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (degrees * INCHES_PER_DEGREE);
 
-            leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            leftMotorFront.setTargetPosition(newfrontLeftTarget);
-            rightMotorFront.setTargetPosition(newfrontRightTarget);
-            leftMotorBack.setTargetPosition(newbackLeftTarget);
-            rightMotorBack.setTargetPosition(newbackRightTarget);
+            leftMotorFront.setTargetPosition(-targetCounts);
+            rightMotorFront.setTargetPosition(targetCounts);
+            leftMotorBack.setTargetPosition(-targetCounts);
+            rightMotorBack.setTargetPosition(targetCounts);
 
             // Turn On RUN_TO_POSITION
             leftMotorFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -213,12 +218,19 @@ public class Bot {
             rightMotorBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
-            runtime.reset();
             leftMotorFront.setPower(Math.abs(speed));
             rightMotorFront.setPower(Math.abs(speed));
             leftMotorBack.setPower(Math.abs(speed));
             rightMotorBack.setPower(Math.abs(speed));
 
+        while (opMode.opModeIsActive() &&
+                (leftMotorFront.isBusy() && leftMotorBack.isBusy() && rightMotorFront.isBusy() && rightMotorBack.isBusy())) {
+            opMode.telemetry.addData("frontLeftEncoder", leftMotorFront.getCurrentPosition());
+            opMode.telemetry.addData("frontRightEncoder", rightMotorFront.getCurrentPosition());
+            opMode.telemetry.addData("backLeftEncoder", leftMotorBack.getCurrentPosition());
+            opMode.telemetry.addData("backRightEncoder", rightMotorBack.getCurrentPosition());
+            opMode.telemetry.update();
+        }
             // Stop all motion;
             leftMotorFront.setPower(0);
             rightMotorFront.setPower(0);
@@ -230,16 +242,19 @@ public class Bot {
             rightMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+
+            leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void encoderStrafe(double speed, double distance, double timeoutS) {
+    public void encoderStrafe(double speed, double distance) {
         int newfrontLeftTarget;
         int newfrontRightTarget;
         int newbackLeftTarget;
         int newbackRightTarget;
 
-        if (opMode.opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
             newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
@@ -247,11 +262,6 @@ public class Bot {
             newbackLeftTarget = leftMotorBack.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
             newbackRightTarget = rightMotorBack.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
 
-            leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
             leftMotorFront.setTargetPosition(newfrontLeftTarget);
             rightMotorFront.setTargetPosition(newfrontRightTarget);
             leftMotorBack.setTargetPosition(newbackLeftTarget);
@@ -264,14 +274,12 @@ public class Bot {
             rightMotorBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
-            runtime.reset();
             leftMotorFront.setPower(Math.abs(speed));
             rightMotorFront.setPower(-Math.abs(speed));
             leftMotorBack.setPower(-Math.abs(speed));
             rightMotorBack.setPower(Math.abs(speed));
 
             while (opMode.opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
                     (leftMotorFront.isBusy() && leftMotorBack.isBusy() && rightMotorFront.isBusy() && rightMotorBack.isBusy())) {
                 opMode.telemetry.addData("frontLeftEncoder", leftMotorFront.getCurrentPosition());
                 opMode.telemetry.addData("frontRightEncoder", rightMotorFront.getCurrentPosition());
@@ -279,6 +287,7 @@ public class Bot {
                 opMode.telemetry.addData("backRightEncoder", rightMotorBack.getCurrentPosition());
                 opMode.telemetry.update();
             }
+
             // Stop all motion;
             leftMotorFront.setPower(0);
             rightMotorFront.setPower(0);
@@ -290,7 +299,11 @@ public class Bot {
             rightMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+
+            leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void resetEncoder(){
