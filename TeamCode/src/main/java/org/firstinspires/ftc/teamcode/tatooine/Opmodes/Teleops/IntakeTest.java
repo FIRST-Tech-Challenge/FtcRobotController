@@ -19,7 +19,7 @@ public class IntakeTest extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(intake.intake(true)
                     ,new SleepAction(3)
                     ,intake.isRightColorFor(isSpecimen)
-            ));
+                    ));
         }
     }
 }
