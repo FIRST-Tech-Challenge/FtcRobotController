@@ -44,29 +44,22 @@ public class MeepMeepTesting {
                 .splineTo(new Vector2d(8,-36.7),Math.toRadians(90))
                 .waitSeconds(1.5)
                 .lineToY(-55.8)
-                .turnTo(Math.toRadians(180))
+                .turnTo(Math.toRadians(177))
                 .strafeTo(new Vector2d(-54.5,-59))
                 .lineToX(47)
-                .waitSeconds(0.5)
+                .waitSeconds(0.7)
                 .turnTo(Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(54.5, -56.9),Math.toRadians(90))
-                .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(56.4, -56.9),Math.toRadians(120))
-                .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(180))
-                .lineToX(59)
+                .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(-140))
+                .strafeToLinearHeading(new Vector2d(54.5, -56.9),Math.toRadians(120))
+                .strafeToLinearHeading(new Vector2d(54.5, -56.9),Math.toRadians(120))
 
-
-
-
-                .build());
+                 .build());
 
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
+                .addEntity(myBot)
                 .addEntity(myBot2)
                 .start();
     }

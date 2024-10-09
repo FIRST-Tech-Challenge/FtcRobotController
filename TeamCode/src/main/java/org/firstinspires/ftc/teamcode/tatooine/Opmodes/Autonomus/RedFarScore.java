@@ -22,7 +22,7 @@ public class RedFarScore extends LinearOpMode {
                 .splineTo(new Vector2d(8,36.7),Math.toRadians(90))
                 .waitSeconds(1.5)
                 .lineToY(58)
-                .strafeTo(new Vector2d());
+                .strafeTo(new Vector2d())
 
 
 
