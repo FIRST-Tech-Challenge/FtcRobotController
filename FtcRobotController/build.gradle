@@ -14,6 +14,10 @@ android {
         buildConfigField "String", "APP_BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileSdkVersion 29
 
     compileOptions {

@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.team20150;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "2 Driver TeleOp", group = "Iterative OpMode")
 
