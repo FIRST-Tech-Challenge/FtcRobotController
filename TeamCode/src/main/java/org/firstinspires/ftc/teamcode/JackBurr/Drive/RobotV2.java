@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.JackBurr.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,6 +18,7 @@ public class RobotV2 extends OpMode {
     public DcMotor backLeft; //PORT 1
     public DcMotor backRight; // PORT 3
     public DcMotor slidesMotor; //EXPANSION HUB PORT _
+    public DcMotor extraArmMotor; //EXPANSION HUB PORT _
     public Servo intakeServo;
     public int servodirection = 0;
     public DcMotor armMotor;
@@ -25,12 +27,13 @@ public class RobotV2 extends OpMode {
     public ElapsedTime buttonTimer = new ElapsedTime();
     public int SLIDES_DOWN = -223;
     public int SLIDES_LOW_BASKET = -1250;
-    public int SLIDES_HIGH_BASKET = -2810;
+    public int SLIDES_HIGH_BASKET = -1375;
     public int SLIDESPOS = SLIDES_DOWN;
     public int ARM_DOWN = -200;
     public int ARM_LOW_BASKET= -1204;
     public int ARM_HIGH_BASKET = -1666;
     public int ARMPOS = ARM_DOWN;
+    public Servo wrist_servo;
 
     public enum SystemStates{
         HIGH_BASKET,
@@ -38,7 +41,15 @@ public class RobotV2 extends OpMode {
         DOWN
     }
 
+    public enum WristStates {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
     public SystemStates states = SystemStates.DOWN;
+    public WristStates wristState = WristStates.CENTER;
+
     @Override
     public void init() {
         frontLeft = hardwareMap.get(DcMotor.class, config.FRONT_LEFT);
@@ -46,13 +57,18 @@ public class RobotV2 extends OpMode {
         backLeft = hardwareMap.get(DcMotor.class, config.BACK_LEFT);
         backRight = hardwareMap.get(DcMotor.class, config.BACK_RIGHT);
         slidesMotor = hardwareMap.get(DcMotor.class, config.SLIDES);
+        extraArmMotor = hardwareMap.get(DcMotor.class, "arm2");
         slidesMotor = hardwareMap.get(DcMotor.class, "slides");
         intakeServo = hardwareMap.get(Servo.class, "intake_servo");
+        wrist_servo = hardwareMap.get(Servo.class, "wrist");
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extraArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extraArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        extraArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -63,12 +79,15 @@ public class RobotV2 extends OpMode {
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         states = SystemStates.DOWN;
+        wristState = WristStates.CENTER;
     }
 
     @Override
     public void loop() {
         telemetry.addLine("ARM POSITION: " + armMotor.getCurrentPosition());
         telemetry.addLine("SLIDES POSITION: " + slidesMotor.getCurrentPosition());
+        telemetry.addLine("ARM TARGET POSITION: " + ARMPOS);
+        telemetry.addLine("SLIDES TARGET POSITION: " + SLIDESPOS);
         intakeServo.setPosition(servodirection);
         if(buttonTimer.seconds() > 0.3 && gamepad1.b){
             servodirection = switch_servo_dir();
@@ -103,9 +122,31 @@ public class RobotV2 extends OpMode {
             arm_up_by(100);
             buttonTimer.reset();
         }
+        if(buttonTimer.seconds() > 0.3 && gamepad1.left_bumper){
+            switch (wristState){
+                case LEFT:
+                    break;
+                case CENTER:
+                    wristState = WristStates.LEFT;
+                case RIGHT:
+                    wristState = WristStates.CENTER;
+            }
+        }
+        if(buttonTimer.seconds() > 0.3 && gamepad1.right_bumper){
+            switch (wristState){
+                case LEFT:
+                    wristState = WristStates.CENTER;
+                case CENTER:
+                    wristState = WristStates.LEFT;
+                case RIGHT:
+                    break;
+            }
+        }
+
         run_motors();
-        arm_goto(ARMPOS);
+        arm_goto(ARMPOS, 1);
         slides_goto(SLIDESPOS);
+        move_wrist();
     }
 
     public void run_motors(){
@@ -143,12 +184,15 @@ public class RobotV2 extends OpMode {
         telemetry.addLine("SLIDES TARGET: " +  pos);
 
     }
-    public void arm_goto(int pos){
+    public void arm_goto(int pos, double power){
         telemetry.clearAll();
-        armMotor.setPower(1);
+        armMotor.setPower(power);
+        extraArmMotor.setPower(power);
         armMotor.setTargetPosition(pos);
+        extraArmMotor.setTargetPosition(pos);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         telemetry.addLine("ARM TARGET: " +  pos);
+        telemetry.addLine("ARM 2 TARGET: " +  pos);
     }
 
     public void arm_up_by(int ticks) {
@@ -156,5 +200,19 @@ public class RobotV2 extends OpMode {
     }
     public void arm_down_by(int ticks) {
         ARMPOS = ARMPOS + ticks;
+    }
+
+    public void move_wrist(){
+        switch(wristState){
+            case LEFT:
+                wrist_servo.setPosition(0);
+                break;
+            case CENTER:
+                wrist_servo.setPosition(0.5);
+                break;
+            case RIGHT:
+                wrist_servo.setPosition(1);
+                break;
+        }
     }
 }

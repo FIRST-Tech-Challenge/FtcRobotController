@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
 @TeleOp
 public class DriveOnly extends OpMode {
     public RobotV1Config config = new RobotV1Config();
-    public ArmMotorV1 arm = new ArmMotorV1(hardwareMap, "arm", telemetry);
 
     public DcMotor frontLeft; //PORT 0
     public DcMotor frontRight; //PORT 2
@@ -25,23 +24,18 @@ public class DriveOnly extends OpMode {
 
     @Override
     public void init() {
-        arm.init(hardwareMap);
         frontLeft = hardwareMap.get(DcMotor.class, config.FRONT_LEFT);
         frontRight = hardwareMap.get(DcMotor.class, config.FRONT_RIGHT);
         backLeft = hardwareMap.get(DcMotor.class, config.BACK_LEFT);
         backRight = hardwareMap.get(DcMotor.class, config.BACK_RIGHT);
-        slidesMotor = hardwareMap.get(DcMotor.class, config.SLIDES);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slidesMotor.setDirection(config.SLIDES_DIRECTION);
     }
 
     @Override
@@ -74,5 +68,9 @@ public class DriveOnly extends OpMode {
         backLeft.setPower(backLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
+        telemetry.addData("Front Left: ", frontLeftPower);
+        telemetry.addData("Front Right: ", frontRightPower);
+        telemetry.addData("Back Left: ", backLeftPower);
+        telemetry.addData("Back Right: ", backRightPower);
     }
 }
