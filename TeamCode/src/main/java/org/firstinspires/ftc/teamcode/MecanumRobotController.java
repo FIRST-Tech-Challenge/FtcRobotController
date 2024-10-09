@@ -227,7 +227,7 @@ public class MecanumRobotController {
                                         Math.abs(backRightTarget - backRight.getCurrentPosition()) +
                                         Math.abs(frontLeftTarget - frontLeft.getCurrentPosition()) +
                                         Math.abs(frontRightTarget - frontRight.getCurrentPosition())) / 4.0;
-            double distanceToDestinationInches = Math.sqrt(Math.pow(Math.cos(direction) *
+            double distanceToDestinationInches = 2 * Math.sqrt(Math.pow(Math.cos(direction) *
                     (distanceToDestination / FORWARD_COUNTS_PER_INCH), 2) + Math.pow(Math.sin(direction) *
                     (distanceToDestination / STRAFE_COUNTS_PER_INCH), 2));
             robot.telemetry.addData("Current Action", "Distance Driving");
