@@ -16,7 +16,7 @@ public class MeepMeepTest {
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                         .forward(30)
                         .turn(Math.toRadians(90))
-                        .forward(30)
+                        .forward(90)
                         .turn(Math.toRadians(90))
                         .forward(30)
                         .turn(Math.toRadians(90))
