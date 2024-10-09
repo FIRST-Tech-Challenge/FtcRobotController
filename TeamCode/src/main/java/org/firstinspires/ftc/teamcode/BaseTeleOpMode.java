@@ -31,9 +31,8 @@ public class BaseTeleOpMode extends OpMode {
     //protected int armMaxPosition = 0; // reset on init
     protected int armTargetPosition = 0;
     
-    /*
+/*
     public double getArmRange() {
-        
         return Double.valueOf(armMaxPosition - armMinPosition);
     }
 */
