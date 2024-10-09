@@ -1,27 +1,38 @@
-# [Hardware](./Hardware.java)
+# [Auto.java](./Auto.java)
 
-It is a class to instantiate the robot and perform basic tasks(e.g. drive the robot forward).
-Both `Autonomous` and `TeleOp` instantiate a `Hardware` object.
-The `Hardware` class uses objects instantiated from the classes in [hardware](./hardware).
-The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's `Hardware`.
-
-> [!Important]
-> DO NOT PUT THE HARDWARE NAMES IN THIS REPOSITORY. THIS IS THE TEMPLATE.
-> THEY SHOULD BE PUT IN THE CURRENT SEASON'S REPOSITORY.
+The autonomous class, which runs without driver input.
 
 # [FileManager.java](./FileManager.java)
 
 Reads and writes text files in external storage.
 
-# Enums
+# [Hardware](./Hardware.java)
 
-## [TeamColor.java](./TeamColor.java)
+It is a class to instantiate the robot and perform basic tasks(e.g. drive the robot forward).
+Both `Auto` and `TeleOp` instantiate a `Hardware` object.
+The `Hardware` class uses objects instantiated from the classes in [hardware](./hardware).
+The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's `Hardware`.
+
+# [PositionInput.java](./PositionInput.java)
+
+A TeleOp that writes the TeamColor and TeamSide of the robot into external storage. 
+
+> [!Note]
+> This class is deprecated. 
+
+# [TeamColor.java](./TeamColor.java)
 
 An enum that states whether the robot is on red or blue side.
 
 ## [TeamSide.java](./TeamSide.java)
 
 An enum that states whether the robot is on far or near side.
+
+
+# [TeleOp.java](./TeleOp.java)
+
+The TeleOp class which runs using driver input.
+
 
 # [Hardware](./hardware/)
 
@@ -42,6 +53,6 @@ A subclass of `Arm` that controls a rotating, extendable arm.
 
 A abstract class for the robot's wheels,
 
-## [Mecanum](./hardware/Mecanum.java)
+## [MecanumWheels](./hardware/MecanumWheels.java)
 
 A subclass of the `Wheels` class for controlling the driving of a four-meccanum wheel system.

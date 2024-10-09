@@ -2,19 +2,24 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import java.util.HashSet;
 
+import com.qualcomm.robotcore.hardware.*;
+
 public abstract class Wheels {
+    protected HashSet<DcMotor> motors;
+
     // A modifier for much power the wheels run with (0.0 - 1.0)
-    protected double wheelPower = 1.0;
+    protected double motorPower = 1.0;
 
     public Wheels() {
-    }
-
-    public void setMotorPower(double motorPower) {
-        this.motorPower = motorPower;
+        motors = new HashSet<>();
     }
 
     public double getMotorPower() {
         return motorPower;
+    }
+
+    public void setMotorPower(double motorPower) {
+        this.motorPower = motorPower;
     }
 
     /**
