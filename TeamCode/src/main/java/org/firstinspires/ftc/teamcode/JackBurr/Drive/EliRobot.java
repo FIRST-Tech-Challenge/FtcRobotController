@@ -68,6 +68,7 @@ public class EliRobot extends OpMode {
             case INWARD:
                 leftIntakeWheel.setPosition(0);
                 rightIntakeWheel.setPosition(1);
+                break;
             case OUTWARD:
                 leftIntakeWheel.setPosition(1);
                 rightIntakeWheel.setPosition(0);
