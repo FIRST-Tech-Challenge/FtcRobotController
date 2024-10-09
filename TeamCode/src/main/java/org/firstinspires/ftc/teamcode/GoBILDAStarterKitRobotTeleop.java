@@ -67,12 +67,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
  */
 
 
-@TeleOp(name = "goBILDA Starter Kit", group = "Robot")
+@TeleOp(name = "goBILDA Starter KitX", group = "Robot")
 //@Disabled
 public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor leftSlide = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -148,10 +149,14 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
+        leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFront");
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftRear");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightRear");
+
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -209,6 +214,20 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
 
         /* Run until the driver presses stop */
         while (opModeIsActive()) {
+            if (gamepad2.dpad_up && leftSlide.getCurrentPosition() <= 3000) {
+                //leftSlide.setPower(0.4);
+                leftSlide.setTargetPosition(2750);
+                leftSlide.setPower(1.0);
+                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            } else if (gamepad2.dpad_down && leftSlide.getCurrentPosition() >= 0) {
+                leftSlide.setTargetPosition(0);
+                leftSlide.setPower(1.0);
+                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            } else {
+                leftSlide.setPower(0);
+            }
+            telemetry.addData("Left Linear Slide: ", "%d", leftSlide.getCurrentPosition());
+
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = gamepad1.left_stick_x;
