@@ -21,11 +21,11 @@ public class ColorSensorOur {
     }
 
     public void init() {
+        isRed = CheckAlliance.isRed();
     }
 
     public boolean isRightColorForSample() {
         checkColors();
-        isRed = CheckAlliance.isRed();
         if (isRed) {
             if (col == 0) {
                 return true;

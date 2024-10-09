@@ -19,22 +19,27 @@ public class RedFarScore extends LinearOpMode {
         Pose2d beginPose = new Pose2d(12.09+3.5, -59.84, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder trajectoryAction1 = drive.actionBuilder(beginPose)
-                .splineTo(new Vector2d(8,-36.7),Math.toRadians(90))
+                .splineTo(new Vector2d(10,-38),Math.toRadians(90))
                 .waitSeconds(1.5)
-                .lineToY(-55.8)
-                .turnTo(Math.toRadians(180))
-                .strafeTo(new Vector2d(-54.5,-59))
-                .lineToX(47)
-                .waitSeconds(0.5)
-                .turnTo(Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(54.5, -56.9),Math.toRadians(90))
-                .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(56.4, -56.9),Math.toRadians(120))
-                .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(180))
-                .lineToX(59);
+                .strafeToSplineHeading(new Vector2d(8,-39),Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(-51,-53.5,Math.toRadians(0)),Math.toRadians(180));
+//                .strafeTo(new Vector2d(-52.5,-54))
+//                .strafeTo(new Vector2d(56.4, -54))
+//                .turnTo(Math.toRadians(90))
+//                .turnTo(Math.toRadians(180))
+//                .strafeTo(new Vector2d(-52.5,-54))
+//                .strafeTo(new Vector2d(56.4, -54))
+//                .turnTo(Math.toRadians(90))
+//                .turnTo(Math.toRadians(180))
+//                .strafeTo(new Vector2d(-54.5,-54))
+//                .strafeTo(new Vector2d(56.4, -52))
+//                .turnTo(Math.toRadians(90))
+//                .turnTo(Math.toRadians(180))
+//                .strafeTo(new Vector2d(-54.5,-54))
+//                .strafeTo(new Vector2d(56.4, -54))
+//                .turnTo(Math.toRadians(90))
+//                .turnTo(Math.toRadians(180));
+
 
 
 
