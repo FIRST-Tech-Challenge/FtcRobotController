@@ -18,15 +18,14 @@ public class ColorSensorOur {
     public ColorSensorOur(HardwareMap hardwareMap) {
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         colorSensor.setGain(gain);
-        init();
     }
 
     public void init() {
-        isRed = CheckAlliance.isRed();
     }
 
     public boolean isRightColorForSample() {
         checkColors();
+        isRed = CheckAlliance.isRed();
         if (isRed) {
             if (col == 0) {
                 return true;
@@ -51,6 +50,7 @@ public class ColorSensorOur {
     }
     public boolean isRightColorForSpecimen(){
         checkColors();
+        isRed = CheckAlliance.isRed();
         if (isRed) {
             if (col == 0) {
                 return true;
