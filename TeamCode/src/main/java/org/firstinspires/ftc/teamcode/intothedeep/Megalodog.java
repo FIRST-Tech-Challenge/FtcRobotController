@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.intothedeep;
 
-import org.firstinspires.ftc.teamcode.core.MegalodogChassis;
+import com.qualcomm.robotcore.hardware.Servo;
 
-public class Megalodog extends MegalodogChassis {
+import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
+
+public class Megalodog {
     public int top_bucket=2000;
     public int low_bucket=1000;
     public int ArmLinearSlide;

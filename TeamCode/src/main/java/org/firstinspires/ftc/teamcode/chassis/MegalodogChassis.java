@@ -11,17 +11,20 @@ public class MegalodogChassis {
     public DcMotor FrontRightWheel;
     public DcMotor BackLeftWheel;
     public DcMotor BackRightWheel;
-    private int WheelDiameter=104;    private LinearOpMode myOpMode;
-    private int RPM = 435;
-    private double ticksPerRevolution=384.5;
+    private int WheelDiameter = 96;
+    private LinearOpMode myOpMode;
+    private int RPM = 312;
+    private double ticksPerRevolution = 537.7;
+
     public enum Direction {LEFT, CENTER, RIGHT}
+
     public enum Alliance {BLUE, RED}
 
     public static final int OneTileMM = 610;
 
     // This is the constructor for the class.  It takes a parameter for currentOp, which allows
     //   it to store and use the current op mode.  The four wheels are initialized here.
-    public MegalodogChassis(LinearOpMode currentOp){
+    public MegalodogChassis(LinearOpMode currentOp) {
 
         // The op mode is important code provided by first.  It has the hardwareMap, sleep function,
         //   and telemetry functions.
@@ -53,10 +56,10 @@ public class MegalodogChassis {
 
         // > Clear Encoders of prior data
         FrontLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)(WheelDiameter)
-                BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)(WheelDiameter)
-                BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)(WheelDiameter)
-                FrontLeftWheel.setTargetPosition(0);
+        FrontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontLeftWheel.setTargetPosition(0);
         FrontRightWheel.setTargetPosition(0);
         BackLeftWheel.setTargetPosition(0);
         BackRightWheel.setTargetPosition(0);
@@ -69,8 +72,7 @@ public class MegalodogChassis {
 
     }
 
-    public void ResetWheelConfig()
-    {
+    public void ResetWheelConfig() {
         FrontRightWheel.setPower(0);
         BackRightWheel.setPower(0);
         FrontLeftWheel.setPower(0);
@@ -108,7 +110,7 @@ public class MegalodogChassis {
     }
 
     // This function strafes left.
-    public void StrafeLeft(int mmToTarget, double VelocityPercentage, int WaitTime){
+    public void StrafeLeft(int mmToTarget, double VelocityPercentage, int WaitTime) {
         StrafeRight(-mmToTarget, VelocityPercentage, WaitTime);
     }
 
@@ -147,7 +149,7 @@ public class MegalodogChassis {
         double TicksToTarget;
         double TicksPerSecond;
 
-        TicksToTarget = (mmToTarget / ( * Math.PI)) * (ticksPerRevolution;
+        TicksToTarget = (mmToTarget / (WheelDiameter * Math.PI)) * (ticksPerRevolution);
         TicksPerSecond = ((VelocityPercentage * RPM) / 60) * ticksPerRevolution;
         // myOpMode.telemetry.addData("ticksToTarget", TicksToTarget);
         //myOpMode.telemetry.update();
@@ -165,20 +167,21 @@ public class MegalodogChassis {
         myOpMode.sleep(WaitTime);
     }
 
-    public void RotateRight(int degree, double VelocityPercentage, int WaitTime){
+    public void RotateRight(int degree, double VelocityPercentage, int WaitTime) {
 
-        RotateLeft(-1*degree, VelocityPercentage, WaitTime);
+        RotateLeft(-1 * degree, VelocityPercentage, WaitTime);
     }
 
-    public void RotateLeft(int degree, double VelocityPercentage, int WaitTime) {
-        int mmToTarget;
+    public void RotateLeft(double degree, double VelocityPercentage, int WaitTime) {
+        double mmToTarget;
         double TicksToTarget;
         double TicksPerSecond;
 
         // converts degree to a mm distance
-        mmToTarget = degree * (560 / 90);
+     //   mmToTarget = (int)(degree * (double)(300/90));
+        mmToTarget = degree*3.33333333;
         // diamter of new robot wheels =
-        // name is
+        // name i
         // uses the formula we've always had for rotation
         TicksToTarget = (mmToTarget / (WheelDiameter * Math.PI)) * ticksPerRevolution;
         TicksPerSecond = ((VelocityPercentage * RPM) / 60) * ticksPerRevolution;
@@ -197,6 +200,7 @@ public class MegalodogChassis {
         }
         myOpMode.sleep(WaitTime);
     }
+}
 
 
 

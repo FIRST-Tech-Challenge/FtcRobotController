@@ -54,7 +54,6 @@ public class Config_Servo extends LinearOpMode {
         //Wait for driver presses play
 
 
-
         //Display selection Instructions during Intialzation
         telemetry.addLine("Select Servo to Test using PlayStation Controller Buttons.")
                 .addData("Cross(X)", "AxonServo")
@@ -191,8 +190,7 @@ public class Config_Servo extends LinearOpMode {
             if (updated) {
                 telemetry.addData("In Update", "");
 
-                try
-                {
+                try {
                     selectedServo.setPosition(servoPosition);
                     telemetry.addData("Setting Position", "");
                 } catch (Exception e) {
@@ -208,6 +206,7 @@ public class Config_Servo extends LinearOpMode {
             sleep(50);
         }
     }
+
     /*
     Initialize a servo and verifies its configuration.
 
@@ -216,8 +215,8 @@ public class Config_Servo extends LinearOpMode {
 
 
      */
-    private Servo initalizeServo(String servoName){
-        try{
+    private Servo initalizeServo(String servoName) {
+        try {
             Servo servo = hardwareMap.get(Servo.class, servoName);
             if (servo == null) {
                 telemetry.addData("Error", "Servo" + servoName + "not found.Please check configuration");
@@ -228,10 +227,11 @@ public class Config_Servo extends LinearOpMode {
             telemetry.addData("Servo Initialized", servoName);
             telemetry.update();
             return servo;
-        }catch (Exception e){
-            telemetry.addData("Error","Exception initializing servo" +servoName+":" + e.getMessage());
+        } catch (Exception e) {
+            telemetry.addData("Error", "Exception initializing servo" + servoName + ":" + e.getMessage());
             telemetry.update();
             requestOpModeStop();
             return null;
         }
     }
+}
