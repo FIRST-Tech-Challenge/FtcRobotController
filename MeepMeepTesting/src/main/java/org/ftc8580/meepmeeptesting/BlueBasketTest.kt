@@ -1,7 +1,6 @@
 package org.ftc8580.meepmeeptesting
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.geometry.Vector2d
 import org.rowlandhall.meepmeep.MeepMeep
 import org.rowlandhall.meepmeep.MeepMeep.Background
 import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder

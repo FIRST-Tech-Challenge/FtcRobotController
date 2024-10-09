@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.arcrobotics.ftclib.hardware.motors.Motor
+import com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup
 import com.qualcomm.hardware.lynx.LynxModule
-import com.qualcomm.robotcore.hardware.ColorSensor
+import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.DistanceSensor
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.TouchSensor
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.teamcode.config.CDConfig
@@ -29,10 +32,21 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     var rightEncoder: DeadWheelEncoder? = null
     var rearEncoder: DeadWheelEncoder? = null
 
-    // Platter sensors
-    var touchSensor: TouchSensor? = null
-    var colorSensor: ColorSensor? = null
-    var distanceSensor: DistanceSensor? = null
+    // Sensors
+    var gripperHomeSensor: TouchSensor? = null
+
+    // Servos
+    var intakeWheelServo: CRServo? = null
+    var intakeRotateServo: Servo? = null
+    var gripperServo: Servo? = null
+
+    // Accessory  motors
+    var viperExtensionMotorLeft: Motor? = null
+    var viperExtensionMotorRight: Motor? = null
+    var viperRotationMotorLeft: Motor? = null
+    var viperRotationMotorRight: Motor? = null
+    var viperExtensionMotorGroup: MotorGroup? = null
+    var viperRotationMotorGroup: MotorGroup? = null
 
     init {
         systemCheck(hardware)
@@ -41,6 +55,8 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
         initializeWheelLocalizers(hardware)
         initializeDriveMotors(hardware)
         initializeSensors(hardware)
+        initializeServos(hardware)
+        initializeAccessoryMotors(hardware)
     }
 
     private fun systemCheck(hardware: HardwareMap)  {
@@ -100,9 +116,42 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     }
 
     private fun initializeSensors(hardware: HardwareMap) {
-        touchSensor = safelyGetHardware<TouchSensor>(hardware, "touchSensor")
-        colorSensor = safelyGetHardware<ColorSensor>(hardware, "colorSensor")
-        distanceSensor = safelyGetHardware<DistanceSensor>(hardware, "distanceSensor")
+        gripperHomeSensor = safelyGetHardware<TouchSensor>(hardware, "gripperHomeSensor")
+    }
+
+    private fun initializeServos(hardware: HardwareMap) {
+        intakeWheelServo = safelyGetHardware<CRServo>(hardware, "intakeWheelServo")
+        intakeRotateServo = safelyGetHardware<Servo>(hardware, "intakeRotateServo")
+        gripperServo = safelyGetHardware<Servo>(hardware, "gripperServo")
+
+        // TODO: Not sure if we actually need this or not
+        // intakeRotateServo?.direction = Servo.Direction.REVERSE
+
+        // Scale range sets a 180 degree servo to limit the range between 0 and 1.
+        // This is configuring a 90 degree range, starting from the 0 position.
+        intakeRotateServo?.scaleRange(0.0, 0.5)
+
+        // Set the position to basket delivery position
+        intakeRotateServo?.position = 0.0
+    }
+
+    private fun initializeAccessoryMotors(hardware: HardwareMap) {
+        viperExtensionMotorRight = safelyGetMotor(hardware, "viperExtensionRight", GoBILDA.RPM_312)
+        viperExtensionMotorLeft = safelyGetMotor(hardware, "viperExtensionLeft", GoBILDA.RPM_312)
+        viperRotationMotorRight = safelyGetMotor(hardware, "viperRotationRight", GoBILDA.RPM_312)
+        viperRotationMotorLeft = safelyGetMotor(hardware, "viperRotationLeft", GoBILDA.RPM_312)
+
+        // Sync sides
+        viperExtensionMotorRight?.motor?.direction = DcMotorSimple.Direction.REVERSE
+        viperRotationMotorRight?.motor?.direction = DcMotorSimple.Direction.REVERSE
+
+        if (viperExtensionMotorRight != null && viperExtensionMotorLeft != null) {
+            viperExtensionMotorGroup = MotorGroup(viperExtensionMotorRight!!, viperExtensionMotorLeft!!)
+        }
+
+        if (viperRotationMotorRight != null && viperRotationMotorLeft != null) {
+            viperRotationMotorGroup = MotorGroup(viperRotationMotorRight!!, viperRotationMotorLeft!!)
+        }
     }
 
     private inline fun <reified T> safelyGetHardware(hardware: HardwareMap, deviceName: String?): T? {
@@ -111,10 +160,18 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
         return try {
             hardware.get(T::class.java, deviceName)
         } catch (e: Exception) {
-            // Ignore exception and return null
+            println("Problem getting hardware $deviceName")
             null
         }
     }
+
+    private fun safelyGetMotor(hardware: HardwareMap, deviceName: String, goBildaType: GoBILDA): Motor? =
+        try {
+            Motor(hardware, deviceName, goBildaType)
+        } catch (e: Exception) {
+            println("Problem getting motor $deviceName")
+            null
+        }
 
     val rawExternalHeading: Double
         get() = 0.0

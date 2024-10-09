@@ -30,7 +30,49 @@ class CDTeleop : OpModeBase() {
 
         mecanumDrive.updatePoseEstimate()
 
-        // TODO: Assign gamepad buttons for raw commands
+        // Driver controls
+        val driverLeftTriggerValue = driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)
+        val driverRightTriggerValue = driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
+
+        if (hardware.gripperHomeSensor?.isPressed == true) {
+            hardware.gripperServo?.position = 0.5
+        } else if (driverLeftTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
+            hardware.gripperServo?.position = 0.25
+        } else if (driverRightTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
+            hardware.gripperServo?.position = 0.75
+        } else {
+            hardware.gripperServo?.position = 0.5
+        }
+
+        // Accessory controls
+        val accessoryLeftTriggerValue = accessoryGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)
+        val accessoryRightTriggerValue = accessoryGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
+
+        if (accessoryLeftTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
+            hardware.intakeWheelServo?.power = -1.0
+            telemetry.addLine("intake servo present? ${hardware.intakeWheelServo != null}")
+            telemetry.addLine("left trigger $accessoryLeftTriggerValue")
+        } else if (accessoryRightTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
+            hardware.intakeWheelServo?.power = 1.0
+            telemetry.addLine("intake servo present? ${hardware.intakeWheelServo != null}")
+            telemetry.addLine("left trigger $accessoryRightTriggerValue")
+        } else {
+            hardware.intakeWheelServo?.power = 0.0
+        }
+
+        if (accessoryGamepad.rightY > VARIABLE_INPUT_DEAD_ZONE || accessoryGamepad.rightY < -VARIABLE_INPUT_DEAD_ZONE) {
+            // TODO: Fix multiplier later
+            viperArmSubsystem.setExtensionMotorGroupPower(accessoryGamepad.rightY * 1.0)
+        } else {
+            viperArmSubsystem.setExtensionMotorGroupPower(0.0)
+        }
+
+        if (accessoryGamepad.leftY > VARIABLE_INPUT_DEAD_ZONE || accessoryGamepad.leftY < -VARIABLE_INPUT_DEAD_ZONE) {
+            // TODO: Fix multiplier later
+            viperArmSubsystem.setRotationMotorGroupPower(accessoryGamepad.leftY * 0.75)
+        } else {
+            viperArmSubsystem.setRotationMotorGroupPower(0.0)
+        }
 
         writeTelemetry()
     }
@@ -39,14 +81,26 @@ class CDTeleop : OpModeBase() {
         val speedFastButton = gamepad.getGamepadButton(GamepadKeys.Button.Y)
         val speedSlowButton = gamepad.getGamepadButton(GamepadKeys.Button.A)
         val normalDriveButton = gamepad.getGamepadButton(GamepadKeys.Button.B)
+//        val gripperPickupButton = gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//        val gripperLowDeliveryButton = gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//        val gripperHighDeliveryButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
 
         speedFastButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_FAST })
         speedSlowButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_SLOW })
         normalDriveButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_NORMAL})
+//        lowChamberHeightButton.whenPressed(Runnable { gripperSubsystem.setLowChamberHeight() })
     }
 
     private fun initializeCoDriverGamepad(gamepad: GamepadEx) {
-        // TODO: Figure out what belongs here
+//        val wristForwardButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//        val wristReverseButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//        val wristLeftButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//        val wristRightButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//
+//        wristForwardButton.whenPressed(Runnable { activeIntakeSubsystem.rotateHome() })
+//        wristReverseButton.whenPressed(Runnable { activeIntakeSubsystem.rotateToBasket() })
+//        wristLeftButton.whenPressed(Runnable { activeIntakeSubsystem.rotateLeft() })
+//        wristRightButton.whenPressed(Runnable { activeIntakeSubsystem.rotateRight() })
     }
 
     private fun writeTelemetry() {
@@ -54,7 +108,28 @@ class CDTeleop : OpModeBase() {
         telemetry.addLine("speed mult: $driveSpeedScale")
         telemetry.addLine()
 
-        // TODO: Refactor this pattern into a helper function
+        if (hardware.viperExtensionMotorLeft == null) {
+            telemetry.addLine("extensionLeft is null")
+        }
+
+        if (hardware.viperExtensionMotorRight == null) {
+            telemetry.addLine("extensionRight is null")
+        }
+
+        if (hardware.viperRotationMotorLeft == null) {
+            telemetry.addLine("rotationLeft is null")
+        }
+
+        if (hardware.viperRotationMotorRight == null) {
+            telemetry.addLine("rotationRight is null")
+        }
+
+//        telemetry.addLine("viperExtensionPos: ${viperArmSubsystem.getExtensionMotorGroupPosition()}")
+//        telemetry.addLine("viperRotationPos: ${viperArmSubsystem.getRotationMotorGroupPosition()}")
+//        telemetry.addLine()
+
+        // TODO: Position is meaningless for continuous servos, we need some way to measure position without an encoder in the servo
+
 //        hardware.suspendMotor?.let {
 //            telemetry.addLine("suspend motor pos: ${it.currentPosition}")
 //        } ?: telemetry.addLine("[WARNING] Suspend motor not found")

@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.opmode
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.arcrobotics.ftclib.command.CommandOpMode
+import com.arcrobotics.ftclib.command.Subsystem
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import org.firstinspires.ftc.teamcode.config.CDConfig
 import org.firstinspires.ftc.teamcode.drive.CDMecanumDrive
 import org.firstinspires.ftc.teamcode.hardware.HardwareManager
+import org.firstinspires.ftc.teamcode.subsystem.ActiveIntakeSubsystem
+import org.firstinspires.ftc.teamcode.subsystem.GripperSubsystem
+import org.firstinspires.ftc.teamcode.subsystem.ViperArmSubsystem
 
 abstract class OpModeBase : CommandOpMode() {
     lateinit var hardware: HardwareManager
@@ -14,25 +18,25 @@ abstract class OpModeBase : CommandOpMode() {
     lateinit var accessoryGamepad: GamepadEx
     lateinit var multiTelemetry: MultipleTelemetry
 
+    // Subsystems
+    lateinit var activeIntakeSubsystem: ActiveIntakeSubsystem
+    lateinit var gripperSubsystem: GripperSubsystem
+    lateinit var viperArmSubsystem: ViperArmSubsystem
+
     fun initHardware() {
         hardware = HardwareManager(CDConfig(), hardwareMap)
         mecanumDrive = CDMecanumDrive(hardware)
         multiTelemetry = MultipleTelemetry(telemetry)
 
-        // Subsystems
-//        deliverySubsystem = try { DeliverySubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
-//        droneSubsystem = try { DroneSubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
-//        intakeSubsystem = try { IntakeSubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
-//        suspendSubsystem = try { SuspendSubsystem(hardware, multiTelemetry) } catch (e: Exception) { null }
-//
-//        val subsystems = listOf<Subsystem?>(
-//            deliverySubsystem,
-//            droneSubsystem,
-//            intakeSubsystem,
-//            suspendSubsystem
-//        )
-//
-//        register(*subsystems.filterNotNull().toTypedArray())
+        activeIntakeSubsystem = ActiveIntakeSubsystem(hardware, multiTelemetry)
+        gripperSubsystem = GripperSubsystem(hardware, multiTelemetry)
+        viperArmSubsystem = ViperArmSubsystem(hardware, multiTelemetry)
+
+        register(
+            activeIntakeSubsystem,
+            gripperSubsystem,
+            viperArmSubsystem
+        )
 
         driverGamepad = GamepadEx(gamepad1)
         accessoryGamepad = GamepadEx(gamepad2)
