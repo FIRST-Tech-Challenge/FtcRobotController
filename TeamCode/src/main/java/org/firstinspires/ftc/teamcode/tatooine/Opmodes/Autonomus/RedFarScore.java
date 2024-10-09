@@ -21,7 +21,6 @@ public class RedFarScore extends LinearOpMode {
         TrajectoryActionBuilder trajectoryAction1 = drive.actionBuilder(beginPose)
                 .splineTo(new Vector2d(8,-36.7),Math.toRadians(90))
                 .waitSeconds(1.5)
-<<<<<<< HEAD
                 .lineToY(-55.8)
                 .turnTo(Math.toRadians(180))
                 .strafeTo(new Vector2d(-54.5,-59))
@@ -36,10 +35,6 @@ public class RedFarScore extends LinearOpMode {
                 .waitSeconds(0.5)
                 .strafeToLinearHeading(new Vector2d(-54.5,-59),Math.toRadians(180))
                 .lineToX(59);
-=======
-                .lineToY(58)
-                .strafeTo(new Vector2d())
->>>>>>> parent of d5d0ab8 (New RedFarScore)
 
 
 
