@@ -91,7 +91,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  *
  */
-@Autonomous(name="Test Auto", group = "drive")
+@Autonomous(name = "Test Auto", group = "drive")
 
 public class TestAuto extends LinearOpMode {
     @Override
@@ -110,10 +110,10 @@ public class TestAuto extends LinearOpMode {
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .forward(24)
                 .strafeRight(24)
-                .turn(Math.toRadians(180)  + 1e-6)
+                .turn(Math.toRadians(180) + 1e-6)
                 .forward(24)
                 .strafeRight(24)
-                .turn(Math.toRadians(180)  - 1e-6)
+                .turn(Math.toRadians(180) - 1e-6)
                 .build();
         drive.followTrajectorySequence(trajSeq);
 //        }

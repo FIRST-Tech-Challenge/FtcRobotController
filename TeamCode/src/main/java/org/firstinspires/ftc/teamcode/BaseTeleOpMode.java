@@ -14,7 +14,7 @@ public class BaseTeleOpMode extends OpMode {
     protected DcMotor leftBackDrive = null;
     protected DcMotor rightFrontDrive = null;
     protected DcMotor rightBackDrive = null;
-    
+
     protected DcMotor intakeMotor = null;
     protected Servo purpleServo = null;
     protected Servo planeServo = null;
@@ -30,15 +30,15 @@ public class BaseTeleOpMode extends OpMode {
     //protected int armMinPosition = 0; // reset on init
     //protected int armMaxPosition = 0; // reset on init
     protected int armTargetPosition = 0;
-    
-/*
-    public double getArmRange() {
-        return Double.valueOf(armMaxPosition - armMinPosition);
-    }
-*/
+
+    /*
+        public double getArmRange() {
+            return Double.valueOf(armMaxPosition - armMinPosition);
+        }
+    */
     protected ElapsedTime runtime = new ElapsedTime();
     protected int sectorCount = 4;
-    
+
     /**
      * Variable to store our instance of the AprilTag processor.
      */
@@ -48,20 +48,19 @@ public class BaseTeleOpMode extends OpMode {
      * The variable to store our instance of the vision portal.
      */
     //private VisionPortal visionPortal;
-    
     public double calculateMse(Mat img1, Mat img2) {
         double diff = 0.0;
         final int width = img1.width();
         final int height = img1.height();
-        for (int x = 0; x < width; x++){
-            for (int y = 0;  y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
                 for (int color = 0; color < 3; color++) {
                     byte[] pv1 = new byte[3];
                     byte[] pv2 = new byte[3];
-                    
+
                     img1.get(y, x, pv1);
                     img2.get(y, x, pv2);
-                    
+
                     if (pv1[color] != pv2[color]) {
                         diff += Math.abs(pv2[color] - pv1[color]);
                     }
@@ -70,15 +69,15 @@ public class BaseTeleOpMode extends OpMode {
         }
         return diff;
     }
-    
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
-     
+
     @Override
     public void init() {
         String[] potentialStatus = new String[]{"Happy", "Sad", "IDK", ":)", "Canadian", "Weird", "Helpful"};
-        int randomStatus = (int)Math.floor(Math.random() * 6);
+        int randomStatus = (int) Math.floor(Math.random() * 6);
         telemetry.addData("Status", potentialStatus[randomStatus]);
 
         // Initialize the hardware variables.
@@ -105,19 +104,19 @@ public class BaseTeleOpMode extends OpMode {
 
         purpleServo.setPosition(purpleServoHoldPosition);
         //planeServo.setPosition(planeServoHoldPosition);
-        
+
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //armMinPosition = armMotor.getCurrentPosition();
         //armMaxPosition = armMinPosition + 800;
         //telemetry.addData("armMinPosition:", "%d", armMinPosition);
         //telemetry.addData("armMaxPosition:", "%d", armMaxPosition);
-        
+
         // Create the AprilTag processor the easy way.
         //aprilTag = AprilTagProcessor.easyCreateWithDefaults();
 
         //visionPortal = VisionPortal.easyCreateWithDefaults(
-          //      hardwareMap.get(WebcamName.class, "WEBCAM"), aprilTag);
-                
+        //      hardwareMap.get(WebcamName.class, "WEBCAM"), aprilTag);
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -189,7 +188,7 @@ public class BaseTeleOpMode extends OpMode {
     }
 
     private double[] wheelRadsToAxialSpeeds(double leftWheelMag, double rightWheelMag, double wheelRadFL,
-            double wheelRadFR) {
+                                            double wheelRadFR) {
         double[] axialSpeeds = new double[4];
         axialSpeeds[0] = (Math.sin(wheelRadFL) + Math.cos(wheelRadFL)) * leftWheelMag; // FL
         axialSpeeds[1] = (Math.sin(wheelRadFR) - Math.cos(wheelRadFR)) * rightWheelMag; // FR
@@ -249,9 +248,9 @@ public class BaseTeleOpMode extends OpMode {
 
         final double powerScale = 0.75; //normal speed
         final double slowerPowerScale = 0.4; //when left bumper is held
-        
+
         double cPowerScale = gamepad1.left_bumper ? slowerPowerScale : powerScale;
-        
+
         leftFrontPower *= cPowerScale;
         rightFrontPower *= cPowerScale;
         leftBackPower *= cPowerScale;
@@ -273,7 +272,7 @@ public class BaseTeleOpMode extends OpMode {
         telemetry.addData("Steering", "%4.2f/%4.2f/%4.2f", steeringDeg, leftSteeringDeg, rightSteeringDeg);
         telemetry.addData("Wheel Scale", "%4.2f/%4.2f", leftWheelScale, rightWheelScale);
         telemetry.addData("Axial Speeds FL/FR/BL/BR", "%4.2f/%4.2f/%4.2f/%4.2f", axialSpeeds[0], axialSpeeds[1],
-            axialSpeeds[2], axialSpeeds[3]);
+                axialSpeeds[2], axialSpeeds[3]);
 
         telemetry.update();
     }

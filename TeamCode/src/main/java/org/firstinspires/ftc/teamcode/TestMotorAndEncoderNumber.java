@@ -50,7 +50,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test Motor and Encoder (one motor at a time)", group="Linear OpMode")
+@TeleOp(name = "Test Motor and Encoder (one motor at a time)", group = "Linear OpMode")
 
 public class TestMotorAndEncoderNumber extends LinearOpMode {
 
@@ -66,7 +66,7 @@ public class TestMotorAndEncoderNumber extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        oneMotor  = hardwareMap.get(DcMotor.class, "rightRear");
+        oneMotor = hardwareMap.get(DcMotor.class, "rightRear");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -89,7 +89,7 @@ public class TestMotorAndEncoderNumber extends LinearOpMode {
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
             double move = -gamepad1.left_stick_y;
-            onePower    = Range.clip(move, -1.0, 1.0) ;
+            onePower = Range.clip(move, -1.0, 1.0);
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.

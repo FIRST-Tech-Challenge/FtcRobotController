@@ -13,16 +13,15 @@ public class TwoDriverTeleOpMode extends BaseTeleOpMode {
         if (gamepad2.dpad_down) {
             intakeMotor.setPower(1.0);
         } else if (gamepad2.dpad_up) {
-            intakeMotor.setPower(-1.0); 
-        }
-        else{
+            intakeMotor.setPower(-1.0);
+        } else {
             intakeMotor.setPower(0);
         }
-        
+
         // arm control
         double armMaxStep = 4.0;
         double armStep = -gamepad2.left_stick_y * armMaxStep;
-        armTargetPosition += (int)Math.round(armStep);
+        armTargetPosition += (int) Math.round(armStep);
 
         if (armTargetPosition < 0)
             armTargetPosition = 0;
@@ -30,12 +29,12 @@ public class TwoDriverTeleOpMode extends BaseTeleOpMode {
             armTargetPosition = 750;
 
         armMotor.setTargetPosition(armTargetPosition);
-        
+
         //box servo control
         //double minBoxPosition = 0.25;
         double minBoxPosition = 0.3;
         double maxBoxPosition = 0.86;
-        
+
         //boxServo = hardwareMap.get(Servo.class, "BOX");
 
         int armPos = armMotor.getCurrentPosition();
@@ -75,24 +74,22 @@ public class TwoDriverTeleOpMode extends BaseTeleOpMode {
                 boxPosition = maxBoxPosition;
         }
         */
-        
+
         telemetry.addData("armPos:", "%d", armPos);
-      
+
         boxServo.setPosition(boxPosition);
 
         //airplane launcher
-        if(gamepad1.right_bumper) {
+        if (gamepad1.right_bumper) {
             //planeServo.setPosition(planeServoDropPosition);
-        }
-        else {
+        } else {
             //planeServo.setPosition(planeServoHoldPosition);
         }
 
         //purple pixel override
-        if(gamepad2.left_bumper){
+        if (gamepad2.left_bumper) {
             purpleServo.setPosition(purpleServoDropPosition);
-        }
-        else{
+        } else {
             purpleServo.setPosition(purpleServoHoldPosition);
         }
 
