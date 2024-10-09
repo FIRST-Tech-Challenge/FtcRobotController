@@ -27,6 +27,8 @@ public class Bot {
     private CRServo topIntake;
     private CRServo bottomIntake;
 
+    private HardwareMap hwMap = null;
+
 
     //Statistics for measurements
 
@@ -49,13 +51,15 @@ public class Bot {
      */
     public void init(HardwareMap map){
 
+        hwMap = map;
+
         //Connecting declared motors to classes of DcMotors and respected names
-        leftMotorFront = map.get(DcMotor.class, "left_front");
-        leftMotorBack = map.get(DcMotor.class, "left_back");
-        rightMotorFront = map.get(DcMotor.class, "right_front");
-        rightMotorBack = map.get(DcMotor.class, "right_back");
-        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
-        rightLift = map.get(DcMotor.class, "right_lift");
+        leftMotorFront = hwMap.get(DcMotor.class, "left_front");
+        leftMotorBack = hwMap.get(DcMotor.class, "left_back");
+        rightMotorFront = hwMap.get(DcMotor.class, "right_front");
+        rightMotorBack = hwMap.get(DcMotor.class, "right_back");
+//        leftLift = hwMap.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
+//        rightLift = hwMap.get(DcMotor.class, "right_lift");
 
         //Set RunModes for Encoder Usage
         /*
@@ -72,12 +76,12 @@ public class Bot {
         leftMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);//this is because the motors are probalby faceing each other
+//        leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
+//        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);//this is because the motors are probalby faceing each other
 
         //Servos for intake on the map
-        topIntake = map.get(CRServo.class, "top_intake");
-        bottomIntake = map.get(CRServo.class, "bottom_intake");
+//        topIntake = hwMap.get(CRServo.class, "top_intake");
+//        bottomIntake = hwMap.get(CRServo.class, "bottom_intake");
     }
 
     /**
@@ -113,13 +117,11 @@ public class Bot {
 
 
     //Drive Encoder
-    static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
-    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
+    static final double COUNTS_PER_MOTOR_REV = 384.5;    // gobilda 5203 motor encoder res
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // 1:1
     static final double WHEEL_DIAMETER_INCHES = 4.09449;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double DRIVE_SPEED = 0.6;
-    static final double TURN_SPEED = 0.5;
     static final double INCHES_PER_DEGREE = 0.1744;
 
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
@@ -159,10 +161,10 @@ public class Bot {
         while (opMode.opModeIsActive() &&
                 (runtime.seconds() < timeoutS) &&
                 (leftMotorFront.isBusy() || rightMotorFront.isBusy() || leftMotorBack.isBusy() || rightMotorBack.isBusy())) {
-            opMode.telemetry.addData("frontLeftEncoder", leftMotorFront.getCurrentPosition());
-            opMode.telemetry.addData("frontRightEncoder", rightMotorFront.getCurrentPosition());
-            opMode.telemetry.addData("backLeftEncoder", leftMotorBack.getCurrentPosition());
-            opMode.telemetry.addData("backRightEncoder", rightMotorBack.getCurrentPosition());
+            opMode.telemetry.addData("frontLeftEncoder", newfrontLeftTarget);
+            opMode.telemetry.addData("frontRightEncoder", newfrontRightTarget);
+            opMode.telemetry.addData("backLeftEncoder", newbackLeftTarget);
+            opMode.telemetry.addData("backRightEncoder", newbackRightTarget);
             opMode.telemetry.update();
         }
 
@@ -268,6 +270,15 @@ public class Bot {
             leftMotorBack.setPower(-Math.abs(speed));
             rightMotorBack.setPower(Math.abs(speed));
 
+            while (opMode.opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (leftMotorFront.isBusy() && leftMotorBack.isBusy() && rightMotorFront.isBusy() && rightMotorBack.isBusy())) {
+                opMode.telemetry.addData("frontLeftEncoder", leftMotorFront.getCurrentPosition());
+                opMode.telemetry.addData("frontRightEncoder", rightMotorFront.getCurrentPosition());
+                opMode.telemetry.addData("backLeftEncoder", leftMotorBack.getCurrentPosition());
+                opMode.telemetry.addData("backRightEncoder", rightMotorBack.getCurrentPosition());
+                opMode.telemetry.update();
+            }
             // Stop all motion;
             leftMotorFront.setPower(0);
             rightMotorFront.setPower(0);
@@ -280,5 +291,27 @@ public class Bot {
             leftMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+    }
+
+    public void resetEncoder(){
+
+        leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+
+    public void setDrivePower(double left, double right){
+        leftMotorFront.setPower(left);
+        leftMotorBack.setPower(left);
+        rightMotorFront.setPower(right);
+        rightMotorBack.setPower(right);
+
+        leftMotorBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftMotorFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotorBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotorFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 }
