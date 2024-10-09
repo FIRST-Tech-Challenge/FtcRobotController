@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 @TeleOp(name = "Teleop")
 public class Teleop extends OpMode {
     private DriveChassis chassis;
-    private double maxSpeed = 0.5; // In Wheel Rotations Per Second
+    private double maxSpeed = 50; // In Wheel Rotations Per Second
 
     private YawPitchRollAngles orientation;
     private double yaw;
