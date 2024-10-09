@@ -18,11 +18,11 @@ public class MecanumAutoBackLeft extends LinearOpMode {
         // robotController.turnTo(45, TURN_SPEED);
 //        robotController.distanceDrive(48, 45, DRIVE_SPEED);
 //        robotController.sleep(10);
-        robotController.distanceDrive(24, 0, DRIVE_SPEED);
-        robotController.turnTo(45, TURN_SPEED);
-        robotController.distanceDrive(10, 45, DRIVE_SPEED);
-        robotController.turnTo(160, TURN_SPEED);
-        robotController.distanceDrive(29, 160, DRIVE_SPEED);
+
+        robotController.turnTo(15, TURN_SPEED);
+        robotController.distanceDrive(30, 15, DRIVE_SPEED);
+        robotController.turnTo(150, TURN_SPEED);
+        robotController.distanceDrive(36, 150, DRIVE_SPEED);
     }
 
     public void initialize() {
