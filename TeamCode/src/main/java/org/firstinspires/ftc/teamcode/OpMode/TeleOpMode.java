@@ -20,7 +20,7 @@ public class TeleOpMode extends LinearOpMode {
             double drive = gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
-            //fdsdfdsdssdfdsfdsf
+            //ie4wiurfkjkjgfkj
             robot.teleOpDrive(drive,strafe,rotate);
         }
     }
