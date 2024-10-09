@@ -46,7 +46,8 @@ public class MecanumDriver extends OpMode {
     private MecanumRobotController robotController;
     private final ElapsedTime runtime = new ElapsedTime();
 
-    private CRServo servo;
+    private Servo intake;
+    private Servo wrist;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
@@ -66,10 +67,8 @@ public class MecanumDriver extends OpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
-        servo = hardwareMap.get(CRServo.class, "intake");
-
-
-
+        intake = hardwareMap.get(Servo.class, "intake");
+        wrist = hardwareMap.get(Servo.class, "intake2");
 
         gyro.resetYaw();
 
@@ -90,13 +89,23 @@ public class MecanumDriver extends OpMode {
         robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
-        servo.setPower(1);
-        double servoPosition = Range.clip(gamepad1.right_trigger - gamepad1.left_trigger, 0.0, 1.0);
+
+        if (gamepad1.left_trigger > 0) {
+            intake.setPosition(0); // Spin in one direction at max power
+        } else if (gamepad1.right_trigger > 0) {
+            intake.setPosition(1); // Spin in the other direction at max power
+        } else {
+
+            //intake.setPower(0.0); // Stop when no trigger is pressed
+        }
+
+
 
 
         telemetry.addData("Left Trigger", gamepad1.left_trigger);
         telemetry.addData("Right Trigger", gamepad1.right_trigger);
-        telemetry.addData("servoPosition", servoPosition);
+        telemetry.addData("Servo Power", intake.getPosition());
+        //telemetry.addData("Servo2 Power", servo2.getPower());
         robotController.sendTelemetry(telemetry);
     }
 
