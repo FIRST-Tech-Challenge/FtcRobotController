@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.MecanumDrive;
 @Config
 @Autonomous(name = "RoadRunnerMechanumTest")
 public class RoadRunnerMechanumTest extends LinearOpMode {
+
     public class Lift {
         private DcMotorEx lift;
 
@@ -45,7 +46,7 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
 
                 double pos = lift.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 3000.0) {
+                if (pos < 3000) {
                     return true;
                 } else {
                     lift.setPower(0);
@@ -119,7 +120,9 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(11.8, 61.7, Math.toRadians(90));
+
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+
         Claw claw = new Claw(hardwareMap);
         Lift lift = new Lift(hardwareMap);
 
@@ -137,19 +140,9 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
                 .turn(Math.toRadians(180))
                 .lineToX(47.5)
                 .waitSeconds(3);
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
-                .lineToY(37)
-                .setTangent(Math.toRadians(0))
-                .lineToX(18)
-                .waitSeconds(3)
-                .setTangent(Math.toRadians(0))
-                .lineToXSplineHeading(46, Math.toRadians(180))
-                .waitSeconds(3);
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
-                .lineToYSplineHeading(33, Math.toRadians(180))
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(46, 30))
-                .waitSeconds(3);
+
+
+
         Action trajectoryActionCloseOut = tab1.fresh()
                 .strafeTo(new Vector2d(48, 12))
                 .build();
@@ -165,18 +158,16 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
 
         telemetry.addData("Starting Position", visionOutputPosition);
         telemetry.update();
+
+        Action trajectoryActionChosen;
+        trajectoryActionChosen = tab1.build();
+
         waitForStart();
 
         if (isStopRequested()) return;
 
-        Action trajectoryActionChosen;
-        if (visionOutputPosition == 1) {
-            trajectoryActionChosen = tab1.build();
-        } else if (visionOutputPosition == 2) {
-            trajectoryActionChosen = tab2.build();
-        } else {
-            trajectoryActionChosen = tab3.build();
-        }
+
+
 
         Actions.runBlocking(
                 new SequentialAction(
