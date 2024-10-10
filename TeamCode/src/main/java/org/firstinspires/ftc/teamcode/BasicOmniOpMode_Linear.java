@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp(name="Chocolate", group="Linear OpMode")
+@TeleOp(name="Chocolate", group="Linear OpMode") // Milla: we need a name that tells the driver what this program does.
 public class BasicOmniOpMode_Linear extends LinearOpMode {
     // Initialize all variables for the program below:
     // This chunk controls our wheels
@@ -37,7 +37,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private static final double VERTICAL_POWER_DEFAULT = 0.6;
     double verticalPower = 0;
     private static final int VERTICAL_MAX = 700;
-    private static final int VERTICAL_MIN = 30;
+    private static final int VERTICAL_MIN = 30; // Milla: You calculated this should be 136 so we don't damage the claw
     private static final int VERTICAL_DEFAULT = 0;
     int verticalPosition = VERTICAL_DEFAULT;
 
@@ -144,7 +144,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely rotate further
-                vertical.setTargetPosition(verticalPosition + 10);                      // Set the target position to as far up as it can go
+                vertical.setTargetPosition(verticalPosition + 10);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
                 ((DcMotorEx) vertical).setVelocity(650);                                // Set the speed
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
@@ -189,7 +189,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Log all (relevant) info about the robot on the hub.
     private void logScreenData() {
-        telemetry.addData("Status", "Run Time: " + runtime);
+        telemetry.addData("Status", "Run Time: " + runtime); // Milla: This prints a lot of decimal points. You can get the number of seconds with runtime.seconds() then use format specifiers to print 0-2 decimal points
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         telemetry.addData("Joystick Axial", "%4.2f", axial);
