@@ -8,8 +8,31 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+/**
+ * Control Mapping
+ *  GAMEPAD1
+ *      Left Joystick X - Strafe
+ *      Left Joystick Y - Forward Backward
+ *      Right Joystick X - Pivot
+ *      Right Trigger - Lift Lower
+ *      Left Trigger - Lift Raise
+ *      Right Bumper - Extend Arm
+ *      Left Bumper - Retract Arm
+ *      X Button - Intake In
+ *      Y Button - Intake Out
+ *      A Button - Raise Arm
+ *      B Button - Lower Arm
+ */
+
 @TeleOp(name = "TeleOp", group = "TeleOp")
 public class Teleop extends LinearOpMode {
+
+        private static final double MAX_EXTEND = 1200;
+        private static final double MAX_PIVOT = 1200;
+        private static final double LEFT_LIFT_MAX = -6160;
+        private static final double LEFT_LIFT_MIN = 22;
+        private static final double RIGHT_LIFT_MAX = -6270;
+        private static final double RIGHT_LIFT_MIN = -62;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,7 +44,7 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x; // Counteract imperfect strafing
+            double x = gamepad1.left_stick_x; // Counteract imperfect strafing
             double pivot = -gamepad1.right_stick_x;
 
             double rightLiftTrigger = gamepad1.right_trigger; //rightTrigger is raising the lift
@@ -41,14 +64,18 @@ public class Teleop extends LinearOpMode {
                 bot.setIntakePosition(0.0);
             }
 
+            //mechanum drive equations for powering each motor
             double frontLeftPower = y + x + pivot;
             double backLeftPower =  y - x + pivot;
             double frontRightPower = y - x - pivot;
             double backRightPower = y + x - pivot;
-            if(rightLiftTrigger > 0.1){
+
+            if(rightLiftTrigger > 0.1 &&
+                    (bot.getLeftLiftPos() < LEFT_LIFT_MIN)&&(bot.getRightLiftPos() < RIGHT_LIFT_MIN)){
                 bot.setLift(1.0);//this makes it go down
             }
-            else if(leftLiftTrigger > 0.1){
+            else if(leftLiftTrigger > 0.1 &&
+                    (bot.getLeftLiftPos() > LEFT_LIFT_MAX)&&(bot.getRightLiftPos() > RIGHT_LIFT_MAX)){
                 bot.setLift(-1.0);//this makes it go up
             }
             else
@@ -66,6 +93,30 @@ public class Teleop extends LinearOpMode {
                 backRightPower /= max;
             }
             bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+
+            //extend arm controls
+            if(gamepad1.right_bumper && bot.getExtendPos() < MAX_EXTEND){
+                bot.setExtendPower(1.0);
+            } else if (gamepad1.left_bumper && bot.getExtendPos() > 0){
+                bot.setExtendPower(-1.0);
+            } else {
+                bot.setExtendPower(0.0);
+            }
+
+            if(gamepad1.a && bot.getPivotArmPos() < MAX_PIVOT){
+                bot.setPivotPower(0.75);
+            } else if(gamepad1.b && bot.getPivotArmPos() > 0){
+                bot.setPivotPower(-0.75);
+            } else {
+                bot.setPivotPower(0.0);
+            }
+
+            //Telemetry Data
+            telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
+            telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
+            telemetry.addData("Current Left Lift Pos: ", bot.getLeftLiftPos());
+            telemetry.addData("Current Right Lift Pos: ", bot.getRightLiftPos());
+            telemetry.update();
         }
     }
 }
