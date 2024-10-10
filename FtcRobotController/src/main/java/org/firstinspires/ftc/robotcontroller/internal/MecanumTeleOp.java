@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "Robot-Centric Mecanum Drive")
 public class MecanumTeleOp extends LinearOpMode {
-    // Main Code
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -25,9 +24,9 @@ public class MecanumTeleOp extends LinearOpMode {
         if(isStopRequested()) return;
 
         while(opModeIsActive()) {
-            double y = gamepad1.left_stick_y; // Y-Axis is default reversed in controller
+            double y = gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x * 1.1; // Counter imperfect strafing
-            double rx = -gamepad1.right_stick_x;
+            double rx = -gamepad1.right_stick_x; // X-axis reversed
 
             /* Denominator is the largest motor power (absolute value) or 1
                This ensures all the powers maintain the same ratio
