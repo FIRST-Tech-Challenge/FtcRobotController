@@ -20,15 +20,15 @@ public class MecanumTeleOp extends OpMode {
     public DcMotorEx right_f;
     public DcMotorEx left_b;
 
-<<<<<<< HEAD
+
     public Servo specimen_claw;
-=======
+
     public Servo left_servo;
 
     private boolean servoToggled = false;
     private boolean aPressedLast = false;
 
->>>>>>> temp
+
 
     int travel;
     //Code to run ONCE after the driver hits INIT
@@ -45,15 +45,14 @@ public class MecanumTeleOp extends OpMode {
 
         right_f.setDirection(DcMotorSimple.Direction.REVERSE);
         right_b.setDirection(DcMotorSimple.Direction.REVERSE);
-<<<<<<< HEAD
-=======
+
+
 
         left_servo = hardwareMap.get(Servo.class, "left_servo");
 
 
 
 
->>>>>>> temp
     }
     //Code to run REPEATEDLY after the driver hits INIT
     @Override
@@ -63,13 +62,13 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("left_servo_position", left_servo.getPosition());
         telemetry.update();
 
-<<<<<<< HEAD
+
         telemetry.addData("linear_motion_left_ticks", robot.linear_L.linear_motion_left.getCurrentPosition());
         telemetry.update();
-=======
 
 
->>>>>>> temp
+
+
     }
 
     //Code to run ONCE after the driver hits PLAY
@@ -144,7 +143,7 @@ public class MecanumTeleOp extends OpMode {
 
                 //-------------------------------------------------
 
-<<<<<<< HEAD
+
         } /*else if (gamepad1.a){
                 robot.left_claw.servo_left.setPosition(1);
         } else if (gamepad1.b){
@@ -152,7 +151,7 @@ public class MecanumTeleOp extends OpMode {
         } */
         else {
             robot.linear_C.linear_claw.setPower(0);
-=======
+
         }
 
         if (gamepad1.a && !aPressedLast) {
@@ -177,7 +176,7 @@ public class MecanumTeleOp extends OpMode {
             //robot.linear_C.linear_claw.setPower(0);
 
 
->>>>>>> temp
+
         }
 
     }
