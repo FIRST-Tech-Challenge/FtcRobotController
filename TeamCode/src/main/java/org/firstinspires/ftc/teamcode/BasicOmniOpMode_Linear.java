@@ -136,40 +136,40 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            // Control the vertical
+            // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
-            if (gamepad1.dpad_up) {
-                vertical.setTargetPosition(VERTICAL_MAX);
-                ((DcMotorEx) vertical).setVelocity(750);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (gamepad1.dpad_up) {                                                     // If the up button is pressed
+                vertical.setTargetPosition(VERTICAL_MAX);                               // Set the target position to as far up as it can go
+                ((DcMotorEx) vertical).setVelocity(750);                                // Set the speed
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
-            else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {
-                vertical.setTargetPosition(VERTICAL_MAX);
-                ((DcMotorEx) vertical).setVelocity(750);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely rotate further
+                vertical.setTargetPosition(verticalPosition + 10);                      // Set the target position to as far up as it can go
+                ((DcMotorEx) vertical).setVelocity(650);                                // Set the speed
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
-            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MIN) {
-                vertical.setTargetPosition(VERTICAL_MIN);
-                ((DcMotorEx) vertical).setVelocity(750);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MIN) {           // If the left button is pressed AND it can safely rotate further
+                vertical.setTargetPosition(verticalPosition - 10);                      // Set the target position to as far down as it can go
+                ((DcMotorEx) vertical).setVelocity(650);                                // Set the speed
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
-            else if (gamepad1.dpad_down) {
-                vertical.setTargetPosition(VERTICAL_MIN);
-                ((DcMotorEx) vertical).setVelocity(750);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                sleep(1000);
+            else if (gamepad1.dpad_down) {                                              // If the down button is pressed
+                vertical.setTargetPosition(VERTICAL_MIN);                               // Set the target position to as far down as it can go
+                ((DcMotorEx) vertical).setVelocity(750);                                // Set the speed
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
+                sleep(1000);                                                 // Stop for one second
             }
 
-            // Control the viper slide
-            viperSlidePosition = -viperSlide.getCurrentPosition();
-            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {
-                viperSlidePower = -VIPER_POWER_DEFAULT;
+            // Control the viper slide - how much it extends
+            viperSlidePosition = -viperSlide.getCurrentPosition();                      // Sets the position of the viper slide
+            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {         // If the right trigger is pressed AND it can safely slide further
+                viperSlidePower = -VIPER_POWER_DEFAULT;                                 // Set the power
             }
-            else if (gamepad1.left_trigger > 0  && viperSlidePosition > VIPER_MIN) {
-                viperSlidePower = VIPER_POWER_DEFAULT;
+            else if (gamepad1.left_trigger > 0  && viperSlidePosition > VIPER_MIN) {    // If the left trigger is pressed AND it can safely slide further
+                viperSlidePower = VIPER_POWER_DEFAULT;                                  // Set the power
             }
             else {
-                viperSlidePower = 0;
+                viperSlidePower = 0;                                                    // If neither trigger is pressed, stop
             }
             viperSlide.setPower(viperSlidePower);
 
