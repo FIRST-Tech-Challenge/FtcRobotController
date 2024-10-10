@@ -147,25 +147,6 @@ public class DriveTrain extends SubsystemBase {
         // normalize wheel speeds so no wheel exceeds maximum attanable (in m/s)
         WheelSpeeds.normalize(MAX_SPEED);
 
-        // resolve individual mecanum speeds
-        //double leftFrontPower  = Vx + Vy + Omega;
-        //double rightFrontPower = Vx - Vy - Omega;
-        //double leftBackPower   = Vx - Vy + Omega;
-        //double rightBackPower  = Vx + Vy - Omega;
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        //double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        //max = Math.max(max, Math.abs(leftBackPower));
-        //max = Math.max(max, Math.abs(rightBackPower));
-
-        //if (max > MAX_SPEED) {
-        //    leftFrontPower  /= (max / MAX_SPEED);
-        //    rightFrontPower /= (max / MAX_SPEED);
-        //    leftBackPower   /= (max / MAX_SPEED);
-        //    rightBackPower  /= (max / MAX_SPEED);
-        //}
-
         // set individual motor speeds
         double requestedLeftFrontDriveVelocity = WheelSpeeds.frontLeftMetersPerSecond;
         double requestedRightFrontDriveVelocity = WheelSpeeds.frontRightMetersPerSecond;
