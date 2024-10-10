@@ -61,10 +61,10 @@ public class MecanumWheels extends Wheels {
      */
     @Override
     public void drive(double x, double y, double turn) {
-        frontLeftMotor.setPower(y - x - turn);
-        frontRightMotor.setPower(y + x + turn);
-        backLeftMotor.setPower(y + x - turn);
-        backRightMotor.setPower(y - x + turn);
+        FRONT_LEFT_MOTOR.setPower(y - x - turn);
+        FRONT_RIGHT_MOTOR.setPower(y + x + turn);
+        BACK_LEFT_MOTOR.setPower(y + x - turn);
+        BACK_RIGHT_MOTOR.setPower(y - x + turn);
     }
 
     /**

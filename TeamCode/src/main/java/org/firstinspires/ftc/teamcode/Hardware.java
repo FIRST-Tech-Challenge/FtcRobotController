@@ -37,13 +37,13 @@ public class Hardware {
         this.OP_MODE = opMode;
         autoSleepEnabled = true;
 
-        COLOR_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "color_switch");
-        SIDE_SWITCH = OP_MODE.hardwareMap.get(DigitalChannel.class, "side_switch");
+        COLOR_SWITCH = null; //OP_MODE.hardwareMap.get(DigitalChannel.class, "color_switch");
+        SIDE_SWITCH = null; //OP_MODE.hardwareMap.get(DigitalChannel.class, "side_switch");
 
-        VISION_PORTAL = new VisionPortal.Builder()
+        VISION_PORTAL = null; /*new VisionPortal.Builder()
                         .setCamera(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"))
                         .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
-                        .build();
+                        .build();*/
 
         initWheels();
         initArm();
@@ -57,12 +57,12 @@ public class Hardware {
          * Define wheels system hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-        DcMotor frontLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_left_wheel");
-        DcMotor frontRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_right_wheel");
-        DcMotor backLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_left_wheel");
-        DcMotor backRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_right_wheel");
+//        DcMotor frontLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_left_wheel");
+//        DcMotor frontRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_right_wheel");
+//        DcMotor backLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_left_wheel");
+//        DcMotor backRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_right_wheel");
 
-        mecanum = new MecanumWheels(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
+        mecanum = null; //new MecanumWheels(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
     }
     
     /**
@@ -73,12 +73,11 @@ public class Hardware {
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-        Servo intakeServo = OP_MODE.hardwareMap.get(Servo.class, "intakeServo");
+        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
         HashMap<String, DcMotor> motors = new HashMap<>();
         HashMap<String, Servo> servos = new HashMap<>();
-        servos.put("intakeServo", intakeServo);
 
-        arm = new ExtendableArm(motors, servos);
+        arm = new ExtendableArm(motors, servos, intakeServo);
     }
 
     public MecanumWheels getWheels() {

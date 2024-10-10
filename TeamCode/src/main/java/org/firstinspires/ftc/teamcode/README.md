@@ -29,7 +29,7 @@ An enum that states whether the robot is on red or blue side.
 An enum that states whether the robot is on far or near side.
 
 
-# [TeleOp.java](./TeleOp.java)
+# [TeleOp.java](./DriverMode.java)
 
 The TeleOp class which runs using driver input.
 
