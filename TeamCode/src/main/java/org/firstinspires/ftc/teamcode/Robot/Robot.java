@@ -20,9 +20,9 @@ public class Robot {
     private IMU imu;
     
     //used for how fast the turning input is used.
-    public static double turningInputConstant = 1.0;
-    public static double pCon = 0.1;
-    public static double dCon = 1;
+    public static double turningInputConstant = 0.005;
+    public static double pCon = 1;
+    public static double dCon = 0;
     
     private double RobotAngle = 0;
     private double drive;
