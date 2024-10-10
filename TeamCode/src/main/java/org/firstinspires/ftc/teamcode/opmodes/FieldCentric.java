@@ -12,13 +12,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 @TeleOp(name = "FieldCentric")
 public class FieldCentric extends LinearOpMode {
+
+
     public static class Params {
         public double speedMult = 1;
-        public double turnMult;
+        public double turnMult = 1;
+        public double autoAngleMult = 0.005;
     }
     public static Params PARAMS = new Params();
 
-    double prevAngle = 0;
+    double wantedAngle = 0;
+    private boolean isAngleSet;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,7 +56,7 @@ public class FieldCentric extends LinearOpMode {
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x;
+            double x = 1.1 * -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
             // This button choice was made so that it is hard to hit on accident,
@@ -69,18 +73,14 @@ public class FieldCentric extends LinearOpMode {
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
             double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
-            rotX = rotX * 1.1 * PARAMS.speedMult;
+            rotX = rotX * PARAMS.speedMult;
             rotY *= PARAMS.speedMult;
             rx *= PARAMS.turnMult;
 
-            if (rx == 0){
-                rx = (botHeading - prevAngle) * 100;
-            }
+            
 
             telemetry.addData("rx:", rx);
-
-
-            prevAngle = botHeading;
+            telemetry.addData("wanted angle",wantedAngle);
 
 
             // Counteract imperfect strafing
