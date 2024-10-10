@@ -24,7 +24,7 @@ public class MecanumTeleOp extends LinearOpMode {
         if(isStopRequested()) return;
 
         while(opModeIsActive()) {
-            double y = gamepad1.left_stick_y; // Y-Axis is default reversed in controller
+            double y = gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x * 1.1; // Counter imperfect strafing
             double rx = -gamepad1.right_stick_x;
 
