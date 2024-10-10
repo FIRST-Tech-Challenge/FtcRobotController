@@ -30,12 +30,16 @@ public class Bot {
     private HardwareMap hwMap = null;
 
 
-    //Statistics for measurements
-
-
-
-    private ElapsedTime runtime = new ElapsedTime();
-
+    //Drive Encoder Stats
+    static final double COUNTS_PER_MOTOR_REV = 537.7;    // GoBilda 5203 motor encoder res
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // 1:1
+    static final double WHEEL_DIAMETER_INCHES = 4.09449;     // For figuring circumference
+    static final double CIRCUMFERENCE = (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / CIRCUMFERENCE;
+    static final double DISTANCE_PER_ENCODER =  CIRCUMFERENCE/COUNTS_PER_MOTOR_REV;
+    static final double COUNTS_PER_DEGREE = COUNTS_PER_MOTOR_REV/360;
+    static final double INCHES_PER_DEGREE = DISTANCE_PER_ENCODER * COUNTS_PER_DEGREE;
+    
     /**
      * Constructor for Bot object
      * @param opMode
@@ -119,17 +123,6 @@ public class Bot {
         topIntake.setPower(intakePower);
         bottomIntake.setPower(-intakePower);
     }
-
-
-    //Drive Encoder Stats
-    static final double COUNTS_PER_MOTOR_REV = 537.7;    // GoBilda 5203 motor encoder res
-    static final double DRIVE_GEAR_REDUCTION = 1.0;     // 1:1
-    static final double WHEEL_DIAMETER_INCHES = 4.09449;     // For figuring circumference
-    static final double CIRCUMFERENCE = (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / CIRCUMFERENCE;
-    static final double DISTANCE_PER_ENCODER =  CIRCUMFERENCE/COUNTS_PER_MOTOR_REV;
-    static final double COUNTS_PER_DEGREE = COUNTS_PER_MOTOR_REV/360;
-    static final double INCHES_PER_DEGREE = DISTANCE_PER_ENCODER * COUNTS_PER_DEGREE;
 
 
     /**
