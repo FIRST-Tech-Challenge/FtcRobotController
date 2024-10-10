@@ -20,7 +20,15 @@ public class MecanumTeleOp extends OpMode {
     public DcMotorEx right_f;
     public DcMotorEx left_b;
 
+<<<<<<< HEAD
     public Servo specimen_claw;
+=======
+    public Servo left_servo;
+
+    private boolean servoToggled = false;
+    private boolean aPressedLast = false;
+
+>>>>>>> temp
 
     int travel;
     //Code to run ONCE after the driver hits INIT
@@ -37,16 +45,31 @@ public class MecanumTeleOp extends OpMode {
 
         right_f.setDirection(DcMotorSimple.Direction.REVERSE);
         right_b.setDirection(DcMotorSimple.Direction.REVERSE);
+<<<<<<< HEAD
+=======
+
+        left_servo = hardwareMap.get(Servo.class, "left_servo");
+
+
+
+
+>>>>>>> temp
     }
     //Code to run REPEATEDLY after the driver hits INIT
     @Override
     public void init_loop() {
 
-        telemetry.addData("Linear_motion_right", gamepad2.left_stick_x);
+        telemetry.addData("Linear_motion_right", robot.linear_L.linear_motion_left.getCurrentPosition());
+        telemetry.addData("left_servo_position", left_servo.getPosition());
         telemetry.update();
 
+<<<<<<< HEAD
         telemetry.addData("linear_motion_left_ticks", robot.linear_L.linear_motion_left.getCurrentPosition());
         telemetry.update();
+=======
+
+
+>>>>>>> temp
     }
 
     //Code to run ONCE after the driver hits PLAY
@@ -112,6 +135,8 @@ public class MecanumTeleOp extends OpMode {
             }
         }
 
+        robot.linear_C.linear_claw.setPower(gamepad2.right_stick_y);
+
             if (gamepad1.dpad_right){
                 encoder(20,1);
             } else if (gamepad1.dpad_left){
@@ -119,6 +144,7 @@ public class MecanumTeleOp extends OpMode {
 
                 //-------------------------------------------------
 
+<<<<<<< HEAD
         } /*else if (gamepad1.a){
                 robot.left_claw.servo_left.setPosition(1);
         } else if (gamepad1.b){
@@ -126,6 +152,32 @@ public class MecanumTeleOp extends OpMode {
         } */
         else {
             robot.linear_C.linear_claw.setPower(0);
+=======
+        }
+
+        if (gamepad1.a && !aPressedLast) {
+            servoToggled = !servoToggled;
+            left_servo.setPosition(servoToggled ? 0.93 : 0.2);
+        }
+        aPressedLast = gamepad1.a;
+
+        if (gamepad1.b){
+                left_servo.setPosition(0);
+            }
+
+
+        if (gamepad2.a){
+
+        }
+
+        else {
+            //robot.linear_L.linear_motion_left.setPower(0.005);
+
+            //robot.linear_R.linear_motion_right.setPower(0.005);
+            //robot.linear_C.linear_claw.setPower(0);
+
+
+>>>>>>> temp
         }
 
     }
