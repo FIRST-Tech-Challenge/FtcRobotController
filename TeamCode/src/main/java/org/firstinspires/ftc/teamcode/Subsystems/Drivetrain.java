@@ -13,8 +13,8 @@ public class Drivetrain {
     public DcMotor bL;
     public DcMotor fR;
     public DcMotor bR;
-    public Encoder encoder;
-    public Encoder encoder2;
+//    public Encoder encoder;
+//    public Encoder encoder2;
     //public static double TICKS_PER_REV = 1;
     public static double GEAR_RATIO = 1;
     public static double WHEEL_RADIUS_INCHES = 1.88976;
@@ -26,8 +26,8 @@ public class Drivetrain {
         bL = map.dcMotor.get("backLeft");
         fR = map.dcMotor.get("frontRight");
         bR = map.dcMotor.get("backRight");
-        encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
-        encoder2 = new Encoder(map.get(DcMotorEx.class, "backRight"));
+//        encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
+//        encoder2 = new Encoder(map.get(DcMotorEx.class, "backRight"));
         imu = map.get(IMU.class, "imu");
 
         fL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
@@ -52,13 +52,13 @@ public class Drivetrain {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
-    public double get1Position() {
-        return -encoder.getCurrentPosition();
-    }
-
-    public double get2Position() {
-        return -encoder2.getCurrentPosition();
-    }
+//    public double get1Position() {
+//        return -encoder.getCurrentPosition();
+//    }
+//
+//    public double get2Position() {
+//        return -encoder2.getCurrentPosition();
+//    }
 
     public void moveMoveMOVE(double power){
         double fLPow = power;
