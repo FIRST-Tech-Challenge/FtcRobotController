@@ -42,84 +42,47 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
-
-/* NEHA: You can delete this. If we need it in the future, we can get it from the samples. Right now this is just distracting from the code that is important.
- * This OpMode illustrates how to use the Limelight3A Vision Sensor.
- *
- * @see <a href="https://limelightvision.io/">Limelight</a>
- *
- * Notes on configuration:
- *
- *   The device presents itself, when plugged into a USB port on a Control Hub as an ethernet
- *   interface.  A DHCP server running on the Limelight automatically assigns the Control Hub an
- *   ip address for the new ethernet interface.
- *
- *   Since the Limelight is plugged into a USB port, it will be listed on the top level configuration
- *   activity along with the Control Hub Portal and other USB devices such as webcams.  Typically
- *   serial numbers are displayed below the device's names.  In the case of the Limelight device, the
- *   Control Hub's assigned ip address for that ethernet interface is used as the "serial number".
- *
- *   Tapping the Limelight's name, transitions to a new screen where the user can rename the Limelight
- *   and specify the Limelight's ip address.  Users should take care not to confuse the ip address of
- *   the Limelight itself, which can be configured through the Limelight settings page via a web browser,
- *   and the ip address the Limelight device assigned the Control Hub and which is displayed in small text
- *   below the name of the Limelight on the top level configuration screen.
- */
 @TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
 public class SensorLimelight3A extends LinearOpMode {
 
     private Limelight3A limelight;
-
+    //The limelight has a heading range of 62 degrees and can see the AprilTag from 10 feet away. It can be positioned at a maximum of 14 1/2 inches tall.
     @Override
     public void runOpMode() throws InterruptedException
     {
-        limelight = hardwareMap.get(Limelight3A.class, "limelight"); // Neha: Lines 76-89 should not have any blank lines between them.
-
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
-
         limelight.pipelineSwitch(0);
-
-        /* Neha: Remove this three line comment. We dont like multi-line comments because they make it harder to see the code that we care about.
-         * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
-         */
+        // Starts polling for data. If you neglect to call start(), getLatestResult() will return null.
         limelight.start();
-
         telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();
         waitForStart();
-
         while (opModeIsActive()) {
             LLStatus status = limelight.getStatus();
             telemetry.addData("Name", "%s", status.getName());
-            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d", status.getTemp(), status.getCpu(),(int)status.getFps());   //Telling us the temperatures, CPU and FPS
-            telemetry.addData("Pipeline", "Index: %d, Type: %s", status.getPipelineIndex(), status.getPipelineType());              //Telling us pipeline value // Neha: comments shouldn't have -ing
+            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d", status.getTemp(), status.getCpu(),(int)status.getFps());   //Tells us the temperatures, CPU and FPS
+            telemetry.addData("Pipeline", "Index: %d, Type: %s", status.getPipelineIndex(), status.getPipelineType());              //Tells us pipeline value
 
             LLResult result = limelight.getLatestResult();
             if (result != null) {
                 // Access general information
-                Pose3D botpose = result.getBotpose(); // Neha: You can move this into the if(result.isValid()) section
-                // Neha: The next 5 lines do a lot that we don't understand. Their purpose is to tell us when there is a problem. Lets re-write this in a way that is helpful.
-                // I put a re-write on line 109. Does it make sense?
-                double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
-                double parseLatency = result.getParseLatency();
-                telemetry.addData("LL Latency", "%.0f", captureLatency + targetingLatency);
-                telemetry.addData("Parse Latency", "%.0f",parseLatency);
-
-                telemetry.addData("Total Latency", "%.0f",result.getCaptureLatency() + result.getTargetingLatency() + result.getParseLatency());
+                telemetry.addData("Total Latency", "%.0f",result.getTargetingLatency());
 
                 if (result.isValid()) {
-                    // Access fiducial results // Neha: Do you know what Fiducial results are? Lets remove the term "Fiducial" from comments and telemetry.
+                    Pose3D botpose = result.getBotpose();
+                    // Access AprilTag ID results
                     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                        telemetry.addData("Fiducial ID", "%d", fr.getFiducialId());             // Fiducial ID // Neha: A better label is "AprilTag ID"
+                        telemetry.addData("AprilTag ID", "%d", fr.getFiducialId());             // AprilTag ID
                     }
                     telemetry.addData("X-Location", "%.1f",botpose.getPosition().x);            // Get X-Location from the robot
                     telemetry.addData("Y-Location", "%.1f",botpose.getPosition().y);            // Get Y-Location from the robot
                     telemetry.addData("Heading", "%.0f",botpose.getOrientation().getYaw());     // Get Heading from the robot
                 }
                 else {
-                    telemetry.addData("Limelight", "No AprilTags");                             // AprilTags are not detected
+                    telemetry.addData("Limelight", "No AprilTags");                              // AprilTags are not detected
                 }
             }
 
