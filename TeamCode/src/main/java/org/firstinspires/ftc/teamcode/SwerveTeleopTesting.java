@@ -21,8 +21,7 @@ public class SwerveTeleopTesting extends LinearOpMode {
 
     public static double P = 2, I = 2, D = 2; // change these constants later
     public static double k = 2;
-
-    //    public static double WHEEL_RADIUS = ;
+//    public static double WHEEL_RADIUS = ;
 //    public static double GEAR_RATIO = 4*2.88 / // output wheel speed / input motor speed
 //    public static final double TICKS_PER_REV = ; // tickers per revolution
     private ElapsedTime runtime = new ElapsedTime();
