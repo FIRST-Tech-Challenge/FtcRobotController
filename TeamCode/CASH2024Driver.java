@@ -33,22 +33,17 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utilities.CASH_Drive_Library;
-
-import java.security.DigestException;
-
 /**
  * This is the TeleOp Mode control class for 2021 robot.
  */
 
-@TeleOp(name="NewTeliopCode_Schultz", group="Iterative Opmode")
+@TeleOp(name="CASH 2023-2024 TeleOp", group="Iterative Opmode")
 //@Disabled
-public class NewTeliopCode_Schultz extends OpMode
+public class CASH2024Driver extends OpMode
 {
     /*
      * Code to run ONCE when the driver hits INIT
@@ -74,16 +69,10 @@ public class NewTeliopCode_Schultz extends OpMode
 
     private int auto_elevator_pos = 0;
 
-    //flag for autostop enabled
-    boolean inAutoStop = false;
-    boolean gotToPosition = false;
 
     //Schultz Updates
     private boolean AutoElevatorActive = false;
-    private boolean fieldCentric = true;
 
-    DistanceSensor sensorRange= null;
-    DistanceSensor sensorRange2=null;
     @Override
 
     public void init() {
@@ -96,24 +85,18 @@ public class NewTeliopCode_Schultz extends OpMode
         //can be a bit better than just open loop.
         CASHDriveLibrary.EnableEncoders();
 
-
         //This resets the angles to 0 degrees and will represent zero after robot is inicialized
         //This method can be used anytime you want to reset the angles to zero
-//        robot.robotIMU.resetAngle();
+        robot.robotIMU.resetAngle();
 
         telemetry.addData("Status", "Initialized");
         robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
-        robot.setDesWinchPosition_Teliop(robot.getWinchPositition());
-
-        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
-        sensorRange2 = hardwareMap.get(DistanceSensor.class, "sensor_range2");
     }
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
     @Override
     public void init_loop() {
-
 
     }
     /*
@@ -123,9 +106,6 @@ public class NewTeliopCode_Schultz extends OpMode
     public void start() {
         runtime.reset();
         loopTime.reset();
-
-
-
     }
 
     /*
@@ -148,64 +128,29 @@ public class NewTeliopCode_Schultz extends OpMode
 
         }
         // INPUTS
-
-        //GamePad 1
         double drive_y = -gamepad1.left_stick_y * powerfactor;
         double drive_x = gamepad1.left_stick_x *  powerfactor;
         double turn_x = 0.75 * gamepad1.right_stick_x * powerfactor;
-
-        if (fieldCentric){
-            if (gamepad1.options) {
-//                robot.robotIMU.resetYaw();
-                robot.robotIMU.imu.resetYaw();
-                telemetry.addLine("REST YAW");
-                telemetry.update();
-            }
-
-            double botHeading = robot.robotIMU.getCurrentAbsoluteAngle()*3.14/180;
-
-            // Rotate the movement direction counter to the bot's rotation
-            double rotX = drive_x * Math.cos(-botHeading) - drive_y * Math.sin(-botHeading);
-            double rotY = drive_x * Math.sin(-botHeading) + drive_y * Math.cos(-botHeading);
-            drive_x = rotX;
-            drive_y = rotY;
-
-
-        }
-
-        //sweeper control
-        float in = gamepad1.right_trigger;
-        float out = gamepad1.left_trigger;
-        //Drone control
-        boolean arm = gamepad1.dpad_down;
-        boolean fire = gamepad1.x;
-
-        boolean autoStop = gamepad1.y;
-
-
-
-        //GamePad 2
         double elevatorCommand = gamepad2.left_stick_y * -1;
-        double winchCommand = gamepad2.right_stick_y;
 
-        //Pixle bucet control
         boolean reset_bucket = gamepad2.left_bumper;
         boolean dump_pixle = gamepad2.right_bumper;
 
-        //hook control
-        boolean raise_hook = gamepad2.dpad_up;
-        boolean lower_hook = gamepad2.dpad_down;
+        boolean arm = gamepad2.dpad_down;
+        boolean fire = gamepad2.x;
 
         boolean low_elevator = gamepad2.a;
         boolean mid_elevator = gamepad2.b;
         boolean high_elevator = gamepad2.y;
 
+        //sweeper control
+        float in = gamepad1.right_trigger;
+        float out = gamepad1.left_trigger;
 
 
-
-        if (loopTime.milliseconds() > 60) {
+        if (loopTime.milliseconds() > 20) {
             RobotLog.i(String.format("looptime: %.6f",loopTime.milliseconds()));
-//            loopTime.reset();
+            loopTime.reset();
 
             if (in > .1) {
                 sweeperCmd = 1.0;
@@ -228,13 +173,6 @@ public class NewTeliopCode_Schultz extends OpMode
             }
             if (dump_pixle) {
                 robot.dump_pixle();
-            }
-
-            if (raise_hook) {
-                robot.raise_hook();
-            }
-            if (lower_hook) {
-                robot.lower_hook();
             }
 
         /*if ( low_elevator == true && AutoRaiseActiveLow == false ) {
@@ -298,27 +236,24 @@ public class NewTeliopCode_Schultz extends OpMode
             //schultz update
             if (low_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(0);
-//                RobotLog.i(String.format("In Lower."));
+                RobotLog.i(String.format("In Lower."));
 //            AutoElevatorActive = true;
             } else if (mid_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_MID_POSITION);
-//                RobotLog.i(String.format("In Middle"));
+                RobotLog.i(String.format("In Middle"));
 //            AutoElevatorActive = true;
             } else if (high_elevator == true) {
                 robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_HIGH_POSITION);
-//                RobotLog.i(String.format("In High"));
+                RobotLog.i(String.format("In High"));
 //            AutoElevatorActive = true;
             }
 
-
-
-
-//            robot.raiseLowerWinch(winchCommand);
-            if (Math.abs(winchCommand) > .025) {
-                robot.raiseLowerWinch(winchCommand);
-                robot.setDesWinchPosition_Teliop(robot.getWinchPositition());
+            if (Math.abs(elevatorCommand) > .025) {
+                AutoElevatorActive = false;
+                robot.raiseLowerElevator(elevatorCommand);
+                robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
             } else {
-                robot.winchUpdate(loopTime.seconds());
+                robot.elevatorUpdate(loopTime.seconds());
             }
 
 //        boolean BucketCommand = gamepad2.a;
@@ -352,60 +287,17 @@ public class NewTeliopCode_Schultz extends OpMode
 //        }
 
 
-//            robot.moveRobotteli(drive_y, drive_x, turn_x);
+            robot.moveRobotteli(drive_y, drive_x, turn_x);
 
-            double desiredRobotAngle = 90; //degrees
-            double desiredDistanceFromWall = 4; //inch
-            if (autoStop && !inAutoStop)
-            {
-                inAutoStop = true;
-                //set desired robot angle
-                robot.setDesiredOrientation(desiredRobotAngle);
-
-                //set desired distance from wall
-                robot.setDesDistFromWall(desiredDistanceFromWall);
-            }else if(Math.abs(drive_y) >0.1 || Math.abs(drive_x) > 0.1 || Math.abs(turn_x) >0.1){
-                inAutoStop = false;
-                gotToPosition = false;
-            }
-
-
-            if (inAutoStop)
-            {
-//                robot.updateRobotRotation(loopTime.seconds());
-                if ( Math.abs(desiredRobotAngle - (-robot.robotIMU.getCurrentAbsoluteAngle())) < 5  || true ){
-                    robot.updateDesDistFromWall(loopTime.seconds(),sensorRange.getDistance(DistanceUnit.INCH),sensorRange2.getDistance(DistanceUnit.INCH));
-//                    robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_MID_POSITION);
-//                    robot.elevatorUpdate(0.02+loopTime.seconds());
-                }else {
-                    //  robot.updateRobotRotation(loopTime.seconds());
-                }
-
-            }
-            else {
-                robot.moveRobotteli(drive_y, drive_x, turn_x);
-            }
-
-
-            if (Math.abs(elevatorCommand) > .025) {
-                AutoElevatorActive = false;
-                robot.raiseLowerElevator(elevatorCommand);
-                robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
-            } else {
-                robot.elevatorUpdate(loopTime.seconds());
-            }
 
             telemetry.addData("elevator Commd", elevatorCommand);
             telemetry.addData("Status", "Running");
             telemetry.addData("#ofTicks", robot.getTicks());
             telemetry.update();
+//        loopTime.reset();
 
-            double currentAngle= robot.robotIMU.getCurrentAbsoluteAngle();
-            double currentAngle2= robot.robotIMU.getCurrentAbsoluteAngle2();
-            double currentAngle3= robot.robotIMU.getCurrentAbsoluteAngle3();
-//            RobotLog.i(String.format("current Angle1: %.2f  Angle12: %.2f   Angle3: %.2f",currentAngle,currentAngle2,currentAngle3));
 
-            loopTime.reset();
+
         }
     }
 

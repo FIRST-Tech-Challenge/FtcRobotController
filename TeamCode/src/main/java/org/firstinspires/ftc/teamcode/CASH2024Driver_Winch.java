@@ -55,12 +55,6 @@ public class CASH2024Driver_Winch extends OpMode
     public CASH_Drive_Library CASHDriveLibrary;
 
     //Teleop variables
-    private double percentTurnPower = .5;
-
-    private boolean dumping = false;
-
-    private boolean raising = false;
-
     private double sweeperCmd = 0;
 
     private boolean AutoRaiseActiveLow = false;
