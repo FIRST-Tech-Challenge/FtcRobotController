@@ -29,11 +29,12 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -74,7 +75,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor motorA = null;
+    private DcMotor towerMotor = null;
+    private CRServo samplePickup = null;
+
+
+
+//sample operation
+
 
     @Override
     public void runOpMode() {
@@ -85,7 +92,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        motorA = hardwareMap.get(DcMotor.class, "motor_a");
+        towerMotor = hardwareMap.get(DcMotor.class, "tower_motor");
+        samplePickup = hardwareMap.get(CRServo.class, "sample_pickup");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -101,11 +109,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
    //     leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
 //        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
 //        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        motorA.setDirection(DcMotor.Direction.FORWARD);
+        towerMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -122,6 +132,17 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
+            boolean sample_in = gamepad1.x;
+            boolean sample_out = gamepad1.y;
+
+
+
+            boolean tower_up = gamepad2.dpad_up;
+            boolean tower_down = gamepad2.dpad_down;
+            boolean tower_top = gamepad2.y;
+            boolean tower_mid = gamepad2.x;
+            boolean tower_home = gamepad2.a;
+
 
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -147,12 +168,35 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             if(gamepad1.a)
             {
-                motorA.setPower(.2);
+                towerMotor.setPower(1);
             }else if(gamepad1.b){
-                motorA.setPower(-.2);
+                towerMotor.setPower(-1);
             }else {
-                motorA.setPower(0);
+                towerMotor.setPower(0);
             }
+
+
+
+            if(sample_in) {
+//                samplePickup.setPosition(1);
+                samplePickup.setPower(1);
+//                robot.claw1.setPosition(0);
+//        sleep(10);
+            } else if (sample_out) {
+//                samplePickup.setPosition(0);
+                samplePickup.setPower(-1);
+//                robot.claw1.setPosition(1);
+                sleep(10);
+            } else {
+//                samplePickup.setPower(0);
+//                samplePickup.setPosition(0.5);
+//                robot.claw1.setPosition(0.5);
+            }
+
+
+
+
+
 
             // This is test code:
             //
