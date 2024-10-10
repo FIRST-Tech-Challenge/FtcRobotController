@@ -23,7 +23,7 @@ public class ExtendableArm extends Arm {
     // The servo that rotates the claw about the Z-axis
     private final Servo CLAW_Z_SERVO;
     // The servo that opens and closes the grip.
-    private final Servo CLAW_GRIP_SERVO;
+    private final CRServo INTAKE_SERVO;
 
     /**
      * Instantiate the motors using HashMaps.
@@ -33,7 +33,7 @@ public class ExtendableArm extends Arm {
      * @param motors A HashMap with motor names as keys and `DcMotor`s as values
      * @param servos A HashMap with servo names as keys and `Servo`s as values
      */
-    public ExtendableArm(HashMap<String, DcMotor> motors, HashMap<String, Servo> servos) {
+    public ExtendableArm(HashMap<String, DcMotor> motors, HashMap<String, Servo> servos, CRServo intakeServo) {
         super(new HashSet<>(motors.values()), new HashSet<>(servos.values()));
 
         ROTATION_MOTOR = null;
@@ -42,7 +42,7 @@ public class ExtendableArm extends Arm {
         CLAW_X_SERVO = null;
         CLAW_Y_SERVO = null;
         CLAW_Z_SERVO = null;
-        CLAW_GRIP_SERVO = servos.get("intakeServo");
+        INTAKE_SERVO = intakeServo;
     }
 
     /**
@@ -70,7 +70,7 @@ public class ExtendableArm extends Arm {
         this.CLAW_X_SERVO = clawXServo;
         this.CLAW_Y_SERVO = clawYServo;
         this.CLAW_Z_SERVO = clawZServo;
-        this.CLAW_GRIP_SERVO = clawGripServo;
+        this.INTAKE_SERVO = (CRServo) clawGripServo;
         
         super.servos.add(clawXServo);
         super.servos.add(clawYServo);
@@ -78,7 +78,7 @@ public class ExtendableArm extends Arm {
         super.servos.add(clawGripServo);
     }
 
-    public Servo getClawGripServo() {
-        return CLAW_GRIP_SERVO;
+    public CRServo getIntakeServo() {
+        return INTAKE_SERVO;
     }
 }

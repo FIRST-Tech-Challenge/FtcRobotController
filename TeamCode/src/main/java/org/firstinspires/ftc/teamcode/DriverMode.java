@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
 
-@TeleOp(name = "TeleOp")
-public class TeleOp extends OpMode {
+@TeleOp(name="TeleOp")
+public class DriverMode extends OpMode {
     private Hardware hardware;
 
     @Override

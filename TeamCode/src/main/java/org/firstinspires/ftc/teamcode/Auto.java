@@ -20,19 +20,23 @@ public class Auto extends LinearOpMode {
     public void runOpMode() {
         hardware = new Hardware(this);
     
-        teamColor = (hardware.getColorSwitch().getState()) ? TeamColor.RED : TeamColor.BLUE;
-        teamSide = (hardware.getSideSwitch().getState()) ? TeamSide.FAR : TeamSide.NEAR;
-
-        telemetry.addData("Intial position:", teamColor.name() + ' ' + teamSide.name());
-
-        telemetry.addData("Intial position:", teamColor.name() + ' ' + teamSide.name());
+//        teamColor = (hardware.getColorSwitch().getState()) ? TeamColor.RED : TeamColor.BLUE;
+//        teamSide = (hardware.getSideSwitch().getState()) ? TeamSide.FAR : TeamSide.NEAR;
+//
+//        telemetry.addData("Initial position:", teamColor.name() + ' ' + teamSide.name());
+//
+//        telemetry.addData("Initial position:", teamColor.name() + ' ' + teamSide.name());
 
         // Wait until the player press the start button
         waitForStart();
 
-        while (true) {
-            Servo intakeServo = hardware.getArm().getClawGripServo();
-            intakeServo.setPosition(intakeServo.getPosition() + 0.01);
+        CRServo intakeServo = hardware.getArm().getIntakeServo();
+        while (opModeIsActive()) {
+            intakeServo.setPower(1.0);
+            telemetry.addData("CRServo power: ", intakeServo.getPower());
         }
+        intakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        sleep(10000);
     }
 }
