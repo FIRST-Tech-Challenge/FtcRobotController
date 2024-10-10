@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *      Left Joystick X - Strafe
  *      Left Joystick Y - Forward Backward
  *      Right Joystick X - Pivot
- *      Right Trigger - Lift Raise
- *      Left Trigger - Lift Lower
+ *      Right Trigger - Lift Lower
+ *      Left Trigger - Lift Raise
  *      Right Bumper - Extend Arm
  *      Left Bumper - Retract Arm
  *      X Button - Intake In
@@ -29,6 +29,10 @@ public class Teleop extends LinearOpMode {
 
         private static final double MAX_EXTEND = 1200;
         private static final double MAX_PIVOT = 1200;
+        private static final double LEFT_LIFT_MAX = -6160;
+        private static final double LEFT_LIFT_MIN = 22;
+        private static final double RIGHT_LIFT_MAX = -6270;
+        private static final double RIGHT_LIFT_MIN = -62;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -66,10 +70,12 @@ public class Teleop extends LinearOpMode {
             double frontRightPower = y - x - pivot;
             double backRightPower = y + x - pivot;
 
-            if(rightLiftTrigger > 0.1){
+            if(rightLiftTrigger > 0.1 &&
+                    (bot.getLeftLiftPos() < LEFT_LIFT_MIN)&&(bot.getRightLiftPos() < RIGHT_LIFT_MIN)){
                 bot.setLift(1.0);//this makes it go down
             }
-            else if(leftLiftTrigger > 0.1){
+            else if(leftLiftTrigger > 0.1 &&
+                    (bot.getLeftLiftPos() > LEFT_LIFT_MAX)&&(bot.getRightLiftPos() > RIGHT_LIFT_MAX)){
                 bot.setLift(-1.0);//this makes it go up
             }
             else
