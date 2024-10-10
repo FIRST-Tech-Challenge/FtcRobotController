@@ -84,10 +84,21 @@ class CDTeleop : OpModeBase() {
 //        val gripperLowDeliveryButton = gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
 //        val gripperHighDeliveryButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
 
+        val retractForClimbButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+        val ratchetClimbButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+
         speedFastButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_FAST })
         speedSlowButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_SLOW })
         normalDriveButton.whenPressed(Runnable { driveSpeedScale = DRIVE_SPEED_NORMAL})
 //        lowChamberHeightButton.whenPressed(Runnable { gripperSubsystem.setLowChamberHeight() })
+
+        // TODO: Set correct numbers from telemetry
+        retractForClimbButton.whenPressed(Runnable { viperArmSubsystem.extendToPosition(0) })
+        ratchetClimbButton.whenPressed(Runnable {
+            viperArmSubsystem.rotateToPosition(0)
+            viperArmSubsystem.extendToPosition(0)
+            viperArmSubsystem.rotateToPosition(200)
+        })
     }
 
     private fun initializeCoDriverGamepad(gamepad: GamepadEx) {
