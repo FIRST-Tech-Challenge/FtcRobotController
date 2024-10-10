@@ -12,18 +12,22 @@ public class Bucket {
     private String SERVO_NAME = "bucketServo";
 
     private Servo servo;
-    private boolean servoTriggered;
+    private boolean servoTriggered, yDown;
 
     public Bucket(HardwareMap hardwareMap) {
         servo = hardwareMap.servo.get(SERVO_NAME);
         servoTriggered = false;
+        yDown = false;
     }
 
     public void update(Gamepad gamepad){
-        if(gamepad.y && servoTriggered){
+        boolean y = gamepad.y && !yDown;
+        yDown = gamepad.y;
+
+        if(y && servoTriggered){
             servo.setPosition(1);
             servoTriggered = !servoTriggered;
-        } else if(gamepad.y && !servoTriggered){
+        } else if(y && !servoTriggered){
             servo.setPosition(0);
             servoTriggered = !servoTriggered;
         }

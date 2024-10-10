@@ -13,28 +13,35 @@ public class Claw {
 
     private Servo jointServo;
     private Servo clawServo;
-    private boolean claw, joint;
+    private boolean claw, joint, aDown, bDown;
 
     public Claw(HardwareMap hardwareMap){
         jointServo = hardwareMap.servo.get(JOINT_SERVO_NAME);
         clawServo = hardwareMap.servo.get(CLAW_SERVO_NAME);
         claw = false;
         joint = false;
+        aDown = false;
+        bDown = false;
     }
 
     public void update(Gamepad gamepad){
-        if(gamepad.a && claw){
+        boolean a = gamepad.a && !aDown;
+        aDown = gamepad.a;
+        boolean b = gamepad.b && !bDown;
+        bDown = gamepad.b;
+
+        if(a && claw){
             setJointPosition(0.75);
             claw = !claw;
-        } else if (gamepad.a && !claw){
+        } else if (a && !claw){
             setJointPosition(0);
             claw = !claw;
         }
 
-        if (gamepad.b && joint){
+        if (b && joint){
             setJointPosition(0.75);
             joint = !joint;
-        } else if (gamepad.b && !joint){
+        } else if (b && !joint){
             setJointPosition(0);
             joint = !joint;
         }
