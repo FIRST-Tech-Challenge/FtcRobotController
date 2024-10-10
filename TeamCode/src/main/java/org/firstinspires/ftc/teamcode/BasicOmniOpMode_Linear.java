@@ -27,15 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -67,7 +65,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
-@Disabled
+//@Disabled
 public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -194,9 +192,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 //                robot.claw1.setPosition(0.5);
             }
 
-
-
-
             if(gamepad1.dpad_up && towerMotor.getCurrentPosition() <500){
                 towerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 towerMotor.setPower(1);
@@ -246,6 +241,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                     towerMotor.setPower(0);}
                 else{}
             }
+
+
+
+
+
 
 
             // This is test code:
