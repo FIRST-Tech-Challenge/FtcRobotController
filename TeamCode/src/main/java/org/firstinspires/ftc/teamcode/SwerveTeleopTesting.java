@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -10,12 +13,14 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 //import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
+import com.arcrobotics.ftclib.controller.PIDFController;
+
 
 @TeleOp(name="TESTING 2024-25 Swerve Teleop Code", group="Linear OpMode")
 public class SwerveTeleopTesting extends LinearOpMode {
 
-//    public static double P = , I = , D = ;
-//    public static double k = ;
+    public static double P = 2, I = 2, D = 2; // change these constants later
+    public static double k = 2;
 
     //    public static double WHEEL_RADIUS = ;
 //    public static double GEAR_RATIO = 4*2.88 / // output wheel speed / input motor speed
@@ -30,8 +35,11 @@ public class SwerveTeleopTesting extends LinearOpMode {
     private CRServo leftBackServo = null;
     private CRServo rightFrontServo = null;
     private CRServo rightBackServo = null;
+    private PIDFController rotationController = null;
 
     public static double TRACK_WIDTH = 0.321, WHEEL_BASE = 0.321; // meters
+    private double target = 0.0;
+    private double position = 0.0;
 
 //    private AbsoluteAnalogEncoder encoder;
 
@@ -120,10 +128,36 @@ public class SwerveTeleopTesting extends LinearOpMode {
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back", leftFrontPower, leftBackPower, rightFrontPower); //, rightBackPower);
             telemetry.update();
         }
+
+
     }
 
 //    public void read(){
 //        position = encoder.getCurrentPositon();
 //    }
+
+    public void update() {
+        rotationController.setPIDF(P, I, D, 0);
+        double targetAngle = getTargetRotation();
+        double currentAngle = getCurrentRotation();
+
+
+    }
+
+    public void set(Pose2D pose) {
+
+    }
+
+    public double getCurrentRotation() {
+        return normalizeRadians(target - Math.PI);
+    }
+
+    public double getTargetRotation() {
+        return normalizeRadians(target - Math.PI);
+    }
+
+    public void setTargetRotation(double target) {
+        this.target = normalizeRadians(target);
+    }
 
 }

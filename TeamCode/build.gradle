@@ -32,6 +32,9 @@ repositories {
 dependencies {
     implementation project(':FtcRobotController')
 
+    implementation 'org.ftclib.ftclib:vision:2.1.0' // vision; if we are using EasyOpenCV (what FTCLib uses for vision, then go to the very bottom of this link: https://docs.ftclib.org/ftclib/installation
+    implementation 'org.ftclib.ftclib:core:2.1.1' // core
+
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
 //    implementation 'com.acmerobotics.roadrunner:core:0.5.6'
