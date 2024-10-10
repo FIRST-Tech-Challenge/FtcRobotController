@@ -26,7 +26,7 @@ public class MecanumTeleOp extends LinearOpMode {
         while(opModeIsActive()) {
             double y = gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x * 1.1; // Counter imperfect strafing
-            double rx = -gamepad1.right_stick_x;
+            double rx = -gamepad1.right_stick_x; // X-axis reversed
 
             /* Denominator is the largest motor power (absolute value) or 1
                This ensures all the powers maintain the same ratio
