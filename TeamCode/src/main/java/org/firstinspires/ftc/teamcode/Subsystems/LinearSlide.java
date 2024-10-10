@@ -39,7 +39,7 @@ public class LinearSlide extends SubsystemBase {
         leftMotor.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
         rightMotor.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
 
-        //setting target to zero upon initalization
+        // Setting target to zero upon initialization
         leftMotor.setTargetPosition(0);
         rightMotor.setTargetPosition(0);
 
