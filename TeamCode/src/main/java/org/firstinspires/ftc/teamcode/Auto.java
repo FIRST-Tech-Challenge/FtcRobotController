@@ -31,6 +31,7 @@ public class Auto extends LinearOpMode {
         waitForStart();
 
         CRServo intakeServo = hardware.getArm().getIntakeServo();
+
         while (opModeIsActive()) {
             intakeServo.setPower(1.0);
             telemetry.addData("CRServo power: ", intakeServo.getPower());
