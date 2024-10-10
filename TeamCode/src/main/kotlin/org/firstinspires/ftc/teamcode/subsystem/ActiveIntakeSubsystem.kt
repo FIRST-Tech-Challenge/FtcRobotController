@@ -24,6 +24,20 @@ class ActiveIntakeSubsystem(
         hardware.intakeRotateServo?.position = 1.0
     }
 
+    fun rotateIncrementDown() {
+        val currentPosition = hardware.intakeRotateServo?.position
+        if (currentPosition != null && currentPosition < 1.0) {
+            hardware.intakeRotateServo?.position = currentPosition + 0.1
+        }
+    }
+
+    fun rotateIncrementUp() {
+        val currentPosition = hardware.intakeRotateServo?.position
+        if (currentPosition != null && currentPosition > 0.0) {
+            hardware.intakeRotateServo?.position = currentPosition - 0.1
+        }
+    }
+
     fun runIntake() {
         // On a continuous servo, position of 1.0 is running forward
         hardware.intakeRotateServo?.position = 1.0

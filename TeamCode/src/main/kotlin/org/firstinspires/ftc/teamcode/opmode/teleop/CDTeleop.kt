@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop
 
+import android.annotation.SuppressLint
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.opmode.OpModeBase
+import kotlin.math.pow
 
 @Suppress("UNUSED")
 @TeleOp(name="CDTeleop")
@@ -17,6 +19,7 @@ class CDTeleop : OpModeBase() {
         initializeCoDriverGamepad(accessoryGamepad)
     }
 
+    @SuppressLint("UseValueOf")
     override fun run() {
         super.run()
 
@@ -50,26 +53,22 @@ class CDTeleop : OpModeBase() {
 
         if (accessoryLeftTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
             hardware.intakeWheelServo?.power = -1.0
-            telemetry.addLine("intake servo present? ${hardware.intakeWheelServo != null}")
-            telemetry.addLine("left trigger $accessoryLeftTriggerValue")
         } else if (accessoryRightTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
             hardware.intakeWheelServo?.power = 1.0
-            telemetry.addLine("intake servo present? ${hardware.intakeWheelServo != null}")
-            telemetry.addLine("left trigger $accessoryRightTriggerValue")
         } else {
             hardware.intakeWheelServo?.power = 0.0
         }
 
         if (accessoryGamepad.rightY > VARIABLE_INPUT_DEAD_ZONE || accessoryGamepad.rightY < -VARIABLE_INPUT_DEAD_ZONE) {
             // TODO: Fix multiplier later
-            viperArmSubsystem.setExtensionMotorGroupPower(accessoryGamepad.rightY * 1.0)
+            viperArmSubsystem.setExtensionMotorGroupPower((-accessoryGamepad.rightY).pow(3.0))
         } else {
             viperArmSubsystem.setExtensionMotorGroupPower(0.0)
         }
 
         if (accessoryGamepad.leftY > VARIABLE_INPUT_DEAD_ZONE || accessoryGamepad.leftY < -VARIABLE_INPUT_DEAD_ZONE) {
             // TODO: Fix multiplier later
-            viperArmSubsystem.setRotationMotorGroupPower(accessoryGamepad.leftY * 0.75)
+            viperArmSubsystem.setRotationMotorGroupPower((-accessoryGamepad.leftY).pow(3.0))
         } else {
             viperArmSubsystem.setRotationMotorGroupPower(0.0)
         }
@@ -92,15 +91,18 @@ class CDTeleop : OpModeBase() {
     }
 
     private fun initializeCoDriverGamepad(gamepad: GamepadEx) {
-//        val wristForwardButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-//        val wristReverseButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-//        val wristLeftButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//        val wristRightButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-//
-//        wristForwardButton.whenPressed(Runnable { activeIntakeSubsystem.rotateHome() })
-//        wristReverseButton.whenPressed(Runnable { activeIntakeSubsystem.rotateToBasket() })
+        val wristForwardButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+        val wristReverseButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+        val wristLeftButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+        val wristRightButton = gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+
+        wristForwardButton.whenPressed(Runnable { activeIntakeSubsystem.rotateHome() })
+        wristReverseButton.whenPressed(Runnable { activeIntakeSubsystem.rotateToBasket() })
 //        wristLeftButton.whenPressed(Runnable { activeIntakeSubsystem.rotateLeft() })
 //        wristRightButton.whenPressed(Runnable { activeIntakeSubsystem.rotateRight() })
+
+        wristLeftButton.whenPressed(Runnable { activeIntakeSubsystem.rotateIncrementDown() })
+        wristRightButton.whenPressed(Runnable { activeIntakeSubsystem.rotateIncrementUp() })
     }
 
     private fun writeTelemetry() {
@@ -108,21 +110,17 @@ class CDTeleop : OpModeBase() {
         telemetry.addLine("speed mult: $driveSpeedScale")
         telemetry.addLine()
 
-        if (hardware.viperExtensionMotorLeft == null) {
-            telemetry.addLine("extensionLeft is null")
-        }
+        hardware.viperExtensionMotorGroup?.let {
+            telemetry.addLine("viperExtensionPosition: ${hardware.viperExtensionMotorGroup?.get() ?: "null"}")
+        } ?: telemetry.addLine("[WARNING] viperExtensionGroup not found")
 
-        if (hardware.viperExtensionMotorRight == null) {
-            telemetry.addLine("extensionRight is null")
-        }
+        hardware.viperRotationMotorGroup?.let {
+            telemetry.addLine("viperRotationPosition: ${hardware.viperRotationMotorGroup?.get() ?: "null"}")
+        } ?: telemetry.addLine("[WARNING] viperRotationGroup not found")
 
-        if (hardware.viperRotationMotorLeft == null) {
-            telemetry.addLine("rotationLeft is null")
-        }
-
-        if (hardware.viperRotationMotorRight == null) {
-            telemetry.addLine("rotationRight is null")
-        }
+        hardware.intakeRotateServo?.let {
+            telemetry.addLine("intakeRotationPosition: ${hardware.intakeRotateServo?.position ?: "null"}")
+        } ?: telemetry.addLine("[WARNING] wrist servo not found")
 
 //        telemetry.addLine("viperExtensionPos: ${viperArmSubsystem.getExtensionMotorGroupPosition()}")
 //        telemetry.addLine("viperRotationPos: ${viperArmSubsystem.getRotationMotorGroupPosition()}")
