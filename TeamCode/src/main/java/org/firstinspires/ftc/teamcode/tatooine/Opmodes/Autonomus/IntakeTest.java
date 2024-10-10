@@ -5,21 +5,25 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Intake;
+import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
 @Autonomous(name = "IntakeTest")
 public class IntakeTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Intake intake = new Intake(hardwareMap);
+        boolean isRed = CheckAlliance.isRed();
+        Intake intake = new Intake(this,isRed);
         boolean isSpecimen = true;
-        if (opModeIsActive()) {
-            Actions.runBlocking(new SequentialAction(intake.intake(true)
-                    , new SleepAction(3)
-                    , intake.isRightColorForSpecimen(isSpecimen)
-            ));
+        waitForStart();
+        while (opModeIsActive()) {
+            Actions.runBlocking(intake.isRightColor(isSpecimen)
+            );
+
+            updateTelemetry(telemetry);
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.tatooine.utils.Alliance;
 
 import java.io.File;
+import java.io.IOException;
 
 public class CheckAlliance {
     public static boolean isRed() {
@@ -9,6 +10,7 @@ public class CheckAlliance {
             return true;
         } else {
             return false;
+
         }
     }
 }

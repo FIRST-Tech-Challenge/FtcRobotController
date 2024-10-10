@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.tatooine.SubSystem;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
 public class ColorSensorOur {
@@ -13,73 +15,87 @@ public class ColorSensorOur {
     private final double[] myCol = new double[3];
     private int gain = 51;
     private boolean isRed = false;
+    private boolean isRightColor = false;
+
+    private OpMode opMode;
 
 
-    public ColorSensorOur(HardwareMap hardwareMap) {
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
+    public ColorSensorOur(OpMode opMode) {
+        this.opMode = opMode;
+        colorSensor = opMode.hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         colorSensor.setGain(gain);
+        init();
     }
 
     public void init() {
         isRed = CheckAlliance.isRed();
     }
 
-    public boolean isRightColorForSample() {
-        checkColors();
-        if (isRed) {
-            if (col == 0) {
-                return true;
-            } else if (col == 1) {
-                return true;
-            } else {
-                return true;
-            }
-        } else if (!isRed) {
-            if (col == 2) {
-                return true;
-            } else if (col == 1) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        else {
-            return true;
-        }
-
-    }
-    public boolean isRightColorForSpecimen(){
-        checkColors();
-        isRed = CheckAlliance.isRed();
-        if (isRed) {
-            if (col == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (!isRed) {
-            if (col == 2) {
-                return true;
-            }
-                else {
-                return false;
-            }
-        }
-        else {
-            return true;
-        }
+    public double getDistance (){
+        return colorSensor.getDistance(DistanceUnit.CM);
     }
 
-    public void checkColors() {
+    public boolean isRightColor(boolean isSpecimen) {
+        col = checkColors();
+        opMode.telemetry.addData("col", col);
+        if (col == 0 && isRed){
+            return true;
+        } else if (col == 2 && !isRed) {
+            return true;
+        } else {
+            return false;
+        }
+//        if (isSpecimen) {
+//            if (isRed) {
+//                if (col == 0) {
+//                    isRightColor = true;
+//                } else {
+//                    isRightColor = false;
+//                }
+//            }
+//             else if (!isRed) {
+//                if (col == 2) {
+//                    isRightColor = true;
+//                } else {
+//                    return false;
+//                }
+//            }
+//        }
+//        else if (!isSpecimen){
+//            if (isRed) {
+//                if (col == 0) {
+//                    isRightColor = true;
+//                }
+//                else if (col ==1){
+//                    isRightColor = true;
+//                }
+//                else {
+//                    isRightColor = false;
+//                }
+//            } else if (!isRed) {
+//                if (col == 2) {
+//                    isRightColor = false;
+//                } else if (col ==1) {
+//                    isRightColor = false;
+//                } else {
+//                    return isRightColor = true;
+//                }
+//            }
+//        }
+//             return isRightColor;
+        }
+
+
+    public int checkColors() {
         myCol[0] = colorSensor.getNormalizedColors().red * 255;
         myCol[1] = colorSensor.getNormalizedColors().green * 255;
         myCol[2] = colorSensor.getNormalizedColors().blue * 255;
         if (myCol[0] > (myCol[1] + dalta) && myCol[0] > (myCol[2] + dalta)) {
-            col = 0;
+            return 0;
         } else if (myCol[2] > (myCol[0] + dalta) && myCol[2] > (myCol[1] + dalta)) {
-            col = 2;
+            return 2;
         } else {
-            col = 1;
+            return 1;
         }
     }
 }
