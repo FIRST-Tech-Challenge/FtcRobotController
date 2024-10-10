@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
@@ -22,8 +25,8 @@ public class Hardware {
     private static final int RESOLUTION_HEIGHT = 100;
 
     /* Robot systems */
-    private final Mecanum MECANUM;
-    private final Arm ARM;
+    private  MecanumWheels mecanum;
+    private ExtendableArm arm;
 
     // Whether the robot is on red or blue team
     private final DigitalChannel COLOR_SWITCH;
@@ -54,12 +57,12 @@ public class Hardware {
          * Define wheels system hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-        DcMotor frontLeftMotor = OP_MODE.hardwareMap.get("front_left_wheel");
-        DcMotor frontRightMotor = OP_MODE.hardwareMap.get("front_right_wheel");
-        DcMotor backLeftMotor = OP_MODE.hardwareMap.get("back_left_wheel");
-        DcMotor backRightMotor = OP_MODE.hardwareMap.get("back_right_wheel");
+        DcMotor frontLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_left_wheel");
+        DcMotor frontRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_right_wheel");
+        DcMotor backLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_left_wheel");
+        DcMotor backRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_right_wheel");
 
-        MECANUM = new Mecanum(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
+        mecanum = new MecanumWheels(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
     }
     
     /**
@@ -70,16 +73,20 @@ public class Hardware {
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
+        Servo intakeServo = OP_MODE.hardwareMap.get(Servo.class, "intakeServo");
+        HashMap<String, DcMotor> motors = new HashMap<>();
+        HashMap<String, Servo> servos = new HashMap<>();
+        servos.put("intakeServo", intakeServo);
 
-        ARM = new Arm();
+        arm = new ExtendableArm(motors, servos);
     }
 
-    public Mecanum getWheels() {
-        return MECANUM;  
+    public MecanumWheels getWheels() {
+        return mecanum;
     }
 
-    public Arm getArm() {
-        return ARM;
+    public ExtendableArm getArm() {
+        return arm;
     }
 
     public DigitalChannel getColorSwitch() {
@@ -110,15 +117,16 @@ public class Hardware {
      * Sleeps the robot any motors are running
      */
     public void autoSleep() {
-        autoSleep(super.motors);
-    }        
+        autoSleep(arm.getMotors());
+        autoSleep(mecanum.getMotors());
+    }
 
     /**
      * Sleeps the robot while the given motors are running
      *
      * @param motors the motors that are running
      */
-    public void autoSleep(DcMotor... motors) {
+    public void autoSleep(HashSet<DcMotor> motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
         // Does nothing if it isn't a LinearOpMode
@@ -126,9 +134,10 @@ public class Hardware {
             return;
         }
 
-        // Sleep while any of the motors are still running
-        while (Arrays.stream(motors).anyMatch(motor -> motor.isBusy())) {
-            linearOp.sleep(1);
+        for (DcMotor motor : motors) {
+            if (motor.isBusy()) {
+                linearOp.sleep(1);
+            }
         }
     }
 }

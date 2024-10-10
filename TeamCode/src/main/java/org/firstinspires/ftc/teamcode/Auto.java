@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.external.*;
 import com.qualcomm.robotcore.hardware.*;
-import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous(name = "Auto")
 public class Auto extends LinearOpMode {
@@ -32,5 +30,9 @@ public class Auto extends LinearOpMode {
         // Wait until the player press the start button
         waitForStart();
 
+        while (true) {
+            Servo intakeServo = hardware.getArm().getClawGripServo();
+            intakeServo.setPosition(intakeServo.getPosition() + 0.01);
+        }
     }
 }

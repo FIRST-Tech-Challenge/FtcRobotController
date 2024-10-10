@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.hardware;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.qualcomm.robotcore.hardware.*;
+
 public class ExtendableArm extends Arm {
     // The motor the arm up and down.
     private final DcMotor ROTATION_MOTOR;
@@ -31,16 +33,16 @@ public class ExtendableArm extends Arm {
      * @param motors A HashMap with motor names as keys and `DcMotor`s as values
      * @param servos A HashMap with servo names as keys and `Servo`s as values
      */
-    public ExtendableArm(HashMap<DcMotor> motors, HashMap<Servo> servos) {
-        super(motors.values(), servos.values());
+    public ExtendableArm(HashMap<String, DcMotor> motors, HashMap<String, Servo> servos) {
+        super(new HashSet<>(motors.values()), new HashSet<>(servos.values()));
 
-        ROTATION_MOTOR = motors.get("rotation_motor");
-        EXTENSION_MOTOR = motors.get("extension_motor");
+        ROTATION_MOTOR = null;
+        EXTENSION_MOTOR = null;
 
-        CLAW_X_SERVO = servos.get("claw_x_servo");
-        CLAW_Y_SERVO = servos.get("claw_y_servo");
-        CLAW_Z_SERVO = servos.get("claw_z_servo");
-        CLAW_GRIP_SERVO = servos.get("claw_grip_servo");
+        CLAW_X_SERVO = null;
+        CLAW_Y_SERVO = null;
+        CLAW_Z_SERVO = null;
+        CLAW_GRIP_SERVO = servos.get("intakeServo");
     }
 
     /**
@@ -74,5 +76,9 @@ public class ExtendableArm extends Arm {
         super.servos.add(clawYServo);
         super.servos.add(clawZServo);
         super.servos.add(clawGripServo);
+    }
+
+    public Servo getClawGripServo() {
+        return CLAW_GRIP_SERVO;
     }
 }
