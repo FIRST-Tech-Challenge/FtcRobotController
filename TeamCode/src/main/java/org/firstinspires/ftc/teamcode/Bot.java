@@ -254,6 +254,7 @@ public class Bot {
 
     /**
      * Strafe using encoders for auto
+     * NOTE: Pos distance is left strafe, Neg distance is right strafe
      * @param speed
      * @param distance
      */
@@ -316,6 +317,9 @@ public class Bot {
         resetEncoder();
     }
 
+    /**
+     * Sets encoder values of drive motors to 0
+     */
     private void resetEncoder(){
         leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
