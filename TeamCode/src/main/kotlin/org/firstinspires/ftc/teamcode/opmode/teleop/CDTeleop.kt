@@ -38,13 +38,13 @@ class CDTeleop : OpModeBase() {
         val driverRightTriggerValue = driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
 
         if (hardware.gripperHomeSensor?.isPressed == true) {
-            hardware.gripperServo?.position = 0.5
+            hardware.gripperServo?.power = 0.0
         } else if (driverLeftTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
-            hardware.gripperServo?.position = 0.25
+            hardware.gripperServo?.power = -0.5
         } else if (driverRightTriggerValue > VARIABLE_INPUT_DEAD_ZONE) {
-            hardware.gripperServo?.position = 0.75
+            hardware.gripperServo?.power = 0.5
         } else {
-            hardware.gripperServo?.position = 0.5
+            hardware.gripperServo?.power = 0.0
         }
 
         // Accessory controls

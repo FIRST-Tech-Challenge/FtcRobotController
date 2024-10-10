@@ -38,7 +38,7 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     // Servos
     var intakeWheelServo: CRServo? = null
     var intakeRotateServo: Servo? = null
-    var gripperServo: Servo? = null
+    var gripperServo: CRServo? = null
 
     // Accessory  motors
     var viperExtensionMotorLeft: Motor? = null
@@ -122,7 +122,7 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     private fun initializeServos(hardware: HardwareMap) {
         intakeWheelServo = safelyGetHardware<CRServo>(hardware, "intakeWheelServo")
         intakeRotateServo = safelyGetHardware<Servo>(hardware, "intakeRotateServo")
-        gripperServo = safelyGetHardware<Servo>(hardware, "gripperServo")
+        gripperServo = safelyGetHardware<CRServo>(hardware, "gripperServo")
 
         // TODO: Not sure if we actually need this or not
         // intakeRotateServo?.direction = Servo.Direction.REVERSE
