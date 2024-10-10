@@ -110,10 +110,11 @@ public class FlowSensorHandler implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-
+        String flowString = "[ angle " + getPosition().angle + " x " + getPosition().x + " y " + getPosition().y + "]";
     }
 
     public FlowSensorData getPosition() {
-        return new FlowSensorData(0, 0, 0);
+        SparkFunOTOS.Pose2D pos = flowSensor.getPosition();
+        return new FlowSensorData(pos.h, pos.x, pos.y);
     }
 }
