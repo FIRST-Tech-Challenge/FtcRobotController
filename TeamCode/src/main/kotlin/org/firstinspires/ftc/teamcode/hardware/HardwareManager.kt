@@ -145,6 +145,12 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
         viperExtensionMotorRight?.motor?.direction = DcMotorSimple.Direction.REVERSE
         viperRotationMotorRight?.motor?.direction = DcMotorSimple.Direction.REVERSE
 
+        // Set encoder mode
+        viperExtensionMotorRight?.motor?.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        viperExtensionMotorLeft?.motor?.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        viperRotationMotorRight?.motor?.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        viperRotationMotorLeft?.motor?.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
         if (viperExtensionMotorRight != null && viperExtensionMotorLeft != null) {
             viperExtensionMotorGroup = MotorGroup(viperExtensionMotorRight!!, viperExtensionMotorLeft!!)
         }

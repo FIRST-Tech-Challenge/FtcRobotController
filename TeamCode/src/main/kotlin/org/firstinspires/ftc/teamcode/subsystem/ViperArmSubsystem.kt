@@ -15,10 +15,12 @@ class ViperArmSubsystem(
 
     init {
         extensionMotorGroup?.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
+        extensionMotorGroup?.resetEncoder()
         extensionMotorGroup?.setRunMode(Motor.RunMode.RawPower)
 //        extensionMotorGroup?.positionCoefficient = EXTENSION_KP
 
         rotationMotorGroup?.setRunMode(Motor.RunMode.RawPower)
+        rotationMotorGroup?.resetEncoder()
         rotationMotorGroup?.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
 //        rotationMotorGroup?.positionCoefficient = ROTATION_KP
     }
