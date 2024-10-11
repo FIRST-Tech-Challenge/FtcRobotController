@@ -21,6 +21,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 public class LocalizationTest extends LinearOpMode {
+
+    //Armaan is moving limelight code from LocalizationTest to a Limelight Class
+    //Will delete limelight initlization code away from LocalizationTest
     private Limelight3A limelight;
     public IMU imu;
 
@@ -65,7 +68,7 @@ public class LocalizationTest extends LinearOpMode {
                                 -gamepad1.left_stick_y,
                                 gamepad1.left_stick_x
                         ),
-                        -gamepad1.right_stick_x
+                        gamepad1.right_stick_x
                 ));
 
                 drive.updatePoseEstimate();
