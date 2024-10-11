@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,6 +11,27 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class MecanumEncoder {
+    private class WheelSettings {
+        WheelSettings(double countsPerMoterRev, double driveGearReduction, double wheelDiameterInches){
+            this.COUNTS_PER_MOTOR_REV = countsPerMoterRev;
+            this.DRIVE_GEAR_REDUCTION = driveGearReduction;
+            this.WHEEL_DIAMETER_INCHES = wheelDiameterInches;
+        }
+        double COUNTS_PER_MOTOR_REV    = 0.0 ;    // eg: TETRIX Motor Encoder
+        double DRIVE_GEAR_REDUCTION    = 0.0 ;     // No External Gearing.
+        double WHEEL_DIAMETER_INCHES   = 0.0 ;     // For figuring circumference
+        double CountsPerInch() {
+            return (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+        }
+    }
+
+    WheelSettings testBot = new WheelSettings(751.8, 1.0, 5.512);
+    WheelSettings compBot = new WheelSettings(751.8, 1.0, 5.512);
+    WheelSettings wheelSettings = null;
+
+    static final double     DRIVE_SPEED             = 1.0;
+    static final double     TURN_SPEED              = 1.0;
+
     private DcMotorEx backLeft;
     private DcMotorEx backRight;
     private DcMotorEx frontLeft;
@@ -17,41 +39,43 @@ public class MecanumEncoder {
     private IMU imu;
 
     private ElapsedTime     runtime = new ElapsedTime();
-    static final double     COUNTS_PER_MOTOR_REV    = 751.8 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 5.512 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 1.0;
     static final double     TURN_SPEED              = 1.0;
 
-    private LinearOpMode opMode;
+    private OpMode opMode;
 
     public enum DriveMode {FieldCentric, BotCentric}
+    public enum Bot {TestBot, CompBot}
 
-    public MecanumEncoder(LinearOpMode opMode)
+    public MecanumEncoder(OpMode opMode)
     {
         this.opMode = opMode;
     }
 
-    public void initHardware(HardwareMap hardwareMap)
+    public void initHardware(HardwareMap hardwareMap, Bot bot)
     {
-        frontLeft  = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
-        backLeft  = hardwareMap.get(DcMotorEx.class, "backLeft");
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        //Read controllerhubid.txt at root of hub file system
+        //Filepath for Windows = Control Hub v1.0\Internal shared storage\controllerhubid.txt
+        //Read value in file test = test bot profile
+        //Read value in file comp = comp bot profile
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        bot = Bot.TestBot ? testBot : compBot;
+        frontLeft  = hardwareMap.get(DcMotorEx.class, "flmotor");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frmotor");
+        backLeft  = hardwareMap.get(DcMotorEx.class, "blmotor");
+        backRight = hardwareMap.get(DcMotorEx.class, "brmotor");
+
+        frontLeft.setDirection(DcMotor.Direction.REVERSE); // REVERSE
+        frontRight.setDirection(DcMotor.Direction.FORWARD); // FORWARD
+        backLeft.setDirection(DcMotor.Direction.REVERSE); // REVERSE
+        backRight.setDirection(DcMotor.Direction.FORWARD); // FORWARD
 
         imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         imu.initialize(parameters);
     }
 
@@ -190,10 +214,10 @@ public class MecanumEncoder {
 
     public void driveForwardInches(double power, double inches, double timeoutSec){
 
-        int fl = (int)(inches * COUNTS_PER_INCH);
-        int fr = (int)(inches * COUNTS_PER_INCH);
-        int bl = (int)(inches * COUNTS_PER_INCH);
-        int br = (int)(inches * COUNTS_PER_INCH);
+        int fl = (int)(inches * compBot.CountsPerInch());
+        int fr = (int)(inches * compBot.CountsPerInch());
+        int bl = (int)(inches * compBot.CountsPerInch());
+        int br = (int)(inches * compBot.CountsPerInch());
 
         drive(power, power, power, power, fl, fr, bl, br, timeoutSec);
     }
@@ -201,30 +225,30 @@ public class MecanumEncoder {
     public void driveBackwardInches(double power,  double inches,
                                     double timeoutSec){
 
-        int fl = (int)(0 - (inches * COUNTS_PER_INCH));
-        int fr = (int)(0 - (inches * COUNTS_PER_INCH));
-        int bl = (int)(0 - (inches * COUNTS_PER_INCH));
-        int br = (int)(0 - (inches * COUNTS_PER_INCH));
+        int fl = (int)(0 - (inches * compBot.CountsPerInch()));
+        int fr = (int)(0 - (inches * compBot.CountsPerInch()));
+        int bl = (int)(0 - (inches * compBot.CountsPerInch()));
+        int br = (int)(0 - (inches * compBot.CountsPerInch()));
 
         drive(power, power, power, power, fl, fr, bl, br, timeoutSec);
     }
     public void driveLeftInches(double power,  double inches,
                                 double timeoutSec){
 
-        int fl = (int)(0 - (inches * COUNTS_PER_INCH));
-        int fr = (int)(inches * COUNTS_PER_INCH);
-        int bl = (int)(inches * COUNTS_PER_INCH);
-        int br = (int)(0 - (inches * COUNTS_PER_INCH));
+        int fl = (int)(0 - (inches * compBot.CountsPerInch()));
+        int fr = (int)(inches * compBot.CountsPerInch());
+        int bl = (int)(inches * compBot.CountsPerInch());
+        int br = (int)(0 - (inches * compBot.CountsPerInch()));
 
         drive(power, power, power, power, fl, fr, bl, br, timeoutSec);
     }
     public void driveRightInches(double power,  double inches,
                                  double timeoutSec){
 
-        int fl = (int)(inches * COUNTS_PER_INCH);
-        int fr = (int)(0 - (inches * COUNTS_PER_INCH));
-        int bl = (int)(0 - (inches * COUNTS_PER_INCH));
-        int br = (int)(inches * COUNTS_PER_INCH);
+        int fl = (int)(inches * compBot.CountsPerInch());
+        int fr = (int)(0 - (inches * compBot.CountsPerInch()));
+        int bl = (int)(0 - (inches * compBot.CountsPerInch()));
+        int br = (int)(inches * compBot.CountsPerInch());
 
         drive(power, power, power, power, fl, fr, bl, br, timeoutSec);
     }
@@ -232,10 +256,10 @@ public class MecanumEncoder {
     public void rotateClockwise(double power, double inches,
                                 double timeoutSec){
 
-        int fl = (int)(inches * COUNTS_PER_INCH);
-        int fr = (int)(0 - (inches * COUNTS_PER_INCH));
-        int bl = (int)(inches * COUNTS_PER_INCH);
-        int br = (int)(0 - (inches * COUNTS_PER_INCH));
+        int fl = (int)(inches * compBot.CountsPerInch());
+        int fr = (int)(0 - (inches * compBot.CountsPerInch()));
+        int bl = (int)(inches * compBot.CountsPerInch());
+        int br = (int)(0 - (inches * compBot.CountsPerInch()));
 
         drive(power, power, power, power, fl, fr, bl, br, timeoutSec);
     }
@@ -261,10 +285,10 @@ public class MecanumEncoder {
     public void rotateCounterClockwise(double power, double inches,
                                        double timeoutSec){
 
-        int fl = (int)(0 - (inches * COUNTS_PER_INCH));
-        int fr = (int)(inches * COUNTS_PER_INCH);
-        int bl = (int)(0 - (inches * COUNTS_PER_INCH));
-        int br = (int)(inches * COUNTS_PER_INCH);
+        int fl = (int)(0 - (inches * compBot.CountsPerInch()));
+        int fr = (int)(inches * compBot.CountsPerInch());
+        int bl = (int)(0 - (inches * compBot.CountsPerInch()));
+        int br = (int)(inches * compBot.CountsPerInch());
 
         drive(power, power, power, power, fl, fr, bl, br, timeoutSec);
     }
