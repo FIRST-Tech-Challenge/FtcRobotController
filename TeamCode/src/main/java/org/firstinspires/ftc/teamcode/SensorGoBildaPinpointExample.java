@@ -150,7 +150,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
                 odo.recalibrateIMU(); //recalibrates the IMU without resetting position
             }
 
-
             /*
             This code prints the loop frequency of the REV Control Hub. This frequency is effected
             by I²C reads/writes. So it's good to keep an eye on. This code calculates the amount
