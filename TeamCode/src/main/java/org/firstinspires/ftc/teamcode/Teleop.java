@@ -56,7 +56,7 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x; // Counteract imperfect strafing
+            double x = -gamepad1.left_stick_x; // Counteract imperfect strafing
             double pivot = -gamepad1.right_stick_x;
 
             double rightLiftTrigger = gamepad1.right_trigger; //rightTrigger is raising the lift
@@ -131,7 +131,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Left Front Power: ", frontLeftPower);
             telemetry.addData("Left Back Power: ", backLeftPower);
             telemetry.addData("Right Front Power", frontRightPower);
-            telemetry.addData("Right Back POwer", backRightPower);
+            telemetry.addData("Right Back Power", backRightPower);
             telemetry.update();
         }
     }
