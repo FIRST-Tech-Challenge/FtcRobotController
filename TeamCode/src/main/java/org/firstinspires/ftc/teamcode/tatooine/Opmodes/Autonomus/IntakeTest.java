@@ -20,7 +20,7 @@ public class IntakeTest extends LinearOpMode {
         boolean isSpecimen = true;
         waitForStart();
         while (opModeIsActive()) {
-            Actions.runBlocking(intake.isRightColor(isSpecimen)
+            Actions.runBlocking(intake.intakeByColor(true)
             );
 
             updateTelemetry(telemetry);

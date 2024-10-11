@@ -44,7 +44,7 @@ public class Intake  {
         power = OUTTAKE_SPEED;
         return new SetPowerAction();
     }
-    public Action isRightColor(boolean isSpecimen) {
+    public Action intakeByColor(boolean isSpecimen) {
         if (isSpecimen) {
             if (colorSensorOur.getDistance() > 2) {
                 power = INTAKE_SPEED;

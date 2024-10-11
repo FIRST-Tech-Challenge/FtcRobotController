@@ -38,51 +38,15 @@ public class ColorSensorOur {
     public boolean isRightColor(boolean isSpecimen) {
         col = checkColors();
         opMode.telemetry.addData("col", col);
-        if (col == 0 && isRed){
-            return true;
-        } else if (col == 2 && !isRed) {
-            return true;
-        } else {
-            return false;
-        }
-//        if (isSpecimen) {
-//            if (isRed) {
-//                if (col == 0) {
-//                    isRightColor = true;
-//                } else {
-//                    isRightColor = false;
-//                }
-//            }
-//             else if (!isRed) {
-//                if (col == 2) {
-//                    isRightColor = true;
-//                } else {
-//                    return false;
-//                }
-//            }
-//        }
-//        else if (!isSpecimen){
-//            if (isRed) {
-//                if (col == 0) {
-//                    isRightColor = true;
-//                }
-//                else if (col ==1){
-//                    isRightColor = true;
-//                }
-//                else {
-//                    isRightColor = false;
-//                }
-//            } else if (!isRed) {
-//                if (col == 2) {
-//                    isRightColor = false;
-//                } else if (col ==1) {
-//                    isRightColor = false;
-//                } else {
-//                    return isRightColor = true;
-//                }
-//            }
-//        }
-//             return isRightColor;
+            if (col == 0 && isRed) {
+                return true;
+            } else if (col == 2 && !isRed) {
+                return true;
+            } else if (col ==1 && isSpecimen) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
 
