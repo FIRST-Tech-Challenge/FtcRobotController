@@ -7,80 +7,34 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
-import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class GamePadHandler implements NKNComponent {
-    enum GamepadButtons {
-        LEFT_TRIGGER {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return (gamepad.left_trigger > 0.5);
-            }
-        }, RIGHT_TRIGGER {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return (gamepad.right_trigger > 0.5);
-            }
-        }, LEFT_BUMPER {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.left_bumper;
-            }
-        }, RIGHT_BUMPER {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.right_bumper;
-            }
-        }, DPAD_LEFT {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.dpad_left;
-            }
-        }, DPAD_DOWN {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.dpad_down;
-            }
-        }, DPAD_RIGHT {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.dpad_right;
-            }
-        }, DPAD_UP {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.dpad_up;
-            }
-        }, A {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.a;
-            }
-        }, B {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.b;
-            }
-        }, X {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.x;
-            }
-        }, Y {
-            @Override
-            boolean detect(Gamepad gamepad) {
-                return gamepad.y;
-            }
-        };
-
-        abstract boolean detect(Gamepad gamepad);
-    }
-    private final double TRIGGERDEADZONE = 0.5;
-    // Hashmap of the button to list for, and the event to trigger based on that
+    // TreeMap of the button to list for, and the event to trigger based on that
     // The key is the button + the name of the event
-    private HashMap<String, Runnable> eventListeners;
+    private TreeMap<String, Runnable> eventListeners = new TreeMap<String, Runnable>();
+    private final double TRIGGERDEADZONE = 0.5;
+
+    // Iterates through the eventListeners tree map to call the runnables on a given button
+    private void activateListener(String button, int gamepadNumber) {
+        String searchKey = button + ":" + gamepadNumber;
+
+        for (Runnable r : eventListeners.subMap(searchKey, searchKey + ";").values()) {
+            r.run();
+        }
+    }
     private Gamepad gamePad1;
     private Gamepad gamePad2;
+
+    // Iterates through the buttons of a gamepad and activates the listeners of any functions that are attached
+    public void checkButtons(Gamepad gamepad, int gamepadNumber) {
+        for (GamepadButtons button : GamepadButtons.values()) {
+            if (button.detect(gamepad)) {
+                activateListener(button.name(), gamepadNumber);
+            }
+        }
+    }
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamePad1, Gamepad gamePad2) {
@@ -188,5 +142,71 @@ public class GamePadHandler implements NKNComponent {
     public void removeListener(GamepadButtons button, int gamepadNumber, String eventName) {
         String keyName = button.name() + ":" + gamepadNumber + ":" + eventName;
         eventListeners.remove(keyName);
+    }
+
+    enum GamepadButtons {
+        LEFT_TRIGGER {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return (gamepad.left_trigger > 0.5);
+            }
+        }, RIGHT_TRIGGER {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return (gamepad.right_trigger > 0.5);
+            }
+        }, LEFT_BUMPER {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.left_bumper;
+            }
+        }, RIGHT_BUMPER {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.right_bumper;
+            }
+        }, DPAD_LEFT {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_left;
+            }
+        }, DPAD_DOWN {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_down;
+            }
+        }, DPAD_RIGHT {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_right;
+            }
+        }, DPAD_UP {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.dpad_up;
+            }
+        }, A {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.a;
+            }
+        }, B {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.b;
+            }
+        }, X {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.x;
+            }
+        }, Y {
+            @Override
+            boolean detect(Gamepad gamepad) {
+                return gamepad.y;
+            }
+        };
+
+        abstract boolean detect(Gamepad gamepad);
     }
 }
