@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class GamePadHandler implements NKNComponent {
@@ -46,7 +45,8 @@ public class GamePadHandler implements NKNComponent {
 
     @Override
     public void init_loop(ElapsedTime runtime, Telemetry telemetry) {
-
+        checkButtons(gamePad1, 1);
+        checkButtons(gamePad2, 2);
     }
 
     @Override
@@ -66,7 +66,8 @@ public class GamePadHandler implements NKNComponent {
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
-
+        checkButtons(gamePad1, 1);
+        checkButtons(gamePad2, 2);
     }
 
     private String buildControllerString(Gamepad gamePad) {
@@ -144,7 +145,7 @@ public class GamePadHandler implements NKNComponent {
         eventListeners.remove(keyName);
     }
 
-    enum GamepadButtons {
+    public enum GamepadButtons {
         LEFT_TRIGGER {
             @Override
             boolean detect(Gamepad gamepad) {
