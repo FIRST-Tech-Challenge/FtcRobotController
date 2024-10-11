@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp(name="Chocolate", group="Linear OpMode") // Milla: we need a name that tells the driver what this program does.
+@TeleOp(name="Remote Control", group="Linear OpMode") // Milla: we need a name that tells the driver what this program does.
 public class BasicOmniOpMode_Linear extends LinearOpMode {
     // Initialize all variables for the program below:
     // This chunk controls our wheels

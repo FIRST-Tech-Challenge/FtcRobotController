@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name="Vanilla", group="Robot")
+@Autonomous(name="Auto Drive", group="Robot")
 public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     // Initialize all variables for the program
     // Hardware variables
