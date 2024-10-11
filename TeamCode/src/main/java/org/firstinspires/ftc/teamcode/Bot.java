@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Bot {
 
@@ -35,12 +32,9 @@ public class Bot {
 
 
     //Statistics for measurements
-    static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
     private static final int TICKS_PER_REV = 1440;
-    private static final double ARM_GEAR_RATIO = 28/8;
+    private static final double ARM_GEAR_RATIO = (double) 28 /8;
     private static final double DISTANCE_PER_REV = 10.0;
-
-    private ElapsedTime runtime = new ElapsedTime();
 
 
     //Drive Encoder Stats
@@ -76,15 +70,8 @@ public class Bot {
         rightMotorFront = hwMap.get(DcMotor.class, "right_front");
         rightMotorBack = hwMap.get(DcMotor.class, "right_back");
 
-        leftMotorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
+        leftLift = map.get(DcMotor.class, "left_lift");//giving the motors a name for codeing
         rightLift = map.get(DcMotor.class, "right_lift");
-
 
         extendArmMotor = map.get(DcMotor.class, "extend_arm");
         armPivotMotor = map.get(DcMotor.class, "pivot_arm");
@@ -112,6 +99,18 @@ public class Bot {
 
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Set zero power behavior for motors
+        leftMotorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightMotorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armPivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Set Direction of each Motors
         // switch REVERSE and FORWARD if controls are opposite
@@ -174,16 +173,12 @@ public class Bot {
     }
 
     /**
-     * Run extention arm
+     * Run extension arm
      * @param power
      */
     public void setExtendPower(double power){ extendArmMotor.setPower(power);}
 
-    public double getArmPosition(){
-        int currentTicks = extendArmMotor.getCurrentPosition();
-        double revolutions = (double) currentTicks / TICKS_PER_REV;
-        return revolutions * ARM_GEAR_RATIO * DISTANCE_PER_REV;
-    }
+    public double getArmPosition(){ return armPivotMotor.getCurrentPosition();}
 
     /**
      * Run extension arm based on target position
@@ -206,8 +201,8 @@ public class Bot {
     public void setPivotPower(double power){ armPivotMotor.setPower(power);}
 
     /**
-     * Get posiiton of extention motor
-     * @return encoder tick of extention motor
+     * Get position of extension motor
+     * @return encoder tick of extension motor
      */
     public double getExtendPos(){ return extendArmMotor.getCurrentPosition();}
 
@@ -362,6 +357,7 @@ public class Bot {
         int newbackLeftTarget;
         int newbackRightTarget;
 
+        //TODO: Change distance calculation for weight in the back of the bot
 
         // Determine new target position, and pass to motor controller
         newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
@@ -437,5 +433,19 @@ public class Bot {
         rightMotorBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotorFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+    }
+
+    /**
+     * Sequence for lifting bot for low hang
+     */
+    public void liftLow(){
+        //TODO: Lift up -> pivot -> Lift down
+    }
+
+    /**
+     * Sequence for lifting bot for high hang
+     */
+    public void liftHigh(){
+        //TODO: Lift up -> pivot arm facing into cage -> extend arm move cg towards back (bot should tilt towards the cage) -> lift down
     }
 }
