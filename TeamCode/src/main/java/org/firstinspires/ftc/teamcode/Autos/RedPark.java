@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Utility.Config.TURNING_P_GAIN;
 
@@ -49,6 +51,11 @@ public class RedPark extends LinearOpMode {
         imu.initialize(parameters);
         imu.resetYaw();
 
+        BLDrive.setMode(RUN_WITHOUT_ENCODER);
+        BRDrive.setMode(RUN_WITHOUT_ENCODER);
+        FLDrive.setMode(RUN_WITHOUT_ENCODER);
+        BRDrive.setMode(RUN_WITHOUT_ENCODER);
+
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,11 +63,40 @@ public class RedPark extends LinearOpMode {
 
         setMotorModes(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        telemetry.setAutoClear(false);
+
         waitForStart();
 
-        //autoDriveForward(.1,12);
+        double heading = getHeading() + 90.0;
+        double speed = .2;
+
+        while(((getHeading() > (heading- 5)) || (getHeading() < (heading + 5))))
+        {
+            FLDrive.setPower(-speed);
+            FRDrive.setPower(speed);
+            BLDrive.setPower(-speed);
+            BRDrive.setPower(speed);
+            telemetry.addData("Heading", getHeading());
+            //addTelemetry(telemetry);
+        }
+        // Stop all motion;
+        //autoDriveForward(0, 0);
+        FLDrive.setPower(0);
+        FRDrive.setPower(0);
+        BLDrive.setPower(0);
+        BRDrive.setPower(0);
+
+        //This path starts on the left of the teeth of the tile next to the last bit of red tape for the observation zone.
+
+        //autoDriveForward(.3,3);
         //Negative is to the right because of the way the IMU faces.
-        turnToAngle(.1, 90.0, telemetry);
+        //turnToAngle(.2, 90.0);
+        //Works
+        //autoDriveForward(.3,24);
+        //Doesn't work.
+        //turnToAngle(.2, 90, telemetry);
+        //Works
+        //autoDriveForward(.3, -3);
     }
 
     /*
@@ -77,17 +113,18 @@ public class RedPark extends LinearOpMode {
         int newBLTarget = 0;
         int newBRTarget = 0;
 
+        FLDrive.setDirection(DcMotor.Direction.REVERSE);
+        FRDrive.setDirection(DcMotor.Direction.REVERSE);
+        BLDrive.setDirection(DcMotor.Direction.REVERSE);
+        BRDrive.setDirection(DcMotor.Direction.FORWARD);
+
+
         if (opModeIsActive()) {
             //Resetting encoders
             FLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            FLDrive.setDirection(DcMotor.Direction.REVERSE);
-            FRDrive.setDirection(DcMotor.Direction.REVERSE);
-            BLDrive.setDirection(DcMotor.Direction.REVERSE);
-            BRDrive.setDirection(DcMotor.Direction.FORWARD);
 
             newFLTarget = FLDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
             newFRTarget = FRDrive.getCurrentPosition() + (int) (inchesForward * COUNTS_PER_INCH);
@@ -143,26 +180,28 @@ public class RedPark extends LinearOpMode {
     /**
      * For auto. Turns to a specified angle, without resetting the heading.
      *
-     * @param angle     How many degrees to turn. [-180, 180].
+     * @param heading    How many degrees to turn. [-180, 180].
      * @param speed     How fast to turn. (0, 1].
-     * @param telemetry Pass this if you want this method to log to telemetry.
      * @see org.firstinspires.ftc.teamcode.Hardware.Drivebase#driveSideways
      * @see org.firstinspires.ftc.teamcode.Hardware.Drivebase#autoDriveForward
      * @see org.firstinspires.ftc.teamcode.Hardware.Drivebase#turnToAngle
      */
-    public void turnToAngle(double speed, double angle, @Nullable Telemetry telemetry) {
-        setMotorModes(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void turnToAngle(double speed, double heading) {
 
-        while (opModeIsActive() && Math.abs(getHeading() - angle) > 1) {
-            final double adjustedPower = speed * getTurningCorrection(angle);
 
-            setDrivePowers(adjustedPower, -adjustedPower, adjustedPower, -adjustedPower);
+        //FLDrive.setDirection(DcMotor.Direction.FORWARD);
+        //FRDrive.setDirection(DcMotor.Direction.REVERSE);
+        //BLDrive.setDirection(DcMotor.Direction.FORWARD);
+        //BRDrive.setDirection(DcMotor.Direction.REVERSE);
 
-            if (telemetry == null) continue; else addTelemetry(telemetry);
+        //Give it a tolerence so it doesn't oscilate and give a negative power intead of reversing directions.
+        /*while((opModeIsActive() && (getHeading() < heading - 1) && getHeading() > heading + 1)) {
+            FLDrive.setPower(speed);
+            FRDrive.setPower(-speed);
+            BLDrive.setPower(speed);
+            BRDrive.setPower(-speed);
+        } */
 
-        }
-
-        setDrivePowers(0);
     }
 
     /**
@@ -220,10 +259,17 @@ public class RedPark extends LinearOpMode {
 
     public void addTelemetry(Telemetry telemetry) {
         // Show the wheel powers.
-//        telemetry.addData("FLDrive", "%4.2f, %4.2f", FLDrive.getCurrentPosition());
-//        telemetry.addData("FRDrive", "%4.2f, %4.2f", FRDrive.getCurrentPosition());
-//        telemetry.addData("BLDrive", "%4.2f, %4.2f", BLDrive.getCurrentPosition());
-//        telemetry.addData("BRDrive", "%4.2f, %4.2f", BRDrive.getCurrentPosition());
+       //telemetry.addData("FLDrive", "%4.2f, %4.2f", FLDrive.getCurrentPosition());
+       //telemetry.addData("FRDrive", "%4.2f, %4.2f", FRDrive.getCurrentPosition());
+       //telemetry.addData("BLDrive", "%4.2f, %4.2f", BLDrive.getCurrentPosition());
+       //telemetry.addData("BRDrive", "%4.2f, %4.2f", BRDrive.getCurrentPosition());
+       //Speed.
+       //telemetry.addData("FLSpeed", "%4.2f, %4.2f", FLDrive.getPower());
+       //telemetry.addData("FRSpeed", "%4.2f, %4.2f", FRDrive.getPower());
+       //telemetry.addData("BLSpeed", "%4.2f, %4.2f", BLDrive.getPower());
+        //telemetry.addData("BRSpeed", "%4.2f, %4.2f", BRDrive.getPower());
+
+        telemetry.addData("Heading", "%4.2f, %4.2f", getHeading());
     }
 }
 
