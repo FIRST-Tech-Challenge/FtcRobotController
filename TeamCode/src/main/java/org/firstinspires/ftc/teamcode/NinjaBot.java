@@ -28,7 +28,9 @@ public class NinjaBot {
 
     // link motors to their references
     leftDrive = hwMap.get(DcMotor.class, "left");
-    leftDrive = hwMap.get(DcMotor.class, "right");
+    rightDrive = hwMap.get(DcMotor.class, "right");
+
+    leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
   }
 
   // define functions relating to the control of motors of the robot in general.
