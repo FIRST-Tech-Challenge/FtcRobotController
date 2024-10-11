@@ -9,11 +9,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
 public class WheelHandler implements NKNComponent {
-    private final String flName;
+    private final String flName; // We pass in the names of the wheels during construction so that we can change them easier
     private final String frName;
     private final String blName;
     private final String brName;
-    private final String[] invertedNames;
+    private final String[] invertedNames; // Names in this array are reversed during initialization
 
     DcMotor motorFR; DcMotor motorBR; DcMotor motorFL; DcMotor motorBL;
 
@@ -27,6 +27,7 @@ public class WheelHandler implements NKNComponent {
         this.invertedNames = invertedNames;
     }
 
+    // Helper function to check if the given motor name needs to be reversed
     private boolean isInReverseList(String name) {
         for (String s: invertedNames) {
             if (s.equals(name)) {
@@ -40,7 +41,7 @@ public class WheelHandler implements NKNComponent {
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         //Get drive motors
         motorFL = hardwareMap.dcMotor.get(flName);
-        if (isInReverseList(flName)) {
+        if (isInReverseList(flName)) { // check if the drive motor is in the list to be reversed
             motorFL.setDirection(DcMotor.Direction.REVERSE);
         }
 
@@ -62,6 +63,8 @@ public class WheelHandler implements NKNComponent {
         return true;
     }
 
+    // Key function of the class
+    // Takes in y, x, and turning components of the vector, and converts them to power instructions for omni wheels
     public void vectorToMotion(float y, float x, float turning) {
         motorBR.setPower(y + x - turning);
         motorBL.setPower(y - x + turning);
@@ -90,7 +93,5 @@ public class WheelHandler implements NKNComponent {
     public void doTelemetry(Telemetry telemetry) {
         String msgString = "[" + motorFL.getPower() + ", " + motorFR.getPower() + ", " + motorBL.getPower() + ", " + motorBR.getPower() + "]";
         telemetry.addData("FL, FR, BL, BR", msgString);
-        String[] msgArray = new String[]{"One", "Two"};
-        telemetry.addData("test", msgArray);
     }
 }

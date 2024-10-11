@@ -7,15 +7,15 @@ import org.nknsd.robotics.team.components.WheelHandler;
 
 import java.util.List;
 
-public class SampleNKNProgram extends NKNProgram {
+public class BasicNKNProgram extends NKNProgram {
     @Override
-    public void createComponents(List<NKNComponent> components) {
+    public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         WheelHandler wheelHandler = new WheelHandler(
                 "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFR", "motorBL", "motorFL"}
         );
         components.add(wheelHandler);
 
-        ChaosMonkey chaosMonkey = new ChaosMonkey(wheelHandler);
+        ChaosMonkey chaosMonkey = new ChaosMonkey(wheelHandler, new String[]{});
         components.add(chaosMonkey);
     }
 }
