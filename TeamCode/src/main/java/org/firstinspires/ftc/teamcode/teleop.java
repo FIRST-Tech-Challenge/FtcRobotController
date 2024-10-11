@@ -33,6 +33,7 @@ public class teleop extends LinearOpMode {
 
 
         drivetrain Drive = new drivetrain();
+        Intake Intake = new Intake();
         Limelight Lime = new Limelight();
 
         GamepadStates newGamePad1 = new GamepadStates(gamepad1);
@@ -48,6 +49,7 @@ public class teleop extends LinearOpMode {
         limelight.start();
 
         Drive.init(this);
+        Intake.init(this);
         Lime.init();
 
         waitForStart();
@@ -80,15 +82,24 @@ public class teleop extends LinearOpMode {
                 }
             }
 
-            LLResult result = limelight.getLatestResult();
-            if (result != null) {
-                if (result.isValid()) {
-                    Pose3D botpose = result.getBotpose();
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("ty", result.getTy());
-                    telemetry.addData("Botpose", botpose.toString());
-                    telemetry.update();
-                }
+//            LLResult result = limelight.getLatestResult();
+//            if (result != null) {
+//                if (result.isValid()) {
+//                    Pose3D botpose = result.getBotpose();
+//                    telemetry.addData("tx", result.getTx());
+//                    telemetry.addData("ty", result.getTy());
+//                    telemetry.addData("Botpose", botpose.toString());
+//                    telemetry.update();
+//                }
+//            }
+            if (gamepad2.left_stick_y>0.4){
+                Intake.intake(speed);
+            }
+            else if (gamepad2.left_stick_y<-0.4) {
+                Intake.eject(speed);
+            }
+            else {
+                Intake.transport(0);
             }
         }
     }
