@@ -45,24 +45,15 @@ public class Intake  {
         return new SetPowerAction();
     }
     public Action intakeByColor(boolean isSpecimen) {
-        if (isSpecimen) {
             if (colorSensorOur.getDistance() > 2) {
                 power = INTAKE_SPEED;
-            } else if (colorSensorOur.getDistance() < 2 && !colorSensorOur.isRightColor(true)) {
+            } else if (colorSensorOur.getDistance() < 2 && !colorSensorOur.isRightColor(isSpecimen)) {
                 power = OUTTAKE_SPEED;
             }
-        } else {
-            if (colorSensorOur.getDistance() > 2) {
-                power = INTAKE_SPEED;
-            } else if (colorSensorOur.getDistance() < 2 && !colorSensorOur.isRightColor(false)) {
-                power = OUTTAKE_SPEED;
-            }
-        }
         telemetry.addData("Color",colorSensorOur.isRightColor(true));
         telemetry.addData("Distance", colorSensorOur.getDistance());
         telemetry.addData("isSpecimen", isSpecimen);
         telemetry.addData("Speed", power);
-
     return new SetPowerAction();
     }
 
