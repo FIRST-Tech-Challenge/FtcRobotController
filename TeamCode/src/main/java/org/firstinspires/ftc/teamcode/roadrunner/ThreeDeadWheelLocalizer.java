@@ -23,8 +23,8 @@ public class ThreeDeadWheelLocalizer implements Localizer {
         //For rotation, if under estimating: Decrease ticks
         //If over estimating: Increase ticks
         //Gobuila ticks = 2000, wheel diameter is 48= mm
-        public double par0YTicks = 1974.0; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = -1974.0; // y position of the second parallel encoder (in tick units)
+        public double par0YTicks = 1830.0; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = -1830.0; // y position of the second parallel encoder (in tick units)
         public double perpXTicks = -1953.0; // x position of the perpendicular encoder (in tick units)
     }
 

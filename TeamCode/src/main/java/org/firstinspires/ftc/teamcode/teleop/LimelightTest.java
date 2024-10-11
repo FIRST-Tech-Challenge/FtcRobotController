@@ -32,12 +32,20 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
+import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.utils.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -63,15 +71,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
  *   and the ip address the Limelight device assigned the Control Hub and which is displayed in small text
  *   below the name of the Limelight on the top level configuration screen.
  */
+@Config
 @TeleOp(name = "LimelightTest")
 public class LimelightTest extends LinearOpMode {
     private IMU imu;
     private LimeLightWrapper wrapper;
     private Limelight3A limelight3A;
+
+    private Pose2d position;
 //poopoo
     @Override
     public void runOpMode() throws InterruptedException
     {
+        position = new Pose2d(0,0,0);
+        Mecanum robot = new Mecanum(hardwareMap);
         limelight3A = hardwareMap.get(Limelight3A.class,"limelight");
         wrapper = new LimeLightWrapper(limelight3A);
         imu = hardwareMap.get(IMU.class, "imu");
@@ -84,15 +97,32 @@ public class LimelightTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if(wrapper.getVaildResult()==null) {
-                Pose3D pose3D = wrapper.distanceFromTag(imu.getRobotYawPitchRollAngles().getYaw());
-                telemetry.addData("X: ",pose3D.getPosition().x);
-                telemetry.addData("Y: ",pose3D.getPosition().y);
-                telemetry.addData("Z: ",pose3D.getPosition().z);
+            robot.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            Pose3D pose3D = wrapper.distanceFromTag(robot.getYaw(AngleUnit.DEGREES));
+            if(pose3D!=null) {
+                Pose3D pos = wrapper.inToMM(pose3D);
+                telemetry.addData("X: ",pos.getPosition().x);
+                telemetry.addData("Y: ",pos.getPosition().y);
+                telemetry.addData("Z: ",pos.getPosition().z);
+                telemetry.addData("Rotation: ",robot.getYaw(AngleUnit.DEGREES));
+                position = new Pose2d(pos.getPosition().x,
+                        pos.getPosition().y,
+                        robot.getYaw(AngleUnit.RADIANS));
                 telemetry.update();
-
             }
+            drawDashboard();
         }
 
     }
+
+    public void drawDashboard(){
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas canvas = packet.fieldOverlay();
+//        canvas.drawImage("/dash/into-the-deep.png", 0, 0, 144, 144);
+        canvas.setStroke("#3F51B5");
+        Drawing.drawRobot(canvas, position);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+    }
+
+
 }

@@ -29,17 +29,39 @@ public class KalmanFilter {
         this.dt = timeStep;
 
         // Initialize the state (3x1 vector: x, y, yaw)
+        //This initializes the location and heading of the filter to 0
         state = new SimpleMatrix(3, 1);
 
         // Initialize the covariance matrix (3x3, initial uncertainty)
-        covariance = SimpleMatrix.identity(3).scale(0.1);
-
+//        covariance = SimpleMatrix.identity(3).scale(0.5);
+        //This is the initial confidence in the starting values
+        //This is the uncertainty values of the initial values
+        covariance = new SimpleMatrix(new double[][]{
+                {0.5, 0, 0},//X pos
+                {0, 0.5, 0},//Y pos
+                {0, 0, 0.5} //H rotation
+        });
         // Initialize the process noise (3x3)
-        processNoise = SimpleMatrix.identity(3).scale(0.01);
+        /*
+        These values tell the filter to trust measurements more than predictions
+        Increase in values --> MEASUREMENTS MORE and PREDICTIONS LESS
+         */
+        processNoise = new SimpleMatrix(new double[][]{
+                {0.1, 0, 0},//X pos
+                {0, 0.1, 0},//Y pos
+                {0, 0, 10} //H rotation
+        });
 
         // Initialize the measurement noise (3x3)
-        measurementNoise = SimpleMatrix.identity(3).scale(0.1);
-
+        /*
+        These values tell the filter to trust predictions more than measurements
+        Increase in values --> PREDICTIONS MORE and MEASUREMENTS LESS
+         */
+        measurementNoise = new SimpleMatrix(new double[][]{
+                {0.01, 0, 0},//X pos
+                {0, 0.01, 0},//Y pos
+                {0, 0, 0.01} //H rotation
+        });
         // Initialize the transition matrix (3x3)
         transitionMatrix = createTransitionMatrix(dt);
 
@@ -126,7 +148,7 @@ public class KalmanFilter {
     public String getStateString(){
         return String.format("X: %.2f\nY: %.2f\nH: %.2f",
                 state.get(0,0),
-                state.get(0,1),
-                state.get(0,2));
+                state.get(1,0),
+                state.get(2,0) * 2);
     }
 }

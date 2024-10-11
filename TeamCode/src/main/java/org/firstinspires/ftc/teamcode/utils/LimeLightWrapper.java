@@ -82,9 +82,9 @@ public class LimeLightWrapper implements LocalizerInterface{
 
     //takes a pose3d from a distance from the tag and localizes it based on which April tag it is
     public Pose3D inToMM(Pose3D pose3D) {
-        int x = (int) (pose3D.getPosition().x*M_TO_IN);
-        int y = (int) (pose3D.getPosition().y*M_TO_IN);
-        int z = (int) (pose3D.getPosition().z*M_TO_IN);
+        double x = (pose3D.getPosition().x*M_TO_IN);
+        double y = (pose3D.getPosition().y*M_TO_IN);
+        double z = (pose3D.getPosition().z*M_TO_IN);
 
         return new Pose3D(new Position(DistanceUnit.INCH,x,y,z,pose3D.getPosition().acquisitionTime),pose3D.getOrientation());
     }

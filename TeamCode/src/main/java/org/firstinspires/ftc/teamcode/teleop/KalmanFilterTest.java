@@ -49,8 +49,8 @@ public class KalmanFilterTest extends LinearOpMode {
             Pose2d sparkData = spark.getPosition();
             Pose2d threeData = threeWheel.getPosition();
             double [][] data = new double[][]{
-                new double[] {sparkData.position.x, sparkData.position.y, sparkData.heading.toDouble()},
-                new double[] {threeData.position.x, threeData.position.y, threeData.heading.toDouble()},
+                new double[] {sparkData.position.x, sparkData.position.y, Math.toDegrees(sparkData.heading.toDouble())},
+                new double[] {threeData.position.x, threeData.position.y, Math.toDegrees(threeData.heading.toDouble())},
 //                new double[] {0,0,0} //Future Limelight comptabilitiy?
             };
             // Update the filter with sensor data
@@ -60,7 +60,7 @@ public class KalmanFilterTest extends LinearOpMode {
 
             //Control Localizer (Actual)
             telemetry.addLine("Average Data: ");
-            telemetry.addLine(pLocalizer.getPosition().toString() + "\n");
+            telemetry.addLine(pLocalizer.toString() + "\n");
 
 
             telemetry.addLine("Kalman Filter results");

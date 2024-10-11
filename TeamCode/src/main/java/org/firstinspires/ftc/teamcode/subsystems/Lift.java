@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.utils.PIDController;
 
 public class Lift {
 
@@ -17,13 +23,16 @@ public class Lift {
     private DcMotor liftLeft, liftRight;
     private int targetPosition;
 
+    private Encoder encoder;
+    private PIDController pid;
+
 
     /**
      * Quick Constructor for the Lift Subsystem Class
      * @param hw [HardwareMap] Hardware map necessary to initialize the motors.
      */
     public Lift(HardwareMap hw){
-        this(hw, "liftLeft", "liftRight");
+        this(hw, "liftLeft", "liftRight", "FRM");
     }
 
     /**
@@ -32,15 +41,17 @@ public class Lift {
      * @param nameLeft [String] Name of the left motor assigned in the configuration.
      * @param nameRight [String] Name of the right motor assigned in the configuration.
      */
-    public Lift(HardwareMap hw, String nameLeft, String nameRight){
+    public Lift(HardwareMap hw, String nameLeft, String nameRight, String nameEncoder){
         //Initialize motors
         this.liftLeft = hw.get(DcMotor.class, nameLeft);
         this.liftRight = hw.get(DcMotor.class, nameRight);
+        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
         //Reverse one of the motors
         this.liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
         //Ensures motor encoders are reset
-        resetLift(liftLeft);
-        resetLift(liftRight);
+
+        pid = new PIDController(0,0,0);
+        pid.setTarget(getPosition());
     }
 
     /**
@@ -50,8 +61,7 @@ public class Lift {
      */
     public int moveLift(double power){
         targetPosition += (power * LIFT_SPEED);
-        liftLeft.setTargetPosition(targetPosition);
-        liftRight.setTargetPosition(targetPosition);
+        pid.setTarget(targetPosition);
         return targetPosition;
     }
 
@@ -60,7 +70,7 @@ public class Lift {
      * @return [int] Returns current position of the left motor in ticks.
      */
     public int getPosition(){
-        return liftLeft.getCurrentPosition();
+        return encoder.getPositionAndVelocity().position;
     }
 
 
@@ -68,37 +78,68 @@ public class Lift {
      * Sets the motors' target position to [LOW_HEIGHT]
      */
     public void goToLow(){
-        liftLeft.setTargetPosition(LOW_HEIGHT);
-        liftRight.setTargetPosition(LOW_HEIGHT);
+        pid.setTarget(LOW_HEIGHT);
     }
     /**
      * Sets the motors' target position to [MEDIUM_HEIGHT]
      */
     public void goToMedium(){
-        liftLeft.setTargetPosition(MEDIUM_HEIGHT);
-        liftRight.setTargetPosition(MEDIUM_HEIGHT);
+        pid.setTarget(MEDIUM_HEIGHT);
     }
 
     /**
      * Sets the motors' target position to [HIGH_HEIGHT]
      */
     public void goToHigh(){
-        liftLeft.setTargetPosition(HIGH_HEIGHT);
-        liftRight.setTargetPosition(HIGH_HEIGHT);
+        pid.setTarget(HIGH_HEIGHT);
     }
-
-
-
 
     /**
-     * Resets the motor encoder of the passed motor.
-     * @param liftMotor [DcMotor] Motor encoder that should be reset.
+     * Updates PID loop/motor power.
+     * Ensure this is called when using lift, otherwise nothing will happen.
      */
-    private void resetLift(DcMotor liftMotor){
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        targetPosition = liftMotor.getCurrentPosition();
-        liftMotor.setTargetPosition(targetPosition);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setPower(POWER);
+    public void update(){
+        double power = pid.calculate(getPosition());
+        liftLeft.setPower(power);
+        liftRight.setPower(power);
     }
+
+    /**
+     * Increases/decreases a PID tuning value by a set amount
+     * @param Kp [double] Increment to increase Kp by
+     * @param Ki [double] Increment to increase Ki by
+     * @param Kd [double] Increment to increase Kd by
+     */
+    public void adjustPID(double Kp, double Ki, double Kd){
+        double[] k = pid.getPIDValues();
+        pid.setKp(k[0] + Kp);
+        pid.setKi(k[1] + Ki);
+        pid.setKd(k[2] + Kd);
+    }
+
+    @Override
+    public String toString(){
+        return String.format(
+                "Arm current position: %f\n" +
+                "Arm target position: %f\n" +
+                "Arm PID Data: \n%s",
+                getPosition(),
+                targetPosition,
+                pid.toString());
+    }
+
+    public PIDController getPid(){
+        return pid;
+    }
+//    /**
+//     * Resets the motor encoder of the passed motor.
+//     * @param liftMotor [DcMotor] Motor encoder that should be reset.
+//     */
+//    private void resetLift(DcMotor liftMotor){
+//        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        targetPosition = liftMotor.getCurrentPosition();
+//        liftMotor.setTargetPosition(targetPosition);
+//        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        liftMotor.setPower(POWER);
+//    }
 }

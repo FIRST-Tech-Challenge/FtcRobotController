@@ -47,7 +47,8 @@ public class PrimaryLocalizer implements LocalizerInterface {
             Pose2d pos = sensors.getPosition();
             xPos += pos.position.x * (sensors.getWeight()/totalWeight);
             yPos += pos.position.y * (sensors.getWeight()/totalWeight);
-            heading += pos.heading.toDouble() * (sensors.getWeight()/totalWeight);
+            //For some reason, not applying an average calculation gives the correct output?
+            heading += pos.heading.toDouble() /* *(sensors.getWeight()/totalWeight)*/;
         }
         return new Pose2d( xPos , yPos , heading );
     }

@@ -17,17 +17,22 @@ public class DistanceTouchSensorTest extends LinearOpMode {
 
     Mecanum robot;
 
-    DigitalChannel distanceSensor;
+    DigitalChannel poloDistanceSensor;
 
     RevTouchSensor touchSensor;
+
+    DistanceSensor distanceSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {
 //        robot = new Mecanum(hardwareMap);
 
-        distanceSensor = hardwareMap.get(DigitalChannel.class, "distance");
-        distanceSensor.setMode(DigitalChannel.Mode.INPUT);
+        poloDistanceSensor = hardwareMap.get(DigitalChannel.class, "distance");
+        poloDistanceSensor.setMode(DigitalChannel.Mode.INPUT);
         touchSensor = hardwareMap.get(RevTouchSensor.class, "touch");
+
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
 
         waitForStart();
 
@@ -37,7 +42,7 @@ public class DistanceTouchSensorTest extends LinearOpMode {
 
 
 
-            telemetry.addData("Distance (Dist Sensor): ",distanceSensor.getState());
+            telemetry.addData("Distance (Dist Sensor): ",poloDistanceSensor.getState());
             telemetry.addData("Touched (Touch Sensor): ",touchSensor.getValue());
             telemetry.update();
         }

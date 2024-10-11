@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
@@ -12,8 +13,10 @@ import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
  * Modified version of ThreeDeadWheelLocalizer
  * TODO: Make sure to adjust the Params in ThreeDeadWheelLocalizer.java
  */
+@Config
 public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements LocalizerInterface {
 
+    public static double inPerTickLocal = 0.00302;
 
     public double weight = 0.33;
     private Pose2d position;
@@ -24,7 +27,7 @@ public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements Lo
     }
 
     public ThreeEncoderLocalizer(HardwareMap hw, String[] names){
-        super(hw, 0.0029, names);
+        super(hw, inPerTickLocal, names);
         position = new Pose2d(0,0,0);
     }
     public ThreeEncoderLocalizer(HardwareMap hardwareMap, double inPerTick) {

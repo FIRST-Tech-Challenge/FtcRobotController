@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
@@ -11,18 +13,42 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @TeleOp(name="LiftArmClawTest", group = "Subsystem Tests")
 public class LiftArmClawTest extends LinearOpMode {
+
+
+    private int index = 0;
+    private double[] pidValues;
+
+    private double INCREMENT = 0.01;
     @Override
     public void runOpMode() throws InterruptedException {
         //Init Phase
         Mecanum robot = new Mecanum(hardwareMap);
 
-        Lift lift = new Lift(hardwareMap);
+//        Lift lift = new Lift(hardwareMap);
 
-        Arm arm = new Arm(hardwareMap);
+//        Arm arm = new Arm(hardwareMap);
 
-        Claw claw = new Claw(hardwareMap);
+//        Claw claw = new Claw(hardwareMap);
 
         GamepadEvents controller1 = new GamepadEvents(gamepad1);
+
+        DcMotor liftL = hardwareMap.get(DcMotor.class,"liftLeft");
+        DcMotor liftR = hardwareMap.get(DcMotor.class,"liftRight");
+        liftR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+//        //Initialized as 6 because both Lift and Arm each have their own PID
+//        pidValues = new double[6];
+//        for (double val : lift.getPid().getPIDValues()){
+//            pidValues[index] = val;
+//            updateIndex(true);
+//        }
+//        for (double val : arm.getPid().getPIDValues()){
+//            pidValues[index] = val;
+//            updateIndex(true);
+//        }
+//        //Updates/resets index to 0
+//        updateIndex(true);
+
 
         waitForStart();
 
@@ -41,29 +67,94 @@ public class LiftArmClawTest extends LinearOpMode {
             * */
 
             //Lift Subsystem
-            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+//            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+            liftL.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+            liftR.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
 
-
-            //Arm Subsystem
-            if (gamepad1.right_bumper){
-                arm.changeHeight(1);
-            }
-            else if (gamepad1.left_bumper){
-                arm.changeHeight(-1);
-            }
-
-            //Claw Subsystem
-            if (gamepad1.a){
-                claw.changePosition(1);
-            } else if (gamepad2.b) {
-                claw.changePosition(-1);
-            }
-
-            telemetry.addData("Lift Motor Position: ",lift.getPosition());
-            telemetry.addData("Claw Servo Position: ",claw.getPosition());
+//            //Arm Subsystem
+//            if (controller1.right_bumper.onPress()){
+//                arm.changeHeight(1);
+//            }
+//            else if (controller1.left_bumper.onPress()){
+//                arm.changeHeight(-1);
+//            }
+//
+//            //Claw Subsystem
+//            if (controller1.a.onPress()){
+//                claw.changePosition(1);
+//            } else if (controller1.b.onPress()) {
+//                claw.changePosition(-1);
+//            }
+//
+//            if(controller1.x.onPress()){
+//                INCREMENT *= 10;
+//            }else if (controller1.y.onPress()){
+//                INCREMENT /= 10;
+//            }
+//
+//            //PID Tuning
+//            //Controls the value increase/decrease
+//            if (controller1.dpad_up.onPress()){
+//                pidValues[index] += INCREMENT;
+//            }
+//            else if( controller1.dpad_down.onPress()){
+//                pidValues[index] = Math.max(0, pidValues[index] - INCREMENT);
+//            }
+//
+//            //Controls which value is being edited
+//            if (controller1.dpad_left.onPress()) {
+//                updateIndex(false);
+//            }
+//            else if(controller1.dpad_right.onPress()){
+//                updateIndex(true);
+//            }
+//
+//            lift.adjustPID(pidValues[0],pidValues[1],pidValues[2]);
+//            arm.adjustPID(pidValues[3],pidValues[4],pidValues[5]);
+//
+//
+//            //Data Telemetry
+//            telemetry.addLine("Current Position Data");
+//            telemetry.addData("Lift Motor Position: ",lift.getPosition());
+//            telemetry.addData("Arm Rotation: ",arm.getRotation());
+//            telemetry.addData("Claw Servo Position: ",claw.getPosition());
+//
+//            //PID Tuning Information
+//            telemetry.addLine("PID Tuning Information:");
+//            telemetry.addLine("X/Y to Increase/Decrease [INCREMENT] amount");
+//            telemetry.addLine("DpadUp/DpadDown to Increase/Decrease current Selected PID by said [INCREMENT] amount");
+//            telemetry.addLine("DpadLeft/DpadRight to switch between PID values");
+//            telemetry.addData("Current [INCREMENT] value: ",INCREMENT);
+//            telemetry.addLine(buildPIDString());
 
             telemetry.update();
             controller1.update();
+//            lift.update();
+//            arm.update();
         }
+    }
+
+    public void updateIndex(boolean increase){
+        if (increase){
+            index = (index+1) % pidValues.length;
+        }else{
+
+        }
+    }
+
+    public String buildPIDString(){
+        String result = "PID data: Line 1 = Lift PID, Line 2 = Arm PID";
+        for(int i=0; i<pidValues.length; i++){
+            if (i%3 == 0) {
+                result += "\n";
+            }
+            if (i==index){
+                result += "[" + pidValues[i] + "]";
+            }else{
+                result += " " + pidValues[i] + " ";
+            }
+
+        }
+        return result;
     }
 }
