@@ -126,7 +126,7 @@ public class BlueLeft extends LinearOpMode {
         telemetry.update();
         done = false;
 
-        //lift arm up
+        //lift arm up 
         while (((currTime - startTime) < 30000) && !done && opModeIsActive()) {
             //autoSeq();
             telemetry.addData("IM at ", getHeading());

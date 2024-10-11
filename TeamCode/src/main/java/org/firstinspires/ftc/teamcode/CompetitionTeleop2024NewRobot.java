@@ -25,10 +25,16 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     private DcMotor RF = null; //Located on Control Hub- Motor port 2
     private DcMotor LB = null; //Located on Control Hub- Motor port 1
     private DcMotor RB = null; //Located on Control Hub- Motor port 3
+    // Left trigger is upward and Right is Downward.
+    private DcMotor lift = null; // location on expansion hub - Motor port 0
     //Declare variables used for our arm lift
-    //private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
-    //private DcMotor arm1 = null; //Located on Expansion Hub- Motor port 0
-    private DcMotor intake = null; //Located on Expansion Hub- Motor port 0
+
+    // positive Y is upward on joystick, left and right
+    private Servo leftArm = null; //Located on Expansion Hub- Servo port 0
+    private Servo rightArm = null; //Located on Expansion Hub- Servo port 1
+    // positive Y on right joystick will be intake, negative = outtake
+    private Servo intake = null; //Located on Expansion Hub- Servo port 2
+
 
     //private Servo elbow = null; //Located on Expansion Hub- Servo port 0
     //private Servo gripper = null; //Located on Expansion Hub- Servo port 0
@@ -75,9 +81,10 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         RF = hardwareMap.get(DcMotor.class, "RF");
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        //arm = hardwareMap.get(DcMotor.class, "arm");
-        //arm1 = hardwareMap.get(DcMotor.class, "arm1");
+        intake = hardwareMap.get(Servo.class, "intake");
+        leftArm = hardwareMap.get(Servo.class, "leftArm");
+        rightArm = hardwareMap.get(Servo.class, "rightArm");
+        lift = hardwareMap.get(DcMotor.class, "lift");
         //gripper = hardwareMap.get(Servo.class, "gripper");
         //elbow = hardwareMap.get(Servo.class, "elbow");
         //plane = hardwareMap.get(Servo.class, "plane");
@@ -107,7 +114,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         RF.setDirection(DcMotor.Direction.REVERSE);
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.FORWARD);
+        //intake.setDirection(DcMotor.Direction.FORWARD);
         //Reverse the arm direction so it moves in the proper direction
         //arm.setDirection(DcMotor.Direction.REVERSE);
         //arm1.setDirection(DcMotor.Direction.REVERSE);
@@ -142,6 +149,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         PowerFactor = (1 - gamepad1.right_trigger) *.8f;
 
         //Code for mecanum wheels
+
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * PowerFactor;
         Orientation angles = imu.getRobotOrientation(AxesReference.INTRINSIC,
                 AxesOrder.ZYX,
@@ -168,17 +176,17 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LF.setPower(LFPower);
         RF.setPower(RFPower);
 
-        double intakePower;
+        //double intakePower;
 
-        intakePower = (gamepad2.right_trigger) - gamepad2.left_trigger;
-        intake.setPower(intakePower);
+        //intakePower = (gamepad2.right_trigger) - gamepad2.left_trigger;
+        //intake.setPower(intakePower);
 
         //Send telemetry data of the motor power for wheels
         telemetry.addData("Left Front Motor","Speed: "+ LFPower);
         telemetry.addData("Left Back Motor","Speed: "+ LBPower);
         telemetry.addData("Right Front Motor","Speed: "+RFPower);
         telemetry.addData("Right Back Motor","Speed: "+ RBPower);
-        telemetry.addData("Intake Motor", "Speed: = "+ intakePower);
+        //telemetry.addData("Intake Motor", "Speed: = "+ intakePower);
         //telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
         telemetry.addData("Initial Heading", "Heading: "+initHeading);
 
@@ -193,81 +201,67 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
 
 
 
-        /*
+
         //Moves the arm up
         if (gamepad2.left_trigger >= .1)
         {
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            arm.setPower(gamepad2.left_trigger * (0.5));
-            arm1.setPower(gamepad2.left_trigger * (0.5));
-            telemetry.addData("arm ticks", arm.getCurrentPosition());
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lift.setPower(gamepad2.left_trigger * (0.5));
+            telemetry.addData("Lift ticks", lift.getCurrentPosition());
             telemetry.update();
             //Moves the arm down
         }
         else if (gamepad2.right_trigger >= .1)
         {
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            arm.setPower(-gamepad2.right_trigger * (0.5));
-            arm1.setPower(-gamepad2.right_trigger * (0.5));
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lift.setPower(-gamepad2.right_trigger * (0.5));
 
         }
         else
         {
-            arm.setPower(0);
-            arm1.setPower(0);
-            arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift.setPower(0);
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
-        telemetry.addData("Gripper Position = ", gripper.getPosition());
-        telemetry.addData("Plane Position = ", plane.getPosition());
-        telemetry.addData("Elbow Position = ", elbow.getPosition());
-        if (gamepad2.a && !changed) {
-            if (gripper.getPosition() < 0.001)
-            {
-                gripper.setPosition(.09);
-                //arm.setTargetPosition(150);
-                //arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //arm.setPower(armPower);
-            }
-            else
-                gripper.setPosition(0.0);
-            changed = true;
-        } else if (!gamepad2.a)
-        {
-            changed = false;
-        }
-        if (gamepad1.a) {
-            plane.setPosition(0.5);
-        } else
-        {
-            plane.setPosition(0.0);
-        }
-        double elbowPosition = elbow.getPosition();
-        double elbowDelta = 0.005;
+        double leftArmPosition = leftArm.getPosition();
+        double rightArmPosition = rightArm.getPosition();
+        double armDelta = 0.005;
         if (gamepad2.left_stick_y > (0.1)) {
-            //if (elbowPosition < (0.9))
 
-            //{
-                elbow.setPosition(elbowPosition + (elbowDelta));
+            leftArm.setPosition(leftArmPosition + (armDelta));
+            rightArm.setPosition(rightArmPosition - (armDelta));
 
-            //}
+
         } else if (gamepad2.left_stick_y < (-0.1))
         {
-            //if (elbowPosition > (0.0))
-                elbow.setPosition(elbowPosition - (elbowDelta));
+            leftArm.setPosition(leftArmPosition - (armDelta));
+            rightArm.setPosition(rightArmPosition + (armDelta));
+
         }
+        if (gamepad2.right_stick_y > (0.1)) {
+
+            intake.setDirection(Servo.Direction.FORWARD);
+
+
+        } else if (gamepad2.right_stick_y < (-0.1))
+        {
+            intake.setDirection(Servo.Direction.REVERSE);
+
+        } else
+        {
+            intake.setDirection();
+        }
+
+
     // Show the elapsed game time and wheel power.
             telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);
         telemetry.update();
     //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
-         */
+
 }
 
     /*
