@@ -40,7 +40,7 @@ public class GamePadHandler implements NKNComponent {
         this.gamePad1 = gamePad1;
         this.gamePad2 = gamePad2;
 
-        return false;
+        return true;
     }
 
     @Override

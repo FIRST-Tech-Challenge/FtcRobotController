@@ -22,10 +22,5 @@ public class BasicNKNProgram extends NKNProgram {
 
         GamePadHandler gamePadHandler = new GamePadHandler();
         components.add(gamePadHandler);
-
-        EventHandlerTester eventHandlerTester = new EventHandlerTester();
-        components.add(eventHandlerTester);
-        telemetryEnabled.add(eventHandlerTester);
-        eventHandlerTester.link(gamePadHandler);
     }
 }

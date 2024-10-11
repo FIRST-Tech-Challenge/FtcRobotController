@@ -23,7 +23,7 @@ public class EventHandlerTester implements NKNComponent {
         };
 
         gamePadHandler.addListener(GamePadHandler.GamepadButtons.A, 1, "sayA", event);
-        return false;
+        return true;
     }
 
     @Override
