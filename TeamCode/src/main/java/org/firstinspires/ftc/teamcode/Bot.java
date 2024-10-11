@@ -35,7 +35,7 @@ public class Bot {
 
 
     //Statistics for measurements
-    static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
+   // static final double WHEEL_DIAMETER_INCHES = 1; // For circumference / distance measurements
     private static final int TICKS_PER_REV = 1440;
     private static final double ARM_GEAR_RATIO = 28/8;
     private static final double DISTANCE_PER_REV = 10.0;
@@ -82,12 +82,12 @@ public class Bot {
         rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
-        rightLift = map.get(DcMotor.class, "right_lift");
-
-
-        extendArmMotor = map.get(DcMotor.class, "extend_arm");
-        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
+//        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
+//        rightLift = map.get(DcMotor.class, "right_lift");
+//
+//
+//        extendArmMotor = map.get(DcMotor.class, "extend_arm");
+//        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
         //set encoders to 0 on init
         leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -95,11 +95,11 @@ public class Bot {
         rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Set RunModes for Encoder Usage
         leftMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -107,11 +107,11 @@ public class Bot {
         rightMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//        extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set Direction of each Motors
         // switch REVERSE and FORWARD if controls are opposite
@@ -120,16 +120,16 @@ public class Bot {
         rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+//        leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
+//        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+//
+//        extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+//        armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Servos for intake on the map
         //TODO Rename Intake servos to something better
-        topIntake = map.get(CRServo.class, "top_intake");
-        bottomIntake = map.get(CRServo.class, "bottom_intake");
+//        topIntake = map.get(CRServo.class, "top_intake");
+//        bottomIntake = map.get(CRServo.class, "bottom_intake");
 
         //TODO push off servos for lift
     }
