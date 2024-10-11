@@ -33,9 +33,9 @@ class ViperArmSubsystem(
         rotationMotorGroup?.set(getBoundedPower(power))
     }
 
-    fun getExtensionMotorGroupPosition(): Int = extensionMotorGroup?.currentPosition ?: 0
+    fun getExtensionMotorGroupPosition(): Double = extensionMotorGroup?.get() ?: 0.0
 
-    fun getRotationMotorGroupPosition(): Int = rotationMotorGroup?.currentPosition ?: 0
+    fun getRotationMotorGroupPosition(): Double = rotationMotorGroup?.get() ?: 0.0
 
     fun extendToPosition(position: Int) {
         val safePosition = getBoundedPosition(position, EXTENSION_MIN_POSITION, EXTENSION_MAX_POSITION)
