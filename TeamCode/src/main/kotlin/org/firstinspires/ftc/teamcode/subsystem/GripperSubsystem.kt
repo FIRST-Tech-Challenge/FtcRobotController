@@ -13,7 +13,7 @@ class GripperSubsystem(
         // We want to start reversing until we hit the home sensor.
         if (hardware.gripperHomeSensor?.isPressed == true) return
 
-        hardware.gripperServo?.position = 0.0
+        hardware.gripperServo?.power = 0.0
 
         // TODO: How do we stop this in the right position?
     }
@@ -21,7 +21,7 @@ class GripperSubsystem(
     fun setHighChamberHeight() {
         // On a continuous servo, position of 0.1 is running forward.
         // We want to start running until we reach the delivery height.
-        hardware.gripperServo?.position = 1.0
+        hardware.gripperServo?.power = 0.0
 
         // TODO: How do we stop this in the right position?
     }
@@ -29,7 +29,7 @@ class GripperSubsystem(
     fun setLowChamberHeight() {
         // On a continuous servo, position of 0.1 is running forward.
         // We want to start running until we reach the delivery height.
-        hardware.gripperServo?.position = 1.0
+        hardware.gripperServo?.power = 0.0
 
         // TODO: How do we stop this in the right position?
     }
