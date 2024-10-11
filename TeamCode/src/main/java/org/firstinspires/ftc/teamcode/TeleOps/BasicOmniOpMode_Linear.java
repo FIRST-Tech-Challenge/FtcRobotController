@@ -101,9 +101,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double straightMove   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double horizontalMove =  gamepad1.left_stick_x;
-            double yaw     =  -gamepad1.right_stick_x;
+            double yaw     =  gamepad1.right_stick_x;
 
             //Check to make sure the joystick is actually being moved instead of it just getting bumped.
-            driveBase.driveRobot(horizontalMove, straightMove, yaw);
+            driveBase.driveRobot(straightMove, horizontalMove, yaw);
         }
     }}
