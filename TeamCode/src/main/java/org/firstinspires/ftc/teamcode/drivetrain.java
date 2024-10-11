@@ -139,6 +139,4 @@ public class drivetrain {
         testing.setPower(0);
         testing1.setPower(0);
     }
-
 }
-
