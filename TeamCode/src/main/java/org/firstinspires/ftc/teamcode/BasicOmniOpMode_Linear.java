@@ -36,7 +36,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor vertical = null;
     private static final double VERTICAL_POWER_DEFAULT = 0.6;
     double verticalPower = 0;
-    private static final int VERTICAL_MAX = 700;
+    private static final int VERTICAL_MAX = 700; // Milla: this has been a bit too high and our robot might tip over backwards. We should lower it a bit.
     private static final int VERTICAL_MIN = 30;
     private static final int VERTICAL_DEFAULT = 0;
     int verticalPosition = VERTICAL_DEFAULT;
@@ -140,7 +140,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
             if (gamepad1.dpad_up) {                                                     // If the up button is pressed
-                vertical.setTargetPosition(VERTICAL_MAX);                               // Set the target position to as far up as it can go
+                vertical.setTargetPosition(VERTICAL_MAX);
+                // Milla: we can't raise the arm when the viper is completely extended
+                // Let's try to fix that by increasing the velocity when the arm is extended.
+                // we try setVelocity(1000+viperSlidePosition/2)
                 ((DcMotorEx) vertical).setVelocity(1000);                                // Set the speed
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
@@ -163,12 +166,17 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Control the viper slide - how much it extends
             viperSlidePosition = viperSlide.getCurrentPosition();                      // Sets the position of the viper slide
             if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {          // If the right button is pressed AND it can safely rotate further
-                viperSlide.setTargetPosition(viperSlidePosition + 200);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
+                viperSlide.setTargetPosition(viperSlidePosition + 200);
+                // Milla: you have seen that the driver often wants more precise control of the viper slide when they are trying to pick up a sample.
+                // Instead of using the same velocity all the time, we can let the driver control the velocity by doing gamepad1.right_trigger*2000
+                // that will make the viper slide move fast when they are pushing the button harder and slower when they push it less.
+                // gamepad1.right_trigger holds a decimal that represents that percent that the button is pushed. So a little push is .2, a medium push is .5, etc.
+                // this means you'll have to double the current velocity to get the arm to continue moving at that speed.
                 ((DcMotorEx) viperSlide).setVelocity(2000);                                // Set the speed
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
             else if (gamepad1.left_trigger > 0 && viperSlidePosition > VIPER_MIN) {          // If the right button is pressed AND it can safely rotate further
-                viperSlide.setTargetPosition(viperSlidePosition - 200);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
+                viperSlide.setTargetPosition(viperSlidePosition - 200);                      // Set the target position to as far up as it can go
                 ((DcMotorEx) viperSlide).setVelocity(1000);                                // Set the speed
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
