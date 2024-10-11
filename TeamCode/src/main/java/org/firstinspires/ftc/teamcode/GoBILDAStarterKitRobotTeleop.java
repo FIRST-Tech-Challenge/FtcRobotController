@@ -74,6 +74,8 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftSlide = null;
+    private DcMotor rightSlide = null;
+
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -152,11 +154,13 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
         leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFront");
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftRear");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightRear");
-
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -214,19 +218,29 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
 
         /* Run until the driver presses stop */
         while (opModeIsActive()) {
-            if (gamepad2.dpad_up && leftSlide.getCurrentPosition() <= 3000) {
-                //leftSlide.setPower(0.4);
-                leftSlide.setTargetPosition(2750);
-                leftSlide.setPower(1.0);
+            if (gamepad2.dpad_up) {
+                leftSlide.setTargetPosition(3000);
+                leftSlide.setPower(3.0);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            } else if (gamepad2.dpad_down && leftSlide.getCurrentPosition() >= 0) {
+
+                rightSlide.setTargetPosition(3000);
+                rightSlide.setPower(3.0);
+                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            } else if (gamepad2.dpad_down) {
                 leftSlide.setTargetPosition(0);
-                leftSlide.setPower(1.0);
+                leftSlide.setPower(3.0);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                rightSlide.setTargetPosition(0);
+                rightSlide.setPower(3.0);
+                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             } else {
-                leftSlide.setPower(0);
+                leftSlide.setPower(0.0);
+                rightSlide.setPower(0.0);
             }
             telemetry.addData("Left Linear Slide: ", "%d", leftSlide.getCurrentPosition());
+            telemetry.addData("Right Linear Slide: ", "%d", rightSlide.getCurrentPosition());
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
