@@ -37,7 +37,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private static final double VERTICAL_POWER_DEFAULT = 0.6;
     double verticalPower = 0;
     private static final int VERTICAL_MAX = 700;
-    private static final int VERTICAL_MIN = 30; // Milla: You calculated this should be 136 so we don't damage the claw
+    private static final int VERTICAL_MIN = 30;
     private static final int VERTICAL_DEFAULT = 0;
     int verticalPosition = VERTICAL_DEFAULT;
 
@@ -45,16 +45,16 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor viperSlide = null;
     private static final double VIPER_POWER_DEFAULT = 0.6;
     double viperSlidePower = 0;
-    private static final int VIPER_MAX = 3000;
+    private static final int VIPER_MAX = 2600;
     private static final int VIPER_MIN = 50;
     private static final int VIPER_DEFAULT = 0;
     int viperSlidePosition = VIPER_DEFAULT;
 
     // This chunk controls our claw
     private Servo claw = null;
-    private static final double CLAW_DEFAULT = 0.3;
-    private static final double CLAW_MIN = 0.26;
-    private static final double CLAW_MAX = 0.5;
+    private static final double CLAW_DEFAULT = 0.75;
+    private static final double CLAW_MIN = 0.96;
+    private static final double CLAW_MAX = 0.75;
     double claw_position = CLAW_DEFAULT;
 
     private final ElapsedTime runtime = new ElapsedTime();
@@ -88,6 +88,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperSlide.setDirection(DcMotor.Direction.REVERSE);
 
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setPosition(claw_position);
@@ -140,45 +141,44 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             verticalPosition = vertical.getCurrentPosition();
             if (gamepad1.dpad_up) {                                                     // If the up button is pressed
                 vertical.setTargetPosition(VERTICAL_MAX);                               // Set the target position to as far up as it can go
-                ((DcMotorEx) vertical).setVelocity(750);                                // Set the speed
+                ((DcMotorEx) vertical).setVelocity(1000);                                // Set the speed
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely rotate further
-                vertical.setTargetPosition(verticalPosition + 10);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
-                ((DcMotorEx) vertical).setVelocity(650);                                // Set the speed
+                vertical.setTargetPosition(verticalPosition + 50);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
+                ((DcMotorEx) vertical).setVelocity(1000);                                // Set the speed
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
             else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MIN) {           // If the left button is pressed AND it can safely rotate further
-                vertical.setTargetPosition(verticalPosition - 10);                      // Set the target position to as far down as it can go
-                ((DcMotorEx) vertical).setVelocity(650);                                // Set the speed
+                vertical.setTargetPosition(verticalPosition - 50);                      // Set the target position to as far down as it can go
+                ((DcMotorEx) vertical).setVelocity(1000);                                // Set the speed
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
             else if (gamepad1.dpad_down) {                                              // If the down button is pressed
                 vertical.setTargetPosition(VERTICAL_MIN);                               // Set the target position to as far down as it can go
-                ((DcMotorEx) vertical).setVelocity(750);                                // Set the speed
+                ((DcMotorEx) vertical).setVelocity(1000);                               // Set the speed
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
-                sleep(1000);                                                 // Stop for one second
             }
 
             // Control the viper slide - how much it extends
-            viperSlidePosition = -viperSlide.getCurrentPosition();                      // Sets the position of the viper slide
-            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {         // If the right trigger is pressed AND it can safely slide further
-                viperSlidePower = -VIPER_POWER_DEFAULT;                                 // Set the power
+            viperSlidePosition = viperSlide.getCurrentPosition();                      // Sets the position of the viper slide
+            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {          // If the right button is pressed AND it can safely rotate further
+                viperSlide.setTargetPosition(viperSlidePosition + 200);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
+                ((DcMotorEx) viperSlide).setVelocity(2000);                                // Set the speed
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
-            else if (gamepad1.left_trigger > 0  && viperSlidePosition > VIPER_MIN) {    // If the left trigger is pressed AND it can safely slide further
-                viperSlidePower = VIPER_POWER_DEFAULT;                                  // Set the power
+            else if (gamepad1.left_trigger > 0 && viperSlidePosition > VIPER_MIN) {          // If the right button is pressed AND it can safely rotate further
+                viperSlide.setTargetPosition(viperSlidePosition - 200);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
+                ((DcMotorEx) viperSlide).setVelocity(1000);                                // Set the speed
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
             }
-            else {
-                viperSlidePower = 0;                                                    // If neither trigger is pressed, stop
-            }
-            viperSlide.setPower(viperSlidePower);
 
             // Control the claw
-            if (gamepad1.left_bumper && claw_position < CLAW_MAX) {
-                claw_position += 0.01;
-            }
-            if (gamepad1.right_bumper && claw_position > CLAW_MIN) {
+            if (gamepad1.left_bumper && claw_position > CLAW_MAX) {
                 claw_position -= 0.01;
+            }
+            if (gamepad1.right_bumper && claw_position < CLAW_MIN) {
+                claw_position += 0.01;
             }
             claw.setPosition(claw_position);
 
