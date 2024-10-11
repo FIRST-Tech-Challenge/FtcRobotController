@@ -26,6 +26,10 @@ public class FlowSensorHandler implements NKNComponent {
 
     SparkFunOTOS flowSensor;
 
+    String flowName;
+    public FlowSensorHandler(String flowName){
+        this.flowName = flowName;
+    }
     private void configureOtos() {
         flowSensor.setLinearUnit(DistanceUnit.INCH);
         flowSensor.setAngularUnit(AngleUnit.DEGREES);
@@ -78,7 +82,7 @@ public class FlowSensorHandler implements NKNComponent {
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
-        flowSensor = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        flowSensor = hardwareMap.get(SparkFunOTOS.class, flowName);
         configureOtos();
         return true;
     }
@@ -111,6 +115,7 @@ public class FlowSensorHandler implements NKNComponent {
     @Override
     public void doTelemetry(Telemetry telemetry) {
         String flowString = "[ angle " + getPosition().angle + " x " + getPosition().x + " y " + getPosition().y + "]";
+        telemetry.addData("flowSensor", flowString);
     }
 
     public FlowSensorData getPosition() {
