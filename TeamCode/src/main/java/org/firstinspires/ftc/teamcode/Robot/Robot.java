@@ -17,7 +17,7 @@ public class Robot {
    
     
     //used for how fast the turning input is used.
-    public static double turningInputConstant = 1.0;
+    public static double maxTurnRadPerSecond = 10;
     public static double pCon = 1;
     public static double dCon = 0;
     
@@ -86,7 +86,7 @@ public class Robot {
         
     }
     
-    double Wrap(double angle) {
+    public double wrap(double angle) {
         while (angle > Math.PI) {
             angle -= 2 * Math.PI;
         }
