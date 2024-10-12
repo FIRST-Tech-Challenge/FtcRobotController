@@ -4,17 +4,11 @@ import org.firstinspires.ftc.teamcode.Robot.systems.MecanumDriveTrain;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.resourses.PIDController;
 import org.firstinspires.ftc.teamcode.resourses.Odometry;
 
@@ -23,7 +17,7 @@ public class Robot {
    
     
     //used for how fast the turning input is used.
-    public static double turningInputConstant = 0.005;
+    public static double turningInputConstant = 1.0;
     public static double pCon = 1;
     public static double dCon = 0;
     
@@ -51,7 +45,7 @@ public class Robot {
     private boolean resettingImu = false;
     private double AutoStartAngle = 0;
     
-    private double previousLoopTime, secondPreviousLoopTime;
+    private double currentLoopTime, previousLoopTime;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry, double x, double y, double angle){
         this.telemetry = telemetry;
@@ -60,9 +54,10 @@ public class Robot {
     }
     
     public double getDeltaTime(){
-        double deltaTime = Math.abs(secondPreviousLoopTime-previousLoopTime);
-        secondPreviousLoopTime = previousLoopTime;
-        previousLoopTime = runtime.nanoseconds();
+        double deltaTime;
+        currentLoopTime = runtime.seconds();
+        deltaTime = currentLoopTime-previousLoopTime;
+        previousLoopTime = currentLoopTime;
         return deltaTime;
     }
     
