@@ -19,8 +19,10 @@ import org.firstinspires.ftc.teamcode.resourses.Odometry;
 
 @Config
 public class Robot {
+
     private double TargetAngle = 0;
     private double lastTimeAngle;
+
     private double drive;
     private double slide;
     private double turn;

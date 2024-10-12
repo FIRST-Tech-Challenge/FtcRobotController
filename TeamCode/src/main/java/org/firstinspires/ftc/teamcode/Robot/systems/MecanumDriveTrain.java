@@ -100,11 +100,19 @@ public class MecanumDriveTrain {
      * @param sidewaysPower amount it goes sideways
      * @param turnPower     amount it turns
      */
-    public void setDrivePower(double forwardPower, double sidewaysPower, double turnPower) {
-        motorFL.setPower(Range.clip(forwardPower + sidewaysPower + turnPower, -1.0, 1.0) * speedMultiplier);
-        motorFR.setPower(Range.clip(forwardPower - sidewaysPower - turnPower, -1.0, 1.0) * speedMultiplier);
-        motorBL.setPower(Range.clip(forwardPower - sidewaysPower + turnPower, -1.0, 1.0) * speedMultiplier);
-        motorBR.setPower(Range.clip(forwardPower + sidewaysPower - turnPower, -1.0, 1.0) * speedMultiplier);
+    public void setDrivePower(double forwardPower, double sidewaysPower, double turnPower, double robotHeading) {
+        // Field Centric Driving aligns all robot movements with the player's perspective from the field, rather than the robot's
+        if (fieldCentricDriving) {
+            double temp = forwardPower * Math.cos(-robotHeading) + sidewaysPower * Math.sin(-robotHeading);
+            sidewaysPower = -forwardPower * Math.sin(-robotHeading) + sidewaysPower * Math.cos(-robotHeading);
+            forwardPower = temp;
+        }
+        
+        motorFL.setPower(Range.clip(forwardPower + sidewaysPower - turnPower, -1.0, 1.0) * speedMultiplier);
+        motorFR.setPower(Range.clip(forwardPower - sidewaysPower + turnPower, -1.0, 1.0) * speedMultiplier);
+        motorBL.setPower(Range.clip(forwardPower - sidewaysPower - turnPower, -1.0, 1.0) * speedMultiplier);
+        motorBR.setPower(Range.clip(forwardPower + sidewaysPower + turnPower, -1.0, 1.0) * speedMultiplier);
+
     }
 }
 
