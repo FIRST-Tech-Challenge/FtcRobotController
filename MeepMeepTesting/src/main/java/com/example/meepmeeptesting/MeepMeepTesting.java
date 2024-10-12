@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -18,6 +19,9 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
+
+
+        //Starting Positions
         Pose2d startColor = new Pose2d(12,-60,Math.toRadians(90));
         Pose2d startYellow = new Pose2d(-12, -60, Math.toRadians(90));
 
@@ -76,8 +80,13 @@ public class MeepMeepTesting {
                 .strafeTo(new Vector2d(48,-60))
                 .waitSeconds(1)//Drop Sample
                 .strafeTo(new Vector2d(48,-44))
-                        .turn(Math.toRadians(-90))
-                .waitSeconds(5)//Place sample in HP zone, wait for HP
+//                        .turn(Math.toRadians(-90))
+            //Retrieve second sample
+                .strafeTo(new Vector2d(48,-26))
+                        .waitSeconds(1)//Pick up new Sample
+                .turn(Math.toRadians(-90))
+
+//                .waitSeconds(5)//Place sample in HP zone, wait for HP
 
             //Pick up specimen from HP
                 .strafeTo(new Vector2d(48,-60))
@@ -104,7 +113,7 @@ public class MeepMeepTesting {
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(yellowBot)
+                .addEntity(colorBot)
                 .start();
     }
 }

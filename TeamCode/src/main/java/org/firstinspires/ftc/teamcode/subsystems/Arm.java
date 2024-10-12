@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
@@ -15,6 +17,12 @@ import org.firstinspires.ftc.teamcode.utils.PIDController;
 
 public class Arm {
 
+    /*TODO LIST:
+        Identify [Rotational/Tick Limits] of Arm
+        Tune PID Parameters accordingly
+    */
+
+
     //Adjustable Constants
     private double ARM_SPEED = 0.001; //Rotation
 
@@ -22,8 +30,8 @@ public class Arm {
 
     private double TICKS_PER_ROTATION = 2048;
 
-    private double MINIMUM_ROTATION = 0; //degrees
-    private double MAXIMUM_ROTATION = 100; //degrees
+    private double MINIMUM_ROTATION = 0; //0 degrees (Relative to starting position)
+    private double MAXIMUM_ROTATION = (100 / 360) * TICKS_PER_ROTATION; //100 degrees (Relative to starting position)
 
     //Internal variables
     private CRServo armLeft, armRight;
@@ -33,7 +41,7 @@ public class Arm {
     private int targetPosition;
 
     public Arm(HardwareMap hw){
-        //TODO name encoder according to wiring described by Ryan
+
         this(hw, "armLeft", "armRight", "FRM");
     }
     public Arm(HardwareMap hw, String nameLeft, String nameRight, String nameEncoder){
@@ -41,16 +49,25 @@ public class Arm {
         armRight = hw.get(CRServo.class, nameRight);
         encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
         armRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        pid = new PIDController(0,0,0);
+        pid = new PIDController(0,0,0,0);
         pid.setTarget(getTicks());
     }
 
     public void changeHeight(double power){
-        pid.setTarget(pid.getTarget() + power * ARM_SPEED);
+        double target = pid.getTarget() + power * ARM_SPEED;
+        target = clamp(target, MAXIMUM_ROTATION, MINIMUM_ROTATION);
+        pid.setTarget(target);
+    }
+    private double clamp(double value, double max, double min){
+        return Math.max( min , Math.min( max , value));
     }
 
     public double getTicks(){
         return encoder.getPositionAndVelocity().position;
+    }
+
+    public double getForwardFeedValue(){
+        return 0;
     }
 
     /**
@@ -59,16 +76,16 @@ public class Arm {
      * For autonomous implementation... Refer to how Roadrunner uses PID
      */
     public void update(){
-        double power = pid.calculate(getTicks());
+        double power = pid.calculate(getTicks(), getForwardFeedValue());
         armLeft.setPower(power);
         armRight.setPower(power);
     }
 
     /**
-     * @return [double] The rotational position in degrees
+     * @return [double] The rotational position in DEGREES
      */
     public double getRotation(){
-        return getTicks() / 360;
+        return getTicks() / TICKS_PER_ROTATION * 360;
     }
 
     public PIDController getPIDObject(){
@@ -90,11 +107,13 @@ public class Arm {
     public PIDController getPid(){
         return pid;
     }
+
+    @SuppressLint("DefaultLocale")
     @Override
     public String toString(){
         return String.format("Arm current Rotation: %f\n" +
                 "Arm current position: %f\n" +
-                "Arm target position: %f\n" +
+                "Arm target position: %d\n" +
                 "Arm PID Data: \n%s",
                 getRotation(),
                 getTicks(),

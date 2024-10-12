@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
@@ -12,12 +14,25 @@ import org.firstinspires.ftc.teamcode.utils.PIDController;
 
 public class Lift {
 
+    /*TODO LIST:
+        Identify [Height Limits] of Lift
+        Identify [Position Heights] of Lift
+        Tune PID Parameters accordingly
+    */
     //Adjustable Constants
     public int LIFT_SPEED = 20; //ticks per call
     public double POWER = 1; //Max Power
     public int LOW_HEIGHT = 0; //Ticks
     public int MEDIUM_HEIGHT = 1000; //Ticks
     public int HIGH_HEIGHT = 2000; //Ticks
+
+    public int MAX_HEIGHT = 2000;
+
+    public double GRAVITY = 9.8; // N/kgs
+    public double ARM_WEIGHT = 1;//kgs
+    public double SLIDE_WEIGHT = 0.3; //kgs
+    public double TICKS_PER_SLIDE = 500; //ticks - Figure out later
+    public double calculatedWeight = GRAVITY * ARM_WEIGHT;
 
     //Internal variables
     private DcMotor liftLeft, liftRight;
@@ -30,7 +45,7 @@ public class Lift {
     /**
      * Quick Constructor for the Lift Subsystem Class
      * @param hw [HardwareMap] Hardware map necessary to initialize the motors.
-     */
+     *///TODO name encoder according to wiring described by Ryan
     public Lift(HardwareMap hw){
         this(hw, "liftLeft", "liftRight", "FRM");
     }
@@ -50,7 +65,7 @@ public class Lift {
         this.liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
         //Ensures motor encoders are reset
 
-        pid = new PIDController(0,0,0);
+        pid = new PIDController(0,0,0,0);
         pid.setTarget(getPosition());
     }
 
@@ -61,8 +76,15 @@ public class Lift {
      */
     public int moveLift(double power){
         targetPosition += (power * LIFT_SPEED);
+        //Toggle this once MAX_HEIGHT has been configured
+//        targetPosition = clamp(targetPosition, MAX_HEIGHT, 0);
         pid.setTarget(targetPosition);
         return targetPosition;
+    }
+
+
+    private double clamp(double value, double max, double min){
+        return Math.max( min , Math.min( max , value));
     }
 
     /**
@@ -94,12 +116,20 @@ public class Lift {
         pid.setTarget(HIGH_HEIGHT);
     }
 
+    public double getForwardFeedValue(){
+        return calculatedWeight;
+    }
+    public void recalculateWeight(){
+        calculatedWeight = GRAVITY * (ARM_WEIGHT + (int) (pid.getTarget()/TICKS_PER_SLIDE) * SLIDE_WEIGHT);
+    }
+
     /**
      * Updates PID loop/motor power.
      * Ensure this is called when using lift, otherwise nothing will happen.
      */
     public void update(){
-        double power = pid.calculate(getPosition());
+        recalculateWeight();
+        double power = pid.calculate(getPosition(), getForwardFeedValue());
         liftLeft.setPower(power);
         liftRight.setPower(power);
     }
@@ -117,11 +147,12 @@ public class Lift {
         pid.setKd(k[2] + Kd);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public String toString(){
         return String.format(
-                "Arm current position: %f\n" +
-                "Arm target position: %f\n" +
+                "Arm current position: %d\n" +
+                "Arm target position: %d\n" +
                 "Arm PID Data: \n%s",
                 getPosition(),
                 targetPosition,

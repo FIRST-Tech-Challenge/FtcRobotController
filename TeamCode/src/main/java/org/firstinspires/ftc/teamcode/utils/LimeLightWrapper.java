@@ -12,6 +12,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 public class LimeLightWrapper implements LocalizerInterface{
+
+    /*Will be used later on to have Limelight report data
+    As the starting wall to be pointed Negative
+    This saves the hassle of creating new nearly identical
+    sets of autos to switch between blue and red
+    */
+    private enum Color {
+        RED_SIDE,
+        BLUE_SIDE
+    }
+    private Color currentColor;
+
     public final double M_TO_IN = 39.3700787402;
     public double weight = 0.33;
 

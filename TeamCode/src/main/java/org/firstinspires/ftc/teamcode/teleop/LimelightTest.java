@@ -41,6 +41,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ControlSystem;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -78,13 +79,17 @@ public class LimelightTest extends LinearOpMode {
     private LimeLightWrapper wrapper;
     private Limelight3A limelight3A;
 
-    private Pose2d position;
+    private Pose2d positionMT1, positionMT2;
 //poopoo
     @Override
     public void runOpMode() throws InterruptedException
     {
-        position = new Pose2d(0,0,0);
+        positionMT1 = new Pose2d(0,0,0);
+        positionMT2 = new Pose2d(0,0,0);
         Mecanum robot = new Mecanum(hardwareMap);
+
+        GamepadEvents controller1 = new GamepadEvents(gamepad1);
+
         limelight3A = hardwareMap.get(Limelight3A.class,"limelight");
         wrapper = new LimeLightWrapper(limelight3A);
         imu = hardwareMap.get(IMU.class, "imu");
@@ -98,19 +103,42 @@ public class LimelightTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
             Pose3D pose3D = wrapper.distanceFromTag(robot.getYaw(AngleUnit.DEGREES));
+            Pose3D pose3D_MT1 = wrapper.distanceFromTag();
             if(pose3D!=null) {
+                Pose3D pos1 = wrapper.inToMM(pose3D_MT1);
+                telemetry.addLine("Mega Tag 1:");
+                telemetry.addData("1 - X: ",pos1.getPosition().x);
+                telemetry.addData("1 - Y: ",pos1.getPosition().y);
+                telemetry.addData("1 - Z: ",pos1.getPosition().z);
+                telemetry.addData("Calculated Rotation: ",pos1.getOrientation().getYaw(AngleUnit.DEGREES));
+
                 Pose3D pos = wrapper.inToMM(pose3D);
-                telemetry.addData("X: ",pos.getPosition().x);
-                telemetry.addData("Y: ",pos.getPosition().y);
-                telemetry.addData("Z: ",pos.getPosition().z);
-                telemetry.addData("Rotation: ",robot.getYaw(AngleUnit.DEGREES));
-                position = new Pose2d(pos.getPosition().x,
+                telemetry.addLine("Mega Tag 2:");
+                telemetry.addData("2 - X: ",pos.getPosition().x);
+                telemetry.addData("2 - Y: ",pos.getPosition().y);
+                telemetry.addData("2 - Z: ",pos.getPosition().z);
+
+                positionMT1 = new Pose2d(pos1.getPosition().x,
+                        pos1.getPosition().y,
+                        pos1.getOrientation().getYaw(AngleUnit.RADIANS));
+
+                positionMT2 = new Pose2d(pos.getPosition().x,
                         pos.getPosition().y,
                         robot.getYaw(AngleUnit.RADIANS));
-                telemetry.update();
+
             }
+
+
+            if(controller1.a.onPress()){
+                robot.resetIMU();
+            }
+
+
             drawDashboard();
+            telemetry.addData("Rotation: ",robot.getYaw(AngleUnit.DEGREES));
+            telemetry.update();
         }
 
     }
@@ -120,7 +148,8 @@ public class LimelightTest extends LinearOpMode {
         Canvas canvas = packet.fieldOverlay();
 //        canvas.drawImage("/dash/into-the-deep.png", 0, 0, 144, 144);
         canvas.setStroke("#3F51B5");
-        Drawing.drawRobot(canvas, position);
+        Drawing.drawRobot(canvas, positionMT1);
+        Drawing.drawRobot(canvas, positionMT2);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
