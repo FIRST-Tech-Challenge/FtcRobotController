@@ -85,7 +85,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-@Autonomous(name="Custom Omni Drive To AprilTag", group = "Concept")
+@Autonomous(name="Auto Omni Drive To AprilTag", group = "Concept")
 public class AutonomousRobotAutoDriveToAprilTagOmni extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
