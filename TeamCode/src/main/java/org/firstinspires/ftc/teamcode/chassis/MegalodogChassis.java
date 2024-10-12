@@ -171,13 +171,13 @@ public class MegalodogChassis {
         RotateLeft(-1*degree, VelocityPercentage, WaitTime);
     }
 
-    public void RotateLeft(int degree, double VelocityPercentage, int WaitTime) {
-        int mmToTarget;
+    public void RotateLeft(double degree, double VelocityPercentage, int WaitTime) {
+        double mmToTarget;
         double TicksToTarget;
         double TicksPerSecond;
 
         // converts degree to a mm distance
-        mmToTarget = degree * (560 / 90);
+        mmToTarget = degree * (454.22 / 90.0);
         // diamter of new robot wheels =
         // name is
         // uses the formula we've always had for rotation
