@@ -8,33 +8,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.masters.components.DriveTrain;
-//import org.firstinspires.ftc.masters.components.Intake;
-import org.firstinspires.ftc.masters.components.Outake;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config // Enables FTC Dashboard
-@TeleOp(name = "qteleop", group = "ri30h")
-public class qteleop extends LinearOpMode {
+@TeleOp(name = "Two Wheel ODO")
+public class twoWheelOdo extends LinearOpMode {
 
     SparkFunOTOS myOtos;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static int floor = 0;
-    public static int highC = 1000;
-    public static int high = 2500;
+    public static double Blank = 0;
 
     public void runOpMode() throws InterruptedException {
 
-        DriveTrain driveTrain = new DriveTrain(hardwareMap);
-        Outake outake = new Outake(hardwareMap, telemetry);
-
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        outake.close();
+        DcMotor leftmoter = hardwareMap.dcMotor.get("leftmoter");
+        DcMotor rightmoter = hardwareMap.dcMotor.get("rightmoter");
 
         configureOtos();
 
@@ -42,53 +34,27 @@ public class qteleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            driveTrain.driveNoMultiplier(gamepad1, DriveTrain.RestrictTo.XYT);
+            double yl = gamepad1.left_stick_y * 0.5;
+            double yr = gamepad1.right_stick_y * 0.5;
 
-            if (gamepad1.a) {outake.forward();}
-            if (gamepad1.b) {outake.backward();}
-
-            if (gamepad1.x) {outake.open();}
-            if (gamepad1.y) {outake.close();}
-
-            if (!outake.getExtendSlide().isBusy()) {
-                outake.getExtendSlide().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                if (gamepad1.right_stick_y != 0) {
-                    outake.extendPower(-Math.pow(gamepad1.right_stick_y, 3));
-                } else {
-                    outake.extendStop();
-                }
-            }
-
-            if (gamepad1.dpad_up){
-                outake.extendPos(highC);
-            }
-            if (gamepad1.dpad_down){
-                outake.extendPos(floor);
-            }
-            if (gamepad1.dpad_right){
-                outake.extendPos(high);
-            }
-
-            if (gamepad1.left_bumper) {
-                outake.rotateUp();
-            } else if (gamepad1.right_bumper) {
-                outake.rotateDown();
-            } else {
-                outake.rotateStop();
-            }
-
-            if (gamepad1.start) {
+            if (gamepad1.y) {
                 myOtos.resetTracking();
             }
 
-            if (gamepad1.options) {
+            if (gamepad1.x) {
                 myOtos.calibrateImu();
             }
 
+            leftmoter.setPower(-yl);
+            rightmoter.setPower(yr);
+
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
-            telemetry.addLine("Press Start on Gamepad to reset tracking");
-            telemetry.addLine("Press Options on Gamepad to calibrate the IMU");
+            telemetry.addData("yl", yl);
+            telemetry.addData("yr", yr);
+
+            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
+            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
 
             telemetry.addData("X coordinate", pos.x);
@@ -132,5 +98,5 @@ public class qteleop extends LinearOpMode {
         telemetry.update();
 
     }
-
 }
+
