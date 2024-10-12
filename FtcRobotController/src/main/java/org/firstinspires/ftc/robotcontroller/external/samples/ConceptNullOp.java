@@ -51,26 +51,33 @@ public class ConceptNullOp extends OpMode {
     telemetry.addData("Status", "Initialized");
   }
 
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
+
+  /**
+   * This method will be called repeatedly during the period between when
+   * the INIT button is pressed and when the START button is pressed (or the
+   * OpMode is stopped).
+   */
+
   @Override
   public void init_loop() {
   }
 
-  /*
-   * This method will be called ONCE when start is pressed
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+ualcomm.robotcore.eventloop.opmode.OpMode#loop()
+
+  /**
+   * This method will be called once, when the START button is pressed.
+
    */
   @Override
   public void start() {
     runtime.reset();
   }
 
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+
+  /**
+   * This method will be called repeatedly during the period between when
+   * the START button is pressed and when the OpMode is stopped.
+
    */
   @Override
   public void loop() {
