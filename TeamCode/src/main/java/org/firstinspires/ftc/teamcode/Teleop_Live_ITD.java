@@ -36,13 +36,15 @@ public class Teleop_Live_ITD extends LinearOpMode {
         // Variable Initialization
         BHI260IMU.Parameters myIMUParameters;
         Orientation myRobotOrientation;
+        telemetry.setAutoClear(false);
+        telemetry.addData("Program Status:", "Initialized");
 
         // IMU in the control hub
         imu = hardwareMap.get(BHI260IMU.class,"imu");
 
         // Start imu initialization
         myIMUParameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,RevHubOrientationOnRobot.UsbFacingDirection.UP )
+                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD )
         );
         imu.initialize(myIMUParameters);
         imu.resetYaw();
@@ -69,6 +71,10 @@ public class Teleop_Live_ITD extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Initial settings
@@ -127,6 +133,8 @@ public class Teleop_Live_ITD extends LinearOpMode {
                 blPow = (blPow/maxPow)*THRESH_WM_POWER;
                 frPow = (frPow/maxPow)*THRESH_WM_POWER;
                 brPow = (brPow/maxPow)*THRESH_WM_POWER;
+
+
 
                 fl.setPower(Range.clip(flPow, -THRESH_WM_POWER, THRESH_WM_POWER));
                 bl.setPower(Range.clip(blPow, -THRESH_WM_POWER, THRESH_WM_POWER));
