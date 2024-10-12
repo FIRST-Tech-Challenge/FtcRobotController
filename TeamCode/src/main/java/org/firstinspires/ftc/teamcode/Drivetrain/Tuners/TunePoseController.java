@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Drivetrain.Tuners;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -70,7 +71,12 @@ public class TunePoseController extends LinearOpMode {
             telemetry.addData("uLb", drivetrain.motorController.uLb);
             telemetry.addData("uRb", drivetrain.motorController.uRb);
             telemetry.addData("uRf", drivetrain.motorController.uRf);
-            dashboard.sendTelemetryPacket(tracking.updatePos(drivetrain.state.get(0,0), drivetrain.state.get(1,0), drivetrain.state.get(2,0)));
+            //dashboard.sendTelemetryPacket(tracking.updatePos(drivetrain.state.get(0,0), drivetrain.state.get(1,0), drivetrain.state.get(2,0)));
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.fieldOverlay();
+            packet.put("x", drivetrain.state.get(0,0));
+            packet.put("y", drivetrain.state.get(1,0));
+            packet.put("heading", drivetrain.state.get(2,0));
             telemetry.update();
             looptime.reset();
         }
