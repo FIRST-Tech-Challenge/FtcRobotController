@@ -48,7 +48,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Sensor: REV touch sensor", group = "Sensor")
-@Disabled
 public class SensorTouch extends LinearOpMode {
     TouchSensor touchSensor;  // Touch sensor Object
 
@@ -56,7 +55,7 @@ public class SensorTouch extends LinearOpMode {
     public void runOpMode() {
 
         // get a reference to our touchSensor object.
-        touchSensor = hardwareMap.get(TouchSensor.class, "sensor_touch");
+        touchSensor = hardwareMap.get(TouchSensor.class, "touch");
 
         // wait for the start button to be pressed.
         waitForStart();
