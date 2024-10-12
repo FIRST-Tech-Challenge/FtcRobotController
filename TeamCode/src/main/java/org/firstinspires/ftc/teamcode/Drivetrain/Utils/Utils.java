@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.Utils;
+package org.firstinspires.ftc.teamcode.Drivetrain.Utils;
 
 import org.ejml.simple.SimpleMatrix;
 public class Utils {
-    public static double r = 50;
-    public static double l = 320 / 2;
-    public static double w = 350 / 2;
+    public static double r = 2.16535; //in
+    public static double l = 5.7; //in
+    public static double w = 5.31496; //in
     public static SimpleMatrix R(double th) {
         SimpleMatrix rotation = new SimpleMatrix(
                 new double[][]{

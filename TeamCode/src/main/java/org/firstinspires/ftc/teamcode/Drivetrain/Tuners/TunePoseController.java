@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
-
+import org.firstinspires.ftc.teamcode.Drivetrain.Utils.TelemetryTracking;
 /**
  * THIS IS AN AUTONOMOUS OPMODE WE WILL USE TO TEST
  * YOUR DRIVETRAIN'S MOTOR DIRECTIONS.
@@ -26,6 +26,7 @@ public class TunePoseController extends LinearOpMode {
 
     // Use FTCDashboard
     FtcDashboard dashboard;
+    TelemetryTracking tracking;
     public static double desiredX = 0;
     public static double desiredY = 0;
     public static double desiredTheta = 0;
@@ -35,7 +36,7 @@ public class TunePoseController extends LinearOpMode {
         drivetrain = new Drivetrain(hardwareMap);
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
-
+        tracking = new TelemetryTracking();
         ElapsedTime looptime = new ElapsedTime();
 
         telemetry.addData("x", 0);
@@ -65,6 +66,11 @@ public class TunePoseController extends LinearOpMode {
             telemetry.addData("desiredX", desiredX);
             telemetry.addData("desiredY", desiredY);
             telemetry.addData("desiredTheta", desiredTheta);
+            telemetry.addData("uLf", drivetrain.motorController.uLf);
+            telemetry.addData("uLb", drivetrain.motorController.uLb);
+            telemetry.addData("uRb", drivetrain.motorController.uRb);
+            telemetry.addData("uRf", drivetrain.motorController.uRf);
+            dashboard.sendTelemetryPacket(tracking.updatePos(drivetrain.state.get(0,0), drivetrain.state.get(1,0), drivetrain.state.get(2,0)));
             telemetry.update();
             looptime.reset();
         }

@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
  * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
  */
 @Config
-@Autonomous(name = "Test Localizer", group = "Autonomous")
-public class TuneLocalizer extends LinearOpMode {
+@Autonomous(name = "Test 2 Wheel Localizer", group = "Autonomous")
+public class TuneTwoWheelLocalizer extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
 
@@ -39,9 +39,6 @@ public class TuneLocalizer extends LinearOpMode {
 
 
         telemetry.addLine("Looptime [ms]: " + 0);
-        telemetry.addLine("Left Encoder [ticks]: " + 0);
-        telemetry.addLine("Right Encoder [ticks]: " + 0);
-        telemetry.addLine("Horizontal Encoder [ticks]: " + 0);
         telemetry.addLine("X [in]: " + 0);
         telemetry.addLine("Y [in]: " + 0);
         telemetry.addLine("Theta [deg]: " + 0);
@@ -55,12 +52,7 @@ public class TuneLocalizer extends LinearOpMode {
 
         while (opModeIsActive()) {
             drivetrain.localize();
-
-
             telemetry.addLine("Looptime [ms]: " + looptime.milliseconds());
-            telemetry.addLine("Left Encoder [ticks]: " + (drivetrain.deadWheelOdo.currentLeftRawPos));
-            telemetry.addLine("Right Encoder [ticks]: " + (drivetrain.deadWheelOdo.currentRightRawPos));
-            telemetry.addLine("Horizontal Encoder [ticks]: " + (drivetrain.deadWheelOdo.currentCenterRawPos));
             telemetry.addLine("X [in]: " + (drivetrain.state.get(0, 0)));
             telemetry.addLine("Y [in]: " + (drivetrain.state.get(1, 0)));
             telemetry.addLine("Theta [deg]: " + Math.toDegrees(drivetrain.state.get(2, 0)));

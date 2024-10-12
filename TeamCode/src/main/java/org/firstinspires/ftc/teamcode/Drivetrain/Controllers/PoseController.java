@@ -4,17 +4,19 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Controllers.PID;
-import org.firstinspires.ftc.teamcode.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
 
 @Config
 public class PoseController {
     public PID xPID;
     public PID yPID;
     public PID tPID;
-    public static double kPX, kPY = 10;
-    public static double kPTheta= 1;
+    public static double kPX = 0.25;
+    public static double kPY = 0.3;
+    public static double kPTheta= 0.25;
     public static double kIX, kIY, kITheta = 0;
     public static double kDX, kDY, kDTheta = 0;
+
     public PoseController(){
         xPID = new PID(kPX, kIX, kDX);
         yPID = new PID(kPY, kIY, kDY);
