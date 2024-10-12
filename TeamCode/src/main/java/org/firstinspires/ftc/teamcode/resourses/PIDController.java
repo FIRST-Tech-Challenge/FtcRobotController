@@ -74,14 +74,6 @@ public class PIDController {
   }
   
   /**
-   * Used for getting the target in the turning code for teleop
-   * @return returns the target
-   */
-  public double getTarget() {
-    return target;
-  }
-  
-  /**
    * used to get the power output from the update function.
    * @return type double which is the power of the motor, range of -1.0 ~ 1.0
    */

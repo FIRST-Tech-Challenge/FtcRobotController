@@ -13,8 +13,6 @@ public class MecanumDriveTrain {
 
     double speedMultiplier = 1;
 
-    private boolean fieldCentricDriving = true;
-    
     /**
      * constructor for mecanum drive train
      * -assigns motors from hardware map
@@ -101,7 +99,6 @@ public class MecanumDriveTrain {
      * @param forwardPower  amount it goes forward
      * @param sidewaysPower amount it goes sideways
      * @param turnPower     amount it turns
-     * @param robotHeading  yaw angle of robot
      */
     public void setDrivePower(double forwardPower, double sidewaysPower, double turnPower, double robotHeading) {
         // Field Centric Driving aligns all robot movements with the player's perspective from the field, rather than the robot's
@@ -115,6 +112,7 @@ public class MecanumDriveTrain {
         motorFR.setPower(Range.clip(forwardPower - sidewaysPower + turnPower, -1.0, 1.0) * speedMultiplier);
         motorBL.setPower(Range.clip(forwardPower - sidewaysPower - turnPower, -1.0, 1.0) * speedMultiplier);
         motorBR.setPower(Range.clip(forwardPower + sidewaysPower + turnPower, -1.0, 1.0) * speedMultiplier);
+
     }
 }
 
