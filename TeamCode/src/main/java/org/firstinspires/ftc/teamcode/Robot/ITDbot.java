@@ -12,7 +12,7 @@ public class ITDbot extends Robot {
 
 
     public void Init(HardwareMap hardwareMap){
-        super.init(hardwareMap);
+        super.init(hardwareMap, 0, 0, 0);
         derivativeConstantAngle = derivativeConstantAngleDef;
         proportionalConstantAngle = proportionalConstantAngleDef;
     }
