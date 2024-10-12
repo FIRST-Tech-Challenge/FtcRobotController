@@ -73,16 +73,16 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftSlide = null;
-    private DcMotor rightSlide = null;
+    private DcMotor leftSlide;
+    private DcMotor rightSlide;
 
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    public DcMotor armMotor = null; //the arm motor
-    public CRServo intake = null; //the active intake servo
-    public Servo wrist = null; //the wrist servo
+    private DcMotor leftFrontDrive;
+    private DcMotor leftBackDrive ;
+    private DcMotor rightFrontDrive;
+    private DcMotor rightBackDrive;
+    public DcMotor armMotor; //the arm motor
+    public CRServo intake; //the active intake servo
+    public Servo wrist; //the wrist servo
 
 
     /* This constant is the number of encoder ticks for each degree of rotation of the arm.
@@ -219,6 +219,7 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
         /* Run until the driver presses stop */
         while (opModeIsActive()) {
             if (gamepad2.dpad_up) {
+
                 leftSlide.setTargetPosition(3000);
                 leftSlide.setPower(3.0);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -266,7 +267,6 @@ public class GoBILDAStarterKitRobotTeleop extends LinearOpMode {
                 leftBackPower /= max;
                 rightBackPower /= max;
             }
-
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
