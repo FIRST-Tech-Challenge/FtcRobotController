@@ -24,7 +24,13 @@ public class Teleop_Live_ITD extends LinearOpMode {
     DcMotor fl = null;
     DcMotor fr = null;
     DcMotor br = null;
-
+    DcMotor m0 = null;
+    DcMotor m1 = null;
+    DcMotor m2 = null;
+    DcMotor m3 = null;
+    Servo s1 = null;
+    Servo s2 = null;
+    Servo s3 = null;
     float left1Y, right1Y,left1X,right1X;
     float left2Y, right2Y, left2X, right2X;
     boolean flag_correction = true;
@@ -36,15 +42,13 @@ public class Teleop_Live_ITD extends LinearOpMode {
         // Variable Initialization
         BHI260IMU.Parameters myIMUParameters;
         Orientation myRobotOrientation;
-        telemetry.setAutoClear(false);
-        telemetry.addData("Program Status:", "Initialized");
 
         // IMU in the control hub
         imu = hardwareMap.get(BHI260IMU.class,"imu");
 
         // Start imu initialization
         myIMUParameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD )
+                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,RevHubOrientationOnRobot.UsbFacingDirection.UP )
         );
         imu.initialize(myIMUParameters);
         imu.resetYaw();
@@ -71,10 +75,17 @@ public class Teleop_Live_ITD extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m0 = hardwareMap.get(DcMotor.class, "M0");
+        m1 = hardwareMap.get(DcMotor.class, "M1");
+        m2 = hardwareMap.get(DcMotor.class, "M2");
+        m3 = hardwareMap.get(DcMotor.class, "M3");
+        s1 = hardwareMap.get(Servo.class, "s1");
+        s2 = hardwareMap.get(Servo.class, "s2");
+        s3 = hardwareMap.get(Servo.class, "s3");
+        s1.setDirection(Servo.Direction.FORWARD);
+        s2.setDirection(Servo.Direction.FORWARD);
+        s3.setDirection(Servo.Direction.REVERSE);
+
 
 
         // Initial settings
@@ -86,6 +97,8 @@ public class Teleop_Live_ITD extends LinearOpMode {
         // Start opMode
         telemetry.addData("Mode", "waiting");
         telemetry.update();
+
+        //s2.(0.147) is the init ( flat position )
 
         waitForStart();
         while (opModeIsActive()) {
@@ -104,14 +117,79 @@ public class Teleop_Live_ITD extends LinearOpMode {
 
 
             // B for gamepad 1 and 2
+            if (gamepad1.b) {
+                m2.setPower(-1);
+                m3.setPower(1);
+            } else {
+                m2.setPower(0);
+                m3.setPower(0);
+            }
+            if (gamepad2.b) {
+                m2.setPower(-1);
+                m3.setPower(1);
+            } else {
+                m2.setPower(0);
+                m3.setPower(0);
+            }
+            // A for gamepad 1 and 2
+            if (gamepad1.a) {
 
+                m2.setPower(1);
+
+            } else {
+               m2.setPower(0);
 
 
             }
 
 
+
+            }
+            // Y for gamepad 1 and 2
+            if (gamepad1.y) {
+                s3.setPosition(0);
+
+            }
+            if (gamepad2.y) {
+                s3.setPosition(0);
+
+            }
+            // left bumper for gamepad 1 and 2
+
+            // X for gamepad 1 and 2
+            if (gamepad1.x) {
+                intake_constant = !intake_constant;
+                telemetry.addData("intake",intake_constant);
+                telemetry.update();
+                s1.setDirection(Servo.Direction.FORWARD);
+
+
+                if (intake_constant == true) {
+                    s1.setPosition(0);
+                }
+                if ( intake_constant == false){
+                    s1.setPosition(1);
+                }
+            }
+
+
+            // left trigger for gamepad 1 and 2
+            if (gamepad1.left_trigger > 0.5) {
+                s2.setPosition(0.147);
+            }
+            if (gamepad2.left_trigger > 0.5) {
+                s2.setPosition(0.147);
+            }
+            // right trigger for gamepad 1 and 2
+            if (gamepad1.right_trigger > 0.5) {
+                s2.setPosition(0.427);
+            }
+            if (gamepad2.right_trigger > 0.5) {
+                s2.setPosition(0.427);
+            }
+
             //Forwards/Backward for gamepad 1
-            if ((left1Y != 0 || left1X !=0) && (right1Y == 0) && (left2Y == 0 && left2X ==0)) {
+            if ((left1Y != 0 || left1X !=0) && (Math.abs(right1Y) <= 0.1) && (true || left2Y == 0 && left2X ==0)) {
                 double THRESH_WM_POWER = 1.0; // max abs wheel power
                 myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 double correction = myRobotOrientation.thirdAngle / 180.0;
@@ -134,11 +212,9 @@ public class Teleop_Live_ITD extends LinearOpMode {
                 frPow = (frPow/maxPow)*THRESH_WM_POWER;
                 brPow = (brPow/maxPow)*THRESH_WM_POWER;
 
-
-
                 fl.setPower(Range.clip(flPow, -THRESH_WM_POWER, THRESH_WM_POWER));
                 bl.setPower(Range.clip(blPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                fr.setPower(Range.clip(frPow, -THRESH_WM_POWER, THRESH_WM_POWER));
+                fr.setPower(Range.clip(-frPow, -THRESH_WM_POWER, THRESH_WM_POWER));
                 br.setPower(Range.clip(brPow, -THRESH_WM_POWER, THRESH_WM_POWER));
 
                 telemetry.addData("first Angle", myRobotOrientation.firstAngle);
@@ -157,10 +233,15 @@ public class Teleop_Live_ITD extends LinearOpMode {
                 telemetry.addData("br Enc Count", br.getCurrentPosition());
                 telemetry.update();
                 telemetry.update();
+            } else {
+                fl.setPower(0);
+                bl.setPower(0);
+                fr.setPower(0);
+                br.setPower(0);
             }
             // forward/backword for gamepad 2
-            if ((left2Y != 0 || left2X !=0) && (right2Y == 0) && (left1Y == 0 && left1X ==0)) {
-                double THRESH_WM_POWER = 1.0; // max abs wheel power
+            if (false || (left2Y != 0 || left2X !=0) && (true || ((right2Y == 0) && (left1Y == 0 && left1X ==0)))) {
+                double THRESH_WM_POWER = 0.5; // max abs wheel power
                 myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 double correction = myRobotOrientation.thirdAngle / 180.0;
                 correction = (10.0 * correction * Math.abs(left2Y) / THRESH_WM_POWER);
@@ -352,7 +433,7 @@ public class Teleop_Live_ITD extends LinearOpMode {
             }
 
             // turning for gamepad 1 and 2
-            if (left1Y == 0) {
+            if (false && left1Y == 0) {
                 //turning
                 double THRESH_WM_POWER_FORTURN = 0.8;
                 fl.setPower(Range.clip(right1X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
@@ -365,7 +446,7 @@ public class Teleop_Live_ITD extends LinearOpMode {
                 //imu.resetYaw();
                 idle();
             }
-            if (left2Y == 0) {
+            if (false && left2Y == 0) {
                 //turning
                 double THRESH_WM_POWER_FORTURN = 0.8;
                 fl.setPower(Range.clip(right2X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));

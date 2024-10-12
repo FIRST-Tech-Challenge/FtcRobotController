@@ -24,17 +24,30 @@ public class Teleop_live_2controllers extends LinearOpMode {
     DcMotor fl = null;
     DcMotor fr = null;
     DcMotor br = null;
-    DcMotor m0 = null;
-    DcMotor m1 = null;
+//    DcMotor m0 = null;
+//    DcMotor m1 = null;
     DcMotor m2 = null;
-    DcMotor m3 = null;
+//    DcMotor m3 = null;
     Servo s1 = null;
-    Servo s2 = null;
-    Servo s3 = null;
-    float left1Y, right1Y,left1X,right1X;
-    float left2Y, right2Y, left2X, right2X;
+//    Servo s2 = null;
+//    Servo s3 = null;
+    double left1Y, right1Y,left1X,right1X;
+    double left2Y, right2Y, left2X, right2X;
     boolean flag_correction = true;
     boolean intake_constant = false;
+    boolean gamepad1x_previous = false;
+    double m2Power, blPower, flPower,brPower, frPower;
+    static final double DEADZONE = 0.1;
+
+    private double clampDeadzone(double val) {
+        if (Math.abs(val) < DEADZONE) {
+            return 0;
+        } else {
+            return val;
+        }
+    }
+
+
     // called when init button is  pressed.
     @Override
     public void runOpMode() throws InterruptedException {
@@ -75,17 +88,23 @@ public class Teleop_live_2controllers extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        m0 = hardwareMap.get(DcMotor.class, "M0");
-        m1 = hardwareMap.get(DcMotor.class, "M1");
+//        m0 = hardwareMap.get(DcMotor.class, "M0");
+//        m1 = hardwareMap.get(DcMotor.class, "M1");
         m2 = hardwareMap.get(DcMotor.class, "M2");
-        m3 = hardwareMap.get(DcMotor.class, "M3");
+//        m3 = hardwareMap.get(DcMotor.class, "M3");
         s1 = hardwareMap.get(Servo.class, "s1");
-        s2 = hardwareMap.get(Servo.class, "s2");
-        s3 = hardwareMap.get(Servo.class, "s3");
+//        s2 = hardwareMap.get(Servo.class, "s2");
+//        s3 = hardwareMap.get(Servo.class, "s3");
         s1.setDirection(Servo.Direction.FORWARD);
-        s2.setDirection(Servo.Direction.FORWARD);
-        s3.setDirection(Servo.Direction.REVERSE);
-
+//        s2.setDirection(Servo.Direction.FORWARD);
+//        s3.setDirection(Servo.Direction.REVERSE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        m1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        m3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Initial settings
@@ -97,129 +116,70 @@ public class Teleop_live_2controllers extends LinearOpMode {
         // Start opMode
         telemetry.addData("Mode", "waiting");
         telemetry.update();
-        s2.setPosition(0.147);
-        //s2.(0.147) is the init ( flat position )
-        s1.setPosition(0.2);
+
+
+
         waitForStart();
         while (opModeIsActive()) {
 
             // initiate the left and right variables
-            left1Y = gamepad1.left_stick_y * -1;
-            left1X = gamepad1.left_stick_x;
-            right1Y = gamepad1.right_stick_y * -1;
-            right1X = gamepad1.right_stick_x;
+            left1Y = this.clampDeadzone(gamepad1.left_stick_y * -1);
+            left1X = this.clampDeadzone(gamepad1.left_stick_x);
+            right1Y = this.clampDeadzone(gamepad1.right_stick_y * -1);
+            right1X = this.clampDeadzone(gamepad1.right_stick_x);
 
-            left2Y = gamepad2.left_stick_y * -1;
-            left2X = gamepad2.left_stick_x;
-            right2Y = gamepad2.right_stick_y * -1;
-            right2X = gamepad2.right_stick_x;
+            left2Y = this.clampDeadzone(gamepad2.left_stick_y * -1);
+            left2X = this.clampDeadzone(gamepad2.left_stick_x);
+            right2Y = this.clampDeadzone(gamepad2.right_stick_y * -1);
+            right2X = this.clampDeadzone(gamepad2.right_stick_x);
 
 
 
-            // B for gamepad 1 and 2
-            if (gamepad1.b) {
-                m2.setPower(-1);
-                m3.setPower(1);
+
+
+
+            // Gamepad1 Linear Slide movement
+            if(gamepad1.a && gamepad1.b){
+                m2Power = 0;
+            } else if (gamepad1.a) {
+                m2Power = 1;
+            } else if (gamepad1.b) {
+                m2Power = -0.5;
             } else {
-                m2.setPower(0);
-                m3.setPower(0);
+                m2Power = 0;
             }
-            if (gamepad2.b) {
-                m2.setPower(-1);
-                m3.setPower(1);
-            } else {
-                m2.setPower(0);
-                m3.setPower(0);
-            }
-            // A for gamepad 1 and 2
-            if (gamepad1.a) {
 
-                m2.setPower(1);
-                m3.setPower(-1);
-            } else {
-                m2.setPower(0);
-                m3.setPower(0);
 
-            }
-            if (gamepad2.a) {
-
-                m2.setPower(1);
-                m3.setPower(-1);
-            } else {
-                m2.setPower(0);
-                m3.setPower(0);
-
-            }
-            // Y for gamepad 1 and 2
-            if (gamepad1.y) {
-                s3.setPosition(0);
-
-            }
-            if (gamepad2.y) {
-                s3.setPosition(0);
-
-            }
-            // left bumper for gamepad 1 and 2
-            if (gamepad1.left_bumper) {
-                s1.setPosition(0.4);
-            }
-            if (gamepad2.left_bumper) {
-                s1.setPosition(0.4);
-            }
-            // right bumper for gamepad 1 and 2
-            if (gamepad1.right_bumper) {
-                s1.setPosition(0.2);
-            }
-            if (gamepad2.right_bumper) {
-                s1.setPosition(0.2);
-            }
-            // X for gamepad 1 and 2
-            if (gamepad1.x) {
+            // Intake
+            if (gamepad1.x != gamepad1x_previous && gamepad1.x ) {
                 intake_constant = !intake_constant;
                 telemetry.addData("intake",intake_constant);
                 telemetry.update();
-                double THRESH_WM_POWER_INTAKE = 1.0; // max abs wheel power
-                sleep(500);
-                if (intake_constant == true) {
-                    m0.setPower(-THRESH_WM_POWER_INTAKE);
-                    m1.setPower(THRESH_WM_POWER_INTAKE);
+                s1.setDirection(Servo.Direction.FORWARD);
+
+
+                if (intake_constant) {
+                    s1.setPosition(0);
+                    //Extend
                 } else {
-                    m0.setPower(0);
-                    m1.setPower(0);
+                    s1.setPosition(1);
+                    //Retract
                 }
             }
-            if (gamepad2.x) {
-                intake_constant = !intake_constant;
-                telemetry.addData("intake",intake_constant);
-                telemetry.update();
-                double THRESH_WM_POWER_INTAKE = 1.0; // max abs wheel power
-                sleep(500);
-                if (intake_constant == true) {
-                    m0.setPower(-THRESH_WM_POWER_INTAKE);
-                    m1.setPower(THRESH_WM_POWER_INTAKE);
-                } else {
-                    m0.setPower(0);
-                    m1.setPower(0);
-                }
-            }
+            gamepad1x_previous = gamepad1.x;
 
-            // left trigger for gamepad 1 and 2
-            if (gamepad1.left_trigger > 0.5) {
-                s2.setPosition(0.147);
-            }
-            if (gamepad2.left_trigger > 0.5) {
-                s2.setPosition(0.147);
-            }
-            // right trigger for gamepad 1 and 2
-            if (gamepad1.right_trigger > 0.5) {
-                s2.setPosition(0.427);
-            }
-            if (gamepad2.right_trigger > 0.5) {
-                s2.setPosition(0.427);
-            }
-
+            boolean leftStickActive = (left1X != 0) || (left1Y != 0);
+            boolean rightStickActive = right1X != 0;
             //Forwards/Backward for gamepad 1
-            if ((left1Y != 0 || left1X !=0) && (Math.abs(right1Y) <= 0.1) && (true || left2Y == 0 && left2X ==0)) {
+            if (leftStickActive == rightStickActive) {
+                flPower = 0;
+                frPower = 0;
+                brPower = 0;
+                blPower = 0;
+
+
+            } else if (leftStickActive) {
+
                 double THRESH_WM_POWER = 1.0; // max abs wheel power
                 myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 double correction = myRobotOrientation.thirdAngle / 180.0;
@@ -242,10 +202,10 @@ public class Teleop_live_2controllers extends LinearOpMode {
                 frPow = (frPow/maxPow)*THRESH_WM_POWER;
                 brPow = (brPow/maxPow)*THRESH_WM_POWER;
 
-                fl.setPower(Range.clip(flPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                bl.setPower(Range.clip(blPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                fr.setPower(Range.clip(-frPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                br.setPower(Range.clip(brPow, -THRESH_WM_POWER, THRESH_WM_POWER));
+                flPower = (Range.clip(flPow, -THRESH_WM_POWER, THRESH_WM_POWER));
+                blPower = (Range.clip(blPow, -THRESH_WM_POWER, THRESH_WM_POWER));
+                frPower = (Range.clip(-frPow, -THRESH_WM_POWER, THRESH_WM_POWER));
+                brPower = (Range.clip(brPow, -THRESH_WM_POWER, THRESH_WM_POWER));
 
                 telemetry.addData("first Angle", myRobotOrientation.firstAngle);
                 telemetry.addData("second Angle", myRobotOrientation.secondAngle);
@@ -264,234 +224,129 @@ public class Teleop_live_2controllers extends LinearOpMode {
                 telemetry.update();
                 telemetry.update();
             } else {
-                fl.setPower(0);
-                bl.setPower(0);
-                fr.setPower(0);
-                br.setPower(0);
-            }
-            // forward/backword for gamepad 2
-            if (false || (left2Y != 0 || left2X !=0) && (true || ((right2Y == 0) && (left1Y == 0 && left1X ==0)))) {
-                double THRESH_WM_POWER = 0.5; // max abs wheel power
+                //rightstick active
+                double THRESH_WM_POWER_FORTURN = 0.8;
+                flPower = (Range.clip(right1X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
+                blPower = (Range.clip(right1X, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
+                frPower = (Range.clip(right1X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
+                brPower = (Range.clip(-right1X, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
                 myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-                double correction = myRobotOrientation.thirdAngle / 180.0;
-                correction = (10.0 * correction * Math.abs(left2Y) / THRESH_WM_POWER);
-                if (flag_correction == false) {
-                    correction = 0;
-                }
-                correction = 0;
-                double maxPow = THRESH_WM_POWER;
-                double flPow = left2Y + left2X + correction;
-                maxPow = Math.max(maxPow,Math.abs(flPow));
-                double blPow = left2Y - left2X + correction;
-                maxPow = Math.max(maxPow,Math.abs(blPow));
-                double frPow = left2Y - left2X - correction;
-                maxPow = Math.max(maxPow,Math.abs(frPow));
-                double brPow = left2Y + left2X - correction;
-                maxPow = Math.max(maxPow,Math.abs(brPow));
-                flPow = (flPow/maxPow)*THRESH_WM_POWER;
-                blPow = (blPow/maxPow)*THRESH_WM_POWER;
-                frPow = (frPow/maxPow)*THRESH_WM_POWER;
-                brPow = (brPow/maxPow)*THRESH_WM_POWER;
-
-                fl.setPower(Range.clip(flPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                bl.setPower(Range.clip(blPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                fr.setPower(Range.clip(frPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                br.setPower(Range.clip(brPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-
-                telemetry.addData("first Angle", myRobotOrientation.firstAngle);
-                telemetry.addData("second Angle", myRobotOrientation.secondAngle);
-                telemetry.addData("third Angle", myRobotOrientation.thirdAngle);
-                telemetry.addData("correction", correction);
-                telemetry.addData("leftY", left2Y);
-                telemetry.addData("leftX",left2X);
-                telemetry.addData("flPow", flPow);
-                telemetry.addData("blPow", blPow);
-                telemetry.addData("frPow", frPow);
-                telemetry.addData("brPow", brPow);
-                telemetry.addData("fl Enc Count", fl.getCurrentPosition());
-                telemetry.addData("bl Enc Count", bl.getCurrentPosition());
-                telemetry.addData("fr Enc Count", fr.getCurrentPosition());
-                telemetry.addData("br Enc Count", br.getCurrentPosition());
+                telemetry.addData("THIS IS THE ANGLE",myRobotOrientation.thirdAngle);
                 telemetry.update();
-                telemetry.update();
+                //imu.resetYaw();
+                idle();
             }
+
 
             // DPad - down gamepad 1 and 2
-            if (gamepad1.dpad_down) {
-                imu.resetYaw();
-                bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                fl.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
-                fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                br.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
-
-                bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-            if (gamepad2.dpad_down) {
-                imu.resetYaw();
-                bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                fl.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
-                fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                br.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
-
-                bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
+//            if (gamepad1.dpad_down) {
+//                imu.resetYaw();
+//                bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                fl.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+//                fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                br.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+//
+//                bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            }
+//            if (gamepad2.dpad_down) {
+//                imu.resetYaw();
+//                bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                fl.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+//                fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                br.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+//
+//                bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            }
 
             //DPad - up for gamepad 1 and 2
-            if (gamepad1.dpad_up) {
-                flag_correction = !flag_correction;
-                boolean flag_2 = flag_correction;
-                flag_correction = flag_2;
-                sleep(1000);
-                telemetry.addData("Correction status", flag_correction);
-                telemetry.update();
-            }
-            if (gamepad2.dpad_up) {
-                flag_correction = !flag_correction;
-                boolean flag_2 = flag_correction;
-                flag_correction = flag_2;
-                sleep(1000);
-                telemetry.addData("Correction status", flag_correction);
-                telemetry.update();
-            }
+//            if (gamepad1.dpad_up) {
+//                flag_correction = !flag_correction;
+//                boolean flag_2 = flag_correction;
+//                flag_correction = flag_2;
+//                sleep(1000);
+//                telemetry.addData("Correction status", flag_correction);
+//                telemetry.update();
+//            }
+//            if (gamepad2.dpad_up) {
+//                flag_correction = !flag_correction;
+//                boolean flag_2 = flag_correction;
+//                flag_correction = flag_2;
+//                sleep(1000);
+//                telemetry.addData("Correction status", flag_correction);
+//                telemetry.update();
+//            }
 
             //sideways: gamepad 1 and 2
-            if (gamepad1.dpad_left || gamepad1.dpad_right) {
-                double directionFactor = 1;
-                if (gamepad1.dpad_right) {
-                    directionFactor = -1;
-                }
-                double THRESH_WM_POWER_SIDEWAYS = 0.8;
-                double frEC = fr.getCurrentPosition();
-                double blEC = bl.getCurrentPosition();
-                double flEC = fl.getCurrentPosition();
-                double brEC = br.getCurrentPosition();
-                double frCorr = 1;
-                double blCorr = 1;
-                double flCorr = 1;
-                double brCorr = 1;
-                if (frEC != 0 && (flag_correction == true)) {
-                    frEC = Math.abs(frEC);
-                    double refEC = frEC;
-                    blEC = Math.abs(blEC);
-                    refEC = Math.min(refEC, blEC);
-                    flEC = Math.abs(flEC);
-                    refEC = Math.min(refEC, flEC);
-                    brEC = Math.abs(brEC);
-                    refEC = Math.min(refEC, brEC);
-                    if (refEC == 0) {
-                        refEC = 1;
-                    }
-                    frCorr = refEC / frEC;
-                    blCorr = refEC / blEC;
-                    flCorr = refEC / flEC;
-                    brCorr = refEC / brEC;
-                }
-                double flPow = directionFactor * -THRESH_WM_POWER_SIDEWAYS * flCorr;
-                double blPow = directionFactor * THRESH_WM_POWER_SIDEWAYS * blCorr;
-                double frPow = directionFactor * THRESH_WM_POWER_SIDEWAYS * frCorr;
-                double brPow = directionFactor * -THRESH_WM_POWER_SIDEWAYS * brCorr;
-                fl.setPower(flPow);
-                bl.setPower(blPow);
-                fr.setPower(frPow);
-                br.setPower(brPow);
-
-                telemetry.addData("fl Pow", flPow);
-                telemetry.addData("bl Pow", blPow);
-                telemetry.addData("fr Pow", frPow);
-                telemetry.addData("br Pow", brPow);
-                telemetry.addData("fl Enc Count", fl.getCurrentPosition());
-                telemetry.addData("bl Enc Count", bl.getCurrentPosition());
-                telemetry.addData("fr Enc Count", fr.getCurrentPosition());
-                telemetry.addData("br Enc Count", br.getCurrentPosition());
-                telemetry.update();
-            }
-            if (gamepad2.dpad_left || gamepad2.dpad_right) {
-                double directionFactor = 1;
-                if (gamepad2.dpad_right) {
-                    directionFactor = -1;
-                }
-                double THRESH_WM_POWER_SIDEWAYS = 0.8;
-                double frEC = fr.getCurrentPosition();
-                double blEC = bl.getCurrentPosition();
-                double flEC = fl.getCurrentPosition();
-                double brEC = br.getCurrentPosition();
-                double frCorr = 1;
-                double blCorr = 1;
-                double flCorr = 1;
-                double brCorr = 1;
-                if (frEC != 0 && (flag_correction == true)) {
-                    frEC = Math.abs(frEC);
-                    double refEC = frEC;
-                    blEC = Math.abs(blEC);
-                    refEC = Math.min(refEC, blEC);
-                    flEC = Math.abs(flEC);
-                    refEC = Math.min(refEC, flEC);
-                    brEC = Math.abs(brEC);
-                    refEC = Math.min(refEC, brEC);
-                    if (refEC == 0) {
-                        refEC = 1;
-                    }
-                    frCorr = refEC / frEC;
-                    blCorr = refEC / blEC;
-                    flCorr = refEC / flEC;
-                    brCorr = refEC / brEC;
-                }
-                double flPow = directionFactor * -THRESH_WM_POWER_SIDEWAYS * flCorr;
-                double blPow = directionFactor * THRESH_WM_POWER_SIDEWAYS * blCorr;
-                double frPow = directionFactor * THRESH_WM_POWER_SIDEWAYS * frCorr;
-                double brPow = directionFactor * -THRESH_WM_POWER_SIDEWAYS * brCorr;
-                fl.setPower(flPow);
-                bl.setPower(blPow);
-                fr.setPower(frPow);
-                br.setPower(brPow);
-
-                telemetry.addData("fl Pow", flPow);
-                telemetry.addData("bl Pow", blPow);
-                telemetry.addData("fr Pow", frPow);
-                telemetry.addData("br Pow", brPow);
-                telemetry.addData("fl Enc Count", fl.getCurrentPosition());
-                telemetry.addData("bl Enc Count", bl.getCurrentPosition());
-                telemetry.addData("fr Enc Count", fr.getCurrentPosition());
-                telemetry.addData("br Enc Count", br.getCurrentPosition());
-                telemetry.update();
-            }
+//            if (gamepad1.dpad_left || gamepad1.dpad_right) {
+//                double directionFactor = 1;
+//                if (gamepad1.dpad_right) {
+//                    directionFactor = -1;
+//                }
+//                double THRESH_WM_POWER_SIDEWAYS = 0.8;
+//                double frEC = fr.getCurrentPosition();
+//                double blEC = bl.getCurrentPosition();
+//                double flEC = fl.getCurrentPosition();
+//                double brEC = br.getCurrentPosition();
+//                double frCorr = 1;
+//                double blCorr = 1;
+//                double flCorr = 1;
+//                double brCorr = 1;
+//                if (frEC != 0 && (flag_correction == true)) {
+//                    frEC = Math.abs(frEC);
+//                    double refEC = frEC;
+//                    blEC = Math.abs(blEC);
+//                    refEC = Math.min(refEC, blEC);
+//                    flEC = Math.abs(flEC);
+//                    refEC = Math.min(refEC, flEC);
+//                    brEC = Math.abs(brEC);
+//                    refEC = Math.min(refEC, brEC);
+//                    if (refEC == 0) {
+//                        refEC = 1;
+//                    }
+//                    frCorr = refEC / frEC;
+//                    blCorr = refEC / blEC;
+//                    flCorr = refEC / flEC;
+//                    brCorr = refEC / brEC;
+//                }
+//                double flPow = directionFactor * -THRESH_WM_POWER_SIDEWAYS * flCorr;
+//                double blPow = directionFactor * THRESH_WM_POWER_SIDEWAYS * blCorr;
+//                double frPow = directionFactor * THRESH_WM_POWER_SIDEWAYS * frCorr;
+//                double brPow = directionFactor * -THRESH_WM_POWER_SIDEWAYS * brCorr;
+//                fl.setPower(flPow);
+//                bl.setPower(blPow);
+//                fr.setPower(frPow);
+//                br.setPower(brPow);
+//
+//                telemetry.addData("fl Pow", flPow);
+//                telemetry.addData("bl Pow", blPow);
+//                telemetry.addData("fr Pow", frPow);
+//                telemetry.addData("br Pow", brPow);
+//                telemetry.addData("fl Enc Count", fl.getCurrentPosition());
+//                telemetry.addData("bl Enc Count", bl.getCurrentPosition());
+//                telemetry.addData("fr Enc Count", fr.getCurrentPosition());
+//                telemetry.addData("br Enc Count", br.getCurrentPosition());
+//                telemetry.update();
+//            }
 
             // turning for gamepad 1 and 2
-            if (false && left1Y == 0) {
-                //turning
-                double THRESH_WM_POWER_FORTURN = 0.8;
-                fl.setPower(Range.clip(right1X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                bl.setPower(Range.clip(right1X, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                fr.setPower(Range.clip(-right1X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                br.setPower(Range.clip(-right1X, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-                telemetry.addData("THIS IS THE ANGLE",myRobotOrientation.thirdAngle);
-                telemetry.update();
-                //imu.resetYaw();
-                idle();
-            }
-            if (false && left2Y == 0) {
-                //turning
-                double THRESH_WM_POWER_FORTURN = 0.8;
-                fl.setPower(Range.clip(right2X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                bl.setPower(Range.clip(right2X, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                fr.setPower(Range.clip(-right2X * 0.6, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                br.setPower(Range.clip(-right2X, -THRESH_WM_POWER_FORTURN, THRESH_WM_POWER_FORTURN));
-                myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-                telemetry.addData("THIS IS THE ANGLE",myRobotOrientation.thirdAngle);
-                telemetry.update();
-                //imu.resetYaw();
-                idle();
-            }
+
+
+            m2.setPower(m2Power);
+            bl.setPower(blPower);
+            br.setPower(brPower);
+            fl.setPower(flPower);
+            fr.setPower(frPower);
+
         }
 
     }
+
 
 
 }
