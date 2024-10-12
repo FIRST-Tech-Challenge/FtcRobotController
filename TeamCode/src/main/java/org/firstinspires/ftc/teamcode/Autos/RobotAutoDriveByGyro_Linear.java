@@ -139,10 +139,10 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     //Seymour wanted to try 0.8
     //Was .2 before
-    static final double     P_TURN_GAIN            = 0.2;     // Larger is more responsive, but also less stable.
+    static final double     P_TURN_GAIN            = 0.025;     // Larger is more responsive, but also less stable.
     //Seymour wanted to try .0003.
     //Was .003 before
-    static final double     P_DRIVE_GAIN           = 0.13;     // Larger is more responsive, but also less stable.
+    static final double     P_DRIVE_GAIN           = 0.0315;     // Larger is more responsive, but also less stable.
     public static final double COUNTS_PER_INCH_FIELD_CALIBRATION = 12/29.0;
     public double COUNTS_PER_INCH = COUNTS_PER_INCH_FIELD_CALIBRATION*((COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415));
 
@@ -213,13 +213,18 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //turnToHeading( TURN_SPEED, 90.0);// Turn  CW to -45 Degrees
         //- is to the right. + is to the left.
         //holdHeading( TURN_SPEED, -90.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
-        driveStraight(.1, 12, -90);
+        driveStraight(.3, 3, 0);
+        turnToHeading(.2, -90);
+        holdHeading(.2, -90, -90);
+
         sleep(500);
-        driveStraight(.1, -12, -90);
+        driveStraight(.3, 36, -90);
+        turnToHeading(.2 ,-180);
+        holdHeading(.2, -180, 0.5);
+        driveStraight(.3, 7, 0.5);
 
         //driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
-        //turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
-        //holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
+           // Hold  45 Deg heading for a 1/2 second
 
         //driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
         //turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
@@ -282,7 +287,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
             maxDriveSpeed = Math.abs(maxDriveSpeed);
-            moveRobot(maxDriveSpeed, 0);
+            moveRobot(maxDriveSpeed, turnSpeed);
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
@@ -296,8 +301,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.
-                moveRobot(maxDriveSpeed, turnSpeed);
-                //moveRobot(maxDriveSpeed, 0);
+                //moveRobot(maxDriveSpeed, turnSpeed);
+                moveRobot(maxDriveSpeed, 0);
 
                 // Display drive status for the driver.
                 sendTelemetry(true);
@@ -438,8 +443,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             BRSpeed /= max;
         }
 
-        FLDrive.setPower(FLSpeed);
-        FRDrive.setPower(FRSpeed);
+        FLDrive.setPower(FLSpeed * .47);
+        FRDrive.setPower(FRSpeed * .47);
         BLDrive.setPower(BLSpeed);
         BRDrive.setPower(BRSpeed);
     }
