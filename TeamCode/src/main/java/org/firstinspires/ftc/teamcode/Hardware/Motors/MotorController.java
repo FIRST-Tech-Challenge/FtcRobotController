@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Hardware.Motors;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class motorController extends DcMotorExComposition {
+import org.firstinspires.ftc.teamcode.Hardware.Motors.DcMotorExComposition;
+
+public class MotorController extends DcMotorExComposition {
     private double lastPower = 0;
     DcMotor motor = null;
     private double motorTolerance = 0.000001;
 
-    public motorController(DcMotor motor) {
+    public MotorController(DcMotor motor) {
         this.motor = motor;
     }
 

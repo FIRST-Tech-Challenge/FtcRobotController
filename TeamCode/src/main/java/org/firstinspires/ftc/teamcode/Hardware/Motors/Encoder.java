@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Hardware.Motors;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-public class Encoder extends DcMotorExComposition{
+import org.firstinspires.ftc.teamcode.Hardware.Motors.DcMotorExComposition;
+
+public class Encoder extends DcMotorExComposition {
     private DcMotorEx encoder;
     private int pos = 0;
     public Encoder(DcMotorEx encoder) {

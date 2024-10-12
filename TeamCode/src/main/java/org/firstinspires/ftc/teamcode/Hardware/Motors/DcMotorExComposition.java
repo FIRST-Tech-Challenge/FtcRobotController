@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware.Motors;
 
+
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -12,7 +13,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 public class DcMotorExComposition implements DcMotorEx {
     private DcMotorEx motor;
 
-    public void CachedMotor(){
+    public DcMotorExComposition(DcMotorEx motor) {
+        this.motor = motor;
+    }
+
+    public DcMotorExComposition() {
+    }
+
+    public void setPower(double power){
+        motor.setPower(power);
+    }
+
+    @Override
+    public double getPower() {
+        return motor.getPower();
     }
 
     @Override
@@ -22,210 +36,199 @@ public class DcMotorExComposition implements DcMotorEx {
 
     @Override
     public Direction getDirection() {
-        return null;
-    }
-
-    public void setPower(double power){
-        motor.setPower(power);
-    }
-
-    @Override
-    public double getPower() {
-        return 0;
+        return motor.getDirection();
     }
 
     @Override
     public void setMotorEnable() {
-
+        motor.setMotorEnable();
     }
 
     @Override
     public void setMotorDisable() {
-
+        motor.setMotorDisable();
     }
 
     @Override
     public boolean isMotorEnabled() {
-        return false;
+        return motor.isMotorEnabled();
     }
 
     @Override
     public void setVelocity(double angularRate) {
-
+        motor.setVelocity(angularRate);
     }
 
     @Override
     public void setVelocity(double angularRate, AngleUnit unit) {
-
+        motor.setVelocity(angularRate, unit);
     }
 
     @Override
-    public double getVelocity() {
-        return 0;
-    }
+    public double getVelocity() { return motor.getVelocity(); }
 
     @Override
     public double getVelocity(AngleUnit unit) {
-        return 0;
+        return motor.getVelocity(unit);
     }
 
     @Override
     public void setPIDCoefficients(RunMode mode, PIDCoefficients pidCoefficients) {
-
+        motor.setPIDCoefficients(mode, pidCoefficients);
     }
 
     @Override
     public void setPIDFCoefficients(RunMode mode, PIDFCoefficients pidfCoefficients) throws UnsupportedOperationException {
-
+        motor.setPIDFCoefficients(mode, pidfCoefficients);
     }
 
     @Override
     public void setVelocityPIDFCoefficients(double p, double i, double d, double f) {
-
+        motor.setVelocityPIDFCoefficients(p, i, d, f);
     }
 
     @Override
     public void setPositionPIDFCoefficients(double p) {
-
+        motor.setPositionPIDFCoefficients(p);
     }
 
     @Override
     public PIDCoefficients getPIDCoefficients(RunMode mode) {
-        return null;
+        return motor.getPIDCoefficients(mode);
     }
 
     @Override
     public PIDFCoefficients getPIDFCoefficients(RunMode mode) {
-        return null;
+        return motor.getPIDFCoefficients(mode);
     }
 
     @Override
     public void setTargetPositionTolerance(int tolerance) {
-
+        motor.setTargetPositionTolerance(tolerance);
     }
 
     @Override
     public int getTargetPositionTolerance() {
-        return 0;
+        return motor.getTargetPositionTolerance();
     }
 
     @Override
     public double getCurrent(CurrentUnit unit) {
-        return 0;
+        return motor.getCurrent(unit);
     }
 
     @Override
     public double getCurrentAlert(CurrentUnit unit) {
-        return 0;
+        return motor.getCurrentAlert(unit);
     }
 
     @Override
     public void setCurrentAlert(double current, CurrentUnit unit) {
-
+        motor.setCurrentAlert(current, unit);
     }
 
     @Override
     public boolean isOverCurrent() {
-        return false;
+        return motor.isOverCurrent();
     }
 
     @Override
     public MotorConfigurationType getMotorType() {
-        return null;
+        return motor.getMotorType();
     }
 
     @Override
     public void setMotorType(MotorConfigurationType motorType) {
-
+        motor.setMotorType(motorType);
     }
 
     @Override
     public DcMotorController getController() {
-        return null;
+        return motor.getController();
     }
 
     @Override
     public int getPortNumber() {
-        return 0;
+        return motor.getPortNumber();
     }
 
     @Override
     public void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {
-
+        motor.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
     @Override
     public ZeroPowerBehavior getZeroPowerBehavior() {
-        return null;
+        return motor.getZeroPowerBehavior();
     }
 
     @Override
     public void setPowerFloat() {
-
+        motor.setPowerFloat();
     }
 
     @Override
     public boolean getPowerFloat() {
-        return false;
+        return motor.getPowerFloat();
     }
 
     @Override
     public void setTargetPosition(int position) {
-
+        motor.setTargetPosition(position);
     }
 
     @Override
     public int getTargetPosition() {
-        return 0;
+        return motor.getTargetPosition();
     }
 
     @Override
     public boolean isBusy() {
-        return false;
+        return motor.isBusy();
     }
 
     @Override
     public int getCurrentPosition() {
-        return 0;
+        return motor.getCurrentPosition();
     }
 
     @Override
     public void setMode(RunMode mode) {
-
+        motor.setMode(mode);
     }
 
     @Override
     public RunMode getMode() {
-        return null;
+        return motor.getMode();
     }
 
     @Override
     public Manufacturer getManufacturer() {
-        return null;
+        return motor.getManufacturer();
     }
 
     @Override
     public String getDeviceName() {
-        return "";
+        return motor.getDeviceName();
     }
 
     @Override
     public String getConnectionInfo() {
-        return "";
+        return motor.getConnectionInfo();
     }
 
     @Override
     public int getVersion() {
-        return 0;
+        return motor.getVersion();
     }
 
     @Override
     public void resetDeviceConfigurationForOpMode() {
-
+        motor.resetDeviceConfigurationForOpMode();
     }
 
     @Override
     public void close() {
-
+        motor.close();
     }
 }
