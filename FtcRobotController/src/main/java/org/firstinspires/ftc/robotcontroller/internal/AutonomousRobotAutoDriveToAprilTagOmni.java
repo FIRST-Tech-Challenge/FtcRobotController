@@ -91,8 +91,7 @@ public class AutonomousRobotAutoDriveToAprilTagOmni extends LinearOpMode
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 18.0; //  this is how close the camera should get to the target (inches)
 
-    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
-    //  applied to the drive motors to correct the error.
+    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
     final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  e.g. Ramp up to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
