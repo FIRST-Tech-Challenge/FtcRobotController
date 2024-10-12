@@ -95,6 +95,7 @@ public class AutonDrivingFunctions extends LinearOpMode {
     double                  robotDesiredDirection   = 0.0;
     double                  directionError          = 0.0;
     double                  directionCorrectionModifier = 0.0;
+    double                  countsPerDegree         = 9.44;
 
     @Override
     public void runOpMode() {
@@ -155,8 +156,10 @@ public class AutonDrivingFunctions extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveForward(0.5,  100, 35.0);  // S1: Forward 47 Inches with 5 Sec timeout
-//        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+
+        turnLeft(0.5, 90);
+
+        //        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
 //        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         while (opModeIsActive()){
             getYaw();
@@ -255,10 +258,76 @@ public class AutonDrivingFunctions extends LinearOpMode {
 
     public void turnLeft(double turnSpeed,
                         double leftAngle){
-    //    leftFrontDrive.setPower(-turnSpeed);
-    //    leftBackDrive.setPower(-turnSpeed);
-    //    rightFrontDrive.setPower(turnSpeed);
-    //    rightBackDrive.setPower(turnSpeed);
+        if(robotDesiredDirection + leftAngle > 180){
+            robotDesiredDirection = robotDesiredDirection + leftAngle - 360;
+        }
+        else if (robotDesiredDirection + leftAngle < -180) {
+            robotDesiredDirection = robotDesiredDirection + leftAngle + 360;
+        }
+        else {
+            robotDesiredDirection = robotDesiredDirection + leftAngle;
+        }
+
+        double              turnTargetPosition      = leftFrontDrive.getCurrentPosition() - (int)leftAngle * countsPerDegree;
+
+
+        if (leftAngle > 0.0) {
+            leftFrontDrive.setPower(-turnSpeed);
+            leftBackDrive.setPower(-turnSpeed);
+            rightFrontDrive.setPower(turnSpeed);
+            rightBackDrive.setPower(turnSpeed);
+            while (opModeIsActive() && turnTargetPosition < leftFrontDrive.getCurrentPosition()) {
+            }
+
+        }
+        else {
+                leftFrontDrive.setPower(turnSpeed);
+                leftBackDrive.setPower(turnSpeed);
+                rightFrontDrive.setPower(-turnSpeed);
+                rightBackDrive.setPower(-turnSpeed);
+                while (opModeIsActive() && turnTargetPosition > leftFrontDrive.getCurrentPosition()){
+                };
+        }
+        sleep(250);
+//        leftFrontDrive.setPower(0.0);
+//        leftBackDrive.setPower(0.0);
+//        rightFrontDrive.setPower(0.0);
+//        rightBackDrive.setPower(0.0);
+//
+//        if(CURRENT_YAW > robotDesiredDirection){
+//            while (opModeIsActive() && CURRENT_YAW > robotDesiredDirection + 1.0){
+//                getYaw();
+//                leftFrontDrive.setPower(0.1);
+//                leftBackDrive.setPower(0.1);
+//                rightFrontDrive.setPower(-0.1);
+//                rightBackDrive.setPower(-0.1);
+//            }
+//        }
+//        else{
+//            while (opModeIsActive() && CURRENT_YAW < robotDesiredDirection - 1.0){
+//                getYaw();
+//                leftFrontDrive.setPower(-0.1);
+//                leftBackDrive.setPower(-0.1);
+//                rightFrontDrive.setPower(0.1);
+//                rightBackDrive.setPower(0.1);
+//            }
+//        }
+        while(opModeIsActive() && (Math.abs(CURRENT_YAW - robotDesiredDirection) > 1.0)) {
+            getYaw();
+            directionError = CURRENT_YAW - robotDesiredDirection;
+            directionCorrectionModifier = directionError * 0.02;
+            telemetry.addData("modifier", "%.2f Deg. (Heading)", directionCorrectionModifier);
+            telemetry.update();
+            leftFrontDrive.setPower(directionCorrectionModifier);
+            leftBackDrive.setPower(directionCorrectionModifier);
+            rightFrontDrive.setPower(-directionCorrectionModifier);
+            rightBackDrive.setPower(-directionCorrectionModifier);
+        }
+        leftFrontDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
+        rightFrontDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
+
     }
 
     public void getYaw(){
