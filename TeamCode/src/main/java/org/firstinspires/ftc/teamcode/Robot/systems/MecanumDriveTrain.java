@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class MecanumDriveTrain {
 
     DcMotor motorFL;
@@ -12,6 +14,8 @@ public class MecanumDriveTrain {
     DcMotor motorBR;
 
     double speedMultiplier = 1;
+    public boolean fieldCentricDriving = true;
+    private Telemetry telemetry;
 
     /**
      * constructor for mecanum drive train
@@ -20,8 +24,8 @@ public class MecanumDriveTrain {
      * -sets zero power behavior to brake
      * @param hardwareMap hardware map of robot
      */
-    public MecanumDriveTrain(HardwareMap hardwareMap) {
-
+    public MecanumDriveTrain(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
         motorFL = hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
@@ -102,7 +106,11 @@ public class MecanumDriveTrain {
      */
     public void setDrivePower(double forwardPower, double sidewaysPower, double turnPower, double robotHeading) {
         // Field Centric Driving aligns all robot movements with the player's perspective from the field, rather than the robot's
+        telemetry.addData("Field Centric Driving Value:", fieldCentricDriving);
+        telemetry.update();
         if (fieldCentricDriving) {
+            telemetry.addData("Field Centric Driving:", "Activated!!!");
+            telemetry.update();
             double temp = forwardPower * Math.cos(-robotHeading) + sidewaysPower * Math.sin(-robotHeading);
             sidewaysPower = -forwardPower * Math.sin(-robotHeading) + sidewaysPower * Math.cos(-robotHeading);
             forwardPower = temp;

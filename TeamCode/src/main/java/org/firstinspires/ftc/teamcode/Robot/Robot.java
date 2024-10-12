@@ -47,17 +47,16 @@ public class Robot {
     
     public double derivativeConstantAngle;
     public double proportionalConstantAngle;
-    
-    public Telemetry telemetry = null;
-    
+    public Telemetry telemetry;
     private boolean resettingImu = false;
     private double AutoStartAngle = 0;
     
     private double previousLoopTime, secondPreviousLoopTime;
-    
-    public void init(HardwareMap hardwareMap, double x, double y, double angle){
-        driveTrain = new MecanumDriveTrain(hardwareMap);
-        odometry = new Odometry(x,y,angle,telemetry);
+
+    public void init(HardwareMap hardwareMap, Telemetry telemetry, double x, double y, double angle){
+        this.telemetry = telemetry;
+        driveTrain = new MecanumDriveTrain(hardwareMap,telemetry);
+        odometry = new Odometry(x,y,angle,telemetry,hardwareMap);
     }
     
     public double getDeltaTime(){

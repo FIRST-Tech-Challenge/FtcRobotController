@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.resourses;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -51,7 +52,7 @@ public class Odometry {
    * @param robotAngle
    * @param telemetry
    */
-  public Odometry(double initX, double initY, double robotAngle, Telemetry telemetry){
+  public Odometry(double initX, double initY, double robotAngle, Telemetry telemetry, HardwareMap hardwareMap){
     this.initX = initX;
     this.initY = initY;
     robotX = initX;
@@ -59,6 +60,13 @@ public class Odometry {
     this.robotAngle = robotAngle;
     oldAngle = robotAngle;
     this.telemetry = telemetry;
+    imu = hardwareMap.get(IMU.class, "imu");
+    RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+    RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+    RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+    imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+
   }
   
   // this does all of the math to recalculate where to robot is.
