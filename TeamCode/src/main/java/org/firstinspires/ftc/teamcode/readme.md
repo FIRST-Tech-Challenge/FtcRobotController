@@ -15,8 +15,8 @@
 #### Servos
 |Port|Type|Name|
 |---:|---|---|
-|0 | | |
-|1 | | |
+|0 | Continous Rotation Servo | wrist |
+|1 | Continous Rotation Servo | intake |
 |2 | | |
 |3 | | |
 
@@ -45,7 +45,7 @@
 #### Motors
 |Port|Type|Name|
 |---:|---|---|
-|0 | | |
+|0 | REV Robotics 40:1 HD Hex Motor | armMotor |
 |1 | | |
 |2 | | |
 |3 | | |
