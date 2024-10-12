@@ -125,7 +125,7 @@ public class Drivebase {
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         FLDrive.setDirection(DcMotor.Direction.REVERSE);
-        FRDrive.setDirection(DcMotor.Direction.FORWARD);
+        FRDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -142,24 +142,36 @@ public class Drivebase {
     /**
      * For use in teleop, controlled by a controller.
      *
-     * @param yInput    Driving input. Negative is back, positive is forward. [-1, 1].
-     * @param xInput    Strafing input. Negative is left, positive is right. [-1, 1].
-     * @param turnInput Turning input. Negative is ccw, positive is clockwise. [-1, 1].
+     * @param axial    Driving input. Negative is back, positive is forward. [-1, 1].
+     * @param lateral    Strafing input. Negative is left, positive is right. [-1, 1].
+     * @param yaw Turning input. Negative is ccw, positive is clockwise. [-1, 1].
      */
-    public void driveRobot(double yInput, double xInput, double turnInput) {
-        double frontLeft = yInput + xInput + turnInput;
-        double frontRight = yInput - xInput - turnInput;
-        double backLeft = yInput - xInput + turnInput;
-        double backRight = yInput + xInput - turnInput;
+    public void driveRobot(double axial, double lateral, double yaw) {
+        double max;
 
-        double clamp = maxOf(1, frontLeft, frontRight, backLeft, backRight);
+        double leftFrontPower  = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower   = axial - lateral + yaw;
+        double rightBackPower  = axial + lateral - yaw;
 
-        setDrivePowers(
-                frontLeft / clamp,
-                frontRight / clamp,
-                backLeft / clamp,
-                backRight / clamp
-        );
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower  /= max;
+            rightFrontPower /= max;
+            leftBackPower   /= max;
+            rightBackPower  /= max;
+        }
+
+        FLDrive.setPower(leftFrontPower);
+        FRDrive.setPower(rightFrontPower);
+        BLDrive.setPower(leftBackPower);
+        BRDrive.setPower(rightBackPower);
     }
 
     /*
