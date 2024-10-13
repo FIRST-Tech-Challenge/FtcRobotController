@@ -117,8 +117,8 @@ public class HolonomicDrive extends LinearOpMode {
             //!!!!Using multiplier to slow Back wheels, attempt to make speeds match!!!!
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower*0.78);
-            rightBackDrive.setPower(rightBackPower*0.78);
+            leftBackDrive.setPower(leftBackPower*0.8);
+            rightBackDrive.setPower(rightBackPower*0.8);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
