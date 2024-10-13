@@ -69,22 +69,22 @@ public final class MecanumDrive {
         //public double inPerTick = 0.0029493101;
        // public double inPerTick = UnitConverter.convert(319.3, unit.CM,unit.INCHES);
 
-        public double inPerTick = UnitConverter.convert(315, unit.CM,unit.INCHES)/223141;
-        public double lateralInPerTick = 0.0004451232705132546;
+        public double inPerTick = UnitConverter.convert(315, unit.CM,unit.INCHES)/233443;
+        public double lateralInPerTick = 0.00040592559610416225;
 
 
         //public double trackWidthTicks = 4537.917767677472;
-        public double trackWidthTicks = 26659.622309920454;
+        public double trackWidthTicks = 27196.85534344257;
 
         // feedforward parameters (in tick units)
-        public double kS =  1.1320690251128793;
-        public double kV = 0.0001031437771245905;
-        public double kA = 0.000005;
+        public double kS =  1.1058503492532976;
+        public double kV = 0.00010326786392654877;
+        public double kA = 0.0000005;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
-        public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxWheelVel = 60;
+        public double minProfileAccel = -40;
+        public double maxProfileAccel = 60;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
@@ -92,12 +92,12 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 1;
-        public double lateralGain = 1;
-        public double headingGain = 1.2; // shared with turn
+        public double lateralGain = 0.9;
+        public double headingGain = 1.263; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+        public double headingVelGain = 0.75; // shared with turn
     }
 
     public static Params PARAMS = new Params();

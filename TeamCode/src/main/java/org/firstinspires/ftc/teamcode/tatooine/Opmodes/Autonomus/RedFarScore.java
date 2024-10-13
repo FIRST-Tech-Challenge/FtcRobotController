@@ -19,10 +19,27 @@ public class RedFarScore extends LinearOpMode {
         Pose2d beginPose = new Pose2d(12.09+3.5, -59.84, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder trajectoryAction1 = drive.actionBuilder(beginPose)
+
+
                 .splineTo(new Vector2d(10,-38),Math.toRadians(90))
                 .waitSeconds(1.5)
                 .strafeToSplineHeading(new Vector2d(8,-39),Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(-51,-53.5,Math.toRadians(0)),Math.toRadians(180));
+                .splineToSplineHeading(new Pose2d(-51,-53.5,Math.toRadians(0)),Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(0,-52),Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(44.3,-37.5,Math.toRadians(45)),Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(0,-47),Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(-30,-49,Math.toRadians(0)),Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-51,-52,Math.toRadians(0)),Math.toRadians(180))
+                .strafeTo(new Vector2d(0,-52))
+                .splineToSplineHeading(new Pose2d(56,-38,Math.toRadians(90)),Math.toRadians(0))
+                .strafeTo(new Vector2d(0,-52))
+                .splineToSplineHeading(new Pose2d(-51,-52,Math.toRadians(0)),Math.toRadians(180))
+                .strafeTo(new Vector2d(0,-52))
+                .splineToSplineHeading(new Pose2d(54,-30,Math.toRadians(0)),Math.toRadians(0))
+                .strafeTo(new Vector2d(0,-52))
+                .splineToSplineHeading(new Pose2d(-51,-52,Math.toRadians(0)),Math.toRadians(180))
+                .strafeTo(new Vector2d(56,-60));
+
 //                .strafeTo(new Vector2d(-52.5,-54))
 //                .strafeTo(new Vector2d(56.4, -54))
 //                .turnTo(Math.toRadians(90))
@@ -39,6 +56,7 @@ public class RedFarScore extends LinearOpMode {
 //                .strafeTo(new Vector2d(56.4, -54))
 //                .turnTo(Math.toRadians(90))
 //                .turnTo(Math.toRadians(180));
+
 
 
 
