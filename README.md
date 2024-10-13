@@ -3,6 +3,9 @@
 This repository is a template for our FtcRobotControllers.
 It is a fork of FTC's official [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController.git).
 Please feel free to modify this template as necessary.
+However, this template is meant for general code to be reused across seasons,
+so please refrain from putting anything year specific into this template
+(e.g. motor names or autonomous commands).
 
 # Creating templates using this template
 

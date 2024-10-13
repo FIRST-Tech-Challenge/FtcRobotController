@@ -2,20 +2,23 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.*;
 
-public class Mecanum extends Wheels {
+public class MecanumWheels extends Wheels {
     /* The DcMotors powering the wheels */
     private final DcMotor FRONT_LEFT_MOTOR;
     private final DcMotor FRONT_RIGHT_MOTOR;
     private final DcMotor BACK_LEFT_MOTOR;
     private final DcMotor BACK_RIGHT_MOTOR;
 
+
     private double WHEEL_GEAR_RATIO = -1.0;
 
-    public Mecanum(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
-        FRONT_LEFT_MOTOR = frontLeftMotor;
-        FRONT_RIGHT_MOTOR = frontRightMotor;
-        BACK_LEFT_MOTOR = backLeftMotor;
-        BACK_RIGHT_MOTOR = backRightMotor;
+    public MecanumWheels(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
+        super();
+        
+        this.FRONT_LEFT_MOTOR = frontLeftMotor;
+        this.FRONT_RIGHT_MOTOR = frontRightMotor;
+        this.BACK_LEFT_MOTOR = backLeftMotor;
+        this.BACK_RIGHT_MOTOR = backRightMotor;
 
         super.MOTORS.add(FRONT_LEFT_MOTOR);
         super.MOTORS.add(FRONT_RIGHT_MOTOR);
@@ -33,12 +36,7 @@ public class Mecanum extends Wheels {
     }
 
     /**
-     * Drive the mecanum wheels.
-     * 
-     * @param drivePower Forwards/backward movement of the robot
-     *                   Negative values are backwards, positive values are forwards
-     * @param turn       Rotation of the robot
-     *                   Negative is counterclockwise, positive is clockwise
+     * {@inheritDoc}
      */
     @Override
     public void drive(double drivePower, double turn) {
@@ -46,14 +44,7 @@ public class Mecanum extends Wheels {
     }
 
     /**
-     * Drive the mecanum wheels.
-     * 
-     * @param x    Sideways movement of the robot
-     *             Negative values are leftwards, positive values are rightwards
-     * @param y    Forwards/backward movement of the robot
-     *             Negative values are backwards, positive values are forwards
-     * @param turn Rotation of the robot
-     *             Negative is counterclockwise, positive is clockwise
+     * {@inheritDoc}
      */
     @Override
     public void drive(double x, double y, double turn) {
@@ -66,18 +57,13 @@ public class Mecanum extends Wheels {
     /**
      * {@inheritDoc}
     */
+    @Override
     public void driveDistance(double distance) {
-        drive(distance, 0);
+        driveDistance(distance, 0);
     }
 
     /**
-     * Drive the robot a certain distance in two dimensions.
-     * 
-     * @param forwardDistance  The distance that the robot travels forward in
-     *                         inches.
-     *                         Positive is forward and negative is backward.
-     * @param sidewaysDistance The distance that the robot travels sideways in inches.
-     *                         Negative is leftward and positive is rightward.
+     * {@inheritDoc}
      */
     @Override
     public void driveDistance(double forwardDistance, double sidewaysDistance) {
