@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class GyroBot extends PivotBot {
+public class GyroBot extends FourWheelDriveBot {
 
     BNO055IMU imu;
     public double startAngle = 0;

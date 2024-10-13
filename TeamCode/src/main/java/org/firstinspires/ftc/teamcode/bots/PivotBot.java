@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.bots;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class PivotBot extends FourWheelDriveBot{
+public class PivotBot extends GyroBot{
 
     public int slideTarget = 0;
     public DcMotorEx Motor = null;

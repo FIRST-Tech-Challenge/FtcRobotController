@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.bots.PivotBot;
 
 @TeleOp(name = "Drive")
 public class TeleOps extends LinearOpMode {
-    private GyroBot robot = new GyroBot(this);
+    private PivotBot robot = new PivotBot(this);
 
     @Override
     public void runOpMode() throws InterruptedException {
