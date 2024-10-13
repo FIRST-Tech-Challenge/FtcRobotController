@@ -46,9 +46,13 @@ public class MoveForwardPractice extends LinearOpMode{
             double lateral = gamepad1.left_stick_x;
             double yaw = gamepad1.right_stick_x;
             //Do appropriate movement for button state
-            double leftFrontPower  = axial + lateral + yaw;
+            //Up:1,0,0
+            //Left:0,1,0
+            //Down:-1,0,0
+            //Right:0,-1,0
+            double leftFrontPower  = axial - lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
+            double leftBackPower   = axial + lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
             //Send power to wheels
             double max;
