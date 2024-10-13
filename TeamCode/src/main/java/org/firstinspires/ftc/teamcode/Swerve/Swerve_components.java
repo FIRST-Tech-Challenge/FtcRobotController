@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
 import java.util.List;
 
-public class ComponentSwerve {
+public class Swerve_components {
 
     /* Declare OpMode members. */
     private LinearOpMode myOp = null;   // gain access to methods in the calling OpMode.
@@ -57,7 +57,7 @@ public class ComponentSwerve {
 
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
-    public ComponentSwerve(LinearOpMode opmode) {
+    public Swerve_components(LinearOpMode opmode) {
         myOp = opmode;
     }
 

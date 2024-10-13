@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Swerve Automation", group = "Swerve")
-public class SwerveAutomation extends LinearOpMode {
+public class SwerveTeleOp extends LinearOpMode {
 
     // Create a RobotHardware object to be used to access robot hardware.
     // Prefix any hardware functions with "robot." to access this class.
-    ComponentSwerve robot = new ComponentSwerve(this);
+    Swerve_components robot = new Swerve_components(this);
 
     @Override
     public void runOpMode() {
@@ -20,7 +20,7 @@ public class SwerveAutomation extends LinearOpMode {
         int turn = 0;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
-        robot.init();
+        robot.initRobot();
 
         // Send telemetry message to signify robot waiting;
         // Wait for the game to start (driver presses PLAY)
