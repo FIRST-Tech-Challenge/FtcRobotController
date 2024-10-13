@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Hardware.Motors;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class servoController{
+public class ServoController {
     private double lastPos = 0;
     Servo servo = null;
     private double servoTolerance = 0.001;
 
-    public servoController(Servo servo) {
+    public ServoController(Servo servo) {
         this.servo = servo;
     }
 

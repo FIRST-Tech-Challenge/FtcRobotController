@@ -18,7 +18,7 @@ import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.GeometricController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
-import org.firstinspires.ftc.teamcode.Drivetrain.Localization.TwoWheelOdometery;
+import org.firstinspires.ftc.teamcode.Drivetrain.Localizers.TwoWheelOdometery;
 import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
 
 public class Drivetrain {
@@ -172,7 +172,7 @@ public class Drivetrain {
             }
         };
     }
-    public Action followPurePursuit(double[][] coords) {
+    public Action followPath(double[][] coords) {
         return new Action() {
             //private boolean initialized = false;
 
