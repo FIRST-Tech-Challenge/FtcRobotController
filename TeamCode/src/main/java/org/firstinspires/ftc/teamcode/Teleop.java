@@ -7,6 +7,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Control Mapping
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *      Left Joystick X - Strafe
  *      Left Joystick Y - Forward Backward
  *      Right Joystick X - Pivot
+ *  GAMEPAD2
  *      Right Trigger - Lift Raise
  *      Left Trigger - Lift Lower
  *      Right Bumper - Extend Arm
@@ -29,6 +31,8 @@ public class Teleop extends LinearOpMode {
 
         private static final double MAX_EXTEND = 1200;
         private static final double MAX_PIVOT = 1200;
+        private ElapsedTime runtime = new ElapsedTime();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -105,6 +109,17 @@ public class Teleop extends LinearOpMode {
                 bot.setPivotPower(0.0);
             }
 
+            //Lower the pivot arms, to raise the robot up
+
+            if (gamepad1.dpad_up) {
+                bot.setPushoff(1.0);
+            }
+            else if (gamepad1.dpad_down) {
+                bot.setPushoff(-1.0);
+            }
+            else {
+                bot.setPushoff(0.0);
+            }
             //Telemetry Data
             telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
             telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
