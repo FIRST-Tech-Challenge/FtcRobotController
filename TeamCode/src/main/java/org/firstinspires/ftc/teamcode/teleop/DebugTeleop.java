@@ -72,8 +72,8 @@ public class DebugTeleop extends OpMode {
             verticalMovePower = 0;
             horizontalMovePower = 0;
         } else {
-            inputAngle = Math.atan2(moveYInput, moveXInput);
-            movementAngle = (Math.toDegrees(inputAngle) - 90) + absoluteYaw;
+            inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput));
+            movementAngle = (inputAngle - 90) + absoluteYaw;
             verticalMovePower = Math.cos(Math.toRadians(movementAngle));
             horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
         }
