@@ -91,8 +91,8 @@ public class Manual  extends LinearOpMode{
         // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
         // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
         // This way it's also easy to just drive straight, or just turn.
-        drive = gamepad2.right_stick_y;
-        turn  = gamepad2.right_stick_x;
+        drive = gamepad2.right_stick_x;
+        turn  = gamepad2.right_stick_y;
 
         //if button on gamepad2 is pressed
         //then drive and turn should be half

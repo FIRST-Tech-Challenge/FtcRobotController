@@ -55,13 +55,14 @@ public class RobotHardware {
     private DcMotor lbMotor;
     private DcMotor viperSlideMotor;
     private DcMotor viperSlideMotorTwo;
-    private DcMotor armMotor;
+   // private DcMotor armMotor;
     private double ticksPerRotationOfLeft;
     private double ticksPerRotationOfRight;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     private static final int TARGET_POSITION_VS = 1000;
     private static final double VS_SPEED = 0.2;
+    //private static final double ARM_SPEED = 0.3;
     //camera
     private Camera camera;
     private static final boolean USE_WEBCAM = true;
@@ -95,7 +96,7 @@ public class RobotHardware {
         lbMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorLB");
 
         //setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor = myOpMode.hardwareMap.get(DcMotor.class,"motorarm");
+       // armMotor = myOpMode.hardwareMap.get(DcMotor.class,"motorArm");
 
         viperSlideMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorvs");
         viperSlideMotorTwo = myOpMode.hardwareMap.get(DcMotor.class,"motorvstwo");
@@ -278,7 +279,7 @@ public class RobotHardware {
     }
 
     // All  of the arm functions for manual below
-    public void setArmPower (){
+   /* public void setArmPower (){
         armMotor.setPower(VS_SPEED);
     }
     public void setArmMotorPowerZero (){
@@ -290,7 +291,7 @@ armMotor.setPower(0);
     public void setArmDirectionReverse(){
         armMotor.setDirection(DcMotor.Direction.REVERSE);
     }
-
+*/
     /**
      * Pass the requested arm power to the appropriate hardware drive motor
      *      Power is reduced by 25%
