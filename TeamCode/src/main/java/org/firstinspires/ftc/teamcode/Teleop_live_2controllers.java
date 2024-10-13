@@ -29,13 +29,15 @@ public class Teleop_live_2controllers extends LinearOpMode {
     DcMotor m2 = null;
 //    DcMotor m3 = null;
     Servo s1 = null;
-//    Servo s2 = null;
+    Servo s2 = null;
 //    Servo s3 = null;
     double left1Y, right1Y,left1X,right1X;
     double left2Y, right2Y, left2X, right2X;
     boolean flag_correction = true;
     boolean intake_constant = false;
     boolean gamepad1x_previous = false;
+    boolean gamepad1RB_previous = false;
+    boolean gamepad1LB_previous = false;
     double m2Power, blPower, flPower,brPower, frPower;
     static final double DEADZONE = 0.1;
 
@@ -93,7 +95,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
         m2 = hardwareMap.get(DcMotor.class, "M2");
 //        m3 = hardwareMap.get(DcMotor.class, "M3");
         s1 = hardwareMap.get(Servo.class, "s1");
-//        s2 = hardwareMap.get(Servo.class, "s2");
+        s2 = hardwareMap.get(Servo.class, "s2");
 //        s3 = hardwareMap.get(Servo.class, "s3");
         s1.setDirection(Servo.Direction.FORWARD);
 //        s2.setDirection(Servo.Direction.FORWARD);
@@ -112,6 +114,8 @@ public class Teleop_live_2controllers extends LinearOpMode {
         fl.setPower(0);
         br.setPower(0);
         fr.setPower(0);
+        s1.setDirection(Servo.Direction.FORWARD);
+        s2.setPosition(0); // open
 
         // Start opMode
         telemetry.addData("Mode", "waiting");
@@ -141,10 +145,10 @@ public class Teleop_live_2controllers extends LinearOpMode {
             // Gamepad1 Linear Slide movement
             if(gamepad1.a && gamepad1.b){
                 m2Power = 0;
-            } else if (gamepad1.a) {
-                m2Power = 1;
             } else if (gamepad1.b) {
-                m2Power = -0.5;
+                m2Power = 0.5;
+            } else if (gamepad1.a) {
+                m2Power = -1;
             } else {
                 m2Power = 0;
             }
@@ -167,6 +171,19 @@ public class Teleop_live_2controllers extends LinearOpMode {
                 }
             }
             gamepad1x_previous = gamepad1.x;
+
+            if (gamepad1.right_bumper != gamepad1RB_previous&& gamepad1.right_bumper) {
+                s1.setDirection(Servo.Direction.FORWARD);
+                s2.setPosition(0); // open
+            }
+            gamepad1RB_previous = gamepad1.right_bumper;
+
+            if (gamepad1.left_bumper != gamepad1LB_previous&& gamepad1.left_bumper) {
+                s1.setDirection(Servo.Direction.REVERSE);
+                s2.setPosition(1); //close
+            }
+            gamepad1LB_previous = gamepad1.left_bumper;
+
 
             boolean leftStickActive = (left1X != 0) || (left1Y != 0);
             boolean rightStickActive = right1X != 0;
