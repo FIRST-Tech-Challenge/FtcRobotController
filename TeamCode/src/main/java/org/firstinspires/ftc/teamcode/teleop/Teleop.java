@@ -59,8 +59,8 @@ public class Teleop extends OpMode {
         } else {
             inputAngle = Math.atan2(moveYInput, moveXInput);
             movementAngle = (Math.toDegrees(inputAngle) ) - absoluteYaw;
-            verticalMovePower = Math.sin(Math.toRadians(movementAngle));
-            horizontalMovePower = Math.cos(Math.toRadians(movementAngle));
+            verticalMovePower = Math.cos(Math.toRadians(movementAngle));
+            horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
         }
 
         double turnPower = -rotationInput;
@@ -86,11 +86,9 @@ public class Teleop extends OpMode {
             rightBPower /= max;
         }
 
-        double velocityScale = chassis.DRIVE_GEAR_RATIO * chassis.TICKS_PER_REVOLUTION * maxSpeed / chassis.WHEEL_CIRCUMFERENCE;
-
-        chassis.leftFrontMotor.setVelocity(leftFPower * velocityScale);
-        chassis.rightFrontMotor.setVelocity(rightFPower * velocityScale);
-        chassis.leftBackMotor.setVelocity(leftBPower * velocityScale);
-        chassis.rightBackMotor.setVelocity(rightBPower * velocityScale);
+        chassis.leftFrontMotor.setVelocity(leftFPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
+        chassis.rightFrontMotor.setVelocity(rightFPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
+        chassis.leftBackMotor.setVelocity(leftBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
+        chassis.rightBackMotor.setVelocity(rightBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
     }
 }

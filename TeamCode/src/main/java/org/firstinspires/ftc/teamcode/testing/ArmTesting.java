@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * This is the class to test the Arm of our robot.
  * */
+@Disabled
 @TeleOp(name = "ArmTesting", group = "Test Programs")
 public class ArmTesting extends OpMode {
     private final int GEAR_RATIO = 60;
