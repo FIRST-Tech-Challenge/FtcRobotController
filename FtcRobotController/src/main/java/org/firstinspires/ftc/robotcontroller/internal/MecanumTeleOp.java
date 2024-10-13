@@ -17,7 +17,8 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
         DcMotor sliderMotor = hardwareMap.dcMotor.get("sliderMotor");
         DcMotor armMotor = hardwareMap.dcMotor.get("armMotor");
-        Servo dropperServo = hardwareMap.servo.get("dropperServo");
+        Servo dropperServoRight = hardwareMap.servo.get("dropperServoRight");
+        Servo dropperServoLeft = hardwareMap.servo.get("dropperServoLeft");
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,9 +52,11 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             if (dropperUp) {
-                dropperServo.setPosition(1.0);
+                dropperServoRight.setPosition(0.25);
+                dropperServoLeft.setPosition(0.25);
             } else if (dropperDown) {
-                dropperServo.setPosition(0.5);
+                dropperServoRight.setPosition(-0.42);
+                dropperServoLeft.setPosition(-0.42);
             }
 
             if (armUp) {
@@ -76,7 +79,7 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("sliderDown", "%5.2f", sliderDown);
             telemetry.addData("dropperDown", dropperUp);
             telemetry.addData("dropperUp", dropperDown);
-            telemetry.addData("dropperPosition", dropperServo.getPosition());
+            telemetry.addData("dropperPosition", dropperServoRight.getPosition());
             telemetry.addData("armUp", armUp);
             telemetry.addData("armDown", armDown);
             telemetry.addData("armStop", armStop);
