@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 public class DriveChassis {
     protected DcMotorEx leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
+    protected final int TICKS_PER_REVOLUTION = 28;
     protected final double DRIVE_GEAR_RATIO = 60;
     protected final double WHEEL_CIRCUMFERENCE = 23.94; // In CM
 

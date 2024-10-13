@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 @TeleOp(name = "Teleop")
 public class Teleop extends OpMode {
     private DriveChassis chassis;
-    private double maxSpeed = 0.5; // In Wheel Rotations Per Second
+    private double maxSpeed = 5; // In CM Per Second
 
     private YawPitchRollAngles orientation;
     private double yaw;
@@ -59,8 +59,8 @@ public class Teleop extends OpMode {
         } else {
             inputAngle = Math.atan2(moveYInput, moveXInput);
             movementAngle = (Math.toDegrees(inputAngle) ) - absoluteYaw;
-            verticalMovePower = Math.cos(Math.toRadians(movementAngle));
-            horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
+            verticalMovePower = Math.sin(Math.toRadians(movementAngle));
+            horizontalMovePower = Math.cos(Math.toRadians(movementAngle));
         }
 
         double turnPower = -rotationInput;
@@ -86,9 +86,11 @@ public class Teleop extends OpMode {
             rightBPower /= max;
         }
 
-        chassis.leftFrontMotor.setVelocity(leftFPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
-        chassis.rightFrontMotor.setVelocity(rightFPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
-        chassis.leftBackMotor.setVelocity(leftBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
-        chassis.rightBackMotor.setVelocity(rightBPower * chassis.DRIVE_GEAR_RATIO * maxSpeed);
+        double velocityScale = chassis.DRIVE_GEAR_RATIO * chassis.TICKS_PER_REVOLUTION * maxSpeed / chassis.WHEEL_CIRCUMFERENCE;
+
+        chassis.leftFrontMotor.setVelocity(leftFPower * velocityScale);
+        chassis.rightFrontMotor.setVelocity(rightFPower * velocityScale);
+        chassis.leftBackMotor.setVelocity(leftBPower * velocityScale);
+        chassis.rightBackMotor.setVelocity(rightBPower * velocityScale);
     }
 }
