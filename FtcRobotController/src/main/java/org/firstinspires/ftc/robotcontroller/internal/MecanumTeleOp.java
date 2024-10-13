@@ -32,8 +32,8 @@ public class MecanumTeleOp extends LinearOpMode {
             double rx = -gamepad1.right_stick_x;
             double sliderUp = gamepad1.right_trigger;
             double sliderDown = -gamepad1.left_trigger;
-            boolean dropperDown = gamepad1.dpad_up;
-            boolean dropperUp = gamepad1.dpad_down;
+            boolean dropperDown = gamepad1.dpad_down;
+            boolean dropperUp = gamepad1.dpad_up;
             boolean armUp = gamepad1.a;
             boolean armDown = gamepad1.b;
             boolean armStop = gamepad1.x;
