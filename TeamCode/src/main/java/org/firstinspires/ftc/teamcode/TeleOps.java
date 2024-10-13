@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.bots.GyroBot;
+import org.firstinspires.ftc.teamcode.bots.PivotBot;
 
 @TeleOp(name = "Drive")
 public class TeleOps extends LinearOpMode {
@@ -28,7 +29,7 @@ public class TeleOps extends LinearOpMode {
             robot.resetAngle(gamepad1.dpad_left);
 
             robot.onLoop(0, "manual drive");
-
+            robot.PivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
 
         }
         robot.close();
