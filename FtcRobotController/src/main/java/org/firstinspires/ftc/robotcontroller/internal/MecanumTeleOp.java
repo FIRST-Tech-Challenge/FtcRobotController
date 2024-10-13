@@ -28,7 +28,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             double y = gamepad1.left_stick_y;
-            double x = -gamepad1.left_stick_x * 1.1; // Counter imperfect strafing
+            double x = -gamepad1.left_stick_x * 1.1;
             double rx = -gamepad1.right_stick_x;
             double sliderUp = gamepad1.right_trigger;
             double sliderDown = -gamepad1.left_trigger;
