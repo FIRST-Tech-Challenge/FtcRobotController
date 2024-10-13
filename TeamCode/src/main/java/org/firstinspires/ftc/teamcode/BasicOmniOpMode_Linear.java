@@ -12,9 +12,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp(name="Remote Control", group="Linear OpMode") // Milla: we need a name that tells the driver what this program does.
+@TeleOp(name="Remote Control", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
     // Initialize all variables for the program below:
     // This chunk controls our wheels
@@ -34,21 +35,17 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // This chunk controls our vertical
     private DcMotor vertical = null;
-    private static final double VERTICAL_POWER_DEFAULT = 0.6;
-    double verticalPower = 0;
-    private static final int VERTICAL_MAX = 700; // Milla: this has been a bit too high and our robot might tip over backwards. We should lower it a bit.
+    private static final int VERTICAL_MAX = 650;
     private static final int VERTICAL_MIN = 30;
     private static final int VERTICAL_DEFAULT = 0;
     int verticalPosition = VERTICAL_DEFAULT;
 
     // This chunk controls our viper slide
     private DcMotor viperSlide = null;
-    private static final double VIPER_POWER_DEFAULT = 0.6;
-    double viperSlidePower = 0;
     private static final int VIPER_MAX = 2600;
     private static final int VIPER_MIN = 50;
     private static final int VIPER_DEFAULT = 0;
-    int viperSlidePosition = VIPER_DEFAULT;
+    private int viperSlidePosition = VIPER_DEFAULT;
 
     // This chunk controls our claw
     private Servo claw = null;
@@ -139,46 +136,38 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
-            if (gamepad1.dpad_up) {                                                     // If the up button is pressed
+            if (gamepad1.dpad_up) {
                 vertical.setTargetPosition(VERTICAL_MAX);
-                // Milla: we can't raise the arm when the viper is completely extended
-                // Let's try to fix that by increasing the velocity when the arm is extended.
-                // we try setVelocity(1000+viperSlidePosition/2)
-                ((DcMotorEx) vertical).setVelocity(1000);                                // Set the speed
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
+                ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely rotate further
-                vertical.setTargetPosition(verticalPosition + 50);                      // Set the target position to as far up as it can go // Milla: you wanted this to be faster
-                ((DcMotorEx) vertical).setVelocity(1000);                                // Set the speed
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
+            else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely raise further
+                vertical.setTargetPosition(verticalPosition + 50);
+                ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MIN) {           // If the left button is pressed AND it can safely rotate further
-                vertical.setTargetPosition(verticalPosition - 50);                      // Set the target position to as far down as it can go
-                ((DcMotorEx) vertical).setVelocity(1000);                                // Set the speed
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
+            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MIN) {           // If the left button is pressed AND it can safely lower further
+                vertical.setTargetPosition(verticalPosition - 50);
+                ((DcMotorEx) vertical).setVelocity(1000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if (gamepad1.dpad_down) {                                              // If the down button is pressed
-                vertical.setTargetPosition(VERTICAL_MIN);                               // Set the target position to as far down as it can go
-                ((DcMotorEx) vertical).setVelocity(1000);                               // Set the speed
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
+            else if (gamepad1.dpad_down) {
+                vertical.setTargetPosition(VERTICAL_MIN);
+                ((DcMotorEx) vertical).setVelocity(1000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             // Control the viper slide - how much it extends
-            viperSlidePosition = viperSlide.getCurrentPosition();                      // Sets the position of the viper slide
-            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {          // If the right button is pressed AND it can safely rotate further
+            viperSlidePosition = viperSlide.getCurrentPosition();
+            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {              // If the right button is pressed AND it can safely extend further
                 viperSlide.setTargetPosition(viperSlidePosition + 200);
-                // Milla: you have seen that the driver often wants more precise control of the viper slide when they are trying to pick up a sample.
-                // Instead of using the same velocity all the time, we can let the driver control the velocity by doing gamepad1.right_trigger*2000
-                // that will make the viper slide move fast when they are pushing the button harder and slower when they push it less.
-                // gamepad1.right_trigger holds a decimal that represents that percent that the button is pushed. So a little push is .2, a medium push is .5, etc.
-                // this means you'll have to double the current velocity to get the arm to continue moving at that speed.
-                ((DcMotorEx) viperSlide).setVelocity(2000);                                // Set the speed
-                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
+                ((DcMotorEx) viperSlide).setVelocity(gamepad1.right_trigger*4000);
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if (gamepad1.left_trigger > 0 && viperSlidePosition > VIPER_MIN) {          // If the right button is pressed AND it can safely rotate further
-                viperSlide.setTargetPosition(viperSlidePosition - 200);                      // Set the target position to as far up as it can go
-                ((DcMotorEx) viperSlide).setVelocity(1000);                                // Set the speed
-                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);                      // It will move until it achieves the desired position
+            else if (gamepad1.left_trigger > 0 && viperSlidePosition > VIPER_MIN) {          // If the right button is pressed AND it can safely retract further
+                viperSlide.setTargetPosition(viperSlidePosition - 200);
+                ((DcMotorEx) viperSlide).setVelocity(gamepad1.left_trigger*4000);
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             // Control the claw
@@ -191,13 +180,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             claw.setPosition(claw_position);
 
             // Show the elapsed game time and wheel power.
-            logScreenData();
+            printDataOnScreen();
         }
     }
 
     // Log all (relevant) info about the robot on the hub.
-    private void logScreenData() {
-        telemetry.addData("Status", "Run Time: " + runtime); // Milla: This prints a lot of decimal points. You can get the number of seconds with runtime.seconds() then use format specifiers to print 0-2 decimal points
+    private void printDataOnScreen() {
+        telemetry.addData("Run Time", "%.1f", runtime.seconds());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         telemetry.addData("Joystick Axial", "%4.2f", axial);
@@ -205,9 +194,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.addData("Claw position", "%4.2f", claw_position);
-        telemetry.addData("Viper Slide Power", "%4.2f", viperSlidePower);
+        telemetry.addData("Viper Slide Velocity", "%4.2f", ((DcMotorEx) viperSlide).getVelocity());
+        telemetry.addData("Viper power consumption", "%.1f", ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
-        telemetry.addData("Vertical Power", "%.0f", verticalPower);
+        telemetry.addData("Vertical Power", "%.1f", ((DcMotorEx) vertical).getVelocity());
+        telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
 
         telemetry.update();
