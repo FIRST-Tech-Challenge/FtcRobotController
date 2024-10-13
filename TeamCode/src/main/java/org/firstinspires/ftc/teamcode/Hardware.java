@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.util.HashSet;
+
 import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
@@ -25,11 +27,6 @@ public class Hardware {
     private final Wheels WHEELS;
     private final Arm ARM;
 
-    // Whether the robot is on red or blue team
-    private final DigitalChannel COLOR_SWITCH;
-    // Whether the robot is far or near
-    private final DigitalChannel SIDE_SWITCH;
-
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
         autoSleepEnabled = true;
@@ -39,32 +36,32 @@ public class Hardware {
                 .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                 .build();
 
-        initWheels();
-        initArm();
+        WHEELS = initWheels();
+        ARM = initArm();
     }
 
     /**
      * Initiates all hardware needed for the WheelsSystem.
      */
-    private void initWheels() {
+    private Wheels initWheels() {
         /*
          * Define wheels system hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        WHEELS = new Wheels();
+        return new Wheels();
     }
 
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
-    private void initArm() {
+    private Arm initArm() {
         /*
          * Define arm hardware here.
          * e.g. exampleMotor = opMode.hardwareMap.get(DcMotor.class, "example_motor");
          */
 
-        ARM = new Arm();
+        return new Arm();
     }
 
     public Wheels getWheels() {
@@ -93,9 +90,13 @@ public class Hardware {
 
     /**
      * Sleeps the robot any motors are running
+     * @noinspection unused
      */
     public void autoSleep() {
-        autoSleep(super.motors);
+        HashSet<DcMotor> allMotors = new HashSet<>(ARM.getMotors());
+        allMotors.addAll(WHEELS.getMotors());
+
+        autoSleep(allMotors);
     }        
 
     /**
@@ -103,7 +104,7 @@ public class Hardware {
      *
      * @param motors the motors that are running
      */
-    public void autoSleep(DcMotor... motors) {
+    public void autoSleep(HashSet<DcMotor> motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
         // Does nothing if it isn't a LinearOpMode
@@ -112,7 +113,7 @@ public class Hardware {
         }
 
         // Sleep while any of the motors are still running
-        while (Arrays.stream(motors).anyMatch(motor -> motor.isBusy())) {
+        while (motors.stream().anyMatch(DcMotor::isBusy)) {
             linearOp.sleep(1);
         }
     }

@@ -1,19 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.os.Environment;
-import java.nio.file;
+import java.io.IOException;
+import java.nio.file.*;
 
-import com.apple.eio.FileManager;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 
 @TeleOp(name = "PositionInput")
 public class PositionInput extends OpMode {
     // File name of the storage file,
     // which is inside the directory specified in FileManager
-    private final Path storageFile = Paths("position.txt");
+    private final Path STORAGE_FILE = Paths.get("position.txt");
+
+    /**
+     * Reads the current position stored in the external storage file
+     * and prints it.
+     * Prints an error message if it fails.
+     */
+    private void printRobotPosition() {
+        try {
+            telemetry.addData("Current position: ", FileManager.readFile(STORAGE_FILE));
+
+        } catch (IOException e) {
+            telemetry.addLine("ERROR: FAILED TO READ ROBOT POSITION FROM STORAGE FILE!");
+        }
+    }
 
     @Override
     public void init() {
-        telemetry.addData("Current position: ", FileManager.readFile(storageFile));
+        printRobotPosition();
     }
 
     @Override
@@ -42,9 +56,18 @@ public class PositionInput extends OpMode {
             positionString += TeamSide.NEAR.name();
         }
 
-        if (positionString != null) {
-            FileManager.writeToFile(storageFile, positionString);
-            telemetry.addData("Current position: ", FileManager.readFile(storageFile));
+        // Do nothing if the driver didn't press any buttons.
+        if (positionString.isEmpty()) {
+            return;
         }
+
+        try {
+            FileManager.writeToFile(STORAGE_FILE, positionString);
+
+        } catch (IOException e) {
+            telemetry.addLine("ERROR: FAILED TO WRITE ROBOT POSITION TO STORAGE FILE!");
+        }
+
+        printRobotPosition();
     }
 }

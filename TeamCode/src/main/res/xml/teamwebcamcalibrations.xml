@@ -4,7 +4,7 @@
   Each calibration is for a particular camera (indicated by USB vid & pid pair) and a particular
   capture resolution for the camera. Note: it is very important when capturing images used to calibrate
   a camera that the image acquisition tool can actually control this capture resolution within the camera
-  itself and that you use this setting correctly. Many image acquistion tools do not in fact provide
+  itself and that you use this setting correctly. Many image acquisition tools do not in fact provide
   this level of control.
 
   Beyond simply providing additional, new camera calibrations, calibrations provided herein can

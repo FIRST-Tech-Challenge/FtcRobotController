@@ -1,37 +1,35 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import java.util.HashSet;
-
 import com.qualcomm.robotcore.hardware.*;
 
 public class Mecanum extends Wheels {
     /* The DcMotors powering the wheels */
-    private DcMotor frontLeftMotor;
-    private DcMotor frontRightMotor;
-    private DcMotor backLeftMotor;
-    private DcMotor backRightMotor;
+    private final DcMotor FRONT_LEFT_MOTOR;
+    private final DcMotor FRONT_RIGHT_MOTOR;
+    private final DcMotor BACK_LEFT_MOTOR;
+    private final DcMotor BACK_RIGHT_MOTOR;
 
-    private double wheelGearRatio = -1.0;
+    private double WHEEL_GEAR_RATIO = -1.0;
 
     public Mecanum(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
-        this.frontLeftMotor = frontLeftMotor;
-        this.frontRightMotor = frontRightMotor;
-        this.backLeftMotor = backLeftMotor;
-        this.backRightMotor = backRightMotor;
+        FRONT_LEFT_MOTOR = frontLeftMotor;
+        FRONT_RIGHT_MOTOR = frontRightMotor;
+        BACK_LEFT_MOTOR = backLeftMotor;
+        BACK_RIGHT_MOTOR = backRightMotor;
 
-        super.motors.add(frontLeftMotor);
-        super.motors.add(frontRightMotor);
-        super.motors.add(backLeftMotor);
-        super.motors.add(backRightMotor);
+        super.MOTORS.add(FRONT_LEFT_MOTOR);
+        super.MOTORS.add(FRONT_RIGHT_MOTOR);
+        super.MOTORS.add(BACK_LEFT_MOTOR);
+        super.MOTORS.add(BACK_RIGHT_MOTOR);
 
         /*
          * Set the directions of the motors
          * The right and left motors run in opposite directions of each other
          */
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        FRONT_LEFT_MOTOR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FRONT_RIGHT_MOTOR.setDirection(DcMotorSimple.Direction.FORWARD);
+        BACK_LEFT_MOTOR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BACK_RIGHT_MOTOR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
@@ -51,7 +49,7 @@ public class Mecanum extends Wheels {
      * Drive the mecanum wheels.
      * 
      * @param x    Sideways movement of the robot
-     *             Negative values are leftwards, postive values are rightwards
+     *             Negative values are leftwards, positive values are rightwards
      * @param y    Forwards/backward movement of the robot
      *             Negative values are backwards, positive values are forwards
      * @param turn Rotation of the robot
@@ -59,10 +57,10 @@ public class Mecanum extends Wheels {
      */
     @Override
     public void drive(double x, double y, double turn) {
-        frontLeftMotor.setPower(y - x - turn);
-        frontRightMotor.setPower(y + x + turn);
-        backLeftMotor.setPower(y + x - turn);
-        backRightMotor.setPower(y - x + turn);
+        FRONT_LEFT_MOTOR.setPower(y - x - turn);
+        FRONT_RIGHT_MOTOR.setPower(y + x + turn);
+        BACK_LEFT_MOTOR.setPower(y + x - turn);
+        BACK_RIGHT_MOTOR.setPower(y - x + turn);
     }
 
     /**
@@ -78,8 +76,8 @@ public class Mecanum extends Wheels {
      * @param forwardDistance  The distance that the robot travels forward in
      *                         inches.
      *                         Positive is forward and negative is backward.
-     * @param sidewaysDistance The distance that the robot travels sidways in inches.
-     *                         Negative is leftward and positive is righward.
+     * @param sidewaysDistance The distance that the robot travels sideways in inches.
+     *                         Negative is leftward and positive is rightward.
      */
     @Override
     public void driveDistance(double forwardDistance, double sidewaysDistance) {

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.ArrayList;
 
 import android.os.Environment;
 
@@ -13,7 +14,7 @@ public class FileManager {
      * repository.
      */
     private static final Path seasonDirectory = Paths.get(
-            Environment.getExternalStorage().getPath() + "/chsRobotix");
+            Environment.getExternalStorageDirectory().getPath() + "/chsRobotix");
 
     /**
      * Writes a String to a text file inside this season's directory.
@@ -46,23 +47,27 @@ public class FileManager {
             return false;
         }
 
-        Files.writeString(writeFile, inputString);
+        ArrayList<String> inputLines = new ArrayList<>();
+        inputLines.add(inputString);
+        Files.write(writeFile, inputLines);
+
         return true;
     }
 
     /**
      * Read a text file inside this season's directory.
      *
-     * @param fileName
+     * @param filePath The file path of the text file to read.
      * @return The String contained within the text file.
      *         If an error occurs, null is returned.
      * @throws IOException Failed to read the input file
      */
-    public static String readFromFile(Path fileName) throws IOException {
-        Path readFile = seasonDirectory.resolve(fileName);
+    public static String readFile(Path filePath) throws IOException {
+        Path readFile = seasonDirectory.resolve(filePath);
 
+        // Read
         if (Files.exists(readFile)) {
-            return Files.readString(readFile);
+            return String.join("\n", Files.readAllLines(readFile));
         }
 
         return null;

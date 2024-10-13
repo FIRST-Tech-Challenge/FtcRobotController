@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "Auto")
 public class Auto extends LinearOpMode {
@@ -19,10 +18,9 @@ public class Auto extends LinearOpMode {
     public void runOpMode() {
         hardware = new Hardware(this);
 
-        telemetry.addData("Intial position:", teamColor.name() + ' ' + teamSide.name());
+        telemetry.addData("Initial position:", teamColor.name() + ' ' + teamSide.name());
 
         // Wait until the player press the start button
         waitForStart();
-
     }
 }
