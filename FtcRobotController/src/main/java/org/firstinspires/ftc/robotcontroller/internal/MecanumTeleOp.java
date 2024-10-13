@@ -11,7 +11,6 @@ public class MecanumTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Declare our motors
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
