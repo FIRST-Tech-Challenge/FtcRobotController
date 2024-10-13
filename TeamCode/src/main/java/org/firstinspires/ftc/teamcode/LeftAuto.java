@@ -15,6 +15,10 @@ public class LeftAuto extends LinearOpMode {
         waitForStart();
 
         robot.encoderDrive(1,15);
+//        robot.setArmPos(45);
+//        robot.setExtendPos(5);
+//        robot.runOuttake();
+//        sleep(5000);
         robot.encoderStrafe(1, 32);
         robot.encoderTurn(1,180);
         robot.encoderDrive(1,-35.8);
