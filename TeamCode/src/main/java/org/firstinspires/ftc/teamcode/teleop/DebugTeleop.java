@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 @TeleOp(name = "DebugTeleop")
 public class DebugTeleop extends OpMode {
     private DriveChassis chassis;
+    private double maxSpeed = 5; // In CM Per Second
 
     private YawPitchRollAngles orientation;
     private double yaw;
@@ -18,6 +19,9 @@ public class DebugTeleop extends OpMode {
     public void init() {
         chassis = new DriveChassis(this);
     }
+
+    boolean speedUpInputLast = false;
+    boolean speedDownInputLast = false;
 
     @Override
     public void loop() {
@@ -35,6 +39,18 @@ public class DebugTeleop extends OpMode {
         float rotationInput = gamepad1.right_stick_x;
         boolean speedUpInput = gamepad1.right_bumper;
         boolean speedDownInput = gamepad1.left_bumper;
+
+        if (speedUpInput && !speedUpInputLast)
+            maxSpeed += 0.1;
+        speedUpInputLast = speedUpInput;
+
+        if (speedDownInput && !speedDownInputLast)
+            maxSpeed -= 0.1;
+        speedDownInputLast = speedDownInput;
+
+        telemetry.addLine();
+        telemetry.addData("Max Speed", maxSpeed);
+        telemetry.addLine();
 
         if (gamepad1.back)
             chassis.imu.resetYaw();
@@ -57,7 +73,7 @@ public class DebugTeleop extends OpMode {
             horizontalMovePower = 0;
         } else {
             inputAngle = Math.atan2(moveYInput, moveXInput);
-            movementAngle = (Math.toDegrees(inputAngle)) - absoluteYaw;
+            movementAngle = (Math.toDegrees(inputAngle) - 90) + absoluteYaw;
             verticalMovePower = Math.cos(Math.toRadians(movementAngle));
             horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
         }
@@ -92,12 +108,14 @@ public class DebugTeleop extends OpMode {
             rightBPower /= max;
         }
 
+        double velocityScale = chassis.DRIVE_GEAR_RATIO * chassis.TICKS_PER_REVOLUTION * maxSpeed / chassis.WHEEL_CIRCUMFERENCE;
+
         telemetry.addLine("--- Power Values ---");
         telemetry.addData("Turn Power", turnPower);
-        telemetry.addData("Left Front", leftFPower);
-        telemetry.addData("Left Back", leftBPower);
-        telemetry.addData("Right Front", rightFPower);
-        telemetry.addData("Right Back", rightBPower);
+        telemetry.addData("Left Front", leftFPower * velocityScale);
+        telemetry.addData("Left Back", leftBPower * velocityScale);
+        telemetry.addData("Right Front", rightFPower * velocityScale);
+        telemetry.addData("Right Back", rightBPower * velocityScale);
         telemetry.addLine();
     }
 }
