@@ -22,5 +22,8 @@ public class DriverMode extends OpMode {
                 gamepad1.right_stick_x,
                 gamepad1.right_stick_y,
                 gamepad1.left_stick_x);
+
+        // Update the information from the robot
+        telemetry.update();
     }
 }

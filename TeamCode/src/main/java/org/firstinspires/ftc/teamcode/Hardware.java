@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import android.util.Size;
-import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.vision.*;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.teamcode.hardware.*;
 
@@ -28,11 +28,6 @@ public class Hardware {
     private  MecanumWheels mecanum;
     private ExtendableArm arm;
 
-    // Whether the robot is on red or blue team
-    private final DigitalChannel COLOR_SWITCH;
-    // Whether the robot is far or near
-    private final DigitalChannel SIDE_SWITCH;
-
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
         autoSleepEnabled = true;
@@ -45,30 +40,30 @@ public class Hardware {
                         .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                         .build();*/
 
-        initWheels();
-        initArm();
+        WHEELS = initWheels();
+        ARM = initArm();
     }
 
     /**
      * Initiates all hardware needed for the WheelsSystem.
      */
-    private void initWheels() {
+    private Wheels initWheels() {
         /*
          * Define wheels system hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-//        DcMotor frontLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_left_wheel");
-//        DcMotor frontRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_right_wheel");
-//        DcMotor backLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_left_wheel");
-//        DcMotor backRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_right_wheel");
+        // DcMotor frontLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_left_wheel");
+        // DcMotor frontRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_right_wheel");
+        // DcMotor backLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_left_wheel");
+        // DcMotor backRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_right_wheel");
 
-        mecanum = null; //new MecanumWheels(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
+        return null;
     }
     
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
-    private void initArm() {
+    private Arm initArm() {
         /*
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
@@ -77,7 +72,7 @@ public class Hardware {
         HashMap<String, DcMotor> motors = new HashMap<>();
         HashMap<String, Servo> servos = new HashMap<>();
 
-        arm = new ExtendableArm(motors, servos, intakeServo);
+        return new ExtendableArm(motors, servos, intakeServo);
     }
 
     public MecanumWheels getWheels() {
@@ -114,10 +109,13 @@ public class Hardware {
 
     /**
      * Sleeps the robot any motors are running
+     * @noinspection unused
      */
     public void autoSleep() {
-        autoSleep(arm.getMotors());
-        autoSleep(mecanum.getMotors());
+        HashSet<DcMotor> allMotors = new HashSet<>(ARM.getMotors());
+        allMotors.addAll(WHEELS.getMotors());
+
+        autoSleep(allMotors);
     }
 
     /**
@@ -133,10 +131,9 @@ public class Hardware {
             return;
         }
 
-        for (DcMotor motor : motors) {
-            if (motor.isBusy()) {
-                linearOp.sleep(1);
-            }
+        // Sleep while any of the motors are still running
+        while (motors.stream().anyMatch(DcMotor::isBusy)) {
+            linearOp.sleep(1);
         }
     }
 }

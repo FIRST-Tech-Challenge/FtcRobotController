@@ -2,16 +2,16 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import java.util.HashSet;
 
-import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 public abstract class Wheels {
-    protected HashSet<DcMotor> motors;
-
     // A modifier for much power the wheels run with (0.0 - 1.0)
     protected double motorPower = 1.0;
 
+    protected final HashSet<DcMotor> MOTORS;
+
     public Wheels() {
-        motors = new HashSet<>();
+        MOTORS = new HashSet<>();
     }
 
     public double getMotorPower() {
@@ -24,27 +24,32 @@ public abstract class Wheels {
 
     /**
      * Get all the DcMotors that are used by this wheels system.
-     * 
+     *
      * @return A set that contains every DcMotor included by this wheels system.
      */
     public HashSet<DcMotor> getMotors() {
-        return motors;
+        return MOTORS;
     }
-
+    
     /**
      * Drive the wheels.
      * 
-     * @param drive Forward input
-     * @param turn  Turn input
+     * @param drivePower Forward power.
+     *                   Positive is forward, negative is backward.
+     * @param turn       Rotation power.
+     *                   Positive is clockwise, negative is counterclockwise.
      */
     public abstract void drive(double drivePower, double turn);
 
     /**
      * Drive the wheels.
      * 
-     * @param x    Sideways input
-     * @param y    Forward input
-     * @param turn Rotation input
+     * @param x    Sideways power.
+     *             Positive is rightward, negative is leftward.
+     * @param y    Forward power.
+     *             Positive is forward, negative is backward.
+     * @param turn Rotation power.
+     *             Positive is clockwise, negative is counterclockwise.
      */
     public abstract void drive(double x, double y, double turn);
 
@@ -52,7 +57,7 @@ public abstract class Wheels {
      * Drive the robot a certain distance forward.
      * 
      * @param distance The distance that the robot travels in inches.
-     *                 Positive is forward and negative is backward.
+     *                 Positive is forward, negative is backward.
      */
     public abstract void driveDistance(double distance);
 
@@ -61,9 +66,17 @@ public abstract class Wheels {
      * 
      * @param forwardDistance  The distance that the robot travels forward in
      *                         inches.
-     *                         Positive is forward and negative is backward.
-     * @param sidewaysDistance The distance that the robot travels sidways in inches.
-     *                         Negative is leftward and positive is righward.
+     *                         Positive is forward, negative is backward.
+     * @param sidewaysDistance The distance that the robot travels sideways in inches.
+     *                         Positive is rightward, negative is leftward.
      */
     public abstract void driveDistance(double forwardDistance, double sidewaysDistance);
+
+    /**
+     * Rotate the robot a certain number of degrees.
+     *
+     * @param degrees How many degrees the robot turns.
+     *                Positive is clockwise, negative is counterclockwise.
+     */
+    public abstract void turn(double degrees);
 }

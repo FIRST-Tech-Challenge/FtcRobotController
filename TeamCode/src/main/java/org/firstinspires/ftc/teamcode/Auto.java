@@ -19,11 +19,9 @@ public class Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
         hardware = new Hardware(this);
-    
+
         // teamColor = (hardware.getColorSwitch().getState()) ? TeamColor.RED : TeamColor.BLUE;
         // teamSide = (hardware.getSideSwitch().getState()) ? TeamSide.FAR : TeamSide.NEAR;
-
-        // telemetry.addData("Initial position:", teamColor.name() + ' ' + teamSide.name());
 
         // telemetry.addData("Initial position:", teamColor.name() + ' ' + teamSide.name());
 

@@ -4,18 +4,19 @@ import java.util.HashSet;
 
 import com.qualcomm.robotcore.hardware.*;
 
+/** @noinspection ALL */
 public abstract class Arm {
-    protected HashSet<DcMotor> motors;
-    protected HashSet<Servo> servos;
+    protected final HashSet<DcMotor> MOTORS;
+    protected final HashSet<Servo> SERVOS;
 
     public Arm() {
-        this.motors = new HashSet<>();
-        this.servos = new HashSet<>();
+        this.MOTORS = new HashSet<>();
+        this.SERVOS = new HashSet<>();
     }
 
     public Arm(HashSet<DcMotor> motors, HashSet<Servo> servos) {
-        this.motors = motors;
-        this.servos = servos;
+        this.MOTORS = motors;
+        this.SERVOS = servos;
     }
 
     /**
@@ -24,6 +25,6 @@ public abstract class Arm {
      * @return A set that contains every DcMotor included by this arm system.
      */
     public HashSet<DcMotor> getMotors() {
-        return motors;
+        return MOTORS;
     }
 }

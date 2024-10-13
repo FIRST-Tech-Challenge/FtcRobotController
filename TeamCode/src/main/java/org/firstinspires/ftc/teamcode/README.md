@@ -55,4 +55,4 @@ A abstract class for the robot's wheels,
 
 ## [MecanumWheels](./hardware/MecanumWheels.java)
 
-A subclass of the `Wheels` class for controlling the driving of a four-meccanum wheel system.
+A subclass of the `Wheels` class for controlling the driving of a four-mecanum wheel system.
