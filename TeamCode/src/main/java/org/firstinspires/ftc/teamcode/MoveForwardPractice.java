@@ -41,11 +41,11 @@ public class MoveForwardPractice extends LinearOpMode{
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            //TODO Check button state
+            //Check button state
             double axial = -gamepad1.left_stick_y;
             double lateral = gamepad1.left_stick_x;
             double yaw = gamepad1.right_stick_x;
-            //TODO Do appropriate movement for button state
+            //Do appropriate movement for button state
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
