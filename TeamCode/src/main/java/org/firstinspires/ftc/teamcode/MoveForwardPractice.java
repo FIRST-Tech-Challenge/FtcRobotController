@@ -23,7 +23,7 @@ public class MoveForwardPractice extends LinearOpMode{
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rearRight");
 
-        // TODO Map the top hat
+
 
         // Set the directions for the motors
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -38,9 +38,15 @@ public class MoveForwardPractice extends LinearOpMode{
         // Waiting for start
         waitForStart();
         runtime.reset();
-        //TODO Check button state
-        //TODO Do appropriate movement for button state
 
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+            //TODO Check button state
+            double axial = -gamepad1.left_stick_y;
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
+            //TODO Do appropriate movement for button state
+            }
         
     }
 }
