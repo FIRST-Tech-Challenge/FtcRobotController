@@ -50,7 +50,7 @@ public class Ryleepart2Opmode extends LinearOpMode {
                 servoTest.setPosition(1);
             }
             // is button pressed?
-            if (digitalTouch.isPressed()1) {
+            if (digitalTouch.isPressed()) {
                 // button is pressed.
                 telemetry.addData("Button", "PRESSED");
             } else {
