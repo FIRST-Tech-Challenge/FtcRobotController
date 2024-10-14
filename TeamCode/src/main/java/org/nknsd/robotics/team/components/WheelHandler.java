@@ -65,7 +65,7 @@ public class WheelHandler implements NKNComponent {
 
     // Key function of the class
     // Takes in y, x, and turning components of the vector, and converts them to power instructions for omni wheels
-    public void vectorToMotion(float y, float x, float turning) {
+    public void vectorToMotion(double y, double x, double turning) {
         motorBR.setPower(y + x - turning);
         motorBL.setPower(y - x + turning);
         motorFR.setPower(y - x - turning);
