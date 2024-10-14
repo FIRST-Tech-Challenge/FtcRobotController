@@ -9,8 +9,6 @@ public class MecanumWheels extends Wheels {
     private final DcMotor BACK_LEFT_MOTOR;
     private final DcMotor BACK_RIGHT_MOTOR;
 
-    private final double WHEEL_GEAR_RATIO = -1.0;
-
     public MecanumWheels(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
         super();
         
