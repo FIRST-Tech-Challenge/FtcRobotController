@@ -46,7 +46,7 @@ public class ExtendableArm extends Arm {
      * @param rotationMotor  The motor that rotates the arm up and down.
      * @param extensionMotor The motor that extends and retracts the arm.
      * @param clawXServo     The servo that rotates the claw about the X-axis.
-     * @param clawYServo     The servo that rotates the claw abou the Y-axis.
+     * @param clawYServo     The servo that rotates the claw about the Y-axis.
      * @param clawZServo     The servo that rotates the claw about the Z-axis.
      * @param intakeServo    The servo that opens and closes the claw.
      */

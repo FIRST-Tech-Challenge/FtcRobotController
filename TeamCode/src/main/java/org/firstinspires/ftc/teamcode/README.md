@@ -1,58 +1,61 @@
-# [Auto.java](./Auto.java)
+# teamcode(Parent Directory)
 
-The autonomous class, which runs without driver input.
+## [Hardware](./Hardware.java)
 
-# [FileManager.java](./FileManager.java)
+It is a class to instantiate the robot and perform basic tasks(e.g. drive the robot forward).
+Both [`Auto`](#Auto) and [`DriverMode`](#DriverMode) instantiate a `Hardware` object.
+The `Hardware` class uses objects instantiated from the classes in [hardwareSystems](#hardwareSystems).
+The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's `Hardware` class.
+
+## [Auto](./Auto.java)
+
+The Autonomous class, which runs without driver input.
+Instantiates a [`Hardware`](#Hardware) class.
+
+## [DriverMode](./DriverMode.java)
+
+The TeleOp class which runs using driver input.
+Instantiates a [`Hardware`](#Hardware) class.
+
+## [FileManager](./FileManager.java)
 
 Reads and writes text files in external storage.
 
-# [Hardware](./Hardware.java)
+## [PositionInput](./PositionInput.java)
 
-It is a class to instantiate the robot and perform basic tasks(e.g. drive the robot forward).
-Both `Auto` and `TeleOp` instantiate a `Hardware` object.
-The `Hardware` class uses objects instantiated from the classes in [hardware](./hardware).
-The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's `Hardware`.
-
-# [PositionInput.java](./PositionInput.java)
-
-A TeleOp that writes the TeamColor and TeamSide of the robot into external storage. 
+A TeleOp that writes the [`TeamColor`](#TeamColor) and [`TeamSide`](#TeamSide) of the robot into external storage. 
 
 > [!Note]
 > This class is deprecated. 
 
-# [TeamColor.java](./TeamColor.java)
+## [TeamColor](./TeamColor.java)
 
 An enum that states whether the robot is on red or blue side.
 
-# [TeamSide.java](./TeamSide.java)
+## [TeamSide](./TeamSide.java)
 
 An enum that states whether the robot is on far or near side.
 
 
-# [TeleOp.java](./TeleOp.java)
+# [hardwareSystems/](./hardwareSystems/)
 
-The TeleOp class which runs using driver input.
-
-
-# [Hardware](./hardware/)
-
-This directory contains helper classes used by `Hardware`.
+This subdirectory contains helper classes used by [`Hardware`](#Hardware).
 The classes are meant to separate and organize the various systems of the robot(e.g. arms, wheels, etc.).
-Some of the classes are abstract and are meant to be used as superclasses.
+Some of the classes(e.g. [Arm](#Arm) and [Wheels](#Wheels)) are abstract and are meant to be used as superclasses.
 Being abstract classes rather than interfaces prevents multiple implementing.
 
-## [Arm](./hardware/Arm.java)
+## [Arm](./hardwareSystems/Arm.java)
 
 An abstract class to control the robot's arm system.
 
-## [ExtendableArm](./hardware/ExtendableArm.java)
+## [ExtendableArm](./hardwareSystems/ExtendableArm.java)
 
 A subclass of `Arm` that controls a rotating, extendable arm.
 
-## [Wheels](./hardware/Wheels.java)
+## [Wheels](./hardwareSystems/Wheels.java)
 
 A abstract class for the robot's wheels,
 
-## [MecanumWheels](./hardware/MecanumWheels.java)
+## [MecanumWheels](./hardwareSystems/MecanumWheels.java)
 
 A subclass of the `Wheels` class for controlling the driving of a four-mecanum wheel system.
