@@ -31,7 +31,7 @@ public class IntakeSub extends SubsystemBase {
     * @param speed the speed to set the intake to
      */
     public void setSpeed(double speed) {
-        telemetry.addData("Intake called with speed of " + speed);
+        telemetry.addData("Intake called with speed of ", speed);
         intake.setPower(speed);
     }
 }

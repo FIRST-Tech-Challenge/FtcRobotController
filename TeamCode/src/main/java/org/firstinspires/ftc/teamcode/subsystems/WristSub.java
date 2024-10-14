@@ -31,7 +31,7 @@ public class WristSub extends SubsystemBase {
     * @param speed the speed to set the wrist to
      */
     public void setSpeed(double speed) {
-        telemetry.addData("Wrist called with speed of " + speed);
+        telemetry.addData("Wrist called with speed of ", speed);
         wrist.setPower(speed);
     }
 }

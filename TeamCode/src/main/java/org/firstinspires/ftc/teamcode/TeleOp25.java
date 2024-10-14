@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSub;
 import org.firstinspires.ftc.teamcode.subsystems.WristSub;
+import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
+import org.firstinspires.ftc.teamcode.commands.MoveArm;
 
 
 @TeleOp(name = "Tele-op 2024-25")
@@ -32,6 +34,12 @@ public class TeleOp25 extends CommandOpMode {
     private WristCmd wristClockwise;
     private WristCmd wristCounterClockwise;
     private WristCmd wristOff;
+    private ArmSub armSub;
+    private MoveArm armUp;
+    private MoveArm armDown;
+    private MoveArm armOff;
+
+
 
     @Override
     public void initialize() {
@@ -57,28 +65,41 @@ public class TeleOp25 extends CommandOpMode {
         driverOp.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(this::toggleFieldCentric));
 
+        armSub = new ArmSub(hardwareMap, telemetry);
+        armUp = new MoveArm(armSub, telemetry, 0.5);
+        armDown = new MoveArm(armSub, telemetry, -0.5);
+        armOff = new MoveArm(armSub, telemetry, -0);
+
+
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armUp);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenReleased(armOff);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(armDown);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armOff);
+
+
         // Intake
         // A: Output Sample
         // B: Take In Sample
-        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(intakeOut);
-        toolOp.getGamepadButton(GamepadKeys.Button.A).whenReleased(intakeOff);
+        toolOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(intakeOut);
+        toolOp.getGamepadButton(GamepadKeys.Button.X).whenReleased(intakeOff);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(intakeIn);
-        toolOp.getGamepadButton(GamepadKeys.Button.B).whenReleased(intakeOff);
+        toolOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(intakeIn);
+        toolOp.getGamepadButton(GamepadKeys.Button.Y).whenReleased(intakeOff);
 
         // Wrist
         // D-Pad Up: Clockwise
         // D-Pad Down: Counter Clockwise
-        toolOp.getTrigger(GamepadKeys.Trigger.DPAD_UP).whenPressed(wristClockwise);
-        toolOp.getTrigger(GamepadKeys.Trigger.DPAD_UP).whenReleased(wristOff);
+        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristClockwise);
+        toolOp.getGamepadButton(GamepadKeys.Button.A).whenReleased(wristOff);
 
-        toolOp.getTrigger(GamepadKeys.Trigger.DPAD_DOWN).whenPressed(wristCounterClockwise);
-        toolOp.getTrigger(GamepadKeys.Trigger.DPAD_DOWN).whenReleased(wristOff);
+        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(wristCounterClockwise);
+        toolOp.getGamepadButton(GamepadKeys.Button.B).whenReleased(wristOff);
 
         register(drive);
         //register(linearSlide);
         drive.setDefaultCommand(driveCmd);
         //linearSlide.setDefaultCommand(linearSlideCmd);
+
     }
 
     @Override
