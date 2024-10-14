@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.CompBot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -79,27 +80,37 @@ public class CompBot extends LinearOpMode {
 
 
             //game pad 2
-            double armLength = gamepad2.left_stick_y;
-            double armAngle = gamepad2.right_stick_y;
+            double armLength = -gamepad2.right_stick_y;
+            double armAngle = -gamepad2.left_stick_y;
 
-            // 0 < arm length < 9999
-            if (slide.getCurrentPosition() + armLength < 9999) {
-                slide.setPower(armLength);
+            // 0 < arm length < 4268
+            if (armLength > 0 && slide.getCurrentPosition() > 4268)
+            {
+                armLength = 0;
+            } else if (armLength < 0 && slide.getCurrentPosition() < -4268) {
+                armLength = 0;
             }
+            slide.setPower(armLength);
 
-            // 0 < arm angle < 9999
-            if (pivot.getCurrentPosition() + armAngle < 9999) {
-                pivot.setPower(armAngle);
+            // 0 < arm angle < 2904
+            if (armAngle > 0 && pivot.getCurrentPosition() > 2904)
+            {
+                armAngle = 0;
+            } else if (armAngle < 0 && pivot.getCurrentPosition() < -2904) {
+                armAngle = 0;
             }
+            pivot.setPower(armAngle);
 
             //to test arm length and angle
-            addTelem(pivot.getCurrentPosition(), slide.getCurrentPosition());
+            addTelem(pivot.getCurrentPosition(), slide.getCurrentPosition(), armAngle, armLength);
         }
     }
 
-    public void addTelem(int x, int y) {
+    public void addTelem(int x, int y,double a,double b) {
         telemetry.addData("Arm angle: ", x);
         telemetry.addData("Arm length: ", y);
+        telemetry.addData("Left stick y: ", a);
+        telemetry.addData("Right stick y: ", b);
         telemetry.update();
     }
 
@@ -170,11 +181,11 @@ public class CompBot extends LinearOpMode {
         pivot.setTargetPosition(0);
         slide.setTargetPosition(0);
 
-        pivot.setPower(1);
-        slide.setPower(1);
+        pivot.setPower(.05);
+        slide.setPower(.05);
 
-        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivot.setMode(RUN_USING_ENCODER);
+        slide.setMode(RUN_USING_ENCODER);
         claw.scaleRange(0, 1);
 
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -182,6 +193,26 @@ public class CompBot extends LinearOpMode {
 
         pivot.setDirection(DcMotor.Direction.FORWARD);
         slide.setDirection(DcMotor.Direction.FORWARD);
+
+        /*
+        // Sets pivot and slide to pos 0
+        pivot.setMode(STOP_AND_RESET_ENCODER);
+        slide.setMode(STOP_AND_RESET_ENCODER);
+
+        pivot.setTargetPosition(2905);
+        slide.setTargetPosition(4269);
+
+        while(pivot.getCurrentPosition() < 2904 || slide.getCurrentPosition() < 4268){
+            int x = 0;
+        }
+        */
+
+        pivot.setMode(STOP_AND_RESET_ENCODER);
+        slide.setMode(STOP_AND_RESET_ENCODER);
+
+        // sets power to 1 again
+        pivot.setPower(1);
+        slide.setPower(1);
     }
 
 
