@@ -37,17 +37,20 @@ public class ColorSensorOur {
 
     public boolean isRightColor(boolean isSpecimen) {
         col = checkColors();
-        opMode.telemetry.addData("col", col);
-            if (col == 0 && isRed) {
-                return true;
-            } else if (col == 2 && !isRed) {
-                return true;
-            } else if (col ==1 && isSpecimen) {
-                return true;
-            } else {
-                return false;
-            }
+        if (isRed && isSpecimen){
+            return col == 0;
         }
+        else if (isRed){
+            return col == 0 || col == 1;
+
+        }
+        else if (isSpecimen){
+            return col == 2;
+        }
+        else {
+            return col == 2 || col == 1;
+        }
+    }
 
 
     public int checkColors() {

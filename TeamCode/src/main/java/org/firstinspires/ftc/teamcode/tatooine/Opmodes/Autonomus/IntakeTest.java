@@ -19,7 +19,7 @@ public class IntakeTest extends LinearOpMode {
         Intake intake = new Intake(this,isRed);
         boolean isSpecimen = true;
         waitForStart();
-        while (opModeIsActive()) {
+        while(opModeIsActive()) {
             Actions.runBlocking(intake.intakeByColor(true)
             );
 
