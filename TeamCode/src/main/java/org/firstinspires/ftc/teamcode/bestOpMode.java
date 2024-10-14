@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.teamcode.driveMech;
 
 @TeleOp(name="Ryken Teleop", group="Iterative OpMode")
 public class bestOpMode extends OpMode
@@ -45,73 +45,35 @@ public class bestOpMode extends OpMode
     private DcMotor frontRightMotor;
     private DcMotor backLeftMotor;
     private DcMotor backRightMotor;
+    driveMech drive = new driveMech();
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
-
-        frontLeftMotor  = hardwareMap.dcMotor.get("frontLeftMotor");
-        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
-        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
-        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
-
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        drive.init(hardwareMap);
         telemetry.addData("Status", "Initialized");
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit START
-     */
-    @Override
-    public void init_loop() {
-    }
-
-    /*
-     * Code to run ONCE when the driver hits START
-     */
     @Override
     public void start() {
+        telemetry.addData("Status", "Started");
         runtime.reset();
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits START but before they hit STOP
-     */
     @Override
     public void loop() {
         double forwardBackward = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
         double turn = gamepad1.right_stick_x;
 
-        double frontLeftPower = Range.clip(forwardBackward + strafe + turn, -1.0, 1.0);
-        double frontRightPower = Range.clip(forwardBackward - strafe - turn, -1.0,1.0);
-        double backLeftPower = Range.clip(forwardBackward - strafe + turn, -1.0, 1.0);
-        double backRightPower = Range.clip(forwardBackward + strafe - turn, -1.0, 1.0);
-        frontLeftMotor.setPower(frontLeftPower);
-        frontRightMotor.setPower(frontRightPower);
-        backLeftMotor.setPower(backLeftPower);
-        backRightMotor.setPower(backRightPower);
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
+        drive.drive(forwardBackward, strafe, turn);
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
     @Override
     public void stop() {
+        telemetry.addData("Status", "Stopped");
     }
 
 }
