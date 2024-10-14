@@ -35,15 +35,16 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // This chunk controls our vertical
     private DcMotor vertical = null;
-    private static final int VERTICAL_MAX = 650;
-    private static final int VERTICAL_MIN = 30;
+    private static final int VERTICAL_MAX = 1600;
+    private static final int VERTICAL_MIN = 0;
+    private static int verticalAdjustedMin = 0;
     private static final int VERTICAL_DEFAULT = 0;
     int verticalPosition = VERTICAL_DEFAULT;
 
     // This chunk controls our viper slide
     private DcMotor viperSlide = null;
-    private static final int VIPER_MAX = 2600;
-    private static final int VIPER_MIN = 50;
+    private static final int VIPER_MAX = 2759;
+    private static final int VIPER_MIN = 245;
     private static final int VIPER_DEFAULT = 0;
     private int viperSlidePosition = VIPER_DEFAULT;
 
@@ -86,6 +87,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperSlide.setDirection(DcMotor.Direction.REVERSE);
+        viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setPosition(claw_position);
@@ -136,6 +138,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
+            verticalAdjustedMin = (int)5.8*viperSlidePosition+VIPER_MIN;
             if (gamepad1.dpad_up) {
                 vertical.setTargetPosition(VERTICAL_MAX);
                 ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
@@ -146,13 +149,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MIN) {           // If the left button is pressed AND it can safely lower further
+            else if (gamepad1.dpad_left && verticalPosition > verticalAdjustedMin) {           // If the left button is pressed AND it can safely lower further
                 vertical.setTargetPosition(verticalPosition - 50);
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_down) {
-                vertical.setTargetPosition(VERTICAL_MIN);
+                vertical.setTargetPosition(verticalAdjustedMin);
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
