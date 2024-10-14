@@ -12,21 +12,45 @@ import org.nknsd.robotics.framework.NKNComponent;
 
 public class FlowSensorHandler implements NKNComponent {
 
-    public static class FlowSensorData {
-        public final double angle;
+    public static class PoseData {
+        public final double heading;
         public final double x;
         public final double y;
 
-        public FlowSensorData(double angle, double x, double y) {
-            this.angle = angle;
+        public PoseData(double heading, double x, double y) {
+            this.heading = heading;
             this.x = x;
             this.y = y;
         }
     }
 
+    public static class OdometryData {
+        public final PoseData pos;
+        public final PoseData vel;
+        public final PoseData acc;
+
+        public OdometryData(PoseData pos, PoseData vel, PoseData acc) {
+            this.pos = pos;
+            this.vel = vel;
+            this.acc = acc;
+        }
+    }
+
     SparkFunOTOS flowSensor;
 
-    private void configureOtos() {
+    String flowName;
+    int xOffset;
+    int yOffset;
+    int hOffset;
+
+    public FlowSensorHandler(String flowName, int xOffset, int yOffset, int hOffset) {
+        this.flowName = flowName;
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.hOffset = hOffset;
+    }
+
+    private void configureOtos(int xOffset, int yOffset, int hOffset) {
         flowSensor.setLinearUnit(DistanceUnit.INCH);
         flowSensor.setAngularUnit(AngleUnit.DEGREES);
 
@@ -37,7 +61,7 @@ public class FlowSensorHandler implements NKNComponent {
         // clockwise (negative rotation) from the robot's orientation, the offset
         // would be {-5, 10, -90}. These can be any value, even the angle can be
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(xOffset, yOffset, hOffset);
         flowSensor.setOffset(offset);
 
         // Here we can set the linear and angular scalars, which can compensate for
@@ -78,8 +102,8 @@ public class FlowSensorHandler implements NKNComponent {
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
-        flowSensor = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
-        configureOtos();
+        flowSensor = hardwareMap.get(SparkFunOTOS.class, flowName);
+        configureOtos(xOffset, yOffset, hOffset);
         return true;
     }
 
@@ -110,11 +134,20 @@ public class FlowSensorHandler implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        String flowString = "[ angle " + getPosition().angle + " x " + getPosition().x + " y " + getPosition().y + "]";
+        String flowString = "[ heading " + getOdometryData().pos.heading + " x " + getOdometryData().pos.x + " y " + getOdometryData().pos.y + "]";
+        telemetry.addData("flowSensor", flowString);
     }
 
-    public FlowSensorData getPosition() {
-        SparkFunOTOS.Pose2D pos = flowSensor.getPosition();
-        return new FlowSensorData(pos.h, pos.x, pos.y);
+    public OdometryData getOdometryData() {
+        SparkFunOTOS.Pose2D pos2d = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D vel2d = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D acc2d = new SparkFunOTOS.Pose2D();
+        flowSensor.getPosVelAcc(pos2d, vel2d, acc2d);
+        PoseData pos = new PoseData(pos2d.h, pos2d.x, pos2d.y);
+        PoseData vel = new PoseData(vel2d.h, vel2d.x, vel2d.y);
+        PoseData acc = new PoseData(acc2d.h, acc2d.x, acc2d.y);
+        return new OdometryData(pos, vel, acc);
     }
+
+
 }
