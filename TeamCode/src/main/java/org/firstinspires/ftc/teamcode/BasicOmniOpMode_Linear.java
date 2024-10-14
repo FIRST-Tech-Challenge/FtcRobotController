@@ -35,22 +35,23 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // This chunk controls our vertical
     private DcMotor vertical = null;
-    private static final int VERTICAL_MAX = 1600;
-    private static final int VERTICAL_MIN = 0;
-    private static int verticalAdjustedMin = 0;
-    private static final int VERTICAL_DEFAULT = 0;
-    int verticalPosition = VERTICAL_DEFAULT;
+    private static final int VERTICAL_MAX = 1800; // Milla: MIN should always be before MAX
+    private static final int VERTICAL_MIN = 0; // Milla: Really, none of our variables should be static
+    private static int verticalAdjustedMin = 0; // Milla: technically, all of our variables should be private.
+            // However, no one is ever calling our class, so it doesn't matter. To make things more simple and easy to read,
+            // I think we should omit the private tag from all of them
+    int verticalPosition = VERTICAL_MIN;
 
     // This chunk controls our viper slide
     private DcMotor viperSlide = null;
     private static final int VIPER_MAX = 2759;
-    private static final int VIPER_MIN = 245;
-    private static final int VIPER_DEFAULT = 0;
+    private static final int VIPER_MIN = 0;
+    private static final int VIPER_DEFAULT = 0; // Milla: We define VIPER_DEFAULT, then use it once, then never use it again. It is kind of a waste.
     private int viperSlidePosition = VIPER_DEFAULT;
 
     // This chunk controls our claw
     private Servo claw = null;
-    private static final double CLAW_DEFAULT = 0.75;
+    private static final double CLAW_DEFAULT = 0.75; // Milla: The order should always be MIN, MAX, DEFAULT
     private static final double CLAW_MIN = 0.96;
     private static final double CLAW_MAX = 0.75;
     double claw_position = CLAW_DEFAULT;
@@ -58,7 +59,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Variables for turns
-    IMU imu = null;
+    IMU imu = null; // Milla: We don't use the IMU anymore. We should delete everything related to the IMU
 
     @Override
     //Op mode runs when the robot runs. It runs the whole time.
@@ -80,6 +81,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // Milla: We don't want to initialize by sending the vertical to a specific position
+        // We want to just reset the encoder so that its starting spot is our defined 0
         vertical.setTargetPosition(0);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -90,7 +93,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(claw_position);
+        claw.setPosition(CLAW_DEFAULT);
 
         // Initialize the IMU configuration
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
@@ -138,6 +141,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
+            // Milla: work on this
             verticalAdjustedMin = (int)5.8*viperSlidePosition+VIPER_MIN;
             if (gamepad1.dpad_up) {
                 vertical.setTargetPosition(VERTICAL_MAX);
@@ -145,6 +149,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely raise further
+                // Milla: You were right about the concern that we can go above the vertical max here.
+                // One way to fix that is to call Math.min with the target position and the vertical max
+                // The same thing can be done below for the vertical min.
                 vertical.setTargetPosition(verticalPosition + 50);
                 ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -196,13 +203,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Joystick Lateral", "%4.2f", lateral);
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
         telemetry.addData("Current Yaw", "%.0f", getHeading());
-        telemetry.addData("Claw position", "%4.2f", claw_position);
+        telemetry.addData("Claw position", "%4.2f", claw_position); // Callie: we should print both the targeted position (this) and the actual position (claw.getPosition())
         telemetry.addData("Viper Slide Velocity", "%4.2f", ((DcMotorEx) viperSlide).getVelocity());
         telemetry.addData("Viper power consumption", "%.1f", ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
         telemetry.addData("Vertical Power", "%.1f", ((DcMotorEx) vertical).getVelocity());
         telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
+        // Milla: We need to print the verticalAdjustedMin so we have the data we need to make changes.
 
         telemetry.update();
     }
