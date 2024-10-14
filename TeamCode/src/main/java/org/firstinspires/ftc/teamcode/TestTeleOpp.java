@@ -58,6 +58,8 @@ public class TestTeleOpp extends LinearOpMode {
         outer.scheduleParallel(actions2);
         outer.scheduleSequential(action3);
 
+        MoveLSAction moveLS = new MoveLSAction();
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -68,6 +70,7 @@ public class TestTeleOpp extends LinearOpMode {
 //            action3.update();
 //            action4.update();
 
+            //moveLS.updateCheckDone();
             outer.updateCheckDone();
 
             telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());

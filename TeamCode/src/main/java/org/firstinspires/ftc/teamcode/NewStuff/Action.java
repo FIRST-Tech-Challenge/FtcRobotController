@@ -17,6 +17,7 @@ public abstract class Action {
     Action getDependentAction() {
         return this.dependentAction;
     }
+
     public void updateCheckDone() {
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
