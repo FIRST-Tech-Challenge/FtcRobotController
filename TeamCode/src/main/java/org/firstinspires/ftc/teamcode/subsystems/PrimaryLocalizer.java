@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Time;
+import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
  * This will be the localizer that will combine
  * any and all localization data into a single location
  */
-public class PrimaryLocalizer implements LocalizerInterface {
+public class PrimaryLocalizer implements LocalizerInterface, Localizer {
 
     //Should be equal or be close to 1;
     private double totalWeight = 0;
@@ -70,6 +72,11 @@ public class PrimaryLocalizer implements LocalizerInterface {
 
     public LocalizerInterface[] getLocalizers(){
         return localizers;
+    }
+
+    @Override
+    public Twist2dDual<Time> update() {
+        return null;
     }
 }
 
