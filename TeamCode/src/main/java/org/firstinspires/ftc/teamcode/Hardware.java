@@ -9,7 +9,7 @@ import org.firstinspires.ftc.vision.*;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
-import org.firstinspires.ftc.teamcode.hardware.*;
+import org.firstinspires.ftc.teamcode.hardwareSystems.*;
 
 public class Hardware {
     // The opMode to access the hardware map from.

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware;
+package org.firstinspires.ftc.teamcode.hardwareSystems;
 
 import com.qualcomm.robotcore.hardware.*;
 
@@ -8,7 +8,6 @@ public class MecanumWheels extends Wheels {
     private final DcMotor FRONT_RIGHT_MOTOR;
     private final DcMotor BACK_LEFT_MOTOR;
     private final DcMotor BACK_RIGHT_MOTOR;
-
 
     private final double WHEEL_GEAR_RATIO = -1.0;
 
@@ -40,7 +39,7 @@ public class MecanumWheels extends Wheels {
      */
     @Override
     public void drive(double drivePower, double turn) {
-        drive(0, drivePower, 0);
+        drive(0, drivePower, turn);
     }
 
     /**
@@ -67,5 +66,14 @@ public class MecanumWheels extends Wheels {
      */
     @Override
     public void driveDistance(double forwardDistance, double sidewaysDistance) {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void turn(double degrees) {
+
     }
 }
