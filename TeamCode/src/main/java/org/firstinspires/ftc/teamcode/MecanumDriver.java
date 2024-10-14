@@ -52,9 +52,10 @@ public class MecanumDriver extends OpMode {
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
     public final boolean isFieldCentric = true;
+    private int slidePosition = 0;
 
-    private DcMotor viperSlide1 = null;
-    private DcMotor viperSlide2 = null;
+    private DcMotor viperSlide1;
+    private DcMotor viperSlide2;
 
     @Override
     public void init() {
@@ -111,18 +112,31 @@ public class MecanumDriver extends OpMode {
         robotController.sendTelemetry(telemetry);
 
         if (gamepad1.left_bumper) {
-            viperSlide1.setPower(1);
-            viperSlide2.setPower(1);
+            slidePosition = 1;
+            moveViperSlides();
 
         } else if (gamepad1.right_bumper) {
-            viperSlide1.setPower(-1);
-            viperSlide2.setPower(-1);
+            slidePosition = -1;
+            moveViperSlides();
         } else {
-            viperSlide1.setPower(0);
-            viperSlide2.setPower(0);
+            slidePosition = 0;
+            moveViperSlides();
         }
 
 
+    }
+
+    public void moveViperSlides() {
+        moveSlide1();
+        moveSlide2();
+    }
+
+    public void moveSlide1() {
+        viperSlide1.setTargetPosition(slidePosition);
+    }
+
+    public void moveSlide2() {
+        viperSlide2.setTargetPosition(slidePosition);
     }
 
 
