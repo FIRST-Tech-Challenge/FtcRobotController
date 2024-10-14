@@ -64,7 +64,7 @@ public class ViperTest extends OpMode
         viperSlide1  = hardwareMap.get(DcMotor.class, "VIPERRIGHT");
         viperSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        viperSlide2 = hardwareMap.get(DcMotor.class, "VIPERLEFTS");
+        viperSlide2 = hardwareMap.get(DcMotor.class, "VIPERLEFT");
         viperSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }

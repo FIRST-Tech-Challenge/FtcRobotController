@@ -53,6 +53,9 @@ public class MecanumDriver extends OpMode {
     private final static double SPEED_MULTIPLIER = 2.3;
     public final boolean isFieldCentric = true;
 
+    private DcMotor viperSlide1 = null;
+    private DcMotor viperSlide2 = null;
+
     @Override
     public void init() {
         DcMotor backLeft = hardwareMap.get(DcMotor.class, "BACKLEFT");
@@ -60,9 +63,17 @@ public class MecanumDriver extends OpMode {
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FRONTLEFT");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "FRONTRIGHT");
 
+        viperSlide1 = hardwareMap.get(DcMotor.class, "VIPERRIGHT");
+        viperSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperSlide2 = hardwareMap.get(DcMotor.class, "VIPERLEFT");
+        viperSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
+
+        telemetry.addData("Status", "Initialized");
+
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
@@ -98,10 +109,21 @@ public class MecanumDriver extends OpMode {
         telemetry.addData("Right Trigger", gamepad1.right_trigger);
         telemetry.addData("servoPosition", servoPosition);
         robotController.sendTelemetry(telemetry);
+
+        if (gamepad1.left_bumper) {
+            viperSlide1.setPower(1);
+            viperSlide2.setPower(1);
+
+        } else if (gamepad1.right_bumper) {
+            viperSlide1.setPower(-1);
+            viperSlide2.setPower(-1);
+        } else {
+            viperSlide1.setPower(0);
+            viperSlide2.setPower(0);
+        }
+
+
     }
 
-    @Override
-    public void stop() {
-    }
 
 }
