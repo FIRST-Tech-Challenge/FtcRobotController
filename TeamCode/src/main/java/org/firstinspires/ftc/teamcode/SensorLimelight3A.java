@@ -45,11 +45,20 @@ import java.util.List;
 @TeleOp(name = "Lime Camera", group = "Sensor")
 public class SensorLimelight3A extends LinearOpMode {
 
+    private static double X_MAX = -100;
+    private static double Y_MAX = -100;
+    private static double YAW_MAX = -500;
+    private static double X_MIN = 100;
+    private static double Y_MIN = 500;
+    private static double YAW_MIN = 100;
+    private static double X_CURRENT = 0;
+    private static double Y_CURRENT = 0;
+    private static double YAW_CURRENT = 0;
+
     private Limelight3A limelight;
-    //The limelight has a heading range of 62 degrees and can see the AprilTag from 10 feet away. It can be positioned at a maximum of 14 1/2 inches tall.
+    //The limelight has a heading range of 62 degrees and can see the AprilTag from 10 feet away. Can be positioned at max 14 1/2 inches high.
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
@@ -61,14 +70,14 @@ public class SensorLimelight3A extends LinearOpMode {
         while (opModeIsActive()) {
             LLStatus status = limelight.getStatus();
             telemetry.addData("Name", "%s", status.getName());
-            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d", status.getTemp(), status.getCpu(),(int)status.getFps());   //Tells us the temperatures, CPU and FPS
+            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d", status.getTemp(), status.getCpu(), (int) status.getFps());   //Tells us the temperatures, CPU and FPS
             telemetry.addData("Pipeline", "Index: %d, Type: %s", status.getPipelineIndex(), status.getPipelineType());              //Tells us pipeline value
 
             LLResult result = limelight.getLatestResult();
             if (result != null) {
                 // Access general information
                 double targetingLatency = result.getTargetingLatency();
-                telemetry.addData("Total Latency", "%.0f",result.getTargetingLatency());
+                telemetry.addData("Total Latency", "%.0f", result.getTargetingLatency());
 
                 if (result.isValid()) {
                     Pose3D botpose = result.getBotpose();
@@ -77,17 +86,44 @@ public class SensorLimelight3A extends LinearOpMode {
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
                         telemetry.addData("AprilTag ID", "%d", fr.getFiducialId());             // AprilTag ID
                     }
-                    telemetry.addData("X-Location", "%.1f",botpose.getPosition().x);            // Get X-Location from the robot
-                    telemetry.addData("Y-Location", "%.1f",botpose.getPosition().y);            // Get Y-Location from the robot
-                    telemetry.addData("Heading", "%.0f",botpose.getOrientation().getYaw());     // Get Heading from the robot
-                }
-                else {
-                    telemetry.addData("Limelight", "No AprilTags");                              // AprilTags are not detected
-                }
-            }
+                    telemetry.addData("X-Location", "%.1f", botpose.getPosition().x);            // Get X-Location from the robot
+                    telemetry.addData("Y-Location", "%.1f", botpose.getPosition().y);            // Get Y-Location from the robot
+                    telemetry.addData("Heading", "%.0f", botpose.getOrientation().getYaw());
 
-            telemetry.update();
+                    X_CURRENT = botpose.getPosition().x;
+                    Y_CURRENT = botpose.getPosition().y;
+                    YAW_CURRENT = botpose.getOrientation().getYaw();
+
+                    if (X_CURRENT > X_MAX) {
+                        X_MAX = X_CURRENT;
+                    }
+                    if (X_CURRENT < X_MIN) {
+                        X_MIN = X_CURRENT;
+                    }
+                    if (Y_CURRENT > Y_MAX) {
+                        Y_MAX = Y_CURRENT;
+                    }
+                    if (Y_CURRENT < Y_MIN) {
+                        Y_MIN = Y_CURRENT;
+                    }
+                    if (YAW_CURRENT > YAW_MAX) {
+                        YAW_MAX = YAW_CURRENT;
+                    }
+                    if (YAW_CURRENT < YAW_MIN) {
+                        YAW_MIN = YAW_CURRENT;
+                    }
+                }
+                telemetry.addData("X Max", "%.1f", X_MAX);
+                telemetry.addData("X Min", "%.1f", X_MIN);
+                telemetry.addData("Y Max", "%.1f", Y_MAX);
+                telemetry.addData("Y Min", "%.1f", Y_MIN);
+                telemetry.addData("Yaw Max", "%.0f", YAW_MAX);
+                telemetry.addData("Yaw Min", "%.0f", YAW_MIN);
+                telemetry.update();
+            }
         }
+
+
         limelight.stop();
     }
 }
