@@ -1,21 +1,13 @@
 package com.kalipsorobotics.fresh;
 
-import com.kalipsorobotics.fresh.mechanisms.DroneLauncher;
-import com.kalipsorobotics.fresh.mechanisms.OuttakeArmClamp;
-import com.kalipsorobotics.fresh.mechanisms.OuttakeArmPivot;
-import com.kalipsorobotics.fresh.mechanisms.OuttakeSlide;
+import org.firstinspires.ftc.teamcode.mechanisms2023.DroneLauncher;
+import org.firstinspires.ftc.teamcode.mechanisms2023.OuttakeArmClamp;
+import org.firstinspires.ftc.teamcode.mechanisms2023.OuttakeArmPivot;
+import org.firstinspires.ftc.teamcode.mechanisms2023.OuttakeSlide;
 import com.kuriosityrobotics.shuttle.HardwareTaskScope;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import com.kalipsorobotics.fresh.localization.Odometry;
-import com.kalipsorobotics.fresh.localization.RobotMovement;
-import com.kalipsorobotics.fresh.math.Path;
-import com.kalipsorobotics.fresh.math.Point;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 @Autonomous(name = "joshua")

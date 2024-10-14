@@ -1,11 +1,10 @@
-package com.kalipsorobotics.fresh.mechanisms;
+package org.firstinspires.ftc.teamcode.mechanisms2023;
 
 
 import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.kuriosityrobotics.shuttle.hardware.LinearMotorControl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class OuttakeSlide extends LinearMotorControl {
     private final DcMotorEx lsFront;
