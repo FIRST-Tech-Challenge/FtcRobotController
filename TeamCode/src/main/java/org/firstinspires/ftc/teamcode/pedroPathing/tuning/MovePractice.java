@@ -94,9 +94,6 @@ public class MovePractice extends OpMode {
                     pathState = 10;
                 }
                 break;
-            case 2:
-                follower.followPath();
-
             case 10:
                 if (pausetime.seconds() > 2 ) {
                     follower.followPath(move2);
