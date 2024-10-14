@@ -6,12 +6,9 @@ import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.PIDController;
 
@@ -34,7 +31,7 @@ public class Arm {
     private double MAXIMUM_ROTATION = (100 / 360) * TICKS_PER_ROTATION; //100 degrees (Relative to starting position)
 
     //Internal variables
-    private CRServo armLeft, armRight;
+    private CRServo armLeft, armRight, pivot;
 
     private Encoder encoder;
     private PIDController pid;
