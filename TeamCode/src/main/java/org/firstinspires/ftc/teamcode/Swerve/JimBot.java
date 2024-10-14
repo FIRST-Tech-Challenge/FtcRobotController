@@ -5,16 +5,12 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
 @TeleOp(name = "JimBot Swerve", group = "Swerve")
@@ -24,8 +20,8 @@ public class JimBot extends LinearOpMode {
 
     Servo FLServo, BLServo, BRServo, FRServo;
 
-    //in case builders are bad is offset center for servo
-    double FLServoOffSet = .00;
+    //in case builders are bad, is offset center for servo
+    double FLServoOffSet = .01;
     double FRServoOffSet = .00;
     double BLServoOffSet = .01;
     double BRServoOffSet = .01;
@@ -44,8 +40,8 @@ public class JimBot extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            double speed = gamepad1.left_trigger - gamepad1.right_trigger ; // Makes it so that the triggers cancel each other out if both are pulled at the same time
-            double angle = gamepad1.right_stick_x;
+            double speed = gamepad1.left_trigger - gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
+            double angle = -gamepad1.right_stick_x;
             if (speed != 0)
                 move(gamepad1.left_stick_x, speed);
             else if (angle != 0)
@@ -177,16 +173,21 @@ public class JimBot extends LinearOpMode {
     public void rotate(double angle) {
 
         //set wheels for rotation (Ben's robot has 2x gear ratio so .25/2 and .75/2)
-        FLServo.setPosition(.25/2);
-        BLServo.setPosition(.75/2);
-        BRServo.setPosition(.25/2);
-        FRServo.setPosition(.75/2);
+        FLServo.setPosition(.25 + .125 / 2);
+        BLServo.setPosition(.75 - .125/2);
+        BRServo.setPosition(.25 + .125 / 2);
+        FRServo.setPosition(.75 - .125/2);
 
         //turn motors to rotate robot
-        FLMotor.setPower(angle);
-        BLMotor.setPower(angle);
+        FLMotor.setPower(-angle);
+        BLMotor.setPower(-angle);
         BRMotor.setPower(angle);
         FRMotor.setPower(angle);
+
+    }
+
+
+    public void strafe(double power){
 
     }
 
