@@ -21,9 +21,13 @@ Instantiates a [`Hardware`](#Hardware) class.
 
 Reads and writes text files in external storage.
 
+> [!Warning]
+> This class relies on java.nio.file.Paths, which is only available from SDK version 26 and onward.
+
 ## [PositionInput](./PositionInput.java)
 
-A TeleOp that writes the [`TeamColor`](#TeamColor) and [`TeamSide`](#TeamSide) of the robot into external storage. 
+A TeleOp that writes the [`TeamColor`](#TeamColor) and [`TeamSide`](#TeamSide) of the robot into external storage.
+Uses [`FileManager`](#FileManager) to write to external storage files.
 
 > [!Note]
 > This class is deprecated. 
@@ -50,7 +54,7 @@ An abstract class to control the robot's arm system.
 
 ## [ExtendableArm](./hardwareSystems/ExtendableArm.java)
 
-A subclass of `Arm` that controls a rotating, extendable arm.
+A subclass of [`Arm`](#Arm) that controls a rotating, extendable arm.
 
 ## [Wheels](./hardwareSystems/Wheels.java)
 
@@ -58,4 +62,4 @@ A abstract class for the robot's wheels,
 
 ## [MecanumWheels](./hardwareSystems/MecanumWheels.java)
 
-A subclass of the `Wheels` class for controlling the driving of a four-mecanum wheel system.
+A subclass of the [`Wheels`](#Wheels) class for controlling the driving of a four-mecanum wheel system.
