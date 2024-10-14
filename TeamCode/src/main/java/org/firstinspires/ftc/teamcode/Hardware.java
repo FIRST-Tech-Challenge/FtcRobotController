@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.vision.*;
 
-import org.firstinspires.ftc.teamcode.hardware.*;
+import org.firstinspires.ftc.teamcode.hardwareSystems.*;
 
 public class Hardware {
     // The opMode to access the hardware map from.
