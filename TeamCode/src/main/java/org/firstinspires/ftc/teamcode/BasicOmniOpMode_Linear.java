@@ -2,18 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 // All the things that we use and borrow
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Remote Control", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
@@ -34,31 +30,26 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     double yaw = 0;
 
     // This chunk controls our vertical
-    private DcMotor vertical = null;
-    private static final int VERTICAL_MAX = 1600;
-    private static final int VERTICAL_MIN = 0;
-    private static int verticalAdjustedMin = 0;
-    private static final int VERTICAL_DEFAULT = 0;
-    int verticalPosition = VERTICAL_DEFAULT;
+    DcMotor vertical = null;
+    final int VERTICAL_MIN = 0;
+    final int VERTICAL_MAX = 1800;
+    int verticalAdjustedMin = 0;
+    int verticalPosition = VERTICAL_MIN;
 
     // This chunk controls our viper slide
-    private DcMotor viperSlide = null;
-    private static final int VIPER_MAX = 2759;
-    private static final int VIPER_MIN = 245;
-    private static final int VIPER_DEFAULT = 0;
-    private int viperSlidePosition = VIPER_DEFAULT;
+    DcMotor viperSlide = null;
+    final int VIPER_MAX = 2759;
+    final int VIPER_MIN = 0;
+    int viperSlidePosition = 0;
 
     // This chunk controls our claw
-    private Servo claw = null;
-    private static final double CLAW_DEFAULT = 0.75;
-    private static final double CLAW_MIN = 0.96;
-    private static final double CLAW_MAX = 0.75;
+    Servo claw = null;
+    final double CLAW_MIN = 0.96;
+    final double CLAW_MAX = 0.75;
+    final double CLAW_DEFAULT = 0.75;
     double claw_position = CLAW_DEFAULT;
 
-    private final ElapsedTime runtime = new ElapsedTime();
-
-    // Variables for turns
-    IMU imu = null;
+    final ElapsedTime runtime = new ElapsedTime();
 
     @Override
     //Op mode runs when the robot runs. It runs the whole time.
@@ -80,8 +71,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        vertical.setTargetPosition(0);
-        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
@@ -90,12 +79,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(claw_position);
-
-        // Initialize the IMU configuration
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        claw.setPosition(CLAW_DEFAULT);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -138,19 +122,20 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
-            verticalAdjustedMin = (int)5.8*viperSlidePosition+VIPER_MIN;
+            // Milla: work on this
+            verticalAdjustedMin = (int)(0.09*viperSlidePosition+VERTICAL_MIN); // 0.09 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
             if (gamepad1.dpad_up) {
                 vertical.setTargetPosition(VERTICAL_MAX);
                 ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely raise further
-                vertical.setTargetPosition(verticalPosition + 50);
+                vertical.setTargetPosition(Math.min(VERTICAL_MAX, verticalPosition + 50));
                 ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_left && verticalPosition > verticalAdjustedMin) {           // If the left button is pressed AND it can safely lower further
-                vertical.setTargetPosition(verticalPosition - 50);
+                vertical.setTargetPosition(Math.max(verticalAdjustedMin, verticalPosition - 50));
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
@@ -168,7 +153,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.left_trigger > 0 && viperSlidePosition > VIPER_MIN) {          // If the right button is pressed AND it can safely retract further
-                viperSlide.setTargetPosition(viperSlidePosition - 200);
+                viperSlide.setTargetPosition(Math.max(VIPER_MIN, viperSlidePosition - 200));
                 ((DcMotorEx) viperSlide).setVelocity(gamepad1.left_trigger*4000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
@@ -195,21 +180,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Joystick Axial", "%4.2f", axial);
         telemetry.addData("Joystick Lateral", "%4.2f", lateral);
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
-        telemetry.addData("Current Yaw", "%.0f", getHeading());
-        telemetry.addData("Claw position", "%4.2f", claw_position);
+        telemetry.addData("Claw position", "%4.2f", claw_position); // Callie: we should print both the targeted position (this) and the actual position (claw.getPosition())
         telemetry.addData("Viper Slide Velocity", "%4.2f", ((DcMotorEx) viperSlide).getVelocity());
         telemetry.addData("Viper power consumption", "%.1f", ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
         telemetry.addData("Vertical Power", "%.1f", ((DcMotorEx) vertical).getVelocity());
         telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
+        telemetry.addData("Vertical Adjusted Min", "%d", verticalAdjustedMin);
 
         telemetry.update();
-    }
-
-    // Read the Robot heading in degrees directly from the IMU
-    public double getHeading() {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.DEGREES);
     }
 }
