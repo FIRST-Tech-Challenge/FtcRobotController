@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp (name = "TeleOpCode_FieldCentric")
+@TeleOp (name = "TeleOp_FieldCentric")
 public class TeleOpCode_FieldCentric extends LinearOpMode {
 
     // Run the initialize function
@@ -36,13 +36,13 @@ public class TeleOpCode_FieldCentric extends LinearOpMode {
 
 
         // Variables that store the different game pad movements for ease of reference later
-        float strafePower; // (left stick x-axis movement)
+        double strafePower; // (left stick x-axis movement)
         strafePower = gamepad1.left_stick_x * 10000;
         telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
-        float turnPower; // (right stick x-axis movement)
+        double turnPower; // (right stick x-axis movement)
         turnPower = gamepad1.right_stick_x * 10000;
         telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
-        float straightMovementPower; // (left stick y-axis movement)
+        double straightMovementPower; // (left stick y-axis movement)
         straightMovementPower = gamepad1.left_stick_y * 10000;
         telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 

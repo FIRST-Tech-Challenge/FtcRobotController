@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp (name = "TeleOpCode_RobotCentric")
+@TeleOp (name = "TeleOp_RobotCentric")
 public class TeleOpCode_RobotCentric extends LinearOpMode {
 
     // Run the initialize function
@@ -33,15 +34,46 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
         // Variables that store the different game pad movements for ease of reference later
-        float strafePower; // (left stick x-axis movement)
-        strafePower = gamepad1.left_stick_x * 1000;
+        double strafePower; // (left stick x-axis movement)
+        strafePower = gamepad1.left_stick_x * 10000; // Min: -10000, Max: 10000
         telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
-        float turnPower; // (right stick x-axis movement)
-        turnPower = gamepad1.right_stick_x * 1000;
+        double turnPower; // (right stick x-axis movement)
+        turnPower = gamepad1.right_stick_x * 10000; // Min: -10000, Max: 10000
         telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
-        float straightMovementPower; // (left stick y-axis movement)
-        straightMovementPower = gamepad1.left_stick_y * 1000;
+        double straightMovementPower; // (left stick y-axis movement)
+        straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y); // Min: -10000, Max: 10000
         telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
+
+        if (gamepad1.left_trigger!=0){
+            straightMovementPower=(gamepad1.left_stick_y*1000);
+            telemetry.addData("L2 pos", gamepad1.left_trigger);
+            telemetry.update();
+        }
+        // accelerationAdditive is 1428.57 because it is
+        // The intended result is that when the control sticks are not stationary the speed slowly
+        // increases until it gets to the max value of 10000 or -10000
+
+        /*
+        if encoder value too diff from initial, then increase speed
+        as change in position increases, speed increases
+
+        diff int = currentpos-initpos
+        speed
+
+        */
+
+//        ElapsedTime accelerationTime = new ElapsedTime();
+//
+//        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0|| gamepad1.right_stick_x != 0) {
+//            for (int i = 0; i < 7; i++) {
+//                strafePower = gamepad1.left_stick_x * 1428.57;
+//                turnPower = gamepad1.right_stick_x * 1428.57;
+//                straightMovementPower = gamepad1.left_stick_y * 1428.57;
+//            }
+//        }
+
+
+
 
 
         // Set velocity of the motors

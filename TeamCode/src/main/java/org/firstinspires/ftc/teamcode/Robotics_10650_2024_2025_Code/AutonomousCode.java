@@ -28,6 +28,8 @@ public class AutonomousCode extends LinearOpMode {
        robot.strafeR(1100, 500);
        robot.goStraight(500, 500);
        robot.strafeL(50, 100);
+       robot.newTurnFunction(90);
+       robot.goStraight(200, 100);
 
         // Shutdown motors when the code ends
         robot.stopMotors();
