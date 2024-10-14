@@ -21,6 +21,10 @@ If you would like to just download the driver files and example code, you can fi
 https://github.com/goBILDA-Official/goBILDA-Pinpoint-Odometry-Computer-FTC-Driver/tree/goBILDA-Odometry-Driver/TeamCode/src/main/java/org/firstinspires/ftc/teamcode
 
 
+### User guide:
+We also have a PDF user guide that goes over calibration, tuning, and common issues which can be found here:
+https://www.gobilda.com/content/user_manuals/3110-0002-0001_user-guide.pdf
+
 ## Requirements
 To use this Android Studio project, you will need Android Studio 2021.2 (codename Chipmunk) or later.
 
