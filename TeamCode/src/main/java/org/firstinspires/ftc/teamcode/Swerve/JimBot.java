@@ -20,21 +20,24 @@ public class JimBot extends LinearOpMode {
 
     Servo FLServo, BLServo, BRServo, FRServo;
 
-    //in case builders are bad, is offset center for servo
+    GoBildaPinpointDriver odo;
+
+
+    ElapsedTime turnTime = new ElapsedTime();
+
+
+    // In case builders are bad, is offset center for servo
     double FLServoOffSet = .01;
     double FRServoOffSet = .00;
     double BLServoOffSet = .01;
     double BRServoOffSet = .01;
 
-    ElapsedTime turnTime = new ElapsedTime();
-
-    GoBildaPinpointDriver odo;
 
     static double TRACKWIDTH = 14; //in inches
     static double WHEELBASE = 15; //in inches
 
-    @Override
-    public void runOpMode() {
+
+    public void runOpMode() throws InterruptedException {
 
         initRobot(); // Does all the robot stuff
 
@@ -42,85 +45,95 @@ public class JimBot extends LinearOpMode {
         while (opModeIsActive()) {
             double speed = gamepad1.left_trigger - gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
             double angle = -gamepad1.right_stick_x;
-            if (speed != 0)
-                move(gamepad1.left_stick_x, speed);
-            else if (angle != 0)
-                rotate(angle);
+            if (speed != 0) move(gamepad1.left_stick_x, speed);
+            else if (angle != 0) rotate(angle);
             else {
                 FLMotor.setPower(0);
                 BLMotor.setPower(0);
                 BRMotor.setPower(0);
                 FRMotor.setPower(0);
             }
-            if (gamepad1.a)
-                moveHome();
+            if (gamepad1.a) rotateToCenter();
         }
 
     }
 
 
+    /**
+     * Initializes the robot.<br>
+     * Starts all the devices and maps where they go
+     */
     public void initRobot() {
-
-        //init odo
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-        odo.resetPosAndIMU();
-        odo.setOffsets(177.8, 50.8);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         // Maps the motor objects to the physical ports
         FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
         BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
         FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
+        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
 
         // Sets the encoder mode
         FLMotor.setMode(RUN_USING_ENCODER);
         BLMotor.setMode(RUN_USING_ENCODER);
-        BRMotor.setMode(RUN_USING_ENCODER);
         FRMotor.setMode(RUN_USING_ENCODER);
+        BRMotor.setMode(RUN_USING_ENCODER);
 
         // Sets what happens when no power is applied to the motors.
         // In this mode, the computer will short the 2 leads of the motor, and because of math, the motor will be a lot harder to turn
         FLMotor.setZeroPowerBehavior(BRAKE);
         BLMotor.setZeroPowerBehavior(BRAKE);
-        BRMotor.setZeroPowerBehavior(BRAKE);
         FRMotor.setZeroPowerBehavior(BRAKE);
+        BRMotor.setZeroPowerBehavior(BRAKE);
 
         FLMotor.setDirection(REVERSE);
         BLMotor.setDirection(REVERSE);
-        BRMotor.setDirection(FORWARD);
         FRMotor.setDirection(REVERSE);
+        BRMotor.setDirection(FORWARD);
 
 
         // Maps the servo objects to the physical ports
         FLServo = hardwareMap.get(Servo.class, "FLServo");
         BLServo = hardwareMap.get(Servo.class, "BLServo");
-        BRServo = hardwareMap.get(Servo.class, "BRServo");
         FRServo = hardwareMap.get(Servo.class, "FRServo");
+        BRServo = hardwareMap.get(Servo.class, "BRServo");
 
         // Sets the ends of the servos. Hover cursor over function for more info
         // Will need to be tuned later
         //FL Servo center .51
-        //FR Servo center .55
         //BL Servo center .51
+        //FR Servo center .55
         //BR Servo center .51
         FLServo.scaleRange(FLServoOffSet, 1.0 + FLServoOffSet * 2);
         BLServo.scaleRange(BLServoOffSet, 1.0 + BLServoOffSet * 2);
-        BRServo.scaleRange(BRServoOffSet, 1.0 + BRServoOffSet * 2);
         FRServo.scaleRange(FRServoOffSet, 1.0 + FRServoOffSet * 2);
-
-        double[] test = cartesianToPolar(1, 0);
+        BRServo.scaleRange(BRServoOffSet, 1.0 + BRServoOffSet * 2);
 
         FLServo.setPosition(0.50 + FLServoOffSet);
-        FRServo.setPosition(0.50 + FRServoOffSet);
         BLServo.setPosition(0.51 + BLServoOffSet);
+        FRServo.setPosition(0.50 + FRServoOffSet);
         BRServo.setPosition(0.51 + BRServoOffSet);
+
+
+        // Init GoBilda Pinpoint module
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo.resetPosAndIMU();
+        odo.setOffsets(177.8, 50.8);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
     }
 
 
-    // Converts cartesian coordinates to polar
-    // 0 = r
-    // 1 = theta
+    /**
+     * Converts standard cartesian coordinates to polar coordinates
+     *
+     * @param x X input
+     * @param y Y input
+     * @return Returns an array of two doubles,<br>
+     * <p>
+     * [0] = R - Magnitude<br>
+     * [1] = Theta Angle of input coordinate.<br>
+     * Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
+     * @see #polarToCartesian(double, double)
+     */
     public double[] cartesianToPolar(double x, double y) {
         double[] arrayToReturn = new double[2];
         arrayToReturn[0] = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); // Radius
@@ -131,11 +144,18 @@ public class JimBot extends LinearOpMode {
     }
 
 
-    /*
-    Converts polar coordinates to cartesian
-     0 = x
-     1 = y
-    */
+    /**
+     * Converts polar coordinates to cartesian
+     *
+     * @param r     Magnitude of input coordinate
+     * @param theta Angle of input coordinate.<br>
+     *              Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
+     * @return Returns an array of two doubles,<br>
+     * <p>
+     * [0] = X<br>
+     * [1] = Y
+     * @see #cartesianToPolar(double, double)
+     */
     public double[] polarToCartesian(double r, double theta) {
         double[] arrayToReturn = new double[2];
         arrayToReturn[0] = r * Math.cos(theta); // X
@@ -145,14 +165,15 @@ public class JimBot extends LinearOpMode {
     }
 
 
-    //oldH newH not used maybe later to have motors wait to turn wheel until Servo is in right position
+    /**
+     * Moves the robot based on desired heading and power.<br>
+     * Does not change the rotation of the robot at all
+     *
+     * @param heading Desired heading of the robot.<br>
+     *                0 is straight forward 1 is fully right, -1 is fully left
+     * @param power   Desired power to run the motors at
+     */
     public void move(double heading, double power) {
-        //double newH;
-        /*
-        /if(newH>=oldH-5 && newH <=oldH+5)
-            oldH = newH;
-         */
-
         heading = (heading + 1) / 2;
 
         FLServo.setPosition(heading + FLServoOffSet);
@@ -160,47 +181,48 @@ public class JimBot extends LinearOpMode {
         BRServo.setPosition(heading + BRServoOffSet);
         FRServo.setPosition(heading + FRServoOffSet);
 
-        //if(turnTime<)
-
         FLMotor.setPower(power);
         BLMotor.setPower(power);
         BRMotor.setPower(power);
         FRMotor.setPower(power);
-        //oldH = newH;
     }
 
 
-    public void rotate(double angle) {
+    /**
+     * Rotates the robot around a center point.<br>
+     * Does not move the robot in any other direction.<br>
+     *
+     * @param power Power to turn the robot at
+     */
+    public void rotate(double power) {
 
-        //set wheels for rotation (Ben's robot has 2x gear ratio so .25/2 and .75/2)
+        // Set wheels for rotation (Ben's robot has 2x gear ratio so .25/2 and .75/2)
         FLServo.setPosition(.25 + .125 / 2);
-        BLServo.setPosition(.75 - .125/2);
+        BLServo.setPosition(.75 - .125 / 2);
         BRServo.setPosition(.25 + .125 / 2);
-        FRServo.setPosition(.75 - .125/2);
+        FRServo.setPosition(.75 - .125 / 2);
 
         //turn motors to rotate robot
-        FLMotor.setPower(-angle);
-        BLMotor.setPower(-angle);
-        BRMotor.setPower(angle);
-        FRMotor.setPower(angle);
+        FLMotor.setPower(-power);
+        BLMotor.setPower(-power);
+        BRMotor.setPower(power);
+        FRMotor.setPower(power);
 
     }
 
 
-    public void strafe(double power){
-
-    }
-
-
-    /*
-    wheel angle is perpendicular to turn angle
-    turn angle is inverse tan(get angle) of 7.5(half of wheel base length) / (turning distance/2)
-    because it is radius of point we are trying to rotate around
-    speed = -1 to 1
-    turnRad = -1 to 1
-    turnDir = LEFT or RIGHT
+    /**
+     * TODO This needs to be worked on. Nothing is done here
+     *
+     * <p>
+     * Wheel angle is perpendicular to turn angle
+     * turn angle is inverse tan(get angle) of 7.5(half of wheel base length) / (turning distance/2)
+     * because it is radius of point we are trying to rotate around
+     * speed = -1 to 1
+     * turnRad = -1 to 1
+     * turnDir = LEFT or RIGHT
      */
-    public void moveAndRotate(double speed, double turnAmount, turnDir dir) {
+    public void moveAndRotate(double speed, double turnAmount) {
 
         double i_WheelAngle = Math.atan2(WHEELBASE, turnAmount - TRACKWIDTH / 2);
         double outsideAng = Math.atan2(WHEELBASE, turnAmount + TRACKWIDTH / 2);
@@ -209,26 +231,35 @@ public class JimBot extends LinearOpMode {
     }
 
 
-    //uses imu
-    public void moveHome() {
+    /**
+     * TODO Possibly make this not run at full speed at all times by adding some sort of power input
+     * Uses the IMU to move the robot to face forward
+     * <p>
+     * As long as this function is called, it will try to rotate back to facing forward
+     */
+    public void rotateToCenter() {
         double orientation = odo.getHeading();
         telemetry.addData("Yaw angle", orientation);
+
         rotate(orientation);
     }
 
 
+    /**
+     * TODO All of this
+     * Moves the robot to the detected specimen
+     */
     public void moveToSpecimen() {
 
     }
 
 
+    /**
+     * TODO All of this as well
+     * Moves the robot back to the storage area
+     */
     public void moveToStore() {
 
-    }
-
-
-    public enum turnDir {
-        LEFT, RIGHT;
     }
 
 }
