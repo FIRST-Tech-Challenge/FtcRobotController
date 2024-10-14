@@ -31,6 +31,7 @@ public class Manual  extends LinearOpMode{
             telemetry.update();
 
             manageDriveMotors();
+            manageGrabber();
 
 
             telemetryAprilTag();
@@ -119,6 +120,17 @@ public class Manual  extends LinearOpMode{
         telemetry.addData("Drive Power", "%.2f", drive);
         telemetry.addData("Turn Power",  "%.2f", turn);
         telemetry.update();
+    }
+
+    private void manageGrabber(){
+
+        telemetry.addData("Gabber Key", gamepad1.right_stick_x);
+        if (gamepad1.right_stick_x > 0) {
+            robot.moveGrabber(true);
+        }
+        else if (gamepad1.right_stick_x < 0) {
+                robot.moveGrabber(false);
+        }
     }
 
     private void telemetryAprilTag(){

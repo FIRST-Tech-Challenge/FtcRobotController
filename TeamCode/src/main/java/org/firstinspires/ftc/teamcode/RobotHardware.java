@@ -73,6 +73,8 @@ public class RobotHardware {
     //The variable to store our instance of the vision portal.
     private VisionPortal myVisionPortal;
 
+    private Servo grabberServo = null;
+
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
      * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
@@ -81,6 +83,11 @@ public class RobotHardware {
     public RobotHardware (LinearOpMode opmode) {
         myOpMode = opmode;
     }
+
+    public static final double GRABBER_SPEED = 0.10;
+    public static final double GRABBER_MIN = 0.10;
+    public static final double GRABBER_MAX = 0.40;
+    private static double grabberDrive = 0.0;
 
     /**
      * Initialize all the robot's hardware.
@@ -100,6 +107,7 @@ public class RobotHardware {
 
         viperSlideMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorvs");
         viperSlideMotorTwo = myOpMode.hardwareMap.get(DcMotor.class,"motorvstwo");
+        grabberServo = myOpMode.hardwareMap.get(Servo.class, "gripperservo");
         setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
@@ -276,6 +284,23 @@ public class RobotHardware {
     public void setViperSlideMotorPower (double power){
         viperSlideMotor.setPower(power);
         viperSlideMotorTwo.setPower( power);
+
+    }
+
+    public void moveGrabber(boolean closeGrabber){
+        if (closeGrabber && grabberDrive > GRABBER_MIN) grabberDrive -= GRABBER_SPEED;
+
+        if (!closeGrabber && grabberDrive < GRABBER_MAX) grabberDrive += GRABBER_SPEED;
+
+        grabberServo.setPosition(Range.clip(grabberDrive, GRABBER_MIN, GRABBER_MAX));
+    }
+
+    public void moveGrabberToPosition(double position){
+        grabberServo.setPosition(Range.clip(position, GRABBER_MIN, GRABBER_MAX));
+    }
+
+    public double getGrabberPoistion(){
+        return grabberServo.getPosition();
     }
 
     // All  of the arm functions for manual below
@@ -298,5 +323,6 @@ armMotor.setPower(0);
      *
      * @param power Should the Arm be moved up or down
      */
-
 }
+
+
