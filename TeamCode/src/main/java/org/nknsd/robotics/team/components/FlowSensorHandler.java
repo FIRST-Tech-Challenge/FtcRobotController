@@ -29,7 +29,7 @@ public class FlowSensorHandler implements NKNComponent {
         public final PoseData vel;
         public final PoseData acc;
 
-        public OdometryData(PoseData pos, PoseData vel, PoseData acc){
+        public OdometryData(PoseData pos, PoseData vel, PoseData acc) {
             this.pos = pos;
             this.vel = vel;
             this.acc = acc;
@@ -39,11 +39,11 @@ public class FlowSensorHandler implements NKNComponent {
     SparkFunOTOS flowSensor;
 
     String flowName;
-    double xOffset;
-    double yOffset;
-    double hOffset;
+    int xOffset;
+    int yOffset;
+    int hOffset;
 
-    public FlowSensorHandler(String flowName, double xOffset, double yOffset, double hOffset) {
+    public FlowSensorHandler(String flowName, int xOffset, int yOffset, int hOffset) {
         this.flowName = flowName;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
@@ -103,7 +103,7 @@ public class FlowSensorHandler implements NKNComponent {
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         flowSensor = hardwareMap.get(SparkFunOTOS.class, flowName);
-        configureOtos(0,0,0);
+        configureOtos(xOffset, yOffset, hOffset);
         return true;
     }
 
