@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
@@ -27,8 +28,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Autonomous (name = "Straight Back And Forth", group = "Autonomous Pathing Tuning")
-public class StraightBackAndForth extends OpMode {
+@Autonomous (name = "Move Practice" , group = "Autonomous Pathing Tuning")
+public class MovePractice extends OpMode {
     private Telemetry telemetryA;
 
     public static double DISTANCE = 40;
@@ -37,8 +38,19 @@ public class StraightBackAndForth extends OpMode {
 
     private Follower follower;
 
-    private Path forwards;
-    private Path backwards;
+    private Path move1;
+    private Path move2;
+    private Path move3;
+    private Path move4;
+    private Path move5;
+    private Path move6;
+    private Path move7;
+    private Path move8;
+
+    // TODO: adjust this for each auto
+    private Pose startPose = new Pose(0, 0, 0);
+
+    private int pathState;
 
     private ElapsedTime pausetime = new ElapsedTime();
 
@@ -51,19 +63,21 @@ public class StraightBackAndForth extends OpMode {
     public void init() {
         follower = new Follower(hardwareMap);
 
-        forwards = new Path(new BezierLine(new Point(0,0, Point.CARTESIAN), new Point(-DISTANCE,0, Point.CARTESIAN)));
-        forwards.setConstantHeadingInterpolation(0);
-        backwards = new Path(new BezierLine(new Point(-DISTANCE,0, Point.CARTESIAN), new Point(0,0, Point.CARTESIAN)));
-        backwards.setConstantHeadingInterpolation(0);
+        move1 = new Path(new BezierLine(new Point(0,0, Point.CARTESIAN), new Point(-17,0, Point.CARTESIAN)));
+        move1.setConstantHeadingInterpolation(0);
+        move2 = new Path(new BezierLine(new Point(-17,0, Point.CARTESIAN), new Point(-17,5, Point.CARTESIAN)));
+        move2.setConstantHeadingInterpolation(0);
        // backwards.setReversed(true);
-        follower.followPath(forwards);
+        follower.followPath(move1);
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.addLine("This will run the robot in a straight line going " + DISTANCE
                             + " inches forward. The robot will go forward and backward continuously"
                             + " along the path. Make sure you have enough room.");
         telemetryA.update();
-
+        pathState = 10;
+        follower.setStartingPose(startPose);
+        follower.followPath(move1);
     }
 
     /**
@@ -72,23 +86,30 @@ public class StraightBackAndForth extends OpMode {
      */
     @Override
     public void loop() {
-        follower.update();
-        if (!follower.isBusy()) {
-            if (forward) {
-                if (pausetime.seconds() > .001) {
-                    forward = false;
-                    follower.followPath(backwards);
+        switch (pathState) {
+            case 1: // starts following the first path to score on the spike mark
+                follower.update();
+                if (!follower.isBusy()) {
+                    pausetime.reset();
+                    pathState = 10;
                 }
+                break;
+            case 2:
+                follower.followPath();
 
-            } else {
-                if (pausetime.seconds() > .001) {
-                    forward = true;
-                    follower.followPath(forwards);
+            case 10:
+                if (pausetime.seconds() > 2 ) {
+                    follower.followPath(move2);
+                    pathState = 11;
                 }
-            }
-
-        } else {
-            pausetime.reset();
+                break;
+            case 11: // starts following the first path to score on the spike mark
+                follower.update();
+                if (!follower.isBusy()) {
+                    pathState = 20;
+                }
+                break;
+            case 20:
         }
         telemetryA.addData("going forward", forward);
         follower.telemetryDebug(telemetryA);

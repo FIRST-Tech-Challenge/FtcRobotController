@@ -1,0 +1,73 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+
+import java.util.List;
+
+public class Limelight {
+
+    public Limelight3A limelight;
+
+    public enum AllianceColor {
+        RED,
+        BLUE
+    }
+
+    public AllianceColor currentAlliance = AllianceColor.BLUE;
+
+    public Limelight(HardwareMap hwMap) {
+        limelight = hwMap.get(Limelight3A.class, "Limelight");
+    }
+
+    public void setAlliance(AllianceColor alliance) {
+        this.currentAlliance = alliance;
+    }
+
+    /**
+     *
+     * @param alliance the alliance whose loading zone corner is the origin (0,0)
+     * @return the pos reading of the limelight, with respect to the alliance-determined origin
+     */
+    public Pose getLimelightPose(AllianceColor alliance) {
+        List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
+        double x = 0;
+        double y = 0;
+
+        for(LLResultTypes.FiducialResult fiducial : results) {
+            x += fiducial.getRobotPoseFieldSpace().getPosition().x;
+            y += fiducial.getRobotPoseFieldSpace().getPosition().y;
+        }
+
+        x /= results.size();
+        y /= results.size();
+
+        x /= 0.0254;
+        y /= 0.0254;
+
+        x += 72;
+        y += 72;
+        
+        Pose llPose = new Pose(x, y);
+
+        return fromLimelightPose(llPose, alliance)
+    }
+
+    public Pose getLimelightPose() {
+        return getLimelightPose(currentAlliance);
+    }
+
+    public Pose fromLimelightPose(Pose llPose, AllianceColor alliance) {
+        llPose.add(new Pose(72, 72));
+        double x = llPose.getY();
+        double y = -llPose.getX();
+    }
+    
+    public Pose fromLimelightPose(Pose llPose) {
+        return fromLimelightPose(llPose, currentAlliance);
+    }
+}
