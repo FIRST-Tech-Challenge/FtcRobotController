@@ -26,9 +26,9 @@ public class JimBot extends LinearOpMode {
 
     //in case builders are bad is offset center for servo
     double FLServoOffSet = .00;
-    double FRServoOffSet = .02;
+    double FRServoOffSet = .00;
     double BLServoOffSet = .01;
-    double BRServoOffSet = -.01;
+    double BRServoOffSet = .01;
 
     ElapsedTime turnTime = new ElapsedTime();
 
@@ -44,7 +44,7 @@ public class JimBot extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            double speed = gamepad1.right_trigger + (-gamepad1.left_trigger); // Makes it so that the triggers cancel each other out if both are pulled at the same time
+            double speed = gamepad1.left_trigger - gamepad1.right_trigger ; // Makes it so that the triggers cancel each other out if both are pulled at the same time
             double angle = gamepad1.right_stick_x;
             if (speed != 0)
                 move(gamepad1.left_stick_x, speed);
@@ -176,11 +176,11 @@ public class JimBot extends LinearOpMode {
 
     public void rotate(double angle) {
 
-        //set wheels for rotation (Ben's robot has 2x gear ratio so .125 and .375)
-        FLServo.setPosition(.25);
-        BLServo.setPosition(.75);
-        BRServo.setPosition(.25);
-        FRServo.setPosition(.75);
+        //set wheels for rotation (Ben's robot has 2x gear ratio so .25/2 and .75/2)
+        FLServo.setPosition(.25/2);
+        BLServo.setPosition(.75/2);
+        BRServo.setPosition(.25/2);
+        FRServo.setPosition(.75/2);
 
         //turn motors to rotate robot
         FLMotor.setPower(angle);
