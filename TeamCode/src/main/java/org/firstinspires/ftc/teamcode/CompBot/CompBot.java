@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve;
+package org.firstinspires.ftc.teamcode.CompBot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
@@ -13,12 +13,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
-@TeleOp(name = "JimBot Swerve", group = "Swerve")
-public class JimBot extends LinearOpMode {
+@TeleOp(name = "CompBot Swerve", group = "CompBot")
+public class CompBot extends LinearOpMode {
 
-    DcMotor FLMotor, BLMotor, BRMotor, FRMotor;
+    DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
 
-    Servo FLServo, BLServo, BRServo, FRServo;
+    Servo FLServo, BLServo, BRServo, FRServo, claw;
 
     GoBildaPinpointDriver odo;
 
@@ -41,27 +41,73 @@ public class JimBot extends LinearOpMode {
 
         initRobot(); // Does all the robot stuff
 
+        /**
+         * controls for game pad 1:
+         * right trigger: forwards
+         * left trigger: backwards
+         * right stick x: rotate
+         * left stick x: strafe
+         *
+         *
+         * controls for game pad 2:
+         * left stick y: in and out of arm
+         * right stick y: up and down of arm
+         * left trigger: claw intake
+         * right trigger: claw out
+         * presets for:
+         * attaching clip to sample
+         * attaching specimen(clip + sample) to top rung
+         * presets for bucket 1 and 2
+         */
+
         waitForStart();
         while (opModeIsActive()) {
-            double speed = gamepad1.left_trigger - gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
-            double angle = -gamepad1.right_stick_x;
-            if (speed != 0) move(gamepad1.left_stick_x, speed);
-            else if (angle != 0) rotate(angle);
+
+            //game pad 1
+            double speedGMP1 = gamepad1.left_trigger - gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
+            double angleGMP1 = -gamepad1.right_stick_x;
+
+            if (speedGMP1 != 0) move(gamepad1.left_stick_x, speedGMP1);
+            else if (angleGMP1 != 0) rotate(angleGMP1);
             else {
                 FLMotor.setPower(0);
                 BLMotor.setPower(0);
                 BRMotor.setPower(0);
                 FRMotor.setPower(0);
             }
-            if (gamepad1.a) rotateToCenter();
-        }
+            //if (gamepad1.a) rotateToCenter();
 
+
+            //game pad 2
+            double armLength = gamepad2.left_stick_y;
+            double armAngle = gamepad2.right_stick_y;
+
+            // 0 < arm length < 9999
+            if (slide.getCurrentPosition() + armLength < 9999) {
+                slide.setPower(armLength);
+            }
+
+            // 0 < arm angle < 9999
+            if (pivot.getCurrentPosition() + armAngle < 9999) {
+                pivot.setPower(armAngle);
+            }
+
+            //to test arm length and angle
+            addTelem(pivot.getCurrentPosition(), slide.getCurrentPosition());
+        }
+    }
+
+    public void addTelem(int x, int y) {
+        telemetry.addData("Arm angle: ", x);
+        telemetry.addData("Arm length: ", y);
+        telemetry.update();
     }
 
 
     /**
      * Initializes the robot.<br>
      * Starts all the devices and maps where they go
+     * As well as sets direction and whether motors run with encoders or not
      */
     public void initRobot() {
 
@@ -115,6 +161,27 @@ public class JimBot extends LinearOpMode {
         odo.setOffsets(177.8, 50.8);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
+
+        // Init slaw, claw, and pivot
+        pivot = hardwareMap.dcMotor.get("pivot");
+        slide = hardwareMap.dcMotor.get("slide");
+        claw = hardwareMap.servo.get("claw");
+
+        pivot.setTargetPosition(0);
+        slide.setTargetPosition(0);
+
+        pivot.setPower(1);
+        slide.setPower(1);
+
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        claw.scaleRange(0, 1);
+
+        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        pivot.setDirection(DcMotor.Direction.FORWARD);
+        slide.setDirection(DcMotor.Direction.FORWARD);
     }
 
 
