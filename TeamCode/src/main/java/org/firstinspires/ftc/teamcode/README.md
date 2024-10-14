@@ -45,7 +45,7 @@ An enum that states whether the robot is on far or near side.
 
 This subdirectory contains helper classes used by [`Hardware`](#Hardware).
 The classes are meant to separate and organize the various systems of the robot(e.g. arms, wheels, etc.).
-Some of the classes(e.g. [Arm](#Arm) and [Wheels](#Wheels)) are abstract and are meant to be used as superclasses.
+Some of the classes(e.g. [`Arm`](#Arm) and [`Wheels`](#Wheels)) are abstract and are meant to be used as superclasses.
 Being abstract classes rather than interfaces prevents multiple implementing.
 
 ## [Arm](./hardwareSystems/Arm.java)
