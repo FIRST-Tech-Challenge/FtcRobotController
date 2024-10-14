@@ -30,7 +30,7 @@ public class Config_Servo extends LinearOpMode {
     private boolean updated = false;
 
     //Define the inital servoPosition
-    private double servoPosition = 0.5;
+    private double servoPosition = 0.3;
 
     //Timer for optional servo select time out
     private ElapsedTime selectionTimer = new ElapsedTime();
@@ -39,16 +39,18 @@ public class Config_Servo extends LinearOpMode {
     public void runOpMode() {
 
         //Initialize the servos with error handling
-        servo1 = initalizeServo("AxonServo");
-        //if (!initalizeServo("servo2")) return;
-        //if (!initalizeServo("servo3")) return;
+        servo1 = initalizeServo("Extension");
+        servo2 = initalizeServo("DeliveryBox");
+        servo3 = initalizeServo("SpecimenGripper");
+        // if (!initalizeServo("servo2")) return;
+        // if (!initalizeServo("servo3")) return;
         //if (!initalizeServo("servo4")) return;
 
         servo1.setDirection(Servo.Direction.FORWARD);
         //Option set intial position for all servos
         servo1.setPosition(servoPosition);
-        //servo2.setPosition(servoPosition);
-        //servo3.setPosition(servoPosition);
+        servo2.setPosition(servoPosition);
+        servo3.setPosition(servoPosition);
         //servo4.setPosition(servoPosition);
 
         //Wait for driver presses play
@@ -56,9 +58,9 @@ public class Config_Servo extends LinearOpMode {
 
         //Display selection Instructions during Intialzation
         telemetry.addLine("Select Servo to Test using PlayStation Controller Buttons.")
-                .addData("Cross(X)", "AxonServo")
-                .addData("Circle(O)", "Servo 2")
-                .addData("Square(N)", "Servo 3")
+                .addData("Cross(X)", "Extension")
+                .addData("Circle(O)", "Delivery Box")
+                .addData("Square(N)", "Specimen Gripper")
                 .addData("Triangle(A)", "Servo 4")
                 .addData("Current Selection", selectedServoName);
         telemetry.update();
@@ -72,21 +74,21 @@ public class Config_Servo extends LinearOpMode {
 //Check for servo selection buttons based on PlayStation controller mapping
             if (gamepad1.a) {//Cross(X)button
                 selectedServo = servo1;
-                selectedServoName = "AxonServo";
+                selectedServoName = "Extension";
                 servoPosition = servo1.getPosition();
                 telemetry.addData("Selected Servo", selectedServoName);
                 telemetry.update();
                 sleep(300);//delay to prevent multiple selections
             } else if (gamepad1.b) {//Circle button
                 selectedServo = servo2;
-                selectedServoName = "Servo 2";
+                selectedServoName = "Delivery Box";
                 servoPosition = servo2.getPosition();
                 telemetry.addData("Selected Servo", selectedServoName);
                 telemetry.update();
                 sleep(300);
             } else if (gamepad1.x) {//Square button
                 selectedServo = servo3;
-                selectedServoName = "Servo 3";
+                selectedServoName = "Specimen Gripper";
                 servoPosition = servo3.getPosition();
                 telemetry.addData("Selected Servo", selectedServoName);
                 telemetry.update();
@@ -102,7 +104,7 @@ public class Config_Servo extends LinearOpMode {
 //option:timeout for servo selection
             if (selectionTimer.seconds() > 30) {
                 selectedServo = servo1;//Defalt selection
-                selectedServoName = "AxonServo - Defaulted";
+                selectedServoName = "Extension - Defaulted";
                 servoPosition = servo1.getPosition();
                 telemetry.addData("Selected Servo", selectedServoName);
                 telemetry.update();
@@ -113,7 +115,7 @@ public class Config_Servo extends LinearOpMode {
         //if no servo was selceted,defalt to servo 1
         if (selectedServo == null) {
             selectedServo = servo1;
-            selectedServoName = "AxonServo - none selected";
+            selectedServoName = "Extension - none selected";
             servoPosition = servo1.getPosition();
             telemetry.addData("Selected Servo", selectedServoName);
             telemetry.update();
@@ -235,3 +237,4 @@ public class Config_Servo extends LinearOpMode {
         }
     }
 }
+

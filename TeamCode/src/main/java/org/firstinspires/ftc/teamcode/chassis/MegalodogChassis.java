@@ -15,6 +15,9 @@ public class MegalodogChassis {
     private int WheelDiameter=104;
     private int RPM = 435;
     private double ticksPerRevolution=384.5;
+
+    // mmPer90DegreeRotation needs to be configured for each robot based on it's chassis size
+    private double mmPer90DegreeRotation=454.22;
     public enum Direction {LEFT, CENTER, RIGHT}
     public enum Alliance {BLUE, RED}
 
@@ -166,7 +169,7 @@ public class MegalodogChassis {
         myOpMode.sleep(WaitTime);
     }
 
-    public void RotateRight(int degree, double VelocityPercentage, int WaitTime){
+    public void RotateRight(double degree, double VelocityPercentage, int WaitTime){
 
         RotateLeft(-1*degree, VelocityPercentage, WaitTime);
     }
@@ -177,7 +180,7 @@ public class MegalodogChassis {
         double TicksPerSecond;
 
         // converts degree to a mm distance
-        mmToTarget = degree * (454.22 / 90.0);
+        mmToTarget = degree * (mmPer90DegreeRotation / 90.0);
         // diamter of new robot wheels =
         // name is
         // uses the formula we've always had for rotation
