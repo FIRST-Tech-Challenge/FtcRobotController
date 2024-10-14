@@ -58,6 +58,7 @@ public class Intake  {
     return new IntakeByColor();
     }
 
+
     public class SetPowerAction implements Action{
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
