@@ -17,7 +17,7 @@ public class NKNOpMode_Iterative extends OpMode {
     //Time counters are in milliseconds
     private long lastTelemetryCall = 0;
     private final long TELEMETRY_DELAY = 200;
-    // We use these two to delay telemetry outputs to ~500 milliseconds
+    // We use these two to delay telemetry outputs to ~200 milliseconds
 
     // Whatever program is attached here will be loaded with all its glorious components
     private final NKNProgram program = new BasicNKNProgram();
