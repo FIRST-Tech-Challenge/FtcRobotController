@@ -15,22 +15,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-/*
-Field oriented Drive!!!!!!!!
- */
 @TeleOp
 public class fieldOrientedDrive extends LinearOpMode {
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
-    /*
-    Thats too much bacon
 
-    Please just bring me some kale chips
-
-    said no one ever
-     */
     private IMU imu;
     Orientation angles = new Orientation();
 
@@ -51,13 +42,6 @@ public class fieldOrientedDrive extends LinearOpMode {
         angles = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
 
         initYaw = angles.firstAngle;
-        /*
-        Haiku's are easy
-
-        but some times they don't make sense
-
-        refrigerator
-         */
 
         leftFront = hardwareMap.get(DcMotor.class,"fLeft");
         leftBack = hardwareMap.get(DcMotor.class,"bLeft");
@@ -88,7 +72,7 @@ public class fieldOrientedDrive extends LinearOpMode {
             double realTheta;;;;;;;;;;;;;;;;;;;;;;;;;;
             realTheta = (360 - zerodYaw) + theta;;;;;;;;;;;;;;;;;;;;;;;;;;;;
             double power = Math.hypot(x, y);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+ pull
             double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));;;;;;;;;;;;;;;;;;;;;;
             double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));;;;;;;;;;;;;;;;
             double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));;;;;;;;;;;;;;;;;;;
@@ -103,13 +87,7 @@ public class fieldOrientedDrive extends LinearOpMode {
                 leftBackPower /= power + turn;
                 rightBackPower /= power - turn;
             }
-            /*
-            cereal
 
-            cereal
-
-            cereal
-             */
             leftFront.setPower(leftFrontPower);
             rightFront.setPower(rightFrontPower);
             leftBack.setPower(leftBackPower);
