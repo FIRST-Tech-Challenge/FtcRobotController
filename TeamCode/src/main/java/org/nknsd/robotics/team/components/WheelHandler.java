@@ -15,7 +15,7 @@ public class WheelHandler implements NKNComponent {
     private final String brName;
     private final String[] invertedNames; // Names in this array are reversed during initialization
 
-    DcMotor motorFR; DcMotor motorBR; DcMotor motorFL; DcMotor motorBL;
+    private DcMotor motorFR; private DcMotor motorBR; private DcMotor motorFL; private DcMotor motorBL;
 
 
     public WheelHandler(String flName,String frName,String blName,String brName,String[] invertedNames){
@@ -73,7 +73,8 @@ public class WheelHandler implements NKNComponent {
     }
 
     @Override
-    public void init_loop(ElapsedTime runtime, Telemetry telemetry) {}
+    public void init_loop(ElapsedTime runtime, Telemetry telemetry) {
+    }
 
     @Override
     public void start(ElapsedTime runtime, Telemetry telemetry) {}
@@ -88,6 +89,22 @@ public class WheelHandler implements NKNComponent {
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {}
+
+    public void runMotorFR(double speed) {
+        motorFR.setPower(speed);
+    }
+
+    public void runMotorFL(double speed) {
+        motorFL.setPower(speed);
+    }
+
+    public void runMotorBR(double speed) {
+        motorBR.setPower(speed);
+    }
+
+    public void runMotorBL(double speed) {
+        motorBL.setPower(speed);
+    }
 
     @Override
     public void doTelemetry(Telemetry telemetry) {

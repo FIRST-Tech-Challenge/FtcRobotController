@@ -13,13 +13,72 @@ public class ChaosMonkey implements NKNComponent {
     // The states enum stores the possible tests chaos monkey can run
     // Each one has a duration, and later we define which state runs what
     private enum States {
-        DO_NOTHING(1000),
-        FORWARD(1000),
-        BACKWARDS(1000),
-        LEFT(1000),
-        RIGHT(1000),
-        CLOCKWISE(1000),
-        COUNTERCLOCKWISE(1000);
+        DO_NOTHING(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        FORWARD(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        BACKWARDS(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        LEFT(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        RIGHT(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        CLOCKWISE(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        COUNTERCLOCKWISE(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        MOTORBR(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        MOTORBL(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        MOTORFR(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        },
+        MOTORFL(1000) {
+            @Override
+            public void runTest() {
+
+            }
+        };
 
         public final long durationMilli;
 
@@ -27,17 +86,17 @@ public class ChaosMonkey implements NKNComponent {
             this.durationMilli = durationMilli;
         }
 
+        public abstract void runTest();
     }
 
     private States state = States.DO_NOTHING;
     private long stateStartTime = 0; // Stores the clock time at which the test started to run, so that we can stop it after the delay
 
     private final WheelHandler wheelHandler;
-    private final String[] skipTests;
 
-    public ChaosMonkey(WheelHandler wheelHandler, String[] skipTests) {
+    public ChaosMonkey(WheelHandler wheelHandler, String[] doTests) {
         this.wheelHandler = wheelHandler;
-        this.skipTests = skipTests;
+
     }
 
     @Override
@@ -55,17 +114,9 @@ public class ChaosMonkey implements NKNComponent {
     @Override
     public String getName() {return "ChaosMonkey";}
 
-    private boolean shouldSkipState(States state) {
-        for (String s: skipTests) {
-            if (s.equals(state.name())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void runState() {
-        if (shouldSkipState(state)) {return;}
+//        if (!shouldDoState(state)) {return;}
 
         switch (state) {
             case DO_NOTHING:
@@ -95,6 +146,26 @@ public class ChaosMonkey implements NKNComponent {
             case COUNTERCLOCKWISE:
                 wheelHandler.vectorToMotion(0, 0, -0.5f);
                 break;
+
+            case MOTORBR:
+                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.runMotorBR(0.5);
+                break;
+
+            case MOTORBL:
+                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.runMotorBL(0.5);
+                break;
+
+            case MOTORFR:
+                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.runMotorFR(0.5);
+                break;
+
+            case MOTORFL:
+                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.runMotorFL(0.5);
+                break;
         }
     }
 
@@ -112,6 +183,7 @@ public class ChaosMonkey implements NKNComponent {
             }
 
             state = States.values()[stateIndex + 1];
+
             stateStartTime = runtime.time(TimeUnit.MILLISECONDS);
         }
 

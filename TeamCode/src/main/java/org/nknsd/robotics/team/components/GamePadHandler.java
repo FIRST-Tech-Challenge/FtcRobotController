@@ -263,7 +263,7 @@ public class GamePadHandler implements NKNComponent {
         LEFT_JOYSTICK_Y {
             @Override
             float getValue(Gamepad gamepad) {
-                return gamepad.left_stick_y;
+                return -gamepad.left_stick_y;
             }
         },
         RIGHT_JOYSTICK_X {
@@ -275,7 +275,7 @@ public class GamePadHandler implements NKNComponent {
         RIGHT_JOYSTICK_Y {
             @Override
             float getValue(Gamepad gamepad) {
-                return gamepad.right_stick_y;
+                return -gamepad.right_stick_y;
             }
         };
 
