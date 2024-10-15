@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,8 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name= "Arhan Cool")
-public class arhanCode extends OpMode {
-
+public class ArhanNew extends OpMode{
     private DcMotor backLeft;
     private DcMotor backRight;
     private DcMotor frontLeft;
@@ -19,9 +19,6 @@ public class arhanCode extends OpMode {
     private static double powerInput = 1;
     private DcMotor intake;
     private double input = 0;
-
-
-
 
     @Override
     public void init() {
@@ -33,52 +30,36 @@ public class arhanCode extends OpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         intake = hardwareMap.get(DcMotor.class, "intake");
-
     }
 
     @Override
     public void loop() {
-
-        this.input = gamepad1.a;
         double y = gamepad1.right_stick_y;
         double x = gamepad1.right_stick_x;
-        double z = gamepad1.left_stick_x;
-        boolean trigger =
+        boolean buttonUp = gamepad1.dpad_up;
+        boolean buttonDown = gamepad1.dpad_down;
+        boolean buttonLeft = gamepad1.dpad_left;
+        boolean buttonRight = gamepad1.dpad_right;
 
         if (y > 0.3)
             moveForward();
         else if (y < -0.3)
             moveBackward();
-
-      /*  if(y > 0.3)
-            moveForward();
-        else if(y < -0.3)
-            moveBackward();
-
-        double x = gamepad1.right_stick_x;
-
-        if(x > 0.3) {
+        if (x > 0.3)
             goRight();
-        } else if(x < -0.3) {
+        else if (x < -0.3)
             goLeft();
-        }
-*/
+        if(buttonUp)
+            moveForward();
+        if(buttonDown)
+            moveBackward();
+        if(buttonLeft)
+            goLeft();
+        if(buttonRight)
+            goRight();
 
-        /*double power = gamepad1.right_stick_y; //as you move the joy-con R thing it records how much u move
-        double x = gamepad1.left_stick_x;
-        if (power > 0.3) //to avoid dying i said if the amount u moved it is above 0.3 it will move as much as u move it
-            powerInput = power;
-        else if (power < -0.3)
-            powerInput = power;
-        else
-            powerInput = 0;*/
-    }
 
-    public void moveBackward() {
-        frontRight.setPower(-1 * powerInput);
-        frontLeft.setPower(-1 * (powerInput));
-        backRight.setPower(-1 * powerInput);
-        backLeft.setPower(-1 * powerInput);
+
     }
 
     public void moveForward() {
@@ -86,6 +67,13 @@ public class arhanCode extends OpMode {
         frontLeft.setPower(powerInput);
         backRight.setPower(powerInput);
         backLeft.setPower(powerInput);
+    }
+
+    public void moveBackward() {
+        frontRight.setPower(-1 * powerInput);
+        frontLeft.setPower(-1 * powerInput);
+        backRight.setPower(-1 * powerInput);
+        backLeft.setPower(-1 * powerInput);
     }
 
     public void goRight() {
@@ -119,5 +107,7 @@ public class arhanCode extends OpMode {
 
 
 
+
 }
+
 
