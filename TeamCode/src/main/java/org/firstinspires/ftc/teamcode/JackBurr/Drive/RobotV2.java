@@ -26,12 +26,12 @@ public class RobotV2 extends OpMode {
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
     public ElapsedTime buttonTimer = new ElapsedTime();
     public int SLIDES_DOWN = -860;
-    public int SLIDES_LOW_BASKET = -1130;
-    public int SLIDES_HIGH_BASKET = -1375;
+    public int SLIDES_LOW_BASKET = -1375;
+    public int SLIDES_HIGH_BASKET = -1575;
     public int SLIDESPOS = SLIDES_DOWN;
     public int ARM_DOWN = 259;
-    public int ARM_LOW_BASKET = 1970;
-    public int ARM_HIGH_BASKET = 2270;
+    public int ARM_LOW_BASKET = 2270;
+    public int ARM_HIGH_BASKET = 2570;
     public int ARMPOS = ARM_DOWN;
     public double initialPosition;
     public Servo wrist_servo;
@@ -160,6 +160,10 @@ public class RobotV2 extends OpMode {
 
         run_motors();
         move_wrist();
+    }
+    public void stop(){
+        slides_goto(0, 0.6, true);
+        arm_goto(0, 0.5, false);
     }
 
     public void run_motors(){
