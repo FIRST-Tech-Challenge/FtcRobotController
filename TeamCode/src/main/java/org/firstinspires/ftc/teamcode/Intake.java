@@ -12,7 +12,7 @@ public class Intake {
     private CRServo Intake = null;
     private Servo grabber1 = null;
     private Servo grabber2 = null;
-    private LinearOpMode opmode = null;
+    private LinearOpMode opmode=null;
 
     public Intake() {
     }
@@ -22,9 +22,9 @@ public class Intake {
         opmode = opMode;
         hwMap = opMode.hardwareMap;
 
-        Intake = hwMap.crservo.get("Intake");
-        grabber1 = hwMap.servo.get("grabber1");
-        grabber2 = hwMap.servo.get("grabber2");
+        Intake=hwMap.crservo.get("Intakes");
+        grabber1=hwMap.servo.get("grabber1");
+        grabber2=hwMap.servo.get("grabber2");
 
         Intake.setPower(0);
 
@@ -39,7 +39,7 @@ public class Intake {
         Intake.setPower(-1);
     }
 
-    public void transport(double speed) {
+    public void transport() {
         Intake.setPower(0);
     }
 }

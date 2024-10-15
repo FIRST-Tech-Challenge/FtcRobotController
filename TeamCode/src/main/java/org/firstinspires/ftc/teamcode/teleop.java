@@ -22,12 +22,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.drivetrain;
 import org.firstinspires.ftc.teamcode.GamepadStates;
 
-@TeleOp(name = "Teleop", group = "Teleop")
+@TeleOp(name="Teleop", group = "Teleop")
 public class teleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
         double speed = .5;
+
+        //Distance sensor set up
+        DistanceSensor Distance;
+        Distance = hardwareMap.get(DistanceSensor.class, "Distance");
+        //finds and sorts distance from object
+        double DistanceFrom = Distance.getDistance(DistanceUnit.CM);
+        // Tell us distance from object
+        telemetry.addData("Distance", "% 01 cm", DistanceFrom);
+        telemetry.update();
 
         Limelight3A limelight;
 
@@ -54,7 +63,7 @@ public class teleop extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        while(opModeIsActive()) {
             newGamePad1.updateState();
             newGamePad2.updateState();
 
@@ -94,12 +103,13 @@ public class teleop extends LinearOpMode {
 //                    telemetry.update();
 //                }
 //            }
-            if (gamepad2.left_stick_y > -0.4) {
+            //
+            if (gamepad2.left_stick_y < -0.4) {
                 Intake.intake();
-            } else if (gamepad2.left_stick_y < 0.4) {
+            } else if (gamepad2.left_stick_y > 0.4) {
                 Intake.eject();
             } else {
-                Intake.transport(0);
+                Intake.transport();
             }
 
             if (newGamePad1.a.released) {

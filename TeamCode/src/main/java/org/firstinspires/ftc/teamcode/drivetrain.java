@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -47,9 +48,9 @@ public class drivetrain {
         testing = hwMap.crservo.get("testing");
         testing1 = hwMap.crservo.get("testing1");
 
-        FrontLM.setDirection(FORWARD);
+        FrontLM.setDirection(REVERSE);
         FrontRM.setDirection(FORWARD);
-        BackLM.setDirection(FORWARD);
+        BackLM.setDirection(REVERSE);
         BackRM.setDirection(FORWARD);
 
         FrontRM.setPower(0);
@@ -89,15 +90,15 @@ public class drivetrain {
 
     public void strafeRight(double speed) {
         FrontRM.setPower(-speed);
-        FrontLM.setPower(-speed);
+        FrontLM.setPower(speed);
         BackRM.setPower(speed);
-        BackLM.setPower(speed);
+        BackLM.setPower(-speed);
     }
 
     public void strafeLeft(double speed) {
         FrontRM.setPower(speed);
-        FrontLM.setPower(speed);
-        BackLM.setPower(-speed);
+        FrontLM.setPower(-speed);
+        BackLM.setPower(speed);
         BackRM.setPower(-speed);
     }
 
