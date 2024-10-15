@@ -28,7 +28,6 @@ public class ArhanNew extends OpMode{
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-        intake = hardwareMap.get(DcMotor.class, "intake");
     }
 
     @Override
