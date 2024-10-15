@@ -42,6 +42,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
 @TeleOp(name="Mecanum Driver", group="TeleOp")
+
 public class MecanumDriver extends OpMode {
     private MecanumRobotController robotController;
     private final ElapsedTime runtime = new ElapsedTime();
@@ -108,6 +109,13 @@ public class MecanumDriver extends OpMode {
         //telemetry.addData("Servo2 Power", servo2.getPower());
         robotController.sendTelemetry(telemetry);
     }
+
+    //class
+
+    viperSlide.setPower(5)
+
+    viperSlide1.setPower(5)viperSlide1.setPosition(5)
+
 
     @Override
     public void stop() {
