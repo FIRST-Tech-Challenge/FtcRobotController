@@ -17,7 +17,6 @@ public class ArhanNew extends OpMode{
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private static double powerInput = 1;
-    private DcMotor intake;
     private double input = 0;
 
     @Override
