@@ -82,23 +82,13 @@ public class TempMovementBase extends LinearOpMode {
         FLDrive  = hardwareMap.get(DcMotor.class, "FLDrive");
         BRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
 
+//if forward
+  //work on  BLDrive.setPower((gamepad1.left_stick_x + gamepad1.left_stick_y) / 2);
+//ifleft
+       // BLDrive.setPower(gamepad1.);
 
-
-
-//move forward
-        if(gamepad1.right_trigger > 0.1){
-
-            SetDriveMotorSpeeds(gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_stick_y);
-
-        }
 
 
 
         }
-        public void SetDriveMotorSpeeds(float BL, float BR, float FL, float FR){
-            BLDrive.setPower(BL);
-            BRDrive.setPower(BR);
-            FLDrive.setPower(FL);
-            FRDrive.setPower(FR);
-    }
     }
