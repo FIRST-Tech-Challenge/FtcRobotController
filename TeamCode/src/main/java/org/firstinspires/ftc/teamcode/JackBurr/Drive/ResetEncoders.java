@@ -12,6 +12,8 @@ public class ResetEncoders extends OpMode {
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         DcMotor slidesMotor = hardwareMap.get(DcMotor.class, "slides");
         slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DcMotor extraArmMotor = hardwareMap.get(DcMotor.class, "arm2");
+        extraArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override

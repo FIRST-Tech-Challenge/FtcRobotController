@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
 
 @TeleOp
-public class RobotV2 extends OpMode {
+public class IntakeAndDriveOnly extends OpMode {
     public RobotV2Config config = new RobotV2Config();
 
     public DcMotor frontLeft; //PORT 0
@@ -26,12 +26,12 @@ public class RobotV2 extends OpMode {
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
     public ElapsedTime buttonTimer = new ElapsedTime();
     public int SLIDES_DOWN = -860;
-    public int SLIDES_LOW_BASKET = -1130;
+    public int SLIDES_LOW_BASKET = -1083;
     public int SLIDES_HIGH_BASKET = -1375;
     public int SLIDESPOS = SLIDES_DOWN;
     public int ARM_DOWN = 259;
     public int ARM_LOW_BASKET = 1970;
-    public int ARM_HIGH_BASKET = 2270;
+    public int ARM_HIGH_BASKET = -1666;
     public int ARMPOS = ARM_DOWN;
     public double initialPosition;
     public Servo wrist_servo;
@@ -85,6 +85,7 @@ public class RobotV2 extends OpMode {
         initialPosition = wrist_servo.getPosition();
         arm_goto(ARM_DOWN, 0.8, true);
         slides_goto(SLIDES_DOWN, 0.6, false);
+
     }
 
     @Override
@@ -93,73 +94,71 @@ public class RobotV2 extends OpMode {
         telemetry.addLine("SLIDES POSITION: " + slidesMotor.getCurrentPosition());
         telemetry.addLine("ARM TARGET POSITION: " + ARMPOS);
         telemetry.addLine("SLIDES TARGET POSITION: " + SLIDESPOS);
+        telemetry.addLine("SERVO POSITION: " + wrist_servo.getPosition());
+        telemetry.addLine("SERVO INITIAL: " + initialPosition);
         intakeServo.setPosition(servodirection);
-        if(buttonTimer.seconds() > 0.3 && gamepad1.b){
-            servodirection = switch_servo_dir();
-            buttonTimer.reset();
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.x){
-            if(states == SystemStates.DOWN) {
+        if(buttonTimer.seconds() > 0.3 && gamepad1.x) {
+            if (states == SystemStates.DOWN) {
                 ARMPOS = ARM_LOW_BASKET;
                 SLIDESPOS = SLIDES_LOW_BASKET;
                 states = SystemStates.LOW_BASKET;
-                arm_goto(ARM_LOW_BASKET, 1, true);
-                slides_goto(SLIDES_LOW_BASKET, 0.8, true);
                 telemetry.addLine(states.toString());
             }
             else if (states == SystemStates.LOW_BASKET) {
-                ARMPOS = ARM_HIGH_BASKET;
-                SLIDESPOS = SLIDES_HIGH_BASKET;
-                states = SystemStates.HIGH_BASKET;
-                arm_goto(ARM_HIGH_BASKET, 1, true);
-                slides_goto(SLIDES_HIGH_BASKET, 1, true);
-                telemetry.addLine(states.toString());
-            }
-            else{
                 SLIDESPOS = SLIDES_DOWN;
                 ARMPOS = ARM_DOWN;
                 states = SystemStates.DOWN;
-                arm_goto(ARM_DOWN, 0.3, true);
-                slides_goto(SLIDES_DOWN, 0.8, true);
                 telemetry.addLine(states.toString());
+                buttonTimer.reset();
             }
-            buttonTimer.reset();
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.dpad_down){
-            arm_down_by(100);
-            buttonTimer.reset();
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.dpad_up){
-            arm_up_by(100);
-            buttonTimer.reset();
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.left_bumper){
-            switch (wristState){
-                case LEFT:
-                    break;
-                case CENTER:
-                    wristState = WristStates.LEFT;
-                case RIGHT:
-                    wristState = WristStates.CENTER;
-                case HOLD:
-                    wristState = WristStates.HOLD;
+            if (buttonTimer.seconds() > 0.3 && gamepad1.b) {
+                servodirection = switch_servo_dir();
+                buttonTimer.reset();
             }
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.right_bumper){
-            switch (wristState){
-                case LEFT:
-                    wristState = WristStates.CENTER;
-                case CENTER:
-                    wristState = WristStates.LEFT;
-                case RIGHT:
-                    break;
-                case HOLD:
-                    wristState = WristStates.HOLD;
+            if (buttonTimer.seconds() > 0.3 && gamepad1.dpad_down) {
+                arm_down_by(100);
+                buttonTimer.reset();
+            }
+            if (buttonTimer.seconds() > 0.3 && gamepad1.dpad_up) {
+                arm_up_by(100);
+                buttonTimer.reset();
+            }
+            if (buttonTimer.seconds() > 0.3 && gamepad1.left_bumper) {
+                switch (wristState) {
+                    case LEFT:
+                        break;
+                    case CENTER:
+                        wristState = WristStates.LEFT;
+                    case RIGHT:
+                        wristState = WristStates.CENTER;
+                    case HOLD:
+                        wristState = WristStates.HOLD;
+                }
+            }
+            if (buttonTimer.seconds() > 0.3 && gamepad1.right_bumper) {
+                switch (wristState) {
+                    case LEFT:
+                        wristState = WristStates.CENTER;
+                    case CENTER:
+                        wristState = WristStates.LEFT;
+                    case RIGHT:
+                        break;
+                    case HOLD:
+                        wristState = WristStates.HOLD;
+                }
             }
         }
 
+
         run_motors();
+        arm_goto(ARMPOS, 1, false);
+        slides_goto(SLIDESPOS, 0.7, false);
         move_wrist();
+    }
+
+    public void stop(){
+        slides_goto(0, 0.6, true);
+        arm_goto(0, 0.5, false);
     }
 
     public void run_motors(){
@@ -214,6 +213,7 @@ public class RobotV2 extends OpMode {
             }
         }
     }
+
     public void arm_up_by(int ticks) {
         ARMPOS = ARMPOS - ticks;
     }
