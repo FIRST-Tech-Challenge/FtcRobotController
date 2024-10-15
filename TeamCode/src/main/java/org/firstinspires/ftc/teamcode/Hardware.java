@@ -108,7 +108,7 @@ public class Hardware {
     }
 
     /**
-     * Sleeps the robot any motors are running
+     * Sleeps the robot any motors or servos are running.
      * @noinspection unused
      */
     public void autoSleep() {
@@ -119,9 +119,9 @@ public class Hardware {
     }
 
     /**
-     * Sleeps the robot while the given motors are running
+     * Sleeps the robot while the given motors are running.
      *
-     * @param motors the motors that are running
+     * @param motors The motors that are running.
      */
     public void autoSleep(HashSet<DcMotor> motors) {
         LinearOpMode linearOp = getLinearOpMode();

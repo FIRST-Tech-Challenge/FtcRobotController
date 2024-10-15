@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public abstract class Wheels {
     // A modifier for much power the wheels run with (0.0 - 1.0)
     protected double motorPower = 1.0;
+    // The gear ratio between the motor and wheel
+    private static final double WHEEL_GEAR_RATIO = -1.0;
+    // The circumference of the wheel in inches
+    private static final double WHEEL_CIRCUMFERENCE = -1.0;
 
     protected final HashSet<DcMotor> MOTORS;
 
