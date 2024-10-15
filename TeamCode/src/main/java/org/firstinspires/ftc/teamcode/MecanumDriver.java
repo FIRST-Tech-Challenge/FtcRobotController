@@ -53,6 +53,8 @@ public class MecanumDriver extends OpMode {
     private final static double SPEED_MULTIPLIER = 2.3;
     public final boolean isFieldCentric = true;
     private int slidePosition = 0;
+    private int encoderMax = 750;
+    private int encoderMin = 250;
 
     private DcMotor viperSlide1;
     private DcMotor viperSlide2;
@@ -112,16 +114,17 @@ public class MecanumDriver extends OpMode {
         robotController.sendTelemetry(telemetry);
 
         if (gamepad1.left_bumper) {
-            slidePosition = 1;
+            slidePosition = encoderMax;
             moveViperSlides();
 
         } else if (gamepad1.right_bumper) {
-            slidePosition = -1;
+            slidePosition = encoderMin;
             moveViperSlides();
         } else {
-            slidePosition = 0;
-            moveViperSlides();
+            viperSlide1.setPower(0);
+            viperSlide2.setPower(0);
         }
+
 
 
     }
