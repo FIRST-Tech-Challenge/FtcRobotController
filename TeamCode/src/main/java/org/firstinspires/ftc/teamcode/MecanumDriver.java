@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -47,15 +46,16 @@ public class MecanumDriver extends OpMode {
     private MecanumRobotController robotController;
     private final ElapsedTime runtime = new ElapsedTime();
 
-    private DcMotor viperLeft;
-
-    private Servo intake;
-    private Servo wrist;
+    private CRServo servo;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
     public final boolean isFieldCentric = true;
+    private int slidePosition = 0;
+
+    private DcMotor viperSlide1;
+    private DcMotor viperSlide2;
 
     @Override
     public void init() {
@@ -63,17 +63,25 @@ public class MecanumDriver extends OpMode {
         DcMotor backRight = hardwareMap.get(DcMotor.class, "BACKRIGHT");
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FRONTLEFT");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "FRONTRIGHT");
-        viperLeft = hardwareMap.get(DcMotor.class, "VIPERLEFT")
+
+        viperSlide1 = hardwareMap.get(DcMotor.class, "VIPERRIGHT");
+        viperSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperSlide2 = hardwareMap.get(DcMotor.class, "VIPERLEFT");
+        viperSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
+
+        telemetry.addData("Status", "Initialized");
+
         frontRight.setDirection(DcMotor.Direction.REVERSE);
-        viperLeft.setDirection(DcMotor.Direction.FORWARD);
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
-        intake = hardwareMap.get(Servo.class, "intake");
-        wrist = hardwareMap.get(Servo.class, "intake2");
+        servo = hardwareMap.get(CRServo.class, "intake");
+
+
+
 
         gyro.resetYaw();
 
@@ -94,28 +102,42 @@ public class MecanumDriver extends OpMode {
         robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
-
-        if (gamepad1.left_bumper) {
-            intake.setPosition(0); // Spin in one direction at max power
-        } else if (gamepad1.right_bumper) {
-            intake.setPosition(1); // Spin in the other direction at max power
-        } else {
-
-            //intake.setPower(0.0); // Stop when no trigger is pressed
-        }
-
-        viperLeft.setPower(gamepad1.left_trigger - gamepad1.right_trigger);
+        servo.setPower(1);
+        double servoPosition = Range.clip(gamepad1.right_trigger - gamepad1.left_trigger, 0.0, 1.0);
 
 
         telemetry.addData("Left Trigger", gamepad1.left_trigger);
         telemetry.addData("Right Trigger", gamepad1.right_trigger);
-        telemetry.addData("Servo Power", intake.getPosition());
-        //telemetry.addData("Servo2 Power", servo2.getPower());
+        telemetry.addData("servoPosition", servoPosition);
         robotController.sendTelemetry(telemetry);
+
+        if (gamepad1.left_bumper) {
+            slidePosition = 1;
+            moveViperSlides();
+
+        } else if (gamepad1.right_bumper) {
+            slidePosition = -1;
+            moveViperSlides();
+        } else {
+            slidePosition = 0;
+            moveViperSlides();
+        }
+
+
     }
 
-    @Override
-    public void stop() {
+    public void moveViperSlides() {
+        moveSlide1();
+        moveSlide2();
     }
+
+    public void moveSlide1() {
+        viperSlide1.setTargetPosition(slidePosition);
+    }
+
+    public void moveSlide2() {
+        viperSlide2.setTargetPosition(slidePosition);
+    }
+
 
 }
