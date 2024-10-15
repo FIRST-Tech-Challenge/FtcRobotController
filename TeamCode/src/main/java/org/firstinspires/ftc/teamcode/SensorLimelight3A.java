@@ -45,15 +45,19 @@ import java.util.List;
 @TeleOp(name = "Lime Camera", group = "Sensor")
 public class SensorLimelight3A extends LinearOpMode {
 
-    private static double X_MAX = -100;
-    private static double Y_MAX = -100;
-    private static double YAW_MAX = -500;
-    private static double X_MIN = 100;
-    private static double Y_MIN = 500;
-    private static double YAW_MIN = 100;
-    private static double X_CURRENT = 0;
-    private static double Y_CURRENT = 0;
-    private static double YAW_CURRENT = 0;
+    // Neha: This is what was causing some of your problems on Sunday. Ask me to explain how static variables keep their
+    // value outside of the program and none of our variables should ever be static.
+    // Neha: Set all MIN values to 500 and all MAX values to -500
+    // Neha: Min always comes before max
+    private double X_MAX = -100;
+    private double Y_MAX = -100;
+    private double YAW_MAX = -500;
+    private double X_MIN = 100;
+    private double Y_MIN = 500;
+    private double YAW_MIN = 100;
+    private double X_CURRENT = 0;
+    private double Y_CURRENT = 0;
+    private double YAW_CURRENT = 0;
 
     private Limelight3A limelight;
     //The limelight has a heading range of 62 degrees and can see the AprilTag from 10 feet away. Can be positioned at max 14 1/2 inches high.
@@ -113,6 +117,7 @@ public class SensorLimelight3A extends LinearOpMode {
                         YAW_MIN = YAW_CURRENT;
                     }
                 }
+                // Neha: Use 2 decimal points for all values.
                 telemetry.addData("X Max", "%.1f", X_MAX);
                 telemetry.addData("X Min", "%.1f", X_MIN);
                 telemetry.addData("Y Max", "%.1f", Y_MAX);
