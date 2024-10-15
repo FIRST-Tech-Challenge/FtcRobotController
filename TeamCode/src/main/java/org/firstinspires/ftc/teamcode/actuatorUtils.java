@@ -7,113 +7,85 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class actuatorUtils {
-    private static DcMotor LF = null; //declare left front motor
-    private static DcMotor LB = null; //declare left back motor
-    private static DcMotor RF = null; //declare right front motor
-    private static DcMotor RB = null; //declare right back motor
-    private static DcMotor arm = null; //declare arm
-    private static DcMotor arm1 = null; //declare arm
 
-    private static Servo gripper = null; //declare gripper
-    private static Servo dump = null; //declare dump
-    private static Servo elbow = null; //declare dump
+    private static DcMotor lift = null; //declare arm
+
+    private static Servo leftArm = null; //declare gripper
+    private static Servo rightArm = null; //declare dump
+    private static CRServo intake = null; //declare dump
     //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 300; //Minimum so string on arm lift doesn't break and position 0
-    private static int highPole = maxEncode; //high pole height
-    private static int medPole = 3100; //Med pole height
-    private static int lowPole = 1900; //Low pole height
-    private static int cone5 = 685; //Height for top cone in stack
-    private static int cone4 = 475; //Height for second cone in stack
-    private static int cone3 = 203; //Height for third cone in stack
-    private static int cone2 = 36; //height for second cone in stack
-    private static int cone1 = 9; //height for first cone in stack
-    private static double armPower = .7f; //Set power to .7 so arm does not go up too fast
+    private static int lowEncode = 2000; //Minimum so string on arm lift doesn't break and position 0
+    private static int highEncode = maxEncode; //Minimum so string on arm lift doesn't break and position 0
+    private static double liftPower = .7f; //Set power to .7 so arm does not go up too fast
 
-    enum ArmLevel
+    enum LiftLevel
     {
         ZERO,
-        CONE1,
-        CONE2,
-        CONE3,
-        CONE4,
-        CONE5,
-        LOW_POLE,
-        MED_POLE,
-        HIGH_POLE
-    }
+        LOW_BASKET,
+        HIGH_BASKET
 
+    }
+    enum IntakeModes
+    {
+        OFF,
+        IN,
+        OUT
+
+    }
+    enum ArmModes
+    {
+        UP,
+        DOWN
+
+    }
     //Initialize actuators
-    public static void initializeActuator(DcMotor arm,DcMotor arm1, Servo gripper, Servo dump, Servo elbow) {
-        actuatorUtils.arm = arm;
-        actuatorUtils.arm1 = arm1;
-        actuatorUtils.gripper = gripper;
-        actuatorUtils.dump = dump;
-        actuatorUtils.elbow = elbow;
-
-    }
-    public static void initializeActuator(DcMotor arm, Servo gripper) {
-        actuatorUtils.arm = arm;
-        actuatorUtils.gripper = gripper;
-        actuatorUtils.dump = null;
-        arm.setPower(0);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public static void initializeActuator(DcMotor lift, Servo leftArm, Servo rightArm, CRServo intake) {
+        actuatorUtils.lift = lift;
+        actuatorUtils.leftArm = leftArm;
+        actuatorUtils.rightArm = rightArm;
+        actuatorUtils.intake = intake;
 
     }
 
-    //Initialize motors for movement
-    public static void initializeActuatorMovement(DcMotor LF, DcMotor RF, DcMotor LB, DcMotor RB) {
-        actuatorUtils.LF = LF;
-        actuatorUtils.RF = RF;
-        actuatorUtils.LB = LB;
-        actuatorUtils.RB = RB;
-    }
 
-    //Stop movement of wheels
-    public static void resetEncoders() {
-        LF.setPower(0);
-        RF.setPower(0);
-        LB.setPower(0);
-        RB.setPower(0);
-        arm.setPower(0);
 
-        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Just a little time to make sure encoders have reset
-        //sleep(200);
 
-        // Not technically encoder but...
-        LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Only using the Back motor Encoders
-        LF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
 
     //Method used to close gripper
-    public static void gripperClose(boolean liftUp) throws InterruptedException {
-        gripperClose(liftUp, true);
+    public static void setIntake(IntakeModes mode)  {
+        if (mode == IntakeModes.IN) {
+            intake.setPower(1.0);
+        } else if (mode == IntakeModes.OUT) {
+           intake.setPower(-1.0);
+        } else {
+            intake.setPower(0.0);
+        }
     }
-    public static void gripperClose(boolean liftUp, boolean doSleep) throws InterruptedException {
-        gripper.setPosition(.6); //Position that grabs cone tightly
-        if (liftUp == true) {
-            if (doSleep)
-                sleep(250);
-            arm.setTargetPosition(minEncode); //Lifts arm up so we can move w/o drag
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(armPower);
+    public static void setArm(ArmModes mode)   {
+        if (mode == ArmModes.UP) {
+            leftArm.setPosition(0.0);
+            rightArm.setPosition(1.0);
+        } else {
+            leftArm.setPosition(1.0);
+            rightArm.setPosition(0.0);
+        }
+    }
+    public static void setLift(LiftLevel mode) {
+        if (mode == LiftLevel.ZERO) {
+            lift.setTargetPosition(minEncode); //Lifts arm up so we can move w/o drag
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(liftPower);
+        }  else if (mode == LiftLevel.LOW_BASKET) {
+            lift.setTargetPosition(lowEncode); //Lifts arm up so we can move w/o drag
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(liftPower);
+        } else {
+            lift.setTargetPosition(highEncode); //Lifts arm up so we can move w/o drag
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(liftPower);
         }
     }
 
