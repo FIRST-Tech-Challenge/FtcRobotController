@@ -28,24 +28,13 @@ public class Intake {
         Intakes.setPower(0);
 
     }
-    public void intake(double speed) {
-        Intakes.setPower(speed);
+    public void intake() {
+        Intakes.setPower(1);
     }
-    public void eject(double speed){
-        Intakes.setPower(-speed);
+    public void eject(){
+        Intakes.setPower(-1);
     }
     public void transport(double speed){
         Intakes.setPower(0);
     }
-
-
-
-
-
-
-
-
-
-
-
 }

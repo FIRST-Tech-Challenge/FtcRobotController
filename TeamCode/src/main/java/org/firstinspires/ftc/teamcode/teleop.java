@@ -92,11 +92,11 @@ public class teleop extends LinearOpMode {
 //                    telemetry.update();
 //                }
 //            }
-            if (gamepad2.left_stick_y>0.4){
-                Intake.intake(speed);
+            if (gamepad2.left_stick_y>-0.4){
+                Intake.intake();
             }
-            else if (gamepad2.left_stick_y<-0.4) {
-                Intake.eject(speed);
+            else if (gamepad2.left_stick_y<0.4) {
+                Intake.eject();
             }
             else {
                 Intake.transport(0);
