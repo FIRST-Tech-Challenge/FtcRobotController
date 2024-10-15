@@ -19,12 +19,10 @@ public class FourEyesRobot extends Mecanum {
         super(hw);
         hardwareMap = hw;
     }
-    public void openClaw() {
-        claw.openClaw();
+    public void toggleClaw() {
+        claw.toggleClaw();
     }
-    public void closeClaw() {
-        claw.closeClaw();
-    }
+
     public void moveLift(double power) {
         lift.moveLift(power);
     }

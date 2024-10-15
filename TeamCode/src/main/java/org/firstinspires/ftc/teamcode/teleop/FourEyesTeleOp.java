@@ -27,27 +27,26 @@ public class FourEyesTeleOp extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            if(binding1[0].onPress()) {
-                fourEyesRobot.openClaw();
+            if(binding1[0].onPress() || binding2[0].onPress()) {
+                fourEyesRobot.toggleClaw();
             }
-            if(binding1[1].onPress()) {
-                fourEyesRobot.closeClaw();
-
-            }
-            if(binding1[2].onPress()) {
+            if(binding1[1].onPress() || binding2[1].onPress()) {
                 if(fourEyesRobot.isIntakeing()) {
                     fourEyesRobot.intakeForward();
                 } else {
                     fourEyesRobot.intakeStop();
                 }
             }
-            if(binding1[3].onPress()) {
+            if(binding1[2].onPress() || binding2[2].onPress()) {
                 if(fourEyesRobot.isIntakeing()) {
                     fourEyesRobot.intakeBackward();
                 } else {
                     fourEyesRobot.intakeStop();
                 }
             }
+
+            fourEyesRobot.moveLift((controller1.left_trigger.getTriggerValue()-controller1.right_trigger.getTriggerValue())+(controller2.left_trigger.getTriggerValue()-controller2.right_trigger.getTriggerValue()));
+
 
 
         }
