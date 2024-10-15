@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import java.util.HashSet;
 
 import android.util.Size;
-import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.vision.*;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.teamcode.hardwareSystems.*;
 
@@ -89,7 +89,7 @@ public class Hardware {
     }
 
     /**
-     * Sleeps the robot any motors are running
+     * Sleeps the robot any motors or servos are running.
      * @noinspection unused
      */
     public void autoSleep() {
@@ -97,12 +97,12 @@ public class Hardware {
         allMotors.addAll(WHEELS.getMotors());
 
         autoSleep(allMotors);
-    }        
+    }
 
     /**
-     * Sleeps the robot while the given motors are running
+     * Sleeps the robot while the given motors are running.
      *
-     * @param motors the motors that are running
+     * @param motors The motors that are running.
      */
     public void autoSleep(HashSet<DcMotor> motors) {
         LinearOpMode linearOp = getLinearOpMode();
