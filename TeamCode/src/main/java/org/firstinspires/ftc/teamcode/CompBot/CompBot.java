@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.Mekanism.*;
+import org.firstinspires.ftc.teamcode.Swerve.*;
 
 @TeleOp(name = "CompBot Swerve", group = "CompBot")
 public class CompBot extends LinearOpMode {
@@ -22,6 +24,13 @@ public class CompBot extends LinearOpMode {
     Servo FLServo, BLServo, BRServo, FRServo, claw;
 
     GoBildaPinpointDriver odo;
+
+
+    // Main swerve stuff is here
+    Swerve_components swerve;
+
+    // Main mechanism stuff is here
+    Mekanism mec;
 
 
     ElapsedTime turnTime = new ElapsedTime();
@@ -38,28 +47,28 @@ public class CompBot extends LinearOpMode {
     static double WHEELBASE = 15; //in inches
 
 
+    /**
+     * controls for game pad 1:
+     * right trigger: forwards
+     * left trigger: backwards
+     * right stick x: rotate
+     * left stick x: strafe
+     * <p>
+     * controls for game pad 2:
+     * left stick y: in and out of arm
+     * right stick y: up and down of arm
+     * left trigger: claw intake
+     * right trigger: claw out
+     * presets for:
+     * attaching clip to sample
+     * attaching specimen(clip + sample) to top rung
+     * presets for bucket 1 and 2
+     */
     public void runOpMode() throws InterruptedException {
 
-        initRobot(); // Does all the robot stuff
+        swerve.initRobot(); // Inits the swerve components
+        mec.initRobot(); // Inits the mechanism components
 
-        /**
-         * controls for game pad 1:
-         * right trigger: forwards
-         * left trigger: backwards
-         * right stick x: rotate
-         * left stick x: strafe
-         *
-         *
-         * controls for game pad 2:
-         * left stick y: in and out of arm
-         * right stick y: up and down of arm
-         * left trigger: claw intake
-         * right trigger: claw out
-         * presets for:
-         * attaching clip to sample
-         * attaching specimen(clip + sample) to top rung
-         * presets for bucket 1 and 2
-         */
 
         waitForStart();
         while (opModeIsActive()) {
@@ -76,7 +85,7 @@ public class CompBot extends LinearOpMode {
                 BRMotor.setPower(0);
                 FRMotor.setPower(0);
             }
-            //if (gamepad1.a) rotateToCenter();
+            // if (gamepad1.a) rotateToCenter();
 
 
             //game pad 2
@@ -84,8 +93,7 @@ public class CompBot extends LinearOpMode {
             double armAngle = -gamepad2.left_stick_y;
 
             // 0 < arm length < 4268
-            if (armLength > 0 && slide.getCurrentPosition() > 4268)
-            {
+            if (armLength > 0 && slide.getCurrentPosition() > 4268) {
                 armLength = 0;
             } else if (armLength < 0 && slide.getCurrentPosition() < -4268) {
                 armLength = 0;
@@ -93,8 +101,7 @@ public class CompBot extends LinearOpMode {
             slide.setPower(armLength);
 
             // 0 < arm angle < 2904
-            if (armAngle > 0 && pivot.getCurrentPosition() > 2904)
-            {
+            if (armAngle > 0 && pivot.getCurrentPosition() > 2904) {
                 armAngle = 0;
             } else if (armAngle < 0 && pivot.getCurrentPosition() < -2904) {
                 armAngle = 0;
@@ -106,113 +113,12 @@ public class CompBot extends LinearOpMode {
         }
     }
 
-    public void addTelem(int x, int y,double a,double b) {
+    public void addTelem(int x, int y, double a, double b) {
         telemetry.addData("Arm angle: ", x);
         telemetry.addData("Arm length: ", y);
         telemetry.addData("Left stick y: ", a);
         telemetry.addData("Right stick y: ", b);
         telemetry.update();
-    }
-
-
-    /**
-     * Initializes the robot.<br>
-     * Starts all the devices and maps where they go
-     * As well as sets direction and whether motors run with encoders or not
-     */
-    public void initRobot() {
-
-        // Maps the motor objects to the physical ports
-        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
-        BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-        FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
-        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
-
-        // Sets the encoder mode
-        FLMotor.setMode(RUN_USING_ENCODER);
-        BLMotor.setMode(RUN_USING_ENCODER);
-        FRMotor.setMode(RUN_USING_ENCODER);
-        BRMotor.setMode(RUN_USING_ENCODER);
-
-        // Sets what happens when no power is applied to the motors.
-        // In this mode, the computer will short the 2 leads of the motor, and because of math, the motor will be a lot harder to turn
-        FLMotor.setZeroPowerBehavior(BRAKE);
-        BLMotor.setZeroPowerBehavior(BRAKE);
-        FRMotor.setZeroPowerBehavior(BRAKE);
-        BRMotor.setZeroPowerBehavior(BRAKE);
-
-        FLMotor.setDirection(REVERSE);
-        BLMotor.setDirection(REVERSE);
-        FRMotor.setDirection(REVERSE);
-        BRMotor.setDirection(FORWARD);
-
-
-        // Maps the servo objects to the physical ports
-        FLServo = hardwareMap.get(Servo.class, "FLServo");
-        BLServo = hardwareMap.get(Servo.class, "BLServo");
-        FRServo = hardwareMap.get(Servo.class, "FRServo");
-        BRServo = hardwareMap.get(Servo.class, "BRServo");
-
-        // Sets the ends of the servos. Hover cursor over function for more info
-        // Will need to be tuned later
-        FLServo.scaleRange(FLServoOffSet, 1.0 + FLServoOffSet * 2);
-        BLServo.scaleRange(BLServoOffSet, 1.0 + BLServoOffSet * 2);
-        FRServo.scaleRange(FRServoOffSet, 1.0 + FRServoOffSet * 2);
-        BRServo.scaleRange(BRServoOffSet, 1.0 + BRServoOffSet * 2);
-
-        FLServo.setPosition(0.50 + FLServoOffSet);
-        BLServo.setPosition(0.51 + BLServoOffSet);
-        FRServo.setPosition(0.50 + FRServoOffSet);
-        BRServo.setPosition(0.51 + BRServoOffSet);
-
-
-        // Init GoBilda Pinpoint module
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-        odo.resetPosAndIMU();
-        odo.setOffsets(177.8, 50.8);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-
-
-        // Init slaw, claw, and pivot
-        pivot = hardwareMap.dcMotor.get("pivot");
-        slide = hardwareMap.dcMotor.get("slide");
-        claw = hardwareMap.servo.get("claw");
-
-        pivot.setTargetPosition(0);
-        slide.setTargetPosition(0);
-
-        pivot.setPower(.05);
-        slide.setPower(.05);
-
-        pivot.setMode(RUN_USING_ENCODER);
-        slide.setMode(RUN_USING_ENCODER);
-        claw.scaleRange(0, 1);
-
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        pivot.setDirection(DcMotor.Direction.FORWARD);
-        slide.setDirection(DcMotor.Direction.FORWARD);
-
-        /*
-        // Sets pivot and slide to pos 0
-        pivot.setMode(STOP_AND_RESET_ENCODER);
-        slide.setMode(STOP_AND_RESET_ENCODER);
-
-        pivot.setTargetPosition(2905);
-        slide.setTargetPosition(4269);
-
-        while(pivot.getCurrentPosition() < 2904 || slide.getCurrentPosition() < 4268){
-            int x = 0;
-        }
-        */
-
-        pivot.setMode(STOP_AND_RESET_ENCODER);
-        slide.setMode(STOP_AND_RESET_ENCODER);
-
-        // sets power to 1 again
-        pivot.setPower(1);
-        slide.setPower(1);
     }
 
 
@@ -232,7 +138,6 @@ public class CompBot extends LinearOpMode {
         double[] arrayToReturn = new double[2];
         arrayToReturn[0] = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); // Radius
         arrayToReturn[1] = Math.atan(y / x) * (Math.PI / 180); // Theta
-
 
         return arrayToReturn;
     }

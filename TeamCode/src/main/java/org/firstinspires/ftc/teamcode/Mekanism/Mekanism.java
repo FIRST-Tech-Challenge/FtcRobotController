@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Mekanism;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,31 +17,42 @@ public class Mekanism {
     int COUNTS_PER_INCH = 1120;
     int COUNTS_PER_DEGREE = 1120;
 
-    public void init() {
+
+    /**
+     * Initializes the mechanism of the robot.<br>
+     * Starts all the devices and maps where they go
+     * As well as sets direction and whether motors run with encoders or not
+     */
+    public void initRobot() {
+
+        // Init slaw, claw, and pivot
         pivot = myOp.hardwareMap.dcMotor.get("pivot");
         slide = myOp.hardwareMap.dcMotor.get("slide");
         claw = myOp.hardwareMap.servo.get("claw");
-        spintake = myOp.hardwareMap.dcMotor.get("spintake");
 
         pivot.setTargetPosition(0);
         slide.setTargetPosition(0);
 
-        pivot.setPower(1);
-        slide.setPower(1);
+        pivot.setDirection(DcMotor.Direction.FORWARD);
+        slide.setDirection(DcMotor.Direction.FORWARD);
 
-        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        spintake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        claw.scaleRange(0, 1);
+        pivot.setMode(STOP_AND_RESET_ENCODER);
+        slide.setMode(STOP_AND_RESET_ENCODER);
+
+        pivot.setMode(RUN_USING_ENCODER);
+        slide.setMode(RUN_USING_ENCODER);
 
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        spintake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        pivot.setDirection(DcMotor.Direction.FORWARD);
-        slide.setDirection(DcMotor.Direction.FORWARD);
-        spintake.setDirection(DcMotor.Direction.FORWARD);
+        // Sets maximum allowed power to 1
+        pivot.setPower(1);
+        slide.setPower(1);
+
+
+        claw.scaleRange(0, 1);
     }
+
 
     // set the pos and angle for arm independently
     public void basicMoveArm(int position, int angle) {
