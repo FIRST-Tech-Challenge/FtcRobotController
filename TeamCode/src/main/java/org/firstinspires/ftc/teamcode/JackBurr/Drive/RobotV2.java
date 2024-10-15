@@ -27,11 +27,11 @@ public class RobotV2 extends OpMode {
     public ElapsedTime buttonTimer = new ElapsedTime();
     public int SLIDES_DOWN = -860;
     public int SLIDES_LOW_BASKET = -1375;
-    public int SLIDES_HIGH_BASKET = -1575;
+    public int SLIDES_HIGH_BASKET = -1875;
     public int SLIDESPOS = SLIDES_DOWN;
     public int ARM_DOWN = 259;
     public int ARM_LOW_BASKET = 2270;
-    public int ARM_HIGH_BASKET = 2570;
+    public int ARM_HIGH_BASKET = 2500;
     public int ARMPOS = ARM_DOWN;
     public double initialPosition;
     public Servo wrist_servo;
@@ -103,24 +103,24 @@ public class RobotV2 extends OpMode {
                 ARMPOS = ARM_LOW_BASKET;
                 SLIDESPOS = SLIDES_LOW_BASKET;
                 states = SystemStates.LOW_BASKET;
-                arm_goto(ARM_LOW_BASKET, 1, true);
-                slides_goto(SLIDES_LOW_BASKET, 0.8, true);
+                arm_goto(ARM_LOW_BASKET, 1, false);
+                slides_goto(SLIDES_LOW_BASKET, 0.8, false);
                 telemetry.addLine(states.toString());
             }
             else if (states == SystemStates.LOW_BASKET) {
                 ARMPOS = ARM_HIGH_BASKET;
                 SLIDESPOS = SLIDES_HIGH_BASKET;
                 states = SystemStates.HIGH_BASKET;
-                arm_goto(ARM_HIGH_BASKET, 1, true);
-                slides_goto(SLIDES_HIGH_BASKET, 1, true);
+                arm_goto(ARM_HIGH_BASKET, 1, false);
+                slides_goto(SLIDES_HIGH_BASKET, 1, false);
                 telemetry.addLine(states.toString());
             }
             else{
                 SLIDESPOS = SLIDES_DOWN;
                 ARMPOS = ARM_DOWN;
                 states = SystemStates.DOWN;
-                arm_goto(ARM_DOWN, 0.3, true);
-                slides_goto(SLIDES_DOWN, 0.8, true);
+                arm_goto(ARM_DOWN, 0.3, false);
+                slides_goto(SLIDES_DOWN, 0.8, false);
                 telemetry.addLine(states.toString());
             }
             buttonTimer.reset();
@@ -163,7 +163,7 @@ public class RobotV2 extends OpMode {
     }
     public void stop(){
         slides_goto(0, 0.6, true);
-        arm_goto(0, 0.5, false);
+        arm_goto(0, 0.5, true);
     }
 
     public void run_motors(){
