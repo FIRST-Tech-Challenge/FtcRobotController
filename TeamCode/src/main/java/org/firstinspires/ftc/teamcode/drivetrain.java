@@ -101,7 +101,14 @@ public class drivetrain {
         BackRM.setPower(-speed);
     }
 
-    public void DriveDistance(double speed, int distance) {
+    public void stop() {
+        FrontRM.setPower(0);
+        FrontLM.setPower(0);
+        BackLM.setPower(0);
+        BackRM.setPower(0);
+    }
+
+    public void forwardDistance(double speed, int distance) {
         imu.resetYaw();
         resetEncoders();
         int pulses = calculatePulses(distance);
@@ -109,6 +116,10 @@ public class drivetrain {
         FrontRM.setTargetPosition(pulses);
         BackLM.setTargetPosition(pulses);
         BackRM.setTargetPosition(pulses);
+        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy()  && BackLM.isBusy()) {
+            backward(speed);
+        }
+        stop();
     }
 
     public void resetEncoders() {
@@ -120,6 +131,10 @@ public class drivetrain {
         FrontRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private int calculatePulses(int distance) {
@@ -127,5 +142,12 @@ public class drivetrain {
         double rotations = distance / circumference;
         int pulses = (int) (rotations * PULSE_PER_REVOLUTION);
         return pulses;
+    }
+
+    public void runEncoders() {
+        BackLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //BackRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }

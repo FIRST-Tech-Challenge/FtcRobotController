@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
     private CRServo Intake = null;
-    private Servo graber1 = null;
-    private Servo graber2 = null;
+    private Servo grabber1 = null;
+    private Servo grabber2 = null;
     private LinearOpMode opmode = null;
 
     public Intake() {
@@ -23,8 +23,8 @@ public class Intake {
         hwMap = opMode.hardwareMap;
 
         Intake = hwMap.crservo.get("Intake");
-        graber1 = hwMap.servo.get("graber1");
-        graber2 = hwMap.servo.get("graber2");
+        grabber1 = hwMap.servo.get("grabber1");
+        grabber2 = hwMap.servo.get("grabber2");
 
         Intake.setPower(0);
 
