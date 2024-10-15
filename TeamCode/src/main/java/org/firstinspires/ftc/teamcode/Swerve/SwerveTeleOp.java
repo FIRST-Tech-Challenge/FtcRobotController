@@ -20,7 +20,7 @@ public class SwerveTeleOp extends LinearOpMode {
         int turn = 0;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
-        robot.initRobot();
+        robot.initSwerve();
 
         // Send telemetry message to signify robot waiting;
         // Wait for the game to start (driver presses PLAY)

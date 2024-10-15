@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Mekanism {
     LinearOpMode myOp;
 
-    DcMotor pivot, slide, spintake;
-    Servo claw;
+    public DcMotor pivot, slide, spintake;
+    public Servo claw;
 
 
     int COUNTS_PER_INCH = 1120;
@@ -23,7 +23,7 @@ public class Mekanism {
      * Starts all the devices and maps where they go
      * As well as sets direction and whether motors run with encoders or not
      */
-    public void initRobot() {
+    public void initMekanism() {
 
         // Init slaw, claw, and pivot
         pivot = myOp.hardwareMap.dcMotor.get("pivot");

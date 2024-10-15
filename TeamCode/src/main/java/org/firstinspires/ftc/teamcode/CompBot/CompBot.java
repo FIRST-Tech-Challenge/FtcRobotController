@@ -1,39 +1,20 @@
 package org.firstinspires.ftc.teamcode.CompBot;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Mekanism.*;
 import org.firstinspires.ftc.teamcode.Swerve.*;
 
 @TeleOp(name = "CompBot Swerve", group = "CompBot")
 public class CompBot extends LinearOpMode {
 
-    DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
-
-    Servo FLServo, BLServo, BRServo, FRServo, claw;
-
-    GoBildaPinpointDriver odo;
-
 
     // Main swerve stuff is here
     Swerve_components swerve;
 
     // Main mechanism stuff is here
-    Mekanism mec;
-
-
-    ElapsedTime turnTime = new ElapsedTime();
+    Mekanism mek;
 
 
     // In case builders are bad, is offset center for servo
@@ -43,31 +24,33 @@ public class CompBot extends LinearOpMode {
     double BRServoOffSet = 0.007;
 
 
-    static double TRACKWIDTH = 14; //in inches
-    static double WHEELBASE = 15; //in inches
+    // Robot dimensions
+    static double TRACK_WIDTH = 14; // In inches
+    static double WHEELBASE = 15; // In inches
 
 
     /**
-     * controls for game pad 1:
-     * right trigger: forwards
-     * left trigger: backwards
-     * right stick x: rotate
-     * left stick x: strafe
+     * Controls for game pad 1:<br>
+     * Right trigger: forwards<br>
+     * Left trigger: backwards<br>
+     * Right stick x: rotate<br>
+     * Left stick x: strafe<br>
      * <p>
-     * controls for game pad 2:
-     * left stick y: in and out of arm
-     * right stick y: up and down of arm
-     * left trigger: claw intake
-     * right trigger: claw out
-     * presets for:
-     * attaching clip to sample
-     * attaching specimen(clip + sample) to top rung
-     * presets for bucket 1 and 2
+     * Controls for game pad 2:<br>
+     * Left stick y: in and out of arm<br>
+     * Right stick y: up and down of arm<br>
+     * Left trigger: claw intake<br>
+     * Right trigger: claw out<br>
+     * <p>
+     * Presets for:<br>
+     * Attaching clip to sample<br>
+     * Attaching specimen(clip + sample) to top rung<br>
+     * Presets for bucket 1 and 2
      */
     public void runOpMode() throws InterruptedException {
 
-        swerve.initRobot(); // Inits the swerve components
-        mec.initRobot(); // Inits the mechanism components
+        swerve.initSwerve(); // Inits the swerve components
+        mek.initMekanism(); // Inits the mechanism components
 
 
         waitForStart();
@@ -80,40 +63,44 @@ public class CompBot extends LinearOpMode {
             if (speedGMP1 != 0) move(gamepad1.left_stick_x, speedGMP1);
             else if (angleGMP1 != 0) rotate(angleGMP1);
             else {
-                FLMotor.setPower(0);
-                BLMotor.setPower(0);
-                BRMotor.setPower(0);
-                FRMotor.setPower(0);
+                swerve.FLMotor.setPower(0);
+                swerve.BLMotor.setPower(0);
+                swerve.BRMotor.setPower(0);
+                swerve.FRMotor.setPower(0);
             }
             // if (gamepad1.a) rotateToCenter();
 
 
-            //game pad 2
+            // Game pad 2
             double armLength = -gamepad2.right_stick_y;
             double armAngle = -gamepad2.left_stick_y;
 
             // 0 < arm length < 4268
-            if (armLength > 0 && slide.getCurrentPosition() > 4268) {
+            if (armLength > 0 && mek.slide.getCurrentPosition() > 4268) {
                 armLength = 0;
-            } else if (armLength < 0 && slide.getCurrentPosition() < -4268) {
+            } else if (armLength < 0 && mek.slide.getCurrentPosition() < -4268) {
                 armLength = 0;
             }
-            slide.setPower(armLength);
+            mek.slide.setPower(armLength);
 
             // 0 < arm angle < 2904
-            if (armAngle > 0 && pivot.getCurrentPosition() > 2904) {
+            if (armAngle > 0 && mek.pivot.getCurrentPosition() > 2904) {
                 armAngle = 0;
-            } else if (armAngle < 0 && pivot.getCurrentPosition() < -2904) {
+            } else if (armAngle < 0 && mek.pivot.getCurrentPosition() < -2904) {
                 armAngle = 0;
             }
-            pivot.setPower(armAngle);
+            mek.pivot.setPower(armAngle);
 
-            //to test arm length and angle
-            addTelem(pivot.getCurrentPosition(), slide.getCurrentPosition(), armAngle, armLength);
+            // To test arm length and angle
+            mekTelemetry(mek.pivot.getCurrentPosition(), mek.slide.getCurrentPosition(), armAngle, armLength);
         }
     }
 
-    public void addTelem(int x, int y, double a, double b) {
+
+    /**
+     * Prints out telemetry for the mechanism
+     */
+    public void mekTelemetry(int x, int y, double a, double b) {
         telemetry.addData("Arm angle: ", x);
         telemetry.addData("Arm length: ", y);
         telemetry.addData("Left stick y: ", a);
@@ -165,6 +152,8 @@ public class CompBot extends LinearOpMode {
 
 
     /**
+     * TODO Move to Swerve_Components as it only deals with swerve drive stuff
+     * <p>
      * Moves the robot based on desired heading and power.<br>
      * Does not change the rotation of the robot at all
      *
@@ -175,19 +164,21 @@ public class CompBot extends LinearOpMode {
     public void move(double heading, double power) {
         heading = (heading + 1) / 2;
 
-        FLServo.setPosition(heading + FLServoOffSet);
-        BLServo.setPosition(heading + BLServoOffSet);
-        BRServo.setPosition(heading + BRServoOffSet);
-        FRServo.setPosition(heading + FRServoOffSet);
+        swerve.FLServo.setPosition(heading + FLServoOffSet);
+        swerve.BLServo.setPosition(heading + BLServoOffSet);
+        swerve.BRServo.setPosition(heading + BRServoOffSet);
+        swerve.FRServo.setPosition(heading + FRServoOffSet);
 
-        FLMotor.setPower(power);
-        BLMotor.setPower(power);
-        BRMotor.setPower(power);
-        FRMotor.setPower(power);
+        swerve.FLMotor.setPower(power);
+        swerve.BLMotor.setPower(power);
+        swerve.BRMotor.setPower(power);
+        swerve.FRMotor.setPower(power);
     }
 
 
     /**
+     * TODO This needs to be moved to Swerve_Components
+     * <p>
      * Rotates the robot around a center point.<br>
      * Does not move the robot in any other direction.<br>
      *
@@ -196,16 +187,16 @@ public class CompBot extends LinearOpMode {
     public void rotate(double power) {
 
         // Set wheels for rotation (Ben's robot has 2x gear ratio so .25/2 and .75/2)
-        FLServo.setPosition(.25 + .125 / 2);
-        BLServo.setPosition(.75 - .125 / 2);
-        BRServo.setPosition(.25 + .125 / 2);
-        FRServo.setPosition(.75 - .125 / 2);
+        swerve.FLServo.setPosition(.25 + .125 / 2);
+        swerve.BLServo.setPosition(.75 - .125 / 2);
+        swerve.BRServo.setPosition(.25 + .125 / 2);
+        swerve.FRServo.setPosition(.75 - .125 / 2);
 
         //turn motors to rotate robot
-        FLMotor.setPower(-power);
-        BLMotor.setPower(-power);
-        BRMotor.setPower(power);
-        FRMotor.setPower(power);
+        swerve.FLMotor.setPower(-power);
+        swerve.BLMotor.setPower(-power);
+        swerve.BRMotor.setPower(power);
+        swerve.FRMotor.setPower(power);
 
     }
 
@@ -223,8 +214,8 @@ public class CompBot extends LinearOpMode {
      */
     public void moveAndRotate(double speed, double turnAmount) {
 
-        double i_WheelAngle = Math.atan2(WHEELBASE, turnAmount - TRACKWIDTH / 2);
-        double outsideAng = Math.atan2(WHEELBASE, turnAmount + TRACKWIDTH / 2);
+        double i_WheelAngle = Math.atan2(WHEELBASE, turnAmount - TRACK_WIDTH / 2);
+        double outsideAng = Math.atan2(WHEELBASE, turnAmount + TRACK_WIDTH / 2);
 
 
     }
@@ -232,12 +223,13 @@ public class CompBot extends LinearOpMode {
 
     /**
      * TODO Possibly make this not run at full speed at all times by adding some sort of power input
+     * <p>
      * Uses the IMU to move the robot to face forward
      * <p>
      * As long as this function is called, it will try to rotate back to facing forward
      */
     public void rotateToCenter() {
-        double orientation = odo.getHeading();
+        double orientation = swerve.odo.getHeading();
         telemetry.addData("Yaw angle", orientation);
 
         rotate(orientation);
