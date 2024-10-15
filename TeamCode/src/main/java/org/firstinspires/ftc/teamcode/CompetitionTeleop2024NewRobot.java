@@ -114,6 +114,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         RF.setDirection(DcMotor.Direction.REVERSE);
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
+        lift.setDirection(DcMotor.Direction.REVERSE);
         //intake.setDirection(DcMotor.Direction.FORWARD);
         //Reverse the arm direction so it moves in the proper direction
         //arm.setDirection(DcMotor.Direction.REVERSE);
