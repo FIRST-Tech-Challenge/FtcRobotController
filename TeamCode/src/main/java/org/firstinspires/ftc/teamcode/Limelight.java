@@ -21,7 +21,6 @@ public class Limelight extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(11);
 
-
         limelight.pipelineSwitch(0);
 
         limelight.start();
@@ -55,7 +54,6 @@ public class Limelight extends LinearOpMode {
             if (result != null) {
                 if (result.isValid()) {
                     Pose3D botpose = result.getBotpose_MT2();
-
                 }
             }
         }

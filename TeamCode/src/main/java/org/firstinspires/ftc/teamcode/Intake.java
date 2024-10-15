@@ -9,32 +9,37 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
-    private CRServo Intakes = null;
+    private CRServo Intake = null;
     private Servo graber1 = null;
     private Servo graber2 = null;
-    private LinearOpMode opmode=null;
+    private LinearOpMode opmode = null;
 
-    public  Intake (){
+    public Intake() {
     }
-    public void init (LinearOpMode opMode){
+
+    public void init(LinearOpMode opMode) {
         HardwareMap hwMap;
         opmode = opMode;
-        hwMap=opMode.hardwareMap;
+        hwMap = opMode.hardwareMap;
 
-        Intakes=hwMap.crservo.get("Intakes");
-        graber1=hwMap.servo.get("graber1");
-        graber2=hwMap.servo.get("graber2");
+        Intake = hwMap.crservo.get("Intake");
+        graber1 = hwMap.servo.get("graber1");
+        graber2 = hwMap.servo.get("graber2");
 
-        Intakes.setPower(0);
+        Intake.setPower(0);
 
     }
+
     public void intake() {
-        Intakes.setPower(1);
+
+        Intake.setPower(1);
     }
-    public void eject(){
-        Intakes.setPower(-1);
+
+    public void eject() {
+        Intake.setPower(-1);
     }
-    public void transport(double speed){
-        Intakes.setPower(0);
+
+    public void transport(double speed) {
+        Intake.setPower(0);
     }
 }

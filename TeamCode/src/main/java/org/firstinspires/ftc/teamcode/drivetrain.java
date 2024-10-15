@@ -105,6 +105,10 @@ public class drivetrain {
         imu.resetYaw();
         resetEncoders();
         int pulses = calculatePulses(distance);
+        FrontLM.setTargetPosition(pulses);
+        FrontRM.setTargetPosition(pulses);
+        BackLM.setTargetPosition(pulses);
+        BackRM.setTargetPosition(pulses);
     }
 
     public void resetEncoders() {
@@ -123,20 +127,5 @@ public class drivetrain {
         double rotations = distance / circumference;
         int pulses = (int) (rotations * PULSE_PER_REVOLUTION);
         return pulses;
-    }
-
-    public void servoForward(double speed) {
-        testing.setPower(speed);
-        testing1.setPower(speed);
-    }
-
-    public void servoRevers(double speed) {
-        testing.setPower(speed);
-        testing1.setPower(speed);
-    }
-
-    public void servoStop() {
-        testing.setPower(0);
-        testing1.setPower(0);
     }
 }
