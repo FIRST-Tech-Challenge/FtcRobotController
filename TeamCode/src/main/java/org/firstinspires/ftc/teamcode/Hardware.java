@@ -25,8 +25,8 @@ public class Hardware {
     private static final int RESOLUTION_HEIGHT = 100;
 
     /* Robot systems */
-    private  MecanumWheels mecanum;
-    private ExtendableArm arm;
+    private  MecanumWheels WHEELS;
+    private ExtendableArm ARM;
 
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
@@ -47,7 +47,7 @@ public class Hardware {
     /**
      * Initiates all hardware needed for the WheelsSystem.
      */
-    private Wheels initWheels() {
+    private MecanumWheels initWheels() {
         /*
          * Define wheels system hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
@@ -63,7 +63,7 @@ public class Hardware {
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
-    private Arm initArm() {
+    private ExtendableArm initArm() {
         /*
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
@@ -75,12 +75,10 @@ public class Hardware {
         return new ExtendableArm(motors, servos, intakeServo);
     }
 
-    public MecanumWheels getWheels() {
-        return mecanum;
-    }
+    public MecanumWheels getWheels() { return WHEELS; }
 
     public ExtendableArm getArm() {
-        return arm;
+    return ARM;
     }
 
     public DigitalChannel getColorSwitch() {
@@ -92,8 +90,8 @@ public class Hardware {
     }
 
     /**
-     * Attempts to cast the OP_MODE to a LinearOpMode
-     * Returns null if it fails
+     * Attempts to cast the OP_MODE to a LinearOpMode.
+     * Returns null if it fails.
      *
      * @return a linearOpMode representation of OP_MODE if possible
      *         Else returns null
@@ -108,7 +106,7 @@ public class Hardware {
     }
 
     /**
-     * Sleeps the robot any motors are running
+     * Sleeps the robot any motors are running.
      * @noinspection unused
      */
     public void autoSleep() {
@@ -126,12 +124,12 @@ public class Hardware {
     public void autoSleep(HashSet<DcMotor> motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
-        // Does nothing if it isn't a LinearOpMode
+        // Does nothing if it isn't a LinearOpMode.
         if (linearOp == null) {
             return;
         }
 
-        // Sleep while any of the motors are still running
+        // Sleep while any of the motors are still running.
         while (motors.stream().anyMatch(DcMotor::isBusy)) {
             linearOp.sleep(1);
         }
