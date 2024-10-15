@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -47,14 +48,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Both of these drives are illustrated at https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
  *
- * Also note that it is critical to set the correct rotation direction for each motor.  See details below.
+ * Also note that it is critical to set the correct rotation direction for each motor. See details below.
  *
  * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
  * Each motion axis is controlled by one Joystick axis.
  *
- * 1) Axial:    Driving forward and backward               Left-joystick Forward/Backward
- * 2) Lateral:  Strafing right and left                     Left-joystick Right and Left
- * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
+ * 1) Axial: Driving forward and backward Left-joystick Forward/Backward
+ * 2) Lateral: Strafing right and left Left-joystick Right and Left
+ * 3) Yaw: Rotating Clockwise and counter clockwise Right-joystick Right and Left
  *
  * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
  * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
@@ -87,32 +88,32 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         towerMotor = hardwareMap.get(DcMotor.class, "tower_motor");
         samplePickup = hardwareMap.get(CRServo.class, "sample_pickup");
 
         // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
+        // !!! IMPORTANT Drive Information. Test your motor directions. !!!!!
         // ########################################################################################
         // Most robots need the motors on one side to be reversed to drive forward.
         // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
         // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
+        // that your motors are turning in the correct direction. So, start out with the reversals here, BUT
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-  //      leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-   //     leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-//        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-//        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        // leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        // leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+// rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+// rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-       rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        towerMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        towerMotor.setDirection(DcMotor.Direction.REVERSE);
 
         towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -128,9 +129,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = -gamepad1.left_stick_y; // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
             boolean sample_in = gamepad1.x;
             boolean sample_out = gamepad1.y;
 
@@ -146,10 +147,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
+            double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -158,10 +159,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
+                leftFrontPower /= max;
                 rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
             }
 
 
@@ -177,19 +178,19 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
 
             if(sample_in) {
-//                samplePickup.setPosition(1);
+// samplePickup.setPosition(1);
                 samplePickup.setPower(1);
-//                robot.claw1.setPosition(0);
-//        sleep(10);
+// robot.claw1.setPosition(0);
+// sleep(10);
             } else if (sample_out) {
-//                samplePickup.setPosition(0);
+// samplePickup.setPosition(0);
                 samplePickup.setPower(-1);
-//                robot.claw1.setPosition(1);
+// robot.claw1.setPosition(1);
                 sleep(10);
             } else {
-//                samplePickup.setPower(0);
-//                samplePickup.setPosition(0.5);
-//                robot.claw1.setPosition(0.5);
+// samplePickup.setPower(0);
+// samplePickup.setPosition(0.5);
+// robot.claw1.setPosition(0.5);
             }
 
             if(gamepad1.dpad_up && towerMotor.getCurrentPosition() <500){
@@ -197,45 +198,75 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 towerMotor.setPower(1);
             }
 
+            if(gamepad1.dpad_up) {
+                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+                towerMotor.setTargetPosition(3000);
 
-            if (tower_top) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 3000);
-                towerMotor.setTargetPosition(8750);
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                towerMotor.setPower(1);
-//                while (opModeIsActive() && robot.tower_motor.isBusy()) {
-//                }
-                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
-                telemetry.update();
-            } else if (tower_mid) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 1500);
-                towerMotor.setTargetPosition(5500);
-                towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                towerMotor.setPower(1);
-//                while (opModeIsActive() && robot.tower_motor.isBusy()) {
-//                }
+                towerMotor.setPower(.5);
+
                 telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
             }
-            else if (tower_home) {
-                int newTargetPosition = 0;
-                towerMotor.setTargetPosition(newTargetPosition);
+
+            else if(gamepad1.dpad_right) {
+                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+                towerMotor.setTargetPosition(2500);
+
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                towerMotor.setPower(1);
-//                while (opModeIsActive() && robot.tower_motor.isBusy()) {
-//                }
+                towerMotor.setPower(.5);
+
                 telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
-            } else if (tower_up) {
-                towerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                towerMotor.setPower(1);
-                telemetry.addData("I am going up:", "%7d", towerMotor.getCurrentPosition());
+            }
+
+            else if(gamepad1.dpad_left) {
+                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+                towerMotor.setTargetPosition(1700);
+
+                towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                towerMotor.setPower(.5);
+
+                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
-            }else if(tower_down){
-                towerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                towerMotor.setPower(-.5);
-                telemetry.addData("I am going up:", "%7d", towerMotor.getCurrentPosition());
+            }
+
+            else if(gamepad1.dpad_down) {
+                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+                towerMotor.setTargetPosition(1200);
+
+                towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                towerMotor.setPower(.5);
+
+                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
+            }
+
+
+
+            else if(gamepad1.left_bumper) {
+                int newTargetPosition = (towerMotor.getCurrentPosition() + 18);
+                towerMotor.setTargetPosition(700);
+
+                towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                towerMotor.setPower(.5);
+
+                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
+                telemetry.update();
+
+            }
+
+            else if (gamepad1.right_bumper) {
+                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+                towerMotor.setTargetPosition(0);
+
+                towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                towerMotor.setPower(.5);
+
+                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
+                telemetry.update();
+
+
             }else {
                 if(!towerMotor.isBusy()){
                     towerMotor.setPower(0);}
@@ -243,27 +274,22 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
 
-
-
-
-
-
             // This is test code:
             //
             // Uncomment the following code to test your motor directions.
             // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
+            // 1) First get all the motors to take to correct positions on the robot
+            // by adjusting your Robot Configuration if necessary.
+            // 2) Then make sure they run in the correct direction by modifying the
+            // the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
+ /*
+ leftFrontPower = gamepad1.x ? 1.0 : 0.0; // X gamepad
+ leftBackPower = gamepad1.a ? 1.0 : 0.0; // A gamepad
+ rightFrontPower = gamepad1.y ? 1.0 : 0.0; // Y gamepad
+ rightBackPower = gamepad1.b ? 1.0 : 0.0; // B gamepad
+ */
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
@@ -274,7 +300,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Back left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
         }
     }}
