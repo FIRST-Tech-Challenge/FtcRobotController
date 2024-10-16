@@ -131,7 +131,9 @@ public class CompBot extends LinearOpMode {
         telemetry.addData("Pivot target pos: ", pivot.getTargetPosition());
         telemetry.addData("Arm target pos: ", slide.getTargetPosition());
         telemetry.addData("Pivot power: ", pivot.getPower());
-        telemetry.addData("Pivot power: ", slide.getPower());
+        telemetry.addData("Arm power: ", slide.getPower());
+        telemetry.addData("Pivot position: ", pivot.getCurrentPosition());
+        telemetry.addData("Arm position: ", slide.getCurrentPosition());
         telemetry.update();
     }
 
@@ -199,12 +201,6 @@ public class CompBot extends LinearOpMode {
         slide = hardwareMap.dcMotor.get("slide");
         claw = hardwareMap.servo.get("claw");
 
-        pivot.setTargetPosition(0);
-        slide.setTargetPosition(0);
-
-        pivot.setPower(0);
-        slide.setPower(0);
-
         pivot.setMode(RUN_USING_ENCODER);
         slide.setMode(RUN_USING_ENCODER);
         claw.scaleRange(0, 1);
@@ -215,16 +211,12 @@ public class CompBot extends LinearOpMode {
         pivot.setDirection(DcMotor.Direction.FORWARD);
         slide.setDirection(DcMotor.Direction.FORWARD);
 
-
         // Sets pivot and slide to pos 0
         pivot.setMode(STOP_AND_RESET_ENCODER);
         slide.setMode(STOP_AND_RESET_ENCODER);
 
-        pivot.setTargetPosition(2905);
-        slide.setTargetPosition(4269);
-
-        pivot.setMode(STOP_AND_RESET_ENCODER);
-        slide.setMode(STOP_AND_RESET_ENCODER);
+        pivot.setPower(0);
+        slide.setPower(0);
     }
 
 
