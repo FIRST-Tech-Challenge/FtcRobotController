@@ -59,8 +59,9 @@ public class Teleop extends OpMode {
         } else {
             inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
             movementAngle = inputAngle + absoluteYaw;
-            verticalMovePower = Math.cos(Math.toRadians(movementAngle));
-            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle));
+            double magnitude = Math.sqrt(Math.pow(moveXInput, 2) + Math.pow(moveYInput, 2));
+            verticalMovePower = Math.cos(Math.toRadians(movementAngle)) * magnitude;
+            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle)) * magnitude;
         }
 
         double turnPower = -rotationInput;
