@@ -47,6 +47,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
 import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
+import org.firstinspires.ftc.teamcode.subsystems.SparkOdo;
 import org.firstinspires.ftc.teamcode.utils.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -84,6 +85,16 @@ public class LimelightTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException
     {
+
+        /*
+        LIME LIGHT TAKE AWAY:
+        ROTATION IS INVERTED (For spark rotation anyway)
+         */
+
+
+
+
+
         positionMT1 = new Pose2d(0,0,0);
         positionMT2 = new Pose2d(0,0,0);
         Mecanum robot = new Mecanum(hardwareMap);
@@ -92,19 +103,24 @@ public class LimelightTest extends LinearOpMode {
 
         limelight3A = hardwareMap.get(Limelight3A.class,"limelight");
         wrapper = new LimeLightWrapper(limelight3A);
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        ));
+//        imu = hardwareMap.get(IMU.class, "imu");
+//        imu.initialize(new IMU.Parameters(
+//                new RevHubOrientationOnRobot(
+//                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+//                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+//                )
+//        ));
+        SparkOdo sparkOdo = new SparkOdo(hardwareMap);
+
+
+
         waitForStart();
 
-        while (opModeIsActive()) {
-            robot.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
-            Pose3D pose3D = wrapper.distanceFromTag(robot.getYaw(AngleUnit.DEGREES));
+        while (opModeIsActive()) {
+            robot.drive(controller1.left_stick_y, controller1.left_stick_x, controller1.right_stick_x);
+            //For some reason, angle direction is inverted, this may be due to the offset.
+            Pose3D pose3D = wrapper.distanceFromTag(-Math.toDegrees(sparkOdo.getPos().h));
             Pose3D pose3D_MT1 = wrapper.distanceFromTag();
             if(pose3D!=null) {
                 Pose3D pos1 = wrapper.inToMM(pose3D_MT1);
@@ -126,19 +142,20 @@ public class LimelightTest extends LinearOpMode {
 
                 positionMT2 = new Pose2d(pos.getPosition().x,
                         pos.getPosition().y,
-                        robot.getYaw(AngleUnit.RADIANS));
+                        -sparkOdo.getPos().h);
 
             }
 
 
             if(controller1.a.onPress()){
-                robot.resetIMU();
+                sparkOdo.resetOdo();
             }
 
 
             drawDashboard();
-            telemetry.addData("Rotation: ",robot.getYaw(AngleUnit.DEGREES));
+            telemetry.addData("Rotation: ",Math.toDegrees(sparkOdo.getPos().h));
             telemetry.update();
+            controller1.update();
         }
 
     }
