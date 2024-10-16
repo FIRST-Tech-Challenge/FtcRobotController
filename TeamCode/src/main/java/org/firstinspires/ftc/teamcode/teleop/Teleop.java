@@ -36,11 +36,11 @@ public class Teleop extends OpMode {
         boolean speedDownInput = gamepad1.left_bumper;
 
         if (speedUpInput && !speedUpInputLast)
-            maxSpeed += 0.1;
+            maxSpeed += 1;
         speedUpInputLast = speedUpInput;
 
         if (speedDownInput && !speedDownInputLast)
-            maxSpeed -= 0.1;
+            maxSpeed -= 1;
         speedDownInputLast = speedDownInput;
 
         telemetry.addData("Speed", maxSpeed);
@@ -50,17 +50,17 @@ public class Teleop extends OpMode {
 
         double verticalMovePower;
         double horizontalMovePower;
-        double inputAngle = 0;
-        double movementAngle = 0;
+        double inputAngle;
+        double movementAngle;
 
         if (moveYInput == 0 && moveXInput == 0) {
             verticalMovePower = 0;
             horizontalMovePower = 0;
         } else {
-            inputAngle = Math.atan2(moveYInput, moveXInput);
-            movementAngle = (Math.toDegrees(inputAngle) - 90) + absoluteYaw;
-            verticalMovePower = Math.sin(Math.toRadians(movementAngle));
-            horizontalMovePower = Math.cos(Math.toRadians(movementAngle));
+            inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
+            movementAngle = inputAngle + absoluteYaw;
+            verticalMovePower = Math.cos(Math.toRadians(movementAngle));
+            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle));
         }
 
         double turnPower = -rotationInput;

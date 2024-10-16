@@ -41,11 +41,11 @@ public class DebugTeleop extends OpMode {
         boolean speedDownInput = gamepad1.left_bumper;
 
         if (speedUpInput && !speedUpInputLast)
-            maxSpeed += 0.1;
+            maxSpeed += 1;
         speedUpInputLast = speedUpInput;
 
         if (speedDownInput && !speedDownInputLast)
-            maxSpeed -= 0.1;
+            maxSpeed -= 1;
         speedDownInputLast = speedDownInput;
 
         telemetry.addLine();
@@ -75,7 +75,7 @@ public class DebugTeleop extends OpMode {
             inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
             movementAngle = inputAngle + absoluteYaw;
             verticalMovePower = Math.cos(Math.toRadians(movementAngle));
-            horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
+            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle));
         }
 
         telemetry.addLine("--- Field Relative Calculations ---");
