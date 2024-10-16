@@ -211,6 +211,7 @@ public class deadAuto extends OpMode {
 
         // Prep ArmControlSubsystem
         ArmControlSubsystem.init(MecanumTeleOp.armPose.REST, cap, spindle, lswitch);
+        LSTop.setPosition(1);
     }
 
     @Override
@@ -231,8 +232,33 @@ public class deadAuto extends OpMode {
             x = 0;
             y = -0.3;
             rx = 0;
-        } else {
+        } else if ((System.currentTimeMillis() - timeAtStart) < 4000) {
+            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_A);
             x = 0;
+            y = 0;
+            rx = 0;
+        } else if ((System.currentTimeMillis() - timeAtStart) < 5000) {
+            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_B);
+            x = 0;
+            y = 0;
+            rx = 0;
+        } else if ((System.currentTimeMillis() - timeAtStart) < 5500) {
+            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_A);
+            x = 0;
+            y = 0.1;
+            rx = 0;
+        } else if ((System.currentTimeMillis() - timeAtStart) < 6000) {
+            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_A);
+            LSTop.setPosition(1);
+            x = 0;
+            y = 0.3;
+            rx = 0;
+        }  else if ((System.currentTimeMillis() - timeAtStart) < 7000) {
+            x = 0.5;
+            y = 0;
+            rx = 0;
+        } else {
+            x = 0.5;
             y = 0;
             rx = 0;
         }
