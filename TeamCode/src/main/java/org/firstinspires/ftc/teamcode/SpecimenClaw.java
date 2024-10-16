@@ -26,15 +26,21 @@ public class SpecimenClaw {
         //aDown = gamepad.a;
         if( gamepad.right_bumper && clampDown) { releaseSpecimen(); }
         else if( gamepad.right_bumper && !clampDown){ grabSpecimen(); }
+
+        if(clampDown){ clampDown = !clampDown; }
     }
 
+    public void setPosition(double d){
+        leftClawServo.setPosition(d);
+        rightClawServo.setPosition(1-d);
+    }
     public void grabSpecimen(){
         leftClawServo.setPosition(0);
-        rightClawServo.setPosition(0);
+        rightClawServo.setPosition(1);
     }
 
     public void releaseSpecimen(){
         leftClawServo.setPosition(1);
-        rightClawServo.setPosition(1);
+        rightClawServo.setPosition(0);
     }
 }

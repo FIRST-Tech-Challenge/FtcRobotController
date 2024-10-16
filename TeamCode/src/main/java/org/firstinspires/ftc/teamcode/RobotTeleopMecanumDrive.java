@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 
 @TeleOp(name="Robot: Teleop", group="Robot")
@@ -25,7 +26,7 @@ public class RobotTeleopMecanumDrive extends OpMode{
         drive.setDriveSpeed(DRIVE_SPEED);
         drive.setDebug(true);
 
-        //drawer = new Drawer(hardwareMap);
+        drawer = new Drawer(hardwareMap);
         //elevator = new Elevator(hardwareMap);
         specimanArm = new SpecimanArm(hardwareMap);
 
@@ -57,6 +58,18 @@ public class RobotTeleopMecanumDrive extends OpMode{
         drawer.update(gamepad1);
         specimanArm.update(gamepad1);
         //elevator.update(gamepad2);
+        testingValues(gamepad2);
+    }
+
+    public void testingValues(Gamepad gamepad) {
+        if(gamepad.a)
+            drawer.setJointPosition(gamepad.left_stick_y * 0.5 + 0.5); // in 0.25, out 1
+        if(gamepad.b)
+            drawer.setClawPosition(gamepad.left_stick_y * 0.5 + 0.5); // open 0, close 0.75
+        if(gamepad.y)
+            specimanArm.setPosition(gamepad.left_stick_y * 0.5 + 0.5);
+        telemetry.addData("Servo Position:", gamepad.left_stick_y * 0.5 + 0.5);
+        telemetry.update();
     }
 
     /*

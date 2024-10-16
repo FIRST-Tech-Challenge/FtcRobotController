@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,7 +15,7 @@ public class Drawer {
     
     public Drawer(HardwareMap hardwareMap) {
         drawerMotor = hardwareMap.dcMotor.get(DRAWER_MOTOR_NAME);
-        drawerMotor.setDirection(DcMotor.Direction.FORWARD);
+        drawerMotor.setDirection(DcMotor.Direction.REVERSE);
         claw = new Claw(hardwareMap);
     }
 

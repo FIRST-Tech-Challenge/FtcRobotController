@@ -38,11 +38,11 @@ public class Claw {
             claw = !claw;
         }
 
-        if (b && joint){
-            setJointPosition(0.75);
+        if (gamepad.right_bumper && joint){
+            setJointPosition(1);
             joint = !joint;
-        } else if (b && !joint){
-            setJointPosition(0);
+        } else if (gamepad.right_bumper && !joint){
+            setJointPosition(0.25);
             joint = !joint;
         }
     }
