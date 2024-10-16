@@ -74,8 +74,8 @@ public class DebugTeleop extends OpMode {
         } else {
             inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
             movementAngle = inputAngle + absoluteYaw;
-            verticalMovePower = Math.sin(Math.toRadians(movementAngle));
-            horizontalMovePower = Math.cos(Math.toRadians(movementAngle));
+            verticalMovePower = Math.cos(Math.toRadians(movementAngle));
+            horizontalMovePower = Math.sin(Math.toRadians(movementAngle));
         }
 
         telemetry.addLine("--- Field Relative Calculations ---");
