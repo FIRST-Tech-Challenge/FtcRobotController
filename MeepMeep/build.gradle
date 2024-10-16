@@ -1,0 +1,14 @@
+plugins {
+    id 'java-library'
+}
+repositories {
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://maven.brott.dev/' }
+}
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+dependencies {
+    implementation 'com.github.rh-robotics:MeepMeep:v1.0.0'
+}
