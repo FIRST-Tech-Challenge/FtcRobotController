@@ -35,16 +35,16 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         // Variables that store the different game pad movements for ease of reference later
         double strafePower; // (left stick x-axis movement)
-        strafePower = gamepad1.left_stick_x * 5000; // Min: -10000, Max: 10000
-        telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
+        strafePower = Math.pow(gamepad1.left_stick_x,3) * 5000; // Min: -10000, Max: 10000
+        //telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
         double turnPower; // (right stick x-axis movement)
-        turnPower = gamepad1.right_stick_x * 5000; // Min: -10000, Max: 10000
-        telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
+        turnPower = Math.pow(gamepad1.right_stick_x,3) * 5000; // Min: -10000, Max: 10000
+        //telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
         double straightMovementPower; // (left stick y-axis movement)
 //      straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y);
 // Min: -10000, Max: 10000
-        straightMovementPower = (gamepad1.left_stick_y * 10000);
-        telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
+        straightMovementPower = Math.pow(gamepad1.left_stick_y, 3) * 10000;
+        //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 
         if (gamepad1.left_trigger!=0){
             straightMovementPower=(gamepad1.left_stick_y * 1000);
