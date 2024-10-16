@@ -1,0 +1,5 @@
+TODO:
+ - Motors are reoriented
+ - Finish dynamic input systems
+ - Hubs are facing up now
+ - Make arm use dualstring extender
