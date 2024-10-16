@@ -116,6 +116,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         towerMotor.setDirection(DcMotor.Direction.REVERSE);
 
         towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        towerMotor.setTargetPosition(0);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -166,13 +167,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
 
+            //change this to output the current value of the encoder
             if(gamepad1.a)
             {
-                towerMotor.setPower(1);
-            }else if(gamepad1.b){
-                towerMotor.setPower(-1);
-            }else {
-                towerMotor.setPower(0);
+                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
+               telemetry.update();
+
+
+
             }
 
 
@@ -193,6 +195,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 // robot.claw1.setPosition(0.5);
             }
 
+
             if(gamepad1.dpad_up && towerMotor.getCurrentPosition() <500){
                 towerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 towerMotor.setPower(1);
@@ -200,7 +203,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             if(gamepad1.dpad_up) {
                 int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
-                towerMotor.setTargetPosition(3000);
+                towerMotor.setTargetPosition(4250);
 
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 towerMotor.setPower(.5);
@@ -245,7 +248,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
 
             else if(gamepad1.left_bumper) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 18);
+//                int newTargetPosition = (towerMotor.getCurrentPosition() + 18);
                 towerMotor.setTargetPosition(700);
 
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -267,9 +270,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 telemetry.update();
 
 
+
             }else {
                 if(!towerMotor.isBusy()){
-                    towerMotor.setPower(0);}
+                    towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    towerMotor.setPower(0.0);}
                 else{}
             }
 
@@ -301,6 +306,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
+            telemetry.update();
             telemetry.update();
         }
     }}
