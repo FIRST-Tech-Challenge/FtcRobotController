@@ -212,7 +212,29 @@ public class AutonDrivingFunctions extends LinearOpMode {
                         (runtime.seconds() < timeoutS) &&
                         (newFrontLeftTarget > leftFrontDrive.getCurrentPosition())) {
                     getYaw();
-                    directionError = CURRENT_YAW - robotDesiredDirection;
+                    // Below: Ensuring that that the robot corrects itself correctly if the
+                    // target angle is close to 180 or -180, and the robot crosses that threshold
+                    if (robotDesiredDirection > 130){
+                        if (CURRENT_YAW < 0) {
+                            directionError = CURRENT_YAW +360 - robotDesiredDirection;
+                        }
+                        else {
+                            directionError = CURRENT_YAW - robotDesiredDirection;
+                        }
+                    }
+                    else if (robotDesiredDirection < -130){
+                        if (CURRENT_YAW > 0){
+                            directionError = CURRENT_YAW - 360 - robotDesiredDirection;
+                        }
+                        else {
+                            directionError = CURRENT_YAW - robotDesiredDirection;
+                        }
+                    }
+                    else {
+                        directionError = CURRENT_YAW - robotDesiredDirection;
+                    }
+                    //directionError = CURRENT_YAW - robotDesiredDirection;
+
                     directionCorrectionModifier = directionError * 0.01;
                     telemetry.addData("modifier", "%.2f Deg. (Heading)", directionCorrectionModifier);
                     telemetry.update();
@@ -276,7 +298,7 @@ public class AutonDrivingFunctions extends LinearOpMode {
             leftBackDrive.setPower(-turnSpeed);
             rightFrontDrive.setPower(turnSpeed);
             rightBackDrive.setPower(turnSpeed);
-            while (opModeIsActive() && turnTargetPosition < leftFrontDrive.getCurrentPosition()) {
+            while (opModeIsActive() && turnTargetPosition < (leftFrontDrive.getCurrentPosition()-5)) {
             }
 
         }
@@ -285,7 +307,7 @@ public class AutonDrivingFunctions extends LinearOpMode {
                 leftBackDrive.setPower(turnSpeed);
                 rightFrontDrive.setPower(-turnSpeed);
                 rightBackDrive.setPower(-turnSpeed);
-                while (opModeIsActive() && turnTargetPosition > leftFrontDrive.getCurrentPosition()){
+                while (opModeIsActive() && turnTargetPosition > (leftFrontDrive.getCurrentPosition()+5)){
                 };
         }
         sleep(250);
@@ -314,7 +336,27 @@ public class AutonDrivingFunctions extends LinearOpMode {
 //        }
         while(opModeIsActive() && (Math.abs(CURRENT_YAW - robotDesiredDirection) > 1.0)) {
             getYaw();
-            directionError = CURRENT_YAW - robotDesiredDirection;
+            // modify direction error if we are close to 180 or -180
+            if (robotDesiredDirection > 90) {
+                if (CURRENT_YAW < 0){
+                    directionError = CURRENT_YAW + 360 - robotDesiredDirection;
+                }
+                else{
+                    directionError = CURRENT_YAW - robotDesiredDirection;
+                }
+            }
+            else if (robotDesiredDirection < -90){
+                if (CURRENT_YAW > 0){
+                    directionError = CURRENT_YAW - 360 - robotDesiredDirection;
+                }
+                else {
+                    directionError = CURRENT_YAW - robotDesiredDirection;
+                }
+            }
+            else {
+                directionError = CURRENT_YAW - robotDesiredDirection;
+            }
+            // directionError = CURRENT_YAW - robotDesiredDirection;
             directionCorrectionModifier = directionError * 0.02;
             telemetry.addData("modifier", "%.2f Deg. (Heading)", directionCorrectionModifier);
             telemetry.update();
