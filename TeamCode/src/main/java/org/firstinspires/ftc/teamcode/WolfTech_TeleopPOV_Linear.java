@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
 @TeleOp(name="Robot: Teleop POV", group="Robot")
@@ -42,11 +43,11 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
     public DcMotor frontRightDrive  = null;
     public DcMotor backLeftDrive = null;
     public DcMotor backRightDrive = null;
-//    public DcMotor  leftArm     = null;
+    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
 //    public Servo    rightClaw   = null;
-
-    double clawOffset = 0;
+//
+//    double clawOffset = 0;
 
 //    public static final double MID_SERVO   =  0.5 ;
 //    public static final double CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
@@ -75,10 +76,10 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//         If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
+//         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
 //        leftClaw  = hardwareMap.get(Servo.class, "left_hand");
@@ -140,7 +141,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
 //                leftArm.setPower(0.0);
 
             // Send telemetry message to signify robot running;
-            telemetry.addData("claw",  "Offset = %.2f", clawOffset);
+//            telemetry.addData("claw",  "Offset = %.2f", clawOffset);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();
