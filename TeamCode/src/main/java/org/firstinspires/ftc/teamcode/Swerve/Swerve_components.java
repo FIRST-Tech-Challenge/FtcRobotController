@@ -15,8 +15,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
-import java.util.List;
-
 public class Swerve_components {
 
     /* Declare OpMode members. */
@@ -24,15 +22,11 @@ public class Swerve_components {
 
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    DcMotor FLMotor, FRMotor, BLMotor, BRMotor;
+    public DcMotor FLMotor, FRMotor, BLMotor, BRMotor;
 
-    Servo FLServo, FRServo, BLServo, BRServo;
+    public Servo FLServo, FRServo, BLServo, BRServo;
 
-    GoBildaPinpointDriver odo;
-
-
-    // A timer helps provide feedback while calibration is taking place
-    ElapsedTime timer = new ElapsedTime();
+    public GoBildaPinpointDriver odo;
 
 
     // Swerve chassis constants
@@ -68,7 +62,7 @@ public class Swerve_components {
      * <p>
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
-    public void initRobot() {
+    public void initSwerve() {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         FLMotor = myOp.hardwareMap.get(DcMotor.class, "FLMotor");
         BLMotor = myOp.hardwareMap.get(DcMotor.class, "BLMotor");
