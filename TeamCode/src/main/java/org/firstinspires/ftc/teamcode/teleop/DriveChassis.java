@@ -29,5 +29,6 @@ public class DriveChassis {
                         RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
                 ))
         );
+        imu.resetYaw();
     }
 }
