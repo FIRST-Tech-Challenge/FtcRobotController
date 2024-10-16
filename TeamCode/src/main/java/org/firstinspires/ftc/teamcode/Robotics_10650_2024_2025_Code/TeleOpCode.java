@@ -33,15 +33,19 @@ public class TeleOpCode extends LinearOpMode {
 
 
         // Variables that store the different game pad movements for ease of reference later
-        float strafePower; // (left stick x-axis movement)
-        strafePower = gamepad1.left_stick_x * 1000;
-        telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
-        float turnPower; // (right stick x-axis movement)
-        turnPower = gamepad1.right_stick_x * 1500;
-        telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
-        float straightMovementPower; // (left stick y-axis movement)
-        straightMovementPower = gamepad1.left_stick_y * 10000;
-        telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
+        HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Robotics_10650_2024_2025_Code/TeleOpCode.java
+        double strafePower; // (left stick x-axis movement)
+        strafePower = Math.pow(gamepad1.left_stick_x,3) * 5000; // Min: -10000, Max: 10000
+        //telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
+        double turnPower; // (right stick x-axis movement)
+        turnPower = Math.pow(gamepad1.right_stick_x,3) * 5000; // Min: -10000, Max: 10000
+        //telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
+        double straightMovementPower; // (left stick y-axis movement)
+//      straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y);
+// Min: -10000, Max: 10000
+        straightMovementPower = Math.pow(gamepad1.left_stick_y, 3) * 10000;
+        //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
+da90631 (TeleOp update):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Robotics_10650_2024_2025_Code/TeleOpCode_RobotCentric.java
 
 
         // Set velocity of the motors
