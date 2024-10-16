@@ -28,15 +28,29 @@ public class Intake {
 
     private boolean isRed = false;
     private boolean isSpecimen;
+    private boolean IS_DEBUG = false;
 
     //intake constructor
-    public Intake(OpMode opMode, boolean isRed) {
+    public Intake(OpMode opMode, boolean isRed, boolean IS_DEBUG) {
+        this.IS_DEBUG = IS_DEBUG;
         telemetry = opMode.telemetry;
         colorSensorOur = new ColorSensorOur(opMode);
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
         this.isRed = isRed;
-        telemetry.addData("isred", isRed);
+        telemetry.addData("isRed", isRed);
         telemetry.update();
+        init();
+        if (IS_DEBUG) {
+            telemetry.addData("IntakeConstructor", true);
+        }
+    }
+
+    public void init() {
+        //TODO change directions if needed
+        //intake.setDirection(CRServo.Direction.FORWARD);
+        if (IS_DEBUG) {
+            telemetry.addData("IntakeInit", true);
+        }
     }
 
     //intake action that is active as long as i press a button
@@ -45,6 +59,7 @@ public class Intake {
         power = INTAKE_SPEED;
         return new SetPowerAction();
     }
+
     //outtake action that is active as long as i press a button
     public Action outtake(boolean buttonPressed) {
         power = OUTTAKE_SPEED;
@@ -54,11 +69,6 @@ public class Intake {
     //intake action that intakes and outtake by right color
     public Action intakeByColor(boolean isSpecimen) {
         this.isSpecimen = isSpecimen;
-        telemetry.addData("Color", colorSensorOur.isRightColor(true));
-        telemetry.addData("Distance", colorSensorOur.getDistance());
-        telemetry.addData("isSpecimen", isSpecimen);
-        telemetry.addData("Speed", power);
-
         return new IntakeByColor();
     }
 
@@ -71,6 +81,7 @@ public class Intake {
         }
     }
 
+    //intake action that intakes and outtake by right color
     public class IntakeByColor implements Action {
 
 
@@ -96,7 +107,16 @@ public class Intake {
 
 
             }
-
+            if (IS_DEBUG) {
+                telemetry.addData("Color", colorCheek);
+                telemetry.addData("Distance", dis);
+                telemetry.addData("isSpecimen", isSpecimen);
+                telemetry.addData("Speed", power);
+                telemetryPacket.put("Color", colorCheek);
+                telemetryPacket.put("Distance", dis);
+                telemetryPacket.put("isSpecimen", isSpecimen);
+                telemetryPacket.put("Speed", power);
+            }
             return (!isIn && !colorCheek);
         }
     }

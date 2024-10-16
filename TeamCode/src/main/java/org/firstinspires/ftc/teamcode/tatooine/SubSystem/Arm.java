@@ -57,7 +57,8 @@ public class Arm {
         //extendMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
     }
-// resets all encoders
+
+    // resets all encoders
     public void resetEncoders() {
         resetAngleEncoder();
     }
@@ -68,7 +69,7 @@ public class Arm {
         angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    //returns the angle(transforms ticks to degries)
+    //returns the angle(transforms ticks to degrees)
     public double getAngle() {
         return MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition());
     }
@@ -158,7 +159,7 @@ public class Arm {
         return move;
     }
 
-//an actions that sets the extension of the arm to the desired position
+    //an actions that sets the extension of the arm to the desired position
     public Action setExtension(double extension) {
         moveExtension move = new moveExtension();
         move.setGoal(extension);
@@ -166,6 +167,7 @@ public class Arm {
         return move;
     }
 
+    //Sets the Extension Servo position
     public class moveExtension implements Action {
         private double goal = 0;
 
@@ -182,12 +184,14 @@ public class Arm {
             extendServo.setPosition(goal);
             if (isDebug) {
                 telemetryPacket.put("servo (E) Power", extendServo.getPosition());
+                telemetry.addData("servo (E) Power", extendServo.getPosition());
 
             }
             return extendServo.getPosition() == goal;
         }
     }
 
+    //Sets the angle motor power through PID and F
     public class moveAngle implements Action {
         private double goal = 0;
 
@@ -205,6 +209,7 @@ public class Arm {
             angleMotor.setPower(anglePID.calculate(MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition()), goal));
             if (isDebug) {
                 telemetryPacket.put("motor (A) Power", angleMotor.getCurrentPosition());
+                telemetry.addData("motor (A) Power", angleMotor.getCurrentPosition());
             }
             return !anglePID.atSetPoint();
         }

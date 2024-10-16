@@ -49,12 +49,6 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    //an actions that does the hanging
-    public Action hanging() {
-        return new setPowerAction();
-    }
-
-
     public DcMotorEx getLiftMotor() {
         return liftMotor;
     }
@@ -111,16 +105,21 @@ public class Lift {
         return AMP_LIMIT_ASCEND;
     }
 
-    public class setPowerAction implements Action {
+    //an actions that does the hanging
+    public Action hanging() {
+        return new Ascend();
+    }
+
+    public class Ascend implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            //alsong as the level of the hanging is 1 or 3 and the ampere level is lower then the max level of the lift ampere the lift goes up
+            //as long as the level of the hanging is 1 or 3 and the ampere level is lower then the max level of the lift ampere the lift goes up
             if (liftMotor.getCurrent(CurrentUnit.AMPS) < AMP_LIMIT_LIFT && (ascendLevel == 1 || ascendLevel == 3)) {
                 liftMotor.setPower(LIFT_POWER);
                 //if lift reached max height ascend to next level
             } else if (liftMotor.getCurrent(CurrentUnit.AMPS) >= AMP_LIMIT_LIFT && (ascendLevel == 1 || ascendLevel == 3)) {
                 ascendLevel = ascendLevel + 1;
-                //aslong as the lift didn't finish to ascend(go down) and it supposed to the it's ascending
+                //as long as the lift didn't finish to ascend(go down) and it supposed to the it's ascending
             } else if (liftMotor.getCurrent(CurrentUnit.AMPS) < AMP_LIMIT_ASCEND && (ascendLevel == 2 || ascendLevel == 4)) {
                 liftMotor.setPower(ASCEND_POWER);
                 //if lift finished to ascend (go down) then ascend to next level

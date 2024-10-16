@@ -16,7 +16,7 @@ public class IntakeTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         boolean isRed = CheckAlliance.isRed();
-        Intake intake = new Intake(this,isRed);
+        Intake intake = new Intake(this,isRed, true);
         boolean isSpecimen = true;
         waitForStart();
         while(opModeIsActive()) {
