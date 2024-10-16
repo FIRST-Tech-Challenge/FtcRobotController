@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
 public class Intake {
+
+    //add the variables
     private final double INTAKE_SPEED = 1;
     private final double OUTTAKE_SPEED = -INTAKE_SPEED;
     CRServo intake = null;
@@ -27,8 +29,8 @@ public class Intake {
     private boolean isRed = false;
     private boolean isSpecimen;
 
+    //intake constructor
     public Intake(OpMode opMode, boolean isRed) {
-        this.alliance = alliance;
         telemetry = opMode.telemetry;
         colorSensorOur = new ColorSensorOur(opMode);
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
@@ -37,17 +39,19 @@ public class Intake {
         telemetry.update();
     }
 
+    //intake action that is active as long as i press a button
     public Action intake(boolean buttonPressed) {
         this.buttonPressed = buttonPressed;
         power = INTAKE_SPEED;
         return new SetPowerAction();
     }
-
+    //outtake action that is active as long as i press a button
     public Action outtake(boolean buttonPressed) {
         power = OUTTAKE_SPEED;
         return new SetPowerAction();
     }
 
+    //intake action that intakes and outtake by right color
     public Action intakeByColor(boolean isSpecimen) {
         this.isSpecimen = isSpecimen;
         telemetry.addData("Color", colorSensorOur.isRightColor(true));

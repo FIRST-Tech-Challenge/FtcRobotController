@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
 public class ColorSensorOur {
 
+    //add variables
     private final double dalta = 40;
     private final double[] myCol = new double[3];
     RevColorSensorV3 colorSensor = null;
@@ -18,7 +19,7 @@ public class ColorSensorOur {
 
     private final OpMode opMode;
 
-
+//color sensor constructor
     public ColorSensorOur(OpMode opMode) {
         this.opMode = opMode;
         colorSensor = opMode.hardwareMap.get(RevColorSensorV3.class, "colorSensor");
@@ -26,14 +27,17 @@ public class ColorSensorOur {
         init();
     }
 
+    //checks if im red or blue
     public void init() {
         isRed = CheckAlliance.isRed();
     }
 
+    //returns the distance of the object from the sensor in Centimeters
     public double getDistance() {
         return colorSensor.getDistance(DistanceUnit.CM);
     }
 
+    //checks if the color of the object is right by Specimen or not
     public boolean isRightColor(boolean isSpecimen) {
         col = checkColors();
         if (isRed && isSpecimen) {
@@ -48,7 +52,7 @@ public class ColorSensorOur {
         }
     }
 
-
+    //returns the color that the sensor gets blue yellow or red
     public int checkColors() {
         myCol[0] = colorSensor.getNormalizedColors().red * 255;
         myCol[1] = colorSensor.getNormalizedColors().green * 255;

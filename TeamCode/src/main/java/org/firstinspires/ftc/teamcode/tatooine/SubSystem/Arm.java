@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 
 public class Arm {
 
+    //add variables
     //TODO change values to real ones (touch grass)
     private final double ANGLE_TOLERANCE = 0;//deg
     private final double EXTEND_TOLERANCE = 0;//mm
@@ -26,14 +27,15 @@ public class Arm {
     private final double length = 0;
     private final double AMP_LIMIT = 0;
 
+    //TODO change values to real ones (touch grass)
     private PIDFController anglePID = new PIDFController(0, 0, 0, 0);
-    private PIDFController extendPID = new PIDFController(0, 0, 0, 0);
     private DcMotorEx angleMotor;
     private Servo extendServo;
     private Telemetry telemetry;
     private TouchSensor touchSensor = null;
     private boolean isDebug;
 
+    //arm constructor
     public Arm(OpMode opMode, boolean isDebug) {
 
         telemetry = opMode.telemetry;
@@ -44,36 +46,32 @@ public class Arm {
         extendServo = opMode.hardwareMap.get(Servo.class, "ExtendServo");
         touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
 
-        extendPID.setTolerance(EXTEND_TOLERANCE);
         anglePID.setTolerance(ANGLE_TOLERANCE);
+        init();
     }
 
+    //init function
     public void init() {
         //TODO change directions if needed
         //angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //extendMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
     }
-
+// resets all encoders
     public void resetEncoders() {
-        resetExtendEncoder();
         resetAngleEncoder();
     }
 
-    public void resetExtendEncoder() {
-//        extendServo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        extendServo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
+    //resets the angle encoder
     public void resetAngleEncoder() {
         angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    //returns the angle(transforms ticks to degries)
     public double getAngle() {
         return MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition());
     }
-
 
     public Telemetry getTelemetry() {
         return telemetry;
@@ -97,14 +95,6 @@ public class Arm {
 
     public void setAnglePID(PIDFController anglePID) {
         this.anglePID = anglePID;
-    }
-
-    public PIDFController getExtendPID() {
-        return extendPID;
-    }
-
-    public void setExtendPID(PIDFController extendPID) {
-        this.extendPID = extendPID;
     }
 
     public DcMotorEx getAngleMotor() {
@@ -155,6 +145,7 @@ public class Arm {
         return EXTEND_CPR;
     }
 
+    //an actions that sets the angle of the arm to the desired angle
     public Action setAngle(double angle) {
         moveAngle move = new moveAngle();
         move.setGoal(angle);
@@ -167,13 +158,13 @@ public class Arm {
         return move;
     }
 
+//an actions that sets the extension of the arm to the desired position
     public Action setExtension(double extension) {
         moveExtension move = new moveExtension();
         move.setGoal(extension);
         telemetry.addData("the new extension ", extension);
         return move;
     }
-
 
     public class moveExtension implements Action {
         private double goal = 0;
