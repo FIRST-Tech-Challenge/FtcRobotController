@@ -18,7 +18,7 @@ import java.util.Scanner;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "TeleOp", group = "Teleops")
-    public class teleop extends OpMode {
+public class teleop extends OpMode {
 
     // Field centric stuff
     boolean usingFC = false;
@@ -170,7 +170,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
         setInTakeFlip();
         setOutTakeFlip();
         setOutTakeClawGrab();
-        
+
         if (gamepad1.y) {
 
             file = new File(fileName);
@@ -274,125 +274,60 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
             backLeftMotor.setPower(-backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+        }
 
-        if (gamepad1.y) {
+            if (gamepad1.y) {
 
-            file = new File(fileName);
-            try {
-                scan = new Scanner(file);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            while(scan.hasNextLine()){
-                positions++;
-                scan.nextLine() ;
-            }
-            try {
-                scan = new Scanner(file);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            path = new String[positions][7];
-            for (int i = 0; i < path.length; i++) {
-                if (scan.hasNextLine()){
-                    position = scan.nextLine();
-                    position = position.replaceAll("[^0-9. -]", "");
-                    path[i] = position.split(" ");
+                file = new File(fileName);
+                try {
+                    scan = new Scanner(file);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
-                try{
-                    dYdX = Double.parseDouble(path[i][1]);
-                    totalDistance = Double.parseDouble(path[i][2]);
-                    distance = Double.parseDouble(path[i][3]);
-                    theta = Double.parseDouble(path[i][4]);
-                    xCoordinate = Double.parseDouble(path[i][5]);
-                    yCoordinate = Double.parseDouble(path[i][6]);
-                } catch (NumberFormatException e){
-                    continue;
+                while(scan.hasNextLine()){
+                    positions++;
+                    scan.nextLine() ;
                 }
-                telemetry.addLine("dYdX = " + dYdX);
-                telemetry.addLine("totalDist = " + totalDistance);
-                telemetry.addLine("dist = " + distance);
-                telemetry.addLine("theta = " + theta);
-                telemetry.addLine("x = " + xCoordinate);
-                telemetry.addLine("y = " + yCoordinate);
-                telemetry.addLine(" ");
+                try {
+                    scan = new Scanner(file);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                path = new String[positions][7];
+                for (int i = 0; i < path.length; i++) {
+                    if (scan.hasNextLine()){
+                        position = scan.nextLine();
+                        position = position.replaceAll("[^0-9. -]", "");
+                        path[i] = position.split(" ");
+                    }
+                    try{
+                        dYdX = Double.parseDouble(path[i][1]);
+                        totalDistance = Double.parseDouble(path[i][2]);
+                        distance = Double.parseDouble(path[i][3]);
+                        theta = Double.parseDouble(path[i][4]);
+                        xCoordinate = Double.parseDouble(path[i][5]);
+                        yCoordinate = Double.parseDouble(path[i][6]);
+                    } catch (NumberFormatException e){
+                        continue;
+                    }
+                    telemetry.addLine("dYdX = " + dYdX);
+                    telemetry.addLine("totalDist = " + totalDistance);
+                    telemetry.addLine("dist = " + distance);
+                    telemetry.addLine("theta = " + theta);
+                    telemetry.addLine("x = " + xCoordinate);
+                    telemetry.addLine("y = " + yCoordinate);
+                    telemetry.addLine(" ");
+                }
+                telemetry.update();
             }
+
+        }
+
+        @Override
+        public void stop()
+        {
+            telemetry.addLine("Stopped");
             telemetry.update();
         }
 
-
-        // field centric activation
-        if (gamepad1.b) {
-            IMU imu = hardwareMap.get(IMU.class, "imu");
-            // change it to match the actual orientation of the rev control hub
-            IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                    RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-            imu.initialize(parameters);
-
-                double y = -gamepad1.left_stick_y;
-                double x = gamepad1.left_stick_x;
-                double rx = gamepad1.right_stick_x;
-
-
-            // this would be start on Xbox (changeable)
-            if (gamepad1.options) {
-                imu.resetYaw();
-            }
-
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x * 1.1;
-            double rx = gamepad1.right_stick_x;
-
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-            // rotate the movement direction to counter the robot's true orientation
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-            rotX = rotX * 1.1;
-
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator;
-            double backLeftPower = (rotY - rotX + rx) / denominator;
-            double frontRightPower = (rotY - rotX - rx) / denominator;
-            double backRightPower = (rotY + rotX - rx) / denominator;
-
-            frontLeftMotor.setPower(frontLeftPower);
-            backLeftMotor.setPower(backLeftPower);
-            frontRightMotor.setPower(frontRightPower);
-            backRightMotor.setPower(backRightPower);
-
-                frontLeftMotor.setPower(frontLeftPower);
-                backLeftMotor.setPower(backLeftPower);
-                frontRightMotor.setPower(frontRightPower);
-                backRightMotor.setPower(backRightPower);
-
     }
-        else {
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x * 1.1;
-            double rx = gamepad1.right_stick_x;
-
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
-
-            frontLeftMotor.setPower(frontLeftPower);
-            backLeftMotor.setPower(backLeftPower);
-            frontRightMotor.setPower(frontRightPower);
-            backRightMotor.setPower(backRightPower);
-        }
-
-}
-
-    @Override
-    public void stop()
-    {
-        telemetry.addLine("Stopped");
-        telemetry.update();
-    }
-
-}
