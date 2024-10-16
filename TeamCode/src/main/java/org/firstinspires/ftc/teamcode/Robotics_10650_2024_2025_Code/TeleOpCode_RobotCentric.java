@@ -46,10 +46,10 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         straightMovementPower = Math.pow(gamepad1.left_stick_y, 3) * 10000;
         //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 
-        if (gamepad1.left_trigger!=0){
-            straightMovementPower=(gamepad1.left_stick_y * 1000);
-            turnPower = (gamepad1.right_stick_x * 1000);
-            strafePower = (gamepad1.left_stick_x * 1000);
+        if (gamepad1.circle){
+            straightMovementPower = Math.pow(gamepad1.left_stick_y,3) * 1000;
+            turnPower = Math.pow(gamepad1.right_stick_x, 3) * 1000;
+            strafePower = Math.pow(gamepad1.left_stick_x, 3) * 1000;
             telemetry.addData("L2 pos", gamepad1.left_trigger);
             telemetry.update();
         }
