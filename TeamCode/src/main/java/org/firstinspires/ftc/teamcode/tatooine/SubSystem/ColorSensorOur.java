@@ -2,22 +2,21 @@ package org.firstinspires.ftc.teamcode.tatooine.SubSystem;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
 public class ColorSensorOur {
 
-    RevColorSensorV3 colorSensor = null;
     private final double dalta = 40;
-    private int col;
     private final double[] myCol = new double[3];
-    private int gain = 51;
+    RevColorSensorV3 colorSensor = null;
+    private int col;
+    private final int gain = 51;
     private boolean isRed = false;
-    private boolean isRightColor = false;
+    private final boolean isRightColor = false;
 
-    private OpMode opMode;
+    private final OpMode opMode;
 
 
     public ColorSensorOur(OpMode opMode) {
@@ -31,23 +30,20 @@ public class ColorSensorOur {
         isRed = CheckAlliance.isRed();
     }
 
-    public double getDistance (){
+    public double getDistance() {
         return colorSensor.getDistance(DistanceUnit.CM);
     }
 
     public boolean isRightColor(boolean isSpecimen) {
         col = checkColors();
-        if (isRed && isSpecimen){
+        if (isRed && isSpecimen) {
             return col == 0;
-        }
-        else if (isRed){
+        } else if (isRed) {
             return col == 0 || col == 1;
 
-        }
-        else if (isSpecimen){
+        } else if (isSpecimen) {
             return col == 2;
-        }
-        else {
+        } else {
             return col == 2 || col == 1;
         }
     }

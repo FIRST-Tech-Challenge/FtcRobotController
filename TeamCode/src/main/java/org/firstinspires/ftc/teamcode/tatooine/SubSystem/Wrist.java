@@ -8,9 +8,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Wrist {
     private final double OPEN = 1;
     private final double CLOSE = 0;
-    private double currentPos = 0;
     boolean dbug = false;
-
+    private double currentPos = 0;
     private Servo wrist = null;
     private Telemetry telemetry;
 

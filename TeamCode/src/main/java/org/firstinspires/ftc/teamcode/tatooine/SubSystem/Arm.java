@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -28,7 +29,7 @@ public class Arm {
     private PIDFController anglePID = new PIDFController(0, 0, 0, 0);
     private PIDFController extendPID = new PIDFController(0, 0, 0, 0);
     private DcMotorEx angleMotor;
-    private DcMotorEx extendMotor;
+    private Servo extendServo;
     private Telemetry telemetry;
     private TouchSensor touchSensor = null;
     private boolean isDebug;
@@ -40,7 +41,7 @@ public class Arm {
         this.isDebug = isDebug;
 
         angleMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AngleMotor");
-        extendMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "ExtendMotor");
+        extendServo = opMode.hardwareMap.get(Servo.class, "ExtendServo");
         touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
 
         extendPID.setTolerance(EXTEND_TOLERANCE);
@@ -60,8 +61,8 @@ public class Arm {
     }
 
     public void resetExtendEncoder() {
-        extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        extendServo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        extendServo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void resetAngleEncoder() {
@@ -71,11 +72,6 @@ public class Arm {
 
     public double getAngle() {
         return MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition());
-    }
-
-
-    public double getLength() {
-        return MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendMotor.getCurrentPosition());
     }
 
 
@@ -119,12 +115,12 @@ public class Arm {
         this.angleMotor = angleMotor;
     }
 
-    public DcMotorEx getExtendMotor() {
-        return extendMotor;
+    public Servo getExtendServo() {
+        return extendServo;
     }
 
-    public void setExtendMotor(DcMotorEx extendMotor) {
-        this.extendMotor = extendMotor;
+    public void setExtendServo(Servo extendServo) {
+        this.extendServo = extendServo;
     }
 
     public double getANGLE_TOLERANCE() {
@@ -192,11 +188,12 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            extendMotor.setPower(extendPID.calculate(MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendMotor.getCurrentPosition()), goal));
+            extendServo.setPosition(goal);
             if (isDebug) {
-                telemetryPacket.put("motor (E) Power", extendMotor.getCurrentPosition());
+                telemetryPacket.put("servo (E) Power", extendServo.getPosition());
+
             }
-            return !extendPID.atSetPoint();
+            return extendServo.getPosition() == goal;
         }
     }
 
@@ -216,7 +213,7 @@ public class Arm {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             angleMotor.setPower(anglePID.calculate(MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition()), goal));
             if (isDebug) {
-                telemetryPacket.put("motor (A) Power", extendMotor.getCurrentPosition());
+                telemetryPacket.put("motor (A) Power", angleMotor.getCurrentPosition());
             }
             return !anglePID.atSetPoint();
         }
