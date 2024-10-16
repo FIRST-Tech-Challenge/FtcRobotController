@@ -17,21 +17,25 @@ public class Lift {
     private final double AMP_LIMIT_ASCEND = 0;
     private final double LIFT_POWER = 1;
     private final double ASCEND_POWER = -LIFT_POWER;
-    DcMotorEx liftMotor = null;
-    Telemetry telemetry;
     private double power = 0;
     private int ascendLevel = 1;
     private boolean IS_DEBUG = false;
+    private DcMotorEx liftMotor = null;
+    private Telemetry telemetry;
 
     //lift constructor
     public Lift(OpMode opMode, boolean IS_DEBUG) {
         setTelemetry(telemetry);
         setIS_DEBUG(IS_DEBUG);
         liftMotor = opMode.hardwareMap.get(DcMotorEx.class, "liftMotor");
+        init();
         if (IS_DEBUG) {
             opMode.telemetry.addData("LiftConstructor", true);
         }
-        init();
+    }
+
+    public Lift(OpMode opMode) {
+        new Lift(opMode, false);
     }
 
     //init that resets encoders and sets direction

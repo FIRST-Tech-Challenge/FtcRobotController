@@ -17,24 +17,23 @@ public class Intake {
     //add the variables
     private final double INTAKE_SPEED = 1;
     private final double OUTTAKE_SPEED = -INTAKE_SPEED;
-    CRServo intake = null;
-    CheckAlliance alliance;
-    ColorSensorOur colorSensorOur;
-    Telemetry telemetry;
-    ElapsedTime timer = new ElapsedTime();
     boolean outtaking = false;
-    private double power = 0;
     private boolean buttonPressed = false;
-
     private boolean isRed = false;
     private boolean isSpecimen;
     private boolean IS_DEBUG = false;
+    private double power = 0;
+    private CRServo intake = null;
+    private CheckAlliance alliance;
+    private ColorSensorOur colorSensorOur;
+    private Telemetry telemetry;
+    private ElapsedTime timer = new ElapsedTime();
 
     //intake constructor
     public Intake(OpMode opMode, boolean isRed, boolean IS_DEBUG) {
         this.IS_DEBUG = IS_DEBUG;
         telemetry = opMode.telemetry;
-        colorSensorOur = new ColorSensorOur(opMode);
+        colorSensorOur = new ColorSensorOur(opMode, IS_DEBUG);
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
         this.isRed = isRed;
         telemetry.addData("isRed", isRed);
@@ -51,6 +50,103 @@ public class Intake {
         if (IS_DEBUG) {
             telemetry.addData("IntakeInit", true);
         }
+    }
+
+
+    public double getINTAKE_SPEED() {
+        return INTAKE_SPEED;
+    }
+
+    public double getOUTTAKE_SPEED() {
+        return OUTTAKE_SPEED;
+    }
+
+    public boolean isOuttaking() {
+        return outtaking;
+    }
+
+    public void setOuttaking(boolean outtaking) {
+        this.outtaking = outtaking;
+    }
+
+    public boolean isButtonPressed() {
+        return buttonPressed;
+    }
+
+    public void setButtonPressed(boolean buttonPressed) {
+        this.buttonPressed = buttonPressed;
+    }
+
+    public boolean isRed() {
+        return isRed;
+    }
+
+    public void setRed(boolean red) {
+        isRed = red;
+    }
+
+    public boolean isSpecimen() {
+        return isSpecimen;
+    }
+
+    public void setSpecimen(boolean specimen) {
+        isSpecimen = specimen;
+    }
+
+    public boolean isIS_DEBUG() {
+        return IS_DEBUG;
+    }
+
+    public void setIS_DEBUG(boolean IS_DEBUG) {
+        this.IS_DEBUG = IS_DEBUG;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public void setPower(double power) {
+        this.power = power;
+    }
+
+    public CRServo getIntake() {
+        return intake;
+    }
+
+    public void setIntake(CRServo intake) {
+        this.intake = intake;
+    }
+
+    public CheckAlliance getAlliance() {
+        return alliance;
+    }
+
+    public void setAlliance(CheckAlliance alliance) {
+        this.alliance = alliance;
+    }
+
+    public ColorSensorOur getColorSensorOur() {
+        return colorSensorOur;
+    }
+
+    public void setColorSensorOur(ColorSensorOur colorSensorOur) {
+        this.colorSensorOur = colorSensorOur;
+    }
+
+    public Telemetry getTelemetry() {
+        return telemetry;
+    }
+
+    public void setTelemetry(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+
+    public ElapsedTime getTimer() {
+        return timer;
+    }
+
+    public void setTimer(ElapsedTime timer) {
+        this.timer = timer;
     }
 
     //intake action that is active as long as i press a button
@@ -104,8 +200,6 @@ public class Intake {
                 } else {
                     outtaking = timer.milliseconds() < 750;
                 }
-
-
             }
             if (IS_DEBUG) {
                 telemetry.addData("Color", colorCheek);

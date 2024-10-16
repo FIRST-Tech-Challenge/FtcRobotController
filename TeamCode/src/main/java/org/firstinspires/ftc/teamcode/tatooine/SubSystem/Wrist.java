@@ -8,15 +8,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Wrist {
     private final double OPEN = 1;
     private final double CLOSE = 0;
-    boolean dbug = false;
     private double currentPos = 0;
     private Servo wrist = null;
     private Telemetry telemetry;
+    private boolean IS_DEBUG = false;
 
-    public Wrist(OpMode opMode, boolean dbug) {
+    public Wrist(OpMode opMode, boolean IS_DEBUG) {
         this.wrist = opMode.hardwareMap.get(Servo.class, "wrist");
         this.telemetry = opMode.telemetry;
-        this.dbug = dbug;
+        this.IS_DEBUG = IS_DEBUG;
     }
 
     public Wrist(OpMode opMode) {
@@ -26,7 +26,7 @@ public class Wrist {
     public void samples() {
         wrist.setPosition(OPEN);
 
-        if (dbug) {
+        if (IS_DEBUG) {
             telemetry.addData("Wrist", "Samples");
         }
 
@@ -35,7 +35,7 @@ public class Wrist {
     public void specimen() {
         wrist.setPosition(CLOSE);
 
-        if (dbug) {
+        if (IS_DEBUG) {
             telemetry.addData("Wrist", "Specimen");
         }
     }
@@ -49,7 +49,7 @@ public class Wrist {
             currentPos = OPEN;
         }
 
-        if (dbug) {
+        if (IS_DEBUG) {
             telemetry.addData("Wrist", "Change State");
             telemetry.addData("Current Pos", currentPos);
         }
@@ -69,5 +69,29 @@ public class Wrist {
 
     public void setWrist(Servo wrist) {
         this.wrist = wrist;
+    }
+
+    public double getOPEN() {
+        return OPEN;
+    }
+
+    public double getCLOSE() {
+        return CLOSE;
+    }
+
+    public Telemetry getTelemetry() {
+        return telemetry;
+    }
+
+    public void setTelemetry(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+
+    public boolean isIS_DEBUG() {
+        return IS_DEBUG;
+    }
+
+    public void setIS_DEBUG(boolean IS_DEBUG) {
+        this.IS_DEBUG = IS_DEBUG;
     }
 }

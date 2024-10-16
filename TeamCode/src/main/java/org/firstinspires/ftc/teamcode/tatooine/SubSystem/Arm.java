@@ -17,17 +17,16 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 public class Arm {
 
     //add variables
+
     //TODO change values to real ones (touch grass)
     private final double ANGLE_TOLERANCE = 0;//deg
     private final double EXTEND_TOLERANCE = 0;//mm
     private final double EXTEND_CPR = 0;
     private final double ANGLE_CPR = 0;
     private final double SPOOL_DIM = 0;//mm
+    private final double AMP_LIMIT = 0;
     private final double angle = 0;
     private final double length = 0;
-    private final double AMP_LIMIT = 0;
-
-    //TODO change values to real ones (touch grass)
     private PIDFController anglePID = new PIDFController(0, 0, 0, 0);
     private DcMotorEx angleMotor;
     private Servo extendServo;
@@ -48,6 +47,10 @@ public class Arm {
 
         anglePID.setTolerance(ANGLE_TOLERANCE);
         init();
+    }
+
+    public Arm(OpMode opMode) {
+        new Arm(opMode, false);
     }
 
     //init function
