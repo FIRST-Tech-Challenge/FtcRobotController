@@ -79,34 +79,45 @@ public class CompBot extends LinearOpMode {
             //if (gamepad1.a) rotateToCenter();
 
 
-            //game pad 2
+            //game pad 2 inputs
             double armLength = -gamepad2.right_stick_y;
             double armAngle = -gamepad2.left_stick_y;
 
-            // 0 < arm length < 4268
-            if (armLength > 0 && slide.getCurrentPosition() > 4268)
-            {
-                armLength = 0;
-            } else if (armLength < 0 && slide.getCurrentPosition() < -4268) {
-                armLength = 0;
-            }
-            slide.setPower(armLength);
-
-            // 0 < arm angle < 2904
-            if (armAngle > 0 && pivot.getCurrentPosition() > 2904)
-            {
-                armAngle = 0;
-            } else if (armAngle < 0 && pivot.getCurrentPosition() < -2904) {
-                armAngle = 0;
-            }
-            pivot.setPower(armAngle);
+            //call move arm
+            extendArm(armLength);
+            liftArm(armAngle);
 
             //to test arm length and angle
             addTelem(pivot.getCurrentPosition(), slide.getCurrentPosition(), armAngle, armLength);
         }
     }
 
-    public void addTelem(int x, int y,double a,double b) {
+    // to lift arm, input from game pad 2 straight in
+    public void liftArm(double input) {
+
+        if (input > 0.01 && slide.getCurrentPosition() > 4268) {
+            input = 0;
+        } else if (input < -0.01 && slide.getCurrentPosition() < -4268) {
+            input = 0;
+        }
+
+        slide.setPower(input);
+    }
+
+    // to extend arm, input from game pad 2 straight in
+    public void extendArm(double input) {
+
+        if (input > 0 && pivot.getCurrentPosition() < 2904) {
+            input = input;
+        } else if (input < 0 && pivot.getCurrentPosition() > -2904) {
+            input = 0;
+        }
+
+        pivot.setPower(input);
+    }
+
+    // to test arm lift and extend
+    public void addTelem(int x, int y, double a, double b) {
         telemetry.addData("Arm angle: ", x);
         telemetry.addData("Arm length: ", y);
         telemetry.addData("Left stick y: ", a);
@@ -181,8 +192,8 @@ public class CompBot extends LinearOpMode {
         pivot.setTargetPosition(0);
         slide.setTargetPosition(0);
 
-        pivot.setPower(.05);
-        slide.setPower(.05);
+        pivot.setPower(0);
+        slide.setPower(0);
 
         pivot.setMode(RUN_USING_ENCODER);
         slide.setMode(RUN_USING_ENCODER);
@@ -209,10 +220,6 @@ public class CompBot extends LinearOpMode {
 
         pivot.setMode(STOP_AND_RESET_ENCODER);
         slide.setMode(STOP_AND_RESET_ENCODER);
-
-        // sets power to 1 again
-        pivot.setPower(1);
-        slide.setPower(1);
     }
 
 
