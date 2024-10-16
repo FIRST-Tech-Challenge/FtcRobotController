@@ -80,15 +80,35 @@ public class TempMovementBase extends LinearOpMode {
         BLDrive  = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
         FLDrive  = hardwareMap.get(DcMotor.class, "FLDrive");
-        BRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
+        FRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
+        double padAngle = Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x);; //some math stuff on gary. :splash:
 
-//if forward
-  //work on  BLDrive.setPower((gamepad1.left_stick_x + gamepad1.left_stick_y) / 2);
-//ifleft
-       // BLDrive.setPower(gamepad1.);
+        if(padAngle >= -22.5 && padAngle <= 22.5){
+            setMotorPowers(1,1,1,1);
+        }
+    /* if(gamepad1.left_stick_y > 0.1){
+        if(gamepad1.left_stick_x > 0.1){
 
-
-
+        } else if(gamepad1.left_stick_x < -0.1){
 
         }
+    } else     if(gamepad1.left_stick_y < 0.1){
+        if(gamepad1.left_stick_x > 0.1){
+
+        } else if(gamepad1.left_stick_x < -0.1){
+
+        }
+    } else {
+        setMotorPowers(0,0,0,0);
+    } */
+
+
     }
+    private void setMotorPowers(float BL, float BR, float FL, float FR){
+        //set all the motor powers to the floats defined
+        BLDrive.setPower(BL);
+        BRDrive.setPower(BR);
+        FLDrive.setPower(FL);
+        FRDrive.setPower(FR);
+    }
+}
