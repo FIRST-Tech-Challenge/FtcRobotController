@@ -1,20 +1,13 @@
 package org.firstinspires.ftc.teamcode;
-
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 @Autonomous(name="secondAuto", group="Auto")
-public class secondAuto extends OpMode {
+public class deadAuto extends OpMode {
     static class PIDController {
         private static double p;
         private static double i;
@@ -161,140 +154,6 @@ public class secondAuto extends OpMode {
         }
     }
 
-    private static class DriveBaseSubsystem {
-        // Motors & Sensors
-        private static DcMotor _frontLeftMotor;
-        private static DcMotor _frontRightMotor;
-        private static DcMotor _backLeftMotor;
-        private static DcMotor _backRightMotor;
-        private static SparkFunOTOS _odometry;
-
-        // Position Controllers
-        private static PIDController translationX;
-        private static PIDController translationY;
-        private static PIDController headingPID;
-
-        // Pose Vars
-        private static SparkFunOTOS.Pose2D currentPose;
-        private static SparkFunOTOS.Pose2D previousPose;
-        private static Long timeAtLastCycle;
-        private static SparkFunOTOS.Pose2D goal;
-        private static boolean isBusy = true;
-
-        // Path Planning
-        private static double[][] path;
-        private static int pathStage = 0;
-
-        // Start Next Path
-        private static boolean startNextPath = true;
-
-        public void init(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor, SparkFunOTOS odometry, Telemetry telemetry, double[][] _path) {
-            // Set Path
-            path = _path;
-
-            // Motors and Sensors
-            _frontLeftMotor = frontLeftMotor;
-            _frontRightMotor = frontRightMotor;
-            _backLeftMotor = backLeftMotor;
-            _backRightMotor = backRightMotor;
-            _odometry = odometry;
-
-            // PID Stuff
-            translationX = new PIDController();
-            translationY = new PIDController();
-            headingPID = new PIDController();
-            translationX.init(1f, 0.0f, 0.0f);
-            translationY.init(1f, 0.0f, 0.0f);
-            headingPID.init(0f, 0.0f, 0.0f);
-
-            // Make sure odo is ready
-            odometry.begin();
-            odometry.setPosition(new SparkFunOTOS.Pose2D(0.0, 0.0, 0.0));
-            goal = new SparkFunOTOS.Pose2D(path[pathStage][0], path[pathStage][1], path[pathStage][2]);
-
-            currentPose = new SparkFunOTOS.Pose2D();
-            previousPose = new SparkFunOTOS.Pose2D();
-
-            currentPose.set(odometry.getPosition());
-            previousPose.set(odometry.getPosition());
-            timeAtLastCycle = System.currentTimeMillis();
-            telemetry.addData("CurrentPoseX", currentPose.x);
-            telemetry.addData("CurrentPoseY", currentPose.y);
-            telemetry.addData("CurrentPoseAngle", currentPose.h);
-            telemetry.addData("GoalPoseX", currentPose.x);
-            telemetry.addData("GoalPoseY", currentPose.y);
-            telemetry.addData("GoalPoseAngle", currentPose.h);
-            telemetry.update();
-            previousPose.set(currentPose);
-            timeAtLastCycle = System.currentTimeMillis();
-        }
-
-        private void driveMech(double x, double y, double rx) {
-            _frontLeftMotor.setPower(y + x + rx);
-            _backLeftMotor.setPower(y - x + rx);
-            _frontRightMotor.setPower(y - x - rx);
-            _backRightMotor.setPower(y + x - rx);
-        }
-
-        private void periodicUpdate(Telemetry telemetry) {
-            currentPose.set(_odometry.getPosition());
-            double x, y, rx;
-            if ((goal.x-0.2) < currentPose.x && currentPose.x < (goal.x + 0.2) &&
-                    (goal.y-0.2) < currentPose.y && currentPose.y < (goal.y + 0.2) &&
-                    (goal.x - 5) < currentPose.h && currentPose.h < (goal.h + 5)) {
-                telemetry.addData("isBusy", "false");
-                if (isBusy) {
-                    startNextPath = false;
-                }
-                if (startNextPath && (pathStage > (path.length + 1))) {
-                    pathStage = pathStage + 1;
-                    goal.set(new SparkFunOTOS.Pose2D(path[pathStage][0], path[pathStage][1], path[pathStage][2]));
-                    x = translationX.getOutput(currentPose.x, goal.x);
-                    y = translationY.getOutput(currentPose.y, goal.y);
-                    rx = headingPID.getOutput(-currentPose.h, goal.h);
-                } else {
-                    x = 0;
-                    y = 0;
-                    rx = 0;
-                }
-                isBusy = false;
-            } else {
-                isBusy = true;
-                telemetry.addData("isBusy", "true");
-                x = translationX.getOutput(currentPose.x, goal.x);
-                y = translationY.getOutput(currentPose.y, goal.y);
-                rx = headingPID.getOutput(-currentPose.h, goal.h);
-            }
-            x = translationX.getOutput(currentPose.x, goal.x);
-            y = translationY.getOutput(currentPose.y, goal.y);
-            rx = headingPID.getOutput(-currentPose.h, goal.h);
-            telemetry.addData("Power X", x);
-            telemetry.addData("Power Y", y);
-            telemetry.addData("Power Rotational", rx);
-            telemetry.addData("Current Path Stage", pathStage);
-            telemetry.addData("Current Pose", "(" + currentPose.x + ", " + currentPose.y + ", " + currentPose.x + ")");
-            telemetry.addData("Goal Pose", "(" + goal.x + ", " + goal.y + ", " + goal.x + ")");
-            driveMech(x, y, rx);
-//            TelemetryPacket packet = new TelemetryPacket();
-//            packet.fieldOverlay().setTranslation(currentPose.x, currentPose.y);
-//            packet.fieldOverlay().setRotation(Math.toRadians(currentPose.h));
-            telemetry.update();
-
-            previousPose.set(currentPose);
-            timeAtLastCycle = System.currentTimeMillis();
-        }
-
-        private boolean isBusy() {
-            return isBusy;
-        }
-
-        private void StartNextPath() {
-            if (!isBusy) {
-                startNextPath = true;
-            }
-        }
-    }
-
     // Servos
     private ServoImplEx LSLower;
     private ServoImplEx LSTop;
@@ -304,18 +163,21 @@ public class secondAuto extends OpMode {
 
     // ACS & DBS
     private ArmSubSystem ArmControlSubsystem =  new ArmSubSystem();
-    private DriveBaseSubsystem DriveBaseSystem = new DriveBaseSubsystem();
+    private long timeAtStart;
+
+    private DcMotor frontLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor backRightMotor;
 
     @Override
     public void init() {
-        // Initialize hardware map
         // Motors & Sensors
-        DcMotor frontLeftMotor = hardwareMap.get(DcMotor.class, "leftFront");
-        DcMotor frontRightMotor = hardwareMap.get(DcMotor.class, "rightFront");
-        DcMotor backLeftMotor = hardwareMap.get(DcMotor.class, "leftBack");
-        DcMotor backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "leftFront");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "rightFront");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "leftBack");
+        backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
         DcMotor spindle = hardwareMap.get(DcMotor.class, "spindle");
-        SparkFunOTOS odometry = hardwareMap.get(SparkFunOTOS.class, "odometry");
         DcMotor cap = hardwareMap.get(DcMotor.class, "cap");
         LSLower = hardwareMap.get(ServoImplEx.class, "LSLower");
         LSTop = hardwareMap.get(ServoImplEx.class, "LSTop");
@@ -328,7 +190,7 @@ public class secondAuto extends OpMode {
         LSTop.scaleRange(0, 1);
 
         // Set motor directions
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -349,13 +211,11 @@ public class secondAuto extends OpMode {
 
         // Prep ArmControlSubsystem
         ArmControlSubsystem.init(MecanumTeleOp.armPose.REST, cap, spindle, lswitch);
+    }
 
-        // Generate Path
-        double[][] path = {{0, 10, 0}, {0, 5, 0}, {-60, 0, 0}};
-
-        // Prep Drive Base Subsystem
-        DriveBaseSystem.init(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, odometry, telemetry, path);
-
+    @Override
+    public void start() {
+        timeAtStart = System.currentTimeMillis();
     }
 
     @Override
@@ -365,10 +225,21 @@ public class secondAuto extends OpMode {
         } else {
             lolclock = lolclock + 0.001;
         }
-        DriveBaseSystem.periodicUpdate(telemetry);
-//        ArmControlSubsystem.periodicUpdate();
-        if (!DriveBaseSystem.isBusy()) {
-            DriveBaseSystem.StartNextPath();
+        ArmControlSubsystem.periodicUpdate();
+        double x, y, rx;
+        if ((System.currentTimeMillis() - timeAtStart) < 3000) {
+            x = 0;
+            y = -0.3;
+            rx = 0;
+        } else {
+            x = 0;
+            y = 0;
+            rx = 0;
         }
+        // Set power to motors
+        frontLeftMotor.setPower(y + x + rx);
+        backLeftMotor.setPower(y - x + rx);
+        frontRightMotor.setPower(y - x - rx);
+        backRightMotor.setPower(y + x - rx);
     }
 }
