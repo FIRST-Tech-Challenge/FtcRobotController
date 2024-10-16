@@ -10,6 +10,7 @@ public class ActiveIntake {
 
     //Internal Variables
     private CRServo intake;
+    private boolean isRunning;
 
     /**
      * Quick constructor used to create an Active Intake Subsystem Class
@@ -17,6 +18,7 @@ public class ActiveIntake {
      */
     public ActiveIntake(HardwareMap hw){
         this(hw, "intake");
+        isRunning=false;
     }
 
     /**
@@ -26,6 +28,7 @@ public class ActiveIntake {
      */
     public ActiveIntake(HardwareMap hw, String name){
         intake = hw.get(CRServo.class, name);
+        isRunning=false;
     }
 
     /**
@@ -33,6 +36,7 @@ public class ActiveIntake {
      */
     public void activateIntake(){
         intake.setPower(MAX_POWER);
+        isRunning=true;
     }
 
     /**
@@ -40,6 +44,8 @@ public class ActiveIntake {
      */
     public void reverseIntake(){
         intake.setPower(-MAX_POWER);
+        isRunning=true;
+
     }
 
     /**
@@ -47,5 +53,10 @@ public class ActiveIntake {
      */
     public void deactivateIntake(){
         intake.setPower(0);
+        isRunning = false;
+    }
+    public boolean isRunning() {
+        return isRunning;
+
     }
 }
