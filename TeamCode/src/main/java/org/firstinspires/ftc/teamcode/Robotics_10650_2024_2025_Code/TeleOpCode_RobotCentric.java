@@ -35,21 +35,25 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         // Variables that store the different game pad movements for ease of reference later
         double strafePower; // (left stick x-axis movement)
-        strafePower = gamepad1.left_stick_x * 10000; // Min: -10000, Max: 10000
+        strafePower = gamepad1.left_stick_x * 5000; // Min: -10000, Max: 10000
         telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
         double turnPower; // (right stick x-axis movement)
-        turnPower = gamepad1.right_stick_x * 10000; // Min: -10000, Max: 10000
+        turnPower = gamepad1.right_stick_x * 5000; // Min: -10000, Max: 10000
         telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
         double straightMovementPower; // (left stick y-axis movement)
-        straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y); // Min: -10000, Max: 10000
+//      straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y);
+// Min: -10000, Max: 10000
+        straightMovementPower = (gamepad1.left_stick_y * 10000);
         telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 
         if (gamepad1.left_trigger!=0){
-            straightMovementPower=(gamepad1.left_stick_y*1000);
+            straightMovementPower=(gamepad1.left_stick_y * 1000);
+            turnPower = (gamepad1.right_stick_x * 1000);
+            strafePower = (gamepad1.left_stick_x * 1000);
             telemetry.addData("L2 pos", gamepad1.left_trigger);
             telemetry.update();
         }
-        // accelerationAdditive is 1428.57 because it is
+        // accelerationAdditive is 1428.57
         // The intended result is that when the control sticks are not stationary the speed slowly
         // increases until it gets to the max value of 10000 or -10000
 
