@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
 import org.firstinspires.ftc.teamcode.systems.Logger;
 import org.firstinspires.ftc.teamcode.systems.SampleFinder;
-import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extender;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 
 /** @noinspection FieldCanBeLocal, unused */
@@ -35,11 +35,11 @@ public class MainAuto {
 
     private void dropSample() {
         baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-        baseRobot.arm.extender.ground();
+        baseRobot.arm.extensor.ground();
         pause(1000);
         baseRobot.arm.claw.setRightServo(true);
         pause(500);
-        baseRobot.arm.extender.set(Extender.Position.HOVER);
+        baseRobot.arm.extensor.setPosition(Extensor.Position.HOVER);
         baseRobot.arm.wrist.setPosition(Wrist.Position.TRANSIT);
         baseRobot.arm.claw.setRightServo(false);
         pause(1000);
@@ -66,7 +66,7 @@ public class MainAuto {
     }
 
     private void placeSpecimen() {
-        baseRobot.arm.extender.set(Extender.Position.LEVEL1);
+        baseRobot.arm.extender.set(Extensor.Position.LEVEL1);
         baseRobot.arm.wrist.setPosition(Wrist.Position.BOARD);
         baseRobot.odometry.moveCounts("forward", 60, 0.1);
         pause(2500);
@@ -74,7 +74,7 @@ public class MainAuto {
         pause(1000);
         baseRobot.odometry.moveCounts("backward", 10, 0.1);
         baseRobot.arm.wrist.setPosition(Wrist.Position.TRANSIT);
-        baseRobot.arm.extender.set(Extender.Position.HOVER);
+        baseRobot.arm.extender.set(Extensor.Position.HOVER);
         pause(2000);
     }
 

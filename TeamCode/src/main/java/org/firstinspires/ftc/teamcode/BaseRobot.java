@@ -34,7 +34,7 @@ public class BaseRobot {
     public final Logger logger;
     public Arm arm;
     public Odometry odometry;
-    private boolean extenderReleased = true;
+    private boolean extensorReleased = true;
     private boolean clawReleasedR = true;
     private boolean actuatorReleased = true;
     private boolean clawReleasedL = true;
@@ -136,19 +136,19 @@ public class BaseRobot {
         // Y: Extend arm upwards | X: Retract arm
         // RT: Open right claw | LT: Open left claw
         if (Settings.Deploy.ARM) {
-            if (extenderReleased) {
+            if (extensorReleased) {
                 if (input.pressed().retractActuator) {
-                    extenderReleased = false;
-                    arm.extender.retract();
+                    extensorReleased = false;
+                    arm.extensor.retract();
                 } else if (input.pressed().extendActuator) {
-                    extenderReleased = false;
-                    arm.extender.extend();
+                    extensorReleased = false;
+                    arm.extensor.extend();
                 } else if (input.pressed().groundActuator) {
-                    extenderReleased = false;
-                    arm.extender.ground();
+                    extensorReleased = false;
+                    arm.extensor.ground();
                 }
             } else if (input.pressed().actuatorBusy) {
-                extenderReleased = true;
+                extensorReleased = true;
             }
 
             if (input.pressed().clawRight) {
