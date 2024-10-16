@@ -25,8 +25,11 @@ public class Hardware {
     private static final int RESOLUTION_HEIGHT = 100;
 
     /* Robot systems */
-    private  MecanumWheels WHEELS;
-    private ExtendableArm ARM;
+    private final MecanumWheels WHEELS;
+    private final ExtendableArm ARM;
+
+    private final DigitalChannel COLOR_SWITCH;
+    private final DigitalChannel SIDE_SWITCH;
 
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
@@ -68,9 +71,13 @@ public class Hardware {
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
         HashMap<String, DcMotor> motors = new HashMap<>();
+
         HashMap<String, Servo> servos = new HashMap<>();
+        servos.put("clawXServo", OP_MODE.hardwareMap.get(Servo.class, "clawXServo"));
+        servos.put("clawZServo", OP_MODE.hardwareMap.get(Servo.class, "clawZServo"));
+
+        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
 
         return new ExtendableArm(motors, servos, intakeServo);
     }

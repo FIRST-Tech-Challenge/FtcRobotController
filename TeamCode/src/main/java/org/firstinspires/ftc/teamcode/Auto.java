@@ -31,11 +31,7 @@ public class Auto extends LinearOpMode {
         CRServo intakeServo = hardware.getArm().getIntakeServo();
         intakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        while (opModeIsActive()) {
-            intakeServo.setPower(1.0);
-            telemetry.addData("CRServo power: ", intakeServo.getPower());
-        }
-
-        sleep(10000);
+        intakeServo.setPower(1.0);
+        sleep(60000);
     }
 }
