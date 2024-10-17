@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class FlappyFlappyWrist extends SubsystemBase {
 
     // Create wrist Servo
-    private static Servo wristServo;
+    private final Servo wristServo;
 
     /** Place code here to initialize subsystem */
     public FlappyFlappyWrist() {
@@ -29,7 +29,7 @@ public class FlappyFlappyWrist extends SubsystemBase {
 
 
     // Turns the Servo a set amount of degrees
-    public static void RotateTo(int degrees){
+    public void RotateTo(int degrees){
 
         // Converts degrees into 0-1 float
         double servoPos = degrees/270.0;
