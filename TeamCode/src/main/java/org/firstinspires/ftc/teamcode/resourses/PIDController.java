@@ -51,6 +51,7 @@ public class PIDController {
   public void update(double currentPosition) {
     // the error of how far you are from where you want to be
     double error = currentPosition - target;
+    error = Utlities.wrap(error);
     
     // The derivative factor scales down the Proportional factor so that we don't over shoot our target.
     double derivative = (error - lastError) / (runtime.time() - lastTime);
