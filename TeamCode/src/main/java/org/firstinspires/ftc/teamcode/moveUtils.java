@@ -28,7 +28,7 @@ public class moveUtils {
     private static CRServo spinner = null;
     private static BNO055IMU imu;
     private static float desiredHeading;
-    private static PIDController pidRotate;
+
     private static Orientation lastAngles = new Orientation();
 
     // Things specific to this class
