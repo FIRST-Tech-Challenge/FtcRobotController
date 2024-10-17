@@ -1,10 +1,8 @@
 
 package org.firstinspires.ftc.teamcode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -25,8 +23,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * the direction of all 4 motors (see code below).
  */
 
-@TeleOp(name="Testing 10/16/24", group="Linear OpMode")
-public class Testing_Oct16 extends LinearOpMode {
+@TeleOp(name="Testing 10/17/24", group="Linear OpMode")
+public class Testing_Oct17 extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -77,9 +75,10 @@ public class Testing_Oct16 extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
 
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            // POV Mode guses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  -gamepad1.left_stick_x;
+            double lateral =  gamepad1.left_stick_x*0.6;
+            //double lateral = gamepad2.right_stick_x;
             double yaw     =  gamepad1.right_stick_x;
             double twr = gamepad2.left_stick_y;
 
@@ -113,19 +112,19 @@ public class Testing_Oct16 extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
+
+//            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
+//            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
+//            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
+//            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+
 
             // Send calculated power to wheels
             //!!!!Using multiplier to slow Back wheels, attempt to make speeds match!!!!
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower*0.8);
-            rightBackDrive.setPower(rightBackPower*0.8);
+            leftBackDrive.setPower(leftBackPower*0.76);
+            rightBackDrive.setPower(rightBackPower*0.76);
             leftCH.setPower(twr);
             rightCH.setPower(twr);
 
