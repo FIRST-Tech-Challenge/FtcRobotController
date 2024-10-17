@@ -17,7 +17,7 @@ public class Robot {
    
     
     //used for how fast the turning input is used.
-    public static double maxTurnDegPerSecond = 600;
+    public static double maxTurnDegPerSecond = 1000;
     public static double pCon = 0.017;
     public static double dCon = 0;
     
