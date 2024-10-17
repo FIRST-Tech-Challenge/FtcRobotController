@@ -80,7 +80,7 @@ public class Testing_Oct17 extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x*0.6;
             //double lateral = gamepad2.right_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-            double twr = gamepad2.left_stick_y;
+            //double twr = gamepad2.left_stick_y;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -117,6 +117,7 @@ public class Testing_Oct17 extends LinearOpMode {
 //            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
 //            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
 //            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+            twr = gamepad1.a ? 0.75 : 0.0;
 
 
             // Send calculated power to wheels
