@@ -1,6 +1,7 @@
 package org.nknsd.robotics.team.components;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class ArmRotator implements NKNComponent {
 
     PotentiometerHandler potHandler;
+    private final String motorName;
+    private DcMotor motor;
     double target;
 
     final double threshold;
@@ -21,7 +24,9 @@ public class ArmRotator implements NKNComponent {
     long targetTime = 0;
     double current;
 
-    public ArmRotator(double threshold, double K){
+
+    public ArmRotator(String motorName, double threshold, double K){
+        this.motorName = motorName;
         this.threshold = threshold;
         this.K = K;
     }
@@ -30,8 +35,10 @@ public class ArmRotator implements NKNComponent {
         this.potHandler = potHandler;
     }
 
+
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
+        motor = hardwareMap.dcMotor.get(motorName);
         return true;
     }
 
@@ -60,7 +67,8 @@ public class ArmRotator implements NKNComponent {
         long currentTime = runtime.time(TimeUnit.MILLISECONDS);
         if(currentTime >= targetTime) {
             current = potHandler.getPotVoltage();
-            controlLoop(current);
+            double armPower = controlLoop(current);
+
             targetTime = currentTime+1;
         }
     }
@@ -76,7 +84,6 @@ public class ArmRotator implements NKNComponent {
         this.target = target;
     }
     private double controlLoop(double current){
-
         diff = (target - current);
         if (Math.abs(diff) <= threshold) {
             return 0;

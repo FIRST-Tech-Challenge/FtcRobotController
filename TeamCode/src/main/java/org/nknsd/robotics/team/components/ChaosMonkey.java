@@ -96,7 +96,6 @@ public class ChaosMonkey implements NKNComponent {
 
     public ChaosMonkey(WheelHandler wheelHandler, String[] doTests) {
         this.wheelHandler = wheelHandler;
-
     }
 
     @Override
