@@ -7,17 +7,12 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-
-import java.util.Locale;
-
-@Autonomous(name = "LeftPath", group = "")
-public class LeftPath extends LinearOpMode {
+@Autonomous(name = "RightPath", group = "")
+public class RightPath extends LinearOpMode {
     private static final int NUMLOOPS = 3 ;
     //test1
 
@@ -50,7 +45,7 @@ public class LeftPath extends LinearOpMode {
         leftArm = hardwareMap.get(Servo.class, "leftArm");
         rightArm = hardwareMap.get(Servo.class, "rightArm");
         intake = hardwareMap.get(CRServo.class, "intake");
-        Pose2d startPose = new Pose2d(-63, 15,0);
+        Pose2d startPose = new Pose2d(-63, -15,0);
         drive.setPoseEstimate(startPose);
         //TrajectorySequence aSeq = autoSeq(startPose);
 
@@ -76,27 +71,15 @@ public class LeftPath extends LinearOpMode {
         waitForStart();
         currTime = System.currentTimeMillis();
         startTime = currTime;
-        //sleep(5000)
-
+        //sleep(5000);
 
         move.driveSeq(startPose.getX()+12,startPose.getY(),0);
-        utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
-        move.driveSeq(-54,54,135);
-       // utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
-       // sleep(3000);
-        //move.driveSeq(-57,57,135);
-        //sleep(1000);
-        utils.setArm(actuatorUtils.ArmModes.REST);
+        move.driveSeq(-54,-54,-135);
+        utils.setArm(actuatorUtils.ArmModes.DOWN);
         utils.setIntake(actuatorUtils.IntakeModes.OUT);
         sleep(2000);
-        utils.setArm(actuatorUtils.ArmModes.UP);
         utils.setIntake(actuatorUtils.IntakeModes.OFF);
-        move.driveSeq(-36,36,135);
-        sleep(1000);
-        utils.setLift(actuatorUtils.LiftLevel.LOW_BASKET);
-        move.driveSeq(-12,36,-90);
-        move.driveSeq(-12,24,-90);
-        utils.setArm(actuatorUtils.ArmModes.REST);
+        utils.setArm(actuatorUtils.ArmModes.UP);
         sleep(1000);
         Pose2d pose = drive.getPoseEstimate();
         fUtils.setPose(pose);

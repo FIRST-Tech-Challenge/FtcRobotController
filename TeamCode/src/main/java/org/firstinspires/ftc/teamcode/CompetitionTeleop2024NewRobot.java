@@ -54,6 +54,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     private int pos2 = 3000; //Position 2
     private int desiredpos = 0; //Used as base for increasing arm position
     private double armPower = .7f;
+    private actuatorUtils utils;
 
     boolean changed = false; //Used for the arm button code
     boolean changed2 = false; //Used for the code that allows the driver to disable IMU controlled direction
@@ -86,9 +87,13 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         leftArm = hardwareMap.get(Servo.class, "leftArm");
         rightArm = hardwareMap.get(Servo.class, "rightArm");
         lift = hardwareMap.get(DcMotor.class, "lift");
+        utils = new actuatorUtils();
+        utils.initializeActuator(lift, leftArm, rightArm, intake);
+
         intake.setPower(0.0);
         leftArm.setPosition(0.0);
         rightArm.setPosition(1.0);
+
         //imu = hardwareMap.get(IMU.class, "imu");
         //IMU.Parameters parameters = new IMU.Parameters(
         //        new RevHubOrientationOnRobot(
@@ -125,6 +130,9 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Set arm up to brake
         //arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setDirection(DcMotor.Direction.REVERSE);
+        lift.setPower(0);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -156,7 +164,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //        AxesOrder.ZYX,
         //        RADIANS);
 //        double heading = (disableIMU) ? 0.0 : angles.firstAngle + Math.PI/2 + initHeading;
-        double heading = Math.PI/2 + initHeading;
+        double heading =  initHeading;
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + heading;
         double rightX = Math.pow(gamepad1.right_stick_x, 1.0)*(1-gamepad1.right_trigger);
         LBPower = r * Math.cos(robotAngle) - rightX;
@@ -208,7 +216,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         if (gamepad2.left_trigger >= .1)
         {
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lift.setPower(gamepad2.left_trigger * (0.5));
+            lift.setPower(-gamepad2.left_trigger * (0.5));
             telemetry.addData("Lift ticks", lift.getCurrentPosition());
             telemetry.update();
             //Moves the arm down
@@ -216,8 +224,17 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         else if (gamepad2.right_trigger >= .1)
         {
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lift.setPower(-gamepad2.right_trigger * (0.5));
+            lift.setPower(gamepad2.right_trigger * (0.5));
 
+        }
+        else if (gamepad2.y) {
+            utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
+        }
+        else if (gamepad2.x) {
+            utils.setLift(actuatorUtils.LiftLevel.LOW_BASKET);
+        }
+        else if (gamepad2.a) {
+            utils.setLift(actuatorUtils.LiftLevel.ZERO);
         }
         else
         {
@@ -231,13 +248,13 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         double leftArmPosition = leftArm.getPosition();
         double rightArmPosition = rightArm.getPosition();
         double armDelta = 0.0025;
-        if (gamepad2.left_stick_y > 0.1) {
+        if (gamepad2.right_stick_y > 0.1) {
 
             leftArm.setPosition(leftArmPosition + (armDelta));
             rightArm.setPosition(rightArmPosition - (armDelta));
 
 
-        } else if (gamepad2.left_stick_y < -0.1)
+        } else if (gamepad2.right_stick_y < -0.1)
         {
             leftArm.setPosition(leftArmPosition - (armDelta));
             rightArm.setPosition(rightArmPosition + (armDelta));
@@ -251,7 +268,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //} else {
         //    intake.setPosition(0.50);
         //}
-        intake.setPower(gamepad2.right_stick_y);
+        intake.setPower(gamepad2.left_stick_y);
 
 
         // Show the elapsed game time and wheel power.
