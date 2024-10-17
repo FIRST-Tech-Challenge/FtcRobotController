@@ -86,21 +86,7 @@ public class TempMovementBase extends LinearOpMode {
         if(padAngle >= -22.5 && padAngle <= 22.5){
             setMotorPowers(1,1,1,1);
         }
-    /* if(gamepad1.left_stick_y > 0.1){
-        if(gamepad1.left_stick_x > 0.1){
 
-        } else if(gamepad1.left_stick_x < -0.1){
-
-        }
-    } else     if(gamepad1.left_stick_y < 0.1){
-        if(gamepad1.left_stick_x > 0.1){
-
-        } else if(gamepad1.left_stick_x < -0.1){
-
-        }
-    } else {
-        setMotorPowers(0,0,0,0);
-    } */
 
 
     }
