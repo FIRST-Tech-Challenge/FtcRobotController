@@ -2,9 +2,9 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
 }
-def f = file('drive.aar')
-new URL('https://parshwa282011.github.io/drive/drive.aar').withInputStream{ i -> f.withOutputStream{ it << i }}
-
+//def f = file('drive.aar')
+//new URL('https://parshwa282011.github.io/drive/drive.aar').withInputStream{ i -> f.withOutputStream{ it << i }}
+//new URL('https://parshwa282011.github.io/drive/Drive-Alpha.aar').withInputStream{ i -> f.withOutputStream{ it << i }}
 dependencies {
     implementation 'org.firstinspires.ftc:Inspection:10.1.0'
     implementation 'org.firstinspires.ftc:Blocks:10.1.0'
@@ -15,6 +15,5 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:10.1.0'
     implementation 'org.firstinspires.ftc:Vision:10.1.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation files('drive.aar')
 }
 
