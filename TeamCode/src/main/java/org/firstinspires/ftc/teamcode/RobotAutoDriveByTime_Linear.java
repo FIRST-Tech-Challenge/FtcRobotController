@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -23,10 +24,29 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     private Servo leftArm = null;
     private static final double ARM_DEFAULT = 0.3;
     private static final double ARM_MIN = 0.0;
-    private static final double ARM_MAX = 1.0;
+
+    DcMotor vertical = null;
+    final int VERTICAL_MIN = 0;
+    final int VERTICAL_MAX = 1800;
+    int verticalAdjustedMin = 0;
+    int verticalPosition = VERTICAL_MIN;
+
+    // This chunk controls our viper slide
+    DcMotor viperSlide = null;
+    final int VIPER_MAX = 2759;
+    final int VIPER_MIN = 0;
+    int viperSlidePosition = 0;
+
+    // This chunk controls our claw
+    Servo claw = null;
+    final double CLAW_MIN = 0.96;
+    final double CLAW_MAX = 0.75;
+    final double CLAW_DEFAULT = 0.75;
+    double claw_position = CLAW_DEFAULT;
+
+    final ElapsedTime runtime = new ElapsedTime();
 
     // Software variables
-    private final ElapsedTime     runtime = new ElapsedTime();
     static final double     DEFAULT_SPEED = 0.6;
 
     private IMU imu = null;
@@ -50,6 +70,18 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        vertical = hardwareMap.get(DcMotor.class, "vertical");
+        vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
+        viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperSlide.setDirection(DcMotor.Direction.REVERSE);
+        viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        claw.setPosition(CLAW_DEFAULT);
+
         //double arm_position = ARM_DEFAULT;
         //leftArm.setPosition(arm_position);
 
@@ -70,8 +102,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        //NEHA From NEHA. Parameter Specify bean.java
+        /*
         moveForward(2.3);
         strafeLeft(0.5);                        //strafing to 1st block
         moveBackward(2.1 );                     //moving first block backward
@@ -85,11 +116,37 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         turnRightToHeading(20);                     //turning to face the red zone
         moveBackward(1.5, 0.2);     //placing block in red zone
 
+       */
+
+        setVertical(1000);
+        setVertical(200);
+
         // End of autonomous program
         telemetry.addData("Path", "Complete");
         telemetry.addData("Current Yaw", "%.0f", getHeading());
         telemetry.update();
     }
+
+    public void setViper(int length){
+        viperSlide.setTargetPosition(length);
+        ((DcMotorEx) viperSlide).setVelocity(2000);
+        viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void setVertical(int height){
+        vertical.setTargetPosition(height);
+        ((DcMotorEx) vertical).setVelocity(1000);
+        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void setClaw(int position){
+        claw.setPosition(position);
+    }
+
+
+
+
+
 
     private void acceleration(double secondsToDrive, double speedToDrive,
                               double leftFrontDriveDirection, double rightFrontDriveDirection,
@@ -192,26 +249,25 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     private void turnLeftToHeading(double heading, double speedToDrive) {
         degreesToTurn = heading - getHeading();
 
-    while (opModeIsActive()
+        while (opModeIsActive()
                 && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)
-            && (gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0)) {
+                && (gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0)) {
 
-        degreesToTurn = heading - getHeading();
-        if(degreesToTurn < -180) degreesToTurn += 360;
-        if(degreesToTurn > 180) degreesToTurn -= 360;
+            degreesToTurn = heading - getHeading();
+            if (degreesToTurn < -180) degreesToTurn += 360;
+            if (degreesToTurn > 180) degreesToTurn -= 360;
 
-        // Clip the speed to the maximum permitted value
-        turnSpeed = Range.clip(degreesToTurn*TURN_SPEED_ADJUSTMENT, -MAX_TURN_SPEED, MAX_TURN_SPEED);
-        if(turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
-        if(turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
+            // Clip the speed to the maximum permitted value
+            turnSpeed = Range.clip(degreesToTurn * TURN_SPEED_ADJUSTMENT, -MAX_TURN_SPEED, MAX_TURN_SPEED);
+            if (turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
+            if (turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
 
-        leftFrontDrive.setPower(-turnSpeed);
-        rightFrontDrive.setPower(turnSpeed);
-        leftBackDrive.setPower(-turnSpeed);
-        rightBackDrive.setPower(turnSpeed);
-
+            leftFrontDrive.setPower(-turnSpeed);
+            rightFrontDrive.setPower(turnSpeed);
+            leftBackDrive.setPower(-turnSpeed);
+            rightBackDrive.setPower(turnSpeed);
+        }
     }
-}
 
     private void turnRightToHeading(double targetYaw) {
         turnRightToHeading(targetYaw, DEFAULT_SPEED);
