@@ -18,10 +18,14 @@ public class FourEyesTeleOp extends LinearOpMode {
         controller1 = new GamepadEvents(gamepad1);
         controller2 = new GamepadEvents(gamepad2);
         binding1 = new GamepadEvents.GamepadButton[] {
-
+                null ,
+                controller1.a,
+                controller1.b
         };
         binding2 = new GamepadEvents.GamepadButton[] {
-
+                null,
+                controller2.a,
+                controller2.b
         };
 
 
@@ -31,14 +35,14 @@ public class FourEyesTeleOp extends LinearOpMode {
                 fourEyesRobot.toggleClaw();
             }
             if(binding1[1].onPress() || binding2[1].onPress()) {
-                if(fourEyesRobot.isIntakeing()) {
+                if(fourEyesRobot.isIntaking()) {
                     fourEyesRobot.intakeForward();
                 } else {
                     fourEyesRobot.intakeStop();
                 }
             }
             if(binding1[2].onPress() || binding2[2].onPress()) {
-                if(fourEyesRobot.isIntakeing()) {
+                if(fourEyesRobot.isIntaking()) {
                     fourEyesRobot.intakeBackward();
                 } else {
                     fourEyesRobot.intakeStop();
@@ -47,7 +51,9 @@ public class FourEyesTeleOp extends LinearOpMode {
 
             fourEyesRobot.moveLift((controller1.left_trigger.getTriggerValue()-controller1.right_trigger.getTriggerValue())+(controller2.left_trigger.getTriggerValue()-controller2.right_trigger.getTriggerValue()));
 
-
+            controller1.update();
+            controller2.update();
+            telemetry.update();
 
         }
 

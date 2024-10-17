@@ -26,7 +26,7 @@ public class Lift {
     public int MEDIUM_HEIGHT = 1000; //Ticks
     public int HIGH_HEIGHT = 2000; //Ticks
 
-    public int MAX_HEIGHT = 2000;
+    public int MAX_HEIGHT = 4300; //Ticks
 
     public double GRAVITY = 9.8; // N/kgs
     public double ARM_WEIGHT = 1;//kgs

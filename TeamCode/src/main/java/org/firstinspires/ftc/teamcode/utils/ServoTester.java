@@ -30,6 +30,7 @@ public class ServoTester extends LinearOpMode {
         try {
             CRservo = hardwareMap.get(CRServo.class, "CRservo");
             servo = hardwareMap.get(Servo.class, "servo");
+            servo.setDirection(Servo.Direction.REVERSE);
         }
         catch (Exception e){
             telemetry.addLine("Ensure Continuous Rotation Servo is named CRservo");

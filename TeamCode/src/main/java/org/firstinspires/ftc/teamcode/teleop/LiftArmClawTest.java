@@ -24,7 +24,7 @@ public class LiftArmClawTest extends LinearOpMode {
         //Init Phase
         Mecanum robot = new Mecanum(hardwareMap);
 
-//        Lift lift = new Lift(hardwareMap);
+        Lift lift = new Lift(hardwareMap);
 
 //        Arm arm = new Arm(hardwareMap);
 
@@ -127,6 +127,7 @@ public class LiftArmClawTest extends LinearOpMode {
 //            telemetry.addData("Current [INCREMENT] value: ",INCREMENT);
 //            telemetry.addLine(buildPIDString());
 
+            telemetry.addData("Lift Position: ",lift.getPosition());
             telemetry.update();
             controller1.update();
 //            lift.update();
