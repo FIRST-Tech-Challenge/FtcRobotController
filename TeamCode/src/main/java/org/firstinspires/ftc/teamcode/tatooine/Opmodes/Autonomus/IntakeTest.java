@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Intake;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
-@Autonomous(name = "IntakeTest")
+@Autonomous(name = "IntakeTest", group = "Autonomous")
 public class IntakeTest extends LinearOpMode {
 
     @Override
@@ -19,11 +19,10 @@ public class IntakeTest extends LinearOpMode {
         Intake intake = new Intake(this,isRed, true);
         boolean isSpecimen = true;
         waitForStart();
-        while(opModeIsActive()) {
+        //while(opModeIsActive()) {
             Actions.runBlocking(intake.intakeByColor(true)
             );
-
             updateTelemetry(telemetry);
-        }
+        //}
     }
 }

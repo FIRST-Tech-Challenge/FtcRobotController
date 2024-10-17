@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
-@TeleOp(name = "def")
+@TeleOp(name = "FieldOrientedDriveTest", group = "TeleOp")
 public class fieldOrientedDriveTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

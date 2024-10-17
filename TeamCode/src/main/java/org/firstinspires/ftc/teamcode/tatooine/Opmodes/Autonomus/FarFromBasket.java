@@ -13,13 +13,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
-@Autonomous(name = "RedFar")
+@Autonomous(name = "FarFromBasket", group = "Autonomous")
 
 public class FarFromBasket extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         boolean isRed = CheckAlliance.isRed();
-        Action test;
+        Action trajectoryActionChosen;
         Pose2d beginPose = new Pose2d(12.09+3.5, -59.84, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder trajectoryRed = drive.actionBuilder(beginPose)
@@ -46,10 +46,10 @@ public class FarFromBasket extends LinearOpMode {
                 .waitSeconds(1);
 
         if (isRed) {
-            test = trajectoryRed.build();
+            trajectoryActionChosen = trajectoryRed.build();
         }
         else {
-            test = trajectoryBlue.build();
+            trajectoryActionChosen = trajectoryBlue.build();
         }
 
         waitForStart();
@@ -57,7 +57,7 @@ public class FarFromBasket extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(1),
-                        test,
+                        trajectoryActionChosen,
                         new SleepAction(1)
                 )
         );
