@@ -36,7 +36,8 @@ public class ExtendableArm extends Arm {
 
     // The servo that opens and closes the grip.
     private final CRServo INTAKE_SERVO;
-    private static double intakePower = 1.0;
+    private static double intakePower = 0.5;
+    private static double ejectPower = -1.0;
 
     /**
      * Instantiate the motors using HashMaps.
@@ -202,5 +203,12 @@ public class ExtendableArm extends Arm {
 
     public void stopIntake() {
         INTAKE_SERVO.setPower(0);
+    }
+
+    /**
+     * Make the intake spin in reverse and eject the object.
+     */
+    public void ejectIntake() {
+        INTAKE_SERVO.setPower(ejectPower);
     }
 }

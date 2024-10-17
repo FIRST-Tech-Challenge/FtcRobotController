@@ -28,13 +28,11 @@ public class Auto extends LinearOpMode {
         // Wait until the player press the start button
         waitForStart();
 
-        CRServo intakeServo = hardware.getArm().getIntakeServo();
-        telemetry.addData("intakeServo: ", intakeServo);
+        CRServo intakeServo = this.hardwareMap.get(CRServo.class, "intakeServo");
+        telemetry.addData("intakeServo power: ", intakeServo.getPower());
 
         while (opModeIsActive()) {
-            hardware.getArm().startIntake();
+            hardware.getIntakeServo().setPower(1.0);
         }
-
-        sleep(60000);
     }
 }

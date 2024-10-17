@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import com.qualcomm.robotcore.hardware.*;
 
-/** @noinspection ALL */
 public abstract class Arm {
     protected final HashSet<DcMotor> MOTORS;
     protected final HashSet<Servo> SERVOS;

@@ -31,7 +31,7 @@ public class Hardware {
     private final DigitalChannel COLOR_SWITCH;
     private final DigitalChannel SIDE_SWITCH;
 
-//    private final CRServo INTAKE_SERVO;
+    private final CRServo INTAKE_SERVO;
 
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
@@ -45,8 +45,10 @@ public class Hardware {
                         .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                         .build();*/
 
+        INTAKE_SERVO = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
+
         WHEELS = initWheels();
-        ARM = initArm();
+        ARM = null; //initArm();
     }
 
     /**
@@ -76,12 +78,19 @@ public class Hardware {
         HashMap<String, DcMotor> motors = new HashMap<>();
 
         HashMap<String, Servo> servos = new HashMap<>();
-        servos.put("clawXServo", OP_MODE.hardwareMap.get(Servo.class, "clawXServo"));
-        servos.put("clawZServo", OP_MODE.hardwareMap.get(Servo.class, "clawZServo"));
+        return null;
+        /*
+//        servos.put("clawXServo", OP_MODE.hardwareMap.get(Servo.class, "clawXServo"));
+//        servos.put("clawZServo", OP_MODE.hardwareMap.get(Servo.class, "clawZServo"));
+         */
 
-        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
+//        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
+//
+//        return new ExtendableArm(motors, servos, intakeServo);
+    }
 
-        return new ExtendableArm(motors, servos, intakeServo);
+    public CRServo getIntakeServo() {
+        return INTAKE_SERVO;
     }
 
     public MecanumWheels getWheels() { return WHEELS; }
