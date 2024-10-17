@@ -2,8 +2,6 @@ package org.nknsd.robotics.team;
 
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.components.ChaosMonkey;
-import org.nknsd.robotics.team.components.EventHandlerTester;
 import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;

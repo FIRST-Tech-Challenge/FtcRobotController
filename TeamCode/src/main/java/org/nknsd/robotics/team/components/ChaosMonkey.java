@@ -120,50 +120,50 @@ public class ChaosMonkey implements NKNComponent {
 
         switch (state) {
             case DO_NOTHING:
-                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.relativeVectorToMotion(0, 0, 0);
                 break;
 
             case FORWARD:
-                wheelHandler.vectorToMotion(0.5f, 0, 0);
+                wheelHandler.relativeVectorToMotion(0.5f, 0, 0);
                 break;
 
             case BACKWARDS:
-                wheelHandler.vectorToMotion(-0.5f, 0, 0);
+                wheelHandler.relativeVectorToMotion(-0.5f, 0, 0);
                 break;
 
             case LEFT:
-                wheelHandler.vectorToMotion(0, -0.5f, 0);
+                wheelHandler.relativeVectorToMotion(0, -0.5f, 0);
                 break;
 
             case RIGHT:
-                wheelHandler.vectorToMotion(0, 0.5f, 0);
+                wheelHandler.relativeVectorToMotion(0, 0.5f, 0);
                 break;
 
             case CLOCKWISE:
-                wheelHandler.vectorToMotion(0, 0, 0.5f);
+                wheelHandler.relativeVectorToMotion(0, 0, 0.5f);
                 break;
 
             case COUNTERCLOCKWISE:
-                wheelHandler.vectorToMotion(0, 0, -0.5f);
+                wheelHandler.relativeVectorToMotion(0, 0, -0.5f);
                 break;
 
             case MOTORBR:
-                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.relativeVectorToMotion(0, 0, 0);
                 wheelHandler.runMotorBR(0.5);
                 break;
 
             case MOTORBL:
-                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.relativeVectorToMotion(0, 0, 0);
                 wheelHandler.runMotorBL(0.5);
                 break;
 
             case MOTORFR:
-                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.relativeVectorToMotion(0, 0, 0);
                 wheelHandler.runMotorFR(0.5);
                 break;
 
             case MOTORFL:
-                wheelHandler.vectorToMotion(0, 0, 0);
+                wheelHandler.relativeVectorToMotion(0, 0, 0);
                 wheelHandler.runMotorFL(0.5);
                 break;
         }
