@@ -16,7 +16,7 @@ public class IntakeServoHandler implements NKNComponent {
     public IntakeServoHandler(String servoName) {
         this.servoName = servoName;
     }
-    void setServoPower (double power){
+    public void setServoPower (double power){
         servo.setPower(power);
     }
 
