@@ -12,11 +12,15 @@ public class IntakeServoHandler implements NKNComponent {
 
     CRServo servo;
     String servoName;
-    public IntakeServoHandler (String servoName, double power){
+
+    public IntakeServoHandler(String servoName) {
         this.servoName = servoName;
-        this.power = power;
     }
-    double power;
+    void setServoPower (double power){
+        servo.setPower(power);
+    }
+
+
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
@@ -26,7 +30,7 @@ public class IntakeServoHandler implements NKNComponent {
 
     @Override
     public void init_loop(ElapsedTime runtime, Telemetry telemetry) {
-    servo.setPower(power);
+
     }
 
     @Override
@@ -46,11 +50,12 @@ public class IntakeServoHandler implements NKNComponent {
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
-
     }
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-
+        String servoString = "[Servo Power" + servo.getPower() + "]";
+        telemetry.addData("intakeServo", servoString);
     }
+
 }
