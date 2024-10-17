@@ -31,6 +31,8 @@ public class Hardware {
     private final DigitalChannel COLOR_SWITCH;
     private final DigitalChannel SIDE_SWITCH;
 
+//    private final CRServo INTAKE_SERVO;
+
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
         autoSleepEnabled = true;
@@ -85,7 +87,7 @@ public class Hardware {
     public MecanumWheels getWheels() { return WHEELS; }
 
     public ExtendableArm getArm() {
-    return ARM;
+        return ARM;
     }
 
     public DigitalChannel getColorSwitch() {
