@@ -1,0 +1,214 @@
+<html>
+<head>
+<title>BasicOmniOpMode_Linear.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #8c8c8c; font-style: italic;}
+.s3 { color: #067d17;}
+.s4 { color: #080808;}
+.s5 { color: #1750eb;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+BasicOmniOpMode_Linear.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org.firstinspires.ftc.teamcode;</span>
+
+<span class="s2">// All the things that we use and borrow</span>
+<span class="s0">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;</span>
+<span class="s0">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.TeleOp;</span>
+<span class="s0">import </span><span class="s1">com.qualcomm.robotcore.hardware.DcMotor;</span>
+<span class="s0">import </span><span class="s1">com.qualcomm.robotcore.hardware.DcMotorEx;</span>
+<span class="s0">import </span><span class="s1">com.qualcomm.robotcore.hardware.Servo;</span>
+<span class="s0">import </span><span class="s1">com.qualcomm.robotcore.util.ElapsedTime;</span>
+
+<span class="s0">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;</span>
+
+<span class="s1">@TeleOp(name=</span><span class="s3">&quot;Remote Control&quot;</span><span class="s1">, group=</span><span class="s3">&quot;Linear OpMode&quot;</span><span class="s1">)</span>
+<span class="s0">public class </span><span class="s1">BasicOmniOpMode_Linear </span><span class="s0">extends </span><span class="s1">LinearOpMode </span><span class="s4">{</span>
+    <span class="s2">// Initialize all variables for the program below:</span>
+    <span class="s2">// This chunk controls our wheels</span>
+    <span class="s0">private </span><span class="s1">DcMotor leftFrontDrive = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">DcMotor leftBackDrive = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">DcMotor rightFrontDrive = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">DcMotor rightBackDrive = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">double </span><span class="s1">leftFrontPower = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">double </span><span class="s1">rightFrontPower = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">double </span><span class="s1">leftBackPower = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">double </span><span class="s1">rightBackPower = </span><span class="s5">0</span><span class="s1">;</span>
+
+    <span class="s2">// Collect joystick position data</span>
+    <span class="s0">double </span><span class="s1">axial = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">double </span><span class="s1">lateral = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">double </span><span class="s1">yaw = </span><span class="s5">0</span><span class="s1">;</span>
+
+    <span class="s2">// This chunk controls our vertical</span>
+    <span class="s1">DcMotor vertical = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">final int </span><span class="s1">VERTICAL_MIN = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">final int </span><span class="s1">VERTICAL_MAX = </span><span class="s5">1800</span><span class="s1">;</span>
+    <span class="s0">int </span><span class="s1">verticalAdjustedMin = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">int </span><span class="s1">verticalPosition = VERTICAL_MIN;</span>
+
+    <span class="s2">// This chunk controls our viper slide</span>
+    <span class="s1">DcMotor viperSlide = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">final int </span><span class="s1">VIPER_MAX = </span><span class="s5">2759</span><span class="s1">;</span>
+    <span class="s0">final int </span><span class="s1">VIPER_MIN = </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s0">int </span><span class="s1">viperSlidePosition = </span><span class="s5">0</span><span class="s1">;</span>
+
+    <span class="s2">// This chunk controls our claw</span>
+    <span class="s1">Servo claw = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">final double </span><span class="s1">CLAW_MIN = </span><span class="s5">0.96</span><span class="s1">;</span>
+    <span class="s0">final double </span><span class="s1">CLAW_MAX = </span><span class="s5">0.75</span><span class="s1">;</span>
+    <span class="s0">final double </span><span class="s1">CLAW_DEFAULT = </span><span class="s5">0.75</span><span class="s1">;</span>
+    <span class="s0">double </span><span class="s1">claw_position = CLAW_DEFAULT;</span>
+
+    <span class="s0">final </span><span class="s1">ElapsedTime runtime = </span><span class="s0">new </span><span class="s1">ElapsedTime();</span>
+
+    <span class="s1">@Override</span>
+    <span class="s2">//Op mode runs when the robot runs. It runs the whole time.</span>
+    <span class="s0">public void </span><span class="s1">runOpMode() </span><span class="s4">{</span>
+
+        <span class="s2">// Initialize the hardware variables.</span>
+        <span class="s1">leftFrontDrive = hardwareMap.get(DcMotor.</span><span class="s0">class</span><span class="s1">, </span><span class="s3">&quot;left_front_drive&quot;</span><span class="s1">);</span>
+        <span class="s1">leftBackDrive = hardwareMap.get(DcMotor.</span><span class="s0">class</span><span class="s1">, </span><span class="s3">&quot;left_back_drive&quot;</span><span class="s1">);</span>
+        <span class="s1">rightFrontDrive = hardwareMap.get(DcMotor.</span><span class="s0">class</span><span class="s1">, </span><span class="s3">&quot;right_front_drive&quot;</span><span class="s1">);</span>
+        <span class="s1">rightBackDrive = hardwareMap.get(DcMotor.</span><span class="s0">class</span><span class="s1">, </span><span class="s3">&quot;right_back_drive&quot;</span><span class="s1">);</span>
+        <span class="s1">leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);</span>
+        <span class="s1">leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);</span>
+        <span class="s1">rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);</span>
+        <span class="s1">rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);</span>
+        <span class="s1">leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);</span>
+        <span class="s1">leftBackDrive.setDirection(DcMotor.Direction.REVERSE);</span>
+        <span class="s1">rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);</span>
+        <span class="s1">rightBackDrive.setDirection(DcMotor.Direction.FORWARD);</span>
+
+        <span class="s1">vertical = hardwareMap.get(DcMotor.</span><span class="s0">class</span><span class="s1">, </span><span class="s3">&quot;vertical&quot;</span><span class="s1">);</span>
+        <span class="s1">vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);</span>
+        <span class="s1">vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);</span>
+
+        <span class="s1">viperSlide = hardwareMap.get(DcMotor.</span><span class="s0">class</span><span class="s1">, </span><span class="s3">&quot;viper_slide&quot;</span><span class="s1">);</span>
+        <span class="s1">viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);</span>
+        <span class="s1">viperSlide.setDirection(DcMotor.Direction.REVERSE);</span>
+        <span class="s1">viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);</span>
+
+        <span class="s1">claw = hardwareMap.get(Servo.</span><span class="s0">class</span><span class="s1">, </span><span class="s3">&quot;claw&quot;</span><span class="s1">);</span>
+        <span class="s1">claw.setPosition(CLAW_DEFAULT);</span>
+
+        <span class="s2">// Wait for the game to start (driver presses PLAY)</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Status&quot;</span><span class="s1">, </span><span class="s3">&quot;Initialized&quot;</span><span class="s1">);</span>
+        <span class="s1">telemetry.update();</span>
+        <span class="s1">waitForStart();</span>
+        <span class="s1">runtime.reset();</span>
+
+        <span class="s2">// Run until the end of the match (driver presses STOP)</span>
+        <span class="s0">while </span><span class="s1">(opModeIsActive()) </span><span class="s4">{</span>
+            <span class="s0">double </span><span class="s1">max;</span>
+
+            <span class="s2">// Get input from the joysticks</span>
+            <span class="s1">axial = -gamepad1.left_stick_y;</span>
+            <span class="s1">lateral = gamepad1.left_stick_x;</span>
+            <span class="s1">yaw = gamepad1.right_stick_x;</span>
+
+            <span class="s2">// Combine the joystick requests for each axis-motion to determine each wheel's power.</span>
+            <span class="s2">// Set up a variable for each drive wheel to save the power.</span>
+            <span class="s1">leftFrontPower = (axial + lateral + yaw) / </span><span class="s5">2</span><span class="s1">;</span>
+            <span class="s1">rightFrontPower = (axial - lateral - yaw) / </span><span class="s5">2</span><span class="s1">;</span>
+            <span class="s1">leftBackPower = (axial - lateral + yaw) / </span><span class="s5">2</span><span class="s1">;</span>
+            <span class="s1">rightBackPower = (axial + lateral - yaw) / </span><span class="s5">2</span><span class="s1">;</span>
+
+            <span class="s2">// Normalize the values so no wheel power exceeds 100%</span>
+            <span class="s1">max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));</span>
+            <span class="s1">max = Math.max(max, Math.abs(leftBackPower));</span>
+            <span class="s1">max = Math.max(max, Math.abs(rightBackPower));</span>
+            <span class="s0">if </span><span class="s1">(max &gt; </span><span class="s5">1.0</span><span class="s1">) </span><span class="s4">{</span>
+                <span class="s1">leftFrontPower /= max;</span>
+                <span class="s1">rightFrontPower /= max;</span>
+                <span class="s1">leftBackPower /= max;</span>
+                <span class="s1">rightBackPower /= max;</span>
+            <span class="s4">}</span>
+
+            <span class="s2">// Send calculated power to wheels</span>
+            <span class="s1">leftFrontDrive.setPower(leftFrontPower);</span>
+            <span class="s1">rightFrontDrive.setPower(rightFrontPower);</span>
+            <span class="s1">leftBackDrive.setPower(leftBackPower);</span>
+            <span class="s1">rightBackDrive.setPower(rightBackPower);</span>
+
+            <span class="s2">// Control the vertical - the rotation level of the arm</span>
+            <span class="s1">verticalPosition = vertical.getCurrentPosition();</span>
+            <span class="s2">// Milla: work on this</span>
+            <span class="s1">verticalAdjustedMin = (</span><span class="s0">int</span><span class="s1">)(</span><span class="s5">0.09</span><span class="s1">*viperSlidePosition+VERTICAL_MIN); </span><span class="s2">// 0.09 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.</span>
+            <span class="s0">if </span><span class="s1">(gamepad1.dpad_up) </span><span class="s4">{</span>
+                <span class="s1">vertical.setTargetPosition(VERTICAL_MAX);</span>
+                <span class="s1">((DcMotorEx) vertical).setVelocity(</span><span class="s5">1000</span><span class="s1">+viperSlidePosition/</span><span class="s5">2.0</span><span class="s1">);</span>
+                <span class="s1">vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);</span>
+            <span class="s4">}</span>
+            <span class="s0">else if </span><span class="s1">(gamepad1.dpad_right &amp;&amp; verticalPosition &lt; VERTICAL_MAX) </span><span class="s4">{          </span><span class="s2">// If the right button is pressed AND it can safely raise further</span>
+                <span class="s1">vertical.setTargetPosition(Math.min(VERTICAL_MAX, verticalPosition + </span><span class="s5">50</span><span class="s1">));</span>
+                <span class="s1">((DcMotorEx) vertical).setVelocity(</span><span class="s5">1000</span><span class="s1">+viperSlidePosition/</span><span class="s5">2.0</span><span class="s1">);</span>
+                <span class="s1">vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);</span>
+            <span class="s4">}</span>
+            <span class="s0">else if </span><span class="s1">(gamepad1.dpad_left &amp;&amp; verticalPosition &gt; verticalAdjustedMin) </span><span class="s4">{           </span><span class="s2">// If the left button is pressed AND it can safely lower further</span>
+                <span class="s1">vertical.setTargetPosition(Math.max(verticalAdjustedMin, verticalPosition - </span><span class="s5">50</span><span class="s1">));</span>
+                <span class="s1">((DcMotorEx) vertical).setVelocity(</span><span class="s5">1000</span><span class="s1">);</span>
+                <span class="s1">vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);</span>
+            <span class="s4">}</span>
+            <span class="s0">else if </span><span class="s1">(gamepad1.dpad_down) </span><span class="s4">{</span>
+                <span class="s1">vertical.setTargetPosition(verticalAdjustedMin);</span>
+                <span class="s1">((DcMotorEx) vertical).setVelocity(</span><span class="s5">1000</span><span class="s1">);</span>
+                <span class="s1">vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);</span>
+            <span class="s4">}</span>
+
+            <span class="s2">// Control the viper slide - how much it extends</span>
+            <span class="s1">viperSlidePosition = viperSlide.getCurrentPosition();</span>
+            <span class="s0">if </span><span class="s1">(gamepad1.right_trigger &gt; </span><span class="s5">0 </span><span class="s1">&amp;&amp; viperSlidePosition &lt; VIPER_MAX) </span><span class="s4">{              </span><span class="s2">// If the right button is pressed AND it can safely extend further</span>
+                <span class="s1">viperSlide.setTargetPosition(viperSlidePosition + </span><span class="s5">200</span><span class="s1">);</span>
+                <span class="s1">((DcMotorEx) viperSlide).setVelocity(gamepad1.right_trigger*</span><span class="s5">4000</span><span class="s1">);</span>
+                <span class="s1">viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);</span>
+            <span class="s4">}</span>
+            <span class="s0">else if </span><span class="s1">(gamepad1.left_trigger &gt; </span><span class="s5">0 </span><span class="s1">&amp;&amp; viperSlidePosition &gt; VIPER_MIN) </span><span class="s4">{          </span><span class="s2">// If the right button is pressed AND it can safely retract further</span>
+                <span class="s1">viperSlide.setTargetPosition(Math.max(VIPER_MIN, viperSlidePosition - </span><span class="s5">200</span><span class="s1">));</span>
+                <span class="s1">((DcMotorEx) viperSlide).setVelocity(gamepad1.left_trigger*</span><span class="s5">4000</span><span class="s1">);</span>
+                <span class="s1">viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);</span>
+            <span class="s4">}</span>
+
+            <span class="s2">// Control the claw</span>
+            <span class="s0">if </span><span class="s1">(gamepad1.left_bumper &amp;&amp; claw_position &gt; CLAW_MAX) </span><span class="s4">{</span>
+                <span class="s1">claw_position -= </span><span class="s5">0.01</span><span class="s1">;</span>
+            <span class="s4">}</span>
+            <span class="s0">if </span><span class="s1">(gamepad1.right_bumper &amp;&amp; claw_position &lt; CLAW_MIN) </span><span class="s4">{</span>
+                <span class="s1">claw_position += </span><span class="s5">0.01</span><span class="s1">;</span>
+            <span class="s4">}</span>
+            <span class="s1">claw.setPosition(claw_position);</span>
+
+            <span class="s2">// Show the elapsed game time and wheel power.</span>
+            <span class="s1">printDataOnScreen();</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s2">// Log all (relevant) info about the robot on the hub.</span>
+    <span class="s0">private void </span><span class="s1">printDataOnScreen() </span><span class="s4">{</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Run Time&quot;</span><span class="s1">, </span><span class="s3">&quot;%.1f&quot;</span><span class="s1">, runtime.seconds());</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Front left/Right&quot;</span><span class="s1">, </span><span class="s3">&quot;%4.2f, %4.2f&quot;</span><span class="s1">, leftFrontPower, rightFrontPower);</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Back  left/Right&quot;</span><span class="s1">, </span><span class="s3">&quot;%4.2f, %4.2f&quot;</span><span class="s1">, leftBackPower, rightBackPower);</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Joystick Axial&quot;</span><span class="s1">, </span><span class="s3">&quot;%4.2f&quot;</span><span class="s1">, axial);</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Joystick Lateral&quot;</span><span class="s1">, </span><span class="s3">&quot;%4.2f&quot;</span><span class="s1">, lateral);</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Joystick Yaw&quot;</span><span class="s1">, </span><span class="s3">&quot;%4.2f&quot;</span><span class="s1">, yaw);</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Claw position&quot;</span><span class="s1">, </span><span class="s3">&quot;%4.2f&quot;</span><span class="s1">, claw_position); </span><span class="s2">// Callie: we should print both the targeted position (this) and the actual position (claw.getPosition())</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Viper Slide Velocity&quot;</span><span class="s1">, </span><span class="s3">&quot;%4.2f&quot;</span><span class="s1">, ((DcMotorEx) viperSlide).getVelocity());</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Viper power consumption&quot;</span><span class="s1">, </span><span class="s3">&quot;%.1f&quot;</span><span class="s1">, ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Viper Slide Position&quot;</span><span class="s1">, </span><span class="s3">&quot;%d&quot;</span><span class="s1">, viperSlidePosition);</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Vertical Power&quot;</span><span class="s1">, </span><span class="s3">&quot;%.1f&quot;</span><span class="s1">, ((DcMotorEx) vertical).getVelocity());</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Vertical power consumption&quot;</span><span class="s1">, </span><span class="s3">&quot;%.1f&quot;</span><span class="s1">, ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Vertical Position&quot;</span><span class="s1">, </span><span class="s3">&quot;%d&quot;</span><span class="s1">, vertical.getCurrentPosition());</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Vertical Adjusted Min&quot;</span><span class="s1">, </span><span class="s3">&quot;%d&quot;</span><span class="s1">, verticalAdjustedMin);</span>
+
+        <span class="s1">telemetry.update();</span>
+    <span class="s4">}</span>
+<span class="s4">}</span></pre>
+</body>
+</html>
