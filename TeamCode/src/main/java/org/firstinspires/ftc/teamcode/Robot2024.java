@@ -47,7 +47,7 @@ public class Robot2024 {
     }
 
     public void openGripper(){
-        gripper.setPosition(this.gripper_close_position);
+        gripper.setPosition(this.gripper_open_position);
     }
 
     public void setShoulderPower(double powerLevel){
