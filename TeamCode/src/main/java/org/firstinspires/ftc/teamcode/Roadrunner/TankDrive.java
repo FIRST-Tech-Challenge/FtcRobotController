@@ -152,7 +152,7 @@ public final class TankDrive {
             }
 
             // TODO: reverse encoder directions if needed
-            //   leftEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+            //   leftEncs.get(0).setDirection(DcMotor.Direction.REVERSE);
         }
 
         @Override
@@ -234,7 +234,7 @@ public final class TankDrive {
         }
 
         // TODO: reverse motor directions if needed
-        //   leftMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+        //   leftMotors.get(0).setDirection(DcMotor.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
