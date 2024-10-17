@@ -88,10 +88,11 @@ public class Mecanum {
         double leftRearWheelPower = r * Math.sin(robotAngle) * Math.sqrt(2) + rightX;
         double rightRearWheelPower = r * Math.cos(robotAngle) * Math.sqrt(2) - rightX;
 
-        leftFrontDrive.setPower(leftFrontWheelPower * driveSpeed * direction.getMagnitude());
-        rightFrontDrive.setPower(rightFrontWheelPower * driveSpeed * direction.getMagnitude());
-        leftRearDrive.setPower(leftRearWheelPower * driveSpeed * direction.getMagnitude());
-        rightRearDrive.setPower(rightRearWheelPower * driveSpeed * direction.getMagnitude());
+        leftFrontDrive.setPower(leftFrontWheelPower);
+        rightFrontDrive.setPower(rightFrontWheelPower);
+        leftRearDrive.setPower(leftRearWheelPower);
+        rightRearDrive.setPower(rightRearWheelPower);
+
 
         if (this.debug) {
             telemetry.addData("leftFront", "%.2f", leftFrontWheelPower);
@@ -102,3 +103,4 @@ public class Mecanum {
         }
     }
 }
+

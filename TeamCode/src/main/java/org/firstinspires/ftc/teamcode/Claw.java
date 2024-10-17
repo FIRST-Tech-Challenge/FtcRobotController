@@ -31,10 +31,10 @@ public class Claw {
         bDown = gamepad.b;
 
         if(a && claw){
-            setJointPosition(0.75);
+            setClawPosition(0.75);
             claw = !claw;
         } else if (a && !claw){
-            setJointPosition(0);
+            setClawPosition(0);
             claw = !claw;
         }
 
