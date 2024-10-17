@@ -84,6 +84,7 @@ public class OpenCV extends OpMode {
                 telemetry.addLine("Left");
             } else {
                 telemetry.addLine("Right");
+
             }
 
 
