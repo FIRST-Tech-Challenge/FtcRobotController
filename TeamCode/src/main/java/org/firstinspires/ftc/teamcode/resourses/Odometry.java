@@ -40,7 +40,7 @@ public class Odometry {
   
   //where the center of the robot is now
   private double robotX, robotY; // in inches
-  private double robotAngle; // in radians
+  private double robotAngle; // in degrees
   
   // used in the odometry math to store the previous iteration of the robot angle.
   private double oldAngle;
@@ -83,12 +83,12 @@ public class Odometry {
     deltaRotation = Utlities.wrap(deltaRotation);
     
     // corrects for the error caused by the robot turning.
-    dForward = odometryPodY - radiusY * deltaRotation;
-    dSideways = odometryPodX - radiusX * deltaRotation;
+    dForward = odometryPodY - radiusY * AngleUnit.DEGREES.toRadians(deltaRotation);
+    dSideways = odometryPodX - radiusX * AngleUnit.DEGREES.toRadians(deltaRotation);
     
     //calculates our new position
-    robotX = (initX - dForward * Math.sin(robotAngle) + dSideways * Math.cos(robotAngle));
-    robotY = (initY + dForward * Math.cos(robotAngle) + dSideways * Math.sin(robotAngle));
+    robotX = (initX - dForward * Math.sin(AngleUnit.DEGREES.toRadians(robotAngle)) + dSideways * Math.cos(AngleUnit.DEGREES.toRadians(robotAngle)));
+    robotY = (initY + dForward * Math.cos(AngleUnit.DEGREES.toRadians(robotAngle)) + dSideways * Math.sin(AngleUnit.DEGREES.toRadians(robotAngle)));
     
     // refreshes the old variables to reflect our new calculations.
     initX = robotX;
@@ -116,7 +116,7 @@ public class Odometry {
     }
     AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
     
-    robotAngle = orientation.getYaw(AngleUnit.RADIANS);
+    robotAngle = orientation.getYaw(AngleUnit.DEGREES);
     robotAngle += AutoStartAngle;
   }
   

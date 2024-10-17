@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class MecanumDriveTrain {
 
@@ -109,8 +110,8 @@ public class MecanumDriveTrain {
         telemetry.addData("Field Centric Driving Value:", fieldCentricDriving);
         if (fieldCentricDriving) {
             telemetry.addData("Field Centric Driving:", "Activated!!!");
-            double temp = forwardPower * Math.cos(-robotHeading) + sidewaysPower * Math.sin(-robotHeading);
-            sidewaysPower = -forwardPower * Math.sin(-robotHeading) + sidewaysPower * Math.cos(-robotHeading);
+            double temp = forwardPower * Math.cos(-AngleUnit.DEGREES.toRadians(robotHeading)) + sidewaysPower * Math.sin(-AngleUnit.DEGREES.toRadians(robotHeading));
+            sidewaysPower = -forwardPower * Math.sin(-AngleUnit.DEGREES.toRadians(robotHeading)) + sidewaysPower * Math.cos(-AngleUnit.DEGREES.toRadians(robotHeading));
             forwardPower = temp;
         }
         

@@ -19,7 +19,7 @@ public class MainTeleOp extends BaseTeleOp {
                 robot.driveTrain.setSpeedMultiplier(1);
 
             robot.odometry.updateOdometry();
-            double target = Utlities.wrap(robot.anglePID.getTarget() + (-gamepad1.right_stick_x * robot.maxTurnRadPerSecond * robot.getDeltaTime() * speedMultiplier));
+            double target = Utlities.wrap(robot.anglePID.getTarget() + (-gamepad1.right_stick_x * robot.maxTurnDegPerSecond * robot.getDeltaTime() * speedMultiplier));
             robot.anglePID.setTarget(target);
             robot.anglePID.update(robot.odometry.getRobotAngle());
             robot.driveTrain.setDrivePower(-gamepad1.left_stick_y, gamepad1.left_stick_x, robot.anglePID.getPower(), robot.odometry.getRobotAngle());
