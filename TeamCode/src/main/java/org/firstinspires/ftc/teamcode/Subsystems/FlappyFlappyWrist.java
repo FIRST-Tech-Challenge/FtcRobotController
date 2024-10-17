@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class FlappyFlappyWrist extends SubsystemBase {
 
     // Create wrist Servo
-    private final Servo wristServo;
+    private static Servo wristServo;
 
     /** Place code here to initialize subsystem */
     public FlappyFlappyWrist() {
 
         // Creates a Servo using the hardware map
-        wristServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "FlappyServoWrist");
+        wristServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "flappyServoWrist");
 
     }
 
@@ -29,10 +29,10 @@ public class FlappyFlappyWrist extends SubsystemBase {
 
 
     // Turns the Servo a set amount of degrees
-    public void RotateTo(int degrees){
+    public static void RotateTo(int degrees){
 
         // Converts degrees into 0-1 float
-        double servoPos = degrees/180.0;
+        double servoPos = degrees/270.0;
 
         // Set the Servo to ServoPos
         wristServo.setPosition(servoPos);

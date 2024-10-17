@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.Subsystems.FlappyFlappyWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.Subsystems.OdometryPod;
@@ -49,6 +50,9 @@ public class RobotContainer {
     //public static Camera frontCamera;
     public static LinearSlide linearSlide;
 
+    public static FlappyFlappyWrist flappyFlappyWrist;
+    //
+
     // Robot initialization for teleop - Run this once at start of teleop
     public static void Init_TeleOp(CommandOpMode mode) {
         // Initialize robot subsystems
@@ -72,6 +76,7 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->FlappyFlappyWrist.RotateTo(90)));
         // driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new ToggleClaw());
 
         // example of binding more complex command to a button. This would be in a separate command file
