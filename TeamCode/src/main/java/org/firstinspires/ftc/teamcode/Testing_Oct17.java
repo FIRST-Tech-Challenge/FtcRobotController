@@ -117,7 +117,7 @@ public class Testing_Oct17 extends LinearOpMode {
 //            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
 //            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
 //            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            twr = gamepad1.a ? 0.75 : 0.0;
+            double twr = gamepad1.a ? 0.75 : 0.0;
 
 
             // Send calculated power to wheels
