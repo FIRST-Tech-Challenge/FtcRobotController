@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import androidx.annotation.NonNull;
 
 
 //import com.acmerobotics.dashboard.FtcDashboard;
@@ -13,21 +12,21 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.vision.VisionPortal;
-
-import kotlin.text.UStringsKt;
 
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode{
-    public void ClawMethod(Servo claw)
+    Boolean homeFlag = false;
+    public void ClawOpen(Servo claw)
     {
         if (gamepad1.a) {
+            claw.setPosition(0.5);
+        }
+    }
+    public void ClawClosed(Servo claw)
+    {
+        if (gamepad1.b) {
             claw.setPosition(0.5);
         }
     }
@@ -37,14 +36,48 @@ public class MainTeleOp extends LinearOpMode{
             wrist.setPosition(0.5);
         }
     }
-    public void ArmMotorMethod(DcMotor armMotor)
+    public void ArmMotorRaise(DcMotor armMotor)
     {
-        armMotor.setDirection(DcMotor.Direction.FORWARD);
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int armTicks = 600;
         armMotor.setTargetPosition(armTicks);    //Sets Target Tick Position
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(1);
+        armMotor.setPower(0.05);
+        homeFlag = false;
+    }
+    public void ArmMotorHome(DcMotor armMotor)
+    {
+        armMotor.setDirection(DcMotor.Direction.FORWARD);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int armTicks = 0;
+        armMotor.setTargetPosition(armTicks);    //Sets Target Tick Position
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.05);
+        homeFlag = true;
+
+    }
+    public void ArmMotorCustom(DcMotor armMotor, int degrees)
+    {
+        //Total ticks in a revolution for 117 RPM motor: 1425
+        //Total ticks for armMotor drivetrain revolution: 7125
+        //90 degree rotation for armMotor drivetrain revolution: 1781.25
+        int currentPosit = armMotor.getCurrentPosition();
+        double ticksPerDegree = 7125.0/360.0;
+        double convertPosit = currentPosit/ticksPerDegree;
+        if (convertPosit > degrees)
+        {
+            armMotor.setDirection(DcMotor.Direction.FORWARD);
+        }
+        else
+        {
+            armMotor.setDirection(DcMotor.Direction.REVERSE);
+        }
+        int convert = (int) (degrees*ticksPerDegree);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setTargetPosition(convert);    //Sets Target Tick Position
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.05);
     }
     public void ViperMotorMethod(DcMotor viperMotor)
     {
@@ -53,23 +86,25 @@ public class MainTeleOp extends LinearOpMode{
         int viperTicks = 600;
         viperMotor.setTargetPosition(viperTicks);    //Sets Target Tick Position
         viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperMotor.setPower(1);
+        viperMotor.setPower(0.05);
     }
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
-        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
+        DcMotor leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        DcMotor leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        DcMotor rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        DcMotor rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         DcMotor armMotor;
         DcMotor viperMotor;
         Servo claw;
         Servo wrist;
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         viperMotor = hardwareMap.get(DcMotor.class, "viperMotor");
-        claw = hardwareMap.get(Servo.class, "claw");
-        wrist = hardwareMap.get(Servo.class, "wrist");
+//        claw = hardwareMap.get(Servo.class, "claw");
+//        wrist = hardwareMap.get(Servo.class, "wrist");
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         waitForStart();
         while(opModeIsActive()){ //while loop for when program is active
@@ -82,8 +117,8 @@ public class MainTeleOp extends LinearOpMode{
             double speedMultiplier = 0.75;
 
             // Reverse the right side motors
-            frontRight.setDirection(DcMotor.Direction.REVERSE);
-            backRight.setDirection(DcMotor.Direction.REVERSE);
+            rightFront.setDirection(DcMotor.Direction.REVERSE);
+            rightBack.setDirection(DcMotor.Direction.REVERSE);
 
             //drive inputs
             drive = gamepad1.left_stick_y * -1;
@@ -98,10 +133,24 @@ public class MainTeleOp extends LinearOpMode{
             fRightPow = Range.clip((drive - turn - strafe) * speedMultiplier, -1, 1);
             bRightPow = Range.clip((drive - turn + strafe) * speedMultiplier, -1, 1);
 
-            frontLeft.setPower(fLeftPow);
-            backLeft.setPower(bLeftPow);
-            frontRight.setPower(fRightPow);
-            backRight.setPower(bRightPow);
+            leftFront.setPower(fLeftPow);
+            leftBack.setPower(bLeftPow);
+            rightFront.setPower(fRightPow);
+            rightBack.setPower(bRightPow);
+
+            if (gamepad1.x) {ArmMotorRaise(armMotor);}
+            if (gamepad1.y) {ArmMotorHome(armMotor);}
+            if (gamepad1.a) {ArmMotorCustom(armMotor, 85);}
+
+            if (armMotor.getCurrentPosition() < 15  )
+            {
+                if (homeFlag)
+                {
+                    armMotor.setPower(0);
+                    armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                }
+                else {homeFlag = false;}
+            }
 
             motorTelemetry(armMotor, "armMotor");
             motorTelemetry(viperMotor, "viperMotor");
