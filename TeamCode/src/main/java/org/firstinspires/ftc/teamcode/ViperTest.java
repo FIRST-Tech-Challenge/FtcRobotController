@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -54,40 +55,30 @@ import com.qualcomm.robotcore.util.Range;
 public class ViperTest extends OpMode
 {
 
-    private DcMotor viperSlide1 = null;
-    private DcMotor viperSlide2 = null;
+    private ViperSlide viperSlide;
 
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
-
-        viperSlide1  = hardwareMap.get(DcMotor.class, "VIPERRIGHT");
-        viperSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        viperSlide2 = hardwareMap.get(DcMotor.class, "VIPERLEFT");
-        viperSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        viperSlide = new ViperSlide(hardwareMap);
     }
 
     @Override
     public void loop() {
-
-        if (gamepad1.left_bumper) {
-            viperSlide1.setPower(1);
-            viperSlide2.setPower(1);
-
-        } else if (gamepad1.right_bumper) {
-            viperSlide1.setPower(-1);
-            viperSlide2.setPower(-1);
+        if (gamepad1.left_trigger > 0) {
+            viperSlide.extend(gamepad1.left_trigger);
+        } else if (gamepad1.right_trigger > 0) {
+            viperSlide.retract(gamepad1.right_trigger);
         } else {
-            viperSlide1.setPower(0);
-            viperSlide2.setPower(0);
+            viperSlide.stop();
         }
 
-    }
-
-    @Override
-    public void stop() {
+        if (gamepad1.left_bumper) {
+            viperSlide.raise(0.2);
+        } else if (gamepad1.right_bumper) {
+            viperSlide.lower(0.2);
+        } else {
+            viperSlide.stopPivot();
+        }
     }
 
 }
