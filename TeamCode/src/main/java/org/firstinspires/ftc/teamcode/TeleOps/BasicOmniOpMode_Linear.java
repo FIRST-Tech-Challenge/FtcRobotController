@@ -75,7 +75,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Drivebase driveBase = new Drivebase(hardwareMap, this::opModeIsActive);
+        Drivebase driveBase = new Drivebase(hardwareMap, this::opModeIsActive, telemetry);
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################

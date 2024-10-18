@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 public class TestingTeleOp extends LinearOpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    Drivebase driveBase = new Drivebase(hardwareMap, this::opModeIsActive);
+    Drivebase driveBase = new Drivebase(hardwareMap, this::opModeIsActive, telemetry);
 
     @Override
     public void runOpMode() {

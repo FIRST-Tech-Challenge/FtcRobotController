@@ -3,25 +3,30 @@ package org.firstinspires.ftc.teamcode.Autos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 
 @Autonomous(name = "BlueMiddleChamber", group = "BlueAutos")
 public class BlueMiddleChamber extends LinearOpMode {
     public void runOpMode() {
-        Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive);
+        Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive, telemetry);
 
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
         waitForStart();
 
+        //Inverse every turn for red.
+
         //Score preloaded specimen.
-        drivebase.autoDriveForward(0.3, 36.0);
+        drivebase.driveStraight(0.3, 24.0, 0);
 
         //To put 1st sample into obs zone.
-        drivebase.driveSideways(0.3, 24);
-        drivebase.autoDriveForward(0.3, 12);
-        drivebase.turnToAngle(90, 0.3, telemetry);
+        //drivebase.driveSideways(0.3, 24);
+        //drivebase.autoDriveForward(0.3, 12);
+        //drivebase.turnToHeading(0.3, 90);
+        /*
         drivebase.autoDriveForward(0.3, 12);
         drivebase.turnToAngle(-90, 0.3, telemetry);
         drivebase.autoDriveForward(0.3,48);
@@ -50,5 +55,7 @@ public class BlueMiddleChamber extends LinearOpMode {
 
         //Park in obs zone.
         drivebase.autoDriveForward(0.3, -60);
+        */
+
     }
 }

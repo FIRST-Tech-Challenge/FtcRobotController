@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 public class BlueBasket extends LinearOpMode {
     @Override
     public void runOpMode() {
-        Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive);
+        Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive, telemetry);
 
         waitForStart();
 
         //Testing statement.
-        drivebase.autoDriveForward(0.5, 20);
+        drivebase.driveStraight(0.5, 10,0);
 
         //Score preloaded specimen into basket.
         //drivebase.autoDriveForward(0.3, 10);
