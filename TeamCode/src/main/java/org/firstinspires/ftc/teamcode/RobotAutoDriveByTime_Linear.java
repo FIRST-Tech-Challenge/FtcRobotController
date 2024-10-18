@@ -146,10 +146,9 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         sleep(300);
     }
 
-    private void acceleration(double secondsToDrive, double speedToDrive,
+    private void acceleration(double secondsToDrive, double targetSpeed,
                               double leftFrontDriveDirection, double rightFrontDriveDirection,
                               double leftBackDriveDirection, double rightBackDriveDirection){
-        double targetSpeed = speedToDrive; // Store the original target speed
         double currentSpeed = 0.0;
 
         runtime.reset();
@@ -158,7 +157,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
             // Driving less than a second
             if(secondsToDrive < 1){
-                currentSpeed = speedToDrive;
+                currentSpeed = targetSpeed;
             }
             // Acceleration phase
             if (elapsedTime < 1 && currentSpeed < targetSpeed) {
