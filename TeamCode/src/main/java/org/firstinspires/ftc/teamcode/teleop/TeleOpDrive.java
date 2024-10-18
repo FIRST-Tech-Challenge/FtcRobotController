@@ -51,7 +51,7 @@ public class TeleOpDrive extends OpMode {
         telemetry.addData("Right Encoder Rotation: ", rightRear.getCurrentPosition());
         telemetry.addData("Strafe Encoder Rotation: ", leftRear.getCurrentPosition());
         telemetry.update();
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
     }
 }
