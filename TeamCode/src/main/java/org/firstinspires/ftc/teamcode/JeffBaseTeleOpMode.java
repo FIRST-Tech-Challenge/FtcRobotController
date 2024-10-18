@@ -6,14 +6,13 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+//import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+//import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @TeleOp(name = "Jeff Base Two Driver TeleOp", group = "Robot")
 
 public class JeffBaseTeleOpMode extends OpMode {
-    private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftSlide;
     private DcMotor rightSlide;
 
@@ -21,15 +20,15 @@ public class JeffBaseTeleOpMode extends OpMode {
     private DcMotor leftBackDrive;
     private DcMotor rightFrontDrive;
     private DcMotor rightBackDrive;
-    public DcMotor armMotor; //the arm motor
-    public CRServo intake; //the active intake servo
-    public Servo wrist; //the wrist servo
+    public DcMotor armMotor;
+    public CRServo intake;
+    public Servo wrist;
 
     final double ARM_TICKS_PER_DEGREE =
             28 // number of encoder ticks per rotation of the bare motor
                     * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
                     * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
-                    * 1 / 360.0; // we want ticks per degree, not per rotation
+                    * 1 / 360.0; // Ticks per degree, not per rotation
 
 
     /* These constants hold the position that the arm is commanded to run to.
@@ -68,7 +67,6 @@ public class JeffBaseTeleOpMode extends OpMode {
     double armPosition = (int) ARM_COLLAPSED_INTO_ROBOT;
     double armPositionFudgeFactor;
 
-
     public void init() {
         leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -81,16 +79,23 @@ public class JeffBaseTeleOpMode extends OpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightRear");
 
-        intake = hardwareMap.get(CRServo.class, "intake");
-        wrist = hardwareMap.get(Servo.class, "wrist");
         armMotor = hardwareMap.get(DcMotor.class, "arm");
+        armMotor.setTargetPosition(0);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        intake = hardwareMap.get(CRServo.class, "intake");
+        intake.setPower(INTAKE_OFF);
+
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        wrist.setPosition(WRIST_FOLDED_IN);
     }
 
     public void loop() {
-        double left;
-        double right;
-        double forward;
-        double rotate;
+        //double left;
+        //double right;
+        //double forward;
+        //double rotate;
         double max;
 
         if (gamepad2.dpad_up) {
@@ -148,21 +153,6 @@ public class JeffBaseTeleOpMode extends OpMode {
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
 
-
-            /* Here we handle the three buttons that have direct control of the intake speed.
-            These control the continuous rotation servo that pulls elements into the robot,
-            If the user presses A, it sets the intake power to the final variable that
-            holds the speed we want to collect at.
-            If the user presses X, it sets the servo to Off.
-            And if the user presses B it reveres the servo to spit out the element.*/
-
-            /* TECH TIP: If Else statements:
-            We're using an else if statement on "gamepad1.x" and "gamepad1.b" just in case
-            multiple buttons are pressed at the same time. If the driver presses both "a" and "x"
-            at the same time. "a" will win over and the intake will turn on. If we just had
-            three if statements, then it will set the intake servo's power to multiple speeds in
-            one cycle. Which can cause strange behavior. */
-
         if (gamepad1.a) {
             intake.setPower(INTAKE_COLLECT);
         } else if (gamepad1.x) {
@@ -170,15 +160,6 @@ public class JeffBaseTeleOpMode extends OpMode {
         } else if (gamepad1.b) {
             intake.setPower(INTAKE_DEPOSIT);
         }
-
-
-
-            /* Here we implement a set of if else statements to set our arm to different scoring positions.
-            We check to see if a specific button is pressed, and then move the arm (and sometimes
-            intake and wrist) to match. For example, if we click the right bumper we want the robot
-            to start collecting. So it moves the armPosition to the ARM_COLLECT position,
-            it folds out the wrist to make sure it is in the correct orientation to intake, and it
-            turns the intake on to the COLLECT mode.*/
 
         if (gamepad1.right_bumper) {
             /* This is the intaking/collecting arm position */
@@ -227,34 +208,10 @@ public class JeffBaseTeleOpMode extends OpMode {
 
         armPositionFudgeFactor = FUDGE_FACTOR * (gamepad1.right_trigger + (-gamepad1.left_trigger));
 
-
-            /* Here we set the target position of our arm to match the variable that was selected
-            by the driver.
-            We also set the target velocity (speed) the motor runs at, and use setMode to run it.*/
         armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor));
 
         ((DcMotorEx) armMotor).setVelocity(2100);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            /* TECH TIP: Encoders, integers, and doubles
-            Encoders report when the motor has moved a specified angle. They send out pulses which
-            only occur at specific intervals (see our ARM_TICKS_PER_DEGREE). This means that the
-            position our arm is currently at can be expressed as a whole number of encoder "ticks".
-            The encoder will never report a partial number of ticks. So we can store the position in
-            an integer (or int).
-            A lot of the variables we use in FTC are doubles. These can capture fractions of whole
-            numbers. Which is great when we want our arm to move to 122.5°, or we want to set our
-            servo power to 0.5.
-
-            setTargetPosition is expecting a number of encoder ticks to drive to. Since encoder
-            ticks are always whole numbers, it expects an int. But we want to think about our
-            arm position in degrees. And we'd like to be able to set it to fractions of a degree.
-            So we make our arm positions Doubles. This allows us to precisely multiply together
-            armPosition and our armPositionFudgeFactor. But once we're done multiplying these
-            variables. We can decide which exact encoder tick we want our motor to go to. We do
-            this by "typecasting" our double, into an int. This takes our fractional double and
-            rounds it to the nearest whole number.
-            */
 
         /* Check to see if our arm is over the current limit, and report via telemetry. */
         if (((DcMotorEx) armMotor).isOverCurrent()) {
@@ -266,19 +223,7 @@ public class JeffBaseTeleOpMode extends OpMode {
         telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
         telemetry.addData("intake: ", intake.getPower());
         telemetry.addData("wrist: ", wrist.getPosition());
+        telemetry.addData("Run Time", getRuntime());
         telemetry.update();
     }
-    /* Declare OpMode members. */
-
-
-
-    /* This constant is the number of encoder ticks for each degree of rotation of the arm.
-    To find this, we first need to consider the total gear reduction powering our arm.
-    First, we have an external 20t:100t (5:1) reduction created by two spur gears.
-    But we also have an internal gear reduction in our motor.
-    The motor we use for this arm is a 117RPM Yellow Jacket. Which has an internal gear
-    reduction of ~50.9:1. (more precisely it is 250047/4913:1)
-    We can multiply these two ratios together to get our final reduction of ~254.47:1.
-    The motor's encoder counts 28 times per rotation. So in total you should see about 7125.16
-    counts per rotation of the arm. We divide that by 360 to get the counts per degree. */
 }
