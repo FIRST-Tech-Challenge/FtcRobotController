@@ -10,29 +10,32 @@ import org.firstinspires.ftc.teamcode.util.Numbers;
 @TeleOp(name="Xendy's Teleop", group = "z_group")
 public class XendysTestTeleop extends OpMode {
     private DriveChassis chassis;
-
-    private double x = 0;
-    private double y = 0;
-    private double r = 0;
-
-    private double targetAngle = 0;
+    private double x, y, r, targetAngle;
 
     @Override
     public void init() {
         chassis = new DriveChassis(this);
     }
+
     @Override
     public void loop() {
+        // Gather rotational data
         double radYaw = chassis.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double degYaw = Numbers.normalizeAngle(chassis.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        // Handle Inputs
         lerpInput();
-        double rotX = x * Math.cos(-radYaw) - y * Math.sin(-radYaw);
-        double rotY = x * Math.sin(-radYaw) + y * Math.cos(-radYaw);
-        rotX *= 1.1;
+
+        // Calculate Rotation
         targetAngle += r * 0.5;
         targetAngle = Numbers.normalizeAngle(targetAngle);
         double rp = getTurnCorrection(degYaw, targetAngle);
 
+        // Calculate movement
+        double rotX = x * Math.cos(-radYaw) - y * Math.sin(-radYaw);
+        double rotY = x * Math.sin(-radYaw) + y * Math.cos(-radYaw);
+        rotX *= 1.1;
+
+        // Move motors
         double mult = 100;
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rp), 1);
         chassis.leftFrontMotor.setVelocity(((rotY + rotX + rp) / denominator) * mult);
@@ -40,6 +43,7 @@ public class XendysTestTeleop extends OpMode {
         chassis.rightFrontMotor.setVelocity(((rotY - rotX - rp) / denominator) * mult);
         chassis.rightBackMotor.setVelocity(((rotY + rotX - rp) / denominator) * mult);
 
+        // Telemetry
         telemetry.addData("Yaw", degYaw);
         telemetry.addData("Target", targetAngle);
         telemetry.addData("Rotation POwer", rp);
