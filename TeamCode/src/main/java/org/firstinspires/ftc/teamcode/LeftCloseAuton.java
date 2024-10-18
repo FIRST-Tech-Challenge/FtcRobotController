@@ -169,15 +169,15 @@ public class LeftCloseAuton extends LinearOpMode {
             turnLeft(0.5,-90);
             //samplePickup pick up neutral sample
             sleep(3000);
-            turnLeft(0.5,180);
+            turnLeft(0.5,180.0);
             driveForward(0.5,10,30);
             //sampleTower up, sample into high basket
             sleep(2000);
             turnLeft(0.5,180);
+            driveForward(0.5,12.0, 3.0);
+            turnLeft(0.5,180.0);
+
             sleep(30000);
-            driveForward(0.5,96,30);
-            turnLeft(0.5,-45);
-            driveForward(0.5,10,30);
 
             getYaw();
             telemetry.addData("Path", "Complete");
