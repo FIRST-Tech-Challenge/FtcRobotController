@@ -9,6 +9,8 @@ package org.firstinspires.ftc.teamcode;
 //import com.acmerobotics.roadrunner.SequentialAction;
 //import com.acmerobotics.roadrunner.ftc.Actions;
 //import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import static java.lang.Math.acos;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +20,7 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode{
     Boolean homeFlag = false;
+    double targetArmDegrees = 0;
     public void ClawOpen(Servo claw)
     {
         if (gamepad1.a) {
@@ -62,31 +65,46 @@ public class MainTeleOp extends LinearOpMode{
         //Total ticks in a revolution for 117 RPM motor: 1425
         //Total ticks for armMotor drivetrain revolution: 7125
         //90 degree rotation for armMotor drivetrain revolution: 1781.25
-        int currentPosit = armMotor.getCurrentPosition();
+        //int currentPosit = armMotor.getCurrentPosition();
+        //targetArmDegrees = degrees;
+
         double ticksPerDegree = 7125.0/360.0;
-        double convertPosit = currentPosit/ticksPerDegree;
-        if (convertPosit > degrees)
-        {
-            armMotor.setDirection(DcMotor.Direction.FORWARD);
-        }
-        else
-        {
-            armMotor.setDirection(DcMotor.Direction.REVERSE);
-        }
+//        double currentDegrees = currentPosit/ticksPerDegree;
+//        if (currentDegrees > degrees)
+//        {
+//            armMotor.setDirection(DcMotor.Direction.FORWARD);
+//        }
+//        else
+//        {
+//            armMotor.setDirection(DcMotor.Direction.REVERSE);
+//        }
         int convert = (int) (degrees*ticksPerDegree);
+        //double difference = Math.abs(convert-currentPosit);
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setTargetPosition(convert);    //Sets Target Tick Position
+        armMotor.setTargetPosition( (int) convert);    //Sets Target Tick Position
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.05);
+        armMotor.setPower(0.2);
     }
-    public void ViperMotorMethod(DcMotor viperMotor)
+    public void ViperMotorCustom(DcMotor viperMotor, int length)
     {
+        //Full motor rotation = 7125 ticks
+        //4 and 5/8 inches per rotation
+        //~1541 ticks per inch
+        double ticksPerInch = 1541;
+        double extensionTicks = length*ticksPerInch;
         viperMotor.setDirection(DcMotor.Direction.FORWARD);
         viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        int viperTicks = 600;
-        viperMotor.setTargetPosition(viperTicks);    //Sets Target Tick Position
+        viperMotor.setTargetPosition( (int) extensionTicks);    //Sets Target Tick Position
         viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperMotor.setPower(0.05);
+        viperMotor.setPower(-0.05);
+    }
+    public double MinimumTicks(double viperLength)
+    {   int maxExtensionLength = 34;
+        double result = maxExtensionLength/(viperLength+15.5);
+        double cosAngle = acos(result);
+        double ticksPerDegree = 7125.0/360.0;
+        return (cosAngle*ticksPerDegree);
     }
     @Override
     public void runOpMode() throws InterruptedException{
@@ -127,30 +145,59 @@ public class MainTeleOp extends LinearOpMode{
             if (gamepad1.right_trigger > 0) {speedMultiplier = 1;}
             if (gamepad1.left_trigger > 0) {speedMultiplier = 0.25;}
 
-            //drive calculations
-            fLeftPow = Range.clip((drive + turn + strafe) * speedMultiplier, -1, 1);
-            bLeftPow = Range.clip((drive + turn - strafe) * speedMultiplier, -1, 1);
-            fRightPow = Range.clip((drive - turn - strafe) * speedMultiplier, -1, 1);
-            bRightPow = Range.clip((drive - turn + strafe) * speedMultiplier, -1, 1);
+            boolean isDriveEnabled = false;
+            if (isDriveEnabled) {
+                //drive calculations
 
-            leftFront.setPower(fLeftPow);
-            leftBack.setPower(bLeftPow);
-            rightFront.setPower(fRightPow);
-            rightBack.setPower(bRightPow);
+                fLeftPow = Range.clip((drive + turn + strafe) * speedMultiplier, -1, 1);
+                bLeftPow = Range.clip((drive + turn - strafe) * speedMultiplier, -1, 1);
+                fRightPow = Range.clip((drive - turn - strafe) * speedMultiplier, -1, 1);
+                bRightPow = Range.clip((drive - turn + strafe) * speedMultiplier, -1, 1);
 
-            if (gamepad1.x) {ArmMotorRaise(armMotor);}
-            if (gamepad1.y) {ArmMotorHome(armMotor);}
-            if (gamepad1.a) {ArmMotorCustom(armMotor, 85);}
-
-            if (armMotor.getCurrentPosition() < 15  )
-            {
-                if (homeFlag)
-                {
-                    armMotor.setPower(0);
-                    armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                }
-                else {homeFlag = false;}
+                leftFront.setPower(fLeftPow);
+                leftBack.setPower(bLeftPow);
+                rightFront.setPower(fRightPow);
+                rightBack.setPower(bRightPow);
             }
+            //picking up
+            if (gamepad1.a) {ArmMotorCustom(armMotor, 0);}
+            //clearance/specimen wall grab
+            if (gamepad1.x) {ArmMotorCustom(armMotor, 24);}
+            //hang
+            if (gamepad1.right_bumper)
+            {
+                //target height is 21 inches
+                //(entire front claw needs to be that height and clear robot front)
+                ArmMotorCustom(armMotor, 65);
+            }
+            if (gamepad2.dpad_up)
+            {
+                ViperMotorCustom(viperMotor, 6);
+            }
+            if (gamepad1.dpad_down)
+            {
+                ViperMotorCustom(viperMotor, 0);
+            }
+            //specimen placement
+            if (gamepad1.y)
+            {
+                //target height: 27 inches
+                //(entire front claw needs to be that height and clear robot front)
+                ArmMotorCustom(armMotor, 70);
+                //extension of viper slide to place specimens
+            }
+            //high basket
+            if (gamepad1.b) {ArmMotorCustom(armMotor, 80);}
+
+//            if (armMotor.getCurrentPosition() < 15  )
+//            {
+//                if (homeFlag)
+//                {
+//                    armMotor.setPower(0);
+//                    armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                }
+//                else {homeFlag = false;}
+//            }
 
             motorTelemetry(armMotor, "armMotor");
             motorTelemetry(viperMotor, "viperMotor");
@@ -163,5 +210,6 @@ public class MainTeleOp extends LinearOpMode{
         int position;
         position = motor.getCurrentPosition();
         telemetry.addData(caption, position);
+        telemetry.addData("targetPosition", motor.getTargetPosition());
     }
 }
