@@ -34,24 +34,44 @@ public class MainTeleOp extends LinearOpMode{
     double targetArmDegrees = 0;
     public void ClawOpen(Servo claw)
     {
+        if (claw == null)
+        {
+            telemetry.addLine("Claw servo not found!");
+            return;
+        }
         if (gamepad1.a) {
             claw.setPosition(0.5);
         }
     }
     public void ClawClosed(Servo claw)
     {
+        if (claw == null)
+        {
+            telemetry.addLine("Claw servo not found!");
+            return;
+        }
         if (gamepad1.b) {
             claw.setPosition(0.5);
         }
     }
     public void WristMethod(Servo wrist)
     {
+        if (wrist == null)
+        {
+            telemetry.addLine("Wrist servo not found!");
+            return;
+        }
         if (gamepad1.a) {
             wrist.setPosition(0.5);
         }
     }
     public void ArmMotorRaise(DcMotorEx armMotor)
     {
+        if (armMotor == null)
+        {
+            telemetry.addLine("Arm motor not found!");
+            return;
+        }
         armMotor.setDirection(DcMotor.Direction.REVERSE);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int armTicks = 600;
@@ -62,6 +82,11 @@ public class MainTeleOp extends LinearOpMode{
     }
     public void ArmMotorHome(DcMotorEx armMotor)
     {
+        if (armMotor == null)
+        {
+            telemetry.addLine("Arm motor not found!");
+            return;
+        }
         armMotor.setDirection(DcMotor.Direction.FORWARD);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int armTicks = 0;
@@ -73,6 +98,11 @@ public class MainTeleOp extends LinearOpMode{
     }
     public void ArmMotorCustom(DcMotorEx armMotor, int degrees)
     {
+        if (armMotor == null)
+        {
+            telemetry.addLine("Arm motor not found!");
+            return;
+        }
 
         //Total ticks for armMotor drivetrain revolution: 7125
         //90 degree rotation for armMotor drivetrain revolution: 1781.25
@@ -99,6 +129,11 @@ public class MainTeleOp extends LinearOpMode{
     }
     public void ViperMotorCustom(DcMotor viperMotor, double lengthInches)
     {
+        if (viperMotor == null)
+        {
+            telemetry.addLine("Viper motor not found!");
+            return;
+        }
         //Full motor rotation = 7125 ticks
         //4 and 5/8 inches per rotation
         //~1541 ticks per inch
@@ -126,24 +161,51 @@ public class MainTeleOp extends LinearOpMode{
         //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
         telemetry.setAutoClear(false);
 
-        DcMotor leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        DcMotor leftBack = hardwareMap.get(DcMotor.class, "leftBack");
-        DcMotor rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        DcMotor rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        DcMotorEx armMotor;
-        DcMotorEx viperMotor;
-        Servo claw;
-        Servo wrist;
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        viperMotor = hardwareMap.get(DcMotorEx.class, "viperMotor");
-//        claw = hardwareMap.get(Servo.class, "claw");
-//        wrist = hardwareMap.get(Servo.class, "wrist");
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DcMotorEx leftFront = hardwareMap.tryGet(DcMotorEx.class, "leftFront");
+        DcMotorEx leftBack = hardwareMap.tryGet(DcMotorEx.class, "leftBack");
+        DcMotorEx rightFront = hardwareMap.tryGet(DcMotorEx.class, "rightFront");
+        DcMotorEx rightBack = hardwareMap.tryGet(DcMotorEx.class, "rightBack");
+
+        //TODO handle devices not found
+        //For right now, just add a telemetry message but the code will still fail when it's accessed in code so gracefully handle the null case
+        //This could be to exit the OpMode or to continue with the OpMode but not use the device. The latter requires checking for null in the code
+        if (leftFront == null || leftBack == null || rightFront == null || rightBack == null)
+        {
+            telemetry.addLine("One or more motors not found!");
+        } else {
+            // Reverse the right side motors
+            rightFront.setDirection(DcMotor.Direction.REVERSE);
+            rightBack.setDirection(DcMotor.Direction.REVERSE);
+        }
+        DcMotorEx armMotor = hardwareMap.tryGet(DcMotorEx.class, "armMotor");
+        if (armMotor == null)
+        {
+            telemetry.addLine("Arm motor not found!");
+        } else {
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        DcMotorEx viperMotor = hardwareMap.tryGet(DcMotorEx.class, "viperMotor");
+        if (viperMotor == null)
+        {
+            telemetry.addLine("Viper motor not found!");
+        } else {
+            viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        Servo claw = hardwareMap.tryGet(Servo.class, "claw");
+        Servo wrist = hardwareMap.tryGet(Servo.class, "wrist");
+        if (claw == null || wrist == null)
+        {
+            telemetry.addLine("Claw or wrist servos not found!");
+        }
 
         //Call the function to initialize telemetry functions
-        initMotorTelemetry(armMotor);
-        initMotorTelemetry(viperMotor);
+        initMotorTelemetry(leftFront, "leftFront");
+        initMotorTelemetry(leftBack, "leftBack");
+        initMotorTelemetry(rightFront, "rightFront");
+        initMotorTelemetry(rightBack, "rightBack");
+        initMotorTelemetry(armMotor, "armMotor");
+        initMotorTelemetry(viperMotor, "viperMotor");
         initGamepadTelemetry(gamepad1);
         initGamepadTelemetry(gamepad2);
 
@@ -152,37 +214,8 @@ public class MainTeleOp extends LinearOpMode{
         while(opModeIsActive()){ //while loop for when program is active
             //Code repeated during teleop goes here
             //Analogous to loop() method in OpMode
-            double drive;
-            double turn;
-            double strafe;
-            double fLeftPow, fRightPow, bLeftPow, bRightPow;
-            double speedMultiplier = 0.75;
+            MecanumDrive(leftFront, leftBack, rightFront, rightBack);
 
-            // Reverse the right side motors
-            rightFront.setDirection(DcMotor.Direction.REVERSE);
-            rightBack.setDirection(DcMotor.Direction.REVERSE);
-
-            //drive inputs
-            drive = gamepad1.left_stick_y * -1;
-            turn = gamepad1.right_stick_x;
-            strafe = gamepad1.left_stick_x;
-            if (gamepad1.right_trigger > 0) {speedMultiplier = 1;}
-            if (gamepad1.left_trigger > 0) {speedMultiplier = 0.25;}
-
-            boolean isDriveEnabled = false;
-            if (isDriveEnabled) {
-                //drive calculations
-
-                fLeftPow = Range.clip((drive + turn + strafe) * speedMultiplier, -1, 1);
-                bLeftPow = Range.clip((drive + turn - strafe) * speedMultiplier, -1, 1);
-                fRightPow = Range.clip((drive - turn - strafe) * speedMultiplier, -1, 1);
-                bRightPow = Range.clip((drive - turn + strafe) * speedMultiplier, -1, 1);
-
-                leftFront.setPower(fLeftPow);
-                leftBack.setPower(bLeftPow);
-                rightFront.setPower(fRightPow);
-                rightBack.setPower(bRightPow);
-            }
             //picking up
             if (gamepad1.a) {ArmMotorCustom(armMotor, 0);}
             //clearance/specimen wall grab
@@ -226,17 +259,56 @@ public class MainTeleOp extends LinearOpMode{
             telemetry.update();
         }
     }
+
+    private void MecanumDrive(DcMotorEx leftFront, DcMotorEx leftBack, DcMotorEx rightFront, DcMotorEx rightBack) {
+        double drive;
+        double turn;
+        double strafe;
+        double fLeftPow, fRightPow, bLeftPow, bRightPow;
+        double speedMultiplier = 0.75;
+
+
+        //drive inputs
+        drive = gamepad1.left_stick_y * -1;
+        turn = gamepad1.right_stick_x;
+        strafe = gamepad1.left_stick_x;
+        if (gamepad1.right_trigger > 0) {speedMultiplier = 1;}
+        if (gamepad1.left_trigger > 0) {speedMultiplier = 0.25;}
+
+        boolean isDriveEnabled = false;
+        if (isDriveEnabled) {
+            //drive calculations
+
+            fLeftPow = Range.clip((drive + turn + strafe) * speedMultiplier, -1, 1);
+            bLeftPow = Range.clip((drive + turn - strafe) * speedMultiplier, -1, 1);
+            fRightPow = Range.clip((drive - turn - strafe) * speedMultiplier, -1, 1);
+            bRightPow = Range.clip((drive - turn + strafe) * speedMultiplier, -1, 1);
+
+            if (leftFront != null) {leftFront.setPower(fLeftPow);}
+            if (leftBack != null) {leftBack.setPower(bLeftPow);}
+            if (rightFront != null) {rightFront.setPower(fRightPow);}
+            if (rightBack != null) {rightBack.setPower(bRightPow);}
+        }
+    }
+
     //Initializes telemetry for a motor
-    private void initMotorTelemetry( DcMotorEx motor)
+    private void initMotorTelemetry( DcMotorEx motor, String motorName)
     {
+        if (motor == null)
+        {
+            telemetry.addLine("Motor " + motorName + " not found!");
+            return;
+        }
         //Using functions for the telemetry addData method allows for the value to be updated each time the telemetry is updated
-        telemetry.addLine()
+        telemetry.addLine(motorName)
             .addData("Pos", motor::getCurrentPosition)
             .addData("Tgt", motor::getTargetPosition)
             .addData("Pwr", "%.2f", motor::getPower)
             .addData("Vel (ticks/s)", motor::getVelocity);
         telemetry.update();
     }
+
+
     //Initializes telemetry for a gamepad
     private void initGamepadTelemetry(Gamepad gamepad)
     {
