@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp (name = "TeleOp_RobotCentric")
 public class TeleOpCode_RobotCentric extends LinearOpMode {
@@ -34,44 +34,87 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
         // Variables that store the different game pad movements for ease of reference later
-        double strafePower; // (left stick x-axis movement)
-        strafePower = Math.pow(gamepad1.left_stick_x,3) * 5000; // Min: -10000, Max: 10000
+        double strafeVelocity; // (left stick x-axis movement)
+        strafeVelocity = Math.pow(gamepad1.left_stick_x,3) * 5000; // Min: -10000, Max: 10000
         //telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
-        double turnPower; // (right stick x-axis movement)
-        turnPower = Math.pow(gamepad1.right_stick_x,3) * 5000; // Min: -10000, Max: 10000
+        double turnVelocity; // (right stick x-axis movement)
+        turnVelocity = Math.pow(gamepad1.right_stick_x,3) * 5000; // Min: -10000, Max: 10000
         //telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
-        double straightMovementPower; // (left stick y-axis movement)
+        double straightMovementVelocity; // (left stick y-axis movement)
 //      straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y);
 // Min: -10000, Max: 10000
-        straightMovementPower = Math.pow(gamepad1.left_stick_y, 3) * 10000;
+        straightMovementVelocity = Math.pow(gamepad1.left_stick_y, 3) * 10000;
         //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
-
+        //Gamepad1 controls the drivetrain
         if (gamepad1.circle){
-            straightMovementPower = Math.pow(gamepad1.left_stick_y,3) * 1000;
-            turnPower = Math.pow(gamepad1.right_stick_x, 3) * 1000;
-            strafePower = Math.pow(gamepad1.left_stick_x, 3) * 1000;
+            straightMovementVelocity = Math.pow(gamepad1.left_stick_y,3) * 1000;
+            turnVelocity = Math.pow(gamepad1.right_stick_x, 3) * 1000;
+            strafeVelocity = Math.pow(gamepad1.left_stick_x, 3) * 1000;
             telemetry.addData("L2 pos", gamepad1.left_trigger);
             telemetry.update();
         }
-        if(gamepad1.y){
+        /*if(gamepad1.y){
             //testing upper bound of lift
-            robot.lift.setPower(.25);
-            telemetry.addData("position", robot.lift.getCurrentPosition());
+            robot.liftExtender.setPower(.25);
+            telemetry.addData("position", robot.liftExtender.getCurrentPosition());
             telemetry.update();
-        }
+        }*/
         if (gamepad1.right_trigger!=0){
             //forward
-            straightMovementPower = Math.pow(gamepad1.right_trigger,3) * 5000;
+            straightMovementVelocity = Math.pow(gamepad1.right_trigger,3) * 5000;
         }
         if (gamepad1.b){
             //slow
-            straightMovementPower = Math.pow(gamepad1.right_trigger,3) * 1000;
+            straightMovementVelocity = Math.pow(gamepad1.right_trigger,3) * 1000;
         }
         if (gamepad1.a){
             //boost
-            straightMovementPower = Math.pow(gamepad1.right_trigger,3) * 10000;
+            straightMovementVelocity = Math.pow(gamepad1.right_trigger,3) * 10000;
         }
 
+        // Gamepad2 controls the lift and its mechanisms
+        int liftPower;
+        liftPower = (int)Math.round(gamepad2.right_stick_y);// Extends and retracts the lift
+
+        int pitchPower;
+        //pitchPower = (int)Math.round(gamepad2.left_stick_y);
+        //telemetry.addData("pitchPower", pitchPower);
+
+        if (gamepad2.square) {
+            robot.liftPitch(200, 0.05);
+        }
+
+        if (gamepad2.circle) {
+            robot.liftPitch(-200, 0.05);
+        }
+
+        if (gamepad2.triangle) {
+            robot.liftExtender(200, 0.05);
+        }
+
+        if (gamepad2.cross) {
+            robot.liftExtender(0, 0.05);
+        }
+
+        if (gamepad2.right_trigger !=0) {
+            robot.intakeToggle(1);
+        } else {
+            robot.intakeToggle(0);
+        }
+
+        if (gamepad2.left_trigger !=0) {
+            robot.intakeToggle(-1);
+        } else {
+            robot.intakeToggle(0);
+        }
+
+        if (gamepad2.dpad_up) {
+            robot.clawPitch(10, 0.005);
+        }
+
+        if (gamepad2.dpad_down) {
+            robot.clawPitch(-10, 0.005);
+        }
 
         // accelerationAdditive is 1428.57
         // The intended result is that when the control sticks are not stationary the speed slowly
@@ -97,22 +140,26 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //        }
 
 
-
-
-
-        // Set velocity of the motors
+        // Set velocity of the motors (drivetrain)
         // Forward and backward movement (left stick y-axis movement)
         // Left and right turning (right stick x-axis movement)
         // Strafing left and right (left stick x-axis movement)
 
-        robot.fLeft.setVelocity(strafePower - straightMovementPower + turnPower); // Overall
+        robot.fLeft.setVelocity(strafeVelocity - straightMovementVelocity + turnVelocity); // Overall
         // negative value
-        robot.fRight.setVelocity(-strafePower - straightMovementPower - turnPower); // Overall
+        robot.fRight.setVelocity(-strafeVelocity - straightMovementVelocity - turnVelocity); // Overall
         // positive value
-        robot.bLeft.setVelocity(strafePower + straightMovementPower - turnPower); // Overall
+        robot.bLeft.setVelocity(strafeVelocity + straightMovementVelocity - turnVelocity); // Overall
         // positive value
-        robot.bRight.setVelocity(-strafePower + straightMovementPower + turnPower); // Overall
+        robot.bRight.setVelocity(-strafeVelocity + straightMovementVelocity + turnVelocity); // Overall
         // negative value
+
+        // Set power of the motors for the lift and the servos
+        // Right stick-y is lift extend
+        //robot.liftExtender((int)(Math.round()*200), 0.1);
+
+        //robot.liftPitch(pitchPower*200, 0.1);
+
 
         // Makes the pitch servo go all the way up
         // Make sure claw is fully closed before lifting up (set up conditional for this)
@@ -121,33 +168,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            pitch.setPosition(1);
 //        }
 
-        // Is supposed to make the pitch servo touch the ground (it keeps going too far down right now)
-        if (gamepad1.cross) {
-            //pitch.setPosition(0.6);
-        }
-
-        // Makes the Lclaw and Rclaw servos open (fix right claw)
-        if (gamepad1.circle) {
-            // 0.6 is maximum value of Lclaw (opening all the way to the left)
-            // Lclaw.setPosition(0.6); (Temporarily disabled but still working)
-            // The range value works as intended for this servo
-
-            //Rclaw.setPosition(0.4);
-
-            // For some reason the Rclaw needs a very specific setPosition
-            // between 0.4-0.5 [0.4?]? As Rclaw setPosition value approaches 1 the claw closes
-            // inwards; As Rclaw setPosition value goes away from 1 (0.9 or below)
-            // the claw opens outwards (negative values are not necessary)
-        }
-
-        // Makes the Lclaw and Rclaw servos close (fix the right claw)
-        if (gamepad1.square) {
-            // Lclaw goes right as setPosition decreases
-            // Lclaw goes left as setPosition increases
-            // Lclaw.setPosition(0.5); (Temporarily disabled but still working)
-            //Rclaw.setPosition(0.9);
-            // Fix the right claw
-        }
 
         // Prints to the robot driver station screen
         telemetry.update();

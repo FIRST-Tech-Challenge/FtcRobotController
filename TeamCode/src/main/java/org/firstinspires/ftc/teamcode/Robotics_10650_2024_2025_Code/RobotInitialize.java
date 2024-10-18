@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Imports all of the necessary FTC libraries and code
-import java.io.*;
-import java.util.*;
 //List importStatements = new ArrayList();
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -28,22 +27,24 @@ public class RobotInitialize {
 
     // Initialization Phase
 
-    // Create servo variables (currently not available)
-     Servo claw;
+    // Create servo variables
+     CRServo intakeToggle;
      Servo pitch;
      Servo roll;
-     DcMotor lift;
-    // Servo rClaw;
+
 
     // Create the empty normal motor variables
     DcMotorEx fLeft;
     DcMotorEx bRight;
     DcMotorEx fRight;
     DcMotorEx bLeft;
+
     // DcMotorEx liftExtender; (Placeholder for fifth motor)
     // DcMotorEx liftPitch; (Placeholder for sixth motor)
 
-    // Add servos once they are on the main robot
+    // Create the empty lift control variables
+    DcMotor liftExtender; //Extends the lift outwards and pulls it inwards
+    DcMotor liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
 
     // Create empty gyroscope variable
     BHI260IMU gyroScope;
@@ -73,20 +74,33 @@ public class RobotInitialize {
         fRight = opMode.hardwareMap.get(DcMotorEx.class, "fright");
         bLeft = opMode.hardwareMap.get(DcMotorEx.class, "bleft");
 
-        lift = opMode.hardwareMap.get(DcMotorEx.class, "lift");
-        claw = opMode.hardwareMap.get(Servo.class, "claw");
+        liftExtender = opMode.hardwareMap.get(DcMotor.class, "liftExtender");
+        liftPitch = opMode.hardwareMap.get(DcMotor.class, "liftPitch");
+        intakeToggle = opMode.hardwareMap.get(CRServo.class, "intakeToggle");
         roll = opMode.hardwareMap.get(Servo.class, "roll");
         pitch = opMode.hardwareMap.get(Servo.class, "pitch");
         // The front left and back right motors are reversed so all wheels go in the same direction
         // When a positive or negative value is used
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        lift.setTargetPosition(0);
-        claw.setPosition(0);
-        roll.setPosition(0);
-        pitch.setPosition(0);
+        intakeToggle.setPower(0);
+
+        liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftExtender.setTargetPosition(0);
+        liftExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftExtender.setZeroPowerBehavior(BRAKE);
+
+        liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftPitch.setTargetPosition(100);
+        liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftPitch.setZeroPowerBehavior(BRAKE);
+
+        //claw.setPosition(0);
+        //roll.setPosition(0);
+        //pitch.setPosition(0);
 
 // map the servos to the hardware map (not currently in use but will be used later)
 //        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
@@ -114,12 +128,6 @@ public class RobotInitialize {
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setZeroPowerBehavior(BRAKE);
-
-
 
 
         // Initialize Gyroscope
@@ -231,18 +239,35 @@ public class RobotInitialize {
         stopMotors();
     }
     //needs to move counterclockwise to move up
-    public void lift(int position, double velocity){
-        lift.setTargetPosition(position);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (Math.abs(lift.getCurrentPosition()-position)>10) {
-            opMode.telemetry.addData("needs to be >10", Math.abs(lift.getCurrentPosition()-position));
-            opMode.telemetry.addData("position", lift.getCurrentPosition());
+    public void liftPitch(int position, double velocity){
+        liftPitch.setTargetPosition(position);
+        liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (Math.abs(liftPitch.getCurrentPosition()-position)>10) {
+            opMode.telemetry.addData("needs to be >10", Math.abs(liftPitch.getCurrentPosition()-position));
+            opMode.telemetry.addData("position", liftPitch.getCurrentPosition());
             opMode.telemetry.update();
-            if (lift.getCurrentPosition()<position) {
-                lift.setPower(velocity);
+            if (liftPitch.getCurrentPosition()<position) {
+                liftPitch.setPower(velocity);
 
-            } else if (lift.getCurrentPosition()<position){
-                lift.setPower(-velocity);
+            } else if (liftPitch.getCurrentPosition()>= position){
+                liftPitch.setPower(-velocity);
+            }
+        }
+    }
+
+    // Extends the lift outwards and retracts it inwards
+    public void liftExtender(int position, double velocity){
+        liftExtender.setTargetPosition(position);
+        liftExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (Math.abs(liftExtender.getCurrentPosition()-position)>10) {
+            opMode.telemetry.addData("needs to be >10", Math.abs(liftExtender.getCurrentPosition()-position));
+            opMode.telemetry.addData("position", liftExtender.getCurrentPosition());
+            opMode.telemetry.update();
+            if (liftExtender.getCurrentPosition()<position) {
+                liftExtender.setPower(velocity);
+
+            } else if (liftExtender.getCurrentPosition()>=position){
+                liftExtender.setPower(-velocity);
             }
         }
     }
@@ -307,6 +332,16 @@ public class RobotInitialize {
         }
         stopMotors();
     }
+
+    public int intakeToggle(int power) {
+    intakeToggle.setPower(power);
+    return power;
+    }
+
+    public void clawPitch(double position, double velocity) {
+        pitch.setPosition(position);
+    }
+
     //gets average magnitudes because motors are going in different directions
     public int getPosStrafe() {
         return ((Math.abs(fRight.getCurrentPosition())+Math.abs(bRight.getCurrentPosition())+Math.abs(fLeft.getCurrentPosition())+ Math.abs(bLeft.getCurrentPosition()))/4);

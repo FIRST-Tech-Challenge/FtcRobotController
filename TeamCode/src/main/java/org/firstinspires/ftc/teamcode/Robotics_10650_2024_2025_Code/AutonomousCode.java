@@ -26,15 +26,20 @@ public class AutonomousCode extends LinearOpMode {
         // Fairly accurate but might need improvement
 
         //robot.claw.setPower(.5);
-//       robot.goStraight(850, 500);
-//       sleep(100);
-//        robot.lift(500, 0.75);
-//        sleep(100);
-//        robot.strafeR(1100, 500);
-//       robot.goStraight(500, 500);
-//       robot.strafeL(50, 100);
-//       robot.newTurnFunction(90);
-//       robot.goStraight(200, 100);
+        //robot.goStraight(850, 500);
+        //sleep(100);
+        //robot.liftExtender.setTargetPosition(0);
+
+        //Positive values make the lift go backwards
+        //Negative values make the lift go forwards
+        robot.liftPitch(200, 0.05);
+
+        //sleep(100);
+        //robot.strafeR(1100, 500);
+        //robot.goStraight(500, 500);
+        //robot.strafeL(50, 100);
+        //robot.newTurnFunction(90);
+        //robot.goStraight(200, 100);
 
         // Shutdown motors when the code ends
         robot.stopMotors();
