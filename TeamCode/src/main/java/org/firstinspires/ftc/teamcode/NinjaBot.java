@@ -9,6 +9,7 @@ public class NinjaBot {
   // Define motors
   public DcMotor leftDrive = null;
   public DcMotor rightDrive = null;
+  public Servo claw = null;
 
   // define constants and other variabes
 
@@ -31,6 +32,8 @@ public class NinjaBot {
     rightDrive = hwMap.get(DcMotor.class, "right");
 
     leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+    claw = hwMap.get(Servo.class, "claw");
   }
 
   // define functions relating to the control of motors of the robot in general.
