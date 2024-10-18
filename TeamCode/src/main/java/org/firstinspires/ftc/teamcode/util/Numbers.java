@@ -7,7 +7,7 @@ public class Numbers {
      * @return The angle converted to a 0 to 360 range
      */
     public static double normalizeAngle(double angle) {
-        return angle > 0 ? 360 - angle : angle;
+        return Math.abs(angle > 0 ? 360 - angle : angle);
     }
 
     /**
