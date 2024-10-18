@@ -88,9 +88,11 @@ public class ServoMonkey implements NKNComponent {
 
             case TARGET_FORWARD:
                 intakeServoHandler.setServoPower(1.0);
+                break;
 
             case TARGET_BACKWARD:
                 intakeServoHandler.setServoPower(-1.0);
+                break;
         }
     }
 
