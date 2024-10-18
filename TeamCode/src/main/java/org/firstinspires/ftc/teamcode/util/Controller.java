@@ -68,47 +68,84 @@ public class Controller {
 
     public boolean getButton(Button button) {
         Gamepad g = currentGamepad;
-        return switch (button) {
-            case A -> g.a;
-            case B -> g.b;
-            case X -> g.x;
-            case Y -> g.y;
-            case Guide -> g.guide;
-            case Back -> g.back;
-            case Options -> g.options;
-            case Cross -> g.cross;
-            case Circle -> g.circle;
-            case Square -> g.square;
-            case Triangle -> g.triangle;
-            case Share -> g.share;
-            case Start -> g.start;
-            case PSButton -> g.ps;
-            case Touchpad -> g.touchpad;
-            case TouchpadFinger1 -> g.touchpad_finger_1;
-            case TouchpadFinger2 -> g.touchpad_finger_2;
-            case LeftBumper -> g.left_bumper;
-            case RightBumper -> g.right_bumper;
-            case LeftTrigger -> getAxis(Axis.LeftTrigger) > 0;
-            case RightTrigger -> getAxis(Axis.RightTrigger) > 0;
-            case LeftStick -> g.left_stick_button;
-            case RightStick -> g.right_stick_button;
-        };
+        switch (button) {
+            case A:
+                return g.a;
+            case B:
+                return g.b;
+            case X:
+                return g.x;
+            case Y:
+                return g.y;
+            case Guide:
+                return g.guide;
+            case Back:
+                return g.back;
+            case Options:
+                return g.options;
+            case Cross:
+                return g.cross;
+            case Circle:
+                return g.circle;
+            case Square:
+                return g.square;
+            case Triangle:
+                return g.triangle;
+            case Share:
+                return g.share;
+            case Start:
+                return g.start;
+            case PSButton:
+                return g.ps;
+            case Touchpad:
+                return g.touchpad;
+            case TouchpadFinger1:
+                return g.touchpad_finger_1;
+            case TouchpadFinger2:
+                return g.touchpad_finger_2;
+            case LeftBumper:
+                return g.left_bumper;
+            case RightBumper:
+                return g.right_bumper;
+            case LeftTrigger:
+                return getAxis(Axis.LeftTrigger) > 0;
+            case RightTrigger:
+                return getAxis(Axis.RightTrigger) > 0;
+            case LeftStick:
+                return g.left_stick_button;
+            case RightStick:
+                return g.right_stick_button;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public float getAxis(Axis axis) {
         Gamepad g = currentGamepad;
-        return switch (axis) {
-            case LeftStickX -> Numbers.deadzone(g.left_stick_x, stickDeadzone);
-            case LeftStickY -> Numbers.deadzone(g.left_stick_y, stickDeadzone);
-            case RightStickX -> Numbers.deadzone(g.right_stick_x, stickDeadzone);
-            case RightStickY -> Numbers.deadzone(g.right_stick_y, stickDeadzone);
-            case LeftTrigger -> g.left_trigger;
-            case RightTrigger -> g.right_trigger;
-            case TouchpadFinger1X -> g.touchpad_finger_1_x;
-            case TouchpadFinger1Y -> g.touchpad_finger_1_y;
-            case TouchpadFinger2X -> g.touchpad_finger_2_x;
-            case TouchpadFinger2Y -> g.touchpad_finger_2_y;
-        };
+        switch (axis) {
+            case LeftStickX:
+                return Numbers.deadzone(g.left_stick_x, stickDeadzone);
+            case LeftStickY:
+                return Numbers.deadzone(g.left_stick_y, stickDeadzone);
+            case RightStickX:
+                return Numbers.deadzone(g.right_stick_x, stickDeadzone);
+            case RightStickY:
+                return Numbers.deadzone(g.right_stick_y, stickDeadzone);
+            case LeftTrigger:
+                return g.left_trigger;
+            case RightTrigger:
+                return g.right_trigger;
+            case TouchpadFinger1X:
+                return g.touchpad_finger_1_x;
+            case TouchpadFinger1Y:
+                return g.touchpad_finger_1_y;
+            case TouchpadFinger2X:
+                return g.touchpad_finger_2_x;
+            case TouchpadFinger2Y:
+                return g.touchpad_finger_2_y;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
 //    public boolean buttonWasPressed
