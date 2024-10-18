@@ -56,27 +56,24 @@ public class Teleop extends OpMode {
         if (gamepad1.back)
             chassis.imu.resetYaw();
 
-        // New Field Relative movement!
-        // Thanks gm0!
-        double verticalMovePower = moveXInput * Math.sin(-yaw) + moveYInput * Math.cos(-yaw);
-        double horizontalMovePower = moveXInput * Math.cos(-yaw) - moveYInput * Math.sin(-yaw);
+        double inputAngle;
+        double movementAngle;
+        double verticalMovePower;
+        double horizontalMovePower;
+
+        if (moveYInput == 0 && moveXInput == 0) {
+            verticalMovePower = 0;
+            horizontalMovePower = 0;
+        } else {
+            inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
+            movementAngle = inputAngle + normalYaw;
+            double magnitude = Math.sqrt(Math.pow(moveXInput, 2) + Math.pow(moveYInput, 2));
+            verticalMovePower = Math.cos(Math.toRadians(movementAngle)) * magnitude;
+            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle)) * magnitude * HORIZONTAL_BALANCE;
+        }
 
         // Correct for the imperfect strafing
         horizontalMovePower *= HORIZONTAL_BALANCE;
-
-        // Old Field Relative movement (my b)
-//        double inputAngle;
-//        double movementAngle;
-//        if (moveYInput == 0 && moveXInput == 0) {
-//            verticalMovePower = 0;
-//            horizontalMovePower = 0;
-//        } else {
-//            inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
-//            movementAngle = inputAngle + absoluteYaw;
-//            double magnitude = Math.sqrt(Math.pow(moveXInput, 2) + Math.pow(moveYInput, 2));
-//            verticalMovePower = Math.cos(Math.toRadians(movementAngle)) * magnitude;
-//            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle)) * magnitude * HORIZONTAL_BALANCE;
-//        }
 
         double turnPower = -rotationInput;
 
