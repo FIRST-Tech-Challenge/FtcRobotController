@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.util.Numbers;
 
@@ -15,6 +16,7 @@ public class Teleop extends OpMode {
 
     private YawPitchRollAngles orientation;
     private double yaw;
+    private double yawRad;
     private double normalYaw;
 
     // Gamepad States
@@ -39,10 +41,8 @@ public class Teleop extends OpMode {
         // Update the orientation of the robot each loop
         orientation = chassis.imu.getRobotYawPitchRollAngles();
         yaw = orientation.getYaw();
+        yawRad = orientation.getYaw(AngleUnit.RADIANS);
         normalYaw = Numbers.normalizeAngle(normalYaw);
-
-        telemetry.addData("Yaw", yaw);
-        telemetry.addData("Normal Yaw", normalYaw);
 
         float moveXInput = gamepad1.left_stick_x;
         float moveYInput = -gamepad1.left_stick_y;
@@ -59,24 +59,27 @@ public class Teleop extends OpMode {
         if (gamepad1.back)
             chassis.imu.resetYaw();
 
-        double inputAngle;
-        double movementAngle;
-        double verticalMovePower;
-        double horizontalMovePower;
-
-        if (moveYInput == 0 && moveXInput == 0) {
-            verticalMovePower = 0;
-            horizontalMovePower = 0;
-        } else {
-            inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
-            movementAngle = inputAngle + normalYaw;
-            double magnitude = Math.sqrt(Math.pow(moveXInput, 2) + Math.pow(moveYInput, 2));
-            verticalMovePower = Math.cos(Math.toRadians(movementAngle)) * magnitude;
-            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle)) * magnitude * HORIZONTAL_BALANCE;
-        }
+        // New Field Relative movement!
+        // Thanks gm0!
+        double verticalMovePower = moveXInput * Math.sin(-yawRad) + moveYInput * Math.cos(-yawRad);
+        double horizontalMovePower = moveXInput * Math.cos(-yawRad) - moveYInput * Math.sin(-yawRad);
 
         // Correct for the imperfect strafing
         horizontalMovePower *= HORIZONTAL_BALANCE;
+
+        // Old Field Relative movement (my b)
+//        double inputAngle;
+//        double movementAngle;
+//        if (moveYInput == 0 && moveXInput == 0) {
+//            verticalMovePower = 0;
+//            horizontalMovePower = 0;
+//        } else {
+//            inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
+//            movementAngle = inputAngle + absoluteYaw;
+//            double magnitude = Math.sqrt(Math.pow(moveXInput, 2) + Math.pow(moveYInput, 2));
+//            verticalMovePower = Math.cos(Math.toRadians(movementAngle)) * magnitude;
+//            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle)) * magnitude * HORIZONTAL_BALANCE;
+//        }
 
         double turnPower = -rotationInput;
 
