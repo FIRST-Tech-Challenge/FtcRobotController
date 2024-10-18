@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Controller Mecanum Drive")
+@TeleOp(name = "Main Mecanum Drive")
 public class MecanumTeleOp extends LinearOpMode {
 
     @Override
@@ -16,18 +16,29 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
         DcMotor sliderMotor = hardwareMap.dcMotor.get("sliderMotor");
-        DcMotor armMotor = hardwareMap.dcMotor.get("armMotor");
+        DcMotor pickUpMotor = hardwareMap.dcMotor.get("pickUpMotor");
         Servo dropperServoRight = hardwareMap.servo.get("dropperServoRight");
         Servo dropperServoLeft = hardwareMap.servo.get("dropperServoLeft");
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+
+            frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             double y = gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x * 1.1;
             double rx = -gamepad1.right_stick_x;
@@ -35,15 +46,15 @@ public class MecanumTeleOp extends LinearOpMode {
             double sliderDown = -gamepad1.left_trigger;
             boolean dropperDown = gamepad1.dpad_down;
             boolean dropperUp = gamepad1.dpad_up;
-            boolean armUp = gamepad1.a;
-            boolean armDown = gamepad1.b;
-            boolean armStop = gamepad1.x;
+            boolean pickUp = gamepad1.a;
+            boolean pickDown = gamepad1.b;
+            boolean pickStop = gamepad1.x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            double frontLeftPower = ((y + x + rx) / denominator) / 1.5;
+            double frontRightPower = ((y - x - rx) / denominator) / 1.5;
+            double backLeftPower = ((y - x + rx) / denominator) / 1.5;
+            double backRightPower = ((y + x - rx) / denominator) / 1.5;
 
             if (sliderUp > 0 && sliderDown == 0) {
                 sliderMotor.setPower(sliderUp);
@@ -52,19 +63,19 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             if (dropperUp) {
-                dropperServoRight.setPosition(0.25);
-                dropperServoLeft.setPosition(0.25);
+                dropperServoRight.setPosition(0.35);
+                dropperServoLeft.setPosition(0.35);
             } else if (dropperDown) {
-                dropperServoRight.setPosition(-0.42);
-                dropperServoLeft.setPosition(-0.42);
+                dropperServoRight.setPosition(-0.35);
+                dropperServoLeft.setPosition(-0.35);
             }
 
-            if (armUp) {
-                armMotor.setPower(0.75);
-            } else if (armDown) {
-                armMotor.setPower(-0.75);
-            } else if (armStop) {
-                armMotor.setPower(0);
+            if (pickUp) {
+                pickUpMotor.setPower(-0.65);
+            } else if (pickDown) {
+                pickUpMotor.setPower(0.75);
+            } else if (pickStop) {
+                pickUpMotor.setPower(0);
             }
 
             frontLeftMotor.setPower(frontLeftPower);
@@ -80,9 +91,13 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("dropperDown", dropperUp);
             telemetry.addData("dropperUp", dropperDown);
             telemetry.addData("dropperPosition", dropperServoRight.getPosition());
-            telemetry.addData("armUp", armUp);
-            telemetry.addData("armDown", armDown);
-            telemetry.addData("armStop", armStop);
+            telemetry.addData("pickUp", pickUp);
+            telemetry.addData("pickDown", pickDown);
+            telemetry.addData("pickStop", pickStop);
+            telemetry.addData("frontLeftMotor", frontLeftMotor.getCurrentPosition());
+            telemetry.addData("frontRightMotor", frontRightMotor.getCurrentPosition());
+            telemetry.addData("backLeftMotor", backLeftMotor.getCurrentPosition());
+            telemetry.addData("backRightMotor", backRightMotor.getCurrentPosition());
             telemetry.update();
         }
     }
