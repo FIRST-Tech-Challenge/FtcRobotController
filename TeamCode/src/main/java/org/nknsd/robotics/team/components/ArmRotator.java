@@ -20,16 +20,16 @@ public class ArmRotator implements NKNComponent {
     double target;
 
     final double threshold;
-    final double K;
+    final double P_CONSTANT;
     double diff;
     long targetTime = 0;
     double current;
 
 
-    public ArmRotator(String motorName, double threshold, double K){
+    public ArmRotator(String motorName, double threshold, double P_CONSTANT){
         this.motorName = motorName;
         this.threshold = threshold;
-        this.K = K;
+        this.P_CONSTANT = P_CONSTANT;
     }
 
     public void link(PotentiometerHandler potHandler){
@@ -91,6 +91,6 @@ public class ArmRotator implements NKNComponent {
         if (Math.abs(diff) <= threshold) {
             return 0;
         }
-        return (diff * K);
+        return (diff * P_CONSTANT);
     }
 }
