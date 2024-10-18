@@ -14,6 +14,14 @@ public class Numbers {
         return -(angle > 0 ? 360 - angle : angle);
     }
 
+    public static double clip(double number, double min, double max) {
+        if (number < min) {
+            return min;
+        } else {
+            return Math.min(number, max);
+        }
+    }
+
     /**
      * Rounds a double by x places
      * @param num The double to round
@@ -67,10 +75,11 @@ public class Numbers {
      */
     private static final double _tolerance = 0.5;
     public static double turnCorrectionSpeed(double current, double target) {
-        double left = Numbers.normalizeAngle(target - current);
-        double right = Numbers.normalizeAngle(current - target);
+        double left = normalizeAngle(target - current);
+        double right = normalizeAngle(current - target);
         double angle = Math.abs(left) < Math.abs(right) ? -left : right;
         if (Math.abs(angle) < 0.5) return 0;
-        return Range.clip(angle / 90, -1, 1);
+        double speed = Range.clip(angle / 90, -1, 1);
+        return Math.pow(speed, 3);
     }
 }
