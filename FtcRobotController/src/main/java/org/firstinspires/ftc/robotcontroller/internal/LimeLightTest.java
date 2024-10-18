@@ -19,15 +19,18 @@ public class LimeLightTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        imu = hardwareMap.get(IMU.class, "imu");
 
         telemetry.setMsTransmissionInterval(11);
 
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(9);
 
         /*
          * Starts polling for data.
          */
         limelight.start();
+
+        waitForStart();
 
         while (opModeIsActive()) {
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
