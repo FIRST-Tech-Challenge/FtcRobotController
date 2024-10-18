@@ -116,15 +116,16 @@ public class Testing_Oct18 extends LinearOpMode {
 //            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
 //            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
 //            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-//            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            double twr = gamepad1.a ? 0.75 : 0.0;
+//            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B ga
+            double twr = gamepad1.dpad_down ? 0.75 : 0.0;
+            twr = gamepad1.dpad_up ? -0.75 : 0.0;
 
 
             // Send calculated power to wheels
             //!!!!Using multiplier to slow Back wheels, attempt to make speeds match!!!!
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower*0.74);
+            leftBackDrive.setPower(leftBackPower*0.76);
             rightBackDrive.setPower(rightBackPower*0.76);
             leftCH.setPower(twr);
             rightCH.setPower(twr);
