@@ -41,6 +41,9 @@ public class Teleop extends OpMode {
         yaw = orientation.getYaw();
         normalYaw = Numbers.normalizeAngle(normalYaw);
 
+        telemetry.addData("Yaw", yaw);
+        telemetry.addData("Normal Yaw", normalYaw);
+
         float moveXInput = gamepad1.left_stick_x;
         float moveYInput = -gamepad1.left_stick_y;
         float rotationInput = gamepad1.right_stick_x;
