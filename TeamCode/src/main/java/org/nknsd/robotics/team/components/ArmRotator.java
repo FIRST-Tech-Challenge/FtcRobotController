@@ -21,15 +21,18 @@ public class ArmRotator implements NKNComponent {
 
     final double threshold;
     final double P_CONSTANT;
+    final double I_CONSTANT;
     double diff;
     long targetTime = 0;
     double current;
+    double resError;
 
 
-    public ArmRotator(String motorName, double threshold, double P_CONSTANT){
+    public ArmRotator(String motorName, double threshold, double P_CONSTANT, double I_CONSTANT){
         this.motorName = motorName;
         this.threshold = threshold;
         this.P_CONSTANT = P_CONSTANT;
+        this.I_CONSTANT = I_CONSTANT;
     }
 
     public void link(PotentiometerHandler potHandler){
@@ -81,6 +84,7 @@ public class ArmRotator implements NKNComponent {
         telemetry.addData("armTarget",target);
         telemetry.addData("armDifference", diff);
         telemetry.addData("Motor Power", motor.getPower());
+        telemetry.addData("residualError", resError);
 
     }
     public void setTarget(double target){
@@ -88,9 +92,11 @@ public class ArmRotator implements NKNComponent {
     }
     private double controlLoop(double current){
         diff = (target - current);
+        resError += diff;
         if (Math.abs(diff) <= threshold) {
+            resError = 0;
             return 0;
         }
-        return (diff * P_CONSTANT);
+        return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
     }
 }
