@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.IntoTheDeep24_25.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -16,25 +13,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/* This is an autonomous OpMode for FTC robots using Mecanum drive, designed to autonomously drive
- * towards an AprilTag based on its distance, yaw, and bearing. The robot will automatically adjust
- * its motion until it reaches a desired distance from the detected AprilTag.
- */
-
-@Autonomous(name = "Autonomous Drive to AprilTag", group = "Autonomous")
+@Autonomous(name = "AprilTag Detection Only", group = "Autonomous")
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
 
-    // Constants for driving towards the AprilTag
-    final double DESIRED_DISTANCE = 12.0; // Target distance in inches from AprilTag
-    final double SPEED_GAIN  =  0.02;     // Forward speed gain
-    final double STRAFE_GAIN =  0.015;    // Strafe speed gain
-    final double TURN_GAIN   =  0.01;     // Turn speed gain
-
-    final double MAX_AUTO_SPEED = 0.5;    // Maximum forward speed
-    final double MAX_AUTO_STRAFE = 0.5;   // Maximum strafe speed
-    final double MAX_AUTO_TURN = 0.3;     // Maximum turn speed
-
-    private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
@@ -44,18 +25,8 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // Initialize the AprilTag detection system and hardware map
+        // Initialize the AprilTag detection system
         initAprilTag();
-
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "FrontLeft");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "FrontRight");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "BackLeft");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "BackRight");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Set exposure for webcam to reduce motion blur
         if (USE_WEBCAM) {
@@ -82,54 +53,18 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
             }
 
             if (targetFound) {
-                // Calculate distance, yaw, and bearing errors
-                double rangeError = desiredTag.ftcPose.range - DESIRED_DISTANCE;
-                double yawError = desiredTag.ftcPose.yaw;
-                double headingError = desiredTag.ftcPose.bearing;
-
-                // Calculate drive, strafe, and turn speeds based on the errors
-                double drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-                double turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-
-                telemetry.addData("Driving", "Drive %5.2f, Strafe %5.2f, Turn %5.2f", drive, strafe, turn);
-                telemetry.update();
-
-                // Move the robot according to calculated values
-                moveRobot(drive, strafe, turn);
+                // Display tag information in the telemetry
+                telemetry.addData("AprilTag Detected", "ID: %d", desiredTag.id);
+                telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
             } else {
                 telemetry.addData("Status", "No AprilTag detected. Searching...");
-                telemetry.update();
-                // Stop the robot if no target is found
-                moveRobot(0, 0, 0);
             }
 
+            telemetry.update();
             sleep(10); // Small delay to allow smooth updates
         }
-    }
-
-    // Method to move the robot based on calculated speeds
-    public void moveRobot(double x, double y, double yaw) {
-        double leftFrontPower = x - y - yaw;
-        double rightFrontPower = x + y + yaw;
-        double leftBackPower = x + y - yaw;
-        double rightBackPower = x - y + yaw;
-
-        double maxPower = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        maxPower = Math.max(maxPower, Math.abs(leftBackPower));
-        maxPower = Math.max(maxPower, Math.abs(rightBackPower));
-
-        if (maxPower > 1.0) {
-            leftFrontPower /= maxPower;
-            rightFrontPower /= maxPower;
-            leftBackPower /= maxPower;
-            rightBackPower /= maxPower;
-        }
-
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
     }
 
     // Initialize the AprilTag detection system
