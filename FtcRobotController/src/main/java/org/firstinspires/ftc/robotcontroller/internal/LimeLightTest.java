@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.robotcontroller.internal;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -35,7 +37,7 @@ public class LimeLightTest extends LinearOpMode {
             limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
             LLResult result = limelight.getLatestResult();
             if (result != null) {
-                // print some data for each detected target
+                // Print some data for each detected target
                 if (result.isValid()) {
                     // Access fiducial results
                     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
