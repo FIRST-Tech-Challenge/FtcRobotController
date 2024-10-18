@@ -24,7 +24,7 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  */
 
 @TeleOp(name="Testing 10/17/24", group="Linear OpMode")
-public class Testing_Oct17 extends LinearOpMode {
+public class Testing_Oct18 extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -124,7 +124,7 @@ public class Testing_Oct17 extends LinearOpMode {
             //!!!!Using multiplier to slow Back wheels, attempt to make speeds match!!!!
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower*0.76);
+            leftBackDrive.setPower(leftBackPower*0.74);
             rightBackDrive.setPower(rightBackPower*0.76);
             leftCH.setPower(twr);
             rightCH.setPower(twr);
