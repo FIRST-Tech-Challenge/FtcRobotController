@@ -66,12 +66,11 @@ public class Numbers {
      * @return The turn correction speed
      */
     private static final double _tolerance = 0.5;
-    public static double turnCorrectionSpeed(double target, double yaw) {
-        double difference = (target - yaw) / 90;
-
-        if (Math.abs(difference) <= _tolerance)
-            return 0;
-
-        return Range.clip(difference, -1, 1);
+    public static double turnCorrectionSpeed(double current, double target) {
+        double left = Numbers.normalizeAngle(target - current);
+        double right = Numbers.normalizeAngle(current - target);
+        double angle = Math.abs(left) < Math.abs(right) ? -left : right;
+        if (Math.abs(angle) < 0.5) return 0;
+        return Range.clip(angle / 90, -1, 1);
     }
 }

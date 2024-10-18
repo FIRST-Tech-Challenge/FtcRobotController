@@ -17,7 +17,7 @@ public class DebugTeleop extends OpMode {
 
     @Override
     public void init() {
-        chassis = new DriveChassis(this);
+
     }
 
     boolean speedUpInputLast = false;
@@ -58,7 +58,7 @@ public class DebugTeleop extends OpMode {
         telemetry.addLine("--- Input ---");
         telemetry.addLine("Gamepad 1");
         telemetry.addData("Left Stick", moveXInput + " / " + moveYInput);
-        telemetry.addData("Right Stick", moveXInput + " / " + moveYInput);
+        telemetry.addData("Right Stick", rotationInput);
         telemetry.addData("Right Bumper", speedUpInput);
         telemetry.addData("Left Bumper", speedDownInput);
         telemetry.addLine();
