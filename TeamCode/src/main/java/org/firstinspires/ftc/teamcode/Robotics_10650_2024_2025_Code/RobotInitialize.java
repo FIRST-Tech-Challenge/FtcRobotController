@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
@@ -19,6 +20,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+
 // How to connect to robot procedure
 
 public class RobotInitialize {
@@ -26,8 +29,10 @@ public class RobotInitialize {
     // Initialization Phase
 
     // Create servo variables (currently not available)
-    // Servo pitch;
-    // Servo lClaw;
+     Servo claw;
+     Servo pitch;
+     Servo roll;
+     DcMotor lift;
     // Servo rClaw;
 
     // Create the empty normal motor variables
@@ -68,11 +73,20 @@ public class RobotInitialize {
         fRight = opMode.hardwareMap.get(DcMotorEx.class, "fright");
         bLeft = opMode.hardwareMap.get(DcMotorEx.class, "bleft");
 
+        lift = opMode.hardwareMap.get(DcMotorEx.class, "lift");
+        claw = opMode.hardwareMap.get(Servo.class, "claw");
+        roll = opMode.hardwareMap.get(Servo.class, "roll");
+        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
         // The front left and back right motors are reversed so all wheels go in the same direction
         // When a positive or negative value is used
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        lift.setTargetPosition(0);
+        claw.setPosition(0);
+        roll.setPosition(0);
+        pitch.setPosition(0);
 
 // map the servos to the hardware map (not currently in use but will be used later)
 //        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
@@ -100,6 +114,12 @@ public class RobotInitialize {
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setZeroPowerBehavior(BRAKE);
+
+
 
 
         // Initialize Gyroscope
@@ -209,6 +229,22 @@ public class RobotInitialize {
             }
         }
         stopMotors();
+    }
+    //needs to move counterclockwise to move up
+    public void lift(int position, double velocity){
+        lift.setTargetPosition(position);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (Math.abs(lift.getCurrentPosition()-position)>10) {
+            opMode.telemetry.addData("needs to be >10", Math.abs(lift.getCurrentPosition()-position));
+            opMode.telemetry.addData("position", lift.getCurrentPosition());
+            opMode.telemetry.update();
+            if (lift.getCurrentPosition()<position) {
+                lift.setPower(velocity);
+
+            } else if (lift.getCurrentPosition()<position){
+                lift.setPower(-velocity);
+            }
+        }
     }
 
     // Makes the robot strafe left by determining where the robot is currently

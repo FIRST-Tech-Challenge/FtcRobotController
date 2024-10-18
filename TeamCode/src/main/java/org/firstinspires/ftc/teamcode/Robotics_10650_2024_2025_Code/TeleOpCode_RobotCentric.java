@@ -53,6 +53,26 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData("L2 pos", gamepad1.left_trigger);
             telemetry.update();
         }
+        if(gamepad1.y){
+            //testing upper bound of lift
+            robot.lift.setPower(.25);
+            telemetry.addData("position", robot.lift.getCurrentPosition());
+            telemetry.update();
+        }
+        if (gamepad1.right_trigger!=0){
+            //forward
+            straightMovementPower = Math.pow(gamepad1.right_trigger,3) * 5000;
+        }
+        if (gamepad1.b){
+            //slow
+            straightMovementPower = Math.pow(gamepad1.right_trigger,3) * 1000;
+        }
+        if (gamepad1.a){
+            //boost
+            straightMovementPower = Math.pow(gamepad1.right_trigger,3) * 10000;
+        }
+
+
         // accelerationAdditive is 1428.57
         // The intended result is that when the control sticks are not stationary the speed slowly
         // increases until it gets to the max value of 10000 or -10000

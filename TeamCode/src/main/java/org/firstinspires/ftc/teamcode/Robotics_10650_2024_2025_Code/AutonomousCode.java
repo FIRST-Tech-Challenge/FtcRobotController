@@ -24,12 +24,17 @@ public class AutonomousCode extends LinearOpMode {
         // Phase 1 auto program (go forward, raise arm device, place pre-loaded sample, then strafe
         // into the ascent zone and use the arm device to touch the first bar
         // Fairly accurate but might need improvement
-       robot.goStraight(850, 500);
-       robot.strafeR(1100, 500);
-       robot.goStraight(500, 500);
-       robot.strafeL(50, 100);
-       robot.newTurnFunction(90);
-       robot.goStraight(200, 100);
+
+        //robot.claw.setPower(.5);
+//       robot.goStraight(850, 500);
+//       sleep(100);
+//        robot.lift(500, 0.75);
+//        sleep(100);
+//        robot.strafeR(1100, 500);
+//       robot.goStraight(500, 500);
+//       robot.strafeL(50, 100);
+//       robot.newTurnFunction(90);
+//       robot.goStraight(200, 100);
 
         // Shutdown motors when the code ends
         robot.stopMotors();
