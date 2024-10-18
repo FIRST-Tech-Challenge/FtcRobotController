@@ -23,6 +23,7 @@ public class AutoExample extends LinearOpMode{
         // Initialization code here
         robot.init(hardwareMap);
 
+        telemetry.addData("Vortex FTC14969 Robot", "Initialized");
 
         waitForStart();
         // Code to run after the driver hits PLAY
@@ -53,6 +54,7 @@ public class AutoExample extends LinearOpMode{
 
         // Stop
             robot.chassis.stopDriveMotors();
+        telemetry.addData("Vortex FTC14969 Robot", "Stopped");
 
     }
 }
