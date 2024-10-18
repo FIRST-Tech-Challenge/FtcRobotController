@@ -2,6 +2,7 @@ package org.nknsd.robotics.team.components;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -39,6 +40,7 @@ public class ArmRotator implements NKNComponent {
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         motor = hardwareMap.dcMotor.get(motorName);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
         return true;
     }
 
@@ -68,16 +70,17 @@ public class ArmRotator implements NKNComponent {
         if(currentTime >= targetTime) {
             current = potHandler.getPotVoltage();
             double armPower = controlLoop(current);
-
+            motor.setPower(armPower);
             targetTime = currentTime+1;
         }
     }
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("armPosition",target);
-        telemetry.addData("armTarget",current);
+        telemetry.addData("armPosition",current);
+        telemetry.addData("armTarget",target);
         telemetry.addData("armDifference", diff);
+        telemetry.addData("Motor Power", motor.getPower());
 
     }
     public void setTarget(double target){

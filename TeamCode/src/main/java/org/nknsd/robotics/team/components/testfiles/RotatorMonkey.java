@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RotatorMonkey implements NKNComponent {
     private ArmRotator armRotator;
-    private Tests currentTest;
+    private Tests currentTest = Tests.DO_NOTHING;
 
     private enum Tests {
         DO_NOTHING(1000),
@@ -88,15 +88,15 @@ public class RotatorMonkey implements NKNComponent {
                 break;
 
             case TARGET_0:
-                armRotator.setTarget(0);
+                armRotator.setTarget(1.4);
                 break;
 
             case TARGET_0_5:
-                armRotator.setTarget(0.5);
+                armRotator.setTarget(1.7);
                 break;
 
             case TARGET_1:
-                armRotator.setTarget(1);
+                armRotator.setTarget(2.4);
                 break;
         }
     }
