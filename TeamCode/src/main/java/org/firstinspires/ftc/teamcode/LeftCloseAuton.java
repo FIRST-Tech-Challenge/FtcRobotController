@@ -37,7 +37,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /*
@@ -66,9 +65,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="autonDrivingFunctions", group="Robot")
+@Autonomous(name="LeftCloseAuton", group="Robot")
 //@Disabled
-public class AutonDrivingFunctions extends LinearOpMode {
+public class LeftCloseAuton extends LinearOpMode {
 
     IMU imu;
 
@@ -162,8 +161,24 @@ public class AutonDrivingFunctions extends LinearOpMode {
         //        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
 //        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         while (opModeIsActive()){
-            driveForward(0.5,20.0,30.0);
-            turnLeft(0.5, -90.0);
+            driveForward(0.5,25,30);
+            //sampleTower place preloaded specimen
+            sleep(3000);
+            turnLeft(0.5,90);
+            driveForward(0.5,48,30);
+            turnLeft(0.5,-90);
+            //samplePickup pick up neutral sample
+            sleep(3000);
+            turnLeft(0.5,180);
+            driveForward(0.5,10,30);
+            //sampleTower up, sample into high basket
+            sleep(2000);
+            turnLeft(0.5,180);
+            sleep(30000);
+            driveForward(0.5,96,30);
+            turnLeft(0.5,-45);
+            driveForward(0.5,10,30);
+
             getYaw();
             telemetry.addData("Path", "Complete");
             telemetry.update();
