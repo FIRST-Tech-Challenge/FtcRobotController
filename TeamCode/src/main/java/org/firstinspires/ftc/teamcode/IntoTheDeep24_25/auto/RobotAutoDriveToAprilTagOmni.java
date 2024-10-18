@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
  * its motion until it reaches a desired distance from the detected AprilTag.
  */
 
-@Autonomous(name = "Autonomous Drive to AprilTag", group = "Autonomous")
-public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
 
+  @Autonomous(name = "Autonomous Drive to AprilTag", group = "Autonomous")
+  public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
     // Constants for driving towards the AprilTag
     final double DESIRED_DISTANCE = 12.0; // Target distance in inches from AprilTag
     final double SPEED_GAIN  =  0.02;     // Forward speed gain
@@ -46,11 +46,6 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
 
         // Initialize the AprilTag detection system and hardware map
         initAprilTag();
-
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "FrontLeft");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "FrontRight");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "BackLeft");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "BackRight");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
