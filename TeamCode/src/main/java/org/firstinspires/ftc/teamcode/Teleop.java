@@ -7,7 +7,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Control Mapping
@@ -15,15 +14,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *      Left Joystick X - Strafe
  *      Left Joystick Y - Forward Backward
  *      Right Joystick X - Pivot
- *  GAMEPAD2 - Arm, Arm Pivot, Intake, & Lift Sequencing
+ *      Down Pad - Pushoff
+ *      Up Pad - Pushoff reset
+ *      Right Trigger = raise lift
+ *      Left Trigger = lower lift
+ *      
+ *  GAMEPAD2 - Arm, Arm Pivot, Intake
  *      Right Trigger - Intake
- *      Left Trigger - Outtake
- *      Right Bumper - Extend Arm
+ *      Left Trigger - Extend Arm
+ *      Right Bumper - Outtake
  *      Left Bumper - Retract Arm
- *      X Button - Raise Arm
- *      Y Button - Lower Arm
- *      A Button - Low Lift
- *      B Button - High Lift
+ *      Y Button - Raise Arm
+ *      A Button - Lower Arm
  *
  *
  *  NOTE: Low lift must be completed before high lift is engaged. This is due to rules and the sequencing of getting to
@@ -44,6 +46,7 @@ public class Teleop extends LinearOpMode {
         private static final double LEFT_LIFT_MIN = 22;
         private static final double RIGHT_LIFT_MAX = -6270;
         private static final double RIGHT_LIFT_MIN = -62;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,7 +70,7 @@ public class Teleop extends LinearOpMode {
                 bot.setIntakePosition(-1.0);
             }
             //when y button is pressed, rotates the opposite way
-            else if (gamepad2.left_trigger > 0.01) {
+            else if (gamepad2.left_bumper) {
                 bot.setIntakePosition(1.0);
             }
             //when no button is pressed, nothing rotates
@@ -106,7 +109,7 @@ public class Teleop extends LinearOpMode {
             bot.setDriveTrain(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
 
             //extend arm controls
-            if(gamepad2.right_bumper && bot.getExtendPos() >= MAX_EXTEND){
+            if(gamepad2.left_trigger > 0.01 && bot.getExtendPos() >= MAX_EXTEND){
                 bot.setExtendPower(-1.0);
             } else if (gamepad2.left_bumper && bot.getExtendPos() <= MIN_EXTEND){
                 bot.setExtendPower(1.0);
@@ -114,9 +117,9 @@ public class Teleop extends LinearOpMode {
                 bot.setExtendPower(0.0);
             }
 
-            if(gamepad2.a && bot.getArmPosition() <= MAX_PIVOT){
+            if(gamepad2.y && bot.getArmPosition() <= MAX_PIVOT){
                 bot.setPivotPower(0.75);
-            } else if(gamepad2.b && bot.getArmPosition() >= MIN_PIVOT){
+            } else if(gamepad2.a && bot.getArmPosition() >= MIN_PIVOT){
                 bot.setPivotPower(-0.75);
             } else {
                 bot.setPivotPower(0.0);

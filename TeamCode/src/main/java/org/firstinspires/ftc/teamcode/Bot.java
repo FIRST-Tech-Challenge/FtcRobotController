@@ -87,12 +87,12 @@ public class Bot {
         rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-//        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
-//        rightLift = map.get(DcMotor.class, "right_lift");
-//
-//
-//        extendArmMotor = map.get(DcMotor.class, "extend_arm");
-//        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
+        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
+        rightLift = map.get(DcMotor.class, "right_lift");
+
+
+        extendArmMotor = map.get(DcMotor.class, "extend_arm");
+        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
 
         leftPushoff = map.get(CRServo.class, "left_pushoff");
@@ -104,11 +104,11 @@ public class Bot {
         rightMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-//        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Set RunModes for Encoder Usage
         leftMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -116,11 +116,11 @@ public class Bot {
         rightMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-//        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//
-//        extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Set zero power behavior for motors
         leftMotorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -141,19 +141,19 @@ public class Bot {
         rightMotorFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotorBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
-//        leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
-//        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
-//
-//        extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-//        armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         leftPushoff.setDirection(CRServo.Direction.FORWARD);
         rightPushoff.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Servos for intake on the map
         //TODO Rename Intake servos to something better
-//        topIntake = map.get(CRServo.class, "top_intake");
-//        bottomIntake = map.get(CRServo.class, "bottom_intake");
+        topIntake = map.get(CRServo.class, "top_intake");
+        bottomIntake = map.get(CRServo.class, "bottom_intake");
 
         //TODO push off servos for lift
 
