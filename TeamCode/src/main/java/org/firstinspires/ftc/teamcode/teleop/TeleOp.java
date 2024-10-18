@@ -31,27 +31,20 @@ public class TeleOp extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
 
-
-
         waitForStart();
         while(opModeIsActive())
         {
-
             double forward = -controller.left_stick_y;
             double strafe = -controller.left_stick_x;
             double rotate = -controller.right_stick_x;
 
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            LLResult result = limelight.getLatestResult();
 
-            if (result != null) {
-                if (result.isValid()) {
-                    Pose3D botpose = result.getBotpose();
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("ty", result.getTy());
-                    telemetry.addData("Botpose", botpose.toString());
-                    telemetry.update();
-                }
+            if(limelight.isDataCorrect())
+            {
+                String[] distance =limelight.getDistanceInInches();
+                telemetry.addData("Limelight Distance: ", distance[0] + ", " + distance[1]);
+                telemetry.update();
             }
 
             robot.drive(forward, strafe, rotate);

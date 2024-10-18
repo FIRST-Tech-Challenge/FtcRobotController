@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class MechDrive {
-    public final double MAX_POWER = 0.9;
+    public final double MAX_POWER = 0.5;
     public DcMotorEx leftFront, leftBack, rightBack, rightFront;
     public final IMU imu;
 
@@ -56,7 +56,7 @@ public class MechDrive {
     }
     public void drive(double forward, double strafe, double rotate)
     {
-        strafe *= -1;
+        strafe *= 1;
         rotate *= -1;
         leftFront.setPower((forward + strafe + rotate));
         leftBack.setPower((forward - strafe + rotate));
