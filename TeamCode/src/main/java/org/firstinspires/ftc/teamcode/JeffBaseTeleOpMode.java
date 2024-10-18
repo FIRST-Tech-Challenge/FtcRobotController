@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
+@TeleOp(name = "Jeff Base Two Driver TeleOp", group = "Robot")
 
 public class JeffBaseTeleOpMode extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -54,13 +57,14 @@ public class JeffBaseTeleOpMode extends OpMode {
     final double INTAKE_DEPOSIT = 0.5;
 
     /* Variables to store the positions that the wrist should be set to when folding in, or folding out. */
-    final double WRIST_FOLDED_IN = 0.8333;
-    final double WRIST_FOLDED_OUT = 0.5;
+    final double WRIST_FOLDED_IN = 0.0;
+    final double WRIST_FOLDED_OUT = 0.6;
 
     /* A number in degrees that the triggers can adjust the arm position by */
     final double FUDGE_FACTOR = 15 * ARM_TICKS_PER_DEGREE;
 
     /* Variables that are used to set the arm to a specific position */
+
     double armPosition = (int) ARM_COLLAPSED_INTO_ROBOT;
     double armPositionFudgeFactor;
 
@@ -76,6 +80,10 @@ public class JeffBaseTeleOpMode extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftRear");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightRear");
+
+        intake = hardwareMap.get(CRServo.class, "intake");
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        armMotor = hardwareMap.get(DcMotor.class, "arm");
     }
 
     public void loop() {
@@ -87,20 +95,20 @@ public class JeffBaseTeleOpMode extends OpMode {
 
         if (gamepad2.dpad_up) {
             leftSlide.setTargetPosition(3000);
-            leftSlide.setPower(3.0);
+            leftSlide.setPower(0.5);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            rightSlide.setTargetPosition(3000);
-            rightSlide.setPower(3.0);
+            rightSlide.setTargetPosition(-3000);
+            rightSlide.setPower(0.5);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         } else if (gamepad2.dpad_down) {
             leftSlide.setTargetPosition(0);
-            leftSlide.setPower(3.0);
+            leftSlide.setPower(0.5);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             rightSlide.setTargetPosition(0);
-            rightSlide.setPower(3.0);
+            rightSlide.setPower(0.5);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else {
             leftSlide.setPower(0.0);

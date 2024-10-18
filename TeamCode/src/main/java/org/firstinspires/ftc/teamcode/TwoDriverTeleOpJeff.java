@@ -35,10 +35,5 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 @TeleOp(name = "Jeff Two Driver TeleOp", group = "Robot")
 
 //@Disabled
-public class TwoDriverTeleOpJeff extends BaseTeleOpMode {
-    @Override
-    public void loop() {
-        ElapsedTime runtime = new ElapsedTime();
-        telemetry.addData("Run Time:", "%d", runtime);
-    }
+public class TwoDriverTeleOpJeff extends JeffBaseTeleOpMode {
 }
