@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ExtensionMonkey implements NKNComponent {
     private ExtensionHandler extensionHandler;
-    private Tests currentTest;
+    private Tests currentTest = Tests.DO_NOTHING;
 
     private enum Tests {
         DO_NOTHING(1000),

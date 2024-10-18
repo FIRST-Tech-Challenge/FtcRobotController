@@ -13,7 +13,7 @@ import java.util.List;
 public class ExtensionMonkeyProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", false, 0.5);
+        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.8);
         components.add(extensionHandler);
         telemetryEnabled.add(extensionHandler);
 
