@@ -14,9 +14,13 @@ import static java.lang.Math.acos;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
+
+import java.text.MessageFormat;
 
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode{
@@ -46,7 +50,7 @@ public class MainTeleOp extends LinearOpMode{
             wrist.setPosition(0.5);
         }
     }
-    public void ArmMotorRaise(DcMotor armMotor)
+    public void ArmMotorRaise(DcMotorEx armMotor)
     {
         armMotor.setDirection(DcMotor.Direction.REVERSE);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -56,7 +60,7 @@ public class MainTeleOp extends LinearOpMode{
         armMotor.setPower(0.05);
         homeFlag = false;
     }
-    public void ArmMotorHome(DcMotor armMotor)
+    public void ArmMotorHome(DcMotorEx armMotor)
     {
         armMotor.setDirection(DcMotor.Direction.FORWARD);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -67,7 +71,7 @@ public class MainTeleOp extends LinearOpMode{
         homeFlag = true;
 
     }
-    public void ArmMotorCustom(DcMotor armMotor, int degrees)
+    public void ArmMotorCustom(DcMotorEx armMotor, int degrees)
     {
 
         //Total ticks for armMotor drivetrain revolution: 7125
@@ -118,20 +122,31 @@ public class MainTeleOp extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
+
+        //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
+        telemetry.setAutoClear(false);
+
         DcMotor leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         DcMotor leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         DcMotor rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         DcMotor rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        DcMotor armMotor;
-        DcMotor viperMotor;
+        DcMotorEx armMotor;
+        DcMotorEx viperMotor;
         Servo claw;
         Servo wrist;
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        viperMotor = hardwareMap.get(DcMotor.class, "viperMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        viperMotor = hardwareMap.get(DcMotorEx.class, "viperMotor");
 //        claw = hardwareMap.get(Servo.class, "claw");
 //        wrist = hardwareMap.get(Servo.class, "wrist");
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Call the function to initialize telemetry functions
+        initMotorTelemetry(armMotor);
+        initMotorTelemetry(viperMotor);
+        initGamepadTelemetry(gamepad1);
+        initGamepadTelemetry(gamepad2);
+
 
         waitForStart();
         while(opModeIsActive()){ //while loop for when program is active
@@ -181,7 +196,6 @@ public class MainTeleOp extends LinearOpMode{
             }
             if (gamepad1.dpad_up)
             {
-                telemetry.addData("Original Viper Position", viperMotor.getCurrentPosition());
                 ViperMotorCustom(viperMotor, 4.625);
             }
             if (gamepad1.dpad_down)
@@ -209,23 +223,44 @@ public class MainTeleOp extends LinearOpMode{
 //                else {homeFlag = false;}
 //            }
 
-            motorTelemetry(armMotor, "armMotor");
-            motorTelemetry(viperMotor, "current ViperMotor");
-            if (gamepad1.dpad_up)
-            {
-                telemetry.addData("dpad-up", "true");
-            } else {
-                telemetry.addData("dpad-up", "false");
-            }
             telemetry.update();
         }
-
     }
-    private void motorTelemetry( DcMotor motor, String caption)
+    //Initializes telemetry for a motor
+    private void initMotorTelemetry( DcMotorEx motor)
     {
-        int position;
-        position = motor.getCurrentPosition();
-        telemetry.addData(caption, position);
-        telemetry.addData("targetPosition", motor.getTargetPosition());
+        //Using functions for the telemetry addData method allows for the value to be updated each time the telemetry is updated
+        telemetry.addLine()
+            .addData("Pos", motor::getCurrentPosition)
+            .addData("Tgt", motor::getTargetPosition)
+            .addData("Pwr", "%.2f", motor::getPower)
+            .addData("Vel (ticks/s)", motor::getVelocity);
+        telemetry.update();
+    }
+    //Initializes telemetry for a gamepad
+    private void initGamepadTelemetry(Gamepad gamepad)
+    {
+        telemetry.addLine("gamepad 1")
+                .addData("X", () -> {return TFAbbr(gamepad.x);})
+                .addData("Y", () -> {return TFAbbr(gamepad.y);})
+                .addData("A", () -> {return TFAbbr(gamepad.a);})
+                .addData("B", () -> {return TFAbbr(gamepad.b);})
+                .addData("RB", () -> {return TFAbbr(gamepad.right_bumper);})
+                .addData("LB", () -> {return TFAbbr(gamepad.right_bumper);});
+        telemetry.addLine()
+                .addData("DPad Up", () -> {return TFAbbr(gamepad.dpad_up);})
+                .addData("DPad Down", () -> {return TFAbbr(gamepad.dpad_down);})
+                .addData("DPad Left", () -> {return TFAbbr(gamepad.dpad_left);})
+                .addData("DPad Right", () -> {return TFAbbr(gamepad.dpad_right);});
+        telemetry.addLine()
+                .addData("LS", () -> {return MessageFormat.format("'{'{0, number, #.##} , {1, number, #.##}'}'", gamepad.left_stick_x, gamepad.left_stick_y);})
+                .addData("RS", () -> {return MessageFormat.format("'{'{0, number, #.##} , {1, number, #.##}'}'", gamepad.right_stick_x, gamepad.right_stick_y);})
+                .addData("LT", () -> {return gamepad.left_trigger;})
+                .addData("RT", () -> {return gamepad.right_trigger;});
+        telemetry.update();
+    }
+    //Converts boolean to T or F
+    private static char TFAbbr(boolean value) {
+        return value ? 'T' : 'F';
     }
 }
