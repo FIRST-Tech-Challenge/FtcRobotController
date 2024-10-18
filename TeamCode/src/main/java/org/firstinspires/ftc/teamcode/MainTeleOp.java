@@ -14,12 +14,19 @@ import static java.lang.Math.acos;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode{
     Boolean homeFlag = false;
+    //Total ticks in a revolution for 117 RPM motor: 1425.1
+    double RPM117_TicksPer = 1425.1;
+    //Total ticks per revolution for 312 RPM motor: 537.7
+    double RPM312_TicksPer = 537.7;
+    double viperDriveTrainTicksPerRevolution = RPM312_TicksPer;
+
     double targetArmDegrees = 0;
     public void ClawOpen(Servo claw)
     {
@@ -62,7 +69,7 @@ public class MainTeleOp extends LinearOpMode{
     }
     public void ArmMotorCustom(DcMotor armMotor, int degrees)
     {
-        //Total ticks in a revolution for 117 RPM motor: 1425
+
         //Total ticks for armMotor drivetrain revolution: 7125
         //90 degree rotation for armMotor drivetrain revolution: 1781.25
         //int currentPosit = armMotor.getCurrentPosition();
@@ -86,18 +93,20 @@ public class MainTeleOp extends LinearOpMode{
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.2);
     }
-    public void ViperMotorCustom(DcMotor viperMotor, int length)
+    public void ViperMotorCustom(DcMotor viperMotor, double lengthInches)
     {
         //Full motor rotation = 7125 ticks
         //4 and 5/8 inches per rotation
         //~1541 ticks per inch
-        double ticksPerInch = 1541;
-        double extensionTicks = length*ticksPerInch;
-        viperMotor.setDirection(DcMotor.Direction.FORWARD);
-        viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        viperMotor.setTargetPosition( (int) extensionTicks);    //Sets Target Tick Position
+
+        //int ticksPerInch = 1541;
+        double ticksPerInch = viperDriveTrainTicksPerRevolution/4.625;
+        int extensionTicks = (int)(lengthInches*ticksPerInch);
+
+        viperMotor.setDirection(DcMotor.Direction.REVERSE);
         viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperMotor.setPower(-0.05);
+        viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
+        viperMotor.setPower(0.05);
     }
     public double MinimumTicks(double viperLength)
     {   int maxExtensionLength = 34;
@@ -170,9 +179,10 @@ public class MainTeleOp extends LinearOpMode{
                 //(entire front claw needs to be that height and clear robot front)
                 ArmMotorCustom(armMotor, 65);
             }
-            if (gamepad2.dpad_up)
+            if (gamepad1.dpad_up)
             {
-                ViperMotorCustom(viperMotor, 6);
+                telemetry.addData("Original Viper Position", viperMotor.getCurrentPosition());
+                ViperMotorCustom(viperMotor, 4.625);
             }
             if (gamepad1.dpad_down)
             {
@@ -200,7 +210,13 @@ public class MainTeleOp extends LinearOpMode{
 //            }
 
             motorTelemetry(armMotor, "armMotor");
-            motorTelemetry(viperMotor, "viperMotor");
+            motorTelemetry(viperMotor, "current ViperMotor");
+            if (gamepad1.dpad_up)
+            {
+                telemetry.addData("dpad-up", "true");
+            } else {
+                telemetry.addData("dpad-up", "false");
+            }
             telemetry.update();
         }
 
