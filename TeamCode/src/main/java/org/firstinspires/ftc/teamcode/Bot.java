@@ -30,6 +30,9 @@ public class Bot {
     private DcMotor extendArmMotor;
     private DcMotor armPivotMotor;
 
+    private CRServo rightPushoff;
+    private CRServo leftPushoff;
+
 
     //Statistics for measurements
     private static final int TICKS_PER_REV = 1440;
@@ -92,6 +95,9 @@ public class Bot {
 //        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
 
+        leftPushoff = map.get(CRServo.class, "left_pushoff");
+        rightPushoff = map.get(CRServo.class, "right_pushoff");
+
         //set encoders to 0 on init
         leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -141,12 +147,16 @@ public class Bot {
 //        extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 //        armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        leftPushoff.setDirection(CRServo.Direction.FORWARD);
+        rightPushoff.setDirection(DcMotorSimple.Direction.REVERSE);
+
         //Servos for intake on the map
         //TODO Rename Intake servos to something better
 //        topIntake = map.get(CRServo.class, "top_intake");
 //        bottomIntake = map.get(CRServo.class, "bottom_intake");
 
         //TODO push off servos for lift
+
     }
 
     /**
@@ -164,6 +174,17 @@ public class Bot {
        leftMotorBack.setPower(backLeftPower);
        rightMotorFront.setPower(frontRightPower);
        rightMotorBack.setPower(backRightPower);
+    }
+
+    /**
+     * set Pushoff power for left and right
+     */
+
+    public void setPushoff(
+            double pushoffPower
+    ){
+        leftPushoff.setPower(pushoffPower);
+        rightPushoff.setPower(pushoffPower);
     }
 
     /**
