@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.qualcomm.robotcore.util.Range;
+
+import org.opencv.core.Mat;
+
 public class Numbers {
     /**
      * Converts a -180 to 180 range (like from the IMU) to a 0 to 360 range
@@ -7,7 +11,7 @@ public class Numbers {
      * @return The angle converted to a 0 to 360 range
      */
     public static double normalizeAngle(double angle) {
-        return Math.abs(angle > 0 ? 360 - angle : angle);
+        return -(angle > 0 ? 360 - angle : angle);
     }
 
     /**
@@ -54,5 +58,20 @@ public class Numbers {
      */
     public static double normalizeInRange(double x, double min, double max, double newMin, double newMax) {
         return (newMax - newMin) * ((x - min) / (max - min)) + newMin;
+    }
+
+    /**
+     * Given the target rotation of the robot and the current rotation of the robot, both in degrees, return the appropriate turn correction direction and magnitude [-1, 1]
+     * @param target The current rotation of the robot
+     * @return The turn correction speed
+     */
+    private static final double _tolerance = 0.5;
+    public static double turnCorrectionSpeed(double target, double yaw) {
+        double difference = (target - yaw) / 90;
+
+        if (Math.abs(difference) <= _tolerance)
+            return 0;
+
+        return Range.clip(difference, -1, 1);
     }
 }

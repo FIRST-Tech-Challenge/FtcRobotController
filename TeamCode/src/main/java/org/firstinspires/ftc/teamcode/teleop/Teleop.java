@@ -19,6 +19,8 @@ public class Teleop extends OpMode {
     private double yawRad;
     private double normalYaw;
 
+    private double targetRotation;
+
     // Gamepad States
     private final Gamepad currentGamepad1 = new Gamepad();
     private final Gamepad currentGamepad2 = new Gamepad();
