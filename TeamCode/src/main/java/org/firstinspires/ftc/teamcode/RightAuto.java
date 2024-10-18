@@ -15,10 +15,13 @@ public class RightAuto extends LinearOpMode {
         waitForStart();
 
         robot.encoderDrive(1,15);
-//        robot.setArmPos(45);
-//        robot.setExtendPos(5);
-//        robot.runOuttake();
-//        sleep(5000);
+        robot.setArmPos(700);
+        robot.setExtendPos(6.6);
+        robot.setArmPos(670);
+        robot.runOuttake();
+        sleep(5000);
+        robot.setExtendPos(0);
+        robot.setArmPos(0);
         robot.encoderStrafe(1, -33);
         robot.encoderTurn(1,-180);
         robot.encoderDrive(1,-36);

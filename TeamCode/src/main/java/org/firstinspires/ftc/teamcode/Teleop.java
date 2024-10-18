@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "TeleOp", group = "TeleOp")
 public class Teleop extends LinearOpMode {
 
+        //min and max values
         private static final double MAX_EXTEND = -3595;
         private static final double MAX_PIVOT = 2560;
         private static final double MIN_PIVOT = -670;
