@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -22,9 +21,6 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
-    private Servo leftArm = null; // Neha: You never use this so you can delete it.
-    private static final double ARM_DEFAULT = 0.3;// Neha: You never use this so you can delete it.
-    private static final double ARM_MIN = 0.0;// Neha: You never use this so you can delete it.
 
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
@@ -42,8 +38,6 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     Servo claw = null;
     final double CLAW_MIN = 0.6;    // Claw is closed
     final double CLAW_MAX = 0.4;    // Claw is open
-    final double CLAW_DEFAULT = 0.4; // Neha: We don't need a default value for auto mode.
-    double claw_position = CLAW_DEFAULT; // Neha: We don't need a default value
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -65,7 +59,6 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        //leftArm = hardwareMap.get(Servo.class, "claw"); // Neha: you do this down below so you can remove this line.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -73,27 +66,17 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Neha: in TeleOp, our code runs in a loop, so we don't need to set our DC motors to a default position.
-        // In Auto mode, our code just runs through once. That means we have to set a target position and RunMode at the beginning.
-        // Here is the example for vertical. You should enable it and write the same code for the viper slide.
-        //vertical.setTargetPosition(0);
-        //vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vertical.setTargetPosition(0);
+        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperSlide.setDirection(DcMotor.Direction.REVERSE);
-        viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperSlide.setTargetPosition(0);
+        viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         claw = hardwareMap.get(Servo.class, "claw");
-        // Neha: in TeleOp, we start by opening the claw.
-        // We don't want to do that in auto mode because we will drop the sample.
-        // So you should set the position to CLAW_MIN
-        claw.setPosition(CLAW_DEFAULT);
-
-        // Neha: You aren't using these so you should delete them.
-        //double arm_position = ARM_DEFAULT;
-        //leftArm.setPosition(arm_position);
+        claw.setPosition(CLAW_MIN);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
@@ -112,24 +95,31 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
         /*
         moveForward(2.3);
         strafeLeft(0.5);                        //strafing to 1st block
         moveBackward(2.1 );                     //moving first block backward
-        turnRightToHeading(-20);                    //turning to the red line to angle the block
+        turnRightToHeading(-20);                //turning to the red line to angle the block
         moveBackward(1.1);                      //moving the block backward into zone
-        turnLeftToHeading(20);                      //turning to 0 degrees
+        turnLeftToHeading(20);                  //turning to 0 degrees
         strafeRight(1.4);                       //strafing before going forward
         moveForward(2.3);                       //moving to 2nd block
         strafeLeft(1.2);                        //strafing left to 2nd block
-        moveBackward(2, 0.2);       //moving to red zone
-        turnRightToHeading(20);                     //turning to face the red zone
-        moveBackward(1.5, 0.2);     //placing block in red zone
-
+        moveBackward(2, 0.2);                   //moving to red zone
+        turnRightToHeading(20);                 //turning to face the red zone
+        moveBackward(1.5, 0.2);                 //placing block in red zone
        */
 
-        setVertical(1000);
-        setVertical(200);
+        //moveForward(1);
+        //turnLeftToHeading(130);
+        //moveForward(0.3);
+        setVertical(VERTICAL_MAX);
+        setViper(VIPER_MAX);
+        moveForward(0.1);
+        setClaw(CLAW_MAX);
+        setViper(VIPER_MIN);
+        setVertical(VERTICAL_MIN);
 
         // End of autonomous program
         telemetry.addData("Path", "Complete");
@@ -141,29 +131,20 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         viperSlide.setTargetPosition(length);
         ((DcMotorEx) viperSlide).setVelocity(2000);
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // Neha: You set the position, velocity, and mode. Then the program continues to the next step.
-        // But the viper slide doesn't move that fast. We need to give it time to finish its task.
-        // You can do that by adding a sleep for 1-2 seconds here. Ex: sleep(2000);
+        sleep(2000);
     }
 
     public void setVertical(int height){
         vertical.setTargetPosition(height);
         ((DcMotorEx) vertical).setVelocity(2000);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // Neha: Same thing as the Viper. We need to add a sleep
+        sleep(1500);
     }
 
     public void setClaw(double position){
-        RobotLog.vv("Rockin Robots", "SetClaw: %.2f", position);
         claw.setPosition(position);
-        // Neha: Same thing as the Viper and Vertical. We need to ass a sleep.
-        // The claw is pretty fast so 100-500 milliseconds is probably enough.
+        sleep(300);
     }
-
-
-
-
-
 
     private void acceleration(double secondsToDrive, double speedToDrive,
                               double leftFrontDriveDirection, double rightFrontDriveDirection,
