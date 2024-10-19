@@ -74,6 +74,8 @@ public class RobotHardware {
     private VisionPortal myVisionPortal;
 
     private Servo grabberServo = null;
+    private Servo armServo = null;
+    private Servo armServoTwo = null;
 
     /** The relativeLayout field is used to aid in providing interesting visual feedback
      * in this sample application; you probably *don't* need this when you use a color sensor on your
@@ -85,9 +87,19 @@ public class RobotHardware {
     }
 
     public static final double GRABBER_SPEED = 0.10;
-    public static final double GRABBER_MIN = 0.10;
+    public static final double GRABBER_MIN = 0.10 ;
     public static final double GRABBER_MAX = 0.40;
     private static double grabberDrive = 0.0;
+
+    public static final double ARM_SPEED = 0.10;
+    public static final double ARM_MIN = 0.10 ;
+    public static final double ARM_MAX = 0.40;
+    private static double armDrive = 0.0;
+
+    //public static final double ARM_SPEED_TWO = 0.10;
+    public static final double ARM_MIN_TWO = 0.10 ;
+    public static final double ARM_MAX_TWO = 0.40;
+    //private static double armDriveTwo = 0.0;
 
     /**
      * Initialize all the robot's hardware.
@@ -108,6 +120,9 @@ public class RobotHardware {
         viperSlideMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorvs");
         viperSlideMotorTwo = myOpMode.hardwareMap.get(DcMotor.class,"motorvstwo");
         grabberServo = myOpMode.hardwareMap.get(Servo.class, "gripperservo");
+        armServo = myOpMode.hardwareMap.get(Servo.class, "armServo");
+        armServoTwo = myOpMode.hardwareMap.get(Servo.class, "armServoTwo");
+        armServoTwo.setDirection(Servo.Direction.REVERSE);
         setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
@@ -299,9 +314,39 @@ public class RobotHardware {
         grabberServo.setPosition(Range.clip(position, GRABBER_MIN, GRABBER_MAX));
     }
 
-    public double getGrabberPoistion(){
-        return grabberServo.getPosition();
+    public double getArmServoPosition(){
+        return armServo.getPosition();
     }
+    public double getArmServoTwoPosition(){
+        return armServoTwo.getPosition();
+    }
+
+    public void moveArm(boolean closeArm){
+        if ( closeArm && armDrive > ARM_MIN){
+            armDrive -= ARM_SPEED;
+            myOpMode.telemetry.addData("Arm", "back");
+        }
+
+
+        if ( !closeArm && armDrive < ARM_MAX){
+            armDrive += ARM_SPEED;
+            myOpMode.telemetry.addData("Arm", "forward");
+        }
+
+
+
+        armServo.setPosition(Range.clip(armDrive, ARM_MIN, ARM_MAX));
+        armServoTwo.setPosition(Range.clip(armDrive, ARM_MIN_TWO, ARM_MAX_TWO));
+        //moveArmToPosition(armDrive);
+    }
+
+
+    public void moveArmToPosition(double position){
+        armServo.setPosition(Range.clip(position, ARM_MIN_TWO, ARM_MAX_TWO));
+        armServoTwo.setPosition(Range.clip(position, ARM_MIN_TWO, ARM_MAX_TWO));
+        //armServo.setPosition((int)position);
+    }
+
 
     // All  of the arm functions for manual below
    /* public void setArmPower (){
@@ -317,7 +362,7 @@ armMotor.setPower(0);
         armMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 */
-    /**
+    /*
      * Pass the requested arm power to the appropriate hardware drive motor
      *      Power is reduced by 25%
      *
