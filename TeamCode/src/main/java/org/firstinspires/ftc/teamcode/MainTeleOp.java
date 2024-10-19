@@ -82,7 +82,7 @@ public class MainTeleOp extends LinearOpMode{
        }
 
        //y button
-       wrist.setPosition(0.35);
+       wrist.setPosition(0.45);
      }
     public void WristDown(Servo wrist)
     {
