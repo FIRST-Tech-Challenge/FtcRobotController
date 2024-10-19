@@ -74,6 +74,16 @@ public class MainTeleOp extends LinearOpMode{
         //y button
         wrist.setPosition(1);
     }
+     public void WristFlip(Servo wrist)
+     {
+       if (wrist == null) {
+           telemetry.addLine("Wrist servo not found!");
+           return;
+       }
+
+       //y button
+       wrist.setPosition(0.35);
+     }
     public void WristDown(Servo wrist)
     {
         //a button
@@ -196,7 +206,7 @@ public class MainTeleOp extends LinearOpMode{
         int extensionTicks = (int)(lengthInches*ticksPerInch);
         viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
         viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperMotor.setPower(0.2);
+        viperMotor.setPower(0.3);
 
     }
     public double MinimumTicks(double viperLength)
@@ -324,6 +334,10 @@ public class MainTeleOp extends LinearOpMode{
                 wristTelemetry.setValue(loopCounter);
                 telemetry.update();
                 ClawOpen(claw);
+            }
+            if(gamepad2.left_trigger > 0)
+            {
+                WristFlip(wrist);
             }
             if(gamepad2.x) {
                 //Code for when B is pressed
