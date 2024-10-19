@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Auto Skelly Don't Run")
 public class AutoSkeleton extends LinearOpMode {
-    @Override //Hell
+    @Override //Hello
     public void runOpMode() throws InterruptedException {
         //Declare Motors and Servos
 
