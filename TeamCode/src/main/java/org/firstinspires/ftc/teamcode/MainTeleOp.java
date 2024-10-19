@@ -257,8 +257,8 @@ public class MainTeleOp extends LinearOpMode{
         telemetryHelper.initGamepadTelemetry(gamepad1);
         telemetryHelper.initGamepadTelemetry(gamepad2);
 
-
         waitForStart();
+
 
         if (armMotor != null)
         {
@@ -316,7 +316,7 @@ public class MainTeleOp extends LinearOpMode{
                 if (homeFlag)
                 {
                     armMotor.setPower(0);
-                    armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
                 }
                 else {homeFlag = false;}
             }
