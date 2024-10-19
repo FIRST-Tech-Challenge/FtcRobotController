@@ -28,10 +28,10 @@ public class CompBot extends LinearOpMode {
 
 
     // In case builders are bad, is offset center for servo
-    double FLServoOffSet = .005;
-    double FRServoOffSet = .00;
-    double BLServoOffSet = .01;
-    double BRServoOffSet = 0.007;
+    double FLServoOffSet = .00;     //0.00
+    double FRServoOffSet = .00;     //0.00
+    double BLServoOffSet = .00;     //0.01
+    double BRServoOffSet = .00;     //.007
 
 
     static double TRACKWIDTH = 14; //in inches
