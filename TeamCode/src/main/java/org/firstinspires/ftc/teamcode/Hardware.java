@@ -124,6 +124,14 @@ public class Hardware {
         }
     }
 
+    public boolean getAutoSleepEnabled() {
+        return autoSleepEnabled;
+    }
+
+    public void setAutoSleepEnabled(boolean autoSleepEnabled) {
+        this.autoSleepEnabled = autoSleepEnabled;
+    }
+
     /**
      * Sleeps the robot while any motors are running.
      */
