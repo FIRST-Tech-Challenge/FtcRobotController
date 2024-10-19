@@ -310,7 +310,7 @@ public class CompBot extends LinearOpMode {
 
 
     /**
-     * TODO This needs to be worked on. Nothing is done here
+     * TODO this needs to be worked on nothing is done here
      *
      * <p>
      * Wheel angle is perpendicular to turn angle
