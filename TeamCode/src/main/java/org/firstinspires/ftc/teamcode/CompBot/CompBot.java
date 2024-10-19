@@ -184,9 +184,9 @@ public class CompBot extends LinearOpMode {
         BRServo.scaleRange(BRServoOffSet, 1.0 + BRServoOffSet * 2);
 
         FLServo.setPosition(0.50 + FLServoOffSet);
-        BLServo.setPosition(0.51 + BLServoOffSet);
+        BLServo.setPosition(0.50 + BLServoOffSet);
         FRServo.setPosition(0.50 + FRServoOffSet);
-        BRServo.setPosition(0.51 + BRServoOffSet);
+        BRServo.setPosition(0.50 + BRServoOffSet);
 
 
         // Init GoBilda Pinpoint module
@@ -294,15 +294,15 @@ public class CompBot extends LinearOpMode {
      */
     public void rotate(double power) {
 
-        // Set wheels for rotation (Ben's robot has 2x gear ratio so .25/2 and .75/2)
-        FLServo.setPosition(.25 + .125 / 2);
-        BLServo.setPosition(.75 - .125 / 2);
+        // Set wheels for rotation
+        FLServo.setPosition(.75 + .125 / 2);
+        BLServo.setPosition(.25 - .125 / 2);
         BRServo.setPosition(.25 + .125 / 2);
         FRServo.setPosition(.75 - .125 / 2);
 
         //turn motors to rotate robot
-        FLMotor.setPower(-power);
-        BLMotor.setPower(-power);
+        FLMotor.setPower(power);
+        BLMotor.setPower(power);
         BRMotor.setPower(power);
         FRMotor.setPower(power);
 
