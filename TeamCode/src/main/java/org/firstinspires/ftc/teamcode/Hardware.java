@@ -25,8 +25,13 @@ public class Hardware {
     private static final int RESOLUTION_HEIGHT = 100;
 
     /* Robot systems */
-    private  MecanumWheels mecanum;
-    private ExtendableArm arm;
+    private final MecanumWheels WHEELS;
+    private final ExtendableArm ARM;
+
+    private final DigitalChannel COLOR_SWITCH;
+    private final DigitalChannel SIDE_SWITCH;
+
+    private final CRServo INTAKE_SERVO;
 
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
@@ -40,14 +45,16 @@ public class Hardware {
                         .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                         .build();*/
 
+        INTAKE_SERVO = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
+
         WHEELS = initWheels();
-        ARM = initArm();
+        ARM = null; //initArm();
     }
 
     /**
      * Initiates all hardware needed for the WheelsSystem.
      */
-    private Wheels initWheels() {
+    private MecanumWheels initWheels() {
         /*
          * Define wheels system hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
@@ -63,24 +70,34 @@ public class Hardware {
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
-    private Arm initArm() {
+    private ExtendableArm initArm() {
         /*
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
         CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
         HashMap<String, DcMotor> motors = new HashMap<>();
+
         HashMap<String, Servo> servos = new HashMap<>();
+        return null;
+        /*
+        servos.put("clawXServo", OP_MODE.hardwareMap.get(Servo.class, "clawXServo"));
+        servos.put("clawZServo", OP_MODE.hardwareMap.get(Servo.class, "clawZServo"));
+
+        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
 
         return new ExtendableArm(motors, servos, intakeServo);
+        */
     }
 
-    public MecanumWheels getWheels() {
-        return mecanum;
+    public CRServo getIntakeServo() {
+        return INTAKE_SERVO;
     }
+
+    public MecanumWheels getWheels() { return WHEELS; }
 
     public ExtendableArm getArm() {
-        return arm;
+        return ARM;
     }
 
     public DigitalChannel getColorSwitch() {
@@ -92,8 +109,8 @@ public class Hardware {
     }
 
     /**
-     * Attempts to cast the OP_MODE to a LinearOpMode
-     * Returns null if it fails
+     * Attempts to cast the OP_MODE to a LinearOpMode.
+     * Returns null if it fails.
      *
      * @return a linearOpMode representation of OP_MODE if possible
      *         Else returns null
@@ -108,8 +125,7 @@ public class Hardware {
     }
 
     /**
-     * Sleeps the robot any motors or servos are running.
-     * @noinspection unused
+     * Sleeps the robot while any motors are running.
      */
     public void autoSleep() {
         HashSet<DcMotor> allMotors = new HashSet<>(ARM.getMotors());
@@ -126,14 +142,14 @@ public class Hardware {
     public void autoSleep(HashSet<DcMotor> motors) {
         LinearOpMode linearOp = getLinearOpMode();
 
-        // Does nothing if it isn't a LinearOpMode
+        // Does nothing if it isn't a LinearOpMode.
         if (linearOp == null) {
             return;
         }
 
-        // Sleep while any of the motors are still running
+        // Sleep while any of the motors are still running.
         while (motors.stream().anyMatch(DcMotor::isBusy)) {
-            linearOp.sleep(1);
+            linearOp.idle();
         }
     }
 }
