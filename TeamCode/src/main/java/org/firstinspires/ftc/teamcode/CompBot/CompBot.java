@@ -32,17 +32,13 @@ public class CompBot extends LinearOpMode {
     double BRServoOffSet = .00;     //.007
 
 
-    static double TRACKWIDTH = 14; //in inches
-    static double WHEELBASE = 15; //in inches
-
-
     /**
      * controls for game pad 1:
      * right trigger: forwards
      * left trigger: backwards
      * right stick x: rotate
      * left stick x: strafe
-     *
+     * <p>
      * controls for game pad 2:
      * left stick y: in and out of arm
      * right stick y: up and down of arm
@@ -67,8 +63,8 @@ public class CompBot extends LinearOpMode {
             double speedGMP1 = gamepad1.left_trigger - gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
             double angleGMP1 = -gamepad1.right_stick_x;
 
-            if (speedGMP1 != 0) move(gamepad1.left_stick_x, speedGMP1);
-            else if (angleGMP1 != 0) rotate(angleGMP1);
+            if (speedGMP1 != 0) swerve.moveStraight(gamepad1.left_stick_x, speedGMP1);
+            else if (angleGMP1 != 0) swerve.rotate(angleGMP1);
             else {
                 FLMotor.setPower(0);
                 BLMotor.setPower(0);
@@ -96,7 +92,6 @@ public class CompBot extends LinearOpMode {
     public void liftArm(double input) {
 
         if (input > 0 && pivot.getCurrentPosition() < 2904) {
-            input = input;
             pivot.setTargetPosition(2905);
         } else if (input < 0 && pivot.getCurrentPosition() > -2904) {
             input = 0;
@@ -218,145 +213,5 @@ public class CompBot extends LinearOpMode {
         slide.setPower(0);
     }
 
-
-    /**
-     * Converts standard cartesian coordinates to polar coordinates
-     *
-     * @param x X input
-     * @param y Y input
-     * @return Returns an array of two doubles,<br>
-     * <p>
-     * [0] = R - Magnitude<br>
-     * [1] = Theta Angle of input coordinate.<br>
-     * Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
-     * @see #polarToCartesian(double, double)
-     */
-    public double[] cartesianToPolar(double x, double y) {
-        double[] arrayToReturn = new double[2];
-        arrayToReturn[0] = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); // Radius
-        arrayToReturn[1] = Math.atan(y / x) * (Math.PI / 180); // Theta
-
-
-        return arrayToReturn;
-    }
-
-
-    /**
-     * Converts polar coordinates to cartesian
-     *
-     * @param r     Magnitude of input coordinate
-     * @param theta Angle of input coordinate.<br>
-     *              Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
-     * @return Returns an array of two doubles,<br>
-     * <p>
-     * [0] = X<br>
-     * [1] = Y
-     * @see #cartesianToPolar(double, double)
-     */
-    public double[] polarToCartesian(double r, double theta) {
-        double[] arrayToReturn = new double[2];
-        arrayToReturn[0] = r * Math.cos(theta); // X
-        arrayToReturn[1] = r * Math.sin(theta); // Y
-
-        return arrayToReturn;
-    }
-
-
-    /**
-     * Moves the robot based on desired heading and power.<br>
-     * Does not change the rotation of the robot at all
-     *
-     * @param heading Desired heading of the robot.<br>
-     *                0 is straight forward 1 is fully right, -1 is fully left
-     * @param power   Desired power to run the motors at
-     */
-    public void move(double heading, double power) {
-        heading = (heading + 1) / 2;
-
-        FLServo.setPosition(heading + FLServoOffSet);
-        BLServo.setPosition(heading + BLServoOffSet);
-        BRServo.setPosition(heading + BRServoOffSet);
-        FRServo.setPosition(heading + FRServoOffSet);
-
-        FLMotor.setPower(power);
-        BLMotor.setPower(power);
-        BRMotor.setPower(power);
-        FRMotor.setPower(power);
-    }
-
-
-    /**
-     * Rotates the robot around a center point.<br>
-     * Does not move the robot in any other direction.<br>
-     *
-     * @param power Power to turn the robot at
-     */
-    public void rotate(double power) {
-
-        // Set wheels for rotation
-        FLServo.setPosition(.75 + .125 / 2);
-        BLServo.setPosition(.25 - .125 / 2);
-        BRServo.setPosition(.25 + .125 / 2);
-        FRServo.setPosition(.75 - .125 / 2);
-
-        //turn motors to rotate robot
-        FLMotor.setPower(power);
-        BLMotor.setPower(power);
-        BRMotor.setPower(power);
-        FRMotor.setPower(power);
-
-    }
-
-
-    /**
-     * TODO this needs to be worked on nothing is done here
-     *
-     * <p>
-     * Wheel angle is perpendicular to turn angle
-     * turn angle is inverse tan(get angle) of 7.5(half of wheel base length) / (turning distance/2)
-     * because it is radius of point we are trying to rotate around
-     * speed = -1 to 1
-     * turnRad = -1 to 1
-     * turnDir = LEFT or RIGHT
-     */
-    public void moveAndRotate(double speed, double turnAmount) {
-
-        double i_WheelAngle = Math.atan2(WHEELBASE, turnAmount - TRACKWIDTH / 2);
-        double outsideAng = Math.atan2(WHEELBASE, turnAmount + TRACKWIDTH / 2);
-
-
-    }
-
-
-    /**
-     * TODO Possibly make this not run at full speed at all times by adding some sort of power input
-     * Uses the IMU to move the robot to face forward
-     * <p>
-     * As long as this function is called, it will try to rotate back to facing forward
-     */
-    public void rotateToCenter() {
-        double orientation = odo.getHeading();
-        telemetry.addData("Yaw angle", orientation);
-
-        rotate(orientation);
-    }
-
-
-    /**
-     * TODO All of this
-     * Moves the robot to the detected specimen
-     */
-    public void moveToSpecimen() {
-
-    }
-
-
-    /**
-     * TODO All of this as well
-     * Moves the robot back to the storage area
-     */
-    public void moveToStore() {
-
-    }
 
 }

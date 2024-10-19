@@ -6,6 +6,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -98,7 +99,16 @@ public class SwerveConfig {
     }
 
 
-    // Only moves the robot in a straight line
+    /**
+     * Moves the robot based on desired heading and power.
+     * <p>
+     * Only moves in a straight line.
+     * Does not change the rotation of the robot at all
+     *
+     * @param heading Desired heading of the robot.<br>
+     *                0 is straight forward 1 is fully right, -1 is fully left
+     * @param power   Desired power to run the motors at
+     */
     public void moveStraight(double heading, double power) {
         heading = (heading + 1) / 2; // Converts the -1 to 1 input range to 0 to 1 for the servos
 
@@ -114,7 +124,13 @@ public class SwerveConfig {
         FRServo.setPosition(heading + FRServoOffSet);
     }
 
-    // Rotates the robot around a center point
+
+    /**
+     * Rotates the robot around a center point.<br>
+     * Does not move the robot in any other direction.<br>
+     *
+     * @param power Power to turn the robot at
+     */
     public void rotate(double power) {
 
         //turn motors to rotate robot
@@ -122,7 +138,6 @@ public class SwerveConfig {
         BLMotor.setPower(-power);
         BRMotor.setPower(power);
         FRMotor.setPower(power);
-
 
 
         // Set wheels for rotation (Ben's robot has 2x gear ratio so .25/2 and .75/2)
@@ -133,8 +148,53 @@ public class SwerveConfig {
 
     }
 
+
+    /**
+     * TODO this needs to be worked on nothing is done here
+     *
+     * <p>
+     * Wheel angle is perpendicular to turn angle
+     * turn angle is inverse tan(get angle) of 7.5(half of wheel base length) / (turning distance/2)
+     * because it is radius of point we are trying to rotate around
+     * speed = -1 to 1
+     * turnRad = -1 to 1
+     * turnDir = LEFT or RIGHT
+     */
     public void moveAndRotate(double power, double turn) {
-        
+
+        double i_WheelAngle = Math.atan2(WHEELBASE, turn - TRACKWIDTH / 2);
+        double outsideAng = Math.atan2(WHEELBASE, turn + TRACKWIDTH / 2);
+
     }
 
+
+    /**
+     * TODO Possibly make this not run at full speed at all times by adding some sort of power input
+     * Uses the IMU to move the robot to face forward
+     * <p>
+     * As long as this function is called, it will try to rotate back to facing forward
+     */
+    public void centerRobot() {
+        double orientation = odo.getHeading();
+
+        rotate(orientation);
+    }
+
+
+    /**
+     * TODO All of this
+     * Moves the robot to the detected specimen
+     */
+    public void moveToSpecimen() {
+
+    }
+
+
+    /**
+     * TODO All of this as well
+     * Moves the robot back to the storage area
+     */
+    public void moveToStore() {
+
+    }
 }
