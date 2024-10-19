@@ -175,7 +175,7 @@ public class MainTeleOp extends LinearOpMode{
         }
         ArmMotorCustom(armMotor, 24);
     }
-    public void ViperMotorCustom(DcMotor viperMotor, double lengthInches)
+    public void ViperMotorCustom(DcMotor viperMotor, double lengthInches, DcMotor armMotor)
     {
         if (viperMotor == null)
         {
@@ -189,17 +189,19 @@ public class MainTeleOp extends LinearOpMode{
         //int ticksPerInch = 1541;
         double ticksPerInch = viperDriveTrainTicksPerRevolution/4.625;
         int extensionTicks = (int)(lengthInches*ticksPerInch);
-
-        viperMotor.setDirection(DcMotor.Direction.REVERSE);
-        viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
-        viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperMotor.setPower(0.2);
+        if (armMotor.getCurrentPosition() >= MinimumTicks(lengthInches))
+        {
+            viperMotor.setDirection(DcMotor.Direction.REVERSE);
+            viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
+            viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            viperMotor.setPower(0.2);
+        }
     }
     public double MinimumTicks(double viperLength)
     {   int maxExtensionLength = 34;
         double result = maxExtensionLength/(viperLength+15.5);
         double cosAngle = acos(result);
-        double ticksPerDegree = 7125.0/360.0;
+        double ticksPerDegree = 538.0/360.0;
         return (cosAngle*ticksPerDegree);
     }
     @Override
@@ -272,17 +274,17 @@ public class MainTeleOp extends LinearOpMode{
             if (gamepad1.dpad_up)
             {
                 desiredViperState = ViperState.PrepareToHang;
-                ViperMotorCustom(viperMotor, 4.625);
+                ViperMotorCustom(viperMotor, 4.625, armMotor);
             }
             if (gamepad1.dpad_left)
             {
                 desiredViperState = ViperState.Dump;
-                ViperMotorCustom(viperMotor, 4.625 * 5);
+                ViperMotorCustom(viperMotor, 4.625 * 5, armMotor);
             }
             if (gamepad1.dpad_down)
             {
                 desiredViperState = ViperState.Closed;
-                ViperMotorCustom(viperMotor, 3);
+                ViperMotorCustom(viperMotor, 3, armMotor);
             }
             //specimen placement
             if (gamepad1.y)
@@ -306,11 +308,11 @@ public class MainTeleOp extends LinearOpMode{
                 }
                 else {homeFlag = false;}
             }
-            if (desiredViperState == ViperState.Closed && viperMotor.getCurrentPosition() < 10)
-            {
-                viperMotor.setPower(0);
-                viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
+//            if (desiredViperState == ViperState.Closed && viperMotor.getCurrentPosition() < 10)
+//            {
+//                viperMotor.setPower(0);
+//                viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            }
 
 
             //Controller B
@@ -337,10 +339,18 @@ public class MainTeleOp extends LinearOpMode{
             }
             if (Math.abs((gamepad2.right_stick_y)) > 0.2 )
             {
-                desiredViperState = ViperState.Manual;
-                //538 ticks per revolution
-                viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                viperMotor.setVelocity(gamepad2.right_stick_y * -1500);
+                double motorPower = 0;
+                if (viperMotor.getCurrentPosition() > -2000)
+                {
+                    motorPower = 0.2;
+                    desiredViperState = ViperState.Manual;
+                    //538 ticks per revolution
+                    viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
+                else {
+                    motorPower = 0;
+                }
+                viperMotor.setPower(gamepad2.right_stick_y * motorPower);
             } else
             {
                 if (desiredViperState == ViperState.Manual) {
