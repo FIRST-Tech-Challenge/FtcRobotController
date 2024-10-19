@@ -18,6 +18,7 @@ import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.GeometricController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
+import org.firstinspires.ftc.teamcode.Drivetrain.Geometry.Path;
 import org.firstinspires.ftc.teamcode.Drivetrain.Localizers.TwoWheelOdometery;
 import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
 
@@ -44,6 +45,7 @@ public class Drivetrain {
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
     public static double distanceThreshold = 2;
     public static double angleThreshold = 1;
+
     public SimpleMatrix prevWheelSpeeds = new SimpleMatrix( new double[][]{
             new double[]{0},
             new double[]{0},
@@ -172,7 +174,7 @@ public class Drivetrain {
             }
         };
     }
-    public Action followPath(double[][] coords) {
+    public Action followPath(Path path) {
         return new Action() {
             //private boolean initialized = false;
 
@@ -182,18 +184,19 @@ public class Drivetrain {
                 //    initialized = true;
                 //}
                 localize();
-                SimpleMatrix furthestPoint = geometricController.calculate(state.get(0,0), state.get(1,0), coords);
+                SimpleMatrix furthestPoint = geometricController.calculate(state.get(0,0), state.get(1,0), path);
                 SimpleMatrix pose = state.extractMatrix(0,3,0,1);
                 SimpleMatrix wheelSpeeds = poseControl.calculate(pose, furthestPoint);
-//                SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
+                double maxScale = distanceThreshold/wheelSpeeds.elementMax();
+                wheelSpeeds.scale(maxScale);
                 SimpleMatrix wheelAccelerations = new SimpleMatrix(4, 1);
                 deltaT.reset();
                 setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
                 prevWheelSpeeds = wheelSpeeds;
-                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold)){
+                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold)){
                     setPower(stopMatrix);
                 }
-                return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold;
+                return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold;
             }
         };
     }

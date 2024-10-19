@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
-import org.firstinspires.ftc.teamcode.Utils.MotionProfiling;
+import org.firstinspires.ftc.teamcode.Utils.MotionProfile;
 
 @Config
 @Autonomous(name = "Test Feed Forward", group = "Autonomous")
@@ -30,8 +30,8 @@ public class TuneFeedForwardGains extends LinearOpMode{
         TelemetryPacket packet = new TelemetryPacket();
         ElapsedTime looptime = new ElapsedTime();
         ElapsedTime lapTime = new ElapsedTime();
-        MotionProfiling motionProfile = new MotionProfiling(maxDistance,maxVelocity,maxAcceleration,maxAcceleration,false);
-        MotionProfiling reverseMotionProfile = new MotionProfiling(maxDistance,maxVelocity,maxAcceleration,maxAcceleration,true);
+        MotionProfile motionProfile = new MotionProfile(maxDistance,maxVelocity,maxAcceleration,maxAcceleration,false);
+        MotionProfile reverseMotionProfile = new MotionProfile(maxDistance,maxVelocity,maxAcceleration,maxAcceleration,true);
         boolean reverse = false;
         double deltaT = reverseMotionProfile.getTime();
         double velocity = maxVelocity;

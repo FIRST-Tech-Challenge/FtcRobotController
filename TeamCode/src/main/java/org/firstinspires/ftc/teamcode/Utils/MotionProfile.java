@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.Utils;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-public class MotionProfiling {
+public class MotionProfile {
     double desiredD;
     double deltaTAccel;
     double deltaTDecel;
@@ -17,7 +16,7 @@ public class MotionProfiling {
     double aAccel;
     double aDecel;
     int reverse;
-    public MotionProfiling(double desiredD, double vMax, double aAccel, double aDecel, boolean reverse){
+    public MotionProfile(double desiredD, double vMax, double aAccel, double aDecel, boolean reverse){
         double deltaTAccel = vMax/aAccel;
         double deltaTDecel = vMax/aDecel;
         double dAccel = aAccel*Math.pow(deltaTAccel,2)/2;

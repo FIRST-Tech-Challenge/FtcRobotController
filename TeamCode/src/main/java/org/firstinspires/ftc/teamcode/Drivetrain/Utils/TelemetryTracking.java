@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 public class TelemetryTracking {
-    TelemetryPacket packet;;
+    TelemetryPacket packet;
     public TelemetryTracking() {
         packet = new TelemetryPacket();
         packet.fieldOverlay();
