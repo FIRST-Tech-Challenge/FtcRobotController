@@ -8,32 +8,74 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Elevator extends SubsystemBase {
-    private static double TICKS_PER_MM = 0.335;
+    private static final double TICKS_PER_MM = 0.335;
+    private static final double KP = 0.0087;
+    private static final double KF = 0.013;
     private Motor elevatorLeft;
     private Motor elevatorRight;
     private Telemetry telemetry;
 
+    private double elevatorPower;
+    private double target;
     public Elevator(HardwareMap hMap, Telemetry telemetry){
         this.elevatorLeft = new Motor(hMap, "ElevatorLeft");
         this.elevatorRight = new Motor(hMap, "ElevatorRight");
 
         this.telemetry = telemetry;
-        this.elevatorLeft.setInverted(true);
+        this.elevatorRight.setInverted(true);
+        this.elevatorRight.encoder.setDirection(Motor.Direction.REVERSE);
     }
 
     @Override
     public void periodic() {
+
+        elevatorRight.set(this.elevatorPower + KF);
+        elevatorLeft.set(this.elevatorPower + KF);
+
+
         telemetry.addData("Pos", this.elevatorRight.getCurrentPosition());
+        telemetry.addData("Elevator Power", this.elevatorPower);
+        telemetry.addData("Elevator Target", this.target);
+    }
+
+    public void setTarget(double target) {
+        if (target > 43.5) {
+            this.target = 43 * 25.4;
+            return;
+        }
+
+        if (target < 0) {
+            this.target = 0;
+            return;
+        }
+
+
+        this.target = target * 25.4;
+
     }
 
     public void goToPos() {
         int currentPos = this.elevatorRight.getCurrentPosition();
         double currentPosMM = currentPos * TICKS_PER_MM;
+        double error = target - currentPosMM;
+        this.elevatorPower = error * KP;
+    }
+
+    public boolean atTarget() {
+        int currentPos = this.elevatorRight.getCurrentPosition();
+        double currentPosMM = currentPos * TICKS_PER_MM;
+        //  target + 5 > currentPosMM && target - 5 < currentPosMM
+        if (currentPosMM < target + 20 &&
+            currentPosMM > target - 20) {
+            return true;
+        }
+
+        return false;
+
     }
 
     public void manualControl(double pow) {
-        elevatorRight.set(pow);
-        elevatorLeft.set(pow);
+        elevatorPower = pow;
     }
 
 }

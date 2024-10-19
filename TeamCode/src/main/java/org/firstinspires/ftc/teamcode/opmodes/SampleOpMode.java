@@ -10,8 +10,14 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
+import org.firstinspires.ftc.teamcode.commands.ElevatorGoTo;
+import org.firstinspires.ftc.teamcode.commands.ExtendIntake;
 import org.firstinspires.ftc.teamcode.commands.ManualElevatorCommand;
+import org.firstinspires.ftc.teamcode.commands.PivotIntake;
+import org.firstinspires.ftc.teamcode.commands.RetractIntake;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
@@ -30,6 +36,7 @@ public class SampleOpMode extends CommandOpMode {
     private Arm arm;
     private Intake intake;
     private Elevator elevator;
+    private Drivetrain drivetrain;
     @Override
     public void initialize() {
         driver   = new GamepadEx(gamepad1);
@@ -38,6 +45,7 @@ public class SampleOpMode extends CommandOpMode {
         arm = new Arm(this.hardwareMap);
         intake = new Intake(this.hardwareMap);
         elevator = new Elevator(this.hardwareMap, telemetry);
+        drivetrain = new Drivetrain(this.hardwareMap, telemetry);
 
 
         GamepadButton armButton = new GamepadButton(
@@ -48,21 +56,47 @@ public class SampleOpMode extends CommandOpMode {
                 operator, GamepadKeys.Button.B
         );
 
+        GamepadButton outtakeButton = new GamepadButton(
+                operator, GamepadKeys.Button.X
+        );
+
+        GamepadButton elevatorUpButton = new GamepadButton(
+                operator, GamepadKeys.Button.LEFT_BUMPER
+        );
+
+        GamepadButton elevatorDownButton = new GamepadButton(
+                operator, GamepadKeys.Button.RIGHT_BUMPER
+        );
+
         armButton.whenHeld(new InstantCommand(() -> arm.goToPos(Arm.ArmState.SCORE)))
                         .whenReleased(new InstantCommand(() -> arm.goToPos(Arm.ArmState.INTAKE)));
 
-        intakeButton.whenHeld(new InstantCommand(() -> {
-            intake.extend();
-            intake.setPivot(Intake.IntakeState.COLLECT);
-        })).whenReleased(new InstantCommand(() -> {
-            intake.setPivot(Intake.IntakeState.STORE);
-            intake.retract();
-        }));
+        intakeButton.whenHeld(new ExtendIntake(intake).andThen(
+                new PivotIntake(Intake.IntakeState.COLLECT,intake).andThen(
+                        new InstantCommand(() -> intake.rollerIntake()))))
+       .whenReleased(new InstantCommand(() -> intake.rollerStop()).andThen(
+               new PivotIntake(Intake.IntakeState.STORE, intake).andThen(
+                       new RetractIntake(intake))));
+
+        outtakeButton.whenHeld(new InstantCommand(() -> intake.rollerOuttake()))
+                        .whenReleased(new InstantCommand(() -> intake.rollerStop()));
+
+        elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 20));
+
+        elevatorDownButton.whenPressed(new ElevatorGoTo(elevator, 0));
 
         CommandScheduler.getInstance().setDefaultCommand(elevator, new ManualElevatorCommand(elevator,
                 () -> (operator.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) - operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)), telemetry));
 
+        CommandScheduler.getInstance().setDefaultCommand(drivetrain, new DefaultDrive(drivetrain,
+                () -> driver.getLeftX(),
+                () -> driver.getLeftY(),
+                () -> driver.getRightX()));
+
         register(arm, intake);
         schedule(new RunCommand(telemetry::update));
+
+        waitForStart();
+        schedule(new PivotIntake(Intake.IntakeState.HOME, intake));
     }
 }

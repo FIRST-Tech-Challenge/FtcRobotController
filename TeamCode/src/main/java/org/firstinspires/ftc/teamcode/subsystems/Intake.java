@@ -27,13 +27,25 @@ public class Intake extends SubsystemBase {
 
     public void extend() {
 
-        intakeExt.setPosition(1);
+        intakeExt.setPosition(0.6);
 
     }
     public void retract() {
 
-        intakeExt.setPosition(0);
+        intakeExt.setPosition(0.15);
 
+    }
+
+    public void rollerIntake() {
+        intakePower.setPower(1);
+    }
+
+    public void rollerStop() {
+        intakePower.setPower(0);
+    }
+
+    public void rollerOuttake() {
+        intakePower.setPower(-1);
     }
 
     public void setPivot(IntakeState state) {
@@ -43,7 +55,7 @@ public class Intake extends SubsystemBase {
                 intakePivot.setPosition(0);
                 break;
             case STORE:
-                intakePivot.setPosition(0.5);
+                intakePivot.setPosition(0.2);
                 break;
             case COLLECT:
                 intakePivot.setPosition(1);
