@@ -5,7 +5,6 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp (name = "TeleOp_RobotCentric")
 public class TeleOpCode_RobotCentric extends LinearOpMode {
@@ -66,6 +65,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         }*/
             if (gamepad1.right_trigger != 0) {
                 //forward
+                //after testing: it went backward sby accident
                 straightMovementVelocity = Math.pow(gamepad1.right_trigger, 3) * 5000;
             }
             if (gamepad1.b) {
@@ -95,31 +95,56 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         // Gamepad2 configuration
         {
-            int liftPower;
-            liftPower = Math.round(gamepad2.right_stick_y);// Extends and retracts the lift
-
-            int pitchPower;
-            pitchPower = Math.round(gamepad2.left_stick_y);
-            //telemetry.addData("pitchPower", pitchPower);
-
+            {
+//            double liftPower = (gamepad2.right_stick_y);// Extends and retracts the lift
+//            if (Math.abs(liftPower)>.2){
+//                robot.liftExtender.setPower(liftPower);
+//            }
+//            double pitchPower = (gamepad2.left_stick_y);// Extends and retracts the lift
+//            if (Math.abs(pitchPower)>.2){
+//                robot.liftPitch.setPower(pitchPower);
+//            }
+//            int pitchPower;
+//            pitchPower = Math.round(gamepad2.left_stick_y);
+//            //telemetry.addData("pitchPower", pitchPower);
+        }
             if (gamepad2.square) {
-                robot.liftPitch(200, 0.05);
+                robot.liftPitch(0, 0.2);
+                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
             }
 
             if (gamepad2.circle) {
-                robot.liftPitch(-200, 0.05);
+                robot.liftPitch(200, 0.2);
+                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
+
             }
 
-            if (gamepad2.triangle) {
-                robot.liftExtender(200, 0.05);
+//            if (gamepad2.triangle) {
+//                robot.liftExtender(2700, 0.3);
+//            }
+//
+//            if (gamepad2.cross) {
+//                robot.liftExtender(0, 0.3);
+//            }
+            if (Math.abs(gamepad2.left_stick_x)>0.2) {
+                robot.liftPitch.setVelocity(400*gamepad2.left_stick_x);
+                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
+
+            } else{
+                robot.liftPitch.setVelocity(0);
+            }//1300
+            //2700
+            //find positon for extension
+            if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftPitch.getCurrentPosition()<2780&&robot.liftPitch.getCurrentPosition()>0) {
+                robot.liftExtender.setVelocity(-400*gamepad2.right_stick_y);
+                telemetry.addData("extenderhpos", robot.liftExtender.getCurrentPosition());
+            } else{
+                robot.liftExtender.setVelocity(0);
             }
 
-            if (gamepad2.cross) {
-                robot.liftExtender(0, 0.05);
-            }
 
             if (gamepad2.right_trigger != 0) {
-                robot.intakeToggle(1);
+                robot.intakeToggle(0.5);
             } else {
                 robot.intakeToggle(0);
             }
@@ -130,12 +155,22 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 robot.intakeToggle(0);
             }
 
-            if (gamepad2.dpad_up) {
-                robot.clawPitch(10, 0.005);
+            if (gamepad2.dpad_left) {
+                //roll turns 90degrees
+                robot.pitch.setPosition(0.08);
             }
 
-            if (gamepad2.dpad_down) {
-                robot.clawPitch(-10, 0.005);
+            if (gamepad2.dpad_right) {
+                //roll turns right
+                robot.pitch.setPosition(.1278);
+            }
+            if(gamepad2.dpad_up){
+               //pitch moves up
+                robot.clawRoll.setPosition(0.1867);
+            }
+            if(gamepad2.dpad_down){
+                //pitch moves down
+                robot.clawRoll.setPosition(0.125);
             }
 
             // Set power of the motors for the lift and the servos

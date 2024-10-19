@@ -32,11 +32,11 @@ public class RobotInitialize {
     // Initialization Phase
 
     // Create servo variables
-     CRServo intakeToggle; // This is a special continous rotation servo which allows it to act
+     CRServo intake; // This is a special continous rotation servo which allows it to act
     // like a motor
 
+     Servo clawRoll;
      Servo pitch;
-     Servo roll;
 
 
     // Create the empty normal motor variables
@@ -49,8 +49,8 @@ public class RobotInitialize {
     // DcMotorEx liftPitch; (Placeholder for sixth motor)
 
     // Create the empty lift control variables
-    DcMotor liftExtender; //Extends the lift outwards and pulls it inwards
-    DcMotor liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
+    DcMotorEx liftExtender; //Extends the lift outwards and pulls it inwards
+    DcMotorEx liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
 
     // Create empty gyroscope variable
     BHI260IMU gyroScope;
@@ -80,30 +80,34 @@ public class RobotInitialize {
         fRight = opMode.hardwareMap.get(DcMotorEx.class, "fright");
         bLeft = opMode.hardwareMap.get(DcMotorEx.class, "bleft");
 
-        liftExtender = opMode.hardwareMap.get(DcMotor.class, "liftExtender");
-        liftPitch = opMode.hardwareMap.get(DcMotor.class, "liftPitch");
-        intakeToggle = opMode.hardwareMap.get(CRServo.class, "intakeToggle");
-        roll = opMode.hardwareMap.get(Servo.class, "roll");
-        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
+        liftExtender = opMode.hardwareMap.get(DcMotorEx.class, "liftExtender");
+        liftPitch = opMode.hardwareMap.get(DcMotorEx.class, "liftPitch");
+        intake = opMode.hardwareMap.get(CRServo.class, "intake");
+        pitch = opMode.hardwareMap.get(Servo.class, "roll");
+        clawRoll = opMode.hardwareMap.get(Servo.class, "pitch");
         // The front left and back right motors are reversed so all wheels go in the same direction
         // When a positive or negative value is used
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        intakeToggle.setPower(0); // Off by default
+        intake.setPower(0); // Off by default
 
         liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
         liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftExtender.setTargetPosition(0);
-        liftExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        liftExtender.setTargetPosition(0);
+        liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftExtender.setZeroPowerBehavior(BRAKE);
 
         liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
         liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftPitch.setTargetPosition(100);
-        liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        liftPitch.setTargetPosition(100);
+        liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftPitch.setZeroPowerBehavior(BRAKE);
+//
+//        roll.setDirection(Servo.Direction.FORWARD);
+//        roll.setPosition(0);
 
+//        pitch.setDirection(Servo.)
         { //This was causing problems
             //claw.setPosition(0);
             //roll.setPosition(0);
@@ -336,12 +340,14 @@ public class RobotInitialize {
         stopMechanisms();
     }
 
-    public int intakeToggle(int power) {
-    intakeToggle.setPower(power);
-    return power;
+    public void intakeToggle(double power) {
+    intake.setPower(power);
     }
 
-    public void clawPitch(double position, double velocity) {
+    public void moveRoll(double position, double velocity) {
+        clawRoll.setPosition(position);
+    }
+    public void movePitch(double position, double velocity) {
         pitch.setPosition(position);
     }
 

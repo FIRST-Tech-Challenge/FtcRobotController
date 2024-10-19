@@ -33,7 +33,8 @@ public class AutonomousCode extends LinearOpMode {
 
         //Positive values make the lift go backwards
         //Negative values make the lift go forwards
-        robot.liftPitch(200, 0.05);
+//        robot.liftPitch(200, 0.05);
+//        robot.intakeToggle(1);
 
         // Main movement of drivetrain during Auto
         robot.goStraight(850, 500);
