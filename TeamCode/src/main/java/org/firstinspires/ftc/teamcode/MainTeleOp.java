@@ -51,7 +51,7 @@ public class MainTeleOp extends LinearOpMode{
             return;
         }
             //b button
-            double clawPosition = .40;
+            double clawPosition = .2;
             claw.setPosition(clawPosition);
     }
     public void ClawClosed(Servo claw)
@@ -188,14 +188,16 @@ public class MainTeleOp extends LinearOpMode{
 
         //int ticksPerInch = 1541;
         double ticksPerInch = viperDriveTrainTicksPerRevolution/4.625;
-        int extensionTicks = (int)(lengthInches*ticksPerInch);
-        if (armMotor.getCurrentPosition() >= MinimumTicks(lengthInches))
-        {
-            viperMotor.setDirection(DcMotor.Direction.REVERSE);
-            viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
-            viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            viperMotor.setPower(0.2);
+        boolean minimumAngleTrue = armMotor.getCurrentPosition() < 500;
+        if (minimumAngleTrue) {
+            lengthInches = Math.min(lengthInches, 18);
         }
+        viperMotor.setDirection(DcMotor.Direction.REVERSE);
+        int extensionTicks = (int)(lengthInches*ticksPerInch);
+        viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
+        viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viperMotor.setPower(0.2);
+
     }
     public double MinimumTicks(double viperLength)
     {   int maxExtensionLength = 34;
@@ -274,12 +276,12 @@ public class MainTeleOp extends LinearOpMode{
             if (gamepad1.dpad_up)
             {
                 desiredViperState = ViperState.PrepareToHang;
-                ViperMotorCustom(viperMotor, 4.625, armMotor);
+                ViperMotorCustom(viperMotor, 9, armMotor);
             }
             if (gamepad1.dpad_left)
             {
                 desiredViperState = ViperState.Dump;
-                ViperMotorCustom(viperMotor, 4.625 * 5, armMotor);
+                ViperMotorCustom(viperMotor, 27, armMotor);
             }
             if (gamepad1.dpad_down)
             {
@@ -337,31 +339,31 @@ public class MainTeleOp extends LinearOpMode{
             if(gamepad2.a) {
                 WristDown(wrist);
             }
-            if (Math.abs((gamepad2.right_stick_y)) > 0.2 )
-            {
-                double motorPower = 0;
-                if (viperMotor.getCurrentPosition() > -2000)
-                {
-                    motorPower = 0.2;
-                    desiredViperState = ViperState.Manual;
-                    //538 ticks per revolution
-                    viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }
-                else {
-                    motorPower = 0;
-                }
-                viperMotor.setPower(gamepad2.right_stick_y * motorPower);
-            } else
-            {
-                if (desiredViperState == ViperState.Manual) {
-                    viperMotor.setVelocity(0);
-                    desiredViperState = ViperState.Current;
-                    int pos = viperMotor.getCurrentPosition();
-                    viperMotor.setTargetPosition(pos);
-                    viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
-
-            }
+//            if (Math.abs((gamepad2.right_stick_y)) > 0.2 )
+//            {
+//                double motorPower = 0;
+//                if (viperMotor.getCurrentPosition() > -2000)
+//                {
+//                    motorPower = -0.2;
+//                    desiredViperState = ViperState.Manual;
+//                    //538 ticks per revolution
+//                    viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                }
+//                else {
+//                    motorPower = 0;
+//                }
+//                viperMotor.setPower(gamepad2.right_stick_y * motorPower);
+//            } else
+//            {
+////                if (desiredViperState == ViperState.Manual) {
+////                    viperMotor.setVelocity(0);
+////                    desiredViperState = ViperState.Current;
+////                    int pos = viperMotor.getCurrentPosition();
+////                    viperMotor.setTargetPosition(pos);
+////                    viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+////                }
+//                  desiredViperState = ViperState.Current;
+//            }
             telemetry.update();
         }
     }
