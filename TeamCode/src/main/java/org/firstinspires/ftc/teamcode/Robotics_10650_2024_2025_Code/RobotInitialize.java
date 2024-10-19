@@ -245,7 +245,7 @@ public class RobotInitialize {
     public void liftPitch(int position, double velocity){
         liftPitch.setTargetPosition(position);
         liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (Math.abs(liftPitch.getCurrentPosition()-position)>10) {
+        while (Math.abs(liftPitch.getCurrentPosition()-position)>10 && opMode.opModeIsActive()) {
             opMode.telemetry.addData("needs to be >10", Math.abs(liftPitch.getCurrentPosition()-position));
             opMode.telemetry.addData("position", liftPitch.getCurrentPosition());
             opMode.telemetry.update();
@@ -262,7 +262,7 @@ public class RobotInitialize {
     public void liftExtender(int position, double velocity){
         liftExtender.setTargetPosition(position);
         liftExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (Math.abs(liftExtender.getCurrentPosition()-position)>10) {
+        while (Math.abs(liftExtender.getCurrentPosition()-position)>10 && opMode.opModeIsActive()) {
             opMode.telemetry.addData("needs to be >10", Math.abs(liftExtender.getCurrentPosition()-position));
             opMode.telemetry.addData("position", liftExtender.getCurrentPosition());
             opMode.telemetry.update();
