@@ -21,7 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
-// How to connect to robot procedure
+// How to connect to robot procedure (see file called
+// controlHubConnectionInstructions.md)
 
 public class RobotInitialize {
 

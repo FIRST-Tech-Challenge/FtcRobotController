@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp (name = "TeleOp_FieldCentric")
+@Disabled // This here until it is ready to be used to avoid
+// confusion, remove after it is ready to be used
 public class TeleOpCode_FieldCentric extends LinearOpMode {
 
     // Run the initialize function
