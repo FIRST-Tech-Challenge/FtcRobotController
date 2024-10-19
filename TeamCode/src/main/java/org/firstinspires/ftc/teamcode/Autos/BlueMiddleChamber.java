@@ -20,17 +20,23 @@ public class BlueMiddleChamber extends LinearOpMode {
         //Inverse every turn for red.
 
         //Score preloaded specimen.
-        drivebase.driveStraight(0.3, 24.0, 0);
+        drivebase.driveStraight(0.3, 26.0, 0);
 
         //To put 1st sample into obs zone.
-        //drivebase.driveSideways(0.3, 24);
-        //drivebase.autoDriveForward(0.3, 12);
-        //drivebase.turnToHeading(0.3, 90);
-        /*
-        drivebase.autoDriveForward(0.3, 12);
-        drivebase.turnToAngle(-90, 0.3, telemetry);
-        drivebase.autoDriveForward(0.3,48);
+        drivebase.turnToHeading(.3, -90);
+        drivebase.holdHeading(.3, -90, 0.5);
+        drivebase.driveStraight(.4, 22, -90);
+        drivebase.turnToHeading(0.3, 0);
+        drivebase.holdHeading(.3, 0, 0.5);
 
+        drivebase.driveStraight(0.4, 28, 0);
+        drivebase.turnToHeading(0.3, -90);
+        drivebase.driveStraight(0.4, 10, -90);
+        drivebase.turnToHeading(0.3, -180);
+        drivebase.driveStraight(0.4,48, -180);
+        //16 decs left before.
+
+        /*
         //Transition from current line to next one down.
         drivebase.turnToAngle(-180, 0.3, telemetry);
 
@@ -56,6 +62,5 @@ public class BlueMiddleChamber extends LinearOpMode {
         //Park in obs zone.
         drivebase.autoDriveForward(0.3, -60);
         */
-
     }
 }
