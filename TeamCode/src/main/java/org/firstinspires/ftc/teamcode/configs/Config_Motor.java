@@ -32,8 +32,8 @@ public class Config_Motor extends LinearOpMode {
     public void runOpMode() {
         //Initilize the motors with error handling
 
-        motor1 = initializeMotor("RedSlide");
-        motor2 = initializeMotor("BlueSlide");
+        motor1 = initializeMotor("IntakeExtension");
+        motor2 = initializeMotor("Lift");
         motor3 = initializeMotor("FrontLeftWheel");
         motor4 = initializeMotor("FrontRightWheel");
 
@@ -65,8 +65,8 @@ public class Config_Motor extends LinearOpMode {
 
         //Display selection instructions during initialization
         telemetry.addLine("Select Motor to Test using PlayStation Controller Buttons.")
-                .addData("Cross(X)","Red Slide")
-                .addData("Circle(O)","Blue Slide")
+                .addData("Cross(X)","Intake Extension")
+                .addData("Circle(O)","Lift")
                 .addData("Square()","Left Front Wheel")
                 .addData("Triangle()","Right Front Wheel")
                 .addData("Current Selection",selectedMotorName);
