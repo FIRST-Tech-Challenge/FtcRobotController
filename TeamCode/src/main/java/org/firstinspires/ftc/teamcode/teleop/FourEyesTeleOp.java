@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.FourEyesRobot;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-
+@TeleOp(name = "FourEyesTeleOP")
 public class FourEyesTeleOp extends LinearOpMode {
     FourEyesRobot fourEyesRobot;
     GamepadEvents controller1,controller2;
@@ -50,7 +51,7 @@ public class FourEyesTeleOp extends LinearOpMode {
             }
 
             fourEyesRobot.moveLift((controller1.left_trigger.getTriggerValue()-controller1.right_trigger.getTriggerValue())+(controller2.left_trigger.getTriggerValue()-controller2.right_trigger.getTriggerValue()));
-
+            fourEyesRobot.drive(-controller1.left_stick_y,controller1.left_stick_x, controller1.right_stick_x);
             controller1.update();
             controller2.update();
             telemetry.update();
