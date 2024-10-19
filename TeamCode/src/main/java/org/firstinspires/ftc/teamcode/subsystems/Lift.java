@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.utils.PIDController;
 
 public class Lift {
@@ -22,11 +23,13 @@ public class Lift {
     //Adjustable Constants
     public int LIFT_SPEED = 20; //ticks per call
     public double POWER = 1; //Max Power
-    public int LOW_HEIGHT = 0; //Ticks
-    public int MEDIUM_HEIGHT = 1000; //Ticks
-    public int HIGH_HEIGHT = 2000; //Ticks
 
-    public int MAX_HEIGHT = 4300; //Ticks
+
+    //Values: 590, 1200, 2700
+    public int ZERO = 0; //Ticks //SAMPLE INTAKE
+    public int SPECIMIN_INTAKE = 590; //Ticks //SPECIMIN INTAKE
+    public int HIGH_BAR = 2700; //Ticks //SPECIMIN DESPOSIT
+    public int MAX_HEIGHT = 4300; //Ticks //SAMPLE DEPOSIT
 
     public double GRAVITY = 9.8; // N/kgs
     public double ARM_WEIGHT = 1;//kgs
@@ -35,7 +38,7 @@ public class Lift {
     public double calculatedWeight = GRAVITY * ARM_WEIGHT;
 
     //Internal variables
-    private DcMotor liftLeft, liftRight;
+    private DcMotorEx liftLeft, liftRight;
     private int targetPosition;
 
     private Encoder encoder;
@@ -58,14 +61,14 @@ public class Lift {
      */
     public Lift(HardwareMap hw, String nameLeft, String nameRight, String nameEncoder){
         //Initialize motors
-        this.liftLeft = hw.get(DcMotor.class, nameLeft);
-        this.liftRight = hw.get(DcMotor.class, nameRight);
+        this.liftLeft = hw.get(DcMotorEx.class, nameLeft);
+        this.liftRight = hw.get(DcMotorEx.class, nameRight);
         encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
         //Reverse one of the motors
         this.liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
         //Ensures motor encoders are reset
 
-        pid = new PIDController(0,0,0,0);
+        pid = new PIDController(0.033,0,0.0004,0);
         pid.setTarget(getPosition());
     }
 
@@ -95,25 +98,36 @@ public class Lift {
         return encoder.getPositionAndVelocity().position;
     }
 
-
+    public double getTargetPosition(){
+        return targetPosition;
+    }
     /**
      * Sets the motors' target position to [LOW_HEIGHT]
      */
-    public void goToLow(){
-        pid.setTarget(LOW_HEIGHT);
+    public void goToSampleIntake(){
+        this.targetPosition = ZERO;
+        pid.setTarget(this.targetPosition);
     }
+
+    public void goToTopBucket(){
+        this.targetPosition = MAX_HEIGHT;
+        pid.setTarget(this.targetPosition);
+    }
+
     /**
      * Sets the motors' target position to [MEDIUM_HEIGHT]
      */
-    public void goToMedium(){
-        pid.setTarget(MEDIUM_HEIGHT);
+    public void goToSpeciminIntake(){
+        this.targetPosition = SPECIMIN_INTAKE;
+        pid.setTarget(this.targetPosition);
     }
 
     /**
      * Sets the motors' target position to [HIGH_HEIGHT]
      */
-    public void goToHigh(){
-        pid.setTarget(HIGH_HEIGHT);
+    public void goToHighBar(){
+        this.targetPosition = HIGH_BAR;
+        pid.setTarget(this.targetPosition);
     }
 
     public double getForwardFeedValue(){
@@ -127,11 +141,12 @@ public class Lift {
      * Updates PID loop/motor power.
      * Ensure this is called when using lift, otherwise nothing will happen.
      */
-    public void update(){
+    public double update(){
         recalculateWeight();
         double power = pid.calculate(getPosition(), getForwardFeedValue());
         liftLeft.setPower(power);
         liftRight.setPower(power);
+        return power;
     }
 
     /**
@@ -141,10 +156,10 @@ public class Lift {
      * @param Kd [double] Increment to increase Kd by
      */
     public void adjustPID(double Kp, double Ki, double Kd){
-        double[] k = pid.getPIDValues();
-        pid.setKp(k[0] + Kp);
-        pid.setKi(k[1] + Ki);
-        pid.setKd(k[2] + Kd);
+//        double[] k = pid.getPIDValues();
+        pid.setKp(Kp);
+        pid.setKi(Ki);
+        pid.setKd(Kd);
     }
 
     @SuppressLint("DefaultLocale")
@@ -157,6 +172,16 @@ public class Lift {
                 getPosition(),
                 targetPosition,
                 pid.toString());
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String getArmCurrent(){
+        return String.format(
+                "Left Arm Current: %f\n" +
+                        "Right Arm Current: %f",
+                liftLeft.getCurrent(CurrentUnit.AMPS),
+                liftRight.getCurrent(CurrentUnit.AMPS)
+        );
     }
 
     public PIDController getPid(){

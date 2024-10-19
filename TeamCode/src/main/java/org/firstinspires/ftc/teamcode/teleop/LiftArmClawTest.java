@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @TeleOp(name="LiftArmClawTest", group = "Subsystem Tests")
@@ -25,6 +26,7 @@ public class LiftArmClawTest extends LinearOpMode {
         Mecanum robot = new Mecanum(hardwareMap);
 
         Lift lift = new Lift(hardwareMap);
+        Wrist wrist = new Wrist(hardwareMap);
 
 //        Arm arm = new Arm(hardwareMap);
 
@@ -32,26 +34,26 @@ public class LiftArmClawTest extends LinearOpMode {
 
         GamepadEvents controller1 = new GamepadEvents(gamepad1);
 
-        DcMotor liftL = hardwareMap.get(DcMotor.class,"liftLeft");
-        DcMotor liftR = hardwareMap.get(DcMotor.class,"liftRight");
-        liftR.setDirection(DcMotorSimple.Direction.REVERSE);
+//        DcMotor liftL = hardwareMap.get(DcMotor.class,"liftLeft");
+//        DcMotor liftR = hardwareMap.get(DcMotor.class,"liftRight");
+//        liftR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-//        //Initialized as 6 because both Lift and Arm each have their own PID
-//        pidValues = new double[6];
-//        for (double val : lift.getPid().getPIDValues()){
-//            pidValues[index] = val;
-//            updateIndex(true);
-//        }
+        //Initialized as 6 because both Lift and Arm each have their own PID
+        pidValues = new double[3];
+        for (double val : lift.getPid().getPIDValues()){
+            pidValues[index] = val;
+            updateIndex(true);
+        }
 //        for (double val : arm.getPid().getPIDValues()){
 //            pidValues[index] = val;
 //            updateIndex(true);
 //        }
-//        //Updates/resets index to 0
+        //Updates/resets index to 0
 //        updateIndex(true);
 
 
         waitForStart();
-
+        wrist.setHoverMode();
         //Start Phase
         while(!isStopRequested()){
 
@@ -67,9 +69,9 @@ public class LiftArmClawTest extends LinearOpMode {
             * */
 
             //Lift Subsystem
-//            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
-            liftL.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
-            liftR.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+//            liftL.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+//            liftR.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
 
 //            //Arm Subsystem
 //            if (controller1.right_bumper.onPress()){
@@ -86,48 +88,64 @@ public class LiftArmClawTest extends LinearOpMode {
 //                claw.changePosition(-1);
 //            }
 //
-//            if(controller1.x.onPress()){
-//                INCREMENT *= 10;
-//            }else if (controller1.y.onPress()){
-//                INCREMENT /= 10;
-//            }
+            if(controller1.x.onPress()){
+                INCREMENT *= 10;
+            }else if (controller1.y.onPress()){
+                INCREMENT /= 10;
+            }
 //
-//            //PID Tuning
-//            //Controls the value increase/decrease
-//            if (controller1.dpad_up.onPress()){
-//                pidValues[index] += INCREMENT;
-//            }
-//            else if( controller1.dpad_down.onPress()){
-//                pidValues[index] = Math.max(0, pidValues[index] - INCREMENT);
-//            }
+            //PID Tuning
+            //Controls the value increase/decrease
+            if (controller1.dpad_up.onPress()){
+                pidValues[index] += INCREMENT;
+            }
+            else if( controller1.dpad_down.onPress()){
+                pidValues[index] = Math.max(0, pidValues[index] - INCREMENT);
+            }
 //
-//            //Controls which value is being edited
-//            if (controller1.dpad_left.onPress()) {
-//                updateIndex(false);
-//            }
-//            else if(controller1.dpad_right.onPress()){
-//                updateIndex(true);
-//            }
-//
-//            lift.adjustPID(pidValues[0],pidValues[1],pidValues[2]);
+            //Controls which value is being edited
+            if (controller1.dpad_left.onPress()) {
+                updateIndex(false);
+            }
+            else if(controller1.dpad_right.onPress()){
+                updateIndex(true);
+            }
+
+
+            if(controller1.a.onPress()){
+                lift.goToTopBucket();
+            }
+            if(controller1.b.onPress()){
+                lift.goToHighBar();
+            }
+            if(controller1.right_bumper.onPress()){
+                lift.goToSampleIntake();
+            }
+
+
+
+            lift.adjustPID(pidValues[0],pidValues[1],pidValues[2]);
 //            arm.adjustPID(pidValues[3],pidValues[4],pidValues[5]);
 //
 //
 //            //Data Telemetry
-//            telemetry.addLine("Current Position Data");
+            telemetry.addLine("Current Position Data");
 //            telemetry.addData("Lift Motor Position: ",lift.getPosition());
 //            telemetry.addData("Arm Rotation: ",arm.getRotation());
 //            telemetry.addData("Claw Servo Position: ",claw.getPosition());
 //
-//            //PID Tuning Information
-//            telemetry.addLine("PID Tuning Information:");
-//            telemetry.addLine("X/Y to Increase/Decrease [INCREMENT] amount");
-//            telemetry.addLine("DpadUp/DpadDown to Increase/Decrease current Selected PID by said [INCREMENT] amount");
-//            telemetry.addLine("DpadLeft/DpadRight to switch between PID values");
-//            telemetry.addData("Current [INCREMENT] value: ",INCREMENT);
-//            telemetry.addLine(buildPIDString());
+            //PID Tuning Information
+            telemetry.addLine("PID Tuning Information:");
+            telemetry.addLine("X/Y to Increase/Decrease [INCREMENT] amount");
+            telemetry.addLine("DpadUp/DpadDown to Increase/Decrease current Selected PID by said [INCREMENT] amount");
+            telemetry.addLine("DpadLeft/DpadRight to switch between PID values");
+            telemetry.addData("Current [INCREMENT] value: ",INCREMENT);
+            telemetry.addLine(buildPIDString());
 
             telemetry.addData("Lift Position: ",lift.getPosition());
+            telemetry.addData("Power: ",lift.update());
+            telemetry.addData("Target position", lift.getTargetPosition());
+            telemetry.addLine(lift.getArmCurrent());
             telemetry.update();
             controller1.update();
 //            lift.update();
@@ -139,7 +157,7 @@ public class LiftArmClawTest extends LinearOpMode {
         if (increase){
             index = (index+1) % pidValues.length;
         }else{
-
+            index = (pidValues.length + index - 1) % pidValues.length;
         }
     }
 

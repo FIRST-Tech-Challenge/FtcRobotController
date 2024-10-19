@@ -24,7 +24,7 @@ public class PIDController {
         double currentTime = System.currentTimeMillis() / 1000.0; // current time in seconds
         double deltaTime = currentTime - prevTime; // time difference
 
-        double error = target - currentPosition;
+        double error = this.target - currentPosition;
         integral += error * deltaTime;
         double derivative = (error - prevError) / deltaTime;
 
@@ -36,11 +36,11 @@ public class PIDController {
     }
 
     public void setTarget(double target){
-        target = target;
+        this.target = target;
     }
 
     public double getTarget(){
-        return target;
+        return this.target;
     }
 
     //These can be used to adjust PID actively
