@@ -20,6 +20,10 @@ public class Swerve_components {
     /* Declare OpMode members. */
     private LinearOpMode myOp = null;   // gain access to methods in the calling OpMode.
 
+    // Define a constructor that allows the OpMode to pass a reference to itself.
+    public Swerve_components(LinearOpMode opmode) {
+        myOp = opmode;
+    }
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     public DcMotor FLMotor, FRMotor, BLMotor, BRMotor;
@@ -50,10 +54,6 @@ public class Swerve_components {
     protected static int rtarget = 0;
 
 
-    // Define a constructor that allows the OpMode to pass a reference to itself.
-    public Swerve_components(LinearOpMode opmode) {
-        myOp = opmode;
-    }
 
 
     /**

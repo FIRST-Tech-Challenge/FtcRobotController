@@ -10,21 +10,19 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
 @TeleOp(name = "CompBot Swerve", group = "CompBot")
 public class CompBot extends LinearOpMode {
 
-    DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
-
-    Servo FLServo, BLServo, BRServo, FRServo, claw;
+    SwerveConfig swerve = new SwerveConfig(this);
 
     GoBildaPinpointDriver odo;
 
+    DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
 
-    ElapsedTime turnTime = new ElapsedTime();
+    Servo FLServo, BLServo, BRServo, FRServo, claw;
 
 
     // In case builders are bad, is offset center for servo
@@ -38,28 +36,29 @@ public class CompBot extends LinearOpMode {
     static double WHEELBASE = 15; //in inches
 
 
+    /**
+     * controls for game pad 1:
+     * right trigger: forwards
+     * left trigger: backwards
+     * right stick x: rotate
+     * left stick x: strafe
+     *
+     * controls for game pad 2:
+     * left stick y: in and out of arm
+     * right stick y: up and down of arm
+     * left trigger: claw intake
+     * right trigger: claw out
+     * presets for:
+     * attaching clip to sample
+     * attaching specimen(clip + sample) to top rung
+     * presets for bucket 1 and 2
+     */
     public void runOpMode() throws InterruptedException {
 
-        initRobot(); // Does all the robot stuff
+        swerve.initSwerve(); // Does all the robot stuff
 
-        /**
-         * controls for game pad 1:
-         * right trigger: forwards
-         * left trigger: backwards
-         * right stick x: rotate
-         * left stick x: strafe
-         *
-         *
-         * controls for game pad 2:
-         * left stick y: in and out of arm
-         * right stick y: up and down of arm
-         * left trigger: claw intake
-         * right trigger: claw out
-         * presets for:
-         * attaching clip to sample
-         * attaching specimen(clip + sample) to top rung
-         * presets for bucket 1 and 2
-         */
+        initRobot();
+
 
         waitForStart();
         while (opModeIsActive()) {

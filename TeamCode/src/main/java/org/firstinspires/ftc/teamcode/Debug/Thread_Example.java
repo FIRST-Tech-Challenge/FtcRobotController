@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -14,7 +14,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class Thread_Example extends LinearOpMode {
 
 
-    Thread t = new Thread() {
+    Thread thread1 = new Thread() {
+        public void run() {
+            //sop (system out print)
+        }
+    };
+
+    Thread thread2 = new Thread() {
         public void run() {
             //sop (system out print)
         }
@@ -22,7 +28,9 @@ public class Thread_Example extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        t.start();
+        thread1.start();
+
+        thread2.start();
     }
 
 

@@ -1,17 +1,16 @@
-package org.firstinspires.ftc.teamcode.Mekanism;
+package org.firstinspires.ftc.teamcode.CompBot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Mekanism {
+public class MekanismConfig {
 
-    public final LinearOpMode myOp;
-    public Mekanism(LinearOpMode opMode) {
+    public LinearOpMode myOp;
+    public MekanismConfig(LinearOpMode opMode) {
         myOp = opMode;
     }
 
@@ -30,7 +29,6 @@ public class Mekanism {
      */
     public void initMekanism() {
 
-/*
         // Init slaw, claw, and pivot
         pivot = myOp.hardwareMap.get(DcMotor.class, "pivot");
         slide = myOp.hardwareMap.get(DcMotor.class, "slide");
@@ -55,7 +53,6 @@ public class Mekanism {
         pivot.setPower(1);
         slide.setPower(1);
 
-         */
 
 
         wrist = myOp.hardwareMap.get(Servo.class, "wrist");
