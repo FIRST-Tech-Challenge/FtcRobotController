@@ -50,6 +50,7 @@ public class PIDController {
    */
   public void update(double currentPosition) {
     // the error of how far you are from where you want to be
+    // added wrap to the error equation
     double error = currentPosition - target;
     error = Utlities.wrap(error);
     

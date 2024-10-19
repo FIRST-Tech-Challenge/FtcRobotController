@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Robot.systems.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.Robot;
 
 public class ITDbot extends Robot {
-    //TODO tune these numbers for ITDbot, these are from Zirka
+    //TODO tune these numbers for ITDbot, need to be updated for Into the deep
     public static double derivativeConstantAngleDef = 0.0015;
     public static double proportionalConstantAngleDef = 0.02;
     public void Init(HardwareMap hardwareMap, Telemetry telemetry){
