@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.network.WifiUtil;
 import org.firstinspires.ftc.teamcode.hardware.MecanumEncoder;
+import org.opencv.features2d.BRISK;
 
 @Autonomous(name="Red Left")
 public class RedLeft extends LinearOpMode {
@@ -18,6 +20,7 @@ public class RedLeft extends LinearOpMode {
     private Telemetry.Item debugOutout_tel = null;
     private Telemetry.Item parking_status_tel = null;
     private Telemetry.Item parking_delay_tel = null;
+    private Servo Bartouch;
     boolean parking_status = false;
     double parking_delay = 0.0;
     Gamepad previous = new Gamepad();
@@ -30,6 +33,7 @@ public class RedLeft extends LinearOpMode {
 
         // run once when init is pressed
         drive.initHardware(this.hardwareMap, wifiSsid.equals(TESTBOT) ? MecanumEncoder.Bot.TestBot : MecanumEncoder.Bot.CompBot);
+//        Bartouch = hardwareMap.get(Servo.class, "bartouch");
         drive.resetYaw();
         telemetry.clearAll();
         telemetry.setAutoClear(false);
@@ -67,6 +71,10 @@ public class RedLeft extends LinearOpMode {
 
         // After we are done initializing our code, we wait for Start button.
         waitForStart();
+
+        Bartouch = hardwareMap.get(Servo.class, "bartouch");
+        Bartouch.setPosition(1.0);
+
             // move off the wall
         drive.driveForwardInches(0.4,2,15.0);
             // move to in front of first sample and push it into observation
@@ -89,10 +97,9 @@ public class RedLeft extends LinearOpMode {
         drive.driveForwardInches(0.7, 40, 15.0); // for testbot, for comp bot
         drive.rotateCounterClockwise(0.4,22,15.0); // for testbot,  for comp bot
 
-        drive.driveBackwardInches(0.7,30,15.0); // for testbot,  for comp bot
-        //drive.driveForwardInches(0.47,4,15.0); // for testbot, for comp bot
-        //drive.driveRightInches(0.47,8.5,15.0); // for testbot,  for comp bot
-        //drive.driveBackwardInches(0.47,6.5,15.0); // for testbot, for comp bot
+        drive.driveBackwardInches(0.7,26,15.0); // for testbot,  for comp bot
+        Bartouch.setPosition(-1.0);
+        drive.driveBackwardInches(0.7,2,15.0); // for testbot,  for comp bot
         drive.stop();
     }
 }

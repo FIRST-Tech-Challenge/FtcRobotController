@@ -316,6 +316,11 @@ public class MecanumEncoder {
         int fr = (int)(inches * settings.CountsPerInch());
         int bl = (int)(0 - (inches * settings.CountsPerInch()));
         int br = (int)(inches * settings.CountsPerInch());
+//        while (opModeInInit()) {
+//            current.copy(gamepad1);
+//            if (current.b && !previous.b) {
+//                lift_status = !lift_status;
+//            }
 
         drive(power, power, power, power, fl, fr, bl, br, timeoutSec);
     }
@@ -324,11 +329,6 @@ public class MecanumEncoder {
 //    public void liftmotor() {
 //        previous.copy(gamepad1);
 //        current.copy(gamepad1);
-//        while (opModeInInit()) {
-//            current.copy(gamepad1);
-//            if (current.b && !previous.b) {
-//                lift_status = !lift_status;
-//            }
 //
 //            if (lift_status == true) {
 //

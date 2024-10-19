@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class RedRight extends LinearOpMode {
 
     private MecanumEncoder drive = new MecanumEncoder(this);
-    private String TESTBOT = "24342-RC";
+    private String TESTBOT = "24342-RC-test";
     private String wifiSsid = "";
     private IMU imu;
     private Telemetry.Item debugOutout = null;
