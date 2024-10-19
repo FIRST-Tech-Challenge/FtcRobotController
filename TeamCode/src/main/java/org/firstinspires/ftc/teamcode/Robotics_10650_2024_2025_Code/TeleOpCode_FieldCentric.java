@@ -1,3 +1,6 @@
+// Program created by: Danny and William
+// Purpose: FTC Robot Software
+
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

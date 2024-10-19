@@ -1,3 +1,6 @@
+// Program created by: Danny and William
+// Purpose: FTC Robot Software
+
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -30,90 +33,117 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         // Gamepad usages (two gamepads in use, one for driving and one for mechanisms):
 
         // Gamepad1 is used for driving (motor controls)
-        // Gamepad2 is used for mechanism manipulation (moving servos)
+        // Gamepad2 is used for mechanism manipulation (moving servos and the lift motors)
 
 
         // Variables that store the different game pad movements for ease of reference later
-        double strafeVelocity; // (left stick x-axis movement)
-        strafeVelocity = Math.pow(gamepad1.left_stick_x,3) * 5000; // Min: -10000, Max: 10000
-        //telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
-        double turnVelocity; // (right stick x-axis movement)
-        turnVelocity = Math.pow(gamepad1.right_stick_x,3) * 5000; // Min: -10000, Max: 10000
-        //telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
-        double straightMovementVelocity; // (left stick y-axis movement)
+        // Gamepad1 configuration
+        {
+            double strafeVelocity; // (left stick x-axis movement)
+            strafeVelocity = Math.pow(gamepad1.left_stick_x, 3) * 5000; // Min: -10000, Max: 10000
+            //telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
+            double turnVelocity; // (right stick x-axis movement)
+            turnVelocity = Math.pow(gamepad1.right_stick_x, 3) * 5000; // Min: -10000, Max: 10000
+            //telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
+            double straightMovementVelocity; // (left stick y-axis movement)
 //      straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y);
 // Min: -10000, Max: 10000
-        straightMovementVelocity = Math.pow(gamepad1.left_stick_y, 3) * 10000;
-        //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
-        //Gamepad1 controls the drivetrain
-        if (gamepad1.circle){
-            straightMovementVelocity = Math.pow(gamepad1.left_stick_y,3) * 1000;
-            turnVelocity = Math.pow(gamepad1.right_stick_x, 3) * 1000;
-            strafeVelocity = Math.pow(gamepad1.left_stick_x, 3) * 1000;
-            telemetry.addData("L2 pos", gamepad1.left_trigger);
-            telemetry.update();
-        }
+            straightMovementVelocity = Math.pow(gamepad1.left_stick_y, 3) * 10000;
+            //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
+            //Gamepad1 controls the drivetrain
+            if (gamepad1.circle) {
+                straightMovementVelocity = Math.pow(gamepad1.left_stick_y, 3) * 1000;
+                turnVelocity = Math.pow(gamepad1.right_stick_x, 3) * 1000;
+                strafeVelocity = Math.pow(gamepad1.left_stick_x, 3) * 1000;
+                telemetry.addData("L2 pos", gamepad1.left_trigger);
+                telemetry.update();
+            }
         /*if(gamepad1.y){
             //testing upper bound of lift
             robot.liftExtender.setPower(.25);
             telemetry.addData("position", robot.liftExtender.getCurrentPosition());
             telemetry.update();
         }*/
-        if (gamepad1.right_trigger!=0){
-            //forward
-            straightMovementVelocity = Math.pow(gamepad1.right_trigger,3) * 5000;
-        }
-        if (gamepad1.b){
-            //slow
-            straightMovementVelocity = Math.pow(gamepad1.right_trigger,3) * 1000;
-        }
-        if (gamepad1.a){
-            //boost
-            straightMovementVelocity = Math.pow(gamepad1.right_trigger,3) * 10000;
-        }
+            if (gamepad1.right_trigger != 0) {
+                //forward
+                straightMovementVelocity = Math.pow(gamepad1.right_trigger, 3) * 5000;
+            }
+            if (gamepad1.b) {
+                //slow
+                straightMovementVelocity = Math.pow(gamepad1.right_trigger, 3) * 1000;
+            }
+            if (gamepad1.a) {
+                //boost
+                straightMovementVelocity = Math.pow(gamepad1.right_trigger, 3) * 10000;
+            }
 
-        // Gamepad2 controls the lift and its mechanisms
-        int liftPower;
-        liftPower = (int)Math.round(gamepad2.right_stick_y);// Extends and retracts the lift
-
-        int pitchPower;
-        //pitchPower = (int)Math.round(gamepad2.left_stick_y);
-        //telemetry.addData("pitchPower", pitchPower);
-
-        if (gamepad2.square) {
-            robot.liftPitch(200, 0.05);
-        }
-
-        if (gamepad2.circle) {
-            robot.liftPitch(-200, 0.05);
-        }
-
-        if (gamepad2.triangle) {
-            robot.liftExtender(200, 0.05);
+            // Set velocity of the motors (drivetrain)
+            // Forward and backward movement (left stick y-axis movement)
+            // Left and right turning (right stick x-axis movement)
+            // Strafing left and right (left stick x-axis movement)
+            {
+                robot.fLeft.setVelocity(strafeVelocity - straightMovementVelocity + turnVelocity); // Overall
+                // negative value
+                robot.fRight.setVelocity(-strafeVelocity - straightMovementVelocity - turnVelocity); // Overall
+                // positive value
+                robot.bLeft.setVelocity(strafeVelocity + straightMovementVelocity - turnVelocity); // Overall
+                // positive value
+                robot.bRight.setVelocity(-strafeVelocity + straightMovementVelocity + turnVelocity); // Overall
+                // negative value
+            }
         }
 
-        if (gamepad2.cross) {
-            robot.liftExtender(0, 0.05);
-        }
+        // Gamepad2 configuration
+        {
+            int liftPower;
+            liftPower = Math.round(gamepad2.right_stick_y);// Extends and retracts the lift
 
-        if (gamepad2.right_trigger !=0) {
-            robot.intakeToggle(1);
-        } else {
-            robot.intakeToggle(0);
-        }
+            int pitchPower;
+            pitchPower = Math.round(gamepad2.left_stick_y);
+            //telemetry.addData("pitchPower", pitchPower);
 
-        if (gamepad2.left_trigger !=0) {
-            robot.intakeToggle(-1);
-        } else {
-            robot.intakeToggle(0);
-        }
+            if (gamepad2.square) {
+                robot.liftPitch(200, 0.05);
+            }
 
-        if (gamepad2.dpad_up) {
-            robot.clawPitch(10, 0.005);
-        }
+            if (gamepad2.circle) {
+                robot.liftPitch(-200, 0.05);
+            }
 
-        if (gamepad2.dpad_down) {
-            robot.clawPitch(-10, 0.005);
+            if (gamepad2.triangle) {
+                robot.liftExtender(200, 0.05);
+            }
+
+            if (gamepad2.cross) {
+                robot.liftExtender(0, 0.05);
+            }
+
+            if (gamepad2.right_trigger != 0) {
+                robot.intakeToggle(1);
+            } else {
+                robot.intakeToggle(0);
+            }
+
+            if (gamepad2.left_trigger != 0) {
+                robot.intakeToggle(-1);
+            } else {
+                robot.intakeToggle(0);
+            }
+
+            if (gamepad2.dpad_up) {
+                robot.clawPitch(10, 0.005);
+            }
+
+            if (gamepad2.dpad_down) {
+                robot.clawPitch(-10, 0.005);
+            }
+
+            // Set power of the motors for the lift and the servos
+            // Right stick-y is lift extend
+            // FIXME: robot.liftExtender((int)(Math.round()*200), 0.1);
+            // FIXME: robot.liftPitch(pitchPower*200, 0.1);
+            System.out.println(robot);
+
         }
 
         // accelerationAdditive is 1428.57
@@ -138,36 +168,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //                straightMovementPower = gamepad1.left_stick_y * 1428.57;
 //            }
 //        }
-
-
-        // Set velocity of the motors (drivetrain)
-        // Forward and backward movement (left stick y-axis movement)
-        // Left and right turning (right stick x-axis movement)
-        // Strafing left and right (left stick x-axis movement)
-
-        robot.fLeft.setVelocity(strafeVelocity - straightMovementVelocity + turnVelocity); // Overall
-        // negative value
-        robot.fRight.setVelocity(-strafeVelocity - straightMovementVelocity - turnVelocity); // Overall
-        // positive value
-        robot.bLeft.setVelocity(strafeVelocity + straightMovementVelocity - turnVelocity); // Overall
-        // positive value
-        robot.bRight.setVelocity(-strafeVelocity + straightMovementVelocity + turnVelocity); // Overall
-        // negative value
-
-        // Set power of the motors for the lift and the servos
-        // Right stick-y is lift extend
-        //robot.liftExtender((int)(Math.round()*200), 0.1);
-
-        //robot.liftPitch(pitchPower*200, 0.1);
-
-
-        // Makes the pitch servo go all the way up
-        // Make sure claw is fully closed before lifting up (set up conditional for this)
-//        if (gamepad1.triangle && (Lclaw.getPosition() <= 0.2 && Lclaw.getPosition() >= 0.1) &&
-//                (Rclaw.getPosition() >= 0.8 && Rclaw.getPosition() <= 0.9)) {
-//            pitch.setPosition(1);
-//        }
-
 
         // Prints to the robot driver station screen
         telemetry.update();

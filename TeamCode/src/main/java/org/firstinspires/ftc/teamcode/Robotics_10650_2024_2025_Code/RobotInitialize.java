@@ -1,3 +1,6 @@
+// Program created by: Danny and William
+// Purpose: FTC Robot Software
+
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Imports all of the necessary FTC libraries and code
@@ -29,7 +32,9 @@ public class RobotInitialize {
     // Initialization Phase
 
     // Create servo variables
-     CRServo intakeToggle;
+     CRServo intakeToggle; // This is a special continous rotation servo which allows it to act
+    // like a motor
+
      Servo pitch;
      Servo roll;
 
@@ -85,7 +90,7 @@ public class RobotInitialize {
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        intakeToggle.setPower(0);
+        intakeToggle.setPower(0); // Off by default
 
         liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
         liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -99,14 +104,11 @@ public class RobotInitialize {
         liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftPitch.setZeroPowerBehavior(BRAKE);
 
-        //claw.setPosition(0);
-        //roll.setPosition(0);
-        //pitch.setPosition(0);
-
-// map the servos to the hardware map (not currently in use but will be used later)
-//        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
-        //lClaw = opMode.hardwareMap.get(Servo.class, "lClaw");
-        //rClaw = opMode.hardwareMap.get(Servo.class, "rClaw");
+        { //This was causing problems
+            //claw.setPosition(0);
+            //roll.setPosition(0);
+            //pitch.setPosition(0);
+        }
 
         // Resetting the encoders (distance measurement sensors)
         // and then start them again on program start
@@ -202,7 +204,7 @@ public class RobotInitialize {
                 opMode.telemetry.update();
             }
         }
-        stopMotors();
+        stopMechanisms();
     }
 
     // Makes the robot strafe right by determining where the robot is currently
@@ -237,7 +239,7 @@ public class RobotInitialize {
                 setMotorVelocity(0);
             }
         }
-        stopMotors();
+        stopMechanisms();
     }
     //needs to move counterclockwise to move up
     public void liftPitch(int position, double velocity){
@@ -302,7 +304,7 @@ public class RobotInitialize {
                 opMode.telemetry.update();
             }
         }
-        stopMotors();
+        stopMechanisms();
     }
 
     // This is the new turn function that includes setVelocity instead of setPower
@@ -331,7 +333,7 @@ public class RobotInitialize {
                 bRight.setVelocity(500);
             }
         }
-        stopMotors();
+        stopMechanisms();
     }
 
     public int intakeToggle(int power) {
@@ -382,8 +384,9 @@ public class RobotInitialize {
     }
 
     // Stops the motors by setting the velocity to 0
-    public void stopMotors() {
+    public void stopMechanisms() {
         setMotorVelocity(0);
+
     }
 }
 
