@@ -1,20 +1,21 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.xendy;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.teleop.DriveChassis;
 import org.firstinspires.ftc.teamcode.util.Numbers;
 
 @TeleOp(name="Xendy's Teleop", group = "z_group")
 public class XendysTestTeleop extends OpMode {
-    private DriveChassis chassis;
+    private XendyChassis chassis;
     private double x, y, r, targetAngle;
 
     @Override
     public void init() {
-        chassis = new DriveChassis(this);
+        chassis = new XendyChassis(this);
     }
 
     @Override
@@ -26,7 +27,7 @@ public class XendysTestTeleop extends OpMode {
         lerpInput();
 
         // Calculate Rotation
-        targetAngle += r * 0.5;
+        targetAngle += r * 3;
         targetAngle = Numbers.normalizeAngle(targetAngle);
         double rp = getTurnCorrection(degYaw, targetAngle);
 

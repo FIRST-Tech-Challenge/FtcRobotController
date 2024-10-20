@@ -89,7 +89,7 @@ public class Teleop extends OpMode {
 //        }
 
 
-        double turnPower = -rotationInput;
+        double turnPower = rotationInput;
 
         double denominator = Math.max(Math.abs(verticalMovePower) + Math.abs(horizontalMovePower) + Math.abs(turnPower), 1);
 
