@@ -66,14 +66,14 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         // drive model parameters
-        public double inPerTick = 0.0030011254;
-        public double lateralInPerTick = 0.002272778868961527;
-        public double trackWidthTicks = 3581.2395642561355;
+        public double inPerTick = 1;
+        public double lateralInPerTick = inPerTick;
+        public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
-        public double kS =  0.7804903929351679;
-        public double kV = 0.0005738168353257409;
-        public double kA = 0.0000525;
+        public double kS = 0;
+        public double kV = 0;
+        public double kA = 0;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -85,12 +85,12 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 5;
-        public double lateralGain = 4;
-        public double headingGain = 4; // shared with turn
+        public double axialGain = 0.0;
+        public double lateralGain = 0.0;
+        public double headingGain = 0.0; // shared with turn
 
         public double axialVelGain = 0.0;
-        public double lateralVelGain = 1;
+        public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
     }
 
@@ -142,7 +142,6 @@ public final class MecanumDrive {
             imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
-            //   _leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         @Override
@@ -209,9 +208,13 @@ public final class MecanumDrive {
         }
     }
 
+    private enum Chassis {
+        DEFAULT,
+        CENTER_STAGE,
+        INTO_THE_DEEP
+    }
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
-
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -220,21 +223,18 @@ public final class MecanumDrive {
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "left_front_drive");
-        leftBack = hardwareMap.get(DcMotorEx.class, "left_back_drive");
-        rightBack = hardwareMap.get(DcMotorEx.class, "right_back_drive");
-        rightFront = hardwareMap.get(DcMotorEx.class, "right_front_drive");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
         // TODO: reverse motor directions if needed
-        //   _leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
@@ -243,7 +243,35 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
+        Chassis chassis = Chassis.CENTER_STAGE;
+        switch (chassis) {
+            case CENTER_STAGE:
+                PARAMS.inPerTick = 0.0030011254;
+                PARAMS.lateralInPerTick = 0.002272778868961527;
+                PARAMS.trackWidthTicks = 3581.2395642561355;
+                PARAMS.kS =  0.7804903929351679;
+                PARAMS.kV = 0.0005738168353257409;
+                PARAMS.kA = 0.0000525;
+                PARAMS.maxWheelVel = 50;
+                PARAMS.minProfileAccel = -30;
+                PARAMS.maxProfileAccel = 50;
+                PARAMS.axialGain = 5;
+                PARAMS.lateralGain = 4;
+                PARAMS.headingGain = 4;
+                PARAMS.axialVelGain = 0.0;
+                PARAMS.lateralVelGain = 1;
+                PARAMS.headingVelGain = 0.0;
+                leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+                leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+                localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
+                break;
+            case INTO_THE_DEEP:
+                localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
+                break;
+            default:
+                localizer = new DriveLocalizer();
+                break;
+        }
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
