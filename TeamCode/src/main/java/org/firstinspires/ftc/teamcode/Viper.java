@@ -16,10 +16,12 @@ public class Viper {
     }
     //--------------------------
     //Variable Storage:
+    //RPM 312 = 537.7 Ticks per Revolution
     int fullExtend = 27;
     int halfExtend = 9;
     int shortExtend = 3;
     //--------------------------
+
     public void ExtendFull() {ViperMotorCustom(fullExtend);}
     public void ExtendShort() {ViperMotorCustom(shortExtend);}
     public void ExtendHalf() {ViperMotorCustom(halfExtend);}
