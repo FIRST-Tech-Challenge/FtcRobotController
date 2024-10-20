@@ -1,38 +1,123 @@
 package org.firstinspires.ftc.teamcode.hardwareSystems;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 import com.qualcomm.robotcore.hardware.*;
 
 public class ExtendableArm extends Arm {
-    // The motor the arm up and down.
+    /**
+     * Passed into the {@code ExtendableArm} constructor.
+     * Contains the motors and motor types.
+     */
+    public static class MotorParams {
+        private final HashSet<DcMotor> MOTORS;
+
+        // The motor that rotates the arm up and down.
+        private final DcMotor ROTATION_MOTOR;
+        // The motor that extends and retracts the arm.
+        private final DcMotor EXTENSION_MOTOR;
+
+        // The type of motor used by the arm.
+        private final MotorType MOTOR_TYPE;
+
+        public MotorParams(DcMotor rotationMotor, DcMotor extensionMotor) {
+            this(rotationMotor, extensionMotor, MotorType.TETRIX_TORQUENADO);
+        }
+
+        public MotorParams(DcMotor rotationMotor, DcMotor extensionMotor, MotorType motorType) {
+            this.ROTATION_MOTOR = rotationMotor;
+            this.EXTENSION_MOTOR = extensionMotor;
+
+            MOTORS = new HashSet<>();
+            MOTORS.add(rotationMotor);
+            MOTORS.add(extensionMotor);
+
+            this.MOTOR_TYPE = motorType;
+        }
+    }
+
+    /**
+     * Passed into the {@code ExtendableArm} constructor.
+     * Contains the servos.
+     */
+    public static class ServoParams {
+        private final HashSet<Servo> SERVOS;
+
+        // The servo that rotates the claw about the X-axis
+        private Servo CLAW_X_SERVO;
+        // The servo that rotates the claw about the Y-axis
+        private Servo CLAW_Y_SERVO;
+        // The servo that rotates the claw about the Z-axis
+        private Servo CLAW_Z_SERVO;
+
+        public ServoParams(Servo clawXServo, Servo clawYServo, Servo clawZServo) {
+            this.CLAW_X_SERVO = clawXServo;
+            this.CLAW_Y_SERVO = clawYServo;
+            this.CLAW_Z_SERVO = clawZServo;
+
+            SERVOS = new HashSet<>();
+            SERVOS.add(clawXServo);
+            SERVOS.add(clawYServo);
+            SERVOS.add(clawZServo);
+        }
+    }
+
+    /**
+     * Passed into the {@code ExtendableArm} constructor.
+     * Contains the min rotation, max rotation, and ticks per degree.
+     */
+    public static class RotationParams {
+        // The minimum rotation of the arm in ticks.
+        private final int MIN_ROTATION;
+        // The maximum rotation of the arm in ticks.
+        private final int MAX_ROTATION;
+        ;
+        // How many ticks it takes to rotate the arm by one degree.
+        private final double TICKS_PER_DEGREE;
+
+        public RotationParams(int minRotation, int maxRotation, double ticksPerDegree) {
+            this.MIN_ROTATION = minRotation;
+            this.MAX_ROTATION = maxRotation;
+            this.TICKS_PER_DEGREE = ticksPerDegree;
+        }
+    }
+
+    /**
+     * Passed into the {@code ExtendableArm} constructor.
+     * Contains the min extension and max extension.
+     */
+    public static class ExtensionParams {
+        // The minimum extension of the arm in ticks.
+        private final int MIN_EXTENSION;
+        // The maximum extension of the arm in ticks.
+        private final int MAX_EXTENSION;
+
+        public ExtensionParams(int minExtension, int maxExtension) {
+            this.MIN_EXTENSION = minExtension;
+            this.MAX_EXTENSION = maxExtension;
+        }
+    }
+
+    // The motor that rotates the arm up and down.
     private final DcMotor ROTATION_MOTOR;
     // The motor power that the arm uses when rotating.
-    private final double rotationPower = 1.0;
+    private double rotationPower = 1.0;
     // How many ticks it takes to rotate the arm by one degree.
-    private final static double TICKS_PER_ROTATION_DEGREE =
-            // Base number of ticks per degree
-            Motor.TETRIX_TORQUENADO.getTicksPerRotation() / 360.0
-            // Gear ratio between motor and arm
-            * 120.0 / 40.0;
+    private final double TICKS_PER_ROTATION_DEGREE;
 
-    /*
-     * The maximum rotation of the arm in ticks.
-     * Theoretically, 90 degrees.
-     */
-    private final static int MAX_ROTATION = 1080;
     // The minimum rotation of the arm in ticks.
-    private final static int MIN_ROTATION = 0;
+    private final int MIN_ROTATION;
+    // The maximum rotation of the arm in ticks.
+    private final int MAX_ROTATION;
 
     // The motor that extends and retracts the arm.
     private final DcMotor EXTENSION_MOTOR;
     // The motor power that the arm uses when rotating.
-    private final static double EXTENSION_POWER = 1.0;
-    // The maximum extension of the arm in ticks.
-    private final static int MAX_EXTENSION = 1000;
+    private double extensionPower = 1.0;
     // The minimum extension of the arm in ticks.
-    private final static int MIN_EXTENSION = 0;
+    private final int MIN_EXTENSION;
+    // The maximum extension of the arm in ticks.
+    private final int MAX_EXTENSION;
 
     // The servo that rotates the claw about the X-axis
     private final Servo CLAW_X_SERVO;
@@ -41,67 +126,82 @@ public class ExtendableArm extends Arm {
     // The servo that rotates the claw about the Z-axis
     private final Servo CLAW_Z_SERVO;
     // How much to gradually move the servo.
-    private final static double SERVO_INCREMENT = 0.1;
+    private double servoIncrement = 0.1;
 
     // The servo that opens and closes the grip.
     private final CRServo INTAKE_SERVO;
-    private final static double INTAKE_POWER = 0.5;
-    private final static double EJECT_POWER = -1.0;
+    private double intakePower = 0.5;
+    private double ejectPower = -1.0;
 
     /**
-     * Instantiate the motors using HashMaps.
-     * Each key should be the name of the motor as defined by the configuration.
-     * Note that the provided keys should be replaced with the current season's.
-     *
-     * @param motors A HashMap with motor names as keys and `DcMotor`s as values.
-     * @param servos A HashMap with servo names as keys and `Servo`s as values.
+     * Instantiates an extendable arm
+     * @param motorParams     The motors and motor types.
+     * @param servoParams     The servos.
+     * @param intakeServo     The intake servo.
+     * @param rotationParams  The min rotation, max rotation, and ticks per degree.
+     * @param extensionParams The min extension and max extension.
      */
-    public ExtendableArm(HashMap<String, DcMotor> motors, HashMap<String, Servo> servos, CRServo intakeServo) {
-        super(new HashSet<>(motors.values()), new HashSet<>(servos.values()));
+    public ExtendableArm(MotorParams motorParams, ServoParams servoParams, CRServo intakeServo, RotationParams rotationParams, ExtensionParams extensionParams) {
+        super(motorParams.MOTORS, servoParams.SERVOS);
 
-        ROTATION_MOTOR = motors.get("rotationMotor");
-        EXTENSION_MOTOR = motors.get("extensionMotor");
+        this.ROTATION_MOTOR = motorParams.ROTATION_MOTOR;
+        this.TICKS_PER_ROTATION_DEGREE = rotationParams.TICKS_PER_DEGREE;
+        this.MIN_ROTATION = rotationParams.MIN_ROTATION;
+        this.MAX_ROTATION = rotationParams.MAX_ROTATION;
 
-        CLAW_X_SERVO = servos.get("clawXServo");
-        CLAW_Y_SERVO = servos.get("clawYServo");
-        CLAW_Z_SERVO = servos.get("clawZServo");
-        INTAKE_SERVO = intakeServo;
-    }
+        this.EXTENSION_MOTOR = motorParams.EXTENSION_MOTOR;
+        this.MIN_EXTENSION = extensionParams.MIN_EXTENSION;
+        this.MAX_EXTENSION = extensionParams.MAX_EXTENSION;
 
-    /**
-     * Instantiate each motor and servo individually.
-     *
-     * @param rotationMotor  The motor that rotates the arm up and down.
-     * @param extensionMotor The motor that extends and retracts the arm.
-     * @param clawXServo     The servo that rotates the claw about the X-axis.
-     * @param clawYServo     The servo that rotates the claw about the Y-axis.
-     * @param clawZServo     The servo that rotates the claw about the Z-axis.
-     * @param intakeServo    The servo that opens and closes the claw.
-     */
-    public ExtendableArm(DcMotor rotationMotor, DcMotor extensionMotor, Servo clawXServo, Servo clawYServo,
-                         Servo clawZServo, CRServo intakeServo) {
-        super();
+        this.CLAW_X_SERVO = servoParams.CLAW_X_SERVO;
+        this.CLAW_Y_SERVO = servoParams.CLAW_Y_SERVO;
+        this.CLAW_Z_SERVO = servoParams.CLAW_Z_SERVO;
 
-        /* Motors */
-        this.ROTATION_MOTOR = rotationMotor;
-        this.EXTENSION_MOTOR = extensionMotor;
-
-        super.MOTORS.add(rotationMotor);
-        super.MOTORS.add(extensionMotor);
-
-        /* Servos */
-        this.CLAW_X_SERVO = clawXServo;
-        this.CLAW_Y_SERVO = clawYServo;
-        this.CLAW_Z_SERVO = clawZServo;
         this.INTAKE_SERVO = intakeServo;
-
-        super.SERVOS.add(clawXServo);
-        super.SERVOS.add(clawYServo);
-        super.SERVOS.add(clawZServo);
     }
 
     public CRServo getIntakeServo() {
         return INTAKE_SERVO;
+    }
+
+    public double getRotationPower() {
+        return rotationPower;
+    }
+
+    public void setRotationPower(double rotationPower) {
+        this.rotationPower = rotationPower;
+    }
+
+    public double getExtensionPower() {
+        return extensionPower;
+    }
+
+    public void setExtensionPower(double extensionPower) {
+        this.extensionPower = extensionPower;
+    }
+
+    public double getServoIncrement() {
+        return servoIncrement;
+    }
+
+    public void setServoIncrement(double servoIncrement) {
+        this.servoIncrement = servoIncrement;
+    }
+
+    public double getIntakePower() {
+        return intakePower;
+    }
+
+    public void setIntakePower(double intakePower) {
+        this.intakePower = intakePower;
+    }
+
+    public double getEjectPower() {
+        return ejectPower;
+    }
+
+    public void setEjectPower(double ejectPower) {
+        this.ejectPower = ejectPower;
     }
 
     /**
@@ -158,13 +258,13 @@ public class ExtendableArm extends Arm {
             return;
         }
 
-        EXTENSION_MOTOR.setPower(Math.signum(direction) * EXTENSION_POWER);
+        EXTENSION_MOTOR.setPower(Math.signum(direction) * extensionPower);
     }
 
     public void extendArmToPosition(int targetPosition) {
         EXTENSION_MOTOR.setTargetPosition(targetPosition);
         int direction = (int) Math.signum(targetPosition - EXTENSION_MOTOR.getCurrentPosition());
-        EXTENSION_MOTOR.setPower(direction * EXTENSION_POWER);
+        EXTENSION_MOTOR.setPower(direction * extensionPower);
         EXTENSION_MOTOR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -176,7 +276,7 @@ public class ExtendableArm extends Arm {
      */
     public void rotateClawXServo(double direction) {
         double targetPosition = CLAW_X_SERVO.getPosition()
-                + Math.signum(direction) * SERVO_INCREMENT;
+                + Math.signum(direction) * servoIncrement;
         CLAW_X_SERVO.setPosition(targetPosition);
     }
 
@@ -188,7 +288,7 @@ public class ExtendableArm extends Arm {
      */
     public void rotateClawYServo(double direction) {
         double targetPosition = CLAW_Z_SERVO.getPosition()
-                + Math.signum(direction) * SERVO_INCREMENT;
+                + Math.signum(direction) * servoIncrement;
         CLAW_Y_SERVO.setPosition(targetPosition);
     }
 
@@ -200,7 +300,7 @@ public class ExtendableArm extends Arm {
      */
     public void rotateClawZServo(double direction) {
         double targetPosition = CLAW_Z_SERVO.getPosition()
-                + Math.signum(direction) * SERVO_INCREMENT;
+                + Math.signum(direction) * servoIncrement;
         CLAW_Z_SERVO.setPosition(targetPosition);
     }
 
@@ -209,7 +309,7 @@ public class ExtendableArm extends Arm {
     }
 
     public void startIntake() {
-        INTAKE_SERVO.setPower(INTAKE_POWER);
+        INTAKE_SERVO.setPower(intakePower);
     }
 
     public void stopIntake() {
@@ -220,6 +320,6 @@ public class ExtendableArm extends Arm {
      * Make the intake spin in reverse and eject the object.
      */
     public void ejectIntake() {
-        INTAKE_SERVO.setPower(EJECT_POWER);
+        INTAKE_SERVO.setPower(ejectPower);
     }
 }

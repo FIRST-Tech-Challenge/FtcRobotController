@@ -56,7 +56,7 @@ public class FileManager {
      *
      * @param filePath The file path of the text file to read.
      * @return The String contained within the text file.
-     *         If an error occurs, null is returned.
+     * If an error occurs, null is returned.
      * @throws IOException Failed to read the input file
      */
     public static String readFile(Path filePath) throws IOException {

@@ -1,13 +1,13 @@
 # Table of Contents
 
 - [teamcode/](#teamcode)
-  - [`Hardware`](#Hardware)
-  - [`Auto`](#Auto)
-  - [`DriverMode`](#DriverMode)
-  - [`FileManager`](#Filemanager)
-  - [`PositionInput`](#PositionInput)
-  - [`TeamColor`](#TeamColor)
-  - [`TeamSide`](#Teamside)
+    - [`Hardware`](#Hardware)
+    - [`Auto`](#Auto)
+    - [`DriverMode`](#DriverMode)
+    - [`FileManager`](#Filemanager)
+    - [`PositionInput`](#PositionInput)
+    - [`TeamColor`](#TeamColor)
+    - [`TeamSide`](#Teamside)
 - [hardwareSystems/](#hardwareSystems)
     - [`Arm`](#Arm)
     - [`ExtendableArm`](#Extendablearm)
@@ -20,8 +20,10 @@
 
 It is a class to instantiate the robot and perform basic tasks(e.g. drive the robot forward).
 Both [`Auto`](#Auto) and [`DriverMode`](#DriverMode) instantiate a `Hardware` object.
-The `Hardware` class uses objects instantiated from the classes in [hardwareSystems](#hardwareSystems).
-The hardware variables(motors, servos, sensors, etc.) should be defined in the current season's `Hardware` class.
+The `Hardware` class uses objects instantiated from the classes
+in [hardwareSystems](#hardwareSystems).
+The hardware variables(motorParams, servoParams, sensors, etc.) should be defined in the current
+season's `Hardware` class.
 
 ## [`Auto`](./Auto.java)
 
@@ -35,18 +37,22 @@ Instantiates a [`Hardware`](#Hardware) class.
 
 ## [`FileManager`](./FileManager.java)
 
+> [!Warning]
+> This class relies on java.nio.file.Paths, which is only available from SDK version 26 and onward.
+
 Reads and writes text files in external storage.
+
+## [`PositionInput`](./PositionInput.java)
 
 > [!Warning]
 > This class relies on java.nio.file.Paths, which is only available from SDK version 26 and onward.
 
-## [`PositionInput`](./PositionInput.java)
-
-A TeleOp that writes the [`TeamColor`](#TeamColor) and [`TeamSide`](#TeamSide) of the robot into external storage.
-Uses [`FileManager`](#FileManager) to write to external storage files.
-
 > [!Note]
-> This class is deprecated. 
+> This class is deprecated.
+
+A TeleOp that writes the [`TeamColor`](#TeamColor) and [`TeamSide`](#TeamSide) of the robot into
+external storage.
+Uses [`FileManager`](#FileManager) to write to external storage files.
 
 ## [`TeamColor`](./TeamColor.java)
 
@@ -56,12 +62,13 @@ An enum that states whether the robot is on red or blue side.
 
 An enum that states whether the robot is on far or near side.
 
-
 # [hardwareSystems/](./hardwareSystems/)
 
 This subdirectory contains helper classes used by [`Hardware`](#Hardware).
-The classes are meant to separate and organize the various systems of the robot(e.g. arms, wheels, etc.).
-Some of the classes(e.g. [`Arm`](#Arm) and [`Wheels`](#Wheels)) are abstract and are meant to be used as superclasses.
+The classes are meant to separate and organize the various systems of the robot(e.g. arms, wheels,
+etc.).
+Some of the classes(e.g. [`Arm`](#Arm) and [`Wheels`](#Wheels)) are abstract and are meant to be
+used as superclasses.
 Being abstract classes rather than interfaces prevents multiple implementing.
 
 ## [`Arm`](./hardwareSystems/Arm.java)
@@ -74,8 +81,9 @@ A subclass of [`Arm`](#Arm) that controls a rotating, extendable arm.
 
 ## [`Wheels`](./hardwareSystems/Wheels.java)
 
-A abstract class for the robot's wheels,
+A abstract class for the robot's wheels.
 
 ## [`MecanumWheels`](./hardwareSystems/MecanumWheels.java)
 
-A subclass of the [`Wheels`](#Wheels) class for controlling the driving of a four-mecanum wheel system.
+A subclass of the [`Wheels`](#Wheels) class for controlling the driving of a four-mecanum wheel
+system.

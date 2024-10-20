@@ -5,17 +5,31 @@ import java.util.HashSet;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public abstract class Wheels {
+    protected final HashSet<DcMotor> MOTORS;
+    protected final MotorType MOTOR_TYPE;
+
     // A modifier for much power the wheels run with (0.0 - 1.0)
     protected double motorPower = 1.0;
-    // The gear ratio between the motor and wheel
-    private static final double WHEEL_GEAR_RATIO = -1.0;
-    // The circumference of the wheel in inches
-    private static final double WHEEL_CIRCUMFERENCE = -1.0;
+    protected final double TICKS_PER_INCH;
 
-    protected final HashSet<DcMotor> MOTORS;
+    public Wheels(HashSet<DcMotor> motors) {
+        this(motors, MotorType.TETRIX_TORQUENADO, 100);
+    }
 
-    public Wheels() {
-        MOTORS = new HashSet<>();
+    /**
+     * Instantiate the a wheels object.
+     *
+     * @param motors       All the motors used by the robot.
+     * @param motorType    The motor type used by the robot.
+     *                     Assumes that all motors in the System are the same
+     *                     (THEY SHOULD BE!)
+     * @param ticksPerInch The number of ticks needed to move the robot by one inh.
+     */
+    public Wheels(HashSet<DcMotor> motors, MotorType motorType, double ticksPerInch) {
+        this.MOTORS = motors;
+        this.MOTOR_TYPE = motorType;
+
+        this.TICKS_PER_INCH = ticksPerInch;
     }
 
     public double getMotorPower() {
@@ -34,10 +48,10 @@ public abstract class Wheels {
     public HashSet<DcMotor> getMotors() {
         return MOTORS;
     }
-    
+
     /**
      * Drive the wheels.
-     * 
+     *
      * @param drivePower Forward power.
      *                   Positive is forward, negative is backward.
      * @param turn       Rotation power.
@@ -47,7 +61,7 @@ public abstract class Wheels {
 
     /**
      * Drive the wheels.
-     * 
+     *
      * @param x    Sideways power.
      *             Positive is rightward, negative is leftward.
      * @param y    Forward power.
@@ -59,7 +73,7 @@ public abstract class Wheels {
 
     /**
      * Drive the robot a certain distance forward.
-     * 
+     *
      * @param distance The distance that the robot travels in inches.
      *                 Positive is forward, negative is backward.
      */
@@ -67,7 +81,7 @@ public abstract class Wheels {
 
     /**
      * Drive the robot a certain distance in two dimensions.
-     * 
+     *
      * @param forwardDistance  The distance that the robot travels forward in
      *                         inches.
      *                         Positive is forward, negative is backward.

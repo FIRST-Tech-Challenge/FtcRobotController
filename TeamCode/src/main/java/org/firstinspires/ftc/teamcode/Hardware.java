@@ -3,12 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import android.util.Size;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
-import org.firstinspires.ftc.vision.*;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.hardwareSystems.*;
 
 public class Hardware {
@@ -19,14 +17,10 @@ public class Hardware {
     // Only applicable in LinearOpMode.
     private boolean autoSleepEnabled;
 
-    /* Camera variables */
-    private final VisionPortal VISION_PORTAL;
-    private static final int RESOLUTION_WIDTH = 100;
-    private static final int RESOLUTION_HEIGHT = 100;
-
     /* Robot systems */
     private final MecanumWheels WHEELS;
     private final ExtendableArm ARM;
+    private final Webcam WEBCAM;
 
     private final DigitalChannel COLOR_SWITCH;
     private final DigitalChannel SIDE_SWITCH;
@@ -37,18 +31,14 @@ public class Hardware {
         this.OP_MODE = opMode;
         autoSleepEnabled = true;
 
+        WHEELS = initWheels();
+        ARM = null; // initArm();
+        WEBCAM = null; // new Webcam(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"));
+
         COLOR_SWITCH = null; //OP_MODE.hardwareMap.get(DigitalChannel.class, "color_switch");
         SIDE_SWITCH = null; //OP_MODE.hardwareMap.get(DigitalChannel.class, "side_switch");
 
-        VISION_PORTAL = null; /*new VisionPortal.Builder()
-                        .setCamera(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"))
-                        .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
-                        .build();*/
-
         INTAKE_SERVO = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
-
-        WHEELS = initWheels();
-        ARM = null; //initArm();
     }
 
     /**
@@ -64,9 +54,17 @@ public class Hardware {
         // DcMotor backLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_left_wheel");
         // DcMotor backRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_right_wheel");
 
-        return null;
+        MecanumWheels.MotorParams motorParams = new MecanumWheels.MotorParams(
+                null,
+                null,
+                null,
+                null
+        );
+
+        
+        return new MecanumWheels(motorParams, 100);
     }
-    
+
     /**
      * Initiate all hardware needed for the WheelsSystem.
      */
@@ -75,29 +73,49 @@ public class Hardware {
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
+        ExtendableArm.MotorParams motorParams = new ExtendableArm.MotorParams(
+                null,
+                null
+        );
+
+        ExtendableArm.ServoParams servoParams = new ExtendableArm.ServoParams(
+                null,
+                null,
+                null
+        );
+
         CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
-        HashMap<String, DcMotor> motors = new HashMap<>();
 
-        HashMap<String, Servo> servos = new HashMap<>();
-        return null;
-        /*
-        servos.put("clawXServo", OP_MODE.hardwareMap.get(Servo.class, "clawXServo"));
-        servos.put("clawZServo", OP_MODE.hardwareMap.get(Servo.class, "clawZServo"));
+        double gearRatio = 120.0 / 40.0;
+        ExtendableArm.RotationParams rotationParams = new ExtendableArm.RotationParams(
+                0,
+                1080,
+                MotorType.TETRIX_TORQUENADO.getTicksPerRotation() / 360.0
+                        * gearRatio
+        );
 
-        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
+        ExtendableArm.ExtensionParams extensionParams = new ExtendableArm.ExtensionParams(
+                0,
+                1000
+        );
 
-        return new ExtendableArm(motors, servos, intakeServo);
-        */
+        return new ExtendableArm(motorParams, servoParams, intakeServo, rotationParams, extensionParams);
     }
 
     public CRServo getIntakeServo() {
         return INTAKE_SERVO;
     }
 
-    public MecanumWheels getWheels() { return WHEELS; }
+    public MecanumWheels getWheels() {
+        return WHEELS;
+    }
 
     public ExtendableArm getArm() {
         return ARM;
+    }
+
+    public Webcam getWebCam() {
+        return WEBCAM;
     }
 
     public DigitalChannel getColorSwitch() {
@@ -113,7 +131,7 @@ public class Hardware {
      * Returns null if it fails.
      *
      * @return a linearOpMode representation of OP_MODE if possible
-     *         Else returns null
+     * Else returns null
      */
     public LinearOpMode getLinearOpMode() {
         try {
