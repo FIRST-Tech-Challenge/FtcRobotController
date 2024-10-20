@@ -25,8 +25,8 @@ public class clawSlideImport extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            
-            if (gamepad1.a) {
+
+            if (gamepad2.a) {
                 intakeL.setPosition(1);
                 intakeR.setPosition(1);
             } else {
