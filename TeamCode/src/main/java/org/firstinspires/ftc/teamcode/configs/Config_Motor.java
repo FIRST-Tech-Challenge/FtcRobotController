@@ -50,8 +50,8 @@ public class Config_Motor extends LinearOpMode {
         resetAndConfigureMotor(motor3);
         resetAndConfigureMotor(motor4);
 
-        motor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor1.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Set initial motor power to 0 (no movement)
         motor1.setPower(0);
@@ -64,11 +64,11 @@ public class Config_Motor extends LinearOpMode {
         waitForStart();
 
         //Display selection instructions during initialization
-        telemetry.addLine("Select Motor to Test using PlayStation Controller Buttons.")
-                .addData("Cross(X)","Intake Extension")
-                .addData("Circle(O)","Lift")
-                .addData("Square()","Left Front Wheel")
-                .addData("Triangle()","Right Front Wheel")
+        telemetry.addLine("Select Motor to Test using PlayStation Controller Buttons.\n")
+                .addData("Cross(X)","Intake Extension\n")
+                .addData("Circle(O)","Lift\n")
+                .addData("Square()","Left Front Wheel\n")
+                .addData("Triangle()","Right Front Wheel\n")
                 .addData("Current Selection",selectedMotorName);
         telemetry.update();
 
@@ -131,7 +131,7 @@ public class Config_Motor extends LinearOpMode {
                 .addData("D-pad Up","-100")
                 .addData("D-pad Up","+10")
                 .addData("D-pad Up","-10")
-                .addData("Current Taget Position",motorTargetPosition);
+                .addData("Current Target Position",motorTargetPosition);
         telemetry.update();
         while(opModeIsActive()){
             boolean updated=false;
@@ -182,15 +182,15 @@ public class Config_Motor extends LinearOpMode {
                 }
                 telemetry.addData("Selecter Motor", motorTargetPosition);
                 telemetry.addData("Target Position",motorTargetPosition);
-                telemetry.update();
+                //telemetry.update();
             }
-            if(selectedMotor.isBusy()) {
+        /*    if(selectedMotor.isBusy()) {
                 telemetry.addLine("Motor is moving to target position...");
             }
             else
             {
                 telemetry.addLine("Motor reached target position");
-            }
+            }  */
             telemetry.update();
             sleep(50);
         }

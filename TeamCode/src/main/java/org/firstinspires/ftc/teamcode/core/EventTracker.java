@@ -11,6 +11,19 @@ public class EventTracker {
         eventTimestamps = new HashMap<>();
     }
 
+    public boolean doEvent(String eventName, double currentTime, double waitTime)
+    {
+        if(currentTime > getLastTimestamp(eventName))
+        { //  allowed to do event
+            setTimestamp(eventName, currentTime + waitTime);
+            return true;
+        }
+        else
+        { // not allowed to do event
+            return false;
+        }
+
+    }
     // Method to set the timestamp for a specific event
     public void setTimestamp(String eventName, double timestamp) {
         eventTimestamps.put(eventName, timestamp);

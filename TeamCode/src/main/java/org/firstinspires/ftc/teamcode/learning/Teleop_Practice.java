@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 
 @TeleOp
 public class Teleop_Practice extends LinearOpMode {
-    private int intakeExtensionMax = 3000;
+    private int extensionSliderMax = 3000;
     private int liftLowerBasket = 500;
     private int liftUpperBasket = 500;
     private int liftLowerSpecimenBar = 500;
@@ -31,17 +31,18 @@ public class Teleop_Practice extends LinearOpMode {
     private DcMotor FrontLeftWheel;
     private DcMotor BackRightWheel;
     private DcMotor FrontRightWheel;
-    private DcMotor IntakeExtension;
-    private int IntakeExtensionPosition;
+    private DcMotor ExtensionSlider;
+    private int extensionSliderPosition;
     private DcMotor Lift;
     private TouchSensor ExtensionLimit;
     private TouchSensor LiftLimit;
-    private Servo Extension;
-    private Servo DeliveryBox;
-    private CRServo IntakeBox;
-    public Servo SpecimenGripper;
+    private Servo ExtensionServo;
+    private Servo DeliveryBoxServo;
+    private CRServo IntakeBoxServo;
+    public Servo SpecimenGripperServo;
     private double extensionServoPosition;
-    private double deliveryServoPosition;
+    private double extensionServoSafetyPosition = 0.5;
+    private double deliveryBoxServoPosition;
     private double specimenServoPosition;
     private float gamepad1_RightStickYValue;
     private float gamepad1_RightStickXValue;
@@ -53,6 +54,9 @@ public class Teleop_Practice extends LinearOpMode {
     private double Rotate;
     private double FastStraight;
     private double FastStrafe;
+    private double highSpeedDrive = 0.7;
+    private double lowSpeedDrive = 0.4;
+    private int liftGoToPosition = 0;
 
     private ElapsedTime currentTimer;
     private EventTracker eventTracker;
@@ -67,113 +71,129 @@ public class Teleop_Practice extends LinearOpMode {
         initializePositions();
 
         currentTimer = new ElapsedTime();
+
+
         eventTracker = new EventTracker();
 
         waitForStart();
         if (opModeIsActive()) {
             // RUN BLOCKS:
             while (opModeIsActive()) {
+
                 // LOOP BLOCKS:
                 driveChassis();
+                manageDriverControls();
                 manageManipulatorControls();
+
+                if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
+                {
+                    telemetry.update();
+                }
             }
         }
     }
 
+    private void manageDriverControls()
+    {
+        if(gamepad1.square)
+        {
+            resetExtensionSlider();
+        }
+        if(gamepad1.circle)
+        {
+            resetLift();
+        }
+    }
     private void manageManipulatorControls()
     {
         if (gamepad2.square) {
-            extensionServoPosition = extensionServoDump;
-            Extension.setPosition(extensionServoPosition);
+            if(checkIsLiftDown() && checkIsExtensionHome()) {
+                extensionServoPosition = extensionServoDump;
+                ExtensionServo.setPosition(extensionServoPosition);
+            }
         } else if (gamepad2.triangle) {
             extensionServoPosition = extensionServoHome;
-            Extension.setPosition(extensionServoPosition);
+            ExtensionServo.setPosition(extensionServoPosition);
         }
 
         if (gamepad2.circle) {
-            deliveryServoPosition = deliveryServoDump;
-            DeliveryBox.setPosition(deliveryServoPosition);
+            checkExtensionServoSafety();
+            deliveryBoxServoPosition = deliveryServoDump;
+            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
         } else if (gamepad2.cross) {
-            deliveryServoPosition = deliveryServoHome;
-            DeliveryBox.setPosition(deliveryServoPosition);
+            checkExtensionServoSafety();
+            deliveryBoxServoPosition = deliveryServoHome;
+            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
         }
 
         if (gamepad2.right_trigger>0.4) {
-            IntakeBox.setPower(continuousIntakePower);
+            IntakeBoxServo.setPower(continuousIntakePower);
         }
         else if(gamepad2.left_trigger>0.4) {
-            IntakeBox.setPower(-specimenServoOpen);
+            IntakeBoxServo.setPower(-continuousIntakePower);
         }
         else {
-            IntakeBox.setPower(0);
+            IntakeBoxServo.setPower(0);
         }
 
         if(gamepad2.right_bumper){
             specimenServoPosition =specimenServoClosed;
-            SpecimenGripper.setPosition(specimenServoPosition);
+            SpecimenGripperServo.setPosition(specimenServoPosition);
         }
 
         if(gamepad2.left_bumper){
             specimenServoPosition =specimenServoOpen;
-            SpecimenGripper.setPosition(specimenServoPosition);
+            SpecimenGripperServo.setPosition(specimenServoPosition);
         }
         if (gamepad2.ps) {
-            Lift.setTargetPosition(0);
+            checkExtensionServoSafety();
+            Lift.setTargetPosition(30);
         } else if (gamepad2.dpad_down) {
+            checkExtensionServoSafety();
             Lift.setTargetPosition(300);
         } else if (gamepad2.dpad_left) {
+            checkExtensionServoSafety();
             Lift.setTargetPosition(600);
         } else if (gamepad2.dpad_up) {
+            checkExtensionServoSafety();
             Lift.setTargetPosition(900);
         } else if (gamepad2.dpad_right) {
+            checkExtensionServoSafety();
             Lift.setTargetPosition(1200);
         }
 
-        while(-gamepad2.left_stick_y > 0.2)
+        if(-gamepad2.left_stick_y > 0.2)
         {
-            if(eventTracker.getLastTimestamp("ExtendIntake") < currentTimer.seconds()-.15) {
-                if (IntakeExtensionPosition < intakeExtensionMax) {
-                    IntakeExtensionPosition += 100;
-                    eventTracker.setTimestamp("ExtendIntake", currentTimer.seconds());
-                    IntakeExtension.setTargetPosition(IntakeExtensionPosition);
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.15))
+            {
+                if (extensionSliderPosition < extensionSliderMax) {
+                    extensionSliderPosition += 100;
+                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
                 }
             }
         }
-        while(-gamepad2.left_stick_y < -0.2)
+        if(-gamepad2.left_stick_y < -0.2)
         {
-            if(eventTracker.getLastTimestamp("ExtendIntake") < currentTimer.seconds()-.15) {
-                if (IntakeExtensionPosition > 100) {
-                    IntakeExtensionPosition -= 100;
-                    eventTracker.setTimestamp("ExtendIntake", currentTimer.seconds());
-                    IntakeExtension.setTargetPosition(IntakeExtensionPosition);
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.15)) {
+                if (extensionSliderPosition > 100) {
+                    extensionSliderPosition -= 100;
+                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
                 }
             }
         }
 
-        /*
-        if (gamepad2.ps) {
-            IntakeExtension.setTargetPosition(0);
-        } else if (gamepad2.dpad_down) {
-            IntakeExtension.setTargetPosition(300);
-        } else if (gamepad2.dpad_left) {
-            IntakeExtension.setTargetPosition(600);
-        } else if (gamepad2.dpad_up) {
-            IntakeExtension.setTargetPosition(900);
-        } else if (gamepad2.dpad_right) {
-            IntakeExtension.setTargetPosition(1200);
-        }
-        */
+
 
     }
 
     private void initializePositions()
     {
         extensionServoPosition = extensionServoHome;
-        Extension.setPosition(extensionServoPosition);
-        deliveryServoPosition = deliveryServoHome;
-        DeliveryBox.setPosition(deliveryServoPosition);
+        ExtensionServo.setPosition(extensionServoPosition);
+        deliveryBoxServoPosition = deliveryServoHome;
+        DeliveryBoxServo.setPosition(deliveryServoHome);
         specimenServoPosition = specimenServoOpen;
-        SpecimenGripper.setPosition(specimenServoPosition);
+        SpecimenGripperServo.setPosition(specimenServoPosition);
 
     }
 
@@ -186,15 +206,15 @@ public class Teleop_Practice extends LinearOpMode {
         gamepad1_TriggersValue = gamepad1.right_trigger - gamepad1.left_trigger;
         if (gamepad1_RightStickYValue != 0 || gamepad1_RightStickXValue != 0 || gamepad1_LeftStickYValue != 0 || gamepad1_LeftStickXValue != 0 || gamepad1_TriggersValue != 0) {
             // Set robot's move forward(+) or backwards(-) power
-            Straight = 0.5 * (0.75 * Math.pow(gamepad1_RightStickYValue, 3) + 0.25 * gamepad1_RightStickYValue);
+            Straight = lowSpeedDrive * (0.75 * Math.pow(gamepad1_RightStickYValue, 3) + 0.25 * gamepad1_RightStickYValue);
             // Set robot's strafe right(+) or left(-) power
-            Strafe = 0.5 * (0.75 * Math.pow(gamepad1_RightStickXValue, 3) + 0.25 * gamepad1_RightStickXValue);
+            Strafe = lowSpeedDrive * (0.75 * Math.pow(gamepad1_RightStickXValue, 3) + 0.25 * gamepad1_RightStickXValue);
             // Set robot's clockwise(+) or counter-clockwise(-) rotation power
-            Rotate = 0.5 * (0.75 * Math.pow(gamepad1_TriggersValue, 3) + 0.25 * gamepad1_TriggersValue);
+            Rotate = lowSpeedDrive * (0.75 * Math.pow(gamepad1_TriggersValue, 3) + 0.25 * gamepad1_TriggersValue);
             // Set robot's fast move forward(+) or backwards(-) power
-            FastStraight = 0.8 * gamepad1_LeftStickYValue;
+            FastStraight = highSpeedDrive * gamepad1_LeftStickYValue;
             // Set robot's fast strafe right(+) or left(-) power
-            FastStrafe = 0.8 * gamepad1_LeftStickXValue;
+            FastStrafe = highSpeedDrive * gamepad1_LeftStickXValue;
             BackLeftWheel.setPower((((Straight + FastStraight) - Strafe) - FastStrafe) + Rotate);
             BackRightWheel.setPower((Straight + FastStraight + Strafe + FastStrafe) - Rotate);
             FrontLeftWheel.setPower(Straight + FastStraight + Strafe + FastStrafe + Rotate);
@@ -244,29 +264,83 @@ public class Teleop_Practice extends LinearOpMode {
 
     private void initializeDevices()
     {
-        Extension = hardwareMap.get(Servo.class, "Extension");
-        DeliveryBox = hardwareMap.get(Servo.class, "DeliveryBox");
-        IntakeBox = hardwareMap.get(CRServo.class, "IntakeBox");
-        SpecimenGripper = hardwareMap.get(Servo.class,"SpecimenGripper");
-        IntakeExtension = hardwareMap.get(DcMotor.class, "IntakeExtension");
+        ExtensionServo = hardwareMap.get(Servo.class, "Extension");
+        DeliveryBoxServo = hardwareMap.get(Servo.class, "DeliveryBox");
+        IntakeBoxServo = hardwareMap.get(CRServo.class, "IntakeBox");
+        SpecimenGripperServo = hardwareMap.get(Servo.class,"SpecimenGripper");
+        ExtensionSlider = hardwareMap.get(DcMotor.class, "IntakeExtension");
         Lift = hardwareMap.get(DcMotor.class, "Lift");
         ExtensionLimit = hardwareMap.get(TouchSensor.class, "ExtensionLimit");
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
 
 
-        IntakeExtension.setDirection(DcMotor.Direction.FORWARD);
-        IntakeExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        IntakeExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        IntakeExtension.setTargetPosition(0);
-        IntakeExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        IntakeExtension.setPower(0.4);
-        IntakeExtensionPosition = 0;
-        // Initialize Lift
+        resetExtensionSlider();
+
+        resetLift();
+    }
+
+    private void resetExtensionSlider()
+    {
+
+        ExtensionSlider.setDirection(DcMotor.Direction.FORWARD);
+        ExtensionSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ExtensionSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        long startTime = System.currentTimeMillis(); // Record the start time
+        long maxDuration = 3000; // Maximum duration in milliseconds (3 seconds)
+
+        while(!ExtensionLimit.isPressed()) {
+            ExtensionSlider.setPower(-0.3);
+            if (System.currentTimeMillis() - startTime > maxDuration) { break;}
+        }
+        ExtensionSlider.setPower(0);
+
+        ExtensionSlider.setDirection(DcMotor.Direction.FORWARD);
+        ExtensionSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ExtensionSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ExtensionSlider.setTargetPosition(0);
+        ExtensionSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ExtensionSlider.setPower(0.4);
+        extensionSliderPosition = 0;
+    }
+
+    private void resetLift()
+    {
+
+        Lift.setDirection(DcMotor.Direction.FORWARD);
+        Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        long startTime = System.currentTimeMillis(); // Record the start time
+        long maxDuration = 3000; // Maximum duration in milliseconds (3 seconds)
+        while(!LiftLimit.isPressed()) {
+            Lift.setPower(-0.3);
+            if (System.currentTimeMillis() - startTime > maxDuration) { break;}
+        }
+        Lift.setPower(0);
+
         Lift.setDirection(DcMotor.Direction.FORWARD);
         Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setTargetPosition(0);
         Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Lift.setPower(0.4);
+    }
+
+    private void checkExtensionServoSafety()
+    {
+        if(ExtensionServo.getPosition() < extensionServoSafetyPosition)
+        {
+            ExtensionServo.setPosition(extensionServoSafetyPosition);
+        }
+    }
+
+    private boolean checkIsLiftDown()
+    {
+        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() == deliveryServoHome);
+    }
+    private boolean checkIsExtensionHome()
+    {
+        return (ExtensionSlider.getCurrentPosition() < 100);
     }
 }
