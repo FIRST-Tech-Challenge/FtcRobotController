@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Main Mecanum Drive")
-public class MecanumTeleOp extends LinearOpMode {
+@TeleOp(name = "Old Main Mecanum Drive")
+public class OldMecanumTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
