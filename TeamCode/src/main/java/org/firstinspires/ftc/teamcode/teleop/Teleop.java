@@ -88,6 +88,7 @@ public class Teleop extends OpMode {
 //            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle)) * magnitude * HORIZONTAL_BALANCE;
 //        }
 
+
         double turnPower = -rotationInput;
 
         double denominator = Math.max(Math.abs(verticalMovePower) + Math.abs(horizontalMovePower) + Math.abs(turnPower), 1);

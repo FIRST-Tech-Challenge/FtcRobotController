@@ -15,7 +15,7 @@ public class DriveChassis {
 
     // Info about our robots design
     protected final int TICKS_PER_REVOLUTION = 28;
-    protected final double DRIVE_GEAR_RATIO = 60;
+    protected final double DRIVE_GEAR_RATIO = 20;
     protected final double WHEEL_CIRCUMFERENCE = 23.94; // In CM
 
     protected IMU imu;
@@ -33,8 +33,8 @@ public class DriveChassis {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
                 ))
         );
         imu.resetYaw();
