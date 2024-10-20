@@ -72,19 +72,23 @@ public class Gamepad_test2 extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         leftwheel  = hardwareMap.get(DcMotor.class, "leftwheel");
         rightwheel = hardwareMap.get(DcMotor.class, "rightwheel");
-        leftservo  = hardwareMap.get(DcMotor.class, "leftservo");
-        rightservo = hardwareMap.get(DcMotor.class, "rightservo");
+        leftservo  = hardwareMap.get(Servo.class, "leftservo");
+        rightservo = hardwareMap.get(Servo.class, "rightservo");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftwheel.setDirection(DcMotor.Direction.REVERSE);
         rightwheel.setDirection(DcMotor.Direction.FORWARD);
+        leftservo.setDirection(Servo.Direction.FORWARD);
+        rightservo.setDirection(Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
 
+        leftservo.setPosition(0.5);
+        rightservo.setPosition(0.5);
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -99,25 +103,40 @@ public class Gamepad_test2 extends LinearOpMode {
             double amount_pushed;
 
             //moving
-            
+
             leftPower  = -gamepad1.left_stick_y ;
             rightPower = -gamepad1.right_stick_y ;
 
             //servo movement
-            leftAngle  = Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x);
-            rightAngle = Math.atan(gamepad1.right_stick_y/gamepad1.right_stick_x);
-            leftdirection = (leftAngle * 0.00555555555);
-            rightdirection = (rightAngle * 0.00555555555);
+
+            leftAngle  = Math.toDegrees(Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x));
+            rightAngle = Math.toDegrees(Math.atan(gamepad1.right_stick_y/gamepad1.right_stick_x));
+            leftdirection = (leftAngle/360);
+            rightdirection = (rightAngle/360);
+
+            if (gamepad1.left_stick_x == 0) {
+                leftservo.setPosition(0.5);
+            }
+            else {
+                leftservo.setPosition(leftdirection);
+            }
+
+            if (gamepad1.right_stick_x == 0) {
+                rightservo.setPosition(0.5);
+            }
+            else {
+                rightservo.setPosition(rightdirection);
+            }
 
 
             // Send calculated power to wheels
             leftwheel.setPower(leftPower);
             rightwheel.setPower(rightPower);
-            leftservo.setPosition(leftdirection);
-            rightservo.setPosition(rightdirection);
 
 
             // Show the elapsed game time and wheel power.
+            telemetry.addData("right servo direction", rightservo.getDirection());
+            telemetry.addData("left servo direction", leftservo.getDirection());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
