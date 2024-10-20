@@ -58,8 +58,6 @@ public class TestTeleOpp extends LinearOpMode {
         outer.scheduleParallel(actions2);
         outer.scheduleSequential(action3);
 
-        MoveLSAction moveLS = new MoveLSAction();
-
         waitForStart();
 
         while (opModeIsActive()) {
