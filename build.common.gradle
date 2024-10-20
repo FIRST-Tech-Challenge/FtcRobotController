@@ -47,7 +47,13 @@ android {
         }
     }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> c86318b7410a14d0bc42c0c8ea2cb391f7ef0a58
 
+>>>>>>> 1094ceb (quickie push)
     defaultConfig {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'

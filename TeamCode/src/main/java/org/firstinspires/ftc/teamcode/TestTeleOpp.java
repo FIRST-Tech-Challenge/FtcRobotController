@@ -68,7 +68,6 @@ public class TestTeleOpp extends LinearOpMode {
 //            action3.update();
 //            action4.update();
 
-            //moveLS.updateCheckDone();
             outer.updateCheckDone();
 
             telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());

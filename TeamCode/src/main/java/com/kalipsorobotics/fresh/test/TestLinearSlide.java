@@ -38,6 +38,7 @@ public class TestLinearSlide extends LinearOpMode {
 //            } else {
 //                linearSlide.setPower(0);
 //            }
+
             linearSlide.setPower((0.7*gamepad1.left_stick_y) - lsStayUpPower);
 
             if(gamepad1.right_stick_y < 0) {
