@@ -56,15 +56,10 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     private double armPower = .7f;
     private actuatorUtils utils;
 
-    boolean changed = false; //Used for the arm button code
-    boolean changed2 = false; //Used for the code that allows the driver to disable IMU controlled direction
-    boolean changed3 = false; //Used to toggle between auto and manual mode for arm
-    boolean changeda1 = false;
-    boolean changedb1 = false;
+
+    boolean autoLift = false;
     boolean disableIMU = true;
     boolean game2back = false; //Used to override switch for arm in case of failure
-    boolean game1back = false; //Used to override minEncode for arm in case of bad encoding
-    boolean gamebpush = false; //To go through intervals one at a time
     Double initHeading = 0.0;
 
     //boolean touchIsPressed = false;
@@ -155,7 +150,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
 
         //Code for gamepad1
         //Code for throttling the power factor
-        PowerFactor = (1 - gamepad1.right_trigger) *.8f;
+        PowerFactor = (1 - gamepad1.right_trigger);
 
         //Code for mecanum wheels
 
@@ -172,12 +167,6 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LFPower = r * Math.sin(robotAngle) - rightX;
         RFPower = r * Math.cos(robotAngle) + rightX;
 
-        if (gamepad1.b && ! changed2) {
-            changed2 = true;
-            disableIMU = !disableIMU;
-        }else if (!gamepad1.b) {
-            changed2 = false;
-        }
 
 
         // Send calculated power to wheels
@@ -202,9 +191,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
 
         //Code for gamepad2
         //Toggle auto and manual mode
-        if (gamepad2.y) {
-            changed3 = !changed3;
-        }
+
         if (gamepad2.back) {
             game2back = !game2back;
         }
@@ -215,6 +202,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Moves the arm up
         if (gamepad2.left_trigger >= .1)
         {
+            autoLift = false;
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setPower(-gamepad2.left_trigger * (0.5));
             telemetry.addData("Lift ticks", lift.getCurrentPosition());
@@ -223,23 +211,37 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         }
         else if (gamepad2.right_trigger >= .1)
         {
+            autoLift = false;
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setPower(gamepad2.right_trigger * (0.5));
 
         }
         else if (gamepad2.y) {
+            autoLift = true;
             utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
+            utils.setArm(actuatorUtils.ArmModes.REST);
         }
         else if (gamepad2.x) {
+            autoLift = true;
             utils.setLift(actuatorUtils.LiftLevel.LOW_BASKET);
+            utils.setArm(actuatorUtils.ArmModes.REST);
+
         }
         else if (gamepad2.a) {
+            autoLift = true;
             utils.setLift(actuatorUtils.LiftLevel.ZERO);
+            utils.setArm(actuatorUtils.ArmModes.UP);
+
         }
-        else
+        else if (gamepad2.b) {
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setPower(0.0);
+        }
+
+        else if (!autoLift)
         {
-            lift.setPower(0);
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift.setPower(0.0);
         }
 
         //Code to increase height position

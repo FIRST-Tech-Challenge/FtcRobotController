@@ -81,7 +81,7 @@ public class LeftPath extends LinearOpMode {
 
         move.driveSeq(startPose.getX()+12,startPose.getY(),0);
         utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
-        move.driveSeq(-54,54,135);
+        move.driveSeq(-52,52,135);
        // utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
        // sleep(3000);
         //move.driveSeq(-57,57,135);

@@ -14,9 +14,9 @@ public class actuatorUtils {
     private static Servo rightArm = null; //declare dump
     private static CRServo intake = null; //declare dump
     //test
-    private static int maxEncode = 3720; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
+    private static int maxEncode = 4180; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 0; //Minimum so string on arm lift doesn't break and position 0
-    private static int lowEncode = 1620; //Minimum so string on arm lift doesn't break and position 0
+    private static int lowEncode = 1980; //Minimum so string on arm lift doesn't break and position 0
     private static int highEncode = maxEncode; //Minimum so string on arm lift doesn't break and position 0
     private static double liftPower = .7f; //Set power to .7 so arm does not go up too fast
 
@@ -63,14 +63,14 @@ public class actuatorUtils {
     }
     public static void setArm(ArmModes mode)   {
         if (mode == ArmModes.UP) {
-            leftArm.setPosition(0.0);
-            rightArm.setPosition(1.0);
+            leftArm.setPosition(0.333);
+            rightArm.setPosition(0.667);
         } else if (mode == ArmModes.REST) {
             leftArm.setPosition(0.5);
             rightArm.setPosition(0.5);
         } else {
-            leftArm.setPosition(1.0);
-            rightArm.setPosition(0.0);
+            leftArm.setPosition(0.667);
+            rightArm.setPosition(0.333);
         }
     }
     public static void setLift(LiftLevel mode) {
