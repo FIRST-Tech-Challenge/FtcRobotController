@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.util.Numbers;
+import org.firstinspires.ftc.teamcode.utils.Numbers;
 
 @TeleOp(name = "Teleop")
 public class Teleop extends OpMode {

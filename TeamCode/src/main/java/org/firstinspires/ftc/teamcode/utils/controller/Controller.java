@@ -1,23 +1,18 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.utils.controller;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.utils.Numbers;
+
 public class Controller {
-    private final Gamepad currentGamepad = new Gamepad();
-    private final Controller previousController;
+    protected final Gamepad currentGamepad = new Gamepad();
 
     private float stickDeadzone = 0.01f;
 
+    public Controller() {}
+
     public Controller(Gamepad gamepad) {
         currentGamepad.copy(gamepad);
-        previousController = new Controller();
-    }
-
-    /**
-     * A private constructor for creating Controllers that are only to save the previous state of a controller
-     */
-    private Controller() {
-        previousController = null;
     }
 
     public enum Button {
@@ -66,7 +61,7 @@ public class Controller {
         TouchpadFinger2Y,
     }
 
-    public boolean getButton(Button button) {
+    public boolean button(Button button) {
         Gamepad g = currentGamepad;
         switch (button) {
             case A:
@@ -108,9 +103,9 @@ public class Controller {
             case RightBumper:
                 return g.right_bumper;
             case LeftTrigger:
-                return getAxis(Axis.LeftTrigger) > 0;
+                return axis(Axis.LeftTrigger) > 0;
             case RightTrigger:
-                return getAxis(Axis.RightTrigger) > 0;
+                return axis(Axis.RightTrigger) > 0;
             case LeftStick:
                 return g.left_stick_button;
             case RightStick:
@@ -120,7 +115,7 @@ public class Controller {
         }
     }
 
-    public float getAxis(Axis axis) {
+    public float axis(Axis axis) {
         Gamepad g = currentGamepad;
         switch (axis) {
             case LeftStickX:
@@ -148,15 +143,11 @@ public class Controller {
         }
     }
 
-//    public boolean buttonWasPressed
-
     public Gamepad.Type getBrand() {
         return currentGamepad.type;
     }
 
     public void update(Gamepad gamepad) {
-        if (previousController != null)
-            previousController.update(currentGamepad);
         currentGamepad.copy(gamepad);
     }
 
