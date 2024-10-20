@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 
-@TeleOp(name = "TeleOp")
+@TeleOp(name = "DriverMode")
 public class DriverMode extends OpMode {
     private Hardware hardware;
 

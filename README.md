@@ -2,16 +2,18 @@
 
 This repository is a template for our FtcRobotControllers.
 It is a fork of FTC's official [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController.git).
-Please feel free to modify this template as necessary.
-However, this template is meant for general code to be reused across seasons,
-so please refrain from putting anything year specific into this template
+Please feel free to modify this template as necessary or even abandon it altogether.
+This template is meant as a gift from the previous programers to the new progammers.
+What you do with it is up to you.
+However, this template is meant for general code to be reused across seasons, so if you do use it,
+please refrain from putting anything year specific into this template
 (e.g. motor names or autonomous commands).
 
 # Creating templates using this template
 
 To create new repositories using this one, go to GitHub and and create a new repository with chsRobotix as the owner. Then,
 under "Repository template" select "chsRobotix/TemplateRobotController." By default, GitHub does not allow users to pull from a template,
-which complicates updating the new repository if the template changes. However, it also is safer since it prevents pushing to the template.
+which complicates updating the new repository if the template changes.
 To pull from the template, type
 
 ```
@@ -39,5 +41,5 @@ git pull upstream master
 # Contents
 
 Our team's code is in [./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/).
-It contains an autonomous, teleop, and various helper classes to ease the process of programming the robot.
+It contains an Autonomous, TeleOp, and various helper classes to ease the process of programming the robot.
 For more details, look at the [README.md](./TeamCode/src/main/java/org/firstinspires/ftc/teamcode/README.md)
