@@ -59,11 +59,11 @@ public class clawSlideImport extends LinearOpMode {
 
     public void setPivot(double x) {
         if (pivot.getCurrentPosition() < limitPivot) {
-            if (!(x < 0))
+            if (x < 0)
                 x = 0;
         }
         else if (pivot.getCurrentPosition() > -limitPivot) {
-            if (!(x < 0))
+            if (x > 0)
                 x = 0;
         }
         pivot.setPower(x);
