@@ -34,181 +34,12 @@ public class MainTeleOp extends LinearOpMode{
     //Total ticks in a revolution for 117 RPM motor: 1425.1
     double RPM117_TicksPer = 1425.1;
     //Total ticks per revolution for 312 RPM motor: 537.7
-    double RPM312_TicksPer = 537.7;
-    double viperDriveTrainTicksPerRevolution = RPM312_TicksPer;
 
     double targetArmDegrees = 0;
     int loopCounter = 0;
     Telemetry.Item homeFlagTelemetry = telemetry.addData("homeFlag", homeFlag);
     Telemetry.Item wristTelemetry = telemetry.addData("Wrist", "Init");
 
-
-    public void ClawOpen(Servo claw)
-    {
-        if (claw == null)
-        {
-            telemetry.addLine("Claw servo not found!");
-            return;
-        }
-            //b button
-            double clawPosition = .2;
-            claw.setPosition(clawPosition);
-    }
-    public void ClawClosed(Servo claw)
-    {
-        if (claw == null)
-        {
-            telemetry.addLine("Claw servo not found!");
-            return;
-        }
-        double clawPosition = 0.52;
-        claw.setPosition(clawPosition);
-    }
-    public void WristUp(Servo wrist)
-    {
-        if (wrist == null) {
-            telemetry.addLine("Wrist servo not found!");
-            return;
-        }
-
-        //y button
-        wrist.setPosition(1);
-    }
-     public void WristFlip(Servo wrist)
-     {
-       if (wrist == null) {
-           telemetry.addLine("Wrist servo not found!");
-           return;
-       }
-
-       //y button
-       wrist.setPosition(0.45);
-     }
-    public void WristDown(Servo wrist)
-    {
-        //a button
-        if (wrist == null)
-        {
-            telemetry.addLine("Wrist servo not found!");
-            return;
-        }
-        wrist.setPosition(.62);
-    }
-    public void WristCenter(Servo wrist)
-    {
-        //d pad up
-        if (wrist == null)
-        {
-            telemetry.addLine("Wrist servo not found!");
-            return;
-        }
-
-        wrist.setPosition(.5);
-    }
-    public void WristMethod(Servo wrist)
-    {
-        if (wrist == null)
-        {
-            telemetry.addLine("Wrist servo not found!");
-            return;
-        }
-        if (gamepad1.a) {
-            wrist.setPosition(0.5);
-        }
-    }
-    public void ArmMotorRaise(DcMotorEx armMotor)
-    {
-        if (armMotor == null)
-        {
-            telemetry.addLine("Arm motor not found!");
-            return;
-        }
-        armMotor.setDirection(DcMotor.Direction.REVERSE);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        int armTicks = 600;
-        armMotor.setTargetPosition(armTicks);    //Sets Target Tick Position
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.05);
-        homeFlag = false;
-    }
-    public void ArmMotorHome(DcMotorEx armMotor)
-    {
-        if (armMotor == null)
-        {
-            telemetry.addLine("Arm motor not found!");
-            return;
-        }
-        armMotor.setDirection(DcMotor.Direction.FORWARD);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        int armTicks = 0;
-        armMotor.setTargetPosition(armTicks);    //Sets Target Tick Position
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.05);
-        homeFlag = true;
-
-    }
-    public void ArmMotorCustom(DcMotorEx armMotor, int degrees)
-    {
-        if (armMotor == null)
-        {
-            telemetry.addLine("Arm motor not found!");
-            return;
-        }
-
-        //Total ticks for armMotor drivetrain revolution: 7125
-        //90 degree rotation for armMotor drivetrain revolution: 1781.25
-        //int currentPosit = armMotor.getCurrentPosition();
-        //targetArmDegrees = degrees;
-
-        double ticksPerDegree = 7125.0/360.0;
-//        double currentDegrees = currentPosit/ticksPerDegree;
-//        if (currentDegrees > degrees)
-//        {
-//            armMotor.setDirection(DcMotor.Direction.FORWARD);
-//        }
-//        else
-//        {
-//            armMotor.setDirection(DcMotor.Direction.REVERSE);
-//        }
-        int convert = (int) (degrees*ticksPerDegree);
-        //double difference = Math.abs(convert-currentPosit);
-        armMotor.setDirection(DcMotor.Direction.REVERSE);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setTargetPosition( (int) convert);    //Sets Target Tick Position
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.2);
-    }
-    public void MoveArmToClearancePosition(DcMotorEx armMotor) {
-        if (armMotor == null) {
-            telemetry.addLine("Arm motor not found!");
-            return;
-        }
-        ArmMotorCustom(armMotor, 24);
-    }
-    public void ViperMotorCustom(DcMotor viperMotor, double lengthInches, DcMotor armMotor)
-    {
-        if (viperMotor == null)
-        {
-            telemetry.addLine("Viper motor not found!");
-            return;
-        }
-        //Full motor rotation = 7125 ticks
-        //4 and 5/8 inches per rotation
-        //~1541 ticks per inch
-
-        //int ticksPerInch = 1541;
-        double ticksPerInch = viperDriveTrainTicksPerRevolution/4.625;
-        boolean minimumAngleTrue = armMotor.getCurrentPosition() < 500;
-        if (minimumAngleTrue) {
-            lengthInches = Math.min(lengthInches, 18);
-        }
-        viperMotor.setDirection(DcMotor.Direction.REVERSE);
-        int extensionTicks = (int)(lengthInches*ticksPerInch);
-        viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
-        viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperMotor.setPower(0.3);
-
-    }
     public double MinimumTicks(double viperLength)
     {   int maxExtensionLength = 34;
         double result = maxExtensionLength/(viperLength+15.5);
@@ -224,46 +55,21 @@ public class MainTeleOp extends LinearOpMode{
         telemetry.setAutoClear(false);
 
         MecanumDrivetrain drivetrain = new MecanumDrivetrain(this);
-
-        DcMotorEx armMotor = hardwareMap.tryGet(DcMotorEx.class, "armMotor");
-        if (armMotor == null)
-        {
-            telemetry.addLine("Arm motor not found!");
-        } else {
-            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        DcMotorEx viperMotor = hardwareMap.tryGet(DcMotorEx.class, "viperMotor");
-        if (viperMotor == null)
-        {
-            telemetry.addLine("Viper motor not found!");
-        } else {
-            viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
-        Servo claw = hardwareMap.tryGet(Servo.class, "claw");
-        Servo wrist = hardwareMap.tryGet(Servo.class, "wrist");
-        if (claw == null || wrist == null)
-        {
-            telemetry.addLine("Claw or wrist servos not found!");
-        } else {
-            WristUp(wrist);
-            ClawClosed(claw);
-
-        }
+        Arm arm = new Arm(this);
+        Viper viper = new Viper(this);
+        WristClaw wristClaw = new WristClaw(this);
+        arm.Reset();
+        wristClaw.MoveUp();
+        wristClaw.CloseClaw();
 
         //Call the function to initialize telemetry functions
-        telemetryHelper.initMotorTelemetry( armMotor, "armMotor");
-        telemetryHelper.initMotorTelemetry( viperMotor, "viperMotor");
+//        telemetryHelper.initMotorTelemetry( viperMotor, "viperMotor");
         telemetryHelper.initGamepadTelemetry(gamepad1);
         telemetryHelper.initGamepadTelemetry(gamepad2);
 
         waitForStart();
 
-
-        if (armMotor != null)
-        {
-            MoveArmToClearancePosition(armMotor);
-        }
+        arm.MoveToClearance();
 
         while(opModeIsActive()){ //while loop for when program is active
             //Code repeated during teleop goes here
@@ -273,53 +79,56 @@ public class MainTeleOp extends LinearOpMode{
             drivetrain.Drive();
 
             //picking up
-            if (gamepad1.a) {ArmMotorCustom(armMotor, 0);}
+            if (gamepad1.a) {arm.MoveToHome();}
+
             //clearance/specimen wall grab
-            if (gamepad1.x) {MoveArmToClearancePosition((armMotor));}
+            if (gamepad1.x) {arm.MoveToClearance();}
+
             //hang
             if (gamepad1.right_bumper)
             {
-                //target height is 21 inches
-                //(entire front claw needs to be that height and clear robot front)
-                ArmMotorCustom(armMotor, 65);
+                arm.MoveToHang();
             }
+            //Extend to 9 inches
             if (gamepad1.dpad_up)
             {
                 desiredViperState = ViperState.PrepareToHang;
-                ViperMotorCustom(viperMotor, 9, armMotor);
+                viper.ExtendHalf();
             }
             if (gamepad1.dpad_left)
             {
                 desiredViperState = ViperState.Dump;
-                ViperMotorCustom(viperMotor, 27, armMotor);
+                viper.ExtendFull();
             }
             if (gamepad1.dpad_down)
             {
                 desiredViperState = ViperState.Closed;
-                ViperMotorCustom(viperMotor, 3, armMotor);
+                viper.ExtendShort();
             }
+
             //specimen placement
             if (gamepad1.y)
             {
-                //target height: 27 inches
-                //(entire front claw needs to be that height and clear robot front)
-                ArmMotorCustom(armMotor, 70);
-                //extension of viper slide to place specimens
+                arm.MoveToSpecimen();
             }
+
             //high basket
-            if (gamepad1.b) {ArmMotorCustom(armMotor, 80);}
+            if (gamepad1.b) {arm.MoveToHighBasket();}
 
-            assert armMotor != null;
-            if (armMotor.getCurrentPosition() < 10  )
+            if (arm.getIsHome())
             {
-                homeFlagTelemetry.setValue(homeFlag);
-                if (homeFlag)
-                {
-                    armMotor.setPower(0);
-
-                }
-                else {homeFlag = false;}
+                arm.Stop();
             }
+//            if (armMotor.getCurrentPosition() < 10  )
+//            {
+//                homeFlagTelemetry.setValue(homeFlag);
+//                if (homeFlag)
+//                {
+//                    armMotor.setPower(0);
+//
+//                }
+//                else {homeFlag = false;}
+        //}
 //            if (desiredViperState == ViperState.Closed && viperMotor.getCurrentPosition() < 10)
 //            {
 //                viperMotor.setPower(0);
@@ -333,11 +142,11 @@ public class MainTeleOp extends LinearOpMode{
                 //telemetry.addData("Controller 1", "B");
                 wristTelemetry.setValue(loopCounter);
                 telemetry.update();
-                ClawOpen(claw);
+                wristClaw.OpenClaw();
             }
             if(gamepad2.left_trigger > 0)
             {
-                WristFlip(wrist);
+                wristClaw.MoveFlip();
             }
             if(gamepad2.x) {
                 //Code for when B is pressed
@@ -345,13 +154,13 @@ public class MainTeleOp extends LinearOpMode{
                 //telemetry.update();
                 //wristTelemetry.setValue(loopCounter);
                 telemetry.update();
-                ClawClosed(claw);
+                wristClaw.CloseClaw();
             }
             if(gamepad2.y) {
-                WristUp(wrist);
+                wristClaw.MoveUp();
             }
             if(gamepad2.a) {
-                WristDown(wrist);
+                wristClaw.MoveDown();
             }
 //            if (Math.abs((gamepad2.right_stick_y)) > 0.2 )
 //            {
