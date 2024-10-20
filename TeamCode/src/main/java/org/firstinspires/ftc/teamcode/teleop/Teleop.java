@@ -19,7 +19,7 @@ public class Teleop extends OpMode {
     private YawPitchRollAngles orientation;
     private double yaw;
     private double yawRad;
-    private double normalYaw;
+    private double normalizedYaw;
 
     private double targetRotation;
 
@@ -44,11 +44,11 @@ public class Teleop extends OpMode {
         orientation = chassis.imu.getRobotYawPitchRollAngles();
         yaw = orientation.getYaw();
         yawRad = orientation.getYaw(AngleUnit.RADIANS);
-        normalYaw = Numbers.normalizeAngle(normalYaw);
+        normalizedYaw = Numbers.normalizeAngle(normalizedYaw);
 
         telemetry.addData("Yaw", yaw);
         telemetry.addData("Yaw Rad", yawRad);
-        telemetry.addData("Normal Yaw", normalYaw);
+        telemetry.addData("Normalized Yaw", normalizedYaw);
 
         float moveXInput = controller1.axis(Axis.LeftStickX);
         float moveYInput = controller1.axis(Axis.LeftStickY);
@@ -72,7 +72,7 @@ public class Teleop extends OpMode {
         // Correct for the imperfect strafing
         horizontalMovePower *= HORIZONTAL_BALANCE;
 
-        double turnPower = rotationInput;
+        double turnPower = Numbers.turnCorrectionSpeed(normalizedYaw, 0);
 
         double denominator = Math.max(Math.abs(verticalMovePower) + Math.abs(horizontalMovePower) + Math.abs(turnPower), 1);
 
