@@ -57,10 +57,10 @@ public class Gamepad_test2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftwheel = null;
-    private DcMotor rightwheel = null;
-    private Servo leftservo ;
-    private Servo rightservo ;
+    public DcMotor leftwheel = null;
+    public DcMotor rightwheel = null;
+    public Servo leftservo ;
+    public Servo rightservo ;
 
     @Override
     public void runOpMode() {
@@ -83,6 +83,7 @@ public class Gamepad_test2 extends LinearOpMode {
         leftservo.setDirection(Servo.Direction.FORWARD);
         rightservo.setDirection(Servo.Direction.FORWARD);
 
+
         // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
@@ -90,6 +91,7 @@ public class Gamepad_test2 extends LinearOpMode {
         leftservo.setPosition(0.5);
         rightservo.setPosition(0.5);
         // run until the end of the match (driver presses STOP)
+
         while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
@@ -101,32 +103,59 @@ public class Gamepad_test2 extends LinearOpMode {
             double rightdirection;
             double radius;
             double amount_pushed;
+            double leftServoPosition;
+            double rightServoPosition;
+            double apressed;
+            double bpressed;
+
+            leftServoPosition = leftservo.getPosition();
+            rightServoPosition = rightservo.getPosition();
 
             //moving
 
             leftPower  = -gamepad1.left_stick_y ;
             rightPower = -gamepad1.right_stick_y ;
 
+            apressed = 0;
+            bpressed = 0;
             //servo movement
 
-            leftAngle  = Math.toDegrees(Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x));
-            rightAngle = Math.toDegrees(Math.atan(gamepad1.right_stick_y/gamepad1.right_stick_x));
-            leftdirection = (leftAngle/360);
-            rightdirection = (rightAngle/360);
-
-            if (gamepad1.left_stick_x == 0) {
-                leftservo.setPosition(0.5);
-            }
-            else {
-                leftservo.setPosition(leftdirection);
+            if (gamepad1.a) {
+                if (leftServoPosition == 0.42d) {
+                    leftservo.setPosition(0d);
+                    apressed = 1;
+                } else {
+                    leftservo.setPosition(0.42d);
+                }
             }
 
-            if (gamepad1.right_stick_x == 0) {
-                rightservo.setPosition(0.5);
+            if (gamepad1.b) {
+                if (rightServoPosition == 0.42d) {
+                    rightservo.setPosition(0d);
+                    bpressed = 1;
+                } else {
+                    rightservo.setPosition(0.42d);
+                }
             }
-            else {
-                rightservo.setPosition(rightdirection);
-            }
+
+            //leftAngle  = Math.toDegrees(Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x));
+//            rightAngle = Math.toDegrees(Math.atan(gamepad1.right_stick_y/gamepad1.right_stick_x));
+//            leftdirection = (leftAngle/360);
+//            rightdirection = (rightAngle/360);
+//
+//            if (gamepad1.left_stick_x == 0) {
+//                leftservo.setPosition(0.5);
+//            }
+//            else {
+//                leftservo.setPosition(leftdirection);
+//            }
+//
+//            if (gamepad1.right_stick_x == 0) {
+//                rightservo.setPosition(0.5);
+//            }
+//            else {
+//                rightservo.setPosition(rightdirection);
+//            }
 
 
             // Send calculated power to wheels
@@ -135,6 +164,8 @@ public class Gamepad_test2 extends LinearOpMode {
 
 
             // Show the elapsed game time and wheel power.
+            telemetry.addData("is a pressed", apressed);
+            telemetry.addData("is b pressed", bpressed);
             telemetry.addData("right servo direction", rightservo.getDirection());
             telemetry.addData("left servo direction", leftservo.getDirection());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
