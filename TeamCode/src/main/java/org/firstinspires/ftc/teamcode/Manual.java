@@ -32,7 +32,6 @@ public class Manual  extends LinearOpMode{
             manageDriveMotors();
             manageGrabber();
             manageArm();
-            manageArmTwo();
 
 
             telemetryAprilTag();
@@ -139,32 +138,18 @@ public class Manual  extends LinearOpMode{
         telemetry.addData("Arm Key", gamepad2.left_stick_x);
         telemetry.addData("Arm Position", robot.getArmServoPosition());
         if (gamepad2.left_stick_x > 0) {
-            robot.moveArmToPosition(robot.getArmServoPosition() + 0.1);
-            //robot.moveArm(true);
-            telemetry.addData("true", gamepad2.left_stick_x);
-        }
-        else if (gamepad2.left_stick_x < 0) {
-            //robot.moveArm(false);
-            robot.moveArmToPosition(robot.getArmServoPosition() - 0.1);
-            telemetry.addData("false", gamepad2.left_stick_x);
-        }
-    }
 
-    private void manageArmTwo(){
-
-        telemetry.addData("ArmTwo Key", gamepad2.left_stick_x);
-        telemetry.addData("ArmTwo Position", robot.getArmServoPosition());
-        if (gamepad2.left_stick_x > 0) {
-            //robot.moveArmToPosition(robot.getArmServoPosition() + 0.1);
             robot.moveArm(true);
             telemetry.addData("true", gamepad2.left_stick_x);
         }
         else if (gamepad2.left_stick_x < 0) {
             robot.moveArm(false);
-            //robot.moveArmToPosition(robot.getArmServoPosition() - 0.1);
+
             telemetry.addData("false", gamepad2.left_stick_x);
         }
     }
+
+
 
     private void telemetryAprilTag(){
         List<AprilTagDetection> currentDetections = robot.getAprilTag().getDetections();

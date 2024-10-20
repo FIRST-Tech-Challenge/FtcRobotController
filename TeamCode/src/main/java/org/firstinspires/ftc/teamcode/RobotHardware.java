@@ -91,14 +91,14 @@ public class RobotHardware {
     public static final double GRABBER_MAX = 0.40;
     private static double grabberDrive = 0.0;
 
-    public static final double ARM_SPEED = 0.10;
-    public static final double ARM_MIN = 0.10 ;
-    public static final double ARM_MAX = 0.40;
+    public static final double ARM_SPEED = 0.02;
+    public static final double ARM_MIN = 0.40 ;
+    public static final double ARM_MAX = 0.90;
     private static double armDrive = 0.0;
 
     //public static final double ARM_SPEED_TWO = 0.10;
-    public static final double ARM_MIN_TWO = 0.10 ;
-    public static final double ARM_MAX_TWO = 0.40;
+    public static final double ARM_MIN_TWO = 0.40 ;
+    public static final double ARM_MAX_TWO = 0.90;
     //private static double armDriveTwo = 0.0;
 
     /**
@@ -123,6 +123,10 @@ public class RobotHardware {
         armServo = myOpMode.hardwareMap.get(Servo.class, "armServo");
         armServoTwo = myOpMode.hardwareMap.get(Servo.class, "armServoTwo");
         armServoTwo.setDirection(Servo.Direction.REVERSE);
+        //armServo.setPosition(0);
+        //armServoTwo.setPosition(0);
+        //armServo.resetDeviceConfigurationForOpMode();
+        //armServoTwo.resetDeviceConfigurationForOpMode();
         setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
@@ -326,15 +330,12 @@ public class RobotHardware {
             armDrive -= ARM_SPEED;
             myOpMode.telemetry.addData("Arm", "back");
         }
-
-
         if ( !closeArm && armDrive < ARM_MAX){
             armDrive += ARM_SPEED;
             myOpMode.telemetry.addData("Arm", "forward");
         }
 
-
-
+        myOpMode.telemetry.addData("Arm Position: ", Range.clip(armDrive, ARM_MIN, ARM_MAX));
         armServo.setPosition(Range.clip(armDrive, ARM_MIN, ARM_MAX));
         armServoTwo.setPosition(Range.clip(armDrive, ARM_MIN_TWO, ARM_MAX_TWO));
         //moveArmToPosition(armDrive);
