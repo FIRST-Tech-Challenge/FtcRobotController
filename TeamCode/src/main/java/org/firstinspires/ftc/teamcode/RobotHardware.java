@@ -224,10 +224,10 @@ public class RobotHardware {
     }
     public void setViperSlideDirectionForward(){
         viperSlideMotor.setDirection(DcMotor.Direction.FORWARD);
-        viperSlideMotorTwo.setDirection(DcMotor.Direction.REVERSE);}
+        viperSlideMotorTwo.setDirection(DcMotor.Direction.FORWARD);}
     public void setViperSlideDirectionReverse(){
         viperSlideMotor.setDirection(DcMotor.Direction.REVERSE);
-        viperSlideMotorTwo.setDirection(DcMotor.Direction.FORWARD);}
+        viperSlideMotorTwo.setDirection(DcMotor.Direction.REVERSE);}
     public void reverseMotors(){
         setMotorDirection(MotorDirection.BACKWARD);
     }
@@ -302,7 +302,7 @@ public class RobotHardware {
 
     public void setViperSlideMotorPower (double power){
         viperSlideMotor.setPower(power);
-        viperSlideMotorTwo.setPower( power);
+        viperSlideMotorTwo.setPower(power);
 
     }
 

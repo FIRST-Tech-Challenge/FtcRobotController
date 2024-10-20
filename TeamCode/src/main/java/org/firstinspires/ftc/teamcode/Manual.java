@@ -124,7 +124,7 @@ public class Manual  extends LinearOpMode{
 
     private void manageGrabber(){
 
-        telemetry.addData("Gabber Key", gamepad1.right_stick_x);
+        telemetry.addData("Grabber Key", gamepad1.right_stick_x);
         if (gamepad1.right_stick_x > 0) {
             robot.moveGrabber(true);
         }
