@@ -28,6 +28,9 @@ public class TestLinearSlide extends LinearOpMode {
         double armPivotPos = 0.5;
         double clawPos = 0.9;
         double highError;
+        double errorToZero;
+
+        boolean leftBumperPressed = false;
 
         waitForStart();
         while (opModeIsActive()) {
@@ -39,7 +42,7 @@ public class TestLinearSlide extends LinearOpMode {
 //                linearSlide.setPower(0);
 //            }
 
-            linearSlide.setPower((0.7*gamepad1.left_stick_y) - lsStayUpPower);
+            linearSlide.setPower((0.75*gamepad1.left_stick_y) - lsStayUpPower);
 
             if(gamepad1.right_stick_y < 0) {
                 armPivotPos += 0.0095;
@@ -82,6 +85,23 @@ public class TestLinearSlide extends LinearOpMode {
                 linearSlide.setPower(0);
             }
 
+            if(gamepad1.left_bumper) {
+                leftBumperPressed = true;
+            }
+
+            errorToZero = 25 - linearSlide.getCurrentPosition();
+
+            if(leftBumperPressed) {
+                linearSlide.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
+                if(linearSlide.getCurrentPosition() < -700 && linearSlide.getCurrentPosition() > -800) {
+                    clawPos = 0.75;
+                }
+
+                if (errorToZero < 25) {
+                    leftBumperPressed = false;
+                }
+            }
+
             telemetry.addData("lienar slides position", linearSlide.getCurrentPosition());
             telemetry.addData("arm pivot position", armPivot.getPosition());
             telemetry.addData("claw position", claw.getPosition());
@@ -90,10 +110,12 @@ public class TestLinearSlide extends LinearOpMode {
             armPivot.setPosition(armPivotPos);
             claw.setPosition(clawPos);
 
+
             //0.75
             //0.9
 
             //0.5, 0.13
+            //-800
         }
     }
 }
