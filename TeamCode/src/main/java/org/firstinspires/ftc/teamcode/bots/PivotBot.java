@@ -70,12 +70,12 @@ public class PivotBot extends GyroBot{
 
     public void PivotControl(boolean up, boolean down){
         if (up){
-            slideTarget = 30;
+            slideTarget = 0;
             Motor.setTargetPosition(slideTarget);
             Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         if(down){
-            slideTarget = 0;
+            slideTarget = 900;
             Motor.setTargetPosition(slideTarget);
             Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
