@@ -8,13 +8,30 @@ public class Path {
     public double finalHeading;
     public MotionProfile motionProfile;
     public boolean reverse;
+    // Maybe a private double[] finalPoint?
 
-    public Path(double[][] wp, MotionProfile mp, double finalDeg, boolean isReversed, boolean staticHeading){
-        waypoints = wp;
-        motionProfile = mp;
-        finalHeading = finalDeg;
-        reverse = isReversed;
-        useStaticHeading = staticHeading;
+    // I'm not sure why you change the parameter argument names. Just keep it the same.
+    // wp should be waypoints, mp should be motionProfile, finalDeg should be finalHeading,
+    // isReversed should be reversed. staticHeading should be useStaticHeading.
+    // to make it more readaable just do things like:
+    // this.waypoints = waypoints.
+
+    // Side note: I think the CLEARNER way would be to keep these private and make getters and setters for them.
+    // In fact, this should be done with most things but I've been lenient with you on it. However I think
+    // Path would be a great example of a class where getters and setters would amek things clean.
+    // so for example, you'd have private double[][] waypoints, and a getWaypoints() function. Instead of
+    // path.waypoints, you'd call path.getWaypoints()!
+    public Path(double[][] waypoints, MotionProfile motionProfile, double finalHeading, boolean reverse, boolean useStaticHeading){
+        this.waypoints = waypoints;
+        this.motionProfile = motionProfile;
+        this.finalHeading = finalHeading;
+        this.reverse = reverse;
+        this.useStaticHeading = useStaticHeading;
+
+        // Also, maybe to make it easy to reach, grab the final waypoint and actually set it here.
+        // just grab the last element of waypoints and set it here!
     }
+
+
 
 }

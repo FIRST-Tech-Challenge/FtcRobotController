@@ -17,6 +17,8 @@ public class GeometricController {
     int lastLookahead = 0;
     public GeometricController(){
     }
+
+
     double[] calcCircleLineIntersection(double xPos, double yPos, int i, double radius, double[][] wayPoints){
         double a = Math.pow((wayPoints[i+1][0] - wayPoints[i][0]), 2) + Math.pow((wayPoints[i+1][1] - wayPoints[i][1]), 2);
         double b = 2*((wayPoints[i][0]-xPos)*(wayPoints[i+1][0]-wayPoints[i][0]) + (wayPoints[i][1]-yPos)*(wayPoints[i+1][1]-wayPoints[i][1]));
@@ -32,15 +34,26 @@ public class GeometricController {
                 root = rootOne;
             } else if (rootTwo>=0 && rootTwo<=1){
                 root = rootTwo;
+            } else {
+                return new double[]{-99999, -99999};
             }
+            // Pretty sure you need to handle the case where neither root is between 0 and 1
+            // Ensure you use the -99999 return statement in that case
+            
             double pX = wayPoints[i][0]+(wayPoints[i+1][0]-wayPoints[i][0])*root;
             double pY = wayPoints[i][1]+(wayPoints[i+1][1]-wayPoints[i][1])*root;
             return new double[]{pX, pY};
         }
         return new double[]{-99999, -99999};
     }
+
+    // To be more consistent with PoseController, pass in SimpleMatrix Pose here,
+    // then first two lines grab the x and y position from the pose.
     public SimpleMatrix calculate(double x, double y, Path path){
+        // Assuming you read my Path class feedback, might want to change to path.getWaypoints() :-)
         double[][] wayPoints = path.waypoints;
+
+        // rename to xyPoints to be consistent with thetaPoints!
         LinkedHashSet<double[]> potentialPoints = new LinkedHashSet<>();
         LinkedHashSet<double[]> thetaPoints = new LinkedHashSet<>();
         for (int i=lastLookahead; i<wayPoints.length-1; i++){
@@ -49,19 +62,33 @@ public class GeometricController {
                 potentialPoints.add(intersection);
             }
         }
+        // You may want to have a 'lastLookaheadXY' AND a 'lastLookaheadTheta' as they may not be the same
+        // Make sure to reset them both in the reset function
         for (int i=lastLookahead; i<wayPoints.length-1; i++){
             double[] intersection = calcCircleLineIntersection(x,y,i,lookAheadTheta, wayPoints);
             if (!Arrays.equals(intersection, new double[]{-99999, -99999})) {
                 thetaPoints.add(intersection);
             }
         }
+
+        // CONSIDER WHAT HAPPENS IF YOU ARE ON THE LAST SEGMENT OF THE PATH!! YOU MAY HAVE NO INTERSECTION
+        // IF THE LOOKAHEAD CIRCLE IS LARGER THAN THE LINE SEGMENT. Check this for both the xy points and 
+        // turn-to points. Please handle this edgecase!
+
+
         ArrayList<double[]> thetaArray = new ArrayList<>(thetaPoints);
         ArrayList<double[]> posArray = new ArrayList<>(potentialPoints);
+        
+        // Rename this to furthestIntersectionPointTheta or something more descriptive.
+        // Also do the same for furthestIntersectionPointXY!!!
         double[] furthestPoint = thetaArray.get(thetaArray.size()-1);
+    
         double desiredTheta;
+
         if (path.useStaticHeading) {
             desiredTheta = path.finalHeading;
         } else {
+            // You get furthestIntersectionPointTheta above for a reason. Use it to make this more readable!
             desiredTheta = Math.atan2((thetaArray.get(thetaArray.size()-1)[1]-y), (thetaArray.get(thetaArray.size()-1)[0]-x));
             if (path.reverse) {
                 if (Math.signum(desiredTheta)==-1){
@@ -72,6 +99,10 @@ public class GeometricController {
             }
 
         }
+
+        // You are calling to thetaArray in the position spots!
+        // See above: get the xy furthest point (furthestIntersectionPointXY)
+        // and use that!
         SimpleMatrix pose = new SimpleMatrix(
             new double[]{
                     posArray.get(thetaArray.size()-1)[0],
