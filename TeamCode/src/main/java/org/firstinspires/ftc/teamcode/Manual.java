@@ -124,28 +124,28 @@ public class Manual  extends LinearOpMode{
 
     private void manageGrabber(){
 
-        telemetry.addData("Grabber Key", gamepad1.right_stick_x);
-        if (gamepad1.right_stick_x > 0) {
+        telemetry.addData("Grabber Key", gamepad1.a || gamepad1.b);
+        if (gamepad1.a ) {
             robot.moveGrabber(true);
         }
-        else if (gamepad1.right_stick_x < 0) {
+        else if (gamepad1.b ) {
                 robot.moveGrabber(false);
         }
     }
 
     private void manageArm(){
 
-        telemetry.addData("Arm Key", gamepad2.left_stick_x);
+        telemetry.addData("Arm Key", gamepad1.right_stick_y);
         telemetry.addData("Arm Position", robot.getArmServoPosition());
-        if (gamepad2.left_stick_x > 0) {
+        if (gamepad1.right_stick_y > 0) {
 
             robot.moveArm(true);
-            telemetry.addData("true", gamepad2.left_stick_x);
+            telemetry.addData("true", gamepad1.right_stick_y);
         }
-        else if (gamepad2.left_stick_x < 0) {
+        else if (gamepad1.right_stick_y < 0) {
             robot.moveArm(false);
 
-            telemetry.addData("false", gamepad2.left_stick_x);
+            telemetry.addData("false", gamepad1.right_stick_y);
         }
     }
 
