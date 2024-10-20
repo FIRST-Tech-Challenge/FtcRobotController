@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -56,8 +57,10 @@ public class Gamepad_test2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    private DcMotor leftwheel = null;
+    private DcMotor rightwheel = null;
+    private Servo leftservo ;
+    private Servo rightservo ;
 
     @Override
     public void runOpMode() {
@@ -67,14 +70,16 @@ public class Gamepad_test2 extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftwheel  = hardwareMap.get(DcMotor.class, "leftwheel");
+        rightwheel = hardwareMap.get(DcMotor.class, "rightwheel");
+        leftservo  = hardwareMap.get(DcMotor.class, "leftservo");
+        rightservo = hardwareMap.get(DcMotor.class, "rightservo");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftwheel.setDirection(DcMotor.Direction.REVERSE);
+        rightwheel.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -90,9 +95,15 @@ public class Gamepad_test2 extends LinearOpMode {
             double rightAngle;
             double leftdirection;
             double rightdirection;
+            double radius;
+            double amount_pushed;
 
+            //moving
+            
             leftPower  = -gamepad1.left_stick_y ;
             rightPower = -gamepad1.right_stick_y ;
+
+            //servo movement
             leftAngle  = Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x);
             rightAngle = Math.atan(gamepad1.right_stick_y/gamepad1.right_stick_x);
             leftdirection = (leftAngle * 0.00555555555);
@@ -100,10 +111,10 @@ public class Gamepad_test2 extends LinearOpMode {
 
 
             // Send calculated power to wheels
-            //leftDrive.setPower(leftPower);
-            //rightDrive.setPower(rightPower);
-            //servoLeft.setposition(leftAngle);
-            //servoRight.setposition(rightAngle);
+            leftwheel.setPower(leftPower);
+            rightwheel.setPower(rightPower);
+            leftservo.setPosition(leftdirection);
+            rightservo.setPosition(rightdirection);
 
 
             // Show the elapsed game time and wheel power.
