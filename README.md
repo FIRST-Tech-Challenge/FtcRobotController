@@ -1,3 +1,5 @@
+## The following README is from the parent repository published by FTC.
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
