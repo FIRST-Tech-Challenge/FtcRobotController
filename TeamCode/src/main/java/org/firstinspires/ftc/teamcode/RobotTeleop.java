@@ -45,18 +45,17 @@ private int cur = 1;
 
     private void arm_wrist_operate()
     {
-        if (gamepad1.y) {
-            arm.setPosSample();
+        if (gamepad2.a) {
+//            arm.setPosSample();
             wrist.setPosSample();
-        } else if (gamepad1.x) {
-            arm.setPosSample();
-            wrist.setPosBasket();
-        } else if (gamepad1.b) {
+        } else if (gamepad2.b) {
             arm.setPosSample();
             wrist.setPosDrop();
-        } else if(gamepad1.a) {
+        } else if(gamepad2.y) {
             arm.setPosFold();
-            wrist.setPosSample();
+            wrist.setPosBasket();
+        } else if(gamepad2.x) {
+            wrist.setPosSpecimen();
         }
     }
 
