@@ -18,6 +18,7 @@ public class TestLinearSlide extends LinearOpMode {
         //OuttakeSlide linearSlide = new OuttakeSlide(opModeUtilities);
 
         DcMotor linearSlide = hardwareMap.get(DcMotor.class,"linearSlide");
+        DcMotor linearSlideTwo = hardwareMap.get(DcMotor.class,"linearSlideTwo");
         Servo armPivot = hardwareMap.get(Servo.class, "armPivot");
         Servo claw = hardwareMap.get(Servo.class, "claw");
 
@@ -43,6 +44,7 @@ public class TestLinearSlide extends LinearOpMode {
 //            }
 
             linearSlide.setPower((0.75*gamepad1.left_stick_y) - lsStayUpPower);
+            linearSlideTwo.setPower((0.75*gamepad1.left_stick_y) - lsStayUpPower);
 
             if(gamepad1.right_stick_y < 0) {
                 armPivotPos += 0.0095;
@@ -83,6 +85,7 @@ public class TestLinearSlide extends LinearOpMode {
 
             if(Math.abs(linearSlide.getCurrentPosition()) < 15) {
                 linearSlide.setPower(0);
+                linearSlideTwo.setPower(0);
             }
 
             if(gamepad1.left_bumper) {
@@ -93,6 +96,7 @@ public class TestLinearSlide extends LinearOpMode {
 
             if(leftBumperPressed) {
                 linearSlide.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
+                linearSlideTwo.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
                 if(linearSlide.getCurrentPosition() < -700 && linearSlide.getCurrentPosition() > -800) {
                     clawPos = 0.75;
                 }
