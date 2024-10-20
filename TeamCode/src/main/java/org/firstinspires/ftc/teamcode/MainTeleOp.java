@@ -29,15 +29,9 @@ public class MainTeleOp extends LinearOpMode{
         Dump
     }
     ViperState desiredViperState = ViperState.Closed;
-    Boolean homeFlag = false;
-
-    //Total ticks in a revolution for 117 RPM motor: 1425.1
-    double RPM117_TicksPer = 1425.1;
-    //Total ticks per revolution for 312 RPM motor: 537.7
 
     double targetArmDegrees = 0;
     int loopCounter = 0;
-    Telemetry.Item homeFlagTelemetry = telemetry.addData("homeFlag", homeFlag);
     Telemetry.Item wristTelemetry = telemetry.addData("Wrist", "Init");
 
     public double MinimumTicks(double viperLength)
@@ -53,7 +47,7 @@ public class MainTeleOp extends LinearOpMode{
         TelemetryHelper telemetryHelper = new TelemetryHelper(this);
         //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
         telemetry.setAutoClear(false);
-
+        //Init for the other classes this opmode pulls methods from
         MecanumDrivetrain drivetrain = new MecanumDrivetrain(this);
         Arm arm = new Arm(this);
         Viper viper = new Viper(this);
@@ -66,9 +60,8 @@ public class MainTeleOp extends LinearOpMode{
 //        telemetryHelper.initMotorTelemetry( viperMotor, "viperMotor");
         telemetryHelper.initGamepadTelemetry(gamepad1);
         telemetryHelper.initGamepadTelemetry(gamepad2);
-
+        //Where the start button is clicked, put some starting commands after
         waitForStart();
-
         arm.MoveToClearance();
 
         while(opModeIsActive()){ //while loop for when program is active
@@ -78,6 +71,7 @@ public class MainTeleOp extends LinearOpMode{
             //Drive code
             drivetrain.Drive();
 
+            //Controller A
             //picking up
             if (gamepad1.a) {arm.MoveToHome();}
 
@@ -85,58 +79,42 @@ public class MainTeleOp extends LinearOpMode{
             if (gamepad1.x) {arm.MoveToClearance();}
 
             //hang
-            if (gamepad1.right_bumper)
-            {
-                arm.MoveToHang();
-            }
+            if (gamepad1.right_bumper) {arm.MoveToHang();}
+
+            //specimen placement
+            if (gamepad1.y) {arm.MoveToSpecimen();}
+
+            //high basket
+            if (gamepad1.b) {arm.MoveToHighBasket();}
+
             //Extend to 9 inches
             if (gamepad1.dpad_up)
             {
                 desiredViperState = ViperState.PrepareToHang;
                 viper.ExtendHalf();
             }
+
+            //Extend to full length, limited to 18 inches at low angles
             if (gamepad1.dpad_left)
             {
                 desiredViperState = ViperState.Dump;
                 viper.ExtendFull();
             }
+
+            //Extend to 3 inches, should be pressed first (add into space before opmode loop?)
             if (gamepad1.dpad_down)
             {
                 desiredViperState = ViperState.Closed;
                 viper.ExtendShort();
             }
 
-            //specimen placement
-            if (gamepad1.y)
-            {
-                arm.MoveToSpecimen();
-            }
-
-            //high basket
-            if (gamepad1.b) {arm.MoveToHighBasket();}
-
             if (arm.getIsHome())
             {
                 arm.Stop();
             }
-//            if (armMotor.getCurrentPosition() < 10  )
-//            {
-//                homeFlagTelemetry.setValue(homeFlag);
-//                if (homeFlag)
-//                {
-//                    armMotor.setPower(0);
-//
-//                }
-//                else {homeFlag = false;}
-        //}
-//            if (desiredViperState == ViperState.Closed && viperMotor.getCurrentPosition() < 10)
-//            {
-//                viperMotor.setPower(0);
-//                viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            }
-
 
             //Controller B
+            //Open Claw
             if(gamepad2.b) {
                 //Code for when B is pressed
                 //telemetry.addData("Controller 1", "B");
@@ -144,24 +122,31 @@ public class MainTeleOp extends LinearOpMode{
                 telemetry.update();
                 wristClaw.OpenClaw();
             }
-            if(gamepad2.left_trigger > 0)
-            {
-                wristClaw.MoveFlip();
-            }
+
+            //Flip Claw
+            if(gamepad2.left_trigger > 0) { wristClaw.MoveFlip();}
+
+            //Close Claw
             if(gamepad2.x) {
                 //Code for when B is pressed
                 //telemetry.addData("Controller 1", "B");
-                //telemetry.update();
                 //wristTelemetry.setValue(loopCounter);
                 telemetry.update();
                 wristClaw.CloseClaw();
             }
+
+            //Move Claw Up
             if(gamepad2.y) {
                 wristClaw.MoveUp();
             }
+
+            //Move Claw Down
             if(gamepad2.a) {
                 wristClaw.MoveDown();
             }
+
+            telemetry.update();
+            //Manual viper code (commented out)
 //            if (Math.abs((gamepad2.right_stick_y)) > 0.2 )
 //            {
 //                double motorPower = 0;
@@ -178,16 +163,15 @@ public class MainTeleOp extends LinearOpMode{
 //                viperMotor.setPower(gamepad2.right_stick_y * motorPower);
 //            } else
 //            {
-////                if (desiredViperState == ViperState.Manual) {
-////                    viperMotor.setVelocity(0);
-////                    desiredViperState = ViperState.Current;
-////                    int pos = viperMotor.getCurrentPosition();
-////                    viperMotor.setTargetPosition(pos);
-////                    viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////                }
+//                if (desiredViperState == ViperState.Manual) {
+//                    viperMotor.setVelocity(0);
+//                    desiredViperState = ViperState.Current;
+//                    int pos = viperMotor.getCurrentPosition();
+//                    viperMotor.setTargetPosition(pos);
+//                    viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                }
 //                  desiredViperState = ViperState.Current;
 //            }
-            telemetry.update();
         }
     }
 }
