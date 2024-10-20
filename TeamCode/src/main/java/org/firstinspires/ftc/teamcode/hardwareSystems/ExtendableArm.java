@@ -135,6 +135,7 @@ public class ExtendableArm extends Arm {
 
     /**
      * Instantiates an extendable arm
+     *
      * @param motorParams     The motors and motor types.
      * @param servoParams     The servos.
      * @param intakeServo     The intake servo.

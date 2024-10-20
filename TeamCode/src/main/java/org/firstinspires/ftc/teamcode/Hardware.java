@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
@@ -22,23 +21,13 @@ public class Hardware {
     private final ExtendableArm ARM;
     private final Webcam WEBCAM;
 
-    private final DigitalChannel COLOR_SWITCH;
-    private final DigitalChannel SIDE_SWITCH;
-
-    private final CRServo INTAKE_SERVO;
-
     public Hardware(OpMode opMode) {
         this.OP_MODE = opMode;
         autoSleepEnabled = true;
 
         WHEELS = initWheels();
-        ARM = null; // initArm();
-        WEBCAM = null; // new Webcam(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"));
-
-        COLOR_SWITCH = null; //OP_MODE.hardwareMap.get(DigitalChannel.class, "color_switch");
-        SIDE_SWITCH = null; //OP_MODE.hardwareMap.get(DigitalChannel.class, "side_switch");
-
-        INTAKE_SERVO = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
+        ARM = initArm();
+        WEBCAM = new Webcam(OP_MODE.hardwareMap.get(WebcamName.class, "webcam"));
     }
 
     /**
@@ -49,81 +38,34 @@ public class Hardware {
          * Define wheels system hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-        // DcMotor frontLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_left_wheel");
-        // DcMotor frontRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "front_right_wheel");
-        // DcMotor backLeftMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_left_wheel");
-        // DcMotor backRightMotor = OP_MODE.hardwareMap.get(DcMotor.class, "back_right_wheel");
-
-        MecanumWheels.MotorParams motorParams = new MecanumWheels.MotorParams(
-                null,
-                null,
-                null,
-                null
-        );
-
-        
-        return new MecanumWheels(motorParams, 100);
+        /* PLACEHOLDER */
+        return new Wheels();
     }
 
     /**
-     * Initiate all hardware needed for the WheelsSystem.
+     * Initiate all hardware needed for the Wheels.
      */
     private ExtendableArm initArm() {
         /*
          * Define arm hardware here.
          * e.g. exampleMotor = OP_MODE.hardwareMap.get(DcMotor.class, "example_motor");
          */
-        ExtendableArm.MotorParams motorParams = new ExtendableArm.MotorParams(
-                null,
-                null
-        );
-
-        ExtendableArm.ServoParams servoParams = new ExtendableArm.ServoParams(
-                null,
-                null,
-                null
-        );
-
-        CRServo intakeServo = OP_MODE.hardwareMap.get(CRServo.class, "intakeServo");
-
-        double gearRatio = 120.0 / 40.0;
-        ExtendableArm.RotationParams rotationParams = new ExtendableArm.RotationParams(
-                0,
-                1080,
-                MotorType.TETRIX_TORQUENADO.getTicksPerRotation() / 360.0
-                        * gearRatio
-        );
-
-        ExtendableArm.ExtensionParams extensionParams = new ExtendableArm.ExtensionParams(
-                0,
-                1000
-        );
-
-        return new ExtendableArm(motorParams, servoParams, intakeServo, rotationParams, extensionParams);
+        /* PLACEHOLDER */
+        return new Arm();
     }
 
-    public CRServo getIntakeServo() {
-        return INTAKE_SERVO;
-    }
-
-    public MecanumWheels getWheels() {
+    /* Replace `Wheels` with the subclass of `Wheels` used this season. */
+    public Wheels getWheels() {
         return WHEELS;
     }
 
-    public ExtendableArm getArm() {
+    /* Replace `Arm` with the subclass of `Arm` used this season. */
+    public Arm getArm() {
         return ARM;
     }
 
     public Webcam getWebCam() {
         return WEBCAM;
-    }
-
-    public DigitalChannel getColorSwitch() {
-        return COLOR_SWITCH;
-    }
-
-    public DigitalChannel getSideSwitch() {
-        return SIDE_SWITCH;
     }
 
     /**

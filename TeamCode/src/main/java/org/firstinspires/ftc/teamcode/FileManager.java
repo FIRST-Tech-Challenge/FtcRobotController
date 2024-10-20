@@ -8,10 +8,12 @@ import android.os.Environment;
 
 public class FileManager {
     /*
-     * The directory that save the current season's storage files.
+     * The directory that saves the current season's storage files.
+     * The current String is a placeholder,
+     * and is intended to be replaced with the name of the current season's repository"
      */
     private static final Path seasonDirectory = Paths.get(
-            Environment.getExternalStorageDirectory().getPath() + "/2024-2025IntoTheDeep");
+            Environment.getExternalStorageDirectory().getPath() + "{start year}-{end year}{season name in PascalCase}");
 
     /**
      * Writes a String to a text file inside this season's directory.

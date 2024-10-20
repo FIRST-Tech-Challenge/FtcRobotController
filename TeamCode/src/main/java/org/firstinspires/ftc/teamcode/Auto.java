@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Size;
-
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
 
 @Autonomous(name = "Auto")
 public class Auto extends LinearOpMode {
@@ -19,21 +16,9 @@ public class Auto extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-//        hardware = new Hardware(this);
-
-        // teamColor = (hardware.getColorSwitch().getState()) ? TeamColor.RED : TeamColor.BLUE;
-        // teamSide = (hardware.getSideSwitch().getState()) ? TeamSide.FAR : TeamSide.NEAR;
-
-        // telemetry.addData("Initial position:", teamColor.name() + ' ' + teamSide.name());
+        hardware = new Hardware(this);
 
         // Wait until the player press the start button
         waitForStart();
-
-        CRServo intakeServo = this.hardwareMap.get(CRServo.class, "intakeServo");
-        telemetry.addData("intakeServo power: ", intakeServo.getPower());
-
-        while (opModeIsActive()) {
-            hardware.getIntakeServo().setPower(1.0);
-        }
     }
 }
