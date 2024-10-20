@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class ActiveIntake {
@@ -29,6 +30,7 @@ public class ActiveIntake {
     public ActiveIntake(HardwareMap hw, String name){
         intake = hw.get(CRServo.class, name);
         isRunning=false;
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**

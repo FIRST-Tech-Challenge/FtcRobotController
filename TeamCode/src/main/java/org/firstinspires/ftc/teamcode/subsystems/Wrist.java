@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Wrist {
 
-    enum WristStates{
+    public enum WristStates{
         IntakeMode,
         HoverMode,
         DepositMode
     }
 
-    private double INTAKE_MODE_POSITION = 0.1;
+    private double INTAKE_MODE_POSITION = 0;
     private double HOVER_MODE_POSITION = 0.15;
     private double DEPOSIT_MODE_POSITION = 0.23;
 

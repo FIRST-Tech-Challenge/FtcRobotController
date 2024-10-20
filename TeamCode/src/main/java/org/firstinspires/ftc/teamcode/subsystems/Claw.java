@@ -17,7 +17,7 @@ public class Claw {
      * @param hw [HardwareMap] The hardware map used to initialize servos
      */
     public Claw(HardwareMap hw){
-        this(hw,"Claw");
+        this(hw,"claw");
     }
 
     /**
@@ -75,5 +75,9 @@ public class Claw {
         else{
             openClaw();
         }
+    }
+
+    public boolean getIsOpen(){
+        return isOpen;
     }
 }

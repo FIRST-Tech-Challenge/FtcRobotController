@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
+import org.firstinspires.ftc.teamcode.subsystems.ActiveIntake;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -25,13 +26,13 @@ public class LiftArmClawTest extends LinearOpMode {
         //Init Phase
         Mecanum robot = new Mecanum(hardwareMap);
 
-        Lift lift = new Lift(hardwareMap);
+//        Lift lift = new Lift(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
 
-//        Arm arm = new Arm(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
 
-//        Claw claw = new Claw(hardwareMap);
-
+        Claw claw = new Claw(hardwareMap);
+        ActiveIntake intake = new ActiveIntake(hardwareMap);
         GamepadEvents controller1 = new GamepadEvents(gamepad1);
 
 //        DcMotor liftL = hardwareMap.get(DcMotor.class,"liftLeft");
@@ -39,21 +40,23 @@ public class LiftArmClawTest extends LinearOpMode {
 //        liftR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Initialized as 6 because both Lift and Arm each have their own PID
-        pidValues = new double[3];
-        for (double val : lift.getPid().getPIDValues()){
-            pidValues[index] = val;
-            updateIndex(true);
-        }
-//        for (double val : arm.getPid().getPIDValues()){
+        pidValues = new double[4];
+//        for (double val : lift.getPid().getPIDValues()){
 //            pidValues[index] = val;
 //            updateIndex(true);
 //        }
+        for (double val : arm.getPid().getPIDValues()){
+            pidValues[index] = val;
+            updateIndex(true);
+        }
         //Updates/resets index to 0
 //        updateIndex(true);
 
 
         waitForStart();
         wrist.setHoverMode();
+//        claw.openClaw();
+//        intake.activateIntake();
         //Start Phase
         while(!isStopRequested()){
 
@@ -69,7 +72,7 @@ public class LiftArmClawTest extends LinearOpMode {
             * */
 
             //Lift Subsystem
-            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+//            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
 //            liftL.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
 //            liftR.setPower(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
 
@@ -80,6 +83,7 @@ public class LiftArmClawTest extends LinearOpMode {
 //            else if (controller1.left_bumper.onPress()){
 //                arm.changeHeight(-1);
 //            }
+            arm.changeHeight(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
 //
 //            //Claw Subsystem
 //            if (controller1.a.onPress()){
@@ -113,25 +117,25 @@ public class LiftArmClawTest extends LinearOpMode {
 
 
             if(controller1.a.onPress()){
-                lift.goToTopBucket();
+//                lift.goToTopBucket();
             }
             if(controller1.b.onPress()){
-                lift.goToHighBar();
+//                lift.goToHighBar();
             }
             if(controller1.right_bumper.onPress()){
-                lift.goToSampleIntake();
+//                lift.goToSampleIntake();
             }
 
 
 
-            lift.adjustPID(pidValues[0],pidValues[1],pidValues[2]);
-//            arm.adjustPID(pidValues[3],pidValues[4],pidValues[5]);
+//            lift.adjustPID(pidValues[0],pidValues[1],pidValues[2]);
+            arm.adjustPID(pidValues[0],pidValues[1],pidValues[2], pidValues[3]);
 //
 //
 //            //Data Telemetry
             telemetry.addLine("Current Position Data");
 //            telemetry.addData("Lift Motor Position: ",lift.getPosition());
-//            telemetry.addData("Arm Rotation: ",arm.getRotation());
+            telemetry.addData("Arm Rotation: ",arm.getRotation());
 //            telemetry.addData("Claw Servo Position: ",claw.getPosition());
 //
             //PID Tuning Information
@@ -142,14 +146,16 @@ public class LiftArmClawTest extends LinearOpMode {
             telemetry.addData("Current [INCREMENT] value: ",INCREMENT);
             telemetry.addLine(buildPIDString());
 
-            telemetry.addData("Lift Position: ",lift.getPosition());
-            telemetry.addData("Power: ",lift.update());
-            telemetry.addData("Target position", lift.getTargetPosition());
-            telemetry.addLine(lift.getArmCurrent());
+            telemetry.addLine(arm.toString());
+//
+//            telemetry.addData("Lift Position: ",lift.getPosition());
+            telemetry.addData("Power: ",arm.update());
+//            telemetry.addData("Target position", lift.getTargetPosition());
+//            telemetry.addLine(lift.getArmCurrent());
             telemetry.update();
             controller1.update();
 //            lift.update();
-//            arm.update();
+            arm.update();
         }
     }
 
@@ -164,7 +170,7 @@ public class LiftArmClawTest extends LinearOpMode {
     public String buildPIDString(){
         String result = "PID data: Line 1 = Lift PID, Line 2 = Arm PID";
         for(int i=0; i<pidValues.length; i++){
-            if (i%3 == 0) {
+            if (i%4 == 0) {
                 result += "\n";
             }
             if (i==index){

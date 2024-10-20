@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
@@ -19,6 +21,14 @@ public class FourEyesRobot extends Mecanum {
     Claw claw;
     ActiveIntake activeIntake;
 
+    enum ScoringType{
+        SAMPLE,
+        SPECIMIN
+    }
+
+    ScoringType currentState;
+
+
     public FourEyesRobot(HardwareMap hw) {
         super(hw);
         //Reassigned here to ensure that they are properly initialized
@@ -28,18 +38,55 @@ public class FourEyesRobot extends Mecanum {
         wrist = new Wrist(hardwareMap);
         claw = new Claw(hardwareMap);
         activeIntake = new ActiveIntake(hardwareMap);
-    }
-    public void toggleClaw() {
-        claw.toggleClaw();
+        currentState = ScoringType.SAMPLE;
     }
 
-    public void moveLift(double power) {
-        lift.moveLift(power);
+    /**
+     * This is to provide power to servos DURING
+     * the begining of START PHASE
+     */
+    public void initializePowerStates(){
+        lift.goToSampleIntake();
+        wrist.setHoverMode();
+        activeIntake.deactivateIntake();
+        claw.closeClaw();
     }
-    public void intakeForward() {
-        wrist.setIntakeMode();
-        activeIntake.activateIntake();
+
+    public void openClaw() {
+        claw.openClaw();
     }
+
+    public void closeClaw(){
+        claw.closeClaw();
+    }
+
+
+    public void intakeSamplePos() {
+        lift.goToSubHover();
+        wrist.setHoverMode();
+        activeIntake.deactivateIntake();
+        currentState = ScoringType.SAMPLE;
+    }
+
+    public void intakeSpeciminPos(){
+        lift.goToSpeciminIntake();
+        wrist.setHoverMode();
+        claw.openClaw();
+        currentState = ScoringType.SPECIMIN;
+    }
+
+    public void depositSamplePos(){
+        lift.goToTopBucket();
+        wrist.setDepositMode();
+        currentState = ScoringType.SAMPLE;
+    }
+
+    public void depositSpeciminPos(){
+        lift.goToHighBar();
+        wrist.setHoverMode();
+        currentState = ScoringType.SPECIMIN;
+    }
+
     public void intakeBackward() {
         activeIntake.reverseIntake();
     }
@@ -47,14 +94,83 @@ public class FourEyesRobot extends Mecanum {
         wrist.setHoverMode();
         activeIntake.deactivateIntake();
     }
+
+    public void toggleIntake(){
+        if (lift.getCurrentState() == Lift.LiftStates.HOVER) {
+            switch (wrist.getState()) {
+                case HoverMode:
+                    //Intake Mode
+//                lift.goToSampleIntake();
+                    wrist.setIntakeMode();
+                    activeIntake.activateIntake();
+                    break;
+                case IntakeMode:
+                    //Hover mode
+                    lift.goToSubHover();
+                    wrist.setHoverMode();
+                    activeIntake.deactivateIntake();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void toggleDeposit(){
+        switch (currentState){
+            case SAMPLE:
+                if (activeIntake.isRunning()) {
+                    activeIntake.deactivateIntake();
+                }
+                else{
+                    activeIntake.reverseIntake();
+                }
+                break;
+            case SPECIMIN:
+                claw.toggleClaw();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void updatePID(){
+        lift.update();
+    }
+
+
     public void depositBasket(){
+        currentState = ScoringType.SAMPLE;
         wrist.setDepositMode();
     }
     public boolean isIntaking() {
         return activeIntake.isRunning();
     }
+
+    //Manual control only
+    public void moveLift(double power) {
+        lift.moveLift(power);
+    }
     public void changeHeightArm(double height) {
         arm.changeHeight(height);
     }
 
+    @SuppressLint("DefaultLocale")
+    public String toString(){
+        return String.format(
+                "Lift Current Position: %d\n" +
+                        "Lift Target Position: %f\n" +
+                        "Active intake powered: %b\n" +
+                        "Claw Open: %b\n" +
+                        "Wrist State: %s\n" +
+                        "Current Scoring Type: %s\n"
+                ,
+                lift.getPosition(),
+                lift.getTargetPosition(),
+                activeIntake.isRunning(),
+                claw.getIsOpen(),
+                wrist.getState(),
+                currentState
+        );
+    }
 }

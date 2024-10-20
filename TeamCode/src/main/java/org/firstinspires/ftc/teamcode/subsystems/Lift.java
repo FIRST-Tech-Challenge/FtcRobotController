@@ -26,7 +26,17 @@ public class Lift {
 
 
     //Values: 590, 1200, 2700
+
+    public enum LiftStates{
+        ZERO,
+        HOVER,
+        SPECIMIN_INTAKE,
+        HIGH_BAR,
+        MAX_HEIGHT
+    }
+    private LiftStates currentState;
     public int ZERO = 0; //Ticks //SAMPLE INTAKE
+    public int HOVER = 280; //Ticks //Sample HOVER
     public int SPECIMIN_INTAKE = 590; //Ticks //SPECIMIN INTAKE
     public int HIGH_BAR = 2700; //Ticks //SPECIMIN DESPOSIT
     public int MAX_HEIGHT = 4300; //Ticks //SAMPLE DEPOSIT
@@ -66,7 +76,9 @@ public class Lift {
         encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
         //Reverse one of the motors
         this.liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        //Ensures motor encoders are reset
+
+        currentState = LiftStates.ZERO;
+
 
         pid = new PIDController(0.033,0,0.0004,0);
         pid.setTarget(getPosition());
@@ -105,11 +117,13 @@ public class Lift {
      * Sets the motors' target position to [LOW_HEIGHT]
      */
     public void goToSampleIntake(){
+        currentState = LiftStates.ZERO;
         this.targetPosition = ZERO;
         pid.setTarget(this.targetPosition);
     }
 
     public void goToTopBucket(){
+        currentState = LiftStates.MAX_HEIGHT;
         this.targetPosition = MAX_HEIGHT;
         pid.setTarget(this.targetPosition);
     }
@@ -118,6 +132,7 @@ public class Lift {
      * Sets the motors' target position to [MEDIUM_HEIGHT]
      */
     public void goToSpeciminIntake(){
+        currentState = LiftStates.SPECIMIN_INTAKE;
         this.targetPosition = SPECIMIN_INTAKE;
         pid.setTarget(this.targetPosition);
     }
@@ -126,8 +141,19 @@ public class Lift {
      * Sets the motors' target position to [HIGH_HEIGHT]
      */
     public void goToHighBar(){
+        currentState = LiftStates.HIGH_BAR;
         this.targetPosition = HIGH_BAR;
         pid.setTarget(this.targetPosition);
+    }
+
+    public void goToSubHover(){
+        currentState = LiftStates.HOVER;
+        this.targetPosition = HOVER;
+        pid.setTarget(this.targetPosition);
+    }
+
+    public LiftStates getCurrentState(){
+        return currentState;
     }
 
     public double getForwardFeedValue(){

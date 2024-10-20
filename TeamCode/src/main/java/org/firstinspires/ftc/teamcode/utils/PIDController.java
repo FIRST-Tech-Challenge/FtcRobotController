@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import android.annotation.SuppressLint;
+
 public class PIDController {
     private double Kp;
     private double Ki;
@@ -56,12 +58,15 @@ public class PIDController {
         Kd = kd;
     }
 
+    public void setKf(double kf) {Kf = kf;}
+
     public double[] getPIDValues(){
-        return new double[] {Kp, Ki, Kd};
+        return new double[] {Kp, Ki, Kd, Kf};
     }
 
+    @SuppressLint("DefaultLocale")
     public String toString(){
-        return String.format("Kp: %f\nKi: %f\nKd: %f",Kp, Ki, Kd);
+        return String.format("Kp: %f\nKi: %f\nKd: %f\nKf: %f",Kp, Ki, Kd,Kf);
     }
 }
 
