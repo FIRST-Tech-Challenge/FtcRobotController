@@ -102,17 +102,9 @@ public class CompBot extends LinearOpMode {
     }
 
     // to extend arm, input from game pad 2 straight in
-    public void extendArm(double input) {
-
-        if (input > 0.01 && slide.getCurrentPosition() > 4268) {
-            input = 0;
-            slide.setTargetPosition(4268);
-        } else if (input < -0.01 && slide.getCurrentPosition() < -4268) {
-            input = 0;
-            slide.setTargetPosition(-4268);
-        }
-
-        slide.setPower(input);
+    public void extendArm(double x) {
+        double d = (slide.getCurrentPosition() < 4268 && slide.getCurrentPosition() > -4268) ? x:0.0;
+        slide.setPower(d);
     }
 
 
