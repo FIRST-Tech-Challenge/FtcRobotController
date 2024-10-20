@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 
 public class MoveTrayClampAction extends Action {
 

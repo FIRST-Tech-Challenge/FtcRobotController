@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 public class DoneStateAction extends Action {
 

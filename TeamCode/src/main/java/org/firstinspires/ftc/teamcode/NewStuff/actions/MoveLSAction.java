@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 
 public class MoveLSAction extends Action {
 

@@ -20,7 +20,7 @@ public class FieldPosition {
     }
 
     PROP_LOCATION propLocation;
-    Boolean isRedAlliance;
+    public Boolean isRedAlliance;
     Boolean longPath;
 
     public FieldPosition(Boolean isRedAlliance, Boolean longPath) {

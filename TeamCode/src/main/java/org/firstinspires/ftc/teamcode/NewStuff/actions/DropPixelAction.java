@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
-import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 
 public class DropPixelAction extends Action {
 

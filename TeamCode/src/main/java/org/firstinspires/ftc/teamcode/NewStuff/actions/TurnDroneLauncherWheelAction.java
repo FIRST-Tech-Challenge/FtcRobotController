@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
-
-import android.util.Log;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class TurnIntakeWheelAction extends Action {
+import org.firstinspires.ftc.teamcode.NewStuff.modules.DroneLauncher;
 
-    DcMotor intakeWheel;
+public class TurnDroneLauncherWheelAction extends Action {
+
+    DcMotor wheel;
     final double ERROR_TOLERANCE = 20;
     final double P_CONSTANT = 0.004;
     double targetTicks;
@@ -14,14 +14,14 @@ public class TurnIntakeWheelAction extends Action {
     double error;
 
 
-    public TurnIntakeWheelAction(Action dependentAction, double targetTicks, Intake intake) {
-        intakeWheel = intake.wheelMotor;
+    public TurnDroneLauncherWheelAction(Action dependentAction, double targetTicks, DroneLauncher droneLauncher) {
+        wheel = droneLauncher.wheel;
         this.dependentAction = dependentAction;
         this.targetTicks = targetTicks;
     }
 
-    public TurnIntakeWheelAction(double targetTicks, Intake intake) {
-        intakeWheel = intake.wheelMotor;
+    public TurnDroneLauncherWheelAction(double targetTicks, DroneLauncher droneLauncher) {
+        wheel = droneLauncher.wheel;
         this.dependentAction = new DoneStateAction();
         this.targetTicks = targetTicks;
     }
@@ -41,19 +41,20 @@ public class TurnIntakeWheelAction extends Action {
         refreshError();
         if (Math.abs(error) <= ERROR_TOLERANCE) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
     void update() {
+        this.currentTicks = wheel.getCurrentPosition();
+
         if(!hasStarted) {
             this.targetTicks += currentTicks;
             hasStarted = true;
         }
 
-        this.currentTicks = intakeWheel.getCurrentPosition();
-        intakeWheel.setPower(calculatePower());
+        wheel.setPower(calculatePower());
     }
+
 }

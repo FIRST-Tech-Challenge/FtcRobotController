@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.modules;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
 public class IMUModule {
     private final OpModeUtilities opModeUtilities;

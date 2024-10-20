@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
-
-import com.kalipsorobotics.fresh.MarkerDetector;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 public abstract class Action {
 

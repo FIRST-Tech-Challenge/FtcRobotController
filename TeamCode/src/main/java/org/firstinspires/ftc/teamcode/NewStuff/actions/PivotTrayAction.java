@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class PivotTrayAction extends Action{
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
+
+public class PivotTrayAction extends Action {
 
     Servo trayPivot;
     Outtake outtake;

@@ -3,16 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.NewStuff.ActionSet;
-import org.firstinspires.ftc.teamcode.NewStuff.DroneLauncher;
-import org.firstinspires.ftc.teamcode.NewStuff.Intake;
-import org.firstinspires.ftc.teamcode.NewStuff.MoveLSAction;
-import org.firstinspires.ftc.teamcode.NewStuff.MoveTrayClampAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.ActionSet;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Intake;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.MoveLSAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.MoveTrayClampAction;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
-import org.firstinspires.ftc.teamcode.NewStuff.Outtake;
-import org.firstinspires.ftc.teamcode.NewStuff.TurnDroneLauncherWheelAction;
-import org.firstinspires.ftc.teamcode.NewStuff.TurnIntakeWheelAction;
-import org.firstinspires.ftc.teamcode.NewStuff.WaitAction;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.TurnDroneLauncherWheelAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.TurnIntakeWheelAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.WaitAction;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.DroneLauncher;
 
 @TeleOp
 public class TestTeleOpp extends LinearOpMode {

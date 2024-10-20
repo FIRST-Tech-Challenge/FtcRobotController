@@ -1,8 +1,12 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 import android.util.Log;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
+import org.firstinspires.ftc.teamcode.NewStuff.PropDetector;
+import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
 
 public class DetectPropPositionAction extends Action {
     ElapsedTime elapsedTime;

@@ -1,8 +1,14 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 import android.util.Log;
 
-public class GoToBoardAction extends Action{
+import org.firstinspires.ftc.teamcode.NewStuff.CalculateTickInches;
+import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.IMUModule;
+import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
+
+public class GoToBoardAction extends Action {
 
     CalculateTickInches calculateTickInches;
     DriveTrain driveTrain;

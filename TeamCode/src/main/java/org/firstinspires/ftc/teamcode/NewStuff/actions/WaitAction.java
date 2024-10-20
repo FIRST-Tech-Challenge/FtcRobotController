@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.NewStuff;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class WaitAction extends Action{
+public class WaitAction extends Action {
 
     double waitTimeSeconds;
     ElapsedTime elapsedTime;

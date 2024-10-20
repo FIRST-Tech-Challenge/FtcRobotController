@@ -5,22 +5,21 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.NewStuff.ActionSet;
-import org.firstinspires.ftc.teamcode.NewStuff.AlignRobotToAprilTagXAction;
-import org.firstinspires.ftc.teamcode.NewStuff.AlignRobotToAprilTagYAction;
-import org.firstinspires.ftc.teamcode.NewStuff.DetectPropPositionAction;
-import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
-import org.firstinspires.ftc.teamcode.NewStuff.DroneLauncher;
-import org.firstinspires.ftc.teamcode.NewStuff.DropPixelAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.ActionSet;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.AlignRobotToAprilTagXAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.AlignRobotToAprilTagYAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DetectPropPositionAction;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DropPixelAction;
 import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
-import org.firstinspires.ftc.teamcode.NewStuff.GoToBoardAction;
-import org.firstinspires.ftc.teamcode.NewStuff.IMUModule;
-import org.firstinspires.ftc.teamcode.NewStuff.Intake;
-import org.firstinspires.ftc.teamcode.NewStuff.MecanumRobotAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.GoToBoardAction;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.IMUModule;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Intake;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
-import org.firstinspires.ftc.teamcode.NewStuff.Outtake;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 import org.firstinspires.ftc.teamcode.NewStuff.PropDetector;
 import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.DroneLauncher;
 
 @Autonomous
 public class TestAuto extends LinearOpMode {
