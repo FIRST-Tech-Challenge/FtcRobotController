@@ -51,7 +51,7 @@ public class clawSlideImport extends LinearOpMode {
                 x = 0;
         }
         else if (slide.getCurrentPosition() > -limitSlide) {
-            if (x < 0)
+            if (x > 0)
                 x = 0;
         }
         slide.setPower(x);
