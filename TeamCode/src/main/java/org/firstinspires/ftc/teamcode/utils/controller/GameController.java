@@ -17,6 +17,10 @@ public class GameController extends Controller {
         return !button(button) && previousController.button(button);
     }
 
+    public boolean stoppedChanging(Axis axis) {
+        return (axis(axis) == 0) && (previousController.axis(axis) != 0);
+    }
+
     @Override
     public void update(Gamepad gamepad) {
         previousController.update(super.currentGamepad);

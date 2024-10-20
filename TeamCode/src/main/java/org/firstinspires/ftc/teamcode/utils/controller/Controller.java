@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.utils.Numbers;
 public class Controller {
     protected final Gamepad currentGamepad = new Gamepad();
 
-    private float stickDeadzone = 0.01f;
+    private float stickDeadzone = 0.05f;
 
     public Controller() {}
 

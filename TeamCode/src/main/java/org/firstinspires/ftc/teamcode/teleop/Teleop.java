@@ -72,7 +72,12 @@ public class Teleop extends OpMode {
         // Correct for the imperfect strafing
         horizontalMovePower *= HORIZONTAL_BALANCE;
 
-        double turnPower = Numbers.turnCorrectionSpeed(normalizedYaw, 0);
+        if (controller1.stoppedChanging(Axis.RightStickX))
+            targetRotation = normalizedYaw;
+
+        double turnPower;
+        if (rotationInput != 0) turnPower = rotationInput;
+        else turnPower = Numbers.turnCorrectionSpeed(normalizedYaw, targetRotation);
 
         double denominator = Math.max(Math.abs(verticalMovePower) + Math.abs(horizontalMovePower) + Math.abs(turnPower), 1);
 
