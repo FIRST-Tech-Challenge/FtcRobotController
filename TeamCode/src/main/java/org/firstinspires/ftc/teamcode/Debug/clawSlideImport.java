@@ -19,15 +19,15 @@ public class clawSlideImport extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             setSlide(-gamepad2.right_stick_y);
             setPivot(-gamepad2.left_stick_y);
         }
     }
 
     public void initRobot() {
-        DcMotor slide = hardwareMap.get(DcMotor.class, "slide");
-        DcMotor pivot = hardwareMap.get(DcMotor.class, "pivot");
+        slide = hardwareMap.get(DcMotor.class, "slide");
+        pivot = hardwareMap.get(DcMotor.class, "pivot");
 
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -41,31 +41,31 @@ public class clawSlideImport extends LinearOpMode {
         slide.setDirection(DcMotorSimple.Direction.FORWARD);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        limitSlide = 9999;
-        limitPivot = 9999;
+        limitSlide = 4268;
+        limitPivot = 2905;
     }
 
     public void setSlide(double x) {
-
         if (slide.getCurrentPosition() < limitSlide) {
-            slide.setPower(0);
+            if (x < 0)
+                x = 0;
         }
         else if (slide.getCurrentPosition() > -limitSlide) {
-            slide.setPower(0);
+            if (x < 0)
+                x = 0;
         }
-
         slide.setPower(x);
     }
 
     public void setPivot(double x) {
         if (pivot.getCurrentPosition() < limitPivot) {
-            pivot.setPower(0);
+            if (x < 0)
+                x = 0;
         }
         else if (pivot.getCurrentPosition() > -limitPivot) {
-            pivot.setPower(0);
+            if (x < 0)
+                x = 0;
         }
-
         pivot.setPower(x);
-
     }
 }
