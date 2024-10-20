@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "Auto Main Mecanum Drive")
+@Autonomous(name = "Old Main Auto Mecanum Drive")
 public class MecanumAuto extends LinearOpMode {
 
     @Override
