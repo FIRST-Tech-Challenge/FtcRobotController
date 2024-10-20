@@ -14,12 +14,14 @@ public class Arm {
     }
     //-----------------------
     //Variable Storage:
+    //Total ticks in a revolution for 117 RPM motor: 1425.1
     int homePosition = 0;
     int clearancePosition = 24;
     int hangPosition = 65;
     int highBasketPosition = 80;
     int specimenPosition = 70;
     //-----------------------
+
     Boolean homeFlag = false;
     public boolean getIsHome()
     {
@@ -78,15 +80,6 @@ public class Arm {
         //targetArmDegrees = degrees;
 
         double ticksPerDegree = 7125.0/360.0;
-//        double currentDegrees = currentPosit/ticksPerDegree;
-//        if (currentDegrees > degrees)
-//        {
-//            armMotor.setDirection(DcMotor.Direction.FORWARD);
-//        }
-//        else
-//        {
-//            armMotor.setDirection(DcMotor.Direction.REVERSE);
-//        }
         int convert = (int) (degrees*ticksPerDegree);
         //double difference = Math.abs(convert-currentPosit);
         _armMotor.setDirection(DcMotor.Direction.REVERSE);
