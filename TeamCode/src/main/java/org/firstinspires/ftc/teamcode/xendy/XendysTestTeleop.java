@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utils.controller.Controller;
 import org.firstinspires.ftc.teamcode.utils.Numbers;
+import org.firstinspires.ftc.teamcode.utils.controller.Controller.Axis;
+import org.firstinspires.ftc.teamcode.utils.controller.Controller.Button;
+import org.firstinspires.ftc.teamcode.utils.controller.GameController;
 
 @TeleOp(name="Xendy's Teleop", group = "z_group")
 public class XendysTestTeleop extends OpMode {
@@ -14,13 +17,13 @@ public class XendysTestTeleop extends OpMode {
     private double x, y, r, targetAngle;
     private boolean rotating = false;
 
-    private Controller controller;
+    private GameController controller;
 
 
     @Override
     public void init() {
         chassis = new XendyChassis(this);
-        controller = new Controller(gamepad1);
+        controller = new GameController(gamepad1);
     }
 
     @Override
@@ -76,9 +79,9 @@ public class XendysTestTeleop extends OpMode {
     public static final double LERP_DIFF_CANCEL = 0.05;
     public static final double LERP_MULT = 0.2;
     public void lerpInput() {
-        double inputX = curveInput(controller.axis(Controller.Axis.LeftStickX));
-        double inputY = curveInput(controller.axis(Controller.Axis.LeftStickY));
-        double inputR = curveInput(controller.axis(Controller.Axis.RightStickX));
+        double inputX = curveInput(controller.axis(Axis.LeftStickX));
+        double inputY = curveInput(controller.axis(Axis.LeftStickY));
+        double inputR = curveInput(controller.axis(Axis.RightStickX));
 
         double diffX = inputX - x;
         double diffY = inputY - y;

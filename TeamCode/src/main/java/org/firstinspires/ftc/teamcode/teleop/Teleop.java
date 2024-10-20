@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.teamcode.utils.controller.Controller.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.utils.Numbers;
+import org.firstinspires.ftc.teamcode.utils.controller.GameController;
 
 @TeleOp(name = "Teleop")
 public class Teleop extends OpMode {
@@ -22,10 +24,8 @@ public class Teleop extends OpMode {
     private double targetRotation;
 
     // Gamepad States
-    private final Gamepad currentGamepad1 = new Gamepad();
-    private final Gamepad currentGamepad2 = new Gamepad();
-    private final Gamepad previousGamepad1 = new Gamepad();
-    private final Gamepad previousGamepad2 = new Gamepad();
+    private final GameController controller1 = new GameController(gamepad1);
+    private final GameController controller2 = new GameController(gamepad2);
 
     private final double SPEED_CHANGE_PER_PRESS = 5;
 
@@ -37,10 +37,8 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         // Keeping track of the buttons from the last loop iteration so we do not need a billion booleans
-        previousGamepad1.copy(currentGamepad1);
-        previousGamepad2.copy(currentGamepad2);
-        currentGamepad1.copy(gamepad1);
-        currentGamepad2.copy(gamepad2);
+        controller1.update(gamepad1);
+        controller2.update(gamepad2);
 
         // Update the orientation of the robot each loop
         orientation = chassis.imu.getRobotYawPitchRollAngles();
@@ -51,45 +49,28 @@ public class Teleop extends OpMode {
         telemetry.addData("Yaw", yaw);
         telemetry.addData("Yaw Rad", yawRad);
         telemetry.addData("Normal Yaw", normalYaw);
-        telemetry.update();
 
-        float moveXInput = gamepad1.left_stick_x;
-        float moveYInput = -gamepad1.left_stick_y;
-        float rotationInput = gamepad1.right_stick_x;
+        float moveXInput = controller1.axis(Axis.LeftStickX);
+        float moveYInput = controller1.axis(Axis.LeftStickY);
+        float rotationInput = controller1.axis(Axis.RightStickX);
 
-        if (gamepad1.right_bumper && !previousGamepad1.right_bumper)
+        if (controller1.pressed(Button.RightBumper))
             maxSpeed += SPEED_CHANGE_PER_PRESS;
 
-        if (gamepad1.left_bumper && !previousGamepad1.left_bumper)
+        if (controller1.pressed(Button.LeftBumper))
             maxSpeed -= SPEED_CHANGE_PER_PRESS;
 
         telemetry.addData("Speed", maxSpeed);
 
-        if (gamepad1.back)
+        if (controller1.pressed(Button.Back))
             chassis.imu.resetYaw();
 
-        // New Field Relative movement!
         // Thanks gm0!
         double verticalMovePower = moveXInput * Math.sin(-yawRad) + moveYInput * Math.cos(-yawRad);
         double horizontalMovePower = moveXInput * Math.cos(-yawRad) - moveYInput * Math.sin(-yawRad);
 
         // Correct for the imperfect strafing
         horizontalMovePower *= HORIZONTAL_BALANCE;
-
-        // Old Field Relative movement (my b)
-//        double inputAngle;
-//        double movementAngle;
-//        if (moveYInput == 0 && moveXInput == 0) {
-//            verticalMovePower = 0;
-//            horizontalMovePower = 0;
-//        } else {
-//            inputAngle = Math.toDegrees(Math.atan2(moveYInput, moveXInput)) - 90;
-//            movementAngle = inputAngle + absoluteYaw;
-//            double magnitude = Math.sqrt(Math.pow(moveXInput, 2) + Math.pow(moveYInput, 2));
-//            verticalMovePower = Math.cos(Math.toRadians(movementAngle)) * magnitude;
-//            horizontalMovePower = -Math.sin(Math.toRadians(movementAngle)) * magnitude * HORIZONTAL_BALANCE;
-//        }
-
 
         double turnPower = rotationInput;
 

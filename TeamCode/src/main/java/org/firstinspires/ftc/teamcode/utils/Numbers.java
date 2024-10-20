@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.opencv.core.Mat;
 
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 public class Numbers {
     /**
      * Converts a -180 to 180 range (like from the IMU) to a 0 to 360 range
@@ -105,5 +108,15 @@ public class Numbers {
         return lerp(a, b, Math.abs(t) * t);
     }
 
-//    public static double interpolate(double a, double b, )
+    public static double interpolate(double a, double b, double startTime, double length, double currentTime, TriFunction<Double, Double, Double, Double> interpolationFunction) {
+        double elapsedTime = currentTime - startTime;
+        if (elapsedTime >= length)
+            return b;
+
+        if (elapsedTime <= 0)
+            return a;
+
+        double t = elapsedTime/length;
+        return interpolationFunction.apply(a, b, t);
+    }
 }
