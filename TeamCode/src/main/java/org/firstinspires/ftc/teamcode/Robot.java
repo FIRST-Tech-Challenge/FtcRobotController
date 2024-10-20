@@ -449,6 +449,10 @@ public class Robot {
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void setMotorPower(final DrivetrainPowers drivetrainPowers) {
+        setMotorPower(drivetrainPowers.fLeftPower, drivetrainPowers.fRightPower, drivetrainPowers.bLeftPower, drivetrainPowers.bRightPower);
+    }
+
     public void setMotorPower(double fLeft, double fRight, double bLeft, double bRight) {
         this.fLeft.setPower(fLeft);
         this.bRight.setPower(bRight);
@@ -1555,10 +1559,10 @@ public class Robot {
     // negative inches - go backward
     public void straightBlocking2(double inches) {
         resetDrivetrainEncoders();
-        straightController.integral = 0;
-        straightController.lastPos = 0;
-        straightController.lastError = 0;
-        straightController.lastTime = 0;
+        straightController.state.integral = 0;
+        straightController.state.lastPos = 0;
+        straightController.state.lastError = 0;
+        straightController.state.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + straightController.convertInchesToTicks(inches);
         double power;
@@ -1579,7 +1583,7 @@ public class Robot {
             velocity = straightController.getVelocity(currentPos);
             Log.d("new pid", "straightBlocking2: velocity is  " + velocity);
 
-            if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS && velocity < 0.1) {
+            if (Math.abs(straightController.state.lastError) < ERROR_TOLERANCE_IN_TICKS && velocity < 0.1) {
                 counter++;
             } else { //todo: test this
                 counter = 0;
@@ -1596,10 +1600,10 @@ public class Robot {
     }
     public void straightBlocking2FixHeading (double inches) {
         resetDrivetrainEncoders();
-        straightController.integral = 0;
-        straightController.lastPos = 0;
-        straightController.lastError = 0;
-        straightController.lastTime = 0;
+        straightController.state.integral = 0;
+        straightController.state.lastPos = 0;
+        straightController.state.lastError = 0;
+        straightController.state.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + straightController.convertInchesToTicks(inches);
         double power;
@@ -1627,7 +1631,7 @@ public class Robot {
             velocity = straightController.getVelocity(currentPos);
             Log.d("new pid", "straightBlocking2: velocity is  " + velocity);
 
-            if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS && velocity < 0.1) {
+            if (Math.abs(straightController.state.lastError) < ERROR_TOLERANCE_IN_TICKS && velocity < 0.1) {
                 counter++;
             } else {
                 counter = 0;
@@ -1679,9 +1683,9 @@ public class Robot {
     // negative inches - left
     public void mecanumBlocking2(double inches) {
         resetDrivetrainEncoders();
-        fLeftMecanumController.integral = 0;
-        fLeftMecanumController.lastError = 0;
-        fLeftMecanumController.lastTime = 0;
+        fLeftMecanumController.state.integral = 0;
+        fLeftMecanumController.state.lastError = 0;
+        fLeftMecanumController.state.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + (bRightMecanumController.convertInchesToTicks(inches));
         double power;
@@ -1689,7 +1693,7 @@ public class Robot {
         int counter = 0;
 
         while (opMode.opModeIsActive() && counter < 3) {
-            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+            if ((Math.abs(fLeftMecanumController.state.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
                 counter++;
             } else { //todo: test this
                 counter = 0;
@@ -2408,9 +2412,9 @@ public class Robot {
 
     public void mecanumAndSlidesDownToZero(double inchesMove, double slideStartingPos) {
         resetDrivetrainEncoders();
-        fLeftMecanumController.integral = 0;
-        fLeftMecanumController.lastError = 0;
-        fLeftMecanumController.lastTime = 0;
+        fLeftMecanumController.state.integral = 0;
+        fLeftMecanumController.state.lastError = 0;
+        fLeftMecanumController.state.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + (bRightMecanumController.convertInchesToTicks(inchesMove));
         double power;
@@ -2418,7 +2422,7 @@ public class Robot {
         int counter = 0;
 
         while (opMode.opModeIsActive() && (counter < 3 || lsFront.getCurrentPosition() > 30)) {
-            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+            if ((Math.abs(fLeftMecanumController.state.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
                 counter++;
             } else { //todo: test this
                 counter = 0;
@@ -2443,9 +2447,9 @@ public class Robot {
 
     public void mecanumRobotToTicksParallel(int inchesMove) {
         resetDrivetrainEncoders();
-        fLeftMecanumController.integral = 0;
-        fLeftMecanumController.lastError = 0;
-        fLeftMecanumController.lastTime = 0;
+        fLeftMecanumController.state.integral = 0;
+        fLeftMecanumController.state.lastError = 0;
+        fLeftMecanumController.state.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + (bRightMecanumController.convertInchesToTicks(inchesMove));
         double power;
@@ -2453,7 +2457,7 @@ public class Robot {
         int counter = 0;
 
         if (opMode.opModeIsActive() && (counter < 3 || lsFront.getCurrentPosition() > 30)) {
-            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+            if ((Math.abs(fLeftMecanumController.state.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
                 counter++;
             } else { //todo: test this
                 counter = 0;
@@ -2468,19 +2472,62 @@ public class Robot {
         opMode.sleep(100);
     }
 
-    public void mecanumParallel(double inches) {
-        fLeftMecanumController.integral = 0;
-        fLeftMecanumController.lastError = 0;
-        fLeftMecanumController.lastTime = 0;
-        double currentPos = fLeft.getCurrentPosition();
-        double targetPos = bRightMecanumController.convertInchesToTicks(inches);
+    public DrivetrainPowers mecanumParallelPowerPID(double currentPos, double targetPos) {
+        fLeftMecanumController.state.integral = 0;
+        fLeftMecanumController.state.lastError = 0;
+        fLeftMecanumController.state.lastTime = 0;
         double power;
         double ERROR_TOLERANCE_IN_TICKS = 15;
 
-        if (opMode.opModeIsActive() && (Math.abs((targetPos - currentPos)) > ERROR_TOLERANCE_IN_TICKS)) {
+        if (Math.abs((targetPos - currentPos)) > ERROR_TOLERANCE_IN_TICKS) {
             power = fLeftMecanumController.calculatePID(currentPos, targetPos);
-            setMotorPower(power, -1 * power, -1 * power, power);
+//            setMotorPower(power, -1 * power, -1 * power, power);
+            return new DrivetrainPowers(power, -1 * power, -1 * power, power);
         }
+        return new DrivetrainPowers(0,0,0,0);
+    }
+
+    public DrivetrainPowers straightParallelPowerPID(double currentPos, double targetPos, boolean forward, int inches, double maxPower) {
+        double ERROR_TOLERANCE = 10;
+        double power;
+        final double KP = 0.01;
+        final double KD = 500_000;
+        final double minPower = 0.2;
+        double currentTick = fLeft.getCurrentPosition();
+        double errorDer;
+        double currentTime;
+
+        //inch to tick
+        final double wheelDiaMm = 96;
+        final double PI = Math.PI;
+        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
+        final double IN_TO_TICK = 537 / wheelCircIn;
+
+        double error = targetPos - currentTick;
+
+        if (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            error = targetPos - currentTick;
+            errorDer = (error - prevError) / (currentTime - prevTime);
+            power = (KP * error) + (KD * errorDer);
+
+            if (power > 0 && power < minPower) {
+                power += minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power -= minPower;
+            }
+
+            //cap power
+            power = Range.clip(power, -1 * maxPower, maxPower);
+
+            prevTime = currentTime;
+            prevError = error;
+
+            return new DrivetrainPowers(power, power, power, power);
+        }
+
+        return new DrivetrainPowers(0,0,0,0);
     }
 
     public void moveFingerUp() {
