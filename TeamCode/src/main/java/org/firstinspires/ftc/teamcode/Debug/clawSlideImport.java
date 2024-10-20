@@ -5,12 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class clawSlideImport extends LinearOpMode {
 
     DcMotor slide, pivot;
     DigitalChannel slideLimit;
+
+    Servo intakeL, intakeR;
 
     int limitSlide, limitPivot;
 
@@ -22,9 +25,17 @@ public class clawSlideImport extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+
+            if (gamepad2.a) {
+                intakeL.setPosition(1);
+                intakeR.setPosition(1);
+            } else {
+                intakeL.setPosition(0);
+                intakeR.setPosition(0);
+            }
+
             setSlide(-gamepad2.right_stick_y);
             setPivot(-gamepad2.left_stick_y);
-            telemetry.addData("game pad left y: ", -gamepad2.left_stick_y);
             telemetry.addData("SL", slideLimit.getState());
             telemetry.update();
         }
@@ -49,6 +60,14 @@ public class clawSlideImport extends LinearOpMode {
 
         limitSlide = 4750;
         limitPivot = 2500;
+
+        //servos
+
+        intakeL = hardwareMap.get(Servo.class, "left");
+        intakeR = hardwareMap.get(Servo.class, "right");
+
+        intakeL.setDirection(Servo.Direction.REVERSE);
+        intakeR.setDirection(Servo.Direction.REVERSE);
     }
 
     public void setSlide(double x) {
