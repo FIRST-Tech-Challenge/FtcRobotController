@@ -82,4 +82,28 @@ public class Numbers {
         double speed = Range.clip(angle / 90, -1, 1);
         return Math.pow(speed, 3);
     }
+
+    /**
+     * Linearly interpolate between values a and b according to t
+     * @param a The starting value, what will be returned when t = 0
+     * @param b The ending value, what will be returned when t = 1
+     * @param t The interpolation value
+     * @return A number between a and b, chosen linearly by t
+     */
+    public static double lerp(double a, double b, double t) {
+        return a + (b - a) * t;
+    }
+
+    /**
+     * Quadratically interpolate between values a and b according t
+     * @param a The starting value, what will be returned when t = 0
+     * @param b The ending value, what will be returned when t = 1
+     * @param t The interpolation value
+     * @return A number between a and b, chosen quadratically by t
+     */
+    public static double querp(double a, double b, double t) {
+        return lerp(a, b, Math.abs(t) * t);
+    }
+
+//    public static double interpolate(double a, double b, )
 }
