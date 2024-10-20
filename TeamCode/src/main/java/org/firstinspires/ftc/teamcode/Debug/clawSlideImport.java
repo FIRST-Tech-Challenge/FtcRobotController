@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+@TeleOp
 public class clawSlideImport extends LinearOpMode {
 
     DcMotor slide, pivot;
@@ -12,15 +14,14 @@ public class clawSlideImport extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        try {
 
-            while (opModeIsActive()) {
-                slide(-gamepad2.right_stick_y);
-                pivot(-gamepad2.left_stick_y);
+        initRobot();
 
-            }
-        } catch (Exception e) {
-            telemetry.addData("Error: ", e);
+        waitForStart();
+
+        while (opModeIsActive()){
+            setSlide(-gamepad2.right_stick_y);
+            setPivot(-gamepad2.left_stick_y);
         }
     }
 
@@ -28,26 +29,23 @@ public class clawSlideImport extends LinearOpMode {
         DcMotor slide = hardwareMap.get(DcMotor.class, "slide");
         DcMotor pivot = hardwareMap.get(DcMotor.class, "pivot");
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        slide.setPower(0);
-        pivot.setPower(0);
+        slide.setPower(.01);
+        pivot.setPower(.01);
 
         slide.setDirection(DcMotorSimple.Direction.FORWARD);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         limitSlide = 9999;
         limitPivot = 9999;
     }
 
-    public void slide(double x) {
+    public void setSlide(double x) {
 
         if (slide.getCurrentPosition() < limitSlide) {
             slide.setPower(0);
@@ -59,7 +57,7 @@ public class clawSlideImport extends LinearOpMode {
         slide.setPower(x);
     }
 
-    public void pivot(double x) {
+    public void setPivot(double x) {
         if (pivot.getCurrentPosition() < limitPivot) {
             pivot.setPower(0);
         }
