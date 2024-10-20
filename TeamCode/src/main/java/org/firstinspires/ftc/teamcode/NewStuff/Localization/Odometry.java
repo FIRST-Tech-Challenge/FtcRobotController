@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
+import android.os.SystemClock;
 import android.util.Log;
+
+import androidx.annotation.RestrictTo;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.NewStuff.DriveTrain;
@@ -11,18 +15,18 @@ import org.firstinspires.ftc.teamcode.NewStuff.Math.Position;
 import org.firstinspires.ftc.teamcode.NewStuff.Math.Velocity;
 
 public class Odometry {
-    final private double TRACK_WIDTH = 304.8;
-    private final double BACK_DISTANCE_TO_MID = 69.85;
-
-    private Telemetry jose;
-    private DcMotor rightEncoder;
-    private DcMotor leftEncoder;
-    private DcMotor backEncoder;
-    private Position currentPosition;
-    private double prevRightTicks = 0;
-    private double prevLeftTicks = 0;
-    private double prevBackTicks = 0;
-
+    final static private double TRACK_WIDTH = 304.8;
+    static private final double BACK_DISTANCE_TO_MID = 69.85;
+    private final Telemetry jose;
+    private final DcMotor rightEncoder;
+    private final DcMotor leftEncoder;
+    private final DcMotor backEncoder;
+    volatile private Position currentPosition;
+    volatile private Velocity currentVelocity;
+    private volatile double prevRightTicks = 0;
+    private volatile double prevLeftTicks = 0;
+    volatile private double prevBackTicks = 0;
+    private volatile double prevTime;
     public Odometry(DriveTrain driveTrain, LinearOpMode opMode,
                     Telemetry telemetry, double xCoordinate, double yCoordinate, double theta) {
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
@@ -103,14 +107,28 @@ public class Odometry {
         return previousGlobalPosition.add(globalDelta);
     }
 
+    public void run() throws InterruptedException{
+        while (true) {
+            updatePosition();
+            if (Thread.interrupted()) {
+                throw new InterruptedException();
+            }
+        }
+    }
+
     public Position updatePosition() {
         double rightTicks = countRight();
         double leftTicks = countLeft();
         double backTicks = countBack();
 
-        Velocity relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
+        double currentTime = SystemClock.elapsedRealtime();
+        double timeElapsed = currentTime - prevTime;
 
+        Velocity relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
         relativeDelta = linearToArcDelta(relativeDelta);
+
+        currentVelocity = relativeDelta.divide(timeElapsed);
+        prevTime = currentTime;
 
         currentPosition = updateGlobal(relativeDelta, currentPosition);
 
@@ -118,12 +136,12 @@ public class Odometry {
         prevLeftTicks = leftTicks;
         prevBackTicks = backTicks;
 
-
-        jose.addData("delta ", relativeDelta.toString());
-
         jose.addData("global", currentPosition.toString());
-        jose.update();
         return currentPosition;
+    }
+
+    public Velocity getCurrentVelocity() {
+        return currentVelocity;
     }
 
     public Position getCurrentPosition() {

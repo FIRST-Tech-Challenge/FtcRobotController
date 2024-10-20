@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.NewStuff.Localization;
 
+import com.kuriosityrobotics.shuttle.HardwareTaskScope;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,28 +18,39 @@ public class TestPurePursuit extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
-        DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        Odometry odometry = new Odometry(driveTrain, this, telemetry, 0, 0, Math.toRadians(0));
-        RobotMovement robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry);
+        try (var outer = HardwareTaskScope.open()) {
+            // the outer scope is for the persistent tasks like odo
+            // stuff, idk
+            OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
+            DriveTrain driveTrain = new DriveTrain(opModeUtilities);
+            Odometry odometry = new Odometry(driveTrain, this, telemetry, 0, 0, Math.toRadians(0));
+            RobotMovement robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry);
 
+            outer.fork(odometry::run);
 
-        List<Point> pathPoints = new ArrayList<Point>() {{
-            add(new Point(0, 0));
-            add(new Point(600, 0));
-            add(new Point(600, 600));
-            add(new Point(1800, 600));
-            add(new Point(1800, 0));
-        }};
-        Point test1 = new Point(0, 0);
-        Point test2 = new Point(600, 600);
-        waitForStart();
-        while (opModeIsActive()) {
-            //robotMovement.targetPosition(0, 600, 0 , 0, 300);
-            robotMovement.pathFollow(new Path(pathPoints));
+            try (var inner = HardwareTaskScope.open()) {
+                List<Point> pathPoints = new ArrayList<Point>() {{
+                    add(new Point(0, 0));
+                    add(new Point(600, 0));
+                    add(new Point(600, 600));
+                    add(new Point(1800, 600));
+                    add(new Point(1800, 0));
+                }};
 
-            telemetry.addData("vector to angle test", Vector.between(test1, test2));
-            telemetry.update();
+                waitForStart();
+                //code
+                inner.fork(() -> robotMovement.pathFollow(new Path(pathPoints)));
+                while (opModeUtilities.getOpMode().opModeIsActive()) {
+                    idle();
+                }
+                inner.shutdown();
+                inner.join();
+
+                telemetry.update();
+            } finally {
+                outer.shutdown();
+                outer.join();
+            }
         }
     }
 }

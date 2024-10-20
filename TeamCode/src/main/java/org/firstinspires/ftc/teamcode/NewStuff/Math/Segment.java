@@ -40,7 +40,6 @@ public class Segment {
         }
         return Optional.of(follow);
     }
-
     public Vector getVector() {
         return Vector.between(this.start, this.finish);
     }

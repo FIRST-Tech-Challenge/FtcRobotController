@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.NewStuff.Math;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 public class Velocity {
     final private double x;
     final private double y;
@@ -19,6 +21,13 @@ public class Velocity {
         );
     }
 
+    public Velocity divide(double denominator) {
+        return new Velocity(this.x / denominator, this.y / denominator, this.theta / denominator);
+    }
+
+    public boolean isWithinThreshhold(double thresholdX, double threshholdY, double threshholdTheta) {
+        return (Math.abs(this.x) < thresholdX && Math.abs(this.y) < threshholdY && Math.abs(this.theta) < threshholdTheta);
+    }
     @Override
     public String toString() {
         return "{" +

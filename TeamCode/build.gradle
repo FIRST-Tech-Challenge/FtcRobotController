@@ -29,7 +29,14 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url = "https://maven.kuriosityrobotics.com/releases/"
+    }
+}
+
 dependencies {
+    // other stuff
     implementation project(':FtcRobotController')
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -43,5 +50,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 >>>>>>> d4a9f77 (mecanum parallel PID control method: calculates and returns power needed, does NOT set power inside the method. new class DrivetrainPowers assigns powers to motors so setPowers can use them easily. figured out test code stuff to debug offline. made a few methods (ie PID controller)  less dependent on other methods for easier isolation of methods to debug and test.)
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+<<<<<<< HEAD
 }
 >>>>>>> 7d07508 (VISION CODE THAT WORKS YES)
+=======
+
+    implementation "com.kuriosityrobotics.shuttle:shuttle-core:1.0"
+    implementation "com.kuriosityrobotics.shuttle:shuttle-hardware:1.0"
+}
+>>>>>>> 6ac96b2 (shuttle implemented)
