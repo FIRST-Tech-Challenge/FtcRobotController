@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 
 @TeleOp(name = "MerryGoAround", group = "Tutorial")
 public class MerryGoAround extends LinearOpMode {
@@ -20,6 +21,7 @@ public class MerryGoAround extends LinearOpMode {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+//        imu = hardwareMap.get(IMU.class,"imu");
 
         // Set motor direction
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -79,45 +81,45 @@ public class MerryGoAround extends LinearOpMode {
             frontLeft.setPower(-1);
             backRight.setPower(1);
             backLeft.setPower(-1);
-            sleep(750);
+            sleep(650);
 
             // go forward
             frontRight.setPower(1);
             frontLeft.setPower(1);
             backRight.setPower(1);
             backLeft.setPower(1);
-            sleep(4300);
+            sleep(3700);
 
 //          turn right
             frontRight.setPower(-1);
             frontLeft.setPower(1);
             backRight.setPower(-1);
             backLeft.setPower(1);
+            sleep(737);
+
+            frontRight.setPower(1);
+            frontLeft.setPower(1);
+            backRight.setPower(1);
+            backLeft.setPower(1);
+            sleep(4000);
+
+            frontRight.setPower(-1);
+            frontLeft.setPower(1);
+            backRight.setPower(-1);
+            backLeft.setPower(1);
+            sleep(730);
+
+            frontRight.setPower(1);
+            frontLeft.setPower(1);
+            backRight.setPower(1);
+            backLeft.setPower(1);
+            sleep(4500);
+
+            frontRight.setPower(-1);
+            frontLeft.setPower(1);
+            backRight.setPower(-1);
+            backLeft.setPower(1);
             sleep(740);
-
-            frontRight.setPower(1);
-            frontLeft.setPower(1);
-            backRight.setPower(1);
-            backLeft.setPower(1);
-            sleep(4500);
-
-            frontRight.setPower(-1);
-            frontLeft.setPower(1);
-            backRight.setPower(-1);
-            backLeft.setPower(1);
-            sleep(720);
-
-            frontRight.setPower(1);
-            frontLeft.setPower(1);
-            backRight.setPower(1);
-            backLeft.setPower(1);
-            sleep(4500);
-
-            frontRight.setPower(-1);
-            frontLeft.setPower(1);
-            backRight.setPower(-1);
-            backLeft.setPower(1);
-            sleep(750);
 
             frontRight.setPower(1);
             frontLeft.setPower(1);
