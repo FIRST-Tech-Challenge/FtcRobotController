@@ -16,8 +16,10 @@ public class XendyChassis {
 
     // Info about our robots design
     protected final int TICKS_PER_REVOLUTION = 28;
-    protected final double DRIVE_GEAR_RATIO = 60;
-    protected final double WHEEL_CIRCUMFERENCE = 23.94; // In CM
+    protected final double DRIVE_GEAR_RATIO = 20;
+    protected final double FREE_RPM = 6000;
+    protected final double FREE_RPS = FREE_RPM/60;
+    protected final double MAX_TICKS_PER_SECOND = FREE_RPS * TICKS_PER_REVOLUTION;
 
     protected IMU imu;
 

@@ -6,16 +6,22 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teleop.DriveChassis;
+import org.firstinspires.ftc.teamcode.util.Controller;
 import org.firstinspires.ftc.teamcode.util.Numbers;
 
 @TeleOp(name="Xendy's Teleop", group = "z_group")
 public class XendysTestTeleop extends OpMode {
     private XendyChassis chassis;
     private double x, y, r, targetAngle;
+    private boolean rotating = false;
+
+    private Controller controller;
+
 
     @Override
     public void init() {
         chassis = new XendyChassis(this);
+        controller = new Controller(gamepad1);
     }
 
     @Override
@@ -24,12 +30,20 @@ public class XendysTestTeleop extends OpMode {
         double radYaw = chassis.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double degYaw = Numbers.normalizeAngle(chassis.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         // Handle Inputs
+        controller.update(gamepad1);
         lerpInput();
 
         // Calculate Rotation
-        targetAngle += r * 3;
-        targetAngle = Numbers.normalizeAngle(targetAngle);
-        double rp = getTurnCorrection(degYaw, targetAngle);
+        double rp = 0;
+        if (r != 0) {
+            rotating = true;
+            rp = r;
+        }
+        else if (rotating) {
+            rotating = false;
+            targetAngle = degYaw;
+        }
+        else rp = getTurnCorrection(degYaw, targetAngle);
 
         // Calculate movement
         double rotX = x * Math.cos(-radYaw) - y * Math.sin(-radYaw);
@@ -37,7 +51,7 @@ public class XendysTestTeleop extends OpMode {
         rotX *= 1.1;
 
         // Move motors
-        double mult = 100;
+        double mult = chassis.MAX_TICKS_PER_SECOND;
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rp), 1);
         chassis.leftFrontMotor.setVelocity(((rotY + rotX + rp) / denominator) * mult);
         chassis.leftBackMotor.setVelocity(((rotY - rotX + rp) / denominator) * mult);
@@ -45,9 +59,10 @@ public class XendysTestTeleop extends OpMode {
         chassis.rightBackMotor.setVelocity(((rotY + rotX - rp) / denominator) * mult);
 
         // Telemetry
+        telemetry.addLine("General: ");
         telemetry.addData("Yaw", degYaw);
         telemetry.addData("Target", targetAngle);
-        telemetry.addData("Rotation POwer", rp);
+        telemetry.addData("Rotation Power", rp);
         telemetry.update();
     }
 
@@ -56,15 +71,15 @@ public class XendysTestTeleop extends OpMode {
         double right = Numbers.normalizeAngle(current - target);
         double angle = Math.abs(left) < Math.abs(right) ? -left : right;
         if (Math.abs(angle) < 0.5) return 0;
-        return Range.clip(angle / 90, -1, 1);
+        return Range.clip(angle / 30, -1, 1);
     }
 
     public static final double LERP_DIFF_CANCEL = 0.05;
     public static final double LERP_MULT = 0.2;
     public void lerpInput() {
-        double inputX = gamepad1.left_stick_x;
-        double inputY = gamepad1.left_stick_y;
-        double inputR = gamepad1.right_stick_x;
+        double inputX = curveInput(controller.getAxis(Controller.Axis.LeftStickX));
+        double inputY = curveInput(controller.getAxis(Controller.Axis.LeftStickY));
+        double inputR = curveInput(controller.getAxis(Controller.Axis.RightStickX));
 
         double diffX = inputX - x;
         double diffY = inputY - y;
@@ -75,5 +90,9 @@ public class XendysTestTeleop extends OpMode {
         else y += diffY * LERP_MULT;
         if (Math.abs(diffR) < LERP_DIFF_CANCEL) r = inputR;
         else r += diffR * LERP_MULT;
+    }
+
+    public double curveInput(double x) {
+        return x * Math.abs(x);
     }
 }

@@ -126,11 +126,11 @@ public class Controller {
             case LeftStickX:
                 return Numbers.deadzone(g.left_stick_x, stickDeadzone);
             case LeftStickY:
-                return Numbers.deadzone(g.left_stick_y, stickDeadzone);
+                return Numbers.deadzone(-g.left_stick_y, stickDeadzone);
             case RightStickX:
                 return Numbers.deadzone(g.right_stick_x, stickDeadzone);
             case RightStickY:
-                return Numbers.deadzone(g.right_stick_y, stickDeadzone);
+                return Numbers.deadzone(-g.right_stick_y, stickDeadzone);
             case LeftTrigger:
                 return g.left_trigger;
             case RightTrigger:

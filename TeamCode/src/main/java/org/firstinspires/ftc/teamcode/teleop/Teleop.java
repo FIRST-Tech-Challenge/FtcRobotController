@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.Numbers;
 @TeleOp(name = "Teleop")
 public class Teleop extends OpMode {
     private DriveChassis chassis;
-    private double maxSpeed = 25;
+    private double maxSpeed = 50;
     private final static float HORIZONTAL_BALANCE = 1.1f;
 
     private YawPitchRollAngles orientation;
@@ -26,6 +26,8 @@ public class Teleop extends OpMode {
     private final Gamepad currentGamepad2 = new Gamepad();
     private final Gamepad previousGamepad1 = new Gamepad();
     private final Gamepad previousGamepad2 = new Gamepad();
+
+    private final double SPEED_CHANGE_PER_PRESS = 5;
 
     @Override
     public void init() {
@@ -56,10 +58,10 @@ public class Teleop extends OpMode {
         float rotationInput = gamepad1.right_stick_x;
 
         if (gamepad1.right_bumper && !previousGamepad1.right_bumper)
-            maxSpeed += 5;
+            maxSpeed += SPEED_CHANGE_PER_PRESS;
 
         if (gamepad1.left_bumper && !previousGamepad1.left_bumper)
-            maxSpeed -= 5;
+            maxSpeed -= SPEED_CHANGE_PER_PRESS;
 
         telemetry.addData("Speed", maxSpeed);
 
