@@ -86,6 +86,7 @@ public class ArmRotator implements NKNComponent {
         }
     }
 
+
     @Override
     public void doTelemetry(Telemetry telemetry) {
         telemetry.addData("armPosition", current);
