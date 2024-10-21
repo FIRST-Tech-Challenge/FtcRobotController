@@ -115,10 +115,10 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
             }
 
             // Output the safe vales to the motor drives.
-            frontLeftDrive.setPower(left);
-            frontRightDrive.setPower(right);
-            backLeftDrive.setPower(left);
-            backRightDrive.setPower(right);
+            frontLeftDrive.setPower(0.5);
+            frontRightDrive.setPower(0.5);
+            backLeftDrive.setPower(0.5);
+            backRightDrive.setPower(0.5);
 
             // Use gamepad left & right Bumpers to open and close the claw
             if (gamepad1.right_bumper)
