@@ -54,8 +54,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 straightMovementVelocity = Math.pow(gamepad1.left_stick_y, 3) * 1000;
                 turnVelocity = Math.pow(gamepad1.right_stick_x, 3) * 1000;
                 strafeVelocity = Math.pow(gamepad1.left_stick_x, 3) * 1000;
-                telemetry.addData("L2 pos", gamepad1.left_trigger);
-                telemetry.update();
             }
         /*if(gamepad1.y){
             //testing upper bound of lift
@@ -63,17 +61,17 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData("position", robot.liftExtender.getCurrentPosition());
             telemetry.update();
         }*/
+
             if (gamepad1.right_trigger != 0) {
-                //forward
-                //after testing: it went backward sby accident
+                // makes the robot drivetrain go forward
                 straightMovementVelocity = Math.pow(gamepad1.right_trigger, 3) * 5000;
             }
             if (gamepad1.b) {
-                //slow
+                // slow down
                 straightMovementVelocity = Math.pow(gamepad1.right_trigger, 3) * 1000;
             }
             if (gamepad1.a) {
-                //boost
+                // speed boost
                 straightMovementVelocity = Math.pow(gamepad1.right_trigger, 3) * 10000;
             }
 
@@ -108,11 +106,14 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            pitchPower = Math.round(gamepad2.left_stick_y);
 //            //telemetry.addData("pitchPower", pitchPower);
         }
+
+            // Makes the lift go backwards
             if (gamepad2.square) {
                 robot.liftPitch(0, 0.2);
                 telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
             }
 
+            // Makes the lift go forward
             if (gamepad2.circle) {
                 robot.liftPitch(200, 0.2);
                 telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
@@ -126,6 +127,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            if (gamepad2.cross) {
 //                robot.liftExtender(0, 0.3);
 //            }
+
+            // Makes the robot lift move based on the control stick input
             if (Math.abs(gamepad2.left_stick_x)>0.2) {
                 robot.liftPitch.setVelocity(400*gamepad2.left_stick_x);
                 telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
@@ -135,7 +138,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             }//1300
             //2700
             //find positon for extension
-            if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftPitch.getCurrentPosition()<2780&&robot.liftPitch.getCurrentPosition()>0) {
+            if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftPitch.getCurrentPosition()<2780&&
+                    robot.liftPitch.getCurrentPosition()>0) {
                 robot.liftExtender.setVelocity(-400*gamepad2.right_stick_y);
                 telemetry.addData("extenderhpos", robot.liftExtender.getCurrentPosition());
             } else{
