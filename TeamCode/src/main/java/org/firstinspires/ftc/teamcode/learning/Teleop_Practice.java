@@ -13,20 +13,21 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 @TeleOp
 public class Teleop_Practice extends LinearOpMode {
     private int extensionSliderMax = 3000;
-    private int liftLowerBasket = 500;
-    private int liftUpperBasket = 500;
+    private int liftLowerBasket = 900;
+    private int liftUpperBasket = 2800;
     private int liftLowerSpecimenBar = 500;
-    private int liftUpperSpecimenBar = 500;
+    private int liftUpperSpecimenBar = 2000;
+    private int liftSnapSpecimen = 200;
     private int liftGetSpecimenFromWall = 500;
-    private int liftHangOnLowerBar = 500;
+    private int liftHangOnLowerBar = 2000;
     private int liftHangOnUpperBar = 1000;
-    private double extensionServoHome = 0.7;
+    private double extensionServoHome = 0.72;
     private double extensionServoDump = 0.1;
     private double deliveryServoHome = 0.3;
     private double deliveryServoDump = 0.95;
     private double specimenServoOpen = 0;
     private double specimenServoClosed = 0.8;
-    private double continuousIntakePower = 0.5;
+    private double continuousIntakePower = 0.8;
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
     private DcMotor BackRightWheel;
@@ -145,21 +146,18 @@ public class Teleop_Practice extends LinearOpMode {
             specimenServoPosition =specimenServoOpen;
             SpecimenGripperServo.setPosition(specimenServoPosition);
         }
-        if (gamepad2.ps) {
+        if (gamepad2.dpad_down) {
             checkExtensionServoSafety();
             Lift.setTargetPosition(30);
-        } else if (gamepad2.dpad_down) {
-            checkExtensionServoSafety();
-            Lift.setTargetPosition(300);
         } else if (gamepad2.dpad_left) {
             checkExtensionServoSafety();
-            Lift.setTargetPosition(600);
+            Lift.setTargetPosition(liftLowerBasket);
         } else if (gamepad2.dpad_up) {
             checkExtensionServoSafety();
-            Lift.setTargetPosition(900);
+            Lift.setTargetPosition(liftUpperBasket);
         } else if (gamepad2.dpad_right) {
             checkExtensionServoSafety();
-            Lift.setTargetPosition(1200);
+            Lift.setTargetPosition(liftUpperSpecimenBar);
         }
 
         if(-gamepad2.left_stick_y > 0.2)
@@ -167,6 +165,7 @@ public class Teleop_Practice extends LinearOpMode {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.15))
             {
                 if (extensionSliderPosition < extensionSliderMax) {
+                    ExtensionServo.setPosition(0.6);
                     extensionSliderPosition += 100;
                     ExtensionSlider.setTargetPosition(extensionSliderPosition);
                 }
@@ -176,6 +175,7 @@ public class Teleop_Practice extends LinearOpMode {
         {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.15)) {
                 if (extensionSliderPosition > 100) {
+                    ExtensionServo.setPosition(0.6);
                     extensionSliderPosition -= 100;
                     ExtensionSlider.setTargetPosition(extensionSliderPosition);
                 }
@@ -324,7 +324,7 @@ public class Teleop_Practice extends LinearOpMode {
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setTargetPosition(0);
         Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Lift.setPower(0.4);
+        Lift.setPower(0.6);
     }
 
     private void checkExtensionServoSafety()
