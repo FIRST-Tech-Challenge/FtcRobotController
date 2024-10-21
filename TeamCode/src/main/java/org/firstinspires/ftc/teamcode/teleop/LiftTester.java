@@ -29,7 +29,6 @@ public class LiftTester extends LinearOpMode {
             telemetry.addData("Lift Power", liftPower);
 //            telemetry.addData("Lift Position", lift.getPosition());
             controller.update();
-
         }
     }
 
