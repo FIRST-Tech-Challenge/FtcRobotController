@@ -108,7 +108,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
 
             // Normalize the values so neither exceed +/- 1.0
             max = Math.max(Math.abs(left), Math.abs(right));
-            if (max > 0.5)
+            if (max > 0.2)
             {
                 left /= max;
                 right /= max;
