@@ -4,16 +4,13 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
-import org.opencv.core.Mat;
 
 public class SwerveConfig {
 
@@ -23,13 +20,13 @@ public class SwerveConfig {
         myOp = opMode;
     }
 
-    GoBildaPinpointDriver odo;
-
 
     DcMotor FLMotor, BLMotor, FRMotor, BRMotor, pivot, slide;
 
-
     Servo FLServo, BLServo, FRServo, BRServo, claw;
+
+    GoBildaPinpointDriver odo;
+
 
     /**
      * TODO Get rid of this somehow

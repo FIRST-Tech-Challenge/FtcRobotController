@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation("org.firstinspires.ftc:FtcDashboard:7.1.0")
 }

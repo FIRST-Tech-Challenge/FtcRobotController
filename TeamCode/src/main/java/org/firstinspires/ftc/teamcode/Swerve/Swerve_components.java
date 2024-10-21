@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Swerve;
 
 
-import static com.qualcomm.robotcore.hardware.DcMotor.*;
+import static com.qualcomm.robotcore.hardware.DcMotor.Direction;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.*;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.EncoderDirection.FORWARD;
 import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
 
@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
@@ -19,7 +18,6 @@ public class Swerve_components {
 
     /* Declare OpMode members. */
     private LinearOpMode myOp = null;   // gain access to methods in the calling OpMode.
-
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public Swerve_components(LinearOpMode opmode) {
         myOp = opmode;
@@ -52,8 +50,6 @@ public class Swerve_components {
     public static double drvSpd = 0.2; // saved drive speed to pass to turn and drive
     protected static int ltarget = 0;
     protected static int rtarget = 0;
-
-
 
 
     /**

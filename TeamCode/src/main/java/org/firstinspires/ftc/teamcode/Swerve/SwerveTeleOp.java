@@ -38,7 +38,6 @@ public class SwerveTeleOp extends LinearOpMode {
             }
 
 
-            //telemetry.addData("drive encoder",robot.encCntD(drive));
             turn = (int) (gamepad1.left_stick_x * 90);
             // determine drive action
             if (Math.abs(turn) > 1) {

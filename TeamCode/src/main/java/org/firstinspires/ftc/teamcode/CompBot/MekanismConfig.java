@@ -10,22 +10,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MekanismConfig {
 
     public LinearOpMode myOp;
+
     public MekanismConfig(LinearOpMode opMode) {
         myOp = opMode;
     }
 
-    DcMotor pivot, slide, spintake;
-    Servo claw, wrist;
+    DcMotor pivot, slide;
+    Servo claw, wrist, spintake;
 
 
-    int COUNTS_PER_INCH = 1120;
-    int COUNTS_PER_DEGREE = 1120;
+    int ARM_COUNTS_PER_INCH = 250; // Encoder counts per inch of slide movement
+    int ARM_COUNTS_PER_DEGREE = 20; // Encoder count per degree of slide angle
 
 
     /**
-     * Initializes the mechanism of the robot.<br>
-     * Starts all the devices and maps where they go
-     * As well as sets direction and whether motors run with encoders or not
+     * Initializes the mechanism of the robot.
+     * <p>
+     * Starts all the devices and maps where they go,
+     * as well as sets direction and whether motors run with encoders or not.
      */
     public void initMekanism() {
 
@@ -54,7 +56,6 @@ public class MekanismConfig {
         slide.setPower(1);
 
 
-
         wrist = myOp.hardwareMap.get(Servo.class, "wrist");
         claw = myOp.hardwareMap.get(Servo.class, "claw");
         claw.scaleRange(0, 1);
@@ -63,38 +64,106 @@ public class MekanismConfig {
     }
 
 
-    // set the pos and angle for arm independently
-    public void basicMoveArm(int position, int angle) {
+    /**
+     * Sets the length of the arm
+     * <p>
+     * In inches.
+     *
+     * @param length Length of the arm
+     */
+    public void armLength(double length) {
 
-        slide.setTargetPosition(position);
-        pivot.setTargetPosition(angle);
-
+        slide.setTargetPosition((int) (length * ARM_COUNTS_PER_INCH));
     }
 
 
-    // In IN.
-    // uses x and y to calculate arm angle and length
-    public void moveXY(int x, int y) {
+    /**
+     * Sets the angle of the arm
+     * <p>
+     * In degrees.
+     *
+     * @param angle Angle of the arm
+     */
+    public void armAngle(double angle) {
+        pivot.setTargetPosition((int) (angle * ARM_COUNTS_PER_DEGREE));
+    }
 
+
+    /**
+     * Sets the length and angle independently
+     * <p>
+     * In inches and degrees
+     *
+     * @param length Length of the arm
+     * @param angle  Angle of the arm
+     */
+    public void basicMoveArm(double length, double angle) {
+
+        slide.setTargetPosition((int) (length * ARM_COUNTS_PER_INCH));
+        pivot.setTargetPosition((int) (angle * ARM_COUNTS_PER_DEGREE));
+    }
+
+
+    /**
+     * Sets the position of the arm by the XY coordinates of the end.
+     * <p>
+     * All in Inches.
+     * <p>
+     * Max 20IN for both X and Y coordinates.
+     *
+     * @param x X coordinate of the arm
+     * @param y Y coordinate of the arm
+     */
+    public void moveXY(double x, double y) {
+
+        // Binds x to a valid coordinate
         if (x < 0) {
             x = 0;
+        } else if (x > 20) {
+            x = 20;
         }
+
+        // Binds y to a valid coordinate
         if (y < 0) {
             y = 0;
+        } else if (y > 20) {
+            y = 20;
         }
 
-        int armLen = (int) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        double armLen = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); // Calculates arm length
+        double armAngle = Math.atan(y / x); // Calculates arm angle
 
-        int armAngle = (int) Math.atan((double) y / (double) x);
-
-        slide.setTargetPosition(armLen * COUNTS_PER_INCH);
-
-        pivot.setTargetPosition(armAngle * COUNTS_PER_DEGREE);
+        slide.setTargetPosition((int) (armLen * ARM_COUNTS_PER_INCH));
+        pivot.setTargetPosition((int) (armAngle * ARM_COUNTS_PER_DEGREE));
     }
 
 
-    // sets the pos for claw
+    /**
+     * Sets the power of the claw
+     *
+     * @param position (-1) to 1.
+     *                 <p> 1 - Full intake.
+     *                 <p> (-1) - Full reverse
+     */
     public void moveClaw(double position) {
+
+        position = (position + 1) / 2;
+
         claw.setPosition(position);
+    }
+
+
+    /**
+     * Sets the power of the intake
+     *
+     * @param power (-1) to 1.
+     *              <p> 1 - Full intake.
+     *              <p> (-1) - Full reverse
+     */
+    public void setSpintake(double power) {
+
+        power = (power + 1) / 2;
+
+        spintake.setPosition(power);
     }
 }

@@ -3,7 +3,16 @@ package org.firstinspires.ftc.teamcode.CompBot;
 
 // Stuff that doesn't do anything physically, only math n' stuff goes here
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 public class Utils {
+
+
+    public LinearOpMode myOp;
+
+    Utils(LinearOpMode opMode) {
+        myOp = opMode;
+    }
 
 
     /**
