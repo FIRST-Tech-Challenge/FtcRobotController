@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
+import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="TeleOp")
@@ -21,6 +23,7 @@ public class TeleOp extends LinearOpMode {
     private MechDrive robot;
     private Limelight limelight;
     private Imu imu;
+    private ThreeDeadWheelLocalizer deadwheels;
 
 
 
@@ -30,6 +33,8 @@ public class TeleOp extends LinearOpMode {
         robot = new MechDrive(hardwareMap);
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
+        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap,2000);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         waitForStart();
         while(opModeIsActive())
@@ -40,6 +45,7 @@ public class TeleOp extends LinearOpMode {
 
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
 
+
             if(limelight.isDataCorrect())
             {
                 String[] distance =limelight.getDistanceInInches();
@@ -47,7 +53,12 @@ public class TeleOp extends LinearOpMode {
                 telemetry.update();
             }
 
+            drive.updatePoseEstimate();
             robot.drive(forward, strafe, rotate);
+            telemetry.addData("x", drive.pose.position.x);
+            telemetry.addData("y", drive.pose.position.y);
+            telemetry.addData("Yaw (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+            telemetry.update();
             controller.update();
         }
 
