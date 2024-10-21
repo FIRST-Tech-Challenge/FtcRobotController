@@ -22,6 +22,20 @@ class SplineTest {
             doubleArrayOf(0.0, 5.0, 15.0, 10.0, 17.0),
             doubleArrayOf(0.0, 3.0, 0.0, 5.0, 10.0)
         )
-        for (i in result) println(i.toDesmos())
+        for (i in result) {
+            println(i.toDesmos())
+            i.fillCache()
+        }
+    }
+
+    @Test fun `test quirky`() {
+        val result = CubicSplineSolver.solve2DMultiSegment(
+            doubleArrayOf(0.0, 5.0, -10.0),
+            doubleArrayOf(0.0, 5.0, 0.0)
+        )
+        for (i in result) {
+            println(i.toDesmos())
+            i.fillCache()
+        }
     }
 }

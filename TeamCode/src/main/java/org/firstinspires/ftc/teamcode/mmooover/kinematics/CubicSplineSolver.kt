@@ -3,7 +3,9 @@
 package org.firstinspires.ftc.teamcode.mmooover.kinematics
 
 import android.annotation.SuppressLint
+import android.graphics.Point
 import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -33,7 +35,10 @@ data class CubicSpline(
         }
     }
 
+    fun at(x: Double): Double = a * x * x * x + b * x * x + c * x + d
+
     override fun toString() = "spline< ${toDesmos()} >"
+
     @JvmOverloads
     fun toDesmos(equation: Boolean = true, varSym: String = "x") = String.format(
         """%s%.6f$varSym^3 + %.6f$varSym^2 + %.6f$varSym + %.6f%s""",
@@ -49,7 +54,33 @@ data class CubicSpline(
 }
 
 data class CubicSplinePair(val x: CubicSpline, val y: CubicSpline) {
+    data class PointAndAccumulator(val x: Double, val y: Double, val totalDistance: Double)
+
+    val tFrom = x.lowX
+    val tTo = x.highX
+    var pointCache: MutableMap<Double, PointAndAccumulator>? = null
     fun toDesmos() = "(${x.toDesmos(false, "t")}, ${y.toDesmos(false, "t")})"
+
+    fun fillCache(resolution: Double = 0.01, step: Double = 1.0) {
+        val newCache: MutableMap<Double, PointAndAccumulator> = mutableMapOf()
+        val steps = floor((tTo - tFrom) / resolution).toInt()
+        var d = 0.0
+        var lastX = 0.0
+        var lastY = 0.0
+        for (i in 0..steps) {
+            val t = (tTo - tFrom) * (i / steps) + tFrom
+            val xP = x.at(t)
+            val yP = y.at(t)
+            if (i > 0) {
+                d += sqrt((xP-lastX).pow(2) + (yP-lastY).pow(2))
+            }
+            lastX = xP
+            lastY = yP
+            newCache.put(t, PointAndAccumulator(xP, yP, d))
+        }
+
+        println("total %.4f units / %d steps".format(d, steps))
+    }
 }
 
 object CubicSplineSolver {
