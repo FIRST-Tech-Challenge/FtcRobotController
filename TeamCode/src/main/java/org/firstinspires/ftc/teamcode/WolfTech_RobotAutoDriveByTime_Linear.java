@@ -59,10 +59,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class WolfTech_RobotAutoDriveByTime_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
-    private DcMotor         frontleftDrive   = null;
-    private DcMotor         frontrightDrive  = null;
-    private DcMotor         backleftDrive = null;
-    private DcMotor         backrightDrive = null;
+    public DcMotor         frontleftDrive   = null;
+    public DcMotor         frontrightDrive  = null;
+    public DcMotor         backleftDrive = null;
+    public DcMotor         backrightDrive = null;
 
     private ElapsedTime     runtime = new ElapsedTime();
 
