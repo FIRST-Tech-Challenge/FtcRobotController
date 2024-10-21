@@ -92,12 +92,12 @@ public class RobotHardware {
     private static double grabberDrive = 0.0;
 
     public static final double ARM_SPEED = 0.02;
-    public static final double ARM_MIN = 0.40 ;
+    public static final double ARM_MIN = 0.00 ;
     public static final double ARM_MAX = 0.90;
     private static double armDrive = 0.0;
 
     //public static final double ARM_SPEED_TWO = 0.10;
-    public static final double ARM_MIN_TWO = 0.40 ;
+    public static final double ARM_MIN_TWO = 0.00 ;
     public static final double ARM_MAX_TWO = 0.90;
     //private static double armDriveTwo = 0.0;
 
