@@ -21,6 +21,7 @@ public class Lift{
      * Primary constructor for the Lift Subsystem Class
      * @param hw [HardwareMap] Hardware map necessary to initialize motors.
      * @param nameLift [String] Name of the lift motor assigned in the configuration.
+     * @param nameEncoder [String] Name of the encoder assigned in the configuration.
      */
     public Lift(HardwareMap hw, String nameLift, String nameEncoder){
         lift = hw.get(DcMotor.class, nameLift);
