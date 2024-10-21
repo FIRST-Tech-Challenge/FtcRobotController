@@ -21,21 +21,32 @@ public class ArmRotator implements NKNComponent {
 
     final double threshold;
     final double P_CONSTANT;
+    final double I_CONSTANT;
+    final double errorCap;
     double diff;
     long targetTime = 0;
     double current;
+    double resError;
+    final boolean enableErrorClear;
 
 
-    public ArmRotator(String motorName, double threshold, double P_CONSTANT){
+    public ArmRotator(String motorName, double threshold, double P_CONSTANT, double I_CONSTANT, double errorCap, boolean enableErrorClear) {
         this.motorName = motorName;
         this.threshold = threshold;
         this.P_CONSTANT = P_CONSTANT;
+        this.I_CONSTANT = I_CONSTANT;
+        this.errorCap = errorCap;
+        this.enableErrorClear = enableErrorClear;
     }
 
-    public void link(PotentiometerHandler potHandler){
+    public void link(PotentiometerHandler potHandler) {
         this.potHandler = potHandler;
     }
 
+    public boolean oppositeSigns(double one, double two){
+        if (one * two >= 0){return false;}
+        return true;
+    }
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
@@ -67,30 +78,41 @@ public class ArmRotator implements NKNComponent {
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         long currentTime = runtime.time(TimeUnit.MILLISECONDS);
-        if(currentTime >= targetTime) {
+        if (currentTime >= targetTime) {
             current = potHandler.getPotVoltage();
             double armPower = controlLoop(current);
             motor.setPower(armPower);
-            targetTime = currentTime+1;
+            targetTime = currentTime + 1;
         }
     }
+
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("armPosition",current);
-        telemetry.addData("armTarget",target);
+        telemetry.addData("armPosition", current);
+        telemetry.addData("armTarget", target);
         telemetry.addData("armDifference", diff);
         telemetry.addData("Motor Power", motor.getPower());
+        telemetry.addData("residualError", resError);
 
     }
-    public void setTarget(double target){
+
+    public void setTarget(double target) {
         this.target = target;
     }
-    private double controlLoop(double current){
+
+    private double controlLoop(double current) {
         diff = (target - current);
+        resError += diff;
         if (Math.abs(diff) <= threshold) {
             return 0;
         }
-        return (diff * P_CONSTANT);
+        if (resError > errorCap) {
+            resError = errorCap;
+        }
+        if (oppositeSigns(diff, resError) && enableErrorClear){
+            resError = diff;
+        }
+        return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
     }
 }

@@ -18,7 +18,7 @@ public class RotatorMonkeyProgram extends NKNProgram {
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
 
-        ArmRotator armRotator = new ArmRotator("motorArmRotate", 0.05, 0.9);
+        ArmRotator armRotator = new ArmRotator("motorArmRotate", 0.0, 0.9,0.001, 1, false);
         armRotator.link(potentiometerHandler);
         components.add(armRotator);
         telemetryEnabled.add(armRotator);
