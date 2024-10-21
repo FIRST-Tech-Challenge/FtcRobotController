@@ -6,13 +6,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
-import org.nknsd.robotics.team.components.ArmRotator;
-import org.nknsd.robotics.team.components.ChaosMonkey;
+import org.nknsd.robotics.team.components.RotationHandler;
 
 import java.util.concurrent.TimeUnit;
 
-public class RotatorMonkey implements NKNComponent {
-    private ArmRotator armRotator;
+public class RotationMonkey implements NKNComponent {
+    private RotationHandler rotationHandler;
     private Tests currentTest = Tests.DO_NOTHING;
 
     private enum Tests {
@@ -88,20 +87,20 @@ public class RotatorMonkey implements NKNComponent {
                 break;
 
             case TARGET_0:
-                armRotator.setTarget(1.4);
+                rotationHandler.setTarget(1.4);
                 break;
 
             case TARGET_0_5:
-                armRotator.setTarget(1.7);
+                rotationHandler.setTarget(1.7);
                 break;
 
             case TARGET_1:
-                armRotator.setTarget(2.4);
+                rotationHandler.setTarget(2.4);
                 break;
         }
     }
 
-    public void link(ArmRotator armRotator) {
-        this.armRotator = armRotator;
+    public void link(RotationHandler rotationHandler) {
+        this.rotationHandler = rotationHandler;
     }
 }

@@ -1,6 +1,5 @@
 package org.nknsd.robotics.team.components;
 
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -12,7 +11,7 @@ import org.nknsd.robotics.framework.NKNComponent;
 
 import java.util.concurrent.TimeUnit;
 
-public class ArmRotator implements NKNComponent {
+public class RotationHandler implements NKNComponent {
 
     PotentiometerHandler potHandler;
     private final String motorName;
@@ -26,7 +25,7 @@ public class ArmRotator implements NKNComponent {
     double current;
 
 
-    public ArmRotator(String motorName, double threshold, double P_CONSTANT){
+    public RotationHandler(String motorName, double threshold, double P_CONSTANT){
         this.motorName = motorName;
         this.threshold = threshold;
         this.P_CONSTANT = P_CONSTANT;
