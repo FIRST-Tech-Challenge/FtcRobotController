@@ -99,7 +99,7 @@ public class Teleop_Practice extends LinearOpMode {
     {
         if(gamepad1.square)
         {
-            resetExtensionSlider();
+            resetExtensionSlider(2000);
         }
         if(gamepad1.circle)
         {
