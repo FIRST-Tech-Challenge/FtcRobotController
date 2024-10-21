@@ -34,10 +34,12 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Park_Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -77,6 +79,7 @@ public class Teleop extends LinearOpMode {
     private static Intake Intake= null;
     private static Arm arm1 = null;
     private static Wrist wrist = null;
+    private static Park_Arm Park_Arm = null;
     public static double armkP = 0.01;
     public static double armkD = 0.00001;
     public static double armkI = 0.0001;
@@ -104,6 +107,7 @@ public class Teleop extends LinearOpMode {
         Intake = new Intake(hardwareMap);
         arm1 = new Arm(hardwareMap);
         wrist = new Wrist(hardwareMap);
+        Park_Arm = new Park_Arm(hardwareMap);
 
         PIDController armPID = new PIDController(armkP, armkI, armkD);
         armPID.setTolerance(50, 10);
@@ -131,7 +135,7 @@ public class Teleop extends LinearOpMode {
             );
 
             drive.update();
-
+            Park_Arm.setPosition(1);
             double arm_move = gamepad2.left_stick_y;
 
 
@@ -139,12 +143,12 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.left_bumper){
                 if (wristOrientation == 0){
                     wristOrientation = 1;
-                }else {
+                } else{
                     wristOrientation = 0;
                 }
             }
 
-            wrist.setPosition((wristOrientation==0)? .3 : .66);
+            wrist.setPosition((wristOrientation==0)? 0.3 : 0.66);
 
             if (gamepad2.b){
                 Intake.setPower(0.9);
@@ -217,6 +221,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.addData("ArmPos1", arm1.getCurrentPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("WristOrientation", wristOrientation);
 
             telemetry.update();
         }

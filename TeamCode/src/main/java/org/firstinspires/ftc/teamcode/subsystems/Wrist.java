@@ -9,9 +9,11 @@ public class Wrist {
 
     public Wrist(HardwareMap hardwareMap) {
         this.Wrist = hardwareMap.get(Servo.class, "Wrist");
-        this.Wrist.setDirection(Servo.Direction.FORWARD);
+        this.Wrist.setDirection(Servo.Direction.REVERSE);
     }
 
     public void setPosition(double position) {Wrist.setPosition(position);
+    }
+    public void setDirection(Servo.Direction direction) {Wrist.setDirection(direction);
     }
 }
