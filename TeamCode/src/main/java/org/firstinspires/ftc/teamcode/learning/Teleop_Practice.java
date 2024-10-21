@@ -37,6 +37,7 @@ public class Teleop_Practice extends LinearOpMode {
     private DcMotor Lift;
     private TouchSensor ExtensionLimit;
     private TouchSensor LiftLimit;
+    private TouchSensor LiftLimit2;
     private Servo ExtensionServo;
     private Servo DeliveryBoxServo;
     private CRServo IntakeBoxServo;
@@ -148,6 +149,8 @@ public class Teleop_Practice extends LinearOpMode {
         }
         if (gamepad2.dpad_down) {
             checkExtensionServoSafety();
+            deliveryBoxServoPosition = deliveryServoHome;
+            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
             Lift.setTargetPosition(30);
         } else if (gamepad2.dpad_left) {
             checkExtensionServoSafety();
@@ -162,7 +165,7 @@ public class Teleop_Practice extends LinearOpMode {
 
         if(-gamepad2.left_stick_y > 0.2)
         {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.15))
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
             {
                 if (extensionSliderPosition < extensionSliderMax) {
                     ExtensionServo.setPosition(0.6);
@@ -173,11 +176,17 @@ public class Teleop_Practice extends LinearOpMode {
         }
         if(-gamepad2.left_stick_y < -0.2)
         {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.15)) {
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
                 if (extensionSliderPosition > 100) {
                     ExtensionServo.setPosition(0.6);
                     extensionSliderPosition -= 100;
-                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                    if(extensionSliderPosition < 150)
+                    {
+                        resetExtensionSlider(1000);
+                    }
+                    else {
+                        ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                    }
                 }
             }
         }
@@ -272,14 +281,14 @@ public class Teleop_Practice extends LinearOpMode {
         Lift = hardwareMap.get(DcMotor.class, "Lift");
         ExtensionLimit = hardwareMap.get(TouchSensor.class, "ExtensionLimit");
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
+        LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit2");
 
-
-        resetExtensionSlider();
+        resetExtensionSlider(3000);
 
         resetLift();
     }
 
-    private void resetExtensionSlider()
+    private void resetExtensionSlider(long safetyDuration)
     {
 
         ExtensionSlider.setDirection(DcMotor.Direction.FORWARD);
@@ -287,10 +296,10 @@ public class Teleop_Practice extends LinearOpMode {
         ExtensionSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         long startTime = System.currentTimeMillis(); // Record the start time
-        long maxDuration = 3000; // Maximum duration in milliseconds (3 seconds)
+        long maxDuration = safetyDuration; // Maximum duration in milliseconds (3 seconds)
 
         while(!ExtensionLimit.isPressed()) {
-            ExtensionSlider.setPower(-0.3);
+            ExtensionSlider.setPower(-0.5);
             if (System.currentTimeMillis() - startTime > maxDuration) { break;}
         }
         ExtensionSlider.setPower(0);
@@ -313,8 +322,8 @@ public class Teleop_Practice extends LinearOpMode {
 
         long startTime = System.currentTimeMillis(); // Record the start time
         long maxDuration = 3000; // Maximum duration in milliseconds (3 seconds)
-        while(!LiftLimit.isPressed()) {
-            Lift.setPower(-0.3);
+        while(!LiftLimit.isPressed() && !LiftLimit2.isPressed()) {
+            Lift.setPower(-0.5);
             if (System.currentTimeMillis() - startTime > maxDuration) { break;}
         }
         Lift.setPower(0);
