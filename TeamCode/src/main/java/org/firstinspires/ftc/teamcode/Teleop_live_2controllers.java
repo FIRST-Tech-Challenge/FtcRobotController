@@ -30,7 +30,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
 //    DcMotor m3 = null;
     Servo s1 = null;
     Servo s2 = null;
-//    Servo s3 = null;
+    Servo s3 = null;
     double left1Y, right1Y,left1X,right1X;
     double left2Y, right2Y, left2X, right2X;
     boolean flag_correction = true;
@@ -96,10 +96,10 @@ public class Teleop_live_2controllers extends LinearOpMode {
 //        m3 = hardwareMap.get(DcMotor.class, "M3");
         s1 = hardwareMap.get(Servo.class, "s1");
         s2 = hardwareMap.get(Servo.class, "s2");
-//        s3 = hardwareMap.get(Servo.class, "s3");
+        s3 = hardwareMap.get(Servo.class, "s3");
         s1.setDirection(Servo.Direction.FORWARD);
 //        s2.setDirection(Servo.Direction.FORWARD);
-//        s3.setDirection(Servo.Direction.REVERSE);
+         s3.setDirection(Servo.Direction.REVERSE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -183,6 +183,21 @@ public class Teleop_live_2controllers extends LinearOpMode {
                 s2.setPosition(1); //close
             }
             gamepad1LB_previous = gamepad1.left_bumper;
+
+
+
+            if (gamepad1.right_trigger > 0.2) {
+                s3.setDirection(Servo.Direction.FORWARD);
+                s3.setPosition(0.5); // open
+            }
+
+
+            if (gamepad1.left_trigger > 0.2) {
+                s3.setDirection(Servo.Direction.FORWARD);
+                s3.setPosition(1); //close
+            }
+
+
 
 
             boolean leftStickActive = (left1X != 0) || (left1Y != 0);
