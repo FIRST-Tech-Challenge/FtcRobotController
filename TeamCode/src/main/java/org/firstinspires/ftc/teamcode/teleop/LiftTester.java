@@ -6,25 +6,29 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-
-public class LiftTester {
+@TeleOp(name = "LiftTester")
+public class LiftTester extends LinearOpMode {
     private Lift lift;
     private GamepadEvents controller;
     public void runOpMode(){
-        lift = new Lift(hardwareMap);
+        lift = new Lift(hardwareMap, "lift");
+        controller = new GamepadEvents(gamepad1);
         telemetry.addData("Status","Initialized");
         telemetry.update();
-        while(linearOpMode.opModeIsActive()){
+        waitForStart();
+        while(opModeIsActive()){
             double liftPower = controller.right_trigger.getTriggerValue();
             lift.moveLift(liftPower);
 
             telemetry.addData("Lift Power", liftPower);
-            telemetry.addData("Lift Position", lift.getPosition());
-            telemetry.update();
+//            telemetry.addData("Lift Position", lift.getPosition());
+            controller.update();
         }
     }
 
