@@ -22,9 +22,11 @@ public class ExtensionMonkeyProgram extends NKNProgram {
 
         // Actual components we actually use
         ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.8);
-        extensionHandler.link(armRotator);
         components.add(extensionHandler);
         telemetryEnabled.add(extensionHandler);
+
+        armRotator.link(potentiometerHandler, extensionHandler);
+        extensionHandler.link(armRotator);
 
         ExtensionMonkey extensionMonkey = new ExtensionMonkey();
         extensionMonkey.link(extensionHandler);

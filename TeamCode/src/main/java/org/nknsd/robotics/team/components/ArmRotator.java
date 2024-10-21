@@ -24,6 +24,7 @@ public class ArmRotator implements NKNComponent {
     double diff;
     long targetTime = 0;
     double current;
+    private ExtensionHandler extensionHandler;
 
 
     public ArmRotator(String motorName, double threshold, double P_CONSTANT){
@@ -32,8 +33,9 @@ public class ArmRotator implements NKNComponent {
         this.P_CONSTANT = P_CONSTANT;
     }
 
-    public void link(PotentiometerHandler potHandler){
+    public void link(PotentiometerHandler potHandler, ExtensionHandler extensionHandler){
         this.potHandler = potHandler;
+        this.extensionHandler = extensionHandler;
     }
 
 
@@ -83,9 +85,11 @@ public class ArmRotator implements NKNComponent {
         telemetry.addData("Motor Power", motor.getPower());
 
     }
+
     public void setTarget(double target){
-        this.target = target;
+        if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.RESTING) {this.target = target;}
     }
+
     private double controlLoop(double current){
         diff = (target - current);
         if (Math.abs(diff) <= threshold) {
