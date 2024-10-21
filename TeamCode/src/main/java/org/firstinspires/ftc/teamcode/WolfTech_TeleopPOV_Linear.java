@@ -110,8 +110,8 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
             max = Math.max(Math.abs(left), Math.abs(right));
             if (max > 0.05)
             {
-                left /= max;
-                right /= max;
+                left *= max;
+                right *= max;
             }
 
             // Output the safe vales to the motor drives.
