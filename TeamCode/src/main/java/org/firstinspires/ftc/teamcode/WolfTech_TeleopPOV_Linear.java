@@ -45,8 +45,8 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
     public DcMotor frontRightDrive  = null;
     public DcMotor backLeftDrive = null;
     public DcMotor backRightDrive = null;
-    public DcMotor  leftArm     = null;
-    public Servo leftClaw    = null;
+    public DcMotor  mainArm     = null;
+    public Servo mainClaw    = null;
 
     double clawOffset = 0;
 
@@ -68,7 +68,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "fr");
         backLeftDrive = hardwareMap.get(DcMotor.class, "bl");
         backRightDrive = hardwareMap.get(DcMotor.class, "br");
-        leftArm    = hardwareMap.get(DcMotor.class, "left_arm");
+        mainArm    = hardwareMap.get(DcMotor.class, "main_arm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -83,8 +83,8 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
 //         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-        leftClaw  = hardwareMap.get(Servo.class, "left_hand");
-        leftClaw.setPosition(MID_SERVO);
+        mainClaw  = hardwareMap.get(Servo.class, "main_hand");
+        mainClaw.setPosition(MID_SERVO);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press START.");    //
@@ -128,15 +128,15 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
 
             // Move both servos to new position.  Assume servos are mirror image of each other.
             clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-            leftClaw.setPosition(MID_SERVO + clawOffset);
+            mainClaw.setPosition(MID_SERVO + clawOffset);
 
             // Use gamepad buttons to move arm up (Y) and down (A)
             if (gamepad1.y)
-                leftArm.setPower(ARM_UP_POWER);
+                mainArm.setPower(ARM_UP_POWER);
             else if (gamepad1.a)
-                leftArm.setPower(ARM_DOWN_POWER);
+                mainArm.setPower(ARM_DOWN_POWER);
             else
-                leftArm.setPower(0.0);
+                mainArm.setPower(0.0);
 
             // Send telemetry message to signify robot running;
             telemetry.addData("claw",  "Offset = %.2f", clawOffset);
