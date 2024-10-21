@@ -13,10 +13,11 @@ public class ExtensionHandler implements NKNComponent {
     private final boolean doInvertMotor;
     private final double motorPower;
     private DcMotor motor; // extender motor
+    private GamePadHandler gamepadHandler;
 
     public enum ExtensionPositions {
         RESTING(0),
-        HIGH_BASKET(20);
+        HIGH_BASKET(3020); //true value is ~3000
 
         final int position;
 
@@ -38,6 +39,7 @@ public class ExtensionHandler implements NKNComponent {
             motor.setDirection(DcMotor.Direction.REVERSE);
         }
 
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setPower(motorPower);
         motor.setTargetPosition(ExtensionPositions.RESTING.position);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -52,7 +54,35 @@ public class ExtensionHandler implements NKNComponent {
 
     @Override
     public void start(ElapsedTime runtime, Telemetry telemetry) {
+        /*
+        Runnable runPos = new Runnable() {
+            @Override
+            public void run() {
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motor.setPower(0.1);
+            }
+        };
 
+        Runnable runNeg = new Runnable() {
+            @Override
+            public void run() {
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motor.setPower(-0.1);
+            }
+        };
+
+        Runnable stopRun = new Runnable() {
+            @Override
+            public void run() {
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motor.setPower(0);
+            }
+        };
+
+        gamepadHandler.addListener(GamePadHandler.GamepadButtons.A, 1, "runExtensionPos", false, runPos);
+        gamepadHandler.addListener(GamePadHandler.GamepadButtons.B, 1, "runExtensionNeg", false, runNeg);
+        gamepadHandler.addListener(GamePadHandler.GamepadButtons.X, 1, "stopExtension", false, stopRun);
+        //*/
     }
 
     @Override
@@ -78,5 +108,9 @@ public class ExtensionHandler implements NKNComponent {
 
     public void gotoPosition(ExtensionPositions extensionPosition) {
         motor.setTargetPosition(extensionPosition.position);
+    }
+
+    public void link (GamePadHandler gamepadHandler) {
+        this.gamepadHandler = gamepadHandler;
     }
 }
