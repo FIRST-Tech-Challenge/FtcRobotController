@@ -105,8 +105,7 @@ public class Gamepad_test2 extends LinearOpMode {
             double amount_pushed;
             double leftServoPosition;
             double rightServoPosition;
-            double apressed;
-            double bpressed;
+
 
             leftServoPosition = leftservo.getPosition();
             rightServoPosition = rightservo.getPosition();
@@ -116,46 +115,24 @@ public class Gamepad_test2 extends LinearOpMode {
             leftPower  = -gamepad1.left_stick_y ;
             rightPower = -gamepad1.right_stick_y ;
 
-            apressed = 0;
-            bpressed = 0;
-            //servo movement
+            leftAngle  = Math.toDegrees(Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x));
+            rightAngle = Math.toDegrees(Math.atan(gamepad1.right_stick_y/gamepad1.right_stick_x));
+            leftdirection = (leftAngle/360);
+            rightdirection = (rightAngle/360);
 
-            if (gamepad1.a) {
-                if (leftServoPosition == 0.42d) {
-                    leftservo.setPosition(0d);
-                    apressed = 1;
-                } else {
-                    leftservo.setPosition(0.42d);
-                }
+            if (gamepad1.left_stick_x == 0) {
+                leftservo.setPosition(0.5);
+            }
+            else {
+                leftservo.setPosition(leftdirection);
             }
 
-            if (gamepad1.b) {
-                if (rightServoPosition == 0.42d) {
-                    rightservo.setPosition(0d);
-                    bpressed = 1;
-                } else {
-                    rightservo.setPosition(0.42d);
-                }
+            if (gamepad1.right_stick_x == 0) {
+                rightservo.setPosition(0.5);
             }
-
-            //leftAngle  = Math.toDegrees(Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x));
-//            rightAngle = Math.toDegrees(Math.atan(gamepad1.right_stick_y/gamepad1.right_stick_x));
-//            leftdirection = (leftAngle/360);
-//            rightdirection = (rightAngle/360);
-//
-//            if (gamepad1.left_stick_x == 0) {
-//                leftservo.setPosition(0.5);
-//            }
-//            else {
-//                leftservo.setPosition(leftdirection);
-//            }
-//
-//            if (gamepad1.right_stick_x == 0) {
-//                rightservo.setPosition(0.5);
-//            }
-//            else {
-//                rightservo.setPosition(rightdirection);
-//            }
+            else {
+                rightservo.setPosition(rightdirection);
+            }
 
 
             // Send calculated power to wheels
@@ -163,9 +140,7 @@ public class Gamepad_test2 extends LinearOpMode {
             rightwheel.setPower(rightPower);
 
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("is a pressed", apressed);
-            telemetry.addData("is b pressed", bpressed);
+            // Show the elapsed game time and wheel power
             telemetry.addData("right servo direction", rightservo.getDirection());
             telemetry.addData("left servo direction", leftservo.getDirection());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
