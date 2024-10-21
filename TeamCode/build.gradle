@@ -32,4 +32,6 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
 
     implementation 'org.ftclib.ftclib:core:2.1.1' // core
+
+    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v3.0.2-ALPHA'
 }

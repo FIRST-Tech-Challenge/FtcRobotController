@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,14 +11,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
+@Photon
 public class Slides {
     //establish left and right slide for gamepad
     public final DcMotor leftSlide, rightSlide;
     public final Gamepad gamepad2;
     //This determines where slides will stop depending on what the driver wants
-    private static int HIGH = 450;
+    private static int HIGH = 50;
     public static int MID = 100;
-    public static int LOW = 50;
+    public static int LOW = 0;
     public static int INTAKE = 0;
     private static double WHEEL_DIAMETER = 1.77;//in
     private static double TICKS_PER_REV = 384.539792388;
@@ -56,10 +58,10 @@ public class Slides {
         rightSlide.setTargetPosition(INTAKE);
         leftSlide.setTargetPosition(INTAKE);
     }
-    public void teleOp() {
-        if (gamepad2.dpad_up) slidesHighBasket();
-        else if (gamepad2.dpad_right) slidesLowBasket();
-        else if (gamepad2.dpad_left) slidesLowChamber();
+    public void teleOp(Gamepad controller) {
+        if (controller.dpad_up) slidesHighBasket();
+        else if (controller.dpad_right) slidesLowBasket();
+        else if (controller.dpad_left) slidesLowChamber();
         else reset();
 
         if (rightSlide.getCurrentPosition() ==0 && leftSlide.getCurrentPosition() == 0) {
@@ -74,20 +76,17 @@ public class Slides {
         rightSlide.setTargetPosition(HIGH);
         leftSlide.setTargetPosition(HIGH);
         telemetry.update();
-
     }
     public void slidesLowBasket() {
         //Use this for high chamber
         rightSlide.setTargetPosition(MID);
         leftSlide.setTargetPosition(MID);
         telemetry.update();
-
     }
     public void slidesLowChamber() {
         rightSlide.setTargetPosition(LOW);
         leftSlide.setTargetPosition(LOW);
         telemetry.update();
-
     }
     public void reset() {
         rightSlide.setTargetPosition(INTAKE);

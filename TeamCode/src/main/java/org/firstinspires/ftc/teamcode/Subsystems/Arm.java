@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -36,8 +37,8 @@ public class Arm {
         armMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
     }
     public void teleOp() {
-        if (gamepad2.dpad_up) goOuttakePos();
-        else if (gamepad2.dpad_down) goIntakePos();
+        if (gamepad2.dpad_left) goOuttakePos();
+        else if (gamepad2.dpad_right) goIntakePos();
         else rest();
     }
     public void goOuttakePos() {
