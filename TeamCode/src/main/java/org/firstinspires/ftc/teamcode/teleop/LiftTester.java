@@ -6,8 +6,6 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -32,8 +30,8 @@ public class LiftTester extends LinearOpMode {
             lift.moveLift(liftPower);
 
             telemetry.addData("Lift Power", liftPower);
-//            telemetry.addData("Lift Position", lift.getPosition());
-            controller.update();
+            telemetry.addData("Lift Position", lift.getPosition());
+            telemetry.update();
         }
     }
 
