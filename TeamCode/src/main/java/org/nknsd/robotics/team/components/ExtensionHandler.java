@@ -12,18 +12,41 @@ public class ExtensionHandler implements NKNComponent {
     private final String extenderName;
     private final boolean doInvertMotor;
     private final double motorPower;
-    private DcMotor motor; // extender motor
-    private GamePadHandler gamepadHandler;
+    private DcMotor motor;          // extender motor
+    private ArmRotator armRotator;  //Connects to the arm rotator to read from it
+    private static double SAFE_ARM_ROTATION_VALUE = 1.5;
+
+    private ExtensionPositions target = ExtensionPositions.RESTING;
 
     public enum ExtensionPositions {
-        RESTING(0),
-        HIGH_BASKET(3020); //true value is ~3000
+        RESTING(0) {
+            @Override
+            boolean canGoToPosition(ArmRotator armRotator) {
+                return true;
+            }
+        },
+
+        COLLECT(10) {
+            @Override
+            boolean canGoToPosition(ArmRotator armRotator) {
+                return true;
+            }
+        },
+
+        HIGH_BASKET(3020) {
+            @Override
+            boolean canGoToPosition(ArmRotator armRotator) {
+                return armRotator.target < ExtensionHandler.SAFE_ARM_ROTATION_VALUE;
+            }
+        }; //true value is ~3000
 
         final int position;
 
         ExtensionPositions(int position) {
             this.position = position;
         }
+
+        abstract boolean canGoToPosition(ArmRotator armRotator);
     }
 
     public ExtensionHandler(String extenderName, boolean doInvertMotor, double motorPower) {
@@ -54,35 +77,7 @@ public class ExtensionHandler implements NKNComponent {
 
     @Override
     public void start(ElapsedTime runtime, Telemetry telemetry) {
-        /*
-        Runnable runPos = new Runnable() {
-            @Override
-            public void run() {
-                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motor.setPower(0.1);
-            }
-        };
 
-        Runnable runNeg = new Runnable() {
-            @Override
-            public void run() {
-                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motor.setPower(-0.1);
-            }
-        };
-
-        Runnable stopRun = new Runnable() {
-            @Override
-            public void run() {
-                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motor.setPower(0);
-            }
-        };
-
-        gamepadHandler.addListener(GamePadHandler.GamepadButtons.A, 1, "runExtensionPos", false, runPos);
-        gamepadHandler.addListener(GamePadHandler.GamepadButtons.B, 1, "runExtensionNeg", false, runNeg);
-        gamepadHandler.addListener(GamePadHandler.GamepadButtons.X, 1, "stopExtension", false, stopRun);
-        //*/
     }
 
     @Override
@@ -107,10 +102,15 @@ public class ExtensionHandler implements NKNComponent {
     }
 
     public void gotoPosition(ExtensionPositions extensionPosition) {
-        motor.setTargetPosition(extensionPosition.position);
+        if (extensionPosition.canGoToPosition(armRotator)) {motor.setTargetPosition(extensionPosition.position); target = extensionPosition;}
     }
 
-    public void link (GamePadHandler gamepadHandler) {
-        this.gamepadHandler = gamepadHandler;
+    public ExtensionPositions targetPosition() {
+        return target;
     }
+
+    public void link(ArmRotator armRotator) {
+        this.armRotator = armRotator;
+    }
+
 }
