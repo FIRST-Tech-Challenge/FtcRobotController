@@ -24,6 +24,7 @@ data class CubicSpline(
     val highX: Double
 ) {
     companion object {
+        @JvmStatic
         fun fromArrayAndBounds(arr: DoubleArray, lowX: Double, highX: Double): CubicSpline {
             assert(arr.size == 4) { "Wrong size to import cubic spline from array : ${arr.size}" }
             return CubicSpline(
@@ -33,6 +34,7 @@ data class CubicSpline(
     }
 
     override fun toString() = "spline< ${toDesmos()} >"
+    @JvmOverloads
     fun toDesmos(equation: Boolean = true, varSym: String = "x") = String.format(
         """%s%.6f$varSym^3 + %.6f$varSym^2 + %.6f$varSym + %.6f%s""",
         if (equation) {
@@ -51,6 +53,7 @@ data class CubicSplinePair(val x: CubicSpline, val y: CubicSpline) {
 }
 
 object CubicSplineSolver {
+    @JvmStatic
     fun solveMat(t1: Number, x1: Number, t2: Number, x2: Number, s1: Number, s2: Number) =
         solveMat(
             t1.toDouble(),
@@ -62,6 +65,7 @@ object CubicSplineSolver {
         )
 
 
+    @JvmStatic
     fun solveMat(
         t1: Double,
         x1: Double,
@@ -104,6 +108,7 @@ object CubicSplineSolver {
 
     private fun getSlope(x1: Double, x2: Double, y1: Double, y2: Double) = (y2 - y1) / (x2 - x1)
 
+    @JvmStatic
     fun solveMultiSegment(xArr: DoubleArray, yArr: DoubleArray): List<CubicSpline> {
         assert(xArr.size == yArr.size) {
             "Mismatched coordinate sets: x has %d, y has %d".format(
@@ -140,6 +145,7 @@ object CubicSplineSolver {
         return results
     }
 
+    @JvmStatic
     fun solve2DMultiSegment(xArr: DoubleArray, yArr: DoubleArray): List<CubicSplinePair> {
         assert(xArr.size == yArr.size) {
             "Mismatched coordinate sets: x has %d, y has %d".format(
