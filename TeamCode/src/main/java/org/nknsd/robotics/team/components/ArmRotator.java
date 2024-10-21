@@ -44,7 +44,7 @@ public class ArmRotator implements NKNComponent {
     }
 
     public boolean oppositeSigns(double one, double two){
-        if (one * two <= 0){return false;}
+        if (one * two >= 0){return false;}
         return true;
     }
 
