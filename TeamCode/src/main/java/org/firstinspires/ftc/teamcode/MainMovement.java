@@ -104,25 +104,33 @@ public class MainMovement extends LinearOpMode {
             //if not in dead zone
             if (angleInDegrees >= -22.5 && angleInDegrees <= 22.5) {
                 // right quadrant
+                System.out.println("Left Stick in RIGHT quadrant");
             } else if (angleInDegrees > 22.5 && angleInDegrees < 67.5) {
                 // top-right quadrant
+                System.out.println("LeftStick in TOP-RIGHT quadrant");
             } else if (angleInDegrees > -67.5 && angleInDegrees < -22.5) {
                 // bottom-right quadrant
+                System.out.println("Left Stick in BOTTOM-RIGHT quadrant");
             } else if (angleInDegrees >= 67.5 && angleInDegrees <= 112.5) {
                 // top quadrant
+                System.out.println("Left Stick in TOP quadrant");
             } else if (angleInDegrees > -112.5 && angleInDegrees < -67.5) {
                 // bottom quadrant
+                System.out.println("Left Stick in BOTTOM quadrant");
             } else if (angleInDegrees > 112.5 && angleInDegrees < 157.5) {
                 // top-left quadrant
+                System.out.println("Left Stick in TOP-LEFT quadrant");
             } else if (angleInDegrees > -157.5 && angleInDegrees < -112.5) {
                 // bottom-left quadrant
+                System.out.println("Left Stick in BOTTOM-LEFT quadrant");
             } else if (angleInDegrees >= 157.5 || angleInDegrees <= -157.5) {
                 // left quadrant
+                System.out.println("Left Stick in LEFT quadrant");
             }
 
         } else {
             //if in dead zone
-            angleInDegrees = 0;
+            System.out.println("Left Stick in dead zone");
         }
 
     }
