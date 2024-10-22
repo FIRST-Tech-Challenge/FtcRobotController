@@ -4,7 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 /*
 https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
@@ -38,6 +46,8 @@ public class Testing_Oct18 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+    relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
