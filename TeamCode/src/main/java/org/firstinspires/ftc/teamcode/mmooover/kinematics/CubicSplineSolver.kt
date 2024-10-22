@@ -3,13 +3,15 @@
 package org.firstinspires.ftc.teamcode.mmooover.kinematics
 
 import android.annotation.SuppressLint
-import android.graphics.Point
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
+
+const val PRECISION = 8
 
 private inline fun DoubleArray.mapInPlace(transform: (Double) -> Double) {
     for (i in this.indices) {
@@ -23,7 +25,7 @@ data class CubicSpline(
     val c: Double,
     val d: Double,
     val lowX: Double,
-    val highX: Double
+    val highX: Double,
 ) {
     companion object {
         @JvmStatic
@@ -41,12 +43,12 @@ data class CubicSpline(
 
     @JvmOverloads
     fun toDesmos(equation: Boolean = true, varSym: String = "x") = String.format(
-        """%s%.6f$varSym^3 + %.6f$varSym^2 + %.6f$varSym + %.6f%s""",
+        """%s%.${PRECISION}f$varSym^3 + %.${PRECISION}f$varSym^2 + %.${PRECISION}f$varSym + %.${PRECISION}f%s""",
         if (equation) {
             "y = "
         } else "", a, b, c, d,
         if (equation) {
-            " \\left\\{%.6f \\leq $varSym \\leq %.6f\\right\\}".format(
+            " \\left\\{%.${PRECISION}f \\leq $varSym \\leq %.${PRECISION}f\\right\\}".format(
                 lowX, highX
             )
         } else ""
@@ -54,32 +56,67 @@ data class CubicSpline(
 }
 
 data class CubicSplinePair(val x: CubicSpline, val y: CubicSpline) {
-    data class PointAndAccumulator(val x: Double, val y: Double, val totalDistance: Double)
+    data class PointData(val x: Double, val y: Double, val totalDistance: Double, val t: Double) {
+        override fun toString(): String = "(%.4f, %.4f <t:%.4f | d:%.4f>)".format(x, y, t, totalDistance)
+        fun toDesmos(): String = "(%.${PRECISION}f, %.${PRECISION}f)".format(x, y)
+    }
 
     val tFrom = x.lowX
     val tTo = x.highX
-    var pointCache: MutableMap<Double, PointAndAccumulator>? = null
+    var pointCache: MutableList<PointData>? = null
+    var totalDistance: Double = 0.0
     fun toDesmos() = "(${x.toDesmos(false, "t")}, ${y.toDesmos(false, "t")})"
 
-    fun fillCache(resolution: Double = 0.01, step: Double = 1.0) {
-        val newCache: MutableMap<Double, PointAndAccumulator> = mutableMapOf()
+    @JvmOverloads
+    fun computeWaypoints(step: Double = 1.0, forceNoCache: Boolean = false, cacheResolution: Double = 0.01): List<PointData> {
+        if (pointCache == null || forceNoCache) updateCache(cacheResolution)
+        // save some not-null asserts later
+        val pointCacheRef = pointCache ?: throw IllegalStateException("Point cache failed to compute for some reason and is still null")
+        val fragments = ceil(totalDistance / step).toInt()
+
+        var cursor = 0
+        val waypoints: MutableList<PointData> = mutableListOf()
+        for (fn in 0..fragments) {
+            val position = fn.toDouble() / fragments // Percentage
+            val positionUnits = position * totalDistance
+            var currentAt = pointCacheRef[cursor++]
+            while (currentAt.totalDistance < positionUnits && cursor < pointCacheRef.size) {
+                currentAt = pointCacheRef[cursor++]
+            }
+            waypoints.add(currentAt)
+        }
+        val actualStep = totalDistance / fragments
+        println("fragments: $fragments (%.4f per fragment, target %.4f, %.2f%% error)"
+            .format(actualStep, step, (100 * (step - actualStep)) / step)
+        )
+        return waypoints
+    }
+
+    fun updateCache(resolution: Double = 0.01) {
+        val newCache: MutableList<PointData> = mutableListOf()
         val steps = floor((tTo - tFrom) / resolution).toInt()
         var d = 0.0
         var lastX = 0.0
         var lastY = 0.0
         for (i in 0..steps) {
-            val t = (tTo - tFrom) * (i / steps) + tFrom
+            val t = (tTo - tFrom) * (i.toDouble() / steps) + tFrom
             val xP = x.at(t)
             val yP = y.at(t)
             if (i > 0) {
-                d += sqrt((xP-lastX).pow(2) + (yP-lastY).pow(2))
+                d += sqrt((xP - lastX).pow(2) + (yP - lastY).pow(2))
             }
             lastX = xP
             lastY = yP
-            newCache.put(t, PointAndAccumulator(xP, yP, d))
+            newCache.add(PointData(xP, yP, d, t))
         }
+        pointCache = newCache
+        totalDistance = d
 
-        println("total %.4f units / %d steps".format(d, steps))
+        println(
+            "total %.4f units | $steps steps".format(
+                totalDistance
+            )
+        )
     }
 }
 
@@ -96,6 +133,11 @@ object CubicSplineSolver {
         )
 
 
+    private fun helpPrintMatrix(arr: Array<DoubleArray>): String {
+        return arr.map { it.toList().toString() }
+            .joinToString("\n", prefix = "[\n", postfix = "\n]")
+    }
+
     @JvmStatic
     fun solveMat(
         t1: Double,
@@ -103,7 +145,7 @@ object CubicSplineSolver {
         t2: Double,
         x2: Double,
         s1: Double,
-        s2: Double
+        s2: Double,
     ): CubicSpline {
         var matrix: Array<DoubleArray> = arrayOf(
             doubleArrayOf(t1 * t1 * t1, t1 * t1, t1, 1.0, x1),
@@ -113,7 +155,7 @@ object CubicSplineSolver {
         )
         val nCols = matrix[0].size
         for ((rowN, row) in matrix.withIndex()) {
-            val pivotCol = row.indexOfFirst { abs(it) > 0.001 }
+            val pivotCol = row.indexOfFirst { abs(it) > 1e-8 }
             if (pivotCol == -1 || pivotCol == row.size - 1) throw IllegalStateException("No suitable pivot column found")
             val coeff = row[pivotCol]
             row.mapInPlace { it -> it / coeff }

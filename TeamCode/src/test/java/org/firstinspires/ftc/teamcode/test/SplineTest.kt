@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.test
 
+import org.firstinspires.ftc.teamcode.mmooover.kinematics.CubicSplinePair
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.CubicSplineSolver
 import org.junit.jupiter.api.Test
 
@@ -24,18 +25,37 @@ class SplineTest {
         )
         for (i in result) {
             println(i.toDesmos())
-            i.fillCache()
+            i.computeWaypoints()
         }
     }
 
-    @Test fun `test quirky`() {
+    @Test fun `Test large-scale`() {
         val result = CubicSplineSolver.solve2DMultiSegment(
-            doubleArrayOf(0.0, 5.0, -10.0),
-            doubleArrayOf(0.0, 5.0, 0.0)
+            doubleArrayOf(0.0, 48.0, 96.0, 96.0, 96.0),
+            doubleArrayOf(0.0, 0.0, 48.0, 96.0, 120.0)
         )
         for (i in result) {
             println(i.toDesmos())
-            i.fillCache()
         }
+        val waypointList: MutableList<CubicSplinePair.PointData> = mutableListOf()
+        for (i in result)
+            waypointList.addAll(i.computeWaypoints())
+        println(waypointList)
+        println("desmos: ${waypointList.map{it.toDesmos()}}")
+    }
+
+    @Test fun `Test small-scale`() {
+        val result = CubicSplineSolver.solve2DMultiSegment(
+            doubleArrayOf(0.0, 8.0, 8.0, 0.0, 0.0),
+            doubleArrayOf(0.0, 0.0, 8.0, 16.0, 0.0)
+        )
+        for (i in result) {
+            println(i.toDesmos())
+        }
+        val waypointList: MutableList<CubicSplinePair.PointData> = mutableListOf()
+        for (i in result)
+            waypointList.addAll(i.computeWaypoints(0.5))
+        println(waypointList)
+        println("desmos: ${waypointList.map{it.toDesmos()}}")
     }
 }
