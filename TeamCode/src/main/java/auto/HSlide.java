@@ -9,16 +9,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class HSlide extends MainTest{
 
-    public HSlide() {
-        // Initialization code can go here if needed
+    public HSlide(DcMotor lol) {
+        // Constructor code if needed
+
+    }
+
+    public void resetPosition() {
+        // Code to reset H-Slide position using touch sensor
     }
 
     public void goToPosition(int position) {
         // Code to move H-Slide to specified position
     }
 
-
-    public void resetPosition() {
-        // Code to reset H-Slide position using touch sensor
-    }
 }
