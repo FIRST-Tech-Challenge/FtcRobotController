@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -24,16 +25,41 @@ public class Odometry_Testing extends LinearOpMode {
 
     // Declare OpMode members for each of the 3 motors and IMU.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor odom_l, odom_r, odom_h;
+    private DcMotor odom_l, odom_r, odom_h,fl, fr, bl, br;
     private BNO055IMU imu;
     Orientation lastAngles = new Orientation();
     double globalAngle;
     @Override
     public void runOpMode() {
+
+        double prev_encoder_l = 0, prev_encoder_r = 0, prev_encoder_h = 0, prev_ang = 0, current_ang ;
+        double delta_encoder_l, delta_encoder_r, delta_encoder_h, delta_local_x, delta_local_y, delta_global_x, delta_global_y, delta_ang;
+        double global_xM = 0, global_yM = 0;
+        double disM_encoderHtoCenter = 0.22; // Distance from the horizontal encoder to the center of the robot in meters, allegedly
+
         // Initialize the hardware variables.
         odom_l = hardwareMap.get(DcMotor.class, "odom_l");
         odom_r = hardwareMap.get(DcMotor.class, "odom_r");
         odom_h = hardwareMap.get(DcMotor.class, "odom_h");
+
+        fl = hardwareMap.get(DcMotor.class, "fl");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
+
+
+
+        //Reverse left side motors
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
 
         // Initialize the IMU
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -52,17 +78,15 @@ public class Odometry_Testing extends LinearOpMode {
         odom_r.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         odom_h.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        double prev_encoder_l = 0, prev_encoder_r = 0, prev_encoder_h = 0, prev_ang = 0, current_ang ;
-        double delta_encoder_l, delta_encoder_r, delta_encoder_h, delta_local_x, delta_local_y, delta_global_x, delta_global_y, delta_ang;
-        double global_xM = 0, global_yM = 0;
-        double disM_encoderHtoCenter = 0.22; // Distance from the horizontal encoder to the center of the robot in meters, allegedly
-
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive() && !isStopRequested()) {
             // Convert encoder ticks to meters
-            double encoder_l = encoderToMetres(odom_l.getCurrentPosition());
+
+
+
+            double encoder_l = encoderToMetres(-odom_l.getCurrentPosition());
             double encoder_r = encoderToMetres(odom_r.getCurrentPosition());
             double encoder_h = encoderToMetres(-odom_h.getCurrentPosition());
             telemetry.addData("l", encoder_l);
@@ -70,7 +94,7 @@ public class Odometry_Testing extends LinearOpMode {
             telemetry.addData("h", encoder_h);
 
             // Get current angle from IMU
-            current_ang = Math.toRadians(getAngle()); //IMU angle
+            current_ang = Math.toRadians(-getAngle()); //IMU angle
            // current_ang = Math.toRadians((encoder_r-encoder_l)/0.023); //(r-l) divided by distance (METRES) between the encoder wheels
 
             // Calculate changes in encoder values and angle
@@ -106,6 +130,29 @@ public class Odometry_Testing extends LinearOpMode {
             telemetry.addData("Angle (delta)", Math.toDegrees(delta_ang));
 
             telemetry.update();
+
+
+
+            //Driving
+
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+
+            //STRAFING VARIABLE
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+
+            //THIS IS THE TURNING VARIABLE
+            double rx = gamepad1.right_stick_x;
+
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+
+            fl.setPower(frontLeftPower);
+            bl.setPower(backLeftPower);
+            fr.setPower(frontRightPower);
+            br.setPower(backRightPower);
         }
     }
 
