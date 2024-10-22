@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.internal.system.Finalizable;
+
 /*
  * This file contains an example of a Linear "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -74,8 +76,7 @@ public class MainMovement extends LinearOpMode {
     private DcMotor BRDrive;
     private DcMotor FLDrive;
     private DcMotor FRDrive;
-
-    private float deadZone = 0.1f;
+    final float deadZone = 0.1f;
 
     @Override
     public void runOpMode() {
@@ -99,7 +100,7 @@ public class MainMovement extends LinearOpMode {
         double angleInRadians = Math.atan2(LjoystickY, LjoystickX);
         double angleInDegrees = angleInRadians * (180 / Math.PI);
 
-            //check if in dead zone
+        //check if in dead zone
         if (!(Math.abs(LjoystickX) <= deadZone) && !(Math.abs(LjoystickY) <= deadZone)) {
             //if not in dead zone
             if (angleInDegrees >= -22.5 && angleInDegrees <= 22.5) {
