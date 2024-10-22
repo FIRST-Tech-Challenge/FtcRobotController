@@ -26,6 +26,7 @@ public class HSlide extends MainTest{
 
     public void goToPosition(int position) {
         // Code to move H-Slide to specified position
+        motor.setTargetPosition(position);
     }
 
 }
