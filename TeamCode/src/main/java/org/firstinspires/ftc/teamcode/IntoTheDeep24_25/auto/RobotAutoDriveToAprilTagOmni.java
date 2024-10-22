@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.IntoTheDeep24_25.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.PowerPlay23_24.TemplateJanx;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -17,6 +21,11 @@ import java.util.concurrent.TimeUnit;
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
 
     private VisionPortal visionPortal;
+    private DcMotor frontLeft;
+    private DcMotor frontRight;
+    private DcMotor backLeft;
+    private DcMotor backRight;
+
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
     private static final boolean USE_WEBCAM = true;
@@ -24,6 +33,7 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        robotInit();
 
         // Initialize the AprilTag detection system
         initAprilTag();
@@ -52,18 +62,47 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
                 }
             }
 
-            if (targetFound) {
+            if(targetFound) {
                 // Display tag information in the telemetry
                 telemetry.addData("AprilTag Detected", "ID: %d", desiredTag.id);
                 telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
                 telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
                 telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
-            } else {
+                moveRobot();
+
+            }
+           else {
                 telemetry.addData("Status", "No AprilTag detected. Searching...");
             }
 
             telemetry.update();
             sleep(10); // Small delay to allow smooth updates
+        }
+    }
+    private void robotInit()
+    {
+        TemplateJanx janx = new TemplateJanx(hardwareMap);
+        janx.wheelInit("frontRight","backRight","backLeft","frontLeft");
+        frontLeft =  janx.fl;
+        frontRight = janx.fr;
+        backRight =  janx.br;
+        backLeft =   janx.bl;
+    }
+    private void moveRobot()
+    {
+        telemetry.addData("trying to move",frontRight.getCurrentPosition());
+        if(desiredTag.ftcPose.range>36)
+        {
+           frontLeft.setPower(-1);
+           frontRight.setPower(-1);
+           backRight.setPower(-1);
+           backLeft.setPower(-1);
+        }
+        else{
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backRight.setPower(0);
+            backLeft.setPower(0);
         }
     }
 
