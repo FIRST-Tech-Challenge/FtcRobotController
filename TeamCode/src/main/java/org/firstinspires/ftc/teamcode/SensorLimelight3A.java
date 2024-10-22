@@ -38,6 +38,7 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -125,6 +126,7 @@ public class SensorLimelight3A extends LinearOpMode {
                 telemetry.addData("Yaw Max", "%.0f", YAW_MAX);
                 telemetry.addData("Yaw Min", "%.0f", YAW_MIN);
                 telemetry.update();
+                RobotLog.vv("RockinRobots", "Yaw Current: %.0f, Yaw Max: %.0f", YAW_MIN, YAW_MAX);
             }
         }
 
