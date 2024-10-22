@@ -96,6 +96,10 @@ public class Drive implements DriveInterface {
         BackRightMotor.setPower(rightBackPower);
         FrontLeftMotor.setPower(leftFrontPower);
         BackLeftMotor.setPower(leftBackPower);
+        FrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     private void FeildOreintedMode(double forward, double strafe, double rotate){
         double speed = builder.getSpeed();
@@ -182,6 +186,10 @@ public class Drive implements DriveInterface {
         FrontRightMotor.setDirection(builder.getMotorOrientationRightFront());
         BackLeftMotor.setDirection(builder.getMotorOrientationLeftBack());
         BackRightMotor.setDirection(builder.getMotorOrientationRightBack());
+        FrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.telemetry = telemetry;
         telemetry.addLine("Done initilizing drive");
         telemetry.update();

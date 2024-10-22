@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.opencv.core.Mat;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -24,9 +25,16 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
     private Drive movementControler;
     private ArrayList movementIds = new ArrayList();
     private ArrayList typeIds = new ArrayList();
+    private double TotalXDiff;
+    private double TotalYDiff;
+    private double TotalXYDiff;
     @Override
     public void init(HardwareMap hwMP, Drive movementController) {
-        this.odoComp = hwMP.get(GoBildaPinpointDriver.class,"computer");
+        this.odoComp = hwMP.get(GoBildaPinpointDriver.class,"odo");
+        odoComp.setOffsets(-48.0, 168.0);
+        odoComp.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odoComp.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odoComp.resetPosAndIMU();
         this.movementControler = movementController;
     }
 
@@ -42,13 +50,12 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
         switch (direction){
             case XDirection:
                 return vel.getX(DistanceUnit.MM);
-                break;
             case YDirection:
                 return vel.getY(DistanceUnit.MM);
-                break;
             case HeadingDirection:
                 return vel.getHeading(AngleUnit.DEGREES);
-                break;
+            default:
+                return 0.0;
         }
     }
 
@@ -59,6 +66,9 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
         int id = getId();
         movementIds.add(id,finalPos);
         typeIds.add(id, LineTo);
+        TotalXDiff = XEnd - robotPos.getX(DistanceUnit.MM);
+        TotalYDiff = YEnd - robotPos.getY(DistanceUnit.MM);
+        TotalXYDiff= Math.hypot(TotalYDiff,TotalXDiff);
         return id;
     }
     private int getId(){
@@ -66,6 +76,7 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
         return id;
     }
     public boolean move(int id){
+        odoComp.update();
         boolean completed = false;
         Pose2D finalPos = (Pose2D) movementIds.get(id);
         if(typeIds.get(id) == LineTo){
@@ -76,13 +87,39 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
             double y = robotPos.getY(DistanceUnit.MM);
             double XDiff = Finalx - x;
             double YDiff = Finaly - y;
-            double maximum = Math.max(1,Math.abs(XDiff));
+            double maximum = Math.max(1.0,Math.abs(XDiff));
             maximum = Math.max(maximum, Math.abs(YDiff));
             double newXSpeed = XDiff / maximum;
             double newYSpeed = YDiff / maximum;
-            movementControler.move();
-        } else if(typeIds.get(id) == Rotate){
+            if(Math.abs(XDiff) <= 10.0){
+                newXSpeed = 0.0;
+            }
+            if(Math.abs(YDiff) <= 10.0){
+                newYSpeed = 0.0;
+            }
 
+            if(newXSpeed == 0.0 && newYSpeed == 0.0){
+                completed = true;
+            }
+            double speed = 1.0;
+            double XYDiff = Math.hypot(XDiff,YDiff);
+            if(Math.abs(XYDiff) / Math.abs(TotalXYDiff) <= 1.0/4.0){
+                speed = 0.5;
+            } else if(Math.abs(XYDiff) / Math.abs(TotalXYDiff) <= 1.0/3.0){
+                speed = 2.0/3.0;
+            } else if(Math.abs(XYDiff) / Math.abs(TotalXYDiff) <= 1.0/2.0){
+                speed = 3.0/4.0;
+            }
+            movementControler.move(newXSpeed, newYSpeed, 0.0,speed);
+        } else if(typeIds.get(id) == Rotate){
+            Pose2D robotPos = odoComp.getPosition();
+            double currentHed = robotPos.getHeading(AngleUnit.DEGREES);
+            double targetHed = finalPos.getHeading(AngleUnit.DEGREES);
+            currentHed = AngleUnit.normalizeDegrees(currentHed);
+            targetHed = AngleUnit.normalizeDegrees(targetHed);
+            double headingDiff = targetHed - currentHed;
+            double headingSpeed = headingDiff >= 1.0 ? headingDiff / headingDiff : headingDiff;
+            movementControler.move(0.0,0.0,headingSpeed,1.0);
         } else if(typeIds.get(id) == CurveTo){
             completed = true;
         } else {

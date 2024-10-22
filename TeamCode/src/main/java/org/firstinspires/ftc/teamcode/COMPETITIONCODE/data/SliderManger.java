@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.learning;
+package org.firstinspires.ftc.teamcode.COMPETITIONCODE.data;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class SliderManger {
     private DcMotor rotator; // Change the name

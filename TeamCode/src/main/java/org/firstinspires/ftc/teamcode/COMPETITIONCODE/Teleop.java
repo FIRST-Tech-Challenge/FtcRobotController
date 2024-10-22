@@ -7,6 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ReadWriteFile;
+
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
 
 @TeleOp(name = "teleop")
 public class Teleop extends LinearOpMode {
@@ -32,13 +37,15 @@ public class Teleop extends LinearOpMode {
 
         while (!isStopRequested()){
             SPED = gamepad1.right_trigger / 2.5;
-            /*if(gamepad1.right_bumper){
+            if(gamepad1.right_bumper){
                 SPED = SPED * 2.0;
             }
-            if(gamepad1.left_bumper){
-                SPED = SPED * 2.5;
-            }*/
+            double forward = gamepad1.a ? 0.0 : gamepad1.left_stick_y;
+            double strafe = gamepad1.b ? 0.0 : -gamepad1.left_stick_x;
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
         }
+        File ThreadManger = AppUtil.getInstance().getSettingsFile("ThreadManger.txt");
+        ReadWriteFile.writeFile(ThreadManger, "STOP");
+
     }
 }
