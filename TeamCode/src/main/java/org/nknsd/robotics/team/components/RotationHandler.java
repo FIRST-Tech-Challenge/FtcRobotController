@@ -16,7 +16,7 @@ public class RotationHandler implements NKNComponent {
     PotentiometerHandler potHandler;
     private final String motorName;
     private DcMotor motor;
-    double target;
+    double target = 0;
 
     final double threshold;
     final double P_CONSTANT;
@@ -71,7 +71,7 @@ public class RotationHandler implements NKNComponent {
         if(currentTime >= targetTime) {
             current = potHandler.getPotVoltage();
             double armPower = controlLoop(current);
-            motor.setPower(armPower);
+            //motor.setPower(armPower);
             targetTime = currentTime+1;
         }
     }

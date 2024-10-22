@@ -23,7 +23,6 @@ public class EACmonkeyProgram extends NKNProgram {
         telemetryEnabled.add(potentiometerHandler);
 
         RotationHandler rotationHandler = new RotationHandler("motorArmRotate", 0.05, 0.9);
-        rotationHandler.link(potentiometerHandler);
         components.add(rotationHandler);
         telemetryEnabled.add(rotationHandler);
 
@@ -32,8 +31,11 @@ public class EACmonkeyProgram extends NKNProgram {
         telemetryEnabled.add(intakeServoHandler);
 
         EACmonkey eacMonkey = new EACmonkey();
-        eacMonkey.link(extensionHandler, intakeServoHandler, rotationHandler);
         components.add(eacMonkey);
         telemetryEnabled.add(eacMonkey);
+
+        eacMonkey.link(extensionHandler, intakeServoHandler, rotationHandler);
+        rotationHandler.link(potentiometerHandler, extensionHandler);
+        extensionHandler.link(rotationHandler);
     }
 }

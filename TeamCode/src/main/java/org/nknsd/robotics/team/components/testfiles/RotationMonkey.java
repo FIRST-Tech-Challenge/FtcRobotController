@@ -87,7 +87,7 @@ public class RotationMonkey implements NKNComponent {
                 break;
 
             case TARGET_0:
-                rotationHandler.setTarget(1.4);
+                rotationHandler.setTarget(1.5);
                 break;
 
             case TARGET_0_5:
