@@ -3,70 +3,43 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Mecanum Drive")
+@TeleOp(name = "DriveTrainTest1 (Blocks to Java)")
 public class linearOpMode extends LinearOpMode {
-  private DcMotor frontLeftMotor = null, backLeftMotor = null;
-  private DcMotor frontRightMotor = null, backRightMotor = null;
 
+  private DcMotor leftBack;
+  private DcMotor leftFront;
+  private DcMotor rightBack;
+  private DcMotor rightFront;
+  private Servo claw;
 
+  /**
+   * This sample contains the bare minimum Blocks for any regular OpMode. The 3 blue
+   * Comment Blocks show where to place Initialization code (runs once, after touching the
+   * DS INIT button, and before touching the DS Start arrow), Run code (runs once, after
+   * touching Start), and Loop code (runs repeatedly while the OpMode is active, namely not
+   * Stopped).
+   */
   @Override
-  public void runOpMode(){
+  public void runOpMode() {
+    leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+    leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+    rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+    rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+    claw = hardwareMap.get(Servo.class, "claw");
 
-
-    frontLeftMotor = hardwareMap.get(DcMotor.class, "leftFront");
-    frontRightMotor = hardwareMap.get(DcMotor.class, "rightFront");
-    backLeftMotor = hardwareMap.get(DcMotor.class, "leftBack");
-    backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
-
-    frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-    frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-    backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-    backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-
-
+    // Put initialization blocks here.
     waitForStart();
-
-    if (isStopRequested()) return;
-
-    while (opModeIsActive()) {
-
-      double y = -gamepad1.left_stick_y;
-      double x = -gamepad1.left_stick_x ;
-      double turn = gamepad1.right_stick_x;
-
-      //input: theta and power
-      //theta is where we want the direction the robot to go
-      //power is (-1) to 1 scale where increasing power will cause the engines to go faster
-      double theta = Math.atan2(y,x);
-      double power = Math.hypot(x,y);
-      double sin = Math.sin(theta - Math.PI/4);
-      double cos = Math.cos(theta - Math.PI/4);
-      //max variable allows to use the motors at it's max power with out disabling it
-      double max = Math.max(Math.abs(sin),Math.abs(cos));
-
-      double leftFront = power * cos/max + turn;
-      double rightFront = power * cos/max - turn;
-      double leftRear = power * sin/max + turn;
-      double rightRear = power * sin/max - turn;
-
-
-      //Prevents the motors exceeding max power thus motors will not seize and act sporadically
-      if ((power + Math.abs(turn))>1){
-        leftFront /= power  + turn;
-        rightFront /= power  - turn;
-        leftRear /= power  + turn;
-        rightRear /= power  - turn;
+    if (opModeIsActive()) {
+      // Put run blocks here.
+      while (opModeIsActive()) {
+        leftBack.setPower(-gamepad1.left_stick_y);
+        leftFront.setPower(-gamepad1.left_stick_y);
+        rightBack.setPower(gamepad1.right_stick_y);
+        rightFront.setPower(gamepad1.right_stick_y);
+        telemetry.update();
       }
-
-
-      frontLeftMotor.setPower(leftFront);
-      backLeftMotor.setPower(leftRear);
-      frontRightMotor.setPower(rightFront);
-      backRightMotor.setPower(rightRear);
     }
   }
 }
-
-
