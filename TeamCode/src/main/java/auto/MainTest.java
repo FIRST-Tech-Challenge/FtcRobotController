@@ -1,3 +1,4 @@
+// MainTest.java
 package auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,5 +21,10 @@ public class MainTest extends LinearOpMode {
             // Add autonomous actions here
             robot.resetAll();
         }
+    }
+
+    // Add the resetPosition method
+    public void resetPosition() {
+        // Base implementation or abstract method
     }
 }
