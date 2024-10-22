@@ -79,16 +79,18 @@ public class MainMovement extends LinearOpMode {
     final float deadZone = 0.1f;
     public float LjoystickX = gamepad1.left_stick_x;
     public float LjoystickY = gamepad1.left_stick_y;
+    public float RjoystickX = gamepad1.right_stick_x;
+    public float RjoystickY = gamepad1.right_stick_y;
     @Override
     public void runOpMode() {
 
-        //psuedocode(:skull:, :fire:, :splash:);
+        //psuedocode (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
         BLDrive  = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
         FLDrive  = hardwareMap.get(DcMotor.class, "FLDrive");
         FRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
 
-        EpicStrafeMovement();
+        legendaryStrafeMovement();
 
     }
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed){
@@ -99,22 +101,21 @@ public class MainMovement extends LinearOpMode {
         FRDrive.setPower(FR*speed);
     }
 
-    private void EpicRotationMovement(){
-        float minSpeed = 0.15f;
-        double addSpeed = Math.sqrt(LjoystickX*LjoystickX +LjoystickY*LjoystickY);
-        float netS = minSpeed + (float)addSpeed; //net speed
+    private void legendaryRotationMovement() {
+        float minRotationSpeed = 0.15f;
+        double addRotationSpeed = Math.sqrt(RjoystickX*RjoystickX + RjoystickY*RjoystickY);
+        float netRS = minRotationSpeed + (float)addRotationSpeed; //net speed
 
 
-        double RangleInRadians = Math.atan2(LjoystickY, LjoystickX);
+        double RangleInRadians = Math.atan2(RjoystickY, RjoystickX);
         double RangleInDegrees = RangleInRadians * (180 / Math.PI);
     }
 
 
-    private void EpicStrafeMovement(){
+    private void legendaryStrafeMovement() {
         float minSpeed = 0.15f;
-        double addSpeed = Math.sqrt(LjoystickX*LjoystickX +LjoystickY*LjoystickY);
+        double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
         float netS = minSpeed + (float)addSpeed; //net speed
-
 
         double LangleInRadians = Math.atan2(LjoystickY, LjoystickX);
         double LangleInDegrees = LangleInRadians * (180 / Math.PI);
