@@ -111,12 +111,16 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         moveBackward(1.5, 0.2);                 //placing block in red zone
        */
 
+        // Neha: You should not start at an angle because getting the exact same angle every time is difficult.
+        // You should count on the robot starting facing the basket.
+        // You don't have to be directly in front of the basket to score. You can approach it from the side.
+        // Update this sequence and we will test it out.
         //moveForward(1);
         //turnLeftToHeading(130);
         //moveForward(0.3);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        moveForward(0.1);
+        moveForward(0.1); // I recommend making the robot drive slowly here. Maybe .2 or .3?
         setClaw(CLAW_MAX);
         setViper(VIPER_MIN);
         setVertical(VERTICAL_MIN);
