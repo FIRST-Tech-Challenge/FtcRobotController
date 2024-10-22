@@ -83,6 +83,7 @@ public class ServoMonkey implements NKNComponent {
     private void runTest(Tests tests) {
         switch (tests) {
             case DO_NOTHING:
+                intakeServoHandler.setServoPower(0);
                 break;
 
             case TARGET_FORWARD:
