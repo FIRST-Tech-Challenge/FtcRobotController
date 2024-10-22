@@ -21,7 +21,7 @@ public class Arm {
 
 
     //Adjustable Constants
-    private double ARM_SPEED = 10; //Ticks
+    private double ARM_SPEED = 30; //Ticks
 
     public double MAX_POWER = 0.5;
 
@@ -33,8 +33,28 @@ public class Arm {
     //Internal variables
     private CRServo armLeft, armRight;
 
+    //Position values 50, wrist, 3200
+
+    private int BASE_HEIGHT = 50; //ticks
+    private int SPECIMIN_HEIGHT = 800; //ticks
+
+    private int REST_HEIGHT = 3250; //ticks
+    private int DEPOSIT_HEIGHT = 3670; //ticks 3670
+
+    enum ArmState{
+        BASE_HEIGHT,
+        SPECIMIN_HEIGHT,
+        REST_HEIGHT,
+        DEPOSIT_HEIGHT
+    }
+
+    private ArmState currentState;
+
+
     private Encoder encoder;
     private PIDController pid;
+
+    private double armAngleOffset = -4;
 
     private int targetPosition;
 
@@ -49,8 +69,9 @@ public class Arm {
         encoder.setDirection(DcMotorSimple.Direction.REVERSE);
         armRight.setDirection(DcMotorSimple.Direction.REVERSE);
         armLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        pid = new PIDController(0,0,0,0);
+        pid = new PIDController(0.002,0,0.0001,0.28);
         pid.setTarget(getTicks());
+        currentState = ArmState.BASE_HEIGHT;
     }
 
     public void changeHeight(double power){
@@ -62,13 +83,43 @@ public class Arm {
         return (int) Math.max( min , Math.min( max , value));
     }
 
-    public double getTicks(){
+    public int getTicks(){
         return encoder.getPositionAndVelocity().position;
     }
 
     public double getForwardFeedValue(){
+//        return 1;
         return Math.cos(Math.toRadians(getRotation()));
     }
+
+    public void goToBase(){
+        currentState = ArmState.BASE_HEIGHT;
+        targetPosition = BASE_HEIGHT;
+        pid.setTarget(targetPosition);
+    }
+
+    public void goToSpecimin(){
+        currentState = ArmState.SPECIMIN_HEIGHT;
+        targetPosition = SPECIMIN_HEIGHT;
+        pid.setTarget(targetPosition);
+    }
+
+    public void goToRest(){
+        currentState = ArmState.REST_HEIGHT;
+        targetPosition = REST_HEIGHT;
+        pid.setTarget(targetPosition);
+    }
+
+    public void goToDeposit(){
+        currentState = ArmState.DEPOSIT_HEIGHT;
+        targetPosition = DEPOSIT_HEIGHT;
+        pid.setTarget(targetPosition);
+    }
+
+    public int getTargetPosition(){
+        return targetPosition;
+    }
+
 
     /**
      * This ensures that the PID loops properly.
@@ -86,7 +137,7 @@ public class Arm {
      * @return [double] The rotational position in DEGREES
      */
     public double getRotation(){
-        return (getTicks() / TICKS_PER_ROTATION) * 360;
+        return (getTicks() / TICKS_PER_ROTATION) * 360  + armAngleOffset;
     }
 
     public PIDController getPIDObject(){

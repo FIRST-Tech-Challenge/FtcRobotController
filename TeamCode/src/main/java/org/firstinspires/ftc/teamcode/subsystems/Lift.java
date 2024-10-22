@@ -30,21 +30,22 @@ public class Lift {
     public enum LiftStates{
         ZERO,
         HOVER,
-        SPECIMIN_INTAKE,
+        SPECIMIN_SCORE,
         HIGH_BAR,
         MAX_HEIGHT
     }
     private LiftStates currentState;
     public int ZERO = 0; //Ticks //SAMPLE INTAKE
-    public int HOVER = 280; //Ticks //Sample HOVER
-    public int SPECIMIN_INTAKE = 590; //Ticks //SPECIMIN INTAKE
-    public int HIGH_BAR = 2700; //Ticks //SPECIMIN DESPOSIT
-    public int MAX_HEIGHT = 4300; //Ticks //SAMPLE DEPOSIT
+    public int HOVER = 220; //Ticks //Sample HOVER
+
+    public int HIGH_BAR = 1700; //Ticks //SPECIMIN DESPOSIT
+    public int SPECIMIN_SCORE = HIGH_BAR-100; //Ticks //SPECIMIN SCORE
+    public int MAX_HEIGHT = 3050; //Ticks //SAMPLE DEPOSIT
 
     public double GRAVITY = 9.8; // N/kgs
     public double ARM_WEIGHT = 1;//kgs
-    public double SLIDE_WEIGHT = 0.3; //kgs
-    public double TICKS_PER_SLIDE = 500; //ticks - Figure out later
+//    public double SLIDE_WEIGHT = 0.3; //kgs
+//    public double TICKS_PER_SLIDE = 500; //ticks - Figure out later
     public double calculatedWeight = GRAVITY * ARM_WEIGHT;
 
     //Internal variables
@@ -80,7 +81,7 @@ public class Lift {
         currentState = LiftStates.ZERO;
 
 
-        pid = new PIDController(0.033,0,0.0004,0);
+        pid = new PIDController(0.009,0,0.0002,0.02);
         pid.setTarget(getPosition());
     }
 
@@ -110,13 +111,13 @@ public class Lift {
         return encoder.getPositionAndVelocity().position;
     }
 
-    public double getTargetPosition(){
+    public int getTargetPosition(){
         return targetPosition;
     }
     /**
      * Sets the motors' target position to [LOW_HEIGHT]
      */
-    public void goToSampleIntake(){
+    public void goToZero(){
         currentState = LiftStates.ZERO;
         this.targetPosition = ZERO;
         pid.setTarget(this.targetPosition);
@@ -131,11 +132,13 @@ public class Lift {
     /**
      * Sets the motors' target position to [MEDIUM_HEIGHT]
      */
-    public void goToSpeciminIntake(){
-        currentState = LiftStates.SPECIMIN_INTAKE;
-        this.targetPosition = SPECIMIN_INTAKE;
+    public void goToSpeciminScore(){
+        currentState = LiftStates.SPECIMIN_SCORE;
+        this.targetPosition = SPECIMIN_SCORE;
         pid.setTarget(this.targetPosition);
     }
+
+
 
     /**
      * Sets the motors' target position to [HIGH_HEIGHT]
@@ -160,7 +163,7 @@ public class Lift {
         return calculatedWeight;
     }
     public void recalculateWeight(){
-        calculatedWeight = GRAVITY * (ARM_WEIGHT + (int) (pid.getTarget()/TICKS_PER_SLIDE) * SLIDE_WEIGHT);
+        calculatedWeight = GRAVITY * ARM_WEIGHT;
     }
 
     /**
@@ -181,11 +184,12 @@ public class Lift {
      * @param Ki [double] Increment to increase Ki by
      * @param Kd [double] Increment to increase Kd by
      */
-    public void adjustPID(double Kp, double Ki, double Kd){
+    public void adjustPID(double Kp, double Ki, double Kd, double Kf){
 //        double[] k = pid.getPIDValues();
         pid.setKp(Kp);
         pid.setKi(Ki);
         pid.setKd(Kd);
+        pid.setKf(Kf);
     }
 
     @SuppressLint("DefaultLocale")

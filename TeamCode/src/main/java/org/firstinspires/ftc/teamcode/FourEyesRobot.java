@@ -46,7 +46,7 @@ public class FourEyesRobot extends Mecanum {
      * the begining of START PHASE
      */
     public void initializePowerStates(){
-        lift.goToSampleIntake();
+        lift.goToZero();
         wrist.setHoverMode();
         activeIntake.deactivateIntake();
         claw.closeClaw();
@@ -63,13 +63,18 @@ public class FourEyesRobot extends Mecanum {
 
     public void intakeSamplePos() {
         lift.goToSubHover();
+        arm.goToBase();
         wrist.setHoverMode();
+
         activeIntake.deactivateIntake();
         currentState = ScoringType.SAMPLE;
     }
 
     public void intakeSpeciminPos(){
-        lift.goToSpeciminIntake();
+//        lift.goToSpeciminIntake();
+
+        lift.goToZero();
+        arm.goToSpecimin();
         wrist.setHoverMode();
         claw.openClaw();
         currentState = ScoringType.SPECIMIN;
@@ -77,12 +82,14 @@ public class FourEyesRobot extends Mecanum {
 
     public void depositSamplePos(){
         lift.goToTopBucket();
+        arm.goToDeposit();
         wrist.setDepositMode();
         currentState = ScoringType.SAMPLE;
     }
 
     public void depositSpeciminPos(){
         lift.goToHighBar();
+        arm.goToBase();
         wrist.setHoverMode();
         currentState = ScoringType.SPECIMIN;
     }
@@ -95,27 +102,34 @@ public class FourEyesRobot extends Mecanum {
         activeIntake.deactivateIntake();
     }
 
+
+    //Right bumper
     public void toggleIntake(){
-        if (lift.getCurrentState() == Lift.LiftStates.HOVER) {
-            switch (wrist.getState()) {
-                case HoverMode:
-                    //Intake Mode
-//                lift.goToSampleIntake();
+        switch(lift.getCurrentState()){
+            //Sample Modes
+            //Currently hovering above sub
+            case HOVER:
+                if (wrist.getState() == Wrist.WristStates.HoverMode) {
+                    //Switch to intake mode
                     wrist.setIntakeMode();
+                    //Activate intake
                     activeIntake.activateIntake();
-                    break;
-                case IntakeMode:
-                    //Hover mode
-                    lift.goToSubHover();
+                }
+                else{
                     wrist.setHoverMode();
                     activeIntake.deactivateIntake();
-                    break;
-                default:
-                    break;
-            }
+                }
+                break;
+            case HIGH_BAR:
+                lift.goToSpeciminScore();
+            case SPECIMIN_SCORE:
+                lift.goToHighBar();
+            default:
+                break;
         }
     }
 
+    //Left bumper
     public void toggleDeposit(){
         switch (currentState){
             case SAMPLE:
@@ -128,6 +142,7 @@ public class FourEyesRobot extends Mecanum {
                 break;
             case SPECIMIN:
                 claw.toggleClaw();
+
                 break;
             default:
                 break;
@@ -136,6 +151,7 @@ public class FourEyesRobot extends Mecanum {
 
     public void updatePID(){
         lift.update();
+        arm.update();
     }
 
 
@@ -159,7 +175,9 @@ public class FourEyesRobot extends Mecanum {
     public String toString(){
         return String.format(
                 "Lift Current Position: %d\n" +
-                        "Lift Target Position: %f\n" +
+                        "Lift Target Position: %d\n" +
+                        "Arm Current Position: %d\n" +
+                        "Arm Target Position: %d\n" +
                         "Active intake powered: %b\n" +
                         "Claw Open: %b\n" +
                         "Wrist State: %s\n" +
@@ -167,6 +185,8 @@ public class FourEyesRobot extends Mecanum {
                 ,
                 lift.getPosition(),
                 lift.getTargetPosition(),
+                arm.getTicks(),
+                arm.getTargetPosition(),
                 activeIntake.isRunning(),
                 claw.getIsOpen(),
                 wrist.getState(),
