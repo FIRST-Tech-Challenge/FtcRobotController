@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.IntoTheDeep24_25.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "AprilTag Detection Only", group = "Autonomous")
-public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
+public class AprilTags extends LinearOpMode {
 
     private VisionPortal visionPortal;
     private DcMotor frontLeft;
@@ -30,6 +29,8 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
     private AprilTagDetection desiredTag = null;
     private static final boolean USE_WEBCAM = true;
     private static final int DESIRED_TAG_ID = -1; // Track any detected AprilTag
+    private static final int TAG_TIMEOUT_THRESHOLD = 100; // Adjust this threshold as needed
+    private int tagTimeoutCounter = 0;
 
     @Override
     public void runOpMode() {
@@ -62,7 +63,10 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
                 }
             }
 
-            if(targetFound) {
+            if (targetFound) {
+                // Reset timeout counter since a tag is detected
+                tagTimeoutCounter = 0;
+
                 // Display tag information in the telemetry
                 telemetry.addData("AprilTag Detected", "ID: %d", desiredTag.id);
                 telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
@@ -70,40 +74,52 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode {
                 telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
                 moveRobot();
 
-            }
-           else {
+            } else {
+                // Increment timeout counter if no tag is detected
+                tagTimeoutCounter++;
                 telemetry.addData("Status", "No AprilTag detected. Searching...");
+
+                // Stop the robot if tag timeout threshold is reached
+                if (tagTimeoutCounter > TAG_TIMEOUT_THRESHOLD) {
+                    stopRobot();
+                    telemetry.addData("Status", "No AprilTag detected. Robot stopped.");
+                }
             }
 
             telemetry.update();
             sleep(10); // Small delay to allow smooth updates
         }
     }
-    private void robotInit()
-    {
+
+    private void robotInit() {
         TemplateJanx janx = new TemplateJanx(hardwareMap);
-        janx.wheelInit("frontRight","backRight","backLeft","frontLeft");
-        frontLeft =  janx.fl;
+        janx.wheelInit("frontRight", "backRight", "backLeft", "frontLeft");
+        frontLeft = janx.fl;
         frontRight = janx.fr;
-        backRight =  janx.br;
-        backLeft =   janx.bl;
+        backRight = janx.br;
+        backLeft = janx.bl;
     }
-    private void moveRobot()
-    {
-        telemetry.addData("trying to move",frontRight.getCurrentPosition());
-        if(desiredTag.ftcPose.range>36)
-        {
-           frontLeft.setPower(-1);
-           frontRight.setPower(-1);
-           backRight.setPower(-1);
-           backLeft.setPower(-1);
-        }
-        else{
+
+    private void moveRobot() {
+        telemetry.addData("trying to move", frontRight.getCurrentPosition());
+        if (desiredTag.ftcPose.range > 36) {
+            frontLeft.setPower(-1);
+            frontRight.setPower(-1);
+            backRight.setPower(-1);
+            backLeft.setPower(-1);
+        } else {
             frontLeft.setPower(0);
             frontRight.setPower(0);
             backRight.setPower(0);
             backLeft.setPower(0);
         }
+    }
+
+    private void stopRobot() {
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        backLeft.setPower(0);
     }
 
     // Initialize the AprilTag detection system
