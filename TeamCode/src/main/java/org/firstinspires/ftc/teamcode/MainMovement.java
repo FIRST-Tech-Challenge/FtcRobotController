@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.sqrt;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -64,7 +66,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
 @Disabled
-public class MovementBase extends LinearOpMode {
+public class MainMovement extends LinearOpMode {
     //move forward: all = cc
     //move backwards all= c
     //strafe left = BL, FR = cc, BR, FL = c
@@ -73,20 +75,55 @@ public class MovementBase extends LinearOpMode {
     private DcMotor FLDrive;
     private DcMotor FRDrive;
 
+    private float deadZone = 0.1f;
+
     @Override
     public void runOpMode() {
 
+        //psuedocode(:skull:, :fire:, :splash:);
         BLDrive  = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
         FLDrive  = hardwareMap.get(DcMotor.class, "FLDrive");
         FRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
-        double padAngle = Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x);; //some math stuff on gary. :splash:
 
-        if(padAngle >= -22.5 && padAngle <= 22.5){
-            setMotorPowers(1,1,1,1);
+        float LjoystickX = gamepad1.left_stick_x;
+        float LjoystickY = gamepad1.left_stick_y;
+
+
+
+        float minSpeed = 0.15f;
+        double addSpeed = Math.sqrt(LjoystickX*LjoystickX +LjoystickY*LjoystickY);
+        float netS = minSpeed + (float)addSpeed;
+
+
+        double angleInRadians = Math.atan2(LjoystickY, LjoystickX);
+        double angleInDegrees = angleInRadians * (180 / Math.PI);
+
+            //check if in dead zone
+        if (!(Math.abs(LjoystickX) <= deadZone) && !(Math.abs(LjoystickY) <= deadZone)) {
+            //if not in dead zone
+            if (angleInDegrees >= -22.5 && angleInDegrees <= 22.5) {
+                // right quadrant
+            } else if (angleInDegrees > 22.5 && angleInDegrees < 67.5) {
+                // top-right quadrant
+            } else if (angleInDegrees > -67.5 && angleInDegrees < -22.5) {
+                // bottom-right quadrant
+            } else if (angleInDegrees >= 67.5 && angleInDegrees <= 112.5) {
+                // top quadrant
+            } else if (angleInDegrees > -112.5 && angleInDegrees < -67.5) {
+                // bottom quadrant
+            } else if (angleInDegrees > 112.5 && angleInDegrees < 157.5) {
+                // top-left quadrant
+            } else if (angleInDegrees > -157.5 && angleInDegrees < -112.5) {
+                // bottom-left quadrant
+            } else if (angleInDegrees >= 157.5 || angleInDegrees <= -157.5) {
+                // left quadrant
+            }
+
+        } else {
+            //if in dead zone
+            angleInDegrees = 0;
         }
-
-
 
     }
     private void setMotorPowers(float BL, float BR, float FL, float FR){
