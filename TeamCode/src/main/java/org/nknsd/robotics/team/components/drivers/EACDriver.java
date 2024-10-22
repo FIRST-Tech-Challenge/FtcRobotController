@@ -112,7 +112,9 @@ public class EACDriver implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-
+        telemetry.addData("Rot Target", rotationHandler.targetRotationPosition.name());
+        telemetry.addData("Ext Target", extensionHandler.targetPosition().name());
+        telemetry.addData("Servo State", servoHandler.getServoPower());
     }
 
     public void link(GamePadHandler gamePadHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeServoHandler servoHandler) {
