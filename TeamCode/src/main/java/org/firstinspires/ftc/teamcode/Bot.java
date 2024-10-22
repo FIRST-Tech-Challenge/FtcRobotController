@@ -35,10 +35,15 @@ public class Bot {
 
 
     //Statistics for measurements
-    private static final int TICKS_PER_REV = 1440;
-    private static final double ARM_GEAR_RATIO = (double) 28 /8;
-    private static final double DISTANCE_PER_REV = 10.0;
     private static final int MAX_TICK_EXT = -3595;
+
+    private static final int LEFT_LIFT_MAX = 7255;
+    private static final int LEFT_LIFT_MIN = -101;
+    private static final int RIGHT_LIFT_MAX = 7302;
+    private static final int RIGHT_LIFT_MIN = -10;
+
+    private static final int MAX_PIVOT = 2560;
+    private static final int MIN_PIVOT = -670;
 
 
     //Drive Encoder Stats
@@ -51,8 +56,6 @@ public class Bot {
     static final double COUNTS_PER_DEGREE = COUNTS_PER_MOTOR_REV/360;
     static final double INCHES_PER_DEGREE = DISTANCE_PER_ENCODER * COUNTS_PER_DEGREE;
 
-    private static final double MAX_PIVOT = 2560;
-    private static final double MIN_PIVOT = -670;
 
     private static final double MAX_DISTANCE = 25.5;
     private static final double TICKS_PER_INCH_EXT = MAX_TICK_EXT / MAX_DISTANCE;
@@ -476,14 +479,26 @@ public class Bot {
      * Sequence for lifting bot for low hang
      */
     public void liftLow(){
-        //TODO: Lift up -> pivot -> Lift down
+        this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
+        this.setPushoff(1.0); //TEST TO MAKE SURE THIS GOES ALL THE WAY
+        this.encoderLift(RIGHT_LIFT_MIN, LEFT_LIFT_MIN);
+
     }
 
     /**
      * Sequence for lifting bot for high hang
      */
     public void liftHigh(){
-        //TODO: Lift up -> pivot arm facing into cage -> extend arm move cg towards back (bot should tilt towards the cage) -> lift down
+        this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
+        opMode.sleep(1000);
+        this.autoPivotArm(MAX_PIVOT, 0.75);
+        opMode.sleep(1000);
+        this.setExtendPos(5.0);
+        opMode.sleep(1000);
+        this.encoderLift(RIGHT_LIFT_MIN, LEFT_LIFT_MIN);
+        opMode.sleep(1000);
+        this.setExtendPos(0.0);
+        opMode.sleep(1000);
     }
 
     /**
@@ -611,6 +626,25 @@ public class Bot {
 
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void encoderLift(int rPos, int lPos){
+        rightLift.setTargetPosition(rPos);
+        leftLift.setTargetPosition(lPos);
+
+        rightLift.setPower(0.75);
+        leftLift.setPower(0.75);
+
+        while(opMode.opModeIsActive() && extendArmMotor.isBusy()){
+            opMode.telemetry.addData("Left Lift Pos: ", leftLift.getCurrentPosition());
+            opMode.telemetry.addData("Right Lift Pos: ", rightLift.getCurrentPosition());
+        }
+
+        rightLift.setPower(0);
+        leftLift.setPower(0);
+
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }

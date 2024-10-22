@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *      Up Pad - Pushoff reset
  *      Right Trigger = raise lift
  *      Left Trigger = lower lift
+ *      A Button - Lift low sequence [1 stage]
+ *      B Button - Lift High sequence [2 stage]
  *      
  *  GAMEPAD2 - Arm, Arm Pivot, Intake
  *      Right Trigger - Intake
@@ -41,11 +43,10 @@ public class Teleop extends LinearOpMode {
         private static final double MIN_PIVOT = -670;
         private static final double MIN_EXTEND = 0;
 
-        //TODO: Change Max and Min values for new lift rig
-        private static final double LEFT_LIFT_MAX = -6160;
-        private static final double LEFT_LIFT_MIN = 22;
-        private static final double RIGHT_LIFT_MAX = -6270;
-        private static final double RIGHT_LIFT_MIN = -62;
+        private static final int LEFT_LIFT_MAX = 7255;
+        private static final int LEFT_LIFT_MIN = -101;
+        private static final int RIGHT_LIFT_MAX = 7302;
+        private static final int RIGHT_LIFT_MIN = -10;
 
 
     @Override
@@ -65,12 +66,11 @@ public class Teleop extends LinearOpMode {
             double leftLiftTrigger = gamepad1.left_trigger; //leftTrigger is lowering the lift
 
 
-            //when x button is pressed, rotates one way
+
             if (gamepad2.right_trigger > 0.01) {
                 bot.setIntakePosition(-1.0);
             }
-            //when y button is pressed, rotates the opposite way
-            else if (gamepad2.left_bumper) {
+            else if (gamepad2.right_bumper) {
                 bot.setIntakePosition(1.0);
             }
             //when no button is pressed, nothing rotates
@@ -85,12 +85,13 @@ public class Teleop extends LinearOpMode {
             double backRightPower = y + x - pivot;
 
             if(rightLiftTrigger > 0.1 &&
-                    (bot.getLeftLiftPos() < LEFT_LIFT_MIN)&&(bot.getRightLiftPos() < RIGHT_LIFT_MIN)){
-                bot.setLift(1.0);//this makes it go down
+                    
+                    (bot.getRightLiftPos() < RIGHT_LIFT_MAX && bot.getLeftLiftPos() < LEFT_LIFT_MAX)){
+                bot.setLift(1.0);//this makes it go up
             }
             else if(leftLiftTrigger > 0.1 &&
-                    (bot.getLeftLiftPos() > LEFT_LIFT_MAX)&&(bot.getRightLiftPos() > RIGHT_LIFT_MAX)){
-                bot.setLift(-1.0);//this makes it go up
+                    bot.getRightLiftPos() > RIGHT_LIFT_MIN && bot.getLeftLiftPos() > LEFT_LIFT_MIN){
+                bot.setLift(-1.0);//this makes it go down
             }
             else
             {
@@ -136,6 +137,17 @@ public class Teleop extends LinearOpMode {
             else {
                 bot.setPushoff(0.0);
             }
+
+            //lift sequence buttons
+            //TODO THIS DOES NOT WORK
+            /*
+            if(gamepad1.a){
+                bot.liftLow();
+            } else if (gamepad1.b) {
+                bot.liftHigh();
+            }
+             */
+
             //Telemetry Data
             telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
             telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
