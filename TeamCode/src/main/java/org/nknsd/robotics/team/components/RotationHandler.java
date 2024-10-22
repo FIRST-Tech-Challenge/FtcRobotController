@@ -23,6 +23,7 @@ public class RotationHandler implements NKNComponent {
     double diff;
     long targetTime = 0;
     double current;
+    private ExtensionHandler extensionHandler;
 
 
     public RotationHandler(String motorName, double threshold, double P_CONSTANT){
@@ -31,8 +32,9 @@ public class RotationHandler implements NKNComponent {
         this.P_CONSTANT = P_CONSTANT;
     }
 
-    public void link(PotentiometerHandler potHandler){
+    public void link(PotentiometerHandler potHandler, ExtensionHandler extensionHandler){
         this.potHandler = potHandler;
+        this.extensionHandler = extensionHandler;
     }
 
 
@@ -82,9 +84,11 @@ public class RotationHandler implements NKNComponent {
         telemetry.addData("Motor Power", motor.getPower());
 
     }
+
     public void setTarget(double target){
-        this.target = target;
+        if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.RESTING) {this.target = target;}
     }
+
     private double controlLoop(double current){
         diff = (target - current);
         if (Math.abs(diff) <= threshold) {
