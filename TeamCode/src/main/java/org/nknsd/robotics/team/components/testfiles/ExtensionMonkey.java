@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
-import org.nknsd.robotics.team.components.ArmRotator;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 
 import java.util.concurrent.TimeUnit;

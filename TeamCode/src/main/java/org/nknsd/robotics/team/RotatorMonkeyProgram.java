@@ -2,13 +2,11 @@ package org.nknsd.robotics.team;
 
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.components.ArmRotator;
-import org.nknsd.robotics.team.components.ExtensionHandler;
-import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.PotentiometerHandler;
-import org.nknsd.robotics.team.components.WheelDriver;
-import org.nknsd.robotics.team.components.WheelHandler;
-import org.nknsd.robotics.team.components.testfiles.RotatorMonkey;
+import org.nknsd.robotics.team.components.testfiles.RotationMonkey;
+import org.nknsd.robotics.team.components.ExtensionHandler;
+import org.nknsd.robotics.team.components.RotationHandler;
+
 
 import java.util.List;
 
@@ -25,17 +23,17 @@ public class RotatorMonkeyProgram extends NKNProgram {
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
 
-        ArmRotator armRotator = new ArmRotator("motorArmRotate", 0.05, 0.9);
-        components.add(armRotator);
-        telemetryEnabled.add(armRotator);
+        RotationHandler rotationHandler = new RotationHandler("motorArmRotate", 0.05, 0.9);
+        components.add(rotationHandler);
+        telemetryEnabled.add(rotationHandler);
 
-        RotatorMonkey rotatorMonkey = new RotatorMonkey();
-        rotatorMonkey.link(armRotator);
+        RotationMonkey rotatorMonkey = new RotationMonkey();
+        rotatorMonkey.link(rotationHandler);
         components.add(rotatorMonkey);
 
         // Linking
-        armRotator.link(potentiometerHandler, extensionHandler);
-        extensionHandler.link(armRotator);
+        rotationHandler.link(potentiometerHandler, extensionHandler);
+        extensionHandler.link(rotationHandler);
         telemetryEnabled.add(rotatorMonkey);
     }
 }

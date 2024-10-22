@@ -13,7 +13,7 @@ public class ExtensionHandler implements NKNComponent {
     private final boolean doInvertMotor;
     private final double motorPower;
     private DcMotor motor;          // extender motor
-    private ArmRotator armRotator;  //Connects to the arm rotator to read from it
+    private RotationHandler rotationHandler;  //Connects to the arm rotator to read from it
     private static double SAFE_ARM_ROTATION_VALUE = 1.5;
 
     private ExtensionPositions target = ExtensionPositions.RESTING;
@@ -21,22 +21,22 @@ public class ExtensionHandler implements NKNComponent {
     public enum ExtensionPositions {
         RESTING(0) {
             @Override
-            boolean canGoToPosition(ArmRotator armRotator) {
+            boolean canGoToPosition(RotationHandler rotationHandler) {
                 return true;
             }
         },
 
         COLLECT(10) {
             @Override
-            boolean canGoToPosition(ArmRotator armRotator) {
+            boolean canGoToPosition(RotationHandler rotationHandler) {
                 return true;
             }
         },
 
         HIGH_BASKET(3020) {
             @Override
-            boolean canGoToPosition(ArmRotator armRotator) {
-                return armRotator.target < ExtensionHandler.SAFE_ARM_ROTATION_VALUE;
+            boolean canGoToPosition(RotationHandler rotationHandler) {
+                return rotationHandler.target < ExtensionHandler.SAFE_ARM_ROTATION_VALUE;
             }
         }; //true value is ~3000
 
@@ -46,7 +46,7 @@ public class ExtensionHandler implements NKNComponent {
             this.position = position;
         }
 
-        abstract boolean canGoToPosition(ArmRotator armRotator);
+        abstract boolean canGoToPosition(RotationHandler rotationHandler);
     }
 
     public ExtensionHandler(String extenderName, boolean doInvertMotor, double motorPower) {
@@ -102,15 +102,15 @@ public class ExtensionHandler implements NKNComponent {
     }
 
     public void gotoPosition(ExtensionPositions extensionPosition) {
-        if (extensionPosition.canGoToPosition(armRotator)) {motor.setTargetPosition(extensionPosition.position); target = extensionPosition;}
+        if (extensionPosition.canGoToPosition(rotationHandler)) {motor.setTargetPosition(extensionPosition.position); target = extensionPosition;}
     }
 
     public ExtensionPositions targetPosition() {
         return target;
     }
 
-    public void link(ArmRotator armRotator) {
-        this.armRotator = armRotator;
+    public void link(RotationHandler rotationHandler) {
+        this.rotationHandler = rotationHandler;
     }
 
 }
