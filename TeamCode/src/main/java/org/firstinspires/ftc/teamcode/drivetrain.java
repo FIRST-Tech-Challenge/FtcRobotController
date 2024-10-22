@@ -171,6 +171,7 @@ public class drivetrain {
         double circumference = Math.PI * WheelDiameter;
         double rotations = distance / circumference;
         int pulses = (int) (rotations * PULSE_PER_REVOLUTION * 1);
+        opmode.telemetry.addData("test", pulses);
         return pulses;
     }
 
