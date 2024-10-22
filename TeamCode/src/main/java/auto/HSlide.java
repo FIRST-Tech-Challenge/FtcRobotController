@@ -21,7 +21,6 @@ public class HSlide extends MainTest{
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
     }
 
     public void goToPosition(int position) {
