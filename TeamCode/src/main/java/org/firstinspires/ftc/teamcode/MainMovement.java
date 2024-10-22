@@ -77,7 +77,8 @@ public class MainMovement extends LinearOpMode {
     private DcMotor FLDrive;
     private DcMotor FRDrive;
     final float deadZone = 0.1f;
-
+    public float LjoystickX = gamepad1.left_stick_x;
+    public float LjoystickY = gamepad1.left_stick_y;
     @Override
     public void runOpMode() {
 
@@ -87,14 +88,26 @@ public class MainMovement extends LinearOpMode {
         FLDrive  = hardwareMap.get(DcMotor.class, "FLDrive");
         FRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
 
-        float LjoystickX = gamepad1.left_stick_x;
-        float LjoystickY = gamepad1.left_stick_y;
+        EpicStrafeMovement();
+
+    }
+    private void setMotorPowers(float BL, float BR, float FL, float FR, float speed){
+        //set all the motor powers to the floats defined
+        BLDrive.setPower(BL*speed);
+        BRDrive.setPower(BR*speed);
+        FLDrive.setPower(FL*speed);
+        FRDrive.setPower(FR*speed);
+    }
+
+    private void EpicRotationMovement(){
+
+    }
 
 
-
+    private void EpicStrafeMovement(){
         float minSpeed = 0.15f;
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX +LjoystickY*LjoystickY);
-        float netS = minSpeed + (float)addSpeed;
+        float netS = minSpeed + (float)addSpeed; //net speed
 
 
         double angleInRadians = Math.atan2(LjoystickY, LjoystickX);
@@ -104,42 +117,52 @@ public class MainMovement extends LinearOpMode {
         if (!(Math.abs(LjoystickX) <= deadZone) && !(Math.abs(LjoystickY) <= deadZone)) {
             //if not in dead zone
             if (angleInDegrees >= -22.5 && angleInDegrees <= 22.5) {
-                // right quadrant
+                // right quadrant, move right
+                setMotorPowers(-1,1,1,-1,netS);
                 System.out.println("Left Stick in RIGHT quadrant");
+
             } else if (angleInDegrees > 22.5 && angleInDegrees < 67.5) {
                 // top-right quadrant
+                setMotorPowers(0,1,1,0,netS);
                 System.out.println("LeftStick in TOP-RIGHT quadrant");
+
             } else if (angleInDegrees > -67.5 && angleInDegrees < -22.5) {
                 // bottom-right quadrant
+                setMotorPowers(-1,0,0,-1,netS);
                 System.out.println("Left Stick in BOTTOM-RIGHT quadrant");
+
             } else if (angleInDegrees >= 67.5 && angleInDegrees <= 112.5) {
                 // top quadrant
+                setMotorPowers(1,1,1,1,netS);
                 System.out.println("Left Stick in TOP quadrant");
+
             } else if (angleInDegrees > -112.5 && angleInDegrees < -67.5) {
                 // bottom quadrant
+                setMotorPowers(-1,-1,-1,-1,netS);
                 System.out.println("Left Stick in BOTTOM quadrant");
+
             } else if (angleInDegrees > 112.5 && angleInDegrees < 157.5) {
                 // top-left quadrant
+                setMotorPowers(1,0,0,1,netS);
                 System.out.println("Left Stick in TOP-LEFT quadrant");
+
             } else if (angleInDegrees > -157.5 && angleInDegrees < -112.5) {
                 // bottom-left quadrant
+                setMotorPowers(0,-1,-1,0,netS);
                 System.out.println("Left Stick in BOTTOM-LEFT quadrant");
+
             } else if (angleInDegrees >= 157.5 || angleInDegrees <= -157.5) {
                 // left quadrant
+                setMotorPowers(1,-1,-1,1,netS);
                 System.out.println("Left Stick in LEFT quadrant");
+
             }
 
         } else {
             //if in dead zone
+            setMotorPowers(0,0,0,0,0);
             System.out.println("Left Stick in dead zone");
         }
 
-    }
-    private void setMotorPowers(float BL, float BR, float FL, float FR){
-        //set all the motor powers to the floats defined
-        BLDrive.setPower(BL);
-        BRDrive.setPower(BR);
-        FLDrive.setPower(FL);
-        FRDrive.setPower(FR);
     }
 }
