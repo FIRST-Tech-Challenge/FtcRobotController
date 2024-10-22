@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.chassis;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class MegalodogChassis {
@@ -42,34 +43,7 @@ public class MegalodogChassis {
         FrontLeftWheel = hardwareMap.get(DcMotor.class, "FrontLeftWheel");
         BackLeftWheel = hardwareMap.get(DcMotor.class, "BackLeftWheel");
 
-        // Set the direction of the wheels.  Because of how the wheels are installed, one side
-        //   has to be reverse.
-        FrontRightWheel.setDirection(DcMotor.Direction.FORWARD);
-        BackRightWheel.setDirection(DcMotor.Direction.FORWARD);
-        FrontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
-        BackLeftWheel.setDirection(DcMotor.Direction.REVERSE);
-
-        // > Set motors' ZeroPower behavior
-        FrontLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FrontRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BackLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BackRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // > Clear Encoders of prior data
-        FrontLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontLeftWheel.setTargetPosition(0);
-        FrontRightWheel.setTargetPosition(0);
-        BackLeftWheel.setTargetPosition(0);
-        BackRightWheel.setTargetPosition(0);
-
-        // > Set some motors' modes different from RUN_WITHOUT_ENCODER (default)
-        FrontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ResetWheelConfig();
 
     }
 
@@ -82,10 +56,10 @@ public class MegalodogChassis {
 
         // Set the direction of the wheels.  Because of how the wheels are installed, one side
         //   has to be reverse.
-        FrontRightWheel.setDirection(DcMotor.Direction.REVERSE);
-        BackRightWheel.setDirection(DcMotor.Direction.REVERSE);
-        FrontLeftWheel.setDirection(DcMotor.Direction.FORWARD);
-        BackLeftWheel.setDirection(DcMotor.Direction.FORWARD);
+        FrontRightWheel.setDirection(DcMotor.Direction.FORWARD);
+        BackRightWheel.setDirection(DcMotor.Direction.FORWARD);
+        FrontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
+        BackLeftWheel.setDirection(DcMotor.Direction.REVERSE);
 
         // > Set motors' ZeroPower behavior
         FrontLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

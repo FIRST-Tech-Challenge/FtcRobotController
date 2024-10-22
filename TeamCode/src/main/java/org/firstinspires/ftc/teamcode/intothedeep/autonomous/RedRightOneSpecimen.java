@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
-
+import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
@@ -21,7 +21,8 @@ public class RedRightOneSpecimen extends LinearOpMode {
 
         // this lets us see how long the op mode has run
 
-        MegalodogChassis myBot = new MegalodogChassis(this);
+        Megalodog myBot = new Megalodog(this);
+        myBot.InitializeDevices();
         // Put code that should run during initialization HERE in this area
 
         // Wait for the start button to be pressed on the driver station
@@ -29,7 +30,7 @@ public class RedRightOneSpecimen extends LinearOpMode {
 
         if (opModeIsActive()) {
             // Put code that should run during the active mode HERE in this area
-
+            myBot.InitializePositions();
             // 1: Strafe left
             myBot.StrafeLeft(-400,.3,1000);
             // 2: Move forward

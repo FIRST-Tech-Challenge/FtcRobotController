@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.EventTracker;
-
+// switch fast and slow drive
 @TeleOp
 public class Teleop_Practice extends LinearOpMode {
     private int extensionSliderMax = 3000;
@@ -56,8 +56,8 @@ public class Teleop_Practice extends LinearOpMode {
     private double Rotate;
     private double FastStraight;
     private double FastStrafe;
-    private double highSpeedDrive = 0.7;
-    private double lowSpeedDrive = 0.4;
+    private double highSpeedDrive = 0.6;
+    private double lowSpeedDrive = 0.3;
     private int liftGoToPosition = 0;
 
     private ElapsedTime currentTimer;
@@ -281,7 +281,7 @@ public class Teleop_Practice extends LinearOpMode {
         Lift = hardwareMap.get(DcMotor.class, "Lift");
         ExtensionLimit = hardwareMap.get(TouchSensor.class, "ExtensionLimit");
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
-        LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit2");
+        LiftLimit2 = hardwareMap.get(TouchSensor.class, "LiftLimit2");
 
         resetExtensionSlider(3000);
 
