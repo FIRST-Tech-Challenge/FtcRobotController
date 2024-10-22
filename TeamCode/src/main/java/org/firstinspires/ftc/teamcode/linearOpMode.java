@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,14 +10,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class linearOpMode extends LinearOpMode {
   private DcMotor frontLeftMotor = null, backLeftMotor = null;
   private DcMotor frontRightMotor = null, backRightMotor = null;
+  private DcMotor slideExtension = null;
+  private  DcMotor slideAbduction = null;
 
-  private DcMotor SlideExtension = null;
-  private  DcMotor SlideAbduction = null;
-
-//  private  DcMotor MaybeIntake = null;
-  private Servo ClawIntake = null;
-
-
+  //  private  DcMotor MaybeIntake = null;
+  private Servo clawIntake = null;
+  private double clawIntakePostion = 1;
 
   @Override
   public void runOpMode(){
@@ -31,12 +29,14 @@ public class linearOpMode extends LinearOpMode {
     backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
 
     //DcMotors for Linear slide
-    SlideExtension = hardwareMap.get(DcMotor.class, "SlideExtend");
-    SlideAbduction = hardwareMap.get(DcMotor.class, "SlideAbd");
+    slideExtension = hardwareMap.get(DcMotor.class, "slideExtend");
+    slideAbduction = hardwareMap.get(DcMotor.class, "slideAbd");
 
+    slideExtension.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+    slideAbduction.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
     //Takers
-    ClawIntake = hardwareMap.get(Servo.class, "ClawIntake");
+    clawIntake = hardwareMap.get(Servo.class, "clawIntake");
 
 //    MaybeIntake = hardwareMap.get(DcMotor.class, "intake");
     //Setting the direction for the motor on where to rotate
@@ -48,21 +48,15 @@ public class linearOpMode extends LinearOpMode {
     backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
     //claw
-    ClawIntake.setDirection(Servo.Direction.REVERSE);
-
+    clawIntake.setDirection(Servo.Direction.REVERSE);
 
     //linear slide
-    SlideExtension.setDirection(DcMotor.Direction.FORWARD);
-    SlideAbduction.setDirection(DcMotor.Direction.FORWARD);
-
-
-
+    slideExtension.setDirection(DcMotor.Direction.FORWARD);
+    slideAbduction.setDirection(DcMotor.Direction.FORWARD);
 
     waitForStart();
 
-
     if (isStopRequested()) return;
-
 
     while (opModeIsActive()) {
 
@@ -77,13 +71,14 @@ public class linearOpMode extends LinearOpMode {
 
        */
 
+      // linear slide controls
+      double slideExtendPower = gamepad2.left_stick_y;
+      double slideAbdPower = gamepad2.right_stick_y;
 
-      double ClawIntakePostion = 1;
-
+      // drive train controls
       double y = -gamepad1.left_stick_y;
       double x = -gamepad1.left_stick_x ;
       double turn = gamepad1.right_stick_x;
-
 
       //input: theta and power
       //theta is where we want the direction the robot to go
@@ -95,13 +90,10 @@ public class linearOpMode extends LinearOpMode {
       //max variable allows to use the motors at its max power with out disabling it
       double max = Math.max(Math.abs(sin),Math.abs(cos));
 
-
       double leftFront = power * cos/max + turn;
       double rightFront = power * cos/max - turn;
       double leftRear = power * sin/max + turn;
       double rightRear = power * sin/max - turn;
-
-
 
       //Prevents the motors exceeding max power thus motors will not seize and act sporadically
       if ((power + Math.abs(turn))>1){
@@ -112,31 +104,32 @@ public class linearOpMode extends LinearOpMode {
       }
 
       //if A on the controller is pressed it will check if the claw is closed
-      if(gamepad1.a){
+      if(gamepad2.a){
         //if it's closed
-        if(ClawIntakePostion == 1){
-            //Set claw position to open
-            ClawIntakePostion = 0;
+        if(clawIntakePostion == 1){
+          //Set claw position to open
+          clawIntakePostion = 0;
         }
         //if it's open
         else{
           //Set claw position to closed
-          ClawIntakePostion = 1;
+          clawIntakePostion = 1;
         }
       }
 
-
-      //Power to the wheels
+      // Power to the wheels
       frontLeftMotor.setPower(leftFront);
       backLeftMotor.setPower(leftRear);
       frontRightMotor.setPower(rightFront);
       backRightMotor.setPower(rightRear);
 
+      // Power to the arm
+      slideAbduction.setPower(slideAbdPower);
+      slideExtension.setPower(slideExtendPower);
 
-      //Power to the Claw
-      ClawIntake.setPosition(ClawIntakePostion);
+      // Power to the Claw
+      clawIntake.setPosition(clawIntakePostion);
 
-     
     }
   }
 }
