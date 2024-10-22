@@ -106,13 +106,13 @@ public class EACmonkey implements NKNComponent {
                 extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.HIGH_BASKET);
                 break;
             case ROTATION_0:
-                rotationHandler.setTarget(1.4);
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.PICKUP);
                 break;
             case ROTATION_0_5:
-                rotationHandler.setTarget(1.7);
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.PREPICKUP);
                 break;
             case ROTATION_1:
-                rotationHandler.setTarget(2.4);
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.HIGH);
                 break;
         }
     }

@@ -16,7 +16,7 @@ public class RotationHandler implements NKNComponent {
     PotentiometerHandler potHandler;
     private final String motorName;
     private DcMotor motor;
-    double target;
+    public RotationPositions targetRotationPosition;
 
     final double threshold;
     final double P_CONSTANT;
@@ -24,6 +24,18 @@ public class RotationHandler implements NKNComponent {
     long targetTime = 0;
     double current;
     private ExtensionHandler extensionHandler;
+
+    public enum RotationPositions {
+        PICKUP(1.3),
+        PREPICKUP(1.6),
+        HIGH(2.4),
+        RESTING(2.6);
+
+        public final double target;
+        RotationPositions(double target) {
+            this.target = target;
+        }
+    }
 
 
     public RotationHandler(String motorName, double threshold, double P_CONSTANT){
@@ -79,18 +91,18 @@ public class RotationHandler implements NKNComponent {
     @Override
     public void doTelemetry(Telemetry telemetry) {
         telemetry.addData("armPosition",current);
-        telemetry.addData("armTarget",target);
+        telemetry.addData("armTarget", targetRotationPosition.target);
         telemetry.addData("armDifference", diff);
         telemetry.addData("Motor Power", motor.getPower());
 
     }
 
-    public void setTarget(double target){
-        if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.RESTING) {this.target = target;}
+    public void setTargetRotationPosition(RotationPositions targetRotationPosition){
+        if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.RESTING) {this.targetRotationPosition = targetRotationPosition;}
     }
 
     private double controlLoop(double current){
-        diff = (target - current);
+        diff = (targetRotationPosition.target - current);
         if (Math.abs(diff) <= threshold) {
             return 0;
         }

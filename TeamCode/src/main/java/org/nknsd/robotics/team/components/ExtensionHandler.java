@@ -14,7 +14,7 @@ public class ExtensionHandler implements NKNComponent {
     private final double motorPower;
     private DcMotor motor;          // extender motor
     private RotationHandler rotationHandler;  //Connects to the arm rotator to read from it
-    private static double SAFE_ARM_ROTATION_VALUE = 1.5;
+    private static final double SAFE_ARM_ROTATION_VALUE = 1.5;
 
     private ExtensionPositions target = ExtensionPositions.RESTING;
 
@@ -36,7 +36,7 @@ public class ExtensionHandler implements NKNComponent {
         HIGH_BASKET(3020) {
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
-                return rotationHandler.target < ExtensionHandler.SAFE_ARM_ROTATION_VALUE;
+                return rotationHandler.targetRotationPosition.target < ExtensionHandler.SAFE_ARM_ROTATION_VALUE;
             }
         }; //true value is ~3000
 

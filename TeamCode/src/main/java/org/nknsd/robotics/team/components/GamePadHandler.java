@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 public class GamePadHandler implements NKNComponent {
     // TreeMap of the button to list for, and the event to trigger based on that
@@ -21,8 +20,10 @@ public class GamePadHandler implements NKNComponent {
         String searchKey = button + ":" + gamepadNumber;
 
         for (String s : eventListeners.subMap(searchKey, searchKey + ";").keySet()) {
-            //If the key has singular, and we're not held, run. If the key doesn't have singular, run
-            if (s.contains(":singular:") && !isHeld || !s.contains(":singular:")) {
+            // If we're not held, we run either way
+            // same with singular, if we're not singular, we run either way
+            // if either is true, the other must be false to run
+            if (!s.contains(":singular:") || !isHeld) {
                 eventListeners.get(s).run();
             }
         }
@@ -67,8 +68,6 @@ public class GamePadHandler implements NKNComponent {
 
         return true;
     }
-
-    private long lastLoop = 0;
 
     @Override
     public void init_loop(ElapsedTime runtime, Telemetry telemetry) {
@@ -188,69 +187,69 @@ public class GamePadHandler implements NKNComponent {
     public enum GamepadButtons {
         LEFT_TRIGGER {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return (gamepad.left_trigger > 0.5);
             }
         }, RIGHT_TRIGGER {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return (gamepad.right_trigger > 0.5);
             }
         }, LEFT_BUMPER {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.left_bumper;
             }
         }, RIGHT_BUMPER {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.right_bumper;
             }
         }, DPAD_LEFT {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.dpad_left;
             }
         }, DPAD_DOWN {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.dpad_down;
             }
         }, DPAD_RIGHT {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.dpad_right;
             }
         }, DPAD_UP {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.dpad_up;
             }
         }, A {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.a;
             }
         }, B {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.b;
             }
         }, X {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.x;
             }
         }, Y {
             @Override
-            boolean detect(Gamepad gamepad) {
+            public boolean detect(Gamepad gamepad) {
                 return gamepad.y;
             }
         };
 
         boolean isHeld1 = false; // Modified by the checkButtons function to store if the button was just pressed or if it has been held down
         boolean isHeld2 = false; // Having two isHeld variables allows us to seperate the buttons between the gamepads.. probably a better way tho
-        abstract boolean detect(Gamepad gamepad);
+        public abstract boolean detect(Gamepad gamepad);
     }
 
     public enum GamepadSticks {
