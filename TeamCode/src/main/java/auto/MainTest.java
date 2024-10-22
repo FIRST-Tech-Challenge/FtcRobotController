@@ -9,12 +9,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class MainTest extends LinearOpMode {
     private Robot robot;
     private DcMotor slideH;
+    private DcMotor slideV;
 
     @Override
     public void runOpMode() {
         robot = new Robot();
         slideH = hardwareMap.get(DcMotor.class, "slideH");
         HSlide sliderH = new HSlide(slideH);
+
+        slideV = hardwareMap.get(DcMotor.class, "slideV");
+        VSlide sliderV = new VSlide(slideV);
 
 
         telemetry.addData("Status", "Initialized");
