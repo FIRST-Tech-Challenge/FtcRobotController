@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.drivetrain;
 import org.firstinspires.ftc.teamcode.GamepadStates;
 
-@TeleOp(name="Teleop", group = "Teleop")
+@TeleOp(name = "Teleop", group = "Teleop")
 public class teleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,7 +35,7 @@ public class teleop extends LinearOpMode {
         //finds and sorts distance from object
         double DistanceFrom = Distance.getDistance(DistanceUnit.CM);
         // Tell us distance from object
-        telemetry.addData("Distance",  DistanceFrom);
+        telemetry.addData("Distance", DistanceFrom);
         telemetry.update();
 
         Limelight3A limelight;
@@ -63,7 +63,7 @@ public class teleop extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             newGamePad1.updateState();
             newGamePad2.updateState();
 
@@ -80,7 +80,9 @@ public class teleop extends LinearOpMode {
             } else if (gamepad1.right_stick_x < -.4) {
                 Drive.turnLeft(speed);
             } else {
-                Drive.stop();
+                if (!newGamePad2.a.state) {
+                    Drive.stop();
+                }
             }
 
             if (newGamePad1.right_bumper.released) {
@@ -93,16 +95,38 @@ public class teleop extends LinearOpMode {
                 }
             }
 
-//            LLResult result = limelight.getLatestResult();
-//            if (result != null) {
-//                if (result.isValid()) {
-//                    Pose3D botpose = result.getBotpose();
-//                    telemetry.addData("tx", result.getTx());
-//                    telemetry.addData("ty", result.getTy());
-//                    telemetry.addData("Botpose", botpose.toString());
-//                    telemetry.update();
-//                }
-//            }
+            LLResult result = limelight.getLatestResult();
+            if (result != null) {
+                if (result.isValid()) {
+                    if (newGamePad2.a.state) {
+                        if (result.getTx() > 10) {
+                            while (result.getTx() > 10) {
+                                Drive.forward(.25);
+                            }
+                            Drive.stop();
+                        }
+                        if (result.getTy() > 10) {
+                            while (result.getTy() > 10) {
+                                Drive.strafeRight(.25);
+                            }
+                            Drive.stop();
+                        } else if (result.getTy() < -10) {
+                            while (result.getTy() < -10) {
+                                Drive.strafeLeft(.25);
+                            }
+                            Drive.stop();
+                        }
+                    } else {
+                        Drive.stop();
+                    }
+                    Pose3D botpose = result.getBotpose();
+                    telemetry.addData("tx", result.getTx());
+                    telemetry.addData("ty", result.getTy());
+                    telemetry.addData("Botpose", botpose.toString());
+                    telemetry.update();
+
+                }
+            }
             //
             if (gamepad2.left_stick_y < -0.4) {
                 Intake.intake();
@@ -114,10 +138,6 @@ public class teleop extends LinearOpMode {
 
             if (newGamePad1.a.released) {
                 Drive.forwardDistance(.25, 24);
-            }
-
-            if (newGamePad1.b.released) {
-                Drive.turn(90, .5,true);
             }
         }
     }
