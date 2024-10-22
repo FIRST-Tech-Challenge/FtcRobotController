@@ -165,4 +165,27 @@ public class drivetrain {
             }
         }
     }
+
+    public void strafeLDistance(double speed, int distance) {
+        FrontLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int pulses = calculateStrafePulses(distance);
+        FrontLM.setTargetPosition(pulses);
+        FrontRM.setTargetPosition(pulses);
+        BackLM.setTargetPosition(pulses);
+        BackRM.setTargetPosition(pulses);
+        runEncoders();
+
+        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public int calculateStrafePulses(double distance) {
+        double circumference = Math.PI * WheelDiameter;
+        double rotations = distance / circumference;
+        int pulses = (int) (rotations * PULSE_PER_REVOLUTION * 1);
+        return pulses;
+    }
+
 }
