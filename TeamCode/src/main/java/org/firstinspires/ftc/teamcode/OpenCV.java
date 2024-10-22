@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.*;
 
@@ -46,7 +48,7 @@ public class OpenCV extends LinearOpMode {
             public void onOpened() {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
 //                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
                 camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
             }
 
@@ -75,13 +77,23 @@ public class OpenCV extends LinearOpMode {
 
 class MyPipeline extends OpenCvPipeline {
 
+
     // Notice this is declared as an instance variable (and re-used), not a local variable
-    Mat grey = new Mat();
+    Mat mat = new Mat();
+    int rectWidth = 100;
+    int rectHeight = 50;
+    int x1 = (OpenCV.CAMERA_WIDTH / 2) - (rectWidth / 2);
+    int y1 = (OpenCV.CAMERA_HEIGHT / 2) - (rectHeight / 2);
+    int x2 = (OpenCV.CAMERA_WIDTH / 2) + (rectWidth / 2);
+    int y2 = (OpenCV.CAMERA_HEIGHT / 2) + (rectHeight / 2);
+    Point p1 = new Point(x1, y1);
+    Point p2 = new Point(x2, y2);
+    Rect rect = new Rect(p1, p2);
 
     @Override
     public Mat processFrame(Mat input)
     {
-        Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
-        return grey;
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        return mat;
     }
 }
