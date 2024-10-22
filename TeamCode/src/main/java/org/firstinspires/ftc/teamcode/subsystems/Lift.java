@@ -16,6 +16,7 @@ public class Lift{
 //    public Lift(HardwareMap hw){
 //        this(hw, "lift", "encoder");
 //    }
+
     /**
      * Primary constructor for the Lift Subsystem Class
      * @param hw [HardwareMap] Hardware map necessary to initialize motors.
