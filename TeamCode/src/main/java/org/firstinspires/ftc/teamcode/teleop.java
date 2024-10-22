@@ -35,7 +35,7 @@ public class teleop extends LinearOpMode {
         //finds and sorts distance from object
         double DistanceFrom = Distance.getDistance(DistanceUnit.CM);
         // Tell us distance from object
-        telemetry.addData("Distance", "% 01 cm", DistanceFrom);
+        telemetry.addData("Distance",  DistanceFrom);
         telemetry.update();
 
         Limelight3A limelight;
@@ -114,6 +114,10 @@ public class teleop extends LinearOpMode {
 
             if (newGamePad1.a.released) {
                 Drive.forwardDistance(.25, 24);
+            }
+
+            if (newGamePad1.b.released) {
+                Drive.turn(90, .5,true);
             }
         }
     }

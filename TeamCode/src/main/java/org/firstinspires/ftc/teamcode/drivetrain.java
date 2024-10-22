@@ -9,14 +9,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 public class drivetrain {
 
     private DcMotor FrontLM = null;
     private DcMotor FrontRM = null;
     private DcMotor BackLM = null;
     private DcMotor BackRM = null;
-    public CRServo testing = null;
-    public CRServo testing1 = null;
     private final double WheelDiameter = 3.75;
     private final double PULSE_PER_REVOLUTION = 537.7;
 
@@ -25,12 +26,12 @@ public class drivetrain {
     IMU imu;
 
     public drivetrain() {
-
     }
 
     public void init(LinearOpMode opMode) {
 
         HardwareMap hwMap;
+
 
         opmode = opMode;
         hwMap = opMode.hardwareMap;
@@ -45,8 +46,6 @@ public class drivetrain {
         BackRM = hwMap.dcMotor.get("BackRM");
         BackLM = hwMap.dcMotor.get("BackLM");
 
-        testing = hwMap.crservo.get("testing");
-        testing1 = hwMap.crservo.get("testing1");
 
         FrontLM.setDirection(REVERSE);
         FrontRM.setDirection(FORWARD);
@@ -117,8 +116,8 @@ public class drivetrain {
         FrontRM.setTargetPosition(pulses);
         BackLM.setTargetPosition(pulses);
         BackRM.setTargetPosition(pulses);
-        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy()  && BackLM.isBusy()) {
-            backward(speed);
+        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy() && BackLM.isBusy()) {
+            forward(speed);
         }
         stop();
     }
@@ -145,10 +144,25 @@ public class drivetrain {
         return pulses;
     }
 
-    public void runEncoders() {
-        BackLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //BackRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void turn (double angle, double speed, boolean isLeft) {
+        imu.resetYaw();
+        boolean isDone =false;
+        while (!isDone) {
+            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+            opmode.telemetry.addData("yaw", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+            opmode.telemetry.update();
+            if (Math.abs(orientation.getYaw(AngleUnit.DEGREES)) < Math.abs(angle)) {
+                if (isLeft) {
+                    turnLeft(speed);
+                }
+                if (!isLeft) {
+                    turnRight(speed);
+                }
+            } else {
+                stop();
+                imu.resetYaw();
+                isDone = true;
+            }
+        }
     }
 }
