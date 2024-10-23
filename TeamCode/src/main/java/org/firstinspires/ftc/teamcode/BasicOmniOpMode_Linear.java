@@ -76,6 +76,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor towerMotor = null;
+    private DcMotor flipperMotor = null;
     private CRServo samplePickup = null;
 
 
@@ -93,6 +94,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         towerMotor = hardwareMap.get(DcMotor.class, "tower_motor");
+        flipperMotor = hardwareMap.get(DcMotor.class, "flipper_motor");
         samplePickup = hardwareMap.get(CRServo.class, "sample_pickup");
 
         // ########################################################################################
@@ -114,7 +116,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
         towerMotor.setDirection(DcMotor.Direction.REVERSE);
+        flipperMotor.setDirection(DcMotor.Direction.FORWARD);
 
+        flipperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         towerMotor.setTargetPosition(0);
 
@@ -135,6 +139,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double yaw = gamepad1.right_stick_x;
             boolean sample_in = gamepad1.x;
             boolean sample_out = gamepad1.y;
+            boolean flip_down = gamepad1.a;
+            boolean flip_up = gamepad1.b;
+
 
 
 
@@ -276,6 +283,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                     towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     towerMotor.setPower(0.0);}
                 else{}
+            }
+
+
+            if(flip_up){
+                flipperMotor.setPower(1);
+            }else if( flip_down){
+                flipperMotor.setPower(-.5);
+            }else{
+                flipperMotor.setPower(0);
             }
 
 
