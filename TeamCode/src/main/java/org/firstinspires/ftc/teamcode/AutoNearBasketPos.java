@@ -39,7 +39,7 @@ public class AutoNearBasketPos extends LinearOpMode {
         backLeftPos = 0;
         backRightPos = 0;
 
-        joint.setPosition(0);
+        joint.setPosition(0.22);
 
         waitForStart();
         //850 Ticks for 90 degrees
@@ -54,7 +54,7 @@ public class AutoNearBasketPos extends LinearOpMode {
         //Forward 32 cm
         drive(355.16, 355.16, 355.16, 355.16, 0.7);
        //Strafe Left 119 cm
-        drive(2400.22, -2400.22, 2400.22, -2400.22, 0.7);
+        drive(2410, -2410, 2410, -2410, 0.7);
         //Turn Left 60 degrees
         drive(-600.4, 600.4, 600.4, -600.4, 0.7);
         //Backward 117cm
@@ -66,13 +66,13 @@ public class AutoNearBasketPos extends LinearOpMode {
         //Turn 30 degrees Left
         drive(-305.6, 305.6, 305.6, -305.6, 0.7);
         //Strafe Left
-        drive(900.8,-900.8,900.8,-900.8,0.5);
+        drive(1100,-1100,1100,-1100,0.5);
         //Drive Back
         drive(-1700.11, -1700.11, -1700.11, -1700.11, 0.5);
         sleep(12000);
         //Strafe Right 9 ft
-        drive(-5100.6, 5100.6, -5100.6, 5100.6, 0.7 );
-        drive(-150.6, -150.6, -150.6, -150.6, 0.7 );
+        drive(-4500, 4500, -4500, 4500, 0.7 );
+        drive(-180, -180, -180, -180, 0.7 );
         //Drive Back
         //Drive forward
        // drive(1600.11, 1600.11, 1600.11, 1600.11, 0.5);

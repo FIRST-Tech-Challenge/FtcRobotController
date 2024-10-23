@@ -39,7 +39,7 @@ public class AutoAwayBasketPos extends LinearOpMode {
         backLeftPos = 0;
         backRightPos = 0;
 
-        joint.setPosition(0);
+        joint.setPosition(0.22);
 
         waitForStart();
         //850 Ticks for 90 degrees
