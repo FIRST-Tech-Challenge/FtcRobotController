@@ -10,22 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-@TeleOp(name = "LiftTester")
-public class LiftTester extends LinearOpMode {
-    private Lift lift;
-    private GamepadEvents controller;
-    public void runOpMode(){
-        lift = new Lift(hardwareMap, "lift");
-        controller = new GamepadEvents(gamepad1);
-        telemetry.addData("Status","Initialized");
-        telemetry.update();
-        waitForStart();
-        while(opModeIsActive()){
-            double liftPower = controller.right_trigger.getTriggerValue();
-            lift.moveLift(liftPower);
-
             telemetry.addData("Lift Power", liftPower);
 //            telemetry.addData("Lift Position", lift.getPosition());
             controller.update();
