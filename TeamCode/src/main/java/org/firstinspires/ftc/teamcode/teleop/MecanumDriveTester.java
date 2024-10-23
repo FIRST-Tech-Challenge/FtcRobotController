@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
     @TeleOp(name="MechDrive")
-    public class MecanumDrive extends LinearOpMode {
+    public class MecanumDriveTester extends LinearOpMode {
 
         private DcMotor leftFront, rightFront, leftBack, rightBack;
         private MechDrive robot;
