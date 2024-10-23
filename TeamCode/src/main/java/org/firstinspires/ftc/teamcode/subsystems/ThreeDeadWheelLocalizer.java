@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -16,7 +20,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.roadrunner.Localizer;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.ThreeDeadWheelInputsMessage;
+
+import java.text.DecimalFormat;
 
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
@@ -42,7 +49,6 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
         par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
         perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "BRM")));
-
 
 
         this.inPerTick = inPerTick;
@@ -97,4 +103,6 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 
         return twist;
     }
+
+
 }
