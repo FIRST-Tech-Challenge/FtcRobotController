@@ -10,9 +10,9 @@ public class teleCorrectLift extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RobotInitialize(this);
-        robot.clawRoll.setPosition(0.1867);
+        //robot.clawRoll.setPosition(0.1867);
         waitForStart();
-        int i = 0;
+       // int i = 0;
         while(opModeIsActive()){
             if (Math.abs(gamepad2.right_stick_x)>0.2) {
                 robot.liftPitch.setVelocity(400*gamepad2.right_stick_x);
@@ -31,7 +31,7 @@ public class teleCorrectLift extends LinearOpMode{
             }
 
 
-            robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ gamepad1.left_stick_x*0.0001);
+            //robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ gamepad1.left_stick_x*0.0001);
            //robot.pitch.setPosition(robot.pitch.getPosition()+ gamepad1.right_stick_x*0.0001);
 
            // telemetry.addData("clawRoll Pos", robot.clawRoll.getPosition());
@@ -41,7 +41,7 @@ public class teleCorrectLift extends LinearOpMode{
             //robot.clawRoll.setPosition(robot.pitch.getPosition()+ (gamepad1.right_stick_x*0.0001));
             //i=i+Math.round(gamepad2.right_stick_y);
 
-            telemetry.addData("pitchpos", robot.clawRoll.getPosition());
+           // telemetry.addData("pitchpos", robot.clawRoll.getPosition());
 
             telemetry.update();
         }

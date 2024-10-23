@@ -44,7 +44,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 speed = 270;
             }
             if (gamepad1.a){
-                speed = 4269;
+                speed = 6969;
             }
 
             double strafeVelocity; // (left stick x-axis movement)
@@ -126,12 +126,12 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             if (gamepad1.a) {
                 //boost
                 if (gamepad1.left_trigger>0) {
-                    straightMovementVelocity = 4269;
+                    straightMovementVelocity = 6969;
                 } else if (gamepad1.right_trigger>0) {
-                    straightMovementVelocity = -4269;
+                    straightMovementVelocity = -6969;
 
                 }
-                strafeVelocity = 4269*Math.signum(gamepad1.right_stick_x);
+                strafeVelocity = 6969*Math.signum(gamepad1.right_stick_x);
                 //turnVelocity = 0 * Math.signum(gamepad1.right_stick_x);
 
             }
@@ -174,11 +174,11 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
             }*/
 
-            if (gamepad2.circle) {
-                robot.liftPitch(726, 0.2);
-                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
-
-            }
+//            if (gamepad2.circle) {
+//                robot.liftPitch(726, 0.2);
+//                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
+//
+//            }
 
 //            if (gamepad2.triangle) {
 //                robot.liftExtender(2700, 0.3);
