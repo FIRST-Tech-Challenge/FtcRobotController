@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.masters.components.Init;
 
 import org.firstinspires.ftc.masters.old.CSCons;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class DriveTrain implements Component{
 
     /*
-
              Y m
        |-------------|
       FL?           FR?
@@ -33,18 +33,24 @@ public class DriveTrain implements Component{
      at full motor power
      */
 
-    private double L = 0.177425;
-    private double W = 0.156525;
-    private double R = 0.047999;
-    private double Vx = 0;
-    private double Vy = 0;
+    private final double L = 0.177425;
+    private final double W = 0.156525;
+    private final double R = 0.047999;
+    private final double Vx = 0;
+    private final double Vy = 0;
 
+    private final DcMotor leftFrontMotor;
+    private final DcMotor rightFrontMotor;
+    private final DcMotor leftRearMotor;
+    private final DcMotor rightRearMotor;
 
-    private DcMotor leftFrontMotor = null;
-    private DcMotor rightFrontMotor = null;
-    private DcMotor leftRearMotor = null;
-    private DcMotor rightRearMotor = null;
-    private HardwareMap hardwareMap = null;
+    Telemetry telemetry;
+    Init init;
+
+    @Override
+    public void initializeHardware() {
+
+    }
 
     public enum RestrictTo {
         X,
@@ -56,52 +62,16 @@ public class DriveTrain implements Component{
         XYT
 
     }
-    public DriveTrain (HardwareMap hardwareMap){
+    public DriveTrain (Init init, Telemetry telemetry){
 
-        this.hardwareMap=hardwareMap;
-
-        initializeHardware();
-    }
-    public void initializeHardware() {
-        // Read from the hardware maps
-        leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
-        rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
-        leftRearMotor = hardwareMap.dcMotor.get("backLeft");
-        rightRearMotor = hardwareMap.dcMotor.get("backRight");
-
-        // Reset the encoder values
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set the drive motor direction:
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        // Don't use the encoders for motor odometry
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Engage the brakes when the robot cuts off power to the motors
-        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        this.init=init;
+        this.telemetry=telemetry;
+        this.leftFrontMotor = init.getLeftFrontMotor();
+        this.rightFrontMotor = init.getRightFrontMotor();
+        this.leftRearMotor = init.getLeftRearMotor();
+        this.rightRearMotor = init.getRightRearMotor();
 
     }
-
-//    public double[] kinematics(double vx, double vy, double w) {
-//        double t1 = (vx + vy - (L + W) * w)/R;
-//        double t2 = (vx - vy + (L + W) * w)/R;
-//        double t3 = (vx - vy - (L + W) * w)/R;
-//        double t4 = (vx + vy + (L + W) * w)/R;
-//    }
 
     // Drive using gamepad (THIS IS THE PREFERRED METHOD TO USE)
     public void drive(Gamepad gamepad) {

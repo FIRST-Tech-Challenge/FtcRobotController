@@ -8,21 +8,27 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Init {
-    public DcMotor leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor;
+    private final DcMotor leftFrontMotor;
+    private final DcMotor rightFrontMotor;
+    private final DcMotor leftRearMotor;
+    private final DcMotor rightRearMotor;
+
+    private final DcMotor extendSlide;
+    private final DcMotor rotateSlide;
+
     BNO055IMU imu;
 
     public Telemetry telemetry;
 
-    LinearOpMode opmode;
-    HardwareMap hardwareMap;
-
-
-    public Init(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Init(HardwareMap hardwareMap) {
         // Read from the hardware maps
         leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
+
+        extendSlide = hardwareMap.dcMotor.get("backLeft");
+        rotateSlide = hardwareMap.dcMotor.get("backRight");
 
         // Reset the encoder values
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -48,17 +54,28 @@ public class Init {
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        extendSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rotateSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = null;;
+        parameters.accelerationIntegrationAlgorithm = null;
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-
     }
+
+    public DcMotor getLeftFrontMotor(){return leftFrontMotor;}
+    public DcMotor getRightFrontMotor(){return rightFrontMotor;}
+    public DcMotor getLeftRearMotor(){return leftRearMotor;}
+    public DcMotor getRightRearMotor(){return rightRearMotor;}
+
+    public DcMotor getExtendSlide(){return extendSlide;}
+    public DcMotor getRotateSlide(){return rotateSlide;}
+
 }

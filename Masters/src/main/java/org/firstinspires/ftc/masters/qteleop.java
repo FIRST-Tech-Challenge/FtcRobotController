@@ -30,9 +30,9 @@ public class qteleop extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        DriveTrain driveTrain = new DriveTrain(hardwareMap);
-        Outake outake = new Outake(hardwareMap, telemetry);
-        Init init = new Init(hardwareMap,telemetry);
+        Init init = new Init(hardwareMap);
+        DriveTrain driveTrain = new DriveTrain(init, telemetry);
+        Outake outake = new Outake(init, telemetry);
 
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

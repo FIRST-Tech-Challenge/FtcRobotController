@@ -28,32 +28,25 @@ public class Outake implements Component{
     public static double wristF = 0.9;
     public static double wristB = 0.7;
 
-    DcMotor extendSlide;
-    DcMotor rotateSlide;
+    private final DcMotor extendSlide;
+    private DcMotor rotateSlide;
     Servo claw;
     Servo clawWrist;
 
-    HardwareMap hardwareMap;
     Telemetry telemetry;
+    Init init;
 
-    public Outake(HardwareMap hardwareMap, Telemetry telemetry){
+    public Outake(Init init, Telemetry telemetry){
 
-        this.hardwareMap=hardwareMap;
+        this.init=init;
         this.telemetry=telemetry;
+        this.extendSlide=getExtendSlide();
+        this.rotateSlide=getRotateSlide();
         initializeHardware();
 
     }
 
     public void initializeHardware() {
-
-        extendSlide = hardwareMap.dcMotor.get("extendSlide");
-        rotateSlide = hardwareMap.dcMotor.get("rotateSlide");
-
-        claw = hardwareMap.servo.get("claw");
-        clawWrist = hardwareMap.servo.get("clawWrist");
-
-        extendSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rotateSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
@@ -61,7 +54,6 @@ public class Outake implements Component{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         target = 0;
-
 
     }
 
