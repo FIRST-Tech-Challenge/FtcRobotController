@@ -16,14 +16,19 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 public class LiftTester extends LinearOpMode {
     private Lift lift;
     private GamepadEvents controller;
+    private double liftPower;
     public void runOpMode(){
-        lift = new Lift(hardwareMap, "lift");
+        lift = new Lift(hardwareMap, "lift", "lift");
         controller = new GamepadEvents(gamepad1);
         telemetry.addData("Status","Initialized");
         telemetry.update();
         waitForStart();
         while(opModeIsActive()){
-            double liftPower = controller.right_trigger.getTriggerValue();
+            if(controller.right_bumper.onPress()){
+                liftPower = -controller.right_trigger.getTriggerValue();
+            }else{
+                liftPower = controller.right_trigger.getTriggerValue();
+            }
             lift.moveLift(liftPower);
 
             telemetry.addData("Lift Power", liftPower);
