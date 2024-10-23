@@ -77,6 +77,8 @@ public class MainMovement extends LinearOpMode {
     private DcMotor FLDrive;
     private DcMotor FRDrive;
     final float deadZone = 0.1f;
+
+    float testytesttest;
     public float LjoystickX = gamepad1.left_stick_x;
     public float LjoystickY = gamepad1.left_stick_y;
     public float RjoystickX = gamepad1.right_stick_x;
