@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.commands.TurnCmd;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -77,8 +78,26 @@ public class MacroRecorder extends CommandOpMode {
 
         ButtonReader br = new ButtonReader(driverOp, GamepadKeys.Button.A);
         if (br.wasJustPressed()) {
+            List<String> newmoves = new ArrayList<String>();
+            String last_move = "";
+            double count = 0;
             for (String move : moves) {
-                telemetry.addData("Moves:", move);
+                if (move.equals(last_move)) {
+                    if (move.equals("FW")) {
+                        count += 0.5;
+                    } else if (move.equals("CW")) {
+                        count -= 5;
+                    } else if (move.equals("CCW")) {
+                        count += 5;
+                    }
+                } else {
+                    newmoves.add(last_move + " " + count);
+                    count = 0;
+                    last_move = move;
+                }
+            }
+            for (String newmove : newmoves) {
+                telemetry.addData(newmove, "");
             }
         }
 
