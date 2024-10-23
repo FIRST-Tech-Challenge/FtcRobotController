@@ -587,4 +587,23 @@ public class Bot {
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    /**
+     *
+     * @param runTime how long the intake runs for
+     * @param direction -1 for FORWARD: 1 for BACKWARD
+     */
+    public void runIntakeForTime(double runTime, int direction) {
+        long startTime = System.currentTimeMillis();
+        topIntake.setPower(direction); // Full power for the intake
+        bottomIntake.setPower(direction);
+
+        // Run until the time is up
+        while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
+        }
+
+        // Stop the motor after the time has expired
+        topIntake.setPower(0);
+        bottomIntake.setPower(0);
+    }
+
 }
