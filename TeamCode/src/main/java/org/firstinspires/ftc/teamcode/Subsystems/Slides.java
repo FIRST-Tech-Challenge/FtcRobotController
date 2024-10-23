@@ -13,12 +13,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 @Photon
 public class Slides {
+
     //establish left and right slide for gamepad
     public final DcMotor leftSlide, rightSlide;
     public final Gamepad gamepad2;
     //This determines where slides will stop depending on what the driver wants
-    private static int HIGH = 50;
-    public static int MID = 100;
+    private static int HIGH = 1000;
+    public static int MID = 500;
     public static int LOW = 0;
     public static int INTAKE = 0;
     private static double WHEEL_DIAMETER = 1.77;//in
@@ -62,11 +63,7 @@ public class Slides {
         if (controller.dpad_up) slidesHighBasket();
         else if (controller.dpad_right) slidesLowBasket();
         else if (controller.dpad_left) slidesLowChamber();
-        else reset();
-
-        if (rightSlide.getCurrentPosition() ==0 && leftSlide.getCurrentPosition() == 0) {
-            gamepad2.rumble(10);
-        }
+        else if (controller.dpad_down) reset();
 
         telemetry.addData("The right slide position in TICKS is: ", rightSlide.getCurrentPosition());
         telemetry.addData("The left slide position in TICKS is: ", leftSlide.getCurrentPosition());
@@ -75,36 +72,34 @@ public class Slides {
     public void slidesHighBasket() {
         rightSlide.setTargetPosition(HIGH);
         leftSlide.setTargetPosition(HIGH);
-        telemetry.update();
     }
     public void slidesLowBasket() {
         //Use this for high chamber
         rightSlide.setTargetPosition(MID);
         leftSlide.setTargetPosition(MID);
-        telemetry.update();
     }
     public void slidesLowChamber() {
         rightSlide.setTargetPosition(LOW);
         leftSlide.setTargetPosition(LOW);
-        telemetry.update();
     }
     public void reset() {
         rightSlide.setTargetPosition(INTAKE);
         leftSlide.setTargetPosition(INTAKE);
-        telemetry.update();
 
     }
-    public void slideManual() {
-        int multiplier = (int) -gamepad2.left_stick_y;
+    public void slideManual(Gamepad gamepad) {
+        double multiplier = -gamepad.left_stick_y;
 
-        if (multiplier != 0) {
-            for (double i = encoderTicksToInches(5); i < 50; i++) {
-                leftSlide.setTargetPosition((int) (multiplier * i++));
-                rightSlide.setTargetPosition((int) (multiplier * i++));
+        if (multiplier >= 0.25) {
+            for (int i = 50; i < 1000; i++) {
+                leftSlide.setTargetPosition((int) (leftSlide.getCurrentPosition() - (multiplier * i++)));
+                rightSlide.setTargetPosition((int) (rightSlide.getCurrentPosition() - (multiplier * i++)));
+            }
+        } else if (multiplier <= -0.25) {
+            for (int i = -50; i < 0; i--) {
+                leftSlide.setTargetPosition((int) (leftSlide.getCurrentPosition() - (multiplier * i--)));
+                rightSlide.setTargetPosition((int) (rightSlide.getCurrentPosition() - (multiplier * i--)));
             }
         }
-    }
-    public static double encoderTicksToInches(double ticks) {
-        return WHEEL_DIAMETER * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 }

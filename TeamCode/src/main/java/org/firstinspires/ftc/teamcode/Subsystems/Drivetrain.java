@@ -58,7 +58,6 @@ import static org.firstinspires.ftc.teamcode.RoadRunner.drive.DriveConstants.kV;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-
 public class Drivetrain extends MecanumDrive {
     public HardwareMap hardwareMap;
     public Gamepad gamepad1;
