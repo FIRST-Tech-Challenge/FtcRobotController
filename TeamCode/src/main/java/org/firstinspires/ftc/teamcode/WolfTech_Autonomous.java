@@ -30,10 +30,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -56,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Robot: Auto Drive By Time", group="Robot")
-public class WolfTech_RobotAutoDriveByTime_Linear extends LinearOpMode {
+public class WolfTech_Autonomous extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor         frontleftDrive   = null;
