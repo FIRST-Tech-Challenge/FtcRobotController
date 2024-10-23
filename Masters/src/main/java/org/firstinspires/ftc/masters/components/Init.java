@@ -18,8 +18,13 @@ public class Init {
     private final DcMotor extendSlide;
     private final DcMotor rotateSlide;
 
-    private Servo slideServo1, slideServo2, stringServo;
-    private DcMotor wheelMotor;
+    private final DcMotor wheelMotor;
+    private final Servo slideServo1;
+    private final Servo slideServo2;
+    private final Servo stringServo;
+
+    private final Servo claw;
+    private final Servo clawWrist;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -67,7 +72,7 @@ public class Init {
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = null;;
+        parameters.accelerationIntegrationAlgorithm = null;
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
@@ -77,6 +82,9 @@ public class Init {
         slideServo1 = hardwareMap.servo.get("slideServo1");
         slideServo2 = hardwareMap.servo.get("slideServo2");
         stringServo = hardwareMap.servo.get("stringServo");
+
+        claw = hardwareMap.servo.get("slideServo2");
+        clawWrist = hardwareMap.servo.get("stringServo");
     }
 
     public DcMotor getLeftFrontMotor(){return leftFrontMotor;}
@@ -86,5 +94,8 @@ public class Init {
 
     public DcMotor getExtendSlide(){return extendSlide;}
     public DcMotor getRotateSlide(){return rotateSlide;}
+
+    public Servo getClaw(){return claw;}
+    public Servo getClawWrist(){return clawWrist;}
 
 }
