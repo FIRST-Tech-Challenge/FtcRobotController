@@ -7,10 +7,12 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
 //import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outake;
+import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -30,6 +32,7 @@ public class qteleop extends LinearOpMode {
 
         DriveTrain driveTrain = new DriveTrain(hardwareMap);
         Outake outake = new Outake(hardwareMap, telemetry);
+        Init init = new Init(hardwareMap,telemetry);
 
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
