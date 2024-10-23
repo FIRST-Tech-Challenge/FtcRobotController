@@ -78,7 +78,7 @@ public class MainMovement extends LinearOpMode {
     private DcMotor FRDrive;
     final float deadZone = 0.1f;
 
-    float testytesttest;
+    boolean usingLStick;
     public float LjoystickX = gamepad1.left_stick_x;
     public float LjoystickY = gamepad1.left_stick_y;
     public float RjoystickX = gamepad1.right_stick_x;
@@ -111,6 +111,14 @@ public class MainMovement extends LinearOpMode {
 
         double RangleInRadians = Math.atan2(RjoystickY, RjoystickX);
         double RangleInDegrees = RangleInRadians * (180 / Math.PI);
+
+        if (!(Math.abs(RjoystickX) <= deadZone) && !(Math.abs(RjoystickY) <= deadZone) && !usingLStick) {
+            if(gamepad1.right_stick_x > 0){
+                setMotorPowers(1, -1,1,-1,gamepad1.right_stick_x);
+            } else if (gamepad1.right_stick_x < 0){
+                setMotorPowers(-1, 1,-1,1,gamepad1.right_stick_x);
+            }
+        }
     }
 
 
@@ -124,6 +132,7 @@ public class MainMovement extends LinearOpMode {
 
         //check if in dead zone
         if (!(Math.abs(LjoystickX) <= deadZone) && !(Math.abs(LjoystickY) <= deadZone)) {
+            usingLStick = true;
             //if not in dead zone
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
                 // right quadrant, move right
@@ -168,9 +177,7 @@ public class MainMovement extends LinearOpMode {
             }
 
         } else {
-            //if in dead zone
-            setMotorPowers(0,0,0,0,0);
-            System.out.println("Left Stick in dead zone");
+            usingLStick = false;
         }
 
     }
