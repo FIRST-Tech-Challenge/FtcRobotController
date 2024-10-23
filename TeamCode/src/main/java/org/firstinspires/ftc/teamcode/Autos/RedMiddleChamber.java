@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.Autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 
-@Autonomous(name = "BlueMiddleChamber", group = "BlueAutos")
-public class BlueMiddleChamber extends LinearOpMode {
+@Autonomous(name = "RedMiddleChamber", group = "BlueAutos")
+public class RedMiddleChamber extends LinearOpMode {
     public void runOpMode() {
         Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive, telemetry);
 
@@ -17,24 +15,30 @@ public class BlueMiddleChamber extends LinearOpMode {
 
         waitForStart();
 
-        //Inverse every turn for red.
-
         //Score preloaded specimen.
         drivebase.driveStraight(0.3, 26.0, 0);
 
         //To put 1st sample into obs zone.
         drivebase.turnToHeading(.3, -90);
-        drivebase.holdHeading(.3, -90, 0.5);
+        //drivebase.holdHeading(.3, -90, 0.1);
         drivebase.driveStraight(.4, 22, -90);
         drivebase.turnToHeading(0.3, 0);
-        drivebase.holdHeading(.3, 0, 0.5);
+        //drivebase.holdHeading(.3, 0, 0.1);
 
-        drivebase.driveStraight(0.4, 28, 0);
-        drivebase.turnToHeading(0.3, -90);
-        drivebase.driveStraight(0.4, 10, -90);
-        drivebase.turnToHeading(0.3, -180);
-        drivebase.driveStraight(0.4,48, -180);
-        //16 decs left before.
+        drivebase.driveStraight(0.5, 28, 0);
+        drivebase.turnToHeading(0.4, -90);
+        drivebase.driveStraight(0.5, 10, -90);
+        drivebase.turnToHeading(0.4, -180);
+        drivebase.driveStraight(0.5,46, -180);
+        drivebase.driveStraight(0.5, -12, -180);
+        sleep(2000);
+        drivebase.turnToHeading(0.4, -90);
+        drivebase.driveStraight(0.5, 14,-90);
+        drivebase.turnToHeading(0.4, -180);
+        drivebase.driveStraight(0.5, 14,-180);
+        drivebase.turnToHeading(0.4, -270);
+        drivebase.driveStraight(0.5, 48, -270);
+
 
         /*
         //Transition from current line to next one down.
