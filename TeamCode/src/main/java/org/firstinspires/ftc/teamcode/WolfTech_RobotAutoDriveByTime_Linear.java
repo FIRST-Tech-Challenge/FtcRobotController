@@ -118,16 +118,36 @@ public class WolfTech_RobotAutoDriveByTime_Linear extends LinearOpMode {
             telemetry.update();
         }
 
-        // Step 3:  Drive Backward for 1 Second
-        frontleftDrive.setPower(-FORWARD_SPEED);
-        backleftDrive.setPower(-FORWARD_SPEED);
-        frontrightDrive.setPower(-FORWARD_SPEED);
-        backrightDrive.setPower(-FORWARD_SPEED);
-        runtime.reset();
+        frontrightDrive.setPower(FORWARD_SPEED);
+        frontleftDrive.setPower(FORWARD_SPEED);
+        backrightDrive.setPower(FORWARD_SPEED);
+        backleftDrive.setPower(FORWARD_SPEED);
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
+
         }
+
+        frontleftDrive.setPower(-TURN_SPEED);
+        frontrightDrive.setPower(TURN_SPEED);
+        backrightDrive.setPower(TURN_SPEED);
+        backleftDrive.setPower(-TURN_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.3)) {
+            telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+
+        }
+        // Step 3:  Drive Backward for 1 Second
+//        frontleftDrive.setPower(-FORWARD_SPEED);
+//        backleftDrive.setPower(-FORWARD_SPEED);
+//        frontrightDrive.setPower(-FORWARD_SPEED);
+//        backrightDrive.setPower(-FORWARD_SPEED);
+//        runtime.reset();
+//        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+//            telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
+//            telemetry.update();
+//        }
 
         // Step 4:  Stop
         frontleftDrive.setPower(0);
