@@ -30,12 +30,20 @@ public class Bot {
     private DcMotor extendArmMotor;
     private DcMotor armPivotMotor;
 
+    private CRServo rightPushoff;
+    private CRServo leftPushoff;
+
 
     //Statistics for measurements
-    private static final int TICKS_PER_REV = 1440;
-    private static final double ARM_GEAR_RATIO = (double) 28 /8;
-    private static final double DISTANCE_PER_REV = 10.0;
     private static final int MAX_TICK_EXT = -3595;
+
+    private static final int LEFT_LIFT_MAX = 7255;
+    private static final int LEFT_LIFT_MIN = -101;
+    private static final int RIGHT_LIFT_MAX = 7302;
+    private static final int RIGHT_LIFT_MIN = -10;
+
+    private static final int MAX_PIVOT = 2560;
+    private static final int MIN_PIVOT = -670;
 
 
     //Drive Encoder Stats
@@ -48,8 +56,6 @@ public class Bot {
     static final double COUNTS_PER_DEGREE = COUNTS_PER_MOTOR_REV/360;
     static final double INCHES_PER_DEGREE = DISTANCE_PER_ENCODER * COUNTS_PER_DEGREE;
 
-    private static final double MAX_PIVOT = 2560;
-    private static final double MIN_PIVOT = -670;
 
     private static final double MAX_DISTANCE = 25.5;
     private static final double TICKS_PER_INCH_EXT = MAX_TICK_EXT / MAX_DISTANCE;
@@ -87,10 +93,15 @@ public class Bot {
         leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
         rightLift = map.get(DcMotor.class, "right_lift");
 
+        extendArmMotor = map.get(DcMotor.class, "extend_arm");
+        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
         extendArmMotor = map.get(DcMotor.class, "extend_arm");
         armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
+
+        leftPushoff = map.get(CRServo.class, "left_pushoff");
+        rightPushoff = map.get(CRServo.class, "right_pushoff");
 
         //set encoders to 0 on init
         leftMotorFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -141,12 +152,16 @@ public class Bot {
         extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        leftPushoff.setDirection(CRServo.Direction.FORWARD);
+        rightPushoff.setDirection(DcMotorSimple.Direction.REVERSE);
+
         //Servos for intake on the map
         //TODO Rename Intake servos to something better
         topIntake = map.get(CRServo.class, "top_intake");
         bottomIntake = map.get(CRServo.class, "bottom_intake");
 
         //TODO push off servos for lift
+
     }
 
     /**
@@ -164,6 +179,17 @@ public class Bot {
        leftMotorBack.setPower(backLeftPower);
        rightMotorFront.setPower(frontRightPower);
        rightMotorBack.setPower(backRightPower);
+    }
+
+    /**
+     * set Pushoff power for left and right
+     */
+
+    public void setPushoff(
+            double pushoffPower
+    ){
+        leftPushoff.setPower(pushoffPower);
+        rightPushoff.setPower(pushoffPower);
     }
 
     /**
@@ -455,14 +481,26 @@ public class Bot {
      * Sequence for lifting bot for low hang
      */
     public void liftLow(){
-        //TODO: Lift up -> pivot -> Lift down
+        this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
+        this.setPushoff(1.0); //TEST TO MAKE SURE THIS GOES ALL THE WAY
+        this.encoderLift(RIGHT_LIFT_MIN, LEFT_LIFT_MIN);
+
     }
 
     /**
      * Sequence for lifting bot for high hang
      */
     public void liftHigh(){
-        //TODO: Lift up -> pivot arm facing into cage -> extend arm move cg towards back (bot should tilt towards the cage) -> lift down
+        this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
+        opMode.sleep(1000);
+        this.autoPivotArm(MAX_PIVOT, 0.75);
+        opMode.sleep(1000);
+        this.setExtendPos(5.0);
+        opMode.sleep(1000);
+        this.encoderLift(RIGHT_LIFT_MIN, LEFT_LIFT_MIN);
+        opMode.sleep(1000);
+        this.setExtendPos(0.0);
+        opMode.sleep(1000);
     }
 
     /**
@@ -585,6 +623,44 @@ public class Bot {
         extendArmMotor.setPower(0);
 
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    /**
+     *
+     * @param runTime how long the intake runs for
+     * @param direction -1 for FORWARD: 1 for BACKWARD
+     */
+    public void runIntakeForTime(double runTime, int direction) {
+        long startTime = System.currentTimeMillis();
+        topIntake.setPower(direction); // Full power for the intake
+        bottomIntake.setPower(direction);
+
+        // Run until the time is up
+        while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
+        }
+
+        // Stop the motor after the time has expired
+        topIntake.setPower(0);
+        bottomIntake.setPower(0);
+    }
+
+    public void encoderLift(int rPos, int lPos){
+        rightLift.setTargetPosition(rPos);
+        leftLift.setTargetPosition(lPos);
+
+        rightLift.setPower(0.75);
+        leftLift.setPower(0.75);
+
+        while(opMode.opModeIsActive() && extendArmMotor.isBusy()){
+            opMode.telemetry.addData("Left Lift Pos: ", leftLift.getCurrentPosition());
+            opMode.telemetry.addData("Right Lift Pos: ", rightLift.getCurrentPosition());
+        }
+
+        rightLift.setPower(0);
+        leftLift.setPower(0);
+
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
