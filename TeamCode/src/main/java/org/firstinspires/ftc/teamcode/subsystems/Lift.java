@@ -7,13 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-public class Lift{
-    public int Lift_SPEED = 20;
-    private DcMotor lift;
-    private Encoder encoder;
-    //    public Lift(HardwareMap hw){
-//        this(hw, "lift", "encoder");
-//    }
 
     /**
      * Primary constructor for the Lift Subsystem Class
