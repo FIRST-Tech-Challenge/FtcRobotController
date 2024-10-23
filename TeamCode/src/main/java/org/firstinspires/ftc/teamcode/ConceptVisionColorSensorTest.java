@@ -33,7 +33,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
-/*
+/*Testing
  * This OpMode illustrates how to use a video source (camera) as a color sensor
  *
  * A "color sensor" will typically determine the color of the object that it is pointed at.
