@@ -666,6 +666,8 @@ public class Bot {
     public void d2EncoderReset(){
         armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
