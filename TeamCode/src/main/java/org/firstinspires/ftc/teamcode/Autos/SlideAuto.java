@@ -30,9 +30,12 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Hardware.Drivebase;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -61,6 +64,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="SlideAuto", group="Robot")
+@Disabled
 public class SlideAuto extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -85,7 +89,7 @@ public class SlideAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive, telemetry);
         // Initialize the drive system variables.
         leftSlide  = hardwareMap.get(DcMotor.class, "left_slide");
         rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
@@ -113,9 +117,9 @@ public class SlideAuto extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderSlide(SLIDE_SPEED,  40.5,  40.5, 10.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderSlide(SLIDE_SPEED,  -40.5,  -40.5, 10.0);
-        telemetry.addData("Path", "Complete");
+        //drivebase.encoderSlide(SLIDE_SPEED,  40.5,  40.5, 10.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        //drivebase.encoderSlide(SLIDE_SPEED,  -40.5,  -40.5, 10.0);
+        //drivebase.sendTelemetry(telemetry);
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
     }
