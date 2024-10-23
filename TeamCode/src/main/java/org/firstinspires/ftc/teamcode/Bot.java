@@ -647,4 +647,9 @@ public class Bot {
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void d2EncoderReset(){
+        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
 }

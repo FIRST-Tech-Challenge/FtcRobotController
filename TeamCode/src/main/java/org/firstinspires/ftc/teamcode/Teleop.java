@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *      Left Trigger = lower lift
  *      A Button - Lift low sequence [1 stage]
  *      B Button - Lift High sequence [2 stage]
+ *
  *      
  *  GAMEPAD2 - Arm, Arm Pivot, Intake
  *      Right Trigger - Intake
@@ -28,6 +29,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *      Left Bumper - Retract Arm
  *      Y Button - Raise Arm
  *      A Button - Lower Arm
+ *      X Button - reset encoder for arms
  *
  *
  *  NOTE: Low lift must be completed before high lift is engaged. This is due to rules and the sequencing of getting to
@@ -147,6 +149,12 @@ public class Teleop extends LinearOpMode {
                 bot.liftHigh();
             }
              */
+
+            //reset button for encoders if needed
+            if(gamepad2.x)
+            {
+                bot.d2EncoderReset();
+            }
 
             //Telemetry Data
             telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
