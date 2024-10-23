@@ -93,6 +93,8 @@ public class Bot {
         leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
         rightLift = map.get(DcMotor.class, "right_lift");
 
+        extendArmMotor = map.get(DcMotor.class, "extend_arm");
+        armPivotMotor = map.get(DcMotor.class, "pivot_arm");
 
         extendArmMotor = map.get(DcMotor.class, "extend_arm");
         armPivotMotor = map.get(DcMotor.class, "pivot_arm");
@@ -523,7 +525,6 @@ public class Bot {
         armPivotMotor.setPower(0);
 
         armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /**
@@ -543,7 +544,6 @@ public class Bot {
         armPivotMotor.setPower(0);
 
         armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /**
@@ -584,7 +584,6 @@ public class Bot {
         extendArmMotor.setPower(0);
 
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /**
@@ -604,7 +603,6 @@ public class Bot {
         extendArmMotor.setPower(0);
 
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /**
@@ -625,7 +623,25 @@ public class Bot {
         extendArmMotor.setPower(0);
 
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    /**
+     *
+     * @param runTime how long the intake runs for
+     * @param direction -1 for FORWARD: 1 for BACKWARD
+     */
+    public void runIntakeForTime(double runTime, int direction) {
+        long startTime = System.currentTimeMillis();
+        topIntake.setPower(direction); // Full power for the intake
+        bottomIntake.setPower(direction);
+
+        // Run until the time is up
+        while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
+        }
+
+        // Stop the motor after the time has expired
+        topIntake.setPower(0);
+        bottomIntake.setPower(0);
     }
 
     public void encoderLift(int rPos, int lPos){

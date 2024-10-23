@@ -20,5 +20,11 @@ public class Auto extends LinearOpMode {
         robot.encoderStrafe(1, -12);
         robot.encoderTurn(1,45);
         robot.encoderDrive(1,45);
+//        robot.runIntake();
+//        sleep(1000);
+//        robot.runOuttake();
+//        sleep(1000);
+
+
     }
 }
