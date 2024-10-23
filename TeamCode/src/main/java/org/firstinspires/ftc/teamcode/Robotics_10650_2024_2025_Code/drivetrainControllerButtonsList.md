@@ -1,12 +1,17 @@
 List of controls for the drivetrain controller (gamepad1):
 
+(Strafe control) Right Control Stick X-Axis: Makes the robot strafe (Pushing the stick left makes 
+the robot strafe left and pushing it right makes the robot strafe right)
+
 Circle: makes the robot slow down
-Right Trigger (The top back button on the controller that bends down like a hinge): Makes the robot
-move forward
-Square: Moves the lift backwards
-Circle: Moves the lift forwards
-Left Control Stick X-Axis: Makes the lift move forward or backwards based on the control stick 
-inputs
+
+Right Trigger: Makes the robot move forward
+
+
+
+
+
+
 
 
 
