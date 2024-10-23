@@ -38,66 +38,82 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         // Variables that store the different game pad movements for ease of reference later
         // Gamepad1 configuration
         {
+            int speed = 400;
+
+            if (gamepad1.circle){
+                speed = 270;
+            }
+            if (gamepad1.a){
+                speed = 2200;
+            }
+
             double strafeVelocity; // (left stick x-axis movement)
-            strafeVelocity = Math.pow(gamepad1.right_stick_x, 3) * 5000; // Min: -10000, Max: 10000
+            strafeVelocity = Math.pow(gamepad1.right_stick_x, 3) * speed; // Min: -10000, Max: 10000
             //telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
             double turnVelocity; // (right stick x-axis movement)
-            turnVelocity = Math.pow(gamepad1.left_stick_x, 3) * 5000; // Min: -10000, Max: 10000
+            turnVelocity = Math.pow(gamepad1.left_stick_x, 3) * speed; // Min: -10000, Max: 10000
             //telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
-            double straightMovementVelocity; // (left stick y-axis movement)
+            double straightMovementVelocity;
+            if (){
+                
+            }; // (left stick y-axis movement)
 //      straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y);
 // Min: -10000, Max: 10000
-            straightMovementVelocity = Math.pow(gamepad1.right_stick_y, 3) * 10000;
+           //original: straightMovementVelocity = Math.pow(gamepad1.right_stick_y, 3) * 10000;
             //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
             //Gamepad1 controls the drivetrain
-            if (gamepad1.circle) {
-                straightMovementVelocity = Math.pow(gamepad1.right_stick_y, 3) * 1000;
-                turnVelocity = Math.pow(gamepad1.left_stick_x, 3) * 1000;
-                strafeVelocity = Math.pow(gamepad1.right_stick_x, 3) * 1000;
-                telemetry.addData("L2 pos", gamepad1.left_trigger);
-                telemetry.update();
-            }
+
+            //not sure what this does
+//            if (gamepad1.circle) {
+//                straightMovementVelocity = Math.pow(gamepad1.right_stick_y, 3) * 1000;
+//                turnVelocity = Math.pow(gamepad1.left_stick_x, 3) * 1000;
+//                strafeVelocity = Math.pow(gamepad1.right_stick_x, 3) * 1000;
+//                telemetry.addData("L2 pos", gamepad1.left_trigger);
+//                telemetry.update();
+//            }
         /*if(gamepad1.y){
             //testing upper bound of lift
             robot.liftExtender.setPower(.25);
             telemetry.addData("position", robot.liftExtender.getCurrentPosition());
             telemetry.update();
         }*/
-            if (gamepad1.right_trigger != 0) {
-                //normal speed
-                //after testing: it went backward sby accident
-                straightMovementVelocity = 400 * Math.signum(gamepad1.right_stick_y);
-                strafeVelocity = 400 * Math.signum(gamepad1.right_stick_x);
-                turnVelocity = 400 * Math.signum(gamepad1.right_stick_x);
-            }
-            if (gamepad1.circle) {
-                //slow
-                straightMovementVelocity = 270*Math.signum(gamepad1.right_stick_y);
-                strafeVelocity = 270*Math.signum(gamepad1.right_stick_x);
-                turnVelocity = 270 * Math.signum(gamepad1.right_stick_x);
-
-            }
-            if (gamepad1.a) {
-                //boost
-                straightMovementVelocity = 2200*Math.signum(gamepad1.right_stick_y);
-                strafeVelocity = 2200*Math.signum(gamepad1.right_stick_x);
-                turnVelocity = 2200 * Math.signum(gamepad1.right_stick_x);
-
-            }
+//            if (gamepad1.right_trigger != 0) {
+//                //normal speed
+//                //after testing: it went backward sby accident
+//                straightMovementVelocity = 400 * Math.signum(gamepad1.right_trigger);
+//                strafeVelocity = 400 * Math.signum(gamepad1.right_stick_x);
+//                turnVelocity = 400 * Math.signum(gamepad1.right_stick_x);
+//            }
             if (gamepad1.left_trigger>0) {
                 //slow
-                straightMovementVelocity = 270*Math.signum(gamepad1.right_stick_y);
-                strafeVelocity = 270*Math.signum(gamepad1.right_stick_x);
-                turnVelocity = 270 * Math.signum(gamepad1.right_stick_x);
+
+                straightMovementVelocity = 800*(gamepad1.left_trigger);
+                //strafeVelocity = 0*(gamepad1.left_trigger);
+                //turnVelocity =0 * (gamepad1.left_trigger);
 
             }
             if (gamepad1.right_trigger>0) {
                 //slow
-                straightMovementVelocity = 270*Math.signum(gamepad1.right_stick_y);
-                strafeVelocity = 270*Math.signum(gamepad1.right_stick_x);
-                turnVelocity = 270 * Math.signum(gamepad1.right_stick_x);
+                straightMovementVelocity = -800*(gamepad1.right_trigger);
+                //strafeVelocity = 0*(gamepad1.right_trigger);
+                //turnVelocity = 0 *(gamepad1.right_trigger);
 
             }
+            if (gamepad1.circle) {
+                //slow
+                straightMovementVelocity = 270*Math.signum(straightMovementVelocity);
+                strafeVelocity = 270*Math.signum(gamepad1.right_stick_x);
+                //turnVelocity = 0 * Math.signum(gamepad1.right_stick_x);
+
+            }
+            if (gamepad1.a) {
+                //boost
+                straightMovementVelocity = 2200;
+                strafeVelocity = 2200*Math.signum(gamepad1.right_stick_x);
+                //turnVelocity = 0 * Math.signum(gamepad1.right_stick_x);
+
+            }
+
 
 
             // Set velocity of the motors (drivetrain)
@@ -150,13 +166,22 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //                robot.liftExtender(0, 0.3);
 //            }
             telemetry.addData("roll", robot.clawRoll.getPosition());
-            if (robot.liftPitch.getCurrentPosition()>849||robot.liftPitch.getCurrentPosition()>=0) {
+
+            //
+            if (robot.liftPitch.getCurrentPosition()<=849&&robot.liftPitch.getCurrentPosition()>=0||
+                    (robot.liftPitch.getCurrentPosition()>=849&&gamepad2.left_stick_x < 0)||
+                    (robot.liftPitch.getCurrentPosition()<=0&&gamepad2.left_stick_x > 0)) {
+
+                //determines where the lift pitch goes
                 if (gamepad2.left_stick_x > 0.2) {
+                    //down
                     robot.liftPitch.setVelocity(400 * gamepad2.left_stick_x);
                     telemetry.addData("luft pitch pos", robot.liftPitch.getCurrentPosition());
 
                 } else if (gamepad2.left_stick_x < 0.2) {
-                    robot.liftPitch.setVelocity(600 * gamepad2.left_stick_x);
+
+                    //up
+                    robot.liftPitch.setVelocity(800 * gamepad2.left_stick_x);
                     telemetry.addData("luft pitch pos", robot.liftPitch.getCurrentPosition());
 
                 } else {
@@ -169,7 +194,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 telemetry.addData("luft pitch pos", robot.liftPitch.getCurrentPosition());//1300
             }//2700
             //find positon for extension
-            if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftExtender.getCurrentPosition()<2780&&robot.liftExtender.getCurrentPosition()>0) {
+            if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftExtender.getCurrentPosition()<=2780&&robot.liftExtender.getCurrentPosition()>=0||(robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)) {
                 robot.liftExtender.setVelocity(-400 * gamepad2.right_stick_y);
             } else{
                 robot.liftExtender.setVelocity(0);
@@ -177,7 +202,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
             if (gamepad2.right_trigger != 0) {
-                robot.intakeToggle(0.5);
+                robot.intakeToggle(1);
             } else {
                 robot.intakeToggle(0);
             }
@@ -199,10 +224,13 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             }
             if(gamepad2.dpad_up){
                //pitch moves up
-                robot.clawRoll.setPosition(0.1867);
+                //original value:0.1867
+                robot.clawRoll.setPosition(0.1561);
+
             }
             if(gamepad2.dpad_down){
                 //pitch moves down
+                //original value 0.125
                 robot.clawRoll.setPosition(0.125);
             }
 

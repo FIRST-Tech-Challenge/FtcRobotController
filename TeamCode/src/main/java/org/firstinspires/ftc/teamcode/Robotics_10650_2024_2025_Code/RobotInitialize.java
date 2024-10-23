@@ -98,7 +98,7 @@ public class RobotInitialize {
 
 
         PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1);
-        liftPitch.setVelocityPIDFCoefficients(.5,1,.25,1);
+        liftPitch.setVelocityPIDFCoefficients(.5,1,0, 1);
 
 
         liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
