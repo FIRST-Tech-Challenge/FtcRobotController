@@ -103,13 +103,11 @@ public class RobotInitialize {
 
         liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
         liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        liftExtender.setTargetPosition(0);
         liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftExtender.setZeroPowerBehavior(BRAKE);
 
         liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
         liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        liftPitch.setTargetPosition(100);
         liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftPitch.setZeroPowerBehavior(BRAKE);
 //
