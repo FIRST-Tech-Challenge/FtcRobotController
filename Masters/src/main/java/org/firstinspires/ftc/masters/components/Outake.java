@@ -29,9 +29,9 @@ public class Outake implements Component{
     public static double wristB = 0.7;
 
     private final DcMotor extendSlide;
-    private DcMotor rotateSlide;
-    Servo claw;
-    Servo clawWrist;
+    private final DcMotor rotateSlide;
+    private final Servo claw;
+    private final Servo clawWrist;
 
     Telemetry telemetry;
     Init init;
@@ -40,8 +40,10 @@ public class Outake implements Component{
 
         this.init=init;
         this.telemetry=telemetry;
-        this.extendSlide=getExtendSlide();
-        this.rotateSlide=getRotateSlide();
+        this.extendSlide=init.getExtendSlide();
+        this.rotateSlide=init.getRotateSlide();
+        this.claw=init.getClaw();
+        this.clawWrist=init.getClawWrist();
         initializeHardware();
 
     }
