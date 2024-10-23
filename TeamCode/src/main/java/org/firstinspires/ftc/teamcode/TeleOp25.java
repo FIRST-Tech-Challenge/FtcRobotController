@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.DriveCmd;
 import org.firstinspires.ftc.teamcode.commands.IntakeCmd;
+import org.firstinspires.ftc.teamcode.commands.MoveArmToPos;
 import org.firstinspires.ftc.teamcode.commands.WristCmd;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
@@ -38,6 +39,7 @@ public class TeleOp25 extends CommandOpMode {
     private MoveArm armUp;
     private MoveArm armDown;
     private MoveArm armOff;
+    private MoveArmToPos moveArmToPos;
 
 
 
@@ -76,12 +78,16 @@ public class TeleOp25 extends CommandOpMode {
         toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(armDown);
         toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armOff);
 
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(moveArmToPos.storePos(armSub.getMotor().getCurrentPosition()));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenReleased(moveArmToPos.storePos(armSub.getMotor().getCurrentPosition()));
+        moveArmToPos.moveToPos();
 
         // Intake
         // A: Output Sample
         // B: Take In Sample
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(intakeOut);
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenReleased(intakeOff);
+
 
         toolOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(intakeIn);
         toolOp.getGamepadButton(GamepadKeys.Button.Y).whenReleased(intakeOff);
@@ -105,6 +111,9 @@ public class TeleOp25 extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+        
+        moveArmToPos = new MoveArmToPos(armSub);
+
 
         telemetry.addData("Field Centric?", fieldCentric);
         telemetry.update();

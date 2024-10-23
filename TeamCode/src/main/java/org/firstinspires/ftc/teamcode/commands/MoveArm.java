@@ -1,17 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.command.button.Trigger;
-import com.arcrobotics.ftclib.gamepad.ButtonReader;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
-import org.checkerframework.checker.index.qual.LTEqLengthOf;
+
 import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
-import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
@@ -27,6 +19,7 @@ public class MoveArm extends CommandBase {
         this.speed = speed;
         this.telemetry = telemetry;
         addRequirements(this.armSub);
+
     }
 
     @Override

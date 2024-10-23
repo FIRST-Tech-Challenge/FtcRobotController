@@ -27,7 +27,10 @@ public class ArmSub extends SubsystemBase{
         return armMotor;
     }
 
-    public  void move(double speed) {
+    public void move(double speed) {
         armMotor.setPower(speed);
+    }
+    public void setPos(int pos) {
+        armMotor.setTargetPosition(pos);
     }
 }
