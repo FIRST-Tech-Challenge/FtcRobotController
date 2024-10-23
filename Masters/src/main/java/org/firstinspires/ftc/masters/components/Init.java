@@ -3,11 +3,13 @@ package org.firstinspires.ftc.masters.components;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Init {
+
     private final DcMotor leftFrontMotor;
     private final DcMotor rightFrontMotor;
     private final DcMotor leftRearMotor;
@@ -16,6 +18,8 @@ public class Init {
     private final DcMotor extendSlide;
     private final DcMotor rotateSlide;
 
+    private Servo slideServo1, slideServo2, stringServo;
+    private DcMotor wheelMotor;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -63,11 +67,16 @@ public class Init {
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = null;
+        parameters.accelerationIntegrationAlgorithm = null;;
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        // Initialize intake motors and servos
+        wheelMotor = hardwareMap.dcMotor.get("wheelMotor");
+        slideServo1 = hardwareMap.servo.get("slideServo1");
+        slideServo2 = hardwareMap.servo.get("slideServo2");
+        stringServo = hardwareMap.servo.get("stringServo");
     }
 
     public DcMotor getLeftFrontMotor(){return leftFrontMotor;}
