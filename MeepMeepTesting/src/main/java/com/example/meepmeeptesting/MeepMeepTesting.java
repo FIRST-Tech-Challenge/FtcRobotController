@@ -21,10 +21,10 @@ public class MeepMeepTesting {
                                 //Outtakes preload
                                 .lineToLinearHeading(new Pose2d(0, -34, Math.toRadians(90)))
                                 .waitSeconds(1)
-                                .lineToLinearHeading(new Pose2d(23, -34, Math.toRadians(90)))
-                                .waitSeconds(1)
-                                .lineToLinearHeading(new Pose2d(-55, -58, Math.toRadians(-130)))
-                                .waitSeconds(1)
+                               .lineToLinearHeading(new Pose2d(30, -34, Math.toRadians(90)))
+                               // .waitSeconds(1)
+                              //  .lineToLinearHeading(new Pose2d(-55, -58, Math.toRadians(-130)))
+                             //   .waitSeconds(1)
                                 .build()
                 );
 
