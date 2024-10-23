@@ -16,7 +16,7 @@ public class ExtensionMonkeyProgram extends NKNProgram {
         PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
         components.add(potentiometerHandler);
 
-        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.9);
+        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.8, 0.02, 5, true);
         components.add(rotationHandler);
 
         // Actual components we actually use

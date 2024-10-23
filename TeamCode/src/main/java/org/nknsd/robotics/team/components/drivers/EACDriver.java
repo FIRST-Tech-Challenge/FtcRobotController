@@ -50,21 +50,36 @@ public class EACDriver implements NKNComponent {
     Runnable extend = new Runnable() {
         @Override
         public void run() {
-            int nextIndex = extensionHandler.targetPosition().ordinal() + 1;
+            boolean done = false; // Repeat until we either hit the end of the array or we reach a valid extension position
+            int index = extensionHandler.targetPosition().ordinal();
+            while (!done) {
+                index ++;
 
-            if (nextIndex >= ExtensionHandler.ExtensionPositions.values().length) {return;}
+                if (index >= ExtensionHandler.ExtensionPositions.values().length) {return;}
 
-            extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.values()[nextIndex]);
+                done = extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.values()[index]);
+            }
         }
     };
     Runnable retract = new Runnable() {
         @Override
         public void run() {
-            int prevIndex = extensionHandler.targetPosition().ordinal() - 1;
+            boolean done = false; // Repeat until we either hit the end of the array or we reach a valid extension position
+            int index = extensionHandler.targetPosition().ordinal();
+            while (!done) {
+                index --;
 
-            if (prevIndex < 0) {return;}
+                if (index < 0) {return;}
 
-            extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.values()[prevIndex]);
+                done = extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.values()[index]);
+            }
+        }
+    };
+
+    Runnable resetEncoder = new Runnable() {
+        @Override
+        public void run() {
+            extensionHandler.resetEncoder();
         }
     };
 
@@ -87,6 +102,7 @@ public class EACDriver implements NKNComponent {
         gamePadHandler.addListener(rotateDownButton, 2, "armRotateDown", true, rotateDown);
         gamePadHandler.addListener(extendButton, 2, "armExtend", true, extend);
         gamePadHandler.addListener(retractButton, 2, "armRetract", true, retract);
+        gamePadHandler.addListener(GamepadButtons.Y, 2, "resetExtensionEncoder", true, resetEncoder);
     }
 
     @Override

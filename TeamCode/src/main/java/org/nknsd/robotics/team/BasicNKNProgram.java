@@ -20,7 +20,6 @@ public class BasicNKNProgram extends NKNProgram {
         // Misc
         GamePadHandler gamePadHandler = new GamePadHandler();
         components.add(gamePadHandler);
-        telemetryEnabled.add(gamePadHandler);
 
         WheelHandler wheelHandler = new WheelHandler(
                 "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFL", "motorBL"}
@@ -34,11 +33,12 @@ public class BasicNKNProgram extends NKNProgram {
 
 
         // Arm
-        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.9);
+        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.005, 10, true);
         components.add(rotationHandler);
 
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.8);
+        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.35);
         components.add(extensionHandler);
+        telemetryEnabled.add(extensionHandler);
 
         IntakeServoHandler intakeServoHandler = new IntakeServoHandler("intakeServo");
         components.add(intakeServoHandler);

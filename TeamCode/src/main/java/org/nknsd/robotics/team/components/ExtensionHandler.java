@@ -26,19 +26,19 @@ public class ExtensionHandler implements NKNComponent {
             }
         },
 
-        COLLECT(10) {
+        COLLECT(1565) {
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
-                return true;
+                return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PICKUP || rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PREPICKUP;
             }
         },
 
-        HIGH_BASKET(3020) {
+        HIGH_BASKET(3100) { //prob closer to 3k
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
-                return rotationHandler.targetRotationPosition.target < ExtensionHandler.SAFE_ARM_ROTATION_VALUE;
+                return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.HIGH;
             }
-        }; //true value is ~3000
+        };
 
         final int position;
 
@@ -97,12 +97,24 @@ public class ExtensionHandler implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("Current Position", motor.getCurrentPosition());
-        telemetry.addData("Target Position", motor.getTargetPosition());
+        telemetry.addData("Current ext Position", motor.getCurrentPosition());
+        telemetry.addData("Target ext Position", motor.getTargetPosition());
     }
 
-    public void gotoPosition(ExtensionPositions extensionPosition) {
-        if (extensionPosition.canGoToPosition(rotationHandler)) {motor.setTargetPosition(extensionPosition.position); target = extensionPosition;}
+    public boolean gotoPosition(ExtensionPositions extensionPosition) {
+        if (extensionPosition.canGoToPosition(rotationHandler)) {
+            motor.setTargetPosition(extensionPosition.position);
+            target = extensionPosition;
+            return true;
+        }
+        return false;
+    }
+
+    public void resetEncoder() {
+        if (target == ExtensionPositions.RESTING) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     public ExtensionPositions targetPosition() {
