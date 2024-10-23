@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -91,6 +92,14 @@ public class RobotInitialize {
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake.setPower(0); // Off by default
+
+
+
+
+
+        PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1);
+        liftPitch.setVelocityPIDFCoefficients(.5,1,.25,1);
+
 
         liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
         liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
