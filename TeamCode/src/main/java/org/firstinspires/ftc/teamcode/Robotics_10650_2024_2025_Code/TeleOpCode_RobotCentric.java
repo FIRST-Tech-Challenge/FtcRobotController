@@ -38,13 +38,13 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         // Variables that store the different game pad movements for ease of reference later
         // Gamepad1 configuration
         {
-            int speed = 400;
+            int speed = 2700;
 
             if (gamepad1.circle){
                 speed = 270;
             }
             if (gamepad1.a){
-                speed = 2200;
+                speed = 4269;
             }
 
             double strafeVelocity; // (left stick x-axis movement)
@@ -53,9 +53,21 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             double turnVelocity; // (right stick x-axis movement)
             turnVelocity = Math.pow(gamepad1.left_stick_x, 3) * speed; // Min: -10000, Max: 10000
             //telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
-            double straightMovementVelocity;
-            if (){
-                
+            double straightMovementVelocity = 0;
+            if (gamepad1.left_trigger>0) {
+                //slow
+                straightMovementVelocity = Math.pow(gamepad1.left_trigger, 3) * speed;
+                //strafeVelocity = 0*(gamepad1.left_trigger);
+                //turnVelocity =0 * (gamepad1.left_trigger);
+
+            } else if (gamepad1.right_trigger>0) {
+                //slow
+                straightMovementVelocity = -Math.pow(gamepad1.right_trigger, 3) * speed;
+                //strafeVelocity = 0*(gamepad1.right_trigger);
+                //turnVelocity = 0 *(gamepad1.right_trigger);
+
+            } else{
+                straightMovementVelocity = 0;
             }; // (left stick y-axis movement)
 //      straightMovementPower = 10000*(gamepad1.left_stick_y*gamepad1.left_stick_y*gamepad1.left_stick_y);
 // Min: -10000, Max: 10000
@@ -87,29 +99,39 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             if (gamepad1.left_trigger>0) {
                 //slow
 
-                straightMovementVelocity = 800*(gamepad1.left_trigger);
+                straightMovementVelocity = 2700*(gamepad1.left_trigger);
                 //strafeVelocity = 0*(gamepad1.left_trigger);
                 //turnVelocity =0 * (gamepad1.left_trigger);
 
             }
             if (gamepad1.right_trigger>0) {
                 //slow
-                straightMovementVelocity = -800*(gamepad1.right_trigger);
+                straightMovementVelocity = -2700*(gamepad1.right_trigger);
                 //strafeVelocity = 0*(gamepad1.right_trigger);
                 //turnVelocity = 0 *(gamepad1.right_trigger);
 
             }
             if (gamepad1.circle) {
                 //slow
-                straightMovementVelocity = 270*Math.signum(straightMovementVelocity);
+                if (gamepad1.left_trigger>0) {
+                    straightMovementVelocity = 270;
+                } else if (gamepad1.right_trigger>0) {
+                    straightMovementVelocity = -270;
+
+                }
                 strafeVelocity = 270*Math.signum(gamepad1.right_stick_x);
                 //turnVelocity = 0 * Math.signum(gamepad1.right_stick_x);
 
             }
             if (gamepad1.a) {
                 //boost
-                straightMovementVelocity = 2200;
-                strafeVelocity = 2200*Math.signum(gamepad1.right_stick_x);
+                if (gamepad1.left_trigger>0) {
+                    straightMovementVelocity = 4269;
+                } else if (gamepad1.right_trigger>0) {
+                    straightMovementVelocity = -4269;
+
+                }
+                strafeVelocity = 4269*Math.signum(gamepad1.right_stick_x);
                 //turnVelocity = 0 * Math.signum(gamepad1.right_stick_x);
 
             }
