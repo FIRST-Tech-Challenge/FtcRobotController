@@ -5,8 +5,8 @@ public enum ShoulderPosition {
     // Constants that store the ticks for the shoulder position
     // 288 ticks/revolution
     GROUND(10), // Roughly half of max
-    HIGH(34), // Max before breakage occurs
-    FLEX(0); // Roughly zero
+    HIGH(-100), // Just under zero
+    FLEX(35); // Max before breakage occurs
 
     // Stores ticks in var value
     private final int value;
