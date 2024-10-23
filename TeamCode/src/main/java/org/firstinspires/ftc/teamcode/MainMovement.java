@@ -87,10 +87,10 @@ public class MainMovement extends LinearOpMode {
     public void runOpMode() {
 
         //psuedocode (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
-        BLDrive  = hardwareMap.get(DcMotor.class, "BLDrive");
-        BRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
-        FLDrive  = hardwareMap.get(DcMotor.class, "FLDrive");
-        FRDrive  = hardwareMap.get(DcMotor.class, "BRDrive");
+        BLDrive  = hardwareMap.get(DcMotor.class, "bl_drive");
+        BRDrive  = hardwareMap.get(DcMotor.class, "br_drive");
+        FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
+        FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
 
         legendaryStrafeMovement();
 
@@ -106,11 +106,7 @@ public class MainMovement extends LinearOpMode {
     private void legendaryRotationMovement() {
         float minRotationSpeed = 0.15f;
         double addRotationSpeed = Math.sqrt(RjoystickX*RjoystickX + RjoystickY*RjoystickY);
-        float netRS = minRotationSpeed + (float)addRotationSpeed; //net speed
-
-
-        double RangleInRadians = Math.atan2(RjoystickY, RjoystickX);
-        double RangleInDegrees = RangleInRadians * (180 / Math.PI);
+        // float netRS = minRotationSpeed + (float)addRotationSpeed; //net speed
 
         if (!(Math.abs(RjoystickX) <= deadZone) && !(Math.abs(RjoystickY) <= deadZone) && !usingLStick) {
             if(gamepad1.right_stick_x > 0){
