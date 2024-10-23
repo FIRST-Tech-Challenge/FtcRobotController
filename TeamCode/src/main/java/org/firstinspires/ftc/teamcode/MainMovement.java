@@ -70,13 +70,13 @@ import org.firstinspires.ftc.robotcore.internal.system.Finalizable;
 @Disabled
 public class MainMovement extends LinearOpMode {
     //move forward: all = cc
-    //move backwards all= c
+    //move backwards all = c
     //strafe left = BL, FR = cc, BR, FL = c
     private DcMotor BLDrive; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
     private DcMotor BRDrive;
     private DcMotor FLDrive;
     private DcMotor FRDrive;
-    final float deadZone = 0.1f;
+    final float joystickDeadzone = 0.1f;
 
     boolean usingLStick;
     public float LjoystickX = gamepad1.left_stick_x;
@@ -92,9 +92,11 @@ public class MainMovement extends LinearOpMode {
         FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
         FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
 
+        epicRotationMovement();
         legendaryStrafeMovement();
 
     }
+
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed){
         //set all the motor powers to the floats defined
         BLDrive.setPower(BL*speed);
@@ -103,31 +105,36 @@ public class MainMovement extends LinearOpMode {
         FRDrive.setPower(FR*speed);
     }
 
-    private void legendaryRotationMovement() {
-        float minRotationSpeed = 0.15f;
-        double addRotationSpeed = Math.sqrt(RjoystickX*RjoystickX + RjoystickY*RjoystickY);
-        // float netRS = minRotationSpeed + (float)addRotationSpeed; //net speed
 
-        if (!(Math.abs(RjoystickX) <= deadZone) && !(Math.abs(RjoystickY) <= deadZone) && !usingLStick) {
-            if(gamepad1.right_stick_x > 0){
-                setMotorPowers(1, -1,1,-1,gamepad1.right_stick_x);
-            } else if (gamepad1.right_stick_x < 0){
-                setMotorPowers(-1, 1,-1,1,gamepad1.right_stick_x);
+
+    private void epicRotationMovement() {
+        // rotates the robot if left stick is not being used (movement takes priorities)
+        if (!(Math.abs(RjoystickX) <= joystickDeadzone) && !(Math.abs(RjoystickY) <= joystickDeadzone) && !usingLStick) {
+            if(gamepad1.right_stick_x > 0) {
+                setMotorPowers(1, -1,1,-1,gamepad1.right_stick_x); // moves wheels at speed how far x is from origin
+            } else if (gamepad1.right_stick_x < 0) {
+                setMotorPowers(-1, 1,-1,1,gamepad1.right_stick_x); // moves wheels at speed how far x is from origin
             }
         }
     }
 
+    //    _                     _          _   _                 _            _                                      __   _
+    //   (_)  __ _   __   ___  | |__      (_) (_)  __ _   __ _  | |  _  _    | |__   __ _   _ _    __   _ _   ___   / _| | |_
+    //   | | / _` | / _| / _ \ | '_ \     | | | | / _` | / _` | | | | || |   | '_ \ / _` | | ' \  / _| | '_| / _ \ |  _| |  _|
+    //  _/ | \__,_| \__| \___/ |_.__/    _/ | |_| \__, | \__, | |_|  \_, |   |_.__/ \__,_| |_||_| \__| |_|   \___/ |_|    \__|
+    // |__/                             |__/      |___/  |___/       |__/
 
     private void legendaryStrafeMovement() {
         float minSpeed = 0.15f;
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
         float netS = minSpeed + (float)addSpeed; //net speed
 
+        // calculates the angle of the joystick in radians -> degrees
         double LangleInRadians = Math.atan2(LjoystickY, LjoystickX);
         double LangleInDegrees = LangleInRadians * (180 / Math.PI);
 
-        //check if in dead zone
-        if (!(Math.abs(LjoystickX) <= deadZone) && !(Math.abs(LjoystickY) <= deadZone)) {
+        // find quadrant of joystick then convert to strafing movement
+        if (!(Math.abs(LjoystickX) <= joystickDeadzone) && !(Math.abs(LjoystickY) <= joystickDeadzone)) {
             usingLStick = true;
             //if not in dead zone
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
@@ -177,4 +184,5 @@ public class MainMovement extends LinearOpMode {
         }
 
     }
+
 }
