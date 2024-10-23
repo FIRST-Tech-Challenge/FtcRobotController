@@ -133,6 +133,8 @@ public class RobotContainer {
         //frontCamera = new Camera("CamyCamy");
         linearSlide = new LinearSlide();
         flappyFlappyWrist = new FlappyFlappyWrist();
+
+        shoulderJoint = new ShoulderJoint();
         // insert other subsystems here
         // claw = new Claw();
 
