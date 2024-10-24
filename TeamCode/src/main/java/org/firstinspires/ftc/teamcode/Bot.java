@@ -484,7 +484,6 @@ public class Bot {
     /**
      * Sequence for lifting bot for low hang
      */
-    //TODO FIX
     public void liftLow(){
         this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
         this.setArmPos(1280);
@@ -505,16 +504,7 @@ public class Bot {
      */
     //TODO FIX
     public void liftHigh(){
-        this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
-        opMode.sleep(1000);
-        this.autoPivotArm(MAX_PIVOT, 0.75);
-        opMode.sleep(1000);
-        this.setExtendPos(5.0);
-        opMode.sleep(1000);
-        this.encoderLift(RIGHT_LIFT_MIN, LEFT_LIFT_MIN);
-        opMode.sleep(1000);
-        this.setExtendPos(0.0);
-        opMode.sleep(1000);
+
     }
 
     /**

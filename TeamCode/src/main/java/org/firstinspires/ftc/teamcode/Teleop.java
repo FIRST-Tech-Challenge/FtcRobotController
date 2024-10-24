@@ -120,9 +120,9 @@ public class Teleop extends LinearOpMode {
             }
 
             if(gamepad2.y && bot.getArmPosition() <= MAX_PIVOT){
-                bot.setPivotPower(0.75);
+                bot.setPivotPower(0.50);
             } else if(gamepad2.a && bot.getArmPosition() >= MIN_PIVOT){
-                bot.setPivotPower(-0.75);
+                bot.setPivotPower(-0.50);
             } else {
                 bot.setPivotPower(0.0);
             }
@@ -140,13 +140,14 @@ public class Teleop extends LinearOpMode {
             }
 
             //lift sequence buttons
-            //TODO THIS DOES NOT WORK
 
-            if(gamepad1.a){
+
+            if(gamepad1.a){ // Takes 25 sec to complete low hang
                 bot.liftLow();
-            } else if (gamepad1.b) {
-                bot.liftHigh();
-            }
+//            } else if (gamepad1.b) {
+//                //TODO THIS DOES NOT WORK
+//                bot.liftHigh();
+//            }
 
 
             //reset button for encoders if needed
