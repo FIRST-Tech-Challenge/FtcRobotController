@@ -1,6 +1,7 @@
 package org.nknsd.robotics.team.components;
 
-import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,28 +11,37 @@ import org.nknsd.robotics.framework.NKNComponent;
 
 import java.util.concurrent.TimeUnit;
 
-public class ArmRotator implements NKNComponent {
+public class RotationHandler implements NKNComponent {
 
     PotentiometerHandler potHandler;
-    double target;
+    private final String motorName;
+    private DcMotor motor;
+    double target = 0;
 
     final double threshold;
-    final double K;
+    final double P_CONSTANT;
     double diff;
     long targetTime = 0;
     double current;
+    private ExtensionHandler extensionHandler;
 
-    public ArmRotator(double threshold, double K){
+
+    public RotationHandler(String motorName, double threshold, double P_CONSTANT){
+        this.motorName = motorName;
         this.threshold = threshold;
-        this.K = K;
+        this.P_CONSTANT = P_CONSTANT;
     }
 
-    public void link(PotentiometerHandler potHandler){
+    public void link(PotentiometerHandler potHandler, ExtensionHandler extensionHandler){
         this.potHandler = potHandler;
+        this.extensionHandler = extensionHandler;
     }
+
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
+        motor = hardwareMap.dcMotor.get(motorName);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
         return true;
     }
 
@@ -60,27 +70,30 @@ public class ArmRotator implements NKNComponent {
         long currentTime = runtime.time(TimeUnit.MILLISECONDS);
         if(currentTime >= targetTime) {
             current = potHandler.getPotVoltage();
-            controlLoop(current);
+            double armPower = controlLoop(current);
+            //motor.setPower(armPower);
             targetTime = currentTime+1;
         }
     }
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("armPosition",target);
-        telemetry.addData("armTarget",current);
+        telemetry.addData("armPosition",current);
+        telemetry.addData("armTarget",target);
         telemetry.addData("armDifference", diff);
+        telemetry.addData("Motor Power", motor.getPower());
 
     }
+
     public void setTarget(double target){
-        this.target = target;
+        if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.RESTING) {this.target = target;}
     }
-    private double controlLoop(double current){
 
+    private double controlLoop(double current){
         diff = (target - current);
         if (Math.abs(diff) <= threshold) {
             return 0;
         }
-        return (diff * K);
+        return (diff * P_CONSTANT);
     }
 }

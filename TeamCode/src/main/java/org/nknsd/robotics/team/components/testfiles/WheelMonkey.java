@@ -1,4 +1,4 @@
-package org.nknsd.robotics.team.components;
+package org.nknsd.robotics.team.components.testfiles;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -6,10 +6,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
+import org.nknsd.robotics.team.components.WheelHandler;
 
 import java.util.concurrent.TimeUnit;
 
-public class ChaosMonkey implements NKNComponent {
+public class WheelMonkey implements NKNComponent {
     // The states enum stores the possible tests chaos monkey can run
     // Each one has a duration, and later we define which state runs what
     private enum States {
@@ -94,9 +95,8 @@ public class ChaosMonkey implements NKNComponent {
 
     private final WheelHandler wheelHandler;
 
-    public ChaosMonkey(WheelHandler wheelHandler, String[] doTests) {
+    public WheelMonkey(WheelHandler wheelHandler, String[] doTests) {
         this.wheelHandler = wheelHandler;
-
     }
 
     @Override
