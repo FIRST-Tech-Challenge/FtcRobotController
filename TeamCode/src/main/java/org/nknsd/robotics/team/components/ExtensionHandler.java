@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
+import java.util.concurrent.TimeUnit;
+
 public class ExtensionHandler implements NKNComponent {
     private final String extenderName;
     private final boolean doInvertMotor;
@@ -15,7 +17,8 @@ public class ExtensionHandler implements NKNComponent {
     private DcMotor motor;          // extender motor
     private RotationHandler rotationHandler;  //Connects to the arm rotator to read from it
     private static double SAFE_ARM_ROTATION_VALUE = 1.5;
-
+    int extenderPrevious = 0;
+    private double lastResetAttempt = 200;
     private ExtensionPositions target = ExtensionPositions.RESTING;
 
     public enum ExtensionPositions {
@@ -92,8 +95,16 @@ public class ExtensionHandler implements NKNComponent {
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
-
-    }
+        double RESET_DELAY = 200;
+        if ((runtime.now(TimeUnit.MILLISECONDS) - RESET_DELAY) > lastResetAttempt) {
+             if (motor.getCurrentPosition() >= extenderPrevious && target == ExtensionPositions.RESTING){
+                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                 motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+             }
+             extenderPrevious = motor.getCurrentPosition();
+            lastResetAttempt = runtime.now(TimeUnit.MILLISECONDS);
+        }
+    } //resets encoder when arm is resting and no longer moving
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
@@ -105,7 +116,6 @@ public class ExtensionHandler implements NKNComponent {
     public void gotoPosition(ExtensionPositions extensionPosition) {
         if (extensionPosition.canGoToPosition(rotationHandler)) {motor.setTargetPosition(extensionPosition.position); target = extensionPosition;}
     }
-
     public ExtensionPositions targetPosition() {
         return target;
     }
