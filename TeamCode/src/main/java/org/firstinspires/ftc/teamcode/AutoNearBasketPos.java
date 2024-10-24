@@ -77,7 +77,7 @@ public class AutoNearBasketPos extends LinearOpMode {
         //Drive Back
         drive(1700.11, 1700.11, 1700.11, 1700.11, 0.5);
         drive(-906, 906, 906, -906, 0.7);
-        drive(-900, -900, -900, -900, 0.5);
+        drive(-850, -850, -850, -850, 0.5);
 
     }
         private void drive(double bLeftTarget, double bRightTarget, double fRightTarget, double fLeftTarget, double speed ) {
