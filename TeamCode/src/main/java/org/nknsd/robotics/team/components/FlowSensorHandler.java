@@ -10,6 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.nknsd.robotics.framework.NKNComponent;
 
+
+//Offset is:
+//0.590551
+//3.54331
 public class FlowSensorHandler implements NKNComponent {
 
     public static class PoseData {

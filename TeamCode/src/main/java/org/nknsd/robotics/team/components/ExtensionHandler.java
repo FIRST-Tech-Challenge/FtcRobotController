@@ -97,8 +97,9 @@ public class ExtensionHandler implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("Current ext Position", motor.getCurrentPosition());
-        telemetry.addData("Target ext Position", motor.getTargetPosition());
+        telemetry.addData("Ext Current Position", motor.getCurrentPosition());
+        telemetry.addData("Ext Target Position", motor.getTargetPosition());
+        telemetry.addData("Ext State", target.name());
     }
 
     public boolean gotoPosition(ExtensionPositions extensionPosition) {
