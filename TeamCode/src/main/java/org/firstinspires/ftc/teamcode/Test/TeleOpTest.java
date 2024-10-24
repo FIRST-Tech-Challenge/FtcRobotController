@@ -103,12 +103,6 @@ public class TeleOpTest extends LinearOpMode {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
             }
 
-            telemetry.addData("frontLeft: ", frontLeft.getDirection());
-            telemetry.addData("backLeft: ", backLeft.getDirection());
-            telemetry.addData("frontRight: ", frontRight.getDirection());
-            telemetry.addData("backRight: ", backRight.getDirection());
-            telemetry.update();
-
         }
     }
 }
