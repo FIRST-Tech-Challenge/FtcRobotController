@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Config
 @TeleOp(name="Mecanum TeleOp", group="TeleOp")
 public class MecanumTeleOp extends OpMode {
 
@@ -44,7 +46,6 @@ public class MecanumTeleOp extends OpMode {
         CHAMBER_A,
         CHAMBER_B,
         ZERO
-
     }
 
     enum armPoseZone {
@@ -88,32 +89,32 @@ public class MecanumTeleOp extends OpMode {
                 case SUBMERSIBLE_B:
                     positionalZone = armPoseZone.SUBMERSABLE;
                     extendoReference = 1000;
-                    capstanReference = 0;
+                    capstanReference = 87;
                     break;
                 case SUBMERSIBLE_A:
                     positionalZone = armPoseZone.SUBMERSABLE;
-                    extendoReference = 1000;
-                    capstanReference = 170;
+                    extendoReference = 2000;
+                    capstanReference = 150;
                     break;
                 case CHAMBER_B:
                     positionalZone = armPoseZone.CHAMBER;
-                    extendoReference = 0;
+                    extendoReference = 1000;
                     capstanReference = 370;
                     break;
                 case CHAMBER_A:
                     positionalZone = armPoseZone.CHAMBER;
-                    extendoReference = 0;
+                    extendoReference = 1000;
                     capstanReference = 450;
                     break;
                 case BASKET:
                     positionalZone = armPoseZone.OTHER;
-                    extendoReference = 1000;
-                    capstanReference = 850;
+                    extendoReference = 2300;
+                    capstanReference = 750;
                     break;
                 case REST:
                     positionalZone = armPoseZone.OTHER;
                     extendoReference = 0;
-                    capstanReference = 200;
+                    capstanReference = 150;
                     break;
             }
         }
@@ -222,6 +223,8 @@ public class MecanumTeleOp extends OpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        cap.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        spindle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         spindle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

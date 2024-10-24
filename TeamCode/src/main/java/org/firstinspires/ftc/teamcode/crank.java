@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @TeleOp(name="crank", group="TeleOp")
 public class crank extends OpMode {
 
@@ -86,7 +88,11 @@ public class crank extends OpMode {
         odometry.begin();
     }
 
-
+    @Override
+    public void start() {
+        telemetry.speak("Evium Start");
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+    }
 
     @Override
     public void loop() {
@@ -100,36 +106,30 @@ public class crank extends OpMode {
         double x;
         double rx;
 
-        if (gamepad1.right_trigger > 0.75) {
-            y = Math.pow(gamepad1.left_stick_y * DRIVE_SENSITIVITY, 3) * 0.2;
-            x = Math.pow(-gamepad1.left_stick_x * DRIVE_SENSITIVITY, 3) * 0.2;
-            rx = -gamepad1.right_stick_x * DRIVE_SENSITIVITY * 0.25;
+        if (gamepad1.right_trigger > 0.33) {
+            y = gamepad1.left_stick_y * 0.2;
+            x = -gamepad1.left_stick_x * 0.5;
+            rx = -gamepad1.right_stick_x * 0.25;
         } else {
-            y = Math.pow(gamepad1.left_stick_y * DRIVE_SENSITIVITY, 3) * (1 - gamepad1.left_trigger);
-            x = Math.pow(-gamepad1.left_stick_x * DRIVE_SENSITIVITY, 3) * (1 - gamepad1.left_trigger);
-            rx = -gamepad1.right_stick_x * DRIVE_SENSITIVITY * (1 - gamepad1.left_trigger);
+            y = Math.pow(gamepad1.left_stick_y, 3);
+            x = Math.pow(-gamepad1.left_stick_x, 3);
+            rx = -gamepad1.right_stick_x;
         }
 
         // Set power to motors
-        if (gamepad2.y) {
-            frontLeftMotor.setPower(0);
-            backLeftMotor.setPower(0);
-            frontRightMotor.setPower(0);
-            backRightMotor.setPower(0);
-        } else {
-            frontLeftMotor.setPower(y + x + rx);
-            backLeftMotor.setPower(y - x + rx);
-            frontRightMotor.setPower(y - x - rx);
-            backRightMotor.setPower(y + x - rx);
-        }
+        frontLeftMotor.setPower(y + x + rx);
+        backLeftMotor.setPower(y - x + rx);
+        frontRightMotor.setPower(y - x - rx);
+        backRightMotor.setPower(y + x - rx);
 
         if (gamepad2.right_trigger > 0.05) {
             capPower = -gamepad2.right_trigger;
         } else {
             capPower = gamepad2.left_trigger;
         }
-        cap.setPower(capPower * 0.75);
+        cap.setPower(capPower);
         if (Lswitch.isPressed()) {
+            telemetry.speak("Warning Capstan. Pull Up");
             cap.setPower(capPower * 0.1);
         }
         spindle.setPower(-gamepad2.left_stick_y * 0.75);
@@ -138,23 +138,25 @@ public class crank extends OpMode {
             LSLowerOut = !LSLowerOut;
             LSLowerToggling = true;
             if (LSLowerOut) {
+                telemetry.speak("Claw Up");
                 LSLowerPos = 1;
             } else {
+                telemetry.speak("Claw Down");
                 LSLowerPos = 0.3;
             }
         }
         if ((!gamepad2.a) && (!gamepad1.a)) {
             LSLowerToggling = false;
         }
-        if (gamepad2.dpad_down) {
+        if (gamepad2.dpad_down || gamepad1.dpad_down) {
             LSLowerPos = LSLowerPos - 0.01;
         }
-        if (gamepad2.dpad_up) {
+        if (gamepad2.dpad_up || gamepad1.dpad_up) {
             LSLowerPos = LSLowerPos + 0.01;
         }
-        LSLower.setPosition(LSLowerPos);
+        LSLower.setPosition(LSLowerPos + lolclock);
 
-        // Linear Slide Top
+        // Linear Servo Top
         if ((gamepad2.x ||gamepad1.x) && !LSTopToggling) {
             LSTopOut = !LSTopOut;
             LSTopToggling = true;
@@ -163,8 +165,10 @@ public class crank extends OpMode {
             LSTopToggling = false;
         }
         if (LSTopOut) {
+            telemetry.speak("Wrist Open");
             LSTop.setPosition(0.75 + lolclock);
         } else {
+            telemetry.speak("Wrist Close");
             LSTop.setPosition(0 + lolclock);
         }
 
@@ -175,6 +179,7 @@ public class crank extends OpMode {
         telemetry.addData("Angle", pos.h);
         telemetry.addData("lstop", LSTop.getPosition());
         telemetry.addData("lsbottom", LSLower.getPosition());
+        telemetry.addData("Left Stick Y", gamepad2.left_stick_y);
         telemetry.update();
     }
 }

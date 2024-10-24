@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="secondAuto", group="Auto")
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+@Autonomous(name="deadAutoI44", group="Auto", preselectTeleOp="crank")
 public class deadAuto extends OpMode {
     static class PIDController {
         private static double p;
@@ -43,13 +45,32 @@ public class deadAuto extends OpMode {
         }
     }
 
+    static class goToFromFor {
+        private ElapsedTime timer;
+        private int from;
+        private int to;
+        private int forV;
+        public void start(int fromVal, int toVal, int forVal) {
+            timer = new ElapsedTime();
+            timer.milliseconds();
+            from = fromVal;
+            to = toVal;
+            forV = forVal;
+        }
+        public int getValue() {
+            return (int) (from + ((to - from) * (timer.milliseconds()/forV)));
+        }
+    }
+
     enum armPose {
         BASKET,
         SUBMERSIBLE_A,
         SUBMERSIBLE_B,
         REST,
         CHAMBER_A,
-        CHAMBER_B
+        CHAMBER_B,
+        ZERO,
+        CUSTOM_1
 
     }
 
@@ -60,22 +81,22 @@ public class deadAuto extends OpMode {
     }
 
     private static class ArmSubSystem {
-        private static MecanumTeleOp.armPose positionalState = MecanumTeleOp.armPose.REST;
-        private static MecanumTeleOp.armPoseZone positionalZone = MecanumTeleOp.armPoseZone.OTHER;
+        private static armPose positionalState = armPose.REST;
+        private static armPoseZone positionalZone = armPoseZone.OTHER;
         private static DcMotor cap;
         private static DcMotor extendo;
         private static RevTouchSensor ClasslimitSwitch;
-        private static MecanumTeleOp.PIDController capstanPID = new MecanumTeleOp.PIDController();
-        private static MecanumTeleOp.PIDController extendoPID = new MecanumTeleOp.PIDController();
-        private static int capstanReference = 0;
+        private static PIDController capstanPID = new PIDController();
+        private static PIDController extendoPID = new PIDController();
+        private static int capstanReference = 300;
         private static int extendoReference = 0;
-        public void init(MecanumTeleOp.armPose positionalStateInitial, DcMotor capstanMotor, DcMotor spindleMotor, RevTouchSensor limitSwitch) {
+        public void init(armPose positionalStateInitial, DcMotor capstanMotor, DcMotor spindleMotor, RevTouchSensor limitSwitch) {
             positionalState = positionalStateInitial;
             cap = capstanMotor;
             extendo = spindleMotor;
             ClasslimitSwitch = limitSwitch;
             extendoPID.init(0.005F, 0, 0.001F);
-            capstanPID.init(0.006F, 0, 0.001F);
+            capstanPID.init(0.0035F, 0, 0.0005F);
         }
         public double getCapstanReference() {
             return capstanReference;
@@ -83,77 +104,98 @@ public class deadAuto extends OpMode {
         public double getExtendoReference() {
             return extendoReference;
         }
-        public void setReferences(MecanumTeleOp.armPose pose) {
+        public void setReferences(armPose pose) {
             positionalState = pose;
             switch (positionalState) {
+                case CUSTOM_1:
+                    positionalZone = armPoseZone.OTHER;
+                    extendoReference = 0;
+                    capstanReference = 300;
+                    break;
+                case ZERO:
+                    positionalZone = armPoseZone.OTHER;
+                    extendoReference = 0;
+                    capstanReference = 0;
+                    break;
                 case SUBMERSIBLE_B:
-                    positionalZone = MecanumTeleOp.armPoseZone.SUBMERSABLE;
-                    extendoReference = 1700;
-                    capstanReference = 117;
+                    positionalZone = armPoseZone.SUBMERSABLE;
+                    extendoReference = 1000;
+                    capstanReference = 87;
                     break;
                 case SUBMERSIBLE_A:
-                    positionalZone = MecanumTeleOp.armPoseZone.SUBMERSABLE;
-                    extendoReference = 1700;
-                    capstanReference = 170;
+                    positionalZone = armPoseZone.SUBMERSABLE;
+                    extendoReference = 2000;
+                    capstanReference = 150;
                     break;
                 case CHAMBER_B:
-                    positionalZone = MecanumTeleOp.armPoseZone.CHAMBER;
-                    extendoReference = 0;
-                    capstanReference = 400;
+                    positionalZone = armPoseZone.CHAMBER;
+                    extendoReference = 1000;
+                    capstanReference = 100;
                     break;
                 case CHAMBER_A:
-                    positionalZone = MecanumTeleOp.armPoseZone.CHAMBER;
-                    extendoReference = 0;
-                    capstanReference = 450;
+                    positionalZone = armPoseZone.CHAMBER;
+                    extendoReference = 1000;
+                    capstanReference = 400;
                     break;
                 case BASKET:
-                    positionalZone = MecanumTeleOp.armPoseZone.OTHER;
-                    extendoReference = 1700;
-                    capstanReference = 850;
+                    positionalZone = armPoseZone.OTHER;
+                    extendoReference = 2300;
+                     capstanReference = 750;
                     break;
                 case REST:
-                    positionalZone = MecanumTeleOp.armPoseZone.OTHER;
+                    positionalZone = armPoseZone.OTHER;
                     extendoReference = 0;
-                    capstanReference = 200;
+                    capstanReference = 150;
                     break;
             }
         }
-        public void periodicUpdate() {
-            extendo.setPower(extendoPID.getOutput(extendo.getCurrentPosition(), extendoReference));
+        public void periodicUpdate(Telemetry telemetry) {
+            double extendoOutput = extendoPID.getOutput(extendo.getCurrentPosition(), extendoReference);
+            if (-0.25 > extendoOutput || extendoOutput > 0.25) {
+                extendo.setPower(extendoOutput);
+            } else {
+                extendo.setPower(0);
+            }
             if (!ClasslimitSwitch.isPressed()) {
                 cap.setPower(capstanPID.getOutput(cap.getCurrentPosition(), capstanReference));
             }
+            telemetry.addData("Extendo Power", extendo.getPower());
+            telemetry.addData("Capstan Power", cap.getPower());
+            telemetry.addData("Capstan Pos", cap.getCurrentPosition());
+            telemetry.addData("Extendo Pos", extendo.getCurrentPosition());
+            telemetry.addData("Capstan Encoder Status", cap.getController().getConnectionInfo());
+            telemetry.addData("Exteno Encoder Status", extendo.getController().getConnectionInfo());
         }
         public void cycleSubmersible() {
-            if (positionalZone != MecanumTeleOp.armPoseZone.SUBMERSABLE) {
-                setReferences(MecanumTeleOp.armPose.SUBMERSIBLE_A);
-            } else if (positionalState == MecanumTeleOp.armPose.SUBMERSIBLE_A) {
-                setReferences(MecanumTeleOp.armPose.SUBMERSIBLE_B);
+            if (positionalState == armPose.SUBMERSIBLE_A) {
+                setReferences(armPose.SUBMERSIBLE_B);
             } else {
-                setReferences(MecanumTeleOp.armPose.REST);
+                setReferences(armPose.SUBMERSIBLE_A);
             }
         }
+        public void enterZeroPos() {
+            setReferences(armPose.ZERO);
+        }
         public void cycleBasketTop() {
-            if (positionalState != MecanumTeleOp.armPose.BASKET) {
-                setReferences(MecanumTeleOp.armPose.BASKET);
+            if (positionalState != armPose.BASKET) {
+                setReferences(armPose.BASKET);
             } else {
-                setReferences(MecanumTeleOp.armPose.REST);
+                setReferences(armPose.REST);
             }
         }
         public void cycleChamberTop() {
-            if (positionalZone != MecanumTeleOp.armPoseZone.CHAMBER) {
-                setReferences(MecanumTeleOp.armPose.CHAMBER_A);
-            } else if (positionalState == MecanumTeleOp.armPose.CHAMBER_A) {
-                setReferences(MecanumTeleOp.armPose.CHAMBER_B);
+            if (positionalZone != armPoseZone.CHAMBER) {
+                setReferences(armPose.CHAMBER_A);
+            } else if (positionalState == armPose.CHAMBER_A) {
+                setReferences(armPose.CHAMBER_B);
             } else {
-                setReferences(MecanumTeleOp.armPose.REST);
+                setReferences(armPose.REST);
             }
         }
         public void goToRest() {
-            setReferences(MecanumTeleOp.armPose.REST);
+            setReferences(armPose.REST);
         }
     }
-
     // Servos
     private ServoImplEx LSLower;
     private ServoImplEx LSTop;
@@ -210,13 +252,18 @@ public class deadAuto extends OpMode {
         spindle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Prep ArmControlSubsystem
-        ArmControlSubsystem.init(MecanumTeleOp.armPose.REST, cap, spindle, lswitch);
-        LSTop.setPosition(1);
+        ArmControlSubsystem.init(armPose.CUSTOM_1, cap, spindle, lswitch);
+        LSTop.setPosition(0.3);
+        LSLower.setPosition(0.1);
     }
 
     @Override
     public void start() {
         timeAtStart = System.currentTimeMillis();
+        ArmSubSystem.cap.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmSubSystem.cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ArmSubSystem.extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmSubSystem.extendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -226,42 +273,68 @@ public class deadAuto extends OpMode {
         } else {
             lolclock = lolclock + 0.001;
         }
-        ArmControlSubsystem.periodicUpdate();
         double x, y, rx;
-        if ((System.currentTimeMillis() - timeAtStart) < 3000) {
-            x = 0;
-            y = -0.3;
-            rx = 0;
-        } else if ((System.currentTimeMillis() - timeAtStart) < 4000) {
-            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_A);
-            x = 0;
-            y = 0;
-            rx = 0;
-        } else if ((System.currentTimeMillis() - timeAtStart) < 5000) {
-            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_B);
+        double delay = 9000;
+        if ((System.currentTimeMillis() - timeAtStart) < (delay + 3640)) {
+            ArmControlSubsystem.setReferences(armPose.CUSTOM_1);
+            LSTop.setPosition(0.3 - lolclock);
+            LSLower.setPosition(0.9 - lolclock);
             x = 0;
             y = 0;
             rx = 0;
-        } else if ((System.currentTimeMillis() - timeAtStart) < 5500) {
-            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_A);
+        } else if ((System.currentTimeMillis() - timeAtStart) < (delay + 5000)) {
+            ArmControlSubsystem.setReferences(armPose.CHAMBER_A);
+            LSTop.setPosition(0.3 - lolclock);
+            LSLower.setPosition(0.9 - lolclock);
+            x = 0;
+            y = -0.25;
+            rx = 0;
+        } else if ((System.currentTimeMillis() - timeAtStart) < (delay + 5500)) {
+            ArmControlSubsystem.setReferences(armPose.CHAMBER_B);
+            LSTop.setPosition(0.3 - lolclock);
+            LSLower.setPosition(0.9 - lolclock);
+            x = 0;
+            y = 0;
+            rx = 0;
+        } else if ((System.currentTimeMillis() - timeAtStart) < (delay + 8000)) {
+            ArmControlSubsystem.setReferences(armPose.CHAMBER_B);
+            LSTop.setPosition(0.3 - lolclock);
+            LSLower.setPosition(0.9 - lolclock);
             x = 0;
             y = 0.1;
             rx = 0;
-        } else if ((System.currentTimeMillis() - timeAtStart) < 6000) {
-            ArmControlSubsystem.setReferences(MecanumTeleOp.armPose.CHAMBER_A);
-            LSTop.setPosition(1);
+        } else if ((System.currentTimeMillis() - timeAtStart) < (delay + 11000)) {
+            ArmControlSubsystem.setReferences(armPose.CHAMBER_B);
+            LSTop.setPosition(0.9 - lolclock);
+            LSLower.setPosition(0.9 - lolclock);
             x = 0;
-            y = 0.3;
+            y = 0.05;
             rx = 0;
-        }  else if ((System.currentTimeMillis() - timeAtStart) < 7000) {
-            x = 0.5;
-            y = 0;
+        } else if ((System.currentTimeMillis() - timeAtStart) < (delay + 17000)) {
+            ArmControlSubsystem.setReferences(armPose.CHAMBER_B);
+            LSTop.setPosition(0.9 - lolclock);
+            LSLower.setPosition(0.9 - lolclock);
+            x = 0;
+            y = 0.2;
+            rx = 0;
+        }  else if ((System.currentTimeMillis() - timeAtStart) < (delay + 22000)) {
+            ArmControlSubsystem.setReferences(armPose.REST);
+            LSTop.setPosition(0.9 - lolclock);
+            LSLower.setPosition(0.9 - lolclock);
+            x = -0.5;
+            y = 0.2;
             rx = 0;
         } else {
-            x = 0.5;
-            y = 0;
+            LSTop.setPosition(0.9 - lolclock);
+            LSLower.setPosition(0.1 - lolclock);
+            ArmControlSubsystem.setReferences(armPose.ZERO);
+            x = 0;
+            y = 0.2;
             rx = 0;
         }
+
+        ArmControlSubsystem.periodicUpdate(telemetry);
+
         // Set power to motors
         frontLeftMotor.setPower(y + x + rx);
         backLeftMotor.setPower(y - x + rx);

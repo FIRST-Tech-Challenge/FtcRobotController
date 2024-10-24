@@ -16,7 +16,9 @@ public class positionFinder extends OpMode {
     public static float i = 0;
     public static float d = 0.001F;
     public static int referenceA = 0;
-    public static int referenceB = 200;
+    public static int referenceB = 0;
+    public static float gripper = 0.3f;
+    public static float wrist = 0;
 
     static class PIDController {
         private static float p;
@@ -58,6 +60,9 @@ public class positionFinder extends OpMode {
     private DcMotor cap;
     private RevTouchSensor Lswitch;
     private autoTeleArm.PIDController capPID = new autoTeleArm.PIDController();
+    private ServoImplEx LSLower;
+    private ServoImplEx LSTop;
+    private double lolclock = 0.01;
 
 
     @Override
@@ -68,6 +73,8 @@ public class positionFinder extends OpMode {
         extendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         cap = hardwareMap.get(DcMotor.class, "cap");
         Lswitch = hardwareMap.get(RevTouchSensor.class, "Lswitch");
+        LSLower = hardwareMap.get(ServoImplEx.class, "LSLower");
+        LSTop = hardwareMap.get(ServoImplEx.class, "LSTop");
         capPID.init(p, i, d);
         cap.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -75,6 +82,13 @@ public class positionFinder extends OpMode {
 
     @Override
     public void loop() {
+        if (lolclock > 0.03) {
+            lolclock = lolclock - 0.001;
+        } else {
+            lolclock = lolclock + 0.001;
+        }
+        LSTop.setPosition(gripper + lolclock);
+        LSLower.setPosition(wrist + lolclock);
         if (!Lswitch.isPressed()) {
             cap.setPower(capPID.getOutput(cap.getCurrentPosition(), referenceA));
         }
@@ -82,5 +96,6 @@ public class positionFinder extends OpMode {
 
         telemetry.addData("Capstan Pos", cap.getCurrentPosition());
         telemetry.addData("Extendo Pos", extendo.getCurrentPosition());
+
     }
 }

@@ -13,8 +13,30 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="secondAuto", group="Auto")
-public class secondAuto extends OpMode {
+@Autonomous(name="thirdAuto", group="Auto")
+public class thirdAuto extends OpMode {
+    static class PIDController {
+        private static float p;
+        private static float i;
+        private static float d;
+        private static float integralSummation;
+        private static float lastError;
+        ElapsedTime timer;
+
+        public void init(float Xp, float Xi, float Xd) {
+            p = Xp;
+            i = Xi;
+            d = Xd;
+            timer = new ElapsedTime();
+        }
+        public float getOutput(float state, float reference) {
+            float error = reference - state;
+            integralSummation += (float) (error * timer.seconds());
+            float derivative = (float) ((error - lastError) / timer.seconds());
+            lastError = error;
+            return (error * p) + (derivative * d) + (integralSummation * i);
+        }
+    }
 
     enum armPose {
         BASKET,
@@ -136,9 +158,9 @@ public class secondAuto extends OpMode {
         private static SparkFunOTOS _odometry;
 
         // Position Controllers
-        private MecanumTeleOp.PIDController translationX = new MecanumTeleOp.PIDController();
-        private MecanumTeleOp.PIDController translationY = new MecanumTeleOp.PIDController();
-        private MecanumTeleOp.PIDController headingPID = new MecanumTeleOp.PIDController();
+        private static PIDController translationX;
+        private static PIDController translationY;
+        private static PIDController headingPID;
 
         // Pose Vars
         private static SparkFunOTOS.Pose2D currentPose;
@@ -166,9 +188,12 @@ public class secondAuto extends OpMode {
             _odometry = odometry;
 
             // PID Stuff
-            translationX.init(0.75F, 0, 0);
-            translationY.init(0.75F, 0, 0);
-            headingPID.init(0, 0, 0);
+            translationX = new PIDController();
+            translationY = new PIDController();
+            headingPID = new PIDController();
+            translationX.init(2F, 0.0F, 0.0F);
+            translationY.init(2F, 0.0F, 0.0F);
+            headingPID.init(0F, 0.0F, 0.0F);
 
             // Make sure odo is ready
             odometry.begin();
@@ -207,27 +232,29 @@ public class secondAuto extends OpMode {
 
         private void periodicUpdate(Telemetry telemetry) {
             currentPose.set(_odometry.getPosition());
-            if ((goal.x-0.2) < currentPose.x && currentPose.x < (goal.x + 0.2) &&
-                    (goal.y-0.2) < currentPose.y && currentPose.y < (goal.y + 0.2) &&
-                    (goal.x - 5) < currentPose.h && currentPose.h < (goal.h + 5)) {
-                telemetry.addData("isBusy", "false");
-                if (isBusy) {
-                    startNextPath = false;
-                }
-                if (startNextPath && (pathStage > (path.length + 1))) {
-                    pathStage = pathStage + 1;
-                    goal.set(new SparkFunOTOS.Pose2D(path[pathStage][0], path[pathStage][1], path[pathStage][2]));
-                    driveMech(translationX.getOutput((float) currentPose.x, (float) goal.x), translationY.getOutput((float) currentPose.y, (float) goal.y), headingPID.getOutput((float) -currentPose.h, (float) goal.h));
-                } else {
-                    driveMech(0,0,0);
-                    telemetry.addData("stopped", "true");
-                }
-                isBusy = false;
-            } else {
-                isBusy = true;
-                telemetry.addData("isBusy", "true");
-                driveMech(translationX.getOutput((float) currentPose.x, (float) goal.x), translationY.getOutput((float) currentPose.y, (float) goal.y), headingPID.getOutput((float) -currentPose.h, (float) goal.h));
-            }
+//            driveMech(translationX.getOutput((float) currentPose.x, (float) goal.x), translationY.getOutput((float) currentPose.y, (float) goal.y), headingPID.getOutput((float) -currentPose.h, (float) goal.h));
+            driveMech(0.25, 0.25, 0);
+//            if ((goal.x-0.2) < currentPose.x && currentPose.x < (goal.x + 0.2) &&
+//                    (goal.y-0.2) < currentPose.y && currentPose.y < (goal.y + 0.2) &&
+//                    (goal.x - 5) < currentPose.h && currentPose.h < (goal.h + 5)) {
+//                telemetry.addData("isBusy", "false");
+//                if (isBusy) {
+//                    startNextPath = false;
+//                }
+//                if (startNextPath && (pathStage > (path.length + 1))) {
+//                    pathStage = pathStage + 1;
+//                    goal.set(new SparkFunOTOS.Pose2D(path[pathStage][0], path[pathStage][1], path[pathStage][2]));
+//
+//                } else {
+//                    driveMech(0,0,0);
+//                    telemetry.addData("stopped", "true");
+//                }
+//                isBusy = false;
+//            } else {
+//                isBusy = true;
+//                telemetry.addData("isBusy", "true");
+//                driveMech(translationX.getOutput((float) currentPose.x, (float) goal.x), translationY.getOutput((float) currentPose.y, (float) goal.y), headingPID.getOutput((float) -currentPose.h, (float) goal.h));
+//            }
             telemetry.addData("Current Path Stage", pathStage);
             telemetry.addData("Current Pose", "(" + currentPose.x + ", " + currentPose.y + ", " + currentPose.x + ")");
             telemetry.addData("Goal Pose", "(" + goal.x + ", " + goal.y + ", " + goal.x + ")");
