@@ -60,8 +60,8 @@ public class DTMotorsTest extends LinearOpMode {
             double lbencoder = leftBack.getCurrentPosition();
             double rfencoder = rightFront.getCurrentPosition();
             double rbencoder = rightBack.getCurrentPosition();
-            double x = gamepad1.left_stick_x;
             double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
             double r = -gamepad1.right_stick_x;
             double normalize = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(r), 1);
             double flPower = (y+x-r);
