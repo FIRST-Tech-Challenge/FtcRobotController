@@ -23,9 +23,31 @@ public class drive extends OpMode {
 
     private DcMotorEx intakeInOut;
     private DcMotorEx clawUpDown;
-    private double intakeMaxSpeed = 0.5;
+    private double intakeMaxSpeed = 0.7;
 
+    public void processClawArmUpDown(){
+        if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0) {
+            intakeInOut.setPower(0);
+        }
+        else if (gamepad2.left_trigger != 0 && gamepad2.right_trigger == 0){
+            intakeInOut.setDirection(DcMotorSimple.Direction.REVERSE);
+            if(gamepad2.left_trigger >= intakeMaxSpeed) {
+                intakeInOut.setPower(intakeMaxSpeed);
+            }
+            else{
+                intakeInOut.setPower(gamepad2.left_trigger);
+            }
 
+        }
+        else if (gamepad2.right_trigger != 0 && gamepad2.left_trigger == 0) {
+            intakeInOut.setDirection(DcMotorSimple.Direction.FORWARD);
+            if (gamepad1.right_trigger >= intakeMaxSpeed) {
+                intakeInOut.setPower(intakeMaxSpeed);
+            } else {
+                intakeInOut.setPower(gamepad2.right_trigger);
+            }
+        }
+    }
     public void processIntakeInOut() {
         if (gamepad1.left_trigger == 0 && gamepad1.right_trigger == 0) {
             intakeInOut.setPower(0);
