@@ -124,49 +124,49 @@ public class Teleop extends LinearOpMode {
                 bot.liftLow();
             }
 
-                // === EXTEND ===
-                if (extendOutControl > 0.01 && bot.getExtendPos() >= Bot.MAX_EXT) {
-                    bot.setExtendPower(-1.0);
-                } else if (extendInControl && bot.getExtendPos() <= Bot.MIN_EXTEND) {
-                    bot.setExtendPower(1.0);
-                } else {
-                    bot.setExtendPower(0.0);
-                }
+            // === EXTEND ===
+            if (extendOutControl > 0.01 && bot.getExtendPos() >= Bot.MAX_EXT) {
+                bot.setExtendPower(-1.0);
+            } else if (extendInControl && bot.getExtendPos() <= Bot.MIN_EXTEND) {
+                bot.setExtendPower(1.0);
+            } else {
+                bot.setExtendPower(0.0);
+            }
 
-                // === PIVOT ===
-                if (pivotUpControl && bot.getArmPosition() <= Bot.MAX_PIVOT) {
-                    bot.setPivotPower(0.50);
-                } else if (pivotDownControl && bot.getArmPosition() >= Bot.MIN_PIVOT) {
-                    bot.setPivotPower(-0.50);
-                } else {
-                    bot.setPivotPower(0.0);
-                }
+            // === PIVOT ===
+            if (pivotUpControl && bot.getArmPosition() <= Bot.MAX_PIVOT) {
+                bot.setPivotPower(0.50);
+            } else if (pivotDownControl && bot.getArmPosition() >= Bot.MIN_PIVOT) {
+                bot.setPivotPower(-0.50);
+            } else {
+                bot.setPivotPower(0.0);
+            }
 
-                // === PUSHOFF ===
-                if (pushoffUpControl) {
-                    bot.setPushoff(1.0);
-                } else if (pushoffDownControl) {
-                    bot.setPushoff(-1.0);
-                } else {
-                    bot.setPushoff(0.0);
-                }
+            // === PUSHOFF ===
+            if (pushoffUpControl) {
+                bot.setPushoff(1.0);
+            } else if (pushoffDownControl) {
+                bot.setPushoff(-1.0);
+            } else {
+                bot.setPushoff(0.0);
+            }
 
-                // === RESET ENCODER ===
-                //reset button for encoders if needed
-                if (resetEncoderControl) {
-                    bot.d2EncoderReset();
-                }
+            // === RESET ENCODER ===
+            //reset button for encoders if needed
+            if (resetEncoderControl) {
+                bot.d2EncoderReset();
+            }
 
-                // === TELEMETRY ===
-                telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
-                telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
-                telemetry.addData("Current Left Lift Pos: ", bot.getLeftLiftPos());
-                telemetry.addData("Current Right Lift Pos: ", bot.getRightLiftPos());
-                telemetry.addData("Left Front Power: ", frontLeftPower);
-                telemetry.addData("Left Back Power: ", backLeftPower);
-                telemetry.addData("Right Front Power", frontRightPower);
-                telemetry.addData("Right Back Power", backRightPower);
-                telemetry.update();
+            // === TELEMETRY ===
+            telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
+            telemetry.addData("Current Pivot Pos: ", bot.getPivotArmPos());
+            telemetry.addData("Current Left Lift Pos: ", bot.getLeftLiftPos());
+            telemetry.addData("Current Right Lift Pos: ", bot.getRightLiftPos());
+            telemetry.addData("Left Front Power: ", frontLeftPower);
+            telemetry.addData("Left Back Power: ", backLeftPower);
+            telemetry.addData("Right Front Power", frontRightPower);
+            telemetry.addData("Right Back Power", backRightPower);
+            telemetry.update();
 
         }
     }
