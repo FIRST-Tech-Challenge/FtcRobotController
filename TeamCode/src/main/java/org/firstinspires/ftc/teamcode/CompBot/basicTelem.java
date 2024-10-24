@@ -25,7 +25,7 @@ public class basicTelem extends LinearOpMode {
 
     DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
 
-    Servo FLServo, BLServo, BRServo, FRServo, claw, intakeL, intakeR;
+    Servo FLServo, BLServo, BRServo, FRServo, intakeL, wrist;
 
     GoBildaPinpointDriver odo;
 
@@ -59,8 +59,8 @@ public class basicTelem extends LinearOpMode {
          * controls for game pad 2:
          * left stick y: in and out of arm
          * right stick y: up and down of arm
-         * left trigger: claw intake
-         * right trigger: claw out
+         * a: constant in changed to out while button is being held
+         * while b is being held right stick x: wrist position
          * presets for:
          * attaching clip to sample
          * attaching specimen(clip + sample) to top rung
@@ -93,27 +93,37 @@ public class basicTelem extends LinearOpMode {
             liftArm(armAngle);
 
             //claw intake/outtake
-            if(gamepad2.a){
+            if (gamepad2.a) {
                 intakeL.setPosition(1);
-                intakeR.setPosition(1);
-            }
-            else{
+            } else {
                 intakeL.setPosition(0);
-                intakeR.setPosition(0);
             }
+
+            //wrist rotation
+            if (gamepad2.b) {
+                double x = (gamepad2.right_stick_x + 1) / 2;
+                if (x > .7)
+                    x = .7;
+                wrist.setPosition(x);
+            }
+
+            //test
+            telemetry.addData("wrist in: ", gamepad2.right_stick_x);
+            telemetry.addData("wrist pos: ", wrist.getPosition());
+            telemetry.update();
         }
     }
 
 
     // to lift arm, input from game pad 2 straight in
     public void liftArm(double x) {
-        double d = (pivot.getCurrentPosition() < 2905 && pivot.getCurrentPosition() > -2905) ? x:0.0;
+        double d = (pivot.getCurrentPosition() < 2905 && pivot.getCurrentPosition() > -2905) ? x : 0.0;
         pivot.setPower(d);
     }
 
     // to extend arm, input from game pad 2 straight in
     public void extendArm(double x) {
-        double d = (slide.getCurrentPosition() < 4268 && slide.getCurrentPosition() > -4268) ? x:0.0;
+        double d = (slide.getCurrentPosition() < 4268 && slide.getCurrentPosition() > -4268) ? x : 0.0;
         slide.setPower(d);
     }
 
@@ -179,17 +189,15 @@ public class basicTelem extends LinearOpMode {
         // Init slaw, claw, and pivot
         pivot = hardwareMap.dcMotor.get("pivot");
         slide = hardwareMap.dcMotor.get("slide");
-        claw = hardwareMap.servo.get("claw");
 
         pivot.setMode(RUN_USING_ENCODER);
         slide.setMode(RUN_USING_ENCODER);
-        claw.scaleRange(0, 1);
 
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        pivot.setDirection(DcMotor.Direction.FORWARD);
-        slide.setDirection(DcMotor.Direction.FORWARD);
+        pivot.setDirection(REVERSE);
+        slide.setDirection(REVERSE);
 
         // Sets pivot and slide to pos 0
         pivot.setMode(STOP_AND_RESET_ENCODER);
@@ -200,11 +208,13 @@ public class basicTelem extends LinearOpMode {
 
 
         //servos for intake
-        intakeL = hardwareMap.get(Servo.class,"left");
-        intakeR = hardwareMap.get(Servo.class,"right");
+        intakeL = hardwareMap.get(Servo.class, "intake");
+        wrist = hardwareMap.get(Servo.class, "wrist");
 
-        intakeL.setDirection(Servo.Direction.REVERSE);
-        intakeR.setDirection(Servo.Direction.REVERSE);
+        intakeL.setDirection(Servo.Direction.FORWARD);
+        wrist.setDirection(Servo.Direction.FORWARD);
+        
+        wrist.setPosition(0);
     }
 
 
