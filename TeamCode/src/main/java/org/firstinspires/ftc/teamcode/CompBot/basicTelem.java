@@ -72,7 +72,7 @@ public class basicTelem extends LinearOpMode {
 
             //game pad 1
             double speedGMP1 = gamepad1.left_trigger - gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
-            double angleGMP1 = -gamepad1.right_stick_x;
+            double angleGMP1 = gamepad1.right_stick_x;
 
             if (speedGMP1 != 0) move(gamepad1.left_stick_x, speedGMP1);
             else if (angleGMP1 != 0) rotate(angleGMP1);
