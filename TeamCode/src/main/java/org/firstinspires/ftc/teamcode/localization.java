@@ -197,7 +197,7 @@ public class localization extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize odometry wheels
         verticalOdom = hardwareMap.get(DcMotorEx.class, "backL");
-        horizontalOdom = hardwareMap.get(DcMotorEx.class, "frontL");
+        horizontalOdom = hardwareMap.get(DcMotorEx.class, "frontR");
         imu = hardwareMap.get(IMU.class, "imu");
 
         verticalOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -213,7 +213,7 @@ public class localization extends LinearOpMode {
             // Read current encoder values
             double currentVertical = verticalOdom.getCurrentPosition();
             double currentHorizontal = horizontalOdom.getCurrentPosition();
-
+          
             // Get the robot's current heading (in radians)
             double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -227,12 +227,38 @@ public class localization extends LinearOpMode {
             // Step 2: Error Handling - Check for outlier encoder values (noise or error in encoder data)
             double deltaVertical = currentVertical - prevVertical;
             double deltaHorizontal = currentHorizontal - prevHorizontal;
+            // Convert the change in encoder ticks to inches
+            deltaVertical /= TICKS_PER_INCH;
+            deltaHorizontal /= TICKS_PER_INCH;
+
             if (Math.abs(deltaVertical) > MAX_ENCODER_TICKS_PER_UPDATE || Math.abs(deltaHorizontal) > MAX_ENCODER_TICKS_PER_UPDATE) {
                 telemetry.addData("Warning", "Encoder Ticks Too Large - Possible Error Detected");
                 deltaVertical = 0; // Ignore outliers to avoid incorrect position updates
                 deltaHorizontal = 0;
             }
 
+
+            // Step 3: Arc handling - Use average heading for position update
+            double radiusX;
+            double radiusY;
+            if (deltaHeading != 0){
+                radiusX = deltaVertical / deltaHeading;
+                radiusY = deltaHorizontal / deltaHeading;
+            } else {
+                radiusX = deltaVertical;
+                radiusY = deltaHorizontal;
+            }
+            double relDeltaX = radiusX * Math.sin(deltaHeading) - radiusY * (1 - Math.cos(deltaHeading));
+            double relDeltaY = radiusY * Math.sin(deltaHeading) + radiusX * (1 - Math.cos(deltaHeading));
+
+            double headingAverage = (prevHeading + currentHeading) / 2.0;
+            double deltaX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) - prevVertical;
+            double deltaY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) - prevHorizontal;
+
+            // Update robot's global position
+            robotX += deltaX;
+            robotY += deltaY;
+          
             // Convert the change in encoder ticks to inches
             deltaVertical /= TICKS_PER_INCH;
             deltaHorizontal /= TICKS_PER_INCH;
@@ -249,6 +275,7 @@ public class localization extends LinearOpMode {
             // Update robot's global position
             robotX += deltaXSimpson;
             robotY += deltaYSimpson;
+
             robotHeading = currentHeading;
 
             // Step 5: IMU Calibration Handling - Detect if the IMU drifts too much
@@ -256,6 +283,7 @@ public class localization extends LinearOpMode {
                 imu.resetYaw(); // Reset IMU if it drifts beyond acceptable range
                 telemetry.addData("IMU", "Recalibrating due to drift");
             }
+
 
             // Step 6: Store previous values for the next loop iteration
             prevVertical = currentVertical;
@@ -416,4 +444,6 @@ public class localization extends LinearOpMode {
             telemetry.update();
         }
     }
+}
+*/
 }*/
