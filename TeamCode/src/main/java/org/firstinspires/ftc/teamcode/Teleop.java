@@ -141,13 +141,13 @@ public class Teleop extends LinearOpMode {
 
             //lift sequence buttons
             //TODO THIS DOES NOT WORK
-            /*
+
             if(gamepad1.a){
                 bot.liftLow();
             } else if (gamepad1.b) {
                 bot.liftHigh();
             }
-             */
+
 
             //reset button for encoders if needed
             if(gamepad2.x)
