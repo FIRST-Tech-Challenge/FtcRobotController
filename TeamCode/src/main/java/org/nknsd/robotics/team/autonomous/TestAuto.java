@@ -1,6 +1,5 @@
-package org.nknsd.robotics.team.components;
+package org.nknsd.robotics.team.autonomous;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,23 +7,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
-public class IntakeServoHandler implements NKNComponent {
+import java.util.concurrent.TimeUnit;
 
-    CRServo servo;
-    String servoName;
-
-    public IntakeServoHandler(String servoName) {
-        this.servoName = servoName;
-    }
-    public void setServoPower (double power){
-        servo.setPower(power);
-    }
-
-
+public class TestAuto implements NKNComponent {
+    private Telemetry telemetry;
+    private AutoSkeleton autoSkeleton;
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
-        servo = hardwareMap.crservo.get(servoName);
+        this.telemetry = telemetry;
         return true;
     }
 
@@ -45,20 +36,20 @@ public class IntakeServoHandler implements NKNComponent {
 
     @Override
     public String getName() {
-        return null;
+        return "TestAuto";
     }
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
+
     }
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        String servoString = "[Servo Power" + servo.getPower() + "]";
-        telemetry.addData("intakeServo", servoString);
+
     }
 
-    public double getServoPower() {
-        return servo.getPower();
+    public void link(AutoSkeleton autoSkeleton) {
+        this.autoSkeleton = autoSkeleton;
     }
 }

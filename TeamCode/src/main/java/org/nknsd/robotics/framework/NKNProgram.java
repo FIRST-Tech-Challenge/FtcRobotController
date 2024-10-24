@@ -20,14 +20,6 @@ public abstract class NKNProgram {
      * Implement this function with your code here to create your components
      */
     public abstract void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled);
-//    { Example code
-        // Construct, link and load
-        //      MyComponent myComponent = new MyComponent();
-        //      MyComponent2 myComponent2 = new MyComponent2();
-        //      myComponent.link(myComponent2);
-        //      components.add(myComponent);
-        //      components.add(myComponent2);
-//    }
 
     // During the init of the program
     public void init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {

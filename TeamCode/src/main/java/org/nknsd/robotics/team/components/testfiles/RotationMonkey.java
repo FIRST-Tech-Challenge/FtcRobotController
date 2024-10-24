@@ -87,15 +87,15 @@ public class RotationMonkey implements NKNComponent {
                 break;
 
             case TARGET_0:
-                rotationHandler.setTarget(1.5);
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.PICKUP);
                 break;
 
             case TARGET_0_5:
-                rotationHandler.setTarget(1.7);
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.PREPICKUP);
                 break;
 
             case TARGET_1:
-                rotationHandler.setTarget(2.4);
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.HIGH);
                 break;
         }
     }

@@ -23,7 +23,7 @@ public class RotatorMonkeyProgram extends NKNProgram {
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
 
-        RotationHandler rotationHandler = new RotationHandler("motorArmRotate", 0.05, 0.9);
+        RotationHandler rotationHandler = new RotationHandler("motorArmRotate", 0.05, 0.8, 0.02, 5, true);
         components.add(rotationHandler);
         telemetryEnabled.add(rotationHandler);
 
