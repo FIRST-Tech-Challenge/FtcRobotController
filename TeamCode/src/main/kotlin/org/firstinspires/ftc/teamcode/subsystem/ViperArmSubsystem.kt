@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystem
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.arcrobotics.ftclib.command.SubsystemBase
 import com.arcrobotics.ftclib.hardware.motors.Motor
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup
 import org.firstinspires.ftc.teamcode.hardware.HardwareManager
+import org.firstinspires.ftc.teamcode.util.MotorGroup
 
 class ViperArmSubsystem(
     hardware: HardwareManager,

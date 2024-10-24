@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -17,6 +16,7 @@ import org.firstinspires.ftc.teamcode.config.CDConfig
 import org.firstinspires.ftc.teamcode.util.DeadWheelEncoder
 import org.firstinspires.ftc.teamcode.util.Encoder
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil
+import org.firstinspires.ftc.teamcode.util.MotorGroup
 
 class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     lateinit var batteryVoltageSensor: VoltageSensor
