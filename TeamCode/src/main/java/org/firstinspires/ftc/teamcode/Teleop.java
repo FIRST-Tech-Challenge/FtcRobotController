@@ -135,7 +135,7 @@ public class Teleop extends LinearOpMode {
 
             // === PIVOT ===
             if (pivotUpControl && bot.getArmPosition() <= Bot.MAX_PIVOT) {
-                bot.setPivotPower(0.50);
+                bot.setPivotPower(0.65);
             } else if (pivotDownControl && bot.getArmPosition() >= Bot.MIN_PIVOT) {
                 bot.setPivotPower(-0.50);
             } else {
@@ -152,7 +152,6 @@ public class Teleop extends LinearOpMode {
             }
 
             // === RESET ENCODER ===
-            //reset button for encoders if needed
             if (resetEncoderControl) {
                 bot.d2EncoderReset();
             }

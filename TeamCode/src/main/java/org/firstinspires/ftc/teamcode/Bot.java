@@ -404,8 +404,6 @@ public class Bot {
         int newbackLeftTarget;
         int newbackRightTarget;
 
-        //TODO: Change distance calculation for weight in the back of the bot
-
         // Determine new target position, and pass to motor controller
         newfrontLeftTarget = leftMotorFront.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
         newfrontRightTarget = rightMotorFront.getCurrentPosition() + (int) (-distance * COUNTS_PER_INCH);
@@ -498,7 +496,7 @@ public class Bot {
         this.setArmPos(MAX_PIVOT-BUFFER);
         this.setExtendPos(5.0);
         this.encoderLift(RIGHT_LIFT_MIN/2, LEFT_LIFT_MIN/2);
-        opMode.sleep(3500); //give time for bot to stop swaying
+        opMode.sleep(2000); //give time for bot to stop swaying
         this.encoderLift(RIGHT_LIFT_MAX- BUFFER*50, LEFT_LIFT_MAX-BUFFER*50);
 
 
