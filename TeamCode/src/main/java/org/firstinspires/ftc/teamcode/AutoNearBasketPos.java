@@ -69,31 +69,16 @@ public class AutoNearBasketPos extends LinearOpMode {
         drive(1100,-1100,1100,-1100,0.5);
         //Drive Back
         drive(-1700.11, -1700.11, -1700.11, -1700.11, 0.5);
-        sleep(12000);
+        sleep(500);
+        //sleep(12000);
         //Strafe Right 9 ft
-        drive(-4500, 4500, -4500, 4500, 0.7 );
-        drive(-180, -180, -180, -180, 0.7 );
+        //drive(-4600, 4600, -4600, 4600, 0.7 );
+        //drive(-160, -160, -160, -160, 0.7 );
         //Drive Back
-        //Drive forward
-       // drive(1600.11, 1600.11, 1600.11, 1600.11, 0.5);
-        //Strafe Left
-       // drive(400.8,-400.8,400.8,-400.8,0.5);
-        //Drive Back
-        //drive(-1600.11, -1600.11, -1600.11, -1600.11, 0.5);
-        //Drive forward
-       // drive(1600.11, 1600.11, 1600.11, 1600.11, 0.5);
+        drive(1700.11, 1700.11, 1700.11, 1700.11, 0.5);
+        drive(-906, 906, 906, -906, 0.7);
+        drive(-900, -900, -900, -900, 0.5);
 
-
-
-        //
-       // drive(-736.413,736.413,736.413,-736.413,0.25);
-       // drive(806.442,806.442,806.442,806.442,0.25);
-       // drive(736.413,-736.413,-736.413,736.413,0.25);
-        //drive(1500,1500,1500,1500,0.25);
-        //drive(-1447.72,1447.72,1447.72,-1447.72,0.25);
-        //drive(2370,2370,2370,2370,0.25);
-        //drive(-300,-300,-300,-300,0.25);
-        //drive(-1200,500,500,-1200,0.25);
     }
         private void drive(double bLeftTarget, double bRightTarget, double fRightTarget, double fLeftTarget, double speed ) {
             frontLeftPos += fLeftTarget;
