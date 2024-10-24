@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.nio.Buffer;
+
 public class Bot {
 
     //OpMode Declaration
@@ -59,6 +61,8 @@ public class Bot {
 
     private static final double MAX_DISTANCE = 25.5;
     private static final double TICKS_PER_INCH_EXT = MAX_TICK_EXT / MAX_DISTANCE;
+
+    private static final int BUFFER = 10;
     
     /**
      * Constructor for Bot object
@@ -480,16 +484,26 @@ public class Bot {
     /**
      * Sequence for lifting bot for low hang
      */
+    //TODO FIX
     public void liftLow(){
         this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
-        this.setPushoff(1.0); //TEST TO MAKE SURE THIS GOES ALL THE WAY
-        this.encoderLift(RIGHT_LIFT_MIN, LEFT_LIFT_MIN);
+        this.setArmPos(1280);
+        this.autoPush();
+        this.encoderLift(RIGHT_LIFT_MAX/2,LEFT_LIFT_MAX/2);
+        this.setArmPos(MAX_PIVOT-BUFFER);
+        this.setExtendPos(5.0);
+        this.encoderLift(RIGHT_LIFT_MIN/2, LEFT_LIFT_MIN/2);
+        opMode.sleep(3500); //give time for bot to stop swaying
+        this.encoderLift(RIGHT_LIFT_MAX- BUFFER*50, LEFT_LIFT_MAX-BUFFER*50);
+
+
 
     }
 
     /**
      * Sequence for lifting bot for high hang
      */
+    //TODO FIX
     public void liftHigh(){
         this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
         opMode.sleep(1000);
@@ -648,12 +662,16 @@ public class Bot {
         rightLift.setTargetPosition(rPos);
         leftLift.setTargetPosition(lPos);
 
-        rightLift.setPower(0.75);
-        leftLift.setPower(0.75);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(opMode.opModeIsActive() && extendArmMotor.isBusy()){
+        rightLift.setPower(1.0);
+        leftLift.setPower(1.0);
+
+        while(opMode.opModeIsActive() && rightLift.isBusy() && leftLift.isBusy()){
             opMode.telemetry.addData("Left Lift Pos: ", leftLift.getCurrentPosition());
             opMode.telemetry.addData("Right Lift Pos: ", rightLift.getCurrentPosition());
+            opMode.telemetry.update();
         }
 
         rightLift.setPower(0);
@@ -668,6 +686,16 @@ public class Bot {
         extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void autoPush(){
+        leftPushoff.setPower(-1.0);
+        rightPushoff.setPower(-1.0);
+
+        opMode.sleep(4500);
+
+        leftPushoff.setPower(0);
+        rightPushoff.setPower(0);
     }
 
 }
