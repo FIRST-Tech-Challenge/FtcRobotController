@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Odo.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 
 @Config
 public class Drivetrain {
@@ -24,7 +25,9 @@ public class Drivetrain {
     private double flPower, frPower, blPower, brPower;
     private double normalize;
     private Pose2d currentPose = new Pose2d(0,0,0);
+    private Pose2d currentVelocity = new Pose2d(0,0,0);
     private double xRn, yRn, rRn;
+    private double headingVelocity = 0;
 
 
     public Drivetrain(HardwareMap hardwareMap, ElapsedTime timer, Pose2d startPose) {
@@ -90,6 +93,8 @@ public class Drivetrain {
     public void update(){
         odo.update();
         currentPose = odo.getPosition();
+        currentVelocity = odo.getVelocity();
+        headingVelocity = M.toDegrees(currentVelocity.getHeading());
         xRn = currentPose.getX();
         yRn = currentPose.getY();
         rRn = currentPose.getHeading();
@@ -97,6 +102,9 @@ public class Drivetrain {
 
     public Pose2d getPose(){
         return currentPose;
+    }
+    public double getHeadingVelocity(){
+        return headingVelocity;
     }
     public GoBildaPinpointDriver.DeviceStatus getStatus(){
         return odo.getDeviceStatus();

@@ -39,6 +39,7 @@ public class DriveClassTest extends LinearOpMode {
 
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", drive.getPose().getX(), drive.getPose().getY(), M.toDegrees(drive.getPose().getHeading()));
             telemetry.addData("Position", data);
+            telemetry.addData("Heading Velocity: ", drive.getHeadingVelocity());
             telemetry.addData("Status", drive.getStatus());
             telemetry.addData("Hub loop Time: ", frequency);
             telemetry.update();
