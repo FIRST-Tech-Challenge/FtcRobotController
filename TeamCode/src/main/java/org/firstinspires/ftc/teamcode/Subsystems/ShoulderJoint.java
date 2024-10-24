@@ -41,7 +41,13 @@ public class ShoulderJoint extends SubsystemBase {
 
     }
 
-    public void moveTo(ShoulderPosition pos) {shoulderMotor.setTargetPosition(pos.getValue());}
+    public void moveTo(ShoulderPosition pos) {
+
+        shoulderMotor.setTargetPosition(pos.getValue());
+
+        // Sets the power
+        shoulderMotor.setPower(1);
+    }
 
 
 

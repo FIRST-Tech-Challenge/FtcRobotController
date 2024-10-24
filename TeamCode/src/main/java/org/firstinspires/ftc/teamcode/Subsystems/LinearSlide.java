@@ -64,7 +64,7 @@ public class LinearSlide extends SubsystemBase {
         leftMotor.setTargetPosition(ticks);
         rightMotor.setTargetPosition(ticks);
 
-        // Sets the power Note: may not be needed (?)
+        // Sets the power VERY IMPORTANT
         leftMotor.setPower(1);
         rightMotor.setPower(1);
     }
