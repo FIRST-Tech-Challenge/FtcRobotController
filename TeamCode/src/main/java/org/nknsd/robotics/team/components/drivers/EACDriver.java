@@ -76,14 +76,6 @@ public class EACDriver implements NKNComponent {
         }
     };
 
-    Runnable resetEncoder = new Runnable() {
-        @Override
-        public void run() {
-            extensionHandler.resetEncoder();
-        }
-    };
-
-
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
@@ -102,7 +94,6 @@ public class EACDriver implements NKNComponent {
         gamePadHandler.addListener(rotateDownButton, 2, "armRotateDown", true, rotateDown);
         gamePadHandler.addListener(extendButton, 2, "armExtend", true, extend);
         gamePadHandler.addListener(retractButton, 2, "armRetract", true, retract);
-        gamePadHandler.addListener(GamepadButtons.Y, 2, "resetExtensionEncoder", true, resetEncoder);
     }
 
     @Override
