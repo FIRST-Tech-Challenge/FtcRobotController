@@ -13,6 +13,11 @@ public class TeleOpTest extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
 
+    float frontMultiplier = 1;
+    float backMultiplier = 1;
+
+    boolean debugMode = false;
+
     @Override
     public void runOpMode() {
 
@@ -82,10 +87,10 @@ public class TeleOpTest extends LinearOpMode {
             else
                 s = 1;
 
-            frontLeft.setPower(frontLeftPower / s);
-            backLeft.setPower(backLeftPower / s);
-            frontRight.setPower(frontRightPower / s);
-            backRight.setPower(backRightPower / s);
+            frontLeft.setPower((frontLeftPower / s) * frontMultiplier);
+            backLeft.setPower(backLeftPower / s * backMultiplier);
+            frontRight.setPower(frontRightPower / s * frontMultiplier);
+            backRight.setPower(backRightPower / s * backMultiplier);
 
             // switching directions
             if(gamepad1.y) {
@@ -101,6 +106,34 @@ public class TeleOpTest extends LinearOpMode {
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
                 frontRight.setDirection(DcMotor.Direction.REVERSE);
                 backRight.setDirection(DcMotor.Direction.REVERSE);
+            }
+
+            if(gamepad2.start && gamepad2.back) {
+                telemetry.addData("debug mode: ", debugMode);
+                telemetry.update();
+                debugMode = !debugMode;
+
+                if(gamepad2.y) { // front wheels
+                    if (gamepad2.dpad_up) {
+                        frontMultiplier += 0.1;
+                        telemetry.addData("frontMultiplier: ", frontMultiplier);
+                        telemetry.update();
+                    } else if (gamepad2.dpad_down) {
+                        frontMultiplier -= 0.1;
+                        telemetry.addData("frontMultiplier: ", frontMultiplier);
+                    }
+                }
+                else if(gamepad2.a) { // back wheels
+                    if(gamepad2.dpad_up) {
+                        backMultiplier += 0.1;
+                        telemetry.addData("backMultiplier: ", backMultiplier);
+                    }
+                    else if(gamepad2.dpad_down) {
+                        backMultiplier -= 0.1;
+                        telemetry.addData("backMultiplier: ", backMultiplier);
+                    }
+                }
+                telemetry.update();
             }
 
         }
