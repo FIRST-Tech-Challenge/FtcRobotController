@@ -55,30 +55,24 @@ import com.qualcomm.robotcore.util.Range;
 public class ViperTest extends OpMode
 {
 
-    private ViperSlide viperSlide;
+    private Arm arm;
 
     @Override
     public void init() {
-        viperSlide = new ViperSlide(hardwareMap);
+        arm = new Arm(hardwareMap);
     }
 
     @Override
     public void loop() {
-        if (gamepad1.left_trigger > 0) {
-            viperSlide.extend(gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger > 0) {
-            viperSlide.retract(gamepad1.right_trigger);
-        } else {
-            viperSlide.stop();
-        }
+        arm.moveViperSlides(gamepad1.left_trigger - gamepad1.right_trigger);
 
-        if (gamepad1.left_bumper) {
-            viperSlide.raise(0.2);
-        } else if (gamepad1.right_bumper) {
-            viperSlide.lower(0.2);
-        } else {
-            viperSlide.stopPivot();
-        }
+//        if (gamepad1.left_bumper) {
+//            arm.raise(0.2);
+//        } else if (gamepad1.right_bumper) {
+//            arm.lower(0.2);
+//        } else {
+//            arm.stopPivot();
+//        }
     }
 
 }
