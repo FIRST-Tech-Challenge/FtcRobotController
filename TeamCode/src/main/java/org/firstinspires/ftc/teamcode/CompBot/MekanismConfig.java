@@ -1,11 +1,21 @@
 package org.firstinspires.ftc.teamcode.CompBot;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+
+/*
+
+Pivot is the pivot for the arm.
+
+Slide is the actual slide in and out
+
+ */
 
 public class MekanismConfig {
 
@@ -17,6 +27,8 @@ public class MekanismConfig {
 
     DcMotor pivot, slide;
     Servo claw, wrist, spintake;
+
+    DigitalChannel pivotHome, slideHome;
 
 
     int ARM_COUNTS_PER_INCH = 250; // Encoder counts per inch of slide movement
@@ -35,10 +47,10 @@ public class MekanismConfig {
         pivot = myOp.hardwareMap.get(DcMotor.class, "pivot");
         slide = myOp.hardwareMap.get(DcMotor.class, "slide");
 
-
         pivot.setTargetPosition(0);
         slide.setTargetPosition(0);
 
+        // TODO: Find the correct direction for these
         pivot.setDirection(DcMotor.Direction.FORWARD);
         slide.setDirection(DcMotor.Direction.FORWARD);
 
@@ -51,16 +63,74 @@ public class MekanismConfig {
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Sets maximum allowed power to 1
-        pivot.setPower(1);
-        slide.setPower(1);
 
-
+        // Servo Configs
         wrist = myOp.hardwareMap.get(Servo.class, "wrist");
         claw = myOp.hardwareMap.get(Servo.class, "claw");
+        spintake = myOp.hardwareMap.get(Servo.class, "spintake");
+
+        // Sets the end stops of the servos
+        wrist.scaleRange(0, 1);
         claw.scaleRange(0, 1);
+        spintake.scaleRange(0, 1);
 
 
+        // Homing switches config
+        pivotHome = myOp.hardwareMap.get(DigitalChannel.class, "pivotHome");
+        slideHome = myOp.hardwareMap.get(DigitalChannel.class, "slideHome");
+
+        pivotHome.setMode(DigitalChannel.Mode.INPUT);
+        slideHome.setMode(DigitalChannel.Mode.INPUT);
+
+    }
+
+
+    /**
+     * Homes the pivot.
+     * <p>
+     * Runs the pivot up until either the limit switch is triggered
+     * or the program is stopped
+     */
+    public void homePivot() {
+        pivot.setMode(RUN_USING_ENCODER);
+
+        // Goes until the switch is pressed or program is stopped
+        while (myOp.opModeIsActive() && !pivotHome.getState()) {
+            pivot.setPower(0.3);
+        }
+
+        pivot.setPower(0);
+
+        // Resets the encoder
+        pivot.setMode(STOP_AND_RESET_ENCODER);
+        pivot.setMode(RUN_TO_POSITION);
+
+        pivot.setPower(1); // Sets the maximum allowed power
+    }
+
+
+    /**
+     * Homes the slide.
+     * <p>
+     * Runs the slide in until either the limit switch is triggered
+     * or the program is stopped
+     */
+    public void homeSlide() {
+
+        slide.setMode(RUN_USING_ENCODER);
+
+        // Goes until the switch is pressed or program is stopped
+        while (myOp.opModeIsActive() && !slideHome.getState()) {
+            slide.setPower(0.3);
+        }
+
+        slide.setPower(0);
+
+        // Resets the encoder
+        slide.setMode(STOP_AND_RESET_ENCODER);
+        slide.setMode(RUN_TO_POSITION);
+
+        slide.setPower(1); // Sets the maximum allowed power
     }
 
 

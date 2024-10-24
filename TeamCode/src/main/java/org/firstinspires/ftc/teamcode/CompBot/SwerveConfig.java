@@ -4,7 +4,6 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,35 +20,37 @@ public class SwerveConfig {
     }
 
 
-    DcMotor FLMotor, BLMotor, FRMotor, BRMotor, pivot, slide;
+    DcMotor FLMotor, BLMotor, FRMotor, BRMotor;
 
-    Servo FLServo, BLServo, FRServo, BRServo, claw;
+    Servo FLServo, BLServo, FRServo, BRServo;
 
     GoBildaPinpointDriver odo;
 
 
     /**
      * TODO Get rid of this somehow
-     * <p>
-     * all of these need to be removed somehow
-     * Philip: can't be removed because builder will always make mistakes so we(coders) cannot
      */
     // In case builders are bad, is offset center for servo
-    double FLServoOffSet = .005;
-    double BLServoOffSet = .01;
-    double FRServoOffSet = .00;
-    double BRServoOffSet = 0.007;
+    double FL_SERVO_OFFSET = .005;
+    double BL_SERVO_OFFSET = .01;
+    double FR_SERVO_OFFSET = .00;
+    double BR_SERVO_OFFSET = 0.007;
 
-    static double TRACKWIDTH = 14, WHEELBASE = 15;
+    // Robot dimensions
+    static double TRACKWIDTH = 14;
+    static double WHEELBASE = 15;
 
 
+    /**
+     * Initializes all of the components related to the swerve drive
+     */
     public void initSwerve() {
 
         // Maps the motor objects to the physical ports
-        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
-        BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-        FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
-        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
+        FLMotor = myOp.hardwareMap.get(DcMotor.class, "FLMotor");
+        BLMotor = myOp.hardwareMap.get(DcMotor.class, "BLMotor");
+        FRMotor = myOp.hardwareMap.get(DcMotor.class, "FRMotor");
+        BRMotor = myOp.hardwareMap.get(DcMotor.class, "BRMotor");
 
         // Sets the encoder mode
         FLMotor.setMode(RUN_USING_ENCODER);
@@ -71,26 +72,26 @@ public class SwerveConfig {
 
 
         // Maps the servo objects to the physical ports
-        FLServo = hardwareMap.get(Servo.class, "FLServo");
-        BLServo = hardwareMap.get(Servo.class, "BLServo");
-        FRServo = hardwareMap.get(Servo.class, "FRServo");
-        BRServo = hardwareMap.get(Servo.class, "BRServo");
+        FLServo = myOp.hardwareMap.get(Servo.class, "FLServo");
+        BLServo = myOp.hardwareMap.get(Servo.class, "BLServo");
+        FRServo = myOp.hardwareMap.get(Servo.class, "FRServo");
+        BRServo = myOp.hardwareMap.get(Servo.class, "BRServo");
 
         // Sets the ends of the servos. Hover cursor over function for more info
         // Will need to be tuned later
-        FLServo.scaleRange(FLServoOffSet, 1.0 + FLServoOffSet * 2);
-        BLServo.scaleRange(BLServoOffSet, 1.0 + BLServoOffSet * 2);
-        FRServo.scaleRange(FRServoOffSet, 1.0 + FRServoOffSet * 2);
-        BRServo.scaleRange(BRServoOffSet, 1.0 + BRServoOffSet * 2);
+        FLServo.scaleRange(FL_SERVO_OFFSET, 1.0 + FL_SERVO_OFFSET * 2);
+        BLServo.scaleRange(BL_SERVO_OFFSET, 1.0 + BL_SERVO_OFFSET * 2);
+        FRServo.scaleRange(FR_SERVO_OFFSET, 1.0 + FR_SERVO_OFFSET * 2);
+        BRServo.scaleRange(BR_SERVO_OFFSET, 1.0 + BR_SERVO_OFFSET * 2);
 
-        FLServo.setPosition(0.50 + FLServoOffSet);
-        BLServo.setPosition(0.51 + BLServoOffSet);
-        FRServo.setPosition(0.50 + FRServoOffSet);
-        BRServo.setPosition(0.51 + BRServoOffSet);
+        setFLServo(0);
+        setBLServo(0);
+        setFRServo(0);
+        setBRServo(0);
 
 
         // Init GoBilda Pinpoint module
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo = myOp.hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         odo.resetPosAndIMU();
         odo.setOffsets(177.8, 50.8);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
@@ -116,10 +117,10 @@ public class SwerveConfig {
         BRMotor.setPower(power);
         FRMotor.setPower(power);
 
-        FLServo.setPosition(heading + FLServoOffSet);
-        BLServo.setPosition(heading + BLServoOffSet);
-        BRServo.setPosition(heading + BRServoOffSet);
-        FRServo.setPosition(heading + FRServoOffSet);
+        FLServo.setPosition(heading + FL_SERVO_OFFSET);
+        BLServo.setPosition(heading + BL_SERVO_OFFSET);
+        BRServo.setPosition(heading + BR_SERVO_OFFSET);
+        FRServo.setPosition(heading + FR_SERVO_OFFSET);
     }
 
 
@@ -176,6 +177,68 @@ public class SwerveConfig {
         double orientation = odo.getHeading();
 
         rotate(orientation);
+    }
+
+
+    /**
+     * All of the set__Servo functions set the position of the servo using a -1 to 1 range
+     *
+     * @param pos (-1) to 1 input
+     * @see #setFLServo(double)
+     * @see #setBLServo(double)
+     * @see #setFRServo(double)
+     * @see #setBRServo(double)
+     */
+    public void setFLServo(double pos) {
+
+        pos = (pos + 1) / 2; // Converts the -1 to 1 input range to 0 to 1 for the servos
+
+        FLServo.setPosition(pos + FL_SERVO_OFFSET);
+    }
+
+    /**
+     * All of the set__Servo functions set the position of the servo using a -1 to 1 range
+     *
+     * @param pos (-1) to 1 input
+     * @see #setFLServo(double)
+     * @see #setBLServo(double)
+     * @see #setFRServo(double)
+     * @see #setBRServo(double)
+     */
+    public void setBLServo(double pos) {
+        pos = (pos + 1) / 2; // Converts the -1 to 1 input range to 0 to 1 for the servos
+
+        BLServo.setPosition(pos + BL_SERVO_OFFSET);
+    }
+
+    /**
+     * All of the set__Servo functions set the position of the servo using a -1 to 1 range
+     *
+     * @param pos (-1) to 1 input
+     * @see #setFLServo(double)
+     * @see #setBLServo(double)
+     * @see #setFRServo(double)
+     * @see #setBRServo(double)
+     */
+    public void setFRServo(double pos) {
+        pos = (pos + 1) / 2; // Converts the -1 to 1 input range to 0 to 1 for the servos
+
+        FRServo.setPosition(pos + FR_SERVO_OFFSET);
+    }
+
+    /**
+     * All of the set__Servo functions set the position of the servo using a -1 to 1 range
+     *
+     * @param pos (-1) to 1 input
+     * @see #setFLServo(double)
+     * @see #setBLServo(double)
+     * @see #setFRServo(double)
+     * @see #setBRServo(double)
+     */
+    public void setBRServo(double pos) {
+        pos = (pos + 1) / 2; // Converts the -1 to 1 input range to 0 to 1 for the servos
+
+        BRServo.setPosition(pos + BR_SERVO_OFFSET);
     }
 
 

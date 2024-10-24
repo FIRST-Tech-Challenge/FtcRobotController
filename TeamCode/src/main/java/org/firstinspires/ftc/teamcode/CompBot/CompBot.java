@@ -16,21 +16,6 @@ public class CompBot extends LinearOpMode {
     GraphicTelemetry graph = new GraphicTelemetry(this);
 
 
-    GoBildaPinpointDriver odo;
-
-    //Philip: Do we need the motors or servos in here Colin?
-    DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
-
-    Servo FLServo, BLServo, BRServo, FRServo, claw;
-
-
-    // In case builders are bad, is offset center for servo
-    double FLServoOffSet = .00;     //0.00
-    double FRServoOffSet = .00;     //0.00
-    double BLServoOffSet = .00;     //0.01
-    double BRServoOffSet = .00;     //.007
-
-
     /**
      * Controls for Gamepad 1:
      * Right trigger: Forwards
@@ -64,10 +49,10 @@ public class CompBot extends LinearOpMode {
             if (speedGMP1 != 0) swerve.moveStraight(gamepad1.left_stick_x, speedGMP1);
             else if (angleGMP1 != 0) swerve.rotate(angleGMP1);
             else {
-                FLMotor.setPower(0);
-                BLMotor.setPower(0);
-                BRMotor.setPower(0);
-                FRMotor.setPower(0);
+                swerve.FLMotor.setPower(0);
+                swerve.BLMotor.setPower(0);
+                swerve.BRMotor.setPower(0);
+                swerve.FRMotor.setPower(0);
             }
 
 
@@ -90,12 +75,12 @@ public class CompBot extends LinearOpMode {
         telemetry.addData("Arm length: ", y);
         telemetry.addData("Left stick y: ", a);
         telemetry.addData("Right stick y: ", b);
-        telemetry.addData("Pivot target pos: ", pivot.getTargetPosition());
-        telemetry.addData("Arm target pos: ", slide.getTargetPosition());
-        telemetry.addData("Pivot power: ", pivot.getPower());
-        telemetry.addData("Arm power: ", slide.getPower());
-        telemetry.addData("Pivot position: ", pivot.getCurrentPosition());
-        telemetry.addData("Arm position: ", slide.getCurrentPosition());
+        telemetry.addData("Pivot target pos: ", mek.pivot.getTargetPosition());
+        telemetry.addData("Arm target pos: ", mek.slide.getTargetPosition());
+        telemetry.addData("Pivot power: ", mek.pivot.getPower());
+        telemetry.addData("Arm power: ", mek.slide.getPower());
+        telemetry.addData("Pivot position: ", mek.pivot.getCurrentPosition());
+        telemetry.addData("Arm position: ", mek.slide.getCurrentPosition());
         telemetry.update();
     }
 
