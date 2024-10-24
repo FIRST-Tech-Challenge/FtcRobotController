@@ -110,6 +110,8 @@ public class basicTelem extends LinearOpMode {
             }
 
             //test
+            telemetry.addData("right stick y: ",-gamepad2.right_stick_y);
+            telemetry.addData("left stick y: ",-gamepad2.left_stick_y);
             telemetry.addData("wrist in: ", gamepad2.right_stick_x);
             telemetry.addData("wrist pos: ", wrist.getPosition());
             telemetry.update();
@@ -119,14 +121,24 @@ public class basicTelem extends LinearOpMode {
 
     // to lift arm, input from game pad 2 straight in
     public void liftArm(double x) {
-        double d = (pivot.getCurrentPosition() < 2905 && pivot.getCurrentPosition() > -2905) ? x : 0.0;
-        pivot.setPower(d);
+        if (pivot.getCurrentPosition() >= 2500 && x > 0) {
+            x = 0;
+        } else if (pivot.getCurrentPosition() <= -2500 && x < 0) {
+            x = 0;
+        }
+        pivot.setPower(x);
+        telemetry.addData("lift power: ",pivot.getPower());
     }
 
     // to extend arm, input from game pad 2 straight in
     public void extendArm(double x) {
-        double d = (slide.getCurrentPosition() < 4268 && slide.getCurrentPosition() > -4268) ? x : 0.0;
-        slide.setPower(d);
+        if (slide.getCurrentPosition() >= 4750 && x > 0) {
+            x = 0;
+        } else if (slide.getCurrentPosition() <= -4750 && x < 0) {
+            x = 0;
+        }
+        slide.setPower(x);
+        telemetry.addData("slide power: ",slide.getPower());
     }
 
 
@@ -199,11 +211,7 @@ public class basicTelem extends LinearOpMode {
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         pivot.setDirection(REVERSE);
-        slide.setDirection(REVERSE);
-
-        // Sets pivot and slide to pos 0
-        pivot.setMode(STOP_AND_RESET_ENCODER);
-        slide.setMode(STOP_AND_RESET_ENCODER);
+        slide.setDirection(FORWARD);
 
         pivot.setPower(0);
         slide.setPower(0);
