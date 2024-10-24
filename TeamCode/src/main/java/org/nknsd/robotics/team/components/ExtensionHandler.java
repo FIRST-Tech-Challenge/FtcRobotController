@@ -97,11 +97,13 @@ public class ExtensionHandler implements NKNComponent {
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         double RESET_DELAY = 200;
         if ((runtime.now(TimeUnit.MILLISECONDS) - RESET_DELAY) > lastResetAttempt) {
-             if (motor.getCurrentPosition() >= extenderPrevious && target == ExtensionPositions.RESTING){
-                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                 motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-             }
-             extenderPrevious = motor.getCurrentPosition();
+            if(target == ExtensionPositions.RESTING) {
+                if (motor.getCurrentPosition() >= extenderPrevious) {
+                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
+                extenderPrevious = motor.getCurrentPosition();
+            }
             lastResetAttempt = runtime.now(TimeUnit.MILLISECONDS);
         }
     } //resets encoder when arm is resting and no longer moving
