@@ -32,7 +32,7 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  */
 
 @TeleOp(name="Testing 10/17/24", group="Linear OpMode")
-public class Testing_Oct18 extends LinearOpMode {
+public class Testing_Oct22 extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -42,12 +42,14 @@ public class Testing_Oct18 extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor leftCH = null;
     private DcMotor rightCH = null;
+    NormalizedColorSensor colorSensor;
+    View relativeLayout;
 
     @Override
     public void runOpMode() {
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
-    relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+        relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
@@ -56,17 +58,52 @@ public class Testing_Oct18 extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
         leftCH = hardwareMap.get(DcMotor.class, "leftCH");
         rightCH = hardwareMap.get(DcMotor.class, "rightCH");
+        try {
+            runSample(); // actually execute the sample
+        } finally {
+            // On the way out, *guarantee* that the background is reasonable. It doesn't actually start off
+            // as pure white, but it's too much work to dig out what actually was used, and this is good
+            // enough to at least make the screen reasonable again.
+            // Set the panel back to the default color
+            relativeLayout.post(new Runnable() {
+                public void run() {
+                    relativeLayout.setBackgroundColor(Color.WHITE);
+                }
+            });
+        }
+    }
+    protected void runSample() {
+        // You can give the sensor a gain value, will be multiplied by the sensor's raw value before the
+        // normalized color values are calculated. Color sensors (especially the REV Color Sensor V3)
+        // can give very low values (depending on the lighting conditions), which only use a small part
+        // of the 0-1 range that is available for the red, green, and blue values. In brighter conditions,
+        // you should use a smaller gain than in dark conditions. If your gain is too high, all of the
+        // colors will report at or near 1, and you won't be able to determine what color you are
+        // actually looking at. For this reason, it's better to err on the side of a lower gain
+        // (but always greater than  or equal to 1).
+        float gain = 2;
 
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
+        // Once per loop, we will update this hsvValues array. The first element (0) will contain the
+        // hue, the second element (1) will contain the saturation, and the third element (2) will
+        // contain the value. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
+        // for an explanation of HSV color.
+        final float[] hsvValues = new float[3];
+
+        // xButtonPreviouslyPressed and xButtonCurrentlyPressed keep track of the previous and current
+        // state of the X button on the gamepad
+        boolean xButtonPreviouslyPressed = false;
+        boolean xButtonCurrentlyPressed = false;
+
+        // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
+        // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
+        // the values you get from ColorSensor are dependent on the specific sensor you're using.
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "Color");
+
+        // If possible, turn the light on in the beginning (it might already be on anyway,
+        // we just make sure it is if we can).
+        if (colorSensor instanceof SwitchableLight) {
+            ((SwitchableLight) colorSensor).enableLight(true);
+        }
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -83,14 +120,29 @@ public class Testing_Oct18 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            xButtonCurrentlyPressed = gamepad1.x;
+
+            // If the button state is different than what it was, then act
+            if (xButtonCurrentlyPressed != xButtonPreviouslyPressed) {
+                // If the button is (now) down, then toggle the light
+                if (xButtonCurrentlyPressed) {
+                    if (colorSensor instanceof SwitchableLight) {
+                        SwitchableLight light = (SwitchableLight)colorSensor;
+                        light.enableLight(!light.isLightOn());
+                    }
+                }
+            }
+            xButtonPreviouslyPressed = xButtonCurrentlyPressed;
+            NormalizedRGBA colors = colorSensor.getNormalizedColors();
+            Color.colorToHSV(colors.toColor(), hsvValues);
+
             double max;
 
             // POV Mode guses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y*0.6;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x*0.6;
-            //double lateral = gamepad2.right_stick_x;
             double yaw     =  gamepad1.right_stick_x*0.6;
-            //double twr = gamepad2.left_stick_y;
+            double twr = 0;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -127,12 +179,23 @@ public class Testing_Oct18 extends LinearOpMode {
 //            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
 //            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
 //            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B ga
-            double twr = gamepad1.dpad_down ? 0.75 : 0.0;
-            twr = gamepad1.dpad_up ? -0.75 : 0.0;
+
 
 
             // Send calculated power to wheels
             //!!!!Using multiplier to slow Back wheels, attempt to make speeds match!!!!
+            if (gamepad1.dpad_down){
+                twr = 0.5;
+            };
+            if (!gamepad1.dpad_down){
+                twr = 0;
+            }
+            if (gamepad1.dpad_up){
+                twr = -0.5;
+            }
+            if (!gamepad1.dpad_up){
+                twr = 0;
+            }
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower*0.76);
@@ -144,6 +207,23 @@ public class Testing_Oct18 extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addLine()
+                    .addData("Red", "%.3f", colors.red)
+                    .addData("Green", "%.3f", colors.green)
+                    .addData("Blue", "%.3f", colors.blue);
+            telemetry.addLine()
+                    .addData("Hue", "%.3f", hsvValues[0])
+                    .addData("Saturation", "%.3f", hsvValues[1])
+                    .addData("Value", "%.3f", hsvValues[2]);
+            telemetry.addData("Alpha", "%.3f", colors.alpha);
+            if (colorSensor instanceof DistanceSensor) {
+                telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+            }
             telemetry.update();
+            relativeLayout.post(new Runnable() {
+                public void run() {
+                    relativeLayout.setBackgroundColor(Color.HSVToColor(hsvValues));
+                }
+            });
         }
     }}
