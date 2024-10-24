@@ -1,0 +1,25 @@
+[versions]
+ftc = "10.1.0"
+agp = "8.7.1"
+android-appcompat = "1.7.0"
+
+[bundles]
+ftc = ["ftc-inspection", "ftc-blocks", "ftc-robot-core", "ftc-robot-server", "ftc-on-bot-java", "ftc-hardware", "ftc-common", "ftc-vision"]
+
+[libraries]
+ftc-inspection = { module = "org.firstinspires.ftc:Inspection", version.ref = "ftc" }
+ftc-blocks = { module = "org.firstinspires.ftc:Blocks", version.ref = "ftc" }
+ftc-robot-core = { module = "org.firstinspires.ftc:RobotCore", version.ref = "ftc" }
+ftc-robot-server = { module = "org.firstinspires.ftc:RobotServer", version.ref = "ftc" }
+ftc-on-bot-java = { module = "org.firstinspires.ftc:OnBotJava", version.ref = "ftc" }
+ftc-hardware = { module = "org.firstinspires.ftc:Hardware", version.ref = "ftc" }
+ftc-common = { module = "org.firstinspires.ftc:FtcCommon", version.ref = "ftc" }
+ftc-vision = { module = "org.firstinspires.ftc:Vision", version.ref = "ftc" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "android-appcompat" }
+android-build = {module = "com.android.tools.build:gradle", version.ref = "agp"}
+android-gradle-api = {module = "com.android.tools.build:gradle-api", version.ref = "agp"}
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp"}
+
