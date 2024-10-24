@@ -90,7 +90,6 @@ public class WheelHandler implements NKNComponent {
     @Override
     public void stop(ElapsedTime runtime, Telemetry telemetry) {}
 
-    @Override
     public String getName() {
         return "WheelHandler";
     }

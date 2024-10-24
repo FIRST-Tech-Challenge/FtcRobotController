@@ -10,7 +10,7 @@ public class AutoSkeleton {
     private WheelHandler wheelHandler;              // Class which handles wheel motions
     private FlowSensorHandler flowSensorHandler;    // Class which gives us our position
     private double[] targetPosition = new double[2];// Array which holds our target position as x, y
-
+    static final double TILE_LENGTH = 24;
 
 
     public AutoSkeleton(double maxSpeed, double movementMargin) {

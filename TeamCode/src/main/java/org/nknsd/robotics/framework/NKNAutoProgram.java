@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.nknsd.robotics.team.autonomous.AutoSkeleton;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,25 +15,22 @@ public abstract class NKNAutoProgram extends NKNProgram{
     private final List<NKNComponent> enabledTelemetryList = new LinkedList<>();
     private final List<NKNAutoStep> stepList = new LinkedList<>();
 
-    abstract void createSteps(List<NKNAutoStep> stepList);
+    private AutoSkeleton autoSkeleton;
     private int currentStep = 0;
     private boolean done = false; //Better ways probably exist
 
-    private void initSteps(List<NKNAutoStep> stepList, List<NKNComponent> componentList) {
-        HashMap<String, NKNComponent> componentHashMap = new HashMap<>();
-        for (NKNComponent c : componentList) {
-            componentHashMap.put(c.getName(), c);
-        }
+    public abstract void createSteps(List<NKNAutoStep> stepList);
 
+    private void initSteps(List<NKNAutoStep> stepList) {
         for (NKNAutoStep a : stepList) {
-            a.link(componentHashMap);
+            a.link(autoSkeleton);
         }
     }
 
     public void init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         createComponents(componentList, enabledTelemetryList);
         createSteps(stepList);
-        initSteps(stepList, componentList);
+        initSteps(stepList);
 
         // Report on the success of the component's initialization
         for (NKNComponent component:componentList){
@@ -58,9 +55,9 @@ public abstract class NKNAutoProgram extends NKNProgram{
         }
 
         NKNAutoStep step = stepList.get(currentStep);
-        step.run();
+        step.run(telemetry);
 
-        if (step.isDone()) {
+        if (step.isDone(runtime)) {
             currentStep ++;
         }
 
