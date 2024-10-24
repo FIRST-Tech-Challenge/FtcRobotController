@@ -105,8 +105,6 @@ public class MainMovement extends LinearOpMode {
         FRDrive.setPower(FR*speed);
     }
 
-
-
     private void epicRotationMovement() {
         // rotates the robot if left stick is not being used (movement takes priorities)
         if (!(Math.abs(RjoystickX) <= joystickDeadzone) && !(Math.abs(RjoystickY) <= joystickDeadzone) && !usingLStick) {
