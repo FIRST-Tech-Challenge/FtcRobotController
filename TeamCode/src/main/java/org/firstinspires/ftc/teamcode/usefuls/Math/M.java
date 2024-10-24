@@ -54,5 +54,10 @@ public final class M {
     public static double toRadians(double deg){
         return Math.toRadians(deg);
     }
-
+    public static double toMM(double inches){
+        return inches*25.4;
+    }
+    public static double toInches(double MM){
+        return MM/25.4;
+    }
 }
