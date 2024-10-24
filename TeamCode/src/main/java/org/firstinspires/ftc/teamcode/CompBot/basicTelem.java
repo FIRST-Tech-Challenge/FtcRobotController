@@ -101,9 +101,11 @@ public class basicTelem extends LinearOpMode {
 
             //wrist rotation
             if (gamepad2.b) {
-                double x = (gamepad2.right_stick_x + 1) / 2;
-                if (x > .7)
-                    x = .7;
+                double x;
+                if(wrist.getPosition()>=.1)
+                    x=0;
+                else
+                    x=.7;
                 wrist.setPosition(x);
             }
 
@@ -213,7 +215,7 @@ public class basicTelem extends LinearOpMode {
 
         intakeL.setDirection(Servo.Direction.FORWARD);
         wrist.setDirection(Servo.Direction.FORWARD);
-        
+
         wrist.setPosition(0);
     }
 
