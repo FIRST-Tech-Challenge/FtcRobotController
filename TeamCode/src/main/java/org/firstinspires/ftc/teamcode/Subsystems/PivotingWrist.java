@@ -17,7 +17,7 @@ public class PivotingWrist extends SubsystemBase {
     public PivotingWrist() {
 
         // Creates a Servo using the hardware map
-        wristServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "PivotingServoWrist");
+        wristServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "wristRotateServo");
 
     }
 

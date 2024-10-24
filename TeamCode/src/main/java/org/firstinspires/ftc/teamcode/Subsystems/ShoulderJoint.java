@@ -21,7 +21,7 @@ public class ShoulderJoint extends SubsystemBase {
     public ShoulderJoint() {
 
         // Creates the motor using the hardware map
-        shoulderMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "ShoulderMotor");
+        shoulderMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "shoulderMotor");
 
         // Resets the encoders for both motors
         shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

@@ -83,6 +83,7 @@ public class RobotContainer {
         driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->flappyFlappyWrist.RotateTo(135)));
 
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->shoulderJoint.moveTo(ShoulderPosition.HIGH)));
+
         // driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new ToggleClaw());
 
         // example of binding more complex command to a button. This would be in a separate command file

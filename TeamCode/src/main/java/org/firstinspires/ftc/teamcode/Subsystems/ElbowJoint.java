@@ -16,7 +16,7 @@ public class ElbowJoint extends SubsystemBase {
     public ElbowJoint() {
 
         // Creates a Servo using the hardware map
-        ElbowServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "ElbowServo");
+        ElbowServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "elbowServo");
 
     }
 
