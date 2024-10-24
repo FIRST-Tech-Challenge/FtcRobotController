@@ -13,11 +13,11 @@ class ActiveIntakeSubsystem(
     }
 
     fun rotateHome() {
-        hardware.intakeRotateServo?.position = 0.33
+        hardware.intakeRotateServo?.position = 0.0
     }
 
     fun rotateToBasket() {
-        hardware.intakeRotateServo?.position = 0.67
+        hardware.intakeRotateServo?.position = 0.66
     }
 
     fun rotateRight() {
@@ -26,15 +26,15 @@ class ActiveIntakeSubsystem(
 
     fun rotateIncrementDown() {
         val currentPosition = hardware.intakeRotateServo?.position
-        if (currentPosition != null && currentPosition < 1.0) {
-            hardware.intakeRotateServo?.position = currentPosition + 0.1
+        if (currentPosition != null && currentPosition < WRIST_MAX) {
+            hardware.intakeRotateServo?.position = currentPosition + WRIST_STEP
         }
     }
 
     fun rotateIncrementUp() {
         val currentPosition = hardware.intakeRotateServo?.position
-        if (currentPosition != null && currentPosition > 0.0) {
-            hardware.intakeRotateServo?.position = currentPosition - 0.1
+        if (currentPosition != null && currentPosition > WRIST_MIN) {
+            hardware.intakeRotateServo?.position = currentPosition - WRIST_STEP
         }
     }
 
@@ -51,5 +51,21 @@ class ActiveIntakeSubsystem(
     fun stopIntake() {
         // On a continuous servo, position of 0.5 is stopped
         hardware.intakeRotateServo?.position = 0.5
+    }
+
+    companion object {
+        private const val WRIST_MIN = 0.0
+        private const val WRIST_MAX = 1.0
+        private const val WRIST_STEP = 0.01
+        //private const val EXTENSION_MIN_POSITION = 0
+        //private const val EXTENSION_LOWER_BASKET_POSITION = 5
+        //private const val EXTENSION_MAX_POSITION = 10
+
+        //private const val ROTATION_SPEED = 1.0
+        //private const val ROTATION_MIN_POSITION = 0
+        //private const val ROTATION_MAX_POSITION = 10
+
+        //private const val EXTENSION_KP = 0.0
+        //private const val ROTATION_KP = 0.0
     }
 }

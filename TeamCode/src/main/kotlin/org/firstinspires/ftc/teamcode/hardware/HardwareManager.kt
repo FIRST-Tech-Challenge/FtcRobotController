@@ -36,7 +36,8 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     var gripperHomeSensor: TouchSensor? = null
 
     // Servos
-    var intakeWheelServo: CRServo? = null
+    var intakeWheelServoRear: CRServo? = null
+    var intakeWheelServoFront: CRServo? = null
     var intakeRotateServo: Servo? = null
     var gripperServo: CRServo? = null
 
@@ -120,26 +121,28 @@ class HardwareManager(private val config: CDConfig, hardware: HardwareMap) {
     }
 
     private fun initializeServos(hardware: HardwareMap) {
-        intakeWheelServo = safelyGetHardware<CRServo>(hardware, "intakeWheelServo")
+        intakeWheelServoRear = safelyGetHardware<CRServo>(hardware, "intakeWheelServo")
+        intakeWheelServoFront = safelyGetHardware<CRServo>(hardware, "intakeWheelServoFront")
         intakeRotateServo = safelyGetHardware<Servo>(hardware, "intakeRotateServo")
         gripperServo = safelyGetHardware<CRServo>(hardware, "gripperServo")
 
         // TODO: Not sure if we actually need this or not
         // intakeRotateServo?.direction = Servo.Direction.REVERSE
 
+        // TODO: Decide if we need scale range for any servos
         // Scale range sets a 180 degree servo to limit the range between 0 and 1.
         // This is configuring a 90 degree range, starting from the 0 position.
-        intakeRotateServo?.scaleRange(0.0, 0.5)
+//        intakeRotateServo?.scaleRange(0.0, 0.5)
 
-        // Set the position to basket delivery position
+        // Set the position to pickup position
         intakeRotateServo?.position = 0.0
     }
 
     private fun initializeAccessoryMotors(hardware: HardwareMap) {
         viperExtensionMotorRight = safelyGetMotor(hardware, "viperExtensionRight", GoBILDA.RPM_312)
         viperExtensionMotorLeft = safelyGetMotor(hardware, "viperExtensionLeft", GoBILDA.RPM_312)
-        viperRotationMotorRight = safelyGetMotor(hardware, "viperRotationRight", GoBILDA.RPM_312)
-        viperRotationMotorLeft = safelyGetMotor(hardware, "viperRotationLeft", GoBILDA.RPM_312)
+        viperRotationMotorRight = safelyGetMotor(hardware, "viperRotationRight", GoBILDA.RPM_43)
+        viperRotationMotorLeft = safelyGetMotor(hardware, "viperRotationLeft", GoBILDA.RPM_43)
 
         // Sync sides
         viperExtensionMotorRight?.motor?.direction = DcMotorSimple.Direction.REVERSE

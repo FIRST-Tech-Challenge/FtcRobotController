@@ -22,7 +22,7 @@ class ExtendOut(private val viperArmSubsystem: ViperArmSubsystem) : CommandBase(
             }
             ExtendOutState.EXTENDING -> {
                 // TODO Adjust target rotation position
-                if (viperArmSubsystem.getExtensionMotorGroupPosition() >= 1.0) {
+                if (viperArmSubsystem.getExtensionMotorGroupSpeed() >= 1000.0) {
                     viperArmSubsystem.setExtensionMotorGroupPower(0.0)
                     currentState = ExtendOutState.FINISHED
                 }

@@ -33,9 +33,51 @@ class ViperArmSubsystem(
         rotationMotorGroup?.set(getBoundedPower(power))
     }
 
-    fun getExtensionMotorGroupPosition(): Double = extensionMotorGroup?.get() ?: 0.0
+    fun getExtensionMotorGroupSpeed(): Double = extensionMotorGroup?.get() ?: 0.0
 
-    fun getRotationMotorGroupPosition(): Double = rotationMotorGroup?.get() ?: 0.0
+    fun getRotationMotorGroupSpeed(): Double = rotationMotorGroup?.get() ?: 0.0
+
+    //Redefined to position instead of speed. MotorGroup only has function to get complete list of positions for all motors. First motor in list is "leader".
+    //The leader is the first in list
+    fun getExtensionMotorGroupPosition(): Double {
+        val extensionMotorGroupPosList = extensionMotorGroup?.getPositions() ?: listOf()
+        val extensionMotorGroupPosListFirst =  extensionMotorGroupPosList.first()
+        return extensionMotorGroupPosListFirst
+    }
+    // The follower will be the second (last in this case) in the list
+    fun getExtensionMotorGroupPositionLast(): Double {
+        val extensionMotorGroupPosList = extensionMotorGroup?.getPositions() ?: listOf()
+        val extensionMotorGroupPosListLast = extensionMotorGroupPosList.last()
+        return extensionMotorGroupPosListLast
+    }
+
+    //Added for testing
+    //TODO: Remove?
+    fun getExtensionMotorGroupPositionList(): List<Double> {
+        val extensionMotorGroupPosList = extensionMotorGroup?.getPositions() ?: listOf()
+        return extensionMotorGroupPosList
+    }
+
+    // The leader is the first in list
+    fun getRotationMotorGroupPosition(): Double {
+        val rotationMotorGroupPosList = rotationMotorGroup?.getPositions() ?: listOf()
+        val rotationMotorGroupPosListFirst = rotationMotorGroupPosList.first()
+        return rotationMotorGroupPosListFirst
+    }
+
+    // The follower will be the second (last in this case) in the list
+    fun getRotationMotorGroupPositionLast(): Double {
+        val rotationMotorGroupPosList = rotationMotorGroup?.getPositions() ?: listOf()
+        val rotationMotorGroupPosListLast = rotationMotorGroupPosList.last()
+        return rotationMotorGroupPosListLast
+    }
+
+    //Added for testing
+    //TODO: Remove?
+    fun getRotationMotorGroupPositionList(): List<Double> {
+        val rotationMotorGroupPosList = rotationMotorGroup?.getPositions() ?: listOf()
+        return rotationMotorGroupPosList
+    }
 
     fun extendToPosition(position: Int) {
         val safePosition = getBoundedPosition(position, EXTENSION_MIN_POSITION, EXTENSION_MAX_POSITION)
@@ -109,7 +151,7 @@ class ViperArmSubsystem(
         private const val EXTENSION_LOWER_BASKET_POSITION = 5
         private const val EXTENSION_MAX_POSITION = 10
 
-        private const val ROTATION_SPEED = 1.0
+        private const val ROTATION_SPEED = 0.1
         private const val ROTATION_MIN_POSITION = 0
         private const val ROTATION_MAX_POSITION = 10
 

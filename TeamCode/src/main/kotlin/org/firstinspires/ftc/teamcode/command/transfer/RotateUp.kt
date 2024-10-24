@@ -22,7 +22,7 @@ class RotateUp(private val viperArmSubsystem: ViperArmSubsystem) : CommandBase()
             }
             RotateUpState.ROTATING -> {
                 // TODO Adjust target rotation position
-                if (viperArmSubsystem.getRotationMotorGroupPosition() >= 1.0) {
+                if (viperArmSubsystem.getRotationMotorGroupSpeed() >= 1000.0) {
                     viperArmSubsystem.setRotationMotorGroupPower(0.0)
                     currentState = RotateUpState.FINISHED
                 }
