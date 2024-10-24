@@ -98,5 +98,8 @@ public class Drivetrain {
     public Pose2d getPose(){
         return currentPose;
     }
+    public GoBildaPinpointDriver.DeviceStatus getStatus(){
+        return odo.getDeviceStatus();
+    }
 
 }
