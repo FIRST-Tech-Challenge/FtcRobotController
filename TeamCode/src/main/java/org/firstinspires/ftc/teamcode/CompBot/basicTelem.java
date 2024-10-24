@@ -102,19 +102,12 @@ public class basicTelem extends LinearOpMode {
             //wrist rotation
             if (gamepad2.b) {
                 double x;
-                if(wrist.getPosition()>=.1)
-                    x=0;
+                if (wrist.getPosition() >= .1)
+                    x = 0;
                 else
-                    x=.7;
+                    x = .7;
                 wrist.setPosition(x);
             }
-
-            //test
-            telemetry.addData("right stick y: ",-gamepad2.right_stick_y);
-            telemetry.addData("left stick y: ",-gamepad2.left_stick_y);
-            telemetry.addData("wrist in: ", gamepad2.right_stick_x);
-            telemetry.addData("wrist pos: ", wrist.getPosition());
-            telemetry.update();
         }
     }
 
@@ -127,7 +120,7 @@ public class basicTelem extends LinearOpMode {
             x = 0;
         }
         pivot.setPower(x);
-        telemetry.addData("lift power: ",pivot.getPower());
+        telemetry.addData("lift power: ", pivot.getPower());
     }
 
     // to extend arm, input from game pad 2 straight in
@@ -138,7 +131,7 @@ public class basicTelem extends LinearOpMode {
             x = 0;
         }
         slide.setPower(x);
-        telemetry.addData("slide power: ",slide.getPower());
+        telemetry.addData("slide power: ", slide.getPower());
     }
 
 
@@ -309,11 +302,11 @@ public class basicTelem extends LinearOpMode {
         FRServo.setPosition(.75 - .125 / 2);
 
         //turn motors to rotate robot
+        power = (power + 1) / 2;
         FLMotor.setPower(power);
         BLMotor.setPower(power);
         BRMotor.setPower(power);
         FRMotor.setPower(power);
-
     }
 
 
