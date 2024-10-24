@@ -193,7 +193,6 @@ public class localization extends LinearOpMode {
     private static final double IMU_CALIBRATION_THRESHOLD = 0.1; // Allowable IMU drift before recalibration
     private static final double MAX_ENCODER_TICKS_PER_UPDATE = 1000; // Max allowed ticks per update to detect encoder errors
 
-
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize odometry wheels
@@ -214,6 +213,7 @@ public class localization extends LinearOpMode {
             // Read current encoder values
             double currentVertical = verticalOdom.getCurrentPosition();
             double currentHorizontal = horizontalOdom.getCurrentPosition();
+          
             // Get the robot's current heading (in radians)
             double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -227,8 +227,6 @@ public class localization extends LinearOpMode {
             // Step 2: Error Handling - Check for outlier encoder values (noise or error in encoder data)
             double deltaVertical = currentVertical - prevVertical;
             double deltaHorizontal = currentHorizontal - prevHorizontal;
-
-
             // Convert the change in encoder ticks to inches
             deltaVertical /= TICKS_PER_INCH;
             deltaHorizontal /= TICKS_PER_INCH;
@@ -238,6 +236,7 @@ public class localization extends LinearOpMode {
                 deltaVertical = 0; // Ignore outliers to avoid incorrect position updates
                 deltaHorizontal = 0;
             }
+
 
             // Step 3: Arc handling - Use average heading for position update
             double radiusX;
@@ -259,6 +258,24 @@ public class localization extends LinearOpMode {
             // Update robot's global position
             robotX += deltaX;
             robotY += deltaY;
+          
+            // Convert the change in encoder ticks to inches
+            deltaVertical /= TICKS_PER_INCH;
+            deltaHorizontal /= TICKS_PER_INCH;
+
+            // Step 3: Arc handling - Use average heading for position update
+            double headingAverage = (prevHeading + currentHeading) / 2.0;
+            double deltaX = deltaVertical * Math.cos(headingAverage) - deltaHorizontal * Math.sin(headingAverage);
+            double deltaY = deltaVertical * Math.sin(headingAverage) + deltaHorizontal * Math.cos(headingAverage);
+
+            // Step 4: Simpson's Rule Integration for smoother movement approximation
+            double deltaXSimpson = WEIGHT * ((prevVertical + 4.0 * deltaX + prevVertical) / 3.0);
+            double deltaYSimpson = WEIGHT * ((prevHorizontal + 4.0 * deltaY + prevHorizontal) / 3.0);
+
+            // Update robot's global position
+            robotX += deltaXSimpson;
+            robotY += deltaYSimpson;
+
             robotHeading = currentHeading;
 
             // Step 5: IMU Calibration Handling - Detect if the IMU drifts too much
@@ -429,3 +446,4 @@ public class localization extends LinearOpMode {
     }
 }
 */
+}*/
