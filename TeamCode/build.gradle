@@ -6,7 +6,6 @@
 // integrate updates to the FTC into your code. If you really need to customize
 // the build definitions, you can place those customizations in this file, but
 // please think carefully as to whether such customizations are really necessary
-// before doing so.
 
 
 // Custom definitions may go here
@@ -45,5 +44,6 @@ repositories {
 
 dependencies {
     implementation project(':FtcRobotController')
+
     implementation 'org.team11260:fast-load:0.1.2'
 }
