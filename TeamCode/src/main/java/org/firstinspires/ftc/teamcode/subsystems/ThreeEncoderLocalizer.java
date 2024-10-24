@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Time;
@@ -49,13 +51,13 @@ public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements Lo
 
         Twist2dDual<Time> twist = super.update();
         debugValue = "" + twist.value().line.x + " , " + twist.value().line.y + " , " + twist.value().angle;
-        if (twist != null){
-            position = position.plus(twist.value());
-        }
-        Pose2d result = new Pose2d(position.position.x, position.position.y, Math.toRadians(position.heading.toDouble()));
-        return result;
+
+        position = position.plus(twist.value());
+
+        return new Pose2d(position.position.x, position.position.y, Math.toRadians(position.heading.toDouble()));
     }
 
+    @SuppressLint("DefaultLocale")
     public String toString(){
         return String.format("X: %f\nY: %f\nHeading: %f",
                 position.position.x,

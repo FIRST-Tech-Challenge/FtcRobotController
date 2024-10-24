@@ -121,6 +121,19 @@ public class LiftArmClawTest extends LinearOpMode {
 //                arm.goToDeposit();
             }
 
+            if(controller2.a.onPress()){
+                arm.goToBase();
+//                lift.goToZero();
+            }
+            if(controller2.b.onPress()){
+                arm.goToSpecimin();
+//                lift.goToTopBucket();
+            }
+            if(controller2.right_bumper.onPress()){
+                arm.goToRest();
+            }
+
+
 
 
             lift.adjustPID(pidValues[0],pidValues[1],pidValues[2], pidValues[3]);

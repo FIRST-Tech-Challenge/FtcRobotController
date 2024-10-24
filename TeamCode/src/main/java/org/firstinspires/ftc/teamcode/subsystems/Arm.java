@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,7 +22,7 @@ public class Arm {
 
 
     //Adjustable Constants
-    private double ARM_SPEED = 30; //Ticks
+    private double ARM_SPEED = 50; //Ticks
 
     public double MAX_POWER = 0.5;
 
@@ -35,11 +36,11 @@ public class Arm {
 
     //Position values 50, wrist, 3200
 
-    private int BASE_HEIGHT = 50; //ticks
-    private int SPECIMIN_HEIGHT = 800; //ticks
+    private int BASE_HEIGHT = 3400;//3450 - 50; //ticks
+    private int SPECIMIN_HEIGHT = 2420;//3450 - 800; //ticks
 
-    private int REST_HEIGHT = 3250; //ticks
-    private int DEPOSIT_HEIGHT = 3670; //ticks 3670
+    private int REST_HEIGHT = 200;//3450 - 3250; //ticks
+    private int DEPOSIT_HEIGHT = -220;//3450 - 3670; //ticks 3670
 
     enum ArmState{
         BASE_HEIGHT,
@@ -65,13 +66,21 @@ public class Arm {
     public Arm(HardwareMap hw, String nameLeft, String nameRight, String nameEncoder){
         armLeft = hw.get(CRServo.class, nameLeft);
         armRight = hw.get(CRServo.class, nameRight);
-        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
-        encoder.setDirection(DcMotorSimple.Direction.REVERSE);
+        DcMotorEx motorPort = hw.get(DcMotorEx.class, nameEncoder);
+        //Resets encoder on start
+        motorPort.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorPort.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //Creates encoder object to use
+        encoder = new OverflowEncoder(new RawEncoder(motorPort));
+
+
+
+//        encoder.setDirection(DcMotorSimple.Direction.REVERSE);
         armRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        armLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        pid = new PIDController(0.002,0,0.0001,0.28);
+//        armLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        pid = new PIDController(0.001,0,0.0001,0.25);
         pid.setTarget(getTicks());
-        currentState = ArmState.BASE_HEIGHT;
+        currentState = ArmState.REST_HEIGHT;
     }
 
     public void changeHeight(double power){
@@ -160,11 +169,15 @@ public class Arm {
         return pid;
     }
 
+    public ArmState getState(){
+        return currentState;
+    }
+
     @SuppressLint("DefaultLocale")
     @Override
     public String toString(){
         return String.format("Arm current Rotation: %f\n" +
-                "Arm current position: %f\n" +
+                "Arm current position: %d\n" +
                 "Arm target position: %d\n" +
                 "Arm PID Data: \n%s",
                 this.getRotation(),

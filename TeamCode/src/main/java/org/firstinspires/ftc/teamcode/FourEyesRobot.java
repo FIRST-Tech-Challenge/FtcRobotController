@@ -75,22 +75,24 @@ public class FourEyesRobot extends Mecanum {
 
         lift.goToZero();
         arm.goToSpecimin();
-        wrist.setHoverMode();
-        claw.openClaw();
+        wrist.setIntakeMode();
+        claw.closeClaw();
         currentState = ScoringType.SPECIMIN;
     }
 
     public void depositSamplePos(){
         lift.goToTopBucket();
         arm.goToDeposit();
-        wrist.setDepositMode();
+        wrist.setHoverMode();
+        claw.closeClaw();
         currentState = ScoringType.SAMPLE;
     }
 
     public void depositSpeciminPos(){
         lift.goToHighBar();
         arm.goToBase();
-        wrist.setHoverMode();
+        wrist.setDepositMode();
+        claw.closeClaw();
         currentState = ScoringType.SPECIMIN;
     }
 
@@ -105,25 +107,27 @@ public class FourEyesRobot extends Mecanum {
 
     //Right bumper
     public void toggleIntake(){
-        switch(lift.getCurrentState()){
+        switch(lift.getState()){
             //Sample Modes
             //Currently hovering above sub
             case HOVER:
                 if (wrist.getState() == Wrist.WristStates.HoverMode) {
                     //Switch to intake mode
-                    wrist.setIntakeMode();
+                    wrist.setDepositMode(); //Change later to SampleDeposit
                     //Activate intake
                     activeIntake.activateIntake();
                 }
                 else{
                     wrist.setHoverMode();
-                    activeIntake.deactivateIntake();
+//                    activeIntake.deactivateIntake();
                 }
                 break;
             case HIGH_BAR:
                 lift.goToSpeciminScore();
+                break;
             case SPECIMIN_SCORE:
                 lift.goToHighBar();
+                break;
             default:
                 break;
         }
@@ -149,6 +153,19 @@ public class FourEyesRobot extends Mecanum {
         }
     }
 
+
+
+    public void raiseClimb(){
+        arm.goToRest();
+        lift.goToClimb();
+    }
+    public void lowerClimb(){
+        arm.goToRest();
+        lift.goToZero();
+    }
+
+
+
     public void updatePID(){
         lift.update();
         arm.update();
@@ -162,6 +179,12 @@ public class FourEyesRobot extends Mecanum {
     public boolean isIntaking() {
         return activeIntake.isRunning();
     }
+    public void deactivateIntake(){
+        activeIntake.deactivateIntake();
+    }
+    public void activateIntake(){
+        activeIntake.activateIntake();
+    }
 
     //Manual control only
     public void moveLift(double power) {
@@ -170,6 +193,11 @@ public class FourEyesRobot extends Mecanum {
     public void changeHeightArm(double height) {
         arm.changeHeight(height);
     }
+    public void setWristPosition(double power){
+        wrist.setPosition(power);
+    }
+
+
 
     @SuppressLint("DefaultLocale")
     public String toString(){
@@ -178,8 +206,11 @@ public class FourEyesRobot extends Mecanum {
                         "Lift Target Position: %d\n" +
                         "Arm Current Position: %d\n" +
                         "Arm Target Position: %d\n" +
-                        "Active intake powered: %b\n" +
+                        "Wrist position: %f\n" +
+                        "Active intake Powered: %b\n" +
                         "Claw Open: %b\n" +
+                        "Lift State: %s\n" +
+                        "Arm State: %s\n" +
                         "Wrist State: %s\n" +
                         "Current Scoring Type: %s\n"
                 ,
@@ -187,8 +218,11 @@ public class FourEyesRobot extends Mecanum {
                 lift.getTargetPosition(),
                 arm.getTicks(),
                 arm.getTargetPosition(),
+                wrist.getWristPosition(),
                 activeIntake.isRunning(),
                 claw.getIsOpen(),
+                lift.getState(),
+                arm.getState(),
                 wrist.getState(),
                 currentState
         );

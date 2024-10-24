@@ -25,11 +25,12 @@ public class FourEyesTeleOp extends LinearOpMode {
                 controller1.y,
                 controller1.b,
                 controller1.a,
-                controller1.x
+                controller1.x,
+                controller1.dpad_up,
+                controller1.dpad_down
+
         };
         binding2 = new GamepadEvents.GamepadButton[] {
-                controller2.left_bumper,
-                controller2.right_bumper,
                 controller2.y,
                 controller2.b,
                 controller2.a,
@@ -43,30 +44,74 @@ public class FourEyesTeleOp extends LinearOpMode {
 
             fourEyesRobot.drive(controller1.left_stick_y, controller1.left_stick_x, controller1.right_stick_x);
 
+            //User 1 controls, driver automations
             //Left bumper
-            if(binding1[0].onPress() || binding2[0].onPress()) {
+            if(binding1[0].onPress()) {
                fourEyesRobot.toggleIntake();
             }
             //Right bumper
-            if(binding1[1].onPress() || binding2[1].onPress()) {
+            if(binding1[1].onPress()) {
                 fourEyesRobot.toggleDeposit();
             }
             //Y button
-            if(binding1[2].onPress() || binding2[2].onPress()) {
+            if(binding1[2].onPress()) {
                 fourEyesRobot.intakeSamplePos();
             }
             //B button
-            if(binding1[3].onPress() || binding2[3].onPress()) {
+            if(binding1[3].onPress()) {
                 fourEyesRobot.intakeSpeciminPos();
             }
             //A button
-            if(binding1[4].onPress() || binding2[4].onPress()) {
+            if(binding1[4].onPress()) {
                 fourEyesRobot.depositSpeciminPos();
             }
             //X button
-            if(binding1[5].onPress() || binding2[5].onPress()) {
+            if(binding1[5].onPress()) {
                 fourEyesRobot.depositSamplePos();
             }
+            //Dpad Up
+            if(binding1[6].onPress()){
+                fourEyesRobot.raiseClimb();
+            }
+            //Dpad Down
+            if(binding1[7].onPress()){
+                fourEyesRobot.lowerClimb();
+            }
+
+            //Player 2 controls
+            //Manual driving
+            //Lift manual control
+            fourEyesRobot.moveLift(-controller2.left_stick_y);
+            //Arm manual control
+            fourEyesRobot.changeHeightArm(controller2.right_stick_y);
+            //Wrist manual control
+            fourEyesRobot.setWristPosition(controller2.right_trigger.getTriggerValue() - controller2.left_trigger.getTriggerValue());
+
+            //Active intake manual control
+            if(binding2[0].onPress()){
+                if (fourEyesRobot.isIntaking()){
+                    fourEyesRobot.deactivateIntake();
+                }
+                else {
+                    fourEyesRobot.intakeBackward();
+                }
+            }
+            if(binding2[3].onPress()){
+                if (fourEyesRobot.isIntaking()){
+                    fourEyesRobot.deactivateIntake();
+                }
+                else{
+                    fourEyesRobot.activateIntake();
+                }
+            }
+            //Claw manual control
+            if(binding2[1].onPress()){
+                fourEyesRobot.openClaw();
+            }
+            if(binding2[2].onPress()){
+                fourEyesRobot.closeClaw();
+            }
+
 
             fourEyesRobot.updatePID();
             controller1.update();

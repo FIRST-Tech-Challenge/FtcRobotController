@@ -21,7 +21,7 @@ public class Lift {
         Tune PID Parameters accordingly
     */
     //Adjustable Constants
-    public int LIFT_SPEED = 20; //ticks per call
+    public int LIFT_SPEED = 50; //ticks per call
     public double POWER = 1; //Max Power
 
 
@@ -30,6 +30,7 @@ public class Lift {
     public enum LiftStates{
         ZERO,
         HOVER,
+        CLIMB,
         SPECIMIN_SCORE,
         HIGH_BAR,
         MAX_HEIGHT
@@ -38,8 +39,9 @@ public class Lift {
     public int ZERO = 0; //Ticks //SAMPLE INTAKE
     public int HOVER = 220; //Ticks //Sample HOVER
 
+    public int CLIMB_HEIGHT = 1600;
     public int HIGH_BAR = 1700; //Ticks //SPECIMIN DESPOSIT
-    public int SPECIMIN_SCORE = HIGH_BAR-100; //Ticks //SPECIMIN SCORE
+    public int SPECIMIN_SCORE = 1200; //Ticks //SPECIMIN SCORE
     public int MAX_HEIGHT = 3050; //Ticks //SAMPLE DEPOSIT
 
     public double GRAVITY = 9.8; // N/kgs
@@ -155,7 +157,13 @@ public class Lift {
         pid.setTarget(this.targetPosition);
     }
 
-    public LiftStates getCurrentState(){
+    public void goToClimb(){
+        currentState = LiftStates.CLIMB;
+        this.targetPosition = CLIMB_HEIGHT;
+        pid.setTarget(this.targetPosition);
+    }
+
+    public LiftStates getState(){
         return currentState;
     }
 
