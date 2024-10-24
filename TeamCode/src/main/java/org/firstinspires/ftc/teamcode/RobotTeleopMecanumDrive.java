@@ -55,8 +55,8 @@ public class RobotTeleopMecanumDrive extends OpMode{
     @Override
     public void loop() {
         drive.update(gamepad1);
-        drawer.update(gamepad1);
-        specimanArm.update(gamepad1);
+        drawer.update(gamepad2);
+        specimanArm.update(gamepad2);
         //elevator.update(gamepad2);
         testingValues(gamepad2);
     }
