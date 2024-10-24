@@ -30,12 +30,15 @@ public class newLocalization extends LinearOpMode {
     private static final double IMU_CALIBRATION_THRESHOLD = 0.1; // Allowable IMU drift before recalibration
     private static final double MAX_ENCODER_TICKS_PER_UPDATE = 1000; // Max allowed ticks per update to detect encoder errors
 
+    private static int i;
+
     public void runOpMode() throws InterruptedException{
 
         // Initialize odometry wheels
         verticalOdom = hardwareMap.get(DcMotorEx.class, "backL");
         horizontalOdom = hardwareMap.get(DcMotorEx.class, "frontR");
         imu = hardwareMap.get(IMU.class, "imu");
+        i = 0;
 
         verticalOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontalOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -105,11 +108,12 @@ public class newLocalization extends LinearOpMode {
             prevVertical = currentVertical;
             prevHorizontal = currentHorizontal;
             prevHeading = currentHeading;
-
+            i += 1;
             // Output telemetry data for debugging
             telemetry.addData("X Position", robotX);
             telemetry.addData("Y Position", robotY);
             telemetry.addData("Heading", Math.toDegrees(robotHeading)); // Display heading in degrees
+            telemetry.addData("Time", i);
             telemetry.update();
         }
     }

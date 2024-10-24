@@ -193,6 +193,7 @@ public class localization extends LinearOpMode {
     private static final double IMU_CALIBRATION_THRESHOLD = 0.1; // Allowable IMU drift before recalibration
     private static final double MAX_ENCODER_TICKS_PER_UPDATE = 1000; // Max allowed ticks per update to detect encoder errors
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize odometry wheels
@@ -239,17 +240,25 @@ public class localization extends LinearOpMode {
             }
 
             // Step 3: Arc handling - Use average heading for position update
-            double headingAverage = (prevHeading + currentHeading) / 2.0;
-            double deltaX = deltaVertical * Math.cos(headingAverage) - deltaHorizontal * Math.sin(headingAverage);
-            double deltaY = deltaVertical * Math.sin(headingAverage) + deltaHorizontal * Math.cos(headingAverage);
+            double radiusX;
+            double radiusY;
+            if (deltaHeading != 0){
+                radiusX = deltaVertical / deltaHeading;
+                radiusY = deltaHorizontal / deltaHeading;
+            } else {
+                radiusX = deltaVertical;
+                radiusY = deltaHorizontal;
+            }
+            double relDeltaX = radiusX * Math.sin(deltaHeading) - radiusY * (1 - Math.cos(deltaHeading));
+            double relDeltaY = radiusY * Math.sin(deltaHeading) + radiusX * (1 - Math.cos(deltaHeading));
 
-            // Step 4: Simpson's Rule Integration for smoother movement approximation
-            double deltaXSimpson = WEIGHT * (deltaX / 3) * (prevVertical + 4.0 * deltaX + currentVertical);
-            double deltaYSimpson = WEIGHT * (deltaY / 3) * (prevHorizontal + 4.0 * deltaY + currentHorizontal);
+            double headingAverage = (prevHeading + currentHeading) / 2.0;
+            double deltaX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) - prevVertical;
+            double deltaY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) - prevHorizontal;
 
             // Update robot's global position
-            robotX += deltaXSimpson;
-            robotY += deltaYSimpson;
+            robotX += deltaX;
+            robotY += deltaY;
             robotHeading = currentHeading;
 
             // Step 5: IMU Calibration Handling - Detect if the IMU drifts too much

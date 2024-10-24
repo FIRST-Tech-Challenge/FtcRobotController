@@ -63,9 +63,9 @@ public class upscalingtest extends LinearOpMode {
     private Mat retrieveLimelightFrame(LLResult result) {
         // assuming result contains the raw image frame in some format
         // convert the image frame to an OpenCV Mat object.
-        byte[] imageData = result.getRawImageData();  // Pseudocode, need actual Limelight API support.
-        Mat imageFrame = Imgcodecs.imdecode(new Mat(imageData), Imgcodecs.IMREAD_COLOR);  // Decode into Mat format.
-        return imageFrame;
+        //byte[] imageData = result.getRawImageData();  // Pseudocode, need actual Limelight API support.
+        //Mat imageFrame = Imgcodecs.imdecode(new Mat(imageData), Imgcodecs.IMREAD_COLOR);  // Decode into Mat format.
+        return null;//imageFrame;
     }
 
 
@@ -86,14 +86,14 @@ public class upscalingtest extends LinearOpMode {
 
             // receive the upscaled frame back from the AI processor.
             InputStream inputStream = socket.getInputStream();
-            byte[] upscaledData = new byte[frameData.length * 4];  // Assuming the upscaled image is larger.
-            inputStream.read(upscaledData);
+            //byte[] upscaledData = new byte[frameData.length * 4];  // Assuming the upscaled image is larger.
+           // inputStream.read(upscaledData);
 
             // convert the received data back into a Mat object.
-            Mat upscaledFrame = Imgcodecs.imdecode(new Mat(upscaledData), Imgcodecs.IMREAD_COLOR);
+            //Mat upscaledFrame = Imgcodecs.imdecode(new Mat(upscaledData), Imgcodecs.IMREAD_COLOR);
             // close the connection
             socket.close();
-            return upscaledFrame;
+            return null;//upscaledFrame;
 
         } catch (Exception e) {
             telemetry.addData("Error", "Unable to upscale image: " + e.getMessage());
