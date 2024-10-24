@@ -158,7 +158,7 @@ public class Bot {
         armPivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         leftPushoff.setDirection(CRServo.Direction.FORWARD);
-        rightPushoff.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightPushoff.setDirection(CRServo.Direction.REVERSE);
 
         //Servos for intake on the map
         //TODO Rename Intake servos to something better
@@ -171,10 +171,10 @@ public class Bot {
 
     /**
      * Set drive train power for mechanum drive
-     * @param frontLeftPower
-     * @param backLeftPower
-     * @param frontRightPower
-     * @param backRightPower
+     * @param frontLeftPower front left motor power
+     * @param backLeftPower back left motor power
+     * @param frontRightPower front right motor power
+     * @param backRightPower back right motor power
      */
     public void setDriveTrain(
            double frontLeftPower, double backLeftPower,
@@ -199,7 +199,7 @@ public class Bot {
 
     /**
      * Set Lift Power for hang
-     * @param liftPower
+     * @param liftPower pwoer for lift
      */
     public void setLift(
             double liftPower
@@ -210,7 +210,7 @@ public class Bot {
 
     /**
      * Set intake power
-     * @param intakePower
+     * @param intakePower power for intake
      */
     public void setIntakePosition(
             double intakePower
@@ -221,7 +221,7 @@ public class Bot {
 
     /**
      * Run extension arm
-     * @param power
+     * @param power power of motor
      */
     public void setExtendPower(double power){ extendArmMotor.setPower(power);}
 
@@ -229,8 +229,8 @@ public class Bot {
 
     /**
      * Run extension arm based on target position
-     * @param targetPosition
-     * @param power
+     * @param targetPosition target position of pivot
+     * @param power power of motor
      */
     public void autoPivotArm(
             int targetPosition, double power
@@ -243,7 +243,7 @@ public class Bot {
 
     /**
      * Run Pivot Motor
-     * @param power
+     * @param power power of motor
      */
     public void setPivotPower(double power){ armPivotMotor.setPower(power);}
 
@@ -274,8 +274,8 @@ public class Bot {
 
     /**
      * Drive using encoders for auto
-     * @param speed
-     * @param distance
+     * @param speed speed for power
+     * @param distance distance to travel
      */
     public void encoderDrive(double speed, double distance) {
         int newfrontLeftTarget;
@@ -338,8 +338,8 @@ public class Bot {
 
     /**
      * Turn using encoders for auto (pivot)
-     * @param speed
-     * @param degrees
+     * @param speed speed for power
+     * @param degrees angle degree to turn
      */
     public void encoderTurn(double speed, double degrees) {
 
@@ -395,8 +395,8 @@ public class Bot {
     /**
      * Strafe using encoders for auto
      * NOTE: Pos distance is left strafe, Neg distance is right strafe
-     * @param speed
-     * @param distance
+     * @param speed speed of motors
+     * @param distance distance to travel
      */
     public void encoderStrafe(double speed, double distance) {
         int newfrontLeftTarget;
@@ -469,6 +469,11 @@ public class Bot {
 
     }
 
+    /**
+     * Drive function
+     * @param left power for left side of chassis
+     * @param right power for right side of chassis
+     */
     public void setDrivePower(double left, double right){
         leftMotorFront.setPower(left);
         leftMotorBack.setPower(left);
@@ -511,7 +516,7 @@ public class Bot {
     /**
      * Auto function to set pivot arm to position based on degree
      * NOTE: NOT TESTED
-     * @param degree
+     * @param degree position by angle degree
      */
     public void setArmPos(double degree){
         double totalTick = MAX_PIVOT - MIN_PIVOT;
@@ -534,7 +539,7 @@ public class Bot {
 
     /**
      * Auto function to set pivot arm to position based on tick
-     * @param tick
+     * @param tick position by encoder tick
      */
     public void setArmPos(int tick){
         armPivotMotor.setTargetPosition(tick);
@@ -572,7 +577,7 @@ public class Bot {
     /**
      * Auto function to extend arm to a set position based on inches
      * NOTE: NOT TESTED
-     * @param inches
+     * @param inches position in inches
      */
     public void setExtendPos(double inches){
         double target = inches * TICKS_PER_INCH_EXT;
@@ -593,7 +598,7 @@ public class Bot {
 
     /**
      * Auto function to extend arm to a set position based on tick
-     * @param tick
+     * @param tick encoder tick position
      */
     public void setExtendPos(int tick){
         extendArmMotor.setTargetPosition(tick);
@@ -642,6 +647,8 @@ public class Bot {
 
         // Run until the time is up
         while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
+            opMode.telemetry.addData("Running intake", 1);
+            opMode.telemetry.update();
         }
 
         // Stop the motor after the time has expired
@@ -649,6 +656,11 @@ public class Bot {
         bottomIntake.setPower(0);
     }
 
+    /**
+     * Auto for lift functionality
+     * @param rPos right lift position
+     * @param lPos left lift position
+     */
     public void encoderLift(int rPos, int lPos){
         rightLift.setTargetPosition(rPos);
         leftLift.setTargetPosition(lPos);
@@ -672,6 +684,9 @@ public class Bot {
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    /**
+     * Resets encoders for pivot and extend if it slips
+     */
     public void d2EncoderReset(){
         armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -679,6 +694,9 @@ public class Bot {
         extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    /**
+     * Auto pushoff for lifting sequence
+     */
     public void autoPush(){
         leftPushoff.setPower(-1.0);
         rightPushoff.setPower(-1.0);
