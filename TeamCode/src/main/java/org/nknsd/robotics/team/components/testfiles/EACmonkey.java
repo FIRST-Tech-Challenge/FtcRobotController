@@ -95,23 +95,23 @@ public class EACmonkey implements NKNComponent {
             case SERVO_FORWARD:
                 intakeServoHandler.setServoPower(1.0);
                 break;
-            case ROTATION_0_5:
-                rotationHandler.setTarget(1.7);
-                break;
-            case ROTATION_1:
-                rotationHandler.setTarget(2.4);
+            case SERVO_BACKWARD:
+                intakeServoHandler.setServoPower(-1.0);
                 break;
             case EXTENSION_EXTENDED:
                 extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.HIGH_BASKET);
                 break;
-            case SERVO_BACKWARD:
-                intakeServoHandler.setServoPower(-1.0);
-                break;
             case EXTENSION_RESTING:
                 extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.RESTING);
-                break;
+                break; 
             case ROTATION_0:
-                rotationHandler.setTarget(1.5);
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.PICKUP);
+                break;
+            case ROTATION_0_5:
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.PREPICKUP);
+                break;
+            case ROTATION_1:
+                rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.HIGH);
                 break;
         }
     }

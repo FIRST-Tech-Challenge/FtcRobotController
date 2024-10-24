@@ -58,4 +58,7 @@ public class IntakeServoHandler implements NKNComponent {
         telemetry.addData("intakeServo", servoString);
     }
 
+    public double getServoPower() {
+        return servo.getPower();
+    }
 }
