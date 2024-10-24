@@ -23,9 +23,9 @@ public class NeuralNetworkLimelight3ABlue extends LinearOpMode {
     private DcMotor backRightMotor;
 
     // target class name to detect
-    private final String TARGET_CLASS_NAME_BLUE = "blue-face-of-piece";
-    private final String TARGET_CLASS_NAME_RED = "red-face-of-piece";
-    private final String TARGET_CLASS_NAME_YELLOW = "yellow-face-of-piece";
+    private final String TARGET_CLASS_NAME_BLUE = "blue-face";
+    private final String TARGET_CLASS_NAME_RED = "red-face";
+    private final String TARGET_CLASS_NAME_YELLOW = "yellow-face";
 
     // to build a custom rumble sequence.
     Gamepad.RumbleEffect customRumbleEffect;
