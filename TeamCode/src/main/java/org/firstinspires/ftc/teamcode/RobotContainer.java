@@ -16,11 +16,13 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.Subsystems.ElbowJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.FlappyFlappyWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.Subsystems.OdometryPod;
 import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
+import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.ShoulderJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.ShoulderPosition;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
@@ -52,9 +54,13 @@ public class RobotContainer {
     //public static Camera frontCamera;
     public static LinearSlide linearSlide;
 
+    public static PivotingWrist wristRotateServo;
+
     public static FlappyFlappyWrist flappyFlappyWrist;
 
     public static ShoulderJoint shoulderJoint;
+
+    public static ElbowJoint elbowJoint;
     //
 
     // Robot initialization for teleop - Run this once at start of teleop
@@ -80,9 +86,16 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->flappyFlappyWrist.RotateTo(135)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->shoulderJoint.moveTo(ShoulderPosition.HIGH)));
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(90)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(()->flappyFlappyWrist.RotateTo(135)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(90)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->shoulderJoint.moveTo(ShoulderPosition.HIGH)));
+
+
 
         // driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new ToggleClaw());
 
@@ -135,6 +148,8 @@ public class RobotContainer {
         linearSlide = new LinearSlide();
         flappyFlappyWrist = new FlappyFlappyWrist();
         shoulderJoint = new ShoulderJoint();
+        wristRotateServo= new PivotingWrist();
+        elbowJoint = new ElbowJoint();
         // insert other subsystems here
         // claw = new Claw();
 
