@@ -37,15 +37,16 @@ public class Bot {
 
 
     //Statistics for measurements
-    private static final int MAX_TICK_EXT = -3595;
+    public static final int MAX_EXT = -3595;
+    public static final double MIN_EXTEND = 0;
 
-    private static final int LEFT_LIFT_MAX = 7255;
-    private static final int LEFT_LIFT_MIN = -101;
-    private static final int RIGHT_LIFT_MAX = 7302;
-    private static final int RIGHT_LIFT_MIN = -10;
+    public static final int LEFT_LIFT_MAX = 7255;
+    public static final int LEFT_LIFT_MIN = -101;
+    public static final int RIGHT_LIFT_MAX = 7302;
+    public static final int RIGHT_LIFT_MIN = -10;
 
-    private static final int MAX_PIVOT = 2560;
-    private static final int MIN_PIVOT = -670;
+    public static final int MAX_PIVOT = 2560;
+    public static final int MIN_PIVOT = -670;
 
 
     //Drive Encoder Stats
@@ -60,7 +61,7 @@ public class Bot {
 
 
     private static final double MAX_DISTANCE = 25.5;
-    private static final double TICKS_PER_INCH_EXT = MAX_TICK_EXT / MAX_DISTANCE;
+    private static final double TICKS_PER_INCH_EXT = MAX_EXT / MAX_DISTANCE;
 
     private static final int BUFFER = 10;
     
