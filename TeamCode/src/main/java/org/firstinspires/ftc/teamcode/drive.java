@@ -24,27 +24,28 @@ public class drive extends OpMode {
     private DcMotorEx intakeInOut;
     private DcMotorEx clawUpDown;
     private double intakeMaxSpeed = 0.7;
-
+    private double clawUpDownMaxSpeed = 0.7;
+    //Test Claw Arm Movement (not working)
     public void processClawArmUpDown(){
         if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0) {
-            intakeInOut.setPower(0);
+            clawUpDown.setPower(0);
         }
         else if (gamepad2.left_trigger != 0 && gamepad2.right_trigger == 0){
-            intakeInOut.setDirection(DcMotorSimple.Direction.REVERSE);
-            if(gamepad2.left_trigger >= intakeMaxSpeed) {
-                intakeInOut.setPower(intakeMaxSpeed);
+            clawUpDown.setDirection(DcMotorSimple.Direction.REVERSE);
+            if(gamepad2.left_trigger >= clawUpDownMaxSpeed) {
+                clawUpDown.setPower(clawUpDownMaxSpeed);
             }
             else{
-                intakeInOut.setPower(gamepad2.left_trigger);
+                clawUpDown.setPower(gamepad2.left_trigger);
             }
 
         }
         else if (gamepad2.right_trigger != 0 && gamepad2.left_trigger == 0) {
-            intakeInOut.setDirection(DcMotorSimple.Direction.FORWARD);
-            if (gamepad1.right_trigger >= intakeMaxSpeed) {
-                intakeInOut.setPower(intakeMaxSpeed);
+            clawUpDown.setDirection(DcMotorSimple.Direction.FORWARD);
+            if (gamepad1.right_trigger >= clawUpDownMaxSpeed) {
+                clawUpDown.setPower(clawUpDownMaxSpeed);
             } else {
-                intakeInOut.setPower(gamepad2.right_trigger);
+                clawUpDown.setPower(gamepad2.right_trigger);
             }
         }
     }
@@ -103,6 +104,7 @@ public class drive extends OpMode {
         // runs while in play
         drive.driverInput(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 1.0, MecanumEncoder.DriveMode.FieldCentric);
         processIntakeInOut();
+        processClawArmUpDown();
     }
 }
 
