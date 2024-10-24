@@ -11,7 +11,7 @@ import org.nknsd.robotics.team.ServoMonkeyProgram;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Servo Monkey")
+@TeleOp(name = "EAC Monkey")
 public class NKNOpMode_EACmonkey extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
