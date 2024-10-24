@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.odo;
+package org.firstinspires.ftc.teamcode.Odo;
 /*   MIT License
  *   Copyright (c) [2024] [Base 10 Assets, LLC]
  *
@@ -32,9 +32,7 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.DevicePropertie
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 import com.qualcomm.robotcore.util.TypeConversion;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.usefuls.Math.M;
+import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 

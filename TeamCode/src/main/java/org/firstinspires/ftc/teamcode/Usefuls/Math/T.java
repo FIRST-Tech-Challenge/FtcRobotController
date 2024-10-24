@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.usefuls.Math;
+package org.firstinspires.ftc.teamcode.Usefuls.Math;
 
 //T for Trigonometry !!
 public final class T {

@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.usefuls.Motor;
+package org.firstinspires.ftc.teamcode.Usefuls.Motor;
 
-import org.firstinspires.ftc.teamcode.usefuls.Timer;
-import org.firstinspires.ftc.teamcode.usefuls.Math.M;
+import org.firstinspires.ftc.teamcode.Usefuls.Timer;
+import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 
 
 public class PID {

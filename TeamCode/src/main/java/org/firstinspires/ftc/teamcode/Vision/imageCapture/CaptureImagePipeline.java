@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision.imageCapture;
+package org.firstinspires.ftc.teamcode.Vision.imageCapture;
 
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;

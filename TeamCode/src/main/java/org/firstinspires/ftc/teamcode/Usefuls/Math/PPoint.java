@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.usefuls.Math;
+package org.firstinspires.ftc.teamcode.Usefuls.Math;
 
 public class PPoint {
     private final double x,y,heading;

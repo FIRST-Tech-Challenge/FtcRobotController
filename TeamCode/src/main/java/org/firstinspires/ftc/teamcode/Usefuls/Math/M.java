@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.usefuls.Math;
+package org.firstinspires.ftc.teamcode.Usefuls.Math;
 
 public final class M {
     public static final double PI = Math.PI;

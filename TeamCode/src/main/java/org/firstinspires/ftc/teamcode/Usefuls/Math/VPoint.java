@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.usefuls.Math;
+package org.firstinspires.ftc.teamcode.Usefuls.Math;
 
 /**
  * Represents a point in a 2D coordinate system.

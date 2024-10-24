@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.usefuls.Motor;
+package org.firstinspires.ftc.teamcode.Usefuls.Motor;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.usefuls.Math.M;
+import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 
 
 public class  ServoMotorBetter implements Motor {

@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.usefuls.Motor;
+package org.firstinspires.ftc.teamcode.Usefuls.Motor;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.usefuls.Math.M;
+import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 
 public class DcMotorBetter implements Motor {
     private DcMotorEx dcMotorEx;

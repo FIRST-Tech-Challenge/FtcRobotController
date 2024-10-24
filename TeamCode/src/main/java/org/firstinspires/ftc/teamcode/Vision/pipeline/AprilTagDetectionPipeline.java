@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision.pipeline;
+package org.firstinspires.ftc.teamcode.Vision.pipeline;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.opencv.calib3d.Calib3d;
@@ -17,7 +17,6 @@ import org.openftc.apriltag.AprilTagPose;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Queue;
 
 public class AprilTagDetectionPipeline extends OpenCvPipeline {
 
