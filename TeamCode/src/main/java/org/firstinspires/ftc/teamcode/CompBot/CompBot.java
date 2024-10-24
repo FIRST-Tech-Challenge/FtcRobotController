@@ -18,6 +18,7 @@ public class CompBot extends LinearOpMode {
 
     GoBildaPinpointDriver odo;
 
+    //Philip: Do we need the motors or servos in here Colin?
     DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
 
     Servo FLServo, BLServo, BRServo, FRServo, claw;

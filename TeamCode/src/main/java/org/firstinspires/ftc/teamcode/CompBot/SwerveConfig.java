@@ -32,6 +32,7 @@ public class SwerveConfig {
      * TODO Get rid of this somehow
      * <p>
      * all of these need to be removed somehow
+     * Philip: can't be removed because builder will always make mistakes so we(coders) cannot
      */
     // In case builders are bad, is offset center for servo
     double FLServoOffSet = .005;
