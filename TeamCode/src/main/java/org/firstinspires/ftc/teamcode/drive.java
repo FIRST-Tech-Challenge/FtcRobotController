@@ -19,70 +19,41 @@ public class drive extends OpMode {
     private String TESTBOT = "24342-RC";
     private Telemetry.Item telPathDebug = null;
     private MecanumEncoder drive = new MecanumEncoder(this);
+    private Slide intakeSlide = new Slide("intakeslide", 1300, 1.0, 114.28);
+    private Slide clawSlide = new Slide("clawslide", 1300, 1.0,114.28);
     private String wifiSsid = "";
 
-    private DcMotorEx intakeInOut;
-    private DcMotorEx clawUpDown;
-    private double intakeMaxSpeed = 0.7;
-    private double clawUpDownMaxSpeed = 0.7;
-    //Test Claw Arm Movement (not working)
-    public void processClawArmUpDown(){
+    public void processClawArmUpDown() {
         if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0) {
-            clawUpDown.setPower(0);
+            clawSlide.Stop();
         }
         else if (gamepad2.left_trigger != 0 && gamepad2.right_trigger == 0){
-            clawUpDown.setDirection(DcMotorSimple.Direction.REVERSE);
-            if(gamepad2.left_trigger >= clawUpDownMaxSpeed) {
-                clawUpDown.setPower(clawUpDownMaxSpeed);
-            }
-            else{
-                clawUpDown.setPower(gamepad2.left_trigger);
-            }
-
+            clawSlide.Retract(gamepad2.left_trigger);
         }
         else if (gamepad2.right_trigger != 0 && gamepad2.left_trigger == 0) {
-            clawUpDown.setDirection(DcMotorSimple.Direction.FORWARD);
-            if (gamepad1.right_trigger >= clawUpDownMaxSpeed) {
-                clawUpDown.setPower(clawUpDownMaxSpeed);
-            } else {
-                clawUpDown.setPower(gamepad2.right_trigger);
-            }
+            clawSlide.Extend(gamepad2.right_trigger);
         }
     }
     public void processIntakeInOut() {
         if (gamepad1.left_trigger == 0 && gamepad1.right_trigger == 0) {
-            intakeInOut.setPower(0);
+            intakeSlide.Stop();
         }
         else if (gamepad1.left_trigger != 0 && gamepad1.right_trigger == 0){
-            intakeInOut.setDirection(DcMotorSimple.Direction.REVERSE);
-            if(gamepad1.left_trigger >= intakeMaxSpeed) {
-                intakeInOut.setPower(intakeMaxSpeed);
-            }
-            else{
-                intakeInOut.setPower(gamepad1.left_trigger);
-            }
-
+            intakeSlide.Retract(gamepad1.left_trigger);
         }
         else if (gamepad1.right_trigger != 0 && gamepad1.left_trigger == 0) {
-            intakeInOut.setDirection(DcMotorSimple.Direction.FORWARD);
-            if (gamepad1.right_trigger >= intakeMaxSpeed) {
-                intakeInOut.setPower(intakeMaxSpeed);
-            } else {
-                intakeInOut.setPower(gamepad1.right_trigger);
-            }
+            intakeSlide.Extend(gamepad1.right_trigger);
         }
     }
     @Override
     public void init() {
-        //Continue defining motors                            //rename in driver station to the below(expainson motor 0)
-        intakeInOut = hardwareMap.get(DcMotorEx.class, "intakeinout");
-        clawUpDown = hardwareMap.get(DcMotorEx.class, "clawupdown");
+        //Continue defining motors
+        intakeSlide.Init(hardwareMap);
+        clawSlide.Init(hardwareMap);
         // run once when init is pressed
         wifiSsid = WifiUtil.getConnectedSsid();
 
         drive.initHardware(hardwareMap, wifiSsid.equals(TESTBOT) ? MecanumEncoder.Bot.TestBot : MecanumEncoder.Bot.CompBot);
-        intakeInOut.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeInOut.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.clearAll();
         telemetry.setAutoClear(false);
         telPathDebug = telemetry.addData("PathDebug:", "");
