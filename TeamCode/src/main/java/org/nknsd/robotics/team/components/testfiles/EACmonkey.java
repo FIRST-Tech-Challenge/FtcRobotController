@@ -14,19 +14,21 @@ import java.util.concurrent.TimeUnit;
 
 public class EACmonkey implements NKNComponent {
     private ExtensionHandler extensionHandler;
-    private Tests currentTest = Tests.DO_NOTHING;
     private IntakeServoHandler intakeServoHandler;
     private RotationHandler rotationHandler;
+    private Tests currentTest = Tests.DO_NOTHING;
+
+    private int testNumber;
 
     private enum Tests {
         DO_NOTHING(1000),
         SERVO_FORWARD(3000),
+        ROTATION_0_5(3000),
+        ROTATION_1(3000),
+        EXTENSION_EXTENDED(3000),
         SERVO_BACKWARD(3000),
         EXTENSION_RESTING(3000),
-        EXTENSION_EXTENDED(3000),
-        ROTATION_0(5000),
-        ROTATION_0_5(5000),
-        ROTATION_1(5000);
+        ROTATION_0(3000);
         public final long durationMilli;
 
         Tests(long durationMilli) {
@@ -64,55 +66,52 @@ public class EACmonkey implements NKNComponent {
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         // Check if the current time is higher than the target time to stop
-        if (runtime.time(TimeUnit.MILLISECONDS) - testStartTime > currentTest.durationMilli) {
-            // Get which test we're on
-            int testIndex = currentTest.ordinal() + 1;
-
-            // If outside the array's length, we need to loop back to the beginning
-            if (testIndex >= Tests.values().length) {
-                //Reset to beginning of tests
-                testIndex = 0;
+            if (runtime.time(TimeUnit.MILLISECONDS) - testStartTime > currentTest.durationMilli) {
+                // Get which test we're on
+                int testIndex = currentTest.ordinal() + 1;
+                // If outside the array's length, we need to loop back to the beginning
+                if (testIndex >= Tests.values().length) {
+                    //Reset to beginning of tests
+                    testIndex = 0;
+                }
+                currentTest = Tests.values()[testIndex];
+                testStartTime = runtime.time(TimeUnit.MILLISECONDS);
             }
-
-            currentTest = Tests.values()[testIndex];
-
-            testStartTime = runtime.time(TimeUnit.MILLISECONDS);
-        }
-
-        runTest(currentTest);
+            runTest(currentTest);
     }
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("Test", currentTest.name());
+        if (testNumber == 1) {
+            telemetry.addData("Test One", currentTest.name());
+        }
     }
 
     private void runTest(Tests tests) {
         switch (tests) {
             case DO_NOTHING:
+                intakeServoHandler.setServoPower(0);
                 break;
-
             case SERVO_FORWARD:
                 intakeServoHandler.setServoPower(1.0);
-                break;
-
-            case SERVO_BACKWARD:
-                intakeServoHandler.setServoPower(-1.0);
-                break;
-            case EXTENSION_RESTING:
-                extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.RESTING);
-                break;
-            case EXTENSION_EXTENDED:
-                extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.HIGH_BASKET);
-                break;
-            case ROTATION_0:
-                rotationHandler.setTarget(1.5);
                 break;
             case ROTATION_0_5:
                 rotationHandler.setTarget(1.7);
                 break;
             case ROTATION_1:
                 rotationHandler.setTarget(2.4);
+                break;
+            case EXTENSION_EXTENDED:
+                extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.HIGH_BASKET);
+                break;
+            case SERVO_BACKWARD:
+                intakeServoHandler.setServoPower(-1.0);
+                break;
+            case EXTENSION_RESTING:
+                extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.RESTING);
+                break;
+            case ROTATION_0:
+                rotationHandler.setTarget(1.5);
                 break;
         }
     }
