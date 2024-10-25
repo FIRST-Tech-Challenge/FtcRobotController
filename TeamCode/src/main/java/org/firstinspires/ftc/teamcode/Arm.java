@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
-    private DcMotor left;
-    private DcMotor right;
-    private DcMotor pivotLeft;
-    private DcMotor pivotRight;
-    private static final int MAX_LIMIT = 1000;
-    private static final int MIN_LIMIT = 30;
+    private final DcMotor left;
+    private final DcMotor right;
+    private final DcMotor pivotLeft;
+    private final DcMotor pivotRight;
+    public static final int MAX_LIMIT = 3000;
+    public static final int MIN_LIMIT = 20;
 
     public Arm(HardwareMap map) {
         left = map.get(DcMotor.class, "VIPERLEFT");
@@ -69,6 +69,7 @@ public class Arm {
     }
 
     public void setViperTargetPosition(int position, double power) {
+        position = Math.max(Math.min(position, MAX_LIMIT), MIN_LIMIT);
         left.setTargetPosition(position);
         right.setTargetPosition(position);
         setViperToPositionMode();
@@ -92,8 +93,11 @@ public class Arm {
     }
 
     public int getViperCurrentPosition() {
-        int currentPosition = (left.getCurrentPosition() + right.getCurrentPosition()) / 2;
-        return currentPosition;
+        return (left.getCurrentPosition() + right.getCurrentPosition()) / 2;
+    }
+
+    public int getPivotCurrentPosition() {
+        return (pivotLeft.getCurrentPosition() + pivotRight.getCurrentPosition()) / 2;
     }
 
     public int getViperTargetPosition() {

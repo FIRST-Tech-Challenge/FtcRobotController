@@ -46,8 +46,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MecanumDriver extends OpMode {
     private MecanumRobotController robotController;
     private final ElapsedTime runtime = new ElapsedTime();
-
-    private CRServo servo;
+    private int pivotPosition = 0;
+    private int viperPosition = 0;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
     private final static double VIPER_POWER = 0.7;
@@ -55,11 +55,8 @@ public class MecanumDriver extends OpMode {
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
     public final boolean isFieldCentric = true;
-//    private int slidePosition = 0;
-//    private int encoderMax = 750;
-//    private int encoderMin = 250;
-
     private Arm arm;
+    private Intake intake;
 
     @Override
     public void init() {
@@ -74,14 +71,14 @@ public class MecanumDriver extends OpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
         arm = new Arm(hardwareMap);
+        intake = new Intake(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
-//        servo = hardwareMap.get(CRServo.class, "intake");
         gyro.resetYaw();
 
-     //   robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
+        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
     }
 
     @Override
@@ -91,81 +88,55 @@ public class MecanumDriver extends OpMode {
     @Override
     public void start() {
         runtime.reset();
+        intake.close();
     }
 
     @Override
     public void loop() {
-//        robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
-//                gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
-//                gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
-        //arm.setPivotTargetPosition(0, PIVOT_POWER);
-//        arm.setViperTargetPosition(1000, VIPER_POWER);
+        robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
+                gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
+                gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
+
+        // Viper
         if (gamepad1.left_trigger != 0 || gamepad1.right_trigger != 0) {
-            arm.setViperToContinuousMode();
-            arm.moveViperSlides((gamepad1.left_trigger - gamepad1.right_trigger) * VIPER_POWER);
+            viperPosition += (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * VIPER_POWER * 50);
         } else if (arm.getViperMode() != DcMotor.RunMode.RUN_TO_POSITION) {
             arm.stopVipers();
         }
 
+        // Pivot
         if (gamepad1.dpad_up) {
-            arm.setPivotToContinuousMode();
-            arm.movePivot(PIVOT_POWER);
+            pivotPosition -= (int) (30 * PIVOT_POWER);
         } else if (gamepad1.dpad_down) {
-            arm.setPivotToContinuousMode();
-            arm.movePivot(-PIVOT_POWER);
+            pivotPosition += (int) (30 * PIVOT_POWER);
         } else if (arm.getPivotMode() != DcMotor.RunMode.RUN_TO_POSITION) {
             arm.stopPivot();
         }
 
+        // Preset Viper Positions
         if (gamepad1.left_bumper) {
-            arm.setViperTargetPosition(1000, VIPER_POWER);
+            arm.setViperTargetPosition(Arm.MAX_LIMIT, VIPER_POWER);
         } else if (gamepad1.right_bumper) {
-            arm.setViperTargetPosition(30, VIPER_POWER);
+            arm.setViperTargetPosition(Arm.MIN_LIMIT, VIPER_POWER);
         }
 
-//        servo.setPower(1);
-//        double servoPosition = Range.clip(gamepad1.right_trigger - gamepad1.left_trigger, 0.0, 1.0);
+        // Open/close intake
+        if (gamepad1.a) {
+            if (intake.isClosed()) {
+                intake.open();
+            } else {
+                intake.close();
+            }
+        }
 
+        arm.setPivotTargetPosition(pivotPosition, PIVOT_POWER);
+        arm.setViperTargetPosition(viperPosition, VIPER_POWER);
 
-        telemetry.addData("Left Trigger", gamepad1.left_trigger);
-        telemetry.addData("Right Trigger", gamepad1.right_trigger);
-        telemetry.addData("Viper Slide Current Position", arm.getViperCurrentPosition());
-        telemetry.addData("Viper Slide Target Position", arm.getViperTargetPosition());
-        telemetry.addData("Left Pivot Current Position", arm.getLeftPivotCurrentPosition());
-        telemetry.addData("Right Pivot Current Position", arm.getRightPivotCurrentPosition());
-        telemetry.addData("Left Pivot Target Position", arm.getLeftPivotTargetPosition());
-        telemetry.addData("Right Pivot Target Position", arm.getRightPivotTargetPosition());
-//        telemetry.addData("servoPosition", servoPosition);
-//        robotController.sendTelemetry(telemetry);
-
-//        if (gamepad1.left_bumper) {
-//            slidePosition = encoderMax;
-//            moveViperSlides();
-//
-//        } else if (gamepad1.right_bumper) {
-//            slidePosition = encoderMin;
-//            moveViperSlides();
-//        } else {
-//            viperSlide1.setPower(0);
-//            viperSlide2.setPower(0);
-//        }
-
-
-
+        telemetry.addData("Claw Left Position", intake.getLeftPosition());
+        telemetry.addData("Claw Right Position", intake.getRightPosition());
+        telemetry.addData("Viper Slide Position", arm.getViperCurrentPosition());
+        telemetry.addData("Pivot Position", arm.getPivotCurrentPosition());
+        telemetry.addData("", "");
+        robotController.sendTelemetry(telemetry);
     }
-//
-//    public void moveViperSlides() {
-//        moveSlide1();
-//        moveSlide2();
-//    }
-//
-//    public void moveSlide1() {
-//        viperSlide1.setTargetPosition(slidePosition);
-//    }
-//
-//    public void moveSlide2() {
-//        viperSlide2.setTargetPosition(slidePosition);
-//    }
-
-
 }

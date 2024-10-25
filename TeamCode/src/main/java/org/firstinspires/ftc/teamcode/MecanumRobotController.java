@@ -28,9 +28,10 @@ public class MecanumRobotController {
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
-    public static final double INCHES_LEFT_TO_SLOW_DOWN = 10;
+    public static final double INCHES_LEFT_TO_SLOW_DOWN = 8;
+    public static final double TURN_DRIFT_TIME = 0.15;
     public static double Kp = 0.07;
-    public static double Kd = 0.002;
+    public static double Kd = 0.0002;
     public static double Ki = 0.00;
 
     private final DcMotor backLeft;
@@ -88,6 +89,7 @@ public class MecanumRobotController {
         this(backLeft, backRight, frontLeft, frontRight, gyro, null);
     }
 
+    // TODO: Tune PID values + other constants like TURN_DRIFT_TIME.
     // Behavior: Moves the robot using a given forward, strafe, and turn power.
     // Params:
     //      - double forward: The forward power for the robot.
@@ -124,7 +126,7 @@ public class MecanumRobotController {
         // when the robot turns fast. This ensures that the robot doesn't set back as much after
         // stopping, and if it gets hit by something super fast, it doesn't try to correct its
         // heading back into that object.
-        if ((robot == null && currentAngularVelocity > MIN_VELOCITY_TO_SMOOTH_TURN) || turn != 0 || runtime.seconds() - turnStoppedTime < 0.15) {
+        if ((robot == null && currentAngularVelocity > MIN_VELOCITY_TO_SMOOTH_TURN) || turn != 0 || runtime.seconds() - turnStoppedTime < TURN_DRIFT_TIME) {
             wantedHeading = currentHeading;
         } else {
             double error = normalize(wantedHeading - currentHeading);
@@ -171,6 +173,7 @@ public class MecanumRobotController {
     }
 
     // TODO: Find exact values for distance and implement it in COUNTS_PER_INCH to make this method precise.
+    // TODO: Figure out error where when first starting, it drives straight then strafes.
     // Behavior: Drives the robot a given distance in a given direction without turning it.
     // Exceptions:
     //      - Throws RuntimeException when a LinearOpMode object was not provided in the constructor.
@@ -236,7 +239,6 @@ public class MecanumRobotController {
             robot.telemetry.addData("", "");
             if (distanceToDestinationInches <= INCHES_LEFT_TO_SLOW_DOWN) {
                 move(speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, 0.0);
-                robot.telemetry.addData("Slowing", "Down");
             } else {
                 move(speed, 0.0, 0.0, 0.0);
             }
@@ -445,6 +447,4 @@ public class MecanumRobotController {
         // Stop the robot
         move(0, 0, 0, 0);
     }
-
-
 }
