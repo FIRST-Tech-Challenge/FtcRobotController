@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
+import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.ElbowJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.FlappyFlappyWrist;
@@ -61,6 +63,8 @@ public class RobotContainer {
     public static ShoulderJoint shoulderJoint;
 
     public static ElbowJoint elbowJoint;
+
+    public static Claw claw;
     //
 
     // Robot initialization for teleop - Run this once at start of teleop
@@ -94,6 +98,12 @@ public class RobotContainer {
         driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(90)));
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->shoulderJoint.moveTo(ShoulderPosition.HIGH)));
+
+        // Controls the claw using bumpers
+        // left = close
+        // right = open
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 
 
 
@@ -150,6 +160,7 @@ public class RobotContainer {
         shoulderJoint = new ShoulderJoint();
         wristRotateServo= new PivotingWrist();
         elbowJoint = new ElbowJoint();
+        claw = new Claw();
         // insert other subsystems here
         // claw = new Claw();
 
