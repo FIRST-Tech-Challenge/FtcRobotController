@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
-public class LimelightBot extends PivotBot {
+public class LimelightBot extends GyroBot {
 
     private Limelight3A limelight;
 

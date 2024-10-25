@@ -8,10 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.bots.LimelightBot;
+import org.firstinspires.ftc.teamcode.bots.PinchBot;
 
 @TeleOp(name = "Drive")
 public class TeleOps extends LinearOpMode {
-    private LimelightBot robot = new LimelightBot(this);
+    private PinchBot robot = new PinchBot(this);
 
     @Override
     public void runOpMode() throws InterruptedException {

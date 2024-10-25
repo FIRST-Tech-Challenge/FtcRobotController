@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.bots;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class PivotBot extends GyroBot{
+public class PivotBot extends LimelightBot{
 
     public int slideTarget = 0;
     public int slideTarget2 = 0;

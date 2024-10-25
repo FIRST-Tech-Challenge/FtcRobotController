@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.SerialNumber;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class PinchBot extends GyroBot{
+public class PinchBot extends PivotBot{
 
     public Servo pinch;
     public Servo rotate;
