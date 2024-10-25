@@ -162,7 +162,7 @@ public class drivetrain {
 
     public void strafeRDistance(double speed, int distance) {
         int pulses = calculateStrafePulses(distance);
-}
+    }
 
     public int calculateStrafePulses(double distance) {
         double circumference = Math.PI * WheelDiameter;
