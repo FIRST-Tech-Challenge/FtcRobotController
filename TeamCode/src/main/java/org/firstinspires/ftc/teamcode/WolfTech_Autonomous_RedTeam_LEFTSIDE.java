@@ -126,10 +126,10 @@ public class WolfTech_Autonomous_RedTeam_LEFTSIDE extends LinearOpMode {
 
         }
 
-        frontleftDrive.setPower(TURN_SPEED);
-        frontrightDrive.setPower(-TURN_SPEED);
-        backrightDrive.setPower(-TURN_SPEED);
-        backleftDrive.setPower(TURN_SPEED);
+        frontleftDrive.setPower(-TURN_SPEED);
+        frontrightDrive.setPower(TURN_SPEED);
+        backrightDrive.setPower(TURN_SPEED);
+        backleftDrive.setPower(-TURN_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.3)) {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
