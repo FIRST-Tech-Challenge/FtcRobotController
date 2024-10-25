@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 public class drivetrain {
 
     private DcMotor FrontLM = null;
@@ -39,7 +42,6 @@ public class drivetrain {
         imu = hwMap.get(IMU.class, "imu");
 
         imu.resetYaw();
-
 
 
         FrontRM = hwMap.dcMotor.get("FrontRM");
@@ -112,6 +114,7 @@ public class drivetrain {
     }
 
     public void forwardDistance(double speed, int distance) {
+        imu.resetYaw();
         resetEncoders();
         int pulses = calculatePulses(distance);
         FrontLM.setTargetPosition(pulses);
@@ -156,16 +159,15 @@ public class drivetrain {
         stop();
     }
 
+
     public void strafeRDistance(double speed, int distance) {
         int pulses = calculateStrafePulses(distance);
-
-    }
+}
 
     public int calculateStrafePulses(double distance) {
         double circumference = Math.PI * WheelDiameter;
         double rotations = distance / circumference;
-        int pulses = (int) (rotations * PULSE_PER_REVOLUTION * STRAFE_CORRECT);
+        int pulses = (int) (rotations * PULSE_PER_REVOLUTION * 1);
         return pulses;
     }
-
 }
