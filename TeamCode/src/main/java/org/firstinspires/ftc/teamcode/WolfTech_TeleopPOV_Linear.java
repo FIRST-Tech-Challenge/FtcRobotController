@@ -45,16 +45,20 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
     public DcMotor frontRightDrive  = null;
     public DcMotor backLeftDrive = null;
     public DcMotor backRightDrive = null;
-//    public CRServo mainArm     = null;
-//    public Servo mainClaw    = null;
+    public CRServo mainArm     = null;
+    public Servo mainClaw    = null;
     public Servo extending_servo = null;
 
     double clawOffset = 0;
 
+    public static final double Extend_Arm_Home= 0.0;
+    public static final double Extend_Arm_Min= 0.0;
+    public static final double Extend_Arm_Max= 1.0;
     public static final double MID_SERVO   =  0.5 ;
     public static final double CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
+    public static final double ARM_SPEED    =  0.45 ;
 
     @Override
     public void runOpMode() {
@@ -63,6 +67,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
         double drive;
         double turn;
         double max;
+        double arm_position = Extend_Arm_Home;
 
         // Define and Initialize Motors
         frontLeftDrive  = hardwareMap.get(DcMotor.class, "fl");
@@ -71,6 +76,8 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "br");
 //        mainArm    = hardwareMap.get(CRServo.class, "main_arm");
         extending_servo = hardwareMap.get(Servo.class, "extend_arm");
+
+        extending_servo.setPosition(Extend_Arm_Home);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -117,10 +124,10 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
             }
 
             // Output the safe vales to the motor drives.
-            frontLeftDrive.setPower(left);
-            frontRightDrive.setPower(right);
-            backLeftDrive.setPower(left);
-            backRightDrive.setPower(right);
+            frontLeftDrive.setPower(0.5);
+            frontRightDrive.setPower(0.5);
+            backLeftDrive.setPower(0.5);
+            backRightDrive.setPower(0.5);
 
             // Use gamepad left & right Bumpers to open and close the claw
             if (gamepad2.right_bumper)
@@ -128,32 +135,35 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
             else if (gamepad2.left_bumper)
                 clawOffset -= CLAW_SPEED;
 
+
+
             // Move both servos to new position.  Assume servos are mirror image of each other.
             clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-//            mainClaw.setPosition(MID_SERVO + clawOffset);
+            mainClaw.setPosition(MID_SERVO + clawOffset);
 
 
             // Use gamepad buttons to move arm up (Y) and down (A)
-//            if (gamepad2.y)
-//                mainArm.setPower(ARM_UP_POWER);
-//            else if (gamepad2.a)
-//                mainArm.setPower(ARM_DOWN_POWER);
-//            else
-//                mainArm.setPower(0.0);
+            if (gamepad2.y)
+                mainArm.setPower(ARM_UP_POWER);
+            else if (gamepad2.a)
+                mainArm.setPower(ARM_DOWN_POWER);
+            else
+                mainArm.setPower(0.0);
 
             if (gamepad2.dpad_up)
-                clawOffset += CLAW_SPEED;
-                extending_servo.setPosition(clawOffset);
-            if (gamepad2.dpad_down)
-                clawOffset -= CLAW_SPEED;
-                extending_servo.setPosition(-clawOffset);
+                arm_position += ARM_SPEED;
+            else if (gamepad2.dpad_down)
+                arm_position -= ARM_SPEED;
+
+            arm_position = Range.clip(arm_position, Extend_Arm_Min, Extend_Arm_Max);
+            extending_servo.setPosition(arm_position);
 
 
 
 
             // Send telemetry message to signify robot running;
             telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-            telemetry.addData("extending_servo", "Offset = %.2f", clawOffset);
+            telemetry.addData("extending_servo", "Offset = %.2f", arm_position);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();
