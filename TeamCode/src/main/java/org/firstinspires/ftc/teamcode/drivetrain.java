@@ -19,6 +19,7 @@ public class drivetrain {
     public CRServo testing1 = null;
     private final double WheelDiameter = 3.75;
     private final double PULSE_PER_REVOLUTION = 537.7;
+    private final double STRAFE_CORRECT = 1;
 
     private LinearOpMode opmode = null;
 
@@ -38,6 +39,7 @@ public class drivetrain {
         imu = hwMap.get(IMU.class, "imu");
 
         imu.resetYaw();
+
 
 
         FrontRM = hwMap.dcMotor.get("FrontRM");
@@ -110,15 +112,14 @@ public class drivetrain {
     }
 
     public void forwardDistance(double speed, int distance) {
-        imu.resetYaw();
         resetEncoders();
         int pulses = calculatePulses(distance);
         FrontLM.setTargetPosition(pulses);
         FrontRM.setTargetPosition(pulses);
         BackLM.setTargetPosition(pulses);
         BackRM.setTargetPosition(pulses);
-        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy()  && BackLM.isBusy()) {
-            backward(speed);
+        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy() && BackLM.isBusy()) {
+            forward(speed);
         }
         stop();
     }
@@ -132,10 +133,6 @@ public class drivetrain {
         FrontRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private int calculatePulses(int distance) {
@@ -145,32 +142,29 @@ public class drivetrain {
         return pulses;
     }
 
-    public void runEncoders() {
-        BackLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //BackRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
     public void strafeLDistance(double speed, int distance) {
-        FrontLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        resetEncoders();
         int pulses = calculateStrafePulses(distance);
         FrontLM.setTargetPosition(pulses);
         FrontRM.setTargetPosition(pulses);
-        BackLM.setTargetPosition(pulses);
         BackRM.setTargetPosition(pulses);
-        runEncoders();
+        BackRM.setTargetPosition(pulses);
 
-        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy() && BackLM.isBusy()) {
+            strafeLeft(speed);
+        }
+        stop();
+    }
+
+    public void strafeRDistance(double speed, int distance) {
+        int pulses = calculateStrafePulses(distance);
+
     }
 
     public int calculateStrafePulses(double distance) {
         double circumference = Math.PI * WheelDiameter;
         double rotations = distance / circumference;
-        int pulses = (int) (rotations * PULSE_PER_REVOLUTION * 1);
+        int pulses = (int) (rotations * PULSE_PER_REVOLUTION * STRAFE_CORRECT);
         return pulses;
     }
 

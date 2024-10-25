@@ -94,6 +94,9 @@ public class teleop extends LinearOpMode {
                     speed -= .1;
                 }
             }
+            if (newGamePad1.b.pressed) {
+                Drive.strafeLDistance(0.5, 24);
+            }
 
             LLResult result = limelight.getLatestResult();
             if (result != null) {
@@ -139,6 +142,7 @@ public class teleop extends LinearOpMode {
             if (newGamePad1.a.released) {
                 Drive.forwardDistance(.25, 24);
             }
+
         }
     }
 }
