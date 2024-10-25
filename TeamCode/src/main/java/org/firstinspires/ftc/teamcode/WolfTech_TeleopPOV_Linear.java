@@ -47,6 +47,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
     public DcMotor backRightDrive = null;
     public CRServo mainArm     = null;
     public Servo mainClaw    = null;
+    public Servo extending_servo = null;
 
     double clawOffset = 0;
 
@@ -69,6 +70,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "bl");
         backRightDrive = hardwareMap.get(DcMotor.class, "br");
         mainArm    = hardwareMap.get(CRServo.class, "main_arm");
+        extending_servo = hardwareMap.get(Servo.class, "extend_arm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -121,22 +123,31 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
             backRightDrive.setPower(right);
 
             // Use gamepad left & right Bumpers to open and close the claw
-            if (gamepad1.right_bumper)
+            if (gamepad2.right_bumper)
                 clawOffset += CLAW_SPEED;
-            else if (gamepad1.left_bumper)
+            else if (gamepad2.left_bumper)
                 clawOffset -= CLAW_SPEED;
 
             // Move both servos to new position.  Assume servos are mirror image of each other.
             clawOffset = Range.clip(clawOffset, -0.5, 0.5);
             mainClaw.setPosition(MID_SERVO + clawOffset);
+            
 
             // Use gamepad buttons to move arm up (Y) and down (A)
-            if (gamepad1.y)
+            if (gamepad2.y)
                 mainArm.setPower(ARM_UP_POWER);
-            else if (gamepad1.a)
+            else if (gamepad2.a)
                 mainArm.setPower(ARM_DOWN_POWER);
             else
                 mainArm.setPower(0.0);
+
+            if (gamepad2.dpad_up)
+                extending_servo.setPosition(0.5);
+            else if (gamepad2.dpad_down)
+                extending_servo.setPosition(-0.5);
+
+
+
 
             // Send telemetry message to signify robot running;
             telemetry.addData("claw",  "Offset = %.2f", clawOffset);
