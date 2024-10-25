@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import android.graphics.Canvas;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.core.Core;
@@ -9,9 +12,11 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class ColorDetect extends OpenCvPipeline {
+public class ColorDetect implements VisionProcessor {
 
     // Set the YCrCb color ranges for blue based on the slider data
     private final Scalar lowerBlue = new Scalar(55.3, 90.7, 141.7);  // Adjusted blue lower bound
@@ -25,8 +30,18 @@ public class ColorDetect extends OpenCvPipeline {
     private final Scalar lowerYellow = new Scalar(79.3, 140.0, 20.0);  // Adjusted yellow lower bound
     private final Scalar upperYellow = new Scalar(204.0, 225.0, 75.0); // Adjusted yellow upper bound
 
+    // List to store detected colors
+    private List<DetectedColor> detectedColors = new ArrayList<>();
+
     @Override
-    public Mat processFrame(Mat input) {
+    public void init(int width, int height, CameraCalibration calibration) {
+    }
+
+    @Override
+    public Object processFrame(Mat input, long captureTimeNanos) {
+        // Clear the list of detected colors for each frame
+        detectedColors.clear();
+
         // Convert the input image from RGB to YCrCb color space for color detection
         Mat ycrcb = new Mat();
         Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
@@ -63,7 +78,7 @@ public class ColorDetect extends OpenCvPipeline {
         maskRed.release();
         maskYellow.release();
 
-        return input;
+        return null;
     }
 
     private void processColorWithSaturation(Mat mask, Mat hsvMat, Mat frame, Scalar boxColor, String colorName, int minArea) {
@@ -77,7 +92,8 @@ public class ColorDetect extends OpenCvPipeline {
             Rect rect = Imgproc.boundingRect(contour);
 
             // Filter out small contours by area
-            if (Imgproc.contourArea(contour) > minArea) {
+            double contourArea = Imgproc.contourArea(contour);
+            if (contourArea > minArea) {
                 // Get the average saturation of this region
                 double avgSaturation = getAvgSaturation(hsvMat, rect);
 
@@ -87,6 +103,9 @@ public class ColorDetect extends OpenCvPipeline {
                 // Put text label near the bounding box with the color name and saturation value
                 String label = colorName + " - Sat: " + String.format("%.2f", avgSaturation);
                 Imgproc.putText(frame, label, new Point(rect.x, rect.y - 5), Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, boxColor, 2);
+
+                // Add detected color to the list
+                detectedColors.add(new DetectedColor(colorName, rect, contourArea));
             }
         }
 
@@ -104,8 +123,26 @@ public class ColorDetect extends OpenCvPipeline {
         return meanVal.val[1]; // Return the saturation channel value
     }
 
+    // Public method to return a list of detected colors, sorted by proximity (area of bounding box)
+    public List<DetectedColor> getDetectedColors() {
+        // Sort detected colors by area, from largest (closest) to smallest (farthest)
+        Collections.sort(detectedColors, new Comparator<DetectedColor>() {
+            @Override
+            public int compare(DetectedColor c1, DetectedColor c2) {
+                return Double.compare(c2.area, c1.area); // Sort descending by area
+            }
+        });
+        return detectedColors;
+    }
+
     @Override
-    public void onViewportTapped() {
-        // Handle viewport tap events (optional)
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx , float scaleCanvasDensity, Object userContext) {
+        // Draw rectangles on canvas (optional for display purposes)
+        // Example drawing code commented out
+        // Paint paint = new Paint();
+        // paint.setColor(Color.GREEN);
+        // paint.setStyle(Paint.Style.STROKE);
+        // paint.setStrokeWidth(5);
+        // canvas.drawRect(makeGraphicsRect(someRect, scaleBmpPxToCanvasPx), paint);
     }
 }

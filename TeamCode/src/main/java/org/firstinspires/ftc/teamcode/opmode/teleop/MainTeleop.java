@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
+import org.firstinspires.ftc.teamcode.utility.VisionSystem;
 
 /*
  * This file contains an example of an "OpMode".
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 //@Disabled
 public class MainTeleop extends CommandOpMode {
 
+    private VisionSystem visionSystem;
     // Initialize all objects, set up subsystems, etc...
     @Override
     public void initialize() {
