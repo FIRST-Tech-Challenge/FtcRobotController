@@ -198,22 +198,22 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 if (gamepad2.left_stick_x > 0.2) {
                     //down
                     robot.liftPitch.setVelocity(400 * gamepad2.left_stick_x);
-                    telemetry.addData("luft pitch pos", robot.liftPitch.getCurrentPosition());
+                    telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());
 
                 } else if (gamepad2.left_stick_x < 0.2) {
 
                     //up
                     robot.liftPitch.setVelocity(800 * gamepad2.left_stick_x);
-                    telemetry.addData("luft pitch pos", robot.liftPitch.getCurrentPosition());
+                    telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());
 
                 } else {
                     robot.liftPitch.setVelocity(0);
-                    telemetry.addData("luft pitch pos", robot.liftPitch.getCurrentPosition());
+                    telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());
 
                 }
             }else {
                 robot.liftPitch.setVelocity(0);
-                telemetry.addData("luft pitch pos", robot.liftPitch.getCurrentPosition());//1300
+                telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());//1300
             }//2700
             //find positon for extension
             if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftExtender.getCurrentPosition()<=2780&&robot.liftExtender.getCurrentPosition()>=0||(robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)) {
