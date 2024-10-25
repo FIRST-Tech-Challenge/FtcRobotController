@@ -48,12 +48,14 @@ public class MecanumDriver extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private int pivotPosition = 0;
     private int viperPosition = 0;
+    private double timeAPressed = 0;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
-    private final static double VIPER_POWER = 1.0;
+    private final static double VIPER_POWER = 0.75;
     private final static double PIVOT_POWER = 0.7;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
+    private final static double INTAKE_COOLDOWN = 0.25;
     public final boolean isFieldCentric = true;
     private Arm arm;
     private Intake intake;
@@ -121,8 +123,9 @@ public class MecanumDriver extends OpMode {
         }
 
         // Open/close intake
-        if (gamepad1.a) {
+        if (gamepad1.a && runtime.seconds() - timeAPressed >= INTAKE_COOLDOWN) {
             telemetry.addData("Button", "A pressed");
+            timeAPressed = runtime.seconds();
             if (intake.isOpen()) {
                 intake.close();
             } else {

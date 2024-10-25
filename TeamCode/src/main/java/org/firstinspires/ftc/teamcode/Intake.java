@@ -9,17 +9,17 @@ public class Intake {
     private final Servo rightServo;
     private boolean isOpen;
 
-    public static final double OPEN_POSITION = 0.5;
-    public static final double CLOSED_POSITION = 0.0;
+    public static final double OPEN_POSITION = 0.2;
+    public static final double CLOSED_POSITION = 0.05;
 
     public Intake(HardwareMap hardwareMap) {
         leftServo = hardwareMap.get(Servo.class, "CLAWLEFT");
         rightServo = hardwareMap.get(Servo.class, "CLAWRIGHT");
 
-        // leftServo.setDirection(Servo.Direction.FORWARD);
-        // rightServo.setDirection(Servo.Direction.REVERSE);
+         leftServo.setDirection(Servo.Direction.FORWARD);
+         rightServo.setDirection(Servo.Direction.REVERSE);
 
-        leftServo.scaleRange(CLOSED_POSITION, OPEN_POSITION);
+        leftServo.scaleRange(CLOSED_POSITION - 0.02, OPEN_POSITION - 0.02);
         rightServo.scaleRange(CLOSED_POSITION, OPEN_POSITION);
     }
 
