@@ -88,5 +88,19 @@ public class TemplateJanx {
         sr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sr.setPower(0);
     }
+    public void basicArmInit(String left, String right) {
+        sl = hwMap.get(DcMotorEx.class, left);
+        sr = hwMap.get(DcMotorEx.class, right);
+
+        sl.setDirection(DcMotor.Direction.FORWARD);
+        sl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sl.setPower(0);
+
+        sr.setDirection(DcMotor.Direction.REVERSE);
+        sr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sr.setPower(0);
+    }
 
 }
