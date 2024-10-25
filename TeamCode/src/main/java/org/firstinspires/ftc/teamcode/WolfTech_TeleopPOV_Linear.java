@@ -107,17 +107,17 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
 
             // Normalize the values so neither exceed +/- 1.0
             max = Math.max(Math.abs(left), Math.abs(right));
-            if (max > 1.0)
+            if (max > 0.5)
             {
-                left /= 2;
-                right /= 2;
+                left /= max;
+                right /= max;
             }
 
             // Output the safe vales to the motor drives.
-            frontLeftDrive.setPower(0.5);
-            frontRightDrive.setPower(0.5);
-            backLeftDrive.setPower(0.5);
-            backRightDrive.setPower(0.5);
+            frontLeftDrive.setPower(left);
+            frontRightDrive.setPower(right);
+            backLeftDrive.setPower(left);
+            backRightDrive.setPower(right);
 
             // Use gamepad left & right Bumpers to open and close the claw
             if (gamepad1.right_bumper)
