@@ -14,9 +14,10 @@ up)
 based on the control stick inputs (When it goes up the lift goes up and when it goes down the lift 
 goes down)
 
-Right Trigger: 
+(NOT COMPLETE) (Intake activator inwards(hold to activate))Right Trigger: Makes the intake spin 
+outwards
 
-(Intake activator (hold to activate))Left Trigger: Makes the intake spin outwards
+(Intake activator outwards(hold to activate))Left Trigger: Makes the intake spin outwards
 
 (Intake outwards) D-Pad_Left: Turns the entire intake mechanism 90º to the left (outward position)
 

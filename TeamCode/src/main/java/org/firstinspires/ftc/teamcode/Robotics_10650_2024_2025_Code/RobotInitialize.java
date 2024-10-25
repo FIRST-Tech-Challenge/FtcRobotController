@@ -4,7 +4,6 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Imports all of the necessary FTC libraries and code
-//List importStatements = new ArrayList();
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -13,7 +12,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -33,11 +31,11 @@ public class RobotInitialize {
     // Initialization Phase
 
     // Create servo variables
-     CRServo intake; // This is a special continuous rotation servo which allows it to act
+    CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
 
-     Servo clawRoll;
-     Servo pitch;
+    Servo pitch;
+    Servo clawRoll;
 
 
     // Create the empty normal motor variables
@@ -46,14 +44,11 @@ public class RobotInitialize {
     DcMotorEx fRight;
     DcMotorEx bLeft;
 
-    // DcMotorEx liftExtender; (Placeholder for fifth motor)
-    // DcMotorEx liftPitch; (Placeholder for sixth motor)
-
     // Create the empty lift control variables
     DcMotorEx liftExtender; //Extends the lift outwards and pulls it inwards
     DcMotorEx liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
 
-    // Create empty gyroscope variable
+    // Create empty gyroscope variable and its settings
     BHI260IMU gyroScope;
     BHI260IMU.Parameters settings;
 
@@ -75,42 +70,77 @@ public class RobotInitialize {
     // The main function that sets all of the hardware to different variables
     // The motors and the gyroscope are initialized here
     public void initialize() {
-        // map the motors to the hardware map
+        // map the devices to the hardware map
+
+        //Drivetrain motors
         fLeft = opMode.hardwareMap.get(DcMotorEx.class, "fleft");
         bRight = opMode.hardwareMap.get(DcMotorEx.class, "bright");
         fRight = opMode.hardwareMap.get(DcMotorEx.class, "fright");
         bLeft = opMode.hardwareMap.get(DcMotorEx.class, "bleft");
 
-        liftExtender = opMode.hardwareMap.get(DcMotorEx.class, "liftExtender");
-        liftPitch = opMode.hardwareMap.get(DcMotorEx.class, "liftPitch");
-        intake = opMode.hardwareMap.get(CRServo.class, "intake");
-        pitch = opMode.hardwareMap.get(Servo.class, "roll");
-        clawRoll = opMode.hardwareMap.get(Servo.class, "pitch");
         // The front left and back right motors are reversed so all wheels go in the same direction
         // When a positive or negative value is used
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        // Resetting the encoders (distance measurement sensors)
+        // and then start them again on program start
+        // Repeat for all motors
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //without odom: bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Manipulator mechanisms
+
+            //Lift motors
+
+        liftExtender = opMode.hardwareMap.get(DcMotorEx.class, "liftExtender");
+
+            //Initial conditions of the liftExtender MOTOR
+            liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
+            liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //liftExtender.setZeroPowerBehavior(BRAKE);
+
+
+
+        liftPitch = opMode.hardwareMap.get(DcMotorEx.class, "liftPitch");
+
+            //Initial conditions of the liftPitch MOTOR
+            //PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1); (This does nothing)
+            //PIDF Coefficients for the liftPitch MOTOR
+            liftPitch.setVelocityPIDFCoefficients(.5,1,0, 1);
+            liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
+            liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftPitch.setZeroPowerBehavior(BRAKE);
+
+        //Manipulator Servos
+
+        //Continuous rotation Servo
+        intake = opMode.hardwareMap.get(CRServo.class, "intake");
+
+        //Initial conditions of the intake SERVO
         intake.setPower(0); // Off by default
 
+        //Regular Servos
+        clawRoll = opMode.hardwareMap.get(Servo.class, "roll");
+        clawRoll.setPosition(0);
+        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
 
 
-
-
-        PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1);
-        liftPitch.setVelocityPIDFCoefficients(.5,1,0, 1);
-
-
-        liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftExtender.setZeroPowerBehavior(BRAKE);
-
-        liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftPitch.setZeroPowerBehavior(BRAKE);
-//
 //        roll.setDirection(Servo.Direction.FORWARD);
 //        roll.setPosition(0);
 
@@ -121,27 +151,6 @@ public class RobotInitialize {
             //pitch.setPosition(0);
         }
 
-        // Resetting the encoders (distance measurement sensors)
-        // and then start them again on program start
-        // Repeat for all motors
-        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //without odom: bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         // Initialize Gyroscope
@@ -151,9 +160,11 @@ public class RobotInitialize {
                 .INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,
                 0));
 
+        // Way to set up the gyroscope
         // new REVHubOrientationOnRobot(REVHubOrientationOnRobot.LogoFacingDirection.<direction
         // here>, REVHubOrientationOnRobot.UsbFacingDirection.<direction here>));
 
+        // Setting up the gyroscope settings
         settings = new BHI260IMU.Parameters(ori);
         gyroScope.initialize(settings);
         AngularVelocity angularVelocity = gyroScope.getRobotAngularVelocity(AngleUnit.DEGREES);
@@ -300,7 +311,8 @@ public class RobotInitialize {
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
 //
-                Double[] motorvVelocity = {bLeft.getVelocity(), fLeft.getVelocity(), bRight.getVelocity(), fRight.getVelocity()};
+                Double[] motorVelocity = {bLeft.getVelocity(), fLeft.getVelocity(),
+                        bRight.getVelocity(), fRight.getVelocity()};
                 fLeft.setVelocity(-velocity);
                 fRight.setVelocity(velocity);
                 bLeft.setVelocity(-velocity);
@@ -352,10 +364,10 @@ public class RobotInitialize {
     }
 
     public void moveRoll(double position, double velocity) {
-        clawRoll.setPosition(position);
+        //clawRoll.setPosition(position);
     }
     public void movePitch(double position, double velocity) {
-        pitch.setPosition(position);
+        //pitch.setPosition(position);
     }
 
     //gets average magnitudes because motors are going in different directions
@@ -421,7 +433,6 @@ public class RobotInitialize {
     // Stops the motors by setting the velocity to 0
     public void stopMechanisms() {
         setMechanismVelocity(0);
-
     }
 }
 

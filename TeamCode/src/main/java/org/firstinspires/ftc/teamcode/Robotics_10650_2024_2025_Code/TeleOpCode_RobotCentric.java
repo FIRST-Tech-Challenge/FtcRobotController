@@ -43,7 +43,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             if (gamepad1.circle){
                 speed = 270;
             }
-            if (gamepad1.a){
+            if (gamepad1.cross){
                 speed = 6969;
             }
 
@@ -123,7 +123,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 //turnVelocity = 0 * Math.signum(gamepad1.right_stick_x);
 
             }
-            if (gamepad1.a) {
+            if (gamepad1.cross) {
                 //boost
                 if (gamepad1.left_trigger>0) {
                     straightMovementVelocity = 6969;
@@ -222,7 +222,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 robot.liftExtender.setVelocity(0);
             }
 
-
+            // FIXME: gamepad2.right_trigger functionality (making the intake go inwards)
+            // Still being worked on but not necessary
             if (gamepad2.right_trigger != 0) {
                 robot.intakeToggle(1);
             } else {
@@ -237,23 +238,23 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
             if (gamepad2.dpad_left) {
                 //roll turns 90degrees
-                robot.pitch.setPosition(0.08);
+                //robot.clawRoll.setPosition(0.08);
             }
 
             if (gamepad2.dpad_right) {
                 //roll turns right
-                robot.pitch.setPosition(.1278);
+                //robot.clawRoll.setPosition(.1278);
             }
             if(gamepad2.dpad_up){
                //pitch moves up
                 //original value:0.1867
-                robot.clawRoll.setPosition(0.1561);
+                //robot.pitch.setPosition(0.1561);
 
             }
             if(gamepad2.dpad_down){
                 //pitch moves down
                 //original value 0.125
-                robot.clawRoll.setPosition(0.125);
+                //robot.pitch.setPosition(0.125);
             }
 
         }
