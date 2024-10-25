@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Intake {
     private CRServo Intake = null;
@@ -25,7 +26,6 @@ public class Intake {
         Intake = hwMap.crservo.get("Intakes");
         grabber1 = hwMap.servo.get("grabber1");
         grabber2 = hwMap.servo.get("grabber2");
-
         Intake.setPower(0);
 
     }
