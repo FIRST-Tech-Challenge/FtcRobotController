@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Robot: Autonomous", group="Robot")
-public class WolfTech_Autonomous_RedTeam_LEFTSIDE extends LinearOpMode {
+public class WolfTech_Autonomous_RightSide extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor         frontleftDrive   = null;
@@ -105,11 +105,11 @@ public class WolfTech_Autonomous_RedTeam_LEFTSIDE extends LinearOpMode {
             telemetry.update();
         }
 
-        // Step 2:  Spin left for 1.3 seconds
-        frontleftDrive.setPower(-TURN_SPEED);
-        frontrightDrive.setPower(TURN_SPEED);
-        backrightDrive.setPower(TURN_SPEED);
-        backleftDrive.setPower(-TURN_SPEED);
+        // Step 2:  Spin right for 1.3 seconds
+        frontleftDrive.setPower(TURN_SPEED);
+        frontrightDrive.setPower(-TURN_SPEED);
+        backrightDrive.setPower(-TURN_SPEED);
+        backleftDrive.setPower(TURN_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.3)) {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
@@ -126,10 +126,10 @@ public class WolfTech_Autonomous_RedTeam_LEFTSIDE extends LinearOpMode {
 
         }
 
-        frontleftDrive.setPower(-TURN_SPEED);
-        frontrightDrive.setPower(TURN_SPEED);
-        backrightDrive.setPower(TURN_SPEED);
-        backleftDrive.setPower(-TURN_SPEED);
+        frontleftDrive.setPower(TURN_SPEED);
+        frontrightDrive.setPower(-TURN_SPEED);
+        backrightDrive.setPower(-TURN_SPEED);
+        backleftDrive.setPower(TURN_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.3)) {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
