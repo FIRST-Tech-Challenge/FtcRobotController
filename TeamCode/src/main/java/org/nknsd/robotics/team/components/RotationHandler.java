@@ -30,16 +30,10 @@ public class RotationHandler implements NKNComponent {
     final boolean enableErrorClear;
     private ExtensionHandler extensionHandler;
 
-    public enum RotationPositions {
-        PICKUP(1.2),
-        PREPICKUP(1.47),
-        HIGH(2.4),
-        RESTING(3.3);
-
-        public final double target;
-        RotationPositions(double target) {
-            this.target = target;
-        }
+    @Override
+    public void stop(ElapsedTime runtime, Telemetry telemetry) {
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setPower(0);
     }
 
 
@@ -75,9 +69,16 @@ public class RotationHandler implements NKNComponent {
 
     }
 
-    @Override
-    public void stop(ElapsedTime runtime, Telemetry telemetry) {
+    public enum RotationPositions {
+        PICKUP(1.1),
+        PREPICKUP(1.47),
+        HIGH(2.4),
+        RESTING(3.3);
 
+        public final double target;
+        RotationPositions(double target) {
+            this.target = target;
+        }
     }
 
     @Override
@@ -140,5 +141,9 @@ public class RotationHandler implements NKNComponent {
         }
 
         return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
+    }
+
+    public boolean isAtTargetPosition() {
+        return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold;
     }
 }

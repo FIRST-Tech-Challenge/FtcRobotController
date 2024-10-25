@@ -70,7 +70,7 @@ public abstract class NKNProgram {
     }
 
     // Helper function which checks if the component is telemetry enabled (default: not-enabled)
-    private boolean isInTelemetryEnabledList(NKNComponent component) {
+    boolean isInTelemetryEnabledList(NKNComponent component) {
         for (NKNComponent c: enabledTelemetryList) {
             if (c.equals(component)) {
                 return true;

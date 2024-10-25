@@ -40,7 +40,7 @@ public class IntakeServoHandler implements NKNComponent {
 
     @Override
     public void stop(ElapsedTime runtime, Telemetry telemetry) {
-
+        setServoPower(0);
     }
 
     @Override

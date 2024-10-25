@@ -73,9 +73,10 @@ public class WheelHandler implements NKNComponent {
         motorFL.setPower(y + x + turning);
     }
 
-    public void absoluteVectorToMotion(double x, double y, double turning, double yaw) {
-        double x2 = (Math.cos(yaw) * x) - (Math.sin(yaw) * y);
-        double y2 = (Math.sin(yaw) * x) + (Math.cos(yaw) * y);
+    public void absoluteVectorToMotion(double x, double y, double turning, double yaw, Telemetry telemetry) {
+        double angle = (yaw * Math.PI) / 180;
+        double x2 = (Math.cos(angle) * x) - (Math.sin(angle) * y);
+        double y2 = (Math.sin(angle) * x) + (Math.cos(angle) * y);
 
         relativeVectorToMotion(y2, x2, turning);
     }

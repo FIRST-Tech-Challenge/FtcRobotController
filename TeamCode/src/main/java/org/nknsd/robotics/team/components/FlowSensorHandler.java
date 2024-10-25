@@ -23,8 +23,8 @@ public class FlowSensorHandler implements NKNComponent {
 
         public PoseData(double heading, double x, double y) {
             this.heading = heading;
-            this.x = x;
-            this.y = y;
+            this.x = -x;
+            this.y = -y;
         }
     }
 

@@ -7,10 +7,11 @@ import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
 import org.nknsd.robotics.team.components.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
+import org.nknsd.robotics.team.components.drivers.AdvancedWheelDriver;
 
 import java.util.List;
 
-public class FlowSensorTestProgram extends NKNProgram {
+public class AbsoluteMovementTestProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Gamepad Handler
@@ -28,7 +29,7 @@ public class FlowSensorTestProgram extends NKNProgram {
         // Flow Sensory Handler
         FlowSensorHandler flowSensorHandler = new FlowSensorHandler("sensor_otos", 0.590551, 3.54331, 0);
         components.add(flowSensorHandler);
-        telemetryEnabled.add(flowSensorHandler);
+        //telemetryEnabled.add(flowSensorHandler);
 
         // IMU Handler
         IMUComponent imuComponent = new IMUComponent();
@@ -36,9 +37,9 @@ public class FlowSensorTestProgram extends NKNProgram {
         //telemetryEnabled.add(imuComponent);
 
         // Wheel Driver
-        WheelDriver wheelDriver = new WheelDriver(0, 1, 5, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_Y, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_X, GamePadHandler.GamepadSticks.RIGHT_JOYSTICK_X);
+        AdvancedWheelDriver wheelDriver = new AdvancedWheelDriver(0, 1, 5, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_Y, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_X, GamePadHandler.GamepadSticks.RIGHT_JOYSTICK_X);
         components.add(wheelDriver);
-        telemetryEnabled.add(wheelDriver);
-        wheelDriver.link(gamePadHandler, wheelHandler);
+        //telemetryEnabled.add(wheelDriver);
+        wheelDriver.link(gamePadHandler, wheelHandler, imuComponent);
     }
 }
