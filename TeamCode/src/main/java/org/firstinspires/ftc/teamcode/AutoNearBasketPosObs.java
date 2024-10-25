@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
 
-public class AutoNearBasketPos extends LinearOpMode {
+public class AutoNearBasketPosObs extends LinearOpMode {
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
@@ -47,13 +47,13 @@ public class AutoNearBasketPos extends LinearOpMode {
         //14.38 Tick/cm
 
         //Strafing Left 10 cm
-       drive(143.8,-143.8,143.8,-143.8,0.5);
-       //Backwards 90 cm
+        drive(143.8,-143.8,143.8,-143.8,0.5);
+        //Backwards 90 cm
         drive(-1490,-1490,-1490,-1490,0.5);
         sleep(500);
         //Forward 32 cm
         drive(355.16, 355.16, 355.16, 355.16, 0.7);
-       //Strafe Left 119 cm
+        //Strafe Left 119 cm
         drive(2410, -2410, 2410, -2410, 0.7);
         //Turn Left 60 degrees
         drive(-600.4, 600.4, 600.4, -600.4, 0.7);
@@ -69,46 +69,46 @@ public class AutoNearBasketPos extends LinearOpMode {
         drive(1100,-1100,1100,-1100,0.5);
         //Drive Back
         drive(-1700.11, -1700.11, -1700.11, -1700.11, 0.5);
-        sleep(500);
+        sleep(12000);
         //sleep(12000);
         //Strafe Right 9 ft
-        //drive(-4600, 4600, -4600, 4600, 0.7 );
-        //drive(-160, -160, -160, -160, 0.7 );
+        //first ending
+        drive(-4600, 4600, -4600, 4600, 0.7 );
+        drive(-160, -160, -160, -160, 0.7 );
         //Drive Back
-        drive(1700.11, 1700.11, 1700.11, 1700.11, 0.5);
-        drive(-906, 906, 906, -906, 0.7);
-        drive(-850, -850, -850, -850, 0.5);
+
+
 
     }
-        private void drive(double bLeftTarget, double bRightTarget, double fRightTarget, double fLeftTarget, double speed ) {
-            frontLeftPos += fLeftTarget;
-            frontRightPos += fRightTarget;
-            backLeftPos += bLeftTarget;
-            backRightPos += bRightTarget;
+    private void drive(double bLeftTarget, double bRightTarget, double fRightTarget, double fLeftTarget, double speed ) {
+        frontLeftPos += fLeftTarget;
+        frontRightPos += fRightTarget;
+        backLeftPos += bLeftTarget;
+        backRightPos += bRightTarget;
 
-            frontLeft.setTargetPosition(frontLeftPos);
-            frontRight.setTargetPosition(frontRightPos);
-            backLeft.setTargetPosition(backLeftPos);
-            backRight.setTargetPosition(backRightPos);
+        frontLeft.setTargetPosition(frontLeftPos);
+        frontRight.setTargetPosition(frontRightPos);
+        backLeft.setTargetPosition(backLeftPos);
+        backRight.setTargetPosition(backRightPos);
 
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setPower(speed);
-            frontRight.setPower(speed);
-            backLeft.setPower(speed);
-            backRight.setPower(speed);
+        frontLeft.setPower(speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
 
-            while(opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backRight.isBusy() && backLeft.isBusy()) {
-                idle();
-                // sleep(1000);
+        while(opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backRight.isBusy() && backLeft.isBusy()) {
+            idle();
+            // sleep(1000);
 
-                //frontLeft.setPower(0);
-                //  frontRight.setPower(0);
-                //  backLeft.setPower(0);
-                //  backRight.setPower(0);
-            }
-            }
+            //frontLeft.setPower(0);
+            //  frontRight.setPower(0);
+            //  backLeft.setPower(0);
+            //  backRight.setPower(0);
+        }
     }
+}

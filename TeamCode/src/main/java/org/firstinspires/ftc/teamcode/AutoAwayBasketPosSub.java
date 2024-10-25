@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @Autonomous
-public class AutoAwayBasketPos extends LinearOpMode {
+public class AutoAwayBasketPosSub extends LinearOpMode {
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
@@ -71,7 +71,16 @@ public class AutoAwayBasketPos extends LinearOpMode {
         drive(-1700.11, -1700.11, -1700.11, -1700.11, 0.5);
         sleep(500);
         //Drive More Back
-        drive(-100, -100, -100, -100, 0.25);
+        //drive(-100, -100, -100, -100, 0.25);
+        //Strafe Left
+        drive(3595, -3595, 3595, -3595, 0.7);
+        //Move forward
+        drive(1700.11, 1700.11, 1700.11, 1700.11, 0.5);
+        //Move Left 90 deg
+        drive(-906, 906, 906, -906, 0.7);
+        //Back
+        drive(-750, -750, -750, -750, 0.5);
+
     }
 
     private void drive(double bLeftTarget, double bRightTarget, double fRightTarget, double fLeftTarget, double speed ) {
