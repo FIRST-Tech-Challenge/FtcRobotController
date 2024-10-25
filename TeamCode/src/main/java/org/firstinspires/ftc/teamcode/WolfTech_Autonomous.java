@@ -93,14 +93,14 @@ public class WolfTech_Autonomous extends LinearOpMode {
 
         // Step through each leg of the path, ensuring that the OpMode has not been stopped along the way.
 
-        // Step 1:  Drive forward for 3 seconds
+        // Step 1:  Drive forward for 5 seconds
         frontrightDrive.setPower(FORWARD_SPEED);
         frontleftDrive.setPower(FORWARD_SPEED);
         backrightDrive.setPower(FORWARD_SPEED);
         backleftDrive.setPower(FORWARD_SPEED);
 
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 5.0)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -137,15 +137,15 @@ public class WolfTech_Autonomous extends LinearOpMode {
 
         }
         // Step 3:  Drive Backward for 1 Second
-//        frontleftDrive.setPower(-FORWARD_SPEED);
-//        backleftDrive.setPower(-FORWARD_SPEED);
-//        frontrightDrive.setPower(-FORWARD_SPEED);
-//        backrightDrive.setPower(-FORWARD_SPEED);
-//        runtime.reset();
-//        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-//            telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
-//            telemetry.update();
-//        }
+        frontleftDrive.setPower(FORWARD_SPEED);
+        backleftDrive.setPower(FORWARD_SPEED);
+        frontrightDrive.setPower(FORWARD_SPEED);
+        backrightDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+            telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
 
         // Step 4:  Stop
         frontleftDrive.setPower(0);
