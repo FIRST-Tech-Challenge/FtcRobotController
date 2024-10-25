@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp (name = "TeleOp_FieldCentric")
 @Disabled // This here until it is ready to be used to avoid
 // confusion, remove after it is ready to be used
-public class TeleOpCode_FieldCentric extends LinearOpMode {
+public class TeleOpCode_FieldCentric_CURRENTLY_UNUSED extends LinearOpMode {
 
     // Run the initialize function
     RobotInitialize robot;

@@ -33,7 +33,7 @@ public class RobotInitialize {
     // Initialization Phase
 
     // Create servo variables
-     CRServo intake; // This is a special continous rotation servo which allows it to act
+     CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
 
      Servo clawRoll;
@@ -196,7 +196,7 @@ public class RobotInitialize {
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
-                setMotorVelocity(Math.abs(velocity));
+                setDrivetrainMotorVelocity(Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getPosStrafe());
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
@@ -206,7 +206,7 @@ public class RobotInitialize {
                 //if current position is less than needed
             } else if (getPosStrafe() > relativeDistance) {
                 // Backwards (- negative relativeDistance value)
-                setMotorVelocity(-Math.abs(velocity));
+                setDrivetrainMotorVelocity(-Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getPosStrafe());
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
@@ -247,7 +247,7 @@ public class RobotInitialize {
                 opMode.telemetry.addData("must be greater than 10", Math.abs(getPosStrafe() - relativeDistance));
                 opMode.telemetry.update();
             } else{
-                setMotorVelocity(0);
+                setDrivetrainMotorVelocity(0);
             }
         }
         stopMechanisms();
@@ -389,16 +389,38 @@ public class RobotInitialize {
     // The back wheels are set to negative velocity so the
     // robot goes forward when the velocity value is positive and
     // vice versa for going backwards
-    public void setMotorVelocity(double velocity) {
+    public void setDrivetrainMotorVelocity(double velocity) {
+        // Drivetrain motors
         fLeft.setVelocity(velocity);
         fRight.setVelocity(velocity);
         bLeft.setVelocity(-velocity);
         bRight.setVelocity(-velocity);
     }
 
+    public void setMechanismVelocity(double velocity){
+        // Drivetrain motors
+        fLeft.setVelocity(velocity);
+        fRight.setVelocity(velocity);
+        bLeft.setVelocity(-velocity);
+        bRight.setVelocity(-velocity);
+
+        // Lift motors
+        liftExtender.setVelocity(velocity);
+        liftPitch.setVelocity(velocity);
+
+        // Servos
+
+        // Continuous rotation servo
+        intake.setPower(0);
+
+        // Regular servos
+        //clawRoll.(); // Try to find way to temporarily disable servos
+        //pitch.(); // Try to find way to temporarily disable servos
+    }
+
     // Stops the motors by setting the velocity to 0
     public void stopMechanisms() {
-        setMotorVelocity(0);
+        setMechanismVelocity(0);
 
     }
 }
