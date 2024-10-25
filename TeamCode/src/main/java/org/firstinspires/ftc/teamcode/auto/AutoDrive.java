@@ -54,18 +54,23 @@ public class AutoDrive extends LinearOpMode {
             limelightX = Double.parseDouble(distance[0]);
             limeLightY = Double.parseDouble(distance[1]);
             goToX=0;
-            goToY = -48;
-            while(Math.hypot(goToX-limelightX, goToY-limeLightY) > 5)
-            {
-                forward = 1;
-                robot.drive(forward, strafe, rotate);
-            }
 
 
-            telemetry.addData("x", screen.roundData(drive.pose.position.x));
-            telemetry.addData("y", screen.roundData(drive.pose.position.y));
-            telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
-            telemetry.update();
+            robot.drive(0.3,0,0);
+//            goToY = -48;
+//            while(Math.hypot(goToX-limelightX, goToY-limeLightY) > 5)
+//            {
+//                forward = 1;
+//                robot.drive(forward, strafe, rotate);
+//                //problem as this record drive datat
+////                telemetry.addData("x", screen.roundData(drive.pose.position.x));
+////                telemetry.addData("y", screen.roundData(drive.pose.position.y));
+////                telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
+//                telemetry.update();
+//            }
+
+
+
         }
     }
 }
