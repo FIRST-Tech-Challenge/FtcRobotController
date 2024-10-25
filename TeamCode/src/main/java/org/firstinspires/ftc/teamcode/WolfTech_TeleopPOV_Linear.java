@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -44,7 +45,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
     public DcMotor frontRightDrive  = null;
     public DcMotor backLeftDrive = null;
     public DcMotor backRightDrive = null;
-    public DcMotor  mainArm     = null;
+    public CRServo mainArm     = null;
     public Servo mainClaw    = null;
 
     double clawOffset = 0;
@@ -67,7 +68,7 @@ public class WolfTech_TeleopPOV_Linear extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "fr");
         backLeftDrive = hardwareMap.get(DcMotor.class, "bl");
         backRightDrive = hardwareMap.get(DcMotor.class, "br");
-        mainArm    = hardwareMap.get(DcMotor.class, "main_arm");
+        mainArm    = hardwareMap.get(CRServo.class, "main_arm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
