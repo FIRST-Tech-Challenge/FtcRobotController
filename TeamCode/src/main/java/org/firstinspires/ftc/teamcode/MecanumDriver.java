@@ -50,7 +50,7 @@ public class MecanumDriver extends OpMode {
     private int viperPosition = 0;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
-    private final static double VIPER_POWER = 0.7;
+    private final static double VIPER_POWER = 1.0;
     private final static double PIVOT_POWER = 0.7;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
@@ -70,15 +70,14 @@ public class MecanumDriver extends OpMode {
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
-        arm = new Arm(hardwareMap);
-        intake = new Intake(hardwareMap);
-
-        telemetry.addData("Status", "Initialized");
-
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
         gyro.resetYaw();
 
+        arm = new Arm(hardwareMap);
+        intake = new Intake(hardwareMap);
         robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
+
+        telemetry.addData("Status", "Initialized");
     }
 
     @Override
@@ -93,22 +92,23 @@ public class MecanumDriver extends OpMode {
 
     @Override
     public void loop() {
-        robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
-                gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
-                gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
+//        robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
+//                gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
+//                gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
 
         // Viper
         if (gamepad1.left_trigger != 0 || gamepad1.right_trigger != 0) {
-            viperPosition += (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * VIPER_POWER * 50);
+            viperPosition += (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * VIPER_POWER * 100);
+            viperPosition = Math.max(Math.min(Arm.MAX_LIMIT, viperPosition), Arm.MIN_LIMIT);
         } else if (arm.getViperMode() != DcMotor.RunMode.RUN_TO_POSITION) {
             arm.stopVipers();
         }
 
         // Pivot
         if (gamepad1.dpad_up) {
-            pivotPosition -= (int) (30 * PIVOT_POWER);
+            pivotPosition += (int) (60 * PIVOT_POWER);
         } else if (gamepad1.dpad_down) {
-            pivotPosition += (int) (30 * PIVOT_POWER);
+            pivotPosition -= (int) (60 * PIVOT_POWER);
         } else if (arm.getPivotMode() != DcMotor.RunMode.RUN_TO_POSITION) {
             arm.stopPivot();
         }
@@ -122,10 +122,11 @@ public class MecanumDriver extends OpMode {
 
         // Open/close intake
         if (gamepad1.a) {
-            if (intake.isClosed()) {
-                intake.open();
-            } else {
+            telemetry.addData("Button", "A pressed");
+            if (intake.isOpen()) {
                 intake.close();
+            } else {
+                intake.open();
             }
         }
 
