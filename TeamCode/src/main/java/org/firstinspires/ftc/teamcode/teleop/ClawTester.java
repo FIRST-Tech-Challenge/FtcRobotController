@@ -1,37 +1,37 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-@TeleOp(name = "LiftTester")
-public class LiftTester extends LinearOpMode {
-    private Lift lift;
+@TeleOp(name = "ClawTester")
+public class ClawTester extends LinearOpMode {
+    private Claw claw;
     private GamepadEvents controller;
-    private double liftPower;
+    private double clawPos;
     public void runOpMode(){
-        lift = new Lift(hardwareMap, "lift", "lift");
+        claw = new Claw(hardwareMap);
         controller = new GamepadEvents(gamepad1);
         telemetry.addData("Status","Initialized");
+        clawPos = 0.6;
         telemetry.update();
         waitForStart();
         while(opModeIsActive()){
-            liftPower = controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue();
+            if(controller.a.onPress()){
+                claw.release();
+            }else if(controller.b.onPress()){
+                claw.close(clawPos);
+            }
 
-            lift.moveLift(liftPower);
-
-            telemetry.addData("Lift Power", liftPower);
-//            telemetry.addData("Lift Position", lift.getPosition());
+            telemetry.addData("Claw Position", clawPos);
             controller.update();
         }
     }
-
 }
