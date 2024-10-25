@@ -25,9 +25,12 @@ import java.util.List;
 
 public class LimelightBot extends GyroBot {
 
+    public LLResult result = null;
+    public Pose3D botpose = null;
     private Limelight3A limelight;
 
     @Override
+
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         limelight = hwMap.get(Limelight3A.class, "limelight");
@@ -43,6 +46,16 @@ public class LimelightBot extends GyroBot {
 
     public LimelightBot(LinearOpMode opMode) {
         super(opMode);
+    }
+    public double horizontalDistance(){
+        result = limelight.getLatestResult();
+        return result.getTx();
+
+    }
+
+    public double verticalDistance(){
+        result = limelight.getLatestResult();
+        return result.getTy();
     }
    public void detect(boolean button){
        LLResult result = limelight.getLatestResult();

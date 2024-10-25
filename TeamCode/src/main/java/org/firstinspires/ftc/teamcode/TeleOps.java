@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -36,6 +37,9 @@ public class TeleOps extends LinearOpMode {
             robot.SlideControl(gamepad1.dpad_left, gamepad1.dpad_right);
 
             telemetry.addData("slide position: ", robot.Slide.getCurrentPosition());
+            telemetry.addData("tx", robot.result.getTx());
+            telemetry.addData("ty", robot.result.getTy());
+            telemetry.addData("Botpose", robot.botpose.toString());
             telemetry.update();
             robot.detect(gamepad1.a);
 
