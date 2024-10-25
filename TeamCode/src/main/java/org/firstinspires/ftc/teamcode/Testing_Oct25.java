@@ -31,8 +31,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * the direction of all 4 motors (see code below).
  */
 
-@TeleOp(name="Testing 10/17/24", group="Linear OpMode")
-public class Testing_Oct22 extends LinearOpMode {
+@TeleOp(name="Testing 10/25/24", group="Linear OpMode")
+public class Testing_Oct25 extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -185,12 +185,16 @@ public class Testing_Oct22 extends LinearOpMode {
             // Send calculated power to wheels
             //!!!!Using multiplier to slow Back wheels, attempt to make speeds match!!!!
             if (gamepad1.dpad_down){
-                twr = 0.5;
+                leftCH.setDirection(DcMotor.Direction.FORWARD);
+                rightCH.setDirection(DcMotor.Direction.REVERSE);
+                twr = -0.5;
             };
             if (!gamepad1.dpad_down){
                 twr = 0;
             }
             if (gamepad1.dpad_up){
+                leftCH.setDirection(DcMotor.Direction.REVERSE);
+                rightCH.setDirection(DcMotor.Direction.FORWARD);
                 twr = -0.5;
             }
             if (!gamepad1.dpad_up){
