@@ -24,8 +24,11 @@ public class LiftTester extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while(opModeIsActive()){
-            liftPower = controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue();
-
+            if(controller.right_bumper.onPress()){
+                liftPower = -controller.right_trigger.getTriggerValue();
+            }else{
+                liftPower = controller.right_trigger.getTriggerValue();
+            }
             lift.moveLift(liftPower);
 
             telemetry.addData("Lift Power", liftPower);

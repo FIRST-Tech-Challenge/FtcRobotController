@@ -19,11 +19,12 @@ public class Limelight extends LinearOpMode {
     private int pipeLine = 0;
 
     public final double M_TO_IN = 39.3700787402;
-
+    //Different Alliance Sides
     private enum Color {
         RED_SIDE,
         BLUE_SIDE
     }
+    //Different postions of the April tags on the field relative to the origin in inches
     public static final Vector2d[] APRIL_TAG_POSITIONS = new Vector2d[]{
             //11
             new Vector2d(-72,-48),
@@ -71,7 +72,7 @@ public class Limelight extends LinearOpMode {
     }
 
 
-    //method that gets distance from the AprilTag
+    //method that gets distance from the AprilTag in inches
     public Pose3D getDistance()
     {
         LLResult result = limeLight.getLatestResult();
@@ -85,7 +86,7 @@ public class Limelight extends LinearOpMode {
         return null;
 
     }
-
+    //rounds Distance
     public String[] getDistanceInInches()
     {
         DecimalFormat df = new DecimalFormat("#.##");
