@@ -27,6 +27,7 @@ public class Netzone extends LinearOpMode {
         //Score 1st neutral sample.
         drivebase.driveStraight(DRIVE_SPEED, -30, 45);
         drivebase.turnToHeading(TURN_SPEED, 90);
+        //drivebase.driveSideways(SIDE_SPEED, -27, 45);
         drivebase.driveStraight(DRIVE_SPEED, -27, 90);
         drivebase.turnToHeading(TURN_SPEED, 0);
         drivebase.driveStraight(DRIVE_SPEED, 5, 0);
@@ -42,5 +43,14 @@ public class Netzone extends LinearOpMode {
         drivebase.driveStraight(DRIVE_SPEED, 13, 0);
         drivebase.turnToHeading(TURN_SPEED, 90);
         drivebase.driveStraight(DRIVE_SPEED, 42, 90);
+
+        //Park
+        drivebase.driveStraight(DRIVE_SPEED, -4, 90);
+        drivebase.turnToHeading(TURN_SPEED, 180);
+        drivebase.driveStraight(.4, 112, 180);
+        drivebase.driveSideways(.3, 12, 90);
+
+
+
     }
 }
