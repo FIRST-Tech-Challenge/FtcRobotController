@@ -8,27 +8,27 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
-public class wrist {
-    public double flexedUp= 1;
+public class Wrist {
+    public double flexedUp= 0;
     public double rest = 0.5;
-    public double flexedDown = 0;
+    public double flexedDown = 1;
 
     public Servo wrist;
     public Gamepad gamepad2;
     public HardwareMap hardwareMap;
     public Telemetry telemetry;
 
-    public wrist(OpMode opMode){
+    public Wrist(OpMode opMode){
         this.hardwareMap = opMode.hardwareMap;
         this.gamepad2 = opMode.gamepad2;
         this.telemetry = opMode.telemetry;
 
-        wrist = (Servo) hardwareMap.get("wristSERVO");
-        wrist.setDirection(Servo.Direction.FORWARD);
+        wrist = (Servo) hardwareMap.get("wrist");
+        wrist.setDirection(Servo.Direction.REVERSE);
     }
     public void teleOp() {
-        if (gamepad2.left_stick_button) wrist.setPosition(flexedDown);
-        else if (gamepad2.left_stick_button && gamepad2.right_stick_button) wrist.setPosition(rest);
-        else if (gamepad2.right_stick_button) wrist.setPosition(flexedUp);
+        if (gamepad2.a) wrist.setPosition(flexedDown);
+        if (gamepad2.x ) wrist.setPosition(rest);
+        if (gamepad2.y) wrist.setPosition(flexedUp);
     }
 }

@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Slides;
-import org.firstinspires.ftc.teamcode.Subsystems.claw;
-import org.firstinspires.ftc.teamcode.Subsystems.wrist;
+import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.Wrist;
 
 @TeleOp
 @Config
@@ -22,8 +22,8 @@ public class TeleOpMain extends LinearOpMode {
         Drivetrain drive = new Drivetrain(this);
         Arm arm = new Arm(this);
         Slides slides = new Slides(this);
-        claw claw = new claw(this);
-        wrist wrist = new wrist(this);
+        Claw claw = new Claw(this);
+        Wrist wrist = new Wrist(this);
 
         waitForStart();
         

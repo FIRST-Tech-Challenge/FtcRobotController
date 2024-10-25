@@ -38,7 +38,7 @@ public class Arm {
     public void teleOp() {
         if (gamepad2.dpad_left) goOuttakePos();
         else if (gamepad2.dpad_right) goIntakePos();
-        else rest();
+        else if (gamepad.dpad_down) rest();
     }
     public void goOuttakePos() {
         armMotor.setTargetPosition(OUTTAKE);

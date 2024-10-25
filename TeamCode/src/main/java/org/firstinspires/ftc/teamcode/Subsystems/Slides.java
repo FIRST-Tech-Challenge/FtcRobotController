@@ -96,7 +96,7 @@ public class Slides {
                 rightSlide.setTargetPosition((int) (rightSlide.getCurrentPosition() - (multiplier * i++)));
             }
         } else if (multiplier <= -0.25) {
-            for (int i = -50; i < 0; i--) {
+            for (int i = -50; i < 0; i++) {
                 leftSlide.setTargetPosition((int) (leftSlide.getCurrentPosition() - (multiplier * i--)));
                 rightSlide.setTargetPosition((int) (rightSlide.getCurrentPosition() - (multiplier * i--)));
             }
