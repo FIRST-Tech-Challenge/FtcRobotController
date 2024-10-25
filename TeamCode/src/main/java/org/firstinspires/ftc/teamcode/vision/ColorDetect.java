@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode.vision;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.core.Core;
@@ -9,7 +11,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ColorSaturationDetectionPipeline extends OpenCvPipeline {
+public class ColorDetect extends OpenCvPipeline {
 
     // Set the YCrCb color ranges for blue based on the slider data
     private final Scalar lowerBlue = new Scalar(55.3, 90.7, 141.7);  // Adjusted blue lower bound
