@@ -75,8 +75,6 @@ public class DTMotorsTest extends LinearOpMode {
 
             telemetry.addData("slides: ", lfencoder*inchesPerTick);
             telemetry.addData("arm: ", lbencoder*degreesPerTick);
-            telemetry.addData("right front", rfencoder);
-            telemetry.addData("right back", rbencoder);
             telemetry.update();
 
         }
