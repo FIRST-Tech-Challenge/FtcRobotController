@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Robot: Autonomous", group="Robot")
-public class WolfTech_Autonomous extends LinearOpMode {
+public class WolfTech_Autonomous_BlueTeam_RIGHTSIDE extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor         frontleftDrive   = null;
