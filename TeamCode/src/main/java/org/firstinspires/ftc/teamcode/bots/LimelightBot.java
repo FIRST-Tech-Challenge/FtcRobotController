@@ -19,6 +19,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
 import java.util.List;
 
 public class LimelightBot extends PivotBot {
@@ -30,16 +32,31 @@ public class LimelightBot extends PivotBot {
         super.init(ahwMap);
         limelight = hwMap.get(Limelight3A.class, "limelight");
 
-        telemetry.setMsTransmissionInterval(11);
 
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(1);
 
         limelight.start();
+
 
 
     }
 
     public LimelightBot(LinearOpMode opMode) {
         super(opMode);
+    }
+   public void detect(boolean button){
+       LLResult result = limelight.getLatestResult();
+       if(result != null){
+           if(result.isValid()){
+               Pose3D botpose = result.getBotpose();
+               telemetry.addData("tx", result.getTx());
+               telemetry.addData("ty", result.getTy());
+               telemetry.addData("Botpose", botpose.toString());
+           }
+
+   }
+
+
+
     }
 }

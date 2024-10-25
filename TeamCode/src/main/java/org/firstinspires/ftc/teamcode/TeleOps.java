@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +22,7 @@ public class TeleOps extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()){
+            telemetry.setMsTransmissionInterval(11);
 
             robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
                     gamepad1.right_stick_x*0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
@@ -33,6 +36,7 @@ public class TeleOps extends LinearOpMode {
 
             telemetry.addData("slide position: ", robot.Slide.getCurrentPosition());
             telemetry.update();
+            robot.detect(gamepad1.a);
 
         }
         robot.close();
