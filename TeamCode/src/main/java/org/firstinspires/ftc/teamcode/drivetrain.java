@@ -18,20 +18,23 @@ public class drivetrain {
     private DcMotor FrontRM = null;
     private DcMotor BackLM = null;
     private DcMotor BackRM = null;
+    public CRServo testing = null;
+    public CRServo testing1 = null;
     private final double WheelDiameter = 3.75;
     private final double PULSE_PER_REVOLUTION = 537.7;
+    private final double STRAFE_CORRECT = 1;
 
     private LinearOpMode opmode = null;
 
     IMU imu;
 
     public drivetrain() {
+
     }
 
     public void init(LinearOpMode opMode) {
 
         HardwareMap hwMap;
-
 
         opmode = opMode;
         hwMap = opMode.hardwareMap;
@@ -46,6 +49,8 @@ public class drivetrain {
         BackRM = hwMap.dcMotor.get("BackRM");
         BackLM = hwMap.dcMotor.get("BackLM");
 
+        testing = hwMap.crservo.get("testing");
+        testing1 = hwMap.crservo.get("testing1");
 
         FrontLM.setDirection(REVERSE);
         FrontRM.setDirection(FORWARD);
@@ -131,10 +136,6 @@ public class drivetrain {
         FrontRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private int calculatePulses(int distance) {
@@ -144,40 +145,24 @@ public class drivetrain {
         return pulses;
     }
 
-    public void turn (double angle, double speed, boolean isLeft) {
-        imu.resetYaw();
-        boolean isDone =false;
-        while (!isDone) {
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            opmode.telemetry.addData("yaw", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-            opmode.telemetry.update();
-            if (Math.abs(orientation.getYaw(AngleUnit.DEGREES)) < Math.abs(angle)) {
-                if (isLeft) {
-                    turnLeft(speed);
-                }
-                if (!isLeft) {
-                    turnRight(speed);
-                }
-            } else {
-                stop();
-                imu.resetYaw();
-                isDone = true;
-            }
-        }
-    }
-
     public void strafeLDistance(double speed, int distance) {
-        FrontLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        resetEncoders();
         int pulses = calculateStrafePulses(distance);
         FrontLM.setTargetPosition(pulses);
         FrontRM.setTargetPosition(pulses);
-        BackLM.setTargetPosition(pulses);
+        BackRM.setTargetPosition(pulses);
         BackRM.setTargetPosition(pulses);
 
-        FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy() && BackLM.isBusy()) {
+            strafeLeft(speed);
+        }
+        stop();
+    }
+
+
+    public void strafeRDistance(double speed, int distance) {
+        int pulses = calculateStrafePulses(distance);
     }
 
     public int calculateStrafePulses(double distance) {
