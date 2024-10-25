@@ -71,7 +71,7 @@ public class basicTelem extends LinearOpMode {
         while (opModeIsActive()) {
 
             //game pad 1
-            double speedGMP1 = -gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
+            double speedGMP1 = gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
             double angleGMP1 = gamepad1.right_stick_x;
 
             if (speedGMP1 != 0) move(gamepad1.left_stick_x, speedGMP1);
@@ -273,12 +273,14 @@ public class basicTelem extends LinearOpMode {
      * @param power   Desired power to run the motors at
      */
     public void move(double heading, double power) {
+        /*
         heading = (heading + 1) / 2;
 
         FLServo.setPosition(heading + FLServoOffSet);
         BLServo.setPosition(heading + BLServoOffSet);
         BRServo.setPosition(heading + BRServoOffSet);
         FRServo.setPosition(heading + FRServoOffSet);
+        */
 
         power = (power + 1) / 2;
         FLMotor.setPower(power);
