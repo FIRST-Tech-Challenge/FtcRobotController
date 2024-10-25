@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import java.nio.Buffer;
 
 public class Bot {
 
@@ -50,14 +47,12 @@ public class Bot {
 
 
     //Drive Encoder Stats
-    static final double COUNTS_PER_MOTOR_REV = 537.7;    // GoBilda 5203 motor encoder res
-    static final double DRIVE_GEAR_REDUCTION = 1.0;     // 1:1
-    static final double WHEEL_DIAMETER_INCHES = 4.09449;     // For figuring circumference
-    static final double CIRCUMFERENCE = (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / CIRCUMFERENCE;
-    static final double DISTANCE_PER_ENCODER =  CIRCUMFERENCE/COUNTS_PER_MOTOR_REV;
-    static final double COUNTS_PER_DEGREE = COUNTS_PER_MOTOR_REV/360;
-    static final double INCHES_PER_DEGREE = DISTANCE_PER_ENCODER * COUNTS_PER_DEGREE;
+    private static final double COUNTS_PER_MOTOR_REV = 537.7;    // GoBilda 5203 motor encoder res
+    private static final double DRIVE_GEAR_REDUCTION = 1.0;     // 1:1
+    private static final double WHEEL_DIAMETER_INCHES = 4.09449;     // For figuring circumference
+    private static final double CIRCUMFERENCE = (WHEEL_DIAMETER_INCHES * Math.PI);
+    private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / CIRCUMFERENCE;
+    private static final double DISTANCE_PER_ENCODER =  CIRCUMFERENCE/COUNTS_PER_MOTOR_REV;
 
 
     private static final double MAX_DISTANCE = 25.5;
@@ -468,24 +463,6 @@ public class Bot {
     }
 
     /**
-     * Drive function
-     * @param left power for left side of chassis
-     * @param right power for right side of chassis
-     */
-    public void setDrivePower(double left, double right){
-        leftMotorFront.setPower(left);
-        leftMotorBack.setPower(left);
-        rightMotorFront.setPower(right);
-        rightMotorBack.setPower(right);
-
-        leftMotorBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftMotorFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotorBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotorFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-    }
-
-    /**
      * Sequence for lifting bot for low hang
      */
     public void liftLow(){
@@ -516,6 +493,7 @@ public class Bot {
      * NOTE: NOT TESTED
      * @param degree position by angle degree
      */
+    //TODO FIX
     public void setArmPos(double degree){
         double totalTick = MAX_PIVOT - MIN_PIVOT;
         double totalDegrees = 180;
@@ -600,26 +578,6 @@ public class Bot {
      */
     public void setExtendPos(int tick){
         extendArmMotor.setTargetPosition(tick);
-        extendArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        extendArmMotor.setPower(1.0);
-
-        while(opMode.opModeIsActive() && extendArmMotor.isBusy()){
-            opMode.telemetry.addData("Extend Pos: ", extendArmMotor.getCurrentPosition());
-        }
-
-        extendArmMotor.setPower(0);
-
-        extendArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    /**
-     * Auto function to retract to its closed state
-     * NOTE: the 0 tick state is based on the bots init position since the bot
-     *      zeroes its encoders on initialization.
-     */
-    public void retractArm(){
-        extendArmMotor.setTargetPosition(0);
         extendArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         extendArmMotor.setPower(1.0);
