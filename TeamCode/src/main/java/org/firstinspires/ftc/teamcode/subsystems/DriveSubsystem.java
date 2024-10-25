@@ -15,7 +15,6 @@ import java.lang.Math;
 
 import org.firstinspires.ftc.teamcode.*;
 
-//TODO: Test odometry and insert correct values for odometry constants
 //TODO: Modify drive functions to make use of new odometry logic rather than IMU
 
 //TODO: Fix deadzone logic to use quadratic equation
@@ -60,7 +59,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
     
     public void drive(double forward, double strafe, double turn) {
-        updatePose();
         if(fieldCentric) driveFieldCentric(forward, strafe, turn); else driveRobotCentric(forward, strafe, turn);
     }
 
@@ -121,85 +119,4 @@ public class DriveSubsystem extends SubsystemBase {
     private double getHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
-
-//Odometry Stuff
-
-    /*
-    Left Pod: frontLeftMotor
-    Center Pod: frontRightMotor
-    Right Pod: backLeftMotor
-    */
-
-    private class Pose {
-        public double x;
-        public double y;
-        public double theta;
-
-        public Pose(double x, double y, double theta) {
-            this.x = x;
-            this.y = y;
-            this.theta = theta;
-        }
-    }
-
-    private int[] lastTicks = new int[3];
-    public Pose pose = new Pose(0, 0, 0);
-
-    public Pose getPose() {
-        return pose;
-    }
-
-    public void resetPose() {
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        pose.x = 0;
-        pose.y = 0;
-        pose.theta = 0;
-
-        lastTicks[0] = frontLeftMotor.getCurrentPosition(); //Change later!
-        lastTicks[1] = frontRightMotor.getCurrentPosition(); //Change later!
-        lastTicks[2] = backLeftMotor.getCurrentPosition(); //Change later!
-    }
-
-    public void updatePose() {
-        int[] ticks = new int[3];
-        ticks[0] = frontLeftMotor.getCurrentPosition(); //Change later!
-        ticks[1] = frontRightMotor.getCurrentPosition(); //Change later!
-        ticks[2] = backLeftMotor.getCurrentPosition(); //Change later!
-
-        int deltaLeft = ticks[0] - lastTicks[0];
-        int deltaCenter = ticks[1] - lastTicks[1];
-        int deltaRight = ticks[2] - lastTicks[2];
-        lastTicks = ticks;
-
-        double leftDist = -deltaLeft * Constants.OdometryConstants.WHEEL_CIRCUMFERENCE / Constants.OdometryConstants.TICKS_PER_REVOLUTION;
-        double centerDist = -deltaCenter * Constants.OdometryConstants.WHEEL_CIRCUMFERENCE / Constants.OdometryConstants.TICKS_PER_REVOLUTION;
-        double rightDist = deltaRight * Constants.OdometryConstants.WHEEL_CIRCUMFERENCE / Constants.OdometryConstants.TICKS_PER_REVOLUTION;
-        double deltaTheta = (rightDist - leftDist) / Constants.OdometryConstants.WIDTH;
-
-        double distY = (leftDist + rightDist) / 2;
-        double distX = centerDist;
-        double avgTheta = (pose.theta + deltaTheta) / 2; 
-
-        double cos = Math.cos(avgTheta);
-        double sin = Math.sin(avgTheta);
-
-        pose.x += distX * sin + distY * cos;
-        pose.y += -distX * cos + distY * sin;
-        pose.theta = normalizeRadians(pose.theta + deltaTheta);
-    }
-
-    public static double normalizeRadians(double radians){
-        double temp = (radians + Math.PI) / (2.0 * Math.PI);
-        return (temp - Math.floor(temp) - 0.5)  * 2.0 * Math.PI;
-    }
-
 }
