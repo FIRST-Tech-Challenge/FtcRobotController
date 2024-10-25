@@ -10,8 +10,6 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
-//TODO: Add a button to switch between fieldCentric and RobotCentric
-
 public class Robot {
 
     private final OpMode opMode;

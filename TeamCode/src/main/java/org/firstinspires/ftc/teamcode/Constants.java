@@ -18,6 +18,7 @@ public abstract class Constants {
         public static final DcMotorSimple.Direction BACK_LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
         public static final DcMotorSimple.Direction BACK_RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
 
+        @Deprecated
         public static final IMU.Parameters IMU_PARAMETERS = new IMU.Parameters(
             new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
@@ -28,4 +29,10 @@ public abstract class Constants {
         public static final double DEADZONE = 0.1;
     }
 
+    public static abstract class OdometryConstants {
+        public static final double WHEEL_DIAMETER = 35; //Millimeters
+        public static final int TICKS_PER_REVOLUTION = 2048; //confirm but I think it's right
+        public static final double WIDTH = 217.5; //Millimeters
+        public static final double WHEEL_CIRCUMFERENCE = 0.0;
+    }
 }
