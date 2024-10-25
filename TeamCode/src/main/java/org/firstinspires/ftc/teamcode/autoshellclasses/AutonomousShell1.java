@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 
@@ -70,7 +71,7 @@ public class AutonomousShell1 extends LinearOpMode {
                 .addProcessors(colorMassDetectionProcessor)
                 .build();
         // JOSHUANOTE: Position sets the cords and heading of the spot you start.
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
+        PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
         Serv gate = new Serv(hardwareMap);
 
 

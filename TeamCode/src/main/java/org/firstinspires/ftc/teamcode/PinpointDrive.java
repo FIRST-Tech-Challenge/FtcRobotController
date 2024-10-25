@@ -56,22 +56,22 @@ public class PinpointDrive extends MecanumDrive {
         public GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     }
 
-    public static Params PARAMS = new Params();
+    public static Params PARAMS2 = new Params();
     public GoBildaPinpointDriverRR pinpoint;
     private Pose2d lastPinpointPose = pose;
 
     public PinpointDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
-        FlightRecorder.write("PINPOINT_PARAMS",PARAMS);
+        FlightRecorder.write("PINPOINT_PARAMS", PARAMS2);
         pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
 
         // RR localizer note: don't love this conversion (change driver?)
-        pinpoint.setOffsets(DistanceUnit.MM.fromInches(PARAMS.xOffset), DistanceUnit.MM.fromInches(PARAMS.yOffset));
+        pinpoint.setOffsets(DistanceUnit.MM.fromInches(PARAMS2.xOffset), DistanceUnit.MM.fromInches(PARAMS2.yOffset));
 
 
-        pinpoint.setEncoderResolution(PARAMS.encoderResolution);
+        pinpoint.setEncoderResolution(PARAMS2.encoderResolution);
 
-        pinpoint.setEncoderDirections(PARAMS.xDirection, PARAMS.yDirection);
+        pinpoint.setEncoderDirections(PARAMS2.xDirection, PARAMS2.yDirection);
 
         /*
         Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary

@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.*;
-import org.firstinspires.ftc.teamcode.autoshellclasses.MecanumDrive;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
@@ -64,10 +64,10 @@ public final class TuningOpModes {
 
                     return new DriveView(
                             DriveType.MECANUM,
-                            MecanumDrive.PARAMS.inPerTick,
-                            MecanumDrive.PARAMS.maxWheelVel,
-                            MecanumDrive.PARAMS.minProfileAccel,
-                            MecanumDrive.PARAMS.maxProfileAccel,
+                            PinpointDrive.PARAMS.inPerTick,
+                            PinpointDrive.PARAMS.maxWheelVel,
+                            PinpointDrive.PARAMS.minProfileAccel,
+                            PinpointDrive.PARAMS.maxProfileAccel,
                             hardwareMap.getAll(LynxModule.class),
                             Arrays.asList(
                                     pd.leftFront,
@@ -83,9 +83,9 @@ public final class TuningOpModes {
                             perpEncs,
                             pd.lazyImu,
                             pd.voltageSensor,
-                            () -> new MotorFeedforward(MecanumDrive.PARAMS.kS,
-                                    MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
-                                    MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick)
+                            () -> new MotorFeedforward(PinpointDrive.PARAMS.kS,
+                                    PinpointDrive.PARAMS.kV / PinpointDrive.PARAMS.inPerTick,
+                                    PinpointDrive.PARAMS.kA / PinpointDrive.PARAMS.inPerTick)
                     );
                 };
         } else if (DRIVE_CLASS.equals(SparkFunOTOSDrive.class)) {
@@ -99,10 +99,10 @@ public final class TuningOpModes {
 
                 return new DriveView(
                         DriveType.MECANUM,
-                        MecanumDrive.PARAMS.inPerTick,
-                        MecanumDrive.PARAMS.maxWheelVel,
-                        MecanumDrive.PARAMS.minProfileAccel,
-                        MecanumDrive.PARAMS.maxProfileAccel,
+                        PinpointDrive.PARAMS.inPerTick,
+                        PinpointDrive.PARAMS.maxWheelVel,
+                        PinpointDrive.PARAMS.minProfileAccel,
+                        PinpointDrive.PARAMS.maxProfileAccel,
                         hardwareMap.getAll(LynxModule.class),
                         Arrays.asList(
                                 od.leftFront,
@@ -118,19 +118,19 @@ public final class TuningOpModes {
                         perpEncs,
                         od.lazyImu,
                         od.voltageSensor,
-                        () -> new MotorFeedforward(MecanumDrive.PARAMS.kS,
-                                MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
-                                MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick)
+                        () -> new MotorFeedforward(PinpointDrive.PARAMS.kS,
+                                PinpointDrive.PARAMS.kV / PinpointDrive.PARAMS.inPerTick,
+                                PinpointDrive.PARAMS.kA / PinpointDrive.PARAMS.inPerTick)
                 );
             };
-        } else if (DRIVE_CLASS.equals(MecanumDrive.class)) {
+        } else if (DRIVE_CLASS.equals(PinpointDrive.class)) {
             dvf = hardwareMap -> {
-                MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                PinpointDrive md = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
-                    MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) md.localizer;
+                if (md.localizer instanceof PinpointDrive.DriveLocalizer) {
+                    PinpointDrive.DriveLocalizer dl = (PinpointDrive.DriveLocalizer) md.localizer;
                     leftEncs.add(dl.leftFront);
                     leftEncs.add(dl.leftBack);
                     rightEncs.add(dl.rightFront);
@@ -150,10 +150,10 @@ public final class TuningOpModes {
 
                 return new DriveView(
                     DriveType.MECANUM,
-                        MecanumDrive.PARAMS.inPerTick,
-                        MecanumDrive.PARAMS.maxWheelVel,
-                        MecanumDrive.PARAMS.minProfileAccel,
-                        MecanumDrive.PARAMS.maxProfileAccel,
+                        PinpointDrive.PARAMS.inPerTick,
+                        PinpointDrive.PARAMS.maxWheelVel,
+                        PinpointDrive.PARAMS.minProfileAccel,
+                        PinpointDrive.PARAMS.maxProfileAccel,
                         hardwareMap.getAll(LynxModule.class),
                         Arrays.asList(
                                 md.leftFront,
@@ -169,9 +169,9 @@ public final class TuningOpModes {
                         perpEncs,
                         md.lazyImu,
                         md.voltageSensor,
-                        () -> new MotorFeedforward(MecanumDrive.PARAMS.kS,
-                                MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
-                                MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick)
+                        () -> new MotorFeedforward(PinpointDrive.PARAMS.kS,
+                                PinpointDrive.PARAMS.kV / PinpointDrive.PARAMS.inPerTick,
+                                PinpointDrive.PARAMS.kA / PinpointDrive.PARAMS.inPerTick)
                 );
             };
         } else if (DRIVE_CLASS.equals(TankDrive.class)) {
