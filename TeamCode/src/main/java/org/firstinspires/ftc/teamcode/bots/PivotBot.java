@@ -9,7 +9,9 @@ package org.firstinspires.ftc.teamcode.bots;
 public class PivotBot extends GyroBot{
 
     public int slideTarget = 0;
+    public int slideTarget2 = 0;
     public DcMotorEx Motor = null;
+    public DcMotorEx Slide = null;
     public int pivotPosition = 0;
 
     private int slidePower = 200;
@@ -30,7 +32,12 @@ public class PivotBot extends GyroBot{
         Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Motor.setPower(0);
 
-
+        Slide = hwMap.get(DcMotorEx.class, "slide");
+        Slide.setDirection(DcMotorSimple.Direction.REVERSE);
+        Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Slide.setPower(0);
     }
 
     public PivotBot(LinearOpMode opMode) {super(opMode);}
@@ -39,33 +46,31 @@ public class PivotBot extends GyroBot{
         return Motor.getCurrentPosition();
     }
 
-//    public void slideDown(boolean button) {
-//        if (button && slidePosition>0){
-//            rightMotor.setPower(-1);
-//            leftMotor.setPower(1);
-//            slidePosition--;
-//        } else {
-//            rightMotor.setPower(0);
-//            leftMotor.setPower(0);
-//        }
-//    }
-
-//    public void slideUp(boolean button) {
-//        if (button && slidePosition<endPosition){
-//            rightMotor.setPower(1);
-//            leftMotor.setPower(-1);
-//            slidePosition++;
-//        } else {
-//            rightMotor.setPower(0);
-//            leftMotor.setPower(0);
-//        }
-//    }
-
     protected void onTick() {
         super.onTick();
         Motor.setTargetPosition(slideTarget);
         Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Motor.setPower(0.3);
+
+        Slide.setTargetPosition(slideTarget2);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(0.5);
+    }
+
+    public void SlideControl(boolean up, boolean down){
+        if (up){
+            slideTarget2 = 20;
+            Slide.setTargetPosition(slideTarget2);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        if(down){
+            slideTarget2 = 2000;
+            Slide.setTargetPosition(slideTarget2);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        if (Math.abs(Slide.getCurrentPosition() - slideTarget2) < 3){
+            Slide.setPower(0);
+        }
     }
 
     public void PivotControl(boolean up, boolean down){

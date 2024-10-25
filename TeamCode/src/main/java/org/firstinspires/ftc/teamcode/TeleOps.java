@@ -29,6 +29,10 @@ public class TeleOps extends LinearOpMode {
 
             robot.onLoop(0, "manual drive");
             robot.PivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
+            robot.SlideControl(gamepad1.dpad_left, gamepad1.dpad_right);
+
+            telemetry.addData("slide position: ", robot.Slide.getCurrentPosition());
+            telemetry.update();
 
         }
         robot.close();
