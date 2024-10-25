@@ -18,5 +18,7 @@ dependencies {
     implementation('com.acmerobotics.dashboard:dashboard:0.4.15') {
         exclude group: 'org.firstinspires.ftc'
     }
+
+    implementation 'org.ejml:ejml-simple:0.43.1'
 }
 
