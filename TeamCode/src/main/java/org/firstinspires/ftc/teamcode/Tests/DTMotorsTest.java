@@ -21,12 +21,7 @@ public class DTMotorsTest extends LinearOpMode {
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         slides = hardwareMap.get(DcMotorEx.class, "slides");
 
-        /*leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);*/
+
 
 
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
