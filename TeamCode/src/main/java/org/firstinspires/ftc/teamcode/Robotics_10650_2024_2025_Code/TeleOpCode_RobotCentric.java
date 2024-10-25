@@ -256,12 +256,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 robot.clawRoll.setPosition(0.125);
             }
 
-            // Set power of the motors for the lift and the servos
-            // Right stick-y is lift extend
-            // FIXME: robot.liftExtender((int)(Math.round()*200), 0.1);
-            // FIXME: robot.liftPitch(pitchPower*200, 0.1);
-            System.out.println(robot);
-
         }
 
         // accelerationAdditive is 1428.57
