@@ -11,14 +11,16 @@ public class linearOpMode extends LinearOpMode {
   private DcMotor frontLeftMotor = null, backLeftMotor = null;
   private DcMotor frontRightMotor = null, backRightMotor = null;
   private DcMotor slideExtension = null;
-  private  DcMotor slideAbduction = null;
+
+  private DcMotor slideAbduction = null;
+  private DcMotor slideAbduction2 = null;
 
   //  private  DcMotor MaybeIntake = null;
   private Servo clawIntake = null;
   private double clawIntakePostion = 1;
 
   @Override
-  public void runOpMode(){
+  public void runOpMode() {
 
     //initializing hardware
 
@@ -67,6 +69,8 @@ public class linearOpMode extends LinearOpMode {
           Right JoyStick = Rotation of drive train
         GamePad 2 (Operator)
           Button A = toggle position of claw to open or closed (We start closed)
+          left stick x = slide extension
+          right stick y = slide abduction
        */
 
       // linear slide controls
@@ -78,42 +82,51 @@ public class linearOpMode extends LinearOpMode {
       double x = -gamepad1.left_stick_x;
       double turn = gamepad1.right_stick_x;
 
+      //linear slide power
+      double p = gamepad2.left_stick_x;
+      double c  = gamepad2.right_stick_y;
+      
       //input: theta and power
       //theta is where we want the direction the robot to go
       //power is (-1) to 1 scale where increasing power will cause the engines to go faster
-      double theta = Math.atan2(y,x);
-      double power = Math.hypot(x,y);
-      double sin = Math.sin(theta - Math.PI/4);
-      double cos = Math.cos(theta - Math.PI/4);
+      double theta = Math.atan2(y, x);
+      double power = Math.hypot(x, y);
+      double sin = Math.sin(theta - Math.PI / 4);
+      double cos = Math.cos(theta - Math.PI / 4);
       //max variable allows to use the motors at its max power with out disabling it
-      double max = Math.max(Math.abs(sin),Math.abs(cos));
+      double max = Math.max(Math.abs(sin), Math.abs(cos));
 
-      double leftFront = power * cos/max + turn;
-      double rightFront = power * cos/max - turn;
-      double leftRear = power * sin/max + turn;
-      double rightRear = power * sin/max - turn;
+      double leftFront = power * cos / max + turn;
+      double rightFront = power * cos / max - turn;
+      double leftRear = power * sin / max + turn;
+      double rightRear = power * sin / max - turn;
 
       //Prevents the motors exceeding max power thus motors will not seize and act sporadically
-      if ((power + Math.abs(turn))>1){
-        leftFront /= power  + turn;
-        rightFront /= power  - turn;
-        leftRear /= power  + turn;
-        rightRear /= power  - turn;
+      if ((power + Math.abs(turn)) > 1) {
+        leftFront /= power + turn;
+        rightFront /= power - turn;
+        leftRear /= power + turn;
+        rightRear /= power - turn;
       }
 
       //if A on the controller is pressed it will check if the claw is closed
-      if(gamepad2.a){
+      if (gamepad2.a) {
+
         //if it's closed
-        if(clawIntakePostion == 1){
+        if (clawIntakePostion == 1) {
           //Set claw position to open
           clawIntakePostion = 0;
         }
         //if it's open
-        else{
+        else {
           //Set claw position to closed
           clawIntakePostion = 1;
         }
       }
+
+      slideAbdPower = c;
+      slideExtendPower = p;
+      
 
       // Power to the wheels
       frontLeftMotor.setPower(leftFront);
@@ -124,9 +137,15 @@ public class linearOpMode extends LinearOpMode {
       // Power to the arm
       slideAbduction.setPower(slideAbdPower);
       slideExtension.setPower(slideExtendPower);
+      slideAbduction2.setPower(slideAbdPower);
 
       // Power to the Claw
       clawIntake.setPosition(clawIntakePostion);
+      //Telemetry
+      telemetry.addData("X", x);
+      telemetry.addData("Y", y);
+      telemetry.update();
 
     }
   }
+}
