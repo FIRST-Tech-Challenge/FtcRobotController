@@ -16,17 +16,19 @@ public class ArmTester extends LinearOpMode {
         arm = new Arm(hardwareMap);
         controller = new GamepadEvents(gamepad1);
         telemetry.addData("Status","Initialized");
-        telemetry.update();
+
         waitForStart();
         while(opModeIsActive()){
+            telemetry.addLine("OpMode Active");
             if(controller.right_bumper.onPress()){
-                armPos = 0.5;
+                armPos = 0.9;
                 arm.setPosition(armPos);
             } else if (controller.left_bumper.onPress()) {
                 armPos = 0;
                 arm.setPosition(armPos);
             }
             telemetry.addData("Arm Position", armPos);
+            telemetry.update();
             controller.update();
         }
     }
