@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.CompBot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -14,8 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
-@TeleOp(name = "basic telemetry", group = "CompBot")
-public class basicTelem extends LinearOpMode {
+@TeleOp(name = "basic telemetry for blue robot", group = "CompBot")
+public class basicTelemBlue extends LinearOpMode {
     /*
     The point of this code is to be a basic telem that works for thursday
     using different classes already made and is not tested as of creation 10/21/24

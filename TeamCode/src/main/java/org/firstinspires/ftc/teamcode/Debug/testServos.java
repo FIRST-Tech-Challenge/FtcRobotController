@@ -86,10 +86,10 @@ public class testServos extends LinearOpMode {
         BRServo.setPosition(0);
         BLServo.setPosition(0);
 
-        FLServo.scaleRange(0, 1.0);
-        FRServo.scaleRange(0, 1.0);
-        BLServo.scaleRange(0, 1.0);
-        BRServo.scaleRange(0, 1.0);
+        FLServo.scaleRange(0, 10);
+        FRServo.scaleRange(0, 10);
+        BLServo.scaleRange(0, 10);
+        BRServo.scaleRange(0, 10);
 
         set = 0;
     }
