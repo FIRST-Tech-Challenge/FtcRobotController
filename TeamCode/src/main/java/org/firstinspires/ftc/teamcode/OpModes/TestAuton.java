@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+//import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,7 +26,6 @@ import org.firstinspires.ftc.teamcode.Drivetrain.Utils.TelemetryTracking;
 public class TestAuton extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
-
     // Use FTCDashboard
     FtcDashboard dashboard;
     TelemetryTracking tracking;
@@ -54,13 +55,23 @@ public class TestAuton extends LinearOpMode {
             SimpleMatrix desiredPose = new SimpleMatrix(
                     new double [][]{
                             new double[]{48},
-                            new double[]{48},
-                            new double[]{90}
+                            new double[]{0},
+                            new double[]{0}
+                    }
+            );
+            SimpleMatrix desiredPoseTwo = new SimpleMatrix(
+                    new double [][]{
+                            new double[]{0},
+                            new double[]{-12},
+                            new double[]{0}
                     }
             );
             drivetrain.localize();
-            //drivetrain.goToPose(desiredPose);
-            Actions.runBlocking(drivetrain.goToPose(desiredPose));
+            Actions.runBlocking(new SequentialAction(
+                    drivetrain.goToPose(desiredPose),
+                    drivetrain.goToPose(desiredPoseTwo)
+            ));
+
             telemetry.addData("x", drivetrain.state.get(0,0));
             telemetry.addData("y", drivetrain.state.get(1,0));
             telemetry.addData("theta", drivetrain.state.get(2,0));
