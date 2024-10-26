@@ -23,7 +23,7 @@ import java.util.Locale;
 @Config
 public class DriveClassTest extends LinearOpMode {
     double oldTime = 0;
-    double globalStateMachine = 0;
+    static double globalStateMachine = 0;
     double timeStamp = 0;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,10 +50,14 @@ public class DriveClassTest extends LinearOpMode {
                 }
 
             }
+            if(gp.a) { // only for testing
+                globalStateMachine = 10;
+            }
+
             if(globalStateMachine<0){
                 globalStateMachine = 0;
             }
-            if(globalStateMachine == 0){
+            if(globalStateMachine == 0){ //default position
                 arm.preTake();
                 slides.floorIntake();
                 wrist.intake();
@@ -91,6 +95,9 @@ public class DriveClassTest extends LinearOpMode {
                 if(timeStamp+450 < timer.milliseconds()){
                     globalStateMachine = 0;
                 }
+            } else if (globalStateMachine == 10) { // submersible intake
+                wrist.deposit();
+                arm.preSubmerse();
             }
 
             drive.update();
@@ -108,6 +115,8 @@ public class DriveClassTest extends LinearOpMode {
             telemetry.addData("Hub loop Time: ", frequency);
             telemetry.addData("slides inches: ", slides.getCurrentSlidesPosition());
             telemetry.addData("arm degrees:", arm.getCurrentArmPosition());
+            telemetry.addData("Left Trigger:", gamepad1.left_trigger);
+            telemetry.addData("Right Trigger:", gamepad1.right_trigger);
             slides.update();
             arm.update();
             gp.update();

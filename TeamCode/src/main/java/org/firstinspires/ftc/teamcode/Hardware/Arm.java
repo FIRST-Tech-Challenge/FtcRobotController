@@ -67,6 +67,9 @@ public class Arm {
     public void preTake(){
         setTargetArmPosition(15);
     }
+    public void preSubmerse(){
+        setTargetArmPosition(20);
+    }
     public void intake(){
         setTargetArmPosition(0);
     }
