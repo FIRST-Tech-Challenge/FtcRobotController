@@ -167,7 +167,7 @@ public class basicTelem extends LinearOpMode {
         FLMotor.setDirection(FORWARD);
         BLMotor.setDirection(FORWARD);
         FRMotor.setDirection(FORWARD);
-        BRMotor.setDirection(FORWARD);
+        BRMotor.setDirection(REVERSE);
 
 
         // Maps the servo objects to the physical ports
