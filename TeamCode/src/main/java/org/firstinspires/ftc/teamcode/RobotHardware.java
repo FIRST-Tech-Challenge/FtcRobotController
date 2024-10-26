@@ -94,9 +94,9 @@ public class RobotHardware {
     public static final double GRABBER_MAX = 0.40;
     private static double grabberDrive = 0.0;
 
-    public static final double ARM_SPEED = 0.5;
-    public static final double ARM_MIN = 0.05 ;
-    public static final double ARM_MAX = 0.90;
+    public static final double ARM_SPEED = 0.02;
+    public static final double ARM_MIN = 0.10 ;
+    public static final double ARM_MAX = 0.80;
     private static double armDrive = 0.3;
     private static double armDrive1 = 0.3;
     private static double armDrive2 = 0.3;
@@ -332,39 +332,22 @@ public class RobotHardware {
     }
 
     public void moveArm(boolean closeArm){
-        armDrive1 = armServo.getPosition();
-        armDrive2 = armServoTwo.getPosition();
-
-        if ( closeArm && armDrive1 > ARM_MIN) { //y joystick is up - goes down
-            armDrive1 -= ARM_SPEED;
-            myOpMode.telemetry.addData("Arm1", "back");
+        if ( closeArm && armDrive > ARM_MIN){
+            armDrive -= ARM_SPEED;
+            myOpMode.telemetry.addData("Arm", "back");
         }
-        if ( closeArm && armDrive2 > ARM_MIN) { //y joystick is up - goes down
-            armDrive2 -= ARM_SPEED;
-
-            myOpMode.telemetry.addData("Arm2", "back");
-        }
-        if ( !closeArm && armDrive1 < ARM_MAX) {
-            armDrive1 += ARM_SPEED;
-            myOpMode.telemetry.addData("Arm1", "forward");
-        }
-        if ( !closeArm && armDrive2 < ARM_MAX){
-            armDrive2 += ARM_SPEED;
-
-            myOpMode.telemetry.addData("Arm2", "forward");
+        if ( !closeArm && armDrive < ARM_MAX){
+            armDrive += ARM_SPEED;
+            myOpMode.telemetry.addData("Arm", "forward");
         }
 
-        armDrive1 = Range.clip(armDrive1, ARM_MIN, ARM_MAX);
-        armDrive2 = Range.clip(armDrive2, ARM_MIN, ARM_MAX);
-        myOpMode.telemetry.addData("Arm Servo position1: ", armDrive1);
-        myOpMode.telemetry.addData("Arm Servo position2: ", armDrive2);
-
-        armServo.setPosition(armDrive1);
-        armServoTwo.setPosition(armDrive2);
+        myOpMode.telemetry.addData("Arm Position: ", Range.clip(armDrive, ARM_MIN, ARM_MAX));
+        armServo.setPosition(Range.clip(armDrive, ARM_MIN, ARM_MAX));
+        armServoTwo.setPosition(Range.clip(armDrive, ARM_MIN_TWO, ARM_MAX_TWO));
         //moveArmToPosition(armDrive);
-        myOpMode.telemetry.update();
-        sleep(1000);
     }
+
+
 
 
     public void moveArmToPosition(double position){
