@@ -33,19 +33,19 @@ public class Hardware extends HardwareMapper {
     @HardwareName("backRight")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     public DcMotor backRight;
+    /*
+        @HardwareName("frontLeft")
+        @AutoClearEncoder
+        public DcMotor encoderLeft;
 
-    @HardwareName("frontLeft")
-    @AutoClearEncoder
-    public DcMotor encoderLeft;
+        @HardwareName("intake")
+        @AutoClearEncoder
+        public DcMotor encoderCenter;
 
-    @HardwareName("intake")
-    @AutoClearEncoder
-    public DcMotor encoderCenter;
-
-    @HardwareName("frontRight")
-    @AutoClearEncoder
-    public DcMotor encoderRight;
-
+        @HardwareName("frontRight")
+        @AutoClearEncoder
+        public DcMotor encoderRight;
+    */
     @HardwareName("gyro")
     public NavxMicroNavigationSensor gyro;
 
