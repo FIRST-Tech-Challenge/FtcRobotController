@@ -307,8 +307,8 @@ public class basicTelem extends LinearOpMode {
         //turn motors to rotate robot
         FLMotor.setPower(power);
         BLMotor.setPower(power);
-        BRMotor.setPower(power);
-        FRMotor.setPower(power);
+        BRMotor.setPower(-power);
+        FRMotor.setPower(-power);
     }
 
 
