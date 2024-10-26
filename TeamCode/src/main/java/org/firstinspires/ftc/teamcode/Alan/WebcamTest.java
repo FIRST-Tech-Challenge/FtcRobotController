@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Alan;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 @Autonomous
+@Disabled
 public class WebcamTest extends LinearOpMode {
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
