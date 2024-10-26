@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleOp", group="Linear OpMode")
+
+@TeleOp(name="Swerve_drive", group="Linear OpMode")
 // @Disabled
-public class Gamepad_test3 extends LinearOpMode {
+public class Swerve_drive extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -17,7 +18,7 @@ public class Gamepad_test3 extends LinearOpMode {
     public Servo leftservo;
     public Servo rightservo;
 
-    @Override
+//    @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -36,6 +37,7 @@ public class Gamepad_test3 extends LinearOpMode {
         leftservo.setDirection(Servo.Direction.FORWARD);
         rightservo.setDirection(Servo.Direction.FORWARD);
 
+
         // Wait for the game to start (driver presses START).
         waitForStart();
         runtime.reset();
@@ -50,10 +52,15 @@ public class Gamepad_test3 extends LinearOpMode {
             // Setup variables for motor power
             double leftPower;
             double rightPower;
+            double radius;
+            radius = 1;
 
             // Map the joystick inputs to motor power
             leftPower  = -gamepad1.left_stick_y;
             rightPower = -gamepad1.right_stick_y;
+            leftPower = Math.sqrt(Math.pow(gamepad1.left_stick_y, 2) + Math.pow(gamepad1.left_stick_x, 2));
+            rightPower = Math.sqrt(Math.pow(gamepad1.right_stick_y, 2) + Math.pow(gamepad1.right_stick_x, 2));
+
 
             // Apply deadzone for joystick X-axis
             double leftStickX = gamepad1.left_stick_x;
