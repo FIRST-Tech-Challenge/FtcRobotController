@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -27,7 +29,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class teleop extends OpMode {
 
     // Testing
-    boolean testingActive = true;
+    boolean testingActive = false;
+    double lastTestTime = 0;
 
     // Field centric stuff
     boolean usingFC = false;
@@ -50,8 +53,6 @@ public class teleop extends OpMode {
     double prevReadPressTime = 0;
 
 
-    double prevPos = 0;
-
     // Mechanism stuff
     double CLOSED_OT_POS = 0;
     double OPEN_OT_POS = 1;
@@ -66,6 +67,13 @@ public class teleop extends OpMode {
     ElapsedTime totalTime = new ElapsedTime();
 
     public IMU imu;
+
+    // Ease of controls stuff
+    RRLocalizationRead localizationRead;
+    Vector2d prevPos = new Vector2d(0,0);
+    double prevVel = 0;
+    double curVel = 0;
+    double prevTime = 0;
 
 
     // Servos and motors for outtake/intake.
@@ -112,7 +120,16 @@ public class teleop extends OpMode {
         frontRightMotor = hardwareMap.dcMotor.get("frontR");
         backRightMotor = hardwareMap.dcMotor.get("backR");
 
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // field ease stuff
+        localizationRead = new RRLocalizationRead();
+        localizationRead.initLocalization(hardwareMap);
 
     }
 
@@ -120,6 +137,14 @@ public class teleop extends OpMode {
     @Override
     public void loop() {
 
+        if (gamepad1.left_bumper && gamepad1.right_bumper && gamepad1.dpad_up && totalTime.milliseconds() > lastTestTime + 500)
+        {
+            if (testingActive)
+                testingActive = false;
+            else
+                testingActive = true;
+            lastTestTime = totalTime.milliseconds();
+        }
         if (testingActive)
             runTesting();
         else {
@@ -236,6 +261,16 @@ public class teleop extends OpMode {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    private Vector2d returnLinearVel()
+    {
+        double deltaTime = totalTime.seconds() - prevTime;
+        Pose2d thisPos = localizationRead.returnPose();
+        Vector2d curV = new Vector2d(Math.sqrt(Math.pow(thisPos.position.x - prevPos.x, 2) + Math.pow(thisPos.position.y - prevPos.y, 2)) / (deltaTime), Math.toDegrees(Math.atan((double)(thisPos.position.y - prevPos.y) / (thisPos.position.x - prevPos.x))));
+        // Have to fix for it to be relative, I think it already is though
+        return curV;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     void readFile()
     {
         if (gamepad1.y && totalTime.milliseconds() - 500 > prevReadPressTime) {
@@ -323,12 +358,13 @@ public class teleop extends OpMode {
 
             //double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
+            double multiplier = Math.max(1 - gamepad1.right_trigger, .25);
 
             double power = Math.min(Math.abs(y) + Math.abs(x), 1);
-            frontLeftMotor.setPower((power * cos + power * sin + rx));
-            backLeftMotor.setPower((power * cos - power * sin + rx));
-            frontRightMotor.setPower((power * cos - power * sin - rx));
-            backRightMotor.setPower((power * cos + power * sin - rx));
+            frontLeftMotor.setPower((power * cos + power * sin + rx) * multiplier);
+            backLeftMotor.setPower((power * cos - power * sin + rx) * multiplier);
+            frontRightMotor.setPower((power * cos - power * sin - rx) * multiplier);
+            backRightMotor.setPower((power * cos + power * sin - rx) * multiplier);
         }
         else {
             double y = -gamepad1.left_stick_y;
@@ -341,10 +377,12 @@ public class teleop extends OpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            frontLeftMotor.setPower(frontLeftPower);
-            backLeftMotor.setPower(-backLeftPower);
-            frontRightMotor.setPower(frontRightPower);
-            backRightMotor.setPower(backRightPower);
+            double multiplier = Math.max(1 - gamepad1.right_trigger, .25) ;
+
+            frontLeftMotor.setPower(frontLeftPower * multiplier);
+            backLeftMotor.setPower(backLeftPower * multiplier);
+            frontRightMotor.setPower(frontRightPower * multiplier);
+            backRightMotor.setPower(backRightPower * multiplier);
         }
     }
 
