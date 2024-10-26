@@ -30,6 +30,8 @@ public class NewRobotTest extends LinearOpMode {
             telemetry.addData("W", "");
             telemetry.update();
         }
+
+
         while (opModeIsActive()) {
             double forward = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
