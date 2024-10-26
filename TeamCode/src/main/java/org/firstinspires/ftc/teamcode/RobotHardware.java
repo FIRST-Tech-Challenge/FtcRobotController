@@ -4,6 +4,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -23,6 +25,7 @@ import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -91,15 +94,18 @@ public class RobotHardware {
     public static final double GRABBER_MAX = 0.40;
     private static double grabberDrive = 0.0;
 
-    public static final double ARM_SPEED = 0.02;
-    public static final double ARM_MIN = 0.00 ;
+    public static final double ARM_SPEED = 0.5;
+    public static final double ARM_MIN = 0.05 ;
     public static final double ARM_MAX = 0.90;
-    private static double armDrive = 0.0;
+    private static double armDrive = 0.3;
+    private static double armDrive1 = 0.3;
+    private static double armDrive2 = 0.3;
+
 
     //public static final double ARM_SPEED_TWO = 0.10;
-    public static final double ARM_MIN_TWO = 0.00 ;
+    public static final double ARM_MIN_TWO = 0.05 ;
     public static final double ARM_MAX_TWO = 0.90;
-    //private static double armDriveTwo = 0.0;
+    //2private static double armDriveTwo = 0.0;
 
     /**
      * Initialize all the robot's hardware.
@@ -224,10 +230,10 @@ public class RobotHardware {
     }
     public void setViperSlideDirectionForward(){
         viperSlideMotor.setDirection(DcMotor.Direction.FORWARD);
-        viperSlideMotorTwo.setDirection(DcMotor.Direction.FORWARD);}
+        viperSlideMotorTwo.setDirection(DcMotor.Direction.REVERSE);}
     public void setViperSlideDirectionReverse(){
         viperSlideMotor.setDirection(DcMotor.Direction.REVERSE);
-        viperSlideMotorTwo.setDirection(DcMotor.Direction.REVERSE);}
+        viperSlideMotorTwo.setDirection(DcMotor.Direction.FORWARD);}
     public void reverseMotors(){
         setMotorDirection(MotorDirection.BACKWARD);
     }
@@ -326,19 +332,38 @@ public class RobotHardware {
     }
 
     public void moveArm(boolean closeArm){
-        if ( closeArm && armDrive > ARM_MIN){
-            armDrive -= ARM_SPEED;
-            myOpMode.telemetry.addData("Arm", "back");
+        armDrive1 = armServo.getPosition();
+        armDrive2 = armServoTwo.getPosition();
+
+        if ( closeArm && armDrive1 > ARM_MIN) { //y joystick is up - goes down
+            armDrive1 -= ARM_SPEED;
+            myOpMode.telemetry.addData("Arm1", "back");
         }
-        if ( !closeArm && armDrive < ARM_MAX){
-            armDrive += ARM_SPEED;
-            myOpMode.telemetry.addData("Arm", "forward");
+        if ( closeArm && armDrive2 > ARM_MIN) { //y joystick is up - goes down
+            armDrive2 -= ARM_SPEED;
+
+            myOpMode.telemetry.addData("Arm2", "back");
+        }
+        if ( !closeArm && armDrive1 < ARM_MAX) {
+            armDrive1 += ARM_SPEED;
+            myOpMode.telemetry.addData("Arm1", "forward");
+        }
+        if ( !closeArm && armDrive2 < ARM_MAX){
+            armDrive2 += ARM_SPEED;
+
+            myOpMode.telemetry.addData("Arm2", "forward");
         }
 
-        myOpMode.telemetry.addData("Arm Position: ", Range.clip(armDrive, ARM_MIN, ARM_MAX));
-        armServo.setPosition(Range.clip(armDrive, ARM_MIN, ARM_MAX));
-        armServoTwo.setPosition(Range.clip(armDrive, ARM_MIN_TWO, ARM_MAX_TWO));
+        armDrive1 = Range.clip(armDrive1, ARM_MIN, ARM_MAX);
+        armDrive2 = Range.clip(armDrive2, ARM_MIN, ARM_MAX);
+        myOpMode.telemetry.addData("Arm Servo position1: ", armDrive1);
+        myOpMode.telemetry.addData("Arm Servo position2: ", armDrive2);
+
+        armServo.setPosition(armDrive1);
+        armServoTwo.setPosition(armDrive2);
         //moveArmToPosition(armDrive);
+        myOpMode.telemetry.update();
+        sleep(1000);
     }
 
 

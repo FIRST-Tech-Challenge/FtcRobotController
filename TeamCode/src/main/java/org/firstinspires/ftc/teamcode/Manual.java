@@ -135,8 +135,8 @@ public class Manual  extends LinearOpMode{
 
     private void manageArm(){
 
-        telemetry.addData("Arm Key", gamepad1.right_stick_y);
-        telemetry.addData("Arm Position", robot.getArmServoPosition());
+        //telemetry.addData("Arm Key", gamepad1.right_stick_y);
+        //telemetry.addData("Arm Position", robot.getArmServoPosition());
         if (gamepad1.right_stick_y > 0) {
 
             robot.moveArm(true);
@@ -147,6 +147,18 @@ public class Manual  extends LinearOpMode{
 
             telemetry.addData("false", gamepad1.right_stick_y);
         }
+        /*
+        if (gamepad1.x) {
+
+            robot.moveArm(true);
+            telemetry.addData("true", gamepad1.x);
+        }
+        if (gamepad1.y) {
+            robot.moveArm(false);
+
+            telemetry.addData("false", gamepad1.y);
+        }
+         */
     }
 
 

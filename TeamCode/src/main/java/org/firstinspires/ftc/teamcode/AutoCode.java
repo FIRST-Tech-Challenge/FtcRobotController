@@ -42,8 +42,15 @@ import org.firstinspires.ftc.vision.VisionPortal;
 public class AutoCode extends LinearOpMode {
 
     /* Declare OpMode members. */
+
+
     private RobotHardware robot = new RobotHardware(this);
     private ElapsedTime     runtime = new ElapsedTime();
+
+    private DcMotor rfMotor;
+    private DcMotor rbMotor;
+    private DcMotor lfMotor;
+    private DcMotor lbMotor;
 
     /************Encoder parameters*****************/
     // Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -63,7 +70,12 @@ public class AutoCode extends LinearOpMode {
     static final double     DRIVE_INCREASED_SPEED             = 0.8;
     static final double     TURN_SPEED              = 0.2;
 
-    @Override
+    public void hardwareMap(){
+        rfMotor = this.hardwareMap.get(DcMotor.class, "motorRF");
+        rbMotor = this.hardwareMap.get(DcMotor.class, "motorRB");
+        lfMotor = this.hardwareMap.get(DcMotor.class, "motorLF");
+        lbMotor = this.hardwareMap.get(DcMotor.class, "motorLB");
+    }
     public void runOpMode() {
         robot.init();
 
@@ -98,7 +110,7 @@ public class AutoCode extends LinearOpMode {
         // Move 5 inches forward
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 5,  5, 5);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 10,  10, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //Move viper slide to position to place specimen
      /*   robot.setViperSlideMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -113,6 +125,43 @@ public class AutoCode extends LinearOpMode {
 
 
     }
+
+    // Method to strafe right
+    public void strafeToPosition(String direction, int distance) {
+        // Calculate target positions
+        int targetPositionFL = lfMotor.getCurrentPosition() - distance;
+        int targetPositionFR = rfMotor.getCurrentPosition() + distance;
+        int targetPositionBL = lbMotor.getCurrentPosition() - distance;
+        int targetPositionBR = rbMotor.getCurrentPosition() + distance;
+
+        // Set target positions
+        lfMotor.setTargetPosition(targetPositionFL);
+        rfMotor.setTargetPosition(targetPositionFR);
+        lbMotor.setTargetPosition(targetPositionBL);
+        rbMotor.setTargetPosition(targetPositionBR);
+
+        // Set motor powers
+        lfMotor.setPower(-1.0); // Full power in reverse
+        rfMotor.setPower(1.0);  // Full power
+        lbMotor.setPower(-1.0);   // Full power in reverse
+        rbMotor.setPower(1.0);    // Full power
+
+        // Wait until all motors reach their target positions
+        while (opModeIsActive() &&
+                (lfMotor.isBusy() || rfMotor.isBusy() ||
+                        lbMotor.isBusy() || rbMotor.isBusy())) {
+            // Optional: Add telemetry here to monitor progress
+        }
+
+        // Stop all motors
+        lfMotor.setPower(0);
+        rfMotor.setPower(0);
+        lbMotor.setPower(0);
+        rbMotor.setPower(0);
+
+    }
+
+
 
     /*
      *  Method to perform a relative move, based on encoder counts.
