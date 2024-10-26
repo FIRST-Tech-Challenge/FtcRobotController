@@ -43,7 +43,7 @@ public class Bot {
     public static final int RIGHT_LIFT_MIN = -10;
 
     public static final int MAX_PIVOT = 2560;
-    public static final int MIN_PIVOT = -400;
+    public static final int MIN_PIVOT = -180;
 
 
     //Drive Encoder Stats
@@ -467,7 +467,7 @@ public class Bot {
      */
     public void liftLow(){
         this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
-        this.setArmPos(1280);
+        this.setArmPos(1500);
         this.autoPush();
         this.encoderLift(RIGHT_LIFT_MAX/2,LEFT_LIFT_MAX/2);
         this.setArmPos(MAX_PIVOT-BUFFER);
