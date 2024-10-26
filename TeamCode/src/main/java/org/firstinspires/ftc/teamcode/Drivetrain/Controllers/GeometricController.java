@@ -57,12 +57,12 @@ public class GeometricController {
         double[][] wayPoints = path.getWaypoints();
 
         // rename to xyPoints to be consistent with thetaPoints!
-        LinkedHashSet<double[]> potentialPoints = new LinkedHashSet<>();
-        LinkedHashSet<double[]> thetaPoints = new LinkedHashSet<>();
+        LinkedHashSet<double[]> furthestIntersectionPointXY = new LinkedHashSet<>();
+        LinkedHashSet<double[]> furthestIntersectionPointTheta = new LinkedHashSet<>();
         for (int i=lastLookaheadXY; i<wayPoints.length-1; i++){
             double[] intersection = calcCircleLineIntersection(x,y,i,lookAheadXY, wayPoints);
             if (!Arrays.equals(intersection, new double[]{-99999, -99999})) {
-                potentialPoints.add(intersection);
+                furthestIntersectionPointXY.add(intersection);
             }
         }
         // You may want to have a 'lastLookaheadXY' AND a 'lastLookaheadTheta' as they may not be the same
@@ -70,7 +70,7 @@ public class GeometricController {
         for (int i=lastLookaheadTheta; i<wayPoints.length-1; i++){
             double[] intersection = calcCircleLineIntersection(x,y,i,lookAheadTheta, wayPoints);
             if (!Arrays.equals(intersection, new double[]{-99999, -99999})) {
-                thetaPoints.add(intersection);
+                furthestIntersectionPointTheta.add(intersection);
             }
         }
 
@@ -79,20 +79,20 @@ public class GeometricController {
         // turn-to points. Please handle this edgecase!
 
 
-        ArrayList<double[]> furthestIntersectionPointTheta = new ArrayList<>(thetaPoints);
-        ArrayList<double[]> furthestIntersectionPointXY = new ArrayList<>(potentialPoints);
+        ArrayList<double[]> thetaArray = new ArrayList<>(furthestIntersectionPointTheta);
+        ArrayList<double[]> posArray = new ArrayList<>(furthestIntersectionPointXY);
         
         // Rename this to furthestIntersectionPointTheta or something more descriptive.
         // Also do the same for furthestIntersectionPointXY!!!
-        double[] furthestPoint = furthestIntersectionPointTheta.get(furthestIntersectionPointTheta.size()-1);
-    
+        double[] furthestPointTheta = thetaArray.get(thetaArray.size()-1);
+
         double desiredTheta;
 
         if (path.useStaticHeading) {
             desiredTheta = path.finalHeading;
         } else {
             // You get furthestIntersectionPointTheta above for a reason. Use it to make this more readable!
-            desiredTheta = Math.atan2((furthestIntersectionPointTheta.get(furthestIntersectionPointTheta.size()-1)[1]-y), (furthestIntersectionPointTheta.get(furthestIntersectionPointTheta.size()-1)[0]-x));
+            desiredTheta = Math.atan2((thetaArray.get(thetaArray.size()-1)[1]-y), (thetaArray.get(thetaArray.size()-1)[0]-x));
             if (path.reverse) {
                 if (Math.signum(desiredTheta)==-1){
                     desiredTheta += Math.PI;
@@ -108,8 +108,8 @@ public class GeometricController {
         // and use that!
         SimpleMatrix pose = new SimpleMatrix(
             new double[]{
-                    furthestIntersectionPointXY.get(furthestIntersectionPointTheta.size()-1)[0],
-                    furthestIntersectionPointXY.get(furthestIntersectionPointTheta.size()-1)[1],
+                    posArray.get(posArray.size()-1)[0],
+                    posArray.get(posArray.size()-1)[1],
                     desiredTheta
             }
         );

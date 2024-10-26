@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.Drivetrain.Geometry;
 
 import org.firstinspires.ftc.teamcode.Utils.MotionProfile;
 
+import java.util.Arrays;
+
 public class Path {
     public double[][] waypoints;
     public boolean useStaticHeading;
     public double finalHeading;
     public MotionProfile motionProfile;
     public boolean reverse;
+    private double[] finalPoint;
     // Maybe a private double[] finalPoint?
 
     // I'm not sure why you change the parameter argument names. Just keep it the same.
@@ -27,7 +30,7 @@ public class Path {
         this.finalHeading = finalHeading;
         this.reverse = reverse;
         this.useStaticHeading = useStaticHeading;
-
+        finalPoint = (double[]) Arrays.stream(waypoints).toArray()[waypoints.length];
         // Also, maybe to make it easy to reach, grab the final waypoint and actually set it here.
         // just grab the last element of waypoints and set it here!
     }
@@ -37,5 +40,4 @@ public class Path {
     public double[][] getWaypoints(){
         return waypoints;
     }
-
 }
