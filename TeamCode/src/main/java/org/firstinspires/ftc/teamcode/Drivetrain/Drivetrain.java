@@ -28,7 +28,7 @@ public class Drivetrain {
      * Hardware map
      */
     HardwareMap hardwareMap = null;
-
+    public int opSwitch = 1;
     public SimpleMatrix state = new SimpleMatrix(6, 1);
     public TwoWheelOdometery twoWheelOdo;
 
@@ -113,6 +113,12 @@ public class Drivetrain {
     public void localize() {
         state = twoWheelOdo.calculate();
     }
+    public void resetOp(){
+        opSwitch = 0;
+    }
+    public void setOp(){
+        opSwitch = 1;
+    }
     public void setPower(SimpleMatrix powers) {
         double u0 = powers.get(0, 0);
         double u1 = powers.get(1, 0);
@@ -175,6 +181,7 @@ public class Drivetrain {
             }
         };
     }
+
     public Action followPath(Path path) {
         return new Action() {
             // Maybe you'd be able to put an elapsedTimer here?? ****
@@ -211,6 +218,7 @@ public class Drivetrain {
                 if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold)){
                     if (Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold) {
                         setPower(stopMatrix);
+                        setOp();
                     }
                 }
                 return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold;

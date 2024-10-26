@@ -48,9 +48,9 @@ public class TestAuton extends LinearOpMode {
         telemetry.addData("desiredY", 0);
         telemetry.addData("desiredTheta", 0);
         telemetry.update();
+        drivetrain.resetOp();
         waitForStart();
         looptime.reset();
-
         while (opModeIsActive()) {
             SimpleMatrix desiredPose = new SimpleMatrix(
                     new double [][]{
@@ -67,11 +67,11 @@ public class TestAuton extends LinearOpMode {
                     }
             );
             drivetrain.localize();
-            Actions.runBlocking(new SequentialAction(
-                    drivetrain.goToPose(desiredPose),
-                    drivetrain.goToPose(desiredPoseTwo)
-            ));
-
+            if (drivetrain.opSwitch == 0){
+                Actions.runBlocking(drivetrain.goToPose(desiredPose));
+            } else {
+                Actions.runBlocking(drivetrain.goToPose(desiredPoseTwo));
+            }
             telemetry.addData("x", drivetrain.state.get(0,0));
             telemetry.addData("y", drivetrain.state.get(1,0));
             telemetry.addData("theta", drivetrain.state.get(2,0));
@@ -82,6 +82,7 @@ public class TestAuton extends LinearOpMode {
             telemetry.addData("uLb", drivetrain.motorController.uLb);
             telemetry.addData("uRb", drivetrain.motorController.uRb);
             telemetry.addData("uRf", drivetrain.motorController.uRf);
+            telemetry.addData("state", drivetrain.opSwitch);
             //dashboard.sendTelemetryPacket(tracking.updatePos(drivetrain.state.get(0,0), drivetrain.state.get(1,0), drivetrain.state.get(2,0)));
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay();
