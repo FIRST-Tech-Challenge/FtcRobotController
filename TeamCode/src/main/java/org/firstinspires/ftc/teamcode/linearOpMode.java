@@ -111,18 +111,22 @@ public class linearOpMode extends LinearOpMode {
       }
 
       //if A on the controller is pressed it will check if the claw is closed
+      // HOTFIX: A is open, B is close
       if (gamepad2.a) {
+        clawIntakePostion = 0; // open
 
         //if it's closed
-        if (clawIntakePostion == 1) {
-          //Set claw position to open
-          clawIntakePostion = 0;
-        }
-        //if it's open
-        else {
-          //Set claw position to closed
-          clawIntakePostion = 1;
-        }
+        // if (clawIntakePostion == 1) {
+        //   //Set claw position to open
+        //   clawIntakePostion = 0;
+        // }
+        // //if it's open
+        // else {
+        //   //Set claw position to closed
+        //   clawIntakePostion = 1;
+        // }
+      } else if(gamepad2.b){
+        clawIntakePostion = 1; // close
       }
 
       slideAbdPower = c;
