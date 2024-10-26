@@ -176,23 +176,37 @@ public class Drivetrain {
     }
     public Action followPath(Path path) {
         return new Action() {
-            //private boolean initialized = false;
-
+            // Maybe you'd be able to put an elapsedTimer here?? ****
+            ElapsedTime elapsedTimer = new ElapsedTime();
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 //if (!initialized) {
                 //    initialized = true;
                 //}
                 localize();
-                SimpleMatrix furthestPoint = geometricController.calculate(state.get(0,0), state.get(1,0), path);
+
+
+                // Check if the distance between the current robot position (so maybe grab the pose from the state FIRST!)
+                // and the path's final waypoint is less than the geometricController's xy lookahead. If that is the case,
+                // you'd want to do what?
                 SimpleMatrix pose = state.extractMatrix(0,3,0,1);
-                SimpleMatrix wheelSpeeds = poseControl.calculate(pose, furthestPoint);
-                double maxScale = distanceThreshold/wheelSpeeds.elementMax();
+                // Rename to desiredPose! It contains a heading too so furthestPoint is misleading!
+                SimpleMatrix desiredPose = geometricController.calculate(state, path);
+                SimpleMatrix wheelSpeeds = poseControl.calculate(pose, desiredPose);
+
+                // not sure why you're using distanceThreshold here.
+                // it would be something like path.getMotionProfile.getVelocity(t), where t is an elapsed timer.
+                // ****This timer should started when you start following this path. Maybe you can put it above?
+                // It shouldn't have to be reset as it should be specific to the action where you're following the path.
+                double maxScale = path.getMotionProfile().getVelocity(elapsedTimer.seconds())/wheelSpeeds.elementMaxAbs(); // You also need to grab the maximum of the ABSOLUTE VALUE of all the wheel speeeds..
                 wheelSpeeds.scale(maxScale);
                 SimpleMatrix wheelAccelerations = new SimpleMatrix(4, 1);
-                deltaT.reset();
+                deltaT.reset(); // don't need this right?
                 setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
                 prevWheelSpeeds = wheelSpeeds;
+
+                // Please please please, write a function in drivetrain called isClose or something, which does this checking for you!!!
+                // replace it with that in both the goToPose and the followPath
                 if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold)){
                     setPower(stopMatrix);
                 }
@@ -200,4 +214,5 @@ public class Drivetrain {
             }
         };
     }
+
 }

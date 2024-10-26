@@ -14,7 +14,8 @@ public class GeometricController {
     public static double lookAheadXY = 10;
     public static double lookAheadTheta = 20;
     public boolean useStaticHeading = false;
-    int lastLookahead = 0;
+    int lastLookaheadXY = 0;
+    int lastLookaheadTheta = 0;
     public GeometricController(){
     }
 
@@ -49,14 +50,16 @@ public class GeometricController {
 
     // To be more consistent with PoseController, pass in SimpleMatrix Pose here,
     // then first two lines grab the x and y position from the pose.
-    public SimpleMatrix calculate(double x, double y, Path path){
+    public SimpleMatrix calculate(SimpleMatrix posPose, Path path){
+        double x = posPose.get(0,0);
+        double y = posPose.get(1,0);
         // Assuming you read my Path class feedback, might want to change to path.getWaypoints() :-)
-        double[][] wayPoints = path.waypoints;
+        double[][] wayPoints = path.getWaypoints();
 
         // rename to xyPoints to be consistent with thetaPoints!
         LinkedHashSet<double[]> potentialPoints = new LinkedHashSet<>();
         LinkedHashSet<double[]> thetaPoints = new LinkedHashSet<>();
-        for (int i=lastLookahead; i<wayPoints.length-1; i++){
+        for (int i=lastLookaheadXY; i<wayPoints.length-1; i++){
             double[] intersection = calcCircleLineIntersection(x,y,i,lookAheadXY, wayPoints);
             if (!Arrays.equals(intersection, new double[]{-99999, -99999})) {
                 potentialPoints.add(intersection);
@@ -64,7 +67,7 @@ public class GeometricController {
         }
         // You may want to have a 'lastLookaheadXY' AND a 'lastLookaheadTheta' as they may not be the same
         // Make sure to reset them both in the reset function
-        for (int i=lastLookahead; i<wayPoints.length-1; i++){
+        for (int i=lastLookaheadTheta; i<wayPoints.length-1; i++){
             double[] intersection = calcCircleLineIntersection(x,y,i,lookAheadTheta, wayPoints);
             if (!Arrays.equals(intersection, new double[]{-99999, -99999})) {
                 thetaPoints.add(intersection);
@@ -76,12 +79,12 @@ public class GeometricController {
         // turn-to points. Please handle this edgecase!
 
 
-        ArrayList<double[]> thetaArray = new ArrayList<>(thetaPoints);
-        ArrayList<double[]> posArray = new ArrayList<>(potentialPoints);
+        ArrayList<double[]> furthestIntersectionPointTheta = new ArrayList<>(thetaPoints);
+        ArrayList<double[]> furthestIntersectionPointXY = new ArrayList<>(potentialPoints);
         
         // Rename this to furthestIntersectionPointTheta or something more descriptive.
         // Also do the same for furthestIntersectionPointXY!!!
-        double[] furthestPoint = thetaArray.get(thetaArray.size()-1);
+        double[] furthestPoint = furthestIntersectionPointTheta.get(furthestIntersectionPointTheta.size()-1);
     
         double desiredTheta;
 
@@ -89,7 +92,7 @@ public class GeometricController {
             desiredTheta = path.finalHeading;
         } else {
             // You get furthestIntersectionPointTheta above for a reason. Use it to make this more readable!
-            desiredTheta = Math.atan2((thetaArray.get(thetaArray.size()-1)[1]-y), (thetaArray.get(thetaArray.size()-1)[0]-x));
+            desiredTheta = Math.atan2((furthestIntersectionPointTheta.get(furthestIntersectionPointTheta.size()-1)[1]-y), (furthestIntersectionPointTheta.get(furthestIntersectionPointTheta.size()-1)[0]-x));
             if (path.reverse) {
                 if (Math.signum(desiredTheta)==-1){
                     desiredTheta += Math.PI;
@@ -105,14 +108,15 @@ public class GeometricController {
         // and use that!
         SimpleMatrix pose = new SimpleMatrix(
             new double[]{
-                    posArray.get(thetaArray.size()-1)[0],
-                    posArray.get(thetaArray.size()-1)[1],
+                    furthestIntersectionPointXY.get(furthestIntersectionPointTheta.size()-1)[0],
+                    furthestIntersectionPointXY.get(furthestIntersectionPointTheta.size()-1)[1],
                     desiredTheta
             }
         );
         return pose;
     }
     public void resetLookAhead(){
-        lastLookahead = 0;
+        lastLookaheadXY = 0;
+        lastLookaheadTheta = 0;
     }
 }

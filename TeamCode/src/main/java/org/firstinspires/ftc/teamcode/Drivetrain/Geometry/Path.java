@@ -31,7 +31,11 @@ public class Path {
         // Also, maybe to make it easy to reach, grab the final waypoint and actually set it here.
         // just grab the last element of waypoints and set it here!
     }
-
-
+    public MotionProfile getMotionProfile(){
+        return motionProfile;
+    }
+    public double[][] getWaypoints(){
+        return waypoints;
+    }
 
 }
