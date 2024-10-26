@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Park_Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
@@ -76,7 +77,8 @@ public class Teleop extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private static Intake Intake= null;
+    private static Gripper Gripper_Right = null;
+    private static Gripper Gripper_Left = null;
     private static Arm arm1 = null;
     private static Wrist wrist = null;
     private static Park_Arm Park_Arm = null;
@@ -104,10 +106,11 @@ public class Teleop extends LinearOpMode {
     public void runOpMode() {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Intake = new Intake(hardwareMap);
-        arm1 = new Arm(hardwareMap);
+       Gripper_Left = new Gripper(hardwareMap);
+       Gripper_Right = new Gripper(hardwareMap);
+        /*arm1 = new Arm(hardwareMap);
         wrist = new Wrist(hardwareMap);
-        Park_Arm = new Park_Arm(hardwareMap);
+        Park_Arm = new Park_Arm(hardwareMap);*/
 
         PIDController armPID = new PIDController(armkP, armkI, armkD);
         armPID.setTolerance(50, 10);
@@ -135,30 +138,30 @@ public class Teleop extends LinearOpMode {
             );
 
             drive.update();
-            Park_Arm.setPosition(1);
+            //Park_Arm.setPosition(1);
             double arm_move = gamepad2.left_stick_y;
 
 
 
-            if (gamepad2.left_bumper){
+          /*  if (gamepad2.left_bumper){
                 if (wristOrientation == 0){
                     wristOrientation = 1;
                 } else{
                     wristOrientation = 0;
                 }
+            }*/
+
+           // wrist.setPosition((wristOrientation==0)? 0.3 : 0.66);
+
+            if (gamepad2.right_bumper){
+                Gripper_Right.setPosition2(0.5);
+                Gripper_Left.setPosition1(0.5);
+            }else {
+                Gripper_Right.setPosition2(0.75);
+                Gripper_Left.setPosition1(0.3);
             }
 
-            wrist.setPosition((wristOrientation==0)? 0.3 : 0.66);
-
-            if (gamepad2.b){
-                Intake.setPower(0.9);
-            } else if(gamepad2.x){
-                Intake.setPower(-0.9);
-            } else {
-                Intake.setPower(0);
-            }
-
-            if (gamepad2.y){
+         /*   if (gamepad2.y){
                 armPID.setSetPoint(armHighChamberPosition);
                 wristOrientation = 0;
             }
@@ -166,13 +169,6 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.a){
                 armPID.setSetPoint(armLowChamberPosition);
                 wristOrientation = 0;
-            }
-
-            if (gamepad2.right_bumper){
-                wristOrientation = 1;
-                sleep(500);
-                armPID.setSetPoint(armPickUpPositon);
-
             }
 
             if (gamepad1.y){
@@ -200,7 +196,7 @@ public class Teleop extends LinearOpMode {
                 armPID.setSetPoint(newArmPosition);
             }
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-
+*/
             if (gamepad1.right_bumper)
             {
                 DriveScale = driveSlowScale;
@@ -209,19 +205,19 @@ public class Teleop extends LinearOpMode {
                 DriveScale = 1;
             }
 
-            armCurrentPosition = arm1.getCurrentPosition();
-            armPower = armPID.calculate(armCurrentPosition);
+            //armCurrentPosition = arm1.getCurrentPosition();
+            //armPower = armPID.calculate(armCurrentPosition);
             //arm1.setPower1(gamepad2.left_stick_y);
 
-            arm1.setPower1(armPower);
+            //arm1.setPower1(armPower);
             // Show the elapsed game time and wheel power.
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("ArmPos1", arm1.getCurrentPosition());
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("WristOrientation", wristOrientation);
+            //telemetry.addData("ArmPos1", arm1.getCurrentPosition());
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry.addData("WristOrientation", wristOrientation);
 
             telemetry.update();
         }
