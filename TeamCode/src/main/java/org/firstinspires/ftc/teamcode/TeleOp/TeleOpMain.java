@@ -21,7 +21,6 @@ public class TeleOpMain extends LinearOpMode {
 
         Drivetrain drive = new Drivetrain(this);
         Arm arm = new Arm(this);
-        Slides slides = new Slides(this);
         Claw claw = new Claw(this);
         Wrist wrist = new Wrist(this);
 
@@ -29,7 +28,6 @@ public class TeleOpMain extends LinearOpMode {
         
         drive.teleOp();
         arm.teleOp();
-        slides.teleOp(DriverOne);
         claw.teleOp();
         wrist.teleOp();
     }

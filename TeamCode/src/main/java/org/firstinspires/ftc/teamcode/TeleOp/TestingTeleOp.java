@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
@@ -18,13 +19,10 @@ public class TestingTeleOp extends LinearOpMode {
         Gamepad DriverOne = gamepad1;
 
         waitForStart();
-        Claw claw = new Claw(this);
-        Wrist wrist = new Wrist(this);
+        Arm arm = new Arm(this);
 
         while (opModeIsActive()) {
-            claw.teleOp();
-            wrist.teleOp();
-
+            arm.teleOp();
         }
     }
 }
