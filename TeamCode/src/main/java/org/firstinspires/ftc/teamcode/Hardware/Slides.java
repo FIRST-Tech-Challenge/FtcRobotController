@@ -13,8 +13,7 @@ import org.firstinspires.ftc.teamcode.Usefuls.Motor.PID;
 public class Slides {
     private static final double TICKS_TO_INCHES = 0.0287253141831239; //
     public static double targetLinSlidePosition = 0;
-    public static double sKp = .1, sKi = 0, sKd = 0;
-    private double error;
+    public static double sKp = .15, sKi = 0, sKd = 0;
     private final DcMotorEx s;
     private final PID linSlideController;
     private final DcMotorEx slidesEncoder;
@@ -26,7 +25,7 @@ public class Slides {
         this.linSlideController = new PID(new PID.Coefficients(sKp, sKi, sKd),
                 () -> (this.getCurrentSlidesPosition()) - targetLinSlidePosition,
                 factor -> {
-                    this.s.setPower(M.clamp(factor, .4, -1)); //b is extension
+                    this.s.setPower(M.clamp(factor, .7, -1)); //b is extension
                 });
     }
 
@@ -39,7 +38,7 @@ public class Slides {
     }
 
     public double getError() {
-        return error;
+        return getCurrentSlidesPosition()-targetLinSlidePosition;
     }
 
     public double getCurrentSlidesPosition() {
@@ -55,14 +54,19 @@ public class Slides {
         targetLinSlidePosition = position;
     }
 
+    public void floorIntake(){
+        setTargetSlidesPosition(-2);
+    }
+    public void preScore(){
+        setTargetSlidesPosition(2);
+    }
+    public void score(){
+        setTargetSlidesPosition(32);
+    }
+
     public void update() {
         linSlideController.update();
     }
 
-    public enum SlidesState {
-        RETRACTED,
-        INTAKE,
-        DEPOSIT
-    }
 
 }

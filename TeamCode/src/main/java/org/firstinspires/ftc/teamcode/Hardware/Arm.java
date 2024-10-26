@@ -33,11 +33,11 @@ public class Arm {
 
     }
 
-    public Arm(HardwareMap hardwareMap, DcMotorEx armEncoder, String armName) {
-        a = hardwareMap.get(DcMotorEx.class, armName);
-        this.armEncoder = armEncoder;
-
-    }
+//    public Arm(HardwareMap hardwareMap, DcMotorEx armEncoder, String armName) {
+//        a = hardwareMap.get(DcMotorEx.class, armName);
+//        this.armEncoder = armEncoder;
+//
+//    }
 
     public void resetEncoder() {
         armEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -45,11 +45,11 @@ public class Arm {
     }
 
     public double getError() {
-        return error;
+        return getCurrentArmPosition() - targetArmPosition;
     }
 
     public double getCurrentArmPosition() {
-        return (this.armEncoder.getCurrentPosition() * TICKS_TO_DEGREES)+100;
+        return (this.armEncoder.getCurrentPosition() * TICKS_TO_DEGREES)+90;
     }
 
 
@@ -58,8 +58,17 @@ public class Arm {
      *
      * @param position the position in degrees
      */
-    public void setTargetSlidesPosition(double position) {
+    public void setTargetArmPosition(double position) {
         targetArmPosition = position;
+    }
+    public void deposit(){
+        setTargetArmPosition(95);
+    }
+    public void preTake(){
+        setTargetArmPosition(15);
+    }
+    public void intake(){
+        setTargetArmPosition(0);
     }
 
     public void update() {

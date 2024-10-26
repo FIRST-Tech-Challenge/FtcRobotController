@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Wrist;
 
 @TeleOp
 @Config
-// closed: 0.2,opened: 0.8,
+// intake: 0.3,score: 0.95,
 public class WristTest extends LinearOpMode {
     public static double angle=0.15;
     public void runOpMode(){

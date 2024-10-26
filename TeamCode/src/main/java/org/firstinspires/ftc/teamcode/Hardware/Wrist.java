@@ -10,11 +10,24 @@ public class Wrist {
         this.wristName="wrist";
         this.wrist=hardwareMap.get(Servo.class,wristName);
     }
-    public Wrist(HardwareMap hardwareMap, String wristName){
-        this.wristName=wristName;
-        this.wrist=hardwareMap.get(Servo.class,wristName);
-    }
+//    public Wrist(HardwareMap hardwareMap, String wristName){
+//        this.wristName=wristName;
+//        this.wrist=hardwareMap.get(Servo.class,wristName);
+//    }
+
+    public double lastPosition = 0;
     public void setPosition(double position){
-        wrist.setPosition(position);
+        if(position!=lastPosition){
+            wrist.setPosition(position);
+        }
+        lastPosition = position;
     }
+
+    public void intake(){
+        setPosition(.3);
+    }
+    public void deposit(){
+        setPosition(.95);
+    }
+
 }
