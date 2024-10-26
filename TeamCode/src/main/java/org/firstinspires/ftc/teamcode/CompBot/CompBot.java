@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.CompBot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 
 @TeleOp(name = "CompBot Swerve", group = "CompBot")
 public class CompBot extends LinearOpMode {
@@ -14,6 +11,37 @@ public class CompBot extends LinearOpMode {
     MekanismConfig mek = new MekanismConfig(this);
     Utils utils = new Utils(this);
     GraphicTelemetry graph = new GraphicTelemetry(this);
+
+
+
+    Thread mekThread = new Thread() {
+        public void run() {
+
+            waitForStart();
+            while (opModeIsActive()) {
+
+                boolean clipCanceled = false;
+
+                if (gamepad2.x) {
+                    mek.armLength(0);
+                    while (mek.slide.isBusy() && gamepad2.y) idle();
+
+                    mek.armAngle(20);
+                    while (mek.pivot.isBusy() && gamepad2.y) idle();
+                }
+                mek.pauseSlide();
+                mek.pausePivot();
+                if (gamepad2.y) clipCanceled = true;
+
+                if (!clipCanceled) {
+                    mek.armLength(10);
+                }
+
+
+            }
+        }
+
+    };
 
 
     /**
@@ -38,6 +66,8 @@ public class CompBot extends LinearOpMode {
         swerve.initSwerve(); // Inits all the stuff related to swerve drive
         mek.initMekanism(); // Inits the mechanism stuff
 
+        mekThread.start();
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -55,33 +85,6 @@ public class CompBot extends LinearOpMode {
                 swerve.FRMotor.setPower(0);
             }
 
-
-            // Gamepad 2
-            double armLength = -gamepad2.right_stick_y;
-            double armAngle = -gamepad2.left_stick_y;
-
-
-            // Moves arm
-            mek.basicMoveArm(armLength, armAngle);
-
         }
     }
-
-
-    // To test arm lift and extend
-    // TODO: Get rid of this
-    public void addTelem(int x, int y, double a, double b) {
-        telemetry.addData("Arm angle: ", x);
-        telemetry.addData("Arm length: ", y);
-        telemetry.addData("Left stick y: ", a);
-        telemetry.addData("Right stick y: ", b);
-        telemetry.addData("Pivot target pos: ", mek.pivot.getTargetPosition());
-        telemetry.addData("Arm target pos: ", mek.slide.getTargetPosition());
-        telemetry.addData("Pivot power: ", mek.pivot.getPower());
-        telemetry.addData("Arm power: ", mek.slide.getPower());
-        telemetry.addData("Pivot position: ", mek.pivot.getCurrentPosition());
-        telemetry.addData("Arm position: ", mek.slide.getCurrentPosition());
-        telemetry.update();
-    }
-
 }
