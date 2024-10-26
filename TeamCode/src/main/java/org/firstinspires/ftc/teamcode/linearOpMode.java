@@ -55,6 +55,7 @@ public class linearOpMode extends LinearOpMode {
     //linear slide
     slideExtension.setDirection(DcMotor.Direction.FORWARD);
     slideAbduction.setDirection(DcMotor.Direction.FORWARD);
+    slideAbduction2.setDirection(DcMotor.Direction.FORWARD);
 
     waitForStart();
 
