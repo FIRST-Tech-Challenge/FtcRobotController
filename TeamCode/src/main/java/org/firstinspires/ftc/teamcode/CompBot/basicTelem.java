@@ -34,14 +34,14 @@ public class basicTelem extends LinearOpMode {
 
 
     // In case builders are bad, is offset center for servo
-    double FLServoOffSet = .00;     //0.00
+    double FLServoOffSet = -.005;    //0.00
     double FRServoOffSet = .00;     //0.00
-    double BLServoOffSet = .00;     //0.01
-    double BRServoOffSet = .00;     //.007
+    double BLServoOffSet = .01;     //0.01
+    double BRServoOffSet = .045;     //.007
 
 
-    static double TRACKWIDTH = 14; //in inches
-    static double WHEELBASE = 15; //in inches
+    static double TRACKWIDTH = 14;      //in inches
+    static double WHEELBASE = 15;       //in inches
 
 
     public void runOpMode() throws InterruptedException {
@@ -71,11 +71,11 @@ public class basicTelem extends LinearOpMode {
         while (opModeIsActive()) {
 
             //game pad 1
-            double speedGMP1 = -gamepad1.left_trigger + gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
-            double angleGMP1 = gamepad1.right_stick_x;
+            double forBack = -gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
+            double rotate = gamepad1.right_stick_x;
 
-            if (speedGMP1 != 0) move(gamepad1.left_stick_x, speedGMP1);
-            else if (angleGMP1 != 0) rotate(angleGMP1);
+            if (forBack != 0) forwardBackward(forBack);
+            else if (rotate != 0) rotate(rotate);
             else {
                 FLMotor.setPower(0);
                 BLMotor.setPower(0);
@@ -93,11 +93,14 @@ public class basicTelem extends LinearOpMode {
             liftArm(armAngle);
 
             //claw intake/outtake
-            if (gamepad2.a) {
+            if (gamepad2.right_trigger != 0) {
                 intakeL.setPosition(1);
-            } else {
+            }
+            else if (gamepad2.left_trigger != 0) {
                 intakeL.setPosition(0);
             }
+            else
+                intakeL.setPosition(0.5);
 
             //wrist rotation
             if (gamepad2.b) {
@@ -161,9 +164,9 @@ public class basicTelem extends LinearOpMode {
         FRMotor.setZeroPowerBehavior(BRAKE);
         BRMotor.setZeroPowerBehavior(BRAKE);
 
-        FLMotor.setDirection(REVERSE);
-        BLMotor.setDirection(REVERSE);
-        FRMotor.setDirection(REVERSE);
+        FLMotor.setDirection(FORWARD);
+        BLMotor.setDirection(FORWARD);
+        FRMotor.setDirection(FORWARD);
         BRMotor.setDirection(FORWARD);
 
 
@@ -214,10 +217,10 @@ public class basicTelem extends LinearOpMode {
         intakeL = hardwareMap.get(Servo.class, "intake");
         wrist = hardwareMap.get(Servo.class, "wrist");
 
-        intakeL.setDirection(Servo.Direction.FORWARD);
+        intakeL.setDirection(Servo.Direction.REVERSE);
         wrist.setDirection(Servo.Direction.FORWARD);
 
-        wrist.setPosition(0);
+        wrist.setPosition(0.7);
     }
 
 
@@ -268,21 +271,15 @@ public class basicTelem extends LinearOpMode {
      * Moves the robot based on desired heading and power.<br>
      * Does not change the rotation of the robot at all
      *
-     * @param heading Desired heading of the robot.<br>
-     *                0 is straight forward 1 is fully right, -1 is fully left
      * @param power   Desired power to run the motors at
      */
-    public void move(double heading, double power) {
-        /*
-        heading = (heading + 1) / 2;
+    public void forwardBackward(double power) {
 
-        FLServo.setPosition(heading + FLServoOffSet);
-        BLServo.setPosition(heading + BLServoOffSet);
-        BRServo.setPosition(heading + BRServoOffSet);
-        FRServo.setPosition(heading + FRServoOffSet);
-        */
+        FLServo.setPosition(0.5+FLServoOffSet);
+        FRServo.setPosition(0.5+FRServoOffSet);
+        BLServo.setPosition(0.5+BLServoOffSet);
+        BRServo.setPosition(0.5+BRServoOffSet);
 
-        //power = (power + 1) / 2;
         FLMotor.setPower(power);
         BLMotor.setPower(power);
         BRMotor.setPower(power);
@@ -299,13 +296,15 @@ public class basicTelem extends LinearOpMode {
     public void rotate(double power) {
 
         // Set wheels for rotation
-        FLServo.setPosition(.75 + .125 / 2);
-        BLServo.setPosition(.25 - .125 / 2);
-        BRServo.setPosition(.25 + .125 / 2);
-        FRServo.setPosition(.75 - .125 / 2);
+        double x = .75 + .125 / 2;
+        FLServo.setPosition(.55);
+        BLServo.setPosition(.45);
+        BRServo.setPosition(.60);
+        FRServo.setPosition(.45);
+
+        telemetry.addData("data: ",x);
 
         //turn motors to rotate robot
-        //power = (power + 1) / 2;
         FLMotor.setPower(power);
         BLMotor.setPower(power);
         BRMotor.setPower(power);
