@@ -4,6 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
@@ -13,9 +18,26 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor backRight = hardwareMap.dcMotor.get("backRight");
-
+        IntegratingGyroscope gyro;
+        NavxMicroNavigationSensor navxMicro;
+        ElapsedTime timer = new ElapsedTime();
+        navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "gyro");
+        gyro = (IntegratingGyroscope) navxMicro;
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        telemetry.log().add("Gyro Calibrating. Do Not Move!");
+
+        // Wait until the gyro calibration is complete
+        timer.reset();
+        while (navxMicro.isCalibrating()) {
+            telemetry.addData("calibrating", "%s", Math.round(timer.seconds()) % 2 == 0 ? "|.." : "..|");
+            telemetry.update();
+        }
+        telemetry.log().clear();
+        telemetry.log().add("Gyro Calibrated. Press Start.");
+        telemetry.clear();
+        telemetry.update();
 
         waitForStart();
         if (isStopRequested()) return;
