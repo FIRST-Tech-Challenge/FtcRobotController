@@ -252,29 +252,12 @@ public class localization extends LinearOpMode {
             double relDeltaY = radiusY * Math.sin(deltaHeading) + radiusX * (1 - Math.cos(deltaHeading));
 
             double headingAverage = (prevHeading + currentHeading) / 2.0;
-            double deltaX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) - prevVertical;
-            double deltaY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) - prevHorizontal;
+            double deltaX = relDeltaX * Math.cos(currentHeading) - relDeltaY * Math.sin(currentHeading) + prevVertical;
+            double deltaY = relDeltaY * Math.cos(currentHeading) + relDeltaX * Math.sin(currentHeading) + prevHorizontal;
 
             // Update robot's global position
-            robotX += deltaX;
-            robotY += deltaY;
-          
-            // Convert the change in encoder ticks to inches
-            deltaVertical /= TICKS_PER_INCH;
-            deltaHorizontal /= TICKS_PER_INCH;
-
-            // Step 3: Arc handling - Use average heading for position update
-            double headingAverage = (prevHeading + currentHeading) / 2.0;
-            double deltaX = deltaVertical * Math.cos(headingAverage) - deltaHorizontal * Math.sin(headingAverage);
-            double deltaY = deltaVertical * Math.sin(headingAverage) + deltaHorizontal * Math.cos(headingAverage);
-
-            // Step 4: Simpson's Rule Integration for smoother movement approximation
-            double deltaXSimpson = WEIGHT * ((prevVertical + 4.0 * deltaX + prevVertical) / 3.0);
-            double deltaYSimpson = WEIGHT * ((prevHorizontal + 4.0 * deltaY + prevHorizontal) / 3.0);
-
-            // Update robot's global position
-            robotX += deltaXSimpson;
-            robotY += deltaYSimpson;
+            robotX = deltaX;
+            robotY = deltaY;
 
             robotHeading = currentHeading;
 
@@ -446,4 +429,3 @@ public class localization extends LinearOpMode {
     }
 }
 */
-}*/

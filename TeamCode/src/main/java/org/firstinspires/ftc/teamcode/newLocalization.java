@@ -80,21 +80,24 @@ public class newLocalization extends LinearOpMode {
             }
 
             // Step 3: Arc handling - Use average heading for relative position update
-            double radiusX = deltaVertical / deltaHeading;
-            double radiusY = deltaHorizontal / deltaHeading;
+            double radiusX = 0;
+            double radiusY = 0;
+            if (deltaHeading != 0){
+                radiusX = deltaVertical / deltaHeading;
+                radiusY = deltaHorizontal / deltaHeading;
+            } else {
+                radiusX = deltaVertical;
+                radiusY = deltaHorizontal;
+            }
+
             double relDeltaX = radiusX * Math.sin(deltaHeading) - radiusY * (1 - Math.cos(deltaHeading));
             double relDeltaY = radiusY * Math.sin(deltaHeading) + radiusX * (1 - Math.cos(deltaHeading));
 
-            double headingAverage = (prevHeading + currentHeading) / 2.0;
-            double deltaX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) - prevVertical;
-            double deltaY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) - prevHorizontal;
-            /*
-            double deltaXSimpson = WEIGHT * (deltaX / 3) * (prevVertical + 4.0 * deltaX + currentVertical);
-            double deltaYSimpson = WEIGHT * (deltaY / 3) * (prevHorizontal + 4.0 * deltaY + currentHorizontal);
-            */
+            double deltaX = prevVertical + relDeltaX * Math.cos(currentHeading) - relDeltaY * Math.sin(currentHeading);
+            double deltaY = prevHorizontal + relDeltaY * Math.cos(currentHeading) + relDeltaX * Math.sin(currentHeading);
 
-            robotX += deltaX;
-            robotY += deltaY;
+            robotX = deltaX;
+            robotY = deltaY;
             robotHeading = currentHeading;
 
 
@@ -108,12 +111,11 @@ public class newLocalization extends LinearOpMode {
             prevVertical = currentVertical;
             prevHorizontal = currentHorizontal;
             prevHeading = currentHeading;
-            i += 1;
+
             // Output telemetry data for debugging
             telemetry.addData("X Position", robotX);
             telemetry.addData("Y Position", robotY);
             telemetry.addData("Heading", Math.toDegrees(robotHeading)); // Display heading in degrees
-            telemetry.addData("Time", i);
             telemetry.update();
         }
     }
