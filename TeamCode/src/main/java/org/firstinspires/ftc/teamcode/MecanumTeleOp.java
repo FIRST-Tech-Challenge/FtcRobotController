@@ -1,18 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
     @Override
+
     public void runOpMode() {
         DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
@@ -43,6 +49,14 @@ public class MecanumTeleOp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+            Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+            telemetry.addLine()
+                    .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
+                    .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
+                    .addData("pitch", "%s deg", formatAngle(angles.angleUnit, angles.thirdAngle));
+            telemetry.update();
+            double botheading = angles.firstAngle;
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x * 1.1;
             double rx = gamepad1.right_stick_x;
@@ -61,5 +75,12 @@ public class MecanumTeleOp extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
         }
+    }
+    String formatAngle(AngleUnit angleUnit, double angle) {
+        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+    }
+    @SuppressLint("DefaultLocale")
+    String formatDegrees(double degrees) {
+        return String.format("%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 }
