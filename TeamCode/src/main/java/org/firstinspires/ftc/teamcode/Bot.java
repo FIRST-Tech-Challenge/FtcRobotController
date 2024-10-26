@@ -43,7 +43,7 @@ public class Bot {
     public static final int RIGHT_LIFT_MIN = -10;
 
     public static final int MAX_PIVOT = 2560;
-    public static final int MIN_PIVOT = -670;
+    public static final int MIN_PIVOT = -400;
 
 
     //Drive Encoder Stats
