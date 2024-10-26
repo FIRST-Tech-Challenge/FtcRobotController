@@ -94,18 +94,14 @@ public class RobotHardware {
     public static final double GRABBER_MAX = 0.40;
     private static double grabberDrive = 0.0;
 
-    public static final double ARM_SPEED = 0.02;
+    public static final double ARM_SPEED = 0.01;
     public static final double ARM_MIN = 0.10 ;
-    public static final double ARM_MAX = 0.80;
+    public static final double ARM_MAX = 0.60;
     private static double armDrive = 0.3;
-    private static double armDrive1 = 0.3;
-    private static double armDrive2 = 0.3;
 
-
-    //public static final double ARM_SPEED_TWO = 0.10;
-    public static final double ARM_MIN_TWO = 0.05 ;
-    public static final double ARM_MAX_TWO = 0.90;
-    //2private static double armDriveTwo = 0.0;
+    //public static final double ARM_MIN_TWO = 0.05 ;
+    //public static final double ARM_MAX_TWO = 0.90;
+    public static final double ARM_MIDDLE = 0;
 
     /**
      * Initialize all the robot's hardware.
@@ -342,17 +338,17 @@ public class RobotHardware {
         }
 
         myOpMode.telemetry.addData("Arm Position: ", Range.clip(armDrive, ARM_MIN, ARM_MAX));
-        armServo.setPosition(Range.clip(armDrive, ARM_MIN, ARM_MAX));
-        armServoTwo.setPosition(Range.clip(armDrive, ARM_MIN_TWO, ARM_MAX_TWO));
-        //moveArmToPosition(armDrive);
+        //armServo.setPosition(Range.clip(armDrive, ARM_MIN, ARM_MAX));
+        //armServoTwo.setPosition(Range.clip(armDrive, ARM_MIN_TWO, ARM_MAX_TWO));
+        moveArmToPosition(armDrive);
     }
 
 
 
 
     public void moveArmToPosition(double position){
-        armServo.setPosition(Range.clip(position, ARM_MIN_TWO, ARM_MAX_TWO));
-        armServoTwo.setPosition(Range.clip(position, ARM_MIN_TWO, ARM_MAX_TWO));
+        armServo.setPosition(Range.clip(position, ARM_MIN, ARM_MAX));
+        armServoTwo.setPosition(Range.clip(position, ARM_MIN, ARM_MAX));
         //armServo.setPosition((int)position);
     }
 
