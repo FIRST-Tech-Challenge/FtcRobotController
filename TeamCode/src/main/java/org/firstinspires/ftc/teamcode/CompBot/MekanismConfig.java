@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
 
@@ -25,14 +26,16 @@ public class MekanismConfig {
         myOp = opMode;
     }
 
+    ElapsedTime homeTimer = new ElapsedTime();
+
     DcMotor pivot, slide;
     Servo claw, wrist, spintake;
 
     DigitalChannel pivotHome, slideHome;
 
 
-    int ARM_COUNTS_PER_INCH = 250; // Encoder counts per inch of slide movement
-    int ARM_COUNTS_PER_DEGREE = 20; // Encoder count per degree of slide angle
+    static int ARM_COUNTS_PER_INCH = 250; // Encoder counts per inch of slide movement
+    static int ARM_COUNTS_PER_DEGREE = 20; // Encoder count per degree of slide angle
 
 
     /**
@@ -57,11 +60,14 @@ public class MekanismConfig {
         pivot.setMode(STOP_AND_RESET_ENCODER);
         slide.setMode(STOP_AND_RESET_ENCODER);
 
-        pivot.setMode(RUN_USING_ENCODER);
-        slide.setMode(RUN_USING_ENCODER);
+        pivot.setMode(RUN_TO_POSITION);
+        slide.setMode(RUN_TO_POSITION);
 
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        pivot.setPower(1.0);
+        slide.setPower(1.0);
 
 
         // Servo Configs
@@ -81,7 +87,6 @@ public class MekanismConfig {
 
         pivotHome.setMode(DigitalChannel.Mode.INPUT);
         slideHome.setMode(DigitalChannel.Mode.INPUT);
-
     }
 
 
@@ -90,15 +95,16 @@ public class MekanismConfig {
      * <p>
      * Runs the pivot up until either the limit switch is triggered
      * or the program is stopped
+     *
+     * @see #homeSlide()
      */
     public void homePivot() {
         pivot.setMode(RUN_USING_ENCODER);
 
         // Goes until the switch is pressed or program is stopped
-        while (myOp.opModeIsActive() && !pivotHome.getState()) {
+        homeTimer.reset();
+        while (myOp.opModeIsActive() && !pivotHome.getState() && homeTimer.seconds() < 3)
             pivot.setPower(0.3);
-        }
-
         pivot.setPower(0);
 
         // Resets the encoder
@@ -114,13 +120,16 @@ public class MekanismConfig {
      * <p>
      * Runs the slide in until either the limit switch is triggered
      * or the program is stopped
+     *
+     * @see #homePivot()
      */
     public void homeSlide() {
 
         slide.setMode(RUN_USING_ENCODER);
 
         // Goes until the switch is pressed or program is stopped
-        while (myOp.opModeIsActive() && !slideHome.getState()) {
+        homeTimer.reset();
+        while (myOp.opModeIsActive() && !slideHome.getState() && homeTimer.seconds() < 3) {
             slide.setPower(0.3);
         }
 
@@ -140,6 +149,7 @@ public class MekanismConfig {
      * In inches.
      *
      * @param length Length of the arm
+     * @see #armAngle(double)
      */
     public void armLength(double length) {
 
@@ -153,6 +163,7 @@ public class MekanismConfig {
      * In degrees.
      *
      * @param angle Angle of the arm
+     * @see #armLength(double)
      */
     public void armAngle(double angle) {
         pivot.setTargetPosition((int) (angle * ARM_COUNTS_PER_DEGREE));
@@ -215,7 +226,7 @@ public class MekanismConfig {
      *                 <p> 1 - Full intake.
      *                 <p> (-1) - Full reverse
      */
-    public void moveClaw(double position) {
+    public void setClaw(double position) {
 
         position = (position + 1) / 2;
 
@@ -236,4 +247,24 @@ public class MekanismConfig {
 
         spintake.setPosition(power);
     }
+
+
+    /**
+     * Pauses slide at the current position
+     *
+     * @see #pausePivot()
+     */
+    public void pauseSlide() {
+        slide.setTargetPosition(slide.getCurrentPosition());
+    }
+
+    /**
+     * Pauses pivot at the current position
+     *
+     * @see #pauseSlide()
+     */
+    public void pausePivot() {
+        pivot.setTargetPosition(pivot.getCurrentPosition());
+    }
+
 }
