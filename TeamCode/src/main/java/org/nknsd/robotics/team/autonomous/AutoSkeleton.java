@@ -10,6 +10,7 @@ import org.nknsd.robotics.team.components.WheelHandler;
 public class AutoSkeleton {
     private final double maxSpeed;                  // Maximum speed the robot can move at
     private final double movementMargin;            // Margin determines how close to the target we have to be before we are there
+    private final double turnMargin;
     private WheelHandler wheelHandler;              // Class which handles wheel motions
     private FlowSensorHandler flowSensorHandler;    // Class which gives us our position
     public double[] targetPositions = new double[2];// Array which holds our target position as x, y
@@ -20,9 +21,11 @@ public class AutoSkeleton {
     private IntakeServoHandler intakeServoHandler;
 
 
-    public AutoSkeleton(double maxSpeed, double movementMargin) {
+
+    public AutoSkeleton(double maxSpeed, double movementMargin, double turnMargin) {
         this.maxSpeed = maxSpeed;
         this.movementMargin = movementMargin;
+        this.turnMargin = turnMargin;
     }
 
     public void link(WheelHandler wheelHandler, RotationHandler rotationHandler, IntakeServoHandler intakeServoHandler, FlowSensorHandler flowSensorHandler, IMUComponent imuComponent) {
@@ -51,8 +54,11 @@ public class AutoSkeleton {
 
     public boolean runToPosition(Telemetry telemetry) {
         // Get position
-        double x = flowSensorHandler.getOdometryData().pos.x;
-        double y = flowSensorHandler.getOdometryData().pos.y;
+        FlowSensorHandler.PoseData pos = flowSensorHandler.getOdometryData().pos;
+        double x = pos.x;
+        double y = pos.y;
+        double yaw = imuComponent.getYaw();
+        //double yaw = pos.heading;
 
         telemetry.addData("Cur X", x);
         telemetry.addData("Cur Y", y);
@@ -67,9 +73,12 @@ public class AutoSkeleton {
         // Check if we're close enough
         double dist = Math.sqrt((x * x) + (y * y));
 
+        // Check if we're at the right heading
+        double angleDiff = Math.abs(targetRotation - yaw);
+
         telemetry.addData("Dist", dist);
 
-        if (dist < movementMargin) {
+        if (dist < movementMargin && angleDiff < turnMargin) {
             wheelHandler.absoluteVectorToMotion(0, 0, 0, 0, telemetry);
             return true;
         } else if (Math.abs(x) < movementMargin) {
@@ -93,11 +102,11 @@ public class AutoSkeleton {
         telemetry.addData("Speed Y", y);
 
         //Turning
-        double turning = targetRotation - imuComponent.getYaw();
+        double turning = targetRotation - yaw;
         turning /= 90;
         turning = Math.min(maxSpeed, Math.max(-maxSpeed, turning));
 
-        wheelHandler.absoluteVectorToMotion(x, y, turning, imuComponent.getYaw(), telemetry);
+        wheelHandler.absoluteVectorToMotion(x, y, turning, yaw, telemetry);
 
         return false;
     }

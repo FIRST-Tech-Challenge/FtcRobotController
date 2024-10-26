@@ -41,21 +41,25 @@ public class WheelHandler implements NKNComponent {
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         //Get drive motors
         motorFL = hardwareMap.dcMotor.get(flName);
+        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(flName)) { // check if the drive motor is in the list to be reversed
             motorFL.setDirection(DcMotor.Direction.REVERSE);
         }
 
         motorFR = hardwareMap.dcMotor.get(frName);
+        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(frName)) {
             motorFR.setDirection(DcMotor.Direction.REVERSE);
         }
 
         motorBL = hardwareMap.dcMotor.get(blName);
+        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(blName)) {
             motorBL.setDirection(DcMotor.Direction.REVERSE);
         }
 
         motorBR = hardwareMap.dcMotor.get(brName);
+        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(brName)) {
             motorBR.setDirection(DcMotor.Direction.REVERSE);
         }

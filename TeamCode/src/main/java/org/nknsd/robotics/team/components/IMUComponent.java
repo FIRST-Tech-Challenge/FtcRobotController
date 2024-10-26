@@ -40,7 +40,7 @@ public class IMUComponent implements NKNComponent {
 
     @Override
     public void start(ElapsedTime runtime, Telemetry telemetry) {
-
+        imu.resetYaw();
     }
 
     @Override

@@ -96,7 +96,7 @@ public class TestAuto extends NKNAutoProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Core mover
-        autoSkeleton = new AutoSkeleton(0.35, 1.5);
+        autoSkeleton = new AutoSkeleton(0.35, 1.5, 0.5);
 
         // Sensors
         FlowSensorHandler flowSensorHandler = new FlowSensorHandler("sensor_otos", 0.590551, 3.54331, 0);

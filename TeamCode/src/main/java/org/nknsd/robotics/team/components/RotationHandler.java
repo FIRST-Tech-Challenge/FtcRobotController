@@ -71,7 +71,7 @@ public class RotationHandler implements NKNComponent {
 
     public enum RotationPositions {
         PICKUP(1.1),
-        PREPICKUP(1.47),
+        PREPICKUP(1.40),
         HIGH(2.4),
         RESTING(3.3);
 
@@ -102,7 +102,7 @@ public class RotationHandler implements NKNComponent {
     @Override
     public void doTelemetry(Telemetry telemetry) {
         telemetry.addData("Arm Rot Position", current);
-        telemetry.addData("Arm Rot Target", targetRotationPosition.name());
+        telemetry.addData("Arm Rot Target", targetRotationPosition.target);
         telemetry.addData("Arm Rot Diff", diff);
         telemetry.addData("Arm Rot Motor Power", motor.getPower());
         telemetry.addData("Arm Rot Residual Err", resError);
@@ -134,6 +134,8 @@ public class RotationHandler implements NKNComponent {
 
         if (resError > errorCap) {
             resError = errorCap;
+        } else if (resError < -errorCap) {
+            resError = -errorCap;
         }
 
         if (oppositeSigns(diff, resError) && enableErrorClear){
