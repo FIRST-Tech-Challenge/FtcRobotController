@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Drivetrain.Utils.TelemetryTracking;
  * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
  */
 @Config
-@Autonomous(name = "Test Pose", group = "Autonomous")
+@Autonomous(name = "Test AAaAAAAAAAA", group = "Autonomous")
 public class TestAuton extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
@@ -53,8 +53,8 @@ public class TestAuton extends LinearOpMode {
         while (opModeIsActive()) {
             SimpleMatrix desiredPose = new SimpleMatrix(
                     new double [][]{
-                            new double[]{72},
-                            new double[]{72},
+                            new double[]{48},
+                            new double[]{48},
                             new double[]{90}
                     }
             );
