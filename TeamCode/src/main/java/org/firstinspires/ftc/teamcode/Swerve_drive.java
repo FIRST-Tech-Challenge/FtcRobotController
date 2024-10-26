@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.security.KeyStore;
+
 
 @TeleOp(name="Swerve_drive", group="Linear OpMode")
 // @Disabled
@@ -17,6 +19,10 @@ public class Swerve_drive extends LinearOpMode {
     public DcMotor rightwheel = null;
     public Servo leftservo;
     public Servo rightservo;
+    public double rightpoddirection;
+    public double leftpoddirection;
+    public float leftwheelposition;
+    public float rightwheelposition;
 
 //    @Override
     public void runOpMode() {
@@ -50,14 +56,27 @@ public class Swerve_drive extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Setup variables for motor power
+            boolean leftMotorForward = true;
+            boolean rightMotorForward = true;
             double leftPower;
             double rightPower;
             double radius;
             radius = 1;
+            rightpoddirection = 1;
+            leftpoddirection = 1;
 
             // Map the joystick inputs to motor power
-            leftPower  = -gamepad1.left_stick_y;
-            rightPower = -gamepad1.right_stick_y;
+            leftwheelposition = (gamepad1.left_stick_y);
+            if (leftwheelposition < 0)
+            {
+                leftMotorForward = false;
+            }
+
+            if (rightwheelposition < 0)
+            {
+                rightMotorForward = false;
+            }
+
             leftPower = Math.sqrt(Math.pow(gamepad1.left_stick_y, 2) + Math.pow(gamepad1.left_stick_x, 2));
             rightPower = Math.sqrt(Math.pow(gamepad1.right_stick_y, 2) + Math.pow(gamepad1.right_stick_x, 2));
 
@@ -65,26 +84,39 @@ public class Swerve_drive extends LinearOpMode {
             // Apply deadzone for joystick X-axis
             double leftStickX = gamepad1.left_stick_x;
             double rightStickX = gamepad1.right_stick_x;
-            double deadzone = 0.05;
+            double deadzone = 0.01;
 
             // Servo control with deadzone
             if (Math.abs(leftStickX) > deadzone) {
                 double leftServoPosition = (leftStickX + 1) / 2; // Map from -1 to 1 range to 0 to 1
                 leftservo.setPosition(leftServoPosition);
             } else {
-                leftservo.setPosition(0.5); // Neutral position
+//                leftservo.setPosition(0.5); // Neutral position
+                double leftServoPosition = (leftStickX + 1) / 2; // Map from -1 to 1 range to 0 to 1
+                leftservo.setPosition(leftServoPosition);
             }
 
             if (Math.abs(rightStickX) > deadzone) {
                 double rightServoPosition = (rightStickX + 1) / 2; // Map from -1 to 1 range to 0 to 1
                 rightservo.setPosition(rightServoPosition);
             } else {
-                rightservo.setPosition(0.5); // Neutral position
+//                rightservo.setPosition(0.5); // Neutral position
+                double rightServoPosition = (rightStickX + 1) / 2; // Map from -1 to 1 range to 0 to 1
+                rightservo.setPosition(rightServoPosition);
             }
 
             // Send calculated power to wheels
-            leftwheel.setPower(leftPower);
-            rightwheel.setPower(rightPower);
+            if (leftMotorForward == true){
+                leftwheel.setPower(leftPower);
+            }else{
+                leftwheel.setPower(-leftPower);
+            }
+
+            if (rightMotorForward == true){
+                rightwheel.setPower(rightPower);
+            }else{
+                rightwheel.setPower(-rightPower);
+            }
 
             // Telemetry to display key data
             telemetry.addData("Status", "Run Time: " + runtime.toString());
