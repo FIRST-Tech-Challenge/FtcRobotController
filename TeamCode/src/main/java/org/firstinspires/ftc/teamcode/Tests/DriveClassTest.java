@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.Tests;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Hardware.Arm;
 import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
+import org.firstinspires.ftc.teamcode.Hardware.Slides;
 import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 
 import java.util.Locale;
@@ -21,16 +22,19 @@ public class DriveClassTest extends LinearOpMode {
     double oldTime = 0;
     @Override
     public void runOpMode() throws InterruptedException {
-
         Pose2d startPosition = new Pose2d(0, 0, 0);
         ElapsedTime timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Drivetrain drive = new Drivetrain(hardwareMap, timer, startPosition);
+        Slides slides = new Slides(hardwareMap, drive.getSlidesMotor());
+        Arm arm = new Arm(hardwareMap, drive.getArmMotor());
+        slides.resetEncoder();
+        arm.resetEncoder();
 
         waitForStart();
         while (opModeIsActive()) {
             drive.update();
-            drive.setPowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
+//            drive.setPowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             double newTime = getRuntime();
             double loopTime = newTime-oldTime;
@@ -42,6 +46,10 @@ public class DriveClassTest extends LinearOpMode {
             telemetry.addData("Heading Velocity: ", drive.getHeadingVelocity());
             telemetry.addData("Status", drive.getStatus());
             telemetry.addData("Hub loop Time: ", frequency);
+            telemetry.addData("slides inches: ", slides.getCurrentSlidesPosition());
+            telemetry.addData("arm degrees:", arm.getCurrentArmPosition());
+            slides.update();
+            arm.update();
             telemetry.update();
         }
     }

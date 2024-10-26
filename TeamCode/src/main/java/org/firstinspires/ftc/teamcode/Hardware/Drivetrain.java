@@ -106,6 +106,12 @@ public class Drivetrain {
     public double getHeadingVelocity(){
         return headingVelocity;
     }
+    public DcMotorEx getSlidesMotor(){
+        return leftFront;
+    }
+    public DcMotorEx getArmMotor(){
+        return leftRear;
+    }
     public GoBildaPinpointDriver.DeviceStatus getStatus(){
         return odo.getDeviceStatus();
     }
