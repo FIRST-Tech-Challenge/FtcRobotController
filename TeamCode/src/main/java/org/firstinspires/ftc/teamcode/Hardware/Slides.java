@@ -31,15 +31,7 @@ public class Slides {
     }
 
 
-//    public Slides(HardwareMap hardwareMap, DcMotorEx slidesEncoder, String slideName) {
-//        s = hardwareMap.get(DcMotorEx.class, slideName);
-//        this.slidesEncoder = slidesEncoder;
-//        this.linSlideController = new PID(new PID.Coefficients(sKp, sKi, sKd),
-//                () -> (this.getCurrentSlidesPosition()) - targetLinSlidePosition,
-//                factor -> {
-//                    this.s.setPower(M.clamp(factor, 1, -1)); //b is extension
-//                });
-//    }
+
 
     public void resetEncoder() {
         slidesEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
