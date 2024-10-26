@@ -20,6 +20,8 @@ public class Teleop_final extends LinearOpMode {
     public Servo grabber;
     public Servo tilt;
     public double tilt_position;
+    public Servo arm;
+    public double arm_position;
 
     //    @Override
     public void runOpMode() {
@@ -33,6 +35,7 @@ public class Teleop_final extends LinearOpMode {
         rightservo = hardwareMap.get(Servo.class, "rightservo");
         grabber  = hardwareMap.get(Servo.class, "grabber");
         tilt = hardwareMap.get(Servo.class, "tilt");
+        arm = hardwareMap.get(Servo.class, "arm");
 
         // Set motor directions.
         leftwheel.setDirection(DcMotor.Direction.REVERSE);
@@ -43,6 +46,7 @@ public class Teleop_final extends LinearOpMode {
         rightservo.setDirection(Servo.Direction.FORWARD);
         grabber.setDirection(Servo.Direction.FORWARD);
         tilt.setDirection(Servo.Direction.FORWARD);
+        arm.setDirection(Servo.Direction.FORWARD);
 
 
         // Wait for the game to start (driver presses START).
@@ -54,6 +58,7 @@ public class Teleop_final extends LinearOpMode {
         rightservo.setPosition(0.5);
         tilt.setPosition(0.5);
         grabber.setPosition(0.5);
+        arm.setPosition(0.5);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -65,8 +70,6 @@ public class Teleop_final extends LinearOpMode {
             radius = 1;
 
             // Map the joystick inputs to motor power
-            leftPower  = -gamepad1.left_stick_y;
-            rightPower = -gamepad1.right_stick_y;
             leftPower = Math.sqrt(Math.pow(gamepad1.left_stick_y, 2) + Math.pow(gamepad1.left_stick_x, 2));
             rightPower = Math.sqrt(Math.pow(gamepad1.right_stick_y, 2) + Math.pow(gamepad1.right_stick_x, 2));
 
@@ -105,9 +108,20 @@ public class Teleop_final extends LinearOpMode {
                 grabber.setPosition(0);
             }
 
-            while (gamepad1.b) {
+            if (gamepad1.b) {
                 grabber.setPosition(1);
             }
+
+            while (gamepad1.right_bumper) {
+                arm_position = arm.getPosition();
+                arm.setPosition(arm_position + 0.05);
+            }
+
+            while (gamepad1.right_bumper) {
+                arm_position = arm.getPosition();
+                arm.setPosition(arm_position - 0.05);
+            }
+
 
             // Send calculated power to wheels
             leftwheel.setPower(leftPower);
@@ -123,6 +137,7 @@ public class Teleop_final extends LinearOpMode {
             telemetry.addData("grabber Servo Position", grabber.getPosition());
             telemetry.addData("Left Stick X", leftStickX);
             telemetry.addData("Right Stick X", rightStickX);
+            telemetry.addData("arm Servo Position", arm.getPosition());
             telemetry.update();
         }
     }
