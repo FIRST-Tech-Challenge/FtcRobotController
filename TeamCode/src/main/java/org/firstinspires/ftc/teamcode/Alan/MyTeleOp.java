@@ -48,9 +48,7 @@ public class MyTeleOp extends LinearOpMode {
             } else {
                 swarsh.setPosition(0.0);
             }
-            telemetry.addData("Red:", cSensor.red());
-            telemetry.addData("Blue:", cSensor.blue());
-            telemetry.addData("Green:", cSensor.green());
+            telemetry.addData("Encoder Pos:", rightBack.getCurrentPosition() * INCHES_PER_TICK);
 
 
 
