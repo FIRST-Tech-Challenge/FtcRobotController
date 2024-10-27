@@ -95,6 +95,6 @@ public class XendysTestTeleop extends OpMode {
     }
 
     public double curveInput(double x) {
-        return x * Math.abs(x);
+        return Math.pow(x, 3);
     }
 }
