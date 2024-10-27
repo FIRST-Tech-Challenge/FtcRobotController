@@ -59,18 +59,20 @@ public class PivotBot extends LimelightBot{
 
     public void slideControl(boolean up, boolean down){
         if (up){
-            slideTarget2 = 20;
-            Slide.setTargetPosition(slideTarget2);
+//            slideTarget2 = 20;
+            if(Slide.getCurrentPosition()<2000)
+            Slide.setTargetPosition(Slide.getCurrentPosition()+20);
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         if(down){
-            slideTarget2 = 2000;
-            Slide.setTargetPosition(slideTarget2);
+//            slideTarget2 = 2000;
+            if(Slide.getCurrentPosition()>20)
+            Slide.setTargetPosition(Slide.getCurrentPosition()-20);
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        if (Math.abs(Slide.getCurrentPosition() - slideTarget2) < 3){
-            Slide.setPower(0);
-        }
+//        if (Math.abs(Slide.getCurrentPosition() - slideTarget2) < 3){
+//            Slide.setPower(0);
+//        }
     }
 
     public void slideMove(int up){
@@ -80,17 +82,22 @@ public class PivotBot extends LimelightBot{
     public void pivotControl(boolean up, boolean down){
         if (up){
             slideTarget = 0;
-            Motor.setTargetPosition(slideTarget);
+            Motor.setTargetPosition(Motor.getCurrentPosition()+20);
             Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         if(down){
             slideTarget = 900;
-            Motor.setTargetPosition(slideTarget);
+            Motor.setTargetPosition(Motor.getCurrentPosition()-20);
             Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        if (Math.abs(Motor.getCurrentPosition() - slideTarget) < 3){
-            Motor.setPower(0);
-        }
+//        if (Math.abs(Motor.getCurrentPosition() - slideTarget) < 3){
+//            Motor.setPower(0);
+//        }
+    }
+
+    public void pivotTo(int pos){
+        Motor.setTargetPosition(pos);
+        Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
