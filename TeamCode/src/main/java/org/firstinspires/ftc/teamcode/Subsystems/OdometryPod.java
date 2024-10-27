@@ -57,10 +57,9 @@ public class OdometryPod extends SubsystemBase {
     @Override
     public void periodic() {
 
-        RobotContainer.ActiveOpMode.telemetry.addData("leftEncoder",leftEncoder.getDistance());
-        RobotContainer.ActiveOpMode.telemetry.addData("rightEncoder",rightEncoder.getDistance());
-        RobotContainer.ActiveOpMode.telemetry.addData("frontEncoder",frontEncoder.getDistance());
-
+        //RobotContainer.ActiveOpMode.telemetry.addData("leftEncoder",leftEncoder.getDistance());
+        //RobotContainer.ActiveOpMode.telemetry.addData("rightEncoder",rightEncoder.getDistance());
+        //RobotContainer.ActiveOpMode.telemetry.addData("frontEncoder",frontEncoder.getDistance());
         RobotContainer.ActiveOpMode.telemetry.update();
     }
 

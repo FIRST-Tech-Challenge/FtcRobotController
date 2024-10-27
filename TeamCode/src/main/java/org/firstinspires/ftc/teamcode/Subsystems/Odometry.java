@@ -5,6 +5,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Vector2d;
+import com.arcrobotics.ftclib.trajectory.Trajectory;
+
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
@@ -25,6 +28,12 @@ public class Odometry extends SubsystemBase {
     private double fieldX = 0.0;
     private double fieldY = 0.0;
     private double fieldAngle = 0.0;
+
+    // variables used for displaying paths on dashboard field widget
+    // arrays hold x and y points of currently shown path(s)
+    // arrays are set to null if no path to be shown
+    private double[] currentTrajectoryXpoints;
+    private double[] currentTrajectoryYpoints;
 
     /** Place code here to initialize subsystem */
     public Odometry() {
@@ -80,7 +89,7 @@ public class Odometry extends SubsystemBase {
         RobotContainer.ActiveOpMode.telemetry.addData("fieldX",fieldX);
         RobotContainer.ActiveOpMode.telemetry.addData("fieldY",fieldY);
 
-        // update FTC dashboard with latest odometry info
+        // update FTC dashboard with latest odometry info - in separate function below for clarity
         UpdateDashBoard();
     }
 
@@ -101,25 +110,45 @@ public class Odometry extends SubsystemBase {
     }
 
 
-    // Updates dashboard with robot odometry info
+    // Updates dashboard field widget with robot odometry info
     private void UpdateDashBoard()
     {
-        // SAMPLE CODE ONLY - Students to make their own code
+        // robot outline (note: values intentionally left in inches)
+        // 0,0 is center of robot
+        Vector2d p1 = new Vector2d(9, 0);
+        Vector2d p2 = new Vector2d(-9, 9);
+        Vector2d p3 = new Vector2d(-9, -9);
+        Vector2d p4 = new Vector2d(0,0);
 
-        // Update field
-        // Note: many options available to draw things on field
-        // robot position, apriltags, other lines, circles, polygons, text, etc.
+        // define robot field position offset vector
+        Vector2d pos = new Vector2d(fieldX*39.3701, fieldY*39.3701);
 
-        // TelemetryPacket field = new TelemetryPacket();
-        // field.fieldOverlay()
-        //         .drawGrid(0, 0, 144, 144, 7, 7)
-        //         .fillText("Origin", 0, 0, "4px Arial", Math.toRadians(90), false)
-        //        .fillCircle(0,0, 1);
-                //.setRotation(Math.toRadians(90))
-                //.strokeRect(x,y,width,height)
-                //.drawImage("/dash/ftc.jpg", 24, 24, 18, 18, Math.toRadians(90), 24, 24, false);
+        // rotate outline by angle of odometry and then add x,y position offset
+        Vector2d p1rotated=(p1.rotateBy(Math.toDegrees(fieldAngle))).plus(pos);
+        Vector2d p2rotated=(p2.rotateBy(Math.toDegrees(fieldAngle))).plus(pos);
+        Vector2d p3rotated=(p3.rotateBy(Math.toDegrees(fieldAngle))).plus(pos);
+        Vector2d p4rotated=(p4.rotateBy(Math.toDegrees(fieldAngle))).plus(pos);
 
-        // RobotContainer.DashBoard.sendTelemetryPacket(field);
+        // create field telemetry packet
+        TelemetryPacket field = new TelemetryPacket();
+        field.fieldOverlay()
+                .drawGrid(0, 0, 144, 144, 7, 7)
+                .strokeLine(p1rotated.getX(), p1rotated.getY(), p2rotated.getX(), p2rotated.getY())
+                .strokeLine(p2rotated.getX(), p2rotated.getY(), p3rotated.getX(), p3rotated.getY())
+                .strokeLine(p3rotated.getX(), p3rotated.getY(), p1rotated.getX(), p1rotated.getY())
+                .fillCircle(p1rotated.getX(),p1rotated.getY(), 2)
+                .fillCircle(p4rotated.getX(),p4rotated.getY(), 1);
+        //.fillText("Origin", 0, 0, "4px Arial", Math.toRadians(90), false)
+        //.setRotation(Math.toRadians(90))
+        //.strokeRect(x,y,width,height)
+        //.drawImage("/dash/ftc.jpg", 24, 24, 18, 18, Math.toRadians(90), 24, 24, false);
+
+        // do we have a trajectory to plot?
+        if (currentTrajectoryXpoints!=null && currentTrajectoryYpoints!=null)
+            field.fieldOverlay().strokePolyline(currentTrajectoryXpoints, currentTrajectoryYpoints);
+
+        // update field
+        RobotContainer.DashBoard.sendTelemetryPacket(field);
 
         // Show data on dashboard
         // double value1 = 1.0;
@@ -137,5 +166,27 @@ public class Odometry extends SubsystemBase {
         // RobotContainer.DashBoard.sendTelemetryPacket(data);
     }
 
+    // display provided trajectory on the dashboard field widget
+    // set trajectory to null turn off trajectory
+    public void DisplayTrajectory (Trajectory trajectory) {
+
+        if (trajectory!=null)
+        {
+            // translate provided trajectory into separate x,y points array for use by dashboard field widget
+            int length = trajectory.getStates().size();
+            currentTrajectoryXpoints = new double[length];
+            currentTrajectoryYpoints = new double[length];
+            for (int index = 0; index < length; ++index) {
+                currentTrajectoryXpoints[index] = 39.3701*trajectory.getStates().get(index).poseMeters.getX();
+                currentTrajectoryYpoints[index] = 39.3701*trajectory.getStates().get(index).poseMeters.getY();
+            }
+        }
+        else
+        {
+            // no trajectory to display - set arrays to null
+            currentTrajectoryXpoints = null;
+            currentTrajectoryYpoints = null;
+        }
+    }
 
 }

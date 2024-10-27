@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.Subsystems.OctQuad;
 import org.firstinspires.ftc.teamcode.Subsystems.OdometryPod;
 import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
@@ -34,9 +36,6 @@ public class RobotContainer {
     public static Telemetry DBTelemetry;
     public static Telemetry RCTelemetry;
 
-    // timer used to determine how often to run scheduler periodic
-    private static ElapsedTime timer;
-
     // create robot GamePads
     public static GamepadEx driverOp;
     public static GamepadEx toolOp;
@@ -44,10 +43,13 @@ public class RobotContainer {
     // create pointers to robot subsystems
     public static DriveTrain drivesystem;
     public static Gyro gyro;
-    public static OdometryPod odometryPod;
+    public static OctQuad odometryPod;
     public static Odometry odometry;
-    //public static Camera frontCamera;
     public static LinearSlide linearSlide;
+    //public static Camera frontCamera;
+
+    // to measure interation time and report on drive station telemetry
+    private static ElapsedTime timer;
 
     // Robot initialization for teleop - Run this once at start of teleop
     public static void Init_TeleOp(CommandOpMode mode) {
@@ -98,14 +100,14 @@ public class RobotContainer {
         // save pointer to active OpMode
         ActiveOpMode = mode;
 
-        // create and reset timer
-        timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        timer.reset();
-
         // set up dashboard and various telemetries
         DashBoard = FtcDashboard.getInstance();
         DBTelemetry = DashBoard.getTelemetry();
         RCTelemetry = ActiveOpMode.telemetry;
+
+        // reset iteration interval timer
+        timer = new ElapsedTime();
+        timer.reset();
 
         // cancel any commands previously running by scheduler
         CommandScheduler.getInstance().cancelAll();
@@ -116,7 +118,7 @@ public class RobotContainer {
 
         // create systems
         gyro = new Gyro();
-        odometryPod = new OdometryPod();
+        odometryPod = new OctQuad();
         odometry = new Odometry();
         drivesystem = new DriveTrain();
         //frontCamera = new Camera("CamyCamy");
@@ -130,12 +132,14 @@ public class RobotContainer {
     // call this function periodically to operate scheduler
     public static void Periodic() {
 
-        // execute robot periodic function 50 times per second (=50Hz)
-        if (timer.milliseconds()>=20.0) {
-            timer.reset();
-            // run scheduler
-            CommandScheduler.getInstance().run();
-        }
+        // run scheduler
+        CommandScheduler.getInstance().run();
+
+        // report time interval on robot controller
+        RCTelemetry.addData("time interval (ms)",timer.milliseconds());
+        RCTelemetry.update();
+        timer.reset();
+
     }
 
 }

@@ -28,7 +28,7 @@ public class Gyro extends SubsystemBase {
      * Place any code here you wish to have run periodically */
     @Override
     public void periodic() {
-        RobotContainer.ActiveOpMode.telemetry.addData("Gyro", JavaUtil.formatNumber(getYawAngle(), 2));
+        //RobotContainer.ActiveOpMode.telemetry.addData("Gyro", JavaUtil.formatNumber(getYawAngle(), 2));
     }
 
     /** get gyro angle - returns angle in deg between -180 and 180 */

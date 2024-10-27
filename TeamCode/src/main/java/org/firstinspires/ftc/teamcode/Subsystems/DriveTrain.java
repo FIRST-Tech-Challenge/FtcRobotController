@@ -183,4 +183,9 @@ public class DriveTrain extends SubsystemBase {
         return speeds;
     }
 
+    /* returns the defined mecanum drive kinematics */
+    public MecanumDriveKinematics GetKinematics() {
+        return driveKinematics;
+    }
+
 }
