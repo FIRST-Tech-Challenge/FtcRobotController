@@ -39,7 +39,7 @@ public class AutoAwayBasketPosObs extends LinearOpMode {
         backLeftPos = 0;
         backRightPos = 0;
 
-        joint.setPosition(0.22);
+        joint.setPosition(0.15);
 
         waitForStart();
         //850 Ticks for 90 degrees
@@ -47,31 +47,33 @@ public class AutoAwayBasketPosObs extends LinearOpMode {
         //14.38 Tick/cm
 
         //Strafing Right 10 cm
-        drive(-143.8, 143.8, -143.8, 143.8, 0.5);
+        drive(-143.8, 143.8, -143.8, 143.8, 0.4);
         //Backwards 90 cm
-        drive(-1490, -1490, -1490, -1490, 0.5);
+        drive(-1490, -1490, -1490, -1490, 0.4);
         sleep(500);
         //Forward 32 cm
         drive(355.16, 355.16, 355.16, 355.16, 0.7);
         //Strafe Right 119 cm
-        drive(-2400.22, 2400.22, -2400.22, 2400.22, 0.7);
+        drive(-2700.22, 2700.22, -2700.22, 2700.22, 0.7);
         //Turn Right 60 degrees
-        drive(600.4, -600.4, -600.4, 600.4, 0.7);
+        drive(750.4, -750.4, -750.4, 750.4, 0.7);
+        //STrafe Right
+        drive(-300,300,-300, 300, 0.4);
         //Backward 117cm
-        drive(-1800.11, -1800.11, -1800.11, -1800.11, 0.5);
+        drive(-2150.11, -2150.11, -2150.11, -2150.11, 0.4);
         sleep(500);
         //Forward 117cm
 
-        drive(1800.11, 1800.11, 1800.11, 1800.11, 0.5);
+        drive(2000.11, 2000.11, 2000.11, 2000.11, 0.4);
         //Turn 30 degrees Right
-        drive(305.6, -305.6, -305.6, 305.6, 0.7);
+        drive(180.6, -180.6, -180.6, 180.6, 0.7);
         //Strafe Right
-        drive(-1000.8, 1000.8, -1000.8, 1000.8, 0.5);
+        drive(-850.8, 850.8, -850.8, 850.8, 0.4);
         //Drive Back
-        drive(-1700.11, -1700.11, -1700.11, -1700.11, 0.5);
+        drive(-1700.11, -1700.11, -1700.11, -1700.11, 0.4);
         sleep(500);
         //Drive More Back
-        drive(-100, -100, -100, -100, 0.25);
+        drive(-600, -600, -600, -600, 0.25);
 
 
 
