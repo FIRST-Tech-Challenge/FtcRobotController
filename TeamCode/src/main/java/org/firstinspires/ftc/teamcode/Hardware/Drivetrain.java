@@ -144,6 +144,8 @@ public class Drivetrain {
             xPower = (xPower * T.cos(rRn) - yPower * T.sin(rRn));
             yPower = (xPower * T.sin(rRn) + yPower * T.cos(rRn));
 
+
+
 //            //zeroMoveAngle is 25 for now
 //            double errorScale = 1 - (Math.abs(rRn - rTarget) / zeroMoveAngle);
 //            if (errorScale < 0) {
@@ -152,6 +154,8 @@ public class Drivetrain {
 //
 //            xPower *= errorScale;
 //            yPower *= errorScale;
+//add this in later
+
 
 //            setPowers(yPower, xPower, rPower);
 
