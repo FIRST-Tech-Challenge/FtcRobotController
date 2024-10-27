@@ -26,9 +26,9 @@ public class OdometryFuse extends LinearOpMode {
 
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
         configureOtos();
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //Inches per tick for wheel odometry
         double INCHES_PER_TICK = 40 / -13510.0 * (40.0 / 40.3612);
 
@@ -70,7 +70,7 @@ public class OdometryFuse extends LinearOpMode {
 
             telemetry.addLine();
 
-            telemetry.addData("Encoder Pos:", rightBack.getCurrentPosition() * INCHES_PER_TICK);
+            telemetry.addData("Encoder Pos:", rightFront.getCurrentPosition() * INCHES_PER_TICK);
             telemetry.update();
         }
     }
