@@ -125,6 +125,7 @@ public class Drivetrain {
 
         if(auto == true){ //DONT UPDATE PID's IN TELEOP, JUST OUR CURRENT POSITION AND VELOCITY!
             //OUR CURRENT POSITION
+            //CONVERT TO RR COORDINATES
             xRn = currentPose.getX();
             yRn = currentPose.getY();
 
