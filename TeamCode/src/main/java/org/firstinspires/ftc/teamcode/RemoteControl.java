@@ -97,8 +97,11 @@ public class RemoteControl extends LinearOpMode {
       telemetry.update();
 
       // set motor power
-      robot.leftDrive.setPower(left * (power + gamepad1.right_trigger * 10));
-      robot.rightDrive.setPower(right * (power + gamepad1.right_trigger * 10));
+      robot.leftDrive.setPower(left * power );
+      robot.rightDrive.setPower(right * power);
+
+      robot.ladder.setPower(-0.3 * gamepad1.left_trigger);
+      robot.ladder.setPower(0.3 * gamepad1.right_trigger);
 
       robot.claw.setPosition(servo_pos);
 
