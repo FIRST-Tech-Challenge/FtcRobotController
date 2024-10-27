@@ -22,14 +22,10 @@ public class Slides {
         s = hardwareMap.get(DcMotorEx.class, "slides");
         this.slidesEncoder = slidesEncoder;
 
-        this.linSlideController = new PID(new PID.Coefficients(sKp, sKi, sKd),
-                () -> (this.getCurrentSlidesPosition()) - targetLinSlidePosition,
-                factor -> {
-                    this.s.setPower(M.clamp(factor, .7, -1)); //b is extension
-                });
+        this.linSlideController = new PID(new PID.Coefficients(sKp, sKi, sKd), () -> (this.getCurrentSlidesPosition()) - targetLinSlidePosition, factor -> {
+            this.s.setPower(M.clamp(factor, .7, -1)); //b is extension
+        });
     }
-
-
 
 
     public void resetEncoder() {
@@ -38,7 +34,7 @@ public class Slides {
     }
 
     public double getError() {
-        return getCurrentSlidesPosition()-targetLinSlidePosition;
+        return getCurrentSlidesPosition() - targetLinSlidePosition;
     }
 
     public double getCurrentSlidesPosition() {
@@ -54,14 +50,15 @@ public class Slides {
         targetLinSlidePosition = position;
     }
 
-    public void floorIntake(){
+    public void floorIntake() {
         setTargetSlidesPosition(-2);
     }
 
-    public void preScore(){
+    public void preScore() {
         setTargetSlidesPosition(2);
     }
-    public void score(){
+
+    public void score() {
         setTargetSlidesPosition(30);
     }
 
