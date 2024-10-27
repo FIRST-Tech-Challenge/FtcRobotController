@@ -42,7 +42,7 @@ public class MecanumRobotAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    protected boolean checkDoneCondition() {
         refreshError();
         if(Math.abs(error) <= ERROR_TOLERANCE_IN_TICKS) {
             driveTrain.setPower(0); // stop, to be safe
@@ -55,7 +55,7 @@ public class MecanumRobotAction extends Action {
     }
 
     @Override
-    void update() {
+    protected void update() {
 
         this.currentTicks = driveTrain.getfLeftTicks();
 

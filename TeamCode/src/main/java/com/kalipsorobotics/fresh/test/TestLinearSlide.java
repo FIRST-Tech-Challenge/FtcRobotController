@@ -1,13 +1,12 @@
 package com.kalipsorobotics.fresh.test;
 
-import com.kalipsorobotics.fresh.OpModeUtilities;
-import com.kalipsorobotics.fresh.mechanism.OuttakeSlide;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
 @TeleOp
 public class TestLinearSlide extends LinearOpMode {

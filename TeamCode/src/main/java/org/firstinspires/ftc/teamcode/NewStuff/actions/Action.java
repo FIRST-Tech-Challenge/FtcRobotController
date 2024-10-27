@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 public abstract class Action {
 
-    Action dependentAction;
+    public Action dependentAction;
     boolean isDone = false;
-    boolean hasStarted = false;
+    public boolean hasStarted = false;
 
     public boolean getIsDone() {
         return isDone;
@@ -30,6 +30,6 @@ public abstract class Action {
         return isDone;
     }
 
-    abstract boolean checkDoneCondition();
-    abstract void update();
+    public abstract boolean checkDoneCondition();
+    public abstract void update();
 }

@@ -6,20 +6,20 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.NewStuff.actions.ActionSet;
-import org.firstinspires.ftc.teamcode.NewStuff.actions.AlignRobotToAprilTagXAction;
-import org.firstinspires.ftc.teamcode.NewStuff.actions.AlignRobotToAprilTagYAction;
-import org.firstinspires.ftc.teamcode.NewStuff.actions.DetectPropPositionAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.AlignRobotToAprilTagXAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.AlignRobotToAprilTagYAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DetectPropPositionAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
-import org.firstinspires.ftc.teamcode.NewStuff.actions.DropPixelAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DropPixelAction;
 import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
-import org.firstinspires.ftc.teamcode.NewStuff.actions.GoToBoardAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.GoToBoardAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.IMUModule;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.Intake;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
-import org.firstinspires.ftc.teamcode.NewStuff.PropDetector;
-import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
-import org.firstinspires.ftc.teamcode.NewStuff.modules.DroneLauncher;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.PropDetector;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.VisionPortalManager;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DroneLauncher;
 
 @Autonomous
 public class TestAuto extends LinearOpMode {

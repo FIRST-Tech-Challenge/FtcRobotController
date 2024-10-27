@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff.modules;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;

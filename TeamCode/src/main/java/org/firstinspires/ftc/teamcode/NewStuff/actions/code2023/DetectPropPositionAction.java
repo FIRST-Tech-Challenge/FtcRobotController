@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.NewStuff.actions;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import android.util.Log;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
-import org.firstinspires.ftc.teamcode.NewStuff.PropDetector;
-import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
 
 public class DetectPropPositionAction extends Action {
     ElapsedTime elapsedTime;
@@ -41,7 +41,7 @@ public class DetectPropPositionAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         if (position == PropDetector.PROP_POSITION.UNDETECTED || position == PropDetector.PROP_POSITION.UNKNOWN) {
             return false;
         } else {
@@ -59,7 +59,7 @@ public class DetectPropPositionAction extends Action {
     }
 
     @Override
-    void update() {
+    public void update() {
         Log.d("vision", "action: entered action update");
 
         if(!timeStarted) {

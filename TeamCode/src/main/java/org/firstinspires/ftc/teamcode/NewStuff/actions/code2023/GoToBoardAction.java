@@ -1,11 +1,17 @@
-package org.firstinspires.ftc.teamcode.NewStuff.actions;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import android.util.Log;
 
 import org.firstinspires.ftc.teamcode.NewStuff.CalculateTickInches;
 import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.ActionSet;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.MecanumRobotAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.MoveRobotStraightInchesAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.TurnRobotAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.WaitAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.IMUModule;
-import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
 
 public class GoToBoardAction extends Action {
@@ -140,7 +146,7 @@ public class GoToBoardAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         if(propLocation == FieldPosition.PROP_LOCATION.INNER) {
             if (actionInner.getIsDone()) {
                 return true;
@@ -163,7 +169,7 @@ public class GoToBoardAction extends Action {
     }
 
     @Override
-    void update() {
+    public void update() {
         Log.d("goprop", "updating");
         if(!hasStarted) {
             Log.d("goprop", "starting now");

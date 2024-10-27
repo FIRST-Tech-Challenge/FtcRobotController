@@ -2,17 +2,17 @@ package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 public class DoneStateAction extends Action {
 
-    DoneStateAction() {
+    public DoneStateAction() {
         isDone = true;
     }
 
     @Override
-    boolean checkDoneCondition() {
+    protected boolean checkDoneCondition() {
         return true;
     }
 
     @Override
-    void update() {
+    protected void update() {
         return;
     }
 }

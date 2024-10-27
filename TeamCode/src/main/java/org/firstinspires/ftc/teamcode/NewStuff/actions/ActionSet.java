@@ -44,7 +44,7 @@ public class ActionSet extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    protected boolean checkDoneCondition() {
         for(int i = 0; i < actions.size(); i++) {
             if (!actions.get(i).getIsDone()) {
                 return false;
@@ -54,7 +54,7 @@ public class ActionSet extends Action {
     }
 
     @Override
-    void update() {
+    protected void update() {
         for(int i = 0; i < actions.size(); i++) {
             actions.get(i).updateCheckDone();
             Log.d("parallelaction", "updating action #" + i);

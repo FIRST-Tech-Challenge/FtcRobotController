@@ -1,9 +1,9 @@
 package com.kalipsorobotics.fresh;
 
-import org.firstinspires.ftc.teamcode.mechanisms2023.DroneLauncher;
-import org.firstinspires.ftc.teamcode.mechanisms2023.OuttakeArmClamp;
-import org.firstinspires.ftc.teamcode.mechanisms2023.OuttakeArmPivot;
-import org.firstinspires.ftc.teamcode.mechanisms2023.OuttakeSlide;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DroneLauncherX;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.OuttakeArmClamp;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.OuttakeArmPivot;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.OuttakeSlide;
 import com.kuriosityrobotics.shuttle.HardwareTaskScope;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +21,7 @@ public class TestShuttle extends LinearOpMode {
                 OuttakeSlide outtakeSlide = new OuttakeSlide(opModeUtilities);
                 OuttakeArmPivot outtakeArmPivot = new OuttakeArmPivot(opModeUtilities);
                 OuttakeArmClamp outtakeArmClamp = new OuttakeArmClamp(opModeUtilities);
-                DroneLauncher droneLauncher = new DroneLauncher(opModeUtilities);
+                DroneLauncherX droneLauncher = new DroneLauncherX(opModeUtilities);
 
                 //DriveTrain driveTrain = new DriveTrain(opModeUtilities);
                 //Odometry odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));

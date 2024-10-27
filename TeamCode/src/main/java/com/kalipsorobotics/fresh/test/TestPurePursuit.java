@@ -1,7 +1,5 @@
 package com.kalipsorobotics.fresh.test;
 
-import com.kalipsorobotics.fresh.DriveTrain;
-import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.kalipsorobotics.fresh.localization.Odometry;
 import com.kalipsorobotics.fresh.localization.RobotMovement;
 import com.kalipsorobotics.fresh.math.Point;
@@ -10,6 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.kalipsorobotics.fresh.math.Path;
+
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,8 @@ public class TestPurePursuit extends LinearOpMode {
         try (var outer = HardwareTaskScope.open()) {
             // the outer scope is for the persistent tasks like odo
             // stuff, idk
-            OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
-            DriveTrain driveTrain = new DriveTrain(opModeUtilities);
+            org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
+            org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain driveTrain = new DriveTrain(opModeUtilities);
             Odometry odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
             RobotMovement robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry);
 

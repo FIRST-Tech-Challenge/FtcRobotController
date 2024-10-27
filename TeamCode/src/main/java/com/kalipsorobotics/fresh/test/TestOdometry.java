@@ -1,7 +1,5 @@
 package com.kalipsorobotics.fresh.test;
 
-import com.kalipsorobotics.fresh.DriveTrain;
-import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.kalipsorobotics.fresh.localization.Odometry;
 import com.kalipsorobotics.fresh.localization.RobotMovement;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

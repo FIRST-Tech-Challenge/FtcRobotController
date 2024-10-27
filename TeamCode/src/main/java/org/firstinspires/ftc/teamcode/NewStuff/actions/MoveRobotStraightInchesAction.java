@@ -34,7 +34,7 @@ public class MoveRobotStraightInchesAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    protected boolean checkDoneCondition() {
         refreshError();
         Log.d("moverobot", "current error is " + error);
         if (Math.abs(error) <= ERROR_TOLERANCE) {
@@ -49,7 +49,7 @@ public class MoveRobotStraightInchesAction extends Action {
     }
 
     @Override
-    void update() {
+    protected void update() {
 
         this.currentTicks = driveTrain.getfLeftTicks();
         Log.d("moverobot", "current ticks is " + currentTicks);

@@ -1,22 +1,22 @@
-package org.firstinspires.ftc.teamcode.mechanisms2023;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
-import com.kalipsorobotics.fresh.OpModeUtilities;
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-public class DroneLauncher {
+public class DroneLauncherX {
     private final DroneLauncherMotor droneLauncherMotor;
     private final static double TARGET_VELOCITY = ((0.028 * 100) * 0.5);
     final private DroneLauncherServo droneLauncherServo;
     private final ReentrantLock lock = new ReentrantLock();
 
 
-    private DroneLauncher(DroneLauncherServo droneLauncherServo, DroneLauncherMotor droneLauncherMotor) {
+    private DroneLauncherX(DroneLauncherServo droneLauncherServo, DroneLauncherMotor droneLauncherMotor) {
         this.droneLauncherMotor = droneLauncherMotor;
         this.droneLauncherServo = droneLauncherServo;
     }
 
-    public DroneLauncher(OpModeUtilities opModeUtilities) {
+    public DroneLauncherX(OpModeUtilities opModeUtilities) {
         this.droneLauncherMotor = new DroneLauncherMotor(opModeUtilities);
         this.droneLauncherServo = new DroneLauncherServo(opModeUtilities);
     }

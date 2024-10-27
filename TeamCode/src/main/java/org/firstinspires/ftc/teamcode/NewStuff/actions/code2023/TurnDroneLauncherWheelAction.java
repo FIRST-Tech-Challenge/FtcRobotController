@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.NewStuff.actions;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.NewStuff.modules.DroneLauncher;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
 
 public class TurnDroneLauncherWheelAction extends Action {
 
@@ -37,7 +38,7 @@ public class TurnDroneLauncherWheelAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         refreshError();
         if (Math.abs(error) <= ERROR_TOLERANCE) {
             return true;
@@ -46,7 +47,7 @@ public class TurnDroneLauncherWheelAction extends Action {
     }
 
     @Override
-    void update() {
+    public void update() {
         this.currentTicks = wheel.getCurrentPosition();
 
         if(!hasStarted) {

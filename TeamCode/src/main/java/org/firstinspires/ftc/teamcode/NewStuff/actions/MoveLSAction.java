@@ -44,7 +44,7 @@ public class MoveLSAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    protected boolean checkDoneCondition() {
         refreshError();
         Log.d("movels", "error is " + error);
         if (Math.abs(error) <= ERROR_TOLERANCE) {
@@ -58,7 +58,7 @@ public class MoveLSAction extends Action {
     }
 
     @Override
-    void update() {
+    protected void update() {
         this.currentTicks = lsFront.getCurrentPosition();
 
         if(!hasStarted) {

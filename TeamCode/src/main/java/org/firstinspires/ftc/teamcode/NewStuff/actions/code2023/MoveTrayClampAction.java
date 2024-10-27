@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.NewStuff.actions;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 
 public class MoveTrayClampAction extends Action {
@@ -28,7 +30,7 @@ public class MoveTrayClampAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         if(trayClamp.getPosition() == targetPos) {
             outtake.getOpModeUtilities().getOpMode().sleep(100);
             return true;
@@ -38,7 +40,7 @@ public class MoveTrayClampAction extends Action {
     }
 
     @Override
-    void update() {
+    public void update() {
         trayClamp.setPosition(targetPos);
     }
 }

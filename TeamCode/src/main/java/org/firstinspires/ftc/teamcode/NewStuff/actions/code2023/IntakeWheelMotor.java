@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.mechanisms2023;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 
-import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
 public class IntakeWheelMotor {
     private final DcMotor intake;

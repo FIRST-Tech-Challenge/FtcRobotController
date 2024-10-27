@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.NewStuff.actions;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import android.util.Log;
 
 import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
-import org.firstinspires.ftc.teamcode.NewStuff.VisionPortalManager;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.MoveRobotStraightInchesAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -54,7 +56,7 @@ public class AlignRobotToAprilTagYAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         if(straight.getIsDone()) {
             driveTrain.setPower(0);
             return true;
@@ -64,7 +66,7 @@ public class AlignRobotToAprilTagYAction extends Action {
     }
 
     @Override
-    void update() {
+    public void update() {
         if (!hasStarted) {
             straight = new MoveRobotStraightInchesAction(-getDistanceToMoveY() + 3, driveTrain);
             hasStarted = true;

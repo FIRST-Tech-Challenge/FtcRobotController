@@ -1,28 +1,34 @@
-package com.kalipsorobotics.fresh.localization;
+package org.firstinspires.ftc.teamcode.NewStuff.actions;
 
 import android.util.Log;
 
 import androidx.annotation.GuardedBy;
 
+import com.kalipsorobotics.fresh.localization.Odometry;
+import com.kalipsorobotics.fresh.localization.PidNav;
+import com.kalipsorobotics.fresh.localization.RobotMovement;
 import com.kalipsorobotics.fresh.math.MathFunctions;
-import com.qualcomm.robotcore.util.Range;
-
 import com.kalipsorobotics.fresh.math.Path;
 import com.kalipsorobotics.fresh.math.Point;
 import com.kalipsorobotics.fresh.math.Position;
 import com.kalipsorobotics.fresh.math.Segment;
 import com.kalipsorobotics.fresh.math.Vector;
+import com.qualcomm.robotcore.robot.Robot;
+import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class RobotMovement{
-    private final OpModeUtilities opModeUtilities;
-    private final Odometry odometry;
-    private final DriveTrain driveTrain;
+public class PurePursuitAction extends Action {
+
+    List<Point> pathPoints = new ArrayList<Point>();
+    DriveTrain driveTrain;
+    Odometry odometry;
+    RobotMovement robotMovement;
+
     @GuardedBy("lock")
     private final PidNav pidX;
     @GuardedBy("lock")
@@ -30,16 +36,24 @@ public class RobotMovement{
     @GuardedBy("lock")
     private final PidNav pidAngle;
 
-    private final ReentrantLock lock = new ReentrantLock();
+    Path path;
+    Segment lastLine;
+    double preferredAngle;
 
-    public RobotMovement (org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities opModeUtilities, org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain driveTrain, Odometry odometry) {
-        this.opModeUtilities = opModeUtilities;
-        this.odometry = odometry;
+    public PurePursuitAction(DriveTrain driveTrain, Odometry odometry, RobotMovement robotMovement) {
         this.driveTrain = driveTrain;
+        this.odometry = odometry;
+        this.robotMovement = robotMovement;
+
         this.pidX = new PidNav(1. / 300, 0, 0);
         this.pidY = new PidNav(1. / 300, 0, 0);
         this.pidAngle = new PidNav(3 / 3.14, 0, 0);
     }
+
+    public void addPoint(int x, int y) {
+        pathPoints.add(new Point(x, y));
+    }
+
     @GuardedBy("lock")
     private void targetPosition(Point target, double preferredAngle) {
         Position currentPos = odometry.getCurrentPosition();
@@ -89,37 +103,45 @@ public class RobotMovement{
 //        opModeUtilities.getTelemetry().addData("power y", powerY);
 //        opModeUtilities.getTelemetry().addData("distance to target", distanceToTarget);
     }
-    //Maybe do a PID reset if it breaks
-    public void pathFollow(Path path) throws InterruptedException {
-        lock.lock();
-        try {
-            while (true) {
-                Optional<Point> follow;
-                double radius = 300;
-                do {
-                    follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
-                    radius += 25;
-                } while (!follow.isPresent());
-                Segment lastLine = path.getSegment(path.numSegments() - 1);
-                double preferredAngle = lastLine.getHeadingDirection();
+
+    @Override
+    protected boolean checkDoneCondition() {
+        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 30
+                && odometry.getCurrentVelocity().isWithinThreshhold(30, 30, Math.toRadians(1))
+                && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(2)) {
+            //opModeUtilities.getTelemetry().addLine("breake");
+            //opModeUtilities.getTelemetry().update();
+            driveTrain.setPower(0, 0, 0, 0);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected void update() {
+        if(!hasStarted) {
+            path = new Path(pathPoints);
+            hasStarted = true;
+        }
+
+        double radius = 300;
+        Optional<Point> follow = follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
+
+        if (!follow.isPresent()) {
+            follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
+            radius += 25;
+        } else {
+            lastLine = path.getSegment(path.numSegments() - 1);
+            preferredAngle = lastLine.getHeadingDirection();
 //                opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
 //                opModeUtilities.getTelemetry().addData("follow point", follow);
-                targetPosition(follow.get(), preferredAngle);
-                Log.d("position", odometry.getCurrentPosition().toString());
-                Log.d("velocity", odometry.getCurrentVelocity().toString());
-                if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 30
-                        && odometry.getCurrentVelocity().isWithinThreshhold(30, 30, Math.toRadians(1))
-                        && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(2)) {
-                    opModeUtilities.getTelemetry().addLine("breake");
-                    opModeUtilities.getTelemetry().update();
-                    driveTrain.setPower(0, 0, 0, 0);
-                    break;
-                }
-
-                if (Thread.interrupted()) throw new InterruptedException();
-            }
-        } finally {
-            lock.unlock();
+            targetPosition(follow.get(), preferredAngle);
+            Log.d("position", odometry.getCurrentPosition().toString());
+            Log.d("velocity", odometry.getCurrentVelocity().toString());
         }
+
+        //if (Thread.interrupted()) throw new InterruptedException();
+
     }
 }

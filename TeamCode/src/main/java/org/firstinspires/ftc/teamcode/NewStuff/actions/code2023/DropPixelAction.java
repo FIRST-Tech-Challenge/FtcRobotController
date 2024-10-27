@@ -1,5 +1,10 @@
-package org.firstinspires.ftc.teamcode.NewStuff.actions;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
+import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.ActionSet;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.MoveLSAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.WaitAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 
 public class DropPixelAction extends Action {
@@ -36,12 +41,12 @@ public class DropPixelAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         return outer.getIsDone();
     }
 
     @Override
-    void update() {
+    public void update() {
         outer.updateCheckDone();
     }
 }

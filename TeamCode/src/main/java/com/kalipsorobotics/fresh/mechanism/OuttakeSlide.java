@@ -1,6 +1,5 @@
 package com.kalipsorobotics.fresh.mechanism;
 
-import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class OuttakeSlide {

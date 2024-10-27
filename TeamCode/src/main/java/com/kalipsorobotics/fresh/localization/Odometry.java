@@ -3,12 +3,13 @@ package com.kalipsorobotics.fresh.localization;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.kalipsorobotics.fresh.DriveTrain;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.fresh.math.Position;
 import com.kalipsorobotics.fresh.math.Velocity;
-import com.kalipsorobotics.fresh.OpModeUtilities;
+
+import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
 
 public class Odometry {
     OpModeUtilities opModeUtilities;
@@ -23,7 +24,7 @@ public class Odometry {
     private volatile double prevLeftTicks = 0;
     volatile private double prevBackTicks = 0;
     private volatile long prevTime;
-    public Odometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
+    public Odometry(DriveTrain driveTrain, org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
         this.opModeUtilities = opModeUtilities;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
         this.rightEncoder = driveTrain.getRightEncoder();
