@@ -29,7 +29,7 @@ public class OdometryFuse extends LinearOpMode {
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        //Inches per tick for wheel odometry
         double INCHES_PER_TICK = 40 / -13510.0 * (40.0 / 40.3612);
 
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
