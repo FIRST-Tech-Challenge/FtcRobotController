@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,12 +8,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class testServos extends LinearOpMode {
 
     Servo FLServo, FRServo, BRServo, BLServo;
+    double set;
 
     @Override
     public void runOpMode() {
 
         initRobot();
         waitForStart();
+        int lastButton = -1;
 
         while (opModeIsActive()) {
 
@@ -24,15 +26,22 @@ public class testServos extends LinearOpMode {
             double brPow;
 
             //sets booleans
-            int set = 0;
-            if (gamepad1.a)
-                set = 0;
-            if(gamepad1.b)
-                set = 0;
-            if(gamepad1.x)
-                set = 0;
-            if(gamepad1.y)
-                set = 0;
+            if (gamepad1.a) {
+                if(lastButton == -1) {
+                    set += .05;
+                    lastButton = 1;
+                }
+            }
+            else if (gamepad1.b) {
+                if(lastButton == -1) {
+                    set -= .05;
+                    lastButton = 2;
+                }
+            }
+            else
+                lastButton = -1;
+
+            //if(gamepad1.left_stick_x)
 
             //sets pow
             flPow = set;
@@ -48,7 +57,7 @@ public class testServos extends LinearOpMode {
             BRServo.setPosition(brPow);
 
             //sets telemetry
-            addTelemetry(flPow, frPow, blPow, brPow);
+            addTelemetry(FLServo.getPosition(), FRServo.getPosition(), BLServo.getPosition(), BRServo.getPosition());
         }
     }
 
@@ -77,9 +86,11 @@ public class testServos extends LinearOpMode {
         BRServo.setPosition(0);
         BLServo.setPosition(0);
 
-        FLServo.scaleRange(0, 1.0);
-        FRServo.scaleRange(0, 1.0);
-        BLServo.scaleRange(0, 1.0);
-        BRServo.scaleRange(0, 1.0);
+        FLServo.scaleRange(0, 10);
+        FRServo.scaleRange(0, 10);
+        BLServo.scaleRange(0, 10);
+        BRServo.scaleRange(0, 10);
+
+        set = 0;
     }
 }
