@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class GameController extends Controller {
     private final Controller previousController = new Controller();
 
+    public GameController() {
+        super();
+    }
+
     public GameController(Gamepad gamepad) {
         super(gamepad);
     }

@@ -73,7 +73,7 @@ public class XendysTestTeleop extends OpMode {
         double right = Numbers.normalizeAngle(current - target);
         double angle = Math.abs(left) < Math.abs(right) ? -left : right;
         if (Math.abs(angle) < 0.5) return 0;
-        return Range.clip(angle / 30, -1, 1);
+        return Range.clip(angle / 45, -1, 1);
     }
 
     public static final double LERP_DIFF_CANCEL = 0.05;

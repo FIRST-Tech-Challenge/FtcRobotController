@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.utils.controller.Controller.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -24,8 +25,8 @@ public class Teleop extends OpMode {
     private double targetRotation;
 
     // Gamepad States
-    private final GameController controller1 = new GameController(gamepad1);
-    private final GameController controller2 = new GameController(gamepad2);
+    private final GameController controller1 = new GameController();
+    private final GameController controller2 = new GameController();
 
     private final double SPEED_CHANGE_PER_PRESS = 5;
 
@@ -44,7 +45,7 @@ public class Teleop extends OpMode {
         orientation = chassis.imu.getRobotYawPitchRollAngles();
         yaw = orientation.getYaw();
         yawRad = orientation.getYaw(AngleUnit.RADIANS);
-        normalizedYaw = Numbers.normalizeAngle(normalizedYaw);
+        normalizedYaw = Numbers.normalizeAngle(yaw);
 
         telemetry.addData("Yaw", yaw);
         telemetry.addData("Yaw Rad", yawRad);
@@ -60,10 +61,14 @@ public class Teleop extends OpMode {
         if (controller1.pressed(Button.LeftBumper))
             maxSpeed -= SPEED_CHANGE_PER_PRESS;
 
+        maxSpeed = Range.clip(maxSpeed, 5, 90);
+
         telemetry.addData("Speed", maxSpeed);
 
-        if (controller1.pressed(Button.Back))
+        if (controller1.pressed(Button.Back)) {
             chassis.imu.resetYaw();
+            targetRotation = 0;
+        }
 
         // Thanks gm0!
         double verticalMovePower = moveXInput * Math.sin(-yawRad) + moveYInput * Math.cos(-yawRad);
@@ -78,6 +83,9 @@ public class Teleop extends OpMode {
         double turnPower;
         if (rotationInput != 0) turnPower = rotationInput;
         else turnPower = Numbers.turnCorrectionSpeed(normalizedYaw, targetRotation);
+        telemetry.addData("Rotation Input", rotationInput);
+        telemetry.addData("Turn Power", turnPower);
+
 
         double denominator = Math.max(Math.abs(verticalMovePower) + Math.abs(horizontalMovePower) + Math.abs(turnPower), 1);
 
@@ -92,5 +100,6 @@ public class Teleop extends OpMode {
         chassis.rightFrontMotor.setVelocity(rightFPower * velocityScale);
         chassis.leftBackMotor.setVelocity(leftBPower * velocityScale);
         chassis.rightBackMotor.setVelocity(rightBPower * velocityScale);
+//        telemetry.update();
     }
 }
