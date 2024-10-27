@@ -600,7 +600,7 @@ public class Bot {
     public void runIntakeForTime(double runTime, int direction) {
         long startTime = System.currentTimeMillis();
         topIntake.setPower(direction); // Full power for the intake
-        bottomIntake.setPower(direction);
+        bottomIntake.setPower(-direction);
 
         // Run until the time is up
         while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
