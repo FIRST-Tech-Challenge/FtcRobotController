@@ -24,10 +24,14 @@ public class Wrist {
     }
 
     public void intake(){
-        setPosition(.3);
+        setPosition(.48);
     }
     public void deposit(){
         setPosition(.95);
+    }
+
+    public void straight() {
+        setPosition(.5);
     }
 
 }

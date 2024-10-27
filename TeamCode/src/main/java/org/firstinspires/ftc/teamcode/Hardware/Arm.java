@@ -49,7 +49,7 @@ public class Arm {
     }
 
     public double getCurrentArmPosition() {
-        return (this.armEncoder.getCurrentPosition() * TICKS_TO_DEGREES)+90;
+        return (this.armEncoder.getCurrentPosition() * TICKS_TO_DEGREES)+4.4;
     }
 
 

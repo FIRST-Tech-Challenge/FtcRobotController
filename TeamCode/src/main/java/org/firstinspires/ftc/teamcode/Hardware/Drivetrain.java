@@ -19,8 +19,8 @@ public class Drivetrain {
     private DcMotorEx leftFront;
     ElapsedTime derivativeTimer = new ElapsedTime();
     private GoBildaPinpointDriver odo;
-    public static double yOffset = 100; //tune
-    public static double xOffset = 84; //tune
+    public static double yOffset = 0; //tune
+    public static double xOffset = 135; //tune
 
     private double flPower, frPower, blPower, brPower;
     private double normalize;
@@ -51,7 +51,7 @@ public class Drivetrain {
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         odo.setOffsets(xOffset, yOffset);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD); //maybe
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD); //maybe
         odo.resetPosAndIMU();
         odo.setPosition(startPose);
     }

@@ -58,14 +58,11 @@ public class Slides {
         setTargetSlidesPosition(-2);
     }
 
-    public void floorIntake(int num) {
-        setTargetSlidesPosition(num);
-    }
     public void preScore(){
         setTargetSlidesPosition(2);
     }
     public void score(){
-        setTargetSlidesPosition(32);
+        setTargetSlidesPosition(30);
     }
 
     public void update() {

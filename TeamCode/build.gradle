@@ -7,7 +7,7 @@
 // the build definitions, you can place those customizations in this file, but
 // please think carefully as to whether such customizations are really necessary
 
-
+//
 // Custom definitions may go here
 buildscript {
     repositories {

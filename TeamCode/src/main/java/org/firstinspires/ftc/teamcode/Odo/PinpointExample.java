@@ -45,8 +45,8 @@ public class PinpointExample extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
 
     double oldTime = 0;
-    public static double yOffset = 130; //100
-    public static double xOffset = 84; //84
+    public static double yOffset = 0; //100
+    public static double xOffset = 152.4; //84
 
 
     @Override
