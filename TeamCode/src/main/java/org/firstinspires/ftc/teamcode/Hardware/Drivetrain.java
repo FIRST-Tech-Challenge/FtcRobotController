@@ -25,7 +25,7 @@ public class Drivetrain {
     public static double yOffset = 0; //tune
     public static double xOffset = 135; //tune
 
-    private double zeroMoveAngle = 25;
+    public static double zeroMoveAngle = 45;
 
     private double flPower, frPower, blPower, brPower;
     private double normalize;
@@ -34,14 +34,15 @@ public class Drivetrain {
     private double xRn, yRn, rRn;
     private double headingVelocity = 0;
 
-    public static double P = 0, D = 0;
-    public static double rP = 0, rD = 0;
+    public static double P = 0.15, D = 4.5;
+    public static double rP = 2.2, rD = 27;
 
     private BasicPID xController, yController, rController;
     private PIDCoefficients xyCoefficients, rCoefficients;
     //x and y must be the same because when you rotate 90 degrees, the x and y are swapped!
     private double xPower, yPower, rPower;
     private double xTarget, yTarget, rTarget;
+    private double xOut, yOut;
     private Pose2d rawOutputs = new Pose2d();
 
 
@@ -65,11 +66,15 @@ public class Drivetrain {
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         xyCoefficients = new PIDCoefficients(P, 0, D);
-        rCoefficients = new PIDCoefficients(P, 0, D);
+        rCoefficients = new PIDCoefficients(rP, 0,rD);
 
         xController = new BasicPID(xyCoefficients);
         yController = new BasicPID(xyCoefficients);
         rController = new BasicPID(rCoefficients);
+
+        xTarget = 0;
+        yTarget = 0;
+        rTarget = 0;
 
         derivativeTimer = timer;
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
@@ -120,48 +125,49 @@ public class Drivetrain {
         //only do this ONE TIME, access ONLY the variables "currentPose and currentVelocity" from now on.
         odo.update();
         currentPose = odo.getPosition();
+        //CONVERT TO RR COORDINATES
+        xRn = -currentPose.getY();
+        yRn = currentPose.getX();
+
+        rRn = currentPose.getHeading();
+        //CHECK THE UNITS OF HEADING AND WRITE IT IN A COMMENT!
+        currentPose = new Pose2d(xRn,yRn, rRn);
         currentVelocity = odo.getVelocity();
         headingVelocity = currentVelocity.getHeading();
 
         if(auto == true){ //DONT UPDATE PID's IN TELEOP, JUST OUR CURRENT POSITION AND VELOCITY!
             //OUR CURRENT POSITION
-            //CONVERT TO RR COORDINATES
-            xRn = currentPose.getX();
-            yRn = currentPose.getY();
 
-            rRn = currentPose.getHeading();
-            //CHECK THE UNITS OF HEADING AND WRITE IT IN A COMMENT!
 
             //PID controllers calculate motor powers based on how far away they are.
-            xPower = xController.calculate(xTarget, xRn);
-            yPower = yController.calculate(yTarget, yRn);
+            xOut = -xController.calculate(xTarget, xRn);
+            yOut = -yController.calculate(yTarget, yRn);
             rPower = rController.calculate(rTarget, rRn);
 
-            rawOutputs = new Pose2d(xPower, yPower, rPower);
+            rawOutputs = new Pose2d(xOut, yOut, rPower);
 
             //check the units of heading, they must be in radians for this to work
             //rotation matrix
-            xPower = (xPower * T.cos(rRn) - yPower * T.sin(rRn));
-            yPower = (xPower * T.sin(rRn) + yPower * T.cos(rRn));
+            xPower = (xOut * T.cos(rRn) + yOut * T.sin(rRn));
+            yPower = (xOut * T.sin(rRn) - yOut * T.cos(rRn));
 
 
 
-//            //zeroMoveAngle is 25 for now
-//            double errorScale = 1 - (Math.abs(rRn - rTarget) / zeroMoveAngle);
-//            if (errorScale < 0) {
-//                errorScale = 0;
-//            }
-//
-//            xPower *= errorScale;
-//            yPower *= errorScale;
+            //zeroMoveAngle is 25 for now
+            double errorScale = 1 - (Math.abs(rRn - rTarget) / Math.toRadians(zeroMoveAngle));
+            if (errorScale < 0) {
+                errorScale = 0;
+            }
+
+            xPower *= errorScale;
+            yPower *= errorScale;
 //add this in later
 
 
 //            setPowers(yPower, xPower, rPower);
 
-//            setPowers(0, yPower, 0);
-//            setPowers(xPower, 0, 0);
-            setPowers(0, 0, rPower);
+            setPowers(yPower, -xPower, rPower);
+
 
 
 
@@ -193,7 +199,7 @@ public class Drivetrain {
     public void setTarget(Pose2d target){
         xTarget = target.getX();
         yTarget = target.getY();
-        rTarget = target.getHeading();
+        rTarget = Math.toRadians(target.getHeading());
     }
     //equivalent to the lineTo function
     //technically doesn't move in a line but neither did lineTo

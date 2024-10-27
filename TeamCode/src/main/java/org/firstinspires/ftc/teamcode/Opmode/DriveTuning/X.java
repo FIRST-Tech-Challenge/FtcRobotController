@@ -5,15 +5,17 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
 
+@TeleOp
 @Config
 public class X extends LinearOpMode {
-    Drivetrain drive = new Drivetrain(hardwareMap, new ElapsedTime(), new Pose2d(0, 0, 0));
     public static double xTarget = 0, yTarget = 0, rTarget = 0;
     public void runOpMode() throws InterruptedException {
+        Drivetrain drive = new Drivetrain(hardwareMap, new ElapsedTime(), new Pose2d(0, 0, 0));
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
