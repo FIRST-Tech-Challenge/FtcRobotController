@@ -59,11 +59,12 @@ public class AutoCode extends LinearOpMode {
     // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
     // This is gearing DOWN for less speed and more torque.
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
-    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 3.78 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_MOTOR_ENCODER_RESOLUTION = 537.7;
+    static final double     DRIVE_MOTOR_GEAR_RATIO = 19.2;
+    static final double     COUNTS_PER_MOTOR_REV    = DRIVE_MOTOR_ENCODER_RESOLUTION * DRIVE_MOTOR_GEAR_RATIO ;
+    static final double     WHEEL_DIAMETER_INCHES   = 4 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * 3.1415);
+
     /************Encoder params end****************/
     static final double     DRIVE_SPEED             = 0.3;
 
@@ -77,7 +78,7 @@ public class AutoCode extends LinearOpMode {
         lbMotor = this.hardwareMap.get(DcMotor.class, "motorLB");
     }
     public void runOpMode() {
-        robot.init();
+        hardwareMap();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -85,7 +86,41 @@ public class AutoCode extends LinearOpMode {
         if (opModeIsActive()) {
             telemetry.addData("Starting to move", "");
             telemetry.update();
+            rbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            while (opModeIsActive() && !isStopRequested()) {
 
+                telemetry.addData("Counts per inch: ", COUNTS_PER_INCH);
+                int currentPosition = rbMotor.getCurrentPosition();
+                telemetry.addData("Current position: ", currentPosition);
+/*
+                int newLeftTarget = currentPosition + (int)(2 * COUNTS_PER_INCH);
+                telemetry.addData("Current target: ", newLeftTarget);
+
+                rbMotor.setTargetPosition(newLeftTarget);
+                rbMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rbMotor.setPower(0.5);
+                telemetry.update();
+                sleep(2000);
+
+ */
+                telemetry.addData("Straight", "");
+                telemetry.update();
+                encoderDrive(0.5, 0.5, 5, 5, 0);
+                //sleep(2000);
+
+                //sleep(2000);
+                //telemetry.addData("strafe", "");
+                //telemetry.update();
+
+                strafeToPosition("Left",5);
+                //stopDrive();
+                break;
+
+
+            }
+
+/*
             while (opModeIsActive() && !isStopRequested()) {
 
                 telemetry.addData("Travelling Straight", "");
@@ -94,9 +129,17 @@ public class AutoCode extends LinearOpMode {
 
                 break;
             }
+            */
+
         }
     }
 
+    public void stopDrive(){
+        lfMotor.setPower(0);
+        lbMotor.setPower(0);
+        rfMotor.setPower(0);
+        rbMotor.setPower(0);
+    }
     public void travelStraight(){
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -128,23 +171,26 @@ public class AutoCode extends LinearOpMode {
 
     // Method to strafe right
     public void strafeToPosition(String direction, int distance) {
+        int encodedDistance = (int)(distance * COUNTS_PER_INCH);
+        int leftP = lfMotor.getCurrentPosition() == 0 ? 1 : lfMotor.getCurrentPosition();
         // Calculate target positions
-        int targetPositionFL = lfMotor.getCurrentPosition() - distance;
-        int targetPositionFR = rfMotor.getCurrentPosition() + distance;
-        int targetPositionBL = lbMotor.getCurrentPosition() - distance;
-        int targetPositionBR = rbMotor.getCurrentPosition() + distance;
+        int targetPositionFL = leftP - encodedDistance;
+        int targetPositionFR = -targetPositionFL;
+        int targetPositionBR = targetPositionFL;
+        int targetPositionBL =-targetPositionFL;
 
         // Set target positions
         lfMotor.setTargetPosition(targetPositionFL);
-        rfMotor.setTargetPosition(targetPositionFR);
+        rfMotor.setTargetPosition(-targetPositionFR);
         lbMotor.setTargetPosition(targetPositionBL);
         rbMotor.setTargetPosition(targetPositionBR);
 
         // Set motor powers
         lfMotor.setPower(-1.0); // Full power in reverse
+        rbMotor.setPower(-1.0);    // Full power
+
         rfMotor.setPower(1.0);  // Full power
-        lbMotor.setPower(-1.0);   // Full power in reverse
-        rbMotor.setPower(1.0);    // Full power
+        lbMotor.setPower(1.0);   // Full power in reverse
 
         // Wait until all motors reach their target positions
         while (opModeIsActive() &&
@@ -180,15 +226,33 @@ public class AutoCode extends LinearOpMode {
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
+            int leftP = lfMotor.getCurrentPosition() == 0 ? 1 : lfMotor.getCurrentPosition();
+            int rightP = rfMotor.getCurrentPosition() == 0 ? 1 : rfMotor.getCurrentPosition();
+telemetry.addData("Pos L: ", leftP);
+telemetry.addData("Pos R: ", rightP);
+telemetry.update();
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.getLeftMotorCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.getRightMotorCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            robot.setLeftTargetPosition(newLeftTarget);
-            robot.setRightTargetPosition(newRightTarget);
+            newLeftTarget = leftP + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = rightP + (int)(rightInches * COUNTS_PER_INCH);
+            telemetry.addData("Target L: ", newLeftTarget);
+            telemetry.addData("Target R: ", newRightTarget);
+            telemetry.update();
+            lfMotor.setTargetPosition(newLeftTarget);
+            rfMotor.setTargetPosition(newLeftTarget);
+            lbMotor.setTargetPosition(newLeftTarget);
+            rbMotor.setTargetPosition(newLeftTarget);
 
             // Turn On RUN_TO_POSITION
-            robot.setMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lfMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rfMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lbMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rbMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            lfMotor.setPower(0.5);
+            //rfMotor.setPower(0.5);
+            lbMotor.setPower(0.5);
+            //rbMotor.setPower(0.5);
+/*
             // reset the timeout time and start motion.
             runtime.reset();
             //robot.setDrivePower(Math.abs(speed), Math.abs(speed));
@@ -217,6 +281,8 @@ public class AutoCode extends LinearOpMode {
             robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move.
+            */
+
         }
     }
 }
