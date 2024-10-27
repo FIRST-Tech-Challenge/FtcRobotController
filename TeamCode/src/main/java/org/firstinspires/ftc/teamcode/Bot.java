@@ -34,7 +34,8 @@ public class Bot {
 
 
     //Statistics for measurements
-    public static final int MAX_EXT = -3595;
+    public static final int MAX_EXT = -2648
+            ;
     public static final double MIN_EXTEND = 0;
 
     public static final int LEFT_LIFT_MAX = 7255;

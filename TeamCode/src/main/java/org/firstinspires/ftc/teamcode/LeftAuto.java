@@ -20,7 +20,7 @@ public class LeftAuto extends LinearOpMode {
         //extend pos is in inches(2 digits)
 
         //drives forward and puts the specimen on the hook
-        robot.encoderDrive(1,15.2);
+        robot.encoderDrive(1,16.5);
         robot.setArmPos(850);
         robot.setExtendPos(12.80);
         robot.setArmPos(450);
