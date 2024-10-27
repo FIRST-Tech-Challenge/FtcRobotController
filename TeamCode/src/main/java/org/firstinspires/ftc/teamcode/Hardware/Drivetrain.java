@@ -43,6 +43,7 @@ public class Drivetrain {
     private double xPower, yPower, rPower;
     private double xTarget, yTarget, rTarget;
     private double xOut, yOut;
+    private Pose2d startPose;
     private Pose2d rawOutputs = new Pose2d();
 
 
@@ -71,6 +72,8 @@ public class Drivetrain {
         xController = new BasicPID(xyCoefficients);
         yController = new BasicPID(xyCoefficients);
         rController = new BasicPID(rCoefficients);
+
+        this.startPose = startPose;
 
         xTarget = 0;
         yTarget = 0;
@@ -126,10 +129,10 @@ public class Drivetrain {
         odo.update();
         currentPose = odo.getPosition();
         //CONVERT TO RR COORDINATES
-        xRn = -currentPose.getY();
-        yRn = currentPose.getX();
+        xRn = -currentPose.getY()+startPose.getY();
+        yRn = currentPose.getX()+startPose.getX();
 
-        rRn = currentPose.getHeading();
+        rRn = currentPose.getHeading()+startPose.getHeading();
         //CHECK THE UNITS OF HEADING AND WRITE IT IN A COMMENT!
         currentPose = new Pose2d(xRn,yRn, rRn);
         currentVelocity = odo.getVelocity();
@@ -222,5 +225,7 @@ public class Drivetrain {
             return false;
         }
     }
-
+    public void setStartPostion(Pose2d startpose){
+        odo.setPosition(startpose);
+    }
 }
