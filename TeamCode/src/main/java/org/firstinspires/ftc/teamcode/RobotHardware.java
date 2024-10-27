@@ -285,10 +285,10 @@ public class RobotHardware {
     }
 
     public void goStrafe (double num){
-        rfMotor.setPower(-num);
-        rbMotor.setPower(num);
-        lfMotor.setPower(num);
+        rbMotor.setPower(-num);
         lbMotor.setPower(-num);
+        rfMotor.setPower(num);
+        lfMotor.setPower(num);
     }
 
     public void setViperSlideMotorMode (DcMotor.RunMode mode){

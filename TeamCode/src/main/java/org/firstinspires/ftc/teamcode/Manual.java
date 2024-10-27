@@ -50,8 +50,6 @@ public class Manual  extends LinearOpMode{
                 robot.setViperSlideMotorPower(0.5);
             }
 
-
-
             if(gamepad1.left_stick_y==0){
                 robot.setViperSlideMotorPower(0);
             }
@@ -70,13 +68,12 @@ public class Manual  extends LinearOpMode{
                 robot.setArmMotorPowerZero();
             }
 */
-
-            if(gamepad2.right_bumper){
+            if(gamepad2.right_trigger > 0){
                 //robot.goDiagonal(1);
-                robot.goStrafe(-1);
+                robot.goStrafe(gamepad2.right_trigger * -1);
             }
-            else if (gamepad2.left_bumper){
-                robot.goStrafe(1);
+            else if (gamepad2.left_trigger > 0){
+                robot.goStrafe(gamepad2.left_trigger * 1);
 
             }
 
