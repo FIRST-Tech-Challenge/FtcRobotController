@@ -67,6 +67,10 @@ public class Drivetrain {
         xyCoefficients = new PIDCoefficients(P, 0, D);
         rCoefficients = new PIDCoefficients(P, 0, D);
 
+        xController = new BasicPID(xyCoefficients);
+        yController = new BasicPID(xyCoefficients);
+        rController = new BasicPID(rCoefficients);
+
         derivativeTimer = timer;
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         odo.setOffsets(xOffset, yOffset);
