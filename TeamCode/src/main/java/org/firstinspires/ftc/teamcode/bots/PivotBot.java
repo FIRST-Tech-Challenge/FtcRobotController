@@ -57,7 +57,7 @@ public class PivotBot extends LimelightBot{
         Slide.setPower(0.5);
     }
 
-    public void SlideControl(boolean up, boolean down){
+    public void slideControl(boolean up, boolean down){
         if (up){
             slideTarget2 = 20;
             Slide.setTargetPosition(slideTarget2);
@@ -73,7 +73,11 @@ public class PivotBot extends LimelightBot{
         }
     }
 
-    public void PivotControl(boolean up, boolean down){
+    public void slideMove(boolean up, boolean down){
+
+    }
+
+    public void pivotControl(boolean up, boolean down){
         if (up){
             slideTarget = 0;
             Motor.setTargetPosition(slideTarget);

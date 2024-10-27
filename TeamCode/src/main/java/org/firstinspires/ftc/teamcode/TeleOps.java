@@ -33,15 +33,15 @@ public class TeleOps extends LinearOpMode {
             robot.resetAngle(gamepad1.x);
 
             robot.onLoop(0, "manual drive");
-            robot.PivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
-            robot.SlideControl(gamepad1.dpad_left, gamepad1.dpad_right);
+            robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
+            robot.slideControl(gamepad1.dpad_left, gamepad1.dpad_right);
 
             telemetry.addData("slide position: ", robot.Slide.getCurrentPosition());
             telemetry.addData("tx", robot.result.getTx());
             telemetry.addData("ty", robot.result.getTy());
             telemetry.addData("Botpose", robot.botpose.toString());
             telemetry.update();
-            robot.detect(gamepad1.a);
+            robot.detectOne(gamepad1.a);
 
         }
         robot.close();

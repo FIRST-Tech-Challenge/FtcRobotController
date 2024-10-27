@@ -3,25 +3,11 @@ package org.firstinspires.ftc.teamcode.bots;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-
-import java.util.List;
 
 public class LimelightBot extends GyroBot {
 
@@ -57,7 +43,7 @@ public class LimelightBot extends GyroBot {
         result = limelight.getLatestResult();
         return result.getTy();
     }
-   public void detect(boolean button){
+   public double[] detectOne(boolean button){
        LLResult result = limelight.getLatestResult();
        if(result != null){
            if(result.isValid()){
@@ -66,10 +52,9 @@ public class LimelightBot extends GyroBot {
                telemetry.addData("ty", result.getTy());
                telemetry.addData("Botpose", botpose.toString());
            }
-
-   }
-
-
-
+       }
+       double[] temp = new double[3];
+       return temp;
     }
+
 }
