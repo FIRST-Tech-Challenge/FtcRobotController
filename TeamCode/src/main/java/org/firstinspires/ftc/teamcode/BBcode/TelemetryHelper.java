@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import java.text.MessageFormat;
 
 public class TelemetryHelper {
-    private OpMode _opMode;
+    private final OpMode _opMode;
     public TelemetryHelper(OpMode opMode)
     {
         _opMode = opMode;
@@ -29,6 +29,7 @@ public class TelemetryHelper {
         _opMode.telemetry.update();
     }
     //Initializes telemetry for a gamepad
+    @SuppressWarnings("CodeBlock2Expr")
     public void initGamepadTelemetry(Gamepad gamepad)
     {
         _opMode.telemetry.addLine("gamepad 1")
