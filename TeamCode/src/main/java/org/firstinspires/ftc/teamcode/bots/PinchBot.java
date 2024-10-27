@@ -41,7 +41,7 @@ public class PinchBot extends PivotBot{
         double x = position[0];
         double y = position[1];
         double theta = position[2];
-
+        
 
 
     }

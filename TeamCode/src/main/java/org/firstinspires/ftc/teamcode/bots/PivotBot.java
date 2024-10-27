@@ -73,8 +73,8 @@ public class PivotBot extends LimelightBot{
         }
     }
 
-    public void slideMove(boolean up, boolean down){
-
+    public void slideMove(int up){
+        //depending on the number, move the slide
     }
 
     public void pivotControl(boolean up, boolean down){
