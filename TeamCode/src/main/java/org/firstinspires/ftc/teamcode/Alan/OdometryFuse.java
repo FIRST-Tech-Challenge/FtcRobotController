@@ -2,12 +2,17 @@ package org.firstinspires.ftc.teamcode.Alan;
 
 //test phase
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import android.annotation.SuppressLint;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class OdometryFuse extends LinearOpMode {
@@ -20,7 +25,7 @@ public class OdometryFuse extends LinearOpMode {
         DcMotor rightBack = hardwareMap.dcMotor.get("bRight");
 
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        //configureOtos();
+        configureOtos();
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -47,4 +52,40 @@ public class OdometryFuse extends LinearOpMode {
             telemetry.update();
         }
     }
+}
+
+
+@SuppressLint("DefaultLocale")
+private void configureOtos() {
+    telemetry.addLine("Configuring OTOS...");
+    telemetry.update();
+
+    myOtos.setLinearUnit(DistanceUnit.INCH);
+
+    myOtos.setAngularUnit(AngleUnit.DEGREES);
+
+    SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+    myOtos.setOffset(offset);
+
+    myOtos.setLinearScalar(1.0);
+    myOtos.setAngularScalar(1.0);
+
+    myOtos.calibrateImu();
+
+    myOtos.resetTracking();
+
+    SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+    myOtos.setPosition(currentPosition);
+
+    // Get the hardware and firmware version
+    SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
+    SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
+    myOtos.getVersionInfo(hwVersion, fwVersion);
+
+    telemetry.addLine("OTOS configured! Press start to get position data!");
+    telemetry.addLine();
+    telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
+    telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+    telemetry.update();
+}
 }
