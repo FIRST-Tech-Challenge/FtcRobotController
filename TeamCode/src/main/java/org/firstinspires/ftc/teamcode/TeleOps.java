@@ -54,8 +54,8 @@ public class TeleOps extends LinearOpMode {
             robot.resetAngle(gamepad1.x);
 
             robot.onLoop(0, "manual drive");
-            robot.PivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
-            robot.SlideControl(gamepad1.dpad_left, gamepad1.dpad_right);
+            robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
+            robot.slideControl(gamepad1.dpad_left, gamepad1.dpad_right);
 
             telemetry.addData("slide position: ", robot.Slide.getCurrentPosition());
 
@@ -65,6 +65,8 @@ public class TeleOps extends LinearOpMode {
             telemetry.addData("ty: ", values[1]);
             telemetry.addData("angle: ", values[2]);
             telemetry.update();
+
+
 
         }
         robot.close();

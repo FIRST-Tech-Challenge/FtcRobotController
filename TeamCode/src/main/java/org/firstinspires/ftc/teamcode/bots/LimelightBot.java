@@ -3,25 +3,11 @@ package org.firstinspires.ftc.teamcode.bots;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-
-import java.util.List;
 
 public class LimelightBot extends GyroBot {
 
@@ -58,6 +44,7 @@ public class LimelightBot extends GyroBot {
         result = limelight.getLatestResult();
         return result.getTy();
     }
+
    public double[] detectOne(){
         double[] values = new double[3];
        LLResult result = limelight.getLatestResult();
@@ -74,6 +61,7 @@ public class LimelightBot extends GyroBot {
                values[2] = angle;
            }
        }
+
        return values;
 
    }
@@ -81,5 +69,8 @@ public class LimelightBot extends GyroBot {
    public void switchPipeline(int pipeline){
        limelight.pipelineSwitch(pipeline);
    }
+
+    }
+
 
 }
