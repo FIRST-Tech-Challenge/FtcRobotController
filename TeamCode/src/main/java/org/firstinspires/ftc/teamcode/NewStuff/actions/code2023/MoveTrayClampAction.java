@@ -4,25 +4,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
-import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 
 public class MoveTrayClampAction extends Action {
 
     Servo trayClamp;
-    Outtake outtake;
+    Outtake2023 outtake;
     double targetPos;
 
     public static double CLAMP_OPEN_POS = 0.471;
     public static double CLAMP_CLOSE_POS = 0.57;
 
-    public MoveTrayClampAction(Action dependentAction, double targetPos, Outtake outtake) {
+    public MoveTrayClampAction(Action dependentAction, double targetPos, Outtake2023 outtake) {
         this.outtake = outtake;
         this.trayClamp = outtake.clamp;
         this.dependentAction = dependentAction;
         this.targetPos = targetPos;
     }
 
-    public MoveTrayClampAction(double targetPos, Outtake outtake) {
+    public MoveTrayClampAction(double targetPos, Outtake2023 outtake) {
         this.outtake = outtake;
         this.trayClamp = outtake.clamp;
         this.dependentAction = new DoneStateAction();

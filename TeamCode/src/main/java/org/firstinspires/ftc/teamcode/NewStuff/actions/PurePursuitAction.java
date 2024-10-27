@@ -6,7 +6,6 @@ import androidx.annotation.GuardedBy;
 
 import com.kalipsorobotics.fresh.localization.Odometry;
 import com.kalipsorobotics.fresh.localization.PidNav;
-import com.kalipsorobotics.fresh.localization.RobotMovement;
 import com.kalipsorobotics.fresh.math.MathFunctions;
 import com.kalipsorobotics.fresh.math.Path;
 import com.kalipsorobotics.fresh.math.Point;
@@ -27,7 +26,6 @@ public class PurePursuitAction extends Action {
     List<Point> pathPoints = new ArrayList<Point>();
     DriveTrain driveTrain;
     Odometry odometry;
-    RobotMovement robotMovement;
 
     @GuardedBy("lock")
     private final PidNav pidX;
@@ -40,10 +38,9 @@ public class PurePursuitAction extends Action {
     Segment lastLine;
     double preferredAngle;
 
-    public PurePursuitAction(DriveTrain driveTrain, Odometry odometry, RobotMovement robotMovement) {
+    public PurePursuitAction(DriveTrain driveTrain, Odometry odometry) {
         this.driveTrain = driveTrain;
         this.odometry = odometry;
-        this.robotMovement = robotMovement;
 
         this.pidX = new PidNav(1. / 300, 0, 0);
         this.pidY = new PidNav(1. / 300, 0, 0);
@@ -105,7 +102,7 @@ public class PurePursuitAction extends Action {
     }
 
     @Override
-    protected boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 30
                 && odometry.getCurrentVelocity().isWithinThreshhold(30, 30, Math.toRadians(1))
                 && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(2)) {
@@ -119,7 +116,7 @@ public class PurePursuitAction extends Action {
     }
 
     @Override
-    protected void update() {
+    public void update() {
         if(!hasStarted) {
             path = new Path(pathPoints);
             hasStarted = true;

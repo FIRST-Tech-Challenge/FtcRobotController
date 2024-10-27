@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.NewStuff.modules;
+package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 
-public class Outtake {
+public class Outtake2023 {
 
     public static final double P_CONSTANT = 0.004;
     private final OpModeUtilities opModeUtilities;
@@ -21,7 +21,7 @@ public class Outtake {
     private double PIGEON_HEAD_ANGLE_MAX = PIGEON_HEAD_DEFAULT_POS + 0.18;
     private double PIGEON_HEAD_ANGLE_MIN = PIGEON_HEAD_DEFAULT_POS - 0.18;
 
-    public Outtake(OpModeUtilities opModeUtilities) {
+    public Outtake2023(OpModeUtilities opModeUtilities) {
 
         this.opModeUtilities = opModeUtilities;
         setUpHardware();

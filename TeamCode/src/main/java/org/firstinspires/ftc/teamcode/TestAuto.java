@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.GoToBoardAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.IMUModule;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.Intake;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
-import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.Outtake2023;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.PropDetector;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.VisionPortalManager;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DroneLauncher;
@@ -32,7 +32,7 @@ public class TestAuto extends LinearOpMode {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
 
-        Outtake outtake = new Outtake(opModeUtilities);
+        Outtake2023 outtake = new Outtake2023(opModeUtilities);
         Intake intake = new Intake(opModeUtilities);
         DroneLauncher droneLauncher = new DroneLauncher(opModeUtilities);
         DriveTrain driveTrain;

@@ -47,51 +47,67 @@ public class DriveTrain {
        // testMotorDeleteLater = opModeUtilities.getHardwareMap().dcMotor.get("testMotor");
     }
     public void setFLeftPower(double power) { fLeft.setPower(power); }
+
     public void setFRightPower(double power) { fRight.setPower(power); }
+
     public void setBLeftPower(double power) { bLeft.setPower(power); }
+
     public void setBRightPower(double power) { bRight.setPower(power); }
+
     public void setPower (double fLeftPower, double fRightPower, double bLeftPower, double bRightPower){
         setFLeftPower(fLeftPower);
         setFRightPower(fRightPower);
         setBLeftPower(bLeftPower);
         setBRightPower(bRightPower);
     }
+
     public void setPower(double power) {
         setFLeftPower(power);
         setFRightPower(power);
         setBLeftPower(power);
         setBRightPower(power);
     }
+
     public DcMotor getBackEncoder() {
         return backEncoder;
     }
+
     public DcMotor getRightEncoder() {
         return rightEncoder;
     }
+
     public DcMotor getLeftEncoder() {
         return leftEncoder;
     }
+
     public DcMotor getfLeft() {
         return fLeft;
     }
+
     public double getfLeftTicks() {
         return fLeft.getCurrentPosition();
     }
+
     public DcMotor getfRight() {
         return fRight;
     }
+
     public DcMotor getbLeft() {
         return bLeft;
     }
+
     public DcMotor getbRight() {
         return bRight;
     }
+
     /*public DcMotor getTestMotorDeleteLater() {
         return testMotorDeleteLater;
     }*/
+
     public OpModeUtilities getOpModeUtilities() {
         return opModeUtilities;
     }
+
     /*public void setTestPower(double power) throws InterruptedException {
         getTestMotorDeleteLater().setPower(power);
         Thread.sleep(3000);

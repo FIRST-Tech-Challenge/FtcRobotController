@@ -5,14 +5,13 @@ import org.firstinspires.ftc.teamcode.NewStuff.actions.ActionSet;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.MoveLSAction;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.WaitAction;
-import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
 
 public class DropPixelAction extends Action {
 
-    Outtake outtake;
+    Outtake2023 outtake;
     ActionSet outer;
 
-    public DropPixelAction(Action dependentAction, Outtake outtake) {
+    public DropPixelAction(Action dependentAction, Outtake2023 outtake) {
         this.dependentAction = dependentAction;
         this.outtake = outtake;
         outer = new ActionSet();
@@ -26,7 +25,7 @@ public class DropPixelAction extends Action {
         outer.scheduleSequential(new MoveLSAction(-500, outtake));
     }
 
-    public DropPixelAction(Outtake outtake) {
+    public DropPixelAction(Outtake2023 outtake) {
         this.dependentAction = new DoneStateAction();
         this.outtake = outtake;
         outer = new ActionSet();

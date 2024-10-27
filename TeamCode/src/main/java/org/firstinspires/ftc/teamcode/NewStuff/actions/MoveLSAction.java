@@ -4,13 +4,13 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.Outtake2023;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake2024;
 
 public class MoveLSAction extends Action {
 
-    DcMotor lsFront;
-    DcMotor lsBack;
-    Outtake outtake;
+    Outtake2024 outtake;
+    DcMotor linearSlide, linearSlideTwo;
     final double ERROR_TOLERANCE = 50;
     final double P_CONSTANT = 0.0035;
     double targetTicks;
@@ -18,18 +18,18 @@ public class MoveLSAction extends Action {
     double error;
 
 
-    public MoveLSAction(Action dependentAction, double targetTicks, Outtake outtake) {
+    public MoveLSAction(Action dependentAction, double targetTicks, Outtake2024 outtake) {
         this.outtake = outtake;
-        lsFront = outtake.lsFront;
-        lsBack = outtake.lsBack;
+        linearSlide = outtake.linearSlide;
+        linearSlideTwo = outtake.linearSlideTwo;
         this.dependentAction = dependentAction;
         this.targetTicks = targetTicks;
     }
 
-    public MoveLSAction(double targetTicks, Outtake outtake) {
+    public MoveLSAction(double targetTicks, Outtake2024 outtake) {
         this.outtake = outtake;
-        lsFront = outtake.lsFront;
-        lsBack = outtake.lsBack;
+        linearSlide = outtake.linearSlide;
+        linearSlideTwo = outtake.linearSlideTwo;
         this.dependentAction = new DoneStateAction();
         this.targetTicks = targetTicks;
     }
@@ -44,12 +44,12 @@ public class MoveLSAction extends Action {
     }
 
     @Override
-    protected boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         refreshError();
         Log.d("movels", "error is " + error);
         if (Math.abs(error) <= ERROR_TOLERANCE) {
-            lsFront.setPower(0);
-            lsBack.setPower(0);
+            linearSlide.setPower(0);
+            linearSlideTwo.setPower(0);
             //outtake.getOpModeUtilities().getOpMode().sleep(100);
             return true;
         } else {
@@ -58,15 +58,15 @@ public class MoveLSAction extends Action {
     }
 
     @Override
-    protected void update() {
-        this.currentTicks = lsFront.getCurrentPosition();
+    public void update() {
+        this.currentTicks = linearSlide.getCurrentPosition();
 
         if(!hasStarted) {
             this.targetTicks += currentTicks;
             hasStarted = true;
         }
 
-        lsFront.setPower(calculatePower());
-        lsBack.setPower(calculatePower());
+        linearSlide.setPower(calculatePower());
+        linearSlideTwo.setPower(calculatePower());
     }
 }

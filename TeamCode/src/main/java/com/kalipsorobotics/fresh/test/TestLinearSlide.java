@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake2024;
 
 @TeleOp
 public class TestLinearSlide extends LinearOpMode {
@@ -16,13 +17,7 @@ public class TestLinearSlide extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         //OuttakeSlide linearSlide = new OuttakeSlide(opModeUtilities);
 
-        DcMotor linearSlide = hardwareMap.get(DcMotor.class,"linearSlide");
-        DcMotor linearSlideTwo = hardwareMap.get(DcMotor.class,"linearSlideTwo");
-        Servo armPivot = hardwareMap.get(Servo.class, "armPivot");
-        Servo claw = hardwareMap.get(Servo.class, "claw");
-
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Outtake2024 outtake2024 = new Outtake2024(opModeUtilities);
 
         double lsStayUpPower = 0.1;
         double armPivotPos = 0.5;
@@ -35,14 +30,14 @@ public class TestLinearSlide extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                linearSlide.setPower(1);
-                linearSlideTwo.setPower(1);
+                outtake2024.linearSlide.setPower(1);
+                outtake2024.linearSlideTwo.setPower(1);
             } else if (gamepad1.b) {
-                linearSlide.setPower(-1);
-                linearSlideTwo.setPower(-1);
+                outtake2024.linearSlide.setPower(-1);
+                outtake2024.linearSlideTwo.setPower(-1);
             } else {
-                linearSlide.setPower(0);
-                linearSlideTwo.setPower(0);
+                outtake2024.linearSlide.setPower(0);
+                outtake2024.linearSlideTwo.setPower(0);
             }
 
             //linearSlide.setPower((0.75*gamepad1.left_stick_y) - lsStayUpPower);
@@ -85,21 +80,21 @@ public class TestLinearSlide extends LinearOpMode {
 //                }
 //            }
 
-            if(Math.abs(linearSlide.getCurrentPosition()) < 15) {
-                linearSlide.setPower(0);
-                linearSlideTwo.setPower(0);
+            if(Math.abs(outtake2024.linearSlide.getCurrentPosition()) < 15) {
+                outtake2024.linearSlide.setPower(0);
+                outtake2024.linearSlideTwo.setPower(0);
             }
 
             if(gamepad1.left_bumper) {
                 leftBumperPressed = true;
             }
 
-            errorToZero = 25 - linearSlide.getCurrentPosition();
+            errorToZero = 25 - outtake2024.linearSlide.getCurrentPosition();
 
             if(leftBumperPressed) {
-                linearSlide.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
-                linearSlideTwo.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
-                if(linearSlide.getCurrentPosition() < -700 && linearSlide.getCurrentPosition() > -800) {
+                outtake2024.linearSlide.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
+                outtake2024.linearSlideTwo.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
+                if(outtake2024.linearSlide.getCurrentPosition() < -700 && outtake2024.linearSlide.getCurrentPosition() > -800) {
                     clawPos = 0.75;
                 }
 
@@ -108,13 +103,13 @@ public class TestLinearSlide extends LinearOpMode {
                 }
             }
 
-            telemetry.addData("lienar slides position", linearSlide.getCurrentPosition());
-            telemetry.addData("arm pivot position", armPivot.getPosition());
-            telemetry.addData("claw position", claw.getPosition());
+            telemetry.addData("lienar slides position", outtake2024.linearSlide.getCurrentPosition());
+            telemetry.addData("arm pivot position", outtake2024.armPivot.getPosition());
+            telemetry.addData("claw position", outtake2024.claw.getPosition());
             telemetry.update();
 
-            armPivot.setPosition(armPivotPos);
-            claw.setPosition(clawPos);
+            outtake2024.armPivot.setPosition(armPivotPos);
+            outtake2024.claw.setPosition(clawPos);
 
 
             //0.75
