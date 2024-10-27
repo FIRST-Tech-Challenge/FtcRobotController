@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.utils.Numbers;
 import org.firstinspires.ftc.teamcode.utils.controller.GameController;
+import org.firstinspires.ftc.teamcode.utils.controller.PowerCurve;
 
 @TeleOp(name = "Teleop")
 public class Teleop extends OpMode {
@@ -51,9 +52,9 @@ public class Teleop extends OpMode {
         telemetry.addData("Yaw Rad", yawRad);
         telemetry.addData("Normalized Yaw", normalizedYaw);
 
-        float moveXInput = controller1.axis(Axis.LeftStickX);
-        float moveYInput = controller1.axis(Axis.LeftStickY);
-        float rotationInput = controller1.axis(Axis.RightStickX);
+        float moveXInput = controller1.axis(Axis.LeftStickX, PowerCurve.Quadratic);
+        float moveYInput = controller1.axis(Axis.LeftStickY, PowerCurve.Quadratic);
+        float rotationInput = controller1.axis(Axis.RightStickX, PowerCurve.Cubic);
 
         if (controller1.pressed(Button.RightBumper))
             maxSpeed += SPEED_CHANGE_PER_PRESS;

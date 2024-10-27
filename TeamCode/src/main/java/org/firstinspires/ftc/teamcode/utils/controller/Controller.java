@@ -116,31 +116,46 @@ public class Controller {
     }
 
     public float axis(Axis axis) {
+        return axis(axis, PowerCurve.Linear);
+    }
+
+    public float axis(Axis axis, PowerCurve curve) {
         Gamepad g = currentGamepad;
+        float value = 0;
         switch (axis) {
             case LeftStickX:
-                return Numbers.deadzone(g.left_stick_x, stickDeadzone);
+                value =  Numbers.deadzone(g.left_stick_x, stickDeadzone);
+                break;
             case LeftStickY:
-                return Numbers.deadzone(-g.left_stick_y, stickDeadzone);
+                value =  Numbers.deadzone(-g.left_stick_y, stickDeadzone);
+                break;
             case RightStickX:
-                return Numbers.deadzone(g.right_stick_x, stickDeadzone);
+                value =  Numbers.deadzone(g.right_stick_x, stickDeadzone);
+                break;
             case RightStickY:
-                return Numbers.deadzone(-g.right_stick_y, stickDeadzone);
+                value =  Numbers.deadzone(-g.right_stick_y, stickDeadzone);
+                break;
             case LeftTrigger:
-                return g.left_trigger;
+                value =  g.left_trigger;
+                break;
             case RightTrigger:
-                return g.right_trigger;
+                value =  g.right_trigger;
+                break;
             case TouchpadFinger1X:
-                return g.touchpad_finger_1_x;
+                value =  g.touchpad_finger_1_x;
+                break;
             case TouchpadFinger1Y:
-                return g.touchpad_finger_1_y;
+                value =  g.touchpad_finger_1_y;
+                break;
             case TouchpadFinger2X:
-                return g.touchpad_finger_2_x;
+                value =  g.touchpad_finger_2_x;
+                break;
             case TouchpadFinger2Y:
-                return g.touchpad_finger_2_y;
-            default:
-                throw new IllegalArgumentException();
+                value =  g.touchpad_finger_2_y;
+                break;
         }
+
+        return curve.apply(value);
     }
 
     public Gamepad.Type getBrand() {
