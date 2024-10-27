@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
@@ -15,55 +19,43 @@ import org.firstinspires.ftc.teamcode.utils.PIDController;
 
 public class Arm {
 
-    /*TODO LIST:
-        Identify [Rotational/Tick Limits] of Arm
-        Tune PID Parameters accordingly
-    */
-
-
     //Adjustable Constants
     private double ARM_SPEED = 50; //Ticks
-
-    public double MAX_POWER = 0.5;
 
     private double TICKS_PER_ROTATION = 8192;
 
     private double MINIMUM_ROTATION = 0; //0 degrees (Relative to starting position)
     private double MAXIMUM_ROTATION = 3000; //Ticks
 
-    //Internal variables
-    private CRServo armLeft, armRight;
-
-    //Position values 50, wrist, 3200
-
     private int BASE_HEIGHT = 3400;//3450 - 50; //ticks
-    private int SPECIMIN_HEIGHT = 2420;//3450 - 800; //ticks
+    private int SPECIMEN_HEIGHT = 2420;//3450 - 800; //ticks
 
     private int REST_HEIGHT = 200;//3450 - 3250; //ticks
     private int DEPOSIT_HEIGHT = -220;//3450 - 3670; //ticks 3670
 
     enum ArmState{
         BASE_HEIGHT,
-        SPECIMIN_HEIGHT,
+        SPECIMEN_HEIGHT,
         REST_HEIGHT,
         DEPOSIT_HEIGHT
     }
+    //Degrees from +x axis (where x axis is the ground and positive is the robot's forward)
+    private double armAngleOffset = 142;
 
+    //Internal variables
+    private CRServo armLeft, armRight;
     private ArmState currentState;
 
 
     private Encoder encoder;
     private PIDController pid;
-
-    private double armAngleOffset = -4;
-
     private int targetPosition;
 
     public Arm(HardwareMap hw){
-
         this(hw, "armLeft", "armRight", "liftLeft");
     }
     public Arm(HardwareMap hw, String nameLeft, String nameRight, String nameEncoder){
+        //Initialize hardware
         armLeft = hw.get(CRServo.class, nameLeft);
         armRight = hw.get(CRServo.class, nameRight);
         DcMotorEx motorPort = hw.get(DcMotorEx.class, nameEncoder);
@@ -73,33 +65,20 @@ public class Arm {
         //Creates encoder object to use
         encoder = new OverflowEncoder(new RawEncoder(motorPort));
 
-
-
-//        encoder.setDirection(DcMotorSimple.Direction.REVERSE);
+        //Reverse Directions for Right Servo
         armRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//        armLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        pid = new PIDController(0.001,0,0.0001,0.25);
-        pid.setTarget(getTicks());
+
+        //Pid Setup
+        pid = new PIDController(0.0015,0,0.00015,0.25);
+        pid.setTarget(getPosition());
         currentState = ArmState.REST_HEIGHT;
     }
 
-    public void changeHeight(double power){
-        targetPosition +=  (power * ARM_SPEED);
-//        targetPosition = clamp(targetPosition, MAXIMUM_ROTATION, MINIMUM_ROTATION);
-        pid.setTarget(targetPosition);
-    }
-    private int clamp(double value, double max, double min){
-        return (int) Math.max( min , Math.min( max , value));
-    }
 
-    public int getTicks(){
-        return encoder.getPositionAndVelocity().position;
-    }
+    //------------------------------------------------------------------------------------------
+    //----------------------------------Go To Position----------------------------------------
+    //------------------------------------------------------------------------------------------
 
-    public double getForwardFeedValue(){
-//        return 1;
-        return Math.cos(Math.toRadians(getRotation()));
-    }
 
     public void goToBase(){
         currentState = ArmState.BASE_HEIGHT;
@@ -107,9 +86,9 @@ public class Arm {
         pid.setTarget(targetPosition);
     }
 
-    public void goToSpecimin(){
-        currentState = ArmState.SPECIMIN_HEIGHT;
-        targetPosition = SPECIMIN_HEIGHT;
+    public void goToSpecimen(){
+        currentState = ArmState.SPECIMEN_HEIGHT;
+        targetPosition = SPECIMEN_HEIGHT;
         pid.setTarget(targetPosition);
     }
 
@@ -125,32 +104,69 @@ public class Arm {
         pid.setTarget(targetPosition);
     }
 
+    public void goToPosition(ArmState state){
+        switch (state){
+            case BASE_HEIGHT:
+                goToBase();
+                break;
+            case REST_HEIGHT:
+                goToRest();
+                break;
+            case DEPOSIT_HEIGHT:
+                goToDeposit();
+                break;
+            case SPECIMEN_HEIGHT:
+                goToSpecimen();
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    //------------------------------------------------------------------------------------------
+    //----------------------------------Getter Functions----------------------------------------
+    //------------------------------------------------------------------------------------------
     public int getTargetPosition(){
         return targetPosition;
     }
 
+    public int getPosition(){
+        return encoder.getPositionAndVelocity().position;
+    }
+    public int getVelocity() {return encoder.getPositionAndVelocity().velocity;}
 
+    public double getForwardFeedValue(){
+        return -Math.cos(Math.toRadians(getRotation()));
+    }
+
+
+    /**
+     * @return [double] The rotational position in DEGREES relative to ground
+     */
+    public double getRotation(){
+        //Initial start position is ~=-50 degrees off of +y axis
+        return armAngleOffset - ((getPosition() / TICKS_PER_ROTATION) * 360);
+    }
+
+    public PIDController getPid(){
+        return pid;
+    }
+    public ArmState getState(){
+        return currentState;
+    }
+    //------------------------------------------------------------------------------------------
+    //----------------------------------PID Functions-------------------------------------------
+    //------------------------------------------------------------------------------------------
     /**
      * This ensures that the PID loops properly.
      * Please add this into the TeleOp loop when using this.
-     * For autonomous implementation... Refer to how Roadrunner uses PID
      */
     public double update(){
-        double power = pid.calculate(getTicks(), getForwardFeedValue());
+        double power = pid.calculate(getPosition(), getForwardFeedValue());
         armLeft.setPower(power);
         armRight.setPower(power);
         return power;
-    }
-
-    /**
-     * @return [double] The rotational position in DEGREES
-     */
-    public double getRotation(){
-        return (getTicks() / TICKS_PER_ROTATION) * 360  + armAngleOffset;
-    }
-
-    public PIDController getPIDObject(){
-        return pid;
     }
 
     /**
@@ -159,18 +175,27 @@ public class Arm {
      * @param Ki [double] Increment to increase Ki by
      * @param Kd [double] Increment to increase Kd by
      */
+
+    //------------------------------------------------------------------------------------------
+    //----------------------------------Tuning/Tweaking Functions-------------------------------
+    //------------------------------------------------------------------------------------------
+
     public void adjustPID(double Kp, double Ki, double Kd, double Kf){
         pid.setKp(Kp);
         pid.setKi(Ki);
         pid.setKd(Kd);
         pid.setKf(Kf);
     }
-    public PIDController getPid(){
-        return pid;
+    public void setPosition(double power){
+        targetPosition +=  (power * ARM_SPEED);
+        pid.setTarget(targetPosition);
     }
 
-    public ArmState getState(){
-        return currentState;
+    //------------------------------------------------------------------------------------------
+    //----------------------------------Helper Functions----------------------------------------
+    //------------------------------------------------------------------------------------------
+    private int clamp(double value, double max, double min){
+        return (int) Math.max( min , Math.min( max , value));
     }
 
     @SuppressLint("DefaultLocale")
@@ -181,9 +206,24 @@ public class Arm {
                 "Arm target position: %d\n" +
                 "Arm PID Data: \n%s",
                 this.getRotation(),
-                this.getTicks(),
+                this.getPosition(),
                 this.targetPosition,
                 pid.toString());
+    }
+
+    //------------------------------------------------------------------------------------------
+    //----------------------------------Autonomous Functions------------------------------------
+    //------------------------------------------------------------------------------------------
+    public Action armPID(){
+        return new ArmPID();
+    }
+
+    public class ArmPID implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            update();
+            return true;
+        }
     }
 
 }

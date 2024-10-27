@@ -74,7 +74,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
  *   below the name of the Limelight on the top level configuration screen.
  */
 @Config
-@TeleOp(name = "LimelightTest")
+//@TeleOp(name = "LimelightTest")
 public class LimelightTest extends LinearOpMode {
     private IMU imu;
     private LimeLightWrapper wrapper;

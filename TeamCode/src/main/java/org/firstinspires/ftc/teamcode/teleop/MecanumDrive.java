@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.SparkOdo;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@TeleOp(name="Mecanum_Drive")
+//@TeleOp(name="Mecanum_Drive")
 public class MecanumDrive extends LinearOpMode {
 
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
@@ -55,7 +55,7 @@ public class MecanumDrive extends LinearOpMode {
         //Start phase
         //This is the event loop
         while (!isStopRequested()) {
-            int target = lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+            int target = lift.setPosition(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
             telemetry.addData("TargetPos: ",target);
             telemetry.addData("CurrentPos:", lift.getPosition());
             double inches = ticksToIn(frontLeft.getCurrentPosition());

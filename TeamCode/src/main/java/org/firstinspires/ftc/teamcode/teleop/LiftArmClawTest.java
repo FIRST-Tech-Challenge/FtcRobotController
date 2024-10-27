@@ -55,7 +55,7 @@ public class LiftArmClawTest extends LinearOpMode {
 
 
         waitForStart();
-        wrist.setHoverMode();
+        wrist.setParallelMode();
 //        claw.openClaw();
 //        intake.activateIntake();
         //Start Phase
@@ -73,9 +73,9 @@ public class LiftArmClawTest extends LinearOpMode {
             * */
 
 //            Lift Subsystem
-            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
+            lift.setPosition(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
             //Arm Subsystem
-            arm.changeHeight(controller2.right_trigger.getTriggerValue() - controller2.left_trigger.getTriggerValue());
+            arm.setPosition(controller2.right_trigger.getTriggerValue() - controller2.left_trigger.getTriggerValue());
 //            lift.moveLift(controller1.right_trigger.getTriggerValue() - controller1.left_trigger.getTriggerValue());
 //
 //            //Claw Subsystem
@@ -126,7 +126,7 @@ public class LiftArmClawTest extends LinearOpMode {
 //                lift.goToZero();
             }
             if(controller2.b.onPress()){
-                arm.goToSpecimin();
+                arm.goToSpecimen();
 //                lift.goToTopBucket();
             }
             if(controller2.right_bumper.onPress()){

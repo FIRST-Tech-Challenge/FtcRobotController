@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Axon Intake Test", group="Subsystem Tests")
+//@TeleOp(name="Axon Intake Test", group="Subsystem Tests")
 public class ActiveIntakeTest extends LinearOpMode {
 
     @Override

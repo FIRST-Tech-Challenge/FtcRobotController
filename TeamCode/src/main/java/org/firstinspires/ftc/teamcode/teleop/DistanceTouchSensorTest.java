@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
 
-@TeleOp(name="Sensor Test", group = "Subsystem Tests")
+//@TeleOp(name="Sensor Test", group = "Subsystem Tests")
 public class DistanceTouchSensorTest extends LinearOpMode {
 
     Mecanum robot;

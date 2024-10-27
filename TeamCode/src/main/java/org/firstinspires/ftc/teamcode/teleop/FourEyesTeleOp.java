@@ -59,11 +59,11 @@ public class FourEyesTeleOp extends LinearOpMode {
             }
             //B button
             if(binding1[3].onPress()) {
-                fourEyesRobot.intakeSpeciminPos();
+                fourEyesRobot.intakeSpecimenPos();
             }
             //A button
             if(binding1[4].onPress()) {
-                fourEyesRobot.depositSpeciminPos();
+                fourEyesRobot.depositSpecimenPos();
             }
             //X button
             if(binding1[5].onPress()) {

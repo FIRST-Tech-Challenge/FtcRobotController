@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SparkOdo;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 
-@TeleOp(name="SparkTest", group = "Subsystem Tests")
+//@TeleOp(name="SparkTest", group = "Subsystem Tests")
 public class SparkTest extends LinearOpMode {
 
 

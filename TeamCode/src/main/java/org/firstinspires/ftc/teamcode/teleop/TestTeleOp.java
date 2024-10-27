@@ -17,7 +17,10 @@ import java.util.ArrayList;
 public class TestTeleOp extends LinearOpMode {
     DcMotorEx frontLeft,frontRight,backLeft,backRight;
     GamepadEvents controller1;
-    @Override
+
+    double maxSpeed = 0.3;
+
+     @Override
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class,"FLM");
         backLeft = hardwareMap.get(DcMotorEx.class,"BLM");
@@ -34,10 +37,10 @@ public class TestTeleOp extends LinearOpMode {
             double strafe = -controller1.left_stick_x;
             double rotate = -controller1.right_stick_x;
             //Activate Motors;
-            frontLeft.setPower((forward + strafe + rotate));
-            backLeft.setPower((forward - strafe + rotate));
-            frontRight.setPower((forward - strafe - rotate));
-            backRight.setPower((forward + strafe - rotate));
+            frontLeft.setPower((forward + strafe + rotate) * maxSpeed);
+            backLeft.setPower((forward - strafe + rotate) * maxSpeed);
+            frontRight.setPower((forward - strafe - rotate) * maxSpeed);
+            backRight.setPower((forward + strafe - rotate) * maxSpeed);
 
             //Display Telemetry information
 
