@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Alan;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Disabled
 @TeleOp
 public class MyTeleOp extends LinearOpMode {
     @Override
@@ -46,9 +48,7 @@ public class MyTeleOp extends LinearOpMode {
             } else {
                 swarsh.setPosition(0.0);
             }
-            telemetry.addData("Red:", cSensor.red());
-            telemetry.addData("Blue:", cSensor.blue());
-            telemetry.addData("Green:", cSensor.green());
+            telemetry.addData("Encoder Pos:", rightBack.getCurrentPosition() * INCHES_PER_TICK);
 
 
 

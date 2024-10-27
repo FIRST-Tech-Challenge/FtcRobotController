@@ -1,7 +1,9 @@
 
-package org.firstinspires.ftc.teamcode.Alan;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,17 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /*
- * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
- *
- * The OpMode assumes that the sensor is configured with a name of "sensor_otos".
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- *
- * See the sensor's product page: https://www.sparkfun.com/products/24904
+WORKS YES YES YES YES YES
  */
 @TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
-@Disabled
 public class OdometryTest extends LinearOpMode {
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
@@ -29,7 +23,7 @@ public class OdometryTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Get a reference to the sensor
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        myOtos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
 
         // All the configuration for the OTOS is done in this helper method, check it out!
         configureOtos();
@@ -68,6 +62,7 @@ public class OdometryTest extends LinearOpMode {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
         telemetry.update();
