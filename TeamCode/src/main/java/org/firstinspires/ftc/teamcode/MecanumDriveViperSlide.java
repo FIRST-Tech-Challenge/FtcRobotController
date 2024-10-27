@@ -20,6 +20,7 @@ public class MecanumDriveViperSlide extends OpMode {
 
     @Override
     public void init() {
+        // initializing hardware
          frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
          backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
          frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
@@ -27,6 +28,7 @@ public class MecanumDriveViperSlide extends OpMode {
          viperSlideMotor = hardwareMap.get(DcMotor.class, "viperSlideMotor");
          armMotor = hardwareMap.get(DcMotor.class, "left_arm");
 
+         // set behavior flags for hardware
          armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
          frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
          backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
