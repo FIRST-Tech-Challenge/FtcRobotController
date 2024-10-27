@@ -10,17 +10,20 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.SliderManger;
 
 import java.io.File;
 
 @TeleOp(name = "teleop")
 public class Teleop extends LinearOpMode {
     private Drive driver = new Drive();
-    private double SPED = 0;
+    private double SPEED = 0;
     private IMU imu;
     private RevHubOrientationOnRobot orientation;
+    private SliderManger SM = new SliderManger();
     @Override
     public void runOpMode() throws InterruptedException {
+
         orientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,RevHubOrientationOnRobot.UsbFacingDirection.UP);
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientation));
@@ -36,16 +39,20 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()){
-            SPED = gamepad1.right_trigger / 2.5;
+            //driver1
+            SPEED = gamepad1.right_trigger / 2.5;
             if(gamepad1.right_bumper){
-                SPED = SPED * 2.0;
+                SPEED = SPEED * 2.0;
             }
-            double forward = gamepad1.a ? 0.0 : gamepad1.left_stick_y;
-            double strafe = gamepad1.b ? 0.0 : -gamepad1.left_stick_x;
-            driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
+
+            driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPEED);
+
+            //driver2
+            SM.move(-gamepad2.left_stick_y,gamepad2.right_stick_x) ;
         }
         File ThreadManger = AppUtil.getInstance().getSettingsFile("ThreadManger.txt");
         ReadWriteFile.writeFile(ThreadManger, "STOP");
+
 
     }
 }
