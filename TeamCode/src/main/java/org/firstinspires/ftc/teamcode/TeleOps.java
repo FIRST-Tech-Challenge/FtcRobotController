@@ -22,6 +22,27 @@ public class TeleOps extends LinearOpMode {
 
         robot.init(hardwareMap);
 
+        robot.switchPipeline(1);
+        telemetry.addData("pipeline: 1", null);
+
+        while (opModeInInit()) {
+
+            if (gamepad1.dpad_right) {
+
+                robot.switchPipeline(1);
+                telemetry.addData("pipeline: 1", null);
+
+            }
+            if (gamepad1.dpad_left) {
+
+                robot.switchPipeline(2);
+                telemetry.addData("pipeline: 2", null);
+
+            }
+            telemetry.update();
+
+        }
+
         waitForStart();
         while(opModeIsActive()){
             telemetry.setMsTransmissionInterval(11);
@@ -37,11 +58,13 @@ public class TeleOps extends LinearOpMode {
             robot.SlideControl(gamepad1.dpad_left, gamepad1.dpad_right);
 
             telemetry.addData("slide position: ", robot.Slide.getCurrentPosition());
-            telemetry.addData("tx", robot.result.getTx());
-            telemetry.addData("ty", robot.result.getTy());
-            telemetry.addData("Botpose", robot.botpose.toString());
+
+            double[] values = robot.detectOne();
+
+            telemetry.addData("tx: ", values[0]);
+            telemetry.addData("ty: ", values[1]);
+            telemetry.addData("angle: ", values[2]);
             telemetry.update();
-            robot.detect(gamepad1.a);
 
         }
         robot.close();
