@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.trajectory.Trajectory;
-
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
