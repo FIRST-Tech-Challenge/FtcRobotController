@@ -73,40 +73,44 @@ public class MainTeleOp extends LinearOpMode{
 
             //Controller A
             //picking up
-            if (gamepad1.a) {arm.MoveToHome();}
+           // if (gamepad1.a) {arm.MoveToHome();}
 
             //clearance/specimen wall grab
-            if (gamepad1.x) {arm.MoveToClearance();}
+            //if (gamepad1.x) {arm.MoveToClearance();}
 
             //hang
             if (gamepad1.right_bumper) {arm.MoveToHang();}
 
             //specimen placement
-            if (gamepad1.y) {arm.MoveToSpecimen();}
+            //if (gamepad1.y) {arm.MoveToSpecimen();}
 
             //high basket
-            if (gamepad1.b) {arm.MoveToHighBasket();}
+            //if (gamepad1.b) {arm.MoveToHighBasket();}
 
             //Extend to 9 inches
-            if (gamepad1.dpad_up)
+            //Low Basket
+            if (gamepad2.dpad_left) {arm.MoveToSpecimen();}
             {
                 desiredViperState = ViperState.PrepareToHang;
                 viper.ExtendHalf();
             }
 
             //Extend to full length, limited to 18 inches at low angles
-            if (gamepad1.dpad_left)
+            //High Basket
+            if (gamepad2.dpad_up) {arm.MoveToHighBasket();}
             {
                 desiredViperState = ViperState.Dump;
                 viper.ExtendFull();
             }
 
             //Extend to 3 inches, should be pressed first (add into space before opmode loop?)
-            if (gamepad1.dpad_down)
+            if (gamepad2.dpad_down) {arm.MoveToClearance();}
             {
                 desiredViperState = ViperState.Closed;
                 viper.ExtendShort();
             }
+
+            if (gamepad2.dpad_right) {arm.MoveToHome();}
 
             if (arm.getIsHome())
             {
