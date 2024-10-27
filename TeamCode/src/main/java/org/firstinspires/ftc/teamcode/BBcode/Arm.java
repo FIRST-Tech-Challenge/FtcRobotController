@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.BBcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,7 +22,6 @@ public class Arm {
     int specimenPosition = 70;
     //-----------------------
 
-    Boolean homeFlag = false;
     public boolean getIsHome()
     {
         return _armMotor.getCurrentPosition() < 10;
@@ -84,7 +83,7 @@ public class Arm {
         //double difference = Math.abs(convert-currentPosit);
         _armMotor.setDirection(DcMotor.Direction.REVERSE);
         _armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        _armMotor.setTargetPosition( (int) convert);    //Sets Target Tick Position
+        _armMotor.setTargetPosition(convert);    //Sets Target Tick Position
         _armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         _armMotor.setPower(0.2);
     }

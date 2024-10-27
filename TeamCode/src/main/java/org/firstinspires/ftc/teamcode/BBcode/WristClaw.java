@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.BBcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,7 +32,6 @@ public class WristClaw {
         if (_wrist == null)
         {
             _opMode.telemetry.addLine("Wrist servo not found!");
-            return;
         } else {
             _wrist.setPosition(position);
         }
@@ -43,7 +42,6 @@ public class WristClaw {
         if (_claw == null)
         {
             _opMode.telemetry.addLine("Claw Servo not found!");
-            return;
         } else {
             _claw.setPosition(position);
         }

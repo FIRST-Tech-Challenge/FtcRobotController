@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.BBcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -16,7 +16,6 @@ public class MecanumDrivetrain {
     DcMotorEx _leftBack;
     DcMotorEx _rightFront;
     DcMotorEx _rightBack;
-    Telemetry _telemetry;
     // Constructor
     public MecanumDrivetrain(OpMode opMode) {
         _opMode = opMode;
