@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.bots;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class PivotBot extends LimelightBot{
+public class PivotBot extends LimelightBot {
 
     public int slideTarget = 0;
     public int slideTarget2 = 0;
@@ -22,8 +22,9 @@ public class PivotBot extends LimelightBot{
     protected boolean isEndOfAuto = false;
 
     public final double endPosition = 300;
+
     @Override
-    public void init(HardwareMap ahwMap){
+    public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         Motor = hwMap.get(DcMotorEx.class, "Pivot Motor");
         Motor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -40,9 +41,11 @@ public class PivotBot extends LimelightBot{
         Slide.setPower(0);
     }
 
-    public PivotBot(LinearOpMode opMode) {super(opMode);}
+    public PivotBot(LinearOpMode opMode) {
+        super(opMode);
+    }
 
-    public int getSlidePosition(){
+    public int getSlidePosition() {
         return Motor.getCurrentPosition();
     }
 
@@ -57,49 +60,52 @@ public class PivotBot extends LimelightBot{
         Slide.setPower(0.5);
     }
 
-    public void slideControl(boolean up, boolean down){
-        if (up){
+    public void slideControl(boolean up, boolean down) {
+        if (up) {
 //            slideTarget2 = 20;
-            if(Slide.getCurrentPosition()<2000)
-            Slide.setTargetPosition(Slide.getCurrentPosition()+20);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-        if(down){
+            if (Slide.getCurrentPosition() < 2000) {
+                Slide.setTargetPosition(Slide.getCurrentPosition() + 20);
+                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            if (down) {
 //            slideTarget2 = 2000;
-            if(Slide.getCurrentPosition()>20)
-            Slide.setTargetPosition(Slide.getCurrentPosition()-20);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+                if (Slide.getCurrentPosition() > 20)
+                    Slide.setTargetPosition(Slide.getCurrentPosition() - 20);
+                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
 //        if (Math.abs(Slide.getCurrentPosition() - slideTarget2) < 3){
 //            Slide.setPower(0);
 //        }
+        }
     }
 
-    public void slideMove(int up){
-        //depending on the number, move the slide
-    }
+        public void slideMove(int pos){
+            //depending on the number, move the slide
+            Slide.setTargetPosition(pos);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
-    public void pivotControl(boolean up, boolean down){
-        if (up){
-            slideTarget = 0;
-            Motor.setTargetPosition(Motor.getCurrentPosition()+20);
-            Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-        if(down){
-            slideTarget = 900;
-            Motor.setTargetPosition(Motor.getCurrentPosition()-20);
-            Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+        public void pivotControl(boolean up, boolean down){
+            if (up) {
+                slideTarget = 0;
+                Motor.setTargetPosition(Motor.getCurrentPosition() + 20);
+                Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            if (down) {
+                slideTarget = 900;
+                Motor.setTargetPosition(Motor.getCurrentPosition() - 20);
+                Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
 //        if (Math.abs(Motor.getCurrentPosition() - slideTarget) < 3){
 //            Motor.setPower(0);
 //        }
+        }
+
+        public void pivotTo(int pos){
+            Motor.setTargetPosition(pos);
+            Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
     }
 
-    public void pivotTo(int pos){
-        Motor.setTargetPosition(pos);
-        Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
 
-
-
-}

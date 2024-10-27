@@ -39,13 +39,13 @@ public class PinchBot extends PivotBot{
         }
     }
     public void rotate(double angle){
-
+        angle = angle;
         rotate.setPosition(angle);
     }
     public void pickUp(boolean button){
         // use horizontalDistance() to move robot and verticalDistance() to move slide
         // figure out how to find angle and use rotate(angle)
-        double[] position = detectOne(button);
+        double[] position = detectOne();
         double x = position[0];
         double y = position[1];
         double theta = position[2];
