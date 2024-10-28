@@ -40,6 +40,8 @@ public class AutoDriveManager {
 
         opMode = LOpMode;
         hornetRobo = HRobo;
+        opMode.telemetry.addData("Drive Manager initialize:", "");
+
     }
 
     public void SetAllMotorsMode(DcMotor.RunMode MotorRunMode) {
@@ -143,24 +145,24 @@ public class AutoDriveManager {
     }
 
     public void SetPowerToStrafe (DriveDirection DirectionToMove, double StrafePower){
-        double leftPower = 0;
-        double rightPower = 0;
+        double frontPower = 0;
+        double backPower = 0;
         if (DirectionToMove == DriveDirection.LEFT) {
-            leftPower = StrafePower;
-            rightPower = -StrafePower;
+            frontPower = StrafePower;
+            backPower = -StrafePower;
 
         }
         else if (DirectionToMove == DriveDirection.RIGHT)
         {
-            leftPower = -StrafePower;
-            rightPower = StrafePower;
+            frontPower = -StrafePower;
+            backPower = StrafePower;
         }
 
-        hornetRobo.LeftFrontMotor.setPower(leftPower);
-        hornetRobo.LeftBackMotor.setPower(leftPower);
+        hornetRobo.LeftFrontMotor.setPower(frontPower);
+        hornetRobo.RightFrontMotor.setPower(frontPower);
 
-        hornetRobo.RightFrontMotor.setPower(rightPower);
-        hornetRobo.RightBackMotor.setPower(rightPower);
+        hornetRobo.LeftBackMotor.setPower(backPower);
+        hornetRobo.RightBackMotor.setPower(backPower);
     }
 
     public void SetTargetPositionToStrafe (DriveDirection DirectionToMove, double StrafeDistance){
@@ -180,8 +182,8 @@ public class AutoDriveManager {
 
         if (DirectionToMove == DriveDirection.LEFT) {
             newLeftFrontTarget = currentLeftFront + encodedDistance;
-            newLeftBackTarget = currentLeftBack + encodedDistance;
-            newRightFrontTarget = currentRightFront - encodedDistance;
+            newLeftBackTarget = currentLeftBack - encodedDistance;
+            newRightFrontTarget = currentRightFront + encodedDistance;
             newRightBackTarget = currentRightBack - encodedDistance;
         }
         else if (DirectionToMove == DriveDirection.RIGHT)

@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -53,7 +54,7 @@ public class AutoCodeTest extends LinearOpMode {
     {
         hornetRobo = new HornetRobo();
         AutoHardwareMapper.MapToHardware(this, hornetRobo);
-
+        driveManager = new AutoDriveManager(this, hornetRobo);
     }
     public void runOpMode() {
         initialize();
@@ -62,24 +63,28 @@ public class AutoCodeTest extends LinearOpMode {
         waitForStart();
 
         //Change motor to test all
+        /*driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
+        TestDriveMotorEncodedMove(hornetRobo.RightFrontMotor);
         TestDriveMotorEncodedMove(hornetRobo.LeftFrontMotor);
-/*
+        TestDriveMotorEncodedMove(hornetRobo.LeftBackMotor);
+        TestDriveMotorEncodedMove(hornetRobo.RightBackMotor);
+
         //Test go fwd
         TestGoForwardRoboUsingEncoders();
 
         //Test Strafe
         TestStrafeRoboUsingEncoders();
-
+*/
         //Test Arm
         TestArm();
 
         //Test Grabber
-        TestGrabberOpenAndClose();
+        //TestGrabberOpenAndClose();
 
-        //Test viper slide
+  /*      //Test viper slide
         TestViperSlide();
+*/
 
- */
     }
 
     public void TestDriveMotorEncodedMove(DcMotor Motor) {
@@ -95,15 +100,21 @@ public class AutoCodeTest extends LinearOpMode {
             Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             while (opModeIsActive() && !isStopRequested()) {
-
                 int currentPosition = Motor.getCurrentPosition();
                 telemetry.addData("Current position: ", currentPosition);
                 int newPosition = currentPosition + encodedDistance;
                 telemetry.addData("New position: ", newPosition);
-
                 Motor.setTargetPosition(newPosition);
+                //Motor.setDirection(DcMotorSimple.Direction.FORWARD);
+                Motor.setPower(0.3);
+                //sleep(2000);
                 Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                telemetry.update();
 
+                while (opModeIsActive()  && Motor.isBusy())
+                {
+
+                }
                 break;
 
             }
@@ -181,7 +192,7 @@ public class AutoCodeTest extends LinearOpMode {
                 telemetry.update();
 
                 grabberManager.OpenOrCloseGrabber(false);
-
+                sleep(2000);
                 break;
             }
 
