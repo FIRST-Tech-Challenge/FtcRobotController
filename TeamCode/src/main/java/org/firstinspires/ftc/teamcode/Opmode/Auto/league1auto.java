@@ -48,6 +48,7 @@ public class league1auto extends LinearOpMode{
         while(opModeIsActive()){
             switch(currentState){
                 case DEPOSIT:
+                    drive.setZeroMoveAngle(Math.toRadians(30));
                     drive.setTarget(deposit);
                     if(drive.isAtTarget()){
                         if(timeToggle){//to be filled in...
@@ -65,6 +66,7 @@ public class league1auto extends LinearOpMode{
                     }
                     break;
                 case BLOCK1:
+                    drive.setZeroMoveAngle(Math.toRadians(10));
                     drive.setTarget(block1);
                     if(drive.isAtTarget()){
                         if(timeToggle){//to be filled in...
@@ -78,6 +80,7 @@ public class league1auto extends LinearOpMode{
                     }
                     break;
                 case BLOCK2:
+                    drive.setZeroMoveAngle(Math.toRadians(10));
                     drive.setTarget(block2);
                     if(drive.isAtTarget()) {
                         if (timeToggle) {//to be filled in...
