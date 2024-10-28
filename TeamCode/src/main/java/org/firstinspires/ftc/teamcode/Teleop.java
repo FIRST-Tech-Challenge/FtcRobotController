@@ -57,7 +57,7 @@ public class Teleop extends LinearOpMode {
 
             double liftUpControl = gamepad1.right_trigger;
             double liftDownControl = gamepad1.left_trigger;
-            boolean liftSeqControl = gamepad1.a;
+            boolean liftSeqControl = gamepad1.y;
 
             boolean pushoffDownControl = gamepad1.dpad_down;
             boolean pushoffUpControl = gamepad1.dpad_up;
