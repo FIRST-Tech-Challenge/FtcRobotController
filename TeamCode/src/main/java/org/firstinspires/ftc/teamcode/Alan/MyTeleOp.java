@@ -23,7 +23,7 @@ public class MyTeleOp extends LinearOpMode {
         ColorSensor cSensor = hardwareMap.colorSensor.get("ColorS");
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double INCHES_PER_TICK = 40 / -13510.0 * (40.0 / 40.3612);
 

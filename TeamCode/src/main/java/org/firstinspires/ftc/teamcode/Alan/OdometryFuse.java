@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+//encode not working
 @TeleOp
 public class OdometryFuse extends LinearOpMode {
     SparkFunOTOS myOtos;
@@ -26,9 +27,11 @@ public class OdometryFuse extends LinearOpMode {
 
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
         configureOtos();
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Inches per tick for wheel odometry
         double INCHES_PER_TICK = 40 / -13510.0 * (40.0 / 40.3612);
 
@@ -70,10 +73,22 @@ public class OdometryFuse extends LinearOpMode {
 
             telemetry.addLine();
 
-            telemetry.addData("Encoder Pos:", rightFront.getCurrentPosition() * INCHES_PER_TICK);
+            telemetry.addData("Wheel Encoder pos x", leftBack.getCurrentPosition() * INCHES_PER_TICK);
+            telemetry.addData("Wheel Encoder pos y", leftFront.getCurrentPosition() * INCHES_PER_TICK);
+            //telemetry.addData("average x", "" + ((leftFront.getCurrentPosition() + pos.x) / 2));
+            //telemetry.addData("average y", "" + ((leftBack.getCurrentPosition() + pos.y) / 2));
             telemetry.update();
         }
     }
+    /*
+    NOTE!!!!!!!!!!
+
+    wheel encoder more acurate moving forward
+    otos prob more accurate for purpursuit
+    otos VERY accurate for heading
+
+    NOTE!!!!!!!!!!
+     */
 
 
 
