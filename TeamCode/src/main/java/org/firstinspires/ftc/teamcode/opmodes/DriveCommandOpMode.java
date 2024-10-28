@@ -7,8 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
+import org.firstinspires.ftc.teamcode.commands.MoveBucketArmCommand;
+import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
@@ -24,8 +28,11 @@ public class DriveCommandOpMode extends CommandOpMode {
     private DoubleSupplier slowdownMultiplier, forwardBack, leftRight, rotation;
 
     private DriveSubsystem driveSubsystem;
+    private ArmSubsystem armSubsystem;
+    private WristSubsystem wristSubsystem;
 
     private DefaultDrive driveCommand;
+    private MoveBucketArmCommand bucketCommand;
 
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriverOP");
@@ -41,7 +48,7 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
 
-        HashMap<RobotHardwareInitializer.Arm, DcMotor> armMotors = RobotHardwareInitializer.initializeArm(this);
+        HashMap<RobotHardwareInitializer.Arm, DynamicTypeValue> armMotors = RobotHardwareInitializer.initializeArm(this);
 
         assert driveMotors != null;
         driveSubsystem = new DriveSubsystem(driveMotors);
@@ -51,33 +58,18 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         initializeDriveSuppliers();
 
-        // Initialize commands for the subsystems
-        DoubleSupplier forwardWristSupplier = () -> {
-            double end = 0;
-            end += armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0;
-            double leftX = armerController.getLeftX();
-            if (leftX > 0) {
-                end += leftX;
-            }
-            end = Math.max(0, Math.min(1, end));
-            return end;
-        };
-        DoubleSupplier backwardWristSupplier = () -> {
-            double end = 0;
-            end += armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0;
-            double leftX = armerController.getLeftX();
-            if (leftX < 0) {
-                end -= leftX;
-            }
-            end = Math.max(0, Math.min(1, end));
-            return end;
-        };
-
         driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
+        armSubsystem = new ArmSubsystem(armMotors);
+
+        bucketCommand = new MoveBucketArmCommand(armSubsystem,
+                () -> driverController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
+                () -> driverController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 
         register(driveSubsystem);
+        register(armSubsystem);
 
         driveSubsystem.setDefaultCommand(driveCommand);
+        armSubsystem.setDefaultCommand(bucketCommand);
 
         dbp.info("Subsystems registered.");
         dbp.send(false);

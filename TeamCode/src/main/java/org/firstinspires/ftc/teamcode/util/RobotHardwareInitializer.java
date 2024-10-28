@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
 
 import java.util.HashMap;
 
@@ -121,15 +123,17 @@ public class RobotHardwareInitializer {
     }
 
     public enum Arm {
-        ARM1,
+        BUCKET_ARM_MOTOR,
         ARM2,
-        ARM3
+        ARM3,
+        BUCKET_SERVO,
     }
 
-    public static HashMap<Arm, DcMotor> initializeArm(final OpMode opMode) {
+    public static HashMap<Arm, DynamicTypeValue> initializeArm(final OpMode opMode) {
         DcMotor arm = null;
         DcMotor arm2 = null;
         DcMotor arm3 = null;
+        Servo bucket_servo = null;
         try {
             arm = opMode.hardwareMap.get(DcMotor.class, "arm1");
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -139,14 +143,17 @@ public class RobotHardwareInitializer {
 
             arm3 = opMode.hardwareMap.get(DcMotor.class, "arm3");
             arm3.setDirection(DcMotorSimple.Direction.FORWARD);
+
+            bucket_servo = opMode.hardwareMap.get(Servo.class, "bucket_servo");
         } catch (Exception e) {
             Error(e, opMode);
         }
 
-        HashMap<Arm, DcMotor> out = new HashMap<>();
-        out.put(Arm.ARM1, arm);
-        out.put(Arm.ARM2, arm2);
-        out.put(Arm.ARM3, arm3);
+        HashMap<Arm, DynamicTypeValue> out = new HashMap<>();
+        out.put(Arm.BUCKET_ARM_MOTOR, new MotorTypeValue(arm));
+        out.put(Arm.ARM2, new MotorTypeValue(arm2));
+        out.put(Arm.ARM3, new MotorTypeValue(arm3));
+        out.put(Arm.BUCKET_SERVO, new ServoTypeValue(bucket_servo));
 
         return out;
     }
