@@ -33,12 +33,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
     final int VERTICAL_MAX = 1800;
+    final int VERTICAL_MAX_VIPER = 1000;
     int verticalAdjustedMin = 0;
     int verticalPosition = VERTICAL_MIN;
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX = 2759;
+    final int VIPER_MAX_WIDE = 2000;
+    final int VIPER_MAX_TALL = 3000;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
@@ -122,7 +124,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
-            // Milla: work on this
             verticalAdjustedMin = (int)(0.09*viperSlidePosition+VERTICAL_MIN); // 0.09 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
             if (gamepad1.dpad_up) {
                 vertical.setTargetPosition(VERTICAL_MAX);
@@ -138,20 +139,32 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 vertical.setTargetPosition(Math.max(verticalAdjustedMin, verticalPosition - 50));
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+               // viperSlide.setTargetPosition(VIPER_MAX_WIDE);
+               // ((DcMotorEx) viperSlide).setVelocity(1000);
+               // viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_down) {
                 vertical.setTargetPosition(verticalAdjustedMin);
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+               // viperSlide.setTargetPosition(VIPER_MAX_WIDE);
+               // ((DcMotorEx) viperSlide).setVelocity(1000);
+               // viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             // Control the viper slide - how much it extends
             viperSlidePosition = viperSlide.getCurrentPosition();
-            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX) {              // If the right button is pressed AND it can safely extend further
+            if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX_TALL && verticalPosition > VERTICAL_MAX_VIPER) {              // If the right button is pressed AND it can safely extend further, and the viper can go all the way up
                 viperSlide.setTargetPosition(viperSlidePosition + 200);
                 ((DcMotorEx) viperSlide).setVelocity(gamepad1.right_trigger*4000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
+            else if (gamepad1.right_trigger > 0 && viperSlidePosition < VIPER_MAX_WIDE && verticalPosition < VERTICAL_MAX_VIPER) {         // If the right button is pressed AND it can safely extend further, and the viper is under the wide limit
+                viperSlide.setTargetPosition(viperSlidePosition + 200);
+                ((DcMotorEx) viperSlide).setVelocity(gamepad1.right_trigger * 4000);
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
             else if (gamepad1.left_trigger > 0 && viperSlidePosition > VIPER_MIN) {          // If the right button is pressed AND it can safely retract further
                 viperSlide.setTargetPosition(Math.max(VIPER_MIN, viperSlidePosition - 200));
                 ((DcMotorEx) viperSlide).setVelocity(gamepad1.left_trigger*4000);
@@ -159,13 +172,23 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             // Control the claw
-            if (gamepad1.left_bumper && claw_position > CLAW_MAX) {
+            if (gamepad1.right_bumper && claw_position > CLAW_MAX) {
                 claw_position -= 0.01;
             }
-            if (gamepad1.right_bumper && claw_position < CLAW_MIN) {
+            if (gamepad1.left_bumper && claw_position < CLAW_MIN) {
                 claw_position += 0.01;
             }
             claw.setPosition(claw_position);
+
+            // Scoring button: All the way up and fully extended
+            if (gamepad1.y) {
+                vertical.setTargetPosition(VERTICAL_MAX);
+                ((DcMotorEx) vertical).setVelocity(1000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                viperSlide.setTargetPosition(VIPER_MAX_TALL);
+                ((DcMotorEx) viperSlide).setVelocity(1000);
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
 
             // Show the elapsed game time and wheel power.
             printDataOnScreen();
