@@ -68,8 +68,13 @@ public class Mecanum {
             strafe = -forward * Math.sin(currentRotation) + strafe * Math.cos(currentRotation);
             forward = temp;
         }
+        //Invert strafe and rotate so that all positive values can be fed into the function to drive
         strafe *= -1;
         rotate *= -1;
+        //Cube all powers
+        forward = Math.pow(forward, 3);
+        strafe = Math.pow(strafe, 3);
+        rotate = Math.pow(rotate, 3);
         frontLeft.setPower((forward + strafe + rotate)*MAX_POWER);
         backLeft.setPower((forward - strafe + rotate)*MAX_POWER);
         frontRight.setPower((forward - strafe - rotate)*MAX_POWER);

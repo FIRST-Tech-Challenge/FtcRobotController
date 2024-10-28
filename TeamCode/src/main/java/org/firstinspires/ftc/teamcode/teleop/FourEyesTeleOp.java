@@ -34,7 +34,9 @@ public class FourEyesTeleOp extends LinearOpMode {
                 controller2.y,
                 controller2.b,
                 controller2.a,
-                controller2.x
+                controller2.x,
+                controller1.dpad_up,
+                controller1.dpad_down
         };
 
 
@@ -88,6 +90,7 @@ public class FourEyesTeleOp extends LinearOpMode {
             fourEyesRobot.setWristPosition(controller2.right_trigger.getTriggerValue() - controller2.left_trigger.getTriggerValue());
 
             //Active intake manual control
+            //Y Key
             if(binding2[0].onPress()){
                 if (fourEyesRobot.isIntaking()){
                     fourEyesRobot.deactivateIntake();
@@ -96,6 +99,7 @@ public class FourEyesTeleOp extends LinearOpMode {
                     fourEyesRobot.intakeBackward();
                 }
             }
+            //X Key
             if(binding2[3].onPress()){
                 if (fourEyesRobot.isIntaking()){
                     fourEyesRobot.deactivateIntake();
@@ -105,11 +109,21 @@ public class FourEyesTeleOp extends LinearOpMode {
                 }
             }
             //Claw manual control
+            //B Key
             if(binding2[1].onPress()){
                 fourEyesRobot.openClaw();
             }
+            //A Key
             if(binding2[2].onPress()){
                 fourEyesRobot.closeClaw();
+            }
+            //Dpad Up
+            if(binding2[4].onHeldFor(2000)){
+                fourEyesRobot.resetIMU();
+            }
+            //Dpad Down
+            if(binding2[5].onHeldFor(1000)){
+                fourEyesRobot.toggleFieldCentric();
             }
 
 
