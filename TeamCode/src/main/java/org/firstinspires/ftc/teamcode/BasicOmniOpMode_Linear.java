@@ -32,15 +32,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 1800;
-    final int VERTICAL_MAX_VIPER = 1000;
+    final int VERTICAL_MAX = 1700;
+    final int VERTICAL_MAX_VIPER = 1200;
     int verticalAdjustedMin = 0;
     int verticalPosition = VERTICAL_MIN;
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX_WIDE = 2000;
-    final int VIPER_MAX_TALL = 3000;
+    final int VIPER_MAX_WIDE = 2500;
+    final int VIPER_MAX_TALL = 3100;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
@@ -127,29 +127,38 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             verticalAdjustedMin = (int)(0.09*viperSlidePosition+VERTICAL_MIN); // 0.09 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
             if (gamepad1.dpad_up) {
                 vertical.setTargetPosition(VERTICAL_MAX);
-                ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
+                ((DcMotorEx) vertical).setVelocity(2000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely raise further
                 vertical.setTargetPosition(Math.min(VERTICAL_MAX, verticalPosition + 50));
-                ((DcMotorEx) vertical).setVelocity(1000+viperSlidePosition/2.0);
+                ((DcMotorEx) vertical).setVelocity(2000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MAX_VIPER) {
+                vertical.setTargetPosition(Math.max(VERTICAL_MAX_VIPER, verticalPosition - 50));
+                ((DcMotorEx) vertical).setVelocity(1500);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_left && verticalPosition > verticalAdjustedMin) {           // If the left button is pressed AND it can safely lower further
+                if (viperSlidePosition > VIPER_MAX_WIDE) {
+                    viperSlide.setTargetPosition(VIPER_MAX_WIDE);
+                    ((DcMotorEx) viperSlide).setVelocity(1000);
+                    viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
                 vertical.setTargetPosition(Math.max(verticalAdjustedMin, verticalPosition - 50));
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               // viperSlide.setTargetPosition(VIPER_MAX_WIDE);
-               // ((DcMotorEx) viperSlide).setVelocity(1000);
-               // viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_down) {
+                if (viperSlidePosition > VIPER_MAX_WIDE) {
+                    viperSlide.setTargetPosition(VIPER_MAX_WIDE);
+                    ((DcMotorEx) viperSlide).setVelocity(1000);
+                    viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
                 vertical.setTargetPosition(verticalAdjustedMin);
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               // viperSlide.setTargetPosition(VIPER_MAX_WIDE);
-               // ((DcMotorEx) viperSlide).setVelocity(1000);
-               // viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             // Control the viper slide - how much it extends
@@ -183,10 +192,37 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Scoring button: All the way up and fully extended
             if (gamepad1.y) {
                 vertical.setTargetPosition(VERTICAL_MAX);
-                ((DcMotorEx) vertical).setVelocity(1000);
+                ((DcMotorEx) vertical).setVelocity(3000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(VIPER_MAX_TALL);
-                ((DcMotorEx) viperSlide).setVelocity(1000);
+                ((DcMotorEx) viperSlide).setVelocity(2000);
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
+            if (gamepad1.a) {
+                viperSlide.setTargetPosition(VIPER_MIN);
+                ((DcMotorEx) viperSlide).setVelocity(4000);
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                vertical.setTargetPosition(VERTICAL_MIN);
+                ((DcMotorEx) vertical).setVelocity(1000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
+            if (gamepad1.x) {
+                vertical.setTargetPosition(430);
+                ((DcMotorEx) vertical).setVelocity(3000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                viperSlide.setTargetPosition(0);
+                ((DcMotorEx) viperSlide).setVelocity(1500);
+                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
+            if (gamepad1.b) {
+                vertical.setTargetPosition(430);
+                ((DcMotorEx) vertical).setVelocity(2000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                viperSlide.setTargetPosition(1900);
+                ((DcMotorEx) viperSlide).setVelocity(2000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
