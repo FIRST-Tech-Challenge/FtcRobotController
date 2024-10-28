@@ -31,7 +31,7 @@ public class EACDriver implements NKNComponent {
         public void run() {
             int nextIndex = rotationHandler.targetRotationPosition.ordinal() + 1;
 
-            if (nextIndex >= RotationHandler.RotationPositions.values().length) {return;}
+            if (nextIndex >= RotationHandler.MAX_INDEX_OF_ROTATION_POSITIONS) {return;}
 
             rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.values()[nextIndex]);
         }
@@ -109,11 +109,11 @@ public class EACDriver implements NKNComponent {
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         if (takeButton.detect(gamePadHandler.getGamePad2())) {
-            servoHandler.setServoPower(-1);
+            servoHandler.setServoPower(-0.3);
         } else if (releaseButton.detect(gamePadHandler.getGamePad2())) {
-            servoHandler.setServoPower(1);
+            servoHandler.setServoPower(0.3);
         } else {
-            servoHandler.setServoPower(0);
+            servoHandler.setServoPower(-0.06);
         }
     }
 

@@ -41,21 +41,25 @@ public class WheelHandler implements NKNComponent {
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         //Get drive motors
         motorFL = hardwareMap.dcMotor.get(flName);
+        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(flName)) { // check if the drive motor is in the list to be reversed
             motorFL.setDirection(DcMotor.Direction.REVERSE);
         }
 
         motorFR = hardwareMap.dcMotor.get(frName);
+        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(frName)) {
             motorFR.setDirection(DcMotor.Direction.REVERSE);
         }
 
         motorBL = hardwareMap.dcMotor.get(blName);
+        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(blName)) {
             motorBL.setDirection(DcMotor.Direction.REVERSE);
         }
 
         motorBR = hardwareMap.dcMotor.get(brName);
+        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (isInReverseList(brName)) {
             motorBR.setDirection(DcMotor.Direction.REVERSE);
         }
@@ -73,9 +77,10 @@ public class WheelHandler implements NKNComponent {
         motorFL.setPower(y + x + turning);
     }
 
-    public void absoluteVectorToMotion(double x, double y, double turning, double yaw) {
-        double x2 = (Math.cos(yaw) * x) - (Math.sin(yaw) * y);
-        double y2 = (Math.sin(yaw) * x) + (Math.cos(yaw) * y);
+    public void absoluteVectorToMotion(double x, double y, double turning, double yaw, Telemetry telemetry) {
+        double angle = (yaw * Math.PI) / 180;
+        double x2 = (Math.cos(angle) * x) - (Math.sin(angle) * y);
+        double y2 = (Math.sin(angle) * x) + (Math.cos(angle) * y);
 
         relativeVectorToMotion(y2, x2, turning);
     }
@@ -90,7 +95,6 @@ public class WheelHandler implements NKNComponent {
     @Override
     public void stop(ElapsedTime runtime, Telemetry telemetry) {}
 
-    @Override
     public String getName() {
         return "WheelHandler";
     }

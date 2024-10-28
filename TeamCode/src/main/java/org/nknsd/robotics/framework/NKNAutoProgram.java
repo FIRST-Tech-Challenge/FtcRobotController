@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.nknsd.robotics.team.autonomous.AutoSkeleton;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,25 +15,22 @@ public abstract class NKNAutoProgram extends NKNProgram{
     private final List<NKNComponent> enabledTelemetryList = new LinkedList<>();
     private final List<NKNAutoStep> stepList = new LinkedList<>();
 
-    abstract void createSteps(List<NKNAutoStep> stepList);
     private int currentStep = 0;
     private boolean done = false; //Better ways probably exist
 
-    private void initSteps(List<NKNAutoStep> stepList, List<NKNComponent> componentList) {
-        HashMap<String, NKNComponent> componentHashMap = new HashMap<>();
-        for (NKNComponent c : componentList) {
-            componentHashMap.put(c.getName(), c);
-        }
+    public abstract void createSteps(List<NKNAutoStep> stepList); // NEEDS to run initSteps on the program's end
 
+    static public void initSteps(List<NKNAutoStep> stepList, AutoSkeleton autoSkeleton) {
         for (NKNAutoStep a : stepList) {
-            a.link(componentHashMap);
+            a.link(autoSkeleton);
+            //telemetry.addData(a.getName(), "Setup!");
         }
     }
 
     public void init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         createComponents(componentList, enabledTelemetryList);
         createSteps(stepList);
-        initSteps(stepList, componentList);
+        telemetry.update();
 
         // Report on the success of the component's initialization
         for (NKNComponent component:componentList){
@@ -45,8 +42,14 @@ public abstract class NKNAutoProgram extends NKNProgram{
         }
     }
 
+    @Override
+    public void start(ElapsedTime runtime, Telemetry telemetry) {
+        stepList.get(0).begin(runtime, telemetry);
+    }
+
     // Code to run REPEATEDLY after the driver hits PLAY
     // Does NOT handle telemetry
+    @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         if (done) {
             stop(runtime, telemetry);
@@ -58,14 +61,26 @@ public abstract class NKNAutoProgram extends NKNProgram{
         }
 
         NKNAutoStep step = stepList.get(currentStep);
-        step.run();
+        step.run(telemetry);
 
-        if (step.isDone()) {
+        if (step.isDone(runtime)) {
             currentStep ++;
+            if (currentStep >= stepList.size()) {
+                done = true;
+                return;
+            }
+            stepList.get(currentStep).begin(runtime, telemetry);
+        }
+    }
+
+    @Override
+    public void doTelemetry(Telemetry telemetry) {
+        for (NKNComponent component:componentList){
+            if (isInTelemetryEnabledList(component)) {
+                component.doTelemetry(telemetry);
+            }
         }
 
-        if (currentStep >= stepList.size()) {
-            done = true;
-        }
+        telemetry.addData("Current step", stepList.get(currentStep).getName());
     }
 }

@@ -255,29 +255,29 @@ public class GamePadHandler implements NKNComponent {
     public enum GamepadSticks {
         LEFT_JOYSTICK_X {
             @Override
-            float getValue(Gamepad gamepad) {
+            public float getValue(Gamepad gamepad) {
                 return gamepad.left_stick_x;
             }
         },
         LEFT_JOYSTICK_Y {
             @Override
-            float getValue(Gamepad gamepad) {
+            public float getValue(Gamepad gamepad) {
                 return -gamepad.left_stick_y;
             }
         },
         RIGHT_JOYSTICK_X {
             @Override
-            float getValue(Gamepad gamepad) {
+            public float getValue(Gamepad gamepad) {
                 return gamepad.right_stick_x;
             }
         },
         RIGHT_JOYSTICK_Y {
             @Override
-            float getValue(Gamepad gamepad) {
+            public float getValue(Gamepad gamepad) {
                 return -gamepad.right_stick_y;
             }
         };
 
-        abstract float getValue(Gamepad gamepad);
+        public abstract float getValue(Gamepad gamepad);
     }
 }

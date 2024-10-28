@@ -10,7 +10,6 @@ import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.components.drivers.EACDriver;
-import org.nknsd.robotics.team.components.testfiles.ExtensionMonkey;
 
 import java.util.List;
 
@@ -30,15 +29,17 @@ public class BasicNKNProgram extends NKNProgram {
         // Sensor
         PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
         components.add(potentiometerHandler);
+        telemetryEnabled.add(potentiometerHandler);
 
 
         // Arm
-        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.005, 10, true);
+        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.1, 1, false);
         components.add(rotationHandler);
+        telemetryEnabled.add(rotationHandler);
 
         ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.35);
         components.add(extensionHandler);
-        telemetryEnabled.add(extensionHandler);
+        //telemetryEnabled.add(extensionHandler);
 
         IntakeServoHandler intakeServoHandler = new IntakeServoHandler("intakeServo");
         components.add(intakeServoHandler);
