@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.autonomous.TestAuto;
+import org.nknsd.robotics.team.autonomous.PushAuto;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +20,7 @@ public class NKNAutonomous_Test extends OpMode {
     // We use these two to delay telemetry outputs to ~200 milliseconds
 
     // Whatever program is attached here will be loaded with all its glorious components
-    private final NKNProgram program = new TestAuto();
+    private final NKNProgram program = new PushAuto();
 
     // Code to run ONCE when the driver hits INIT
     @Override

@@ -15,7 +15,6 @@ public abstract class NKNAutoProgram extends NKNProgram{
     private final List<NKNComponent> enabledTelemetryList = new LinkedList<>();
     private final List<NKNAutoStep> stepList = new LinkedList<>();
 
-    private AutoSkeleton autoSkeleton;
     private int currentStep = 0;
     private boolean done = false; //Better ways probably exist
 
@@ -36,9 +35,9 @@ public abstract class NKNAutoProgram extends NKNProgram{
         // Report on the success of the component's initialization
         for (NKNComponent component:componentList){
             if (!component.init(telemetry,hardwareMap,gamepad1,gamepad2)){
-//                telemetry.addData("Status", "Failed on "+component.getName());
-//                telemetry.update();
-//                throw new NullPointerException("Failed to init "+component.getName());
+                telemetry.addData("Status", "Failed on "+component.getName());
+                telemetry.update();
+                throw new NullPointerException("Failed to init "+component.getName());
             }
         }
     }
@@ -70,7 +69,6 @@ public abstract class NKNAutoProgram extends NKNProgram{
                 done = true;
                 return;
             }
-
             stepList.get(currentStep).begin(runtime, telemetry);
         }
     }
@@ -84,7 +82,5 @@ public abstract class NKNAutoProgram extends NKNProgram{
         }
 
         telemetry.addData("Current step", stepList.get(currentStep).getName());
-
-        telemetry.update();
     }
 }

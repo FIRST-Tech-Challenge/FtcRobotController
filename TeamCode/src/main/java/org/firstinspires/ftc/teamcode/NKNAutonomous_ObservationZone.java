@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.autonomous.ObservationZoneAuto;
-import org.nknsd.robotics.team.autonomous.TestAuto;
 
 import java.util.concurrent.TimeUnit;
 

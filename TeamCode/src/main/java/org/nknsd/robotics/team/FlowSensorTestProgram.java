@@ -33,7 +33,7 @@ public class FlowSensorTestProgram extends NKNProgram {
         // IMU Handler
         IMUComponent imuComponent = new IMUComponent();
         components.add(imuComponent);
-        //telemetryEnabled.add(imuComponent);
+        telemetryEnabled.add(imuComponent);
 
         // Wheel Driver
         WheelDriver wheelDriver = new WheelDriver(0, 1, 5, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_Y, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_X, GamePadHandler.GamepadSticks.RIGHT_JOYSTICK_X);

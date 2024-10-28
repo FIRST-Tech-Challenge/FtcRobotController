@@ -3,7 +3,6 @@ package org.nknsd.robotics.team.autonomous;
 import org.nknsd.robotics.framework.NKNAutoProgram;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.framework.NKNComponent;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepAdjustTarget;
 import org.nknsd.robotics.team.autonomous.steps.AutoStepD;
 import org.nknsd.robotics.team.autonomous.steps.AutoStepL;
 import org.nknsd.robotics.team.autonomous.steps.AutoStepMoveNRotate;
@@ -21,7 +20,7 @@ import org.nknsd.robotics.team.components.WheelHandler;
 
 import java.util.List;
 
-public class TestAuto extends NKNAutoProgram {
+public class PushAuto extends NKNAutoProgram {
     private AutoSkeleton autoSkeleton;
 
     @Override
@@ -32,7 +31,7 @@ public class TestAuto extends NKNAutoProgram {
 
 
         //Deposit blue sample
-        AutoStepL step1 = new AutoStepL(1.7);
+        AutoStepL step1 = new AutoStepL(1.62);
         stepList.add(step1);
 
 
@@ -40,15 +39,15 @@ public class TestAuto extends NKNAutoProgram {
         AutoStepR step2 = new AutoStepR(0.95);
         stepList.add(step2);
 
-        AutoStepU step3 = new AutoStepU(1.7);
+        AutoStepU step3 = new AutoStepU(1.6);
         stepList.add(step3);
 
 
         //Align with middle sample and bring it down
-        AutoStepL step4 = new AutoStepL(0.9);
+        AutoStepL step4 = new AutoStepL(0.82);
         stepList.add(step4);
 
-        AutoStepD step5 = new AutoStepD(1.85);
+        AutoStepD step5 = new AutoStepD(1.6);
         stepList.add(step5);
 
 
@@ -70,7 +69,7 @@ public class TestAuto extends NKNAutoProgram {
         AutoStepU step9 = new AutoStepU(1.65);
         stepList.add(step9);
 
-        AutoStepMoveNRotate step10 = new AutoStepMoveNRotate(1.2, 0, 90);
+        AutoStepMoveNRotate step10 = new AutoStepMoveNRotate(1.25, 0, 90);
         stepList.add(step10);
 
         AutoStepRotateArm step11 = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
@@ -79,16 +78,6 @@ public class TestAuto extends NKNAutoProgram {
         AutoStepServo step12 = new AutoStepServo(-.1, 100);
         stepList.add(step12);
 
-        //Next bit is for pseudo battlebots code (Dillon will know)
-        //AutoStepR step6 = new AutoStepR(2);
-        //stepList.add(step6);
-
-        //AutoStepD step7 = new AutoStepD(0.15);
-        //stepList.add(step7);
-
-        //AutoStepR step8 = new AutoStepR(2.5);
-        //stepList.add(step8);
-        // WHYYY
 
         NKNAutoProgram.initSteps(stepList, autoSkeleton);
     }
@@ -96,7 +85,7 @@ public class TestAuto extends NKNAutoProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Core mover
-        autoSkeleton = new AutoSkeleton(0.35, 1.5, 0.5);
+        autoSkeleton = new AutoSkeleton(0.35, 1, 0.5);
 
         // Sensors
         FlowSensorHandler flowSensorHandler = new FlowSensorHandler("sensor_otos", 0.590551, 3.54331, 0);
@@ -105,6 +94,7 @@ public class TestAuto extends NKNAutoProgram {
 
         IMUComponent imuComponent = new IMUComponent();
         components.add(imuComponent);
+        telemetryEnabled.add(imuComponent);
 
         PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
         components.add(potentiometerHandler);
@@ -114,7 +104,6 @@ public class TestAuto extends NKNAutoProgram {
                 "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFL", "motorBL"}
         );
         components.add(wheelHandler);
-        telemetryEnabled.add(wheelHandler);
 
         // Arm Stuff
         RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.005, 10, true);

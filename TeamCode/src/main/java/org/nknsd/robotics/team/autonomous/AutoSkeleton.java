@@ -57,15 +57,15 @@ public class AutoSkeleton {
         FlowSensorHandler.PoseData pos = flowSensorHandler.getOdometryData().pos;
         double x = pos.x;
         double y = pos.y;
-        double yaw = imuComponent.getYaw();
-        //double yaw = pos.heading;
+        //double yaw = imuComponent.getYaw();
+        double yaw = pos.heading;
 
         telemetry.addData("Cur X", x);
         telemetry.addData("Cur Y", y);
 
         // Find difference in position
-        x = (targetPositions[0] * TILE_LENGTH - x) * 0.5;
-        y = (targetPositions[1] * TILE_LENGTH - y) * 0.5;
+        x = (targetPositions[0] * TILE_LENGTH - x);
+        y = (targetPositions[1] * TILE_LENGTH - y);
 
         telemetry.addData("Targ X", targetPositions[0] * TILE_LENGTH);
         telemetry.addData("Targ Y", targetPositions[1] * TILE_LENGTH);
