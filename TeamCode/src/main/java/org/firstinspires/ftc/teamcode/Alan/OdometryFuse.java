@@ -81,7 +81,7 @@ public class OdometryFuse extends LinearOpMode {
     //configure SPARK FUN Otos
     @SuppressLint("DefaultLocale")
     public void configureOtos() {
-        telemetry.addLine("Configuring OTOS...");
+        telemetry.addLine("Configuring OTOS... Press to play a game while you wait");
         telemetry.update();
 
         myOtos.setLinearUnit(DistanceUnit.INCH);
