@@ -20,7 +20,6 @@ public class TestTeleOpp extends LinearOpMode {
     DroneLauncher droneLauncher;
     DriveTrain driveTrain;
     Odometry odometry;
-    RobotMovement robotMovement;
 
     OpModeUtilities opModeUtilities;
 
@@ -35,7 +34,6 @@ public class TestTeleOpp extends LinearOpMode {
         droneLauncher = new DroneLauncher(opModeUtilities);
         driveTrain = new DriveTrain(opModeUtilities);
         odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-        robotMovement = new RobotMovement(opModeUtilities, driveTrain, odometry);
 
 
         //define the actions; enter a condition (if any), target ticks, and module

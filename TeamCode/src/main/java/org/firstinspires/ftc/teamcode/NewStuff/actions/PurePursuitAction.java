@@ -45,10 +45,12 @@ public class PurePursuitAction extends Action {
         this.pidX = new PidNav(1. / 300, 0, 0);
         this.pidY = new PidNav(1. / 300, 0, 0);
         this.pidAngle = new PidNav(3 / 3.14, 0, 0);
+        Log.d("purepursaction", "constructed");
     }
 
     public void addPoint(int x, int y) {
         pathPoints.add(new Point(x, y));
+        Log.d("purepursaction", "added point " + x + ", " + y);
     }
 
     @GuardedBy("lock")
@@ -95,6 +97,8 @@ public class PurePursuitAction extends Action {
 
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
+        Log.d("purepursaction", "set target and set powers");
+
 //        opModeUtilities.getTelemetry().addData("current pos", currentPos.toString());
 //        opModeUtilities.getTelemetry().addData("power x ", powerX);
 //        opModeUtilities.getTelemetry().addData("power y", powerY);
@@ -109,6 +113,7 @@ public class PurePursuitAction extends Action {
             //opModeUtilities.getTelemetry().addLine("breake");
             //opModeUtilities.getTelemetry().update();
             driveTrain.setPower(0, 0, 0, 0);
+            Log.d("purepursaction", "done");
             return true;
         } else {
             return false;
@@ -119,6 +124,7 @@ public class PurePursuitAction extends Action {
     public void update() {
         if(!hasStarted) {
             path = new Path(pathPoints);
+            Log.d("purepursaction", "set path");
             hasStarted = true;
         }
 
@@ -126,17 +132,18 @@ public class PurePursuitAction extends Action {
         Optional<Point> follow = follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
 
         if (!follow.isPresent()) {
+            Log.d("purepursaction", "follow is not present");
             follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
             radius += 25;
-        } else {
-            lastLine = path.getSegment(path.numSegments() - 1);
-            preferredAngle = lastLine.getHeadingDirection();
+        }
+
+        lastLine = path.getSegment(path.numSegments() - 1);
+        preferredAngle = lastLine.getHeadingDirection();
 //                opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
 //                opModeUtilities.getTelemetry().addData("follow point", follow);
-            targetPosition(follow.get(), preferredAngle);
-            Log.d("position", odometry.getCurrentPosition().toString());
-            Log.d("velocity", odometry.getCurrentVelocity().toString());
-        }
+        targetPosition(follow.get(), preferredAngle);
+        Log.d("position", odometry.getCurrentPosition().toString());
+        Log.d("velocity", odometry.getCurrentVelocity().toString());
 
         //if (Thread.interrupted()) throw new InterruptedException();
 

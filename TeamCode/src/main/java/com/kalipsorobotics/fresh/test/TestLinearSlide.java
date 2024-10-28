@@ -19,7 +19,7 @@ public class TestLinearSlide extends LinearOpMode {
 
         Outtake2024 outtake2024 = new Outtake2024(opModeUtilities);
 
-        double lsStayUpPower = 0.1;
+        double lsStayUpPower = 0.1; //power LS motors need to be at to keep the slides up instead of dropping down
         double armPivotPos = 0.5;
         double clawPos = 0.9;
         double highError;
@@ -49,24 +49,28 @@ public class TestLinearSlide extends LinearOpMode {
                 armPivotPos -= 0.0095;
             }
 
+            //open and close positions for CLAW
             if(gamepad1.a) {
                 clawPos = 0.75;
             } else if (gamepad1.y) {
                 clawPos = 0.9;
             }
 
+            //up and down positions for OUTTAKE PIVOT
             if(gamepad1.x) {
                 armPivotPos = 0.13;
             } else if (gamepad1.b){
                 armPivotPos = 0.5;
             }
 
+            //servo positions are from 0 to 1
             if(armPivotPos < 0) {
                 armPivotPos = 0;
             } else if (armPivotPos > 0.5) {
                 armPivotPos = 0.5;
             }
 
+            //servo positions are from 0 to 1
             if(clawPos < 0) {
                 clawPos = 0;
             } else if (clawPos > 1) {
@@ -80,6 +84,7 @@ public class TestLinearSlide extends LinearOpMode {
 //                }
 //            }
 
+            //make sure linear slides don't crash all the way down; if position is low, turn off power on motors
             if(Math.abs(outtake2024.linearSlide.getCurrentPosition()) < 15) {
                 outtake2024.linearSlide.setPower(0);
                 outtake2024.linearSlideTwo.setPower(0);
@@ -91,6 +96,7 @@ public class TestLinearSlide extends LinearOpMode {
 
             errorToZero = 25 - outtake2024.linearSlide.getCurrentPosition();
 
+            //REALLY basic one-button outtake stuff
             if(leftBumperPressed) {
                 outtake2024.linearSlide.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
                 outtake2024.linearSlideTwo.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
