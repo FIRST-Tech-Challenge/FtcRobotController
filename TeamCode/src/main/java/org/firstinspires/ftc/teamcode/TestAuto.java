@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.AlignRobotToApri
 import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.AlignRobotToAprilTagYAction;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DetectPropPositionAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
-import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DropPixelAction;
+//import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DropPixelAction;
 import org.firstinspires.ftc.teamcode.NewStuff.FieldPosition;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.GoToBoardAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.IMUModule;
@@ -63,7 +63,7 @@ public class TestAuto extends LinearOpMode {
         outer.scheduleSequential(new AlignRobotToAprilTagXAction(fieldPosition,driveTrain, visionPortalManager));
         // then go to prop
         outer.scheduleSequential(new AlignRobotToAprilTagYAction(fieldPosition,driveTrain,visionPortalManager));
-        outer.scheduleSequential(new DropPixelAction(outtake));
+        //outer.scheduleSequential(new DropPixelAction(outtake));
 
         //todo combine both into a single action
 

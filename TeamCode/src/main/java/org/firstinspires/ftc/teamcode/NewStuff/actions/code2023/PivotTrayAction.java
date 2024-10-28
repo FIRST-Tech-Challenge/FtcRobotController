@@ -4,29 +4,28 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake2024;
 
 public class PivotTrayAction extends Action {
 
     Servo trayPivot;
-    Outtake2023 outtake;
+    Outtake2024 outtake;
 
     double targetPos;
 
     public static double TRAY_INTAKE_POS = 0.3;
     public static double TRAY_OUTTAKE_POS = 0;
 
-    public PivotTrayAction(Action dependentAction, double targetPos, Outtake2023 outtake) {
+    public PivotTrayAction(Action dependentAction, double targetPos, Outtake2024 outtake) {
         this.dependentAction = dependentAction;
         this.targetPos = targetPos;
         this.outtake = outtake;
-        this.trayPivot = outtake.tray;
     }
 
-    public PivotTrayAction(double targetPos, Outtake2023 outtake) {
+    public PivotTrayAction(double targetPos, Outtake2024 outtake) {
         this.dependentAction = new DoneStateAction();
         this.targetPos = targetPos;
         this.outtake = outtake;
-        this.trayPivot = outtake.tray;
     }
 
     @Override

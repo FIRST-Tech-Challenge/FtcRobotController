@@ -37,6 +37,20 @@ public class PurePursuitAction extends Action {
     Path path;
     Segment lastLine;
     double preferredAngle;
+    double radius;
+    Optional<Point> follow;
+
+    public PurePursuitAction(DriveTrain driveTrain, Odometry odometry, Action dependentAction) {
+        this.driveTrain = driveTrain;
+        this.odometry = odometry;
+
+        this.pidX = new PidNav(1. / 300, 0, 0);
+        this.pidY = new PidNav(1. / 300, 0, 0);
+        this.pidAngle = new PidNav(3 / 3.14, 0, 0);
+        Log.d("purepursaction", "constructed");
+
+        this.dependentAction = dependentAction;
+    }
 
     public PurePursuitAction(DriveTrain driveTrain, Odometry odometry) {
         this.driveTrain = driveTrain;
@@ -46,6 +60,8 @@ public class PurePursuitAction extends Action {
         this.pidY = new PidNav(1. / 300, 0, 0);
         this.pidAngle = new PidNav(3 / 3.14, 0, 0);
         Log.d("purepursaction", "constructed");
+
+        this.dependentAction = new DoneStateAction();
     }
 
     public void addPoint(int x, int y) {
@@ -128,8 +144,8 @@ public class PurePursuitAction extends Action {
             hasStarted = true;
         }
 
-        double radius = 300;
-        Optional<Point> follow = follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
+        radius = 300;
+        follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
 
         if (!follow.isPresent()) {
             Log.d("purepursaction", "follow is not present");
@@ -137,13 +153,15 @@ public class PurePursuitAction extends Action {
             radius += 25;
         }
 
-        lastLine = path.getSegment(path.numSegments() - 1);
-        preferredAngle = lastLine.getHeadingDirection();
+        if(follow.isPresent()) {
+            lastLine = path.getSegment(path.numSegments() - 1);
+            preferredAngle = lastLine.getHeadingDirection();
 //                opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
 //                opModeUtilities.getTelemetry().addData("follow point", follow);
-        targetPosition(follow.get(), preferredAngle);
-        Log.d("position", odometry.getCurrentPosition().toString());
-        Log.d("velocity", odometry.getCurrentVelocity().toString());
+            targetPosition(follow.get(), preferredAngle);
+            Log.d("position", odometry.getCurrentPosition().toString());
+            Log.d("velocity", odometry.getCurrentVelocity().toString());
+        }
 
         //if (Thread.interrupted()) throw new InterruptedException();
 

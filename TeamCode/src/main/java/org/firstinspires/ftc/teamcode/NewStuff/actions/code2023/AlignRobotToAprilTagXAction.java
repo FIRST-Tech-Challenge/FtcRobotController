@@ -71,7 +71,7 @@ public class AlignRobotToAprilTagXAction extends Action {
     }
 
     @Override
-    boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         if (hasInitialized) {
             if(mecanum.getIsDone()) {
                 driveTrain.setPower(0);
@@ -86,7 +86,7 @@ public class AlignRobotToAprilTagXAction extends Action {
     }
 
     @Override
-    void update() {
+    public void update() {
         if (!hasStarted) {
             hasStarted = true;
             visionPortalManager.getVisionPortal().setProcessorEnabled(visionPortalManager.getAprilTagProcessor(), true);

@@ -7,12 +7,12 @@ public class DoneStateAction extends Action {
     }
 
     @Override
-    protected boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         return true;
     }
 
     @Override
-    protected void update() {
+    public void update() {
         return;
     }
 }

@@ -15,9 +15,6 @@ import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.DroneLauncher;
 @TeleOp
 public class TestTeleOpp extends LinearOpMode {
 
-    Intake intake;
-    Outtake2023 outtake;
-    DroneLauncher droneLauncher;
     DriveTrain driveTrain;
     Odometry odometry;
 
@@ -28,10 +25,6 @@ public class TestTeleOpp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-
-        outtake = new Outtake2023(opModeUtilities);
-        intake = new Intake(opModeUtilities);
-        droneLauncher = new DroneLauncher(opModeUtilities);
         driveTrain = new DriveTrain(opModeUtilities);
         odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
 

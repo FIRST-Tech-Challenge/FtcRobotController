@@ -59,7 +59,7 @@ public class TurnRobotAction extends Action {
     }
 
     @Override
-    protected boolean checkDoneCondition() {
+    public boolean checkDoneCondition() {
         refreshError();
         if (Math.abs(error) <= ERROR_TOLERANCE) {
             driveTrain.setPower(0,0,0,0);
@@ -74,7 +74,7 @@ public class TurnRobotAction extends Action {
     }
 
     @Override
-    protected void update() {
+    public void update() {
         double errorDer;
         double power;
         double currentTime;

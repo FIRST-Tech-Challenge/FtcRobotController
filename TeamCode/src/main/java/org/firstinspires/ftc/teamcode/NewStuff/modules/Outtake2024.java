@@ -26,4 +26,8 @@ public class Outtake2024 {
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    public OpModeUtilities getOpModeUtilities() {
+        return opModeUtilities;
+    }
 }

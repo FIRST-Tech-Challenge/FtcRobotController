@@ -1,17 +1,18 @@
-package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
+/*package org.firstinspires.ftc.teamcode.NewStuff.actions.code2023;
 
 import org.firstinspires.ftc.teamcode.NewStuff.actions.Action;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.ActionSet;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.DoneStateAction;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.MoveLSAction;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.WaitAction;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.Outtake2024;
 
 public class DropPixelAction extends Action {
 
-    Outtake2023 outtake;
+    Outtake2024 outtake;
     ActionSet outer;
 
-    public DropPixelAction(Action dependentAction, Outtake2023 outtake) {
+    public DropPixelAction(Action dependentAction, Outtake2024 outtake) {
         this.dependentAction = dependentAction;
         this.outtake = outtake;
         outer = new ActionSet();
@@ -25,7 +26,7 @@ public class DropPixelAction extends Action {
         outer.scheduleSequential(new MoveLSAction(-500, outtake));
     }
 
-    public DropPixelAction(Outtake2023 outtake) {
+    public DropPixelAction(Outtake2024 outtake) {
         this.dependentAction = new DoneStateAction();
         this.outtake = outtake;
         outer = new ActionSet();
@@ -48,4 +49,4 @@ public class DropPixelAction extends Action {
     public void update() {
         outer.updateCheckDone();
     }
-}
+}*/
