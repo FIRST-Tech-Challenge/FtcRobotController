@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 
 import java.util.Locale;
 
@@ -16,6 +18,7 @@ public class AutoOpMode extends LinearOpMode {
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     private DriveToPoint nav = new DriveToPoint(this); //OpMode member for the point-to-point navigation class
+    private DcMotor rotateArmMotor = null;
 
     enum StateMachine{
         WAITING_FOR_START,
@@ -35,17 +38,13 @@ public class AutoOpMode extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-        odo.setOffsets(-101.6, -120.65); //these are tuned for 3110-0002-0001 Product Insight #1
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-
-        odo.resetPosAndIMU();
+        initPinpoint();
 
         nav.initializeMotors();
         nav.setXYCoefficients(.005,0,2.0,DistanceUnit.MM,12);
         nav.setYawCoefficients(3.1,0,2.0, AngleUnit.DEGREES,2);
+
+        rotateArmMotor = hardwareMap.get(DcMotor.class, "rotate");
 
         StateMachine stateMachine;
         stateMachine = StateMachine.WAITING_FOR_START;
@@ -107,4 +106,18 @@ public class AutoOpMode extends LinearOpMode {
             telemetry.addData("Position", data);
             telemetry.update();
         }
-    }}
+    }
+
+    private boolean armUp() {
+        rotateArmMotor.set
+    }
+
+    private void initPinpoint() {
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        odo.setOffsets(-101.6, -120.65); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                                 GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odo.resetPosAndIMU();
+    }
+}
