@@ -3,13 +3,10 @@ package org.nknsd.robotics.team.autonomous;
 import org.nknsd.robotics.framework.NKNAutoProgram;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.framework.NKNComponent;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepD;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepL;
+import org.nknsd.robotics.team.autonomous.steps.AutoStepMove;
 import org.nknsd.robotics.team.autonomous.steps.AutoStepMoveNRotate;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepR;
 import org.nknsd.robotics.team.autonomous.steps.AutoStepRotateArm;
 import org.nknsd.robotics.team.autonomous.steps.AutoStepServo;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepU;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
@@ -26,28 +23,27 @@ public class PushAuto extends NKNAutoProgram {
     @Override
     public void createSteps(List<NKNAutoStep> stepList) {
         //Move forward
-        AutoStepU step0 = new AutoStepU(0.2);
+        AutoStepMove step0 = new AutoStepMove(0, 0.2);
         stepList.add(step0);
 
-
         //Deposit blue sample
-        AutoStepL step1 = new AutoStepL(1.62);
+        AutoStepMove step1 = new AutoStepMove(-1.62, 0);
         stepList.add(step1);
 
 
         //Head to c5
-        AutoStepR step2 = new AutoStepR(0.95);
+        AutoStepMove step2 = new AutoStepMove(0.95, 0);
         stepList.add(step2);
 
-        AutoStepU step3 = new AutoStepU(1.6);
+        AutoStepMove step3 = new AutoStepMove(0, 1.6);
         stepList.add(step3);
 
 
         //Align with middle sample and bring it down
-        AutoStepL step4 = new AutoStepL(0.82);
+        AutoStepMove step4 = new AutoStepMove(-0.82, 0);
         stepList.add(step4);
 
-        AutoStepD step5 = new AutoStepD(1.6);
+        AutoStepMove step5 = new AutoStepMove(0, -1.6);
         stepList.add(step5);
 
 
@@ -66,16 +62,16 @@ public class PushAuto extends NKNAutoProgram {
 
 
         //Head to observation zone
-        AutoStepU step9 = new AutoStepU(1.65);
+        AutoStepMove step9 = new AutoStepMove(0, 1.65);
         stepList.add(step9);
 
-        AutoStepMoveNRotate step10 = new AutoStepMoveNRotate(1.25, 0, 90);
+        AutoStepMoveNRotate step10 = new AutoStepMoveNRotate(1.2, 0, 90);
         stepList.add(step10);
 
-        AutoStepRotateArm step11 = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
+        AutoStepRotateArm step11 = new AutoStepRotateArm(RotationHandler.RotationPositions.PARKING);
         stepList.add(step11);
 
-        AutoStepServo step12 = new AutoStepServo(-.1, 100);
+        AutoStepServo step12 = new AutoStepServo(-.1, 1000);
         stepList.add(step12);
 
 

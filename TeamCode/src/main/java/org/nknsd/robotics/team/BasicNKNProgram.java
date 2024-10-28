@@ -10,7 +10,6 @@ import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.components.drivers.EACDriver;
-import org.nknsd.robotics.team.components.testfiles.ExtensionMonkey;
 
 import java.util.List;
 
@@ -30,6 +29,7 @@ public class BasicNKNProgram extends NKNProgram {
         // Sensor
         PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
         components.add(potentiometerHandler);
+        telemetryEnabled.add(potentiometerHandler);
 
 
         // Arm

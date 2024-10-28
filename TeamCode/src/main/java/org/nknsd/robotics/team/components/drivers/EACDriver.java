@@ -31,7 +31,7 @@ public class EACDriver implements NKNComponent {
         public void run() {
             int nextIndex = rotationHandler.targetRotationPosition.ordinal() + 1;
 
-            if (nextIndex >= RotationHandler.RotationPositions.values().length) {return;}
+            if (nextIndex >= RotationHandler.MAX_INDEX_OF_ROTATION_POSITIONS) {return;}
 
             rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.values()[nextIndex]);
         }

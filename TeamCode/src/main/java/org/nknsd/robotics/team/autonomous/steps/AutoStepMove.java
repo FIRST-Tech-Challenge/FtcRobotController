@@ -6,23 +6,20 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.team.autonomous.AutoSkeleton;
 
-public class AutoStepL implements NKNAutoStep {
+public class AutoStepMove implements NKNAutoStep {
     AutoSkeleton autoSkeleton;
     boolean done = false;
-    private double dist;
+    private final double xDist;
+    private final double yDist;
 
-    public AutoStepL(double dist) {
-        this.dist = dist;
+    public AutoStepMove(double xDist, double yDist) {
+        this.xDist = xDist;
+        this.yDist = yDist;
     }
 
     @Override
     public void link(AutoSkeleton autoSkeleton) {
         this.autoSkeleton = autoSkeleton;
-
-    }
-
-    public void begin(ElapsedTime runtime, Telemetry telemetry) {
-        autoSkeleton.setTargetPosition(autoSkeleton.targetPositions[0] - dist, autoSkeleton.targetPositions[1]); // X/Y are weird, sorry future me!
     }
 
     @Override
@@ -31,10 +28,17 @@ public class AutoStepL implements NKNAutoStep {
     }
 
     @Override
-    public boolean isDone(ElapsedTime runtime) {return done;}
+    public boolean isDone(ElapsedTime runtime) {
+        return done;
+    }
 
     @Override
     public String getName() {
-        return "Left " + dist;
+        return "Moving horizontally + " + xDist + " units & vertically " + yDist + " units.";
+    }
+
+    @Override
+    public void begin(ElapsedTime runtime, Telemetry telemetry) {
+        autoSkeleton.setTargetPosition(autoSkeleton.targetPositions[0] + xDist, autoSkeleton.targetPositions[1] + yDist);
     }
 }

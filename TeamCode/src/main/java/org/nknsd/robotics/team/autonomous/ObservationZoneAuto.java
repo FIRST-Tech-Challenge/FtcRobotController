@@ -3,14 +3,7 @@ package org.nknsd.robotics.team.autonomous;
 import org.nknsd.robotics.framework.NKNAutoProgram;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.framework.NKNComponent;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepAdjustTarget;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepD;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepL;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepMoveNRotate;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepR;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepRotateArm;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepServo;
-import org.nknsd.robotics.team.autonomous.steps.AutoStepU;
+import org.nknsd.robotics.team.autonomous.steps.AutoStepMove;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
@@ -27,11 +20,11 @@ public class ObservationZoneAuto extends NKNAutoProgram {
     @Override
     public void createSteps(List<NKNAutoStep> stepList) {
         //Move forward a little
-        AutoStepU step0 = new AutoStepU(0.2);
+        AutoStepMove step0 = new AutoStepMove(0, 0.2);
         stepList.add(step0);
 
         //Move right into the obs zone
-        AutoStepR step1 = new AutoStepR(1.5);
+        AutoStepMove step1 = new AutoStepMove(1.5, 0);
         stepList.add(step1);
 
         NKNAutoProgram.initSteps(stepList, autoSkeleton);

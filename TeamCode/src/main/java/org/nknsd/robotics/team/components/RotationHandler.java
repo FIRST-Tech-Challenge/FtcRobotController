@@ -13,31 +13,22 @@ import java.util.concurrent.TimeUnit;
 
 public class RotationHandler implements NKNComponent {
 
-    PotentiometerHandler potHandler;
-    private final String motorName;
-    private DcMotor motor;
-
-    public RotationPositions targetRotationPosition = RotationPositions.RESTING;
-
     final double threshold;
     final double P_CONSTANT;
     final double I_CONSTANT;
     final double errorCap;
+    final boolean enableErrorClear;
+    private final String motorName;
+    public RotationPositions targetRotationPosition = RotationPositions.RESTING;
+    PotentiometerHandler potHandler;
     double diff;
     long targetTime = 0;
     double current;
     double resError;
-    final boolean enableErrorClear;
+    private DcMotor motor;
     private ExtensionHandler extensionHandler;
 
-    @Override
-    public void stop(ElapsedTime runtime, Telemetry telemetry) {
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setPower(0);
-    }
-
-
-    public RotationHandler(String motorName, double threshold, double P_CONSTANT, double I_CONSTANT, double errorCap, boolean enableErrorClear){
+    public RotationHandler(String motorName, double threshold, double P_CONSTANT, double I_CONSTANT, double errorCap, boolean enableErrorClear) {
         this.motorName = motorName;
         this.threshold = threshold;
         this.P_CONSTANT = P_CONSTANT;
@@ -46,7 +37,13 @@ public class RotationHandler implements NKNComponent {
         this.enableErrorClear = enableErrorClear;
     }
 
-    public void link(PotentiometerHandler potHandler, ExtensionHandler extensionHandler){
+    @Override
+    public void stop(ElapsedTime runtime, Telemetry telemetry) {
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setPower(0);
+    }
+
+    public void link(PotentiometerHandler potHandler, ExtensionHandler extensionHandler) {
         this.potHandler = potHandler;
         this.extensionHandler = extensionHandler;
     }
@@ -69,18 +66,6 @@ public class RotationHandler implements NKNComponent {
 
     }
 
-    public enum RotationPositions {
-        PICKUP(1.1),
-        PREPICKUP(1.40),
-        HIGH(2.4),
-        RESTING(3.3);
-
-        public final double target;
-        RotationPositions(double target) {
-            this.target = target;
-        }
-    }
-
     @Override
     public String getName() {
         return "ArmRotator";
@@ -89,13 +74,13 @@ public class RotationHandler implements NKNComponent {
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         long currentTime = runtime.time(TimeUnit.MILLISECONDS);
-        if(currentTime >= targetTime) {
+        if (currentTime >= targetTime) {
             current = potHandler.getPotVoltage();
             double armPower = controlLoop(current);
-          
+
             motor.setPower(armPower);
-          
-            targetTime = currentTime+1;
+
+            targetTime = currentTime + 1;
         }
     }
 
@@ -108,7 +93,7 @@ public class RotationHandler implements NKNComponent {
         telemetry.addData("Arm Rot Residual Err", resError);
     }
 
-    public void setTargetRotationPosition(RotationPositions targetRotationPosition){
+    public void setTargetRotationPosition(RotationPositions targetRotationPosition) {
         if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.RESTING) {
             this.targetRotationPosition = targetRotationPosition;
 
@@ -120,11 +105,11 @@ public class RotationHandler implements NKNComponent {
         }
     }
 
-    private boolean oppositeSigns(double one, double two){
+    private boolean oppositeSigns(double one, double two) {
         return one * two < 0; // If the two have DIFFERENT signs, multiplying them will give us a negative number
     }
 
-    private double controlLoop(double current){
+    private double controlLoop(double current) {
         diff = (targetRotationPosition.target - current);
         resError += diff;
 
@@ -138,7 +123,7 @@ public class RotationHandler implements NKNComponent {
             resError = -errorCap;
         }
 
-        if (oppositeSigns(diff, resError) && enableErrorClear){
+        if (oppositeSigns(diff, resError) && enableErrorClear) {
             resError = diff;
         }
 
@@ -147,5 +132,17 @@ public class RotationHandler implements NKNComponent {
 
     public boolean isAtTargetPosition() {
         return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold;
+    }
+
+    public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 4;
+
+    public enum RotationPositions {
+        PICKUP(1.1), PREPICKUP(1.40), HIGH(2.4), RESTING(3.3), PARKING(2.19);
+
+        public final double target;
+
+        RotationPositions(double target) {
+            this.target = target;
+        }
     }
 }
