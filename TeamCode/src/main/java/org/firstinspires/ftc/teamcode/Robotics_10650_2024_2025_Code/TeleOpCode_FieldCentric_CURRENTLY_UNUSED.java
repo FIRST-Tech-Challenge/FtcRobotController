@@ -1,10 +1,18 @@
+// Program created by: Danny and William
+// Purpose: FTC Robot Software
+
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp (name = "TeleOpCode")
-public class TeleOpCode extends LinearOpMode {
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+@TeleOp (name = "TeleOp_FieldCentric")
+@Disabled // This here until it is ready to be used to avoid
+// confusion, remove after it is ready to be used
+public class TeleOpCode_FieldCentric_CURRENTLY_UNUSED extends LinearOpMode {
 
     // Run the initialize function
     RobotInitialize robot;
@@ -20,6 +28,7 @@ public class TeleOpCode extends LinearOpMode {
         // loop while the program is running
         // waits for controller input then runs the associated code
         while(opModeIsActive()) {
+            double heading = robot.gyroScope.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             // controller inputs that is inputted by the drive team
             controllerInput();
         }
@@ -46,7 +55,15 @@ public class TeleOpCode extends LinearOpMode {
         straightMovementPower = Math.pow(gamepad1.left_stick_y, 3) * 10000;
         //telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 
-
+        //double strafePower; // (left stick x-axis movement)
+        strafePower = gamepad1.left_stick_x * 10000;
+        telemetry.addData("gamepad1.left_stick_x (strafing)", strafePower);
+        //double turnPower; // (right stick x-axis movement)
+        turnPower = gamepad1.right_stick_x * 10000;
+        telemetry.addData("gamepad1.right_stick_x (turning)", turnPower);
+        //double straightMovementPower; // (left stick y-axis movement)
+        straightMovementPower = gamepad1.left_stick_y * 10000;
+        telemetry.addData("gamepad1.left_stick_y (straight movement)", strafePower);
 
         // Set velocity of the motors
         // Forward and backward movement (left stick y-axis movement)

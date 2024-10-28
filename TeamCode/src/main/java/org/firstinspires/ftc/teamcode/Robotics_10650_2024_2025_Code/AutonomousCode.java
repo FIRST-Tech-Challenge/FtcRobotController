@@ -1,3 +1,6 @@
+// Program created by: Danny and William
+// Purpose: FTC Robot Software
+
 // The file path of the class
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
@@ -6,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 // Create an Autonomous program (Auto) that preselects a TeleOp (controller operated)
-@Autonomous(name = "AutonomousCode", preselectTeleOp = "TeleOpCode")
+@Autonomous(name = "AutonomousCode", preselectTeleOp = "TeleOpCode_RobotCentric")
 public class AutonomousCode extends LinearOpMode {
 
     // Execute the function from the RobotInitialize class
@@ -24,14 +27,24 @@ public class AutonomousCode extends LinearOpMode {
         // Phase 1 auto program (go forward, raise arm device, place pre-loaded sample, then strafe
         // into the ascent zone and use the arm device to touch the first bar
         // Fairly accurate but might need improvement
-       robot.goStraight(850, 500);
-       robot.strafeR(1100, 500);
-       robot.goStraight(500, 500);
-       robot.strafeL(50, 100);
-       robot.newTurnFunction(90);
-       robot.goStraight(200, 100);
 
-        // Shutdown motors when the code ends
-        robot.stopMotors();
+        //robot.claw.setPower(.5);
+        //robot.liftExtender.setTargetPosition(0);
+
+        //Positive values make the lift go backwards
+        //Negative values make the lift go forwards
+//        robot.liftPitch(200, 0.05);
+//        robot.intakeToggle(1);
+
+        // Main movement of drivetrain during Auto
+        robot.goStraight(850, 500);
+        robot.strafeR(1100, 500);
+        robot.goStraight(500, 500);
+        robot.strafeL(50, 100);
+        robot.newTurnFunction(90);
+        robot.goStraight(200, 100);
+
+        // Shutdown all mechanisms when the code ends
+        robot.stopMechanisms();
     }
 }

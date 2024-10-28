@@ -1,12 +1,18 @@
+// Program created by: Danny and William
+// Purpose: FTC Robot Software
+
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Imports all of the necessary FTC libraries and code
+
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
@@ -15,27 +21,34 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-// How to connect to robot procedure
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+
+// How to connect to robot procedure (see file called
+// controlHubConnectionInstructions.md)
 
 public class RobotInitialize {
 
     // Initialization Phase
 
-    // Create servo variables (currently not available)
-    // Servo pitch;
-    // Servo lClaw;
-    // Servo rClaw;
+    // Create servo variables
+    CRServo intake; // This is a special continuous rotation servo which allows it to act
+    // like a motor
+
+    Servo pitch;
+    Servo clawRoll;
+
 
     // Create the empty normal motor variables
     DcMotorEx fLeft;
     DcMotorEx bRight;
     DcMotorEx fRight;
     DcMotorEx bLeft;
-    // DcMotorEx liftMotor; (Placeholder for fifth motor)
 
-    // Add servos once they are on the main robot
+    // Create the empty lift control variables
+    DcMotorEx liftExtender; //Extends the lift outwards and pulls it inwards
+    DcMotorEx liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
 
-    // Create empty gyroscope variable
+    // Create empty gyroscope variable and its settings
     BHI260IMU gyroScope;
     BHI260IMU.Parameters settings;
 
@@ -48,7 +61,7 @@ public class RobotInitialize {
     LinearOpMode opMode;
 
     // Enables the class to be referenced in other classes such as the Autonomous Code
-    // and the TeleOpCode
+    // and the TeleOpCode_RobotCentric
     public RobotInitialize(LinearOpMode opMode) {
         this.opMode = opMode;
         initialize();
@@ -57,7 +70,9 @@ public class RobotInitialize {
     // The main function that sets all of the hardware to different variables
     // The motors and the gyroscope are initialized here
     public void initialize() {
-        // map the motors to the hardware map
+        // map the devices to the hardware map
+
+        //Drivetrain motors
         fLeft = opMode.hardwareMap.get(DcMotorEx.class, "fleft");
         bRight = opMode.hardwareMap.get(DcMotorEx.class, "bright");
         fRight = opMode.hardwareMap.get(DcMotorEx.class, "fright");
@@ -68,12 +83,6 @@ public class RobotInitialize {
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-// map the servos to the hardware map (not currently in use but will be used later)
-//        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
-        //lClaw = opMode.hardwareMap.get(Servo.class, "lClaw");
-        //rClaw = opMode.hardwareMap.get(Servo.class, "rClaw");
-
         // Resetting the encoders (distance measurement sensors)
         // and then start them again on program start
         // Repeat for all motors
@@ -81,32 +90,86 @@ public class RobotInitialize {
         //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
         fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
 
         bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        //Manipulator mechanisms
+
+            //Lift motors
+
+        liftExtender = opMode.hardwareMap.get(DcMotorEx.class, "liftExtender");
+
+            //Initial conditions of the liftExtender MOTOR
+            liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
+            liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //liftExtender.setZeroPowerBehavior(BRAKE);
+
+
+
+        liftPitch = opMode.hardwareMap.get(DcMotorEx.class, "liftPitch");
+
+            //Initial conditions of the liftPitch MOTOR
+            //PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1); (This does nothing)
+            //PIDF Coefficients for the liftPitch MOTOR
+            liftPitch.setVelocityPIDFCoefficients(.5,1,0, 1);
+            liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
+            liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftPitch.setZeroPowerBehavior(BRAKE);
+
+        //Manipulator Servos
+
+        //Continuous rotation Servo
+        intake = opMode.hardwareMap.get(CRServo.class, "intake");
+
+        //Initial conditions of the intake SERVO
+        intake.setPower(0); // Off by default
+
+        //Regular Servos
+        clawRoll = opMode.hardwareMap.get(Servo.class, "roll");
+        clawRoll.setPosition(0);
+        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
+
+
+//        roll.setDirection(Servo.Direction.FORWARD);
+//        roll.setPosition(0);
+
+//        pitch.setDirection(Servo.)
+        { //This was causing problems
+            //claw.setPosition(0);
+            //roll.setPosition(0);
+            //pitch.setPosition(0);
+        }
+
+
 
         // Initialize Gyroscope
         gyroScope = opMode.hardwareMap.get(BHI260IMU.class, "gyroScope");
+        // Possibly change this to the following code comment
+        RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(new Orientation(AxesReference
+                .INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,
+                0));
 
-        RevHubOrientationOnRobot ori = new RevHubOrientationOnRobot(new Orientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES, 90, 0, 0,0));
+        // Way to set up the gyroscope
+        // new REVHubOrientationOnRobot(REVHubOrientationOnRobot.LogoFacingDirection.<direction
+        // here>, REVHubOrientationOnRobot.UsbFacingDirection.<direction here>));
+
+        // Setting up the gyroscope settings
         settings = new BHI260IMU.Parameters(ori);
+        gyroScope.initialize(settings);
         AngularVelocity angularVelocity = gyroScope.getRobotAngularVelocity(AngleUnit.DEGREES);
         YawPitchRollAngles orientation = gyroScope.getRobotYawPitchRollAngles();
-        gyroScope.initialize(settings);
-
+        gyroScope.resetYaw();
     }
 
 
@@ -144,7 +207,7 @@ public class RobotInitialize {
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
-                setMotorVelocity(Math.abs(velocity));
+                setDrivetrainMotorVelocity(Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getPosStrafe());
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
@@ -154,7 +217,7 @@ public class RobotInitialize {
                 //if current position is less than needed
             } else if (getPosStrafe() > relativeDistance) {
                 // Backwards (- negative relativeDistance value)
-                setMotorVelocity(-Math.abs(velocity));
+                setDrivetrainMotorVelocity(-Math.abs(velocity));
                 opMode.telemetry.addData("Encoder straight", getPosStrafe());
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
@@ -163,7 +226,7 @@ public class RobotInitialize {
                 opMode.telemetry.update();
             }
         }
-        stopMotors();
+        stopMechanisms();
     }
 
     // Makes the robot strafe right by determining where the robot is currently
@@ -195,10 +258,43 @@ public class RobotInitialize {
                 opMode.telemetry.addData("must be greater than 10", Math.abs(getPosStrafe() - relativeDistance));
                 opMode.telemetry.update();
             } else{
-                setMotorVelocity(0);
+                setDrivetrainMotorVelocity(0);
             }
         }
-        stopMotors();
+        stopMechanisms();
+    }
+    //needs to move counterclockwise to move up
+    public void liftPitch(int position, double velocity){
+        liftPitch.setTargetPosition(position);
+        liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (Math.abs(liftPitch.getCurrentPosition()-position)>10 && opMode.opModeIsActive()) {
+            opMode.telemetry.addData("needs to be >10", Math.abs(liftPitch.getCurrentPosition()-position));
+            opMode.telemetry.addData("position", liftPitch.getCurrentPosition());
+            opMode.telemetry.update();
+            if (liftPitch.getCurrentPosition()<position) {
+                liftPitch.setPower(velocity);
+
+            } else if (liftPitch.getCurrentPosition()>= position){
+                liftPitch.setPower(-velocity);
+            }
+        }
+    }
+
+    // Extends the lift outwards and retracts it inwards
+    public void liftExtender(int position, double velocity){
+        liftExtender.setTargetPosition(position);
+        liftExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (Math.abs(liftExtender.getCurrentPosition()-position)>10 && opMode.opModeIsActive()) {
+            opMode.telemetry.addData("needs to be >10", Math.abs(liftExtender.getCurrentPosition()-position));
+            opMode.telemetry.addData("position", liftExtender.getCurrentPosition());
+            opMode.telemetry.update();
+            if (liftExtender.getCurrentPosition()<position) {
+                liftExtender.setPower(velocity);
+
+            } else if (liftExtender.getCurrentPosition()>=position){
+                liftExtender.setPower(-velocity);
+            }
+        }
     }
 
     // Makes the robot strafe left by determining where the robot is currently
@@ -215,7 +311,8 @@ public class RobotInitialize {
                 // Forwards (+ positive relativeDistance value)
                 //setMotorVelocity(Math.abs(velocity));
 //
-                Double[] motorvVelocity = {bLeft.getVelocity(), fLeft.getVelocity(), bRight.getVelocity(), fRight.getVelocity()};
+                Double[] motorVelocity = {bLeft.getVelocity(), fLeft.getVelocity(),
+                        bRight.getVelocity(), fRight.getVelocity()};
                 fLeft.setVelocity(-velocity);
                 fRight.setVelocity(velocity);
                 bLeft.setVelocity(-velocity);
@@ -230,7 +327,7 @@ public class RobotInitialize {
                 opMode.telemetry.update();
             }
         }
-        stopMotors();
+        stopMechanisms();
     }
 
     // This is the new turn function that includes setVelocity instead of setPower
@@ -259,8 +356,20 @@ public class RobotInitialize {
                 bRight.setVelocity(500);
             }
         }
-        stopMotors();
+        stopMechanisms();
     }
+
+    public void intakeToggle(double power) {
+    intake.setPower(power);
+    }
+
+    public void moveRoll(double position, double velocity) {
+        //clawRoll.setPosition(position);
+    }
+    public void movePitch(double position, double velocity) {
+        //pitch.setPosition(position);
+    }
+
     //gets average magnitudes because motors are going in different directions
     public int getPosStrafe() {
         return ((Math.abs(fRight.getCurrentPosition())+Math.abs(bRight.getCurrentPosition())+Math.abs(fLeft.getCurrentPosition())+ Math.abs(bLeft.getCurrentPosition()))/4);
@@ -292,16 +401,38 @@ public class RobotInitialize {
     // The back wheels are set to negative velocity so the
     // robot goes forward when the velocity value is positive and
     // vice versa for going backwards
-    public void setMotorVelocity(double velocity) {
+    public void setDrivetrainMotorVelocity(double velocity) {
+        // Drivetrain motors
         fLeft.setVelocity(velocity);
         fRight.setVelocity(velocity);
         bLeft.setVelocity(-velocity);
         bRight.setVelocity(-velocity);
     }
 
+    public void setMechanismVelocity(double velocity){
+        // Drivetrain motors
+        fLeft.setVelocity(velocity);
+        fRight.setVelocity(velocity);
+        bLeft.setVelocity(-velocity);
+        bRight.setVelocity(-velocity);
+
+        // Lift motors
+        liftExtender.setVelocity(velocity);
+        liftPitch.setVelocity(velocity);
+
+        // Servos
+
+        // Continuous rotation servo
+        intake.setPower(0);
+
+        // Regular servos
+        //clawRoll.(); // Try to find way to temporarily disable servos
+        //pitch.(); // Try to find way to temporarily disable servos
+    }
+
     // Stops the motors by setting the velocity to 0
-    public void stopMotors() {
-        setMotorVelocity(0);
+    public void stopMechanisms() {
+        setMechanismVelocity(0);
     }
 }
 
