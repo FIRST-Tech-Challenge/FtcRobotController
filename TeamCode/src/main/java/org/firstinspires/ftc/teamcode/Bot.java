@@ -34,7 +34,8 @@ public class Bot {
 
 
     //Statistics for measurements
-    public static final int MAX_EXT = -3595;
+    public static final int MAX_EXT = -2648
+            ;
     public static final double MIN_EXTEND = 0;
 
     public static final int LEFT_LIFT_MAX = 7255;
@@ -43,7 +44,7 @@ public class Bot {
     public static final int RIGHT_LIFT_MIN = -10;
 
     public static final int MAX_PIVOT = 2560;
-    public static final int MIN_PIVOT = -670;
+    public static final int MIN_PIVOT = -180;
 
 
     //Drive Encoder Stats
@@ -467,7 +468,7 @@ public class Bot {
      */
     public void liftLow(){
         this.encoderLift(RIGHT_LIFT_MAX, LEFT_LIFT_MAX);
-        this.setArmPos(1280);
+        this.setArmPos(1500);
         this.autoPush();
         this.encoderLift(RIGHT_LIFT_MAX/2,LEFT_LIFT_MAX/2);
         this.setArmPos(MAX_PIVOT-BUFFER);
@@ -599,7 +600,7 @@ public class Bot {
     public void runIntakeForTime(double runTime, int direction) {
         long startTime = System.currentTimeMillis();
         topIntake.setPower(direction); // Full power for the intake
-        bottomIntake.setPower(direction);
+        bottomIntake.setPower(-direction);
 
         // Run until the time is up
         while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
