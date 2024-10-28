@@ -22,17 +22,11 @@ public class MecanumTeleOp extends LinearOpMode {
 
     public void runOpMode() {
         Hardware hardware = new Hardware(hardwareMap);
-        DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
-        DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
-        DcMotor backRight = hardwareMap.dcMotor.get("backRight");
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "gyro");
         gyro = (IntegratingGyroscope) navxMicro;
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         telemetry.log().add("Gyro Calibrating. Do Not Move!");
 
