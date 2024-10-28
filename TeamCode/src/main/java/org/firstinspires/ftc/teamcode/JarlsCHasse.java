@@ -23,10 +23,6 @@ public class JarlsCHasse {
         RMBack = hwMap.get(DcMotorEx.class, "rightBack");
         LMBack = hwMap.get(DcMotorEx.class, "leftFront");
 
-        OdomLeft = hwMap.get(DcMotorEx.class, "OdomLeft");
-        OdomRight = hwMap.get(DcMotorEx.class, "OdomRight");
-        OdomBack = hwMap.get(DcMotorEx.class, "OdomBack");
-
         RMFront.setDirection(DcMotorEx.Direction.REVERSE);
         LMBack.setDirection(DcMotorEx.Direction.REVERSE);
     }
@@ -79,6 +75,23 @@ public class JarlsCHasse {
         LMBack.setPower(speed);
     }
 
+    public void moveX(boolean sign){
+
+        
+
+    }
+
+    public void moveY(boolean sign){
+
+    }
+
+    public void turn0Clockwise(){
+
+    }
+
+    public void turn0CounterClock(){
+
+    }
 
 
 }
