@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.*;
 
-@TeleOp
-@Disabled
-public class ViperSlide extends OpMode {
+public class ViperSlide {
     private DcMotor slide = null;
 
-    @Override
-    public void init() {
+    public ViperSlide(HardwareMap hardwareMap) {
         slide = hardwareMap.get(DcMotor.class, "Slide");
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    @Override
-    public void loop() {
-        slide.setPower(gamepad1.left_stick_y);
+    public void up() {
+        slide.setTargetPosition(200);
+    }
+
+    public void down() {
+        slide.setTargetPosition(0);
+    }
+
+    public void stop() {
+        slide.setPower(0);
     }
 }
