@@ -22,6 +22,10 @@ public class MecanumTeleOp extends LinearOpMode {
 
     public void runOpMode() {
         Hardware hardware = new Hardware(hardwareMap);
+        hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -74,10 +78,15 @@ public class MecanumTeleOp extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            hardware.frontLeft.setPower(frontLeftPower);
-            hardware.backLeft.setPower(backLeftPower);
-            hardware.frontRight.setPower(frontRightPower);
-            hardware.backRight.setPower(backRightPower);
+            hardware.frontLeft.setPower(frontLeftPower/2);
+            hardware.backLeft.setPower(backLeftPower/2);
+            hardware.frontRight.setPower(frontRightPower/2);
+            hardware.backRight.setPower(backRightPower/2);
+
+            telemetry.addData("fl power", frontLeftPower);
+            telemetry.addData("fr power", frontRightPower);
+            telemetry.addData("bl power", backLeftPower);
+            telemetry.addData("br power", backRightPower);
         }
     }
     String formatAngle(AngleUnit angleUnit, double angle) {
