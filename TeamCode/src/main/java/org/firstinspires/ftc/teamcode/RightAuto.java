@@ -15,8 +15,9 @@ public class RightAuto extends LinearOpMode {
         waitForStart();
 
         //drives forward and puts the specimen on the hook
-        robot.encoderDrive(1,15.5);
-        robot.setArmPos(750);
+        robot.encoderDrive(1,15);
+        robot.setArmPos(850);
+
         robot.setExtendPos(12.75);
         robot.setArmPos(450);
         robot.runIntakeForTime(2.0, 1);
