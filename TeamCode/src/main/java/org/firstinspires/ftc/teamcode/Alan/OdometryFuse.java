@@ -80,7 +80,7 @@ public class OdometryFuse extends LinearOpMode {
 
     //configure SPARK FUN Otos
     @SuppressLint("DefaultLocale")
-    private void configureOtos() {
+    public void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
         telemetry.update();
 
