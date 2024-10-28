@@ -34,7 +34,7 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
 @TeleOp(name="Testing 10/25/24", group="Linear OpMode")
 public class Testing_Oct25 extends LinearOpMode {
 
-    // Declare OpMode members for each of the 4 motors.
+    // Declare OpMode members for each of the 6 motors (and sensor)
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -104,6 +104,8 @@ public class Testing_Oct25 extends LinearOpMode {
         if (colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) colorSensor).enableLight(true);
         }
+
+        //SET MOTOR DIRECTIONS
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -182,8 +184,7 @@ public class Testing_Oct25 extends LinearOpMode {
 
 
 
-            // Send calculated power to wheels
-            //!!!!Using multiplier to slow Back wheels, attempt to make speeds match!!!!
+            //Tower Control, Down Function Still Broken
             if (gamepad1.dpad_down){
                 leftCH.setDirection(DcMotor.Direction.FORWARD);
                 rightCH.setDirection(DcMotor.Direction.REVERSE);
@@ -200,6 +201,8 @@ public class Testing_Oct25 extends LinearOpMode {
             if (!gamepad1.dpad_up){
                 twr = 0;
             }
+
+            //make the wheels deal with all the data
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower*0.76);
@@ -207,7 +210,7 @@ public class Testing_Oct25 extends LinearOpMode {
             leftCH.setPower(twr);
             rightCH.setPower(twr);
 
-            // Show the elapsed game time and wheel power.
+            // print out data from drive motors and color sensor
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
