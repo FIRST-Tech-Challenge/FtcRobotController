@@ -226,7 +226,7 @@ public class Drivetrain {
     }
 
     public boolean isAtTarget() {
-        return (Math.hypot(Math.abs(xTarget - xRn), Math.abs(yTarget - yRn)) < 2) && Math.abs(rTarget - rRn) < 2;
+        return (Math.hypot(Math.abs(xTarget - xRn), Math.abs(yTarget - yRn)) < 1) && Math.abs(rTarget - rRn) < 2;
     }
     public void setStartPostion(Pose2d startpose){
         odo.setPosition(startpose);
