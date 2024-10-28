@@ -9,10 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 import java.util.Locale;
 
-@Autonomous(name="Pinpoint Navigation Example", group="Pinpoint")
+@Autonomous(name="AutoPinpoint")
 //@Disabled
 
-public class SensorPinpointDriveToPoint extends LinearOpMode {
+public class AutoOpMode extends LinearOpMode {
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     private DriveToPoint nav = new DriveToPoint(this); //OpMode member for the point-to-point navigation class
@@ -101,6 +101,7 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
 
         }
         while (opModeIsActive()) {
+            // Print final pose
             pos = odo.getPosition();
             data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
