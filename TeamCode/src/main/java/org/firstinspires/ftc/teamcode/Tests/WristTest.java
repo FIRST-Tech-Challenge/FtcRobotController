@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Wrist;
 
 @TeleOp
 @Config
-// intake: 0.3,score: 0.95,
+// intake: 0.3,score: 0.95, gear keeps skipping
 public class WristTest extends LinearOpMode {
     public static double angle=0.15;
     public void runOpMode(){

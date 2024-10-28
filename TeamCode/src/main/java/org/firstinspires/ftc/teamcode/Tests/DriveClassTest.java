@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,6 +22,7 @@ import java.util.Locale;
 
 @TeleOp
 @Config
+@Disabled
 public class DriveClassTest extends LinearOpMode {
     double oldTime = 0;
     double globalStateMachine = 0;
@@ -30,7 +32,7 @@ public class DriveClassTest extends LinearOpMode {
         Pose2d startPosition = new Pose2d(0, 0, 0);
         ElapsedTime timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Drivetrain drive = new Drivetrain(hardwareMap, timer, startPosition);
+        Drivetrain drive = new Drivetrain(hardwareMap, startPosition);
         Slides slides = new Slides(hardwareMap, drive.getSlidesMotor());
         Arm arm = new Arm(hardwareMap, drive.getArmMotor());
         Claw claw = new Claw(hardwareMap);

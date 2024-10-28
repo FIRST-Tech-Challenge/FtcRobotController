@@ -123,6 +123,9 @@ public class DcMotorBetter implements Motor {
                 double power = this.power;
                 if (this.direction != this.dcMotorEx.getDirection()) power = -power;
                 this.dcMotorEx.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                if(Math.abs(this.power)<.3){
+                    this.dcMotorEx.setPower(0.0);
+                }
                 if(Math.abs(this.power - this.lastPower) > .05){
                     this.dcMotorEx.setPower(power);
                 }

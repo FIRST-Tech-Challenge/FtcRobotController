@@ -37,10 +37,12 @@ public class league1auto extends LinearOpMode{
     double TimeStamp = 0;
     @Override
     public void runOpMode() throws InterruptedException {
+
         ElapsedTime timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Drivetrain drive = new Drivetrain(hardwareMap, timer, startPosition);
-        drive.setStartPostion(startPosition);
+        Drivetrain drive = new Drivetrain(hardwareMap, startPosition);
+        //doesnt work lol
+//        drive.setStartPostion(startPosition);
 
         waitForStart();
         while(opModeIsActive()){

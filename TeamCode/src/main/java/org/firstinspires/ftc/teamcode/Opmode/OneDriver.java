@@ -20,21 +20,21 @@ import java.util.Locale;
 
 
 @TeleOp
-@Config
 
 public class OneDriver extends LinearOpMode {
-    public static double inchesPerSecond = 66.67;
-    static double globalStateMachine = 0;
+    public double inchesPerSecond = 66.67;
+    double globalStateMachine = 0;
     double oldTime = 0;
     double timeStamp = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         Pose2d startPosition = new Pose2d(0, 0, 0);
         double slideInches = 0;
         ElapsedTime timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Drivetrain drive = new Drivetrain(hardwareMap, timer, startPosition);
+        Drivetrain drive = new Drivetrain(hardwareMap, startPosition);
         Slides slides = new Slides(hardwareMap, drive.getSlidesMotor());
         Arm arm = new Arm(hardwareMap, drive.getArmMotor());
         Claw claw = new Claw(hardwareMap);
@@ -43,29 +43,41 @@ public class OneDriver extends LinearOpMode {
         waitForStart();
         double frequency = 0;
         double loopTime = 0;
+
         while (opModeIsActive()) {
+            //read gamepads
+
             if (gp.left_bumper && (globalStateMachine == 11 || globalStateMachine == 12)) {
                 globalStateMachine = 11;
-            }
+            }//advances backwards
+
             if ((globalStateMachine == 11 || globalStateMachine == 12) && gp.right_bumper) {
                 globalStateMachine++;
             } else if (gp.right_bumper) {
                 if (globalStateMachine != 9 || globalStateMachine != 6 || globalStateMachine != 3) {
                     globalStateMachine++;
-                }
+                } //advances forward
             } else if (gp.left_bumper) {
                 if (globalStateMachine == 3) {
                     globalStateMachine = 0;
                 } else {
                     globalStateMachine--;
-                }
+                } //advances backwards
             } else if (gp.a) {
                 globalStateMachine = 10;
-            }
+            }//submersible
+
+
 
             if (globalStateMachine < 0) {
                 globalStateMachine = 0;
-            }
+            }//make sure we cant fall out of our state machine
+
+
+
+            //state machine
+            //if you're reading this PLEASE make this an ENUM or something readable
+
             if (globalStateMachine == 0) { //default position
                 arm.preTake();
                 slides.floorIntake();
@@ -115,6 +127,7 @@ public class OneDriver extends LinearOpMode {
                 slideInches += increment;
                 if (slideInches > 15.0) slideInches = 15.0;
                 slides.setTargetSlidesPosition(slideInches);
+
             } else if (globalStateMachine == 12) {
                 arm.intake();
                 wrist.intake();
@@ -139,13 +152,21 @@ public class OneDriver extends LinearOpMode {
                 }
             }
 
-            drive.update();
-            drive.setPowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
+
+
 
             double newTime = getRuntime();
             loopTime = newTime - oldTime;
             frequency = 1 / loopTime;
             oldTime = newTime;
+
+
+            drive.update();
+            drive.setPowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            slides.update();
+            arm.update();
+            gp.update();
+
 
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", drive.getPose().getX(), drive.getPose().getY(), M.toDegrees(drive.getPose().getHeading()));
             telemetry.addData("Position", data);
@@ -157,9 +178,6 @@ public class OneDriver extends LinearOpMode {
             telemetry.addData("Left Trigger:", gamepad1.left_trigger);
             telemetry.addData("Right Trigger:", gamepad1.right_trigger);
 
-            slides.update();
-            arm.update();
-            gp.update();
             telemetry.update();
         }
     }

@@ -8,47 +8,48 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Odo.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Usefuls.Math.T;
 
 @Config
 public class Drivetrain {
-    public static double yOffset = 0; //tune
-    public static double xOffset = 135; //tune
+    public final double yOffset = 0;
+    public final double xOffset = 135;
+
     public static double zeroMoveAngle = 45;
-    public static double P = 0.15, D = 4.5;
-    public static double rP = 2.2, rD = 27;
-    ElapsedTime derivativeTimer = new ElapsedTime();
+    public final double P = 0.15, D = 4.5;
+    public final double rP = 2.2, rD = 27;
     private boolean auto = false;
+
     private final DcMotorEx rightRear;
     private final DcMotorEx rightFront;
     private final DcMotorEx leftRear;
     private final DcMotorEx leftFront;
     private final GoBildaPinpointDriver odo;
-    private double flPower, frPower, blPower, brPower;
-    private double normalize;
+
+
+    private Pose2d startPose;
     private Pose2d currentPose = new Pose2d(0, 0, 0);
-    private Pose2d currentVelocity = new Pose2d(0, 0, 0);
     private double xRn, yRn, rRn;
     private double headingVelocity = 0;
+
     private final BasicPID xController;
     private final BasicPID yController;
     private final BasicPID rController;
-    private final PIDCoefficients xyCoefficients;
-    private final PIDCoefficients rCoefficients;
     //x and y must be the same because when you rotate 90 degrees, the x and y are swapped!
+
     private double xPower, yPower, rPower;
     private double xTarget, yTarget, rTarget;
-    private double xOut, yOut;
-    private Pose2d startPose;
+
     private Pose2d rawOutputs = new Pose2d();
+
     private double lastFlPower = 0;
     private double lastBlPower = 0;
     private double lastBrPower = 0;
     private double lastFrPower = 0;
-    public Drivetrain(HardwareMap hardwareMap, ElapsedTime timer, Pose2d startPose) {
+
+    public Drivetrain(HardwareMap hardwareMap, Pose2d startPose) {
         leftFront = hardwareMap.get(DcMotorEx.class, "bl");
         leftRear = hardwareMap.get(DcMotorEx.class, "fl");
         rightFront = hardwareMap.get(DcMotorEx.class, "fr");
@@ -66,8 +67,8 @@ public class Drivetrain {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        xyCoefficients = new PIDCoefficients(P, 0, D);
-        rCoefficients = new PIDCoefficients(rP, 0, rD);
+        PIDCoefficients xyCoefficients = new PIDCoefficients(P, 0, D);
+        PIDCoefficients rCoefficients = new PIDCoefficients(rP, 0, rD);
 
         xController = new BasicPID(xyCoefficients);
         yController = new BasicPID(xyCoefficients);
@@ -75,11 +76,10 @@ public class Drivetrain {
 
         this.startPose = startPose;
 
-        xTarget = 0;
-        yTarget = 0;
-        rTarget = 0;
+        xTarget = startPose.getX();
+        yTarget = startPose.getY();
+        rTarget = startPose.getHeading();
 
-        derivativeTimer = timer;
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         odo.setOffsets(xOffset, yOffset);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
@@ -89,17 +89,32 @@ public class Drivetrain {
     }
 
     public void setPowers(double y, double x, double r) { //y moves forward, x strafes// , r rotates it
-        normalize = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(r), 1);
+        double normalize = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(r), 1);
 
-        flPower = (y + x - r);
-        blPower = (y - x - r);
-        brPower = (y + x + r);
-        frPower = (y - x + r);
+        double flPower = (y + x - r);
+        double blPower = (y - x - r);
+        double brPower = (y + x + r);
+        double frPower = (y - x + r);
 
         flPower /= normalize;
         blPower /= normalize;
         brPower /= normalize;
         frPower /= normalize;
+
+        // Set small powers to 0 if below .05
+        if (Math.abs(flPower) < 0.05) {
+            flPower = 0;
+        }
+        if (Math.abs(blPower) < 0.05) {
+            blPower = 0;
+        }
+        if (Math.abs(brPower) < 0.05) {
+            brPower = 0;
+        }
+        if (Math.abs(frPower) < 0.05) {
+            frPower = 0;
+        }
+
         // Only set power if the change is greater than 0.05
         if (Math.abs(flPower - lastFlPower) > 0.05) {
             leftFront.setPower(flPower);
@@ -132,7 +147,7 @@ public class Drivetrain {
         rRn = currentPose.getHeading()+startPose.getHeading();
         //CHECK THE UNITS OF HEADING AND WRITE IT IN A COMMENT!
         currentPose = new Pose2d(xRn, yRn, rRn);
-        currentVelocity = odo.getVelocity();
+        Pose2d currentVelocity = odo.getVelocity();
         headingVelocity = currentVelocity.getHeading();
 
         if (auto) { //DONT UPDATE PID's IN TELEOP, JUST OUR CURRENT POSITION AND VELOCITY!
@@ -140,8 +155,8 @@ public class Drivetrain {
 
 
             //PID controllers calculate motor powers based on how far away they are.
-            xOut = -xController.calculate(xTarget, xRn);
-            yOut = -yController.calculate(yTarget, yRn);
+            double xOut = -xController.calculate(xTarget, xRn);
+            double yOut = -yController.calculate(yTarget, yRn);
             rPower = rController.calculate(rTarget, rRn);
 
             rawOutputs = new Pose2d(xOut, yOut, rPower);
@@ -160,16 +175,11 @@ public class Drivetrain {
 
             xPower *= errorScale;
             yPower *= errorScale;
-//add this in later
 
 
-//            setPowers(yPower, xPower, rPower);
 
             setPowers(yPower, -xPower, rPower);
-
-
             //actually setting motor powers using the setPowers function!
-            //negatives and stuff here
         }
     }
 
@@ -202,8 +212,6 @@ public class Drivetrain {
         yTarget = target.getY();
         rTarget = Math.toRadians(target.getHeading());
     }
-    //equivalent to the lineTo function
-    //technically doesn't move in a line but neither did lineTo
 
     public void setZeroMoveAngle(double angle) {
         zeroMoveAngle = angle;
