@@ -112,7 +112,7 @@ public class RobotInitialize {
             liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
             liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //liftExtender.setZeroPowerBehavior(BRAKE);
+            liftExtender.setZeroPowerBehavior(BRAKE);
 
 
 
@@ -131,15 +131,14 @@ public class RobotInitialize {
 
         //Continuous rotation Servo
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
-
         //Initial conditions of the intake SERVO
         intake.setPower(0); // Off by default
-
+        intake.setDirection(CRServo.Direction.REVERSE);
         //Regular Servos
         clawRoll = opMode.hardwareMap.get(Servo.class, "roll");
         clawRoll.setPosition(0);
         pitch = opMode.hardwareMap.get(Servo.class, "pitch");
-
+        pitch.setPosition(0.0461);
 
 //        roll.setDirection(Servo.Direction.FORWARD);
 //        roll.setPosition(0);
@@ -359,9 +358,9 @@ public class RobotInitialize {
         stopMechanisms();
     }
 
-    public void intakeToggle(double power) {
-    intake.setPower(power);
-    }
+//    public void intakeToggle(double power) {
+//    intake.setPower(power);
+//    }
 
     public void moveRoll(double position, double velocity) {
         //clawRoll.setPosition(position);
@@ -420,10 +419,6 @@ public class RobotInitialize {
         liftExtender.setVelocity(velocity);
         liftPitch.setVelocity(velocity);
 
-        // Servos
-
-        // Continuous rotation servo
-        intake.setPower(0);
 
         // Regular servos
         //clawRoll.(); // Try to find way to temporarily disable servos
