@@ -19,6 +19,8 @@ public class AutonPaths1 {
     /* Declare OpMode members. */
     private OpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
+    public static Path movepl;
+    public static Path movepr;
     public static Path move1;
     public static Path move2;
     public static Path move3;
@@ -39,6 +41,16 @@ public class AutonPaths1 {
      */
     public void init()    {
         // to spot to hang specimen
+        movepl = new Path(new BezierLine(
+                new Point(9.75,100, Point.CARTESIAN),
+                new Point(50,100, Point.CARTESIAN)));
+        movepl.setConstantHeadingInterpolation(0); // to spot to hang specimin
+
+        movepr = new Path(new BezierLine(
+                new Point(9.75,60, Point.CARTESIAN),
+                new Point(49.75,60, Point.CARTESIAN)));
+        movepr.setConstantHeadingInterpolation(90); // to spot to hang specimin
+
         move1 = new Path(new BezierLine(
                 new Point(7.25,89.75, Point.CARTESIAN),
                 new Point(36.25,80.25, Point.CARTESIAN)));
