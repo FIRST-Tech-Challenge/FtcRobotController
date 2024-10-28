@@ -21,9 +21,9 @@ public class MyTeleOp extends LinearOpMode {
         DcMotor rightBack = hardwareMap.dcMotor.get("bRight");
         Servo swarsh = hardwareMap.servo.get("s");
         ColorSensor cSensor = hardwareMap.colorSensor.get("ColorS");
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double INCHES_PER_TICK = 40 / -13510.0 * (40.0 / 40.3612);
 
@@ -48,7 +48,7 @@ public class MyTeleOp extends LinearOpMode {
             } else {
                 swarsh.setPosition(0.0);
             }
-            telemetry.addData("Encoder Pos:", rightBack.getCurrentPosition() * INCHES_PER_TICK);
+            telemetry.addData("Encoder Pos:", rightFront.getCurrentPosition() * INCHES_PER_TICK);
 
 
 

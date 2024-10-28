@@ -1,4 +1,18 @@
 package org.firstinspires.ftc.teamcode.PID;
 
-public class OpMode {
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+@TeleOp
+public class OpMode extends LinearOpMode {
+    @Override
+    public void runOpMode() throws InterruptedException {
+        DriveTrain driveTrain = new DriveTrain(hardwareMap);
+        waitForStart();
+
+        while (opModeIsActive()) {
+            driveTrain.move(12, 0, 0, telemetry);
+        }
+
+    }
 }
