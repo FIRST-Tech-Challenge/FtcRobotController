@@ -55,7 +55,7 @@ public class LiftArmClawTest extends LinearOpMode {
 
 
         waitForStart();
-        wrist.setParallelMode();
+        wrist.goToPosition(Wrist.WristStates.ParallelMode);
 //        claw.openClaw();
 //        intake.activateIntake();
         //Start Phase
@@ -111,26 +111,26 @@ public class LiftArmClawTest extends LinearOpMode {
 
             if(controller1.a.onPress()){
 //                arm.goToBase();
-                lift.goToZero();
+                lift.goToPosition(Lift.LiftStates.ZERO);
             }
             if(controller1.b.onPress()){
 //                arm.goToSpecimin();
-                lift.goToTopBucket();
+                lift.goToPosition(Lift.LiftStates.MAX_HEIGHT);
             }
             if(controller1.right_bumper.onPress()){
 //                arm.goToDeposit();
             }
 
             if(controller2.a.onPress()){
-                arm.goToBase();
+                arm.goToPosition(Arm.ArmState.BASE_HEIGHT);
 //                lift.goToZero();
             }
             if(controller2.b.onPress()){
-                arm.goToSpecimen();
+                arm.goToPosition(Arm.ArmState.SPECIMEN_HEIGHT);
 //                lift.goToTopBucket();
             }
             if(controller2.right_bumper.onPress()){
-                arm.goToRest();
+                arm.goToPosition(Arm.ArmState.REST_HEIGHT);
             }
 
 

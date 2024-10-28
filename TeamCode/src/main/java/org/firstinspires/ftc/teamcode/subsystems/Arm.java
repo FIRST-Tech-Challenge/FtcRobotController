@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utils.PIDController;
 
+import java.util.HashMap;
+
 public class Arm {
 
     //Adjustable Constants
@@ -33,12 +35,15 @@ public class Arm {
     private int REST_HEIGHT = 200;//3450 - 3250; //ticks
     private int DEPOSIT_HEIGHT = -220;//3450 - 3670; //ticks 3670
 
-    enum ArmState{
+    public enum ArmState{
         BASE_HEIGHT,
         SPECIMEN_HEIGHT,
         REST_HEIGHT,
         DEPOSIT_HEIGHT
     }
+
+    private HashMap<ArmState, Integer> armPositions;
+
     //Degrees from +x axis (where x axis is the ground and positive is the robot's forward)
     private double armAngleOffset = 142;
 
@@ -72,6 +77,12 @@ public class Arm {
         pid = new PIDController(0.0015,0,0.00015,0.25);
         pid.setTarget(getPosition());
         currentState = ArmState.REST_HEIGHT;
+
+        armPositions = new HashMap<ArmState,Integer>();
+        armPositions.put(ArmState.DEPOSIT_HEIGHT, -220);
+        armPositions.put(ArmState.REST_HEIGHT, 200);
+        armPositions.put(ArmState.SPECIMEN_HEIGHT, 2420);
+        armPositions.put(ArmState.BASE_HEIGHT,3400);
     }
 
 
@@ -80,47 +91,10 @@ public class Arm {
     //------------------------------------------------------------------------------------------
 
 
-    public void goToBase(){
-        currentState = ArmState.BASE_HEIGHT;
-        targetPosition = BASE_HEIGHT;
-        pid.setTarget(targetPosition);
-    }
-
-    public void goToSpecimen(){
-        currentState = ArmState.SPECIMEN_HEIGHT;
-        targetPosition = SPECIMEN_HEIGHT;
-        pid.setTarget(targetPosition);
-    }
-
-    public void goToRest(){
-        currentState = ArmState.REST_HEIGHT;
-        targetPosition = REST_HEIGHT;
-        pid.setTarget(targetPosition);
-    }
-
-    public void goToDeposit(){
-        currentState = ArmState.DEPOSIT_HEIGHT;
-        targetPosition = DEPOSIT_HEIGHT;
-        pid.setTarget(targetPosition);
-    }
-
     public void goToPosition(ArmState state){
-        switch (state){
-            case BASE_HEIGHT:
-                goToBase();
-                break;
-            case REST_HEIGHT:
-                goToRest();
-                break;
-            case DEPOSIT_HEIGHT:
-                goToDeposit();
-                break;
-            case SPECIMEN_HEIGHT:
-                goToSpecimen();
-                break;
-            default:
-                break;
-        }
+        currentState = state;
+        targetPosition = armPositions.get(state);
+        pid.setTarget(targetPosition);
     }
 
 

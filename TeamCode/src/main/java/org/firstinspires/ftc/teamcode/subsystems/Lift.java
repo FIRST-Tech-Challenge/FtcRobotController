@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.utils.PIDController;
 
+import java.util.HashMap;
+
 public class Lift {
 
     //Adjustable Constants
@@ -34,13 +36,10 @@ public class Lift {
         MAX_HEIGHT
     }
     private LiftStates currentState;
-    public int ZERO = 0; //Ticks //SAMPLE INTAKE
-    public int HOVER = 220; //Ticks //Sample HOVER
 
-    public int CLIMB_HEIGHT = 1600;
-    public int HIGH_BAR = 1700; //Ticks //SPECIMIN DESPOSIT
-    public int SPECIMEN_SCORE = 1200; //Ticks //SPECIMIN SCORE
-    public int MAX_HEIGHT = 3050; //Ticks //SAMPLE DEPOSIT
+    private HashMap<LiftStates, Integer> liftPositions;
+
+
     //Was planning to tune weight, but just stuck with the mass of 1 kg
     public double calculatedWeight = 9.8;
 
@@ -83,6 +82,14 @@ public class Lift {
 
         pid = new PIDController(0.009,0,0.0002,0.02);
         pid.setTarget(getPosition());
+
+        liftPositions = new HashMap<LiftStates, Integer>(3);
+        liftPositions.put(LiftStates.ZERO, 0);
+        liftPositions.put(LiftStates.HOVER, 220);
+        liftPositions.put(LiftStates.SPECIMEN_SCORE, 1200);
+        liftPositions.put(LiftStates.CLIMB, 1600);
+        liftPositions.put(LiftStates.HIGH_BAR, 1700);
+        liftPositions.put(LiftStates.MAX_HEIGHT, 3050);
     }
 
 
@@ -91,94 +98,15 @@ public class Lift {
     //----------------------------------Go To Positions----------------------------------------
     //-----------------------------------------------------------------------------------------
 
-    /**
-     * Sets the motors' target position to [ZERO] (lowest possible position)
-     */
-    public void goToZero(){
-        currentState = LiftStates.ZERO;
-        this.targetPosition = ZERO;
-        pid.setTarget(this.targetPosition);
-    }
-
-    /**
-     * Sets the motors' target position to [MAX_HEIGHT] (highest possible position)
-     */
-    public void goToTopBucket(){
-        currentState = LiftStates.MAX_HEIGHT;
-        this.targetPosition = MAX_HEIGHT;
-        pid.setTarget(this.targetPosition);
-    }
-
-    /**
-     * Sets the motors' target position to [SPECIMIN_SCORE]
-     */
-    public void goToSpecimenScore(){
-        currentState = LiftStates.SPECIMEN_SCORE;
-        this.targetPosition = SPECIMEN_SCORE;
-        pid.setTarget(this.targetPosition);
-    }
-
-    /**
-     * Sets the motors' target position to [HIGH_BAR]
-     */
-    public void goToHighBar(){
-        currentState = LiftStates.HIGH_BAR;
-        this.targetPosition = HIGH_BAR;
-        pid.setTarget(this.targetPosition);
-    }
-
-    /**
-     * Sets the motors' target position to [HOVER]
-     */
-    public void goToSubHover(){
-        currentState = LiftStates.HOVER;
-        this.targetPosition = HOVER;
-        pid.setTarget(this.targetPosition);
-    }
-
-    /**
-     * Sets the motors' target position to [CLIMB]
-     */
-    public void goToClimb(){
-        currentState = LiftStates.CLIMB;
-        this.targetPosition = CLIMB_HEIGHT;
-        pid.setTarget(this.targetPosition);
-    }
 
     /**
      * This will cause the lift to travel to the given LiftState.
      * @param state [LiftStates] - Sets the lift to go to the given Lift Position State.
      */
     public void goToPosition(LiftStates state){
-        switch (state){
-            case ZERO:
-                goToZero();
-                break;
-
-            case HOVER:
-                goToSubHover();
-                break;
-
-            case HIGH_BAR:
-                goToHighBar();
-                break;
-
-            case CLIMB:
-                goToClimb();
-                break;
-
-            case MAX_HEIGHT:
-                goToTopBucket();
-                break;
-
-            case SPECIMEN_SCORE:
-                goToSpecimenScore();
-                break;
-
-            default:
-                //Do Nothing
-                break;
-        }
+        currentState = state;
+        targetPosition = liftPositions.get(state);
+        pid.setTarget(targetPosition);
     }
     //------------------------------------------------------------------------------------------
     //----------------------------------Getter Functions----------------------------------------
@@ -234,8 +162,7 @@ public class Lift {
      */
     public int setPosition(double power){
         targetPosition += (power * LIFT_SPEED);
-        //Toggle this once MAX_HEIGHT has been configured
-//        targetPosition = clamp(targetPosition, MAX_HEIGHT, 0);
+        liftPositions.put(currentState,targetPosition);
         pid.setTarget(targetPosition);
         return targetPosition;
     }

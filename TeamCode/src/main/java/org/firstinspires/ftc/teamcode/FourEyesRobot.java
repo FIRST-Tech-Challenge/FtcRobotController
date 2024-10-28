@@ -55,8 +55,8 @@ public class FourEyesRobot extends Mecanum {
      * the begining of START PHASE
      */
     public void initializePowerStates(){
-        lift.goToZero();
-        wrist.setParallelMode();
+        lift.goToPosition(Lift.LiftStates.ZERO);
+        wrist.goToPosition(Wrist.WristStates.ParallelMode);
         activeIntake.deactivateIntake();
         claw.closeClaw();
     }
@@ -70,9 +70,9 @@ public class FourEyesRobot extends Mecanum {
      * Preparation to intake SAMPLE from the Submersible
      */
     public void intakeSamplePos() {
-        lift.goToSubHover(); //Set the lift just high enough to be above submersible
-        arm.goToBase();//
-        wrist.setParallelMode();
+        lift.goToPosition(Lift.LiftStates.HOVER);//Set the lift just high enough to be above submersible
+        arm.goToPosition(Arm.ArmState.BASE_HEIGHT);
+        wrist.goToPosition(Wrist.WristStates.ParallelMode);
         activeIntake.deactivateIntake();
         currentState = ScoringType.SAMPLE;
     }
@@ -82,9 +82,9 @@ public class FourEyesRobot extends Mecanum {
      * Preparation to intake SPECIMEN from the Human Player Wall
      */
     public void intakeSpecimenPos(){
-        lift.goToZero(); //Lower lift as low as possible
-        arm.goToSpecimen(); //Use arm to go to an angle to decrease extention length from center of rotation
-        wrist.setSampleIntakeMode(); //Use wrist to counter act arm's rotation
+        lift.goToPosition(Lift.LiftStates.ZERO);//Lower lift as low as possible
+        arm.goToPosition(Arm.ArmState.SPECIMEN_HEIGHT);//Use arm to go to an angle to decrease extention length from center of rotation
+        wrist.goToPosition(Wrist.WristStates.SampleIntakeMode);//Use wrist to counter act arm's rotation
         claw.closeClaw(); //Close the claw before hand so if the arm is behind, the claw won't hit the lift
         currentState = ScoringType.SPECIMEN;
     }
@@ -94,9 +94,9 @@ public class FourEyesRobot extends Mecanum {
      * Deposit SAMPLE into High Basket
      */
     public void depositSamplePos(){
-        lift.goToTopBucket(); //Raises lift to maximum height
-        arm.goToDeposit(); //Flips arm to go backwards
-        wrist.setParallelMode(); //Flips wrist to angle
+        lift.goToPosition(Lift.LiftStates.MAX_HEIGHT);//Raises lift to maximum height
+        arm.goToPosition(Arm.ArmState.DEPOSIT_HEIGHT);//Flips arm to go backwards
+        wrist.goToPosition(Wrist.WristStates.SampleDepositMode);//Flips wrist to angle
         claw.closeClaw(); //Closes claw if it was open from before
         currentState = ScoringType.SAMPLE;
     }
@@ -106,9 +106,9 @@ public class FourEyesRobot extends Mecanum {
      * Deposit SPECIMEN into High Bar
      */
     public void depositSpecimenPos(){
-        lift.goToHighBar();
-        arm.goToBase();
-        wrist.setSampleDepositMode();
+        lift.goToPosition(Lift.LiftStates.HIGH_BAR);
+        arm.goToPosition(Arm.ArmState.BASE_HEIGHT);
+        wrist.goToPosition(Wrist.WristStates.ParallelMode);
         claw.closeClaw();
         currentState = ScoringType.SPECIMEN;
     }
@@ -117,7 +117,7 @@ public class FourEyesRobot extends Mecanum {
         activeIntake.reverseIntake();
     }
     public void intakeStop() {
-        wrist.setParallelMode();
+        wrist.goToPosition(Wrist.WristStates.ParallelMode);
         activeIntake.deactivateIntake();
     }
 
@@ -130,19 +130,19 @@ public class FourEyesRobot extends Mecanum {
             case HOVER:
                 if (wrist.getState() == Wrist.WristStates.ParallelMode) {
                     //Switch to intake mode
-                    wrist.setSampleDepositMode(); //Change later to SampleDeposit
+                    wrist.goToPosition(Wrist.WristStates.SampleIntakeMode);
                     //Activate intake
                     activeIntake.activateIntake();
                 }
                 else{
-                    wrist.setParallelMode();
+                    wrist.goToPosition(Wrist.WristStates.ParallelMode);
                 }
                 break;
             case HIGH_BAR:
-                lift.goToSpecimenScore();
+                lift.goToPosition(Lift.LiftStates.SPECIMEN_SCORE);
                 break;
             case SPECIMEN_SCORE:
-                lift.goToHighBar();
+                lift.goToPosition(Lift.LiftStates.HIGH_BAR);
                 break;
             default:
                 break;
@@ -172,12 +172,12 @@ public class FourEyesRobot extends Mecanum {
 
 
     public void raiseClimb(){
-        arm.goToRest();
-        lift.goToClimb();
+        arm.goToPosition(Arm.ArmState.REST_HEIGHT);
+        lift.goToPosition(Lift.LiftStates.CLIMB);
     }
     public void lowerClimb(){
-        arm.goToRest();
-        lift.goToZero();
+        arm.goToPosition(Arm.ArmState.REST_HEIGHT);
+        lift.goToPosition(Lift.LiftStates.ZERO);
     }
 
 
@@ -191,7 +191,7 @@ public class FourEyesRobot extends Mecanum {
 
     public void depositBasket(){
         currentState = ScoringType.SAMPLE;
-        wrist.setSampleDepositMode();
+        wrist.goToPosition(Wrist.WristStates.SampleDepositMode);
     }
 
     //---------------------------------------------------------------------------------------------
