@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class DriveBaseSubsystem {
     public static float Translational_P = 0.07f;
     public static float Translational_I = 0;
-    public static float Translational_D = 0.015f;
+    public static float Translational_D = 0.005f;
     // Motors & Sensors
     private static DcMotor _frontLeftMotor;
     private static DcMotor _frontRightMotor;
@@ -48,7 +48,7 @@ public class DriveBaseSubsystem {
         // PID Stuff
         translationX.init(Translational_P, Translational_I, Translational_D);
         translationY.init(Translational_P, Translational_I, Translational_D);
-        headingPID.init(0.06f, 0, 0.015f);
+        headingPID.init(0.02f, 0, 0.015f);
 
         // Make sure odo is ready
         _odometry.begin();

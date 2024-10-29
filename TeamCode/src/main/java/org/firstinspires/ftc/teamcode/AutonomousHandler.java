@@ -30,7 +30,6 @@ public class AutonomousHandler {
     }
     public void periodicFunction() {
         TelemetryPacket packet = new TelemetryPacket();
-
         if (driveSubSys.isAtReference(packet) && armSubSys.isAtReference(packet)) {
             if (Objects.requireNonNull(path.get(systemStateReference + 1)).wristPosition == null) {
                 theTelemetry.addData("driveSystemStopped", "yes");

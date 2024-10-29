@@ -58,27 +58,27 @@ public class thirdAuto extends OpMode {
         SystemState stateOne = new SystemState();
         stateOne.clawPosition = clawState.CLOSED;
         stateOne.wristPosition = wristState.DOWN;
-        stateOne.armPosition = armPose.ZERO;
+        stateOne.armPosition = armPose.REST;
         stateOne.drivePose = new SparkFunOTOS.Pose2D(0, 0, 0);
 
         // State 2
         SystemState stateTwo = new SystemState();
         stateTwo.clawPosition = clawState.CLOSED;
         stateTwo.wristPosition = wristState.DOWN;
-        stateTwo.armPosition = armPose.ZERO;
-        stateTwo.drivePose = new SparkFunOTOS.Pose2D(0, 9, 0);
+        stateTwo.armPosition = armPose.BASKET;
+        stateTwo.drivePose = new SparkFunOTOS.Pose2D(0, 15, 0);
 
         // State 3
         SystemState stateThree = new SystemState();
         stateThree.clawPosition = clawState.CLOSED;
         stateThree.wristPosition = wristState.DOWN;
-        stateThree.armPosition = armPose.ZERO;
+        stateThree.armPosition = armPose.BASKET;
         stateThree.drivePose = new SparkFunOTOS.Pose2D(22, 12, -135);
 
         // State 4
         SystemState stateFour = new SystemState();
-        stateFour.clawPosition = clawState.OPENED;
-        stateFour.wristPosition = wristState.DOWN;
+        stateFour.clawPosition = clawState.CLOSED;
+        stateFour.wristPosition = wristState.UP;
         stateFour.armPosition = armPose.BASKET;
         stateFour.drivePose = new SparkFunOTOS.Pose2D(22, 12, -135);
 
@@ -89,12 +89,33 @@ public class thirdAuto extends OpMode {
         stateFourA.armPosition = armPose.BASKET;
         stateFourA.drivePose = new SparkFunOTOS.Pose2D(22, 12, -135);
 
+        // State 5Pre1
+        SystemState stateFivePre1 = new SystemState();
+        stateFivePre1.clawPosition = clawState.OPENED;
+        stateFivePre1.wristPosition = wristState.DOWN;
+        stateFivePre1.armPosition = armPose.REST;
+        stateFivePre1.drivePose = new SparkFunOTOS.Pose2D(12, 18, 0);
+
         // State 5
         SystemState stateFive = new SystemState();
         stateFive.clawPosition = clawState.OPENED;
         stateFive.wristPosition = wristState.DOWN;
-        stateFive.armPosition = armPose.ZERO;
+        stateFive.armPosition = armPose.REST;
         stateFive.drivePose = new SparkFunOTOS.Pose2D(12, 24, 0);
+
+        // State 5A
+        SystemState stateFiveA = new SystemState();
+        stateFiveA.clawPosition = clawState.CLOSED;
+        stateFiveA.wristPosition = wristState.DOWN;
+        stateFiveA.armPosition = armPose.REST;
+        stateFiveA.drivePose = new SparkFunOTOS.Pose2D(12, 24, 0);
+
+        // State 5B
+        SystemState stateFiveB = new SystemState();
+        stateFiveB.clawPosition = clawState.CLOSED;
+        stateFiveB.wristPosition = wristState.DOWN;
+        stateFiveB.armPosition = armPose.BASKET;
+        stateFiveB.drivePose = new SparkFunOTOS.Pose2D(12, 24, 0);
 
         // State 6
         SystemState endState = new SystemState();
@@ -105,14 +126,17 @@ public class thirdAuto extends OpMode {
 
         // Generate Path
         HashMap<Integer, SystemState> instructions = new HashMap<>();
-        instructions.put(0, stateOne);
-        instructions.put(1, stateTwo);
-        instructions.put(2, stateThree);
-        instructions.put(3, stateFour);
-        instructions.put(4, stateFourA);
-        instructions.put(5, stateFive);
-        instructions.put(6, stateThree);
-        instructions.put(7, endState);
+        instructions.put(0, stateOne); // Arm Up
+        instructions.put(1, stateTwo); // Move forward
+        instructions.put(2, stateThree); // Go to basket
+        instructions.put(3, stateFour); // Wrist up
+        instructions.put(4, stateFourA); // Claw Open
+        instructions.put(5, stateFivePre1); // Go to pickup line 1
+        instructions.put(6, stateFive); // Go to pickup line 1
+//        instructions.put(7, stateFiveA); // Close Claw
+//        instructions.put(8, stateFiveB); // Raise Arm
+//        instructions.put(9, stateThree); // Go to basket
+//        instructions.put(10, endState); // End at (0, 0)
 
 
         // ACS & DBS & Handler
