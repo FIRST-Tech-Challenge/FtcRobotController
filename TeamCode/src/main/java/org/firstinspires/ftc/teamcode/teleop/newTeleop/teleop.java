@@ -178,27 +178,32 @@ public class teleop extends LinearOpMode implements teleop_interface {
     // Method for controlling the arm based on gamepad input
     @Override
     public void finalArm() {
-        teleop_enum state; // Initialize state
-        double armSpeed; // Initialize arm speed
+        teleop_enum state = null; // Initialize state
+        double armSpeed = 0; // Initialize arm speed
         double reduction = 0.65; // Initializes arm reduction speed, used for lift
         // Determine arm state and speed based on gamepad input
         if (Math.abs(gamepad2.left_stick_y) > 0) {
             state = teleop_enum.MANTIS; // Set state to MANTIS
-            armSpeed = gamepad2.left_stick_y; // Use left stick Y for speed
-        } else if (Math.abs(gamepad2.left_stick_x) > 0) {
-            state = teleop_enum.HOPPER; // Set state to HOPPER
-            armSpeed = gamepad2.left_stick_x * reduction; // Use left stick X for speed
-        } else if (Math.abs(gamepad2.right_stick_y) > 0) {
-            state = teleop_enum.LIFT; // Set state to LIFT
-            armSpeed = gamepad2.right_stick_y;// Use right stick Y for speed
-            if(Math.abs(gamepad2.right_stick_y) ==  0){
-                armSpeed = 0.1;
-            }
-        } else{
-            state = teleop_enum.STOP;
-            armSpeed = 0;
+            armSpeed = gamepad2.left_stick_y;// Use left stick Y for speed
+
         }
-        arm(state, armSpeed); // Call arm method with determined state and speed
+
+        if (Math.abs(gamepad2.left_stick_y) > 0) {
+            state = teleop_enum.HOPPER; // Set state to HOPPER
+            armSpeed = gamepad2.left_stick_y * reduction; // Use left stick X for speed
+        }
+
+        if (Math.abs(gamepad2.right_trigger) > 0) {
+            state = teleop_enum.LIFT; // Set state to LIFT
+            armSpeed = gamepad2.right_trigger;// Use right stick Y for speed
+        }else if (Math.abs(gamepad2.left_trigger) > 0) {
+            state = teleop_enum.LIFT; // Set state to LIFT
+            armSpeed = -gamepad2.left_trigger;// Use right stick Y for speed
+        }
+
+        if(state != null) {
+            arm(state, armSpeed);
+        }// Call arm method with determined state and speed
     }
 
     // Method for controlling the gripper based on gamepad input
