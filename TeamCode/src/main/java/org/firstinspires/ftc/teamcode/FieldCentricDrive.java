@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -76,6 +77,8 @@ public class FieldCentricDrive extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private IMU imu = null;
+    private Orientation angles = null;
+
 
     @Override
     public void runOpMode() {
@@ -87,18 +90,36 @@ public class FieldCentricDrive extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
 
+        // https://www.youtube.com/watch?v=QEZO5e2zUcY
+        angles = new Orientation();
+
+
+        // motor braking
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+//        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         // reverse right motor direction bc its flipped
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
         imu = hardwareMap.get(IMU.class, "imu");
-        // Retrieve the IMU from the hardware map
-        imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
+        // TODO: this is the issue. the Rev Hub is not facing a normal direction
+//        // Adjust the orientation parameters to match your robot
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+
 
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
@@ -106,9 +127,13 @@ public class FieldCentricDrive extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        imu.resetYaw();
 
         waitForStart();
         runtime.reset();
+
+        boolean aPressedDelta = false;
+        boolean aPressedPrevious = false;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -123,7 +148,27 @@ public class FieldCentricDrive extends LinearOpMode {
                 imu.resetYaw();
             }
 
+            boolean aPressed = gamepad1.a;
+
+            if (aPressed) {
+                // if a was not pressed previously, aPressedDelta is true
+                aPressedDelta = !aPressedPrevious;
+            }
+
+            // if the button has been pressed and the action has not been done yet
+            if (aPressedDelta) {
+                // do the action
+            }
+
+            // a pressed is not changing, so set to false
+            aPressedDelta = false;
+
+            // get previous a pressed value
+            aPressedPrevious = aPressed;
+
+
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            telemetry.addData("bot heading: ", botHeading);
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
