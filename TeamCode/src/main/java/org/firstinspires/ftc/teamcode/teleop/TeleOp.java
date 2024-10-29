@@ -69,11 +69,11 @@ public class TeleOp extends LinearOpMode {
 
             //arm
             if(controller.right_bumper.onPress()){
-                armPos = 1;
+                armPos = 0.4;
                 arm.setPosition(armPos);
             } else if (controller.left_bumper.onPress()) {
                 armPos -= 0.2;
-                if(armPos >= 0.6){
+                if(armPos >= 0){
                     arm.setPosition(armPos);
                 }
             }
