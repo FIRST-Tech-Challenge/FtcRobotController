@@ -45,7 +45,11 @@ public class TeleOp extends LinearOpMode {
         screen = new DriverHubHelp();
         deadwheels = new ThreeDeadWheelLocalizer(hardwareMap, 2000);
         arm = new Arm(hardwareMap);
+        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap, 2000);
+        arm = new Arm(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        claw = new Claw(hardwareMap);
+        lift = new Lift(hardwareMap, "lift", "lift");
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap, "lift", "lift");
 
@@ -68,12 +72,12 @@ public class TeleOp extends LinearOpMode {
 
 
             //arm
-            if(controller.right_bumper.onPress()){
-                        armPos = 0.4;
+            if (controller.right_bumper.onPress()) {
+                armPos = 0.4;
                 arm.setPosition(armPos);
             } else if (controller.left_bumper.onPress()) {
                 armPos -= 0.2;
-                if(armPos >= 0){
+                if (armPos >= 0) {
                     arm.setPosition(armPos);
                 }
                 armPos = 0.5;
@@ -85,29 +89,67 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("Arm Position", armPos);
 
 
-                //claw
-                if (controller.a.onPress()) {
-                    claw.release();
-                } else if (controller.b.onPress()) {
-                    claw.close(clawPos);
-                }
-                telemetry.addData("Claw Position", clawPos);
-
-
-                //lift
-                liftPower = controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue();
-                lift.moveLift(liftPower);
-                telemetry.addData("Lift Power", liftPower);
-
-
-                telemetry.update();
-                controller.update();
+            //claw
+            if (controller.a.onPress()) {
+                claw.release();
+            } else if (controller.b.onPress()) {
+                claw.close(clawPos);
             }
+            telemetry.addData("Claw Position", clawPos);
 
 
+            //lift
+            liftPower = controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue();
+            lift.moveLift(liftPower);
+            telemetry.addData("Lift Power", liftPower);
+
+
+            telemetry.update();
+            controller.update();
+
+
+            //arm
+            if (controller.right_bumper.onPress()) {
+                armPos = 0.4;
+                arm.setPosition(armPos);
+            } else if (controller.left_bumper.onPress()) {
+                armPos -= 0.2;
+                if (armPos >= 0) {
+                    arm.setPosition(armPos);
+                }
+                armPos = 0.5;
+                arm.setPosition(armPos);
+            } else if (controller.left_bumper.onPress()) {
+                armPos = 0.1;
+                arm.setPosition(armPos);
+            }
+            telemetry.addData("Arm Position", armPos);
+
+
+            //claw
+            if (controller.a.onPress()) {
+                claw.release();
+            } else if (controller.b.onPress()) {
+                claw.close(clawPos);
+            }
+            telemetry.addData("Claw Position", clawPos);
+
+
+            //lift
+            liftPower = controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue();
+            lift.moveLift(liftPower);
+            telemetry.addData("Lift Power", liftPower);
+
+
+            telemetry.update();
+            controller.update();
         }
 
 
+    }
+
 }
+
+
 
 
