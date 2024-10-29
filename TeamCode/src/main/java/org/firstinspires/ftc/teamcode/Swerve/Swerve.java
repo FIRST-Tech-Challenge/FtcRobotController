@@ -92,10 +92,10 @@ public class Swerve {
     static final double maxSpeedMetersPerSec;
 
     static {
-      double countsPerRevolution = 1;
-      double gearRatio = 1;
-      double wheelCircumferenceMeters = 1;
-      double maxMotorVelocity = 1;
+      double countsPerRevolution = 537.7;
+      double gearRatio = 1.7;
+      double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
+      double maxMotorVelocity = 3.12;
 
       conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
       maxSpeedMetersPerSec = ((maxMotorVelocity / gearRatio)) * wheelCircumferenceMeters;
@@ -124,7 +124,7 @@ public class Swerve {
       // steerServo = opMode.hardwareMap.crservo.get(pos + "Servo");
       steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
 
-      drivePID = new PIDController(0, 0, 0);
+      drivePID = new PIDController(24 / maxSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 12 / maxSpeedMetersPerSec);
     }
 
