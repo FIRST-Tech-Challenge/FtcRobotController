@@ -144,7 +144,7 @@ public class MainMovement extends LinearOpMode {
         double LangleInDegrees = LangleInRadians * (180 / Math.PI);
 
         // strafe based on joystick angle
-        if (!(Math.abs(LjoystickX) <= joystickDeadzone) && !(Math.abs(LjoystickY) <= joystickDeadzone)) {
+        if (!(Math.abs(LjoystickX) <= joystickDeadzone) || !(Math.abs(LjoystickY) <= joystickDeadzone)) {
             usingLStick = true;
             //if not in dead zone
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
