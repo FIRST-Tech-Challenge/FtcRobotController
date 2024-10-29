@@ -9,8 +9,9 @@ public class Intake {
     private final Servo rightServo;
     private boolean isOpen;
 
-    public static final double OPEN_POSITION = 0.2;
-    public static final double CLOSED_POSITION = 0.05;
+    public static final double MOVING_DISTANCE = 0.058;
+    public static final double LEFT_CLOSED_POSITION = 0.03488;
+    public static final double RIGHT_CLOSED_POSITION = 0.7914;
 
     public Intake(HardwareMap hardwareMap) {
         leftServo = hardwareMap.get(Servo.class, "CLAWLEFT");
@@ -19,19 +20,19 @@ public class Intake {
          leftServo.setDirection(Servo.Direction.FORWARD);
          rightServo.setDirection(Servo.Direction.REVERSE);
 
-        leftServo.scaleRange(CLOSED_POSITION - 0.02, OPEN_POSITION - 0.02);
-        rightServo.scaleRange(CLOSED_POSITION, OPEN_POSITION);
+//        leftServo.scaleRange(LEFT_CLOSED_POSITION, LEFT_CLOSED_POSITION + MOVING_DISTANCE);
+//        rightServo.scaleRange(RIGHT_CLOSED_POSITION, RIGHT_CLOSED_POSITION + MOVING_DISTANCE);
     }
 
     public void open() {
-        leftServo.setPosition(1.0);
-        rightServo.setPosition(1.0);
+        leftServo.setPosition(LEFT_CLOSED_POSITION + MOVING_DISTANCE);
+        rightServo.setPosition(RIGHT_CLOSED_POSITION + MOVING_DISTANCE);
         isOpen = true;
     }
 
     public void close() {
-        leftServo.setPosition(0.0);
-        rightServo.setPosition(0.0);
+        leftServo.setPosition(LEFT_CLOSED_POSITION);
+        rightServo.setPosition(RIGHT_CLOSED_POSITION);
         isOpen = false;
     }
 
@@ -49,5 +50,13 @@ public class Intake {
 
     public double getRightPosition() {
         return rightServo.getPosition();
+    }
+
+    public void setLeftPosition(double position) {
+        leftServo.setPosition(position);
+    }
+
+    public void setRightPosition(double position) {
+        rightServo.setPosition(position);
     }
 }

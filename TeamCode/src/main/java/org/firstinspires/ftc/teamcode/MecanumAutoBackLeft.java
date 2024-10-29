@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 @Autonomous(name="Mecanum Auto Back Left", group="Robot")
@@ -26,15 +26,15 @@ public class MecanumAutoBackLeft extends LinearOpMode {
     }
 
     public void initialize() {
-        DcMotor backLeft = hardwareMap.get(DcMotor.class, "BACKLEFT");
-        DcMotor backRight = hardwareMap.get(DcMotor.class, "BACKRIGHT");
-        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FRONTLEFT");
-        DcMotor frontRight = hardwareMap.get(DcMotor.class, "FRONTRIGHT");
+        DcMotorEx backLeft = hardwareMap.get(DcMotorEx.class, "BACKLEFT");
+        DcMotorEx backRight = hardwareMap.get(DcMotorEx.class, "BACKRIGHT");
+        DcMotorEx frontLeft = hardwareMap.get(DcMotorEx.class, "FRONTLEFT");
+        DcMotorEx frontRight = hardwareMap.get(DcMotorEx.class, "FRONTRIGHT");
 
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
         gyro.resetYaw();

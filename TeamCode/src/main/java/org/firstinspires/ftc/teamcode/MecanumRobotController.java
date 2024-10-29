@@ -11,6 +11,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -24,7 +25,7 @@ public class MecanumRobotController {
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
     public static final double FORWARD_COUNTS_PER_INCH = 43.80;
     public static final double STRAFE_COUNTS_PER_INCH = 50.58;
-    public static final double HEADING_CORRECTION_POWER = 1.0;
+    public static final double HEADING_CORRECTION_POWER = 0.0;
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
@@ -34,10 +35,10 @@ public class MecanumRobotController {
     public static double Kd = 0.0002;
     public static double Ki = 0.00;
 
-    private final DcMotor backLeft;
-    private final DcMotor backRight;
-    private final DcMotor frontLeft;
-    private final DcMotor frontRight;
+    private final DcMotorEx backLeft;
+    private final DcMotorEx backRight;
+    private final DcMotorEx frontLeft;
+    private final DcMotorEx frontRight;
     private final IMU gyro;
     private final LinearOpMode robot;
     private final ElapsedTime runtime;
@@ -59,8 +60,8 @@ public class MecanumRobotController {
 
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
-    public MecanumRobotController(DcMotor backLeft, DcMotor backRight,
-                                  DcMotor frontLeft, DcMotor frontRight,
+    public MecanumRobotController(DcMotorEx backLeft, DcMotorEx backRight,
+                                  DcMotorEx frontLeft, DcMotorEx frontRight,
                                   IMU gyro, LinearOpMode robot) {
         this.backLeft = backLeft;
         this.backRight = backRight;
@@ -83,8 +84,8 @@ public class MecanumRobotController {
 
     // Overloaded constructor to create the robot controller without a LinearOpMode.
     // You cannot use distanceDrive or turnTo without a LinearOpMode.
-    public MecanumRobotController(DcMotor backLeft, DcMotor backRight,
-                                  DcMotor frontLeft, DcMotor frontRight,
+    public MecanumRobotController(DcMotorEx backLeft, DcMotorEx backRight,
+                                  DcMotorEx frontLeft, DcMotorEx frontRight,
                                   IMU gyro) {
         this(backLeft, backRight, frontLeft, frontRight, gyro, null);
     }
@@ -133,12 +134,12 @@ public class MecanumRobotController {
             double derivative = (error - lastError) / PIDTimer.seconds();
             integralSum += error * PIDTimer.seconds();
 
-            double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
+            Double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
             headingCorrection = normalize(headingCorrection);
             lastError = error;
             PIDTimer.reset();
 
-            turn = headingCorrectionPower * headingCorrection;
+            turn = headingCorrectionPower * (headingCorrection.isNaN() ? 0.0 : headingCorrection);
         }
 
         // Set fields so the robot knows what its current forward, strafe, and turn is in other methods.
@@ -151,9 +152,9 @@ public class MecanumRobotController {
             sendTelemetry();
         }
 
-        double backLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
+        double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
         double backRightPower = Range.clip((forward - strafe + turn) / 3, -1.0, 1.0);
-        double frontLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
+        double frontLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
         double frontRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
 
         backLeft.setPower(backLeftPower);
@@ -220,10 +221,10 @@ public class MecanumRobotController {
         frontLeft.setTargetPosition(frontLeftTarget);
         frontRight.setTargetPosition(frontRightTarget);
 
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         while ((backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy())
                 && robot.opModeIsActive()) {
@@ -246,10 +247,10 @@ public class MecanumRobotController {
 
         // Stop movement and switch modes
         move(0, 0, 0, 0);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
     // Behavior: Overloaded method of distanceDrive. This sets the default of isFieldCentric.
