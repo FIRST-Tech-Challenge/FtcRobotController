@@ -124,8 +124,8 @@ public class Swerve {
       // steerServo = opMode.hardwareMap.crservo.get(pos + "Servo");
       steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
 
-      drivePID = new PIDController(24 / maxSpeedMetersPerSec, 0, 0);
-      driveFeedforward = new SimpleMotorFeedforward(0, 12 / maxSpeedMetersPerSec);
+      drivePID = new PIDController(2 / maxSpeedMetersPerSec, 0, 0);
+      driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxSpeedMetersPerSec);
     }
 
     void run(SwerveModuleState state) {
