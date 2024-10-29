@@ -4,13 +4,13 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.PIDController;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
-@TeleOp(name = "Optimized PID TeleOp", group = "Linear OpMode")
+@TeleOp(name = "PID TeleOp", group = "Linear OpMode")
 public class PIDTeleOp extends LinearOpMode {
 
     private DcMotor motorFrontLeft = null;
@@ -22,7 +22,7 @@ public class PIDTeleOp extends LinearOpMode {
 
     private PIDController turnPID;
 
-    private double targetHeading = 0.0; // Desired heading in degrees
+    private double targetHeading = 0.0; 
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,37 +38,29 @@ public class PIDTeleOp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            // Get joystick inputs
-            double y = -gamepad1.left_stick_y; // Forward/Backward
-            double x = gamepad1.left_stick_x * 1.1; // Strafe, adjust for imperfect strafing
+            
+            double y = -gamepad1.left_stick_y; 
+            double x = gamepad1.left_stick_x * 1.1; 
 
-            // Update target heading based on right stick input
-            double turnInput = -gamepad1.right_stick_x; // Inverted to match heading direction
-            double turnRate = turnInput * 30; // Maximum turn rate in degrees per second
-            targetHeading += turnRate * getRuntime(); // Update target heading
+            
+            double turnInput = -gamepad1.right_stick_x; 
+            double turnRate = turnInput * 30; 
+            targetHeading += turnRate * getRuntime(); 
 
-            // Normalize target heading to be within -180 to +180 degrees
+            
             targetHeading = normalizeAngle(targetHeading);
 
-            // Get current heading from IMU
-            double currentHeading = imu
-                .getRobotYawPitchRollAngles()
-                .getYaw(AngleUnit.DEGREES);
+            
+            double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-            // Calculate heading error
-            double headingError = getHeadingError(
-                targetHeading,
-                currentHeading
-            );
+            
+            double headingError = getHeadingError(targetHeading, currentHeading);
 
-            // Calculate PID output for rotation
+            
             double rotationOutput = turnPID.calculate(headingError, 0);
 
-            // Use the drive calculations from easyteleop.java with PID rotation control
-            double denominator = Math.max(
-                Math.abs(y) + Math.abs(x) + Math.abs(rotationOutput),
-                1
-            );
+            
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rotationOutput), 1);
             double frontLeftPower = (y + x + rotationOutput) / denominator;
             double backLeftPower = (y - x + rotationOutput) / denominator;
             double frontRightPower = (y - x - rotationOutput) / denominator;
@@ -79,7 +71,7 @@ public class PIDTeleOp extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
-            // Telemetry for debugging
+            
             telemetry.addData("Current Heading", "%.2f", currentHeading);
             telemetry.addData("Target Heading", "%.2f", targetHeading);
             telemetry.addData("Heading Error", "%.2f", headingError);
@@ -89,7 +81,7 @@ public class PIDTeleOp extends LinearOpMode {
             telemetry.addData("BR Power", "%.2f", backRightPower);
             telemetry.update();
 
-            // Reset runtime for next loop
+            
             resetRuntime();
         }
     }
@@ -111,26 +103,23 @@ public class PIDTeleOp extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Initialize IMU
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-            RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-        RevHubOrientationOnRobot orientationOnRobot =
-            new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
     }
 
     private void initPIDController() {
-        turnPID = new PIDController(0.02, 0.0, 0.003); // Adjust kP, kI, kD as needed
+        turnPID = new PIDController(0.02, 0.0, 0.003); 
 
         turnPID.setOutputLimits(-1, 1);
     }
 
     private double getHeadingError(double target, double current) {
         double error = target - current;
-        // Normalize error to be within -180 to +180 degrees
+       
         error = normalizeAngle(error);
         return error;
     }
