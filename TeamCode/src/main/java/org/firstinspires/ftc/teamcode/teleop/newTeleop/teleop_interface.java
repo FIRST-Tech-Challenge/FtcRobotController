@@ -10,7 +10,7 @@ public interface teleop_interface {
 
     void movement(double vertical, double strafe, double turn);
     void arm(teleop_enum state, double speed);
-    void gripper(int pos);
+    void claw(teleop_enum state, int pos);
 
     void finalMovement();
     void finalArm();

@@ -8,5 +8,9 @@ public enum teleop_enum {
     HOPPER,
     LIFT,
     MANTIS,
-    STOP
+    STOP,
+
+    GRABBER,
+    WRIST,
+    DOOR
 }

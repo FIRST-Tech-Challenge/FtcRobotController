@@ -15,7 +15,9 @@ public class hardware {
     public DcMotor lift;
     public DcMotor hopper;
 
+    public Servo wrist;
     public Servo grabber;
+    public Servo door;
 
     public ColorSensor colorSensor;
 

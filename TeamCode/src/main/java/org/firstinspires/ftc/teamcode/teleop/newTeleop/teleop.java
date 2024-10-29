@@ -7,13 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.autonomous.newAuto.classes.hardware;
-
 // TeleOp annotation to register this OpMode with the FTC Driver Station
 @TeleOp(name = "Into The Deep Teleop", group = "Teleop")
 public class teleop extends LinearOpMode implements teleop_interface {
     // Instance of the hardware class to manage robot components
-    final org.firstinspires.ftc.teamcode.autonomous.newAuto.classes.hardware hardware = new hardware();
+    final hardware hardware = new hardware();
 
     @Override
     public void initialize() {
@@ -29,7 +27,9 @@ public class teleop extends LinearOpMode implements teleop_interface {
             hardware.hopper = hardwareMap.get(DcMotor.class, "hopper");
 
             //Servos
+            hardware.wrist = hardwareMap.get(Servo.class, "wrist");
             hardware.grabber = hardwareMap.get(Servo.class, "grabber");
+            hardware.door = hardwareMap.get(Servo.class, "door");
 
             //Sensors
             hardware.colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -65,7 +65,6 @@ public class teleop extends LinearOpMode implements teleop_interface {
     }
 
     @Override
-    //TODO find direction
     public void setDirection() {
         // Set the direction of each motor
         hardware.frontLeft.setDirection(DcMotor.Direction.REVERSE); // Reverse front left motor
@@ -124,7 +123,7 @@ public class teleop extends LinearOpMode implements teleop_interface {
                 hardware.hopper.setPower(speed); // Set hopper motor power
                 break;
             case STOP:
-                // Stop all motors if no valid state is provided
+                // Stop all motors
                 hardware.lift.setPower(0);
                 hardware.mantis.setPower(0);
                 hardware.hopper.setPower(0);
@@ -134,11 +133,19 @@ public class teleop extends LinearOpMode implements teleop_interface {
 
     // Control the gripper's position
     @Override
-    public void gripper(int pos) {
-        hardware.grabber.setPosition(pos); // Set the position of the grabber servo
+    public void claw(teleop_enum state, int pos) {
+        switch (state){
+            case GRABBER:
+                hardware.grabber.setPosition(pos); // Set the position of the grabber servo
+                break;
+            case WRIST:
+                hardware.wrist.setPosition(pos); // Set the position of the grabber servo
+                break;
+            case DOOR:
+                hardware.door.setPosition(pos);
+                break;
+        }
     }
-
-    //TODO test arms
 
     // Method for controlling final movement with reduced speeds
     @Override
@@ -191,22 +198,51 @@ public class teleop extends LinearOpMode implements teleop_interface {
             state = teleop_enum.STOP;
             armSpeed = 0;
         }
-        if (state != null) {
-            arm(state, armSpeed); // Call arm method with determined state and speed
-        }
+        arm(state, armSpeed); // Call arm method with determined state and speed
     }
 
     // Method for controlling the gripper based on gamepad input
     @Override
     public void finalGrabber() {
         //TODO find open and close position
-        int close = -200; // Position to close the gripper
-        int open = 200; // Position to open the gripper
+        int collect = 200; // Position to collect block
+        int release = -200; //Position to release block
+
+        int open = 200; // Position to open the door
+        int close = -200; // Position to close the door
+
+        int up = 100; // sets position for wrist to go up
+        int down = 200; // sets position for wrist to go down
+
+        teleop_enum state = null;
+        int pos = 0;
         // Control gripper based on button presses
         if (gamepad2.x) {
-            gripper(close); // Close gripper
+            state = teleop_enum.GRABBER;
+            pos = collect;
         } else if (gamepad2.y) {
-            gripper(open); // Open gripper
+            state = teleop_enum.GRABBER;
+            pos = release;
+        }
+
+        if (gamepad2.right_trigger > 0){
+            state = teleop_enum.WRIST;
+            pos = up;
+        }else if (gamepad2.left_trigger > 0){
+            state = teleop_enum.WRIST;
+            pos = down;
+        }
+
+        if(gamepad2.dpad_up){
+            state = teleop_enum.DOOR;
+            pos = open;
+        }else if (gamepad2.dpad_down){
+            state = teleop_enum.DOOR;
+            pos = close;
+        }
+
+        if (state != null) {
+            claw(state, pos);
         }
     }
 
@@ -219,7 +255,7 @@ public class teleop extends LinearOpMode implements teleop_interface {
 
         waitForStart(); // Wait for the start signal
 
-        // Main loop for controll   ing the robot during teleop
+        // Main loop for control   ing the robot during teleop
         while (opModeIsActive()) {
             whileMotorsBusy(); //Sends info about motors
             finalMovement(); // Control robot movement
