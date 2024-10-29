@@ -20,8 +20,8 @@ public class Bot {
     private DcMotor rightLift;
     private DcMotor leftLift;
 
-    private CRServo topIntake;
-    private CRServo bottomIntake;
+    private CRServo leftIntake;
+    private CRServo rightIntake;
 
     private HardwareMap hwMap = null;
 
@@ -41,7 +41,6 @@ public class Bot {
     public static final int LEFT_LIFT_MIN = -101;
     public static final int RIGHT_LIFT_MAX = 7302;
     public static final int RIGHT_LIFT_MIN = -10;
-
     public static final int MAX_PIVOT = 2560;
     public static final int MIN_PIVOT = -180;
 
@@ -156,11 +155,8 @@ public class Bot {
         rightPushoff.setDirection(CRServo.Direction.REVERSE);
 
         //Servos for intake on the map
-        //TODO Rename Intake servos to something better
-        topIntake = map.get(CRServo.class, "top_intake");
-        bottomIntake = map.get(CRServo.class, "bottom_intake");
-
-        //TODO push off servos for lift
+        leftIntake = map.get(CRServo.class, "left_intake");
+        rightIntake = map.get(CRServo.class, "right_intake");
 
     }
 
@@ -210,8 +206,8 @@ public class Bot {
     public void setIntakePosition(
             double intakePower
     ) {
-        topIntake.setPower(intakePower);
-        bottomIntake.setPower(-intakePower);
+        leftIntake.setPower(intakePower);
+        rightIntake.setPower(-intakePower);
     }
 
     /**
@@ -533,24 +529,6 @@ public class Bot {
     }
 
     /**
-     * Auto function to run intake
-     * NOTE: needs to be followed by a sleep() in order to run for a period of time
-     */
-    public void runIntake(){
-        topIntake.setPower(-1.0);
-        bottomIntake.setPower(1.0);
-    }
-
-    /**
-     * Auto function to run outtake
-     * NOTE: needs to be followed by a sleep() in order to run for a period of time
-     */
-    public void runOuttake(){
-        topIntake.setPower(1.0);
-        bottomIntake.setPower(-1.0);
-    }
-
-    /**
      * Auto function to extend arm to a set position based on inches
      * NOTE: NOT TESTED
      * @param inches position in inches
@@ -598,8 +576,8 @@ public class Bot {
      */
     public void runIntakeForTime(double runTime, int direction) {
         long startTime = System.currentTimeMillis();
-        topIntake.setPower(direction); // Full power for the intake
-        bottomIntake.setPower(-direction);
+        leftIntake.setPower(direction); // Full power for the intake
+        rightIntake.setPower(-direction);
 
         // Run until the time is up
         while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
@@ -608,8 +586,8 @@ public class Bot {
         }
 
         // Stop the motor after the time has expired
-        topIntake.setPower(0);
-        bottomIntake.setPower(0);
+        leftIntake.setPower(0);
+        rightIntake.setPower(0);
     }
 
     /**
