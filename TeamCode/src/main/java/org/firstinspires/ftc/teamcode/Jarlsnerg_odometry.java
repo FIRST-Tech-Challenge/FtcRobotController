@@ -15,29 +15,39 @@ public class Jarlsnerg_odometry extends OpMode {
 
     public void driveToTarPos() {
 
-        while (odo.curPosIsTarPos()) {
+        while (odo.curPosIsTarPos() == false) {
 
             if (odo.cur0 != odo.tar0) {
-                drivetrain.turn0Clockwise();
+                drivetrain.turn0Clockwise(true);
+            }
+            else{
+                drivetrain.rXmov = 0;
             }
             if (odo.curX != odo.tarX) {
                 if (odo.curX <= odo.tarX) {
-                    drivetrain.moveX(true);
+                    drivetrain.moveX(true, odo.cur0);
                 }
-                if (odo.curX >= odo.tarX) {
-                    drivetrain.moveX(false);
+                else if(odo.curX >= odo.tarX){
+                    drivetrain.moveX(false, odo.cur0);
+                }
+                else{
+                    drivetrain.Xmov = 0;
                 }
             }
             if (odo.curY != odo.tarY) {
                 if (odo.curY <= odo.tarY) {
-                    drivetrain.moveY(true);
+                    drivetrain.moveY(true, odo.cur0);
                 }
-                if (odo.curY >= odo.tarY) {
-                    drivetrain.moveY(false);
+                else if (odo.curY >= odo.tarY) {
+                    drivetrain.moveY(false, odo.cur0);
+                }
+                else{
+                    drivetrain.Ymov = 0;
                 }
             }
 
         }
+        drivetrain.HALT();
     }
 
     @Override
@@ -50,7 +60,6 @@ public class Jarlsnerg_odometry extends OpMode {
 
     @Override
     public void loop() {
-
 
 
     }
