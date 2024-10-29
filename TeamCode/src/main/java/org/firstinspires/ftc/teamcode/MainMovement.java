@@ -73,32 +73,40 @@ public class MainMovement extends LinearOpMode {
     //move backwards all = c
     //strafe left = BL, FR = cc, BR, FL = c
     private DcMotor BLDrive; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor BRDrive;
-    private DcMotor FLDrive;
-    private DcMotor FRDrive;
+    private DcMotor BRDrive; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
+    private DcMotor FLDrive; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
+    private DcMotor FRDrive; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
     final float joystickDeadzone = 0.1f;
 
     boolean usingLStick;
-    public float LjoystickX = gamepad1.left_stick_x;
-    public float LjoystickY = gamepad1.left_stick_y;
-    public float RjoystickX = gamepad1.right_stick_x;
-    public float RjoystickY = gamepad1.right_stick_y;
+    // declaring the joysticks here because the values need to be updated in OpMode ??? (maybe i think???)
+    public float LjoystickX;
+    public float LjoystickY;
+    public float RjoystickX;
+    public float RjoystickY;
+    
     @Override
     public void runOpMode() {
-
-        //psuedocode (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
+        // initializing the motors (pseudocode) (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
         BLDrive  = hardwareMap.get(DcMotor.class, "bl_drive");
         BRDrive  = hardwareMap.get(DcMotor.class, "br_drive");
         FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
         FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
+
+
+        // ~ ~ should this stuff be put in some sort of WHILE loop ~ ~
+        LjoystickX = gamepad1.left_stick_x;
+        LjoystickY = gamepad1.left_stick_y;
+        RjoystickX = gamepad1.right_stick_x;
+        RjoystickY = gamepad1.right_stick_y;
 
         epicRotationMovement();
         legendaryStrafeMovement();
 
     }
 
-    private void setMotorPowers(float BL, float BR, float FL, float FR, float speed){
-        //set all the motor powers to the floats defined
+    private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
+        // set all the motor powers to the floats defined
         BLDrive.setPower(BL*speed);
         BRDrive.setPower(BR*speed);
         FLDrive.setPower(FL*speed);
@@ -107,11 +115,15 @@ public class MainMovement extends LinearOpMode {
 
     private void epicRotationMovement() {
         // rotates the robot if left stick is not being used (movement takes priorities)
-        if (!(Math.abs(RjoystickX) <= joystickDeadzone) && !(Math.abs(RjoystickY) <= joystickDeadzone) && !usingLStick) {
-            if(gamepad1.right_stick_x > 0) {
-                setMotorPowers(1, -1,1,-1,gamepad1.right_stick_x); // moves wheels at speed how far x is from origin
-            } else if (gamepad1.right_stick_x < 0) {
-                setMotorPowers(-1, 1,-1,1,gamepad1.right_stick_x); // moves wheels at speed how far x is from origin
+        if (!(Math.abs(RjoystickX) <= joystickDeadzone) && !usingLStick) {
+            if(RjoystickX > 0) {
+                
+                setMotorPowers(1, -1, 1, -1, RjoystickX); // clockwise rotation
+                
+            } else if (RjoystickX < 0) {
+                
+                setMotorPowers(-1, 1, -1, 1, RjoystickX); // counter-clockwise rotation
+                
             }
         }
     }
@@ -129,52 +141,52 @@ public class MainMovement extends LinearOpMode {
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
         float netS = minSpeed + (float)addSpeed; //net speed
 
-        // calculates the angle of the joystick in radians -> degrees
+        // calculates the angle of the joystick in radians --> degrees
         double LangleInRadians = Math.atan2(LjoystickY, LjoystickX);
         double LangleInDegrees = LangleInRadians * (180 / Math.PI);
 
-        // find quadrant of joystick then convert to strafing movement
-        if (!(Math.abs(LjoystickX) <= joystickDeadzone) && !(Math.abs(LjoystickY) <= joystickDeadzone)) {
+        // strafe based on joystick angle
+        if (!(Math.abs(LjoystickX) <= joystickDeadzone) || !(Math.abs(LjoystickY) <= joystickDeadzone)) {
             usingLStick = true;
             //if not in dead zone
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
                 // right quadrant, move right
-                setMotorPowers(-1,1,1,-1,netS);
+                setMotorPowers(-1, 1, 1, -1, netS);
                 System.out.println("Left Stick in RIGHT quadrant");
 
             } else if (LangleInDegrees > 22.5 && LangleInDegrees < 67.5) {
                 // top-right quadrant
-                setMotorPowers(0,1,1,0,netS);
+                setMotorPowers(0, 1, 1, 0, netS);
                 System.out.println("LeftStick in TOP-RIGHT quadrant");
 
             } else if (LangleInDegrees > -67.5 && LangleInDegrees < -22.5) {
                 // bottom-right quadrant
-                setMotorPowers(-1,0,0,-1,netS);
+                setMotorPowers(-1, 0, 0, -1, netS);
                 System.out.println("Left Stick in BOTTOM-RIGHT quadrant");
 
             } else if (LangleInDegrees >= 67.5 && LangleInDegrees <= 112.5) {
                 // top quadrant
-                setMotorPowers(1,1,1,1,netS);
+                setMotorPowers(1, 1, 1, 1, netS);
                 System.out.println("Left Stick in TOP quadrant");
 
             } else if (LangleInDegrees > -112.5 && LangleInDegrees < -67.5) {
                 // bottom quadrant
-                setMotorPowers(-1,-1,-1,-1,netS);
+                setMotorPowers(-1, -1, -1, -1, netS);
                 System.out.println("Left Stick in BOTTOM quadrant");
 
             } else if (LangleInDegrees > 112.5 && LangleInDegrees < 157.5) {
                 // top-left quadrant
-                setMotorPowers(1,0,0,1,netS);
+                setMotorPowers(1, 0, 0, 1, netS);
                 System.out.println("Left Stick in TOP-LEFT quadrant");
 
             } else if (LangleInDegrees > -157.5 && LangleInDegrees < -112.5) {
                 // bottom-left quadrant
-                setMotorPowers(0,-1,-1,0,netS);
+                setMotorPowers(0, -1, -1, 0, netS);
                 System.out.println("Left Stick in BOTTOM-LEFT quadrant");
 
             } else if (LangleInDegrees >= 157.5 || LangleInDegrees <= -157.5) {
                 // left quadrant
-                setMotorPowers(1,-1,-1,1,netS);
+                setMotorPowers(1, -1, -1, 1, netS);
                 System.out.println("Left Stick in LEFT quadrant");
 
             }
