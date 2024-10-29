@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.MIN_POWER;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.MatchRecorder.MatchLogger;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import android.annotation.SuppressLint;

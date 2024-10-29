@@ -45,6 +45,7 @@ import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.util.MatchRecorder.MatchLogger;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -198,6 +199,8 @@ public final class MecanumDrive {
             lastRightFrontPos = rightFrontPosVel.position;
 
             lastHeading = heading;
+
+            MatchLogger.getInstance().logRobotPose(pose);
 
             return new Twist2dDual<>(
                     twist.line,

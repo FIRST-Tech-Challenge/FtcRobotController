@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
+import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.opencv.core.Mat;
 
@@ -21,6 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.util.Objects;
+import java.util.logging.Filter;
 import java.util.logging.Logger;
 
 public class MatchLogger {
@@ -28,6 +31,8 @@ public class MatchLogger {
     private static String MATCH_FILE_NAME = "match_";
     public static MatchLogger matchLogger = null;
     public int matchNumber;
+
+    public static final boolean REFLECTIONLESS = false; // turn to true if the robot is slow
 
     public static MatchLogger getInstance() {
         if (matchLogger == null) {
@@ -40,6 +45,7 @@ public class MatchLogger {
         VERBOSE("verbose.txt"),
         SCORE("score_prediction.txt"),
         POSITION("position.txt"),
+        ARM("arm.txt")
         ;
 
         String filename;
@@ -119,6 +125,10 @@ public class MatchLogger {
         System.out.println(message);
     }
 
+    /**
+     * Records the current robot position
+     */
+    // TODO: there is no framework for logging positions in the DriveSubsystem for normal driving (no odometry)
     public void logRobotPose(Pose2d pose2d) {
         DecimalFormat format = new DecimalFormat("#.##");
         Vector2d position = pose2d.position;
@@ -127,6 +137,47 @@ public class MatchLogger {
                 format.format(position.x), format.format(position.y),
                 format.format(rotation2d.real), format.format(rotation2d.imag));
         write(message, FileType.POSITION, FileType.VERBOSE);
+    }
+
+    private String arrayToString(Object[] relevantVariables) {
+        if (relevantVariables == null) {
+            return "";
+        }
+        String message = "";
+        for (int i = 0; i < relevantVariables.length; i++) {
+            message += Objects.toString(relevantVariables[i]);
+            if (i != relevantVariables.length - 1) {
+                message += " ";
+            }
+        }
+        return message;
+    }
+
+    /**
+     * Records the passed variables and logs the method that was called before this.
+     */
+    public void logArm(ArmSubsystem subsystem, Object...relevantVariables) {
+        String message = String.format("Arm: %s | %s", getCalledMethodName(), arrayToString(relevantVariables));
+        write(message, FileType.ARM, FileType.VERBOSE);
+    }
+
+    private String getCalledMethodName() {
+        if (REFLECTIONLESS) {
+            return "[reflectionless]";
+        }
+        StackTraceElement[] elements = new Throwable().getStackTrace();
+        if (elements == null || elements.length == 0) {
+            return "[err_no_stacktrace]";
+        }
+        for (int i = 0; i < elements.length; i++) {
+            String calledClassName = elements[i].getClassName();
+            if (calledClassName.equals(getClass().getName())) {
+                continue;
+            }
+            // It is something other than the MatchLogger, record the method used
+            return String.format("[%s]", elements[i].getMethodName());
+        }
+        return "[err_404]"; // not found
     }
 
     public static String youJustLostTheGame(Object lol) {

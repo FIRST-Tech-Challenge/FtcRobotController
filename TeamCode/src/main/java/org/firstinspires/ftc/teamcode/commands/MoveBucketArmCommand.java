@@ -34,7 +34,7 @@ public class MoveBucketArmCommand extends CommandBase {
         if (power == 0) {
             subsystem.haltAllArms();
         } else {
-            subsystem.manualMoveArm(power, ArmSubsystem.ARMS.BUCKET_ARM);
+            subsystem.manualMoveArm(power, ArmSubsystem.ArmState.BUCKET_ARM);
             // Todo: Work on this
         }
     }

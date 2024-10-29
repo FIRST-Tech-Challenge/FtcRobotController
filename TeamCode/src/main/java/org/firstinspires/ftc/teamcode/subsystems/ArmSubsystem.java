@@ -2,19 +2,17 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.MatchRecorder.MatchLogger;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Objects;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -25,7 +23,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     public static final float ANGLE_PER_SECOND = 60;
 
-    public enum ARMS {
+    // TODO: Clarify what this enum does, (renamed it from ARMS to ArmState because it seems to fit better)
+    public enum ArmState {
         BUCKET_ARM,
         HORIZONTAL_ARM,
         HANGING_ARM,
@@ -62,7 +61,8 @@ public class ArmSubsystem extends SubsystemBase {
      * @param power the power to set the arms to
      */
     public void manualMoveArm(double power) {
-        manualMoveArm(power, ARMS.ALL);
+        // when would we need to move all of the arms?
+        manualMoveArm(power, ArmState.ALL);
     }
 
     /**
@@ -70,7 +70,8 @@ public class ArmSubsystem extends SubsystemBase {
      * @param power the power to set the arm to
      * @param arm the arm to set the power to
      */
-    public void manualMoveArm(double power, ARMS arm) {
+    public void manualMoveArm(double power, ArmState arm) {
+        MatchLogger.getInstance().logArm(this, power, arm);
         switchArmMode(DcMotor.RunMode.RUN_USING_ENCODER, arm);
         switch (arm) {
             case ALL:
@@ -94,25 +95,29 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void manualMoveBucketArm(double power) {
+        MatchLogger.getInstance().logArm(this, power);
         bucketArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bucketArmMotor.setPower(power);
     }
 
     public void manualMoveHorizontalArm(double power) {
+        MatchLogger.getInstance().logArm(this, power);
         horizontalArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         horizontalArmMotor.setPower(power);
     }
 
     public void manualMoveHangingArm(double power) {
+        MatchLogger.getInstance().logArm(this, power);
         hangingArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hangingArmMotor.setPower(power);
     }
 
     public void switchArmMode(DcMotor.RunMode runMode) {
-        switchArmMode(runMode, ARMS.ALL);
+        switchArmMode(runMode, ArmState.ALL);
     }
 
-    public void switchArmMode(DcMotor.RunMode runMode, ARMS arm) {
+    public void switchArmMode(DcMotor.RunMode runMode, ArmState arm) {
+        MatchLogger.getInstance().logArm(this, arm);
         switch (arm) {
             case ALL:
                 horizontalArmMotor.setMode(runMode);
@@ -138,6 +143,7 @@ public class ArmSubsystem extends SubsystemBase {
      * Sets the power of the armMotor to zero
      */
     public void haltAllArms() {
+        MatchLogger.getInstance().logArm(this);
         switchArmMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bucketArmMotor.setPower(0);
         horizontalArmMotor.setPower(0);
@@ -145,6 +151,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void resetAllArms() {
+        MatchLogger.getInstance().logArm(this);
         switchArmMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
