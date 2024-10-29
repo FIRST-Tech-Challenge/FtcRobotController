@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name="crank", group="TeleOp")
-public class crank extends OpMode {
+@TeleOp(name="SOUP", group="TeleOp")
+public class SOUP extends OpMode {
 
     // Motors & Sensors
     private DcMotor frontLeftMotor;
@@ -117,17 +117,11 @@ public class crank extends OpMode {
         }
 
         // Set power to motors
-        double heading = Math.toRadians(odometry.getPosition().h);
-        double rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
-        double rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
-        frontLeftMotor.setPower(rotY + rotX + rx);
-        backLeftMotor.setPower(rotY - rotX + rx);
-        frontRightMotor.setPower(rotY - rotX - rx);
-        backRightMotor.setPower(rotY + rotX - rx);
-//        frontLeftMotor.setPower(y + x + rx);
-//        backLeftMotor.setPower(y - x + rx);
-//        frontRightMotor.setPower(y - x - rx);
-//        backRightMotor.setPower(y + x - rx);
+//        double heading = Math.toRadians(odometry.getPosition().h);
+        frontLeftMotor.setPower(y + x + rx);
+        backLeftMotor.setPower(y - x + rx);
+        frontRightMotor.setPower(y - x - rx);
+        backRightMotor.setPower(y + x - rx);
 
         if (gamepad2.right_trigger > 0.05) {
             capPower = -gamepad2.right_trigger;
