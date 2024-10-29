@@ -50,6 +50,13 @@ public class AutoCodeToNetZone extends LinearOpMode {
     private AutoGrabberManager grabberManager;
     private AutoViperSlideManager viperSlideManager;
 
+    //path flags
+    private boolean strafeToStart = true;
+    private boolean dropSpecimen = true;
+    private boolean moveNearToAscentZone = true;
+    private boolean ploughSampleToNetZone = true;
+    private boolean parkInAscent = true;
+
     public void initialize()
     {
         hornetRobo = new HornetRobo();
@@ -69,84 +76,100 @@ public class AutoCodeToNetZone extends LinearOpMode {
         if (opModeIsActive()) {
             telemetry.addData("Starting to move", "");
             telemetry.update();
+
+            //set forward
+            driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
+
             while (opModeIsActive() && !isStopRequested()) {
 
-                telemetry.addData("Move Forward to reach subermersible  ", "");
-                //TODO: adjust the distance during testing
-                double distanceToSub = 12;
-                telemetry.addData("Distance To Sub: ", distanceToSub);
+                telemetry.addData("Move to reach submersible  ", "");
                 telemetry.update();
-                //reset encoders
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                int strafeDistance;
+                int distanceToSub;
+                int distance;
+                int rotateToPosition;
 
-                telemetry.addData("Setting target position", "");
-                telemetry.update();
+                if (strafeToStart) {
 
-                //set target position to encoders and move to position
-                driveManager.SetTargetPosition(AutoDriveManager.DriveDirection.FORWARD, distanceToSub);
-                driveManager.SetDrivePower(DRIVE_SPEED, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    telemetry.addData("Strafe to align with submersible", "");
+                    telemetry.update();
 
-                telemetry.addData("Reached Submersible", "");
-                telemetry.update();
+                    strafeDistance = 19;
+                    driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
+                    telemetry.addData("Strafed Right", "");
+                    telemetry.update();
+                }
 
-                //Set Arm in a position to hang specimen
-                double armPosition = 0.5; //TODO: Correct during testing
-                armManager.MoveArmToPosition(armPosition);
-                telemetry.addData("Set Arm Pos: ", armPosition);
-                telemetry.update();
+                if (dropSpecimen) {
 
-                //Open grabber to hang
-                grabberManager.OpenOrCloseGrabber(true);
-                telemetry.addData("Set grabber to open", "");
-                telemetry.update();
+                    //TODO: adjust the distance during testing
+                    distanceToSub = 12;
+                    telemetry.addData("Distance To Sub: ", distanceToSub);
+                    telemetry.update();
 
-                //Move arm back
-                armPosition = 0.6; //TODO: Correct during testing
-                armManager.MoveArmToPosition(armPosition);
-                telemetry.addData("Set Arm Pos Back: ", armPosition);
-                telemetry.update();
+                    //set target position to encoders and move to position
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distanceToSub);
+                    telemetry.addData("Reached Submersible", "");
+                    telemetry.update();
 
-                // Go reverse to be away from submersible to move to pick sample
-                int reverseDistance = 5; //TODO: Adjust during testing
-                driveManager.SetTargetPosition(AutoDriveManager.DriveDirection.BACKWARD, reverseDistance);
-                driveManager.SetDrivePower(DRIVE_SPEED, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-                telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
-                telemetry.update();
+                    //Set Arm in a position to hang specimen
+                    double armPosition = 0.5; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos: ", armPosition);
+                    telemetry.update();
 
-                //strafe to go pass submersible edges to avoid hitting when moving forward to pick samples
-                int strafeDistance = 23; //TODO: Adjust during testing
-                driveManager.SetTargetPositionToStrafe(AutoDriveManager.DriveDirection.LEFT, strafeDistance);
-                driveManager.SetPowerToStrafe(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-                telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
-                telemetry.update();
+                    //Open grabber to hang
+                    grabberManager.OpenOrCloseGrabber(true);
+                    telemetry.addData("Set grabber to open", "");
+                    telemetry.update();
 
-                //MOVE FORWARD past sample
-                double distance = 30; //TODO: Adjust during testing
-                driveManager.SetTargetPosition(AutoDriveManager.DriveDirection.FORWARD, distance);
-                driveManager.SetDrivePower(DRIVE_SPEED, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-                telemetry.addData("MOVE FORWARD past sample", distance);
-                telemetry.update();
+                    //Move arm back
+                    armPosition = 0.6; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos Back: ", armPosition);
+                    telemetry.update();
+                }
 
-                //strafe to a position to plough right most sample to net zone when moving backward
-                strafeDistance = 10; //TODO: Adjust during testing
-                driveManager.SetTargetPositionToStrafe(AutoDriveManager.DriveDirection.LEFT, strafeDistance);
-                driveManager.SetPowerToStrafe(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-                telemetry.addData("strafe to a position to plough right most sample to net zone when moving backward", "");
-                telemetry.update();
+                if (moveNearToAscentZone) {
+                    // Go reverse to be away from submersible to move to pick sample
+                    int reverseDistance = 5; //TODO: Adjust during testing
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, reverseDistance);
+                    telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
+                    telemetry.update();
 
-                //Move backward until it reaches net zone
-                distance = 35; //TODO: Adjust during testing
-                driveManager.SetTargetPosition(AutoDriveManager.DriveDirection.FORWARD, distance);
-                driveManager.SetDrivePower(DRIVE_SPEED, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-                telemetry.addData("Move backward until it reaches net zone", "");
-                telemetry.update();
+                    //strafe to go pass submersible edges to avoid hitting when moving forward to pick samples
+                    strafeDistance = 23; //TODO: Adjust during testing
+                    driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, strafeDistance);
+                    telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
+                    telemetry.update();
+
+                    //MOVE FORWARD past sample
+                    distance = 30; //TODO: Adjust during testing
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distance);
+                    telemetry.addData("MOVE FORWARD past sample", distance);
+                    telemetry.update();
+                }
+
+                if (ploughSampleToNetZone) {
+
+                    //Rotate 180 (to point front) + 45 degrees to turn to go in diagonal to plogh sample
+                    rotateToPosition = 12;
+                    driveManager.RotateUsingEncoders(DRIVE_SPEED, rotateToPosition);
+                    telemetry.addData("rotate to point to front and turn to plough the sample", "");
+                    telemetry.update();
+
+                    //Move forward until it reaches net zone
+                    distance = 35; //TODO: Adjust during testing
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distance);
+                    telemetry.addData("Move backward until it reaches net zone", "");
+                    telemetry.update();
+                }
+
+                if (parkInAscent)
+                {
+                    distance = 35;
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
+                }
 
                 //done
                 driveManager.StopRobo();

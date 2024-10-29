@@ -31,7 +31,7 @@ public class AutoGrabberManager {
     }
 
     public void OpenOrCloseGrabber(boolean Open){
-        double grabberPosition = Open? GRABBER_MAX: GRABBER_MIN;
+        double grabberPosition = Open ? GRABBER_MAX : GRABBER_MIN;
         hornetRobo.Grabber.setPosition(grabberPosition);
     }
 }

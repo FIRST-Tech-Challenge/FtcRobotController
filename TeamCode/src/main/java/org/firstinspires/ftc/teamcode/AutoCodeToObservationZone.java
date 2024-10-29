@@ -50,6 +50,10 @@ public class AutoCodeToObservationZone extends LinearOpMode {
     private AutoGrabberManager grabberManager;
     private AutoViperSlideManager viperSlideManager;
 
+    //path flags
+    private boolean dropSpecimen = true;
+    private boolean parkInObservationZone = true;
+
     public void initialize()
     {
         hornetRobo = new HornetRobo();
@@ -69,61 +73,59 @@ public class AutoCodeToObservationZone extends LinearOpMode {
         if (opModeIsActive()) {
             telemetry.addData("Starting to move", "");
             telemetry.update();
+
+            //set forward
+            driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
+
             while (opModeIsActive() && !isStopRequested()) {
 
-                telemetry.addData("Move Forward to reach subermersible  ", "");
-                //TODO: adjust the distance during testing
-                double distanceToSub = 12;
-                telemetry.addData("Distance To Sub: ", distanceToSub);
-                telemetry.update();
-                //reset encoders
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                // for easiness in turning certain chunk on and off
+                if (dropSpecimen) {
+                    telemetry.addData("Move Forward to reach subermersible  ", "");
+                    //TODO: adjust the distance during testing
+                    int distanceToSub = 12;
+                    telemetry.addData("Distance To Sub: ", distanceToSub);
+                    telemetry.update();
 
-                telemetry.addData("Setting target position", "");
-                telemetry.update();
+                    telemetry.addData("Starting to Move", "");
+                    telemetry.update();
 
-                //set target position to encoders and move to position
-                driveManager.SetTargetPosition(AutoDriveManager.DriveDirection.FORWARD, distanceToSub);
-                driveManager.SetDrivePower(DRIVE_SPEED, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    //set target position to encoders and move to position
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distanceToSub);
+                    telemetry.addData("Reached Submersible", "");
+                    telemetry.update();
 
-                telemetry.addData("Reached Submersible", "");
-                telemetry.update();
+                    //Set Arm in a position to hang specimen
+                    double armPosition = 0.5; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos: ", armPosition);
+                    telemetry.update();
 
-                //Set Arm in a position to hang specimen
-                double armPosition = 0.5; //TODO: Correct during testing
-                armManager.MoveArmToPosition(armPosition);
-                telemetry.addData("Set Arm Pos: ", armPosition);
-                telemetry.update();
+                    //Open grabber to hang
+                    grabberManager.OpenOrCloseGrabber(true);
+                    telemetry.addData("Set grabber to open", "");
+                    telemetry.update();
 
-                //Open grabber to hang
-                grabberManager.OpenOrCloseGrabber(true);
-                telemetry.addData("Set grabber to open", "");
-                telemetry.update();
+                    //Move arm back
+                    armPosition = 0.6; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos Back: ", armPosition);
+                    telemetry.update();
+                }
 
-                //Move arm back
-                armPosition = 0.6; //TODO: Correct during testing
-                armManager.MoveArmToPosition(armPosition);
-                telemetry.addData("Set Arm Pos Back: ", armPosition);
-                telemetry.update();
+                if (parkInObservationZone) {
+                    // Go reverse to be away from submersible to move to park in obs zone
+                    int reverseDistance = 12; //TODO: Adjust during testing
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, reverseDistance);
+                    telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
+                    telemetry.update();
 
-                // Go reverse to be away from submersible to move to park in obs zone
-                int reverseDistance = 12; //TODO: Adjust during testing
-                driveManager.SetTargetPosition(AutoDriveManager.DriveDirection.BACKWARD, reverseDistance);
-                driveManager.SetDrivePower(DRIVE_SPEED, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-                telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
-                telemetry.update();
-
-                //strafe to move to obs zone
-                int strafeDistance = 30; //TODO: Adjust during testing
-                driveManager.SetTargetPositionToStrafe(AutoDriveManager.DriveDirection.LEFT, strafeDistance);
-                driveManager.SetPowerToStrafe(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED);
-                driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-                telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
-                telemetry.update();
-
+                    //strafe to move to obs zone
+                    int strafeDistance = 30; //TODO: Adjust during testing
+                    driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
+                    telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
+                    telemetry.update();
+                }
                 //done
                 driveManager.StopRobo();
                 telemetry.addData("Stopped Robo", "");

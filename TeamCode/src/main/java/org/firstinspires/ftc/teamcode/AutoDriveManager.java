@@ -4,6 +4,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -42,6 +44,12 @@ public class AutoDriveManager {
         hornetRobo = HRobo;
         opMode.telemetry.addData("Drive Manager initialize:", "");
 
+    }
+
+    public void ResetAndSetToEncoder()
+    {
+        SetAllMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SetAllMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void SetAllMotorsMode(DcMotor.RunMode MotorRunMode) {
@@ -85,7 +93,6 @@ public class AutoDriveManager {
         hornetRobo.LeftBackMotor.setPower(left);
         hornetRobo.RightFrontMotor.setPower(right);
         hornetRobo.RightBackMotor.setPower(right);
-
     }
 
     public int getEncodedDistance(double DistanceInInches)
@@ -144,6 +151,21 @@ public class AutoDriveManager {
         hornetRobo.RightBackMotor.setTargetPosition(newRightBackTarget);
     }
 
+    public void StrafeToPosition (DriveDirection DirectionToStrafe, double StrafePower, int StrafeDistance) {
+        ResetAndSetToEncoder();
+        SetTargetPositionToStrafe(AutoDriveManager.DriveDirection.LEFT, StrafeDistance);
+        SetPowerToStrafe(DirectionToStrafe, StrafePower);
+        SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+
+    public void MoveStraightToPosition (DriveDirection DirectionToMove, double Speed, int DistanceToMove) {
+        ResetAndSetToEncoder();
+        SetTargetPosition(DirectionToMove, DistanceToMove);
+        SetDrivePower(Speed, Speed);
+        SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     public void SetPowerToStrafe (DriveDirection DirectionToMove, double StrafePower){
         double frontPower = 0;
         double backPower = 0;
@@ -198,6 +220,47 @@ public class AutoDriveManager {
         hornetRobo.LeftBackMotor.setTargetPosition(newLeftBackTarget);
         hornetRobo.RightFrontMotor.setTargetPosition(newRightFrontTarget);
         hornetRobo.RightBackMotor.setTargetPosition(newRightBackTarget);
+    }
+
+    public void RotateTimed(double DriveSpeed, int ForHowLong) {
+        hornetRobo.LeftFrontMotor.setPower(DriveSpeed);
+        hornetRobo.LeftBackMotor.setPower(DriveSpeed);
+        hornetRobo.RightFrontMotor.setPower(-DriveSpeed);
+        hornetRobo.RightBackMotor.setPower(-DriveSpeed);
+        sleep(ForHowLong);
+    }
+
+    public void RotateUsingEncoders(double DriveSpeed, double targetPositionInInches) {
+
+        int encodedDistance = getEncodedDistance(targetPositionInInches);
+
+        SetAllMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SetAllMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Get current positions of the motors
+        int currentLeftFront = hornetRobo.LeftFrontMotor.getCurrentPosition();
+        int currentLeftBack = hornetRobo.LeftBackMotor.getCurrentPosition();
+        int currentRightFront = hornetRobo.RightFrontMotor.getCurrentPosition();
+        int currentRightBack = hornetRobo.RightBackMotor.getCurrentPosition();
+
+        // Calculate new target positions
+        int newLeftFrontTarget = 0;
+        int newLeftBackTarget = 0;
+        int newRightFrontTarget = 0;
+        int newRightBackTarget = 0;
+
+        newLeftFrontTarget = currentLeftFront + encodedDistance;
+        newLeftBackTarget = currentLeftBack + encodedDistance;
+        newRightFrontTarget = currentRightFront - encodedDistance;
+        newRightBackTarget = currentRightBack - encodedDistance;
+
+        hornetRobo.LeftFrontMotor.setTargetPosition(newLeftFrontTarget);
+        hornetRobo.LeftBackMotor.setTargetPosition(newLeftBackTarget);
+        hornetRobo.RightFrontMotor.setTargetPosition(newRightFrontTarget);
+        hornetRobo.RightBackMotor.setTargetPosition(newRightBackTarget);
+
+        SetDrivePower(DriveSpeed, DriveSpeed);
+        SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
 
