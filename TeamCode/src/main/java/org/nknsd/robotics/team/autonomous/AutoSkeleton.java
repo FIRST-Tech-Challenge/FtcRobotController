@@ -3,7 +3,7 @@ package org.nknsd.robotics.team.autonomous;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
-import org.nknsd.robotics.team.components.IntakeServoHandler;
+import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.WheelHandler;
 
@@ -18,7 +18,7 @@ public class AutoSkeleton {
     private IMUComponent imuComponent;
     private RotationHandler rotationHandler;
     private double targetRotation = 0;
-    private IntakeServoHandler intakeServoHandler;
+    private IntakeSpinnerHandler intakeSpinnerHandler;
 
 
 
@@ -28,12 +28,12 @@ public class AutoSkeleton {
         this.turnMargin = turnMargin;
     }
 
-    public void link(WheelHandler wheelHandler, RotationHandler rotationHandler, IntakeServoHandler intakeServoHandler, FlowSensorHandler flowSensorHandler, IMUComponent imuComponent) {
+    public void link(WheelHandler wheelHandler, RotationHandler rotationHandler, IntakeSpinnerHandler intakeSpinnerHandler, FlowSensorHandler flowSensorHandler, IMUComponent imuComponent) {
         this.wheelHandler = wheelHandler;
         this.flowSensorHandler = flowSensorHandler;
         this.imuComponent = imuComponent;
         this.rotationHandler = rotationHandler;
-        this.intakeServoHandler = intakeServoHandler;
+        this.intakeSpinnerHandler = intakeSpinnerHandler;
     }
 
     public void setTargetPosition(double x, double y) {
@@ -111,7 +111,7 @@ public class AutoSkeleton {
         return false;
     }
 
-    public void setServoPower(double power) {
-        intakeServoHandler.setServoPower(power);
+    public void setServoPower(IntakeSpinnerHandler.HandStates handState) {
+        intakeSpinnerHandler.setServoPower(handState);
     }
 }

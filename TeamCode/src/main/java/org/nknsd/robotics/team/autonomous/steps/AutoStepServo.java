@@ -5,19 +5,19 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.team.autonomous.AutoSkeleton;
+import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 
 import java.util.concurrent.TimeUnit;
 
 public class AutoStepServo implements NKNAutoStep {
     AutoSkeleton autoSkeleton;
-    boolean done = false;
-    private double power;
+    private final IntakeSpinnerHandler.HandStates power;
     private long timeBegan;
-    private long duration;
+    private final long duration;
 
-    public AutoStepServo(double power, long duration) {
+    public AutoStepServo(IntakeSpinnerHandler.HandStates handState, long duration) {
         this.duration = duration;
-        this.power = power;
+        this.power = handState;
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.nknsd.robotics.team.autonomous.steps.AutoStepServo;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
-import org.nknsd.robotics.team.components.IntakeServoHandler;
+import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.PotentiometerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.WheelHandler;
@@ -71,7 +71,7 @@ public class PushAuto extends NKNAutoProgram {
         AutoStepRotateArm step11 = new AutoStepRotateArm(RotationHandler.RotationPositions.PARKING);
         stepList.add(step11);
 
-        AutoStepServo step12 = new AutoStepServo(-.1, 1000);
+        AutoStepServo step12 = new AutoStepServo(IntakeSpinnerHandler.HandStates.GRIP, 1000);
         stepList.add(step12);
 
 
@@ -108,12 +108,12 @@ public class PushAuto extends NKNAutoProgram {
         ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.35);
         components.add(extensionHandler);
 
-        IntakeServoHandler intakeServoHandler = new IntakeServoHandler("intakeServo");
-        components.add(intakeServoHandler);
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        components.add(intakeSpinnerHandler);
 
         // Linking
         rotationHandler.link(potentiometerHandler, extensionHandler);
         extensionHandler.link(rotationHandler);
-        autoSkeleton.link(wheelHandler, rotationHandler, intakeServoHandler, flowSensorHandler, imuComponent);
+        autoSkeleton.link(wheelHandler, rotationHandler, intakeSpinnerHandler, flowSensorHandler, imuComponent);
     }
 }

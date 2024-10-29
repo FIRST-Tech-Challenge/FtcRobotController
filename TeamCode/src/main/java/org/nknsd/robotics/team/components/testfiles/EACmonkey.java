@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.team.components.ExtensionHandler;
-import org.nknsd.robotics.team.components.IntakeServoHandler;
+import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
 
 import java.util.concurrent.TimeUnit;
 
 public class EACmonkey implements NKNComponent {
     private ExtensionHandler extensionHandler;
-    private IntakeServoHandler intakeServoHandler;
+    private IntakeSpinnerHandler intakeSpinnerHandler;
     private RotationHandler rotationHandler;
     private Tests currentTest = Tests.DO_NOTHING;
 
@@ -90,13 +90,13 @@ public class EACmonkey implements NKNComponent {
     private void runTest(Tests tests) {
         switch (tests) {
             case DO_NOTHING:
-                intakeServoHandler.setServoPower(0);
+                intakeSpinnerHandler.setServoPower(IntakeSpinnerHandler.HandStates.TRUE_STOP);
                 break;
             case SERVO_FORWARD:
-                intakeServoHandler.setServoPower(1.0);
+                intakeSpinnerHandler.setServoPower(IntakeSpinnerHandler.HandStates.GRIP);
                 break;
             case SERVO_BACKWARD:
-                intakeServoHandler.setServoPower(-1.0);
+                intakeSpinnerHandler.setServoPower(IntakeSpinnerHandler.HandStates.RELEASE);
                 break;
             case EXTENSION_EXTENDED:
                 extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.HIGH_BASKET);
@@ -116,9 +116,9 @@ public class EACmonkey implements NKNComponent {
         }
     }
 
-    public void link(ExtensionHandler extensionHandler, IntakeServoHandler intakeServoHandler, RotationHandler rotationHandler) {
+    public void link(ExtensionHandler extensionHandler, IntakeSpinnerHandler intakeSpinnerHandler, RotationHandler rotationHandler) {
         this.extensionHandler = extensionHandler;
-        this.intakeServoHandler = intakeServoHandler;
+        this.intakeSpinnerHandler = intakeSpinnerHandler;
         this.rotationHandler = rotationHandler;
     }
 }

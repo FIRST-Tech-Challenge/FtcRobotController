@@ -3,11 +3,10 @@ package org.nknsd.robotics.team;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.components.ExtensionHandler;
-import org.nknsd.robotics.team.components.IntakeServoHandler;
+import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.PotentiometerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.testfiles.EACmonkey;
-import org.nknsd.robotics.team.components.testfiles.ExtensionMonkey;
 
 import java.util.List;
 
@@ -26,15 +25,15 @@ public class EACmonkeyProgram extends NKNProgram {
         components.add(rotationHandler);
         telemetryEnabled.add(rotationHandler);
 
-        IntakeServoHandler intakeServoHandler = new IntakeServoHandler("intakeServo");
-        components.add(intakeServoHandler);
-        telemetryEnabled.add(intakeServoHandler);
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        components.add(intakeSpinnerHandler);
+        telemetryEnabled.add(intakeSpinnerHandler);
 
         EACmonkey eacMonkey = new EACmonkey();
         components.add(eacMonkey);
         telemetryEnabled.add(eacMonkey);
 
-        eacMonkey.link(extensionHandler, intakeServoHandler, rotationHandler);
+        eacMonkey.link(extensionHandler, intakeSpinnerHandler, rotationHandler);
         rotationHandler.link(potentiometerHandler, extensionHandler);
         extensionHandler.link(rotationHandler);
     }

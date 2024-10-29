@@ -8,16 +8,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
-public class IntakeServoHandler implements NKNComponent {
+public class IntakeSpinnerHandler implements NKNComponent {
 
     CRServo servo;
     String servoName;
 
-    public IntakeServoHandler(String servoName) {
+    public IntakeSpinnerHandler(String servoName) {
         this.servoName = servoName;
     }
-    public void setServoPower (double power){
-        servo.setPower(power);
+    public void setServoPower (HandStates handStates){
+        servo.setPower(handStates.power);
     }
 
 
@@ -40,7 +40,7 @@ public class IntakeServoHandler implements NKNComponent {
 
     @Override
     public void stop(ElapsedTime runtime, Telemetry telemetry) {
-        setServoPower(0);
+        setServoPower(HandStates.TRUE_STOP);
     }
 
     @Override
@@ -60,5 +60,18 @@ public class IntakeServoHandler implements NKNComponent {
 
     public double getServoPower() {
         return servo.getPower();
+    }
+
+    public enum HandStates {
+        GRIP(-0.3),
+        RELEASE(0.3),
+        REST(-0.06),
+        TRUE_STOP(0);
+
+        public final double power;
+
+        HandStates(double power) {
+            this.power = power;
+        }
     }
 }

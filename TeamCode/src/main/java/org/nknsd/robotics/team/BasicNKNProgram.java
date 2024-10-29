@@ -4,7 +4,7 @@ import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.GamePadHandler;
-import org.nknsd.robotics.team.components.IntakeServoHandler;
+import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.PotentiometerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.WheelDriver;
@@ -41,8 +41,8 @@ public class BasicNKNProgram extends NKNProgram {
         components.add(extensionHandler);
         //telemetryEnabled.add(extensionHandler);
 
-        IntakeServoHandler intakeServoHandler = new IntakeServoHandler("intakeServo");
-        components.add(intakeServoHandler);
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        components.add(intakeSpinnerHandler);
 
 
         // Driver
@@ -58,6 +58,6 @@ public class BasicNKNProgram extends NKNProgram {
         wheelDriver.link(gamePadHandler, wheelHandler);
         rotationHandler.link(potentiometerHandler, extensionHandler);
         extensionHandler.link(rotationHandler);
-        eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeServoHandler);
+        eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler);
     }
 }
