@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.SwerveDriveKinema
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.SwerveModuleState;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.PIDController;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.SimpleMotorFeedforward;
-import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 import org.firstinspires.ftc.teamcode.Utils;
 
 public class Swerve {
@@ -138,14 +137,10 @@ public class Swerve {
               + driveFeedforward.calculate(state.speedMetersPerSecond));
 
       // TODO: Get continuous mode working
-      //get pid controller to control servo pos
-      //feedback and feedforward into servoVel
+      // get pid controller to control servo pos
+      // feedback and feedforward into servoVel
 
-      steerServo.setPosition(
-          MathUtil.inverseInterpolate(
-              Units.degreesToRadians(-355.0 / 2),
-              Units.degreesToRadians(355.0 / 2),
-              MathUtil.angleModulus(state.angle.getRadians())));
+      steerServo.setPosition(MathUtil.inverseInterpolate(-90, 90, state.angle.getDegrees()));
     }
 
     public double getDrivePosition() {
@@ -172,12 +167,7 @@ public class Swerve {
     }
 
     private Rotation2d getServoPos() {
-      return Rotation2d.fromDegrees(
-          MathUtil.interpolate(
-              0,
-              360,
-              MathUtil.inverseInterpolate(
-                  0, steerEncoder.getMaxVoltage(), steerEncoder.getVoltage())));
+      return Rotation2d.fromDegrees(MathUtil.interpolate(-90, 90, steerServo.getPosition()));
     }
 
     private void runServoVel(double velRad) {
