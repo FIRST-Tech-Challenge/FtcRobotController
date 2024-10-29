@@ -58,38 +58,45 @@ public class thirdAuto extends OpMode {
         SystemState stateOne = new SystemState();
         stateOne.clawPosition = clawState.CLOSED;
         stateOne.wristPosition = wristState.DOWN;
-        stateOne.armPosition = armPose.BASKET;
+        stateOne.armPosition = armPose.ZERO;
         stateOne.drivePose = new SparkFunOTOS.Pose2D(0, 0, 0);
 
         // State 2
         SystemState stateTwo = new SystemState();
         stateTwo.clawPosition = clawState.CLOSED;
-        stateTwo.wristPosition = wristState.UP;
-        stateTwo.armPosition = armPose.BASKET;
+        stateTwo.wristPosition = wristState.DOWN;
+        stateTwo.armPosition = armPose.ZERO;
         stateTwo.drivePose = new SparkFunOTOS.Pose2D(0, 9, 0);
 
         // State 3
         SystemState stateThree = new SystemState();
         stateThree.clawPosition = clawState.CLOSED;
-        stateThree.wristPosition = wristState.UP;
-        stateThree.armPosition = armPose.BASKET;
+        stateThree.wristPosition = wristState.DOWN;
+        stateThree.armPosition = armPose.ZERO;
         stateThree.drivePose = new SparkFunOTOS.Pose2D(22, 12, -135);
 
         // State 4
         SystemState stateFour = new SystemState();
         stateFour.clawPosition = clawState.OPENED;
-        stateFour.wristPosition = wristState.UP;
+        stateFour.wristPosition = wristState.DOWN;
         stateFour.armPosition = armPose.BASKET;
         stateFour.drivePose = new SparkFunOTOS.Pose2D(22, 12, -135);
 
-        // State 4
-        SystemState stateFive = new SystemState();
-        stateFive.clawPosition = clawState.OPENED;
-        stateFive.wristPosition = wristState.UP;
-        stateFive.armPosition = armPose.BASKET;
-        stateFive.drivePose = new SparkFunOTOS.Pose2D(12, 24, 0);
+        // State 4A
+        SystemState stateFourA = new SystemState();
+        stateFourA.clawPosition = clawState.OPENED;
+        stateFourA.wristPosition = wristState.UP;
+        stateFourA.armPosition = armPose.BASKET;
+        stateFourA.drivePose = new SparkFunOTOS.Pose2D(22, 12, -135);
 
         // State 5
+        SystemState stateFive = new SystemState();
+        stateFive.clawPosition = clawState.OPENED;
+        stateFive.wristPosition = wristState.DOWN;
+        stateFive.armPosition = armPose.ZERO;
+        stateFive.drivePose = new SparkFunOTOS.Pose2D(12, 24, 0);
+
+        // State 6
         SystemState endState = new SystemState();
         endState.clawPosition = clawState.OPENED;
         endState.wristPosition = wristState.UP;
@@ -102,9 +109,10 @@ public class thirdAuto extends OpMode {
         instructions.put(1, stateTwo);
         instructions.put(2, stateThree);
         instructions.put(3, stateFour);
-        instructions.put(4, stateThree);
-        instructions.put(5, endState);
+        instructions.put(4, stateFourA);
+        instructions.put(5, stateFive);
         instructions.put(6, stateThree);
+        instructions.put(7, endState);
 
 
         // ACS & DBS & Handler

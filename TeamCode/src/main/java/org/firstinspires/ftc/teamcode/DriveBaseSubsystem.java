@@ -39,12 +39,16 @@ public class DriveBaseSubsystem {
         _frontRightMotor = frontRightMotor;
         _backLeftMotor = backLeftMotor;
         _backRightMotor = backRightMotor;
+        _frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        _frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        _backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        _backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         _odometry = odometry;
 
         // PID Stuff
         translationX.init(Translational_P, Translational_I, Translational_D);
         translationY.init(Translational_P, Translational_I, Translational_D);
-        headingPID.init(0.062f, 0, 0.015f);
+        headingPID.init(0.06f, 0, 0.015f);
 
         // Make sure odo is ready
         _odometry.begin();
@@ -102,7 +106,7 @@ public class DriveBaseSubsystem {
 
     void periodicUpdate(TelemetryPacket packet) {
         currentPose.set(_odometry.getPosition());
-        driveMech(-translationX.getOutput((float) currentPose.y, (float) goal.x), translationY.getOutput((float) currentPose.x, (float) goal.y), headingPID.getOutput((float) -currentPose.h, (float) goal.h), Math.toRadians(-currentPose.h), packet);
+        driveMech(-translationX.getOutput((float) currentPose.y, (float) goal.x), translationY.getOutput((float) currentPose.x, (float) goal.y), headingPID.getOutput((float) -currentPose.h, (float) goal.h), Math.toRadians(currentPose.h), packet);
         telemetry.addData("Current Pose", "(" + currentPose.x + ", " + currentPose.y + ", " + currentPose.x + ")");
         telemetry.addData("Goal Pose", "(" + goal.x + ", " + goal.y + ", " + goal.x + ")");
         packet.fieldOverlay().fillRect(currentPose.y, currentPose.x, 18,18);

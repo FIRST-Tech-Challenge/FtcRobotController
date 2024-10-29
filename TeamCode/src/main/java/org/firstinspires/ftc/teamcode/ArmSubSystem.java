@@ -21,7 +21,7 @@ public class ArmSubSystem {
     private final PIDController extendoPID = new PIDController();
     private int capstanReference = 0;
     private int extendoReference = 0;
-    private float wristReference = 0.5F;
+    private float wristReference = 0.1F;
     private float clawReference = 0.1F;
     private double lolclock;
     private Telemetry telemetry;
