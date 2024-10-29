@@ -74,6 +74,8 @@ public class Teleop extends LinearOpMode {
             boolean pivotUpControl = gamepad2.y;
             boolean pivotDownControl = gamepad2.a;
 
+            boolean testButton = gamepad2.b;
+
             boolean resetEncoderControl = gamepad2.x;
 
             // =====================
@@ -154,6 +156,10 @@ public class Teleop extends LinearOpMode {
             // === RESET ENCODER ===
             if (resetEncoderControl) {
                 bot.d2EncoderReset();
+            }
+
+            if(testButton){
+                bot.autoIntake(2.0);
             }
 
             // === TELEMETRY ===

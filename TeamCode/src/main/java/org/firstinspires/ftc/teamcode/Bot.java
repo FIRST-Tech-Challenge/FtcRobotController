@@ -616,4 +616,12 @@ public class Bot {
         rightPushoff.setPower(0);
     }
 
+    public void autoIntake(double time){
+        this.setArmPos(-200);
+        this.setExtendPos(6.25);
+        this.runIntakeForTime(time, 1);
+        this.setExtendPos(0.0);
+        this.setArmPos(0);
+    }
+
 }
