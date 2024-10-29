@@ -13,8 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@Autonomous(name="AutoDrive")
-public class AutoDrive extends LinearOpMode {
+public class ClawAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
@@ -51,22 +50,23 @@ public class AutoDrive extends LinearOpMode {
 
             drive.updatePoseEstimate();
 
+            //Alt Auto move to different class
             limelightX = Double.parseDouble(distance[0]);
             limeLightY = Double.parseDouble(distance[1]);
 
 //            robot.drive(0.3,0,0);
             goToX=0;
             goToY = 0;
-            while(Math.hypot(goToX-limelightX, goToY-limeLightY) < 5)
-            {
-                strafe = -0.3;
-                robot.drive(forward, strafe, rotate);
-                //problem as this record drive datat
-//                telemetry.addData("x", screen.roundData(drive.pose.position.x));
-//                telemetry.addData("y", screen.roundData(drive.pose.position.y));
-//                telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
-                telemetry.update();
-            }
+//            if(Math.hypot(goToX-limelightX, goToY-limeLightY) > 48)
+//            {
+//                strafe = -0.3;
+//                robot.drive(forward, strafe, rotate);
+//                //problem as this record drive datat
+////                telemetry.addData("x", screen.roundData(drive.pose.position.x));
+////                telemetry.addData("y", screen.roundData(drive.pose.position.y));
+////                telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
+//                telemetry.update();
+//            }
 
 
 
