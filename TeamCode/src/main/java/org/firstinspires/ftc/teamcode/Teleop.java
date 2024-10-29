@@ -78,6 +78,8 @@ public class Teleop extends LinearOpMode {
 
             boolean resetEncoderControl = gamepad2.x;
 
+            boolean extendSaveControl = gamepad2.dpad_down;
+
             // =====================
 
 
@@ -158,6 +160,11 @@ public class Teleop extends LinearOpMode {
                 bot.d2EncoderReset();
             }
 
+            // === Extend Save ===
+            if(extendSaveControl){
+                bot.runExtend(1.0);
+            }
+            // === Test Button ===
             if(testButton){
                 bot.autoIntake(2.0);
             }
