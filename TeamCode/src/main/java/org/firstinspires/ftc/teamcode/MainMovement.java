@@ -73,9 +73,9 @@ public class MainMovement extends LinearOpMode {
     //move backwards all = c
     //strafe left = BL, FR = cc, BR, FL = c
     private DcMotor BLDrive; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor BRDrive;
-    private DcMotor FLDrive;
-    private DcMotor FRDrive;
+    private DcMotor BRDrive; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
+    private DcMotor FLDrive; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
+    private DcMotor FRDrive; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
     final float joystickDeadzone = 0.1f;
 
     boolean usingLStick;
@@ -115,12 +115,12 @@ public class MainMovement extends LinearOpMode {
 
     private void epicRotationMovement() {
         // rotates the robot if left stick is not being used (movement takes priorities)
-        if (!(Math.abs(RjoystickX) <= joystickDeadzone) && !(Math.abs(RjoystickY) <= joystickDeadzone) && !usingLStick) {
-            if(gamepad1.right_stick_x > 0) {
+        if (!(Math.abs(RjoystickX) <= joystickDeadzone) && !usingLStick) {
+            if(RjoystickX > 0) {
                 
                 setMotorPowers(1, -1, 1, -1, RjoystickX); // clockwise rotation
                 
-            } else if (gamepad1.right_stick_x < 0) {
+            } else if (RjoystickX < 0) {
                 
                 setMotorPowers(-1, 1, -1, 1, RjoystickX); // counter-clockwise rotation
                 
