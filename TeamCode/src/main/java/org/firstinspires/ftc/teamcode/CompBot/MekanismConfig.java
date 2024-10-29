@@ -29,7 +29,7 @@ public class MekanismConfig {
     ElapsedTime homeTimer = new ElapsedTime();
 
     DcMotor pivot, slide;
-    Servo claw, wrist, spintake;
+    Servo wrist, intake;
 
     DigitalChannel pivotHome, slideHome;
 
@@ -46,7 +46,7 @@ public class MekanismConfig {
      */
     public void initMekanism() {
 
-        // Init slaw, claw, and pivot
+        // Init slide and pivot
         pivot = myOp.hardwareMap.get(DcMotor.class, "pivot");
         slide = myOp.hardwareMap.get(DcMotor.class, "slide");
 
@@ -72,13 +72,11 @@ public class MekanismConfig {
 
         // Servo Configs
         wrist = myOp.hardwareMap.get(Servo.class, "wrist");
-        claw = myOp.hardwareMap.get(Servo.class, "claw");
-        spintake = myOp.hardwareMap.get(Servo.class, "spintake");
+        intake = myOp.hardwareMap.get(Servo.class, "intake");
 
         // Sets the end stops of the servos
         wrist.scaleRange(0, 1);
-        claw.scaleRange(0, 1);
-        spintake.scaleRange(0, 1);
+        intake.scaleRange(0, 1);
 
 
         // Homing switches config
@@ -220,32 +218,17 @@ public class MekanismConfig {
 
 
     /**
-     * Sets the power of the claw
-     *
-     * @param position (-1) to 1.
-     *                 <p> 1 - Full intake.
-     *                 <p> (-1) - Full reverse
-     */
-    public void setClaw(double position) {
-
-        position = (position + 1) / 2;
-
-        claw.setPosition(position);
-    }
-
-
-    /**
      * Sets the power of the intake
      *
      * @param power (-1) to 1.
      *              <p> 1 - Full intake.
      *              <p> (-1) - Full reverse
      */
-    public void setSpintake(double power) {
+    public void setIntake(double power) {
 
         power = (power + 1) / 2;
 
-        spintake.setPosition(power);
+        intake.setPosition(power);
     }
 
 

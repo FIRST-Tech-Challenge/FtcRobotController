@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.CompBot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @TeleOp(name = "CompBot Swerve", group = "CompBot")
@@ -13,13 +14,16 @@ public class CompBot extends LinearOpMode {
     GraphicTelemetry graph = new GraphicTelemetry(this);
 
 
-
     Thread mekThread = new Thread() {
         public void run() {
 
             waitForStart();
             while (opModeIsActive()) {
+                
+                mek.slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                mek.slide.setPower(-gamepad2.left_stick_y);
 
+                /*
                 boolean clipCanceled = false;
 
                 if (gamepad2.x) {
@@ -36,9 +40,9 @@ public class CompBot extends LinearOpMode {
                 if (!clipCanceled) {
                     mek.armLength(10);
                 }
-
-
+                */
             }
+
         }
 
     };
@@ -68,23 +72,10 @@ public class CompBot extends LinearOpMode {
 
         mekThread.start();
 
-
         waitForStart();
         while (opModeIsActive()) {
-
-            // Gamepad 1
-            double speedGMP1 = gamepad1.left_trigger - gamepad1.right_trigger; // Makes it so that the triggers cancel each other out if both are pulled at the same time
-            double angleGMP1 = -gamepad1.right_stick_x;
-
-            if (speedGMP1 != 0) swerve.moveStraight(gamepad1.left_stick_x, speedGMP1);
-            else if (angleGMP1 != 0) swerve.rotate(angleGMP1);
-            else {
-                swerve.FLMotor.setPower(0);
-                swerve.BLMotor.setPower(0);
-                swerve.BRMotor.setPower(0);
-                swerve.FRMotor.setPower(0);
-            }
-
+            idle();
         }
+
     }
 }
