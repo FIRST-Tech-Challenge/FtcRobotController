@@ -31,10 +31,12 @@ public class Auto extends Robot {
         Init();
         WaitForStart();
         if (opModeIsActive()) {
-            move(0.00, 1.0, 0 , new double[]{0.0, 0.0}, new double[]{0.04, 0.09, 0.0, 0.0},new double[]{0.035, 0.08, 0.0, 0.0});
-            move(1.00, 1.0, 0 , new double[]{0.0, 0.0}, new double[]{0.04, 0.09, 0.0, 0.0},new double[]{0.035, 0.08, 0.0, 0.0});
-            move(2.00, 2.0, 0 , new double[]{0.0, 0.0}, new double[]{0.04, 0.09, 0.0, 0.0},new double[]{0.035, 0.08, 0.0, 0.0});
+//            move(1.0, 1.0, 90.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
+//                    new double[]{0.12, 0.081, 0.0, 0.0},new double[]{0.1, 0.041, 0.0, 0.0}, 0.0);
+            move(1.00, 1.0, -90.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
+                    new double[]{0.12, 0.081, 0.0, 0.0},new double[]{0.1, 0.041, 0.0, 0.0}, 0.0);
+            move(0.00, 0.0, 180.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
+                    new double[]{0.12, 0.09, 0.0, 0.0},new double[]{0.1, 0.041, 0.0, 0.0}, 0.1);
         }
-
     }
 }

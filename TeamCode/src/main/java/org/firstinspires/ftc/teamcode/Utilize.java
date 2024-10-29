@@ -42,4 +42,7 @@ public class Utilize {
     public  static double toRadian(double degs){
         return Math.toRadians(degs) * -1;
     }
+    public  static double toDegree(double rads){
+        return Math.toDegrees(rads) * -1;
+    }
 }

@@ -34,8 +34,8 @@ public abstract class Robot extends LinearOpMode {
     public final double   Wheel_Diameter_Inch = 7.5/2.54;
     public final double   Counts_per_Inch     = Gear_20_HD_HEX / (Wheel_Diameter_Inch * Math.PI);
     public double[]       currentXY           = {0, 0};
-    public final double   L                   = 32.9; //distance between 1 and 2 in cm
-    public final double   B                   = 9.7; //distance between center of 1 and 2 and 3 in cm
+    public final double   L                   = 33.4; //distance between 1 and 2 in cm
+    public final double   B                   = 9.65; //distance between center of 1 and 2 and 3 in cm
     public final double   r                   = 2.4 ; // Odomentry wheel radius in cm
     public final double   N                   = 2000.0 ; // ticks per one rotation
     public double         cm_per_tick     = 2.0 * Math.PI * r / N ;
@@ -44,6 +44,9 @@ public abstract class Robot extends LinearOpMode {
     int                   left_encoder_pos , right_encoder_pos , center_encoder_pos ,
                           prev_left_encoder_pos, prev_right_encoder_pos, prev_center_encoder_pos = 0;
     double                CurrentYaw, OldYaw         = 0;
+    private double Current_Time = System.nanoTime() * 1E-9;
+    private double Last_Time = Current_Time;
+    private double Last_yaw;
 
 
     public void Odomentry() {
@@ -51,11 +54,16 @@ public abstract class Robot extends LinearOpMode {
         right_encoder_pos = -encoder2.getCurrentPosition();
         center_encoder_pos = encoder3.getCurrentPosition();
 
+        double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        heading = yaw;
+
         double delta_left_encoder_pos = (left_encoder_pos - prev_left_encoder_pos) * cm_per_tick;
         double delta_right_encoder_pos = (right_encoder_pos - prev_right_encoder_pos) * cm_per_tick;
         double delta_center_encoder_pos = (center_encoder_pos - prev_center_encoder_pos) * cm_per_tick;
 
-        double phi = (delta_right_encoder_pos - delta_left_encoder_pos) / L;
+//        double phi = (delta_right_encoder_pos - delta_left_encoder_pos) / L;
+        double phi = WrapRads(Last_yaw - yaw);
+        telemetry.addData("phi", phi);
         double delta_middle_pos = (delta_left_encoder_pos + delta_right_encoder_pos) / 2.0;
         double delta_perp_pos = delta_center_encoder_pos - B * phi;
 
@@ -64,13 +72,14 @@ public abstract class Robot extends LinearOpMode {
 
         Posx += delta_x;
         Posy += delta_y;
-        heading += phi;
+//        heading += phi;
 
-        heading = WrapRads(heading);
+//        heading = WrapRads(heading);
 
         prev_left_encoder_pos = left_encoder_pos;
         prev_right_encoder_pos = right_encoder_pos;
         prev_center_encoder_pos = center_encoder_pos;
+        Last_yaw = yaw;
 
 //        CurrentYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -98,16 +107,18 @@ public abstract class Robot extends LinearOpMode {
 //        OldYaw = CurrentYaw;
     }
 
-    public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_X, double[] Kpidf_Y) {
-        Controller  pidR    = new Controller(2.4, 0.8, 0.0, 0, 0.1, toRadian(0.75));
-        Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[0], 0.5);
-        Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[1], 0.5);
+    public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
+                     double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time) {
+        Controller  pidR    = new Controller(Kpidf_R[0], Kpidf_R[1], Kpidf_R[2], Kpidf_R[3], basespeed[0], toRadian(0.75));
+        Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 1);
+        Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[2], 1);
         double targetx = tilex * tileSize[0];
         double targety = tiley * tileSize[1];
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
         int IS_Complete = 0;
+        this.Current_Time = System.nanoTime() * 1E-9;
+        this.Last_Time = this.Current_Time;
         while (opModeIsActive()) {
+            this.Current_Time = System.nanoTime() * 1E-9;
             Odomentry();
 //            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double Vx = DelthaX.Calculate((targetx - Posx)*-1);
@@ -117,14 +128,18 @@ public abstract class Robot extends LinearOpMode {
             double y2    =  (Math.sin(heading) * Vx) + (Math.cos(heading) * Vy);
 
             double r =  pidR.Calculate(WrapRads(toRadian(setpoint) - heading));
-            double d = Math.max(Math.abs(Vx) + Math.abs(Vy), 1);
-            MovePower((y2 - x2 - r) / d, (y2 + x2 + r) / d,
-                    (y2 + x2 - r) / d, (y2 - x2 + r) / d);
+            double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
+            double Move_Factor = Range.clip(this.Current_Time - this.Last_Time, 0, 1);
+            MovePower((y2 - x2 - r) / d * Move_Factor, (y2 + x2 + r) / d * Move_Factor,
+                      (y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor);
 //            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            telemetry.addData("Move_Factor", Move_Factor);
             telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
             telemetry.addData("tagetXtargetY", "%6f cm %6f cm" , targetx, targety);
+            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
             telemetry.addData("X", "%6f cm/s %6f cm" , Vx, DelthaX.ErrorTolerance);
             telemetry.addData("Y", "%6f cm/s %6f cm" , Vy, DelthaY.ErrorTolerance);
+            telemetry.addData("ErrorR", pidR.Error);
             telemetry.addData("ErrorX", DelthaX.Error);
             telemetry.addData("ErrorY", DelthaY.Error);
             telemetry.addData("Complete", IS_Complete);
@@ -136,7 +151,7 @@ public abstract class Robot extends LinearOpMode {
             }
             IS_Complete = 0;
         }
-        Break(0.5);
+        Break(Brake_Time);
     }
 
 
@@ -164,6 +179,7 @@ public abstract class Robot extends LinearOpMode {
         imu = hardwareMap.get(IMU.class,       "imu");
         FL  = hardwareMap.get(DcMotorEx.class, "Front_Left");    FR  = hardwareMap.get(DcMotorEx.class, "Front_Right");
         BL  = hardwareMap.get(DcMotorEx.class, "Back_Left");     BR  = hardwareMap.get(DcMotorEx.class, "Back_Right");
+        Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL ;
         encoder2 = FR;
         encoder3 = BL;

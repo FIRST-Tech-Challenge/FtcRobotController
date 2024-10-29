@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Utilize.WrapRads;
 import static org.firstinspires.ftc.teamcode.Utilize.toRadian;
+import static org.firstinspires.ftc.teamcode.Utilize.toDegree;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,8 +53,8 @@ public class Tele extends Robot {
         double d = Math.max(Math.abs(x2) + Math.abs(y2) + Math.abs(r), 1);
         MovePower((y2 - x2 - r) / d, (y2 + x2 + r) / d,
                 (y2 + x2 - r) / d, (y2 - x2 + r) / d);
-        telemetry.addData("yaw", Math.toDegrees(-yaw));
-        telemetry.addData("setpoint", Math.toDegrees(-setpoint));
+        telemetry.addData("yaw", toDegree(yaw));
+        telemetry.addData("setpoint", toDegree(setpoint));
         telemetry.addData("error", controller.Error);
     }
     @Override
@@ -67,7 +68,7 @@ public class Tele extends Robot {
 
 //                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
                 telemetry.addData("LRM", "%6d  %6d %6d", left_encoder_pos, right_encoder_pos, center_encoder_pos);
-                telemetry.addData("heading", heading);
+                telemetry.addData("heading", toDegree(heading));
                 telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
                 telemetry.update();
                 if(gamepad1.a){
