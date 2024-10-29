@@ -74,3 +74,9 @@ public class DriveOnly extends OpMode {
         telemetry.addData("Back Right: ", backRightPower);
     }
 }
+
+//BLANK CHASSIS:
+//0=BL
+//1=FL
+//2=BR
+//3=FR
