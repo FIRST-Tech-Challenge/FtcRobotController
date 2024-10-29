@@ -485,31 +485,6 @@ public class Bot {
     }
 
     /**
-     * Auto function to set pivot arm to position based on degree
-     * NOTE: NOT TESTED
-     * @param degree position by angle degree
-     */
-    //TODO FIX
-    public void setArmPos(double degree){
-        double totalTick = MAX_PIVOT - MIN_PIVOT;
-        double totalDegrees = 180;
-        double targetPos = ((this.getArmPosition() - MIN_PIVOT) / totalTick) * totalDegrees;
-
-        armPivotMotor.setTargetPosition((int)targetPos);
-        armPivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        armPivotMotor.setPower(0.75);
-
-        while(opMode.opModeIsActive() && armPivotMotor.isBusy()){
-            opMode.telemetry.addData("Pivot Pos: ", armPivotMotor.getCurrentPosition());
-        }
-
-        armPivotMotor.setPower(0);
-
-        armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    /**
      * Auto function to set pivot arm to position based on tick
      * @param tick position by encoder tick
      */
