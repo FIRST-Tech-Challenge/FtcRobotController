@@ -16,10 +16,8 @@ import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 @TeleOp(name = "basic telemetry for gray robot", group = "CompBot")
 public class basicTelemGray extends LinearOpMode {
     /*
-    The point of this code is to be a basic telem that works for thursday
-    using different classes already made and is not tested as of creation 10/21/24
-    date last updated and tested: 10/21/24
-    uses clawSlideImport and permaIntake
+    The point of this code is to be a basic telem that works for the gray robot
+    date last updated and tested:
     */
 
     DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
@@ -34,8 +32,8 @@ public class basicTelemGray extends LinearOpMode {
 
     // In case builders are bad, is offset center for servo
     double FLServoOffSet = -.005;    //0.00
-    double FRServoOffSet = .00;     //0.00
-    double BLServoOffSet = .01;     //0.01
+    double FRServoOffSet = .00;      //0.00
+    double BLServoOffSet = .01;      //0.01
     double BRServoOffSet = .045;     //.007
 
 
@@ -163,8 +161,8 @@ public class basicTelemGray extends LinearOpMode {
         FRMotor.setZeroPowerBehavior(BRAKE);
         BRMotor.setZeroPowerBehavior(BRAKE);
 
-        FLMotor.setDirection(FORWARD);
-        BLMotor.setDirection(FORWARD);
+        FLMotor.setDirection(REVERSE);
+        BLMotor.setDirection(REVERSE);
         FRMotor.setDirection(FORWARD);
         BRMotor.setDirection(REVERSE);
 
