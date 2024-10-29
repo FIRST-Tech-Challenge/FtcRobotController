@@ -616,4 +616,22 @@ public class Bot {
         rightPushoff.setPower(0);
     }
 
+    /**
+     * Auto Intake Function
+     * @param time how long to run intake
+     */
+    public void autoIntake(double time){
+        this.setArmPos(-200);
+        this.setExtendPos(6.25);
+        this.runIntakeForTime(time, 1);
+        this.setExtendPos(0.0);
+        this.setArmPos(0);
+    }
+
+    /**
+     * Used for bypass on extend if encoder not zeroed correctly
+     * @param power power to motor
+     */
+    public void runExtend(double power){ extendArmMotor.setPower(power); }
+
 }

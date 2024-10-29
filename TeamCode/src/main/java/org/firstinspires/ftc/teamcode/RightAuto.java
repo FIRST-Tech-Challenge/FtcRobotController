@@ -20,7 +20,7 @@ public class RightAuto extends LinearOpMode {
 
         robot.setExtendPos(12.75);
         robot.setArmPos(450);
-        robot.runIntakeForTime(2.0, 1);
+        robot.runIntakeForTime(2.0, -1);
         robot.setExtendPos(0);
         robot.setArmPos(0);
         //puts samples in
