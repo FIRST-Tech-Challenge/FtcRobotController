@@ -91,7 +91,7 @@ public class FieldCentricDrive extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
 
         // https://www.youtube.com/watch?v=QEZO5e2zUcY
-        angles = new Orientation();
+//        angles = new Orientation();
 
 
         // motor braking
@@ -132,67 +132,85 @@ public class FieldCentricDrive extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        boolean aPressedDelta = false;
-        boolean aPressedPrevious = false;
+        aPressedDelta = false;
+        aPressedPrevious = false;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
-
-            // This button choice was made so that it is hard to hit on accident,
-            // it can be freely changed based on preference.
-            // The equivalent button is start on Xbox-style controllers.
-            if (gamepad1.options) {
-                imu.resetYaw();
-            }
-
-            boolean aPressed = gamepad1.a;
-
-            if (aPressed) {
-                // if a was not pressed previously, aPressedDelta is true
-                aPressedDelta = !aPressedPrevious;
-            }
-
-            // if the button has been pressed and the action has not been done yet
-            if (aPressedDelta) {
-                // do the action
-            }
-
-            // a pressed is not changing, so set to false
-            aPressedDelta = false;
-
-            // get previous a pressed value
-            aPressedPrevious = aPressed;
-
-
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            telemetry.addData("bot heading: ", botHeading);
-
-            // Rotate the movement direction counter to the bot's rotation
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            rotX = rotX * 1.1; // counteract imperfect strafing
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-
-            double frontLeftPower = (rotY + rotX + rx) / denominator;
-            double backLeftPower = (rotY - rotX + rx) / denominator;
-            double frontRightPower = (rotY - rotX - rx) / denominator;
-            double backRightPower = (rotY + rotX - rx) / denominator;
-
-            // Send calculated power to wheels
-            leftFrontDrive.setPower(frontLeftPower);
-            rightFrontDrive.setPower(frontRightPower);
-            leftBackDrive.setPower(backLeftPower);
-            rightBackDrive.setPower(backRightPower);
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.update();
+            updateRobot();
         }
+    }
+    boolean aPressed;
+    boolean aPressedDelta;
+    boolean aPressedPrevious;
+    double y; // Remember, Y stick value is reversed
+    double x; // Counteract imperfect strafing
+    double rx;
+    double botHeading;
+    double rotX;
+    double rotY;
+    double frontLeftPower;
+    double backLeftPower;
+    double frontRightPower;
+    double backRightPower;
+
+    public void updateRobot() {
+        y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+        x = gamepad1.left_stick_x; // Counteract imperfect strafing
+        rx = gamepad1.right_stick_x;
+
+        // This button choice was made so that it is hard to hit on accident,
+        // it can be freely changed based on preference.
+        // The equivalent button is start on Xbox-style controllers.
+        if (gamepad1.options) {
+            imu.resetYaw();
+        }
+
+        aPressed = gamepad1.a;
+
+        // if a is pressed
+        if (aPressed) {
+            // if a was not pressed previously, aPressedDelta is true
+            aPressedDelta = !aPressedPrevious;
+        }
+
+        // if the button has been pressed and the action has not been done yet
+        if (aPressedDelta) {
+            // do the action
+        }
+
+        // a pressed is not changing, so set to false
+        aPressedDelta = false;
+
+        // get previous a pressed value
+        aPressedPrevious = aPressed;
+
+        botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // Rotate the movement direction counter to the bot's rotation
+        rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        rotX = rotX * 1.1; // counteract imperfect strafing
+
+        rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+
+        frontLeftPower = (rotY + rotX + rx) / denominator;
+        backLeftPower = (rotY - rotX + rx) / denominator;
+        frontRightPower = (rotY - rotX - rx) / denominator;
+        backRightPower = (rotY + rotX - rx) / denominator;
+
+        // Send calculated power to wheels
+        leftFrontDrive.setPower(frontLeftPower);
+        rightFrontDrive.setPower(frontRightPower);
+        leftBackDrive.setPower(backLeftPower);
+        rightBackDrive.setPower(backRightPower);
+
+        // Show the elapsed game time and wheel power.
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("bot heading: ", botHeading);
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+        telemetry.update();
     }
 }
