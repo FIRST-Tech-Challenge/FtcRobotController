@@ -74,7 +74,7 @@ public class Teleop extends LinearOpMode {
             boolean pivotUpControl = gamepad2.y;
             boolean pivotDownControl = gamepad2.a;
 
-            boolean testButton = gamepad2.b;
+            boolean groundIntakeControl = gamepad2.b;
 
             boolean resetEncoderControl = gamepad2.x;
 
@@ -92,6 +92,10 @@ public class Teleop extends LinearOpMode {
             //when no button is pressed, nothing rotates
             else {
                 bot.setIntakePosition(0.0);
+            }
+            // ground intake control
+            if(groundIntakeControl){
+                bot.autoIntake(2.0);
             }
 
             // === DRIVE ===
@@ -164,10 +168,7 @@ public class Teleop extends LinearOpMode {
             if(extendSaveControl){
                 bot.runExtend(1.0);
             }
-            // === Test Button ===
-            if(testButton){
-                bot.autoIntake(2.0);
-            }
+
 
             // === TELEMETRY ===
             telemetry.addData("Current Extend Pos: ", bot.getExtendPos());
