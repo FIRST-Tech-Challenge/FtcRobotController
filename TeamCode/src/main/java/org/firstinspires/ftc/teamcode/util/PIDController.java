@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 public class PIDController {
+
     private double kP;
     private double kI;
     private double kD;
@@ -27,8 +28,7 @@ public class PIDController {
         lastError = 0;
     }
 
-    public double calculate(double setpoint, double measuredValue) {
-        double error = setpoint - measuredValue;
+    public double calculate(double error) {
         integralSum += error;
         double derivative = error - lastError;
         lastError = error;
