@@ -7,7 +7,7 @@ import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.PotentiometerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
-import org.nknsd.robotics.team.components.WheelDriver;
+import org.nknsd.robotics.team.components.drivers.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.components.drivers.EACDriver;
 

@@ -1,4 +1,4 @@
-package org.nknsd.robotics.team.components;
+package org.nknsd.robotics.team.components.drivers;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
+import org.nknsd.robotics.team.components.GamePadHandler;
+import org.nknsd.robotics.team.components.WheelHandler;
 
 // Adds events to gamepad to control the wheels
 public class WheelDriver implements NKNComponent {
@@ -45,7 +47,7 @@ public class WheelDriver implements NKNComponent {
         this.forwardStick = forwardStick;
         this.strafeStick = strafeStick;
         this.turnStick = turnStick;
-        speedStepAmount = (speedMax - speedMin) / 5;
+        speedStepAmount = (speedMax - speedMin) / speedSteps;
     }
 
     @Override

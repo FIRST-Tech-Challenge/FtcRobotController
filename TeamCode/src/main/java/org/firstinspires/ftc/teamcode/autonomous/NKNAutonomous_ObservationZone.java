@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.autonomous.PushAuto;
+import org.nknsd.robotics.team.autonomous.ObservationZoneAuto;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Autonomous Test")
-public class NKNAutonomous_Test extends OpMode {
+@Autonomous(name = "Observation Zone Auto")
+public class NKNAutonomous_ObservationZone extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     //Time counters are in milliseconds
@@ -20,7 +20,7 @@ public class NKNAutonomous_Test extends OpMode {
     // We use these two to delay telemetry outputs to ~200 milliseconds
 
     // Whatever program is attached here will be loaded with all its glorious components
-    private final NKNProgram program = new PushAuto();
+    private final NKNProgram program = new ObservationZoneAuto();
 
     // Code to run ONCE when the driver hits INIT
     @Override

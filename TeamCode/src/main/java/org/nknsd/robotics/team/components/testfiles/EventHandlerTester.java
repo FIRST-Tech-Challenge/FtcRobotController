@@ -1,4 +1,4 @@
-package org.nknsd.robotics.team.components;
+package org.nknsd.robotics.team.components.testfiles;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
+import org.nknsd.robotics.team.components.GamePadHandler;
 
 public class EventHandlerTester implements NKNComponent {
     private GamePadHandler gamePadHandler;

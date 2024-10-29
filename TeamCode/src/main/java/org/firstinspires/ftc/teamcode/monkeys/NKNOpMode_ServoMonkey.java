@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.monkeys;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.RotatorMonkeyProgram;
+import org.nknsd.robotics.team.monkeys.ServoMonkeyProgram;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Rotator Monkey")
-public class NKNOpMode_RotatorMonkey extends OpMode {
+@TeleOp(name = "Servo Monkey")
+public class NKNOpMode_ServoMonkey extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     //Time counters are in milliseconds
@@ -20,7 +20,7 @@ public class NKNOpMode_RotatorMonkey extends OpMode {
     // We use these two to delay telemetry outputs to ~200 milliseconds
 
     // Whatever program is attached here will be loaded with all its glorious components
-    private final NKNProgram program = new RotatorMonkeyProgram();
+    private final NKNProgram program = new ServoMonkeyProgram();
 
     // Code to run ONCE when the driver hits INIT
     @Override

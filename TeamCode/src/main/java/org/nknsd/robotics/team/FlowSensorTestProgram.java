@@ -5,7 +5,7 @@ import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
 import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
-import org.nknsd.robotics.team.components.WheelDriver;
+import org.nknsd.robotics.team.components.drivers.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
 
 import java.util.List;
