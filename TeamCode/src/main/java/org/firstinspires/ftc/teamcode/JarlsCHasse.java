@@ -24,8 +24,8 @@ public class JarlsCHasse {
     JarlsCHasse(HardwareMap hwMap){
         RMFront = hwMap.get(DcMotorEx.class, "rightFront");
         LMFront = hwMap.get(DcMotorEx.class, "leftFront");
-        RMBack = hwMap.get(DcMotorEx.class, "rightBack");
-        LMBack = hwMap.get(DcMotorEx.class, "leftFront");
+        RMBack = hwMap.get(DcMotorEx.class, "rightRear");
+        LMBack = hwMap.get(DcMotorEx.class, "leftRear");
 
         RMFront.setDirection(DcMotorEx.Direction.REVERSE);
         LMBack.setDirection(DcMotorEx.Direction.REVERSE);
