@@ -50,8 +50,7 @@ public class Testing_Oct25 extends LinearOpMode {
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
+        //Match names to config thingy
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
@@ -184,7 +183,7 @@ public class Testing_Oct25 extends LinearOpMode {
 
 
 
-
+            //Use Dpad to control the tower movement variables.
             if(!gamepad1.dpad_up&&!gamepad1.dpad_down){
                 twr=-0.075;
             } else if (!gamepad1.dpad_down&&gamepad1.dpad_up) {
