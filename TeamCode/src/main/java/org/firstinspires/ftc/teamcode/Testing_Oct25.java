@@ -184,23 +184,7 @@ public class Testing_Oct25 extends LinearOpMode {
 
 
 
-            //Tower Control, Down Function Still Broken
-//            if (gamepad1.dpad_down){
-//                leftCH.setDirection(DcMotor.Direction.FORWARD);
-//                rightCH.setDirection(DcMotor.Direction.REVERSE);
-//                twr = -0.5;
-//            };
-//            if (!gamepad1.dpad_down){
-//                twr = 0;
-//            }
-//            if (gamepad1.dpad_up){
-//                leftCH.setDirection(DcMotor.Direction.REVERSE);
-//                rightCH.setDirection(DcMotor.Direction.FORWARD);
-//                twr = -0.5;
-//            }
-//            if (!gamepad1.dpad_up){
-//                twr = 0;
-//            }
+
             if(!gamepad1.dpad_up&&!gamepad1.dpad_down){
                 twr=-0.075;
             } else if (!gamepad1.dpad_down&&gamepad1.dpad_up) {
@@ -208,8 +192,6 @@ public class Testing_Oct25 extends LinearOpMode {
             } else if (gamepad1.dpad_down&&!gamepad1.dpad_up) {
                 twr=0.5;
             }
-//            twr = gamepad1.left_bumper ? 0.5 : 0.0;
-//            twr = gamepad1.right_bumper ? -0.5 : 0.0;
 
             //make the wheels deal with all the data
             leftFrontDrive.setPower(leftFrontPower);
