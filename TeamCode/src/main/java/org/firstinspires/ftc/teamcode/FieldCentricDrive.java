@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -78,6 +79,7 @@ public class FieldCentricDrive extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private IMU imu = null;
     private Orientation angles = null;
+    private ServoImplEx servo = null;
 
 
     @Override
@@ -184,6 +186,15 @@ public class FieldCentricDrive extends LinearOpMode {
 
         // get previous a pressed value
         aPressedPrevious = aPressed;
+        if(gamepad1.a){
+            servo.setPosition(1.0);
+
+        }
+        if(gamepad1.b){
+            servo.setPosition(0.0);
+
+        }
+        // Set
 
         botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
