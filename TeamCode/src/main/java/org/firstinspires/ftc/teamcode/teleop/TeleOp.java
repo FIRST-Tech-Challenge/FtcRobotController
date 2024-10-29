@@ -84,7 +84,7 @@ public class TeleOp extends LinearOpMode {
             }
             telemetry.addData("Arm Position", armPos);
 
-            }
+
                 //claw
                 if (controller.a.onPress()) {
                     claw.release();
@@ -107,5 +107,7 @@ public class TeleOp extends LinearOpMode {
 
         }
 
-    }
+
+}
+
 
