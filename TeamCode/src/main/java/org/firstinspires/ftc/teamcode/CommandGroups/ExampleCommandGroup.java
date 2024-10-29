@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.CommandGroups;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 
-import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
+
+import java.util.ArrayList;
 
 // Example Sequential Command Group
 // There are also:
@@ -16,6 +21,81 @@ public class ExampleCommandGroup extends SequentialCommandGroup {
     public ExampleCommandGroup() {
 
         addCommands (
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
+                        new Rotation2d(Math.toRadians(-135.0))
+                ),
+
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-135.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(-1.24, 0.95, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90.0))
+                ),
+
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
+                        new Rotation2d(Math.toRadians(-135.0))
+                ),
+
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-135.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(-1.50, 0.95, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90.0))
+                ),
+
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
+                        new Rotation2d(Math.toRadians(-135.0))
+                ),
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-135.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(-1.75, 0.95, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90.0))
+                ),
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
+                        new Rotation2d(Math.toRadians(-135.0))
+                )
+
         // new command1
         // new command2
         // new command3

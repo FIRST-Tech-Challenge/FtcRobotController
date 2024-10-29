@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-
-
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
@@ -57,10 +55,9 @@ public class OdometryPod extends SubsystemBase {
     @Override
     public void periodic() {
 
-        RobotContainer.ActiveOpMode.telemetry.addData("leftEncoder",leftEncoder.getDistance());
-        RobotContainer.ActiveOpMode.telemetry.addData("rightEncoder",rightEncoder.getDistance());
-        RobotContainer.ActiveOpMode.telemetry.addData("frontEncoder",frontEncoder.getDistance());
-
+        //RobotContainer.ActiveOpMode.telemetry.addData("leftEncoder",leftEncoder.getDistance());
+        //RobotContainer.ActiveOpMode.telemetry.addData("rightEncoder",rightEncoder.getDistance());
+        //RobotContainer.ActiveOpMode.telemetry.addData("frontEncoder",frontEncoder.getDistance());
         RobotContainer.ActiveOpMode.telemetry.update();
     }
 

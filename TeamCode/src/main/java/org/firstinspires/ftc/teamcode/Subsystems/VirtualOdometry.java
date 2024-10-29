@@ -1,18 +1,21 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Vector2d;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
+// Virtual odometry. Used together with virtual drivetrain subsystem.
+// Useful for emulating robot without using actual hardware.
+
 /** Subsystem */
-//@Config // EXAMPLE - use @Config to add public variables to dashboard for realtime updating
-public class Odometry extends SubsystemBase {
+public class VirtualOdometry extends SubsystemBase {
 
     // for Dashboard demo purposes only!
     // values on dashboard for edit must be public and static
@@ -35,7 +38,7 @@ public class Odometry extends SubsystemBase {
     private double[] currentTrajectoryYpoints;
 
     /** Place code here to initialize subsystem */
-    public Odometry() {
+    public VirtualOdometry() {
 
     }
 
@@ -44,49 +47,17 @@ public class Odometry extends SubsystemBase {
     @Override
     public void periodic() {
 
-        double leftPos;
-        double rightPos;
-        double frontPos;
+        // get drive system kinematics
+        MecanumDriveKinematics kinematics = RobotContainer.drivesystem.GetKinematics();
 
-        leftPos = RobotContainer.odometryPod.getLeftEncoderDistance();
-        rightPos = RobotContainer.odometryPod.getRightEncoderDistance();
-        frontPos = RobotContainer.odometryPod.getFrontEncoderDistance();
+        // apply reverse kinematics to wheel speeds to get chassis speeds
+        ChassisSpeeds speeds;
+        speeds = kinematics.toChassisSpeeds(RobotContainer.drivesystem.GetWheelSpeeds());
 
-        double leftChangePos;
-        double rightChangePos;
-        double frontChangePos;
-
-        leftChangePos = leftPos - previousLeftPos;
-        rightChangePos = rightPos - previousRightPos;
-        frontChangePos = frontPos - previousFrontPos;
-
-        previousLeftPos = leftPos;
-        previousRightPos = rightPos;
-        previousFrontPos = frontPos;
-
-        // creating the value of sin theta (aka the angle of the hipotinuse)
-        double theta = Math.asin((rightChangePos - leftChangePos)/RobotContainer.odometryPod.LATERAL_DISTANCE);
-
-        // equation that tells us how much the robot has moved forward
-        double ForwardChange = (leftChangePos + rightChangePos) / 2.0 ;
-
-        // equation that tells us how much the robot has moved laterally
-        double LateralChange = (frontChangePos - RobotContainer.odometryPod.FORWARD_OFFSET * Math.sin(theta));// Lateral means left to right
-
-        double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
-
-        double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
-
-        double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
-
-        fieldX += fieldForwardChange;// += means is equal to and add fieldForwardChange to itself
-
-        fieldY += fieldLateralChange;// += means is equal to and add fieldLateralChange to itself
-
-        fieldAngle = IMUHeading;
-
-        RobotContainer.ActiveOpMode.telemetry.addData("fieldX",fieldX);
-        RobotContainer.ActiveOpMode.telemetry.addData("fieldY",fieldY);
+        // estimate odometry based on drive system chassis speeds
+        fieldX += 0.02 * speeds.vxMetersPerSecond;
+        fieldY += 0.02 * speeds.vyMetersPerSecond;
+        fieldAngle += 0.02 * speeds.omegaRadiansPerSecond;
 
         // update FTC dashboard with latest odometry info - in separate function below for clarity
         UpdateDashBoard();
@@ -148,6 +119,16 @@ public class Odometry extends SubsystemBase {
 
         // update field
         RobotContainer.DashBoard.sendTelemetryPacket(field);
+
+        // show robot position on dashboard
+        RobotContainer.DBTelemetry.addData("Robot x pos: ", fieldX);
+        RobotContainer.DBTelemetry.addData("Robot y pos: ", fieldY);
+        RobotContainer.DBTelemetry.addData("Robot angle: ", Math.toDegrees(fieldAngle));
+        RobotContainer.DBTelemetry.update();
+
+        //RobotContainer.DBTelemetry.addData("Robot y pos: ", "%.2f", GetWheelSpeeds().rearLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Right Front Speed: ", "%.2f", GetWheelSpeeds().frontRightMetersPerSecond);
+
 
         // Show data on dashboard
         // double value1 = 1.0;

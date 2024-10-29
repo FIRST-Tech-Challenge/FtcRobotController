@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.utility.Utils;
 public class ManualDrive extends CommandBase {
 
     // PID controller used to counteract rotational drift due to misalignment of wheels
-    private PIDController m_headingPID = new PIDController(0.01, 0.0001, 0);
+    private PIDController m_headingPID = new PIDController(0.05, 0.0005, 0);
     private Double m_PIDTarget = null;    // Use Double class so it can be set to null
     private long m_pidDelay = -1;
 
@@ -39,8 +39,8 @@ public class ManualDrive extends CommandBase {
 
         // get joystick input - for competition
         double dX = -RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
-        double dY = RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
-        double omega = 0.6 * RobotContainer.ActiveOpMode.gamepad1.right_stick_x;
+        double dY = -RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
+        double omega = -3.0 * RobotContainer.ActiveOpMode.gamepad1.right_stick_x;
         double speedTrigger = RobotContainer.ActiveOpMode.gamepad1.right_trigger;
 
         // implement dead-zoning of joystick inputs
@@ -62,7 +62,7 @@ public class ManualDrive extends CommandBase {
                     m_headingPID.reset(); // Clear existing integral term as may accumulate while not in use
                 }
 
-                omega = m_headingPID.calculate(-Utils.AngleDifference(m_PIDTarget, RobotContainer.gyro.getYawAngle()));
+                omega = m_headingPID.calculate(Utils.AngleDifference(m_PIDTarget, RobotContainer.gyro.getYawAngle()));
             }
         }
         else

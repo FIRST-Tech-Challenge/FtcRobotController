@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /** DriveTrain Subsystem */
-public class DriveTrain extends SubsystemBase {
+public class VirtualDriveTrain extends SubsystemBase {
 
     // constants for Tetrix DC Motor
     final double MAXRPM = 6000.0;
@@ -38,9 +38,11 @@ public class DriveTrain extends SubsystemBase {
     private DcMotorEx rightFrontDrive = null;
     private DcMotorEx rightBackDrive = null;
 
+    //public ChassisSpeeds RequestedChassisSpeeds;
+    MecanumDriveWheelSpeeds SimulatedWheelSpeeds;
 
     /** Place code here to initialize subsystem */
-    public DriveTrain() {
+    public VirtualDriveTrain() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
 
@@ -91,17 +93,20 @@ public class DriveTrain extends SubsystemBase {
         rightFrontDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        SimulatedWheelSpeeds = new MecanumDriveWheelSpeeds();
+        //RequestedChassisSpeeds = new ChassisSpeeds();
+
     }
 
     /** Method called periodically by the scheduler
      * Place any code here you wish to have run periodically */
     @Override
     public void periodic() {
-        RobotContainer.DBTelemetry.addData("Robot Left Front Speed: ", "%.2f", GetWheelSpeeds().frontLeftMetersPerSecond);
-        RobotContainer.DBTelemetry.addData("Robot Left Back Speed: ", "%.2f", GetWheelSpeeds().rearLeftMetersPerSecond);
-        RobotContainer.DBTelemetry.addData("Robot Right Front Speed: ", "%.2f", GetWheelSpeeds().frontRightMetersPerSecond);
-        RobotContainer.DBTelemetry.addData("Robot Right Back Speed: ", "%.2f", GetWheelSpeeds().rearRightMetersPerSecond);
-        RobotContainer.DBTelemetry.update();
+        //RobotContainer.DBTelemetry.addData("Robot Left Front Speed: ", "%.2f", GetWheelSpeeds().frontLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Left Back Speed: ", "%.2f", GetWheelSpeeds().rearLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Right Front Speed: ", "%.2f", GetWheelSpeeds().frontRightMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Right Back Speed: ", "%.2f", GetWheelSpeeds().rearRightMetersPerSecond);
+        //RobotContainer.DBTelemetry.update();
     }
 
 
@@ -142,8 +147,12 @@ public class DriveTrain extends SubsystemBase {
         MecanumDriveWheelSpeeds WheelSpeeds;
         WheelSpeeds = driveKinematics.toWheelSpeeds(driveChassisSpeeds, new Translation2d(0,0));
 
-        // normalize wheel speeds so no wheel exceeds maximum attainable (in m/s)
+        // normalize wheel speeds so no wheel exceeds maximum attanable (in m/s)
         WheelSpeeds.normalize(MAX_SPEED);
+
+        // temporary - store our requested chassis speed
+        //RequestedChassisSpeeds = driveKinematics.toChassisSpeeds(WheelSpeeds);
+        SimulatedWheelSpeeds = WheelSpeeds;
 
         // set individual motor speeds
         double requestedLeftFrontDriveVelocity = WheelSpeeds.frontLeftMetersPerSecond;
@@ -152,14 +161,14 @@ public class DriveTrain extends SubsystemBase {
         double requestedRightBackDriveVelocity = WheelSpeeds.rearRightMetersPerSecond;
 
         // update telemetry to requested velocities
-        RobotContainer.DBTelemetry.addData("Vx Speed: ", "%.2f", Vx * powerFactor);
-        RobotContainer.DBTelemetry.addData("Vy Speed: ", "%.2f", Vy * powerFactor);
-        RobotContainer.DBTelemetry.addData("Omega: ", "%.2f", Omega);
-        RobotContainer.DBTelemetry.addData("Requested Left Front Velocity: ", "%.2f", requestedLeftFrontDriveVelocity);
-        RobotContainer.DBTelemetry.addData("Requested Right Front Velocity: ", "%.2f", requestedRightFrontDriveVelocity);
-        RobotContainer.DBTelemetry.addData("Requested Left Back Velocity: ", "%.2f", requestedLeftBackDriveVelocity);
-        RobotContainer.DBTelemetry.addData("Requested Right Back Velocity: ", "%.2f", requestedRightBackDriveVelocity);
-        RobotContainer.DBTelemetry.update();
+        //RobotContainer.DBTelemetry.addData("Vx Speed: ", "%.2f", Vx * powerFactor);
+        //RobotContainer.DBTelemetry.addData("Vy Speed: ", "%.2f", Vy * powerFactor);
+        //RobotContainer.DBTelemetry.addData("Omega: ", "%.2f", Omega);
+        //RobotContainer.DBTelemetry.addData("Requested Left Front Velocity: ", "%.2f", requestedLeftFrontDriveVelocity);
+        //RobotContainer.DBTelemetry.addData("Requested Right Front Velocity: ", "%.2f", requestedRightFrontDriveVelocity);
+        //RobotContainer.DBTelemetry.addData("Requested Left Back Velocity: ", "%.2f", requestedLeftBackDriveVelocity);
+        //RobotContainer.DBTelemetry.addData("Requested Right Back Velocity: ", "%.2f", requestedRightBackDriveVelocity);
+        //RobotContainer.DBTelemetry.update();
 
         // set motor velocities to requested velocities
         leftFrontDrive.setVelocity(MPS_TO_TICKSPS * requestedLeftFrontDriveVelocity);
@@ -171,14 +180,15 @@ public class DriveTrain extends SubsystemBase {
     /** returns current speeds of mecanum drive wheels in m/s */
     public MecanumDriveWheelSpeeds GetWheelSpeeds()
     {
-        // motor speeds are in encoder ticks/s - convert to m/s
-        MecanumDriveWheelSpeeds speeds = new MecanumDriveWheelSpeeds();
-        speeds.rearLeftMetersPerSecond = TICKSPS_TO_MPS * leftBackDrive.getVelocity();
-        speeds.frontLeftMetersPerSecond = TICKSPS_TO_MPS * leftFrontDrive.getVelocity();
-        speeds.rearRightMetersPerSecond = TICKSPS_TO_MPS * rightBackDrive.getVelocity();
-        speeds.frontRightMetersPerSecond = TICKSPS_TO_MPS * rightFrontDrive.getVelocity();
+        return SimulatedWheelSpeeds;
 
-        return speeds;
+        // motor speeds are in encoder ticks/s - convert to m/s
+        //MecanumDriveWheelSpeeds speeds = new MecanumDriveWheelSpeeds();
+        //speeds.rearLeftMetersPerSecond = TICKSPS_TO_MPS * leftBackDrive.getVelocity();
+        //speeds.frontLeftMetersPerSecond = TICKSPS_TO_MPS * leftFrontDrive.getVelocity();
+        //speeds.rearRightMetersPerSecond = TICKSPS_TO_MPS * rightBackDrive.getVelocity();
+        //speeds.frontRightMetersPerSecond = TICKSPS_TO_MPS * rightFrontDrive.getVelocity();
+        //return speeds;
     }
 
     /* returns the defined mecanum drive kinematics */
