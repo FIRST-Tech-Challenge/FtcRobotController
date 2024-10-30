@@ -84,7 +84,7 @@ public class ViperSlide {
     public void move(double power) {
         int currentPosition = getCurrentPosition();
         if (power > 0 && currentPosition >= MAX_POSITION || power < 0 && currentPosition <= MIN_POSITION) {
-            setState(SlideState.STOPPED, 0);
+            setState(SlideState.HOLDING, 0);
             return;
         }
         setState(SlideState.MOVING, power);
