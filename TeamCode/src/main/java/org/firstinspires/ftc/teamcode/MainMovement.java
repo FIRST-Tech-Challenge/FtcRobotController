@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+
 /*
  * This file contains an example of a Linear "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -66,6 +67,7 @@ public class MainMovement extends LinearOpMode {
     //move forward: all = cc
     //move backwards all = c
     //strafe left = BL, FR = cc, BR, FL = c
+
     private DcMotor BLDrive; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
     private DcMotor BRDrive; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
     private DcMotor FLDrive; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
