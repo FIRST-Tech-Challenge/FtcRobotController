@@ -73,7 +73,7 @@ public class MainMovement extends LinearOpMode {
     private DcMotor FLDrive; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
     private DcMotor FRDrive; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
     final float joystickDeadzone = 0.1f;
-
+    
     boolean usingLStick;
     // declaring the joysticks here because the values need to be updated in OpMode ??? (maybe i think???)
     public float LjoystickX;
@@ -105,7 +105,6 @@ public class MainMovement extends LinearOpMode {
         }
 
     }
-
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
         BLDrive.setPower(BL*speed);
