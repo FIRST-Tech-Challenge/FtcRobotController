@@ -31,7 +31,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final BHI260IMU imu;
 
     private double speedMultiplier = 1.0;
-    private boolean fieldCentric = true;
+    public boolean fieldCentric = true;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;

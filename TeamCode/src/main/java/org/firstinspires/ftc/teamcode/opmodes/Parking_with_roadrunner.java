@@ -1,6 +1,7 @@
 
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,7 +16,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 import org.firstinspires.ftc.teamcode.*;
 
@@ -27,17 +28,45 @@ public class Parking_with_roadrunner extends LinearOpMode {
 
         Robot robot = new Robot(this);
         robot.configureAutoSetting();
-        int inchToTile= org.firstinspires.ftc.teamcode.Constants.inch_to_tile;
 
-        Pose2d initialPose = new Pose2d(11.8, 61.7, Math.toRadians(90));
+        int InchToTile= org.firstinspires.ftc.teamcode.Constants.INCH_TO_TILE;
+        Pose2d initialPose = new Pose2d(1.5*InchToTile, 0, Math.toRadians(180));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
+        boolean isTouchingLowRung=true;
+
+        TrajectoryActionBuilder touchLowRung = drive.actionBuilder(initialPose)
+                        .lineToYConstantHeading(2.5*InchToTile)
+                                .lineToXConstantHeading(2.5*InchToTile);
+
+        TrajectoryActionBuilder parkObzone = drive.actionBuilder(initialPose)
+                        .lineToYConstantHeading(0.5*InchToTile)
+                                .lineToX(5.5*InchToTile);
 
         waitForStart();
+
+        Action trajectoryActionChosen;
+        if (isTouchingLowRung) {
+            trajectoryActionChosen = touchLowRung.build();
+        } else {
+            trajectoryActionChosen = parkObzone.build();
+        }
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        trajectoryActionChosen
+                ));
 
         while (opModeIsActive() && !isStopRequested()) {
             robot.run();
 
-            telemetry.addData("Position now", position);
+
+
+            drive.updatePoseEstimate();
+
+            telemetry.addData("x", drive.pose.position.x);
+            telemetry.addData("y", drive.pose.position.y);
+            telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
             telemetry.update();
         }
     }

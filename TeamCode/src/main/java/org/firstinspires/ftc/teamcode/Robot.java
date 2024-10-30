@@ -71,12 +71,12 @@ public class Robot {
         CommandScheduler.getInstance().cancelAll();
 
 
-
     }
 
     public void run() {
         CommandScheduler.getInstance().run();
         opMode.telemetry.addData("Y axis:", driverGamepad.getLeftY());
+        opMode.telemetry.addData("Is fieldcentric?",driveSubsystem.fieldCentric);
         opMode.telemetry.update();
     }
 

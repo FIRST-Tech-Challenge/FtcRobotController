@@ -38,8 +38,8 @@ public abstract class Constants {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
         );
 
-        public static final int inch_to_tile = 24;
-
         public static final double DEADZONE = 0.1;
     }
+
+    public static final int INCH_TO_TILE = 24;
 }
