@@ -7,8 +7,8 @@ import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.EncoderDi
 import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
@@ -32,13 +32,13 @@ public class Swerve {
   private final Module[] modules = new Module[4];
 
   public Swerve(OpMode opMode) {
-    odometry = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "ODO");
+    odometry = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     odometry.setOffsets(0, 0);
     odometry.setEncoderResolution(goBILDA_4_BAR_POD);
     odometry.setEncoderDirections(FORWARD, FORWARD);
 
-    double trackLengthMeters = 1;
-    double trackWidthMeters = 1;
+    double trackLengthMeters = .31;
+    double trackWidthMeters = .38;
     kinematics =
         new SwerveDriveKinematics(
             new Translation2d(trackLengthMeters / 2, trackWidthMeters / 2),
@@ -103,7 +103,7 @@ public class Swerve {
     final DcMotorEx driveMotor;
     final Servo steerServo;
     //    final CRServo steerServo;
-    final AnalogInput steerEncoder;
+    //    final AnalogInput steerEncoder;
 
     final PIDController drivePID;
     final SimpleMotorFeedforward driveFeedforward;
@@ -121,7 +121,11 @@ public class Swerve {
       driveMotor = (DcMotorEx) opMode.hardwareMap.dcMotor.get(pos + "Motor");
       steerServo = opMode.hardwareMap.servo.get(pos + "Servo");
       // steerServo = opMode.hardwareMap.crservo.get(pos + "Servo");
-      steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
+      //      steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
+
+      if (pos.equals("FL") || pos.equals("FR")) {
+        driveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+      }
 
       drivePID = new PIDController(2 / maxSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxSpeedMetersPerSec);
@@ -139,7 +143,10 @@ public class Swerve {
       // TODO: Get continuous mode working
       // get pid controller to control servo pos
       // feedback and feedforward into servoVel
-
+      if (state.angle.getDegrees() > 90 || state.angle.getDegrees() < 90) {
+        state.angle.rotateBy(Rotation2d.k180deg);
+        state.speedMetersPerSecond *= -1;
+      }
       steerServo.setPosition(MathUtil.inverseInterpolate(-90, 90, state.angle.getDegrees()));
     }
 
