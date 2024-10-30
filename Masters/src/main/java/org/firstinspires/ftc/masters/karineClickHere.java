@@ -1,22 +1,26 @@
 package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
-@Config // Enables FTC Dashboard
 @TeleOp(name = "Karine Click Here")
 public class karineClickHere extends LinearOpMode {
 
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    private boolean sheepFound;
+
+    private boolean wasX = false;
 
     public void runOpMode() throws InterruptedException {
+
+        int sheepSoundID = hardwareMap.appContext.getResources().getIdentifier("sheep", "raw", hardwareMap.appContext.getPackageName());
+
+        if (sheepSoundID != 0)
+            sheepFound = SoundPlayer.getInstance().preload(hardwareMap.appContext, sheepSoundID);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -28,10 +32,8 @@ public class karineClickHere extends LinearOpMode {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        telemetry.addData("Did Karine find it?", true);
+        telemetry.addData("Did Karine find it? (sheep button x)", true);
+        telemetry.addData("sheep resource", sheepFound ? "Found" : "Not found /src/main/res/raw" );
 
         telemetry.update();
 
@@ -73,8 +75,16 @@ public class karineClickHere extends LinearOpMode {
             frontRight.setPower(rightFrontPower);
             backRight.setPower(rightRearPower);
 
+            boolean isX = false;
+            if (sheepFound && (isX = gamepad1.x) && !wasX) {
+                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, sheepSoundID);
+                telemetry.addData("Playing", "Sheep");
+                telemetry.update();
+            }
+
+            wasX = isX;
+
 
         }
     }
 }
-
