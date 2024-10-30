@@ -48,13 +48,16 @@ public class AutoCodeTest extends LinearOpMode {
     private AutoDriveManager driveManager;
     private AutoArmManager armManager;
     private AutoGrabberManager armGrabberManager;
-    private AutoViperSlideManager armViperSlideManager;
+    private AutoViperSlideManager viperSlideManager;
 
     public void initialize()
     {
         hornetRobo = new HornetRobo();
         AutoHardwareMapper.MapToHardware(this, hornetRobo);
         driveManager = new AutoDriveManager(this, hornetRobo);
+        viperSlideManager = new AutoViperSlideManager(this, hornetRobo);
+        armManager = new AutoArmManager(this, hornetRobo);
+        armGrabberManager = new AutoGrabberManager(this, hornetRobo);
     }
     public void runOpMode() {
         initialize();
@@ -64,37 +67,38 @@ public class AutoCodeTest extends LinearOpMode {
 
         //Change motor to test all
         driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
+        //TestViperSlideUpOnButtonClick();
 
         //Test strafe
-        TestStrafeRoboUsingEncoders();
+        //TestStrafeRoboUsingEncoders();
 
         //Test turn
-        TestRotate180();
+        //TestRotate180();
 
         //Test Move Forward
-        driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, 15);
-
-        /*TestDriveMotorEncodedMove(hornetRobo.RightFrontMotor);
+        driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, 10);
+/*
+        TestDriveMotorEncodedMove(hornetRobo.RightFrontMotor);
         TestDriveMotorEncodedMove(hornetRobo.LeftFrontMotor);
         TestDriveMotorEncodedMove(hornetRobo.LeftBackMotor);
         TestDriveMotorEncodedMove(hornetRobo.RightBackMotor);
-        */
+*/
 
         //Test go fwd
-        TestGoForwardRoboUsingEncoders();
+        //TestGoForwardRoboUsingEncoders();
 
         //Test Strafe
         TestStrafeRoboUsingEncoders();
 
         //Test Arm
-        TestArm();
+        //TestArm();
 
         //Test Grabber
         //TestGrabberOpenAndClose();
 
-  /*      //Test viper slide
-        TestViperSlide();
-*/
+        //Test viper slide
+        //TestViperSlide();
+        TestRotate180();
 
     }
 
@@ -137,8 +141,6 @@ public class AutoCodeTest extends LinearOpMode {
         AutoDriveManager driveManager = new AutoDriveManager(this, hornetRobo);
 
         if (opModeIsActive()) {
-            //driveManager.SetAllMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //driveManager.SetAllMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             telemetry.addData("Starting to move", "");
             telemetry.update();
@@ -147,7 +149,6 @@ public class AutoCodeTest extends LinearOpMode {
                 telemetry.update();
 
                 driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, 8);
-                // Move 5 inches forward
 
                 telemetry.addData("go forward", "");
                 telemetry.update();
@@ -167,6 +168,7 @@ public class AutoCodeTest extends LinearOpMode {
 
             telemetry.addData("Starting to move", "");
             telemetry.update();
+
             while (opModeIsActive() && !isStopRequested()) {
                 telemetry.addData("go forward", "");
                 telemetry.update();
@@ -211,21 +213,23 @@ public class AutoCodeTest extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            telemetry.addData("Starting grabber test", "");
+            telemetry.addData("Starting arm test", "");
             telemetry.update();
             while (opModeIsActive() && !isStopRequested()) {
                 telemetry.addData("Move to min", "");
                 telemetry.update();
 
                 armManager.MoveArmToPosition(AutoArmManager.ARM_MIN);
-                sleep(2000);
+                //sleep(200);
                 telemetry.addData("Move to max", "");
                 telemetry.update();
+                sleep(100);
                 armManager.MoveArmToPosition(AutoArmManager.ARM_MAX);
-                sleep(2000);
+                sleep(100);
                 armManager.MoveArmToPosition(0.3);
                 telemetry.addData("Move to 0.3", "");
                 telemetry.update();
+                sleep(2000);
 
                 break;
             }
@@ -272,12 +276,37 @@ public class AutoCodeTest extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
                 telemetry.addData("Starting rotate test timed", "");
                 telemetry.update();
-                driveManager.RotateTimed(DRIVE_SPEED, 2000);
-                telemetry.addData("Starting rotate test encoders", "");
-                telemetry.update();
-                driveManager.RotateUsingEncoders(DRIVE_SPEED, 10);
+                //driveManager.TurnTimed(DRIVE_SPEED, 2000);
+                //telemetry.addData("Starting rotate test encoders", "");
+                //telemetry.update();
+                driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, 10);
                 sleep(100);
                 break;
+            }
+
+        }
+    }
+
+    public void TestViperSlideUpOnButtonClick()
+    {
+        // vsManager = new AutoViperSlideManager(this, hornetRobo);
+
+        if (opModeIsActive()) {
+
+            telemetry.addData("Starting rotate test", "");
+            telemetry.update();
+            while (opModeIsActive() && !isStopRequested()) {
+                if (gamepad1.y){
+                    viperSlideManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, 0.5,12);
+                    armManager.MoveArmToPosition(0.3);
+                    armGrabberManager.OpenOrCloseGrabber(true);
+                    sleep(100);
+                    armManager.MoveArmToPosition(0.7);
+                    armGrabberManager.OpenOrCloseGrabber(false);
+                    sleep(100);
+                    break;
+
+                }
             }
 
         }

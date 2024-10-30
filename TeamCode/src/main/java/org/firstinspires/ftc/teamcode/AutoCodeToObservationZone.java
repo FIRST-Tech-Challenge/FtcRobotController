@@ -76,18 +76,14 @@ public class AutoCodeToObservationZone extends LinearOpMode {
 
             //set forward
             driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
-
             while (opModeIsActive() && !isStopRequested()) {
 
                 // for easiness in turning certain chunk on and off
                 if (dropSpecimen) {
                     telemetry.addData("Move Forward to reach subermersible  ", "");
                     //TODO: adjust the distance during testing
-                    int distanceToSub = 12;
+                    int distanceToSub = 27;
                     telemetry.addData("Distance To Sub: ", distanceToSub);
-                    telemetry.update();
-
-                    telemetry.addData("Starting to Move", "");
                     telemetry.update();
 
                     //set target position to encoders and move to position
@@ -96,14 +92,14 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                     telemetry.update();
 
                     //Set Arm in a position to hang specimen
-                    double armPosition = 0.5; //TODO: Correct during testing
+                    double armPosition = 0.2; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
 
-                    //Open grabber to hang
-                    grabberManager.OpenOrCloseGrabber(true);
-                    telemetry.addData("Set grabber to open", "");
+                    int reverseDistance = -5; //TODO: Adjust during testing
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED + 0.2, reverseDistance);
+                    telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
 
                     //Move arm back
@@ -111,17 +107,18 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos Back: ", armPosition);
                     telemetry.update();
+                    sleep(100);
                 }
 
                 if (parkInObservationZone) {
                     // Go reverse to be away from submersible to move to park in obs zone
-                    int reverseDistance = 12; //TODO: Adjust during testing
+                    int reverseDistance = 15; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
 
                     //strafe to move to obs zone
-                    int strafeDistance = 30; //TODO: Adjust during testing
+                    int strafeDistance = 35; //TODO: Adjust during testing
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
                     telemetry.update();

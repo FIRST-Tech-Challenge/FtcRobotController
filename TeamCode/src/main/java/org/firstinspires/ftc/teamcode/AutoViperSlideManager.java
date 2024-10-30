@@ -24,9 +24,9 @@ public class AutoViperSlideManager {
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     /*TODO: Switch to viper slide encoder resolution, gear ratio, wheel diameter*/
     static final double     DRIVE_MOTOR_ENCODER_RESOLUTION = 435;
-    static final double     DRIVE_MOTOR_GEAR_RATIO = 13.7;
+    static final double     DRIVE_MOTOR_GEAR_RATIO = 1;
     static final double     COUNTS_PER_MOTOR_REV    = DRIVE_MOTOR_ENCODER_RESOLUTION * DRIVE_MOTOR_GEAR_RATIO ;
-    static final double     WHEEL_DIAMETER_INCHES   = 4.4 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_INCHES   = 1.4 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
     /* Declare OpMode members. */
@@ -77,6 +77,27 @@ public class AutoViperSlideManager {
         return encodedDistance;
     }
 
+    public void ResetAndSetToEncoder()
+    {
+        SetMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SetMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void MoveStraightToPosition (AutoDriveManager.DriveDirection DirectionToMove, double Speed, int DistanceToMove) {
+        ResetAndSetToEncoder();
+        SetTargetPosition(DistanceToMove);
+        SetPower(Speed);
+        SetMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WaitForMotorToDoTheTask();
+    }
+
+    public void WaitForMotorToDoTheTask()
+    {
+        while (hornetRobo.ViperSlideOne.isBusy() || hornetRobo.ViperSlideTwo.isBusy())
+        {
+            ;
+        }
+    }
 }
 
 

@@ -30,7 +30,14 @@ public class AutoArmManager {
         hornetRobo = HRobo;
     }
 
+    public void SetDirection()
+    {
+        hornetRobo.ArmOne.setDirection(Servo.Direction.FORWARD);
+        hornetRobo.ArmTwo.setDirection(Servo.Direction.REVERSE);
+    }
+
     public void MoveArmToPosition( double position){
+        SetDirection();
         hornetRobo.ArmOne.setPosition(Range.clip(position, ARM_MIN, ARM_MAX));
         hornetRobo.ArmTwo.setPosition(Range.clip(position, ARM_MIN, ARM_MAX));
     }

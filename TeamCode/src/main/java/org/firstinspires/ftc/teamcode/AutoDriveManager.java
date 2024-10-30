@@ -27,9 +27,9 @@ public class AutoDriveManager {
     // This is gearing DOWN for less speed and more torque.
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     static final double     DRIVE_MOTOR_ENCODER_RESOLUTION = 537.7;
-    static final double     DRIVE_MOTOR_GEAR_RATIO = 19.2;
+    static final double     DRIVE_MOTOR_GEAR_RATIO = 1;
     static final double     COUNTS_PER_MOTOR_REV    = DRIVE_MOTOR_ENCODER_RESOLUTION * DRIVE_MOTOR_GEAR_RATIO ;
-    static final double     WHEEL_DIAMETER_INCHES   = 4 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_INCHES   = 3.78 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
     /* Declare OpMode members. */
@@ -141,29 +141,14 @@ public class AutoDriveManager {
         SetMotorDirection(DriveDirection.FORWARD);
 
         newLeftFrontTarget = currentLeftFront + encodedDistance;
-        newLeftBackTarget = currentLeftBack + encodedDistance;
-        newRightFrontTarget = currentRightFront + encodedDistance;
+        newLeftBackTarget = currentLeftBack - encodedDistance;
+        newRightFrontTarget = currentRightFront - encodedDistance;
         newRightBackTarget = currentRightBack + encodedDistance;
 
         hornetRobo.LeftFrontMotor.setTargetPosition(newLeftFrontTarget);
         hornetRobo.LeftBackMotor.setTargetPosition(newLeftBackTarget);
         hornetRobo.RightFrontMotor.setTargetPosition(newRightFrontTarget);
         hornetRobo.RightBackMotor.setTargetPosition(newRightBackTarget);
-    }
-
-    public void StrafeToPosition (DriveDirection DirectionToStrafe, double StrafePower, int StrafeDistance) {
-        ResetAndSetToEncoder();
-        SetTargetPositionToStrafe(AutoDriveManager.DriveDirection.LEFT, StrafeDistance);
-        SetPowerToStrafe(DirectionToStrafe, StrafePower);
-        SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-    }
-
-    public void MoveStraightToPosition (DriveDirection DirectionToMove, double Speed, int DistanceToMove) {
-        ResetAndSetToEncoder();
-        SetTargetPosition(DirectionToMove, DistanceToMove);
-        SetDrivePower(Speed, Speed);
-        SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void SetPowerToStrafe (DriveDirection DirectionToMove, double StrafePower){
@@ -181,10 +166,25 @@ public class AutoDriveManager {
         }
 
         hornetRobo.LeftFrontMotor.setPower(frontPower);
-        hornetRobo.RightFrontMotor.setPower(frontPower);
-
         hornetRobo.LeftBackMotor.setPower(backPower);
-        hornetRobo.RightBackMotor.setPower(backPower);
+        hornetRobo.RightFrontMotor.setPower(backPower);
+        hornetRobo.RightBackMotor.setPower(frontPower);
+    }
+
+    public void StrafeToPosition (DriveDirection DirectionToStrafe, double StrafePower, int StrafeDistance) {
+        ResetAndSetToEncoder();
+        SetTargetPositionToStrafe(AutoDriveManager.DriveDirection.LEFT, StrafeDistance);
+        SetDrivePower(StrafePower, StrafePower);
+        SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WaitForMotorToDoTheTask();
+    }
+
+    public void MoveStraightToPosition (DriveDirection DirectionToMove, double Speed, int DistanceToMove) {
+        ResetAndSetToEncoder();
+        SetTargetPosition(DirectionToMove, DistanceToMove);
+        SetDrivePower(Speed, Speed);
+        SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WaitForMotorToDoTheTask();
     }
 
     public void SetTargetPositionToStrafe (DriveDirection DirectionToMove, double StrafeDistance){
@@ -205,15 +205,15 @@ public class AutoDriveManager {
         if (DirectionToMove == DriveDirection.LEFT) {
             newLeftFrontTarget = currentLeftFront + encodedDistance;
             newLeftBackTarget = currentLeftBack - encodedDistance;
-            newRightFrontTarget = currentRightFront + encodedDistance;
-            newRightBackTarget = currentRightBack - encodedDistance;
+            newRightFrontTarget = currentRightFront - encodedDistance;
+            newRightBackTarget = currentRightBack + encodedDistance;
         }
         else if (DirectionToMove == DriveDirection.RIGHT)
         {
             newLeftFrontTarget = currentLeftFront - encodedDistance;
-            newLeftBackTarget = currentLeftBack - encodedDistance;
+            newLeftBackTarget = currentLeftBack + encodedDistance;
             newRightFrontTarget = currentRightFront + encodedDistance;
-            newRightBackTarget = currentRightBack + encodedDistance;
+            newRightBackTarget = currentRightBack - encodedDistance;
         }
 
         hornetRobo.LeftFrontMotor.setTargetPosition(newLeftFrontTarget);
@@ -222,7 +222,7 @@ public class AutoDriveManager {
         hornetRobo.RightBackMotor.setTargetPosition(newRightBackTarget);
     }
 
-    public void RotateTimed(double DriveSpeed, int ForHowLong) {
+    public void TurnTimed(double DriveSpeed, int ForHowLong) {
         hornetRobo.LeftFrontMotor.setPower(DriveSpeed);
         hornetRobo.LeftBackMotor.setPower(DriveSpeed);
         hornetRobo.RightFrontMotor.setPower(-DriveSpeed);
@@ -230,7 +230,7 @@ public class AutoDriveManager {
         sleep(ForHowLong);
     }
 
-    public void RotateUsingEncoders(double DriveSpeed, double targetPositionInInches) {
+    public void TurnUsingEncoders(DriveDirection DirectionToTurn, double DriveSpeed, double targetPositionInInches) {
 
         int encodedDistance = getEncodedDistance(targetPositionInInches);
 
@@ -249,10 +249,18 @@ public class AutoDriveManager {
         int newRightFrontTarget = 0;
         int newRightBackTarget = 0;
 
-        newLeftFrontTarget = currentLeftFront + encodedDistance;
-        newLeftBackTarget = currentLeftBack + encodedDistance;
-        newRightFrontTarget = currentRightFront - encodedDistance;
-        newRightBackTarget = currentRightBack - encodedDistance;
+        if (DirectionToTurn == DriveDirection.LEFT) {
+            newLeftFrontTarget = currentLeftFront + encodedDistance;
+            newLeftBackTarget = currentLeftBack + encodedDistance;
+            newRightFrontTarget = currentRightFront - encodedDistance;
+            newRightBackTarget = currentRightBack - encodedDistance;
+        }
+        else if (DirectionToTurn == DriveDirection.RIGHT) {
+            newLeftFrontTarget = currentLeftFront - encodedDistance;
+            newLeftBackTarget = currentLeftBack - encodedDistance;
+            newRightFrontTarget = currentRightFront + encodedDistance;
+            newRightBackTarget = currentRightBack + encodedDistance;
+        }
 
         hornetRobo.LeftFrontMotor.setTargetPosition(newLeftFrontTarget);
         hornetRobo.LeftBackMotor.setTargetPosition(newLeftBackTarget);
@@ -261,6 +269,18 @@ public class AutoDriveManager {
 
         SetDrivePower(DriveSpeed, DriveSpeed);
         SetAllMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        WaitForMotorToDoTheTask();
+
+    }
+
+    public void WaitForMotorToDoTheTask()
+    {
+        while (hornetRobo.LeftFrontMotor.isBusy() || hornetRobo.RightFrontMotor.isBusy()
+                ||hornetRobo.LeftBackMotor.isBusy() || hornetRobo.RightBackMotor.isBusy())
+        {
+            ;
+        }
     }
 }
 
