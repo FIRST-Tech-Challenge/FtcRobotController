@@ -13,6 +13,7 @@ public class Input {
 
     public void Move(double power)
     {
+
         for (int i = 0; i < motors.driveTrainMotors.length; i++) {
 
             motors.MoveMotor(i, power); // loop over every motor and move them by gamepad input

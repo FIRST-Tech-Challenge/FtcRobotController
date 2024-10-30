@@ -8,6 +8,10 @@ public class Motors {
 
     public DcMotor[] driveTrainMotors = null;
 
+    private final double wheelDiameter = 1.0;
+    //private final double CPR = ; //how many times the motor counts before a single 360 rotation happens
+    private final double circumference = Math.PI * wheelDiameter;
+
 //    double leftFrontPower;
 //    double rightFrontPower;
 //    double leftBackPower;
@@ -25,6 +29,12 @@ public class Motors {
         driveTrainMotors[1].setDirection(DcMotor.Direction.REVERSE);
         driveTrainMotors[2].setDirection(DcMotor.Direction.FORWARD);
         driveTrainMotors[3].setDirection(DcMotor.Direction.FORWARD);
+
+        driveTrainMotors[0].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveTrainMotors[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveTrainMotors[2].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveTrainMotors[3].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     public void MoveMotor(int motorNumber, double power) { //choose motor to move, power is 0-100, motorNumber is 0-3
@@ -32,6 +42,11 @@ public class Motors {
         double actualPower = power / 100;
 
         driveTrainMotors[motorNumber].setPower(actualPower);
+    }
+
+    public double GetMotorPosition(int motorNumber)
+    {
+        return driveTrainMotors[motorNumber].getCurrentPosition();
     }
 
 //    private void CalculatePower()
