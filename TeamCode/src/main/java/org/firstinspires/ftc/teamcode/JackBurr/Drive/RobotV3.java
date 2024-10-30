@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
 
 @TeleOp
-public class RobotV2 extends OpMode {
+public class RobotV3 extends OpMode {
     public RobotV2Config config = new RobotV2Config();
 
     public DcMotor frontLeft; //PORT 0
@@ -18,23 +18,20 @@ public class RobotV2 extends OpMode {
     public DcMotor backLeft; //PORT 1
     public DcMotor backRight; // PORT 3
     public DcMotor slidesMotor; //EXPANSION HUB PORT _
-    public DcMotor extraArmMotor; //EXPANSION HUB PORT _
     public Servo intakeServo;
     public int servodirection = 0;
     public DcMotor armMotor;
     public double ARM_POWER = config.ARM_POWER;
     public int MOVEMENT_DISTANCE = config.ARM_MOVEMENT_DISTANCE;
     public ElapsedTime buttonTimer = new ElapsedTime();
-    public int SLIDES_DOWN = -860;
-    public int SLIDES_LOW_BASKET = -1375;
-    public int SLIDES_HIGH_BASKET = -1875;
+    public int SLIDES_DOWN = -957;
+    public int SLIDES_LOW_BASKET = -1662;
+    public int SLIDES_HIGH_BASKET = -1662;
     public int SLIDESPOS = SLIDES_DOWN;
-    public int ARM_DOWN = 259;
-    public int ARM_LOW_BASKET = 2270;
-    public int ARM_HIGH_BASKET = 2500;
+    public int ARM_DOWN = -300;
+    public int ARM_LOW_BASKET = -1840;
+    public int ARM_HIGH_BASKET = -2500;
     public int ARMPOS = ARM_DOWN;
-    public double initialPosition;
-    public Servo wrist_servo;
 
     public enum SystemStates{
         HIGH_BASKET,
@@ -42,15 +39,8 @@ public class RobotV2 extends OpMode {
         DOWN
     }
 
-    public enum WristStates {
-        LEFT,
-        CENTER,
-        RIGHT,
-        HOLD
-    }
 
     public SystemStates states = SystemStates.DOWN;
-    public WristStates wristState = WristStates.HOLD;
 
     @Override
     public void init() {
@@ -59,18 +49,13 @@ public class RobotV2 extends OpMode {
         backLeft = hardwareMap.get(DcMotor.class, config.BACK_LEFT);
         backRight = hardwareMap.get(DcMotor.class, config.BACK_RIGHT);
         slidesMotor = hardwareMap.get(DcMotor.class, config.SLIDES);
-        extraArmMotor = hardwareMap.get(DcMotor.class, "arm2");
         slidesMotor = hardwareMap.get(DcMotor.class, "slides");
         intakeServo = hardwareMap.get(Servo.class, "grippers");
-        wrist_servo = hardwareMap.get(Servo.class, "wrist");
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        extraArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        extraArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        extraArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -81,8 +66,6 @@ public class RobotV2 extends OpMode {
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         states = SystemStates.DOWN;
-        wristState = WristStates.HOLD;
-        initialPosition = wrist_servo.getPosition();
         arm_goto(ARM_DOWN, 0.8, true);
         slides_goto(SLIDES_DOWN, 0.6, false);
     }
@@ -133,33 +116,8 @@ public class RobotV2 extends OpMode {
             arm_up_by(100);
             buttonTimer.reset();
         }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.left_bumper){
-            switch (wristState){
-                case LEFT:
-                    break;
-                case CENTER:
-                    wristState = WristStates.LEFT;
-                case RIGHT:
-                    wristState = WristStates.CENTER;
-                case HOLD:
-                    wristState = WristStates.HOLD;
-            }
-        }
-        if(buttonTimer.seconds() > 0.3 && gamepad1.right_bumper){
-            switch (wristState){
-                case LEFT:
-                    wristState = WristStates.CENTER;
-                case CENTER:
-                    wristState = WristStates.LEFT;
-                case RIGHT:
-                    break;
-                case HOLD:
-                    wristState = WristStates.HOLD;
-            }
-        }
 
         run_motors();
-        move_wrist();
     }
     public void stop(){
         slides_goto(0, 0.6, true);
@@ -225,19 +183,4 @@ public class RobotV2 extends OpMode {
         ARMPOS = ARMPOS + ticks;
     }
 
-    public void move_wrist(){
-        switch(wristState){
-            case LEFT:
-                wrist_servo.setPosition(0);
-                break;
-            case CENTER:
-                wrist_servo.setPosition(0.5);
-                break;
-            case RIGHT:
-                wrist_servo.setPosition(1);
-                break;
-            case HOLD:
-                wrist_servo.setPosition(initialPosition);
-        }
-    }
 }

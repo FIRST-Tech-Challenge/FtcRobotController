@@ -36,7 +36,7 @@ import java.util.List;
 @Autonomous(group = "drive")
 public class AutomaticFeedforwardTuner extends LinearOpMode {
     public static double MAX_POWER = 0.7;
-    public static double DISTANCE = 100; // in
+    public static double DISTANCE = 60; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
