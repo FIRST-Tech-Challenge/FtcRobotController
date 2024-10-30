@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -28,10 +27,10 @@ public class Outake implements Component{
     public static double wristF = 0.9;
     public static double wristB = 0.7;
 
-    private final DcMotor extendSlide;
-    private final DcMotor rotateSlide;
-    private final Servo claw;
-    private final Servo clawWrist;
+    private final Servo elbow1, elbow2, fingers;
+    private final DcMotor extension1;
+    private final DcMotor extension2;
+
 
     Telemetry telemetry;
     Init init;
@@ -40,10 +39,11 @@ public class Outake implements Component{
 
         this.init=init;
         this.telemetry=telemetry;
-        this.extendSlide=init.getExtendSlide();
-        this.rotateSlide=init.getRotateSlide();
-        this.claw=init.getClaw();
-        this.clawWrist=init.getClawWrist();
+        this.extension1=init.getExtension1();
+        this.extension2=init.getExtension2();
+        this.elbow1=init.getElbow1();
+        this.elbow2=init.getElbow2();
+        this.fingers=init.getFingers();
         initializeHardware();
 
     }
@@ -59,58 +59,36 @@ public class Outake implements Component{
 
     }
 
-    public void slidesMove(int target) {
+    public void slidePower(int power) {
+        extension1.setPower(power);
+        extension2.setPower(power);
+    }
 
-        int rotatePos = rotateSlide.getCurrentPosition();
+    public void moveElbow(float pos) {
+        elbow1.setPosition(pos);
+        elbow2.setPosition(pos);
+    }
+
+    public void moveWrist(float mod) {
+        elbow1.setPosition(.5 + mod);
+        elbow1.setPosition(.5 - mod);
+    }
+
+    public void moveClaw(float pos) {
+        fingers.setPosition(pos);
+    }
+
+    public void moveSlide(int target) {
+
+        int rotatePos = extension1.getCurrentPosition();
         double pid = controller.calculate(rotatePos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
         double lift = pid + ff;
 
-        rotateSlide.setPower(lift);
+        extension1.setPower(lift);
+        extension2.setPower(lift);
 
     }
 
-    public void extend() {
-        extendSlide.setPower(1);
-    }
-
-    public void extendPower(double power) {
-        extendSlide.setPower(power);
-        telemetry.addData("Pos", extendSlide.getCurrentPosition());
-        telemetry.update();
-    }
-    public void extendPos(int pos) {
-        extendSlide.setTargetPosition(pos);
-        extendSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extendSlide.setPower(.7);
-    }
-
-    public void retract() {
-        extendSlide.setPower(-1);
-    }
-    public void rotateStop() {
-        rotateSlide.setPower(0);
-    }
-
-    public void extendStop() {
-        extendSlide.setPower(0);
-    }
-
-    public void open(){ claw.setPosition(open); }
-    public void close(){ claw.setPosition(close); }
-
-    public void forward(){ clawWrist.setPosition(wristF); }
-    public void backward(){ clawWrist.setPosition(wristB); }
-
-    public void rotateUp(){ rotateSlide.setPower(1); }
-    public void rotateDown(){ rotateSlide.setPower(-1); }
-
-    public DcMotor getExtendSlide(){
-        return extendSlide;
-    }
-
-    public DcMotor getRotateSlide(){
-        return rotateSlide;
-    }
 
 }
