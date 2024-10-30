@@ -73,7 +73,7 @@ public class MainMovement extends LinearOpMode {
     private DcMotor FLDrive; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
     private DcMotor FRDrive; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
     final float joystickDeadzone = 0.1f;
-    
+
     boolean usingLStick;
     // declaring the joysticks here because the values need to be updated in OpMode ??? (maybe i think???)
     public float LjoystickX;
@@ -137,7 +137,7 @@ public class MainMovement extends LinearOpMode {
     //  _/ |                            _/ |   __/ | __/ |   __/ |
     // |__/                            |__/   |___/ |___/   |___/
     private void legendaryStrafeMovement() {
-        float minSpeed = 0.15f;
+        float minSpeed = 0.05f;
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
         float netS = minSpeed + (float)addSpeed; //net speed
 
