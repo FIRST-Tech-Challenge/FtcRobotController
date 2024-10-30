@@ -14,6 +14,13 @@ public class Main extends OpMode {
 
     @Override
     public void loop() {
-        slide.up();
+        if (gamepad1.y) {
+            slide.up();
+        } else if (gamepad1.a) {
+            slide.down();
+        } else {
+            slide.stop();
+        }
+        telemetry.add("Slide target: ", slide.getTarget());
     }
 }
