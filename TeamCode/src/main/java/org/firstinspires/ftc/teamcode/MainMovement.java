@@ -29,14 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.sqrt;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.robotcore.internal.system.Finalizable;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -66,8 +61,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Finalizable;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
-@Disabled
+@TeleOp(name="MainMovement", group="Linear OpMode")
 public class MainMovement extends LinearOpMode {
     //move forward: all = cc
     //move backwards all = c
