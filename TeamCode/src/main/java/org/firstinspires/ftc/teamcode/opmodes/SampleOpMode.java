@@ -53,11 +53,11 @@ public class SampleOpMode extends CommandOpMode {
         );
 
         GamepadButton intakeButton = new GamepadButton(
-                operator, GamepadKeys.Button.B
+                driver, GamepadKeys.Button.RIGHT_BUMPER
         );
 
         GamepadButton outtakeButton = new GamepadButton(
-                operator, GamepadKeys.Button.X
+                driver, GamepadKeys.Button.X
         );
 
         GamepadButton elevatorUpButton = new GamepadButton(
@@ -75,13 +75,15 @@ public class SampleOpMode extends CommandOpMode {
                 new PivotIntake(Intake.IntakeState.COLLECT,intake).andThen(
                         new InstantCommand(() -> intake.rollerIntake()))))
        .whenReleased(new InstantCommand(() -> intake.rollerStop()).andThen(
-               new PivotIntake(Intake.IntakeState.STORE, intake).andThen(
+               new PivotIntake(Intake.IntakeState.HOME, intake).andThen(
                        new RetractIntake(intake))));
 
-        outtakeButton.whenHeld(new InstantCommand(() -> intake.rollerOuttake()))
-                        .whenReleased(new InstantCommand(() -> intake.rollerStop()));
+        outtakeButton.whenHeld(new PivotIntake(Intake.IntakeState.STORE, intake).andThen(new InstantCommand(() -> intake.rollerOuttake())))
+                        .whenReleased(new InstantCommand(() -> intake.rollerStop()).andThen(
+                                new PivotIntake(Intake.IntakeState.HOME, intake)
+                        ));
 
-        elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 20));
+        elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 40));
 
         elevatorDownButton.whenPressed(new ElevatorGoTo(elevator, 0));
 
@@ -97,6 +99,6 @@ public class SampleOpMode extends CommandOpMode {
         schedule(new RunCommand(telemetry::update));
 
         waitForStart();
-        schedule(new PivotIntake(Intake.IntakeState.HOME, intake));
+        schedule(new PivotIntake(Intake.IntakeState.HOME, intake), new RetractIntake(intake));
     }
 }

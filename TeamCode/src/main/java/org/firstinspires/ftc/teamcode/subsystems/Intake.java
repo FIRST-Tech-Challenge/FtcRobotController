@@ -27,12 +27,12 @@ public class Intake extends SubsystemBase {
 
     public void extend() {
 
-        intakeExt.setPosition(0.6);
+        intakeExt.setPosition(0.8);
 
     }
     public void retract() {
 
-        intakeExt.setPosition(0.15);
+        intakeExt.setPosition(0.25);
 
     }
 
@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
 
         switch(state) {
             case HOME:
-                intakePivot.setPosition(0);
+                intakePivot.setPosition(0.5);
                 break;
             case STORE:
                 intakePivot.setPosition(0.2);

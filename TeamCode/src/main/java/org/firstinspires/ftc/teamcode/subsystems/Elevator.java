@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Elevator extends SubsystemBase {
     private static final double TICKS_PER_MM = 0.335;
     private static final double KP = 0.0087;
-    private static final double KF = 0.013;
+    private static final double KF = 0.05;
     private Motor elevatorLeft;
     private Motor elevatorRight;
     private Telemetry telemetry;
@@ -23,7 +23,6 @@ public class Elevator extends SubsystemBase {
 
         this.telemetry = telemetry;
         this.elevatorRight.setInverted(true);
-        this.elevatorRight.encoder.setDirection(Motor.Direction.REVERSE);
     }
 
     @Override
@@ -39,8 +38,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setTarget(double target) {
-        if (target > 43.5) {
-            this.target = 43 * 25.4;
+        if (target > 40) {
+            this.target = 40 * 25.4;
             return;
         }
 
@@ -75,7 +74,19 @@ public class Elevator extends SubsystemBase {
     }
 
     public void manualControl(double pow) {
+        int currentPos = this.elevatorRight.getCurrentPosition();
+        double currentPosMM = currentPos * TICKS_PER_MM;
+        if (pow > 0 && currentPosMM > 40 * 25.4) {
+            elevatorPower = 0;
+            return;
+        } else if (pow < 0 && currentPos <= 0) {
+            elevatorPower = 0;
+            return;
+        }
+
         elevatorPower = pow;
+
+
     }
 
 }
