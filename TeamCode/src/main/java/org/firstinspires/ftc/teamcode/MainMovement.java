@@ -89,15 +89,20 @@ public class MainMovement extends LinearOpMode {
         FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
         FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
 
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
-        // ~ ~ should this stuff be put in some sort of WHILE loop ~ ~
-        LjoystickX = gamepad1.left_stick_x;
-        LjoystickY = gamepad1.left_stick_y;
-        RjoystickX = gamepad1.right_stick_x;
-        RjoystickY = gamepad1.right_stick_y;
+        waitForStart(); //waits for play on the driver hub :3
 
-        epicRotationMovement();
-        legendaryStrafeMovement();
+        while (opModeIsActive()) {
+            LjoystickX = gamepad1.left_stick_x;
+            LjoystickY = gamepad1.left_stick_y;
+            RjoystickX = gamepad1.right_stick_x;
+            RjoystickY = gamepad1.right_stick_y;
+
+            epicRotationMovement(); // rotation on gary
+            legendaryStrafeMovement(); // movement on gary
+        }
 
     }
 
