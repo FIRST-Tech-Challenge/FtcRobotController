@@ -137,7 +137,7 @@ public class Swerve {
               + driveFeedforward.calculate(state.speedMetersPerSecond));
 
       // TODO: Get continuous mode working
-      // get pid controller to control servo pos
+      // get wanted degrees and current degrees subtract and send through PID
       // feedback and feedforward into servoVel
 
       steerServo.setPosition(MathUtil.inverseInterpolate(-90, 90, state.angle.getDegrees()));
