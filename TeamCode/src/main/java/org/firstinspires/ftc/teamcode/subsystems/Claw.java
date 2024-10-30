@@ -9,7 +9,9 @@ public class Claw {
     public Claw(HardwareMap hw){
         servo = hw.get(Servo.class, "claw");
     }
-    public void close(double clawPos){servo.setPosition(clawPos);}
+    public void close(double clawPos){
+        servo.setPosition(clawPos);
+    }
     public void release(){
         servo.setPosition(0);
     }
