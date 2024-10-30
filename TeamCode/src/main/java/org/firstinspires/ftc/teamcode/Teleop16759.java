@@ -74,10 +74,13 @@ public class Teleop16759 extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor rotateArmMotor = null;
-    private DcMotor armExtentionMotor = null;
-    private Servo wrist = null;
-    private Servo leftFinger = null;
-    private Servo rightFinger = null;
+    private DcMotor armExtensionMotor = null;
+//    private Servo wrist = null;
+//    private Servo leftFinger = null;
+//    private Servo rightFinger = null;
+
+    final double ARM_POWER = 0.5;
+    final double EXTENSION_POWER = 0.75;
 
 
 
@@ -91,10 +94,10 @@ public class Teleop16759 extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
         rotateArmMotor = hardwareMap.get(DcMotor.class, "rotate");
-        armExtentionMotor = hardwareMap.get(DcMotor.class, "extender");
-        wrist = hardwareMap.get(Servo.class, "wrist");
-        leftFinger = hardwareMap.get(Servo.class, "leftFinger");
-        rightFinger = hardwareMap.get(Servo.class, "rightFinger");
+        armExtensionMotor = hardwareMap.get(DcMotor.class, "extender");
+//        wrist = hardwareMap.get(Servo.class, "wrist");
+//        leftFinger = hardwareMap.get(Servo.class, "leftFinger");
+//        rightFinger = hardwareMap.get(Servo.class, "rightFinger");
 
 
         // ########################################################################################
@@ -117,8 +120,7 @@ public class Teleop16759 extends LinearOpMode {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rotateArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armExtentionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        //armExtensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -126,6 +128,7 @@ public class Teleop16759 extends LinearOpMode {
         telemetry.addData("lb Encoder: ", leftBackDrive.getCurrentPosition());
         telemetry.addData("rf Encoder: ", rightFrontDrive.getCurrentPosition());
         telemetry.addData("rb Encoder: ", rightBackDrive.getCurrentPosition());
+        telemetry.addData("rotateArmMotor position: ", rotateArmMotor.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
@@ -147,8 +150,8 @@ public class Teleop16759 extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
-            boolean armUp = gamepad2.a;
-            boolean armDown = gamepad2.y;
+            boolean armUp = gamepad2.y;
+            boolean armDown = gamepad2.a;
 
             boolean extendOut = gamepad2.x;
             boolean extendIn = gamepad2.b;
@@ -198,82 +201,66 @@ public class Teleop16759 extends LinearOpMode {
 
             // Send calculated power to wheels
             rightFrontDrive.setPower(rightFrontPower);
-
             leftFrontDrive.setPower(leftFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+            rightFrontDrive.setPower(rightFrontPower);
 
-            double armMotorPower = 0;
-            double extenderPower = 0;
-            double servoPosition = 0;
-            double leftFingerPosition = 0;
-
-
-            // Move the arm up if A is pressed. Move it down if Y is pressed.
             if (armUp) {
-                armMotorPower = 0.75;
-                rotateArmMotor.setPower(armMotorPower);
+                rotateArmMotor.setPower(-ARM_POWER);
             }
-
             else if (armDown){
-                armMotorPower = -0.75;
-                rotateArmMotor.setPower(armMotorPower);
+                rotateArmMotor.setPower(ARM_POWER);
             }
-
             else {
-                armMotorPower = 0;
-                rotateArmMotor.setPower(armMotorPower);
+                rotateArmMotor.setPower(0);
             }
 
-            // Extend arm out if x is pressed and retract if b is pressed
             if (extendOut) {
-                extenderPower = 1;
-                armExtentionMotor.setPower(extenderPower);
+                armExtensionMotor.setPower(EXTENSION_POWER);
             }
-
             else if (extendIn){
-                extenderPower = -1;
-                armExtentionMotor.setPower(extenderPower);
+                armExtensionMotor.setPower(-EXTENSION_POWER);
             }
-
             else {
-                extenderPower = 0;
-                armExtentionMotor.setPower(extenderPower);
+                armExtensionMotor.setPower(0);
             }
-
-            if (wristButtonUp > 0.8) {
-                servoPosition = 0.5;
-                wrist.setPosition(servoPosition);
-            }
-
-            else if (wristButtonDown > 0.8){
-                servoPosition = 0.0;
-                wrist.setPosition(servoPosition);
-            }
-
-            if(rightFingerToggle && !isRightFingerClosed && !wasRightFingerToggleDown) {
-                rightFingerPosition = 0.55;
-                isRightFingerClosed = true;
-                //rightFinger.setPosition(rightFingerPosition);
-            } else if(rightFingerToggle && isRightFingerClosed && !wasRightFingerToggleDown) {
-                rightFingerPosition = 0.4;
-                isRightFingerClosed = false;
-                //rightFinger.setPosition(rightFingerPosition);
-            }
-            rightFinger.setPosition(rightFingerPosition);
-
-            wasRightFingerToggleDown = rightFingerToggle;
-
-
-
+////
+////            if (wristButtonUp > 0.8) {
+////                servoPosition = 0.5;
+////                wrist.setPosition(servoPosition);
+////            }
+////
+////            else if (wristButtonDown > 0.8){
+////                servoPosition = 0.0;
+////                wrist.setPosition(servoPosition);
+////            }
+////
+////            if(rightFingerToggle && !isRightFingerClosed && !wasRightFingerToggleDown) {
+////                rightFingerPosition = 0.55;
+////                isRightFingerClosed = true;
+////                //rightFinger.setPosition(rightFingerPosition);
+////            } else if(rightFingerToggle && isRightFingerClosed && !wasRightFingerToggleDown) {
+////                rightFingerPosition = 0.4;
+////                isRightFingerClosed = false;
+////                //rightFinger.setPosition(rightFingerPosition);
+////            }
+////            rightFinger.setPosition(rightFingerPosition);
+////
+////            wasRightFingerToggleDown = rightFingerToggle;
+//
+//
+//
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("ArmPower", "%4.2f", armMotorPower);
-            telemetry.addData("WristButtonUp", "%4.2f", wristButtonUp);
-            telemetry.addData("WristButtonDown", "%4.2f", wristButtonDown);
-            telemetry.addData("WristPosition", "%4.2f", wrist.getPosition());
+            telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
+            telemetry.addData("ExtensionPosition", armExtensionMotor.getCurrentPosition());
+
+//            //telemetry.addData("WristButtonUp", "%4.2f", wristButtonUp);
+            //telemetry.addData("WristButtonDown", "%4.2f", wristButtonDown);
+            //telemetry.addData("WristPosition", "%4.2f", wrist.getPosition());
             telemetry.update();
         }
     }
