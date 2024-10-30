@@ -21,11 +21,11 @@ public class LeftAuto extends LinearOpMode {
 
         //drives forward and puts the specimen on the hook
         robot.encoderDrive(1,20);
-        robot.setArmPos(1000);
+        robot.setArmPos(1100);
         robot.setExtendPos(13.0);
-        robot.setArmPos(450);
+        robot.setArmPos(550);
         robot.runIntakeForTime(2.0, -1);
-        robot.setExtendPos(0);
+        robot.setExtendPos(0.5);
         robot.setArmPos(50);
         //drives to the samples
         robot.encoderStrafe(1, 32);
@@ -33,9 +33,9 @@ public class LeftAuto extends LinearOpMode {
         robot.encoderTurn(1,180);
         //back up
         robot.encoderDrive(1,-37);
-        robot.encoderStrafe(1, -14.57);
+        robot.encoderStrafe(1, -17);
         //sample 1
-        robot.encoderDrive(1, 5);
+        robot.encoderDrive(1, 10);
         robot.autoIntake(1.5);
         robot.encoderDrive(1, 30);
         robot.setExtendPos(0);
