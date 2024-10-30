@@ -31,8 +31,9 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     //Declare variables used for our arm lift
 
     // positive Y is upward on joystick, left and right
-    private Servo leftArm = null; //Located on Expansion Hub- Servo port 0
-    private Servo rightArm = null; //Located on Expansion Hub- Servo port 1
+    private DcMotor leftArm = null; //Located on Expansion Hub- Motor port 1
+    private DcMotor rightArm = null; //Located on Expansion Hub- Motor port 2
+    private Servo wrist = null; //Located on Expansion Hub- Servo port 0
     // positive Y on right joystick will be intake, negative = outtake
     private CRServo intake = null; //Located on Expansion Hub- Servo port 2
 
@@ -79,16 +80,14 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
         intake = hardwareMap.get(CRServo.class, "intake");
-        leftArm = hardwareMap.get(Servo.class, "leftArm");
-        rightArm = hardwareMap.get(Servo.class, "rightArm");
+        leftArm = hardwareMap.get(DcMotor.class, "leftArm");
+        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
         lift = hardwareMap.get(DcMotor.class, "lift");
+        wrist = hardwareMap.get(Servo.class, "wrist");
         utils = new actuatorUtils();
-        utils.initializeActuator(lift, leftArm, rightArm, intake);
+        utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
 
         intake.setPower(0.0);
-        leftArm.setPosition(0.0);
-        rightArm.setPosition(1.0);
-
         //imu = hardwareMap.get(IMU.class, "imu");
         //IMU.Parameters parameters = new IMU.Parameters(
         //        new RevHubOrientationOnRobot(
@@ -115,19 +114,16 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
         lift.setDirection(DcMotor.Direction.REVERSE);
-        //intake.setDirection(DcMotor.Direction.FORWARD);
-        //Reverse the arm direction so it moves in the proper direction
-        //arm.setDirection(DcMotor.Direction.REVERSE);
-        //arm1.setDirection(DcMotor.Direction.REVERSE);
-        //Set arm up to use encoders
-        //arm.setPower(0);
-        //arm1.setPower(0);
-        //Set arm up to brake
-        //arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setPower(0);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftArm.setDirection(DcMotor.Direction.REVERSE);
+        rightArm.setDirection(DcMotor.Direction.REVERSE);
+        leftArm.setPower(0);
+        leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightArm.setPower(0);
+        rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
 
     }
 
@@ -247,21 +243,17 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
-        double leftArmPosition = leftArm.getPosition();
-        double rightArmPosition = rightArm.getPosition();
-        double armDelta = 0.0025;
-        if (gamepad2.right_stick_y > 0.1) {
+        double leftArmPosition = leftArm.getCurrentPosition();
 
-            leftArm.setPosition(leftArmPosition + (armDelta));
-            rightArm.setPosition(rightArmPosition - (armDelta));
-
-
-        } else if (gamepad2.right_stick_y < -0.1)
-        {
-            leftArm.setPosition(leftArmPosition - (armDelta));
-            rightArm.setPosition(rightArmPosition + (armDelta));
-
+        if (leftArmPosition < utils.upEncode & leftArmPosition > utils.downEncode) {
+            leftArm.setPower(gamepad2.right_stick_y);
+            rightArm.setPower(gamepad2.right_stick_y);
+        } else {
+            leftArm.setPower(0.0);
+            rightArm.setPower(0.0);
         }
+        //gamepad2.dpad_up
+
 
         //if (gamepad2.right_stick_y > 0.1) {
         //    intake.setPosition(0.55);
@@ -274,8 +266,8 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
 
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("leftArm: ", leftArm.getPosition());
-        telemetry.addData("rightArm:", rightArm.getPosition());
+        telemetry.addData("leftArm: ", leftArm.getCurrentPosition());
+        telemetry.addData("rightArm:", rightArm.getCurrentPosition());
         telemetry.addData("intake:", intake.getPower());
         telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);
