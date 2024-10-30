@@ -22,10 +22,29 @@ public class motorTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
+            float leftThumbstickValue = gamepad1.left_stick_y;
+            float rightThumbstickValue = gamepad1.right_stick_y;
+
+            telemetry.addData("Left Thumbstick Value",leftThumbstickValue);
+            telemetry.addData("Right Thumbstick Value", rightThumbstickValue);
+
+            if (gamepad1.a) {
+                leftMotor.setPower(-1*0.95);
+                rightMotor.setPower(1);
+            } else {
+                leftMotor.setPower(-0);
+                rightMotor.setPower(0);
+
+                if (gamepad1.b) {
+                    leftMotor.setPower(1*0.95);
+                    rightMotor.setPower(-1);
+                } else {
+                    leftMotor.setPower(-0);
+                    rightMotor.setPower(0);
+            }}
+            //leftMotor.setPower(leftThumbstickValue);
+            //rightMotor.setPower(-rightThumbstickValue);
             telemetry.update();
-            
-            leftMotor.setPower(1);
-            rightMotor.setPower(-1);
         }
     }
 
