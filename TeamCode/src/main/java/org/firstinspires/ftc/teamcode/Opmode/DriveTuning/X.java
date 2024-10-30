@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Opmode.DriveTuning;
 
+import android.drm.DrmStore;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -44,6 +46,7 @@ public class X extends LinearOpMode {
         ACTION3,
         ACTION4,
         ACTION5,
+        ACTION6,
         REST
 
     }
@@ -92,6 +95,7 @@ public class X extends LinearOpMode {
                 case ACTION1:
                     arm.deposit();
                     slides.preScore();
+                    currentAction=Actions.ACTION2;
                     break;
                 case ACTION2:
 //                    slides.score();
@@ -99,36 +103,73 @@ public class X extends LinearOpMode {
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 1000){
+                    if(timer.milliseconds() > ActionStamp + 1500){
                         slides.score();
 
                         actionToggle = true;
-//                        currentAction = Actions.ACTION3;
+                        currentAction = Actions.ACTION3;
                     }
                     break;
                 case ACTION3:
-                    wrist.deposit();
+//                    wrist.deposit();
                     if(actionToggle){//to be filled in...
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 5000){
+                    if(timer.milliseconds() > ActionStamp + 1000){
+                        wrist.deposit();
                         actionToggle = true;
                         currentAction = Actions.ACTION4;
                     }
                     break;
                 case ACTION4:
-                    claw.open();
+//                    claw.open();
                     if(actionToggle){//to be filled in...
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 5000){
+                    if(timer.milliseconds() > ActionStamp + 500){
+                        claw.open();
+
                         actionToggle = true;
                         currentAction = Actions.ACTION5;
                     }
                     break;
                 case ACTION5:
+                    if (actionToggle){
+                        ActionStamp=timer.milliseconds();
+                        actionToggle=false;
+                    }
+                    if (timer.milliseconds()>ActionStamp+500){
+                        wrist.intake();
+                        slides.preScore();
+                    }
+
+                    if (timer.milliseconds()>ActionStamp+1000){
+                        arm.preTake();
+                        actionToggle=true;
+                        currentAction=Actions.REST;
+                    }
+                    break;
+                case ACTION6:
+                    if (actionToggle){
+                        ActionStamp=timer.milliseconds();
+                        actionToggle=false;
+                    }
+
+                    slides.setTargetSlidesPosition(7);
+                    if (timer.milliseconds()>ActionStamp+500){
+                        arm.intake();
+                    }
+                    if (timer.milliseconds()>ActionStamp+1000){
+
+                        claw.close();
+                        actionToggle=true;
+                        currentAction=Actions.REST;
+                    }
+
+
+
                     break;
 
 
@@ -158,9 +199,9 @@ public class X extends LinearOpMode {
                         if(timeToggle){//to be filled in...
                             TimeStamp = timer.milliseconds();
                             timeToggle = false;
-                            currentAction = Actions.ACTION2;
+                            currentAction = Actions.ACTION1;
                         }
-                        if(timer.milliseconds() > TimeStamp + 15000){
+                        if(timer.milliseconds() > TimeStamp + 4000){
 
                             timeToggle = true;
                             if(currentCycle ==0){
@@ -181,7 +222,10 @@ public class X extends LinearOpMode {
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
                     }
-                    if(timer.milliseconds() > TimeStamp + 2000){
+                    if(timer.milliseconds() > TimeStamp + 1000){
+                        currentAction=Actions.ACTION6;
+                    }
+                    if(timer.milliseconds() > TimeStamp + 2500){
                         timeToggle = true;
                         currentState = State.BONK2;
                     }
@@ -192,7 +236,10 @@ public class X extends LinearOpMode {
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
                     }
-                    if(timer.milliseconds() > TimeStamp + 2000){
+                    if(timer.milliseconds() > TimeStamp + 1000){
+                        currentAction=Actions.ACTION6;
+                    }
+                    if(timer.milliseconds() > TimeStamp + 2500){
                         timeToggle = true;
                         currentState = State.BONK2;
                     }
@@ -259,6 +306,9 @@ public class X extends LinearOpMode {
             telemetry.addData("xOut", drive.PIDOutputs().getX());
             telemetry.addData("yOut", drive.PIDOutputs().getY());
             telemetry.addData("headingOut", drive.PIDOutputs().getHeading());
+            telemetry.addData("current state:",currentState.name());
+            telemetry.addData("current action:",currentAction.name());
+
 
             telemetry.update();
         }
