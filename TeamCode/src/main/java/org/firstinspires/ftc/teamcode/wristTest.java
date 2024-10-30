@@ -11,24 +11,9 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import java.util.HashMap;
 
 @Disabled
-@Autonomous(name="secondAuto", group="Auto")
-public class secondAuto extends OpMode {
+@Autonomous(name="wristTest", group="Auto")
+public class wristTest extends OpMode {
     private AutonomousHandler autoHandler;
-    private HashMap<Integer, SystemState> instructions;
-    private ArmSubSystem armControlSubsystem;
-    private DriveBaseSubsystem driveBaseSystem;
-
-    private DcMotor frontLeftMotor;
-    private DcMotor frontRightMotor;
-    private DcMotor backLeftMotor;
-    private DcMotor backRightMotor;
-    private DcMotor spindle;
-    private SparkFunOTOS odometry;
-    private DcMotor cap;
-    // Servos
-    private ServoImplEx LSLower;
-    private ServoImplEx LSTop;
-    private RevTouchSensor lswitch;
 
     @Override
     public void init() {
@@ -64,10 +49,10 @@ public class secondAuto extends OpMode {
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Breaking mode
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         cap.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         spindle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -75,40 +60,17 @@ public class secondAuto extends OpMode {
         SystemState stateOne = new SystemState();
         stateOne.clawPosition = clawState.CLOSED;
         stateOne.wristPosition = wristState.UP;
-        stateOne.armPosition = armPose.CHAMBER_A;
-        stateOne.drivePose = new SparkFunOTOS.Pose2D(12, 0, 0);
-
-        // State Two
-        SystemState stateTwo = new SystemState();
-        stateTwo.clawPosition = clawState.CLOSED;
-        stateTwo.wristPosition = wristState.UP;
-        stateTwo.armPosition = armPose.BASKET;
-        stateTwo.drivePose = new SparkFunOTOS.Pose2D(12, 0, 0);
-
-        // State Three
-        SystemState stateThree = new SystemState();
-        stateThree.clawPosition = clawState.OPENED;
-        stateThree.wristPosition = wristState.UP;
-        stateThree.armPosition = armPose.BASKET;
-        stateThree.drivePose = new SparkFunOTOS.Pose2D(12, 0, 0);
-
-        // State Four
-        SystemState stateFour = new SystemState();
-        stateFour.clawPosition = clawState.OPENED;
-        stateFour.wristPosition = wristState.UP;
-        stateFour.armPosition = armPose.REST;
-        stateFour.drivePose = new SparkFunOTOS.Pose2D(-50, 0, 0);
+        stateOne.armPosition = armPose.REST;
+        stateOne.drivePose = new SparkFunOTOS.Pose2D(0, 0, 0);
 
         // Generate Path
-        instructions = new HashMap<>();
-        instructions.put(0, stateOne);
-        instructions.put(1, stateTwo);
-        instructions.put(2, stateThree);
-        instructions.put(3, stateFour);
+        HashMap<Integer, SystemState> instructions = new HashMap<>();
+        instructions.put(0, stateOne); // Arm Up
+
 
         // ACS & DBS & Handler
-        armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);
-        driveBaseSystem = new DriveBaseSubsystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, odometry, telemetry);
+        ArmSubSystem armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);
+        DriveBaseSubsystem driveBaseSystem = new DriveBaseSubsystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, odometry, telemetry);
         autoHandler = new AutonomousHandler(instructions, armControlSubsystem, driveBaseSystem, 0, telemetry);
     }
 

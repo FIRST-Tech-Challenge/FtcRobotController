@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PIDController {
@@ -17,8 +18,8 @@ public class PIDController {
         d = Xd;
         timer = new ElapsedTime();
     }
-    public float getOutput(float state, float reference) {
-        if (previousReference != reference) {
+    public float getOutput(float state, float reference, TelemetryPacket packet, String name) {
+        if (reference != previousReference) {
             integralSummation = 0;
         }
         float error = reference - state;
@@ -26,6 +27,7 @@ public class PIDController {
         float derivative = (float) ((error - lastError) / timer.seconds());
         lastError = error;
         previousReference = reference;
+//        packet.put(name + "Integral Summation", integralSummation);
         return (error * p) + (derivative * d) + (integralSummation * i);
     }
 }

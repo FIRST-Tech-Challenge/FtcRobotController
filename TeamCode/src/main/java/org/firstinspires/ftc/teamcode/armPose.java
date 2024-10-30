@@ -7,5 +7,6 @@ public enum armPose {
     REST,
     CHAMBER_A,
     CHAMBER_B,
-    ZERO
+    ZERO,
+    BASKET_PREP
 }

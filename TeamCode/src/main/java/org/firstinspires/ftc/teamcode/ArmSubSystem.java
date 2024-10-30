@@ -12,7 +12,7 @@ import com.sun.tools.javac.util.Warner;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmSubSystem {
-    private armPose positionalState = armPose.REST;
+    private armPose positionalState;
     private armPoseZone positionalZone = armPoseZone.OTHER;
     private DcMotor cap;
     private DcMotor extendo;
@@ -77,17 +77,23 @@ public class ArmSubSystem {
             case BASKET:
                 positionalZone = armPoseZone.OTHER;
                 extendoReference = 2250;
-                capstanReference = -600;
+                capstanReference = -550;
                 break;
             case REST:
                 positionalZone = armPoseZone.OTHER;
                 extendoReference = 0;
-                capstanReference = -200;
+                capstanReference = -40;
+                break;
+            case BASKET_PREP:
+                positionalZone = armPoseZone.OTHER;
+                extendoReference = 1000;
+                capstanReference = -300;
                 break;
             case ZERO:
                 positionalZone = armPoseZone.OTHER;
                 extendoReference = 0;
                 capstanReference = 0;
+                break;
         }
     }
     public void setManipulatorReference(wristState stateOfWrist, clawState stateOfClaw) {
@@ -107,7 +113,7 @@ public class ArmSubSystem {
         packet.put("ExtendoReference", extendoReference);
         packet.put("CapstanPosition", cap.getCurrentPosition());
         packet.put("CapstanReference", capstanReference);
-        float extendoPIDValue = extendoPID.getOutput(extendo.getCurrentPosition(), extendoReference);
+        float extendoPIDValue = extendoPID.getOutput(extendo.getCurrentPosition(), extendoReference, packet, "extendo");
         if (extendoPIDValue > 0.75) {
             extendo.setPower(0.75);
         } else if (extendoPIDValue < -0.75) {
@@ -116,7 +122,7 @@ public class ArmSubSystem {
             extendo.setPower(extendoPIDValue);
         }
         if (!ClasslimitSwitch.isPressed()) {
-            float capPIDValue = capstanPID.getOutput(cap.getCurrentPosition(), capstanReference);
+            float capPIDValue = capstanPID.getOutput(cap.getCurrentPosition(), capstanReference, packet, "capstan");
             if (capPIDValue > 0.75) {
                 cap.setPower(0.75);
             } else if (capPIDValue < -0.75) {

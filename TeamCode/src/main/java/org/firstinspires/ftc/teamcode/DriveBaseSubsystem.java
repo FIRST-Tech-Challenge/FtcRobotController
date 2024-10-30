@@ -12,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Config
 public class DriveBaseSubsystem {
     public static float Translational_P = 0.07f;
-    public static float Translational_I = 0;
-    public static float Translational_D = 0.005f;
+    public static float Translational_I = 0.000005f;
+    public static float Translational_D = 0;
     // Motors & Sensors
     private static DcMotor _frontLeftMotor;
     private static DcMotor _frontRightMotor;
@@ -97,7 +97,7 @@ public class DriveBaseSubsystem {
         packet.put("YPower", y);
         packet.put("RXPower", rx);
         double rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
-        double rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
+        double rotY = (x * Math.sin(-heading) + y * Math.cos(-heading)) * 1.1; // Strafe Helper
         _frontLeftMotor.setPower(motorClamp(rotY + rotX + rx));
         _backLeftMotor.setPower(motorClamp(rotY - rotX + rx));
         _frontRightMotor.setPower(motorClamp(rotY - rotX - rx));
@@ -106,7 +106,7 @@ public class DriveBaseSubsystem {
 
     void periodicUpdate(TelemetryPacket packet) {
         currentPose.set(_odometry.getPosition());
-        driveMech(-translationX.getOutput((float) currentPose.y, (float) goal.x), translationY.getOutput((float) currentPose.x, (float) goal.y), headingPID.getOutput((float) -currentPose.h, (float) goal.h), Math.toRadians(currentPose.h), packet);
+        driveMech(-translationX.getOutput((float) currentPose.y, (float) goal.x, packet, "transX"), translationY.getOutput((float) currentPose.x, (float) goal.y, packet, "transY"), headingPID.getOutput((float) -currentPose.h, (float) goal.h, packet, "head"), Math.toRadians(currentPose.h), packet);
         telemetry.addData("Current Pose", "(" + currentPose.x + ", " + currentPose.y + ", " + currentPose.x + ")");
         telemetry.addData("Goal Pose", "(" + goal.x + ", " + goal.y + ", " + goal.x + ")");
         packet.fieldOverlay().fillRect(currentPose.y, currentPose.x, 18,18);

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -15,6 +16,9 @@ public class AutonomousHandler {
     private int systemStateReference = 0;
     private Telemetry theTelemetry;
     private FtcDashboard dashboard;
+    private ElapsedTime timer = new ElapsedTime();
+    private double servoWaitStart = timer.milliseconds();
+    private boolean waiting = false;
 
     public AutonomousHandler(HashMap<Integer, SystemState> pathList, ArmSubSystem armSubSystem, DriveBaseSubsystem driveBaseSystem, int StartAtStep, Telemetry thisTelemetry) {
         systemStateReference = StartAtStep;
@@ -33,16 +37,30 @@ public class AutonomousHandler {
         if (driveSubSys.isAtReference(packet) && armSubSys.isAtReference(packet)) {
             if (Objects.requireNonNull(path.get(systemStateReference + 1)).wristPosition == null) {
                 theTelemetry.addData("driveSystemStopped", "yes");
-            } else {
+                packet.put("driveSystemStopped", "yes");
+            } else if ((!waiting) && ((Objects.requireNonNull(path.get(systemStateReference + 1)).wristPosition != Objects.requireNonNull(path.get(systemStateReference)).wristPosition) || (Objects.requireNonNull(path.get(systemStateReference + 1)).clawPosition != Objects.requireNonNull(path.get(systemStateReference)).clawPosition))) {
+                servoWaitStart = timer.milliseconds();
+                theTelemetry.addData("driveSystemStopped", "waitingForServo");
+                packet.put("driveSystemStopped", "waitingForServo");
+                waiting = true;
+            } else if (timer.milliseconds() > (servoWaitStart + 700)) {
+                waiting = false;
                 theTelemetry.addData("driveSystemStopped", "changing");
+                packet.put("driveSystemStopped", "changing");
                 systemStateReference = systemStateReference + 1;
                 driveSubSys.setGoal(Objects.requireNonNull(path.get(systemStateReference)).drivePose);
                 armSubSys.setReferences(Objects.requireNonNull(path.get(systemStateReference)).armPosition);
                 armSubSys.setManipulatorReference(Objects.requireNonNull(path.get(systemStateReference)).wristPosition, Objects.requireNonNull(path.get(systemStateReference)).clawPosition);
+            } else {
+                packet.put("driveSystemStopped", "waitingForServo");
+                theTelemetry.addData("driveSystemStopped", "waitingForServo");
             }
         } else {
+            packet.put("driveSystemStopped", "no");
             theTelemetry.addData("driveSystemStopped", "no");
         }
+        packet.put("timeToWait", servoWaitStart + 700);
+        packet.put("currentTime", timer.milliseconds());
         armSubSys.periodicUpdate(packet); // Moves arm
         driveSubSys.periodicUpdate(packet); // Moves Drive Base
         theTelemetry.addData("Auto Stage", systemStateReference);
