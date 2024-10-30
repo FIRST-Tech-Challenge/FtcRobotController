@@ -65,14 +65,14 @@ public class PushAuto extends NKNAutoProgram {
         AutoStepMove step9 = new AutoStepMove(0, 1.65);
         stepList.add(step9);
 
-        AutoStepMoveNRotate step10 = new AutoStepMoveNRotate(1.2, 0, 90);
-        stepList.add(step10);
+        AutoStepRotateArm lowerArm = new AutoStepRotateArm(RotationHandler.RotationPositions.PREPICKUP);
+        stepList.add(lowerArm);
 
-        AutoStepRotateArm step11 = new AutoStepRotateArm(RotationHandler.RotationPositions.PARKING);
+        AutoStepMoveNRotate step11 = new AutoStepMoveNRotate(1.2, 0, 90);
         stepList.add(step11);
 
-        AutoStepServo step12 = new AutoStepServo(IntakeSpinnerHandler.HandStates.GRIP, 1000);
-        stepList.add(step12);
+        AutoStepRotateArm raiseArm = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
+        stepList.add(raiseArm);
 
 
         NKNAutoProgram.initSteps(stepList, autoSkeleton);

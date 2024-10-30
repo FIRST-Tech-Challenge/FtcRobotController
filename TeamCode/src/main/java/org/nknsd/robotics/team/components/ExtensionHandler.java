@@ -38,7 +38,7 @@ public class ExtensionHandler implements NKNComponent {
         },
 
         // Temporarily decreased since we are aiming for low basket
-        HIGH_BASKET(2000) { //~3100
+        HIGH_BASKET(3100) {
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
                 return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.HIGH;

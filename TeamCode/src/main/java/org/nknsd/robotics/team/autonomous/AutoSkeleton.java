@@ -57,8 +57,8 @@ public class AutoSkeleton {
         FlowSensorHandler.PoseData pos = flowSensorHandler.getOdometryData().pos;
         double x = pos.x;
         double y = pos.y;
-        //double yaw = imuComponent.getYaw();
-        double yaw = pos.heading;
+        double yaw = imuComponent.getYaw();
+        //double yaw = pos.heading;
 
         telemetry.addData("Cur X", x);
         telemetry.addData("Cur Y", y);
@@ -100,11 +100,6 @@ public class AutoSkeleton {
 
         telemetry.addData("Speed X", x);
         telemetry.addData("Speed Y", y);
-
-        //Normalize targetRot & yaw for rotation
-        targetRotation = (targetRotation + 360) % 360;
-        yaw = (yaw + 360) % 360;
-        //Note that this kind of normalization only works for converting 180* ranges to 360* ones.
 
         double turning = targetRotation - yaw;
         turning /= 90;
