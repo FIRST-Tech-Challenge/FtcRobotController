@@ -694,9 +694,9 @@ Version 5.5 requires Android Studio 4.0 or later.
     * REV Hub is running outdated firmware (older than version 1.8.2)
 * Adds support for Sony PS4 gamepad, and reworks how gamepads work on the Driver Station
     * Removes preference which sets gamepad type based on driver position. Replaced with menu which allows specifying type for gamepads with unknown VID and PID
-	* Attempts to auto-detect gamepad type based on USB VID and PID
-	* If gamepad VID and PID is not known, use type specified by user for that VID and PID
-	* If gamepad VID and PID is not known AND the user has not specified a type for that VID and PID, an educated guess is made about how to map the gamepad
+  * Attempts to auto-detect gamepad type based on USB VID and PID
+  * If gamepad VID and PID is not known, use type specified by user for that VID and PID
+  * If gamepad VID and PID is not known AND the user has not specified a type for that VID and PID, an educated guess is made about how to map the gamepad
 * Driver Station will now attempt to automatically recover from a gamepad disconnecting, and re-assign it to the position it was assigned to when it dropped
     * If only one gamepad is assigned and it drops: it can be recovered
     * If two gamepads are assigned, and have **different** VID/PID signatures, and only one drops: it will be recovered
@@ -779,7 +779,7 @@ Version 5.5 requires Android Studio 4.0 or later.
 * Allows a Driver Station to connect to a Robot Controller after another has disconnected
 * Improves generation of fake serial numbers for UVC cameras which do not provide a real serial number
     * Previously some devices would assign such cameras a serial of `0:0` and fail to open and start streaming
-	* Fixes [ftc_app issue #638](https://github.com/ftctechnh/ftc_app/issues/638).
+  * Fixes [ftc_app issue #638](https://github.com/ftctechnh/ftc_app/issues/638).
 * Fixes a slew of bugs with the Vuforia camera monitor including:
     * Fixes bug where preview could be displayed with a wonky aspect ratio
     * Fixes bug where preview could be cut off in landscape
@@ -972,8 +972,8 @@ Changes include:
     - User can upload calibration files from Program and Manage web interface.
     - UVC cameras seem to draw a fair amount of electrical current from the USB bus.
          + This does not appear to present any problems for the REV Robotics Control Hub.
-	 + This does seem to create stability problems when using some cameras with an Android phone-based Robot Controller.
-	 + FTC Tech Team is investigating options to mitigate this issue with the phone-based Robot Controllers.
+   + This does seem to create stability problems when using some cameras with an Android phone-based Robot Controller.
+   + FTC Tech Team is investigating options to mitigate this issue with the phone-based Robot Controllers.
     - Updated sample Vuforia Navigation and VuMark OpModes to demonstrate how to use an internal phone-based camera and an external UVC webcam.
 
  * Support for improved motor control.
@@ -986,23 +986,23 @@ Changes include:
  * Wireless
     - Added 5GHz support for wireless channel changing for those devices that support it.
         + Tested with Moto G5 and E4 phones.
-	+ Also tested with other (currently non-approved) phones such as Samsung Galaxy S8.
+  + Also tested with other (currently non-approved) phones such as Samsung Galaxy S8.
 
 * Improved Expansion Hub firmware update support in Robot Controller app
     - Changes to make the system more robust during the firmware update process (when performed through Robot Controller app).
     - User no longer has to disconnect a downstream daisy-chained Expansion Hub when updating an Expansion Hub's firmware.
         + If user is updating an Expansion Hub's firmware through a USB connection, he/she does not have to disconnect RS485 connection to other Expansion Hubs.
-	+ The user still must use a USB connection to update an Expansion Hub's firmware.
-	+ The user cannot update the Expansion Hub firmware for a downstream device that is daisy chained through an RS485 connection.
+  + The user still must use a USB connection to update an Expansion Hub's firmware.
+  + The user cannot update the Expansion Hub firmware for a downstream device that is daisy chained through an RS485 connection.
     - If an Expansion Hub accidentally gets "bricked" the Robot Controller app is now more likely to recognize the Hub when it scans the USB bus.
         + Robot Controller app should be able to detect an Expansion Hub, even if it accidentally was bricked in a previous update attempt.
-	+ Robot Controller app should be able to install the firmware onto the Hub, even if if accidentally was bricked in a previous update attempt.
+  + Robot Controller app should be able to install the firmware onto the Hub, even if if accidentally was bricked in a previous update attempt.
 
  * Resiliency
     - FTC software can detect and enable an FTDI reset feature that is available with REV Robotics v1.8 Expansion Hub firmware and greater.
         + When enabled, the Expansion Hub can detect if it hasn't communicated with the Robot Controller over the FTDI (USB) connection.
-	+ If the Hub hasn't heard from the Robot Controller in a while, it will reset the FTDI connection.
-	+ This action helps system recover from some ESD-induced disruptions.
+  + If the Hub hasn't heard from the Robot Controller in a while, it will reset the FTDI connection.
+  + This action helps system recover from some ESD-induced disruptions.
     - Various fixes to improve reliability of FTC software.
 
  * Blocks
@@ -1018,19 +1018,19 @@ Changes include:
     - Added support for a REV Touch Sensor (no longer have to configure as a generic digital device).
     - Added blocks for DcMotorEx methods.
         + These are enhanced methods that you can use when supported by the motor controller hardware.
-	+ The REV Robotics Expansion Hub supports these enhanced methods.
-	+ Enhanced methods include methods to get/set motor velocity (in encoder pulses per second), get/set PIDF coefficients, etc..
+  + The REV Robotics Expansion Hub supports these enhanced methods.
+  + Enhanced methods include methods to get/set motor velocity (in encoder pulses per second), get/set PIDF coefficients, etc..
 
  * Modest Improvements in Logging
     - Decrease frequency of battery checker voltage statements.
     - Removed non-FTC related log statements (wherever possible).
     - Introduced a "Match Logging" feature.
         + Under "Settings" a user can enable/disable this feature (it's disabled by default).
-	+ If enabled, user provides a "Match Number" through the Driver Station user interface (top of the screen).
-	    * The Match Number is used to create a log file specifically with log statements from that particular OpMode run.
-	    * Match log files are stored in /sdcard/FIRST/matlogs on the Robot Controller.
-	    * Once an OpMode run is complete, the Match Number is cleared.
-	    * This is a convenient way to create a separate match log with statements only related to a specific OpMode run.
+  + If enabled, user provides a "Match Number" through the Driver Station user interface (top of the screen).
+      * The Match Number is used to create a log file specifically with log statements from that particular OpMode run.
+      * Match log files are stored in /sdcard/FIRST/matlogs on the Robot Controller.
+      * Once an OpMode run is complete, the Match Number is cleared.
+      * This is a convenient way to create a separate match log with statements only related to a specific OpMode run.
 
  * New Devices
     - Support for REV Robotics Blinkin LED Controller.
@@ -1052,14 +1052,14 @@ Known issues:
  * Initial support for UVC compatible cameras
     - UVC cameras seem to draw significant amount of current from the USB bus.
         + This does not appear to present any problems for the REV Robotics Control Hub.
-	+ This does seem to create stability problems when using some cameras with an Android phone-based Robot Controller.
-	+ FTC Tech Team is investigating options to mitigate this issue with the phone-based Robot Controllers.
+  + This does seem to create stability problems when using some cameras with an Android phone-based Robot Controller.
+  + FTC Tech Team is investigating options to mitigate this issue with the phone-based Robot Controllers.
     - There might be a possible deadlock which causes the RC to become unresponsive when using a UVC webcam with a Nougat Android Robot Controller.
 
  * Wireless
     - When user selects a wireless channel, this channel does not necessarily persist if the phone is power cycled.
         + Tech Team is hoping to eventually address this issue in a future release.
-	+ Issue has been present since apps were introduced (i.e., it is not new with the v4.0 release).
+  + Issue has been present since apps were introduced (i.e., it is not new with the v4.0 release).
     - Wireless channel is not currently displayed for Wi-Fi Direct connections.
 
  * Miscellaneous

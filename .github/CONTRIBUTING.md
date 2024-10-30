@@ -14,8 +14,8 @@ If you are looking at this button then you've pushed some changes to your team's
 
 The vast majority of pull requests seen on the ftctechnh/ftc_app repository are not intended to be merged into the official SDK.  Team software is just that, your team's.  It's specific to the tasks you are trying to accomplish, the testing you are doing, and goals your team has.  You don't want that pushed into the official SDK.
 
-If what you've read so far makes little sense, there are some very good git learning resources online.  
-[Git Book](https://git-scm.com/book/en/v2)  
+If what you've read so far makes little sense, there are some very good git learning resources online.
+[Git Book](https://git-scm.com/book/en/v2)
 [Interactive Git Tutorial](https://try.github.io)
 
 ### Guidlines for experienced GIT users.
@@ -30,7 +30,7 @@ Alternatively, if you have a team repository forked from ftctechnh/ftc_app, and 
 
 The latter would be the "best" way to manage software among a large team. But as with all things git there are many options.
 
-Pull requests that do not fall into the category above are evaluated by the FTC Technology Team on a case-by-case basis.  Please note however that the deployment model of the SDK does not support direct pulls into ftctechnh/ftc_app.  
+Pull requests that do not fall into the category above are evaluated by the FTC Technology Team on a case-by-case basis.  Please note however that the deployment model of the SDK does not support direct pulls into ftctechnh/ftc_app.
 
 ### Report bugs
 
@@ -61,7 +61,7 @@ Explain the problem and include additional details to help maintainers reproduce
 
 ### Suggesting Enhancements
 
-FIRST volunteers are awesome.  You all have great ideas and we want to hear them.  
+FIRST volunteers are awesome.  You all have great ideas and we want to hear them.
 
 Enhancements should be broadly applicable to a large majority of teams, should not force teams to change their workflow, and should provide real value to the mission of FIRST as it relates to engaging youth in engineering activities.
 

@@ -1,3 +1,6 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Swerve.wpilib.util;
 
 /** Utility class that converts between commonly used units in FRC. */

@@ -10,7 +10,6 @@ package org.firstinspires.ftc.teamcode.Swerve;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
 
 @TeleOp(name = "Swerve Automation", group = "Swerve")
 public class SwerveTeleOp extends LinearOpMode {
@@ -19,9 +18,16 @@ public class SwerveTeleOp extends LinearOpMode {
     var swerve = new Swerve(this);
 
     waitForStart();
+    double lastTime = System.nanoTime() / 1e9;
     while (opModeIsActive()) {
-      swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.left_stick_x);
+      double currentTime = System.nanoTime() / 1e9;
+      swerve.teleopDrive(
+          -gamepad1.left_stick_y,
+          -gamepad1.left_stick_x,
+          -gamepad1.left_stick_x,
+          currentTime - lastTime);
       swerve.periodic();
+      lastTime = currentTime;
     }
   }
 }

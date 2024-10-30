@@ -1,7 +1,9 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry;
 
 import java.util.Objects;
-
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.interpolation.Interpolatable;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
@@ -13,8 +15,7 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
  * return 361 degrees. This allows algorithms that wouldn't want to see a discontinuity in the
  * rotations as it sweeps past from 360 to 0 on the second time around.
  */
-public class Rotation2d
-    implements Interpolatable<Rotation2d> {
+public class Rotation2d implements Interpolatable<Rotation2d> {
   /**
    * A preallocated Rotation2d representing no rotation.
    *
@@ -215,7 +216,6 @@ public class Rotation2d
    * @return The radian value of the Rotation2d.
    * @see edu.wpi.first.math.MathUtil#angleModulus(double) to constrain the angle within (-pi, pi]
    */
-
   public double getRadians() {
     return m_value;
   }

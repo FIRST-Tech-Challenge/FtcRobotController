@@ -1,11 +1,13 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics;
 
+import java.util.Arrays;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Twist2d;
-
-import java.util.Arrays;
 
 /**
  * Helper class that converts a chassis velocity (dx, dy, and dtheta components) into individual

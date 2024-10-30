@@ -1,11 +1,13 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics;
 
+import java.util.Objects;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Twist2d;
-
-import java.util.Objects;
 
 /**
  * Represents the speed of a robot chassis. Although this class contains similar members compared to
@@ -285,9 +287,9 @@ public class ChassisSpeeds {
   public boolean equals(Object o) {
     return o == this
         || o instanceof ChassisSpeeds c
-        && vxMetersPerSecond == c.vxMetersPerSecond
-        && vyMetersPerSecond == c.vyMetersPerSecond
-        && omegaRadiansPerSecond == c.omegaRadiansPerSecond;
+            && vxMetersPerSecond == c.vxMetersPerSecond
+            && vyMetersPerSecond == c.vyMetersPerSecond
+            && omegaRadiansPerSecond == c.omegaRadiansPerSecond;
   }
 
   @Override

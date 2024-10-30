@@ -1,12 +1,13 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics;
 
+import java.util.Objects;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 
-import java.util.Objects;
-
 /** Represents the state of one swerve module. */
-public class SwerveModuleState
-    implements Comparable<SwerveModuleState> {
+public class SwerveModuleState implements Comparable<SwerveModuleState> {
   /** Speed of the wheel of the module. */
   public double speedMetersPerSecond;
 
