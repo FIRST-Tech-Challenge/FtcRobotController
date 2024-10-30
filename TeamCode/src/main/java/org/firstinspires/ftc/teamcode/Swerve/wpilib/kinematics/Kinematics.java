@@ -1,3 +1,6 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics;
 
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Twist2d;

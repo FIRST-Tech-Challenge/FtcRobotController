@@ -1,3 +1,6 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
@@ -11,23 +14,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp
 public class testMotor extends LinearOpMode {
 
-    DcMotor motor;
+  DcMotor motor;
 
-    public void runOpMode() {
-        initR();
+  public void runOpMode() {
+    initR();
 
-        waitForStart();
+    waitForStart();
 
-        while (opModeIsActive()) {
-            double pow = -gamepad1.right_stick_y;
-            motor.setPower(pow);
-        }
+    while (opModeIsActive()) {
+      double pow = -gamepad1.right_stick_y;
+      motor.setPower(pow);
     }
+  }
 
-    public void initR() {
-        motor = hardwareMap.get(DcMotor.class, "motor");
-        motor.setZeroPowerBehavior(BRAKE);
-        motor.setDirection(FORWARD);
-        motor.setMode(RUN_WITHOUT_ENCODER);
-    }
+  public void initR() {
+    motor = hardwareMap.get(DcMotor.class, "motor");
+    motor.setZeroPowerBehavior(BRAKE);
+    motor.setDirection(FORWARD);
+    motor.setMode(RUN_WITHOUT_ENCODER);
+  }
 }

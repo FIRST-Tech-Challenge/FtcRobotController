@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry;
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
 
-import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
-import org.firstinspires.ftc.teamcode.Swerve.wpilib.interpolation.Interpolatable;
+package org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.interpolation.Interpolatable;
 
 /**
  * Represents a translation in 2D space. This object can be used to represent a point or a vector.
@@ -14,8 +16,7 @@ import java.util.Objects;
  * <p>This assumes that you are using conventional mathematical axes. When the robot is at the
  * origin facing in the positive X direction, forward is positive X and left is positive Y.
  */
-public class Translation2d
-    implements Interpolatable<Translation2d> {
+public class Translation2d implements Interpolatable<Translation2d> {
   /**
    * A preallocated Translation2d representing the origin.
    *

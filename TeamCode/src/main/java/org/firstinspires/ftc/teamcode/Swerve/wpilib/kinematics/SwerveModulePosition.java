@@ -1,15 +1,16 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics;
 
+import java.util.Objects;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.interpolation.Interpolatable;
 
-import java.util.Objects;
-
 /** Represents the state of one swerve module. */
 public class SwerveModulePosition
-    implements Comparable<SwerveModulePosition>,
-    Interpolatable<SwerveModulePosition> {
+    implements Comparable<SwerveModulePosition>, Interpolatable<SwerveModulePosition> {
   /** Distance measured by the wheel of the module. */
   public double distanceMeters;
 

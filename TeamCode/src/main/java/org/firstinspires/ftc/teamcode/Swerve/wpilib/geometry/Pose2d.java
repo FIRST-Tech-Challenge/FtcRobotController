@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry;
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
 
-import org.firstinspires.ftc.teamcode.Swerve.wpilib.interpolation.Interpolatable;
+package org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.interpolation.Interpolatable;
 
 /** Represents a 2D pose containing translational and rotational elements. */
 public class Pose2d implements Interpolatable<Pose2d> {
