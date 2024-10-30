@@ -74,7 +74,6 @@ public class Drivetrain {
         yController = new BasicPID(xyCoefficients);
         rController = new BasicPID(rCoefficients);
 
-        this.startPose = startPose;
 
         xTarget = startPose.getX();
         yTarget = startPose.getY();
@@ -141,10 +140,10 @@ public class Drivetrain {
         odo.update();
         currentPose = odo.getPosition();
         //CONVERT TO RR COORDINATES
-        xRn = -currentPose.getY()+startPose.getY();
-        yRn = currentPose.getX()+startPose.getX();
+        xRn = -currentPose.getY();
+        yRn = currentPose.getX();
 
-        rRn = currentPose.getHeading()+startPose.getHeading();
+        rRn = currentPose.getHeading();
         //CHECK THE UNITS OF HEADING AND WRITE IT IN A COMMENT!
         currentPose = new Pose2d(xRn, yRn, rRn);
         Pose2d currentVelocity = odo.getVelocity();

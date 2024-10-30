@@ -24,7 +24,7 @@ public class league1auto extends LinearOpMode{
         FINISH
     }
     Pose2d startPosition = new Pose2d(-37, -60, Math.toRadians(90));
-    Pose2d deposit = new Pose2d(-50, -52, Math.toRadians(45));
+    Pose2d deposit = new Pose2d(-46, -52, Math.toRadians(45));
     Pose2d block1 = new Pose2d(-50, -32, Math.toRadians(90));
     Pose2d block2 = new Pose2d(-55, -32, Math.toRadians(90));
     Pose2d park = new Pose2d(-35, -15, Math.toRadians(90));
@@ -46,24 +46,26 @@ public class league1auto extends LinearOpMode{
 
         waitForStart();
         while(opModeIsActive()){
+            drive.autonomous();
+            drive.setTarget(deposit);
             switch(currentState){
                 case DEPOSIT:
-                    drive.setZeroMoveAngle(Math.toRadians(30));
-                    drive.setTarget(deposit);
-                    if(drive.isAtTarget()){
-                        if(timeToggle){//to be filled in...
-                            TimeStamp = timer.milliseconds();
-                            timeToggle = false;
-                        }
-                        if(timer.milliseconds() > TimeStamp + 2000){
-                            timeToggle = true;
-                            currentCycle++;
-                            if(currentCycle == 1)
-                                currentState = State.BLOCK1;
-                            if(currentCycle == 2)
-                                currentState = State.BLOCK2;
-                        }
-                    }
+//                    drive.setZeroMoveAngle(Math.toRadians(30));
+//                    drive.setTarget(deposit);
+//                    if(drive.isAtTarget()){
+//                        if(timeToggle){//to be filled in...
+//                            TimeStamp = timer.milliseconds();
+//                            timeToggle = false;
+//                        }
+//                        if(timer.milliseconds() > TimeStamp + 2000){
+//                            timeToggle = true;
+//                            currentCycle++;
+//                            if(currentCycle == 1)
+//                                currentState = State.BLOCK1;
+//                            if(currentCycle == 2)
+//                                currentState = State.BLOCK2;
+//                        }
+//                    }
                     break;
                 case BLOCK1:
                     drive.setZeroMoveAngle(Math.toRadians(10));
@@ -111,8 +113,11 @@ public class league1auto extends LinearOpMode{
             }
             drive.update();
             telemetry.addData("STATE", currentState);
+            telemetry.addData("CYCLE num", currentCycle);
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", drive.getPose().getX(), drive.getPose().getY(), M.toDegrees(drive.getPose().getHeading()));
+            String target = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", deposit.getX(), deposit.getY(), M.toDegrees(deposit.getHeading()));
             telemetry.addData("POSITION", data);
+            telemetry.addData("TARGET", target);
             telemetry.update();
         }
     }
