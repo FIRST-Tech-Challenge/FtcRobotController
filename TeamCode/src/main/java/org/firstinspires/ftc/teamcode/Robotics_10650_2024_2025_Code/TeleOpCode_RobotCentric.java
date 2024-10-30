@@ -12,6 +12,9 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
     // Run the initialize function
     RobotInitialize robot;
 
+    int liftPitchPosition = 0;
+    int liftExtenderPosition = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
 // create and define the initialization variable
@@ -19,6 +22,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         // initialization of the control of the robot when start is pressed
         waitForStart();
+
+        robot.clawRoll.setPosition(0.0206);
 
         //robot.intake.setPower(0);
 
@@ -174,16 +179,32 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            pitchPower = Math.round(gamepad2.left_stick_y);
 //            //telemetry.addData("pitchPower", pitchPower);
         }
-            /*if (gamepad2.square) {
-                robot.liftPitch(0, 0.2);
-                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
-            }*/
-
-//            if (gamepad2.circle) {
+            if (gamepad2.circle) {
 //                robot.liftPitch(726, 0.2);
 //                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
-//
-//            }
+                liftPitchPosition = 2000;
+                robot.clawRoll.setPosition(0.0206);
+            }
+
+            if (gamepad2.square) {
+//                robot.liftPitch(0, 0.2);
+//                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
+                liftPitchPosition = 0;
+            }
+
+
+            if (Math.abs(robot.liftPitch.getCurrentPosition()-liftPitchPosition)>50){
+                if (robot.liftPitch.getCurrentPosition()<liftPitchPosition){
+                    robot.liftPitch.setVelocity(2250);
+                } else if (robot.liftPitch.getCurrentPosition()>= liftPitchPosition) {
+                    robot.liftPitch.setVelocity(-2250);
+                }
+            } else {
+                robot.liftPitch.setVelocity(0);
+            }
+
+            telemetry.addData("Pitch CurrentPos",robot.liftPitch.getCurrentPosition());
+            telemetry.addData("Pitch TargetPos",liftPitchPosition);
 
 //            if (gamepad2.triangle) {
 //                robot.liftPitch.setPosition(2700, 0.3);
@@ -194,75 +215,79 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            }
             telemetry.addData("roll", robot.clawRoll.getPosition());
 
-            //chnage x to y
-            if (robot.liftPitch.getCurrentPosition()<=849&&robot.liftPitch.getCurrentPosition()>=0||
-                    (robot.liftPitch.getCurrentPosition()>=849&&gamepad2.left_stick_y< 0)||
-                    (robot.liftPitch.getCurrentPosition()<=0&&gamepad2.left_stick_y > 0)) {
+
+            if (liftPitchPosition<=2000&&liftPitchPosition>=0||
+                    (liftPitchPosition>=2000&&gamepad2.left_stick_y > 0)||
+                    (liftPitchPosition<=0&&gamepad2.left_stick_y < 0)) {
 
                 //determines where the lift pitch goes
                 if (gamepad2.left_stick_y > 0.2) {//going down
 
-                    robot.liftPitch.setVelocity(400 * gamepad2.left_stick_y);
-                    telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());
+                    liftPitchPosition = liftPitchPosition - 25;
+                    telemetry.addData("left pitch pos", liftPitchPosition);
 
-                } else if (gamepad2.left_stick_y< 0.2) {//going up
-
+                } else if (gamepad2.left_stick_y< -0.2) {//going up
+                    liftPitchPosition = liftPitchPosition + 25;
 
                     //if it is a t a really low point
-                    if (robot.liftPitch.getCurrentPosition()>600){
-                        robot.liftPitch.setVelocity(1400 * gamepad2.left_stick_y);
 
-                    } else{
-                        robot.liftPitch.setVelocity(800 * gamepad2.left_stick_y);
-                        telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());
 
-                    }
-
-                } else {
-                    robot.liftPitch.setVelocity(0);
-                    telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());
+//                    if (robot.liftPitch.getCurrentPosition()<400) {
+//                        robot.liftPitch.setVelocity(470 * gamepad2.left_stick_y);
+//                    }else if(robot.liftPitch.getCurrentPosition()>600){
+//                        robot.liftPitch.setVelocity(1550 * gamepad2.left_stick_y);
+//
+//
+//                    } else{
+//                        robot.liftPitch.setVelocity(800 * gamepad2.left_stick_y);
+//                        telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());
+//
+//                    }
 
                 }
-            }else {
-                robot.liftPitch.setVelocity(0);
-                telemetry.addData("left pitch pos", robot.liftPitch.getCurrentPosition());//1300
+            //1300
             }//2700
             //find positon for extension
-            if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftExtender.getCurrentPosition()<=2780&&robot.liftExtender.getCurrentPosition()>=0||(robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)) {
-                robot.liftExtender.setVelocity(-400 * gamepad2.right_stick_y);
-            } else{
+
+            if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftExtender.getCurrentPosition()<=
+                    2780&&robot.liftExtender.getCurrentPosition()>=0||(
+                            robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)) {
+                liftExtenderPosition = liftExtenderPosition - (int)(20*gamepad2.right_stick_y);
+            }
+
+            if (Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>50){
+                if (robot.liftExtender.getCurrentPosition()<liftExtenderPosition){
+                    robot.liftExtender.setVelocity(600);
+                } else if (robot.liftExtender.getCurrentPosition()>= liftExtenderPosition) {
+                    robot.liftExtender.setVelocity(-600);
+                }
+            } else {
                 robot.liftExtender.setVelocity(0);
             }
 
             // FIXME: gamepad2.right_trigger functionality (making the intake go inwards)
             // Still being worked on but not necessary
-            if (gamepad2.right_trigger != 0) {
-                robot.intake.setPower(-1.0);
-                telemetry.addData("intake power", robot.intake.getPower());
-            } else {
-                robot.intake.setPower(0.0);
-                telemetry.addData("intake power", robot.intake.getPower());
-
-            }
-
             if (gamepad2.left_trigger != 0) {
                 robot.intake.setPower(1.0);
                 telemetry.addData("intake power", robot.intake.getPower());
+            }
+            else if (gamepad2.right_trigger != 0) {
+                robot.intake.setPower(-1.0);
+                telemetry.addData("intake power", robot.intake.getPower());
 
             } else {
                 robot.intake.setPower(0.0);
                 telemetry.addData("intake power", robot.intake.getPower());
-
             }
 
             if (gamepad2.dpad_left) {
                 //roll turns down
-                robot.pitch.setPosition(0.0461);
+                robot.pitch.setPosition(0);
             }
 
             if (gamepad2.dpad_right) {
                 //roll turns up
-                robot.pitch.setPosition(0);
+                robot.pitch.setPosition(0.0461);
             }
             if(gamepad2.dpad_down){
                //pitch moves up

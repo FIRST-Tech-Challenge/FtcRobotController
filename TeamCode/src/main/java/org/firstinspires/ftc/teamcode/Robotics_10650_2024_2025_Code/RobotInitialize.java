@@ -121,7 +121,7 @@ public class RobotInitialize {
             //Initial conditions of the liftPitch MOTOR
             //PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1); (This does nothing)
             //PIDF Coefficients for the liftPitch MOTOR
-            liftPitch.setVelocityPIDFCoefficients(.5,1,0, 1);
+            liftPitch.setVelocityPIDFCoefficients(1,1,-2.5, 1);
             liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
             liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
