@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.util.function.DoubleToLongFunction;
+
 @TeleOp(name = "TeleOpTest", group = "Test")
 
 public class TeleOpTest extends LinearOpMode {
@@ -106,10 +108,10 @@ public class TeleOpTest extends LinearOpMode {
             else
                 s = 1;
 
-            frontLeft.setPower((frontLeftPower / s) * frontMultiplier);
-            backLeft.setPower(backLeftPower / s * backMultiplier);
-            frontRight.setPower(frontRightPower / s * frontMultiplier);
-            backRight.setPower(backRightPower / s * backMultiplier);
+            accelerateMotors(frontLeftPower, 2000);
+            accelerateMotors(backLeftPower, 2000);
+            accelerateMotors(frontRightPower, 2000);
+            accelerateMotors(backRightPower, 2000);
 
             // switching directions
             if(gamepad1.y) {
@@ -177,5 +179,26 @@ public class TeleOpTest extends LinearOpMode {
             }
 
         }
+    }
+
+
+    private void accelerateMotors(double targetPower, double duration) {
+        double currentPower = 0;
+        double increment = targetPower / (duration / 10.0); // Increment power every 10ms
+
+        while (currentPower < targetPower) {
+            currentPower += increment;
+            frontLeft.setPower(currentPower);
+            backLeft.setPower(currentPower);
+            frontRight.setPower(currentPower);
+            backRight.setPower(currentPower);
+
+            sleep(10); // Wait for 10ms before the next increment
+        }
+
+        frontLeft.setPower(targetPower);
+        backLeft.setPower(targetPower);
+        frontRight.setPower(targetPower);
+        backRight.setPower(targetPower);
     }
 }
