@@ -20,12 +20,19 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
+import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.Subsystems.ElbowJoint;
+import org.firstinspires.ftc.teamcode.Subsystems.FlappyFlappyWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.Subsystems.OctQuad;
 import org.firstinspires.ftc.teamcode.Subsystems.OdometryPod;
 import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
+import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
+import org.firstinspires.ftc.teamcode.Subsystems.ShoulderJoint;
+import org.firstinspires.ftc.teamcode.Subsystems.ShoulderPosition;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 import org.firstinspires.ftc.teamcode.Subsystems.VirtualDriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.VirtualOdometry;
@@ -62,6 +69,17 @@ public class RobotContainer {
     public static LinearSlide linearSlide;
     //public static Camera frontCamera;
 
+    public static PivotingWrist wristRotateServo;
+
+    public static FlappyFlappyWrist flappyFlappyWrist;
+
+    public static ShoulderJoint shoulderJoint;
+
+    public static ElbowJoint elbowJoint;
+
+    public static Claw claw;
+    //
+
     // Robot initialization for teleop - Run this once at start of teleop
     public static void Init_TeleOp(CommandOpMode mode) {
         // Initialize robot subsystems
@@ -84,6 +102,23 @@ public class RobotContainer {
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_MEDIUM)));
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
+
+
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(90)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(()->flappyFlappyWrist.RotateTo(135)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(90)));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->shoulderJoint.RotateTo(90)));
+
+        // Controls the claw using bumpers
+        // left = close
+        // right = open
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
+
+
 
         // driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new ToggleClaw());
 
@@ -142,6 +177,11 @@ public class RobotContainer {
         //drivesystem = new VirtualDriveTrain();
         //frontCamera = new Camera("CamyCamy");
         linearSlide = new LinearSlide();
+        flappyFlappyWrist = new FlappyFlappyWrist();
+        shoulderJoint = new ShoulderJoint();
+        wristRotateServo= new PivotingWrist();
+        elbowJoint = new ElbowJoint();
+        claw = new Claw();
         // insert other subsystems here
         // claw = new Claw();
 
