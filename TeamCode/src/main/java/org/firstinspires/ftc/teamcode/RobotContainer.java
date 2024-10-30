@@ -97,7 +97,7 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(90)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->shoulderJoint.moveTo(ShoulderPosition.HIGH)));
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->shoulderJoint.RotateTo(90)));
 
         // Controls the claw using bumpers
         // left = close

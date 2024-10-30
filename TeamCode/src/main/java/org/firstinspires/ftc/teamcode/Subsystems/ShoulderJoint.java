@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
@@ -12,25 +13,13 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class ShoulderJoint extends SubsystemBase {
 
     // Create the shoulder motor
-    private final DcMotorEx shoulderMotor;
-
-    // Tracks the offset of the shoulder from it's zero pos
-    private static final int KEYOFFSET = 0;
+    private final Servo ShoulderServo;
 
     /** Place code here to initialize subsystem */
     public ShoulderJoint() {
 
-        // Creates the motor using the hardware map
-        shoulderMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "shoulderMotor");
-
-        // Resets the encoders for both motors
-        shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Setting target to zero upon initialization
-        shoulderMotor.setTargetPosition(0);
-
-        // Puts the motors into position control mode
-        shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Creates a Servo using the hardware map
+        ShoulderServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "shoulderServo");
 
     }
 
@@ -41,14 +30,20 @@ public class ShoulderJoint extends SubsystemBase {
 
     }
 
-    public void moveTo(ShoulderPosition pos) {
 
-        shoulderMotor.setTargetPosition(pos.getValue());
+    // Turns the Servo a set amount of degrees
+    public void RotateTo(int degrees){
 
-        // Sets the power
-        shoulderMotor.setPower(1);
+        // Converts degrees into 0-1 float
+        double servoPos = degrees/180.0;
+
+        // Set the Servo to ServoPos
+        ShoulderServo.setPosition(servoPos);
+
     }
 
+    // Sets the Elbow to fixed positions
+    public void setPos(ShoulderPosition pos) {RotateTo(pos.getValue());}
 
 
 }
