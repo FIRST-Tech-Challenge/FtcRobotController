@@ -31,6 +31,7 @@ public class MatchLogger {
     private static String MATCH_FILE_NAME = "match_";
     public static MatchLogger matchLogger = null;
     public int matchNumber;
+    private Pose2d latestPose;
 
     public static final boolean REFLECTIONLESS = false; // turn to true if the robot is slow
 
@@ -137,6 +138,9 @@ public class MatchLogger {
                 format.format(position.x), format.format(position.y),
                 format.format(rotation2d.real), format.format(rotation2d.imag));
         write(message, FileType.POSITION, FileType.VERBOSE);
+
+        // Record the latest pose for teleop when auto is finished.
+        latestPose = pose2d;
     }
 
     private String arrayToString(Object[] relevantVariables) {
