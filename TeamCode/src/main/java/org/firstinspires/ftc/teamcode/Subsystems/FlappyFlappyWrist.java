@@ -7,16 +7,16 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 /** Subsystem */
-public class Claw extends SubsystemBase {
+public class FlappyFlappyWrist extends SubsystemBase {
 
     // Create wrist Servo
-    private final Servo clawServo;
+    private final Servo wristServo;
 
     /** Place code here to initialize subsystem */
-    public Claw() {
+    public FlappyFlappyWrist() {
 
         // Creates a Servo using the hardware map
-        clawServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "clawServo");
+        wristServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "flappyServoWrist");
 
     }
 
@@ -27,10 +27,16 @@ public class Claw extends SubsystemBase {
 
     }
 
-    // Open and close the claw using the enum ClawState
-    public void ControlClaw(ClawState state){
-        clawServo.setPosition(state.getValue());
-    }
 
+    // Turns the Servo a set amount of degrees
+    public void RotateTo(int degrees){
+
+        // Converts degrees into 0-1 float
+        double servoPos = degrees/270.0;
+
+        // Set the Servo to ServoPos
+        wristServo.setPosition(servoPos);
+
+    }
 
 }

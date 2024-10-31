@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
@@ -28,7 +27,7 @@ public class Gyro extends SubsystemBase {
      * Place any code here you wish to have run periodically */
     @Override
     public void periodic() {
-        RobotContainer.ActiveOpMode.telemetry.addData("Gyro", JavaUtil.formatNumber(getYawAngle(), 2));
+        //RobotContainer.ActiveOpMode.telemetry.addData("Gyro", JavaUtil.formatNumber(getYawAngle(), 2));
     }
 
     /** get gyro angle - returns angle in deg between -180 and 180 */
