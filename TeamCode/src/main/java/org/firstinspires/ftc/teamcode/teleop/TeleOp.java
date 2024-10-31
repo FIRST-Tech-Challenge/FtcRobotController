@@ -35,6 +35,10 @@ public class TeleOp extends LinearOpMode {
     private double clawPos;
     private Lift lift;
     private double liftPower;
+    boolean reverseArm;
+    private double[] armPositions = {0.5, 0.3, 0.1, 0.0};
+    private int armPositionIndex = 0;
+    private boolean isReversing = false;
 
     public void runOpMode() throws InterruptedException{
 
@@ -48,6 +52,7 @@ public class TeleOp extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap, "lift", "lift");
+        reverseArm = false;
 
         waitForStart();
         while(opModeIsActive())
@@ -70,16 +75,44 @@ public class TeleOp extends LinearOpMode {
 
 
             //arm
-            if (controller.right_bumper.onPress()) {
-                armPos = 0.4;
-                arm.setPosition(armPos);
-            } else if (controller.left_bumper.onPress()) {
-                armPos -= 0.2;
-                if (armPos <= 0) {
-                    armPos = 0;
+            if(controller.right_bumper.onPress())
+            {
+                if(!isReversing)
+                {
+                    armPos = armPositions[armPositionIndex];
+                    arm.setPosition(armPos);
+                    armPositionIndex++;
+                    if(armPositionIndex >= armPositions.length)
+                    {
+                        armPositionIndex--;
+                        isReversing = true;
+                    }
+                }else {
+                    armPos = armPositions[armPositionIndex];
+                    arm.setPosition(armPos);
+                    armPositionIndex--;
+                    if(armPositionIndex < 0)
+                    {
+                        armPositionIndex++;
+                        isReversing = false; 
+                    }
                 }
-                arm.setPosition(armPos);
+
+
             }
+            if(controller.left_bumper.onPress())
+            {
+
+                armPos = armPositions[armPositionIndex];
+                arm.setPosition(armPos);
+                armPositionIndex--;
+                if(armPositionIndex < 0)
+                {
+                    armPositionIndex = armPositions.length-1;
+                }
+
+            }
+
             telemetry.addData("Arm Position", armPos);
 
 
