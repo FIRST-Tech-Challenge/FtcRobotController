@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,6 +30,11 @@ public class JarlsCHasse {
 
         RMFront.setDirection(DcMotorEx.Direction.REVERSE);
         LMBack.setDirection(DcMotorEx.Direction.REVERSE);
+
+        RMFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LMFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RMBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LMBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void moveX(boolean sign, double rotation){

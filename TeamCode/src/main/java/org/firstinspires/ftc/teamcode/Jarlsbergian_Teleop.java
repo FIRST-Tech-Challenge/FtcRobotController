@@ -21,7 +21,7 @@ public class Jarlsbergian_Teleop extends OpMode {
     public void loop() {
 
         odo.updateCurPos();
-        drivetrain.GamepadInputs(90, gamepad1);
+        drivetrain.GamepadInputs(odo.cur0, gamepad1);
 
     }
 }

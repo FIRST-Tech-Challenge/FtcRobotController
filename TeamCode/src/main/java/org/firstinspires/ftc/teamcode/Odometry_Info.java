@@ -11,11 +11,15 @@ public class Odometry_Info {
 
     /*static variables for odometry sensor stats*/
     static double odoTPM = 2000;
-    static double C = 2*Math.PI*16*(1/odoTPM);
+    static double C = 2*Math.PI*16;
     static double L = 172;
     static double B = 146;
 
     /* Variables to notate the current positions of the robot*/
+    double Xc = 0.0;
+    double Xp = 0.0;
+    double Theta0 = 0.0;
+
     double curX = 0.0;
     double curY = 0.0;
     double cur0 = 0.0;
@@ -39,13 +43,13 @@ public class Odometry_Info {
     /* this function should be placed in the loop section*/
     public void updateCurPos(){
 
-        Cn1 = odoRight.getCurrentPosition();
-        Cn2 = odoLeft.getCurrentPosition();
-        Cn3 = odoBack.getCurrentPosition();
+        Cn1 = C*(odoRight.getCurrentPosition()/odoTPM);
+        Cn2 = C*(odoLeft.getCurrentPosition()/odoTPM);
+        Cn3 = C*(odoBack.getCurrentPosition()/odoTPM);
 
-        curX += C*(Cn1+Cn2/L);
-        cur0 += C*(Cn2-Cn1/L);
-        curY += C*(Cn3-B*(Cn2-Cn1/L));
+        Xc += (Cn1+Cn2/2);
+        cur0 += (Cn2-Cn1/L);
+        Xp += (Cn3 - (B*cur0));
     }
 
     public void setTargetPos(double x, double y, double O){
