@@ -89,12 +89,6 @@ public class MainMovement extends LinearOpMode {
         FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
         FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
 
-
-        //psuedocode (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
-        BLDrive  = hardwareMap.get(DcMotor.class, "bl_drive");
-        BRDrive  = hardwareMap.get(DcMotor.class, "br_drive");
-        FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
-        FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
