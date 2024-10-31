@@ -30,11 +30,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -123,6 +123,10 @@ public class FieldCentricDrive extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
 
+        servo = hardwareMap.get(ServoImplEx.class, "servo");
+        servo.setPwmEnable();
+        servo.setPwmRange(new PwmControl.PwmRange(1400, 1900));
+
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
@@ -137,24 +141,39 @@ public class FieldCentricDrive extends LinearOpMode {
         aPressedDelta = false;
         aPressedPrevious = false;
 
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             updateRobot();
         }
     }
-    boolean aPressed;
-    boolean aPressedDelta;
-    boolean aPressedPrevious;
-    double y; // Remember, Y stick value is reversed
-    double x; // Counteract imperfect strafing
-    double rx;
-    double botHeading;
-    double rotX;
-    double rotY;
-    double frontLeftPower;
-    double backLeftPower;
-    double frontRightPower;
-    double backRightPower;
+
+    private boolean aPressed;
+    private boolean aPressedDelta;
+    private boolean aPressedPrevious;
+    private double y; // Remember, Y stick value is reversed
+    private double x; // Counteract imperfect strafing
+    private double rx;
+    private double botHeading;
+    private double rotX;
+    private double rotY;
+    private double frontLeftPower;
+    private double backLeftPower;
+    private double frontRightPower;
+    private double backRightPower;
+
+    private double servoCloseTime;
+    private double servoSlightOpenTime;
+
+    final double SERVO_OPENED_POSITION = 0;
+
+    final double SERVO_CLOSED_POSITION = 1;
+
+    final double SERVO_CLOSED_DURATION = 1;
+
+    final double SERVO_SLIGHT_OPEN_POSITION = 0.01;
+
+    final double SERVO_SLIGHT_OPEN_DURATION = 0.3;
 
     public void updateRobot() {
         y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
@@ -186,16 +205,34 @@ public class FieldCentricDrive extends LinearOpMode {
 
         // get previous a pressed value
         aPressedPrevious = aPressed;
-        if(gamepad1.a){
-            servo.setPosition(1.0);
+
+        // servo close
+        if (gamepad1.a) {
+            servo.setPosition(SERVO_CLOSED_POSITION);
+            servoCloseTime = runtime.time();
+            servoSlightOpenTime = 0;
+        }
+
+        if (servoCloseTime > 0 && runtime.time() - servoCloseTime >= SERVO_CLOSED_DURATION) {
+            servo.setPosition(SERVO_SLIGHT_OPEN_POSITION);
+            servoSlightOpenTime = runtime.time();
+            servoCloseTime = 0;
 
         }
-        if(gamepad1.b){
-            servo.setPosition(0.0);
+
+        if (servoSlightOpenTime > 0 && runtime.time() - servoSlightOpenTime >= SERVO_SLIGHT_OPEN_DURATION) {
+            servo.setPosition(SERVO_CLOSED_POSITION);
+            servoSlightOpenTime = 0;
+        }
+
+        // open
+        if (gamepad1.b) {
+            servo.setPosition(SERVO_OPENED_POSITION);
+            servoCloseTime = 0;
 
         }
-        // Set
 
+        // get bot heading relative to control hub IMU
         botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
