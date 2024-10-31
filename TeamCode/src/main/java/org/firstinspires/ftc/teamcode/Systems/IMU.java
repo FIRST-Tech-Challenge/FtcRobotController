@@ -14,7 +14,7 @@ public class IMU {
 
     BHI260IMU imu;
 
-    public void Initialize()
+    public IMU()
     {
         imu = hardwareMap.get(BHI260IMU.class, "imu");
 

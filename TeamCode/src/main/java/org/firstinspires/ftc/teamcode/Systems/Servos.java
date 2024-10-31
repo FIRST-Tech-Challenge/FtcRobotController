@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Servos {
 
-    private Servo[] servos = null;
+    private Servo[] servos;
 
-    public void Initialize()
+    public Servos(HardwareMap hardwareMap) //constructor to init servos
     {
+        servos = new Servo[2];
+
         servos[0] = hardwareMap.get(Servo.class, "L");
         servos[1] = hardwareMap.get(Servo.class, "H");
     }
@@ -18,4 +22,10 @@ public class Servos {
 
         servos[servoNum].setPosition(actualPosition);
     }
+
+    public double getServoPosition(int servoNum)
+    {
+        return servos[servoNum].getPosition();
+    }
+
 }
