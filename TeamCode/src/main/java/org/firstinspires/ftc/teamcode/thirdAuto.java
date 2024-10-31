@@ -63,75 +63,75 @@ public class thirdAuto extends OpMode {
         stateOne.armPosition = armPose.AUTO_1;
         stateOne.drivePose = new SparkFunOTOS.Pose2D(0, 0, 0);
 
-        // State 1
+        // State 1A
         SystemState stateOneA = new SystemState();
-        stateOne.clawPosition = clawState.CLOSED;
-        stateOne.wristPosition = wristState.DOWN;
-        stateOne.armPosition = armPose.BASKET_PREP;
-        stateOne.drivePose = new SparkFunOTOS.Pose2D(10, 10, -45);
+        stateOneA.clawPosition = clawState.CLOSED;
+        stateOneA.wristPosition = wristState.DOWN;
+        stateOneA.armPosition = armPose.BASKET_PREP;
+        stateOneA.drivePose = new SparkFunOTOS.Pose2D(5, 9, -45);
 
         // State 2
         SystemState stateTwo = new SystemState();
         stateTwo.clawPosition = clawState.CLOSED;
         stateTwo.wristPosition = wristState.UP;
         stateTwo.armPosition = armPose.BASKET;
-        stateTwo.drivePose = new SparkFunOTOS.Pose2D(20, 13, -90);
+        stateTwo.drivePose = new SparkFunOTOS.Pose2D(10, 9, -90);
 
         // State 3
         SystemState stateThree = new SystemState();
         stateThree.clawPosition = clawState.CLOSED;
         stateThree.wristPosition = wristState.UP;
         stateThree.armPosition = armPose.BASKET;
-        stateThree.drivePose = new SparkFunOTOS.Pose2D(32, 9, -135);
+        stateThree.drivePose = new SparkFunOTOS.Pose2D(30, 9, -135);
 
         // State 4
         SystemState stateFour = new SystemState();
         stateFour.clawPosition = clawState.CLOSED;
         stateFour.wristPosition = wristState.DOWN;
         stateFour.armPosition = armPose.BASKET;
-        stateFour.drivePose = new SparkFunOTOS.Pose2D(32, 9, -135);
+        stateFour.drivePose = new SparkFunOTOS.Pose2D(30, 9, -135);
 
         // State 4A
         SystemState stateFourA = new SystemState();
         stateFourA.clawPosition = clawState.OPENED;
         stateFourA.wristPosition = wristState.UP;
         stateFourA.armPosition = armPose.BASKET;
-        stateFourA.drivePose = new SparkFunOTOS.Pose2D(32, 9, -135);
+        stateFourA.drivePose = new SparkFunOTOS.Pose2D(30, 9, -135);
 
         // State 5PrePre1
         SystemState stateFivePrePre1 = new SystemState();
         stateFivePrePre1.clawPosition = clawState.OPENED;
         stateFivePrePre1.wristPosition = wristState.DOWN;
         stateFivePrePre1.armPosition = armPose.REST;
-        stateFivePrePre1.drivePose = new SparkFunOTOS.Pose2D(15, 15, -35);
+        stateFivePrePre1.drivePose = new SparkFunOTOS.Pose2D(15.75, 18, 0);
 
         // State 5Pre1
         SystemState stateFivePre1 = new SystemState();
         stateFivePre1.clawPosition = clawState.OPENED;
         stateFivePre1.wristPosition = wristState.DOWN;
         stateFivePre1.armPosition = armPose.REST;
-        stateFivePre1.drivePose = new SparkFunOTOS.Pose2D(15, 17, 0);
+        stateFivePre1.drivePose = new SparkFunOTOS.Pose2D(15.75, 22, 0);
 
         // State 5
         SystemState stateFive = new SystemState();
-        stateFive.clawPosition = clawState.OPENED;
+        stateFive.clawPosition = clawState.CLOSED;
         stateFive.wristPosition = wristState.DOWN;
-        stateFive.armPosition = armPose.REST;
-        stateFive.drivePose = new SparkFunOTOS.Pose2D(15, 25, 0);
+        stateFive.armPosition = armPose.PICKUP;
+        stateFive.drivePose = new SparkFunOTOS.Pose2D(15.75, 25, 0); // 27
 
         // State 5A
         SystemState stateFiveA = new SystemState();
-        stateFiveA.clawPosition = clawState.OPENED;
+        stateFiveA.clawPosition = clawState.CLOSED;
         stateFiveA.wristPosition = wristState.DOWN;
         stateFiveA.armPosition = armPose.PICKUP;
-        stateFiveA.drivePose = new SparkFunOTOS.Pose2D(15, 25, 0);
+        stateFiveA.drivePose = new SparkFunOTOS.Pose2D(15.75, 27, 0);
 
         // State 5B
         SystemState stateFiveB = new SystemState();
         stateFiveB.clawPosition = clawState.CLOSED;
         stateFiveB.wristPosition = wristState.DOWN;
-        stateFiveB.armPosition = armPose.PICKUP;
-        stateFiveB.drivePose = new SparkFunOTOS.Pose2D(15, 25, 0);
+        stateFiveB.armPosition = armPose.BASKET_PREP;
+        stateFiveB.drivePose = new SparkFunOTOS.Pose2D(15.75, 27, 0);
 
         // State Second Line Pre
         SystemState stateSecondPre = new SystemState();
@@ -171,31 +171,31 @@ public class thirdAuto extends OpMode {
         // Generate Path
         HashMap<Integer, SystemState> instructions = new HashMap<>();
         instructions.put(0, stateOne); // Arm Up
-        instructions.put(1, stateTwo); // Move forward
-        instructions.put(2, stateThree); // Go to basket
-        instructions.put(3, stateFour); // Wrist up
-        instructions.put(4, stateFourA); // Claw Open
-        instructions.put(5, stateFivePrePre1); // Prep pickup 1
-        instructions.put(6, stateFivePre1); // Prep pickup 2
-        instructions.put(7, stateFive); // Go to pickup line 1
-        instructions.put(8, stateFiveA); // Close Claw
-        instructions.put(9, stateFiveB); // Raise Arm
-        instructions.put(10, stateOne); // Move forward
-        instructions.put(11, stateTwo); // Move forward
-        instructions.put(12, stateThree); // Go to basket
-        instructions.put(13, stateFour); // Wrist up
-        instructions.put(14, stateFourA); // Claw Open
-        instructions.put(15, stateSecondPre); // Go to pickup line 2
-        instructions.put(16, stateSecond); // Go to pickup line 1
-        instructions.put(17, stateSecondA); // Close Claw
-        instructions.put(18, stateSecondB); // Raise Arm
-        instructions.put(19, stateOne); // Move forward
-        instructions.put(20, stateTwo); // Move forward
-        instructions.put(21, stateThree); // Go to basket
-        instructions.put(22, stateFour); // Wrist up
-        instructions.put(23, stateFourA); // Claw Open
-        instructions.put(24, endState); // End at (0, 0)
-
+        instructions.put(1, stateOneA); // Move Forward & Arm Up More
+        instructions.put(2, stateTwo); // Move forward
+        instructions.put(3, stateThree); // Go to basket
+        instructions.put(4, stateFour); // Wrist up
+        instructions.put(5, stateFourA); // Claw Open
+        instructions.put(6, stateFivePrePre1); // Prep pickup 1
+        instructions.put(7, stateFivePre1); // Prep pickup 2
+        instructions.put(8, stateFive); // Go to pickup line 1
+        instructions.put(9, stateFiveA); // Close Claw
+        instructions.put(10, stateFiveB); // Raise Arm
+        instructions.put(11, stateOneA); // Move forward
+        instructions.put(12, stateTwo); // Move forward
+        instructions.put(13, stateThree); // Go to basket
+        instructions.put(14, stateFour); // Wrist up
+        instructions.put(15, stateFourA); // Claw Open
+        instructions.put(16, stateSecondPre); // Go to pickup line 2
+        instructions.put(17, stateSecond); // Go to pickup line 1
+        instructions.put(18, stateSecondA); // Close Claw
+        instructions.put(19, stateSecondB); // Raise Arm
+        instructions.put(20, stateOneA); // Move forward
+        instructions.put(21, stateTwo); // Move forward
+        instructions.put(22, stateThree); // Go to basket
+        instructions.put(23, stateFour); // Wrist up
+        instructions.put(24, stateFourA); // Claw Open
+        instructions.put(25, endState); // End at (0, 0)
 
         // ACS & DBS & Handler
         ArmSubSystem armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);

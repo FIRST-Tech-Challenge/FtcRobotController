@@ -38,6 +38,7 @@ public class AutonomousHandler {
     }
     public void periodicFunction() {
         TelemetryPacket packet = new TelemetryPacket();
+        packet.put("Auto Stage", systemStateReference);
         if (driveSubSys.isAtReference(packet, timer.milliseconds()) && armSubSys.isAtReference(packet)) {
             if (Objects.requireNonNull(path.get(systemStateReference + 1)).wristPosition == null) {
                 theTelemetry.addData("driveSystemStopped", "yes");
