@@ -8,7 +8,7 @@ public class Input {
 
     public Input()
     {
-        motors.Initialize();
+       // constructorrrrr
     }
 
     public void Move(double power)

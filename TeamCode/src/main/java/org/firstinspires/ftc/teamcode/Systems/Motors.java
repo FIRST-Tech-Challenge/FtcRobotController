@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode.Systems;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Motors {
 
-    public DcMotor[] driveTrainMotors = null;
+    public DcMotor[] driveTrainMotors;
 
     private final double wheelDiameter = 1.0;
     private final double PPR = 537.7; //how many times the motor counts before a single 360 rotation happens pulse per rotation
@@ -17,7 +18,9 @@ public class Motors {
 //    double rightBackPower;
 
 
-    public void Initialize() {
+    public Motors(HardwareMap hardwareMap) {
+
+        driveTrainMotors = new DcMotor[4];
 
         driveTrainMotors[0]  = hardwareMap.get(DcMotor.class, "LB"); //left back
         driveTrainMotors[1]  = hardwareMap.get(DcMotor.class, "LF"); //left front

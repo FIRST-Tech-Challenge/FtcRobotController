@@ -13,8 +13,7 @@ public class aUtOnOmOuS extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        //Initialize stuff
-        motor.Initialize();
+        motor = new Motors(hardwareMap);
 
         waitForStart();
         //run once
