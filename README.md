@@ -147,7 +147,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Fixes a bug in the blocks editor where collapsed function blocks show a warning "Collapsed blocks contain warnings." when the Blocks OpMode is reopened.
 * Fixes a bug where the blocks editor wouldn't warn you that you have unsaved changes when you try to leave. This bug was introduced due to a behavior change in Chrome 119.
 * [Issue #764](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/764) - Get gain control returns a null pointer for a switchable camera
-* Fixes a bug where the correct deadzone for certain gamepads was not applied when Advanced Gamepad Features was enabled
+* Fixes a bug where the correct joystickDeadzone for certain gamepads was not applied when Advanced Gamepad Features was enabled
 
 ## Version 9.1 (20240215-115542)
 
@@ -479,7 +479,7 @@ This is a bug fix only release to address the following four issues.
 * Fixes lint error ([issue #4](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/4)).
 * Fixes Driver Station crash when attempting to use DualShock4 v1 gamepad with Advanced Gamepad Features enabled ([issue #173](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/173)).
 * Fixes possible (but unlikely) Driver Station crash when connecting gamepads of any type.
-* Fixes bug where Driver Station would use generic 20% deadzone for Xbox360 and Logitech F310 gamepads when Advanced Gamepad Features was disabled.
+* Fixes bug where Driver Station would use generic 20% joystickDeadzone for Xbox360 and Logitech F310 gamepads when Advanced Gamepad Features was disabled.
 * Added SimpleOmniDrive sample OpMode.
 * Adds UVC white balance control API.
 * Fixes [issue #259](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/259) Most blocks samples for TensorFlow can't be used for a different model.
