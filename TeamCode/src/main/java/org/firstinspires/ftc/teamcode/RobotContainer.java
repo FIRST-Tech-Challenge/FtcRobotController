@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
+
+import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
@@ -65,6 +67,8 @@ public class RobotContainer {
     public static Gyro gyro;
     public static OctQuad odometryPod;
     public static Odometry odometry;
+    //public static Camera frontCamera;
+    public static ClawCamera clawCamera;
     //public static VirtualOdometry odometry;
     public static LinearSlide linearSlide;
     //public static Camera frontCamera;
@@ -176,6 +180,8 @@ public class RobotContainer {
         //odometry = new VirtualOdometry();
         //drivesystem = new VirtualDriveTrain();
         //frontCamera = new Camera("CamyCamy");
+        clawCamera = new ClawCamera("ClawCamera");
+
         linearSlide = new LinearSlide();
         flappyFlappyWrist = new FlappyFlappyWrist();
         shoulderJoint = new ShoulderJoint();

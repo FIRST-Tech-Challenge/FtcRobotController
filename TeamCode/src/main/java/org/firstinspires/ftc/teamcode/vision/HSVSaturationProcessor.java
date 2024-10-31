@@ -29,8 +29,6 @@ public class HSVSaturationProcessor implements VisionProcessor {
     public double CENTER_SPIKE_SATURATION_BASELINE = 0;
     public double RIGHT_SPIKE_SATURATION_BASELINE =  0;
 
-
-
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
 
