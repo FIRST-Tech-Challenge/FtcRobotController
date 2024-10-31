@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.newTeleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -27,9 +28,9 @@ public class teleop extends LinearOpMode implements teleop_interface {
             hardware.hopper = hardwareMap.get(DcMotor.class, "hopper");
 
             //Servos
-            hardware.wrist = hardwareMap.get(Servo.class, "wrist");
-            hardware.grabber = hardwareMap.get(Servo.class, "grabber");
-            hardware.door = hardwareMap.get(Servo.class, "door");
+            hardware.wrist = hardwareMap.get(CRServo.class, "wrist");
+            hardware.grabber = hardwareMap.get(CRServo.class, "grabber");
+            hardware.door = hardwareMap.get(CRServo.class, "door");
 
             //Sensors
             hardware.colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -133,16 +134,16 @@ public class teleop extends LinearOpMode implements teleop_interface {
 
     // Control the gripper's position
     @Override
-    public void claw(teleop_enum state, int pos) {
+    public void claw(teleop_enum state, int power) {
         switch (state){
             case GRABBER:
-                hardware.grabber.setPosition(pos); // Set the position of the grabber servo
+                hardware.grabber.setPower(power); // Set the position of the grabber servo
                 break;
             case WRIST:
-                hardware.wrist.setPosition(pos); // Set the position of the grabber servo
+                hardware.wrist.setPower(power); // Set the position of the grabber servo
                 break;
             case DOOR:
-                hardware.door.setPosition(pos);
+                hardware.door.setPower(power);
                 break;
         }
     }
@@ -210,44 +211,44 @@ public class teleop extends LinearOpMode implements teleop_interface {
     @Override
     public void finalGrabber() {
         //TODO find open and close position
-        int collect = 200; // Position to collect block
-        int release = -200; //Position to release block
+        int collect = 1; // Position to collect block
+        int release = -1; //Position to release block
 
-        int open = 200; // Position to open the door
-        int close = -200; // Position to close the door
+        int open = 1; // Position to open the door
+        int close = -1; // Position to close the door
 
-        int up = 100; // sets position for wrist to go up
-        int down = 200; // sets position for wrist to go down
+        int up = 1; // sets position for wrist to go up
+        int down = -1; // sets position for wrist to go down
 
         teleop_enum state = null;
-        int pos = 0;
+        int power = 0;
         // Control gripper based on button presses
         if (gamepad2.x) {
             state = teleop_enum.GRABBER;
-            pos = collect;
+            power = collect;
         } else if (gamepad2.y) {
             state = teleop_enum.GRABBER;
-            pos = release;
+            power = release;
         }
 
         if (gamepad2.right_trigger > 0){
             state = teleop_enum.WRIST;
-            pos = up;
+            power = up;
         }else if (gamepad2.left_trigger > 0){
             state = teleop_enum.WRIST;
-            pos = down;
+            power = down;
         }
 
         if(gamepad2.dpad_up){
             state = teleop_enum.DOOR;
-            pos = open;
+            power = open;
         }else if (gamepad2.dpad_down){
             state = teleop_enum.DOOR;
-            pos = close;
+            power = close;
         }
 
         if (state != null) {
-            claw(state, pos);
+            claw(state, power);
         }
     }
 
