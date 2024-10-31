@@ -38,9 +38,13 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     public final Encoder par0, par1, perp;
 
     public final double inPerTick;
+    public final double ticksPerInch = 333.3333333;
 
     private int lastPar0Pos, lastPar1Pos, lastPerpPos;
     private boolean initialized;
+
+    private double xPos = 0.0, yPos = 0.0, heading = 0.0;
+
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
         // TODO: make sure your config has **motors** with these names (or change them)
@@ -54,6 +58,32 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         this.inPerTick = inPerTick;
 
         FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
+    }
+
+    public double getPoseEstimateX() {
+        Twist2dDual<Time> twist = update(); // Calculate the change in position
+
+        // Extract translation and heading from twist
+
+        PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
+        PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
+        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+
+        int par0Delta = par0PosVel.position - lastPar0Pos;
+        int par1Delta = par1PosVel.position - lastPar1Pos;
+        int perpDelta = perpPosVel.position - lastPerpPos;
+
+        double dx = (par0Delta + par1Delta) / 2.0 * inPerTick;
+        double dy = perpDelta * inPerTick;
+        double dHeading = (par0Delta - par1Delta) / (PARAMS.par0YTicks - PARAMS.par1YTicks);
+
+        xPos += dx * Math.cos(heading) - dy * Math.sin(heading);
+        yPos += dx * Math.sin(heading) + dy * Math.cos(heading);
+        heading += dHeading;
+
+        heading = (heading + Math.PI) % (2 * Math.PI) - Math.PI;
+
+        return xPos;
     }
 
     public Twist2dDual<Time> update() {
