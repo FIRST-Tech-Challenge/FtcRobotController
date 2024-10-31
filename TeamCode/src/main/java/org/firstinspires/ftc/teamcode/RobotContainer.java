@@ -14,6 +14,7 @@ import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
@@ -109,7 +110,7 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(125)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(()->flappyFlappyWrist.RotateTo(0)));
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new ArmStowHigh());
 
         driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(0)));
 

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class PivotingWrist extends SubsystemBase {
 
     // Create wrist Servo
-    /**0° is in*/
+    /**0° is counterclockwise looking from behind*/
     private final Servo wristServo;
 
     /** Place code here to initialize subsystem */
