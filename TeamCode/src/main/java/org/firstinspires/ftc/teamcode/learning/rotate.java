@@ -12,7 +12,8 @@ public class rotate extends LinearOpMode {
     private int LastPos;
     @Override
     public void runOpMode() throws InterruptedException {
-        rotate = hardwareMap.dcMotor.get("RFM");
+        rotate = hardwareMap.dcMotor.get("sr");
+        LastPos = rotate.getCurrentPosition();
         rotate.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         waitForStart();
         while(!isStopRequested()){
@@ -20,12 +21,15 @@ public class rotate extends LinearOpMode {
                 LastPos = rotate.getCurrentPosition();
                 rotate.setPower(-gamepad2.right_stick_y / 2.0);
             }else{
-                if(LastPos <= rotate.getCurrentPosition()-10 || LastPos >=rotate.getCurrentPosition()+10){
-                    if(LastPos <= rotate.getCurrentPosition()-10){
-                        rotate.setPower(0.25);
+                if(LastPos <= rotate.getCurrentPosition()-30.0 || LastPos >=rotate.getCurrentPosition()+30.0){
+                    if(LastPos <= rotate.getCurrentPosition()-30.0){
+                        rotate.setPower(-0.5);
                     }
-                    if(LastPos >= rotate.getCurrentPosition()+10){
-                        rotate.setPower(-0.25);
+                    if(LastPos >= rotate.getCurrentPosition()+30.0){
+                        rotate.setPower(0.5);
+                    }
+                    if(LastPos <= rotate.getCurrentPosition()-30.0 && LastPos >= rotate.getCurrentPosition()+30.0){
+                        rotate.setPower(0.0);
                     }
                 }
             }

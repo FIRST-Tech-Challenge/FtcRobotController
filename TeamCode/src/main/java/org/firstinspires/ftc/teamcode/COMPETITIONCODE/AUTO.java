@@ -39,33 +39,74 @@ public class AUTO extends LinearOpMode {
         autoDriver.init(hardwareMap,driver);
         //TODO: GET REAL VALUES
         //TODO: SET UP MULTIAUTOMODE
-        int hangSpeciminPos = autoDriver.lineTo(1000.0, 0.0,1.0);
-        int moveToSample1 = autoDriver.lineTo(1000.0,-1000.0,1.0);
-        int rotateToCollectSample1 = autoDriver.rotateRobot(180.0, Directions.RightRotateDirection);
-        int moveToNetZone1 = autoDriver.lineTo(10.0,100.0, 1.0);
-        int moveOutOfNetZone1 = autoDriver.lineTo(50.0,150.0,1.0);
+        //TODO: SET UP ROTATIONS
+        //IMPORTANT: DO THE TODOS
+        int sample1pos = autoDriver.lineTo(-850.0, 420.0,1.0);
+        int netZone = autoDriver.lineTo(0.0,450.0,1.0);
+        int sample2pos = autoDriver.lineTo(-850.0,435.0, 1.0);
+        int forwardTest = autoDriver.lineTo(-1000.0,0.0,1.0);
+        int strafeTest = autoDriver.lineTo(-1000.0, -1000.0, 1.0);
+        int diagonalTest = autoDriver.lineTo(0.0,0.0,1.0);
+        int rotateTest = autoDriver.rotateRobot(90, Directions.RightRotateDirection);
         telemetry.addLine("initilized");
         telemetry.update();
         waitForStart();
         boolean completed = false;
+        /*while(!isStopRequested() && !completed){
+            Pose2D pos = autoDriver.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Position", data);
+            completed = autoDriver.move(forwardTest);
+        }
+        completed = false;
         while(!isStopRequested() && !completed){
             Pose2D pos = autoDriver.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
-            completed = autoDriver.move(hangSpeciminPos);
+            completed = autoDriver.move(strafeTest);
         }
+        completed = false;
         while(!isStopRequested() && !completed){
             Pose2D pos = autoDriver.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
-            completed = autoDriver.move(moveToSample1);
+            completed = autoDriver.move(diagonalTest);
         }
+        completed = false;
         while(!isStopRequested() && !completed){
             Pose2D pos = autoDriver.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
-            completed = autoDriver.move(rotateToCollectSample1);
+            completed = autoDriver.move(rotateTest);
+        }*/
+        while(!isStopRequested() && !completed){
+            Pose2D pos = autoDriver.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Position", data);
+            completed = autoDriver.move(sample1pos);
         }
-        ReadWriteFile.writeFile(ThreadManger, "STOP");
+        completed = false;
+        while(!isStopRequested() && !completed){
+            Pose2D pos = autoDriver.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Position", data);
+            completed = autoDriver.move(netZone);
+        }
+        completed = false;
+        while(!isStopRequested() && !completed){
+            Pose2D pos = autoDriver.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Position", data);
+            completed = autoDriver.move(sample2pos);
+        }
+        completed = false;
+        while(!isStopRequested() && !completed){
+            Pose2D pos = autoDriver.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Position", data);
+            completed = autoDriver.move(netZone);
+        }
+        //ReadWriteFile.writeFile(ThreadManger, "STOP");
+
     }
 }

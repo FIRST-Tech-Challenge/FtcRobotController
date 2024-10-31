@@ -1,33 +1,24 @@
 package com.parshwa.drive.auto;
 
-import static com.parshwa.drive.auto.Directions.HeadingDirection;
-import static com.parshwa.drive.auto.Directions.XDirection;
-import static com.parshwa.drive.auto.Directions.YDirection;
 import static com.parshwa.drive.auto.Types.*;
 
-import android.text.style.TtsSpan;
-
 import com.parshwa.drive.tele.Drive;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.opencv.core.Mat;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.function.Function;
+import java.util.List;
 
 public class AutoDriverBetaV1 implements AutoDriverInterface {
     private GoBildaPinpointDriver odoComp;
     private Drive movementControler;
     private ArrayList movementIds = new ArrayList();
     private ArrayList typeIds = new ArrayList();
-    private double TotalXDiff;
-    private double TotalYDiff;
-    private double TotalXYDiff;
+    private ArrayList startPos = new ArrayList();
+    private boolean stay = false;
     @Override
     public void init(HardwareMap hwMP, Drive movementController) {
         this.odoComp = hwMP.get(GoBildaPinpointDriver.class,"odo");
@@ -66,9 +57,7 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
         int id = getId();
         movementIds.add(id,finalPos);
         typeIds.add(id, LineTo);
-        TotalXDiff = XEnd - robotPos.getX(DistanceUnit.MM);
-        TotalYDiff = YEnd - robotPos.getY(DistanceUnit.MM);
-        TotalXYDiff= Math.hypot(TotalYDiff,TotalXDiff);
+        startPos.add(id, robotPos);
         return id;
     }
     private int getId(){
@@ -79,8 +68,8 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
         odoComp.update();
         boolean completed = false;
         Pose2D finalPos = (Pose2D) movementIds.get(id);
+        Pose2D robotPos = odoComp.getPosition();
         if(typeIds.get(id) == LineTo){
-            Pose2D robotPos = odoComp.getPosition();
             double Finalx = finalPos.getX(DistanceUnit.MM);
             double Finaly = finalPos.getY(DistanceUnit.MM);
             double x = robotPos.getX(DistanceUnit.MM);
@@ -91,35 +80,56 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
             maximum = Math.max(maximum, Math.abs(YDiff));
             double newXSpeed = XDiff / maximum;
             double newYSpeed = YDiff / maximum;
-            if(Math.abs(XDiff) <= 10.0){
+            if(Math.abs(XDiff) <= 7.5){
                 newXSpeed = 0.0;
             }
-            if(Math.abs(YDiff) <= 10.0){
+            if(Math.abs(YDiff) <= 7.5){
                 newYSpeed = 0.0;
             }
-
+            double headingSpeed = 0.0;
+            Pose2D start = (Pose2D) startPos.get(id);
+            double TotalHeadDiff = start.getHeading(AngleUnit.DEGREES) - robotPos.getHeading(AngleUnit.DEGREES);
+            if(Math.abs(robotPos.getHeading(AngleUnit.DEGREES)-TotalHeadDiff) >= 5.0){
+                headingSpeed = robotPos.getHeading(AngleUnit.DEGREES) <= 0.0 ? -0.001: 0.0001;
+            }
+            double speed = 0.75;
+            double currentDiff = Math.sqrt(Math.pow(XDiff,2) + Math.pow(YDiff,2));
+            if(currentDiff <= 1000.0){
+                speed = 0.65;
+            }
+            if(currentDiff <= 500.0){
+                speed = 0.45;
+            }
+            if(currentDiff <= 100.0){
+                speed = 0.25;
+            }
+            if(currentDiff <= 50.0){
+                speed = 0.15;
+            }
+            speed = 0.15;
             if(newXSpeed == 0.0 && newYSpeed == 0.0){
                 completed = true;
             }
-            double speed = 1.0;
-            double XYDiff = Math.hypot(XDiff,YDiff);
-            if(Math.abs(XYDiff) / Math.abs(TotalXYDiff) <= 1.0/4.0){
-                speed = 0.5;
-            } else if(Math.abs(XYDiff) / Math.abs(TotalXYDiff) <= 1.0/3.0){
-                speed = 2.0/3.0;
-            } else if(Math.abs(XYDiff) / Math.abs(TotalXYDiff) <= 1.0/2.0){
-                speed = 3.0/4.0;
-            }
-            movementControler.move(newXSpeed, newYSpeed, 0.0,speed);
+            movementControler.move(newXSpeed, newYSpeed, headingSpeed,speed);
         } else if(typeIds.get(id) == Rotate){
-            Pose2D robotPos = odoComp.getPosition();
             double currentHed = robotPos.getHeading(AngleUnit.DEGREES);
             double targetHed = finalPos.getHeading(AngleUnit.DEGREES);
             currentHed = AngleUnit.normalizeDegrees(currentHed);
             targetHed = AngleUnit.normalizeDegrees(targetHed);
             double headingDiff = targetHed - currentHed;
-            double headingSpeed = headingDiff >= 1.0 ? headingDiff / headingDiff : headingDiff;
-            movementControler.move(0.0,0.0,headingSpeed,1.0);
+            double headingSpeed = Math.abs(headingDiff) >= 1.0 ? headingDiff / Math.abs(headingDiff) : headingDiff;
+            if(Math.abs(headingDiff) >= 180.0 || stay){
+                headingSpeed = -headingSpeed;
+                stay = true;
+            }
+            double speed = 0.1;
+            if(targetHed <= currentHed + 10.0 && targetHed >= currentHed - 10.0){
+                completed = true;
+                stay = false;
+                movementControler.move(0.0,0.0,0.0,0.5);
+            }else{
+                movementControler.move(0.0,0.0,headingSpeed,speed);
+            }
         } else if(typeIds.get(id) == CurveTo){
             completed = true;
         } else {
@@ -129,23 +139,18 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
     }
 
     @Override
-    public int curveTo(double CircleCenterX, double CircleCenterY, double TotalAngle, double MaxAngleVelocity, Directions curveDirection) {
-        return 0;
+    public List<Integer> curveTo(double CircleCenterX, double CircleCenterY, double TotalAngle, double MaxAngleVelocity, Directions curveDirection) {
+        List<Integer> ids = new ArrayList<>();
+        return ids;
     }
     @Override
     public int rotateRobot(double degrees, Directions rotationDirection) {
         Pose2D robotPos = getPosition();
-        Pose2D finalPos;
-        if(Directions.LeftRotateDirection == rotationDirection){
-            finalPos = new Pose2D(DistanceUnit.MM, robotPos.getX(DistanceUnit.MM), robotPos.getY(DistanceUnit.MM), AngleUnit.DEGREES, robotPos.getHeading(AngleUnit.DEGREES)+degrees);
-        } else if(Directions.RightRotateDirection == rotationDirection){
-            finalPos = new Pose2D(DistanceUnit.MM, robotPos.getX(DistanceUnit.MM), robotPos.getY(DistanceUnit.MM), AngleUnit.DEGREES, robotPos.getHeading(AngleUnit.DEGREES)-degrees);
-        } else {
-            finalPos = new Pose2D(DistanceUnit.MM, robotPos.getX(DistanceUnit.MM), robotPos.getY(DistanceUnit.MM), AngleUnit.DEGREES, robotPos.getHeading(AngleUnit.DEGREES));
-        }
+        Pose2D finalPos = new Pose2D(DistanceUnit.MM, robotPos.getX(DistanceUnit.MM), robotPos.getY(DistanceUnit.MM), AngleUnit.DEGREES, degrees);
         int id = getId();
         movementIds.add(id,finalPos);
         typeIds.add(id, Rotate);
+        startPos.add(id, robotPos);
         return id;
     }
 }
