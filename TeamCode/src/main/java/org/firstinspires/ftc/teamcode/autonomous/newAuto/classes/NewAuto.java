@@ -226,8 +226,9 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
 
     // Movement logic based on state
     @Override
-    public void movement(newAuto_enum state, double inches, double speed) {
-        int targetPos = (int) (inches * calculations.WHEEL_TICK_PER_INCH);
+    public void movement(newAuto_enum state, double tick, double rotation, double speed) {
+        int targetPos = (int) (tick * calculations.tick_per_inch);
+        int targetRotation = (int) (rotation * calculations.tick_per_360);
         switch (state) {
             case FORWARD:
                 base(targetPos, targetPos, targetPos, targetPos, speed, speed, speed, speed);
@@ -241,20 +242,12 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
             case STRAFE_RIGHT:
                 base(targetPos, -targetPos, -targetPos, targetPos, speed, -speed, -speed, speed);
                 break;
-        }
-    }
-
-    // Turning logic based on state
-    @Override
-    public void turn(newAuto_enum state, double degrees, double speed) {
-        int targetPos = (int) (calculations.WHEEL_TICK_PER_DEGREE * degrees);
-        switch (state) {
             case TURN_RIGHT:
-                base(targetPos, targetPos, -targetPos, -targetPos, speed, speed, -speed, -speed);
-                break;
+                 base(targetRotation, targetRotation, -targetRotation, -targetRotation, speed, speed, -speed, -speed);
+                 break;
             case TURN_LEFT:
-                base(-targetPos, -targetPos, targetPos, targetPos, -speed, -speed, speed, speed);
-                break;
+                 base(-targetRotation, -targetRotation, targetRotation, targetRotation, -speed, -speed, speed, speed);
+                 break;
         }
     }
 
@@ -295,7 +288,6 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     @Override
     public boolean detectYellow(int blue, int red, int green) {
         return (blue < red) && (blue < green);
-
     }
 
     // Moves to an area based on a state given
@@ -304,17 +296,17 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
         switch (state) {
             case START_POSITION:
                 //Move forward turning radius plus an inch for error
-                movement(newAuto_enum.FORWARD, 5, calculations.DRIVE_SPEED);
+                movement(newAuto_enum.FORWARD, 5, 0, calculations.DRIVE_SPEED);
 
                 //Turn right 90degrees so that the color sensor is closest to the wall
-                movement(newAuto_enum.TURN_RIGHT, 90, calculations.DRIVE_SPEED);
+                movement(newAuto_enum.TURN_RIGHT,0, 90, calculations.DRIVE_SPEED);
 
                 //Strafe right until the distance sensor is at DISTANCE_FROM_BLOCK inches from wall
                 while (hardware.distanceSensorRight.getDistance(DistanceUnit.INCH) < calculations.DISTANCE_FROM_WALL) {
-                    movement(newAuto_enum.STRAFE_RIGHT, calculations.SMIDGEN, calculations.DRIVE_SPEED);
+                    movement(newAuto_enum.STRAFE_RIGHT, calculations.SMIDGEN, 0, calculations.DRIVE_SPEED);
                 }
                 //Move backwards a set number of inches until you're near blocks //TODO find set number of inches
-                movement(newAuto_enum.BACKWARD, calculations.DISTANCE_TO_BLOCKS, calculations.DRIVE_SPEED);
+                movement(newAuto_enum.BACKWARD, calculations.DISTANCE_TO_BLOCKS, 0, calculations.DRIVE_SPEED);
 
                 //Give back data
                 telemetry.speak("Going to start position");
@@ -322,13 +314,13 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
                 sleep(1000);
                 break;
             case GO_TO_BASKET:
-                movement(newAuto_enum.FORWARD, 5, calculations.DRIVE_SPEED);
+                movement(newAuto_enum.FORWARD, 5, 0,calculations.DRIVE_SPEED);
                 telemetry.speak("Heading towards the bucket");
                 telemetry.update();
                 sleep(1000);
                 break;
             case END_POSITION:
-                movement(newAuto_enum.BACKWARD, 3, calculations.DRIVE_SPEED);
+                movement(newAuto_enum.BACKWARD, 3, 0, calculations.DRIVE_SPEED);
                 telemetry.speak("Going back to start position");
                 telemetry.update();
                 sleep(1000);

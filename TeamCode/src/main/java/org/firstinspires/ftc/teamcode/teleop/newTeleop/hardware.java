@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop.newTeleop;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -15,9 +16,9 @@ public class hardware {
     public DcMotor lift;
     public DcMotor hopper;
 
-    public Servo wrist;
-    public Servo grabber;
-    public Servo door;
+    public CRServo wrist;
+    public CRServo grabber;
+    public CRServo door;
 
     public ColorSensor colorSensor;
 
