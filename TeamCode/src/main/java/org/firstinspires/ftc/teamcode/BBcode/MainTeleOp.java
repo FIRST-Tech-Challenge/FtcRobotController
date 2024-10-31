@@ -107,6 +107,7 @@ public class MainTeleOp extends LinearOpMode{
                 viper.ExtendShort();
             }
 
+            //brings arm down to pick up samples
             if (gamepad2.dpad_right) {arm.MoveToHome();}
 
             if (arm.getIsHome())
@@ -114,7 +115,6 @@ public class MainTeleOp extends LinearOpMode{
                 arm.Stop();
             }
 
-            //Controller B
             //Open Claw
             if(gamepad2.b) {
                 //Code for when B is pressed
@@ -124,8 +124,18 @@ public class MainTeleOp extends LinearOpMode{
                 wristClaw.OpenClaw();
             }
 
-            //Flip Claw
+            //Bring the arm out to hang
             if(gamepad2.left_trigger > 0) {arm.MoveToHang();}
+            {
+                desiredViperState = ViperState.PrepareToHang;
+                viper.ExtendHalf();
+            }
+
+            //Pull up the robot
+            if(gamepad2.right_trigger > 0) {
+                desiredViperState = ViperState.PrepareToHang;
+                viper.ExtendSpecimenhang();
+            }
 
             //Close Claw
             if(gamepad2.x) {
@@ -146,9 +156,17 @@ public class MainTeleOp extends LinearOpMode{
                 wristClaw.MoveDown();
             }
 
+            //bring the harm up to hang specimen
             if (gamepad2.left_bumper) {arm.MoveToSpecimen();}
+            {
+                desiredViperState = ViperState.PrepareToHang;
+                viper.ExtendSpecimenhang();
+            }
 
-          //  if (gamepad2.right_bumper)
+            //hang the specimens
+            if (gamepad2.right_bumper) {
+
+            }
 
             telemetry.update();
             //Manual viper code (commented out)

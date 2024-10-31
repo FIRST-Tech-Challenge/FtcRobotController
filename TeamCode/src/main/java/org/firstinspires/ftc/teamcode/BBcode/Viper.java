@@ -19,12 +19,16 @@ public class Viper {
     //RPM 312 = 537.7 Ticks per Revolution
     int fullExtend = 27;
     int halfExtend = 9;
+    int specimenhangExtend = 7;
     int shortExtend = 3;
     //--------------------------
 
     public void ExtendFull() {ViperMotorCustom(fullExtend);}
     public void ExtendShort() {ViperMotorCustom(shortExtend);}
     public void ExtendHalf() {ViperMotorCustom(halfExtend);}
+    public void ExtendSpecimenhang() {ViperMotorCustom(specimenhangExtend);}
+
+
     public void ViperMotorCustom(double lengthInches)
     {
         if (_viperMotor == null)
