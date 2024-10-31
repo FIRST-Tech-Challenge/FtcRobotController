@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Input {
 
     Motors motors;
 
-    public Input()
+    public Input(HardwareMap hardwareMap)
     {
+        motors = new Motors(hardwareMap);
        // constructorrrrr
     }
 
