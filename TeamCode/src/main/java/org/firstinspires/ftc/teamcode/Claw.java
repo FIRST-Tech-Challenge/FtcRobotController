@@ -5,45 +5,47 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Claw {
     private String JOINT_SERVO_NAME = "jointServo";
     private String CLAW_SERVO_NAME = "clawServo";
 
     private Servo jointServo;
     private Servo clawServo;
-    private boolean claw, joint, aDown, bDown;
 
-    public Claw(HardwareMap hardwareMap){
+    private boolean isAPressed;
+    private boolean isXPressed;
+
+
+    public Claw(HardwareMap hardwareMap) {
         jointServo = hardwareMap.servo.get(JOINT_SERVO_NAME);
         clawServo = hardwareMap.servo.get(CLAW_SERVO_NAME);
-        claw = false;
-        joint = false;
-        aDown = false;
-        bDown = false;
+        isAPressed = false;
+        isXPressed = false;
     }
 
-    public void update(Gamepad gamepad){
-        boolean a = gamepad.a && !aDown;
-        aDown = gamepad.a;
-        boolean b = gamepad.b && !bDown;
-        bDown = gamepad.b;
-
-        if(a && claw){
-            setClawPosition(0.75);
-            claw = !claw;
-        } else if (a && !claw){
-            setClawPosition(0);
-            claw = !claw;
+    public void update(Gamepad gamepad) {
+        if (gamepad.a && !isAPressed) {
+            if (clawServo.getPosition() == 0){
+                setClawPosition(1);
+            }else{
+                setClawPosition(0);
+            }
+            isAPressed = true;
+        } else if (!gamepad.a) {
+            isAPressed = false;
         }
 
-        if (gamepad.right_bumper && joint){
-            setJointPosition(1);
-            joint = !joint;
-        } else if (gamepad.right_bumper && !joint){
-            setJointPosition(0.25);
-            joint = !joint;
+        if (gamepad.x && !isXPressed) {
+            if (jointServo.getPosition() == 0){
+                setJointPosition(1);
+            }else{
+                setJointPosition(0);
+            }
+            isXPressed = true;
+        } else if (!gamepad.x) {
+            isXPressed = false;
         }
     }
 
