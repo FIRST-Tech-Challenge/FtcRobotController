@@ -17,7 +17,7 @@ public class karineClickHere extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        int sheepSoundID = hardwareMap.appContext.getResources().getIdentifier("sheep", "raw", hardwareMap.appContext.getPackageName());
+        int sheepSoundID = hardwareMap.appContext.getResources().getIdentifier("pig", "raw", hardwareMap.appContext.getPackageName());
 
         if (sheepSoundID != 0)
             sheepFound = SoundPlayer.getInstance().preload(hardwareMap.appContext, sheepSoundID);
