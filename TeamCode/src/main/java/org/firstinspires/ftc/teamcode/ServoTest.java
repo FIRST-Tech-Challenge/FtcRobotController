@@ -78,7 +78,7 @@ public class ServoTest extends LinearOpMode {
         servo.setPwmEnable();
         servo.setPwmRange(new PwmControl.PwmRange(1400, 1900));
 
-        Claw wrist = new Claw(servo, gamepad1, runtime);
+        Claw claw = new Claw(servo, gamepad1, runtime);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -92,7 +92,7 @@ public class ServoTest extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             updateRobot();
-            wrist.update();
+            claw.update();
         }
     }
 

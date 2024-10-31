@@ -21,11 +21,12 @@ public class Claw {
 
     final double SERVO_CLOSED_DURATION = 1;
 
-    final double SERVO_SLIGHTLY_OPENED_POSITION = 0.01;
+    final double SERVO_SLIGHTLY_OPENED_POSITION = 0.5;
 
     final double SERVO_SLIGHTLY_OPENED_DURATION = 0.3;
 
     public Claw(ServoImplEx servo, Gamepad gamepad, ElapsedTime runtime) {
+        // pulse width modulation??
         servo.setPwmEnable();
         servo.setPwmRange(new PwmControl.PwmRange(1400, 1900));
         this.servo = servo;
@@ -66,31 +67,31 @@ public class Claw {
             servo.setPosition(SERVO_SLIGHTLY_OPENED_POSITION);
         }
 
-//        // servo close
-//        if (gamepad.a) {
-//            servo.setPosition(SERVO_CLOSED_POSITION);
-//            servoCloseTime = runtime.time();
-//            servoSlightOpenTime = 0;
-//        }
-//
-//        if (servoCloseTime > 0 && runtime.time() - servoCloseTime >= SERVO_CLOSED_DURATION) {
-//            servo.setPosition(SERVO_SLIGHTLY_OPENED_POSITION);
-//            servoSlightOpenTime = runtime.time();
-//            servoCloseTime = 0;
-//
-//        }
-//
-//        if (servoSlightOpenTime > 0 && runtime.time() - servoSlightOpenTime >= SERVO_SLIGHTLY_OPENED_DURATION) {
-//            servo.setPosition(SERVO_CLOSED_POSITION);
-//            servoSlightOpenTime = 0;
-//        }
-//
-//        // open
-//        if (gamepad.b) {
-//            servo.setPosition(SERVO_OPENED_POSITION);
-//            servoCloseTime = 0;
-//
-//        }
+        // servo close
+        if (gamepad.a) {
+            servo.setPosition(SERVO_CLOSED_POSITION);
+            servoCloseTime = runtime.time();
+            servoSlightOpenTime = 0;
+        }
+
+        if (servoCloseTime > 0 && runtime.time() - servoCloseTime >= SERVO_CLOSED_DURATION) {
+            servo.setPosition(SERVO_SLIGHTLY_OPENED_POSITION);
+            servoSlightOpenTime = runtime.time();
+            servoCloseTime = 0;
+
+        }
+
+        if (servoSlightOpenTime > 0 && runtime.time() - servoSlightOpenTime >= SERVO_SLIGHTLY_OPENED_DURATION) {
+            servo.setPosition(SERVO_CLOSED_POSITION);
+            servoSlightOpenTime = 0;
+        }
+
+        // open
+        if (gamepad.b) {
+            servo.setPosition(SERVO_OPENED_POSITION);
+            servoCloseTime = 0;
+
+        }
 
     }
 
