@@ -1,12 +1,12 @@
 List of controls for the manipulator controller (gamepad2): 
 
 (Preset lift down position (all the way down)) Circle: Moves the lift forwards (until it reaches 
-the max of position 726) (Currently broken DO NOT USE!!!) 
+the max of position 2000)
 
 (Preset lift up position (all the way up)) Square: Moves the lift backwards (until it reaches the 
-minimum of position <unfinished>) (Currently broken DO NOT USE!!!)
+minimum of position of 0 (vertical))
 
-(Lift pitch control) Left Control Stick X-Axis: Makes the lift move forward or backwards based on 
+(Lift pitch control) Left Control Stick Y-Axis: Makes the lift move forward or backwards based on 
 the control stick inputs (when it goes right the lift goes down and when it goes left the lift goes 
 up)
 
@@ -14,12 +14,13 @@ up)
 based on the control stick inputs (When it goes up the lift goes up and when it goes down the lift 
 goes down)
 
-(NOT COMPLETE) (Intake activator inwards(hold to activate))Right Trigger: Makes the intake spin 
-outwards
+(Intake activator inwards(hold to activate))Right Trigger: Makes the intake spin 
+inwards
 
 (Intake activator outwards(hold to activate))Left Trigger: Makes the intake spin outwards
 
-(Intake outwards) D-Pad_Left: Turns the entire intake mechanism 90º to the left (outward position)
+(Intake rotate left) D-Pad_Left: Turns the entire intake mechanism 90º to the left 
+(outward position)
 
 (Intake return to default) D-Pad_Right: Turns the entire intake mechanism 90º to the right 
 (default position)
