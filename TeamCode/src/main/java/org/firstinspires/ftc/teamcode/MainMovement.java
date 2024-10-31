@@ -68,10 +68,10 @@ public class MainMovement extends LinearOpMode {
     //move backwards all = c
     //strafe left = BL, FR = cc, BR, FL = c
 
-    private DcMotor BLDrive; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor BRDrive; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
-    private DcMotor FLDrive; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor FRDrive; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
+    private DcMotor leftBack; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
+    private DcMotor rightBack; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
+    private DcMotor leftFront; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
+    private DcMotor rightFront; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
     final float joystickDeadzone = 0.1f;
 
     boolean usingLStick;
@@ -84,10 +84,10 @@ public class MainMovement extends LinearOpMode {
     @Override
     public void runOpMode() {
         // initializing the motors (pseudocode) (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
-        BLDrive  = hardwareMap.get(DcMotor.class, "bl_drive");
-        BRDrive  = hardwareMap.get(DcMotor.class, "br_drive");
-        FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
-        FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
+        leftBack  = hardwareMap.get(DcMotor.class, "bl");
+        rightBack  = hardwareMap.get(DcMotor.class, "br");
+        leftFront  = hardwareMap.get(DcMotor.class, "fl");
+        rightFront  = hardwareMap.get(DcMotor.class, "fr");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -107,10 +107,10 @@ public class MainMovement extends LinearOpMode {
     }
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
-        BLDrive.setPower(BL*speed);
-        BRDrive.setPower(BR*speed);
-        FLDrive.setPower(FL*speed);
-        FRDrive.setPower(FR*speed);
+        leftBack.setPower(BL*speed);
+        rightBack.setPower(BR*speed);
+        leftFront.setPower(FL*speed);
+        rightFront.setPower(FR*speed);
     }
 
     private void epicRotationMovement() {
