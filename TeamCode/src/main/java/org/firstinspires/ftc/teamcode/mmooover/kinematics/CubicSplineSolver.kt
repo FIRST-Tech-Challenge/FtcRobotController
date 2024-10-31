@@ -19,20 +19,21 @@ private inline fun DoubleArray.mapInPlace(transform: (Double) -> Double) {
     }
 }
 
-data class CubicSpline(
+data class CubicSpline @JvmOverloads constructor(
     val a: Double,
     val b: Double,
     val c: Double,
     val d: Double,
     val lowX: Double,
     val highX: Double,
+    val offset: Double = 0.0
 ) {
     companion object {
         @JvmStatic
-        fun fromArrayAndBounds(arr: DoubleArray, lowX: Double, highX: Double): CubicSpline {
+        fun fromArrayAndBounds(arr: DoubleArray, lowX: Double, highX: Double, offset: Double): CubicSpline {
             assert(arr.size == 4) { "Wrong size to import cubic spline from array : ${arr.size}" }
             return CubicSpline(
-                arr[0], arr[1], arr[2], arr[3], lowX, highX
+                arr[0], arr[1], arr[2], arr[3], lowX, highX, offset
             )
         }
     }
@@ -55,9 +56,10 @@ data class CubicSpline(
     )
 }
 
-data class CubicSplinePair(val x: CubicSpline, val y: CubicSpline) {
-    data class PointData(val x: Double, val y: Double, val totalDistance: Double, val t: Double) {
-        override fun toString(): String = "(%.4f, %.4f <t:%.4f | d:%.4f>)".format(x, y, t, totalDistance)
+data class CubicSplinePair(val id: Int, val x: CubicSpline, val y: CubicSpline) {
+
+    data class PointData(val basedOn: CubicSplinePair, val x: Double, val y: Double, val totalDistance: Double, val t: Double, val tReal: Double) {
+        override fun toString(): String = "(%.4f, %.4f <t:%.4f (real %.4f by %d) | d:%.4f>)".format(x, y, t, tReal, basedOn.id, totalDistance)
         fun toDesmos(): String = "(%.${PRECISION}f, %.${PRECISION}f)".format(x, y)
     }
 
@@ -86,13 +88,17 @@ data class CubicSplinePair(val x: CubicSpline, val y: CubicSpline) {
             waypoints.add(currentAt)
         }
         val actualStep = totalDistance / fragments
-        println("fragments: $fragments (%.4f per fragment, target %.4f, %.2f%% error)"
-            .format(actualStep, step, (100 * (step - actualStep)) / step)
-        )
+        if (!CubicSplineSolver.silent)
+            println("fragments: $fragments (%.4f per fragment, target %.4f, %.2f%% error)"
+                .format(actualStep, step, (100 * (step - actualStep)) / step)
+            )
         return waypoints
     }
 
     fun updateCache(resolution: Double = 0.01) {
+        assert(abs(x.offset - y.offset) < 0.001) {
+            "Mismatched offsets on splines (desync id %d)".format(id)
+        }
         val newCache: MutableList<PointData> = mutableListOf()
         val steps = floor((tTo - tFrom) / resolution).toInt()
         var d = 0.0
@@ -107,20 +113,23 @@ data class CubicSplinePair(val x: CubicSpline, val y: CubicSpline) {
             }
             lastX = xP
             lastY = yP
-            newCache.add(PointData(xP, yP, d, t))
+            newCache.add(PointData(this, xP, yP, d, t, t + x.offset))
         }
         pointCache = newCache
         totalDistance = d
 
-        println(
-            "total %.4f units | $steps steps".format(
-                totalDistance
+        if (!CubicSplineSolver.silent)
+            println(
+                "total %.4f units | $steps steps".format(
+                    totalDistance
+                )
             )
-        )
     }
 }
 
 object CubicSplineSolver {
+    var silent: Boolean = false
+
     @JvmStatic
     fun solveMat(t1: Number, x1: Number, t2: Number, x2: Number, s1: Number, s2: Number) =
         solveMat(
@@ -146,6 +155,7 @@ object CubicSplineSolver {
         x2: Double,
         s1: Double,
         s2: Double,
+        tOffset: Double = 0.0,
     ): CubicSpline {
         var matrix: Array<DoubleArray> = arrayOf(
             doubleArrayOf(t1 * t1 * t1, t1 * t1, t1, 1.0, x1),
@@ -155,7 +165,7 @@ object CubicSplineSolver {
         )
         val nCols = matrix[0].size
         for ((rowN, row) in matrix.withIndex()) {
-            val pivotCol = row.indexOfFirst { abs(it) > 1e-8 }
+            val pivotCol = row.indexOfFirst { abs(it) > 1e-3 }
             if (pivotCol == -1 || pivotCol == row.size - 1) throw IllegalStateException("No suitable pivot column found")
             val coeff = row[pivotCol]
             row.mapInPlace { it -> it / coeff }
@@ -174,8 +184,8 @@ object CubicSplineSolver {
                 abs(it[index] - 1.0) < 0.001
             }.last()
         }
-        val result = CubicSpline.fromArrayAndBounds(factors, min(t1, t2), max(t1, t2))
-        println(result.toString())
+        val result = CubicSpline.fromArrayAndBounds(factors, min(t1, t2), max(t1, t2), tOffset)
+//        println(result.toString())
         return result
     }
 
@@ -211,8 +221,8 @@ object CubicSplineSolver {
         val results: MutableList<CubicSpline> = mutableListOf()
         for (i in 0..<m.size - 1) results.add(
             solveMat(
-                xArr[i], yArr[i], xArr[i + 1], yArr[i + 1],
-                m[i], m[i + 1]
+                0.0, yArr[i], xArr[i + 1] - xArr[i], yArr[i + 1],
+                m[i], m[i + 1], xArr[i]
             )
         )
         return results
@@ -242,6 +252,7 @@ object CubicSplineSolver {
         for (i in 0..<xSplines.size) {
             result.add(
                 CubicSplinePair(
+                    i,
                     xSplines[i],
                     ySplines[i]
                 )
