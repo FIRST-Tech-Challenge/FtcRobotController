@@ -22,7 +22,7 @@ public class aUtOnOmOuS extends LinearOpMode {
         while (opModeIsActive())
         {
             motor.MoveMotor(0, 100);
-            //Runs here repeatedly
+            //Runs here NEVRER (n't)
         }
     }
 }
