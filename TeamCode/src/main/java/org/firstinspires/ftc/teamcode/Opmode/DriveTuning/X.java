@@ -103,7 +103,7 @@ public class X extends LinearOpMode {
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 1500){
+                    if(timer.milliseconds() > ActionStamp + 1250){
                         slides.score();
 
                         actionToggle = true;
@@ -116,7 +116,7 @@ public class X extends LinearOpMode {
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 1000){
+                    if(timer.milliseconds() > ActionStamp + 600){
                         wrist.deposit();
                         actionToggle = true;
                         currentAction = Actions.ACTION4;
@@ -201,7 +201,7 @@ public class X extends LinearOpMode {
                             timeToggle = false;
                             currentAction = Actions.ACTION1;
                         }
-                        if(timer.milliseconds() > TimeStamp + 4000){
+                        if(timer.milliseconds() > TimeStamp + 3500){
 
                             timeToggle = true;
                             if(currentCycle ==0){
