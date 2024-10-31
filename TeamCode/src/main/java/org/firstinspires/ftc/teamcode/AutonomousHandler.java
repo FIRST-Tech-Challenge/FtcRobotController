@@ -31,10 +31,14 @@ public class AutonomousHandler {
         driveSubSys.setGoal(Objects.requireNonNull(path.get(systemStateReference)).drivePose);
         armSubSys.setReferences(Objects.requireNonNull(path.get(systemStateReference)).armPosition);
         armSubSys.setManipulatorReference(Objects.requireNonNull(path.get(systemStateReference)).wristPosition, Objects.requireNonNull(path.get(systemStateReference)).clawPosition);
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("CapstanPosition", "INIT");
+        packet.put("Capstan", "INIT");
+
     }
     public void periodicFunction() {
         TelemetryPacket packet = new TelemetryPacket();
-        if (driveSubSys.isAtReference(packet) && armSubSys.isAtReference(packet)) {
+        if (driveSubSys.isAtReference(packet, timer.milliseconds()) && armSubSys.isAtReference(packet)) {
             if (Objects.requireNonNull(path.get(systemStateReference + 1)).wristPosition == null) {
                 theTelemetry.addData("driveSystemStopped", "yes");
                 packet.put("driveSystemStopped", "yes");
@@ -43,7 +47,7 @@ public class AutonomousHandler {
                 theTelemetry.addData("driveSystemStopped", "waitingForServo");
                 packet.put("driveSystemStopped", "waitingForServo");
                 waiting = true;
-            } else if (timer.milliseconds() > (servoWaitStart + 700)) {
+            } else if (timer.milliseconds() > (servoWaitStart + 1500)) {
                 waiting = false;
                 theTelemetry.addData("driveSystemStopped", "changing");
                 packet.put("driveSystemStopped", "changing");
@@ -59,7 +63,7 @@ public class AutonomousHandler {
             packet.put("driveSystemStopped", "no");
             theTelemetry.addData("driveSystemStopped", "no");
         }
-        packet.put("timeToWait", servoWaitStart + 700);
+        packet.put("timeToWait", servoWaitStart + 1500);
         packet.put("currentTime", timer.milliseconds());
         armSubSys.periodicUpdate(packet); // Moves arm
         driveSubSys.periodicUpdate(packet); // Moves Drive Base

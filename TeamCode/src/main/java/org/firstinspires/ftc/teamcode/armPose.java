@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 public enum armPose {
+    AUTO_1,
     BASKET,
     SUBMERSIBLE_A,
     SUBMERSIBLE_B,
@@ -8,5 +9,6 @@ public enum armPose {
     CHAMBER_A,
     CHAMBER_B,
     ZERO,
-    BASKET_PREP
+    BASKET_PREP,
+    PICKUP
 }

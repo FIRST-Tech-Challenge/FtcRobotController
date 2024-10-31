@@ -41,7 +41,7 @@ public class ArmSubSystem {
         cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        extendoPID.init(0.008F, 0, 0.001F);
+        extendoPID.init(0.01F, 0, 0.001F);
         capstanPID.init(0.007F, 0, 0.001F);
     }
 
@@ -56,12 +56,12 @@ public class ArmSubSystem {
         switch (positionalState) {
             case SUBMERSIBLE_B:
                 positionalZone = armPoseZone.SUBMERSABLE;
-                extendoReference = 2250;
+                extendoReference = 2400;
                 capstanReference = -117;
                 break;
             case SUBMERSIBLE_A:
                 positionalZone = armPoseZone.SUBMERSABLE;
-                extendoReference = 2250;
+                extendoReference = 2400;
                 capstanReference = -170;
                 break;
             case CHAMBER_B:
@@ -76,18 +76,28 @@ public class ArmSubSystem {
                 break;
             case BASKET:
                 positionalZone = armPoseZone.OTHER;
-                extendoReference = 2250;
-                capstanReference = -550;
+                extendoReference = 2400;
+                capstanReference = -600;
+                break;
+            case AUTO_1:
+                positionalZone = armPoseZone.OTHER;
+                extendoReference = 0;
+                capstanReference = -200;
                 break;
             case REST:
                 positionalZone = armPoseZone.OTHER;
-                extendoReference = 0;
+                extendoReference = 100;
                 capstanReference = -40;
+                break;
+            case PICKUP:
+                positionalZone = armPoseZone.OTHER;
+                extendoReference = 100;
+                capstanReference = 0;
                 break;
             case BASKET_PREP:
                 positionalZone = armPoseZone.OTHER;
-                extendoReference = 1000;
-                capstanReference = -300;
+                extendoReference = 2000;
+                capstanReference = -500;
                 break;
             case ZERO:
                 positionalZone = armPoseZone.OTHER;
@@ -114,13 +124,7 @@ public class ArmSubSystem {
         packet.put("CapstanPosition", cap.getCurrentPosition());
         packet.put("CapstanReference", capstanReference);
         float extendoPIDValue = extendoPID.getOutput(extendo.getCurrentPosition(), extendoReference, packet, "extendo");
-        if (extendoPIDValue > 0.75) {
-            extendo.setPower(0.75);
-        } else if (extendoPIDValue < -0.75) {
-            extendo.setPower(-0.75);
-        } else {
-            extendo.setPower(extendoPIDValue);
-        }
+        extendo.setPower(extendoPIDValue);
         if (!ClasslimitSwitch.isPressed()) {
             float capPIDValue = capstanPID.getOutput(cap.getCurrentPosition(), capstanReference, packet, "capstan");
             if (capPIDValue > 0.75) {

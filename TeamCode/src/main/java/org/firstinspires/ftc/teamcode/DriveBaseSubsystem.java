@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Config
 public class DriveBaseSubsystem {
     public static float Translational_P = 0.07f;
-    public static float Translational_I = 0.000005f;
+    public static float Translational_I = 0.000007f; // 0.000005 is good
     public static float Translational_D = 0;
     // Motors & Sensors
     private static DcMotor _frontLeftMotor;
@@ -120,10 +120,17 @@ public class DriveBaseSubsystem {
         timeAtLastCycle = System.currentTimeMillis();
     }
 
-    public boolean isAtReference(TelemetryPacket packet) {
-        boolean x = ((goal.x-1) < currentPose.y) && (currentPose.y < (goal.x + 1));
-        boolean y = ((goal.y-1) < currentPose.x) && (currentPose.x < (goal.y + 1));
-        boolean h = Math.abs(Math.abs(currentPose.h) - Math.abs(goal.h)) < 4;
+    public boolean isAtReference(TelemetryPacket packet, double time) {
+        boolean x, y, h;
+        if (time > 20000) {
+            x = ((goal.x-2) < currentPose.y) && (currentPose.y < (goal.x + 2));
+            y = ((goal.y-2) < currentPose.x) && (currentPose.x < (goal.y + 2));
+            h = Math.abs(Math.abs(currentPose.h) - Math.abs(goal.h)) < 6;
+        } else {
+            x = ((goal.x-1) < currentPose.y) && (currentPose.y < (goal.x + 1));
+            y = ((goal.y-1) < currentPose.x) && (currentPose.x < (goal.y + 1));
+            h = Math.abs(Math.abs(currentPose.h) - Math.abs(goal.h)) < 4;
+        }
 //        boolean h = ((goal.x - 2) < -currentPose.h) && (-currentPose.h < (goal.h + 2));
         packet.put("xAcceptable", x);
         packet.put("yAcceptable", y);
