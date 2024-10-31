@@ -89,7 +89,7 @@ public class MainMovement extends LinearOpMode {
         FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
         FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
 
-<<<<<<< HEAD
+
         //psuedocode (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
         BLDrive  = hardwareMap.get(DcMotor.class, "bl_drive");
         BRDrive  = hardwareMap.get(DcMotor.class, "br_drive");
@@ -98,7 +98,6 @@ public class MainMovement extends LinearOpMode {
 =======
         telemetry.addData("Status", "Initialized");
         telemetry.update();
->>>>>>> 79cb5638c9798e0e51925efd788129b7875b6d43
 
         waitForStart(); //waits for play on the driver hub :3
 
