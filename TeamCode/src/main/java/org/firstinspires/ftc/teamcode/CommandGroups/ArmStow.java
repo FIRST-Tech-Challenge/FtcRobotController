@@ -23,14 +23,14 @@ public class ArmStow extends SequentialCommandGroup {
     public ArmStow() {
 
         addCommands (
-                // folds the wrist in 0 or 270
-                //new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo()),
+                // folds the wrist in 10
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
 
                 // lifts the shoulder up 90+-60 degrees
-                //new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo()),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(55)),
 
-                // folds the elbow in 0 or 270
-                //new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo())
+                // folds the elbow in 10
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(0))
 
         // new command1
         // new command2

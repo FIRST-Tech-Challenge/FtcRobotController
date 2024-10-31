@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class FlappyFlappyWrist extends SubsystemBase {
 
     // Create wrist Servo
+    /**0° is in*/
     private final Servo wristServo;
 
     /** Place code here to initialize subsystem */

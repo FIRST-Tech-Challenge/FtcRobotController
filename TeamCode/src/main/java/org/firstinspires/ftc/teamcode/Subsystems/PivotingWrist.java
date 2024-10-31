@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class PivotingWrist extends SubsystemBase {
 
     // Create wrist Servo
+    /**0° is in*/
     private final Servo wristServo;
 
     /** Place code here to initialize subsystem */
@@ -33,7 +34,7 @@ public class PivotingWrist extends SubsystemBase {
     public void RotateTo(int degrees){
 
         // Converts degrees into 0-1 float
-        double servoPos = degrees/180.0;
+        double servoPos = degrees/270.0;
 
         // Set the Servo to ServoPos
         wristServo.setPosition(servoPos);

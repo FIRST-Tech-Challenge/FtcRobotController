@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
-/** Subsystem */
+/** Elbow Subsystem
+ * 0° is down*/
 public class ElbowJoint extends SubsystemBase {
 
     // Create wrist Servo
+    /**0° is down*/
     private final Servo ElbowServo;
 
     /** Place code here to initialize subsystem */
@@ -32,7 +34,7 @@ public class ElbowJoint extends SubsystemBase {
     public void RotateTo(int degrees){
 
         // Converts degrees into 0-1 float
-        double servoPos = degrees/180.0;
+        double servoPos = degrees/270.0;
 
         // Set the Servo to ServoPos
         ElbowServo.setPosition(servoPos);
