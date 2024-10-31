@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -25,6 +26,8 @@ public class Claw {
     final double SERVO_SLIGHTLY_OPENED_DURATION = 0.3;
 
     public Claw(ServoImplEx servo, Gamepad gamepad, ElapsedTime runtime) {
+        servo.setPwmEnable();
+        servo.setPwmRange(new PwmControl.PwmRange(1400, 1900));
         this.servo = servo;
         this.gamepad = gamepad;
         this.runtime = runtime;
@@ -33,7 +36,9 @@ public class Claw {
 
     }
 
+    // is the a button held?
     private boolean aPressed = false;
+    // is the a button pressed? becomes false once the action is completed
     private boolean aPressedDelta = false;
     private boolean aPressedPrevious = false;
 

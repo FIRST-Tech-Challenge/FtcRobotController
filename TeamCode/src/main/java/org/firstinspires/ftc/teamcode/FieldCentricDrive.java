@@ -124,8 +124,6 @@ public class FieldCentricDrive extends LinearOpMode {
 
 
         servo = hardwareMap.get(ServoImplEx.class, "servo");
-        servo.setPwmEnable();
-        servo.setPwmRange(new PwmControl.PwmRange(1400, 1900));
 
         Claw wrist = new Claw(servo, gamepad1, runtime);
 
