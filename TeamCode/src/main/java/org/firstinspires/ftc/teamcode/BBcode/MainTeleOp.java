@@ -76,7 +76,7 @@ public class MainTeleOp extends LinearOpMode{
             //if (gamepad1.x) {arm.MoveToClearance();}
 
             //hang
-            if (gamepad1.right_bumper) {arm.MoveToHang();}
+            //if (gamepad1.right_bumper) {arm.MoveToHang();}
 
             //specimen placement
             //if (gamepad1.y) {arm.MoveToSpecimen();}
@@ -125,7 +125,7 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Flip Claw
-            if(gamepad2.left_trigger > 0) { wristClaw.MoveFlip();}
+            if(gamepad2.left_trigger > 0) {arm.MoveToHang();}
 
             //Close Claw
             if(gamepad2.x) {
@@ -145,6 +145,10 @@ public class MainTeleOp extends LinearOpMode{
             if(gamepad2.a) {
                 wristClaw.MoveDown();
             }
+
+            if (gamepad2.left_bumper) {arm.MoveToSpecimen();}
+
+          //  if (gamepad2.right_bumper)
 
             telemetry.update();
             //Manual viper code (commented out)
