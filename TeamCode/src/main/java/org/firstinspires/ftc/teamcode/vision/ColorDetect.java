@@ -10,7 +10,6 @@ import org.opencv.core.Rect;
 import org.opencv.core.Point;
 import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

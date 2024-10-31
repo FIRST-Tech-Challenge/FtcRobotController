@@ -4,86 +4,104 @@ import android.util.Size;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.vision.ColorDetect;
 import org.firstinspires.ftc.teamcode.vision.DetectedColor;
+import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
+import org.firstinspires.ftc.teamcode.vision.DetectedColorWithAngle;
 import org.firstinspires.ftc.vision.VisionPortal;
-//import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-//import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-//import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 /** Subsystem */
 public class ClawCamera extends SubsystemBase {
 
     // Used for managing the color detection process.
-    private ColorDetect myColorDetectProcessor;
-
+    private ColorDetect  myColorDetectProcessor;
+    private ColorAndOrientationDetect myColorAndOrienDetProcessor;
     // Local objects and variables here
     private final VisionPortal CameraPortal;
 
+    private boolean dashboardInitialized = false;
+
     /** Place code here to initialize subsystem */
     public ClawCamera(String cameraName) {
+        myColorDetectProcessor = new ColorDetect();
+        myColorAndOrienDetProcessor = new ColorAndOrientationDetect();
 
         CameraPortal = new VisionPortal.Builder()
                 .setCamera(RobotContainer.ActiveOpMode.hardwareMap.get(WebcamName.class, cameraName))
-                .setCameraResolution(new Size(640, 480))
-                //.setCameraResolution(new Size(1280,720)) if have an HD camera
-                .addProcessor(myColorDetectProcessor)
+                .addProcessors(myColorAndOrienDetProcessor) // add all the processors here
+                //.setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(640,480))
                 .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
 
-        // set camera exposure and gain
-        // values used from example code
-//        setCameraExposure(2, 250);
-
         RobotContainer.DashBoard.startCameraStream(CameraPortal, 0);
+
+    }
+    @Override
+    public void periodic() {
+//        if (!dashboardInitialized) {
+//            initializeDashboard();
+//            dashboardInitialized = true;
+//        }
+//        updateDashboard();
     }
 
-    // Updates dashboard with robot odometry info
+    // Method to initialize dashboard with default (null) values
+    private void initializeDashboard() {
+        // Set up a fixed number of slots on the dashboard for detected colors
+        for (int i = 0; i < 4; i++) { // Assuming a maximum of 10 color detections
+            RobotContainer.DBTelemetry.addData("Detected Color " + (i + 1), "null");
+            RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Bounding Box",
+                    "Top-left: (null, null), Bottom-right: (null, null)"
+            );
+        }
+        // Update the telemetry to show the initial layout
+        RobotContainer.DBTelemetry.update();
+    }
+
+    // Method to update the dashboard with actual detected values
     public void updateDashboard() {
         // Get the list of detected colors
-        List<DetectedColor> detectedColors = GetCurrentColorDetections();
+        List<DetectedColorWithAngle> detectedColors = GetCurrentColAndAng();
 
-        // First, clear the previous data from the dashboard (if needed)
-        RobotContainer.DBTelemetry.clear(); // Optional, depending on your telemetry system
+        // Update each slot with the detected values or leave them as null if no detection
+        for (int i = 0; i < 4; i++) { // Assuming a maximum of 10 color detections
+            if (i < detectedColors.size()) {
+                DetectedColorWithAngle detected = detectedColors.get(i);
 
-        // Add information for each detected color
-        for (int i = 0; i < detectedColors.size(); i++) {
-            DetectedColor detected = detectedColors.get(i);
+                // Update detected color name and area in the telemetry
+                RobotContainer.DBTelemetry.addData("Detected Color " + (i + 1), detected.colorName);
 
-            // Add detected color name and area to the telemetry
-            RobotContainer.DBTelemetry.addData("Detected Color " + (i + 1), detected.colorName);
-            RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Area", detected.area);
-
-            // Add bounding box information (for instance, top-left and bottom-right coordinates)
-            RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Bounding Box",
-                    "Top-left: (" + detected.boundingBox.x + ", " + detected.boundingBox.y + "), " +
-                            "Bottom-right: (" + (detected.boundingBox.x + detected.boundingBox.width) + ", " +
-                            (detected.boundingBox.y + detected.boundingBox.height) + ")"
-            );
+                // Update bounding box information
+                RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Bounding Box",
+                        "Top-left: (" + detected.boundingBox.x + ", " + detected.boundingBox.y + "), " +
+                                "Bottom-right: (" + (detected.boundingBox.x + detected.boundingBox.width) + ", " +
+                                (detected.boundingBox.y + detected.boundingBox.height) + ")"
+                );
+            } else {
+                // No detection for this slot, set it to null or empty string
+                RobotContainer.DBTelemetry.addData("Detected Color " + (i + 1), "null");
+                RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Bounding Box",
+                        "Top-left: (null, null), Bottom-right: (null, null)"
+                );
+            }
         }
 
         // Update the telemetry to reflect the latest data on the dashboard
         RobotContainer.DBTelemetry.update();
     }
 
-    /** Method called periodically by the scheduler
-     * Place any code here you wish to have run periodically */
-    @Override
-    public void periodic() {
-        updateDashboard();
-    }
-
     // get current AprilTag detections (if any) from camera
     // returns list containing info on each tag detected
     public List<DetectedColor> GetCurrentColorDetections() {
         return myColorDetectProcessor.getDetectedColors();
+    }
+    public List<DetectedColorWithAngle> GetCurrentColAndAng(){
+        return myColorAndOrienDetProcessor.getDetectedColorsAndAng();
     }
 
     // get camera frames per second
@@ -95,34 +113,4 @@ public class ClawCamera extends SubsystemBase {
     public void EnableColorDetectProcessing (boolean enable) {
         CameraPortal.setProcessorEnabled(myColorDetectProcessor, enable);
     }
-
-    /** Set the camera gain and exposure. */
-    public void setCameraExposure(int exposureMS, int gain) {
-
-        // wait until camera in streaming mode
-        while (CameraPortal.getCameraState()!= VisionPortal.CameraState.STREAMING)
-        {}
-
-        // set exposure control to manual
-        ExposureControl exposureControl = CameraPortal.getCameraControl(ExposureControl.class);
-        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-            exposureControl.setMode(ExposureControl.Mode.Manual);
-
-            RobotContainer.ActiveOpMode.sleep(50);
-        }
-
-        // set exposure and gain
-        exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-        RobotContainer.ActiveOpMode.sleep(20);
-        GainControl gainControl = CameraPortal.getCameraControl(GainControl.class);
-        gainControl.setGain(gain);
-        RobotContainer.ActiveOpMode.sleep(20);
-    }
-
-    /** Sets the camera exposure to automatic */
-    public void SetAutoCameraExposure() {
-        ExposureControl exposureControl = CameraPortal.getCameraControl(ExposureControl.class);
-        exposureControl.setMode(ExposureControl.Mode.Auto);
-    }
-
 }

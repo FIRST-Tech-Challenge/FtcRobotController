@@ -122,7 +122,7 @@ public class RobotContainer {
         odometry = new Odometry();
         drivesystem = new DriveTrain();
         //frontCamera = new Camera("CamyCamy");
-        clawCamera = new ClawCamera("ClawCam");
+        clawCamera = new ClawCamera("ClawCamera");
 
         linearSlide = new LinearSlide();
         // insert other subsystems here
