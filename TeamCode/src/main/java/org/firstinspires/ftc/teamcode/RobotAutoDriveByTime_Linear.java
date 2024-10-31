@@ -24,13 +24,13 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 1800;
+    final int VERTICAL_MAX = 1700;
     int verticalAdjustedMin = 0;
     int verticalPosition = VERTICAL_MIN;
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX = 2759;
+    final int VIPER_MAX = 3100;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
@@ -96,34 +96,19 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        /*
-        moveForward(2.3);
-        strafeLeft(0.5);                        //strafing to 1st block
-        moveBackward(2.1 );                     //moving first block backward
-        turnRightToHeading(-20);                //turning to the red line to angle the block
-        moveBackward(1.1);                      //moving the block backward into zone
-        turnLeftToHeading(20);                  //turning to 0 degrees
-        strafeRight(1.4);                       //strafing before going forward
-        moveForward(2.3);                       //moving to 2nd block
-        strafeLeft(1.2);                        //strafing left to 2nd block
-        moveBackward(2, 0.2);                   //moving to red zone
-        turnRightToHeading(20);                 //turning to face the red zone
-        moveBackward(1.5, 0.2);                 //placing block in red zone
-       */
-
-        // Neha: You should not start at an angle because getting the exact same angle every time is difficult.
-        // You should count on the robot starting facing the basket.
-        // You don't have to be directly in front of the basket to score. You can approach it from the side.
-        // Update this sequence and we will test it out.
-        //moveForward(1);
-        //turnLeftToHeading(130);
-        //moveForward(0.3);
-        setVertical(VERTICAL_MAX);
-        setViper(VIPER_MAX);
-        moveForward(0.1); // I recommend making the robot drive slowly here. Maybe .2 or .3?
-        setClaw(CLAW_MAX);
-        setViper(VIPER_MIN);
-        setVertical(VERTICAL_MIN);
+        // Code here
+        setVertical(VERTICAL_MAX);                             // Raising Arm
+        setViper(VIPER_MAX);                                   // Extending Viper
+        strafeRight(2.0, 0.4);       // Positioning to basket
+        moveForward(0.7, 0.4);       // Positioning to basket
+        turnToHeading(45, 0.4);           // Turn to basket, claw in position
+        setClaw(CLAW_MAX);                                    // Drop the block
+        turnToHeading(0, 0.4);            // Turning away from basket
+        setViper(VIPER_MIN);                                  // Retracting Viper
+        setVertical(VERTICAL_MIN);                            // Lowering Arm
+        strafeLeft(1.0, 0.4);       // Positioning to park
+        moveBackward(3, 0.5);       // Actively backing in to park
+        //claw.close();                                         MILLA- What does this do? Please test.
 
         // End of autonomous program
         telemetry.addData("Path", "Complete");
@@ -141,6 +126,13 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     public void setVertical(int height){
         vertical.setTargetPosition(height);
         ((DcMotorEx) vertical).setVelocity(2000);
+        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep(1500);
+    }
+
+    public void setVertical(int height, int speed){
+        vertical.setTargetPosition(height);
+        ((DcMotorEx) vertical).setVelocity(speed);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         sleep(1500);
     }
@@ -242,24 +234,20 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         return orientation.getYaw(AngleUnit.DEGREES);
     }
 
-    private void turnLeftToHeading(double targetYaw) {
-        turnLeftToHeading(targetYaw, DEFAULT_SPEED);
+    private void turnToHeading(double targetYaw) {
+        turnToHeading(targetYaw, DEFAULT_SPEED);
     }
 
-    // Turn left to desired heading.
-    private void turnLeftToHeading(double heading, double speedToDrive) {
+    private void turnToHeading(double heading, double speedToDrive) {
         degreesToTurn = heading - getHeading();
 
-        while (opModeIsActive()
-                && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)
-                && (gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0)) {
-
+        while (opModeIsActive() && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)) {
             degreesToTurn = heading - getHeading();
             if (degreesToTurn < -180) degreesToTurn += 360;
             if (degreesToTurn > 180) degreesToTurn -= 360;
 
             // Clip the speed to the maximum permitted value
-            turnSpeed = Range.clip(degreesToTurn * TURN_SPEED_ADJUSTMENT, -MAX_TURN_SPEED, MAX_TURN_SPEED);
+            turnSpeed = Range.clip(degreesToTurn * TURN_SPEED_ADJUSTMENT, -speedToDrive, speedToDrive);
             if (turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
             if (turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
 
@@ -268,38 +256,6 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
             leftBackDrive.setPower(-turnSpeed);
             rightBackDrive.setPower(turnSpeed);
         }
+        stopMoving();
     }
-
-    private void turnRightToHeading(double targetYaw) {
-        turnRightToHeading(targetYaw, DEFAULT_SPEED);
-    }
-
-    // Turn right to desired heading.
-    private void turnRightToHeading(double heading, double speedToDrive) {
-        degreesToTurn = heading - getHeading();
-
-        while (opModeIsActive()
-                && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)
-                && (gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0)) {
-
-            degreesToTurn = heading - getHeading();
-            if(degreesToTurn < -180) degreesToTurn += 360;
-            if(degreesToTurn > 180) degreesToTurn -= 360;
-
-            // Clip the speed to the maximum permitted value
-            turnSpeed = Range.clip(degreesToTurn*TURN_SPEED_ADJUSTMENT, -MAX_TURN_SPEED, MAX_TURN_SPEED);
-            if(turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
-            if(turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
-
-            leftFrontDrive.setPower(turnSpeed);
-            rightFrontDrive.setPower(-turnSpeed);
-            leftBackDrive.setPower(turnSpeed);
-            rightBackDrive.setPower(-turnSpeed);
-
-        }
-    }
-
-
 }
-
-//NC TELEMETRY TRANSFER
