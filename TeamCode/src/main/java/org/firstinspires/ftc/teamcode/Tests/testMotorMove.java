@@ -30,7 +30,7 @@ public class testMotorMove extends LinearOpMode {
             telemetry.addData("MOVE:", "left_y (%.2f),", leftsticky);
             telemetry.addData("SPIN:", "right_x (%.2f),", rightstickx);
             telemetry.addData("Strafe:", "left_x (%.2f),", leftstickx);
-            telemetry.update();
+            telemetry.update(); // telemtryy
         }
     }
 
