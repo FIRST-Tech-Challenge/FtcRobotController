@@ -20,6 +20,8 @@ public class MatchLoggerSubsystem extends SubsystemBase {
     public void periodic() {
         mecanumDrive.updatePoseEstimate();
         MATCH_LOGGER.logRobotPose(mecanumDrive.pose);
+        // NOTE: Some of the subsystems (like the ArmSubsystem) already has the logging system implemented in the code.
+        // Remember to not log things twice.
         super.periodic();
     }
 }

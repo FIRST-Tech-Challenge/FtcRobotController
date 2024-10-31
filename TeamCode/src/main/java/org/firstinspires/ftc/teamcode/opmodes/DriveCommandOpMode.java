@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.MoveBucketArmCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
@@ -33,10 +34,10 @@ public class DriveCommandOpMode extends CommandOpMode {
     private DriveSubsystem driveSubsystem;
     private ArmSubsystem armSubsystem;
     private WristSubsystem wristSubsystem;
+    private HangSubsystem hangSubsystem;
 
     private DefaultDrive driveCommand;
     private MoveBucketArmCommand bucketCommand;
-
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriverOP");
 

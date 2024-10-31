@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.MatchRecorder.MatchLogger;
+import org.opencv.core.Mat;
 
 public class LauncherSubsystem extends SubsystemBase {
 
@@ -20,6 +22,7 @@ public class LauncherSubsystem extends SubsystemBase {
             return;
         }
         servo.setPosition(position.getPosition());
+        MatchLogger.getInstance().genericLog("Launcher", MatchLogger.FileType.LAUNCHER, position.name(), position.getPosition());
     }
 
     public enum LauncherPosition {
