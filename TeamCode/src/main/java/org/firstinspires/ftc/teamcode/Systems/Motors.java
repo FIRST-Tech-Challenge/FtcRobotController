@@ -9,7 +9,7 @@ public class Motors {
     public DcMotor[] driveTrainMotors = null;
 
     private final double wheelDiameter = 1.0;
-    private final double PPR = 537.7; //how many times the motor counts before a single 360 rotation happens
+    private final double PPR = 537.7; //how many times the motor counts before a single 360 rotation happens pulse per rotation
 
 //    double leftFrontPower;
 //    double rightFrontPower;
@@ -45,7 +45,7 @@ public class Motors {
 
     public double GetDistance(int motorNumber)
     {
-        double CPR = PPR * 4;
+        double CPR = PPR * 4; //count per rotation
         double position = driveTrainMotors[motorNumber].getCurrentPosition();
 
         double revolutions = position/CPR;
