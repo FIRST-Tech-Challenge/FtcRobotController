@@ -1,31 +1,33 @@
 package org.firstinspires.ftc.teamcode.What;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 
+@Autonomous (name = "Sam motor")
 public class helpHowDoIMakeThingsWork extends LinearOpMode {
 
-    Motors notServos;
+    Motors motors;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        notServos = new Motors(hardwareMap);
+        motors = new Motors(hardwareMap);
 
         waitForStart();
 
         while(opModeIsActive())
         {
-            notServos.MoveMotor(0, 0.5);
-            notServos.MoveMotor(1, 0.5);
-            notServos.MoveMotor(2, 0.5);
-            notServos.MoveMotor(3, 0.5);
+            motors.MoveMotor(0, 50);
+            motors.MoveMotor(1, 50);
+            motors.MoveMotor(2, 50);
+            motors.MoveMotor(3, 50);
             sleep(500);
-            notServos.MoveMotor(0,0);
-            notServos.MoveMotor(1,0);
-            notServos.MoveMotor(2,0);
-            notServos.MoveMotor(3,0);
+            motors.MoveMotor(0,0);
+            motors.MoveMotor(1,0);
+            motors.MoveMotor(2,0);
+            motors.MoveMotor(3,0);
             sleep(500);
         }
     }
