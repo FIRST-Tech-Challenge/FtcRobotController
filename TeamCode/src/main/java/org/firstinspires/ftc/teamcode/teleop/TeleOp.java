@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="The Aurabot TeleOp")
 public class TeleOp extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
@@ -43,9 +43,7 @@ public class TeleOp extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap,2000);
-        arm = new Arm(hardwareMap);
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap, 2000);
+        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap, 0.0029);
         arm = new Arm(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
@@ -65,9 +63,10 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("Limelight Distance: ", distance[0] + ", " + distance[1]);
             drive.updatePoseEstimate();
             robot.drive(forward, strafe, rotate);
-            telemetry.addData("x", screen.roundData(drive.pose.position.x));
-            telemetry.addData("y", screen.roundData(drive.pose.position.y));
-            telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
+            telemetry.addData("deadwheel position:",screen.roundData(deadwheels.getPoseEstimateX()));
+//            telemetry.addData("x", screen.roundData(drive.pose.position.x));
+//            telemetry.addData("y", screen.roundData(drive.pose.position.y));
+//            telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
 
 
             //arm
