@@ -19,7 +19,7 @@ public class karineClickHere extends LinearOpMode {
 
         double reducer = 0.7;
 
-        int sheepSoundID = hardwareMap.appContext.getResources().getIdentifier("sheep", "raw", hardwareMap.appContext.getPackageName());
+        int sheepSoundID = hardwareMap.appContext.getResources().getIdentifier("pig", "raw", hardwareMap.appContext.getPackageName());
 
         if (sheepSoundID != 0)
             sheepFound = SoundPlayer.getInstance().preload(hardwareMap.appContext, sheepSoundID);
