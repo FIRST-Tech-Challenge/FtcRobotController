@@ -76,19 +76,21 @@ public class AutoCodeTest extends LinearOpMode {
         //TestRotate180();
 
         //Test Move Forward
-        driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, 10);
+
+       // driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, 10);
+       // driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, 10);
 /*
         TestDriveMotorEncodedMove(hornetRobo.RightFrontMotor);
         TestDriveMotorEncodedMove(hornetRobo.LeftFrontMotor);
         TestDriveMotorEncodedMove(hornetRobo.LeftBackMotor);
         TestDriveMotorEncodedMove(hornetRobo.RightBackMotor);
-*/
 
+*/
         //Test go fwd
         //TestGoForwardRoboUsingEncoders();
 
         //Test Strafe
-        TestStrafeRoboUsingEncoders();
+        //TestStrafeRoboUsingEncoders();
 
         //Test Arm
         //TestArm();
@@ -97,8 +99,8 @@ public class AutoCodeTest extends LinearOpMode {
         //TestGrabberOpenAndClose();
 
         //Test viper slide
-        //TestViperSlide();
-        TestRotate180();
+        TestViperSlide();
+        //TestRotate180();
 
     }
 
@@ -247,16 +249,7 @@ public class AutoCodeTest extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
                 telemetry.addData("Move forward for 1 sec", "");
                 telemetry.update();
-                vsManager.SetMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                vsManager.SetMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                vsManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
-                vsManager.SetPower(0.5);
-                sleep(1000);
-                telemetry.addData("Move Backward for 1 sec", "");
-                telemetry.update();
-                vsManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
-                vsManager.SetPower(0.5);
-                sleep(1000);
+                vsManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, 0.2, 5);
                 telemetry.addData("VS test done", "");
                 telemetry.update();
 

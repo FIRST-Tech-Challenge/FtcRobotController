@@ -94,7 +94,7 @@ public class AutoCodeToNetZone extends LinearOpMode {
                     telemetry.addData("Strafe to align with submersible", "");
                     telemetry.update();
 
-                    strafeDistance = 22;
+                    strafeDistance = 37;
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("Strafed Right", "");
                     telemetry.update();
@@ -108,18 +108,18 @@ public class AutoCodeToNetZone extends LinearOpMode {
                     telemetry.update();
 
                     //set target position to encoders and move to position
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distanceToSub);
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distanceToSub);
                     telemetry.addData("Reached Submersible", "");
                     telemetry.update();
 
                     //Set Arm in a position to hang specimen
-                    double armPosition = 0.2; //TODO: Correct during testing
+                    double armPosition = 0.4; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
 
-                    int reverseDistance = -5; //TODO: Adjust during testing
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED + 0.2, reverseDistance);
+                    int reverseDistance = -6; //TODO: Adjust during testing
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED + 0.2, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
 
@@ -134,19 +134,19 @@ public class AutoCodeToNetZone extends LinearOpMode {
                 if (moveNearToAscentZone) {
                     // Go reverse to be away from submersible to move to pick sample
                     int reverseDistance = 5; //TODO: Adjust during testing
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, reverseDistance);
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
 
                     //strafe to go pass submersible edges to avoid hitting when moving forward to pick samples
-                    strafeDistance = 12; //TODO: Adjust during testing
+                    strafeDistance = 30; //TODO: Adjust during testing
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
                     telemetry.update();
 
                     //MOVE FORWARD past sample
                     distance = 30; //TODO: Adjust during testing
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distance);
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
                     telemetry.addData("MOVE FORWARD past sample", distance);
                     telemetry.update();
                 }
@@ -154,22 +154,27 @@ public class AutoCodeToNetZone extends LinearOpMode {
                 if (ploughSampleToNetZone) {
 
                     //Rotate 180 (to point front) + 45 degrees to turn to go in diagonal to plogh sample
-                    rotateToPosition = 12;
+                    rotateToPosition = 30;
                     driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, rotateToPosition);
                     telemetry.addData("rotate to point to front and turn to plough the sample", "");
                     telemetry.update();
 
                     //Move forward until it reaches net zone
                     distance = 35; //TODO: Adjust during testing
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distance);
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
                     telemetry.addData("Move backward until it reaches net zone", "");
+                    telemetry.update();
+
+                    rotateToPosition = 30;
+                    driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, rotateToPosition);
+                    telemetry.addData("rotate to point to front and turn to plough the sample", "");
                     telemetry.update();
                 }
 
                 if (parkInAscent)
                 {
                     distance = 35;
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distance);
                 }
 
                 //done
