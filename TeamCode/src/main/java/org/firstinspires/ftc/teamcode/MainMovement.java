@@ -95,7 +95,6 @@ public class MainMovement extends LinearOpMode {
         BRDrive  = hardwareMap.get(DcMotor.class, "br_drive");
         FLDrive  = hardwareMap.get(DcMotor.class, "fl_drive");
         FRDrive  = hardwareMap.get(DcMotor.class, "fr_drive");
-=======
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
