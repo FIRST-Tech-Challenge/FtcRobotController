@@ -224,7 +224,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 if (gamepad2.left_stick_y > 0.2) {//going down
 
                     liftPitchPosition = liftPitchPosition - 25;
-                    telemetry.addData("left pitch pos", liftPitchPosition);
+                    telemetry.addData("lift pitch pos", liftPitchPosition);
 
                 } else if (gamepad2.left_stick_y< -0.2) {//going up
                     liftPitchPosition = liftPitchPosition + 25;
@@ -249,30 +249,33 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             }//2700
             //find positon for extension
 
+            //Bounds on the liftExtender motor
+            //FixMe: Make it so that the liftExtender can go back after extending to max length
+            //FixMe: Correct the liftExtender motor so that the lift stays in the same place when
+            // there is no controller input
             if (Math.abs(gamepad2.right_stick_y)>0.2&&robot.liftExtender.getCurrentPosition()<=
                     2780&&robot.liftExtender.getCurrentPosition()>=0||(
                             robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)) {
                 liftExtenderPosition = liftExtenderPosition - (int)(20*gamepad2.right_stick_y);
             }
-
-            if (Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>50){
+                //Determines if the liftExtender should go up or down based on the controller inputs
+            if (Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>10){
                 if (robot.liftExtender.getCurrentPosition()<liftExtenderPosition){
-                    robot.liftExtender.setVelocity(600);
+                    robot.liftExtender.setVelocity(800);
                 } else if (robot.liftExtender.getCurrentPosition()>= liftExtenderPosition) {
-                    robot.liftExtender.setVelocity(-600);
+                    robot.liftExtender.setVelocity(-800);
                 }
+                //If no input, make sure the liftExtender motor does not move
             } else {
                 robot.liftExtender.setVelocity(0);
             }
 
-            // FIXME: gamepad2.right_trigger functionality (making the intake go inwards)
-            // Still being worked on but not necessary
             if (gamepad2.left_trigger != 0) {
-                robot.intake.setPower(1.0);
+                robot.intake.setPower(-1.0);
                 telemetry.addData("intake power", robot.intake.getPower());
             }
             else if (gamepad2.right_trigger != 0) {
-                robot.intake.setPower(-1.0);
+                robot.intake.setPower(1.0);
                 telemetry.addData("intake power", robot.intake.getPower());
 
             } else {

@@ -169,6 +169,15 @@ public class RobotInitialize {
         AngularVelocity angularVelocity = gyroScope.getRobotAngularVelocity(AngleUnit.DEGREES);
         YawPitchRollAngles orientation = gyroScope.getRobotYawPitchRollAngles();
         gyroScope.resetYaw();
+
+
+
+
+        //odom sect
+        final int wheelDiam = 48;
+
+        //final int x = ;
+
     }
 
 
