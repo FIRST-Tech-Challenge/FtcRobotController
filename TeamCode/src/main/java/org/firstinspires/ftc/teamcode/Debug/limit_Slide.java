@@ -17,6 +17,12 @@ public class limit_Slide extends LinearOpMode {
 
     int limitSlide, limitPivot;
 
+    double pubLim = 0;
+
+    double encoderCountsPerInch = 111; //needs adjusting
+
+    double encoderCountsPerDegree = 40;
+
     private DigitalChannel limitSwitch;
 
     @Override
@@ -38,8 +44,11 @@ public class limit_Slide extends LinearOpMode {
 
             setSlide(-gamepad2.right_stick_y);
             setPivot(-gamepad2.left_stick_y);
+            slideLimit();
             telemetry.addData("Limit switch: ", limitSwitch.getState());
             telemetry.addData("Encoder count: ", pivot.getCurrentPosition());
+            telemetry.addData("limit: ", pubLim);
+            telemetry.addData("current length: ", slide.getCurrentPosition());
             telemetry.update();
         }
     }
@@ -47,6 +56,9 @@ public class limit_Slide extends LinearOpMode {
     public void initRobot() {
         slide = hardwareMap.get(DcMotor.class, "slide");
         pivot = hardwareMap.get(DcMotor.class, "pivot");
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -93,32 +105,24 @@ public class limit_Slide extends LinearOpMode {
     }
 
     public void setSlide(double x) {
-        telemetry.addData("set slide x 1", x);
         if (slide.getCurrentPosition() >= limitSlide && x > 0) {
             x = 0;
         } else if (slide.getCurrentPosition() <= -limitSlide && x < 0) {
             x = 0;
         }
-
-        if (x > 1 && !(slide.getCurrentPosition() > slideLimit()))
-            x = .5;
-        if (x < -1)
-            x = -.5;
-        // TODO: add limit for slide based on pivot and have a forced move if necessary
+        if (x > 0 && slide.getCurrentPosition() > pubLim) {
+            x = 0;
+        }
+        // TODO: add limit for slide based on pivot and add a forced move later
         slide.setPower(x);
-        telemetry.addData("set slide x 2", x);
     }
 
-    public double slideLimit() {
-        double limit = 0;
-        double encoderCountsPerInch = 65; //needs adjusting
+    public void slideLimit() {
         double slideLength = slide.getCurrentPosition() / encoderCountsPerInch;
-        limit = Math.toDegrees(Math.acos(46 / slideLength));
-        return limit;
+        pubLim = Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree)) * (46 * encoderCountsPerInch);
     }
 
     public void setPivot(double x) {
-        telemetry.addData("set pivot x 1", x);
         if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
             x = 0;
         } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
@@ -131,6 +135,5 @@ public class limit_Slide extends LinearOpMode {
             x = -.5;
 
         pivot.setPower(x);
-        telemetry.addData("set pivot x 2", x);
     }
 }

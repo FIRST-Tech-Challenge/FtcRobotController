@@ -27,9 +27,7 @@ public class basicTelemBlue extends LinearOpMode {
 
   GoBildaPinpointDriver odo;
 
-
   ElapsedTime turnTime = new ElapsedTime();
-
 
   // In case we need to add it later, but servos only have 180° so have to be perfectly placed
   double FLServoOffSet = .00;
