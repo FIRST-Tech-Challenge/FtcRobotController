@@ -17,11 +17,14 @@ public class limit_Slide extends LinearOpMode {
 
     int limitSlide, limitPivot;
 
-    double pubLim = 0;
+    double pubLength = 0;
+    double pubAngle = 0;
 
     double encoderCountsPerInch = 111; //needs adjusting
 
     double encoderCountsPerDegree = 40;
+
+    boolean test = false;
 
     private DigitalChannel limitSwitch;
 
@@ -47,8 +50,9 @@ public class limit_Slide extends LinearOpMode {
             slideLimit();
             telemetry.addData("Limit switch: ", limitSwitch.getState());
             telemetry.addData("Encoder count: ", pivot.getCurrentPosition());
-            telemetry.addData("limit: ", pubLim);
+            telemetry.addData("limit: ", pubLength);
             telemetry.addData("current length: ", slide.getCurrentPosition());
+            telemetry.addData("boolean: ", test);
             telemetry.update();
         }
     }
@@ -110,7 +114,7 @@ public class limit_Slide extends LinearOpMode {
         } else if (slide.getCurrentPosition() <= -limitSlide && x < 0) {
             x = 0;
         }
-        if (x > 0 && slide.getCurrentPosition() > pubLim) {
+        if (x > 0 && slide.getCurrentPosition() > pubLength) {
             x = 0;
         }
         // TODO: add forced move for slide based on pivot
@@ -119,10 +123,12 @@ public class limit_Slide extends LinearOpMode {
 
     public void slideLimit() {
         double slideLength = slide.getCurrentPosition() / encoderCountsPerInch;
-        pubLim = Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree)) * (46 * encoderCountsPerInch);
+        pubAngle = Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree));
+        pubLength = pubAngle * (46 * encoderCountsPerInch);
     }
 
     public void setPivot(double x) {
+        test = false;
         if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
             x = 0;
         } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
@@ -134,6 +140,10 @@ public class limit_Slide extends LinearOpMode {
         if (x < -1)
             x = -.5;
 
+        if(pivot.getCurrentPosition() / encoderCountsPerDegree > pubAngle) {
+            x = 0;
+            test = true;
+        }
         pivot.setPower(x);
     }
 }
