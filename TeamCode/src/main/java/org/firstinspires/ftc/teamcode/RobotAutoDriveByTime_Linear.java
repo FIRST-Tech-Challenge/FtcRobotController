@@ -36,8 +36,8 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
     // This chunk controls our claw
     Servo claw = null;
-    final double CLAW_MIN = 0.6;    // Claw is closed
-    final double CLAW_MAX = 0.4;    // Claw is open
+    final double CLAW_MIN = 0.9;    // Claw is closed
+    final double CLAW_MAX = 0.7;    // Claw is open
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -99,16 +99,21 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         // Code here
         setVertical(VERTICAL_MAX);                             // Raising Arm
         setViper(VIPER_MAX);                                   // Extending Viper
-        strafeRight(2.0, 0.4);       // Positioning to basket
-        moveForward(0.7, 0.4);       // Positioning to basket
+        strafeRight(1.5, 0.4);       // Positioning to basket
+        moveForward(0.4, 0.4);       // Positioning to basket
         turnToHeading(45, 0.4);           // Turn to basket, claw in position
+        moveForward(0.3, 0.3);
         setClaw(CLAW_MAX);                                    // Drop the block
-        turnToHeading(0, 0.4);            // Turning away from basket
+        moveBackward(0.3, 0.3);
+        turnToHeading(-2, 0.4);            // Turning away from basket
         setViper(VIPER_MIN);                                  // Retracting Viper
         setVertical(VERTICAL_MIN);                            // Lowering Arm
-        strafeLeft(1.0, 0.4);       // Positioning to park
-        moveBackward(3, 0.5);       // Actively backing in to park
-        //claw.close();                                         MILLA- What does this do? Please test.
+        strafeRight(0.5, 0.4);
+        turnToHeading(0, 0.4);
+        moveBackward(4, 0.5);      // Todo: Change to 4 seconds before competition
+        turnToHeading(0, 0.4);
+        strafeLeft(2.5, 0.4);       // Positioning to park
+        claw.close();                                         // Release tension on the claw
 
         // End of autonomous program
         telemetry.addData("Path", "Complete");
