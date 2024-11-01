@@ -113,7 +113,7 @@ public class limit_Slide extends LinearOpMode {
         if (x > 0 && slide.getCurrentPosition() > pubLim) {
             x = 0;
         }
-        // TODO: add limit for slide based on pivot and add a forced move later
+        // TODO: add forced move for slide based on pivot
         slide.setPower(x);
     }
 
