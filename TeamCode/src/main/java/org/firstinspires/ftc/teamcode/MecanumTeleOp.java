@@ -60,11 +60,13 @@ public class MecanumTeleOp extends LinearOpMode {
 
             telemetry.update();
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
             double rotX = x * Math.cos(-botheading) - y * Math.sin(-botheading);
             double rotY = x * Math.sin(-botheading) + y * Math.cos(-botheading);
+            rotX *= 1.1; // Counteract imperfect strafing
+
             telemetry.addLine()
                     .addData("rotX", rotX)
                     .addData("rotY", rotY);
