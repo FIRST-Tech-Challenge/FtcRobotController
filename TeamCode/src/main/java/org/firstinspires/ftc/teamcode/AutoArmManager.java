@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
  */
 public class AutoArmManager {
 
-    public static final double ARM_SPEED = 0.1;
+    public static final double ARM_SPEED = 0.05;
     public static final double ARM_MIN = 0.10 ;
     public static final double ARM_MAX = 0.60;
 

@@ -76,7 +76,7 @@ public class AutoCodeToObservationZone extends LinearOpMode {
 
             //set forward
             driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.BACKWARD);
-            armManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+            armManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
 
             while (opModeIsActive() && !isStopRequested()) {
 
@@ -84,9 +84,10 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                 if (dropSpecimen) {
                     telemetry.addData("Move Forward to reach subermersible  ", "");
                     //TODO: adjust the distance during testing
-                    int distanceToSub = 20;
+                    int distanceToSub = 22;
                     telemetry.addData("Distance To Sub: ", distanceToSub);
                     telemetry.update();
+                    sleep(1500);
 
                     //set target position to encoders and move to position
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, distanceToSub);
@@ -94,18 +95,29 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                     telemetry.update();
 
                     //Set Arm in a position to hang specimen
-                    double armPosition = 0.45; //TODO: Correct during testing
+                    double armPosition = 0.37; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
+                    sleep(2000);
 
-                    int reverseDistance = 5; //TODO: Adjust during testing
+                    grabberManager.OpenOrCloseGrabber(true);
+                    telemetry.addData("Open Grabber", "");
+                    telemetry.update();
+                    sleep(2000);
+
+                   /* grabberManager.OpenOrCloseGrabber(false);
+                    telemetry.addData("Close Grabber", "");
+                    telemetry.update();
+                    sleep(100);*/
+
+                    /*int reverseDistance = 5; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED + 0.2, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
-                    telemetry.update();
+                    telemetry.update();*/
 
                     //Move arm back
-                    armPosition = 0.2; //TODO: Correct during testing
+                    armPosition = 0.6; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos Back: ", armPosition);
                     telemetry.update();
@@ -114,7 +126,7 @@ public class AutoCodeToObservationZone extends LinearOpMode {
 
                 if (parkInObservationZone) {
                     // Go reverse to be away from submersible to move to park in obs zone
-                    int reverseDistance = 20; //TODO: Adjust during testing
+                    int reverseDistance = 19; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
