@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.teleop.newTeleop;
+package org.firstinspires.ftc.teamcode.teleop.newTeleop.main;
+import org.firstinspires.ftc.teamcode.mainEnum;
 
 
 public interface teleop_interface {
@@ -9,8 +10,8 @@ public interface teleop_interface {
     void whileMotorsBusy();
 
     void movement(double vertical, double strafe, double turn);
-    void arm(teleop_enum state, double speed);
-    void claw(teleop_enum state, int pos);
+    void arm(mainEnum state, double speed);
+    void claw(mainEnum state, double power, int pos);
 
     void finalMovement();
     void finalArm();

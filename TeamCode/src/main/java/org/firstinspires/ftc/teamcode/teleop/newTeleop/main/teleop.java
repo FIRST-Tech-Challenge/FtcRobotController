@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.newTeleop;
+package org.firstinspires.ftc.teamcode.teleop.newTeleop.main;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.mainEnum;
+
+import org.firstinspires.ftc.teamcode.hardware;
 
 // TeleOp annotation to register this OpMode with the FTC Driver Station
 @TeleOp(name = "Into The Deep Teleop", group = "Teleop")
@@ -28,7 +31,7 @@ public class teleop extends LinearOpMode implements teleop_interface {
             hardware.hopper = hardwareMap.get(DcMotor.class, "hopper");
 
             //Servos
-            hardware.wrist = hardwareMap.get(CRServo.class, "wrist");
+            hardware.wrist = hardwareMap.get(Servo.class, "wrist");
             hardware.grabber = hardwareMap.get(CRServo.class, "grabber");
             hardware.door = hardwareMap.get(CRServo.class, "door");
 
@@ -112,7 +115,7 @@ public class teleop extends LinearOpMode implements teleop_interface {
 
     // Control the robot's arm based on the state and speed
     @Override
-    public void arm(teleop_enum state, double speed) {
+    public void arm(mainEnum state, double speed) {
         switch (state) {
             case LIFT:
                 hardware.lift.setPower(speed); // Set lift motor power
@@ -134,13 +137,13 @@ public class teleop extends LinearOpMode implements teleop_interface {
 
     // Control the gripper's position
     @Override
-    public void claw(teleop_enum state, int power) {
+    public void claw(mainEnum state, double power, int pos) {
         switch (state){
             case GRABBER:
                 hardware.grabber.setPower(power); // Set the position of the grabber servo
                 break;
             case WRIST:
-                hardware.wrist.setPower(power); // Set the position of the grabber servo
+                hardware.wrist.setPosition(pos); // Set the position of the grabber servo
                 break;
             case DOOR:
                 hardware.door.setPower(power);
@@ -179,26 +182,26 @@ public class teleop extends LinearOpMode implements teleop_interface {
     // Method for controlling the arm based on gamepad input
     @Override
     public void finalArm() {
-        teleop_enum state = null; // Initialize state
+        mainEnum state = null; // Initialize state
         double armSpeed = 0; // Initialize arm speed
         double reduction = 0.65; // Initializes arm reduction speed, used for lift
         // Determine arm state and speed based on gamepad input
         if (Math.abs(gamepad2.left_stick_y) > 0) {
-            state = teleop_enum.MANTIS; // Set state to MANTIS
+            state = mainEnum.MANTIS; // Set state to MANTIS
             armSpeed = gamepad2.left_stick_y;// Use left stick Y for speed
 
         }
 
         if (Math.abs(gamepad2.left_stick_y) > 0) {
-            state = teleop_enum.HOPPER; // Set state to HOPPER
+            state = mainEnum.HOPPER; // Set state to HOPPER
             armSpeed = gamepad2.left_stick_y * reduction; // Use left stick X for speed
         }
 
         if (Math.abs(gamepad2.right_trigger) > 0) {
-            state = teleop_enum.LIFT; // Set state to LIFT
+            state = mainEnum.LIFT; // Set state to LIFT
             armSpeed = gamepad2.right_trigger;// Use right stick Y for speed
         }else if (Math.abs(gamepad2.left_trigger) > 0) {
-            state = teleop_enum.LIFT; // Set state to LIFT
+            state = mainEnum.LIFT; // Set state to LIFT
             armSpeed = -gamepad2.left_trigger;// Use right stick Y for speed
         }
 
@@ -217,38 +220,40 @@ public class teleop extends LinearOpMode implements teleop_interface {
         int open = 1; // Position to open the door
         int close = -1; // Position to close the door
 
-        int up = 1; // sets position for wrist to go up
-        int down = -1; // sets position for wrist to go down
+        //TODO find up and down position
+        int up = 200; // sets position for wrist to go up
+        int down = -200; // sets position for wrist to go down
 
-        teleop_enum state = null;
+        mainEnum state = null;
         int power = 0;
+        int pos = 0;
         // Control gripper based on button presses
         if (gamepad2.x) {
-            state = teleop_enum.GRABBER;
+            state = mainEnum.GRABBER;
             power = collect;
         } else if (gamepad2.y) {
-            state = teleop_enum.GRABBER;
+            state = mainEnum.GRABBER;
             power = release;
         }
 
         if (gamepad2.right_trigger > 0){
-            state = teleop_enum.WRIST;
-            power = up;
+            state = mainEnum.WRIST;
+            pos = up;
         }else if (gamepad2.left_trigger > 0){
-            state = teleop_enum.WRIST;
-            power = down;
+            state = mainEnum.WRIST;
+            pos = down;
         }
 
         if(gamepad2.dpad_up){
-            state = teleop_enum.DOOR;
+            state = mainEnum.DOOR;
             power = open;
         }else if (gamepad2.dpad_down){
-            state = teleop_enum.DOOR;
+            state = mainEnum.DOOR;
             power = close;
         }
 
         if (state != null) {
-            claw(state, power);
+            claw(state, power, pos);
         }
     }
 

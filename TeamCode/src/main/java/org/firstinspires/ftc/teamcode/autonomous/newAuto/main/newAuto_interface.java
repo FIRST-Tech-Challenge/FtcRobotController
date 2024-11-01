@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.autonomous.newAuto;
+package org.firstinspires.ftc.teamcode.autonomous.newAuto.main;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.mainEnum;
 
 public interface newAuto_interface {
     void initialize();
@@ -22,14 +24,14 @@ public interface newAuto_interface {
 
 
     void base(int targetPosFL, int targetPosFR, int targetPosBL, int targetPosBR, double speedFL, double speedFR, double speedBL, double speedBR);
-    void movement(newAuto_enum state, double tick, double rotation, double speed);
+    void movement(mainEnum state, double tick, double rotation, double speed);
 
 
 
-    void arm(newAuto_enum motor, double inch, double speed);
-    void grabber(newAuto_enum state,int open, int close);
+    void arm(mainEnum motor, double inch, double speed);
+    void grabber(mainEnum state,int open, int close);
 
     boolean detectYellow(int blue, int red, int green);
 
-    void moveTo(newAuto_enum state);
+    void moveTo(mainEnum state);
 }

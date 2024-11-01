@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.teleop.newTeleop;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import java.util.Random;
 
 public class hardware {
     public DcMotor frontLeft;
@@ -16,8 +18,8 @@ public class hardware {
     public DcMotor lift;
     public DcMotor hopper;
 
-    public CRServo wrist;
     public CRServo grabber;
+    public Servo wrist;
     public CRServo door;
 
     public ColorSensor colorSensor;
@@ -29,4 +31,7 @@ public class hardware {
     public void checkMotorInit(){
 
     }
+
+    public String puns[
+            ];
 }

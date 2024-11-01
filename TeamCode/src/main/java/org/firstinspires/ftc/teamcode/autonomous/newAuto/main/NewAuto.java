@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.autonomous.newAuto.classes;
+package org.firstinspires.ftc.teamcode.autonomous.newAuto.main;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,8 +10,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.autonomous.newAuto.newAuto_enum;
-import org.firstinspires.ftc.teamcode.autonomous.newAuto.newAuto_interface;
+import org.firstinspires.ftc.teamcode.mainEnum;
+import org.firstinspires.ftc.teamcode.hardware;
 
 @Autonomous(name = "New Autonomous", group = "Autonomous")
 public class NewAuto extends LinearOpMode implements newAuto_interface {
@@ -36,7 +37,9 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
             hardware.hopper = hardwareMap.get(DcMotor.class, "hopper");
 
             //Servos
-            hardware.grabber = hardwareMap.get(Servo.class, "grabber");
+            hardware.grabber = hardwareMap.get(CRServo.class, "grabber");
+            hardware.door = hardwareMap.get(CRServo.class, "door");
+            hardware.wrist = hardwareMap.get(Servo.class, "wrist");
 
             //Sensors
             hardware.colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -88,9 +91,9 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
         } else if (hardware.hopper.isBusy()) {
             telemetry.addLine("=== Hopper Arm ===");
             telemetry.addData("Hopper Motor Position", hardware.hopper.getCurrentPosition());
-        } else if (hardware.grabber.getPosition() != 0) {
+        } else if (hardware.grabber.getPower() != 0) {
             telemetry.addLine("=== Grabber ===");
-            telemetry.addData("Grabber Position", hardware.grabber.getPosition());
+            telemetry.addData("Grabber Position", hardware.grabber.getPower());
         }
         telemetry.update();
     }
@@ -128,13 +131,17 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
 
     @Override
     public void motorToPosition() {
-        runToPosition(hardware.frontLeft);
-        runToPosition(hardware.frontRight);
-        runToPosition(hardware.backLeft);
-        runToPosition(hardware.backRight);
-        runToPosition(hardware.lift);
-        runToPosition(hardware.mantis);
-        runToPosition(hardware.hopper);
+        if (hardware.frontLeft.isBusy() || hardware.frontRight.isBusy() || hardware.backLeft.isBusy() || hardware.backRight.isBusy()) {
+            runToPosition(hardware.frontLeft);
+            runToPosition(hardware.frontRight);
+            runToPosition(hardware.backLeft);
+            runToPosition(hardware.backRight);
+        }
+        if(hardware.lift.isBusy() || hardware.mantis.isBusy() || hardware.hopper.isBusy()){
+            runToPosition(hardware.lift);
+            runToPosition(hardware.mantis);
+            runToPosition(hardware.hopper);
+        }
     }
 
     // Helper method to reset motor encoder
@@ -218,7 +225,9 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
         setPosition(targetPosFL, targetPosFR, targetPosBL, targetPosBR);
         motorToPosition();
         setSpeed(speedFL, speedFR, speedBL, speedBR);
-        whileMotorsBusy();
+        while (hardware.frontLeft.isBusy()) {
+            whileMotorsBusy();
+        }
         sleep(1000);
         resetMotorEncoders();
     }
@@ -226,7 +235,7 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
 
     // Movement logic based on state
     @Override
-    public void movement(newAuto_enum state, double tick, double rotation, double speed) {
+    public void movement(mainEnum state, double tick, double rotation, double speed) {
         int targetPos = (int) (tick * calculations.tick_per_inch);
         int targetRotation = (int) (rotation * calculations.tick_per_360);
         switch (state) {
@@ -252,7 +261,7 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     }
 
     @Override
-    public void arm(newAuto_enum motor, double inch, double speed) {
+    public void arm(mainEnum motor, double inch, double speed) {
         int targetPos;
         switch (motor) {
             case MANTIS:
@@ -272,14 +281,15 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
                 break;
         }
     }
+    //TODO redo this code
     @Override
-    public void grabber(newAuto_enum state,int open, int close){
+    public void grabber(mainEnum state,int open, int close){
         switch (state){
             case OPEN:
-                hardware.grabber.setPosition(open);
+                hardware.grabber.setPower(open);
                 break;
             case CLOSE:
-                hardware.grabber.setPosition(close);
+                hardware.grabber.setPower(close);
                 break;
         }
     }
@@ -292,21 +302,22 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
 
     // Moves to an area based on a state given
     @Override
-    public void moveTo(newAuto_enum state) {
+    public void moveTo(mainEnum state) {
         switch (state) {
             case START_POSITION:
                 //Move forward turning radius plus an inch for error
-                movement(newAuto_enum.FORWARD, 5, 0, calculations.DRIVE_SPEED);
+                movement(mainEnum.FORWARD, 5, 0, calculations.DRIVE_SPEED);
 
                 //Turn right 90degrees so that the color sensor is closest to the wall
-                movement(newAuto_enum.TURN_RIGHT,0, 90, calculations.DRIVE_SPEED);
+                movement(mainEnum.TURN_RIGHT,0, 90, calculations.DRIVE_SPEED);
 
                 //Strafe right until the distance sensor is at DISTANCE_FROM_BLOCK inches from wall
                 while (hardware.distanceSensorRight.getDistance(DistanceUnit.INCH) < calculations.DISTANCE_FROM_WALL) {
-                    movement(newAuto_enum.STRAFE_RIGHT, calculations.SMIDGEN, 0, calculations.DRIVE_SPEED);
+                    movement(mainEnum.STRAFE_RIGHT, calculations.SMIDGEN, 0, calculations.DRIVE_SPEED);
                 }
-                //Move backwards a set number of inches until you're near blocks //TODO find set number of inches
-                movement(newAuto_enum.BACKWARD, calculations.DISTANCE_TO_BLOCKS, 0, calculations.DRIVE_SPEED);
+                //Move backwards a set number of inches until you're near blocks
+                //TODO find set number of inches
+                movement(mainEnum.BACKWARD, calculations.DISTANCE_TO_BLOCKS, 0, calculations.DRIVE_SPEED);
 
                 //Give back data
                 telemetry.speak("Going to start position");
@@ -314,13 +325,13 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
                 sleep(1000);
                 break;
             case GO_TO_BASKET:
-                movement(newAuto_enum.FORWARD, 5, 0,calculations.DRIVE_SPEED);
+                movement(mainEnum.FORWARD, 5, 0,calculations.DRIVE_SPEED);
                 telemetry.speak("Heading towards the bucket");
                 telemetry.update();
                 sleep(1000);
                 break;
             case END_POSITION:
-                movement(newAuto_enum.BACKWARD, 3, 0, calculations.DRIVE_SPEED);
+                movement(mainEnum.BACKWARD, 3, 0, calculations.DRIVE_SPEED);
                 telemetry.speak("Going back to start position");
                 telemetry.update();
                 sleep(1000);
@@ -333,16 +344,15 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        int red = hardware.colorSensor.red();
-        int blue = hardware.colorSensor.blue();
-        int green = hardware.colorSensor.green();
+        setDirection();
         setMotorBrakes();
         resetMotorEncoders();
-        setDirection();
         waitForStart();
-        telemetry();
         while (opModeIsActive()) {
-            telemetry();
+            int red = hardware.colorSensor.red();
+            int blue = hardware.colorSensor.blue();
+            int green = hardware.colorSensor.green();
+
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous.newAuto.classes;
+package org.firstinspires.ftc.teamcode.autonomous.newAuto.main;
 
 
 import java.util.Random;
