@@ -131,13 +131,25 @@ public class Hardware2025Bot
     public int          liftTarget         = 0;      // Automatic movement target ticks
 
     //====== COLLECTOR SERVOS =====
+    public AnalogInput pushServoPos = null;
+    public Servo  pushServo = null;
+    public double PUSH_SERVO_INIT = 0.350;
+    final public static double PUSH_SERVO_INIT_ANGLE = 230.0;
+    public double PUSH_SERVO_SAFE = 0.350;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
+    final public static double PUSH_SERVO_SAFE_ANGLE = 184.0;
+    public double PUSH_SERVO_GRAB = 0.350;  // Partially extend to align fingers inside pixels
+    final public static double PUSH_SERVO_GRAB_ANGLE = 168.0;
+    public double PUSH_SERVO_DROP = 0.350;  // Fully extend finger assembly toward the Backdrop
+    final public static double PUSH_SERVO_DROP_ANGLE = 56.1;
+    final public static double PUSH_SERVO_PIXEL_CLEAR_ANGLE = 90.0; // Pulling back from backdrop but cleared pixel
+
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
-    public double WRIST_SERVO_INIT = 0.450;           // higher is counter-clockwise
+    public double WRIST_SERVO_INIT = 0.500;           // higher is counter-clockwise
     final public static double WRIST_SERVO_INIT_ANGLE = 188.0; // no idea yet, will have to figure it out!
-    public double WRIST_SERVO_GRAB = 0.450;
+    public double WRIST_SERVO_GRAB = 0.500;
     final public static double WRIST_SERVO_GRAB_ANGLE = 183.5;
-    public double WRIST_SERVO_DROP = 0.810;
+    public double WRIST_SERVO_DROP = 0.500;
     final public static double WRIST_SERVO_DROP_ANGLE = 128.9;
 
     //Ultrasonic sensors
@@ -218,16 +230,19 @@ public class Hardware2025Bot
 
         // Viper slide motor
         viperMotor = hwMap.get(DcMotorEx.class,"viperMotor");  // Expansion Hub port 2
-        viperMotor.setDirection(DcMotor.Direction.FORWARD);
+        viperMotor.setDirection(DcMotor.Direction.REVERSE);   // positive motor power extends
         viperMotor.setPower( 0.0 );
         viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         viperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//      wristServo = hwMap.servo.get("WristServo");             // servo port 1 (Expansion Hub)
-//      wristServoPos = hwMap.analogInput.get("WristServoPos"); // Analog port 0 (Expansion Hub)
-//      wristServo.setPosition(WRIST_SERVO_INIT);
+        pushServo = hwMap.servo.get("ElbowServo");             // servo port 0 (Expansion Hub)
+        pushServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port 1 (Expansion Hub)
+        pushServo.setPosition(PUSH_SERVO_INIT);
 
+        wristServo = hwMap.servo.get("WristServo");             // servo port 1 (Expansion Hub)
+        wristServoPos = hwMap.analogInput.get("WristServoPos"); // Analog port 0 (Expansion Hub)
+        wristServo.setPosition(WRIST_SERVO_INIT);
 
         // Initialize REV Control Hub IMU
         initIMU();
@@ -561,6 +576,15 @@ public class Hardware2025Bot
         // Return
         return cm;
     } // fastSonarRange
+
+    /*--------------------------------------------------------------------------------------------*/
+    public double getPushServoAngle() {
+        return (pushServoPos.getVoltage() / 3.3) * 360.0;
+    }
+
+    public double getWristServoAngle() {
+        return (wristServoPos.getVoltage() / 3.3) * 360.0;
+    }
 
     /*--------------------------------------------------------------------------------------------*/
 
