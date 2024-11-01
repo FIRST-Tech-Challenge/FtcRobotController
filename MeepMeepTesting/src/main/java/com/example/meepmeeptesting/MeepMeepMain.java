@@ -71,8 +71,10 @@ public class MeepMeepMain {
 //                .strafeTo(new Vector2d(46, -10))
                 .strafeTo(new Vector2d(45, -55))
                 .strafeToLinearHeading(new Vector2d(45, -30), Math.toRadians(270.0))
+                .waitSeconds(1)
                 .strafeTo(new Vector2d(45, -45))
                 .waitSeconds(1)
+                .splineTo(new Vector2d(10, -45), Math.toRadians(90))
 //                .splineTo(new Vector2d(46, -30), Math.toRadians(180))
                 .build());
 
