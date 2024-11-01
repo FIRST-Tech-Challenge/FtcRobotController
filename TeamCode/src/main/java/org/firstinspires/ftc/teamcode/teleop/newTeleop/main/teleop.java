@@ -77,7 +77,7 @@ public class teleop extends LinearOpMode implements teleop_interface {
         hardware.backRight.setDirection(DcMotor.Direction.FORWARD);// Forward back right motor
 
         hardware.lift.setDirection(DcMotor.Direction.REVERSE); // Reverse lift motor
-        hardware.mantis.setDirection(DcMotor.Direction.FORWARD); // Forward mantis motor
+        hardware.mantis.setDirection(DcMotor.Direction.REVERSE); // Forward mantis motor
         hardware.hopper.setDirection(DcMotor.Direction.REVERSE); // Reverse hopper motor
     }
 
@@ -198,10 +198,16 @@ public class teleop extends LinearOpMode implements teleop_interface {
         double armSpeed = 0; // Initialize arm speed
         double reduction = 0.65; // Initializes arm reduction speed, used for lift
         // Determine arm state and speed based on gamepad input
-        if (Math.abs(gamepad2.left_stick_y) > 0) {
-            state = mainEnum.MANTIS; // Set state to MANTIS
-            armSpeed = gamepad2.left_stick_y;// Use left stick Y for speed
+        if(gamepad2.right_stick_y > 0) {
+            state = mainEnum.MANTIS;
+            armSpeed =gamepad1.right_stick_y;
 
+        }else if(gamepad2.right_stick_y < 0){
+            state = mainEnum.MANTIS;
+            armSpeed =(0.2 * gamepad1.right_stick_y);
+        }else{
+            state = mainEnum.MANTIS;
+            armSpeed = 0.1;
         }
 
         if (Math.abs(gamepad2.left_stick_y) > 0) {

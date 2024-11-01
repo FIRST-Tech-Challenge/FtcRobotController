@@ -204,13 +204,13 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     // The base for all other movement functions
     @Override
     public void base(int targetPosFL, int targetPosFR, int targetPosBL, int targetPosBR, double speedFL, double speedFR, double speedBL, double speedBR) {
+        setSpeed(speedFL, speedFR, speedBL, speedBR);
         setPosition(targetPosFL, targetPosFR, targetPosBL, targetPosBR);
         motorToPosition();
-        setSpeed(speedFL, speedFR, speedBL, speedBR);
         while (hardware.frontLeft.isBusy()) {
             whileMotorsBusy();
         }
-        sleep(1000);
+        setSpeed(0, 0, 0, 0);
         resetMotorEncoders();
     }
 
@@ -269,6 +269,10 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
         double power = 0;
         int pos = 0;
         switch (state){
+            case RELEASE:
+                power = -1;
+                hardware.grabber.setPower(power);
+                break;
             case OPEN:
                 power = 1;
                 hardware.door.setPower(power);
@@ -279,10 +283,6 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
                 break;
             case GRAB:
                 power = 1;
-                hardware.grabber.setPower(power);
-                break;
-            case RELEASE:
-                power = -1;
                 hardware.grabber.setPower(power);
                 break;
             case WRIST_UP:
@@ -355,7 +355,7 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
             int red = hardware.colorSensor.red();
             int blue = hardware.colorSensor.blue();
             int green = hardware.colorSensor.green();
-
+            movement(mainEnum.FORWARD, 100,0,calculations.DRIVE_SPEED);
         }
     }
 }
