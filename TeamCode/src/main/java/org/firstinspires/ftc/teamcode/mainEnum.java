@@ -26,8 +26,6 @@ public enum mainEnum {
     CLOSE,
     GRAB,
     RELEASE,
-    UP,
-    DOWN
-
-
+    WRIST_UP,
+    WRIST_DOWN
 }
