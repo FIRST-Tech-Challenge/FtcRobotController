@@ -27,7 +27,7 @@ public interface newAuto_interface {
 
 
     void arm(mainEnum motor, double inch, double speed);
-    void grabber(mainEnum state,int open, int close);
+    void grabber(mainEnum state);
 
     boolean detectYellow(int blue, int red, int green);
 
