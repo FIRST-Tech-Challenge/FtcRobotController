@@ -84,10 +84,8 @@ public class OneDriver extends LinearOpMode {
                     globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
                 } else if (globalStateMachine == GlobalStateMachine.WRIST_SCORE) {
                     globalStateMachine = GlobalStateMachine.READY_DEPOSIT;
-                } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN) {
-                    globalStateMachine = GlobalStateMachine.BEGIN_SUBMERSIBLE;
-                } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) {
-                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN;
+                }  else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) {
+                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
                 }
             } else if (gp.a && (globalStateMachine == GlobalStateMachine.DEFAULT || globalStateMachine == GlobalStateMachine.INTAKE_READY)  ) { // safeguard for submersible
                 globalStateMachine = GlobalStateMachine.BEGIN_SUBMERSIBLE;
@@ -144,7 +142,9 @@ public class OneDriver extends LinearOpMode {
                 slideInches = 0;
                 globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER) { // SUBMERSIBLE SLIDER
-
+                wrist.straight();
+                arm.preSubmerse();
+                claw.open();
                 double increment = inchesPerSecond * loopTime * (gamepad1.left_trigger - gamepad1.right_trigger);
                 slideInches += increment;
                 if (slideInches > 15.0) slideInches = 15.0;
