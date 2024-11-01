@@ -26,11 +26,16 @@ data class CubicSpline @JvmOverloads constructor(
     val d: Double,
     val lowX: Double,
     val highX: Double,
-    val offset: Double = 0.0
+    val offset: Double = 0.0,
 ) {
     companion object {
         @JvmStatic
-        fun fromArrayAndBounds(arr: DoubleArray, lowX: Double, highX: Double, offset: Double): CubicSpline {
+        fun fromArrayAndBounds(
+            arr: DoubleArray,
+            lowX: Double,
+            highX: Double,
+            offset: Double,
+        ): CubicSpline {
             assert(arr.size == 4) { "Wrong size to import cubic spline from array : ${arr.size}" }
             return CubicSpline(
                 arr[0], arr[1], arr[2], arr[3], lowX, highX, offset
@@ -58,8 +63,23 @@ data class CubicSpline @JvmOverloads constructor(
 
 data class CubicSplinePair(val id: Int, val x: CubicSpline, val y: CubicSpline) {
 
-    data class PointData(val basedOn: CubicSplinePair, val x: Double, val y: Double, val totalDistance: Double, val t: Double, val tReal: Double) {
-        override fun toString(): String = "(%.4f, %.4f <t:%.4f (real %.4f by %d) | d:%.4f>)".format(x, y, t, tReal, basedOn.id, totalDistance)
+    data class PointData(
+        val basedOn: CubicSplinePair,
+        override val x: Double,
+        override val y: Double,
+        val totalDistance: Double,
+        override val t: Double,
+        val tVirt: Double,
+    ) : TimedWaypoint() {
+        override fun toString(): String = "(%.4f, %.4f <t:%.4f (real %.4f by %d) | d:%.4f>)".format(
+            x,
+            y,
+            tVirt,
+            t,
+            basedOn.id,
+            totalDistance
+        )
+
         fun toDesmos(): String = "(%.${PRECISION}f, %.${PRECISION}f)".format(x, y)
     }
 
@@ -70,10 +90,15 @@ data class CubicSplinePair(val id: Int, val x: CubicSpline, val y: CubicSpline) 
     fun toDesmos() = "(${x.toDesmos(false, "t")}, ${y.toDesmos(false, "t")})"
 
     @JvmOverloads
-    fun computeWaypoints(step: Double = 1.0, forceNoCache: Boolean = false, cacheResolution: Double = 0.01): List<PointData> {
+    fun computeWaypoints(
+        step: Double = 1.0,
+        forceNoCache: Boolean = false,
+        cacheResolution: Double = 0.01,
+    ): List<PointData> {
         if (pointCache == null || forceNoCache) updateCache(cacheResolution)
         // save some not-null asserts later
-        val pointCacheRef = pointCache ?: throw IllegalStateException("Point cache failed to compute for some reason and is still null")
+        val pointCacheRef = pointCache
+            ?: throw IllegalStateException("Point cache failed to compute for some reason and is still null")
         val fragments = ceil(totalDistance / step).toInt()
 
         var cursor = 0
@@ -89,8 +114,9 @@ data class CubicSplinePair(val id: Int, val x: CubicSpline, val y: CubicSpline) 
         }
         val actualStep = totalDistance / fragments
         if (!CubicSplineSolver.silent)
-            println("fragments: $fragments (%.4f per fragment, target %.4f, %.2f%% error)"
-                .format(actualStep, step, (100 * (step - actualStep)) / step)
+            println(
+                "fragments: $fragments (%.4f per fragment, target %.4f, %.2f%% error)"
+                    .format(actualStep, step, (100 * (step - actualStep)) / step)
             )
         return waypoints
     }
@@ -113,7 +139,7 @@ data class CubicSplinePair(val id: Int, val x: CubicSpline, val y: CubicSpline) 
             }
             lastX = xP
             lastY = yP
-            newCache.add(PointData(this, xP, yP, d, t, t + x.offset))
+            newCache.add(PointData(this, xP, yP, d, t + x.offset, t))
         }
         pointCache = newCache
         totalDistance = d
@@ -259,5 +285,20 @@ object CubicSplineSolver {
             )
         }
         return result
+    }
+
+    data class TW3Impl(override val t: Double, override val x: Double, override val y: Double,
+                       override val r: Double): TimedWaypoint3()
+
+    /**
+     * 'zip' this set of waypoints with a third channel of splines.
+     */
+    fun thirdChannel(left: List<TimedWaypoint>, right: List<CubicSpline>): List<TimedWaypoint3> {
+        var index = 0
+        return left.map { wp2 ->
+            while (right[index].offset + right[index].lowX > wp2.t || wp2.t > right[index].offset + right[index].highX) index++
+            val seg = right[index]
+            return@map TW3Impl(wp2.t, wp2.x, wp2.y, seg.at(wp2.t - seg.offset))
+        }
     }
 }

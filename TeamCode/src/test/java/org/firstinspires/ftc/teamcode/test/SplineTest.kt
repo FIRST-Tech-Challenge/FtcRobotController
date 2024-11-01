@@ -2,7 +2,13 @@ package org.firstinspires.ftc.teamcode.test
 
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.CubicSplinePair
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.CubicSplineSolver
+import org.firstinspires.ftc.teamcode.mmooover.kinematics.Waypoint
+import org.firstinspires.ftc.teamcode.mmooover.kinematics.WaypointSerializer
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import kotlin.random.Random
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
@@ -49,6 +55,34 @@ class SplineTest {
             waypointList.addAll(i.computeWaypoints())
         println(waypointList)
         println("desmos: ${waypointList.map{it.toDesmos()}}")
+    }
+
+    @Test fun `Test serializer`() {
+        CubicSplineSolver.silent = false
+
+        val result = CubicSplineSolver.solve2DMultiSegment(
+            doubleArrayOf(0.0, 48.0, 96.0, 96.0, 96.0),
+            doubleArrayOf(0.0, 0.0, 48.0, 96.0, 120.0)
+        )
+        val waypointList: MutableList<CubicSplinePair.PointData> = mutableListOf()
+        for (i in result)
+            waypointList.addAll(i.computeWaypoints())
+
+        val roundtripWaypoints: MutableList<Waypoint>
+        ByteArrayOutputStream().use { outBytes ->
+            DataOutputStream(outBytes).use { out ->
+                WaypointSerializer.serialize2(waypointList, out)
+            }
+            val container = outBytes.toByteArray()
+            ByteArrayInputStream(container).use {inBytes ->
+                DataInputStream(inBytes).use {input ->
+                    roundtripWaypoints = WaypointSerializer.deserialize2(input)
+                }
+            }
+        }
+        for ((a, b) in waypointList.zip(roundtripWaypoints)) {
+            assert(a approx b) { "Roundtrip error" }
+        }
     }
 
     @Test fun `Test fuzzing`() {
