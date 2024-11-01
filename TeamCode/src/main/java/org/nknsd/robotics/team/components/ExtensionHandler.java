@@ -22,6 +22,10 @@ public class ExtensionHandler implements NKNComponent {
 
     private ExtensionPositions target = ExtensionPositions.RESTING;
 
+    public boolean isExtensionDone() {
+        return (Math.abs(motor.getCurrentPosition() - target.position) <= 15);
+    }
+
     public enum ExtensionPositions {
         RESTING(0) {
             @Override
@@ -119,6 +123,12 @@ public class ExtensionHandler implements NKNComponent {
         if (extensionPosition.canGoToPosition(rotationHandler)) {
             motor.setTargetPosition(extensionPosition.position);
             target = extensionPosition;
+
+            if (extensionPosition == ExtensionPositions.COLLECT) {
+                motor.setPower(motorPower / 2);
+            } else {
+                motor.setPower(motorPower);
+            }
             return true;
         }
         return false;

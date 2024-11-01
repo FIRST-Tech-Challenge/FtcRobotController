@@ -135,7 +135,7 @@ public class RotationHandler implements NKNComponent {
     }
 
     public boolean isAtTargetPosition() {
-        return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold;
+        return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold * 2;
     }
 
     public enum RotationPositions {
