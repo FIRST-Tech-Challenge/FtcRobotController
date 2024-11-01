@@ -33,7 +33,7 @@ public class SpecimanArm {
         specimanMotor.setPower(power);
     }
 
-    public void setPosition(double pos) {claw.setPosition(pos);}
+    //public void setPosition(double pos) {claw.setPosition(pos);}
 
     public void grabSpeciman(){ claw.grabSpecimen(); }
     public void releaseSpeciman(){ claw.releaseSpecimen(); }

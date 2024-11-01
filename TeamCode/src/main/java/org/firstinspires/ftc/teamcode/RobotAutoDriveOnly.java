@@ -33,7 +33,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
-@Disabled
 public class RobotAutoDriveOnly extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -50,6 +49,8 @@ public class RobotAutoDriveOnly extends LinearOpMode {
     @Override
     public void runOpMode() {
         drive = new Mecanum(hardwareMap);
+        drive.setTelemetry(telemetry);
+        drive.setDriveSpeed(1);
         drive.update(new Vector2(-0.5, 0), 0);
         try {
             Thread.sleep(500);

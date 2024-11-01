@@ -54,23 +54,25 @@ public class RobotTeleopMecanumDrive extends OpMode{
      */
     @Override
     public void loop() {
-        drive.update(gamepad1);
+        drive.update(gamepad1, gamepad2);
         drawer.update(gamepad2);
         specimanArm.update(gamepad2);
-        //elevator.update(gamepad2);
-        testingValues(gamepad2);
-    }
 
+        //elevator.update(gamepad2);
+        //testingValues(gamepad2);
+    }
+/*
     public void testingValues(Gamepad gamepad) {
         if(gamepad.a)
             drawer.setJointPosition(gamepad.left_stick_y * 0.5 + 0.5); // in 0.25, out 1
         if(gamepad.b)
             drawer.setClawPosition(gamepad.left_stick_y * 0.5 + 0.5); // open 0, close 0.75
         if(gamepad.y)
-            specimanArm.setPosition(gamepad.left_stick_y * 0.5 + 0.5);
+            //specimanArm.setPosition(gamepad.left_stick_y * 0.5 + 0.5);
         telemetry.addData("Servo Position:", gamepad.left_stick_y * 0.5 + 0.5);
         telemetry.update();
     }
+ */
 
     /*
      * Code to run ONCE after the driver hits STOP

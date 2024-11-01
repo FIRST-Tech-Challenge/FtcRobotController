@@ -26,26 +26,22 @@ public class Claw {
     }
 
     public void update(Gamepad gamepad) {
-        if (gamepad.a && !isAPressed) {
-            if (clawServo.getPosition() == 0){
-                setClawPosition(1);
-            }else{
-                setClawPosition(0);
+        if(gamepad.x) {
+            if (isAPressed){
+                setClawPosition(0.242);
+            } else {
+                setClawPosition(0.80);
             }
-            isAPressed = true;
-        } else if (!gamepad.a) {
-            isAPressed = false;
+            isAPressed = !isAPressed;
         }
 
-        if (gamepad.x && !isXPressed) {
-            if (jointServo.getPosition() == 0){
-                setJointPosition(1);
-            }else{
-                setJointPosition(0);
+        if(gamepad.a) {
+            if (isXPressed){
+                setJointPosition(0.242);
+            } else {
+                setJointPosition(0.606);
             }
-            isXPressed = true;
-        } else if (!gamepad.x) {
-            isXPressed = false;
+            isXPressed = !isXPressed;
         }
     }
 

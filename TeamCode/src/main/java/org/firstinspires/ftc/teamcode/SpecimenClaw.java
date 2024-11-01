@@ -25,22 +25,26 @@ public class SpecimenClaw {
         //boolean a = gamepad.a && !aDown;
         //aDown = gamepad.a;
         if( gamepad.right_bumper && clampDown) { releaseSpecimen(); }
-        else if( gamepad.right_bumper && !clampDown){ grabSpecimen(); }
+        else if( gamepad.right_bumper){ grabSpecimen(); }
 
-        if(clampDown){ clampDown = !clampDown; }
+        if(gamepad.right_bumper){ clampDown = !clampDown; }
     }
 
-    public void setPosition(double d){
+    public void setLeftPosition(double d){
         leftClawServo.setPosition(d);
-        rightClawServo.setPosition(1-d);
+        //rightClawServo.setPosition(1-d);
+    }
+
+    public void setRightPosition(double d) {
+        rightClawServo.setPosition(d);
     }
     public void grabSpecimen(){
-        leftClawServo.setPosition(0);
-        rightClawServo.setPosition(1);
+        leftClawServo.setPosition(0.562);
+        rightClawServo.setPosition(0.162);
     }
 
     public void releaseSpecimen(){
-        leftClawServo.setPosition(1);
-        rightClawServo.setPosition(0);
+        leftClawServo.setPosition(0.562-0.4);
+        rightClawServo.setPosition(0.162+0.4);
     }
 }

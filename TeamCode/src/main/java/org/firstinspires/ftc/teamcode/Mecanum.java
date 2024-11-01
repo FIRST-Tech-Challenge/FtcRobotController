@@ -72,7 +72,7 @@ public class Mecanum {
         }
     }
 
-    public void update(Gamepad gamepad) {
+    public void update(Gamepad gamepad, Gamepad gp2) {
         double leftStickX = gamepad.left_stick_x;
         double leftStickY = gamepad.left_stick_y;
         double rightStickX = gamepad.right_stick_x;
@@ -81,6 +81,14 @@ public class Mecanum {
         double vectorY = leftStickY * leftStickY * Math.signum(leftStickY);
 
         this.update(new Vector2(vectorX, vectorY), rightStickX);
+
+        if(gp2.dpad_left){
+            driveSpeed = 0.4;
+        } else if (gp2.dpad_right){
+            driveSpeed = 1;
+        } else {
+            driveSpeed = 0.75;
+        }
     }
 
     public void update(Vector2 direction, double desiredAxis) {
