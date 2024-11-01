@@ -35,6 +35,9 @@ public class Hardware2025Bot
     public double headingAngle = 0.0;
     public double tiltAngle    = 0.0;
 
+    //====== GOBILDA PINPOINT ODOMETRY COMPUTER ======
+    GoBildaPinpointDriver odom;
+
     //====== MECANUM DRIVETRAIN MOTORS (RUN_USING_ENCODER) =====
     protected DcMotorEx frontLeftMotor     = null;
     public int          frontLeftMotorTgt  = 0;       // RUN_TO_POSITION target encoder count
@@ -177,6 +180,13 @@ public class Hardware2025Bot
             }
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+
+        // Locate the odometry controller in our hardware settings
+        odom = hwMap.get(GoBildaPinpointDriver.class,"odom");      // Control Hub I2C port 3
+        odom.setOffsets(-135.0, -145.0);      // odometry pod locations relative center of robot
+        odom.setEncoderResolution( GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD ); // 4bar pods
+        odom.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odom.resetPosAndIMU();
 
         // Define and Initialize drivetrain motors
         frontLeftMotor  = hwMap.get(DcMotorEx.class,"FrontLeft");  // Expansion Hub port 1 (REVERSE)

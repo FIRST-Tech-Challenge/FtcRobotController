@@ -5,6 +5,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
+import java.util.Locale;
+
 /**
  * TeleOp DriveTrain Only (with test modes).
  */
@@ -51,6 +57,7 @@ public class TeleopLift extends LinearOpMode {
     double    elapsedTime, elapsedHz;
 
     boolean liftTweaked  = false;  // Reminder to zero power when input stops
+    boolean enableOdometry = false;
 
     /* Declare OpMode members. */
     Hardware2025Bot robot = new Hardware2025Bot();
@@ -75,9 +82,24 @@ public class TeleopLift extends LinearOpMode {
         {
             // Refresh gamepad button status
             captureGamepad1Buttons();
+            captureGamepad2Buttons();
 
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
+
+            // Request an update from the Pinpoint odometry computer (single I2C read)
+            if( enableOdometry ) {
+                robot.odom.update();
+                Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
+                String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}",
+                      pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), pos.getHeading(AngleUnit.DEGREES));
+                telemetry.addData("Position", posStr);
+                Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
+                String velStr = String.format(Locale.US,"{X,Y: %.1f, %.1f in/sec, HVel: %.2f deg/sec}",
+                     vel.getX(DistanceUnit.INCH), vel.getY(DistanceUnit.INCH), vel.getHeading(AngleUnit.DEGREES));
+                telemetry.addData("Velocity", velStr);
+                telemetry.addData("Status", robot.odom.getDeviceStatus());
+            }
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -128,7 +150,6 @@ public class TeleopLift extends LinearOpMode {
             } // processDpadDriveMode
 
             processPanAndTilt();
-//          processViperMotor();
             ProcessLiftControls();
 
             // Compute current cycle time
@@ -436,25 +457,13 @@ public class TeleopLift extends LinearOpMode {
 
         // Tilt movement
         if(Math.abs(gamepad2.left_stick_y) > 0.05) {
-            double tiltPower = (gamepad2.left_stick_y > 0.0)? -0.10 : 0.25;
+            double tiltPower = (gamepad2.left_stick_y > 0.0)? 0.30 : -0.30;
             robot.wormTiltMotor.setPower(tiltPower);
-
         }
         else {
             robot.wormTiltMotor.setPower(0.0);
         }
     } // processPanAndTilt
-
-    void processViperMotor() {
-        if(Math.abs(gamepad2.right_stick_y) > 0.05) {
-//          double extendPower = (gamepad2.right_stick_y > 0.0)? 0.40 : -0.40;
-//          robot.viperMotor.setPower(extendPower);
-            robot.viperMotor.setPower(gamepad2.right_stick_y);
-        }
-        else {
-            robot.viperMotor.setPower(0.0);
-        }
-    } // processViperMotor
 
     /*---------------------------------------------------------------------------------*/
     void ProcessLiftControls() {
