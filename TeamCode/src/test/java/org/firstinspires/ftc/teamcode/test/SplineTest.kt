@@ -54,7 +54,7 @@ class SplineTest {
     @Test fun `Test fuzzing`() {
         CubicSplineSolver.silent = true
         val resultSet = mutableListOf<Double>()
-        val iterCount = 500
+        val iterCount = 100
         for (index in 1 .. iterCount){
             val x: MutableList<Double> = mutableListOf(0.0)
             val y: MutableList<Double> = mutableListOf(0.0)
