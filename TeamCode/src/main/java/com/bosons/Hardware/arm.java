@@ -37,6 +37,12 @@ public class arm {
 
     public void RunToTarget(int Counts){
         Pips = Counts;
+        //Dynamic Safty range
+        if ((Pips - 5) < 0) {MinPip = 5;}
+        else {MinPip = Pips - 5;}
+        if ((Pips+5) > 2190) {MaxPip = 2185;}
+        else {MaxPip = Pips + 5;}
+        //if pips is greater or smaller than the arms maximums then clamp to arm maximums and dont exceed them.
         if(Pips <= MinPip) {// when arm is set to close
             if (RightArmMotor.getCurrentPosition() <= MinPip) {RightArmMotor.setPower(0);}
             else {RightArmMotor.setPower(Power);} // check if RightArm is fully closed then turn off power
