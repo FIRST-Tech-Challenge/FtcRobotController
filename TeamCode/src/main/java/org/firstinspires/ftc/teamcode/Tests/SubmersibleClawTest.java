@@ -62,8 +62,10 @@ public class SubmersibleClawTest extends LinearOpMode {
                 } else {
                     globalStateMachine--;
                 }
-            } else if (gp.a) {
+            } else if (gp.a && (globalStateMachine == 0 || globalStateMachine == 1)  ) {
                 globalStateMachine = 10;
+            } else if (gp.a && (globalStateMachine == 10 || globalStateMachine == 11)) {
+                globalStateMachine = 0;
             }
 
             if (globalStateMachine < 0) {
