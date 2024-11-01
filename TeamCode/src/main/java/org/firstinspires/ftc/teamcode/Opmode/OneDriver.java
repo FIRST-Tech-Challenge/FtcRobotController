@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,10 +22,15 @@ import java.util.Locale;
 
 public class OneDriver extends LinearOpMode {
     public double inchesPerSecond = 66.67;
-    double globalStateMachine = 0;
     double oldTime = 0;
     double timeStamp = 0;
-
+    enum GlobalStateMachine {
+        DEFAULT, INTAKE_READY, CLOSE_INTAKE, FINISHED_INTAKE, READY_DEPOSIT, SLIDES_BEGIN_SCORE,
+        WRIST_SCORE, FINISH_SCORE, POST_SCORE, RETURN_TO_DEFAULT,
+        BEGIN_SUBMERSIBLE, SUBMERSIBLE_SLIDER, SUBMERSIBLE_INTAKE_OPEN, SUBMERSIBLE_INTAKE_CLOSE,
+        SUBMERSIBLE_FINISH_1, SUBMERSIBLE_FINISH_2, RETURN_TO_MAIN
+    }
+    GlobalStateMachine globalStateMachine = GlobalStateMachine.DEFAULT;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -44,117 +48,130 @@ public class OneDriver extends LinearOpMode {
         double frequency = 0;
         double loopTime = 0;
 
-//        enum GlobalStateMachine {
-//            DEFAULT,
-//        }
 
         while (opModeIsActive()) {
             //read gamepads
 
-            if (gp.left_bumper && (globalStateMachine == 11 || globalStateMachine == 12)) {
-                globalStateMachine = 11;
+            if (gp.left_bumper && (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER || globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN)) {
+                globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
             }//advances backwards
-
-            if ((globalStateMachine == 11 || globalStateMachine == 12) && gp.right_bumper) {
-                globalStateMachine++;
-            } else if (gp.right_bumper) {
-                if (globalStateMachine != 9 || globalStateMachine != 6 || globalStateMachine != 3) {
-                    globalStateMachine++;
-                } //advances forward
-            } else if (gp.left_bumper) {
-                if (globalStateMachine == 3) {
-                    globalStateMachine = 0;
-                } else {
-                    globalStateMachine--;
-                } //advances backwards
-            } else if (gp.a && (globalStateMachine == 0 || globalStateMachine == 1)  ) { // safeguard for submersible
-                globalStateMachine = 10;
-            } else if (gp.a && (globalStateMachine == 10 || globalStateMachine == 11)) { // switch back from submersible
-                globalStateMachine = 0;
+            if (gp.right_bumper) {
+                if(globalStateMachine == GlobalStateMachine.DEFAULT) { // 0 -> 1
+                    globalStateMachine = GlobalStateMachine.INTAKE_READY;
+                } else if(globalStateMachine == GlobalStateMachine.INTAKE_READY) { // 1 -> 2
+                    globalStateMachine = GlobalStateMachine.CLOSE_INTAKE;
+                } else if (globalStateMachine == GlobalStateMachine.FINISHED_INTAKE && timeStamp + 250 < timer.milliseconds()) { // 3->4
+                    globalStateMachine = GlobalStateMachine.READY_DEPOSIT;
+                } else if (globalStateMachine == GlobalStateMachine.READY_DEPOSIT) { // 4 -> 5
+                    globalStateMachine = GlobalStateMachine.SLIDES_BEGIN_SCORE;
+                } else if (globalStateMachine == GlobalStateMachine.WRIST_SCORE && timeStamp + 400 < timer.milliseconds()) { // 6->7
+                    globalStateMachine = GlobalStateMachine.FINISH_SCORE;
+                } else if (globalStateMachine == GlobalStateMachine.FINISH_SCORE) { //7->8
+                    globalStateMachine = GlobalStateMachine.POST_SCORE;
+                }
+                else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER) { // 11 -> 12
+                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN;
+                } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN) { // 12 -> 13
+                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE;
+                } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) {
+                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_FINISH_1;
+                }
+            }
+            else if (gp.left_bumper) {//advances backwards
+                if (globalStateMachine == GlobalStateMachine.INTAKE_READY || globalStateMachine == GlobalStateMachine.FINISHED_INTAKE) {
+                    globalStateMachine = GlobalStateMachine.DEFAULT;
+                } else if (globalStateMachine == GlobalStateMachine.READY_DEPOSIT){
+                    globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
+                } else if (globalStateMachine == GlobalStateMachine.WRIST_SCORE) {
+                    globalStateMachine = GlobalStateMachine.READY_DEPOSIT;
+                } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN) {
+                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
+                } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) {
+                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN;
+                }
+            } else if (gp.a && (globalStateMachine == GlobalStateMachine.DEFAULT || globalStateMachine == GlobalStateMachine.INTAKE_READY)  ) { // safeguard for submersible
+                globalStateMachine = GlobalStateMachine.BEGIN_SUBMERSIBLE;
+            } else if (gp.a && (globalStateMachine == GlobalStateMachine.BEGIN_SUBMERSIBLE || globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER)) { // switch back from submersible
+                globalStateMachine = GlobalStateMachine.DEFAULT;
             }
 
 
 
-            if (globalStateMachine < 0) {
-                globalStateMachine = 0;
-            }//make sure we cant fall out of our state machine
-
-
-
             //state machine
-            //if you're reading this PLEASE make this an ENUM or something readable
-
-            if (globalStateMachine == 0) { //default position
+            if (globalStateMachine == GlobalStateMachine.DEFAULT) { // DEFAULT
                 arm.preTake();
                 slides.floorIntake();
                 wrist.intake();
                 claw.open();
-            } else if (globalStateMachine == 1) {
+            } else if (globalStateMachine == GlobalStateMachine.INTAKE_READY) { //INTAKE READY
                 arm.intake();
-            } else if (globalStateMachine == 2) {
+            } else if (globalStateMachine == GlobalStateMachine.CLOSE_INTAKE) { //CLOSE INTAKE
                 claw.close();
                 timeStamp = timer.milliseconds();
-                globalStateMachine++;
-            } else if (globalStateMachine == 3) {
+                globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
+            } else if (globalStateMachine == GlobalStateMachine.FINISHED_INTAKE) { // FINISHED INTAKE
                 if (timeStamp + 250 < timer.milliseconds()) {
                     arm.preTake();
                     slides.floorIntake();
                 }
-            } else if (globalStateMachine == 4) {
+            } else if (globalStateMachine == GlobalStateMachine.READY_DEPOSIT) { // READY DEPOSIT
                 arm.deposit();
                 slides.preScore();
-            } else if (globalStateMachine == 5) {
+                wrist.intake();
+            } else if (globalStateMachine == GlobalStateMachine.SLIDES_BEGIN_SCORE) { // SLIDES BEGIN SCORE
                 slides.score();
                 timeStamp = timer.milliseconds();
-                globalStateMachine++;
-            } else if (globalStateMachine == 6) {
+                globalStateMachine = GlobalStateMachine.WRIST_SCORE;
+            } else if (globalStateMachine == GlobalStateMachine.WRIST_SCORE) { // WRIST SCORE
                 if (timeStamp + 400 < timer.milliseconds()) {
                     wrist.deposit();
                 }
-            } else if (globalStateMachine == 7) {
+            } else if (globalStateMachine == GlobalStateMachine.FINISH_SCORE) { // FINISH SCORE
                 claw.open();
-            } else if (globalStateMachine == 8) {
+            } else if (globalStateMachine == GlobalStateMachine.POST_SCORE) { // POST SCORE
                 wrist.intake();
                 slides.preScore();
                 timeStamp = timer.milliseconds();
-                globalStateMachine++;
-            } else if (globalStateMachine == 9) {
+                globalStateMachine = GlobalStateMachine.RETURN_TO_DEFAULT;
+            } else if (globalStateMachine == GlobalStateMachine.RETURN_TO_DEFAULT) { // RETURN TO DEFAULT
                 if (timeStamp + 450 < timer.milliseconds()) {
-                    globalStateMachine = 0;
+                    globalStateMachine = GlobalStateMachine.DEFAULT;
                 }
-            } else if (globalStateMachine == 10) { // submersible intake
+            } else if (globalStateMachine == GlobalStateMachine.BEGIN_SUBMERSIBLE) { // BEGIN SUBMERSIBLE
                 wrist.straight();
                 arm.preSubmerse();
                 claw.open();
-                globalStateMachine++;
-            } else if (globalStateMachine == 11) {
+                slideInches = 0;
+                globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
+            } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER) { // SUBMERSIBLE SLIDER
 
                 double increment = inchesPerSecond * loopTime * (gamepad1.left_trigger - gamepad1.right_trigger);
                 slideInches += increment;
                 if (slideInches > 15.0) slideInches = 15.0;
                 slides.setTargetSlidesPosition(slideInches);
 
-            } else if (globalStateMachine == 12) {
+            } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN) { // SUBMERSIBLE INTAKE OPEN
+                claw.open();
                 arm.intake();
                 wrist.intake();
-            } else if (globalStateMachine == 13) {
+            } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) { // SUBMERSIBLE INTAKE CLOSE
                 claw.close();
-            } else if (globalStateMachine == 14) {
+            } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_FINISH_1) { // SUBMERSIBLE FINISH 1
                 wrist.deposit();
                 arm.preSubmerse();
                 timeStamp = timer.milliseconds();
-                globalStateMachine++;
-            } else if (globalStateMachine == 15) {
+                globalStateMachine = GlobalStateMachine.SUBMERSIBLE_FINISH_2;
+            } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_FINISH_2) { // SUBMERSIBLE FINISH 2
                 if (timeStamp + 350 < timer.milliseconds()) {
                     arm.preTake();
                     slides.floorIntake();
                     timeStamp = timer.milliseconds();
-                    globalStateMachine = 16;
+                    globalStateMachine = GlobalStateMachine.RETURN_TO_MAIN;
                 }
-            } else if (globalStateMachine == 16) {
+            } else if (globalStateMachine == GlobalStateMachine.RETURN_TO_MAIN) { // RETURN TO MAIN STATE
                 if (timeStamp + 350 < timer.milliseconds()) {
                     wrist.intake();
-                    globalStateMachine = 3;
+                    globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
                 }
             }
 
@@ -187,4 +204,6 @@ public class OneDriver extends LinearOpMode {
             telemetry.update();
         }
     }
+
+
 }
