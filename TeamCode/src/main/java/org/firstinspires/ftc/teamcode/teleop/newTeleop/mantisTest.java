@@ -4,9 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.hardware;
+
 @TeleOp(name = "Mantis Test", group = "Teleop")
 public class mantisTest extends LinearOpMode {
-    private DcMotor mantis;
+    hardware hardware = new hardware();
     final double driveSpeed = 0.75;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,14 +20,16 @@ public class mantisTest extends LinearOpMode {
     }
 
     private void initialize(){
-        mantis = hardwareMap.get(DcMotor.class, "mantis");
-        mantis.setDirection(DcMotor.Direction.FORWARD);
+        hardware.mantis = hardwareMap.get(DcMotor.class, "mantis");
+        hardware.mantis.setDirection(DcMotor.Direction.FORWARD);
     }
     private void mantis(){
         if(gamepad1.right_trigger > 0){
-            mantis.setPower(driveSpeed);
+            hardware.mantis.setPower(driveSpeed);
         }else if(gamepad1.left_trigger > 0){
-            mantis.setPower(-0.5);
+            hardware.mantis.setPower(driveSpeed * -0.5);
+        }else{
+            hardware.mantis.setPower(0.1);
         }
     }
 }
