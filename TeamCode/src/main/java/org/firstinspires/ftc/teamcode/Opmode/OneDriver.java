@@ -44,6 +44,10 @@ public class OneDriver extends LinearOpMode {
         double frequency = 0;
         double loopTime = 0;
 
+//        enum GlobalStateMachine {
+//            DEFAULT,
+//        }
+
         while (opModeIsActive()) {
             //read gamepads
 
@@ -63,9 +67,11 @@ public class OneDriver extends LinearOpMode {
                 } else {
                     globalStateMachine--;
                 } //advances backwards
-            } else if (gp.a) {
+            } else if (gp.a && (globalStateMachine == 0 || globalStateMachine == 1)  ) { // safeguard for submersible
                 globalStateMachine = 10;
-            }//submersible
+            } else if (gp.a && (globalStateMachine == 10 || globalStateMachine == 11)) { // switch back from submersible
+                globalStateMachine = 0;
+            }
 
 
 
