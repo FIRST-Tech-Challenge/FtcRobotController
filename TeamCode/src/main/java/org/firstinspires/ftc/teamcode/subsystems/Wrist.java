@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -17,19 +19,23 @@ public class Wrist {
         SampleDepositMode,
         SampleIntakeMode,
         ParallelMode,
+        SubHoverMode,
+
+        PerpendicularMode
     }
 
     private HashMap<WristStates, Double> wristPositions;
 
     public final double LOWER_LIMIT = 0.53; // 0.25 = 90 degrees
     public final double UPPER_LIMIT = 1;
-    public final double WRIST_PARALLEL = 0.78; // Servo position to be parallel when Arm Rotation = 0
+    public final double WRIST_PARALLEL = 0.76; // Servo position to be parallel when Arm Rotation = 0
 
     private double lastAngle;
     private double callsPerSecond = 50;
     private double rotationPerSecond = 0.2 / callsPerSecond; //Max of 0.04 change in servo position. Up to 100 calls per second
     private long lastCalled = 0;
     private WristStates currentState;
+    private double currentPosition;
 
     private Servo wrist;
 
@@ -47,8 +53,10 @@ public class Wrist {
 
         wristPositions = new HashMap<WristStates, Double>();
         wristPositions.put(WristStates.ParallelMode, WRIST_PARALLEL);
-        wristPositions.put(WristStates.SampleDepositMode, WRIST_PARALLEL + 0.3);
-        wristPositions.put(WristStates.SampleIntakeMode, WRIST_PARALLEL - 0.1);
+        wristPositions.put(WristStates.SubHoverMode, WRIST_PARALLEL + 0.12);
+        wristPositions.put(WristStates.SampleDepositMode, WRIST_PARALLEL + 0.03);
+        wristPositions.put(WristStates.SampleIntakeMode, WRIST_PARALLEL - 0.086); //0.694
+        wristPositions.put(WristStates.PerpendicularMode, WRIST_PARALLEL - 0.25); //Set 90 degrees off from parallel
     }
 
     //------------------------------------------------------------------------------------------
@@ -59,13 +67,21 @@ public class Wrist {
     public void wristParallelToGround(double angleToGround){
         lastAngle = angleToGround;
         if (currentState == WristStates.ParallelMode){
-            double newPos = clamp(WRIST_PARALLEL -  (angleToGround / 360), LOWER_LIMIT, UPPER_LIMIT);
+            double newPos = clamp(wristPositions.get(WristStates.ParallelMode) -  (angleToGround / 360), LOWER_LIMIT, UPPER_LIMIT);
+//            double newPos = wristPositions.get(WristStates.ParallelMode) -  (angleToGround / 360.0);
+            currentPosition = wristPositions.get(WristStates.ParallelMode);
             wrist.setPosition(newPos);
         }
+//        else if(currentState == WristStates.PerpendicularMode){
+//            double newPos = clamp(wristPositions.get(WristStates.PerpendicularMode) -  ((180-angleToGround) / 360.0), LOWER_LIMIT, UPPER_LIMIT);
+//            currentPosition = wristPositions.get(WristStates.PerpendicularMode) -  ((180-angleToGround) / 360.0);
+//            wrist.setPosition(newPos);
+//        }
     }
     public void goToPosition(WristStates state){
         currentState = state;
-        if (state != WristStates.ParallelMode) {
+        if (state != WristStates.ParallelMode &&
+            state != WristStates.PerpendicularMode) {
             wrist.setPosition(wristPositions.get(state));
         }
     }
@@ -91,16 +107,18 @@ public class Wrist {
             return;
         }
         lastCalled = timeNow;
-        double newPos = wrist.getPosition() + (power * rotationPerSecond);
-        if (currentState == WristStates.ParallelMode){
-            wristPositions.put(currentState, (power * rotationPerSecond) +
-                    clamp(WRIST_PARALLEL -  (lastAngle / 360), LOWER_LIMIT, UPPER_LIMIT));
-        }
-        else{
-            wristPositions.put(currentState, newPos);
-        }
+        double newPos = wristPositions.get(currentState) + (power * rotationPerSecond);
+//        if (currentState == WristStates.ParallelMode){
+//            wristPositions.put(currentState, (power * rotationPerSecond) +
+//                    clamp(WRIST_PARALLEL -  (lastAngle / 360), LOWER_LIMIT, UPPER_LIMIT));
+//        }
+//        else{
+        wristPositions.put(currentState, newPos);
 
-        wrist.setPosition(newPos);
+        if (currentState != WristStates.ParallelMode /*&&
+                currentState != WristStates.PerpendicularMode*/) {
+            wrist.setPosition(newPos);
+        }
     }
 
     //------------------------------------------------------------------------------------------
@@ -108,5 +126,19 @@ public class Wrist {
     //------------------------------------------------------------------------------------------
     private double clamp(double value, double min, double max){
         return Math.max( min , Math.min( max , value));
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public String toString(){
+        return String.format(
+                "Wrist Position: %f\n" +
+                "Wrist State: %s\n" +
+                "Wrist current position: %f",
+                getWristPosition(),
+                currentState,
+                currentPosition
+
+        );
     }
 }

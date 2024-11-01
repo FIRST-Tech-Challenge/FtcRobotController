@@ -24,22 +24,25 @@ public class Arm {
     //Adjustable Constants
     private double ARM_SPEED = 50; //Ticks
 
-    private double TICKS_PER_ROTATION = 8192;
+    private double TICKS_PER_ROTATION = 8192; //Ticks
 
-    private double MINIMUM_ROTATION = 0; //0 degrees (Relative to starting position)
-    private double MAXIMUM_ROTATION = 3000; //Ticks
-
-    private int BASE_HEIGHT = 3400;//3450 - 50; //ticks
-    private int SPECIMEN_HEIGHT = 2420;//3450 - 800; //ticks
-
-    private int REST_HEIGHT = 200;//3450 - 3250; //ticks
-    private int DEPOSIT_HEIGHT = -220;//3450 - 3670; //ticks 3670
+//    private double MINIMUM_ROTATION = 0; //0 degrees (Relative to starting position)
+//    private double MAXIMUM_ROTATION = 3000; //Ticks
+//
+//    private int BASE_HEIGHT = 3400;//3450 - 50; //ticks
+//    private int SPECIMEN_HEIGHT = 2420;//3450 - 800; //ticks
+//
+//    private int REST_HEIGHT = 200;//3450 - 3250; //ticks
+//    private int DEPOSIT_HEIGHT = -220;//3450 - 3670; //ticks 3670
 
     public enum ArmState{
         BASE_HEIGHT,
         SPECIMEN_HEIGHT,
         REST_HEIGHT,
-        DEPOSIT_HEIGHT
+        DEPOSIT_HEIGHT,
+        DEPOSIT_HEIGHT_FORWARD,
+
+        REVERSE_SPECIMEN_HEIGHT
     }
 
     private HashMap<ArmState, Integer> armPositions;
@@ -74,15 +77,17 @@ public class Arm {
         armRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Pid Setup
-        pid = new PIDController(0.0015,0,0.00015,0.25);
+        pid = new PIDController(0.0005,0,0.00006,0.11);
         pid.setTarget(getPosition());
         currentState = ArmState.REST_HEIGHT;
 
         armPositions = new HashMap<ArmState,Integer>();
         armPositions.put(ArmState.DEPOSIT_HEIGHT, -220);
         armPositions.put(ArmState.REST_HEIGHT, 200);
-        armPositions.put(ArmState.SPECIMEN_HEIGHT, 2420);
-        armPositions.put(ArmState.BASE_HEIGHT,3400);
+        armPositions.put(ArmState.SPECIMEN_HEIGHT, 2520);
+        armPositions.put(ArmState.BASE_HEIGHT,3170);
+        armPositions.put(ArmState.REVERSE_SPECIMEN_HEIGHT, -60); // Adjust Once Measured
+        armPositions.put(ArmState.DEPOSIT_HEIGHT_FORWARD, 2000);
     }
 
 
@@ -183,6 +188,22 @@ public class Arm {
                 this.getPosition(),
                 this.targetPosition,
                 pid.toString());
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String toString(boolean disablePID){
+        if(disablePID){
+            return String.format(
+                    "Arm current Rotation: %f\n" +
+                    "Arm current position: %d\n" +
+                    "Arm target position: %d\n" +
+                    "Arm State: %s",
+                    this.getRotation(),
+                    this.getPosition(),
+                    this.targetPosition,
+                    this.currentState);
+        }
+        return toString();
     }
 
     //------------------------------------------------------------------------------------------

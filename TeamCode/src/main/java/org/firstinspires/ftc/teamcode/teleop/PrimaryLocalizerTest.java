@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ThreeEncoderLocalizer;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 
-//@TeleOp(name="PrimaryLocalizerTest", group = "Subsystem Tests")
+@TeleOp(name="PrimaryLocalizerTest", group = "Subsystem Tests")
 public class PrimaryLocalizerTest extends LinearOpMode {
 
     @Override

@@ -23,8 +23,8 @@ public class ThreeDeadWheelLocalizer implements Localizer {
         //For rotation, if under estimating: Decrease ticks
         //If over estimating: Increase ticks
         //Gobuila ticks = 2000, wheel diameter is 48= mm
-        public double par0YTicks = 1830.0; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = -1830.0; // y position of the second parallel encoder (in tick units)
+        public double par0YTicks = -1830.0; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = 1830.0; // y position of the second parallel encoder (in tick units)
         public double perpXTicks = -1953.0; // x position of the perpendicular encoder (in tick units)
     }
 
@@ -38,7 +38,7 @@ public class ThreeDeadWheelLocalizer implements Localizer {
     private boolean initialized;
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
-        this(hardwareMap, inPerTick, new String[] {"leftFront", "rightBack", "leftBack"});
+        this(hardwareMap, inPerTick, new String[] {"FLM", "BRM", "BLM"});
     }
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick, String[] names){
@@ -51,6 +51,7 @@ public class ThreeDeadWheelLocalizer implements Localizer {
 
         // TODO: reverse encoder directions if needed
            par0.setDirection(DcMotorSimple.Direction.REVERSE);
+           perp.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.inPerTick = inPerTick;
 

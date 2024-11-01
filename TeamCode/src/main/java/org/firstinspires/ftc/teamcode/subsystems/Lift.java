@@ -35,6 +35,9 @@ public class Lift {
         HIGH_BAR,
         MAX_HEIGHT
     }
+
+    //TODO: CHANGE LATER TO NEW MOTOR MAX HEIGHT
+    private int MAX_HEIGHT_POSITION = 3050;//ticks
     private LiftStates currentState;
 
     private HashMap<LiftStates, Integer> liftPositions;
@@ -84,12 +87,15 @@ public class Lift {
         pid.setTarget(getPosition());
 
         liftPositions = new HashMap<LiftStates, Integer>(3);
+        //Calculate the ratios by [Desired Tick Position] / [MAX_HEIGHT_POSITION]
+        //This way the ratio can be reused despite different gear ratios or tick resolutions
+        //Aim for at least 6 decimal places, the more the better.
         liftPositions.put(LiftStates.ZERO, 0);
-        liftPositions.put(LiftStates.HOVER, 220);
-        liftPositions.put(LiftStates.SPECIMEN_SCORE, 1200);
-        liftPositions.put(LiftStates.CLIMB, 1600);
-        liftPositions.put(LiftStates.HIGH_BAR, 1700);
-        liftPositions.put(LiftStates.MAX_HEIGHT, 3050);
+        liftPositions.put(LiftStates.HOVER, (int) (0.0163934 * MAX_HEIGHT_POSITION));
+        liftPositions.put(LiftStates.SPECIMEN_SCORE, (int) (0.344262 * MAX_HEIGHT_POSITION)); //1000 Old 1200
+        liftPositions.put(LiftStates.CLIMB, (int) (0.524590 * MAX_HEIGHT_POSITION));
+        liftPositions.put(LiftStates.HIGH_BAR, (int) (0.213114 * MAX_HEIGHT_POSITION)); //700 Old 1700
+        liftPositions.put(LiftStates.MAX_HEIGHT, MAX_HEIGHT_POSITION);
     }
 
 
@@ -185,12 +191,26 @@ public class Lift {
     @Override
     public String toString(){
         return String.format(
-                "Arm current position: %d\n" +
-                        "Arm target position: %d\n" +
-                        "Arm PID Data: \n%s",
+                "Lift current position: %d\n" +
+                "Lift target position: %d\n" +
+                "Lift PID Data: \n%s",
                 getPosition(),
                 targetPosition,
                 pid.toString());
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String toString(boolean disablePID){
+        if (disablePID){
+            return String.format(
+                    "Lift current position: %d\n" +
+                    "Lift target position: %d\n" +
+                    "Lift current state: %s\n",
+                    getPosition(),
+                    targetPosition,
+                    currentState);
+        }
+        return toString();
     }
 
     @SuppressLint("DefaultLocale")

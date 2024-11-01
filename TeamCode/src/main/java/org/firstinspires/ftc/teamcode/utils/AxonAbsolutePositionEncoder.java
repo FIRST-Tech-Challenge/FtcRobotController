@@ -20,6 +20,8 @@ public class AxonAbsolutePositionEncoder {
     double angularOffset, maxVoltage;
     int inverted;
 
+    double lastCheckedPosition;
+
     public AxonAbsolutePositionEncoder(HardwareMap hw ) {
         this(hw, "absoluteEncoder");
     }
@@ -32,7 +34,6 @@ public class AxonAbsolutePositionEncoder {
         encoder = hw.analogInput.get( encoderName );
         angularOffset = offset;
         maxVoltage = volt;
-
     }
 
     public void setOffset(double offset) {

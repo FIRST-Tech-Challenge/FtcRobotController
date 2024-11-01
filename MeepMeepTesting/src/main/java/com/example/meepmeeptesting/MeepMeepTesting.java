@@ -19,13 +19,61 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
+        RoadRunnerBotEntity yellowBot2 = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .build();
+
 
 
         //Starting Positions
         Pose2d startColor = new Pose2d(12,-60,Math.toRadians(90));
         Pose2d startYellow = new Pose2d(-12, -60, Math.toRadians(90));
-
+        Pose2d startYellow2 = new Pose2d(-12, -60, Math.toRadians(90));
         Vector2d basketDropOff = new Vector2d(-55, -65);
+
+        Vector2d firstSpike = new Vector2d(-49, -26);
+        Vector2d secondSpike = new Vector2d(-61, -26);
+        Vector2d thirdSpike = new Vector2d(-70, -26);
+
+        //intake length from center of robot
+        double intakeLength = 15;
+        yellowBot2.runAction(yellowBot2.getDrive().actionBuilder(startYellow2)
+                //Score preload sample
+                        .strafeToLinearHeading(basketDropOff, Math.toRadians(180))
+                        //At the same time as the spline, raise the lift/arm
+                        .waitSeconds(2) //Time to deposit
+
+                //Go to first spike
+                        .strafeTo(firstSpike.plus(calculateOffset(180, intakeLength)))
+                        //Lower lift/arm at the same time here
+                        //Activate intake
+                        .strafeTo(firstSpike.plus(calculateOffset(180, intakeLength-5)))
+                        .strafeTo(basketDropOff)
+                        .waitSeconds(2) //Time to deposit
+                //Go to second spike
+                    .strafeTo(secondSpike.plus(calculateOffset(180, intakeLength)))
+                    //Lower lift/arm at the same time here
+                    //Activate intake
+                    .strafeTo(secondSpike.plus(calculateOffset(180, intakeLength-5)))
+                    .strafeTo(basketDropOff)
+                    .waitSeconds(2) //Time to deposit
+                //Go to third spike
+
+                    .strafeTo(thirdSpike.plus(calculateOffset(180, intakeLength)))
+                    //Lower lift/arm at the same time here
+                    //Activate intake
+                    .strafeTo(thirdSpike.plus(calculateOffset(180, intakeLength-5)))
+                    .strafeTo(basketDropOff)
+                    .waitSeconds(2) //Time to deposit
+
+                //Park
+//                        .turn(Math.toRadians(-90))
+                        .setTangent(Math.toRadians(90))
+                        .splineTo(new Vector2d(-24,-12),Math.toRadians(0))
+                .build());
+
+
 
         yellowBot.runAction(yellowBot.getDrive().actionBuilder(startYellow)
                 //Hang Preload
@@ -113,7 +161,11 @@ public class MeepMeepTesting {
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(colorBot)
+                .addEntity(yellowBot2)
                 .start();
+    }
+
+    public static Vector2d calculateOffset(double angleDegrees, double distance){
+        return new Vector2d(-distance * Math.cos(Math.toRadians(angleDegrees)), -distance * Math.sin(Math.toRadians(angleDegrees)));
     }
 }

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
 
     //Adjustable Constraints
-    public double OPEN_POS = 0.4, CLOSE_POS = 0.1;
+    public double OPEN_POS = 1, CLOSE_POS = 0.5;
 
     //Internal variables
     private Servo claw;
@@ -79,5 +79,12 @@ public class Claw {
 
     public boolean getIsOpen(){
         return isOpen;
+    }
+
+    @Override
+    public String toString(){
+        return String.format(
+                "Claw Open: %b\n",
+                isOpen);
     }
 }

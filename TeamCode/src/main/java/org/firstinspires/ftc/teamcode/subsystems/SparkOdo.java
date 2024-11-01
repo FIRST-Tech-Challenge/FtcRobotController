@@ -187,7 +187,7 @@ public class SparkOdo implements LocalizerInterface {
     @Override
     public Pose2d getPosition() {
         SparkFunOTOS.Pose2D result = getPos();
-        return new Pose2d(result.x, -result.y, -result.h);
+        return new Pose2d(-result.x, result.y, -result.h);
     }
 
     public String toString(){

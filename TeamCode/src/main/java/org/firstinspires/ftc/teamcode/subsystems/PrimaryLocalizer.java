@@ -95,6 +95,7 @@ public class PrimaryLocalizer implements LocalizerInterface, Localizer {
             lastPosY = pos.position.y;
             lastHeading = heading;
             lastCalled = System.currentTimeMillis();
+            initialized = true;
             return new Twist2dDual<>(
                     Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
                     DualNum.constant(0.0, 2)
@@ -113,12 +114,12 @@ public class PrimaryLocalizer implements LocalizerInterface, Localizer {
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[] {
-                                xDelta,
-                                xVel,
+                                xDelta * 2,
+                                xVel * 2,
                         }),
                         new DualNum<Time>(new double[] {
-                                yDelta,
-                                yVel,
+                                yDelta * 2,
+                                yVel * 2,
                         })
                 ),
                 new DualNum<>(new double[] {
