@@ -19,7 +19,7 @@ public class DcMotorExComposition implements DcMotorEx {
 
     public DcMotorExComposition() {
     }
-
+    @Override
     public void setPower(double power){
         motor.setPower(power);
     }

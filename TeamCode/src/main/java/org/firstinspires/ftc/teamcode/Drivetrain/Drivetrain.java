@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Geometry.Path;
 import org.firstinspires.ftc.teamcode.Drivetrain.Localizers.TwoWheelOdometery;
 import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Hardware.Motors.MotorController;
 
 public class Drivetrain {
     /**
@@ -37,10 +38,10 @@ public class Drivetrain {
     /**
      * Drive motors
      */
-    public DcMotorEx motorLeftFront = null;
-    public DcMotorEx motorLeftBack = null;
-    public DcMotorEx motorRightBack = null;
-    public DcMotorEx motorRightFront = null;
+    public MotorController motorLeftFront = null;
+    public MotorController motorLeftBack = null;
+    public MotorController motorRightBack = null;
+    public MotorController motorRightFront = null;
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
@@ -68,6 +69,7 @@ public class Drivetrain {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+<<<<<<< Updated upstream
         motorLeftFront = hardwareMap.get(DcMotorEx.class, "lfm");
         motorLeftBack = hardwareMap.get(DcMotorEx.class, "lbm");
         motorRightBack = hardwareMap.get(DcMotorEx.class, "rbm");
@@ -76,6 +78,18 @@ public class Drivetrain {
         motorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+=======
+        motorLeftFront = (MotorController) hardwareMap.get(DcMotorEx.class, "lfm");
+        motorLeftBack = (MotorController) hardwareMap.get(DcMotorEx.class, "lbm");
+        motorRightBack = (MotorController) hardwareMap.get(DcMotorEx.class, "rbm");
+        motorRightFront = (MotorController) hardwareMap.get(DcMotorEx.class, "rfm");
+        //casting
+
+        motorLeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+>>>>>>> Stashed changes
         motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -226,4 +240,29 @@ public class Drivetrain {
         };
     }
 
+//    public Action followPath(double[][] coords) {
+//        return new Action() {
+//            //private boolean initialized = false;
+//
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket packet) {
+//                //if (!initialized) {
+//                //    initialized = true;
+//                //}
+//                localize();
+//                SimpleMatrix furthestPoint = geometricController.calculate(state.get(0,0), state.get(1,0), coords);
+//                SimpleMatrix pose = state.extractMatrix(0,3,0,1);
+//                SimpleMatrix wheelSpeeds = poseControl.calculate(pose, furthestPoint);
+////                SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
+//                SimpleMatrix wheelAccelerations = new SimpleMatrix(4, 1);
+//                deltaT.reset();
+//                setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
+//                prevWheelSpeeds = wheelSpeeds;
+//                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold)){
+//                    setPower(stopMatrix);
+//                }
+//                return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold;
+//            }
+//        };
+//    }
 }
