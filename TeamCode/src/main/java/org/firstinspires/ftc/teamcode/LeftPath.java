@@ -25,10 +25,11 @@ public class LeftPath extends LinearOpMode {
     private actuatorUtils utils;
     private moveUtils move;
 
-    private Servo leftArm = null; //Located on Expansion Hub- Servo port 0
-    private Servo rightArm = null; //Located on Expansion Hub- Servo port 0
+    private DcMotor leftArm = null; //Located on Expansion Hub- Servo port 0
+    private DcMotor rightArm = null; //Located on Expansion Hub- Servo port 0
     private CRServo intake = null; //Located on Expansion Hub- Servo port 0
     private DcMotor lift = null;
+    private Servo wrist = null; //Located on Expansion Hub- Servo port 0
 
 
     static final float MAX_SPEED = 1.0f;
@@ -47,9 +48,10 @@ public class LeftPath extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         utils = new actuatorUtils();
         lift = hardwareMap.get(DcMotor.class, "lift");
-        leftArm = hardwareMap.get(Servo.class, "leftArm");
-        rightArm = hardwareMap.get(Servo.class, "rightArm");
+        leftArm = hardwareMap.get(DcMotor.class, "leftArm");
+        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
         intake = hardwareMap.get(CRServo.class, "intake");
+        wrist = hardwareMap.get(Servo.class,"wrist");
         Pose2d startPose = new Pose2d(-63, 15,0);
         drive.setPoseEstimate(startPose);
         //TrajectorySequence aSeq = autoSeq(startPose);
@@ -63,11 +65,12 @@ public class LeftPath extends LinearOpMode {
         fUtils = new fileUtils();
         desiredHeading = getHeading();
 
-        utils.initializeActuator(lift, leftArm, rightArm, intake);
+        utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
         move.initialize(drive, utils);
 
         utils.setArm(actuatorUtils.ArmModes.UP);
         utils.setIntake(actuatorUtils.IntakeModes.OFF);
+        utils.setWrist(actuatorUtils.WristModes.DOWN);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -81,7 +84,7 @@ public class LeftPath extends LinearOpMode {
 
         move.driveSeq(startPose.getX()+12,startPose.getY(),0);
         utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
-        move.driveSeq(-54,54,135);
+        move.driveSeq(-52,52,135);
        // utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
        // sleep(3000);
         //move.driveSeq(-57,57,135);

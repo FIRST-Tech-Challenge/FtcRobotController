@@ -10,13 +10,18 @@ public class actuatorUtils {
 
     private static DcMotor lift = null; //declare arm
 
-    private static Servo leftArm = null; //declare gripper
-    private static Servo rightArm = null; //declare dump
+    private static DcMotor leftArm = null; //declare gripper
+    private static DcMotor rightArm = null; //declare dump
     private static CRServo intake = null; //declare dump
+    private static Servo wrist = null;
     //test
-    private static int maxEncode = 3720; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
+    public static int upEncode = 4180; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
+    private static int restEncode = 2000; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
+    public static int downEncode = 0; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
+    private static double armPower = .7f; //Set power to .7 so arm does not go up too fast
+    private static int maxEncode = 4180; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 0; //Minimum so string on arm lift doesn't break and position 0
-    private static int lowEncode = 1620; //Minimum so string on arm lift doesn't break and position 0
+    private static int lowEncode = 1980; //Minimum so string on arm lift doesn't break and position 0
     private static int highEncode = maxEncode; //Minimum so string on arm lift doesn't break and position 0
     private static double liftPower = .7f; //Set power to .7 so arm does not go up too fast
 
@@ -34,6 +39,12 @@ public class actuatorUtils {
         OUT
 
     }
+    enum WristModes
+    {
+        UP,
+        DOWN
+
+    }
     enum ArmModes
     {
         UP,
@@ -42,12 +53,12 @@ public class actuatorUtils {
 
     }
     //Initialize actuators
-    public static void initializeActuator(DcMotor lift, Servo leftArm, Servo rightArm, CRServo intake) {
+    public static void initializeActuator(DcMotor lift, DcMotor leftArm, DcMotor rightArm, CRServo intake, Servo wrist) {
         actuatorUtils.lift = lift;
         actuatorUtils.leftArm = leftArm;
         actuatorUtils.rightArm = rightArm;
         actuatorUtils.intake = intake;
-
+        actuatorUtils.wrist = wrist;
     }
 
 
@@ -63,14 +74,39 @@ public class actuatorUtils {
     }
     public static void setArm(ArmModes mode)   {
         if (mode == ArmModes.UP) {
-            leftArm.setPosition(0.0);
-            rightArm.setPosition(1.0);
+            leftArm.setTargetPosition(upEncode); //Lifts arm up so we can move w/o drag
+            leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftArm.setPower(armPower);
+
+            rightArm.setTargetPosition(upEncode); //Lifts arm up so we can move w/o drag
+            rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightArm.setPower(armPower);
         } else if (mode == ArmModes.REST) {
-            leftArm.setPosition(0.5);
-            rightArm.setPosition(0.5);
+            leftArm.setTargetPosition(restEncode); //Lifts arm up so we can move w/o drag
+            leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftArm.setPower(armPower);
+
+            rightArm.setTargetPosition(restEncode); //Lifts arm up so we can move w/o drag
+            rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightArm.setPower(armPower);
+
         } else {
-            leftArm.setPosition(1.0);
-            rightArm.setPosition(0.0);
+            leftArm.setTargetPosition(downEncode); //Lifts arm up so we can move w/o drag
+            leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftArm.setPower(armPower);
+
+            rightArm.setTargetPosition(downEncode); //Lifts arm up so we can move w/o drag
+            rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightArm.setPower(armPower);
+
+        }
+    }
+    public static void setWrist(WristModes mode)  {
+        if (mode == WristModes.UP) {
+            wrist.setPosition(0.333);
+
+        } else {
+            wrist.setPosition(0.0);
         }
     }
     public static void setLift(LiftLevel mode) {

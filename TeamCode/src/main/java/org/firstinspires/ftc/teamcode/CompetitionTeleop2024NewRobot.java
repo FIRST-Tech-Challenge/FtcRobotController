@@ -31,8 +31,9 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     //Declare variables used for our arm lift
 
     // positive Y is upward on joystick, left and right
-    private Servo leftArm = null; //Located on Expansion Hub- Servo port 0
-    private Servo rightArm = null; //Located on Expansion Hub- Servo port 1
+    private DcMotor leftArm = null; //Located on Expansion Hub- Motor port 1
+    private DcMotor rightArm = null; //Located on Expansion Hub- Motor port 2
+    private Servo wrist = null; //Located on Expansion Hub- Servo port 0
     // positive Y on right joystick will be intake, negative = outtake
     private CRServo intake = null; //Located on Expansion Hub- Servo port 2
 
@@ -56,15 +57,10 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     private double armPower = .7f;
     private actuatorUtils utils;
 
-    boolean changed = false; //Used for the arm button code
-    boolean changed2 = false; //Used for the code that allows the driver to disable IMU controlled direction
-    boolean changed3 = false; //Used to toggle between auto and manual mode for arm
-    boolean changeda1 = false;
-    boolean changedb1 = false;
+
+    boolean autoLift = false;
     boolean disableIMU = true;
     boolean game2back = false; //Used to override switch for arm in case of failure
-    boolean game1back = false; //Used to override minEncode for arm in case of bad encoding
-    boolean gamebpush = false; //To go through intervals one at a time
     Double initHeading = 0.0;
 
     //boolean touchIsPressed = false;
@@ -84,16 +80,14 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
         intake = hardwareMap.get(CRServo.class, "intake");
-        leftArm = hardwareMap.get(Servo.class, "leftArm");
-        rightArm = hardwareMap.get(Servo.class, "rightArm");
+        leftArm = hardwareMap.get(DcMotor.class, "leftArm");
+        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
         lift = hardwareMap.get(DcMotor.class, "lift");
+        wrist = hardwareMap.get(Servo.class, "wrist");
         utils = new actuatorUtils();
-        utils.initializeActuator(lift, leftArm, rightArm, intake);
+        utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
 
         intake.setPower(0.0);
-        leftArm.setPosition(0.0);
-        rightArm.setPosition(1.0);
-
         //imu = hardwareMap.get(IMU.class, "imu");
         //IMU.Parameters parameters = new IMU.Parameters(
         //        new RevHubOrientationOnRobot(
@@ -120,19 +114,16 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
         lift.setDirection(DcMotor.Direction.REVERSE);
-        //intake.setDirection(DcMotor.Direction.FORWARD);
-        //Reverse the arm direction so it moves in the proper direction
-        //arm.setDirection(DcMotor.Direction.REVERSE);
-        //arm1.setDirection(DcMotor.Direction.REVERSE);
-        //Set arm up to use encoders
-        //arm.setPower(0);
-        //arm1.setPower(0);
-        //Set arm up to brake
-        //arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setPower(0);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftArm.setDirection(DcMotor.Direction.REVERSE);
+        rightArm.setDirection(DcMotor.Direction.REVERSE);
+        leftArm.setPower(0);
+        leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightArm.setPower(0);
+        rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
 
     }
 
@@ -155,7 +146,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
 
         //Code for gamepad1
         //Code for throttling the power factor
-        PowerFactor = (1 - gamepad1.right_trigger) *.8f;
+        PowerFactor = (1 - gamepad1.right_trigger);
 
         //Code for mecanum wheels
 
@@ -172,12 +163,6 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LFPower = r * Math.sin(robotAngle) - rightX;
         RFPower = r * Math.cos(robotAngle) + rightX;
 
-        if (gamepad1.b && ! changed2) {
-            changed2 = true;
-            disableIMU = !disableIMU;
-        }else if (!gamepad1.b) {
-            changed2 = false;
-        }
 
 
         // Send calculated power to wheels
@@ -202,9 +187,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
 
         //Code for gamepad2
         //Toggle auto and manual mode
-        if (gamepad2.y) {
-            changed3 = !changed3;
-        }
+
         if (gamepad2.back) {
             game2back = !game2back;
         }
@@ -215,6 +198,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Moves the arm up
         if (gamepad2.left_trigger >= .1)
         {
+            autoLift = false;
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setPower(-gamepad2.left_trigger * (0.5));
             telemetry.addData("Lift ticks", lift.getCurrentPosition());
@@ -223,43 +207,53 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         }
         else if (gamepad2.right_trigger >= .1)
         {
+            autoLift = false;
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setPower(gamepad2.right_trigger * (0.5));
 
         }
         else if (gamepad2.y) {
+            autoLift = true;
             utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
+            utils.setArm(actuatorUtils.ArmModes.REST);
         }
         else if (gamepad2.x) {
+            autoLift = true;
             utils.setLift(actuatorUtils.LiftLevel.LOW_BASKET);
+            utils.setArm(actuatorUtils.ArmModes.REST);
+
         }
         else if (gamepad2.a) {
+            autoLift = true;
             utils.setLift(actuatorUtils.LiftLevel.ZERO);
+            utils.setArm(actuatorUtils.ArmModes.UP);
+
         }
-        else
+        else if (gamepad2.b) {
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setPower(0.0);
+        }
+
+        else if (!autoLift)
         {
-            lift.setPower(0);
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift.setPower(0.0);
         }
 
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
-        double leftArmPosition = leftArm.getPosition();
-        double rightArmPosition = rightArm.getPosition();
-        double armDelta = 0.0025;
-        if (gamepad2.right_stick_y > 0.1) {
+        double leftArmPosition = leftArm.getCurrentPosition();
 
-            leftArm.setPosition(leftArmPosition + (armDelta));
-            rightArm.setPosition(rightArmPosition - (armDelta));
-
-
-        } else if (gamepad2.right_stick_y < -0.1)
-        {
-            leftArm.setPosition(leftArmPosition - (armDelta));
-            rightArm.setPosition(rightArmPosition + (armDelta));
-
+        if (leftArmPosition < utils.upEncode & leftArmPosition > utils.downEncode) {
+            leftArm.setPower(gamepad2.right_stick_y);
+            rightArm.setPower(gamepad2.right_stick_y);
+        } else {
+            leftArm.setPower(0.0);
+            rightArm.setPower(0.0);
         }
+        //gamepad2.dpad_up
+
 
         //if (gamepad2.right_stick_y > 0.1) {
         //    intake.setPosition(0.55);
@@ -272,8 +266,8 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
 
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("leftArm: ", leftArm.getPosition());
-        telemetry.addData("rightArm:", rightArm.getPosition());
+        telemetry.addData("leftArm: ", leftArm.getCurrentPosition());
+        telemetry.addData("rightArm:", rightArm.getCurrentPosition());
         telemetry.addData("intake:", intake.getPower());
         telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);
