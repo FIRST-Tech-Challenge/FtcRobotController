@@ -5,6 +5,8 @@ import static com.qualcomm.robotcore.util.Range.clip;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.TemplateJanx;
+
 @TeleOp(name = "MechanumTest")
 public class mechanumTest extends LinearOpMode {
 

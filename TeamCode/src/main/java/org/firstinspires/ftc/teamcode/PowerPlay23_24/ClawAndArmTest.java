@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.TemplateJanx;
 
 @TeleOp(name = "Claw")
 public class ClawAndArmTest extends LinearOpMode {

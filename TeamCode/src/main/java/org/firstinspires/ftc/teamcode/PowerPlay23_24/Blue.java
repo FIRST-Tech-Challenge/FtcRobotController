@@ -1,8 +1,6 @@
 package org. firstinspires. ftc. teamcode. PowerPlay23_24;
-
-
+import org.firstinspires.ftc.teamcode.TemplateJanx;
 import static com.qualcomm.robotcore.util.Range.clip;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;

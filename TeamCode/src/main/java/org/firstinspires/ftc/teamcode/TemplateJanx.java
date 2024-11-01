@@ -24,6 +24,9 @@ public class TemplateJanx {
     public DcMotorEx sl = null;
     public DcMotorEx sr = null;
 
+    public DcMotorEx motor = null;
+    public Servo ser = null;
+
     HardwareMap hwMap = null;
 
 
@@ -87,6 +90,22 @@ public class TemplateJanx {
         sr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         sr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sr.setPower(0);
+    }
+    public void basicArmInit(String m, String s)
+    {
+        ser = hwMap.get(Servo.class, s);
+        motor  = hwMap.get(DcMotorEx.class, m);
+
+        if (ser == null){
+            throw new NullPointerException("The servo must be populated in the robot configuration");
+        }
+        if(motor == null) {
+            throw new NullPointerException("The motor must be populated in the robot configuration");
+        }
+
+        motor.setDirection(DcMotor.Direction.FORWARD);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setPower(0);
     }
 
 }

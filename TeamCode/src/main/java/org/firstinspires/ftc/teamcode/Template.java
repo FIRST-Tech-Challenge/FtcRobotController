@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.PowerPlay23_24.TemplateJanx;
+import org.firstinspires.ftc.teamcode.TemplateJanx;
 
 @TeleOp(name = "what will show up on driver hub")
 public class Template extends LinearOpMode {
