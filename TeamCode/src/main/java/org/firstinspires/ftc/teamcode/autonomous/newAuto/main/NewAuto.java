@@ -265,16 +265,37 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     }
     //TODO redo this code
     @Override
-    public void grabber(mainEnum state,int open, int close){
+    public void grabber(mainEnum state){
+        double power = 0;
+        int pos = 0;
         switch (state){
             case OPEN:
-                hardware.grabber.setPower(open);
+                power = 1;
+                hardware.door.setPower(power);
                 break;
             case CLOSE:
-                hardware.grabber.setPower(close);
+                power = -1;
+                hardware.door.setPower(power);
+                break;
+            case GRAB:
+                power = 1;
+                hardware.grabber.setPower(power);
+                break;
+            case RELEASE:
+                power = -1;
+                hardware.grabber.setPower(power);
+                break;
+            case WRIST_UP:
+                pos = 200;
+                hardware.wrist.setPosition(pos);
+                break;
+            case WRIST_DOWN:
+                pos = 0;
+                hardware.wrist.setPosition(pos);
                 break;
         }
     }
+
 
 
     @Override
