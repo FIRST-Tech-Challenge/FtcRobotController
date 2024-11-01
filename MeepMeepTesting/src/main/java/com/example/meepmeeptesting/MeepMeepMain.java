@@ -11,7 +11,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepMain {
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(600);
+        MeepMeep meepMeep = new MeepMeep(500);
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
@@ -49,8 +49,18 @@ public class MeepMeepMain {
     private static RoadRunnerBotEntity RedRight(MeepMeep meepMeep)
     {
         RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "red");
-        botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(20, -65, 0))
-
+        botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(10, -63, Math.toRadians(90.0)))
+                .strafeTo(new Vector2d(10.0, -45.0))
+                .waitSeconds(1)
+                .strafeTo(new Vector2d(25, -45))
+                .splineTo(new Vector2d(45, -10), Math.toRadians(0))
+//                .strafeTo(new Vector2d(28, -10))
+//                .strafeTo(new Vector2d(46, -10))
+                .strafeTo(new Vector2d(45, -55))
+                .strafeToLinearHeading(new Vector2d(45, -30), Math.toRadians(270.0))
+                .strafeTo(new Vector2d(45, -45))
+                .waitSeconds(1)
+//                .splineTo(new Vector2d(46, -30), Math.toRadians(180))
                 .build());
 
         return botEntity;
