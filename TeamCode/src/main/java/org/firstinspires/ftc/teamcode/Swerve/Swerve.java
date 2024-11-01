@@ -114,7 +114,7 @@ public class Swerve {
       conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
       maxDriveSpeedMetersPerSec = ((maxMotorVelocity / gearRatio)) * wheelCircumferenceMeters;
 
-      double maxSpeedSecondsPer60Degrees = .115;
+      double maxSpeedSecondsPer60Degrees = .14 * .667;
       maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
     }
 
