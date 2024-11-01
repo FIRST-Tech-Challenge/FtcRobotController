@@ -105,6 +105,7 @@ public class MainMovement extends LinearOpMode {
         }
 
     }
+    
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
         leftBack.setPower(BL*speed);
@@ -136,6 +137,7 @@ public class MainMovement extends LinearOpMode {
     //   | |\__,_|\___\___/|_.__/        | |_|\__, |\__, |_|\__, |       |_.__/ \__,_|_| |_|\___|_|  \___/|_|  \__|
     //  _/ |                            _/ |   __/ | __/ |   __/ |
     // |__/                            |__/   |___/ |___/   |___/
+
     private void legendaryStrafeMovement() {
         float minSpeed = 0.05f;
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
@@ -146,7 +148,7 @@ public class MainMovement extends LinearOpMode {
         double LangleInDegrees = LangleInRadians * (180 / Math.PI);
 
         // strafe based on joystick angle
-        if (!(Math.abs(LjoystickX) <= joystickDeadzone) || !(Math.abs(LjoystickY) <= joystickDeadzone)) {
+        if (Math.abs(LjoystickX) > joystickDeadzone || Math.abs(LjoystickY) > joystickDeadzone) {
             usingLStick = true;
             //if not in dead zone
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
