@@ -13,6 +13,10 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+/*Comment
+ armManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+                armManager.MoveArmToPosition(AutoArmManager.ARM_MIN);
+ */
 public class AutoArmManager {
 
     public static final double ARM_SPEED = 0.1;
@@ -30,14 +34,19 @@ public class AutoArmManager {
         hornetRobo = HRobo;
     }
 
-    public void SetDirection()
+    public void SetDirection(AutoDriveManager.DriveDirection Direction)
     {
-        hornetRobo.ArmOne.setDirection(Servo.Direction.FORWARD);
-        hornetRobo.ArmTwo.setDirection(Servo.Direction.REVERSE);
+        if (Direction == AutoDriveManager.DriveDirection.FORWARD) {
+            hornetRobo.ArmOne.setDirection(Servo.Direction.FORWARD);
+            hornetRobo.ArmTwo.setDirection(Servo.Direction.REVERSE);
+        }
+        else if (Direction == AutoDriveManager.DriveDirection.BACKWARD) {
+            hornetRobo.ArmOne.setDirection(Servo.Direction.REVERSE);
+            hornetRobo.ArmTwo.setDirection(Servo.Direction.FORWARD);
+        }
     }
 
-    public void MoveArmToPosition( double position){
-        SetDirection();
+    public void MoveArmToPosition(double position){
         hornetRobo.ArmOne.setPosition(Range.clip(position, ARM_MIN, ARM_MAX));
         hornetRobo.ArmTwo.setPosition(Range.clip(position, ARM_MIN, ARM_MAX));
     }
