@@ -48,8 +48,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     Servo claw = null;
     final double CLAW_MIN = 0.9;        // Claw is closed
     final double CLAW_MAX = 0.7;        // Claw is open
-    final double CLAW_DEFAULT = 0.4;    // Start with the claw open
-    double claw_position = CLAW_DEFAULT;
+    double claw_position = CLAW_MAX;
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -81,7 +80,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(CLAW_DEFAULT);
+        claw.setPosition(CLAW_MAX);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -124,7 +123,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
-            verticalAdjustedMin = (int)(0.09*viperSlidePosition+VERTICAL_MIN); // 0.09 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
+            verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
             if (gamepad1.dpad_up) {
                 vertical.setTargetPosition(VERTICAL_MAX);
                 ((DcMotorEx) vertical).setVelocity(2000);
@@ -229,6 +228,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             printDataOnScreen();
         }
+        claw.close();
     }
 
     // Log all (relevant) info about the robot on the hub.
