@@ -8,6 +8,7 @@ public interface newAuto_interface {
     void initialize();
     void telemetry();
     void setDirection();
+    void setBrakes();
     void whileMotorsBusy();
 
     void runToPosition(DcMotor motor);
@@ -15,9 +16,6 @@ public interface newAuto_interface {
 
     void resetEncoder(DcMotor motor);
     void resetMotorEncoders();
-
-    void setBrakes(DcMotor motor);
-    void setMotorBrakes();
 
     void setPosition(int frontLeftPos, int frontRightPos, int backLeftPos, int backRightPos);
     void setSpeed(double frontLeftSpeed, double frontRightSpeed, double backRightSpeed, double backLeftSpeed);

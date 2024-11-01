@@ -6,6 +6,7 @@ public interface teleop_interface {
     void initialize();
     void telemetryInit();
     void setDirection();
+    void setBrakes();
 
     void whileMotorsBusy();
 

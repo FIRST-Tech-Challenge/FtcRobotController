@@ -81,6 +81,18 @@ public class teleop extends LinearOpMode implements teleop_interface {
         hardware.hopper.setDirection(DcMotor.Direction.REVERSE); // Reverse hopper motor
     }
 
+    @Override
+    public void setBrakes(){
+        hardware.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        hardware.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.mantis.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.hopper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
     // Check if motors are busy and display telemetry
     @Override
     public void whileMotorsBusy() {
@@ -261,7 +273,8 @@ public class teleop extends LinearOpMode implements teleop_interface {
     public void runOpMode() {
         // Initialize the OpMode
         initialize(); // Initialize hardware
-        setDirection(); // Set motor directions
+        setDirection();// Set motor directions
+        setBrakes();//Sets the motor brakes
         telemetryInit(); // Send initial telemetry data
 
         waitForStart(); // Wait for the start signal

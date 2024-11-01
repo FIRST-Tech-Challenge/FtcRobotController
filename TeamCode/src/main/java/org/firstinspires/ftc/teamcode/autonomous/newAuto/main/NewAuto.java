@@ -111,6 +111,18 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
         hardware.hopper.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
+    @Override
+    public void setBrakes(){
+        hardware.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        hardware.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.mantis.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.hopper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
     // Sets the motor to run to a position set by the number of encoder ticks
     @Override
     public void runToPosition(DcMotor motor) {
@@ -172,36 +184,6 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
         resetEncoder(hardware.mantis);
         resetEncoder(hardware.hopper);
     }
-
-    // Set the zero power behavior of the motor to BRAKE
-    @Override
-    public void setBrakes(DcMotor motor) {
-        if (motor == null) {
-            telemetry.addLine("Cannot set motor brakes; motor is null.");
-            telemetry.update();
-            return; // Exit the method if motor is null
-        }
-        try {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            telemetry.addLine("Setting brakes for motors");
-        } catch (Exception e) {
-            telemetry.addLine("Error setting motor brakes");
-            telemetry.update();
-        }
-    }
-
-    // Sets the motors to brake
-    @Override
-    public void setMotorBrakes() {
-        setBrakes(hardware.frontLeft);
-        setBrakes(hardware.frontRight);
-        setBrakes(hardware.backLeft);
-        setBrakes(hardware.backRight);
-        setBrakes(hardware.lift);
-        setBrakes(hardware.mantis);
-        setBrakes(hardware.hopper);
-    }
-
 
     // Sets the robot's encoder position to go to
     public void setPosition(int frontLeftPos, int frontRightPos, int backLeftPos, int backRightPos) {
@@ -345,7 +327,7 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     public void runOpMode() throws InterruptedException {
         initialize();
         setDirection();
-        setMotorBrakes();
+        setBrakes();
         resetMotorEncoders();
         waitForStart();
         while (opModeIsActive()) {
