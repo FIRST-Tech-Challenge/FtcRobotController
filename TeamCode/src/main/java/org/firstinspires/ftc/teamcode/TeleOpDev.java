@@ -24,13 +24,13 @@ import com.bosons.Hardware.arm;
 
 public class TeleOpDev extends OpMode{
     // Declare HardWare.
-    public Controller Driver = null;
+    public Controller driverA = null;
     public DriveTrain driveTrain = null;
     //public arm Arm = null;
 
-    double leftX  = 0.0;
-    double leftY  = 0.0;
-    double rightY = 0.0;
+    //declare drive constants.
+    double drivePower  = 1;
+    double driveTurn  = 1;
 
     /*
      * Code to run ONCE when the Driver hits INIT
@@ -38,8 +38,8 @@ public class TeleOpDev extends OpMode{
     @Override
     public void init () {
         //Arm = new arm(this,0.5);
-        driveTrain = new DriveTrain(this,1.0);
-        Driver = new Controller(gamepad1);
+        driveTrain = new DriveTrain(this);
+        driverA = new Controller(gamepad1);
 
         telemetry.addData("Status", "Initialized");
 
@@ -58,7 +58,7 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void start () {
-        //driveTrain.DebugWheels(12.0,0.5);
+
     }
 
     /*
@@ -74,14 +74,20 @@ public class TeleOpDev extends OpMode{
         //if (Driver.onButtonPress(Controller.Button.dPadDown)) {
         //    Arm.RunToTarget(0);
         //}
-        if(Driver.toggleButtonState(Controller.Button.y)){driveTrain.MotorPower = 0.1;}
-        else{driveTrain.MotorPower = 1.0;}
+        //if(Driver.toggleButtonState(Controller.Button.y)){driveTrain.MotorPower = 0.1;}
+        //else{driveTrain.MotorPower = 1.0;}
 
-        leftX = Driver.getAnalogValue(Controller.Joystick.LeftX);
-        leftY = Driver.getAnalogValue(Controller.Joystick.LeftY);
-        rightY = Driver.getAnalogValue(Controller.Joystick.RightY);
+        //setting up controller input to drivetrain output ratios//
+        double x = -driverA.getAnalogValue(Controller.Joystick.LeftX) * 1.5;
+        double y = driverA.getAnalogValue(Controller.Joystick.LeftY) * 1.5;
+        double turn = -driverA.getAnalogValue(Controller.Joystick.RightX)/1.2;
 
-        driveTrain.KinematicMove(leftX,leftY,rightY);
+        double p = Math.sqrt((x * x) + (y * y));
+        double theta = Math.atan2(y, x);
+        driveTrain.drive(p * drivePower, theta, turn * driveTurn); //updates the drivetrain inputs in the "DriveTrain" class
+        //------------------------------------------------------//
+
+        //driveTrain.KinematicMove(leftX,leftY,rightY);
 
         //telemetry.addData("Current Pip           | ",Arm.Pips);
         //telemetry.addData("RightArmMotor Power   | ",Arm.RightArmMotor.getPower());
@@ -91,7 +97,7 @@ public class TeleOpDev extends OpMode{
         //telemetry.addData("LeftArmMotor encoder  | ",Arm.LeftArmMotor.getCurrentPosition());
 
         //YOU NEED THESE FOR CONTROLLER AND SAFTEY CHECKS
-        Driver.updateAll();
+        driverA.updateAll();
         //Arm.MotorCheck();
     }
 

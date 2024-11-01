@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class arm {
-    public DcMotor LeftArmMotor = null;//rename this to sumn else because we will have the extendo/rotation motors both affecting the arm.
+    public DcMotor LeftArmMotor = null;
     public DcMotor RightArmMotor = null;
     public DcMotor Rotation = null;
 
-    public int Pips;//pips are actually encoder "ticks" and should probably be renamed as such
+    public int Pips;
     public int MinPip = 5;
     public int MaxPip = 2185;
     public double Power = 0.0;
@@ -37,12 +37,6 @@ public class arm {
 
     public void RunToTarget(int Counts){
         Pips = Counts;
-        //Dynamic Safty range
-        if ((Pips - 5) < 0) {MinPip = 5;}
-        else {MinPip = Pips - 5;}
-        if ((Pips+5) > 2190) {MaxPip = 2185;}
-        else {MaxPip = Pips + 5;}
-        //if pips is greater or smaller than the arms maximums then clamp to arm maximums and dont exceed them.
         if(Pips <= MinPip) {// when arm is set to close
             if (RightArmMotor.getCurrentPosition() <= MinPip) {RightArmMotor.setPower(0);}
             else {RightArmMotor.setPower(Power);} // check if RightArm is fully closed then turn off power
