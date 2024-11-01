@@ -85,7 +85,7 @@ public class OneDriver extends LinearOpMode {
                 } else if (globalStateMachine == GlobalStateMachine.WRIST_SCORE) {
                     globalStateMachine = GlobalStateMachine.READY_DEPOSIT;
                 } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN) {
-                    globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
+                    globalStateMachine = GlobalStateMachine.BEGIN_SUBMERSIBLE;
                 } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) {
                     globalStateMachine = GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN;
                 }
