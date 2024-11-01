@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,11 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
 
 
 @TeleOp
@@ -52,13 +54,11 @@ public class MecanumTeleOp extends LinearOpMode {
 
             Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             double botheading = angles.firstAngle;
-            telemetry.addLine()
-                    .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
-                    .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
-                    .addData("pitch", "%s deg", formatAngle(angles.angleUnit, angles.thirdAngle))
-                    .addData("botheading",formatAngle(angles.angleUnit,botheading));
+            telemetry.addData("Heading", formatAngle(angles.angleUnit, botheading));
+//                    .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
+//                    .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
+//                    .addData("pitch", "%s deg", formatAngle(angles.angleUnit, angles.thirdAngle))
 
-            telemetry.update();
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
@@ -70,7 +70,6 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addLine()
                     .addData("rotX", rotX)
                     .addData("rotY", rotY);
-            telemetry.update();
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
@@ -80,20 +79,23 @@ public class MecanumTeleOp extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            hardware.frontLeft.setPower(frontLeftPower/2);
-            hardware.backLeft.setPower(backLeftPower/2);
-            hardware.frontRight.setPower(frontRightPower/2);
-            hardware.backRight.setPower(backRightPower/2);
+            hardware.frontLeft.setPower(frontLeftPower / 2);
+            hardware.backLeft.setPower(backLeftPower / 2);
+            hardware.frontRight.setPower(frontRightPower / 2);
+            hardware.backRight.setPower(backRightPower / 2);
 
             telemetry.addData("fl power", frontLeftPower);
             telemetry.addData("fr power", frontRightPower);
             telemetry.addData("bl power", backLeftPower);
             telemetry.addData("br power", backRightPower);
+            telemetry.update();
         }
     }
+
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
+
     @SuppressLint("DefaultLocale")
     String formatDegrees(double degrees) {
         return String.format("%.1f", AngleUnit.DEGREES.normalize(degrees));
