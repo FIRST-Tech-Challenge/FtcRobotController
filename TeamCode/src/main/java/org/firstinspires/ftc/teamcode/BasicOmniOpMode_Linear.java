@@ -47,7 +47,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     // This chunk controls our claw
     Servo claw = null;
     final double CLAW_MIN = 0.9;        // Claw is closed
-    final double CLAW_MAX = 0.7;        // Claw is open
+    final double CLAW_MAX = 0.6;        // Claw is open
     double claw_position = CLAW_MAX;
 
     final ElapsedTime runtime = new ElapsedTime();
