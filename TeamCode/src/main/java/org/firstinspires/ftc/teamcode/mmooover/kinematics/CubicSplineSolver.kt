@@ -85,6 +85,7 @@ data class CubicSplinePair(val id: Int, val x: CubicSpline, val y: CubicSpline) 
 
     val tFrom = x.lowX
     val tTo = x.highX
+    val offset = x.offset
     var pointCache: MutableList<PointData>? = null
     var totalDistance: Double = 0.0
     fun toDesmos() = "(${x.toDesmos(false, "t")}, ${y.toDesmos(false, "t")})"

@@ -99,6 +99,7 @@ def pushPaths = tasks.register("pushPaths", Exec) {
 
     dependsOn(":TeamCode:testDebugUnitTest")
     workingDir pathOutputPath.toString()
+    ignoreExitValue true
     commandLine(android.getAdbExecutable().toPath().toString(), "push", pathOutputPath.toString(), "/sdcard/")
 }
 
