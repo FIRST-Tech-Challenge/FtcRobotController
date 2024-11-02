@@ -42,47 +42,50 @@ import java.text.DecimalFormat;
         private int lastPar0Pos, lastPar1Pos, lastPerpPos;
         private boolean initialized;
 
-        private double xPos = 0.0, yPos = 0.0, heading = 0.0;
+    private double xPos = 0.0, yPos = 0.0, heading = 0.0;
 
-        public ThreeDeadWheelLocalizer(HardwareMap hardwareMap) {
-            // Initialize encoders
-            par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
-            par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
-            perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "BRM")));
+
+    public ThreeDeadWheelLocalizer(HardwareMap hardwareMap) {
+        // TODO: make sure your config has **motors** with these names (or change them)
+        //   the encoders should be plugged into the slot matching the named motor
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "BRM")));
 
             FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
         }
 
-        public double getPoseEstimateX() {
-            Twist2dDual<Time> twist = update(); // Calculate the change in position
+    public double getPoseEstimateX() {
+        Twist2dDual<Time> twist = update(); // Calculate the change in position
 
-            // Extract translation and heading from twist
+        // Extract translation and heading from twist
 
-            PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
-            PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
-            PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+        PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
+        PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
+        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
 
-            int par0Delta = par0PosVel.position - lastPar0Pos;
-            int par1Delta = par1PosVel.position - lastPar1Pos;
-            int perpDelta = perpPosVel.position - lastPerpPos;
+        int par0Delta = par0PosVel.position - lastPar0Pos;
+        int par1Delta = par1PosVel.position - lastPar1Pos;
+        int perpDelta = perpPosVel.position - lastPerpPos;
 
-            double dx = (par0Delta + par1Delta) / 2.0 * inPerTick;
-            double dy = perpDelta * inPerTick;
-            double dHeading = (par0Delta - par1Delta) / (PARAMS.par0YTicks - PARAMS.par1YTicks);
+        double dx = (par0Delta + par1Delta) / 2.0 * inPerTick;
+        double dy = perpDelta * inPerTick;
+        double dHeading = (par0Delta - par1Delta) / (PARAMS.par0YTicks - PARAMS.par1YTicks);
 
-            xPos += dx * Math.cos(heading) - dy * Math.sin(heading);
-            yPos += dx * Math.sin(heading) + dy * Math.cos(heading);
-            heading += dHeading;
+        xPos += dx * Math.cos(heading) - dy * Math.sin(heading);
+        yPos += dx * Math.sin(heading) + dy * Math.cos(heading);
+        heading += dHeading;
 
-            heading = (heading + Math.PI) % (2 * Math.PI) - Math.PI;
+        heading = (heading + Math.PI) % (2 * Math.PI) - Math.PI;
 
-            return 22*xPos;
-        }
+        return xPos;
+    }
 
-        public Twist2dDual<Time> update() {
-            PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
-            PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
-            PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+    public Twist2dDual<Time> update() {
+        PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
+        PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
+        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
 
             FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
 

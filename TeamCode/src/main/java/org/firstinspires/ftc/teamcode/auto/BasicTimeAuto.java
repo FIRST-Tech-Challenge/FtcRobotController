@@ -22,7 +22,6 @@ public class BasicTimeAuto extends LinearOpMode {
     double forward;
     double strafe;
     double rotate;
-    double TIME_TO_WAIT;
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MechDrive(hardwareMap);
@@ -31,7 +30,7 @@ public class BasicTimeAuto extends LinearOpMode {
         screen = new DriverHubHelp();
         deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        TIME_TO_WAIT = 1000;
+
         waitForStart();
 
         while(opModeIsActive())
@@ -39,10 +38,7 @@ public class BasicTimeAuto extends LinearOpMode {
                 strafe = 0;
                 rotate = 0;
                 forward = -0.2;
-
-
-            sleep((long) TIME_TO_WAIT);
-            robot.drive(forward,strafe,rotate);
+                robot.drive(forward,strafe,rotate);
 
         }
     }

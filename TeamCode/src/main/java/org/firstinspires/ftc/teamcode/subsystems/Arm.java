@@ -5,21 +5,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Arm {
-    private CRServo servo;
+    private Servo servo;
     public Arm(HardwareMap hw){
 
-        servo = hw.get(CRServo.class, "arm");
+        servo = hw.get(Servo.class, "arm");
     }
-//    public void setPosition(double armPower){
-//        servo.setPosition(armPower);
-//
-//    }
-//    public double getPosition(){
-//        return servo.getPosition();
-//    }
+    public void setPosition(double armPower){
+        servo.setPosition(armPower);
 
-    public void setPower(double armPower)
-    {
-        servo.setPower(armPower);
     }
+    public double getPosition(){
+        return servo.getPosition();
+    }
+
+
+
+
 }

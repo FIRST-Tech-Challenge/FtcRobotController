@@ -37,11 +37,10 @@ public class TeleOp extends LinearOpMode {
     private Lift lift;
     private double liftPower;
     boolean reverseArm;
-    private double[] armPositions = {.25, -.25, 0};
+    private double[] armPositions = {0.4, 0.3, 0.1, 0.0};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
     private Climb climb;
-    private int armCount;
 
     public void runOpMode() throws InterruptedException{
 
@@ -52,18 +51,19 @@ public class TeleOp extends LinearOpMode {
         screen = new DriverHubHelp();
         deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         arm = new Arm(hardwareMap);
+        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
+        arm = new Arm(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap, "lift", "lift");
         reverseArm = false;
         climb = new Climb(hardwareMap,"climb");
-        armCount++;
 
         waitForStart();
         while(opModeIsActive())
         {
-            double forward = -controller.left_stick_y;
-            double strafe = -controller.left_stick_x;
+            double forward = controller.left_stick_y;
+            double strafe = controller.left_stick_x;
             double rotate = -controller.right_stick_x;
             clawPos = 0.6;
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
@@ -73,26 +73,50 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("Limelight Distance: ", distance[0] + ", " + distance[1]);
             drive.updatePoseEstimate();
             robot.drive(forward, strafe, rotate);
-            telemetry.addData("deadwheels position x:",screen.roundData(deadwheels.getPoseEstimateX()));
-//            telemetry.addData("deadwheels position y:", screen.roundData(deadwheels.getPoseEstimateY()));
-//            telemetry.addData("deadwheels position heading:", screen.roundData(deadwheels.getPoseEstimateHeading()));
-//            telemetry.addData("x", screen.roundData(drive.pose.position.x));
-//            telemetry.addData("y", screen.roundData(drive.pose.position.y));
-//            telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
+            telemetry.addData("x", screen.roundData(drive.pose.position.x));
+            telemetry.addData("y", screen.roundData(drive.pose.position.y));
+            telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
 
 
             //arm
             if(controller.right_bumper.onPress())
             {
-                armCount++;
-            }
+                if(!isReversing)
+                {
+                    armPos = armPositions[armPositionIndex];
+                    arm.setPosition(armPos);
+                    armPositionIndex++;
+                    if(armPositionIndex >= armPositions.length)
+                    {
+                        armPositionIndex--;
+                        isReversing = true;
+                    }
+                }else {
+                    armPos = armPositions[armPositionIndex];
+                    arm.setPosition(armPos);
+                    armPositionIndex--;
+                    if(armPositionIndex < 0)
+                    {
+                        armPositionIndex++;
+                        isReversing = false;
+                    }
+                }
 
-            if(armCount %2 == 1)
+
+            }
+            if(controller.left_bumper.onPress())
             {
-                arm.setPower(controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue());\
-            }
 
-          telemetry.addData("Arm Position", armPos);
+                armPos = armPositions[armPositionIndex];
+                arm.setPosition(armPos);
+                armPositionIndex--;
+                if(armPositionIndex < 0)
+                {
+                    armPositionIndex = armPositions.length-1;
+                }
+
+            }
+            telemetry.addData("Arm Position", armPos);
 
 
             //claw
