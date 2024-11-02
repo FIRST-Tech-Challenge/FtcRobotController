@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="MainMovement", group="Linear OpMode")
 public class MainMovement extends LinearOpMode {
@@ -14,6 +16,10 @@ public class MainMovement extends LinearOpMode {
     private DcMotor rightBack; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
     private DcMotor leftFront; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
     private DcMotor rightFront; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
+
+    private Servo clawServo;
+    private CRServo clawRotate;
+
     final float joystickDeadzone = 0.1f;
 
     boolean usingLStick;
@@ -22,7 +28,10 @@ public class MainMovement extends LinearOpMode {
     public float LjoystickY;
     public float RjoystickX;
     public float RjoystickY;
-    
+
+    boolean open = false;
+
+
     @Override
     public void runOpMode() {
         // initializing the motors (pseudocode) (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
@@ -30,6 +39,9 @@ public class MainMovement extends LinearOpMode {
         rightBack  = hardwareMap.get(DcMotor.class, "br");
         leftFront  = hardwareMap.get(DcMotor.class, "fl");
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
+
+        clawServo = hardwareMap.get(Servo.class, "clawServo");
+        clawRotate = hardwareMap.get(CRServo.class, "clawRotate");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -44,10 +56,16 @@ public class MainMovement extends LinearOpMode {
 
             epicRotationMovement(); // rotation on gary
             legendaryStrafeMovement(); // movement on gary
+            ClawClamp();
         }
 
     }
-    
+
+    //////////////////////// START OF MOVEMENT CODE ////////////////////////
+    //////////////////////// START OF MOVEMENT CODE ////////////////////////
+    //////////////////////// START OF MOVEMENT CODE ////////////////////////
+    //////////////////////// START OF MOVEMENT CODE ////////////////////////
+    //////////////////////// START OF MOVEMENT CODE ////////////////////////
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
         leftBack.setPower(BL*speed);
@@ -142,6 +160,39 @@ public class MainMovement extends LinearOpMode {
             setMotorPowers(0, 0, 0,0, 0);
         }
 
+
+
+
+
     }
 
+    //////////////////////// END OF MOVEMENT CODE ////////////////////////
+    //////////////////////// END OF MOVEMENT CODE ////////////////////////
+    //////////////////////// END OF MOVEMENT CODE ////////////////////////
+    //////////////////////// END OF MOVEMENT CODE ////////////////////////
+    //////////////////////// END OF MOVEMENT CODE ////////////////////////
+
+    private void ClawClamp() {
+
+        if(gamepad2.x){
+            open = !open;
+            if(open) {
+                clawServo.setPosition(1);
+            } else {
+                clawServo.setPosition(0);
+            }
+            sleep(250);
+
+        }
+
+        if(gamepad2.left_trigger > 0){
+            clawRotate.setPower(gamepad2.left_trigger + -gamepad2.right_trigger);
+        }
+
+        if(gamepad2.right_trigger > 0){
+            clawRotate.setPower(gamepad2.right_trigger + -gamepad2.left_trigger);
+        }
+
+
+    }
 }
