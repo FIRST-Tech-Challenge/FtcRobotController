@@ -104,7 +104,7 @@ public class basicTelemBlue extends LinearOpMode {
       //call move arm
       slideLimit();
       setSlide(-gamepad2.right_stick_y);
-      setPivot(-gamepad2.left_stick_y);
+      setPivot(gamepad2.left_stick_y);
 
       //claw intake/outtake
       if (gamepad2.right_trigger != 0) {
@@ -126,6 +126,10 @@ public class basicTelemBlue extends LinearOpMode {
           x = .7;
         wrist.setPosition(x);
       }
+
+      telemetry.addData("Slide limit: ",pubLength);
+      telemetry.addData("Slide length: ",slide.getCurrentPosition());
+      telemetry.update();
     }
   }
 
@@ -205,7 +209,7 @@ public class basicTelemBlue extends LinearOpMode {
         slide.setPower(0);
 
         limitSlide = 4750;
-        limitPivot = 3200;
+        limitPivot = 3250;
 
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
 
@@ -227,12 +231,13 @@ public class basicTelemBlue extends LinearOpMode {
     if (x > 0 && slide.getCurrentPosition() > pubLength) {
       x = 0;
     }
-    // TODO: add forced move for slide based on pivot
     slide.setPower(x);
   }
 
   public void slideLimit() {
     pubLength = Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree)) * (46 * encoderCountsPerInch);
+    if(pubLength <= 2950)
+        pubLength = 2950;
   }
 
   public void setPivot(double x) {
