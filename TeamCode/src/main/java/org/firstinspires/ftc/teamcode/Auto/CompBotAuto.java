@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.Debug;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-@TeleOp
-public class limit_Slide extends LinearOpMode {
+@Autonomous
+public class CompBotAuto extends LinearOpMode {
 
     DcMotor slide, pivot;
 
@@ -25,7 +25,7 @@ public class limit_Slide extends LinearOpMode {
 
     boolean test = false;
 
-    private DigitalChannel limitSwitch;
+    DigitalChannel limitSwitch;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,28 +36,20 @@ public class limit_Slide extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            double x = 0;
-            if(gamepad2.left_trigger == 0)
-                x = .5;
-            double y = 0;
-            if(gamepad2.right_trigger == 0)
-                y = 0.5;
+        setSlide(4250);   //change to edit drop spot
 
-            if (x != 0.5) {
-                intakeL.setPosition(x);
-            } else if (y != 0.5) {
-                intakeL.setPosition(y);
-            }
+        setPivot(75);     //change to edit drop spot
 
-            setSlide(-gamepad2.right_stick_y);
-            setPivot(-gamepad2.left_stick_y);
-            slideLimit();
-            telemetry.addData("Limit switch: ", limitSwitch.getState());
-            telemetry.addData("current pos: ", pivot.getCurrentPosition());
-            telemetry.addData("boolean: ", test);
-            telemetry.update();
-        }
+        sleep(1000);
+
+        intakeL.setPosition(0);
+
+        sleep(500);
+        intakeL.setPosition(0.5);
+
+        setSlide(0);
+
+        setPivot(0);
     }
 
     public void initRobot() {
@@ -100,14 +92,18 @@ public class limit_Slide extends LinearOpMode {
         double i = -0.75;
         while (limitSwitch.getState()) {
             pivot.setPower(i);
-            telemetry.addData("pivot", pivot.getCurrentPosition());
-            telemetry.addLine("initializing slide");
-            telemetry.update();
+            slide.setPower(-.01);
         }
+
         pivot.setPower(.00);
+        slide.setPower(.00);
         sleep(250);
+
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setPower(.00);
     }
 
