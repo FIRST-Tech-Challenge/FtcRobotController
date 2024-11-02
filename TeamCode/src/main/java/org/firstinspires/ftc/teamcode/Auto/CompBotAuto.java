@@ -50,6 +50,10 @@ public class CompBotAuto extends LinearOpMode {
 
         sleep(500);
         intakeL.setPosition(0.5);
+
+        setSlide(0);
+
+        setPivot(0);
     }
 
     public void initRobot() {
@@ -92,14 +96,18 @@ public class CompBotAuto extends LinearOpMode {
         double i = -0.75;
         while (limitSwitch.getState()) {
             pivot.setPower(i);
-            telemetry.addData("pivot", pivot.getCurrentPosition());
-            telemetry.addLine("initializing slide");
-            telemetry.update();
+            slide.setPower(-.01);
         }
+        
         pivot.setPower(.00);
+        slide.setPower(.00);
         sleep(250);
+
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setPower(.00);
     }
 
