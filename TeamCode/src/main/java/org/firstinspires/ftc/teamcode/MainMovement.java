@@ -19,6 +19,7 @@ public class MainMovement extends LinearOpMode {
 
     private Servo clawServo;
     private CRServo clawRotate;
+    private DcMotor linearSlide;
 
     final float joystickDeadzone = 0.1f;
 
@@ -42,6 +43,7 @@ public class MainMovement extends LinearOpMode {
 
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         clawRotate = hardwareMap.get(CRServo.class, "clawRotate");
+        linearSlide = hardwareMap.get(DcMotor.class, "linearSlide");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -56,7 +58,7 @@ public class MainMovement extends LinearOpMode {
 
             epicRotationMovement(); // rotation on gary
             legendaryStrafeMovement(); // movement on gary
-            ClawClamp();
+            LimbMovement();
         }
 
     }
@@ -172,7 +174,7 @@ public class MainMovement extends LinearOpMode {
     //////////////////////// END OF MOVEMENT CODE ////////////////////////
     //////////////////////// END OF MOVEMENT CODE ////////////////////////
 
-    private void ClawClamp() {
+    private void LimbMovement() {
 
         if(gamepad2.x){
             open = !open;
@@ -186,13 +188,17 @@ public class MainMovement extends LinearOpMode {
         }
 
         if(gamepad2.left_trigger > 0){
-            clawRotate.setPower(gamepad2.left_trigger + -gamepad2.right_trigger);
+            clawRotate.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
         }
 
         if(gamepad2.right_trigger > 0){
-            clawRotate.setPower(gamepad2.right_trigger + -gamepad2.left_trigger);
+            clawRotate.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
         }
 
+        if(Math.abs(gamepad2.left_stick_y) > joystickDeadzone){
+            linearSlide.setPower(gamepad2.left_stick_y);
+        }
 
     }
+
 }
