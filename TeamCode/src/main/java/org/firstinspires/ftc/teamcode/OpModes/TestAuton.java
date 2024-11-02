@@ -43,7 +43,20 @@ public class TestAuton extends LinearOpMode {
         telemetry = dashboard.getTelemetry();
         tracking = new TelemetryTracking();
         ElapsedTime looptime = new ElapsedTime();
-
+        SimpleMatrix desiredPose = new SimpleMatrix(
+                new double [][]{
+                        new double[]{48},
+                        new double[]{0},
+                        new double[]{0}
+                }
+        );
+        SimpleMatrix desiredPoseTwo = new SimpleMatrix(
+                new double [][]{
+                        new double[]{0},
+                        new double[]{-12},
+                        new double[]{0}
+                }
+        );
         telemetry.addData("x", 0);
         telemetry.addData("y", 0);
         telemetry.addData("theta", 0);
@@ -54,28 +67,14 @@ public class TestAuton extends LinearOpMode {
         drivetrain.resetOp();
         waitForStart();
         looptime.reset();
+        Actions.runBlocking(new SequentialAction(
+                drivetrain.goToPose(desiredPose, 0),
+
+                drivetrain.goToPose(desiredPoseTwo, 1)
+
+        ));
         while (opModeIsActive()) {
-            SimpleMatrix desiredPose = new SimpleMatrix(
-                    new double [][]{
-                            new double[]{48},
-                            new double[]{0},
-                            new double[]{0}
-                    }
-            );
-            SimpleMatrix desiredPoseTwo = new SimpleMatrix(
-                    new double [][]{
-                            new double[]{0},
-                            new double[]{-12},
-                            new double[]{0}
-                    }
-            );
             drivetrain.localize();
-            Actions.runBlocking(new SequentialAction(
-                                drivetrain.goToPose(desiredPose, 0),
-
-                                drivetrain.goToPose(desiredPoseTwo, 1)
-
-            ));
             telemetry.addData("x", drivetrain.state.get(0,0));
             telemetry.addData("y", drivetrain.state.get(1,0));
             telemetry.addData("theta", drivetrain.state.get(2,0));

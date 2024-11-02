@@ -201,7 +201,6 @@ public class Drivetrain {
                 // Rename to desiredPose! It contains a heading too so furthestPoint is misleading!
                 SimpleMatrix desiredPose = geometricController.calculate(state, path);
                 SimpleMatrix wheelSpeeds = poseControl.calculate(pose, desiredPose);
-
                 // not sure why you're using distanceThreshold here.
                 // it would be something like path.getMotionProfile.getVelocity(t), where t is an elapsed timer.
                 // ****This timer should started when you start following this path. Maybe you can put it above?
