@@ -37,7 +37,7 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
 //        robot.intakeToggle(1);
 
         // Main movement of drivetrain during Auto
-        robot.goStraight(850, 500);
+        robot.goStraight(100, 500);
 
 
         //Old auto code (keep for now)

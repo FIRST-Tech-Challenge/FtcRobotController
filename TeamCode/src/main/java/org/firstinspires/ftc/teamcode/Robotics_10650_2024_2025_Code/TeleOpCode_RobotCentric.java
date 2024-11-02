@@ -14,6 +14,11 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
     int liftPitchPosition = 0;
     int liftExtenderPosition = 0;
+    double maxLifEtxtension =0;
+
+    final double liftDist = 8.25;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -257,24 +262,47 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 }
             //1300
             }//2700
+
+
+
+
+            //lift pitch horizontal bounds
+
+            //if pitch degree is less than 31.25
+
             //find positon for extension
-            //telemetry.addData("lift pitch pos", liftPitchPosition);
+            telemetry.addData("lift extender pos", robot.liftExtender.getCurrentPosition());
+            telemetry.addData("lift pitch pos", robot.liftPitch.getCurrentPosition());
+
 
 
             //Bounds on the liftExtender motor
             //FixMe: Correct the liftExtender motor so that the lift stays in the same place when
             // there is no controller input
+            double pitchAngle = robot.liftPitch.getCurrentPosition()*(90)/2595;
+            if (pitchAngle>=31.25){
+                maxLifEtxtension = 33.75/(Math.sin(pitchAngle)); //idk why this goes negative or why it doesnt work
+            } else{
+                maxLifEtxtension = 2780;
+
+            }
+            telemetry.addData("max lift etension", maxLifEtxtension);
+            telemetry.addData("pitch angle", (robot.liftPitch.getCurrentPosition()*90)/2595);
+
+
+
+
             if ((Math.abs(gamepad2.right_stick_y)>0.2)
-                    &&(liftExtenderPosition<=2780)
+                    &&(liftExtenderPosition<=maxLifEtxtension)
                     &&(liftExtenderPosition>=0)
                     ||(robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)
-                    ||(robot.liftExtender.getCurrentPosition()>2780&&gamepad2.right_stick_y>0)) {
+                    ||(robot.liftExtender.getCurrentPosition()>maxLifEtxtension&&gamepad2.right_stick_y>0)) {
 
                 liftExtenderPosition = liftExtenderPosition - (int)(30*gamepad2.right_stick_y);
                 if(liftExtenderPosition < 0)
                     liftExtenderPosition = 0;
-                if(liftExtenderPosition > 2780)
-                    liftExtenderPosition = 2780;
+                if(liftExtenderPosition > maxLifEtxtension)
+                    liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
             }
                 //Determines if the liftExtender should go up or down based on the controller inputs
             if (liftExtenderPosition<=5&&robot.liftExtender.getCurrentPosition()<=5) {
