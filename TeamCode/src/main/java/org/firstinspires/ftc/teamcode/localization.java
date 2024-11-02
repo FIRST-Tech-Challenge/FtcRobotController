@@ -271,7 +271,7 @@ public class localization extends LinearOpMode {
             // Step 4: Simpson's Rule Integration for smoother movement approximation
             double deltaXSimpson = WEIGHT * ((prevVertical + 4.0 * deltaX + prevVertical) / 3.0);
             double deltaYSimpson = WEIGHT * ((prevHorizontal + 4.0 * deltaY + prevHorizontal) / 3.0);
-            
+
 
             robotHeading = currentHeading;
 
@@ -443,7 +443,3 @@ public class localization extends LinearOpMode {
     }
 }
 */
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
