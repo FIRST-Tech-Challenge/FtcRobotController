@@ -5,6 +5,8 @@ package org.firstinspires.ftc.teamcode.Alan;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import android.annotation.SuppressLint;
+
+import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,68 +18,69 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 //encode not working
 @TeleOp
-public class OdometryFuse extends LinearOpMode {
-    SparkFunOTOS myOtos;
+public class OdometryFuse {
+    OpModeUtilities opModeUtilities;
+    private final SparkFunOTOS myOtos;
     @Override
-    public void runOpMode() throws InterruptedException {
-        DcMotor leftFront = hardwareMap.dcMotor.get("fLeft");
-        DcMotor rightFront = hardwareMap.dcMotor.get("fRight");
-        DcMotor leftBack = hardwareMap.dcMotor.get("bLeft");
-        DcMotor rightBack = hardwareMap.dcMotor.get("bRight");
-
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        configureOtos();
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //Inches per tick for wheel odometry
-        double INCHES_PER_TICK = 40 / -13510.0 * (40.0 / 40.3612);
-
-        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        waitForStart();
-
-        while (opModeIsActive()) {
-            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            double forward = -gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
-            double strafe = gamepad1.left_stick_x;
-            leftFront.setPower(forward + turn + strafe);
-            rightFront.setPower(forward - turn - strafe);
-            leftBack.setPower(forward + turn - strafe);
-            rightBack.setPower(forward - turn + strafe);
-
-            // Reset the tracking when needed
-            if (gamepad1.y) {
-                myOtos.resetTracking();
-            }
-
-            // Re-calibrate the IMU (for fixing issues ig)
-            if (gamepad1.x) {
-                myOtos.calibrateImu();
-            }
-            //Info things
-            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
-            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
-            telemetry.addLine();
-
-            //sprkfun update pos
-            telemetry.addData("X coordinate", pos.x);
-            telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("Heading angle", pos.h);
-
-            telemetry.addLine();
-
-            telemetry.addData("Wheel Encoder pos x", leftBack.getCurrentPosition() * INCHES_PER_TICK);
-            telemetry.addData("Wheel Encoder pos y", leftFront.getCurrentPosition() * INCHES_PER_TICK);
-            //telemetry.addData("average x", "" + ((leftFront.getCurrentPosition() + pos.x) / 2));
-            //telemetry.addData("average y", "" + ((leftBack.getCurrentPosition() + pos.y) / 2));
-            telemetry.update();
+//    public void runOpMode() throws InterruptedException {
+//        DcMotor leftFront = hardwareMap.dcMotor.get("fLeft");
+//        DcMotor rightFront = hardwareMap.dcMotor.get("fRight");
+//        DcMotor leftBack = hardwareMap.dcMotor.get("bLeft");
+//        DcMotor rightBack = hardwareMap.dcMotor.get("bRight");
+//
+//        myOtos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
+//        configureOtos();
+//        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        //Inches per tick for wheel odometry
+//        double INCHES_PER_TICK = 40 / -13510.0 * (40.0 / 40.3612);
+//
+//        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+//        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+//        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//
+//        waitForStart();
+//
+//        while (opModeIsActive()) {
+//            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+//            double forward = -gamepad1.left_stick_y;
+//            double turn = gamepad1.right_stick_x;
+//            double strafe = gamepad1.left_stick_x;
+//            leftFront.setPower(forward + turn + strafe);
+//            rightFront.setPower(forward - turn - strafe);
+//            leftBack.setPower(forward + turn - strafe);
+//            rightBack.setPower(forward - turn + strafe);
+//
+//            // Reset the tracking when needed
+//            if (gamepad1.y) {
+//                myOtos.resetTracking();
+//            }
+//
+//            // Re-calibrate the IMU (for fixing issues ig)
+//            if (gamepad1.x) {
+//                myOtos.calibrateImu();
+//            }
+//            //Info things
+//            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
+//            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
+//            telemetry.addLine();
+//
+//            //sprkfun update pos
+//            telemetry.addData("X coordinate", pos.x);
+//            telemetry.addData("Y coordinate", pos.y);
+//            telemetry.addData("Heading angle", pos.h);
+//
+//            telemetry.addLine();
+//
+//            telemetry.addData("Wheel Encoder pos x", leftBack.getCurrentPosition() * INCHES_PER_TICK);
+//            telemetry.addData("Wheel Encoder pos y", leftFront.getCurrentPosition() * INCHES_PER_TICK);
+//            //telemetry.addData("average x", "" + ((leftFront.getCurrentPosition() + pos.x) / 2));
+//            //telemetry.addData("average y", "" + ((leftBack.getCurrentPosition() + pos.y) / 2));
+//            telemetry.update();
         }
     }
     /*
