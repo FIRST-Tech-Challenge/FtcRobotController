@@ -40,4 +40,5 @@ public class Path {
     public double[][] getWaypoints(){
         return waypoints;
     }
+    public double[] getFinalPoint() {return finalPoint;}
 }

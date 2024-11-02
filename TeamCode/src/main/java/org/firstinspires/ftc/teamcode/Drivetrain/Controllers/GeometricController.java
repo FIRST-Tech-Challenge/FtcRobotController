@@ -14,8 +14,11 @@ public class GeometricController {
     public static double lookAheadXY = 10;
     public static double lookAheadTheta = 20;
     public boolean useStaticHeading = false;
+    int lastIndexXY = 0;
+    int lastIndexTheta = 0;
     int lastLookaheadXY = 0;
     int lastLookaheadTheta = 0;
+    public PoseController poseControl = new PoseController();
     public GeometricController(){
     }
 
@@ -59,24 +62,34 @@ public class GeometricController {
         // rename to xyPoints to be consistent with thetaPoints!
         LinkedHashSet<double[]> furthestIntersectionPointXY = new LinkedHashSet<>();
         LinkedHashSet<double[]> furthestIntersectionPointTheta = new LinkedHashSet<>();
-        for (int i=lastLookaheadXY; i<wayPoints.length-1; i++){
+        for (int i=lastIndexXY; i<wayPoints.length-1; i++){
             double[] intersection = calcCircleLineIntersection(x,y,i,lookAheadXY, wayPoints);
             if (!Arrays.equals(intersection, new double[]{-99999, -99999})) {
                 furthestIntersectionPointXY.add(intersection);
+                lastLookaheadXY = i;
             }
         }
+        lastIndexXY = lastLookaheadXY;
         // You may want to have a 'lastLookaheadXY' AND a 'lastLookaheadTheta' as they may not be the same
         // Make sure to reset them both in the reset function
-        for (int i=lastLookaheadTheta; i<wayPoints.length-1; i++){
+        for (int i=lastIndexTheta; i<wayPoints.length-1; i++){
             double[] intersection = calcCircleLineIntersection(x,y,i,lookAheadTheta, wayPoints);
             if (!Arrays.equals(intersection, new double[]{-99999, -99999})) {
                 furthestIntersectionPointTheta.add(intersection);
+                lastIndexXY = i;
             }
         }
-
-        // CONSIDER WHAT HAPPENS IF YOU ARE ON THE LAST SEGMENT OF THE PATH!! YOU MAY HAVE NO INTERSECTION
-        // IF THE LOOKAHEAD CIRCLE IS LARGER THAN THE LINE SEGMENT. Check this for both the xy points and 
-        // turn-to points. Please handle this edgecase!
+        lastIndexTheta = lastLookaheadTheta;
+        if (furthestIntersectionPointXY.isEmpty() || furthestIntersectionPointTheta.isEmpty()){
+            SimpleMatrix desiredPose = new SimpleMatrix(
+                    new double[]{
+                            path.getFinalPoint()[0],
+                            path.getFinalPoint()[0],
+                            path.finalHeading
+                    }
+            );
+            return desiredPose;
+        }
 
 
         ArrayList<double[]> thetaArray = new ArrayList<>(furthestIntersectionPointTheta);
@@ -118,5 +131,7 @@ public class GeometricController {
     public void resetLookAhead(){
         lastLookaheadXY = 0;
         lastLookaheadTheta = 0;
+        lastIndexTheta = 0;
+        lastIndexXY = 0;
     }
 }
