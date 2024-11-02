@@ -9,6 +9,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -35,6 +36,16 @@ public class basicTelemBlue extends LinearOpMode {
   double BLServoOffSet = .00;
   double BRServoOffSet = .00;
 
+  double limitSlide;
+  double limitPivot;
+
+  DigitalChannel limitSwitch;
+
+  double pubLength = 0;
+
+  double encoderCountsPerInch = 111;
+
+  double encoderCountsPerDegree = 40; //needs adjusting
 
   static double TRACKWIDTH = 14;      //in inches
   static double WHEELBASE = 15;       //in inches
@@ -85,8 +96,9 @@ public class basicTelemBlue extends LinearOpMode {
       double armAngle = -gamepad2.left_stick_y;
 
       //call move arm
-      extendArm(armLength);
-      liftArm(armAngle);
+      slideLimit();
+      setSlide(armLength);
+      setPivot(armAngle);
 
       //claw intake/outtake
       if (gamepad2.right_trigger != 0) {
@@ -110,115 +122,128 @@ public class basicTelemBlue extends LinearOpMode {
     }
   }
 
+    /**
+     * Initializes the robot.<br>
+     * Starts all the devices and maps where they go
+     * As well as whether motors run with encoders or not
+     */
+    public void initRobot() {
+
+        // Maps the motor objects to the physical ports
+        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
+        BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
+        FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
+        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
+
+        // Sets the encoder mode
+        FLMotor.setMode(RUN_USING_ENCODER);
+        BLMotor.setMode(RUN_USING_ENCODER);
+        FRMotor.setMode(RUN_USING_ENCODER);
+        BRMotor.setMode(RUN_USING_ENCODER);
+
+        // Sets what happens when no power is applied to the motors.
+        // In this mode, the computer will short the 2 leads of the motor, and because of math, the motor will be a lot harder to turn
+        FLMotor.setZeroPowerBehavior(BRAKE);
+        BLMotor.setZeroPowerBehavior(BRAKE);
+        FRMotor.setZeroPowerBehavior(BRAKE);
+        BRMotor.setZeroPowerBehavior(BRAKE);
+
+        FLMotor.setDirection(FORWARD);
+        BLMotor.setDirection(FORWARD);
+        FRMotor.setDirection(FORWARD);
+        BRMotor.setDirection(REVERSE);
+
+
+        // Maps the servo objects to the physical ports
+        FLServo = hardwareMap.get(Servo.class, "FLServo");
+        BLServo = hardwareMap.get(Servo.class, "BLServo");
+        FRServo = hardwareMap.get(Servo.class, "FRServo");
+        BRServo = hardwareMap.get(Servo.class, "BRServo");
+
+        // Sets the ends of the servos. Hover cursor over function for more info
+        // Will need to be tuned later
+        FLServo.scaleRange(0, 1.0);
+        BLServo.scaleRange(0, 1.0);
+        FRServo.scaleRange(0, 1.0);
+        BRServo.scaleRange(0, 1.0);
+
+        FLServo.setPosition(0.50);
+        BLServo.setPosition(0.50);
+        FRServo.setPosition(0.50);
+        BRServo.setPosition(0.50);
+
+
+        // Init GoBilda Pinpoint module
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo.resetPosAndIMU();
+        odo.setOffsets(177.8, 50.8);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
+
+        // Init slaw, claw, and pivot
+        pivot = hardwareMap.dcMotor.get("pivot");
+        slide = hardwareMap.dcMotor.get("slide");
+
+        pivot.setMode(RUN_USING_ENCODER);
+        slide.setMode(RUN_USING_ENCODER);
+
+        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        pivot.setDirection(REVERSE);
+        slide.setDirection(FORWARD);
+
+        pivot.setPower(0);
+        slide.setPower(0);
+
+        limitSlide = 4750;
+        limitPivot = 3200;
+
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
+
+        //servos for intake
+        intakeL = hardwareMap.get(Servo.class, "intake");
+        wrist = hardwareMap.get(Servo.class, "wrist");
+
+        intakeL.setDirection(Servo.Direction.REVERSE);
+        wrist.setDirection(Servo.Direction.FORWARD);
+
+        wrist.setPosition(0.7);
+    }
 
   // to lift arm, input from game pad 2 straight in
-  public void liftArm(double x) {
-    if (pivot.getCurrentPosition() >= 2500 && x > 0) {
+  public void setSlide(double x) {
+    if (slide.getCurrentPosition() >= limitSlide && x > 0) {
       x = 0;
-    } else if (pivot.getCurrentPosition() <= -2500 && x < 0) {
-      x = 0;
-    }
-    pivot.setPower(x);
-    telemetry.addData("lift power: ", pivot.getPower());
-  }
-
-  // to extend arm, input from game pad 2 straight in
-  public void extendArm(double x) {
-    if (slide.getCurrentPosition() >= 4750 && x > 0) {
-      x = 0;
-    } else if (slide.getCurrentPosition() <= -4750 && x < 0) {
+    } else if (slide.getCurrentPosition() <= -limitSlide && x < 0) {
       x = 0;
     }
+    if (x > 0 && slide.getCurrentPosition() > pubLength) {
+      x = 0;
+    }
+    // TODO: add forced move for slide based on pivot
     slide.setPower(x);
-    telemetry.addData("slide power: ", slide.getPower());
   }
 
-
-  /**
-   * Initializes the robot.<br>
-   * Starts all the devices and maps where they go
-   * As well as whether motors run with encoders or not
-   */
-  public void initRobot() {
-
-    // Maps the motor objects to the physical ports
-    FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
-    BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-    FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
-    BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
-
-    // Sets the encoder mode
-    FLMotor.setMode(RUN_USING_ENCODER);
-    BLMotor.setMode(RUN_USING_ENCODER);
-    FRMotor.setMode(RUN_USING_ENCODER);
-    BRMotor.setMode(RUN_USING_ENCODER);
-
-    // Sets what happens when no power is applied to the motors.
-    // In this mode, the computer will short the 2 leads of the motor, and because of math, the motor will be a lot harder to turn
-    FLMotor.setZeroPowerBehavior(BRAKE);
-    BLMotor.setZeroPowerBehavior(BRAKE);
-    FRMotor.setZeroPowerBehavior(BRAKE);
-    BRMotor.setZeroPowerBehavior(BRAKE);
-
-    FLMotor.setDirection(FORWARD);
-    BLMotor.setDirection(FORWARD);
-    FRMotor.setDirection(FORWARD);
-    BRMotor.setDirection(REVERSE);
-
-
-    // Maps the servo objects to the physical ports
-    FLServo = hardwareMap.get(Servo.class, "FLServo");
-    BLServo = hardwareMap.get(Servo.class, "BLServo");
-    FRServo = hardwareMap.get(Servo.class, "FRServo");
-    BRServo = hardwareMap.get(Servo.class, "BRServo");
-
-    // Sets the ends of the servos. Hover cursor over function for more info
-    // Will need to be tuned later
-    FLServo.scaleRange(0, 1.0);
-    BLServo.scaleRange(0, 1.0);
-    FRServo.scaleRange(0, 1.0);
-    BRServo.scaleRange(0, 1.0);
-
-    FLServo.setPosition(0.50);
-    BLServo.setPosition(0.50);
-    FRServo.setPosition(0.50);
-    BRServo.setPosition(0.50);
-
-
-    // Init GoBilda Pinpoint module
-    odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-    odo.resetPosAndIMU();
-    odo.setOffsets(177.8, 50.8);
-    odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-
-
-    // Init slaw, claw, and pivot
-    pivot = hardwareMap.dcMotor.get("pivot");
-    slide = hardwareMap.dcMotor.get("slide");
-
-    pivot.setMode(RUN_USING_ENCODER);
-    slide.setMode(RUN_USING_ENCODER);
-
-    pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    pivot.setDirection(REVERSE);
-    slide.setDirection(FORWARD);
-
-    pivot.setPower(0);
-    slide.setPower(0);
-
-
-    //servos for intake
-    intakeL = hardwareMap.get(Servo.class, "intake");
-    wrist = hardwareMap.get(Servo.class, "wrist");
-
-    intakeL.setDirection(Servo.Direction.REVERSE);
-    wrist.setDirection(Servo.Direction.FORWARD);
-
-    wrist.setPosition(0.7);
+  public void slideLimit() {
+    pubLength = Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree)) * (46 * encoderCountsPerInch);
   }
 
+  public void setPivot(double x) {
+    if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
+      x = 0;
+    } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
+      x = 0;
+    }
+
+    if (x > 1)
+      x = .5;
+    if (x < -1)
+      x = -.5;
+    if(slide.getCurrentPosition() > pubLength && x > 1)
+      slide.setPower(-x*2);
+    pivot.setPower(x);
+  }
 
   /**
    * Converts standard cartesian coordinates to polar coordinates

@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.Slide;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-@Autonomous
-public class CompBotAuto extends LinearOpMode {
+public class slide {
+    /*
 
     DcMotor slide, pivot;
 
@@ -24,7 +24,7 @@ public class CompBotAuto extends LinearOpMode {
 
     boolean test = false;
 
-    DigitalChannel limitSwitch;
+    private DigitalChannel limitSwitch;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,20 +35,28 @@ public class CompBotAuto extends LinearOpMode {
 
         waitForStart();
 
-        setSlide(4250);   //change to edit drop spot
+        while (opModeIsActive()) {
+            double x = 0;
+            if(gamepad2.left_trigger == 0)
+                x = .5;
+            double y = 0;
+            if(gamepad2.right_trigger == 0)
+                y = 0.5;
 
-        setPivot(75);     //change to edit drop spot
+            if (x != 0.5) {
+                intakeL.setPosition(x);
+            } else if (y != 0.5) {
+                intakeL.setPosition(y);
+            }
 
-        sleep(1000);
+            setSlide(-gamepad2.right_stick_y);
+            setPivot(-gamepad2.left_stick_y);
+            slideLimit();
+        }
+    }
 
-        intakeL.setPosition(0);
+    public void slide(opMode this) {
 
-        sleep(500);
-        intakeL.setPosition(0.5);
-
-        setSlide(0);
-
-        setPivot(0);
     }
 
     public void initRobot() {
@@ -91,18 +99,14 @@ public class CompBotAuto extends LinearOpMode {
         double i = -0.75;
         while (limitSwitch.getState()) {
             pivot.setPower(i);
-            slide.setPower(-.01);
+            telemetry.addData("pivot", pivot.getCurrentPosition());
+            telemetry.addLine("initializing slide");
+            telemetry.update();
         }
-
         pivot.setPower(.00);
-        slide.setPower(.00);
         sleep(250);
-
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setPower(.00);
     }
 
@@ -136,8 +140,10 @@ public class CompBotAuto extends LinearOpMode {
             x = .5;
         if (x < -1)
             x = -.5;
-        if(slide.getCurrentPosition() > pubLength)
+        if(slide.getCurrentPosition() > pubLength && x > 1)
             slide.setPower(-x*2);
         pivot.setPower(x);
     }
+
+     */
 }

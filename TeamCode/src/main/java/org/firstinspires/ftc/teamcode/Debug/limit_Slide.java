@@ -23,8 +23,6 @@ public class limit_Slide extends LinearOpMode {
 
     double encoderCountsPerDegree = 40;
 
-    boolean test = false;
-
     private DigitalChannel limitSwitch;
 
     @Override
@@ -55,7 +53,6 @@ public class limit_Slide extends LinearOpMode {
             slideLimit();
             telemetry.addData("Limit switch: ", limitSwitch.getState());
             telemetry.addData("current pos: ", pivot.getCurrentPosition());
-            telemetry.addData("boolean: ", test);
             telemetry.update();
         }
     }
@@ -130,7 +127,6 @@ public class limit_Slide extends LinearOpMode {
     }
 
     public void setPivot(double x) {
-        test = false;
         if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
             x = 0;
         } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
@@ -141,7 +137,7 @@ public class limit_Slide extends LinearOpMode {
             x = .5;
         if (x < -1)
             x = -.5;
-        if(slide.getCurrentPosition() > pubLength)
+        if(slide.getCurrentPosition() > pubLength && x > 1)
             slide.setPower(-x*2);
         pivot.setPower(x);
     }
