@@ -27,10 +27,6 @@ public class CompBotAuto extends LinearOpMode {
 
     DigitalChannel limitSwitch;
 
-    int slidePos = 0;  //in encoder counts not inches
-
-    int pivotAng = 0;  //in encoder counts not degrees or radians
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -40,9 +36,9 @@ public class CompBotAuto extends LinearOpMode {
 
         waitForStart();
 
-        setSlide(slidePos);
+        setSlide(4250);   //change to edit drop spot
 
-        setPivot(pivotAng);
+        setPivot(75);     //change to edit drop spot
 
         sleep(1000);
 
@@ -98,7 +94,7 @@ public class CompBotAuto extends LinearOpMode {
             pivot.setPower(i);
             slide.setPower(-.01);
         }
-        
+
         pivot.setPower(.00);
         slide.setPower(.00);
         sleep(250);
