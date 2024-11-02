@@ -49,9 +49,8 @@ public class limit_Slide extends LinearOpMode {
             setPivot(-gamepad2.left_stick_y);
             slideLimit();
             telemetry.addData("Limit switch: ", limitSwitch.getState());
-            telemetry.addData("Encoder count: ", pivot.getCurrentPosition());
-            telemetry.addData("limit: ", pubLength);
-            telemetry.addData("current length: ", slide.getCurrentPosition());
+            telemetry.addData("limit: ", pubAngle);
+            telemetry.addData("current pos: ", pivot.getCurrentPosition());
             telemetry.addData("boolean: ", test);
             telemetry.update();
         }
@@ -108,6 +107,7 @@ public class limit_Slide extends LinearOpMode {
         pivot.setPower(.00);
     }
 
+
     public void setSlide(double x) {
         if (slide.getCurrentPosition() >= limitSlide && x > 0) {
             x = 0;
@@ -122,9 +122,11 @@ public class limit_Slide extends LinearOpMode {
     }
 
     public void slideLimit() {
-        double slideLength = slide.getCurrentPosition() / encoderCountsPerInch;
-        pubAngle = Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree));
-        pubLength = pubAngle * (46 * encoderCountsPerInch);
+        if (slide.getCurrentPosition() > 46 * encoderCountsPerInch) {
+            pubAngle = Math.toDegrees(Math.acos(slide.getCurrentPosition() / 46 * encoderCountsPerInch)) * encoderCountsPerDegree;
+        } else
+            pubAngle = limitPivot;
+        pubLength = Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree)) * (46 * encoderCountsPerInch);
     }
 
     public void setPivot(double x) {
@@ -140,7 +142,7 @@ public class limit_Slide extends LinearOpMode {
         if (x < -1)
             x = -.5;
 
-        if(pivot.getCurrentPosition() / encoderCountsPerDegree > pubAngle) {
+        if (pivot.getCurrentPosition() / encoderCountsPerDegree > pubAngle) {
             x = 0;
             test = true;
         }
