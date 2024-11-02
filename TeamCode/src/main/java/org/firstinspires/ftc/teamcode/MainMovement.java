@@ -87,7 +87,7 @@ public class MainMovement extends LinearOpMode {
         float netS = Math.min(maxSpeed, (float)addSpeed); //net speed
 
         // calculates the angle of the joystick in radians --> degrees
-        double LangleInRadians = Math.atan2(LjoystickY, LjoystickX);
+        double LangleInRadians = Math.atan2(-LjoystickY, LjoystickX);
         double LangleInDegrees = LangleInRadians * (180 / Math.PI);
 
         // strafe based on joystick angle
