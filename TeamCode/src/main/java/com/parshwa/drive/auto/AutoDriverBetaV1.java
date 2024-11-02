@@ -106,7 +106,7 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
             if(currentDiff <= 50.0){
                 speed = 0.15;
             }
-            speed = 0.15;
+            speed = 0.3333333333;
             if(newXSpeed == 0.0 && newYSpeed == 0.0){
                 completed = true;
             }

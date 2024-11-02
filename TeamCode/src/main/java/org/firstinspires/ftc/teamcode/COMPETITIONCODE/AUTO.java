@@ -52,7 +52,7 @@ public class AUTO extends LinearOpMode {
         telemetry.update();
         waitForStart();
         boolean completed = false;
-        /*while(!isStopRequested() && !completed){
+        while(!isStopRequested() && !completed){
             Pose2D pos = autoDriver.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
@@ -78,8 +78,8 @@ public class AUTO extends LinearOpMode {
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
             completed = autoDriver.move(rotateTest);
-        }*/
-        while(!isStopRequested() && !completed){
+        }
+        /*while(!isStopRequested() && !completed){
             Pose2D pos = autoDriver.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
@@ -105,7 +105,7 @@ public class AUTO extends LinearOpMode {
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
             completed = autoDriver.move(netZone);
-        }
+        }*/
         //ReadWriteFile.writeFile(ThreadManger, "STOP");
 
     }

@@ -64,7 +64,7 @@ public class Teleop extends LinearOpMode {
 
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
             //driver2
-            SM.move(-gamepad2.left_stick_y,gamepad2.right_stick_x);
+            SM.move(gamepad2.left_stick_y,gamepad2.right_stick_x, true);
             telemetry.addLine(String.valueOf(sr.getCurrentPosition()));
             telemetry.addLine(String.valueOf(gamepad2.right_stick_x));
             if(gamepad2.b) {
@@ -74,6 +74,9 @@ public class Teleop extends LinearOpMode {
                 clawRotateServo.setServoPosition(0.0);
             }
             if(gamepad2.y) {
+                clawRotateServo.setServoPosition(0.6);
+            }
+            if(gamepad2.x) {
                 clawRotateServo.setServoPosition(0.7);
             }
             if(gamepad2.right_bumper){
@@ -83,11 +86,15 @@ public class Teleop extends LinearOpMode {
                 clawServo.setServoPosition(0.0);
             }
             if(gamepad2.dpad_left){
-                clawRotateServo2.setServoPosition(0.75);
+                clawRotateServo2.setServoPosition(0.8);
             }else if(gamepad2.dpad_right){
-                clawRotateServo2.setServoPosition(0.25);
+                clawRotateServo2.setServoPosition(0.3);
+            }else if(gamepad2.dpad_up){
+                clawRotateServo2.setServoPosition(0.1);
+            }else if(gamepad2.dpad_down){
+                clawRotateServo2.setServoPosition(0.9);
             }else{
-                clawRotateServo2.setServoPosition(0.5);
+                clawRotateServo2.setServoPosition(0.55);
             }
         }
         File ThreadManger = AppUtil.getInstance().getSettingsFile("ThreadManger.txt");

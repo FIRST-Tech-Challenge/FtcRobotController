@@ -17,8 +17,8 @@ public class SliderManger {
         pos = rotator.getCurrentPosition();
         pos2 = controller.getCurrentPosition();
     }
-    public void move(double controllerPower, double rotatorPower){
-        if(Math.abs(rotatorPower/1.75) > 0.1){
+    public void move(double controllerPower, double rotatorPower,boolean run){
+        if(run){
             controller.setPower(controllerPower/1.5);
             rotator.setPower(rotatorPower/1.75);
            pos = rotator.getCurrentPosition();
