@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Climb;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
@@ -36,9 +37,10 @@ public class TeleOp extends LinearOpMode {
     private Lift lift;
     private double liftPower;
     boolean reverseArm;
-    private double[] armPositions = {0.5, 0.3, 0.1, 0.0};
+    private double[] armPositions = {0.4, 0.3, 0.1, 0.0};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
+    private Climb climb;
 
     public void runOpMode() throws InterruptedException{
 
@@ -47,12 +49,13 @@ public class TeleOp extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap, 0.0029);
+        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         arm = new Arm(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap, "lift", "lift");
         reverseArm = false;
+        climb = new Climb(hardwareMap,"climb");
 
         waitForStart();
         while(opModeIsActive())
@@ -68,7 +71,9 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("Limelight Distance: ", distance[0] + ", " + distance[1]);
             drive.updatePoseEstimate();
             robot.drive(forward, strafe, rotate);
-            telemetry.addData("deadwheel position:",screen.roundData(deadwheels.getPoseEstimateX()));
+            telemetry.addData("deadwheels position x:",screen.roundData(deadwheels.getPoseEstimateX()));
+//            telemetry.addData("deadwheels position y:", screen.roundData(deadwheels.getPoseEstimateY()));
+//            telemetry.addData("deadwheels position heading:", screen.roundData(deadwheels.getPoseEstimateHeading()));
 //            telemetry.addData("x", screen.roundData(drive.pose.position.x));
 //            telemetry.addData("y", screen.roundData(drive.pose.position.y));
 //            telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
@@ -130,7 +135,16 @@ public class TeleOp extends LinearOpMode {
             lift.moveLift(liftPower);
             telemetry.addData("Lift Power", liftPower);
 
+            //climb
 
+ //           climb.moveClimb(controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue());
+//            if(controller.dpad_up.onPress())
+//            {
+//                climb.moveClimb(0.7);
+//            }else if(controller.dpad_down.onPress())
+//            {
+//                climb.moveClimb(0);
+//            }
             telemetry.update();
             controller.update();
         }
