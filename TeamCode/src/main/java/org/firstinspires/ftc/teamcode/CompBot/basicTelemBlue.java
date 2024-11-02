@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode.CompBot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -78,11 +79,11 @@ public class basicTelemBlue extends LinearOpMode {
     while (opModeIsActive()) {
 
       //game pad 1
-      double forBack = -gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
+      double forBack = gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
       double rotate = gamepad1.right_stick_x;
 
-      if (forBack != 0) forwardBackward(forBack);
-      else if (rotate != 0) rotate(rotate);
+      if (forBack != 0) { forwardBackward(forBack); }
+      else if (rotate != 0) { rotate(rotate); }
       else {
         FLMotor.setPower(0);
         BLMotor.setPower(0);
@@ -90,15 +91,10 @@ public class basicTelemBlue extends LinearOpMode {
         FRMotor.setPower(0);
       }
 
-
-      //game pad 2 inputs
-      double armLength = -gamepad2.right_stick_y;
-      double armAngle = -gamepad2.left_stick_y;
-
       //call move arm
       slideLimit();
-      setSlide(armLength);
-      setPivot(armAngle);
+      setSlide(-gamepad2.right_stick_y);
+      setPivot(-gamepad2.left_stick_y);
 
       //claw intake/outtake
       if (gamepad2.right_trigger != 0) {
@@ -107,8 +103,9 @@ public class basicTelemBlue extends LinearOpMode {
       else if (gamepad2.left_trigger != 0) {
         intakeL.setPosition(0);
       }
-      else
-        intakeL.setPosition(0.5);
+      else {
+          intakeL.setPosition(0.5);
+      }
 
       //wrist rotation
       if (gamepad2.b) {
@@ -153,6 +150,10 @@ public class basicTelemBlue extends LinearOpMode {
         FRMotor.setDirection(FORWARD);
         BRMotor.setDirection(REVERSE);
 
+        FLMotor.setPower(0);
+        BLMotor.setPower(0);
+        FRMotor.setPower(0);
+        BRMotor.setPower(0);
 
         // Maps the servo objects to the physical ports
         FLServo = hardwareMap.get(Servo.class, "FLServo");
@@ -184,13 +185,16 @@ public class basicTelemBlue extends LinearOpMode {
         pivot = hardwareMap.dcMotor.get("pivot");
         slide = hardwareMap.dcMotor.get("slide");
 
+        pivot.setMode(STOP_AND_RESET_ENCODER);
+        slide.setMode(STOP_AND_RESET_ENCODER);
+
         pivot.setMode(RUN_USING_ENCODER);
         slide.setMode(RUN_USING_ENCODER);
 
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        pivot.setDirection(REVERSE);
+        pivot.setDirection(FORWARD);
         slide.setDirection(FORWARD);
 
         pivot.setPower(0);
@@ -310,25 +314,29 @@ public class basicTelemBlue extends LinearOpMode {
   }
 
 
-  /**
-   * Rotates the robot around itself.<br>
-   * Does not move the robot in any other direction.<br>
-   *
-   * @param power Desired power to turn the robot at
-   */
-  public void rotate(double power) {
 
-    // Set wheels for rotation
+  public void strafe(double power) {
+    // Set wheels for strafe
     FLServo.setPosition(.80);
     BLServo.setPosition(.20);
     BRServo.setPosition(.80);
     FRServo.setPosition(.20);
 
-    //turn motors to rotate robot
+    //turn motors to strafe robot
     FLMotor.setPower(power);
     BLMotor.setPower(power);
     BRMotor.setPower(-power);
     FRMotor.setPower(-power);
+  }
+
+    /**
+     * Rotates the robot around itself.<br>
+     * Does not move the robot in any other direction.<br>
+     *
+     * @param power Desired power to turn the robot at
+     */
+  public void rotate(double power) {
+
   }
 
 
