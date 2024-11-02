@@ -76,6 +76,14 @@ public class basicTelemBlue extends LinearOpMode {
      */
 
     waitForStart();
+
+      FLServo.setPosition(0.50);
+      BLServo.setPosition(0.50);
+      FRServo.setPosition(0.50);
+      BRServo.setPosition(0.50);
+
+      wrist.setPosition(0.7);
+
     while (opModeIsActive()) {
 
       //game pad 1
@@ -170,12 +178,6 @@ public class basicTelemBlue extends LinearOpMode {
         FRServo.scaleRange(0, 1.0);
         BRServo.scaleRange(0, 1.0);
 
-        FLServo.setPosition(0.50);
-        BLServo.setPosition(0.50);
-        FRServo.setPosition(0.50);
-        BRServo.setPosition(0.50);
-
-
         // Init GoBilda Pinpoint module
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         odo.resetPosAndIMU();
@@ -213,8 +215,6 @@ public class basicTelemBlue extends LinearOpMode {
 
         intakeL.setDirection(Servo.Direction.REVERSE);
         wrist.setDirection(Servo.Direction.FORWARD);
-
-        wrist.setPosition(0.7);
     }
 
   // to lift arm, input from game pad 2 straight in
