@@ -7,6 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.bosons.Hardware.Controller;
 import com.bosons.Hardware.DriveTrain;
 import com.bosons.Hardware.Arm;
+import com.bosons.Hardware.Motor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -35,7 +40,7 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void init () {
-        arm = new Arm(this,0.5);
+        arm = new Arm(this,0.8);
         driveTrain = new DriveTrain(this);
         driverA = new Controller(gamepad1);
 
@@ -48,7 +53,20 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void init_loop () {
+        /*
+        Motor rightExt = new Motor("RightExt",this);
+        rightExt.setConstants(DcMotor.RunMode.RUN_TO_POSITION, DcMotor.ZeroPowerBehavior.BRAKE, DcMotorSimple.Direction.FORWARD);
+        rightExt.setPower(0.5);
+        rightExt.setTargetPosition(100);
+        ElapsedTime time = new ElapsedTime();
+        while(time.seconds()<3){
 
+        }
+        rightExt.setTargetPosition(0);
+        while(time.seconds()<6){
+
+        }
+    */
     }
 
     /*
@@ -66,14 +84,20 @@ public class TeleOpDev extends OpMode{
     public void loop () {
 
 
-        //if (Driver.onButtonPress(Controller.Button.dPadUp)){
-        //    Arm.RunToTarget(2190);
-        //}
-        //if (Driver.onButtonPress(Controller.Button.dPadDown)) {
-        //    Arm.RunToTarget(0);
-        //}
-        //if(Driver.toggleButtonState(Controller.Button.y)){driveTrain.MotorPower = 0.1;}
-        //else{driveTrain.MotorPower = 1.0;}
+        if (driverA.onButtonPress(Controller.Button.dPadUp)){
+            arm.extendToTarget(2190);
+        }
+        if (driverA.onButtonPress(Controller.Button.dPadDown)) {
+            arm.extendToTarget(0);
+        }
+        if(driverA.toggleButtonState(Controller.Button.y)){
+            driveTrain.setDrivePowerCoefficient(0.1);
+            driveTrain.setTurnPowerCoefficient(0.1);
+        }
+        else{
+            driveTrain.setDrivePowerCoefficient(1);
+            driveTrain.setTurnPowerCoefficient(1);
+        }
 
         //setting up controller input to drivetrain output ratios//
         double x = -driverA.getAnalogValue(Controller.Joystick.LeftX) * 1.5;
@@ -99,7 +123,13 @@ public class TeleOpDev extends OpMode{
 
         //YOU NEED THESE FOR CONTROLLER AND SAFTEY CHECKS
         driverA.updateAll();
-        //Arm.MotorCheck();
+        arm.MotorCheck();
+        telemetry.addData("R power ", arm.rightExtendoMotor.getPower());
+        telemetry.addData("L power ", arm.leftExtendoMotor.getPower());
+        telemetry.addData("R pos ", arm.rightExtendoMotor.getCurrentPosition());
+        telemetry.addData("L pos ", arm.leftExtendoMotor.getCurrentPosition());
+        telemetry.addData("R target ", arm.rightExtendoMotor.getTargetPosition());
+        telemetry.addData("L target ", arm.leftExtendoMotor.getTargetPosition());
     }
 
     /*
