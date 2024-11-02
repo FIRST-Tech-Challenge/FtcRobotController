@@ -21,7 +21,56 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
     private final SparkFunOTOS myOtos;
-    @Override
+    private final DcMotor leftFront;
+    private final DcMotor leftBack;
+    private final DcMotor rightFront;
+    private final DcMotor rightBack;
+
+    public OdometryFuse(SparkFunOTOS myOtos, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack) {
+        this.myOtos = myOtos;
+        this.leftFront = leftFront;
+        this.leftBack = leftBack;
+        this.rightFront = rightFront;
+        this.rightBack = rightBack;
+    }
+
+    public String updateData() {
+        SparkFunOTOS.Pose2D SparkFunOTOS;
+        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        return("Spark x: " + pos.x + "\n" +
+                "Spark y: " + pos.y + "\n" +
+                "Spark h: " + pos.h);
+    }
+
+    //configure SPARK FUN Otos
+    @SuppressLint("DefaultLocale")
+    public String configureOtos(SparkFunOTOS myOtos) {
+
+        myOtos.setLinearUnit(DistanceUnit.INCH);
+
+        myOtos.setAngularUnit(AngleUnit.DEGREES);
+
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        myOtos.setOffset(offset);
+
+        myOtos.setLinearScalar(1.0);
+        myOtos.setAngularScalar(1.0);
+
+        myOtos.calibrateImu();
+
+        myOtos.resetTracking();
+
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+        myOtos.setPosition(currentPosition);
+
+            // Get the hardware and firmware version
+        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
+        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
+        myOtos.getVersionInfo(hwVersion, fwVersion);
+
+        return("OTOS configured! \n Hardware version: " + hwVersion.major + hwVersion.minor + "\n" +
+                "Firmware Version: " + fwVersion.major + fwVersion.minor);
+        }
 //    public void runOpMode() throws InterruptedException {
 //        DcMotor leftFront = hardwareMap.dcMotor.get("fLeft");
 //        DcMotor rightFront = hardwareMap.dcMotor.get("fRight");
@@ -96,38 +145,4 @@ public class OdometryFuse {
 
 
 
-    //configure SPARK FUN Otos
-    @SuppressLint("DefaultLocale")
-    public void configureOtos() {
-        telemetry.addLine("Configuring OTOS... Press to play a game while you wait");
-        telemetry.update();
 
-        myOtos.setLinearUnit(DistanceUnit.INCH);
-
-        myOtos.setAngularUnit(AngleUnit.DEGREES);
-
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
-        myOtos.setOffset(offset);
-
-        myOtos.setLinearScalar(1.0);
-        myOtos.setAngularScalar(1.0);
-
-        myOtos.calibrateImu();
-
-        myOtos.resetTracking();
-
-        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
-        myOtos.setPosition(currentPosition);
-
-        // Get the hardware and firmware version
-        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
-        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
-        myOtos.getVersionInfo(hwVersion, fwVersion);
-
-        telemetry.addLine("OTOS configured! Press start to get position data!");
-        telemetry.addLine();
-        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
-        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
-        telemetry.update();
-    }
-}
