@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.Debug;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-@TeleOp
-public class limit_Slide extends LinearOpMode {
+@Autonomous
+public class CompBotAuto extends LinearOpMode {
 
     DcMotor slide, pivot;
 
@@ -25,7 +25,11 @@ public class limit_Slide extends LinearOpMode {
 
     boolean test = false;
 
-    private DigitalChannel limitSwitch;
+    DigitalChannel limitSwitch;
+
+    int slidePos = 0;  //in encoder counts not inches
+
+    int pivotAng = 0;  //in encoder counts not degrees or radians
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,28 +40,16 @@ public class limit_Slide extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            double x = 0;
-            if(gamepad2.left_trigger == 0)
-                x = .5;
-            double y = 0;
-            if(gamepad2.right_trigger == 0)
-                y = 0.5;
+        setSlide(slidePos);
 
-            if (x != 0.5) {
-                intakeL.setPosition(x);
-            } else if (y != 0.5) {
-                intakeL.setPosition(y);
-            }
+        setPivot(pivotAng);
 
-            setSlide(-gamepad2.right_stick_y);
-            setPivot(-gamepad2.left_stick_y);
-            slideLimit();
-            telemetry.addData("Limit switch: ", limitSwitch.getState());
-            telemetry.addData("current pos: ", pivot.getCurrentPosition());
-            telemetry.addData("boolean: ", test);
-            telemetry.update();
-        }
+        sleep(1000);
+
+        intakeL.setPosition(0);
+
+        sleep(500);
+        intakeL.setPosition(0.5);
     }
 
     public void initRobot() {
