@@ -34,7 +34,7 @@ public class BasicAutoDrive extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap,2000);
+        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         waitForStart();
@@ -47,6 +47,7 @@ public class BasicAutoDrive extends LinearOpMode {
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
 
             String[] distance =limelight.getDistanceInInches();
+            //distance[0] is x, distance[1] is y
             telemetry.addData("Limelight Distance: ", distance[0] + ", " + distance[1]);
 
             drive.updatePoseEstimate();
@@ -57,10 +58,14 @@ public class BasicAutoDrive extends LinearOpMode {
             telemetry.update();
             if(Math.abs(drive.pose.position.x) < 30)
             {
-                strafe = 0;
-                rotate = 0;
-                forward = -0.2;
-                robot.drive(forward,strafe,rotate);
+                //distance[0] is x, distance[1] is y
+//                if(limelight.isDataCorrect() && Double.parseDouble(distance[0]) < 30)
+//                {
+                    strafe = 0;
+                    rotate = 0;
+                    forward = -0.2;
+                    robot.drive(forward,strafe,rotate);
+//                }
             }else {
                 forward = 0;
                 robot.drive(forward,strafe,rotate);

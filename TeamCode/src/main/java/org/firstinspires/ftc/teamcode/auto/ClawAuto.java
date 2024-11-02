@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-
+//@Autonomous(name="BasicClawAuto")
 public class ClawAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
@@ -33,7 +33,7 @@ public class ClawAuto extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap,2000);
+        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         waitForStart();

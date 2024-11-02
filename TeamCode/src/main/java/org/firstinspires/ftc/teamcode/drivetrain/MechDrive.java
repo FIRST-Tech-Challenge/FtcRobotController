@@ -33,8 +33,8 @@ public class MechDrive {
         rightBack = hw.get(DcMotorEx.class, "BRM");
         rightFront = hw.get(DcMotorEx.class, "FRM");
 
-//        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-//        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         resetEncoders();
 

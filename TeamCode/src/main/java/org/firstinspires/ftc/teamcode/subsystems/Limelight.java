@@ -106,6 +106,7 @@ public class Limelight extends LinearOpMode {
         distanceInMeters[1] = df.format(0);
         return distanceInMeters;
     }
+
     public LLResult getLatestResult() {
         return limeLight.getLatestResult();
     }
