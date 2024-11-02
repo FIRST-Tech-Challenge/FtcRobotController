@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -29,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class teleop extends OpMode {
 
     // Testing
-    boolean testingActive = false;
+    boolean testingActive = true;
     double lastTestTime = 0;
 
     // Field centric stuff
@@ -70,20 +71,23 @@ public class teleop extends OpMode {
 
     // Ease of controls stuff
     RRLocalizationRead localizationRead;
-    Vector2d prevPos = new Vector2d(0,0);
-    double prevVel = 0;
-    double curVel = 0;
-    double prevTime = 0;
 
 
     // Servos and motors for outtake/intake.
     DcMotor outTakeLift;
+
+
+    Servo outTakeLargePivotExpansion;
+    Servo outTakeLargePivotControl;
+    Servo outTakeClawPivot;
     Servo outTakeClaw;
-    Servo outTakeFlip;
 
     DcMotor inTakeLift;
     Servo inTakeClaw;
-    Servo inTakeFlip;
+    Servo inTakeFlipControl;
+    Servo inTakeFlipExpansion;
+    Servo inTakeRotator;
+
 
     // Motors for drivetrain
     DcMotor frontLeftMotor;
@@ -106,13 +110,27 @@ public class teleop extends OpMode {
         imu.initialize(parameters);
         outTakeLift = hardwareMap.dcMotor.get("otl");
         outTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        outTakeClaw = hardwareMap.servo.get(("otc"));
-        outTakeFlip = hardwareMap.servo.get(("otf"));
+        //outTakeClaw = hardwareMap.servo.get(("otc"));
+        //outTakeFlip = hardwareMap.servo.get(("otf"));
 
+        // Intake lift
         inTakeLift = hardwareMap.dcMotor.get("itl");
         inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        inTakeClaw = hardwareMap.servo.get(("itc"));
-        inTakeFlip = hardwareMap.servo.get(("itf"));
+
+       // inTakeFlipControl.getController().pwmEnable();
+
+        // Control hub servos
+        inTakeFlipControl = hardwareMap.servo.get(("itfc")); // port 0
+        inTakeFlipExpansion = hardwareMap.servo.get("itfe"); // port 1
+        inTakeRotator = hardwareMap.servo.get("itr"); // port 2
+        inTakeClaw = hardwareMap.servo.get(("itc")); // port 3
+
+
+        // Expansion hub servos
+        outTakeLargePivotExpansion = hardwareMap.servo.get(("otse"));
+        outTakeLargePivotControl = hardwareMap.servo.get(("otsc"));
+        outTakeClawPivot = hardwareMap.servo.get(("otcp"));
+        outTakeClaw = hardwareMap.servo.get(("otc"));
 
         // Drivetrain initialization
         frontLeftMotor = hardwareMap.dcMotor.get("frontL");
@@ -184,6 +202,63 @@ public class teleop extends OpMode {
         }
         else
             backRightMotor.setPower(0);
+
+        if (gamepad2.a)
+        {
+            // up
+            inTakeClaw.setPosition(.76);
+        }
+        if (gamepad2.b)
+        {
+            //grab
+            inTakeFlipExpansion.setPosition(.3);
+            //inTakeFlipControl.getController().setServoPosition();
+        }
+        if (gamepad2.dpad_up)
+        {
+            //put in transfer
+            inTakeFlipExpansion.setPosition(.5);
+        }
+        if (gamepad2.dpad_down)
+        {
+            //put in transfer
+            inTakeRotator.setPosition(.32);
+        }
+        if (gamepad2.dpad_left)
+        {
+            inTakeRotator.setPosition(0);
+        }
+        if (gamepad2.x)
+        {
+            inTakeFlipExpansion.setPosition(.7);
+        }
+        if (gamepad2.y)
+        {
+            inTakeClaw.setPosition(1);
+        }
+        if (gamepad2.left_bumper)
+        {
+            outTakeLift.setPower(.8);
+        }
+        else if (gamepad2.right_bumper)
+        {
+            outTakeLift.setPower(-.8);
+        }
+        else
+        {
+            outTakeLift.setPower(0);
+        }
+        if (gamepad2.left_trigger > .1)
+        {
+            inTakeLift.setPower(.8);
+        }
+        else if (gamepad2.right_trigger > .1)
+        {
+            inTakeLift.setPower(-.8);
+        }
+        else {
+            inTakeLift.setPower(0);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -260,15 +335,7 @@ public class teleop extends OpMode {
 
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    private Vector2d returnLinearVel()
-    {
-        double deltaTime = totalTime.seconds() - prevTime;
-        Pose2d thisPos = localizationRead.returnPose();
-        Vector2d curV = new Vector2d(Math.sqrt(Math.pow(thisPos.position.x - prevPos.x, 2) + Math.pow(thisPos.position.y - prevPos.y, 2)) / (deltaTime), Math.toDegrees(Math.atan((double)(thisPos.position.y - prevPos.y) / (thisPos.position.x - prevPos.x))));
-        // Have to fix for it to be relative, I think it already is though
-        return curV;
-    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     void readFile()

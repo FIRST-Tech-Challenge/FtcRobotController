@@ -170,7 +170,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous(name = "Odometry Localization", group = "Sensor")
+@Autonomous(name = "Odom Localization", group = "Sensor")
 public class localization extends LinearOpMode {
 
     // Hardware components
@@ -189,7 +189,7 @@ public class localization extends LinearOpMode {
     private static final double WEIGHT = 1.0 / 6.0; // Weight for Simpson's Rule, shows how to weight different trajectories
 
     // Thresholds and constants for error-handling
-    private static final double MAX_HEADING_CHANGE = Math.toRadians(10); // Max allowed change in heading (in radians)
+    private final double MAX_HEADING_CHANGE = Math.toRadians(10); // Max allowed change in heading (in radians)
     private static final double IMU_CALIBRATION_THRESHOLD = 0.1; // Allowable IMU drift before recalibration
     private static final double MAX_ENCODER_TICKS_PER_UPDATE = 1000; // Max allowed ticks per update to detect encoder errors
 
@@ -256,8 +256,22 @@ public class localization extends LinearOpMode {
             double deltaY = relDeltaY * Math.cos(currentHeading) + relDeltaX * Math.sin(currentHeading) + prevHorizontal;
 
             // Update robot's global position
-            robotX = deltaX;
-            robotY = deltaY;
+            robotX += deltaX;
+            robotY += deltaY;
+          
+            // Convert the change in encoder ticks to inches
+            deltaVertical /= TICKS_PER_INCH;
+            deltaHorizontal /= TICKS_PER_INCH;
+
+            // Step 3: Arc handling - Use average heading for position update
+            //double headingAverage = (prevHeading + currentHeading) / 2.0;
+            //double deltaX = deltaVertical * Math.cos(headingAverage) - deltaHorizontal * Math.sin(headingAverage);
+            //double deltaY = deltaVertical * Math.sin(headingAverage) + deltaHorizontal * Math.cos(headingAverage);
+
+            // Step 4: Simpson's Rule Integration for smoother movement approximation
+            double deltaXSimpson = WEIGHT * ((prevVertical + 4.0 * deltaX + prevVertical) / 3.0);
+            double deltaYSimpson = WEIGHT * ((prevHorizontal + 4.0 * deltaY + prevHorizontal) / 3.0);
+            
 
             robotHeading = currentHeading;
 
@@ -429,3 +443,7 @@ public class localization extends LinearOpMode {
     }
 }
 */
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
