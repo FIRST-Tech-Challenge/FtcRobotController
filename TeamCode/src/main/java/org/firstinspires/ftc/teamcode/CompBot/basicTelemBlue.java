@@ -332,7 +332,7 @@ public class basicTelemBlue extends LinearOpMode {
     FLMotor.setPower(power);      // actually BR
     BLMotor.setPower(power);
     BRMotor.setPower(-power);
-    FRMotor.setPower(power);
+    FRMotor.setPower(-power);     // actually BL
   }
 
     /**
