@@ -27,6 +27,7 @@ public class SwerveTeleOp extends LinearOpMode {
           -gamepad1.left_stick_x,
           currentTime - lastTime);
       swerve.periodic();
+      telemetry.update();
       lastTime = currentTime;
     }
   }
