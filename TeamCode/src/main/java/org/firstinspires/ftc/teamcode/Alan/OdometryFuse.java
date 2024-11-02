@@ -40,6 +40,13 @@ public class OdometryFuse {
                 "Spark y: " + pos.y + "\n" +
                 "Spark h: " + pos.h);
     }
+    public String averageUpdateData() {
+        SparkFunOTOS.Pose2D SparkFunOTOS;
+        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
+        return("ave x: " + ((((rightEncoder.getCurrentPosition() + leftEncoder.getCurrentPosition()) / 2) * TICKSTOINCH) + pos.x) / 2 + "\n" +
+                "ave y: " + ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2);
+    }
 
     //configure SPARK FUN Otos
     @SuppressLint("DefaultLocale")
