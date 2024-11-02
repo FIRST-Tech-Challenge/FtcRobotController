@@ -81,9 +81,11 @@ public class basicTelemBlue extends LinearOpMode {
       //game pad 1
       double forBack = gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
       double rotate = gamepad1.right_stick_x;
+      double strafe = gamepad1.left_stick_x;
 
       if (forBack != 0) { forwardBackward(forBack); }
       else if (rotate != 0) { rotate(rotate); }
+      else if (strafe != 0) {strafe(strafe); }
       else {
         FLMotor.setPower(0);
         BLMotor.setPower(0);
@@ -148,7 +150,7 @@ public class basicTelemBlue extends LinearOpMode {
         FLMotor.setDirection(FORWARD);
         BLMotor.setDirection(FORWARD);
         FRMotor.setDirection(FORWARD);
-        BRMotor.setDirection(REVERSE);
+        BRMotor.setDirection(FORWARD);
 
         FLMotor.setPower(0);
         BLMotor.setPower(0);
@@ -301,7 +303,6 @@ public class basicTelemBlue extends LinearOpMode {
    * @param power   Desired power to run the motors at
    */
   public void forwardBackward(double power) {
-
     FLServo.setPosition(0.5);
     FRServo.setPosition(0.5);
     BLServo.setPosition(0.5);
