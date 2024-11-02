@@ -116,7 +116,7 @@ public class MainMovement extends LinearOpMode {
 
     private void epicRotationMovement() {
         // rotates the robot if left stick is not being used (movement takes priorities)
-        if (!(Math.abs(RjoystickX) <= joystickDeadzone) && !usingLStick) {
+        if ((Math.abs(RjoystickX) >= joystickDeadzone / 2) && !usingLStick) {
             if(RjoystickX > 0) {
                 
                 setMotorPowers(1, -1, 1, -1, RjoystickX); // clockwise rotation
@@ -140,8 +140,12 @@ public class MainMovement extends LinearOpMode {
 
     private void legendaryStrafeMovement() {
         float minSpeed = 0.05f;
+        //float maxSpeed = 1.0f;
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
+        
         float netS = minSpeed + (float)addSpeed; //net speed
+        // float netS = Math.min(maxSpeed, minSpeed + (float)addSpeed);
+        // should we be capping the speed at 1.0f maybe???
 
         // calculates the angle of the joystick in radians --> degrees
         double LangleInRadians = Math.atan2(LjoystickY, LjoystickX);
