@@ -2,16 +2,12 @@ package org.firstinspires.ftc.teamcode.Alan;
 
 //test phase
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import android.annotation.SuppressLint;
 
 import com.kalipsorobotics.fresh.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -21,20 +17,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
     private final SparkFunOTOS myOtos;
-    private final DcMotor leftFront;
-    private final DcMotor leftBack;
-    private final DcMotor rightFront;
-    private final DcMotor rightBack;
+    private final DcMotor rightEncoder;
+    private final DcMotor leftEncoder;
+    private final DcMotor backEncoder;
 
-    public OdometryFuse(SparkFunOTOS myOtos, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack) {
+    public OdometryFuse(SparkFunOTOS myOtos, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor rightEncoder, DcMotor leftEncoder, DcMotor backEncoder) {
         this.myOtos = myOtos;
-        this.leftFront = leftFront;
-        this.leftBack = leftBack;
-        this.rightFront = rightFront;
-        this.rightBack = rightBack;
+        this.rightEncoder = rightEncoder;
+        this.leftEncoder = leftEncoder;
+        this.backEncoder = backEncoder;
     }
-
-    public String updateData() {
+    public String WheelUpdateData() {
+        double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
+        return("R wheel x: " + rightEncoder.getCurrentPosition() * TICKSTOINCH + "\n" +
+                "L wheel x: " + leftEncoder.getCurrentPosition() * TICKSTOINCH + "\n" +
+                "B wheel y: " + backEncoder.getCurrentPosition() * TICKSTOINCH);
+    }
+    public String SparkUpdateData() {
         SparkFunOTOS.Pose2D SparkFunOTOS;
         com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return("Spark x: " + pos.x + "\n" +
