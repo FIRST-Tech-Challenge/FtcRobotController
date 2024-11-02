@@ -45,7 +45,7 @@ public class TestAuton extends LinearOpMode {
         ElapsedTime looptime = new ElapsedTime();
         SimpleMatrix desiredPose = new SimpleMatrix(
                 new double [][]{
-                        new double[]{48},
+                        new double[]{24},
                         new double[]{0},
                         new double[]{0}
                 }
@@ -53,7 +53,7 @@ public class TestAuton extends LinearOpMode {
         SimpleMatrix desiredPoseTwo = new SimpleMatrix(
                 new double [][]{
                         new double[]{48},
-                        new double[]{-12},
+                        new double[]{-24},
                         new double[]{0}
                 }
         );
@@ -70,7 +70,9 @@ public class TestAuton extends LinearOpMode {
         Actions.runBlocking(new SequentialAction(
                 drivetrain.goToPose(desiredPose, 0),
 
-                drivetrain.goToPose(desiredPoseTwo, 1)
+                drivetrain.goToPose(desiredPoseTwo, 1),
+
+                drivetrain.stopMotors()
 
         ));
         while (opModeIsActive()) {

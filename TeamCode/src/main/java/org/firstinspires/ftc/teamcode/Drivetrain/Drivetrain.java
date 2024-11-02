@@ -177,11 +177,25 @@ public class Drivetrain {
                     setPower(stopMatrix);
                     opSwitch++;
                 }
-                return opSwitch==step;
+                return step == opSwitch;
             }
         };
     }
+    public Action stopMotors() {
+        return new Action() {
+            //private boolean initialized = false;
 
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //if (!initialized) {
+                //    initialized = true;
+                //}
+                localize();
+                setPower(stopMatrix);
+                return false;
+            }
+        };
+    }
     public Action followPath(Path path) {
         return new Action() {
             // Maybe you'd be able to put an elapsedTimer here?? ****
