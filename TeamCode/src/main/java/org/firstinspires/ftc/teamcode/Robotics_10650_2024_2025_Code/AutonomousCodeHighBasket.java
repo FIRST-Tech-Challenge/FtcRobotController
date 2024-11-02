@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 // Create an Autonomous program (Auto) that preselects a TeleOp (controller operated)
-@Autonomous(name = "AutonomousCode", preselectTeleOp = "TeleOpCode_RobotCentric")
-public class AutonomousCode extends LinearOpMode {
+@Autonomous(name = "AutonomousCodeHighBasket", preselectTeleOp = "TeleOpCode_RobotCentric")
+public class AutonomousCodeHighBasket extends LinearOpMode {
 
     // Execute the function from the RobotInitialize class
     RobotInitialize robot;

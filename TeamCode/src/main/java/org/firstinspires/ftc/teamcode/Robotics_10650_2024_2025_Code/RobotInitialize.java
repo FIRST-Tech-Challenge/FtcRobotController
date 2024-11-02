@@ -109,7 +109,9 @@ public class RobotInitialize {
         liftExtender = opMode.hardwareMap.get(DcMotorEx.class, "liftExtender");
 
             //Initial conditions of the liftExtender MOTOR
-            liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftExtender.setVelocityPIDFCoefficients(2.67,2.05,0, 3.3);
+
+        liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
             liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftExtender.setZeroPowerBehavior(BRAKE);
