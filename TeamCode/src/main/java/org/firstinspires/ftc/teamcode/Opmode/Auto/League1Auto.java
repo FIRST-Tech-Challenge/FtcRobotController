@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Opmode.DriveTuning;
+package org.firstinspires.ftc.teamcode.Opmode.Auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -22,48 +22,25 @@ import java.util.List;
 @Config
 
 
-public class X extends LinearOpMode {
-    enum State {
-        DEPOSIT1,
-        DEPOSIT2,
-        CYCLE1,
-        CYCLE2,
-        CYCLE3,
-        PARK1,
-        PARK2,
-        PARK3,
-        PARK4,
-        PARK5,
-    }
-    //(-18, 23.5, 30)
-    enum Actions{
-        PICKUP,
-        SLIDESEXTEND,
-        WRISTDEPOSIT,
-        DEPOSIT,
-        RESET,
-        INTAKE,
-        REST
-
-    }
-    State currentState = State.DEPOSIT1;
-
-    Actions currentAction = Actions.PICKUP;
+public class League1Auto extends LinearOpMode {
     public static double xTarget = 10, yTarget = 0, rTarget = 0;
+    State currentState = State.DRIVETODEPOSIT;
+    Actions currentAction = Actions.PICKUP;
     boolean timeToggle = true;
     boolean actionToggle = true;
     double TimeStamp = 0;
     double ActionStamp = 0;
-    boolean farpark = false;
     int currentCycle = 0;
     ElapsedTime timer = new ElapsedTime();
     double oldTime = 0;
     double timeStamp = 0;
+    PARKING parking = PARKING.NEAR;
+
     public void runOpMode() throws InterruptedException {
         //bulk reading
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
-        for (LynxModule hub : allHubs){
+        for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
@@ -77,17 +54,17 @@ public class X extends LinearOpMode {
         Wrist wrist = new Wrist(hardwareMap);
         stickyGamepad gp = new stickyGamepad(gamepad1);
 
-        while(opModeInInit()){
+        while (opModeInInit()) {
             claw.close();
             wrist.intake();
-            if(gp.right_bumper){
-                farpark = true;
+            if (gp.right_bumper) {
+                parking = PARKING.FAR;
             }
-            if(gp.left_bumper){
-                farpark = false;
+            if (gp.left_bumper) {
+                parking = PARKING.NEAR;
             }
             gp.update();
-            telemetry.addData("FAR PARK", farpark);
+            telemetry.addData("Parking: ", parking.name());
             telemetry.update();
 
 
@@ -95,24 +72,24 @@ public class X extends LinearOpMode {
         waitForStart();
         double frequency = 0;
         double loopTime = 0;
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             drive.autonomous();
 
-            switch(currentAction){
+            switch (currentAction) {
                 case REST:
                     break;
                 case PICKUP:
                     arm.deposit();
                     slides.preScore();
-                    currentAction=Actions.SLIDESEXTEND;
+                    currentAction = Actions.SLIDESEXTEND;
                     break;
                 case SLIDESEXTEND:
 //                    slides.score();
-                    if(actionToggle){//to be filled in...
+                    if (actionToggle) {//to be filled in...
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 1250){
+                    if (timer.milliseconds() > ActionStamp + 1250) {
                         slides.score();
 
                         actionToggle = true;
@@ -121,11 +98,11 @@ public class X extends LinearOpMode {
                     break;
                 case WRISTDEPOSIT:
 //                    wrist.deposit();
-                    if(actionToggle){//to be filled in...
+                    if (actionToggle) {//to be filled in...
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 600){
+                    if (timer.milliseconds() > ActionStamp + 600) {
                         wrist.deposit();
                         actionToggle = true;
                         currentAction = Actions.DEPOSIT;
@@ -133,11 +110,11 @@ public class X extends LinearOpMode {
                     break;
                 case DEPOSIT:
 //                    claw.open();
-                    if(actionToggle){//to be filled in...
+                    if (actionToggle) {//to be filled in...
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(timer.milliseconds() > ActionStamp + 500){
+                    if (timer.milliseconds() > ActionStamp + 500) {
                         claw.open();
 
                         actionToggle = true;
@@ -145,181 +122,158 @@ public class X extends LinearOpMode {
                     }
                     break;
                 case RESET:
-                    if (actionToggle){
-                        ActionStamp=timer.milliseconds();
-                        actionToggle=false;
+                    if (actionToggle) {
+                        ActionStamp = timer.milliseconds();
+                        actionToggle = false;
                     }
-                    if (timer.milliseconds()>ActionStamp+500){
+                    if (timer.milliseconds() > ActionStamp + 500) {
                         wrist.intake();
                         slides.preScore();
                     }
 
-                    if (timer.milliseconds()>ActionStamp+1000){
+                    if (timer.milliseconds() > ActionStamp + 1000) {
                         arm.preTake();
-                        actionToggle=true;
-                        currentAction=Actions.REST;
+                        actionToggle = true;
+                        currentAction = Actions.REST;
                     }
                     break;
                 case INTAKE:
-                    if (actionToggle){
-                        ActionStamp=timer.milliseconds();
-                        actionToggle=false;
+                    if (actionToggle) {
+                        ActionStamp = timer.milliseconds();
+                        actionToggle = false;
                     }
 
                     slides.setTargetSlidesPosition(6);
-                    if (timer.milliseconds()>ActionStamp+500){
+                    if (timer.milliseconds() > ActionStamp + 500) {
                         arm.intake();
                     }
-                    if (timer.milliseconds()>ActionStamp+1000){
+                    if (timer.milliseconds() > ActionStamp + 1000) {
 
                         claw.close();
-                        actionToggle=true;
-                        currentAction=Actions.REST;
+                        actionToggle = true;
+                        currentAction = Actions.REST;
                     }
-
 
 
                     break;
 
 
             }
-            switch(currentState){
-                case DEPOSIT1:
+            switch (currentState) {
+                case DRIVETODEPOSIT:
 
                     drive.setTarget(new Pose2d(-10, 11, 0));
 
-                        if(timeToggle){//to be filled in...
-                            TimeStamp = timer.milliseconds();
-                            timeToggle = false;
+                    if (timeToggle) {//to be filled in...
+                        TimeStamp = timer.milliseconds();
+                        timeToggle = false;
 
-                        }
-                        if(timer.milliseconds() > TimeStamp + 500){
-                            timeToggle = true;
-                            currentAction = Actions.PICKUP;
-                            currentState = State.DEPOSIT2;
+                    }
+                    if (timer.milliseconds() > TimeStamp + 500) {
+                        timeToggle = true;
+                        currentAction = Actions.PICKUP;
+                        currentState = State.DEPOSIT;
 
-                        }
+                    }
 
                     break;
-                case DEPOSIT2:
+                case DEPOSIT:
 
                     drive.setTarget(new Pose2d(-13, 13, -45)); // deposit
 
-                        if(timeToggle){//to be filled in...
-                            TimeStamp = timer.milliseconds();
-                            timeToggle = false;
-                            currentAction = Actions.PICKUP;
-                        }
-                        int timeDelay;
-                        if(currentCycle == 3){
-                            timeDelay = 4500;
-                        }else{
-                            timeDelay = 3500;
-                        }
+                    if (timeToggle) {//to be filled in...
+                        TimeStamp = timer.milliseconds();
+                        timeToggle = false;
+                        currentAction = Actions.PICKUP;
+                    }
 
 
-                        if(timer.milliseconds() > TimeStamp + timeDelay){
 
-                            timeToggle = true;
-                            if(currentCycle ==0){
-                                currentState = State.CYCLE1;
-                            }else if(currentCycle ==1){
-                                currentState = State.CYCLE2;
-                            }else if(currentCycle == 2){
-                                currentState = State.CYCLE3;
-                            }else if(currentCycle == 3){
-                                currentState = State.PARK1;
+                    if (timer.milliseconds() > TimeStamp + 3500) {
+
+                        timeToggle = true;
+                        if (currentCycle == 0) {
+                            currentState = State.CYCLE1;
+                        } else if (currentCycle == 1) {
+                            currentState = State.CYCLE2;
+                        } else if (currentCycle == 2) {
+                            currentState = State.CYCLE3;
+                        } else if (currentCycle == 3) {
+                            if (parking == PARKING.NEAR) {
+                                currentState = State.PARKNEAR;
+                            } else if (parking==PARKING.FAR){
+                                currentState=State.PARKFAR;
                             }
                         }
+                    }
 
                     break;
                 case CYCLE1:
                     drive.setTarget(new Pose2d(-9, 22, 0)); //first block
-                    if(timeToggle){//to be filled in...
+                    if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
                     }
-                    if(timer.milliseconds() > TimeStamp + 1000){
-                        currentAction=Actions.INTAKE;
+                    if (timer.milliseconds() > TimeStamp + 1000) {
+                        currentAction = Actions.INTAKE;
                     }
-                    if(timer.milliseconds() > TimeStamp + 2500){
+                    if (timer.milliseconds() > TimeStamp + 2500) {
                         timeToggle = true;
-                        currentState = State.DEPOSIT2;
+                        currentState = State.DEPOSIT;
                         currentCycle++;
                     }
                     break;
                 case CYCLE2:
                     drive.setTarget(new Pose2d(-18, 22, 0)); //second block
-                    if(timeToggle){//to be filled in...
+                    if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
                     }
-                    if(timer.milliseconds() > TimeStamp + 1000){
-                        currentAction=Actions.INTAKE;
+                    if (timer.milliseconds() > TimeStamp + 1000) {
+                        currentAction = Actions.INTAKE;
                     }
-                    if(timer.milliseconds() > TimeStamp + 2500){
+                    if (timer.milliseconds() > TimeStamp + 2500) {
                         timeToggle = true;
-                        currentState = State.DEPOSIT2;
+                        currentState = State.DEPOSIT;
                         currentCycle++;
                     }
                     break;
                 case CYCLE3:
-                    drive.setTarget(new Pose2d(-18, 25.7, 39));
-                    if(timeToggle){//to be filled in...
+                    drive.setTarget(new Pose2d(-18, 25.7, 39)); //third block
+                    if (timeToggle) {
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
                     }
-                    if(timer.milliseconds() > TimeStamp + 1000){
-                        currentAction=Actions.INTAKE;
+                    if (timer.milliseconds() > TimeStamp + 1000) {
+                        currentAction = Actions.INTAKE;
                     }
-                    if(timer.milliseconds() > TimeStamp + 2500){
+                    if (timer.milliseconds() > TimeStamp + 2500) {
                         timeToggle = true;
-                        currentState = State.DEPOSIT2;
+                        currentState = State.DEPOSIT;
                         currentCycle++;
                     }
                     break;
+                case PARKNEAR:
+                    drive.setTarget(new Pose2d(5, 49, 0));
+                    break;
+                case PARKFAR:
+                    drive.setTarget(new Pose2d(6, 27, -90));
+                    if (timeToggle) {//to be filled in...
+                        TimeStamp = timer.milliseconds();
+                        timeToggle = false;
+                    }
+                    if (timer.milliseconds() > TimeStamp + 1000) {
+                        drive.setTarget(new Pose2d(76, 27, -90));
+                    }
+                    if (timer.milliseconds() > TimeStamp + 3000) {
+                        drive.setTarget(new Pose2d(76, 48, -90));
+                    }
+                    if (timer.milliseconds() > TimeStamp + 4000) {
+                        drive.setTarget(new Pose2d(76, 48, -33));
 
-                case PARK1:
-                    if(!farpark) {
-                        drive.setTarget(new Pose2d(5, 49, 0));
-                    }
-                    else{
-                        drive.setTarget(new Pose2d(6, 27, -90));
-                        if(timeToggle){//to be filled in...
-                            TimeStamp = timer.milliseconds();
-                            timeToggle = false;
-                        }
-                        if(timer.milliseconds() > TimeStamp + 1000){
-                            timeToggle = true;
-                            currentState = State.PARK2;
-                        }
                     }
                     break;
-                case PARK2:
-                    drive.setTarget(new Pose2d(76, 27, -90));
-                    if(timeToggle){//to be filled in...
-                        TimeStamp = timer.milliseconds();
-                        timeToggle = false;
-                    }
-                    if(timer.milliseconds() > TimeStamp + 2000){
-                        timeToggle = true;
-                        currentState = State.PARK3;
-                    }
-                    break;
-                case PARK3:
-                    drive.setTarget(new Pose2d(76, 48, -90));
-                    if(timeToggle){//to be filled in...
-                        TimeStamp = timer.milliseconds();
-                        timeToggle = false;
-                    }
-                    if(timer.milliseconds() > TimeStamp + 1000){
-                        timeToggle = true;
-                        currentState = State.PARK4;
-                    }
-                    break;
-                case PARK4:
-                    drive.setTarget(new Pose2d(76, 48, -33));
-                    break;
+
 
             }
             double newTime = getRuntime();
@@ -341,12 +295,24 @@ public class X extends LinearOpMode {
             telemetry.addData("xOut", drive.PIDOutputs().getX());
             telemetry.addData("yOut", drive.PIDOutputs().getY());
             telemetry.addData("headingOut", drive.PIDOutputs().getHeading());
-            telemetry.addData("current state:",currentState.name());
-            telemetry.addData("current action:",currentAction.name());
-            telemetry.addData("current cycle:",currentCycle);
+            telemetry.addData("current state:", currentState.name());
+            telemetry.addData("current action:", currentAction.name());
+            telemetry.addData("current cycle:", currentCycle);
 
 
             telemetry.update();
         }
+    }
+    enum State {
+        DRIVETODEPOSIT, DEPOSIT, CYCLE1, CYCLE2, CYCLE3, PARKNEAR, PARKFAR
+    }
+    //(-18, 23.5, 30)
+    enum Actions {
+        PICKUP, SLIDESEXTEND, WRISTDEPOSIT, DEPOSIT, RESET, INTAKE, REST
+
+    }
+
+    enum PARKING {
+        NEAR, FAR
     }
 }
