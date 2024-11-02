@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Alan;
 
-//test phase
+
 
 import android.annotation.SuppressLint;
 
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-//encode not working
+
 @TeleOp
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
