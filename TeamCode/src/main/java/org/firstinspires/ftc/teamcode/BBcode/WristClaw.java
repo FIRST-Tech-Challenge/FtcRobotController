@@ -20,6 +20,8 @@ public class WristClaw {
     double upPosition = 1;
     double flipPosition = 0.45;
     double downPosition = 0.62;
+    double centerPosition = 0.5;
+    double wristInit = 0.755;
     //-----------------------------------------
 
     public void OpenClaw() {ClawCustom(openPosition);}
@@ -27,6 +29,8 @@ public class WristClaw {
     public void MoveUp() {WristCustom(upPosition);}
     public void MoveFlip() {WristCustom(flipPosition);}
     public void MoveDown() {WristCustom(downPosition);}
+    public void MoveCenter() {WristCustom(centerPosition);}
+    public void MoveWristInit() {WristCustom(wristInit);}
     public void WristCustom(double position)
     {
         if (_wrist == null)

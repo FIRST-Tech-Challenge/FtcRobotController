@@ -50,7 +50,7 @@ public class MainTeleOp extends LinearOpMode{
         Viper viper = new Viper(this);
         WristClaw wristClaw = new WristClaw(this);
         arm.Reset();
-        wristClaw.MoveUp();
+        wristClaw.MoveWristInit();
         wristClaw.CloseClaw();
 
         //Call the function to initialize telemetry functions
