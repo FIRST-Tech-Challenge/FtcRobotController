@@ -324,10 +324,10 @@ public class basicTelemBlue extends LinearOpMode {
     FRServo.setPosition(.20);
 
     //turn motors to strafe robot
-    FLMotor.setPower(power);
+    FLMotor.setPower(power);      // actually BR
     BLMotor.setPower(power);
     BRMotor.setPower(-power);
-    FRMotor.setPower(-power);
+    FRMotor.setPower(power);
   }
 
     /**
@@ -338,16 +338,16 @@ public class basicTelemBlue extends LinearOpMode {
      */
   public void rotate(double power) {
       // Set wheels for rotation
-      FLServo.setPosition(.80);
-      BLServo.setPosition(.20);
-      BRServo.setPosition(.80);
-      FRServo.setPosition(.20);
+      FLServo.setPosition(.35);
+      BLServo.setPosition(.60);
+      BRServo.setPosition(.60);
+      FRServo.setPosition(.35);
 
       //turn motors to strafe robot
-      FLMotor.setPower(power);
+      FLMotor.setPower(-power);
       BLMotor.setPower(power);
       BRMotor.setPower(-power);
-      FRMotor.setPower(-power);
+      FRMotor.setPower(power);
   }
 
 

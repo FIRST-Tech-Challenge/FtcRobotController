@@ -43,17 +43,11 @@ public class testServos extends LinearOpMode {
 
       // if(gamepad1.left_stick_x)
 
-      // sets pow
-      flPow = set;
-      frPow = set;
-      blPow = set;
-      brPow = set;
-
       // sets servos
-      FLServo.setPosition(flPow);
-      FRServo.setPosition(frPow);
-      BLServo.setPosition(blPow);
-      BRServo.setPosition(brPow);
+      FLServo.setPosition(set);
+      FRServo.setPosition(set);
+      BLServo.setPosition(set);
+      BRServo.setPosition(set);
 
       // sets telemetry
       addTelemetry(
