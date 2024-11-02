@@ -33,10 +33,10 @@ public class YellowSideAuto extends LinearOpMode {
     private MecanumDrive roadRunnerDrive;
 
     //Locations
-    private Pose2d startPosition = new Pose2d(-12,-60,Math.toRadians(90));
-    private Vector2d bucketPosition = new Vector2d(-55, -65);
+    private Pose2d startPosition = new Pose2d(-12,-64,Math.toRadians(90));
+    private Pose2d bucketPosition = new Pose2d(-68, -57,Math.toRadians(225));
     private Vector2d yellowSpikeRight = new Vector2d(-49, -26);
-    private Vector2d yellowSpikeMiddle = new Vector2d(-61, -26);
+    private Vector2d yellowSpikeMiddle = new Vector2d(-66, -26);
     private Vector2d yellowSpikeLeft = new Vector2d(-70, -26);
 
     //Subsystem info
@@ -54,74 +54,99 @@ public class YellowSideAuto extends LinearOpMode {
 
         robot = new FourEyesRobot(hardwareMap);
 
+
         roadRunnerDrive = new MecanumDrive(hardwareMap, startPosition);
         waitForStart();
         //Auto Begins
 
 
+//        Actions.runBlocking(
+//                roadRunnerDrive.actionBuilder(startPosition)
+//                .strafeToLinearHeading(bucketPosition,Math.toRadians(180))
+//                .build());
         //This is the primary action loop.
+
         Actions.runBlocking(new ParallelAction(
                 robot.autoPID(), //This PID loop will be constantly running in the background
                 new SequentialAction(
                         new InstantAction(robot::initializePowerStates), //Initializes robot's servos specifically
-
+                        new InstantAction(robot::activateIntake),
                         //Score Sample Pre-Load
                         new InstantAction(() -> this.addTelemetryMessage("Driving to bucket...")),
                         new InstantAction(robot::depositSamplePosForward), //Set new target position
-                        strafeWithSubsystems(startPosition, new Pose2d(bucketPosition,Math.toRadians(180))),
+                        strafeWithSubsystems(startPosition, bucketPosition),
                         //Deposit Via Claw
-                        new InstantAction(robot::openClaw),
-                        new SleepAction(0.5), //Wait for claw to completely open and deposit
-
-
+                        new InstantAction(robot::intakeBackward),
+                        new SleepAction(1), //Wait for claw to completely open and deposit
+                        new InstantAction(robot::deactivateIntake),
+                        new InstantAction(robot::resetArm),
+                        robot.waitForLiftArmPID(1),
+                        new InstantAction(robot::resetLift),
+                        robot.waitForLiftArmPID(3),
 
                         //Retrieve Right Spike Mark
-                        new InstantAction(() -> this.addTelemetryMessage("Driving to Spike Mark 1...")),
-                        new InstantAction(robot::intakeSamplePos),
-                        strafeWithSubsystems(roadRunnerDrive.pose, yellowSpikeRight.plus(
-                                calculateOffset(180, armExtentionLength))),
-                        new InstantAction(robot::toggleIntake),
-
-                        new InstantAction(() -> this.addTelemetryMessage("Attempting to retrieve Sample...")),
-                        //Drive forward 5 inches to try to "sweep" and pick up the spike mark sample
-                        roadRunnerDrive.actionBuilder(roadRunnerDrive.pose)
-                                .strafeTo(yellowSpikeRight.plus(calculateOffset(180, armExtentionLength-5)))
-                                .build(),
-
-                        new InstantAction(() -> this.addTelemetryMessage("Depositing Sample...")),
-                        new InstantAction(robot::depositSamplePosForward), //Set subsystems to prepare deposit
-                        strafeWithSubsystems(roadRunnerDrive.pose, bucketPosition),
-                        new InstantAction(robot::intakeBackward), //Deposits sample
-                        new SleepAction(0.5), //Wait for intake to completely deposit
+//                        new InstantAction(() -> this.addTelemetryMessage("Driving to Spike Mark 1...")),
+//                        new InstantAction(robot::intakeSamplePos),
+//                        strafeWithSubsystems(roadRunnerDrive.pose, yellowSpikeRight.plus(
+//                                calculateOffset(180, armExtentionLength))),
+//                        new InstantAction(robot::toggleIntake)
+//
+//                        new InstantAction(() -> this.addTelemetryMessage("Attempting to retrieve Sample...")),
+//                        //Drive forward 5 inches to try to "sweep" and pick up the spike mark sample
+//                        roadRunnerDrive.actionBuilder(roadRunnerDrive.pose)
+//                                .strafeTo(yellowSpikeRight.plus(calculateOffset(180, armExtentionLength-5)))
+//                                .build(),
+//
+//                        new InstantAction(() -> this.addTelemetryMessage("Depositing Sample...")),
+//                        new InstantAction(robot::depositSamplePosForward), //Set subsystems to prepare deposit
+//                        strafeWithSubsystems(roadRunnerDrive.pose, bucketPosition),
+//                        new InstantAction(robot::intakeBackward), //Deposits sample
+//                        new SleepAction(0.5), //Wait for intake to completely deposit
 
 
 
                         //Retrieve Middle Spike Mark
+
                         new InstantAction(() -> this.addTelemetryMessage("Driving to Spike Mark 2...")),
-                        new InstantAction(robot::intakeSamplePos),
-                        strafeWithSubsystems(roadRunnerDrive.pose, yellowSpikeMiddle.plus(
-                                calculateOffset(180, armExtentionLength))),
-                        new InstantAction(robot::toggleIntake),
 
-                        new InstantAction(() -> this.addTelemetryMessage("Attempting to retrieve Sample...")),
+                        strafeWithSubsystems(bucketPosition,
+                                new Pose2d(yellowSpikeMiddle.plus(calculateOffset(180, armExtentionLength)),
+                                        Math.toRadians(180)
+                                )),
+                        new InstantAction(robot::lowerClimb),
+//                        new InstantAction(robot::intakeSamplePos),
+//                        new InstantAction(robot::toggleIntake),
+
+
+                        new InstantAction(() -> this.addTelemetryMessage("Attempting to retrieve Sample...\n" +
+                                "Start Position:" +
+                                yellowSpikeMiddle.plus(calculateOffset(180, armExtentionLength)).x + ", "
+                                + yellowSpikeMiddle.plus(calculateOffset(180, armExtentionLength)).y +
+                                "Target Position: "
+                                + yellowSpikeMiddle.plus(new Vector2d(-5, 0)).plus(calculateOffset(180, armExtentionLength)).x
+                                + ", " + yellowSpikeMiddle.plus(new Vector2d(-5, 0)).plus(calculateOffset(180, armExtentionLength)).y)),
                         //Drive forward 5 inches to try to "sweep" and pick up the spike mark sample
-                        roadRunnerDrive.actionBuilder(roadRunnerDrive.pose)
-                                .strafeTo(yellowSpikeMiddle.plus(calculateOffset(180, armExtentionLength-5)))
-                                .build(),
+                        roadRunnerDrive.actionBuilder(new Pose2d(yellowSpikeMiddle.plus(calculateOffset(180, armExtentionLength)),Math.toRadians(180)))
+//                                .strafeToLinearHeading(yellowSpikeMiddle.plus(calculateOffset(180, armExtentionLength-5)),Math.toRadians(180))
+//                                .lineToY(roadRunnerDrive.pose.position.y - 5)
+//                                .strafeTo(yellowSpikeMiddle.plus(new Vector2d(-5, 0)))
+                                .strafeTo(yellowSpikeMiddle.plus(new Vector2d(-5, 0)).plus(calculateOffset(180, armExtentionLength)))
+                                .build()
 
+                        /*
                         new InstantAction(() -> this.addTelemetryMessage("Depositing Sample...")),
                         new InstantAction(robot::depositSamplePosForward), //Set subsystems to prepare deposit
-                        strafeWithSubsystems(roadRunnerDrive.pose, bucketPosition),
+                        strafeWithSubsystems(roadRunnerDrive.pose, new Pose2d(bucketPosition,Math.toRadians(225))),
                         new InstantAction(robot::intakeBackward), //Deposits sample
                         new SleepAction(0.5), //Wait for intake to completely deposit
 
 
 
-                        //Retrieve Middle Spike Mark
+                        //Retrieve Left Spike Mark
                         new InstantAction(() -> this.addTelemetryMessage("Driving to Spike Mark 3...")),
                         new InstantAction(robot::intakeSamplePos),
-                        strafeWithSubsystems(roadRunnerDrive.pose, yellowSpikeLeft.plus(
-                                calculateOffset(180, armExtentionLength))),
+                        strafeWithSubsystems(roadRunnerDrive.pose, new Pose2d(yellowSpikeLeft.plus(
+                                calculateOffset(180, armExtentionLength)),Math.toRadians(180))),
                         new InstantAction(robot::toggleIntake),
 
                         new InstantAction(() -> this.addTelemetryMessage("Attempting to retrieve Sample...")),
@@ -129,10 +154,9 @@ public class YellowSideAuto extends LinearOpMode {
                         roadRunnerDrive.actionBuilder(roadRunnerDrive.pose)
                                 .strafeTo(yellowSpikeLeft.plus(calculateOffset(180, armExtentionLength-5)))
                                 .build(),
-
                         new InstantAction(() -> this.addTelemetryMessage("Depositing Sample...")),
                         new InstantAction(robot::depositSamplePosForward), //Set subsystems to prepare deposit
-                        strafeWithSubsystems(roadRunnerDrive.pose, bucketPosition),
+                        strafeWithSubsystems(roadRunnerDrive.pose, new Pose2d(bucketPosition,Math.toRadians(225))),
                         new InstantAction(robot::intakeBackward), //Deposits sample
                         new SleepAction(0.5), //Wait for intake to completely deposit
 
@@ -144,8 +168,14 @@ public class YellowSideAuto extends LinearOpMode {
                                 .setTangent(Math.toRadians(90))
                                 .splineTo(new Vector2d(-24,-12),0)
                                 .build()
+                                */
+
                 )
         ));
+
+
+
+
 
     }
 
@@ -161,7 +191,7 @@ public class YellowSideAuto extends LinearOpMode {
                                 calculateOffset(180, armExtentionLength)
                         ), endPosition.heading)
                         .build(),
-                robot.waitForLiftArmPID(3) //Ensure that subsystems are in the right position
+                robot.waitForLiftArmPID(6) //Ensure that subsystems are in the right position
         );
     }
 
@@ -173,4 +203,5 @@ public class YellowSideAuto extends LinearOpMode {
     public static Vector2d calculateOffset(double angleDegrees, double distance){
         return new Vector2d(-distance * Math.cos(Math.toRadians(angleDegrees)), -distance * Math.sin(Math.toRadians(angleDegrees)));
     }
+
 }

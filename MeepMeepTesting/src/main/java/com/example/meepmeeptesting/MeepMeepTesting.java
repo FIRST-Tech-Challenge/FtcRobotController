@@ -27,9 +27,9 @@ public class MeepMeepTesting {
 
 
         //Starting Positions
-        Pose2d startColor = new Pose2d(12,-60,Math.toRadians(90));
-        Pose2d startYellow = new Pose2d(-12, -60, Math.toRadians(90));
-        Pose2d startYellow2 = new Pose2d(-12, -60, Math.toRadians(90));
+        Pose2d startColor = new Pose2d(12,-64,Math.toRadians(90));
+        Pose2d startYellow = new Pose2d(-12, -64, Math.toRadians(90));
+        Pose2d startYellow2 = new Pose2d(-12, -64, Math.toRadians(90));
         Vector2d basketDropOff = new Vector2d(-55, -65);
 
         Vector2d firstSpike = new Vector2d(-49, -26);

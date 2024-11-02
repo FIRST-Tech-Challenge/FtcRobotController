@@ -105,7 +105,7 @@ public class FourEyesRobot extends Mecanum {
      */
     public void depositSamplePosForward(){
         lift.goToPosition(Lift.LiftStates.MAX_HEIGHT);//Raises lift to maximum height
-        arm.goToPosition(Arm.ArmState.DEPOSIT_HEIGHT);//Flips arm to go backwards
+        arm.goToPosition(Arm.ArmState.DEPOSIT_HEIGHT_FORWARD);//Flips arm to go backwards
         wrist.goToPosition(Wrist.WristStates.ParallelMode);//Flips wrist to angle
         claw.closeClaw(); //Closes claw if it was open from before
         currentState = ScoringType.SAMPLE;
@@ -123,6 +123,14 @@ public class FourEyesRobot extends Mecanum {
         wrist.goToPosition(Wrist.WristStates.PerpendicularMode);
         claw.closeClaw();
         currentState = ScoringType.SPECIMEN;
+    }
+
+    public void resetArm(){
+        arm.goToPosition(Arm.ArmState.REST_HEIGHT);
+    }
+
+    public void resetLift(){
+        lift.goToPosition(Lift.LiftStates.ZERO);
     }
 
     public void intakeBackward() {

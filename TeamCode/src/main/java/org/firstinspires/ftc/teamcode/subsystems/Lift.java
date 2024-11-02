@@ -36,8 +36,7 @@ public class Lift {
         MAX_HEIGHT
     }
 
-    //TODO: CHANGE LATER TO NEW MOTOR MAX HEIGHT
-    private int MAX_HEIGHT_POSITION = 3050;//ticks
+    private int MAX_HEIGHT_POSITION = 4300;//ticks
     private LiftStates currentState;
 
     private HashMap<LiftStates, Integer> liftPositions;
@@ -83,7 +82,7 @@ public class Lift {
         currentState = LiftStates.ZERO;
 
 
-        pid = new PIDController(0.009,0,0.0002,0.02);
+        pid = new PIDController(0.009,0,0.00002,0.017);
         pid.setTarget(getPosition());
 
         liftPositions = new HashMap<LiftStates, Integer>(3);
