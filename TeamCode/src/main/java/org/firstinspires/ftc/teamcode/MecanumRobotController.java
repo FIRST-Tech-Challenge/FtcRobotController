@@ -9,6 +9,7 @@
 //      P: Parameters, the list of parameters and explanations of them.
 
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -25,7 +26,7 @@ public class MecanumRobotController {
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
     public static final double FORWARD_COUNTS_PER_INCH = 43.80;
     public static final double STRAFE_COUNTS_PER_INCH = 50.58;
-    public static final double HEADING_CORRECTION_POWER = 0.0;
+    public static final double HEADING_CORRECTION_POWER = 1.0;
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
@@ -55,6 +56,7 @@ public class MecanumRobotController {
     private double lastError;
     private double turnStartedTime;
     private double turnStoppedTime;
+    private double headingOffset;
     private int kTuner;
 
 
@@ -69,6 +71,10 @@ public class MecanumRobotController {
         this.frontRight = frontRight;
 
         this.gyro = gyro;
+        IMU.Parameters params = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        gyro.initialize(params);
+        gyro.resetYaw();
+//        this.headingOffset = -gyro.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
         this.robot = robot;
         this.wantedHeading = getAngleImuDegrees();
 
@@ -287,7 +293,7 @@ public class MecanumRobotController {
             strafe = strafePower;
         }
 
-        move(forward, strafe, turn, HEADING_CORRECTION_POWER);
+        move(forward, strafe, turn, 0.0);
     }
 
     // Behavior: Allows driver to tune heading correction using the controller.
@@ -413,6 +419,10 @@ public class MecanumRobotController {
         telemetry.addData("Front Right Target", frontRight.getCurrentPosition() - frontRight.getTargetPosition());
         telemetry.addData("Back Left Target", backLeft.getCurrentPosition() - backLeft.getTargetPosition());
         telemetry.addData("Back Right Target", backRight.getCurrentPosition() - backRight.getTargetPosition());
+        telemetry.addData("Front Left Pos", frontLeft.getCurrentPosition());
+        telemetry.addData("Back Left Pos", backLeft.getCurrentPosition());
+        telemetry.addData("Front Right Pos", frontRight.getCurrentPosition());
+        telemetry.addData("Back Right Pos", backRight.getCurrentPosition());
 
         telemetry.update();
     }

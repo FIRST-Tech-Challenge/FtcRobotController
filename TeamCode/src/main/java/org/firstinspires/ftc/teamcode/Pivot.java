@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Pivot {
-    private DcMotor leftMotor;
-    private DcMotor rightMotor;
+    private DcMotorEx leftMotor;
+    private DcMotorEx rightMotor;
     private static final double DEFAULT_POWER = 0.8;
     private static final int POSITION_TOLERANCE = 10;
 
@@ -24,7 +25,7 @@ public class Pivot {
         STOPPED
     }
 
-    public Pivot(DcMotor leftMotor, DcMotor rightMotor) {
+    public Pivot(DcMotorEx leftMotor, DcMotorEx rightMotor) {
         this.leftMotor = leftMotor;
         this.rightMotor = rightMotor;
         leftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -34,7 +35,7 @@ public class Pivot {
         resetEncoders();
     }
 
-    private void setState(PivotState newState, double power) {
+    private void setState(PivotState newState, double velocity) {
         // Only change motors if state is different
         if (newState != currentState) {
             switch (newState) {
@@ -43,8 +44,8 @@ public class Pivot {
                         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     }
-                    leftMotor.setPower(power);
-                    rightMotor.setPower(power);
+                    leftMotor.setVelocity(velocity);
+                    rightMotor.setVelocity(velocity);
                     break;
 
                 case HOLDING:
@@ -66,9 +67,9 @@ public class Pivot {
         }
 
         // If moving up or down, update power even if already in that state
-        else if ((newState == PivotState.MOVING) && power != Math.abs(leftMotor.getPower())) {
-            leftMotor.setPower(power);
-            rightMotor.setPower(power);
+        else if ((newState == PivotState.MOVING) && velocity != Math.abs(leftMotor.getPower())) {
+            leftMotor.setVelocity(velocity);
+            rightMotor.setVelocity(velocity);
         }
     }
 
@@ -79,8 +80,8 @@ public class Pivot {
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void move(double power) {
-        setState(PivotState.MOVING, power);
+    public void move(double velocity) {
+        setState(PivotState.MOVING, velocity);
     }
 
     public void stop() {

@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class ViperSlide {
-    private DcMotor leftMotor;
-    private DcMotor rightMotor;
+    private DcMotorEx leftMotor;
+    private DcMotorEx rightMotor;
     public static final double DEFAULT_POWER = 0.8;
     public static final int POSITION_TOLERANCE = 10;
     public static final int MIN_POSITION = 10;
@@ -26,35 +28,35 @@ public class ViperSlide {
         STOPPED
     }
 
-    public ViperSlide(DcMotor leftMotor, DcMotor rightMotor) {
+    public ViperSlide(DcMotorEx leftMotor, DcMotorEx rightMotor) {
         this.leftMotor = leftMotor;
         this.rightMotor = rightMotor;
         leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);  // Clockwise
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE); // Counter-clockwise
-        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         resetEncoders();
     }
 
-    private void setState(SlideState newState, double power) {
+    private void setState(SlideState newState, double velocity) {
         // Only change motors if state is different
         if (newState != currentState) {
             switch (newState) {
                 case MOVING:
-                    if (leftMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
-                        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    if (leftMotor.getMode() != DcMotorEx.RunMode.RUN_USING_ENCODER) {
+                        leftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                        rightMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                     }
-                    leftMotor.setPower(power);
-                    rightMotor.setPower(power);
+                    leftMotor.setVelocity(velocity);
+                    rightMotor.setVelocity(velocity);
                     break;
 
                 case HOLDING:
                     int currentPos = getCurrentPosition();
                     leftMotor.setTargetPosition(currentPos);
                     rightMotor.setTargetPosition(currentPos);
-                    leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    rightMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                     leftMotor.setPower(DEFAULT_POWER);
                     rightMotor.setPower(DEFAULT_POWER);
                     break;
@@ -67,27 +69,27 @@ public class ViperSlide {
             currentState = newState;
         }
 
-        // If extending or retracting, update power even if already in that state
-        else if ((newState == SlideState.MOVING) && power != Math.abs(leftMotor.getPower())) {
-            leftMotor.setPower(power);
-            rightMotor.setPower(power);
+        // If extending or retracting, update velocity even if already in that state
+        else if ((newState == SlideState.MOVING) && velocity != Math.abs(leftMotor.getVelocity())) {
+            leftMotor.setVelocity(velocity);
+            rightMotor.setVelocity(velocity);
         }
     }
 
     public void resetEncoders() {
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
-    public void move(double power) {
+    public void move(double velocity) {
         int currentPosition = getCurrentPosition();
-        if (power > 0 && currentPosition >= MAX_POSITION || power < 0 && currentPosition <= MIN_POSITION) {
+        if (velocity > 0 && currentPosition >= MAX_POSITION || velocity < 0 && currentPosition <= MIN_POSITION) {
             setState(SlideState.HOLDING, 0);
             return;
         }
-        setState(SlideState.MOVING, power);
+        setState(SlideState.MOVING, velocity);
     }
 
     public void stop() {
@@ -107,9 +109,9 @@ public class ViperSlide {
         rightMotor.setTargetPosition(position);
 
         // Only change mode and power if not already in RUN_TO_POSITION
-        if (leftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
-            leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (leftMotor.getMode() != DcMotorEx.RunMode.RUN_TO_POSITION) {
+            leftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            rightMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             leftMotor.setPower(DEFAULT_POWER);
             rightMotor.setPower(DEFAULT_POWER);
         }

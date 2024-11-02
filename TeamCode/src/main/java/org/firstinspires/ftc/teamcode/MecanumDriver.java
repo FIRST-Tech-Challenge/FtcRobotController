@@ -31,18 +31,21 @@ package org.firstinspires.ftc.teamcode;
 
 import android.view.ViewOutlineProvider;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 
 @TeleOp(name="Mecanum Driver", group="TeleOp")
@@ -52,26 +55,28 @@ public class MecanumDriver extends OpMode {
     private int pivotPosition = 0;
     private int viperPosition = 0;
     private double timeAPressed = 0;
+    private double timeXPressed = 0;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
-    private final static double VIPER_POWER = 0.75;
-    private final static double BASE_PIVOT_POWER = 0.1;
-    private final static double MAX_PIVOT_POWER = 0.35;
+    private final static double VIPER_VELOCITY_CONSTANT = 1800;
+    private final static double BASE_PIVOT_VELOCITY = 240;
+    private final static double MAX_PIVOT_VELOCITY = 840;
     private final static double PIVOT_RAMP_TIME = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final static double SPEED_MULTIPLIER = 2.3;
     private final static double INTAKE_COOLDOWN = 0.25;
+    private final static double WHACK_COOLDOWN = 0.25;
     private final static double WRIST_MIN_POS = 0.0;
     private final static double WRIST_MAX_POS = 0.5;
-    public final boolean isFieldCentric = false;
-    private Servo claw;
-    private Servo wrist;
+    public final boolean isFieldCentric = true;
+//    private Servo claw;
+//    private Servo wrist;
     private ViperSlide viperSlide;
     private Pivot pivot;
-//    private Intake intake;
+    private Intake intake;
     private double pivotStartedTime;
     private boolean pivotStarted;
-    private boolean clawOpen;
+//    private boolean clawOpen;
 
     @Override
     public void init() {
@@ -79,9 +84,9 @@ public class MecanumDriver extends OpMode {
         DcMotorEx backRight = hardwareMap.get(DcMotorEx.class, "BACKRIGHT");
         DcMotorEx frontLeft = hardwareMap.get(DcMotorEx.class, "FRONTLEFT");
         DcMotorEx frontRight = hardwareMap.get(DcMotorEx.class, "FRONTRIGHT");
-        claw = hardwareMap.get(Servo.class, "CLAWLEFT");
-        claw.setDirection(Servo.Direction.REVERSE);
-        wrist = hardwareMap.get(Servo.class, "CLAWRIGHT");
+//        claw = hardwareMap.get(Servo.class, "CLAWLEFT");
+//        claw.setDirection(Servo.Direction.REVERSE);
+//        wrist = hardwareMap.get(Servo.class, "CLAWRIGHT");
 
         backLeft.setDirection(DcMotorEx.Direction.FORWARD);
         backRight.setDirection(DcMotorEx.Direction.REVERSE);
@@ -94,17 +99,16 @@ public class MecanumDriver extends OpMode {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
-        gyro.resetYaw();
 
         viperSlide = new ViperSlide(
-                hardwareMap.get(DcMotor.class, "VIPERLEFT"),
-                hardwareMap.get(DcMotor.class, "VIPERRIGHT")
+                hardwareMap.get(DcMotorEx.class, "VIPERLEFT"),
+                hardwareMap.get(DcMotorEx.class, "VIPERRIGHT")
         );
         pivot = new Pivot(
-                hardwareMap.get(DcMotor.class, "PIVOTLEFT"),
-                hardwareMap.get(DcMotor.class, "PIVOTRIGHT")
+                hardwareMap.get(DcMotorEx.class, "PIVOTLEFT"),
+                hardwareMap.get(DcMotorEx.class, "PIVOTRIGHT")
         );
-//        intake = new Intake(hardwareMap);
+        intake = new Intake(hardwareMap);
         robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
 
         telemetry.addData("Status", "Initialized");
@@ -117,9 +121,10 @@ public class MecanumDriver extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-//        intake.close();
-        claw.setPosition(0.75);
-        wrist.setPosition(WRIST_MIN_POS);
+        intake.close();
+        intake.unwhack();
+//        claw.setPosition(0.75);
+//        wrist.setPosition(WRIST_MIN_POS);
     }
 
     @Override
@@ -129,25 +134,23 @@ public class MecanumDriver extends OpMode {
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
 
-        double triggerPower = gamepad1.left_trigger - gamepad1.right_trigger;
+        double triggerPower = gamepad2.left_trigger - gamepad2.right_trigger;
         // Viper
         if (triggerPower != 0) {
-            viperSlide.move(triggerPower * VIPER_POWER);
+            viperSlide.move(triggerPower * VIPER_VELOCITY_CONSTANT);
         } else {
             viperSlide.hold();
         }
-//        leftClawPos += (gamepad1.left_trigger - gamepad1.right_trigger) / 200;
-//        rightClawPos += (gamepad2.left_trigger - gamepad2.right_trigger) / 200;
 
-        double pivotPower = Math.min(MAX_PIVOT_POWER, BASE_PIVOT_POWER + (MAX_PIVOT_POWER - BASE_PIVOT_POWER) * (runtime.seconds() - pivotStartedTime) / PIVOT_RAMP_TIME);
+        double pivotPower = Math.min(MAX_PIVOT_VELOCITY, BASE_PIVOT_VELOCITY + (MAX_PIVOT_VELOCITY - BASE_PIVOT_VELOCITY) * (runtime.seconds() - pivotStartedTime) / PIVOT_RAMP_TIME);
         // Pivot
-        if (gamepad1.dpad_down) {
+        if (gamepad2.dpad_down) {
             if (!pivotStarted) {
                 pivotStartedTime = runtime.seconds();
                 pivotStarted = true;
             }
             pivot.move(pivotPower);
-        } else if (gamepad1.dpad_up) {
+        } else if (gamepad2.dpad_up) {
             if (!pivotStarted) {
                 pivotStartedTime = runtime.seconds();
                 pivotStarted = true;
@@ -159,39 +162,49 @@ public class MecanumDriver extends OpMode {
         }
 
         // Preset Viper Positions
-        if (gamepad1.left_bumper) {
+        if (gamepad2.left_bumper) {
             viperSlide.setTargetPosition(ViperSlide.MAX_POSITION);
-        } else if (gamepad1.right_bumper) {
+        } else if (gamepad2.right_bumper) {
             viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
         }
 
         // Open/close intake
-        if (gamepad1.a && runtime.seconds() - timeAPressed >= INTAKE_COOLDOWN) {
+        if (gamepad2.a && runtime.seconds() - timeAPressed >= INTAKE_COOLDOWN) {
             telemetry.addData("Button", "A pressed");
             timeAPressed = runtime.seconds();
-            if (/*intake.isOpen()*/clawOpen) {
-//                intake.close();
-                claw.setPosition(0.75);
-                clawOpen = false;
+            if (intake.isOpen()/*clawOpen*/) {
+                intake.close();
+//                claw.setPosition(0.75);
+//                clawOpen = false;
             } else {
-//                intake.open();
-                claw.setPosition(0.65);
-                clawOpen = true;
+                intake.open();
+//                claw.setPosition(0.65);
+//                clawOpen = true;
             }
         }
 
-        if (gamepad1.dpad_left) {
-            wrist.setPosition(Math.max(WRIST_MIN_POS, wrist.getPosition() - 0.03));
-        } else if (gamepad1.dpad_right) {
-            wrist.setPosition(Math.min(WRIST_MAX_POS, wrist.getPosition() + 0.03));
+        if (gamepad2.x && runtime.seconds() - timeXPressed >= WHACK_COOLDOWN) {
+            timeXPressed = runtime.seconds();
+            if (intake.isWhacked()) {
+                intake.unwhack();
+            } else {
+                intake.whack();
+            }
         }
 
-//        telemetry.addData("Claw Left Position", intake.getLeftPosition());
-//        telemetry.addData("Claw Right Position", intake.getRightPosition());
-        telemetry.addData("Claw Position", claw.getPosition());
-        telemetry.addData("Wrist Position", wrist.getPosition());
+//        if (gamepad2.dpad_left) {
+//            wrist.setPosition(Math.max(WRIST_MIN_POS, wrist.getPosition() - 0.03));
+//        } else if (gamepad2.dpad_right) {
+//            wrist.setPosition(Math.min(WRIST_MAX_POS, wrist.getPosition() + 0.03));
+//        }
+
+        telemetry.addData("Claw Left Position", intake.getLeftPosition());
+        telemetry.addData("Claw Right Position", intake.getRightPosition());
+//        telemetry.addData("Claw Position", claw.getPosition());
+//        telemetry.addData("Wrist Position", wrist.getPosition());
         telemetry.addData("Viper Slide Position", viperSlide.getCurrentPosition());
         telemetry.addData("Pivot Position", pivot.getCurrentPosition());
+        telemetry.addData("Whacker Position", intake.getWhackerPosition());
         telemetry.addData("", "");
         robotController.sendTelemetry(telemetry);
     }
