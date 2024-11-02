@@ -190,8 +190,10 @@ public class Swerve {
     }
 
     public Rotation2d getServoPos() {
-      return Rotation2d.fromDegrees(
-          MathUtil.interpolate(0, 360, steerEncoder.getVoltage() / steerEncoder.getMaxVoltage()));
+      return new Rotation2d(
+          MathUtil.angleModulus(
+              MathUtil.interpolate(
+                  0, 2 * Math.PI, steerEncoder.getVoltage() / steerEncoder.getMaxVoltage())));
     }
 
     private void runServoVel(double velRadPerSec) {
