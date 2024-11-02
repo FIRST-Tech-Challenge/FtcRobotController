@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode;
-
+/*
+To get the trim to work
+1) multiply the left motor by the value of the left trim using the method trimLeft() wherever you want to trim it
+2) multiply the right motor by the value of the right trim using the method trimRight() wherever you want to trim it
+3) call the update() method before you first move your motors in your while (opModeIsActive) loop
+*/
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
