@@ -81,13 +81,10 @@ public class MainMovement extends LinearOpMode {
     // |__/                            |__/   |___/ |___/   |___/
 
     private void legendaryStrafeMovement() {
-        float minSpeed = 0.05f;
-        //float maxSpeed = 1.0f;
+        float maxSpeed = 1.0f;
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
-        
-        float netS = minSpeed + (float)addSpeed; //net speed
-        // float netS = Math.min(maxSpeed, minSpeed + (float)addSpeed);
-        // should we be capping the speed at 1.0f maybe???
+
+        float netS = Math.min(maxSpeed, (float)addSpeed); //net speed
 
         // calculates the angle of the joystick in radians --> degrees
         double LangleInRadians = Math.atan2(LjoystickY, LjoystickX);
@@ -100,47 +97,49 @@ public class MainMovement extends LinearOpMode {
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
                 // right quadrant, move right
                 setMotorPowers(-1, 1, 1, -1, netS);
-                System.out.println("Left Stick in RIGHT quadrant");
+                telemetry.addData("Left Stick in RIGHT quadrant", null);
 
             } else if (LangleInDegrees > 22.5 && LangleInDegrees < 67.5) {
                 // top-right quadrant
                 setMotorPowers(0, 1, 1, 0, netS);
-                System.out.println("LeftStick in TOP-RIGHT quadrant");
+                telemetry.addData("Left Stick in TOP-RIGHT quadrant", null);
 
             } else if (LangleInDegrees > -67.5 && LangleInDegrees < -22.5) {
                 // bottom-right quadrant
                 setMotorPowers(-1, 0, 0, -1, netS);
-                System.out.println("Left Stick in BOTTOM-RIGHT quadrant");
+                telemetry.addData("Left Stick in BOTTOM-RIGHT quadrant", null);
 
             } else if (LangleInDegrees >= 67.5 && LangleInDegrees <= 112.5) {
                 // top quadrant
                 setMotorPowers(1, 1, 1, 1, netS);
-                System.out.println("Left Stick in TOP quadrant");
+                telemetry.addData("Left Stick in TOP quadrant", null);
 
             } else if (LangleInDegrees > -112.5 && LangleInDegrees < -67.5) {
                 // bottom quadrant
                 setMotorPowers(-1, -1, -1, -1, netS);
-                System.out.println("Left Stick in BOTTOM quadrant");
+                telemetry.addData("Left Stick in BOTTOM quadrant", null);
 
             } else if (LangleInDegrees > 112.5 && LangleInDegrees < 157.5) {
                 // top-left quadrant
                 setMotorPowers(1, 0, 0, 1, netS);
-                System.out.println("Left Stick in TOP-LEFT quadrant");
+                telemetry.addData("Left Stick in TOP-LEFT quadrant", null);
 
             } else if (LangleInDegrees > -157.5 && LangleInDegrees < -112.5) {
                 // bottom-left quadrant
                 setMotorPowers(0, -1, -1, 0, netS);
-                System.out.println("Left Stick in BOTTOM-LEFT quadrant");
+                telemetry.addData("Left Stick in BOTTOM-LEFT quadrant", null);
 
             } else if (LangleInDegrees >= 157.5 || LangleInDegrees <= -157.5) {
                 // left quadrant
                 setMotorPowers(1, -1, -1, 1, netS);
-                System.out.println("Left Stick in LEFT quadrant");
+                telemetry.addData("Left Stick in LEFT quadrant", null);
 
             }
+            telemetry.update();
 
         } else {
             usingLStick = false;
+            setMotorPowers(0, 0, 0,0, 0);
         }
 
     }
