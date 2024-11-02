@@ -129,7 +129,7 @@ public class basicTelemBlue extends LinearOpMode {
     public void initRobot() {
 
         // Maps the motor objects to the physical ports
-        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
+        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");     //TODO: Figure out which motors are plugged into which ports
         BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
         FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
         BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
@@ -150,7 +150,7 @@ public class basicTelemBlue extends LinearOpMode {
         FLMotor.setDirection(FORWARD);
         BLMotor.setDirection(REVERSE);
         FRMotor.setDirection(REVERSE);
-        BRMotor.setDirection(REVERSE);
+        BRMotor.setDirection(FORWARD);
 
         FLMotor.setPower(0);
         BLMotor.setPower(0);
@@ -337,7 +337,17 @@ public class basicTelemBlue extends LinearOpMode {
      * @param power Desired power to turn the robot at
      */
   public void rotate(double power) {
+      // Set wheels for rotation
+      FLServo.setPosition(.80);
+      BLServo.setPosition(.20);
+      BRServo.setPosition(.80);
+      FRServo.setPosition(.20);
 
+      //turn motors to strafe robot
+      FLMotor.setPower(power);
+      BLMotor.setPower(power);
+      BRMotor.setPower(-power);
+      FRMotor.setPower(-power);
   }
 
 
