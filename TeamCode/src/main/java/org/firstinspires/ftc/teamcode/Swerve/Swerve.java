@@ -145,7 +145,7 @@ public class Swerve {
         driveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
       }
 
-      drivePID = new PIDController(2 / maxDriveSpeedMetersPerSec, 0, 0);
+      drivePID = new PIDController(0 / maxDriveSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
       steerPID = new PIDController(5, 0, 0);
