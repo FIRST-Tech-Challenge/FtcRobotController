@@ -23,8 +23,16 @@ public class SimpleDebugTeleOp extends OpMode {
     @Override
     public void loop() {
         double power = 0;
-        if (Math.abs(gamepad1.left_stick_y) > .1) {
-            power = gamepad1.left_stick_y * .5;
+
+        double inputSpeed = -gamepad1.left_stick_y;
+
+        // put some "slop" in, in case joystick is too sensitive
+        if (Math.abs(inputSpeed) < .1) {
+            inputSpeed = 0;
+        }
+
+        if (gamepad1.a) {
+            power = inputSpeed * .5;
         }
 
         motorTest.setPower(power);
