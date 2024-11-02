@@ -79,7 +79,7 @@ public class basicTelemBlue extends LinearOpMode {
     while (opModeIsActive()) {
 
       //game pad 1
-      double forBack = -gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
+      double forBack = -gamepad1.left_stick_y;
       double rotate = gamepad1.right_stick_x;
       double strafe = -gamepad1.left_stick_x;
 
