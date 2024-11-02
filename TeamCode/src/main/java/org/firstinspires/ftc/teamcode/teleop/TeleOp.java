@@ -37,10 +37,11 @@ public class TeleOp extends LinearOpMode {
     private Lift lift;
     private double liftPower;
     boolean reverseArm;
-    private double[] armPositions = {0.4, 0.3, 0.1, 0.0};
+    private double[] armPositions = {.25, -.25, 0};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
     private Climb climb;
+    private int armCount;
 
     public void runOpMode() throws InterruptedException{
 
@@ -56,6 +57,7 @@ public class TeleOp extends LinearOpMode {
         lift = new Lift(hardwareMap, "lift", "lift");
         reverseArm = false;
         climb = new Climb(hardwareMap,"climb");
+        armCount++;
 
         waitForStart();
         while(opModeIsActive())
@@ -82,43 +84,15 @@ public class TeleOp extends LinearOpMode {
             //arm
             if(controller.right_bumper.onPress())
             {
-                if(!isReversing)
-                {
-                    armPos = armPositions[armPositionIndex];
-                    arm.setPosition(armPos);
-                    armPositionIndex++;
-                    if(armPositionIndex >= armPositions.length)
-                    {
-                        armPositionIndex--;
-                        isReversing = true;
-                    }
-                }else {
-                    armPos = armPositions[armPositionIndex];
-                    arm.setPosition(armPos);
-                    armPositionIndex--;
-                    if(armPositionIndex < 0)
-                    {
-                        armPositionIndex++;
-                        isReversing = false; 
-                    }
-                }
-
-
+                armCount++;
             }
-            if(controller.left_bumper.onPress())
+
+            if(armCount %2 == 1)
             {
-
-                armPos = armPositions[armPositionIndex];
-                arm.setPosition(armPos);
-                armPositionIndex--;
-                if(armPositionIndex < 0)
-                {
-                    armPositionIndex = armPositions.length-1;
-                }
-
+                arm.setPower(controller.right_trigger.getTriggerValue() - controller.left_trigger.getTriggerValue());\
             }
 
-            telemetry.addData("Arm Position", armPos);
+          telemetry.addData("Arm Position", armPos);
 
 
             //claw
