@@ -204,14 +204,19 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     // The base for all other movement functions
     @Override
     public void base(int targetPosFL, int targetPosFR, int targetPosBL, int targetPosBR, double speedFL, double speedFR, double speedBL, double speedBR) {
-        setSpeed(speedFL, speedFR, speedBL, speedBR);
-        setPosition(targetPosFL, targetPosFR, targetPosBL, targetPosBR);
-        motorToPosition();
-        while (hardware.frontLeft.isBusy()) {
-            whileMotorsBusy();
+        if(opModeIsActive()){
+            setPosition(targetPosFL, targetPosFR, targetPosBL, targetPosBR);
+            motorToPosition();
+            while(hardware.frontLeft.getCurrentPosition() < targetPosFL || hardware.frontRight.getCurrentPosition() < targetPosFR || hardware.backLeft.getCurrentPosition() < targetPosBL || hardware.backRight.getCurrentPosition() < targetPosBR){
+                setSpeed(speedFL, speedFR, speedBL, speedBR);
+                while (hardware.frontLeft.isBusy()) {
+                    whileMotorsBusy();
+                }
+            }
+            setSpeed(0, 0, 0, 0);
+            resetMotorEncoders();
+            sleep(250);
         }
-        setSpeed(0, 0, 0, 0);
-        resetMotorEncoders();
     }
 
 
