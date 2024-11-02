@@ -101,6 +101,20 @@ public class Hardware2025Bot
     public double       wormTiltMotorVel  = 0.0;     // encoder counts per second
     public double       wormTiltMotorAmps = 0.0;     // current power draw (Amps)
 
+    public double       PAN_ANGLE_HW_MAX    =  100.0;  // absolute encoder angles at maximum rotation RIGHT
+    public double       PAN_ANGLE_CYCLE_R   =  133.5;
+    public double       PAN_ANGLE_AUTO_M_R  =  137.0;  // scoring the autonomous pre-load cone (RIGHT MED)
+    public double       PAN_ANGLE_AUTO_R    =  117.5;  // scoring the autonomous pre-load cone (RIGHT HIGH)
+    public double       PAN_ANGLE_5STACK_L  =  118.0;
+    public double       PAN_ANGLE_COLLECT_R =   21.9;
+    public double       PAN_ANGLE_CENTER    =    0.0;  // turret centered
+    public double       PAN_ANGLE_COLLECT_L =  -21.9;
+    public double       PAN_ANGLE_5STACK_R  = -103.0;
+    public double       PAN_ANGLE_AUTO_L    = -124.5;  // scoring the autonomous pre-load cone (LEFT HIGH)
+    public double       PAN_ANGLE_CYCLE_L   = -133.5;
+    public double       PAN_ANGLE_AUTO_M_L  = -141.0;  // scoring the autonomous pre-load cone (LEFT MED)
+    public double       PAN_ANGLE_HW_MIN    = -100.0;  // absolute encoder angles at maximum rotation LEFT
+
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
     public int          viperMotorTgt    = 0;       // RUN_TO_POSITION target encoder count
@@ -134,17 +148,17 @@ public class Hardware2025Bot
     public int          liftTarget         = 0;      // Automatic movement target ticks
 
     //====== COLLECTOR SERVOS =====
-    public AnalogInput pushServoPos = null;
-    public Servo  pushServo = null;
-    public double PUSH_SERVO_INIT = 0.350;
-    final public static double PUSH_SERVO_INIT_ANGLE = 230.0;
-    public double PUSH_SERVO_SAFE = 0.350;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
-    final public static double PUSH_SERVO_SAFE_ANGLE = 184.0;
-    public double PUSH_SERVO_GRAB = 0.350;  // Partially extend to align fingers inside pixels
-    final public static double PUSH_SERVO_GRAB_ANGLE = 168.0;
-    public double PUSH_SERVO_DROP = 0.350;  // Fully extend finger assembly toward the Backdrop
-    final public static double PUSH_SERVO_DROP_ANGLE = 56.1;
-    final public static double PUSH_SERVO_PIXEL_CLEAR_ANGLE = 90.0; // Pulling back from backdrop but cleared pixel
+    public AnalogInput elbowServoPos = null;
+    public Servo elbowServo = null;
+    public double ELBOW_SERVO_INIT = 0.350;
+    final public static double ELBOW_SERVO_INIT_ANGLE = 230.0;
+    public double ELBOW_SERVO_SAFE = 0.350;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
+    final public static double ELBOW_SERVO_SAFE_ANGLE = 184.0;
+    public double ELBOW_SERVO_GRAB = 0.350;  // Partially extend to align fingers inside pixels
+    final public static double ELBOW_SERVO_GRAB_ANGLE = 168.0;
+    public double ELBOW_SERVO_DROP = 0.350;  // Fully extend finger assembly toward the Backdrop
+    final public static double ELBOW_SERVO_DROP_ANGLE = 56.1;
+    final public static double ELBOW_SERVO_PIXEL_CLEAR_ANGLE = 90.0; // Pulling back from backdrop but cleared pixel
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
@@ -156,7 +170,7 @@ public class Hardware2025Bot
     final public static double WRIST_SERVO_DROP_ANGLE = 128.9;
 
     //Ultrasonic sensors
-    private MaxSonarI2CXL sonarRangeF = null;
+//  private MaxSonarI2CXL sonarRangeF = null;
 
     /* local OpMode members. */
     protected HardwareMap hwMap = null;
@@ -246,9 +260,9 @@ public class Hardware2025Bot
         viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         viperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        pushServo = hwMap.servo.get("ElbowServo");             // servo port 0 (Expansion Hub)
-        pushServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port 1 (Expansion Hub)
-        pushServo.setPosition(PUSH_SERVO_INIT);
+        elbowServo = hwMap.servo.get("ElbowServo");             // servo port 0 (Expansion Hub)
+        elbowServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port 1 (Expansion Hub)
+        elbowServo.setPosition(ELBOW_SERVO_INIT);
 
         wristServo = hwMap.servo.get("WristServo");             // servo port 1 (Expansion Hub)
         wristServoPos = hwMap.analogInput.get("WristServoPos"); // Analog port 0 (Expansion Hub)
@@ -536,7 +550,7 @@ public class Hardware2025Bot
         }
     } // abortViperSlideExtension
 
-
+/*
     public int singleSonarRangeF() {
         //Query the current range sensor reading and wait for a response
         return sonarRangeF.getDistanceSync();
@@ -586,10 +600,10 @@ public class Hardware2025Bot
         // Return
         return cm;
     } // fastSonarRange
-
+*/
     /*--------------------------------------------------------------------------------------------*/
-    public double getPushServoAngle() {
-        return (pushServoPos.getVoltage() / 3.3) * 360.0;
+    public double getElbowServoAngle() {
+        return (elbowServoPos.getVoltage() / 3.3) * 360.0;
     }
 
     public double getWristServoAngle() {

@@ -1,35 +1,8 @@
-/* FTC Team 7572 - Version 1.0 (12/29/2023)
- */
+/* FTC Team 7572 - Version 1.0 (11/01/2024) */
 package org.firstinspires.ftc.teamcode;
-
-import android.os.Environment;
-import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ReadWriteFile;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
  * TeleOp Servo Test Program
@@ -51,11 +24,11 @@ public class TeleopServoTest extends LinearOpMode {
     boolean gamepad1_l_trigger_last,  gamepad1_l_trigger_now  = false;
     boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
 
-    int    selectedServo = 0;  // 0=push, 1=wrist
-    double pushPos, wristPos;
-    double stepSize = 0.01;
-    long      nanoTimeCurr=0, nanoTimePrev=0;
-    double    elapsedTime, elapsedHz;
+    int     selectedServo = 0;  // 0=push, 1=wrist
+    double  elbowPos, wristPos;
+    double  stepSize = 0.01;
+    long    nanoTimeCurr=0, nanoTimePrev=0;
+    double  elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
 //  Hardware2025Bot robot = new Hardware2025Bot(telemetry);
@@ -71,7 +44,7 @@ public class TeleopServoTest extends LinearOpMode {
         robot.init(hardwareMap,false);
 
         // Start each value at the initialization position
-        pushPos = robot.PUSH_SERVO_INIT;
+        elbowPos = robot.ELBOW_SERVO_INIT;
         wristPos = robot.WRIST_SERVO_INIT;
 
         // Send telemetry message to signify robot waiting;
@@ -95,8 +68,8 @@ public class TeleopServoTest extends LinearOpMode {
             switch( selectedServo ) { // 0=push, 1=wrist
                 case 0 :
                     telemetry.addData("SELECTED:", "PushServo" );
-                    telemetry.addData("value", "%.3f", pushPos );
-                    telemetry.addData("Push Servo Angle", "%.1f", robot.getPushServoAngle());
+                    telemetry.addData("value", "%.3f", elbowPos);
+                    telemetry.addData("Elbow Servo Angle", "%.1f", robot.getElbowServoAngle());
                     break;
                 case 1 :
                     telemetry.addData("SELECTED:", "WristServo" );
@@ -120,10 +93,10 @@ public class TeleopServoTest extends LinearOpMode {
             {
                 switch( selectedServo ) { // 0=push, 1=wrist
                     case 0 :
-                        pushPos -= stepSize;
-                        if( pushPos < 0.0 ) pushPos = 0.0;
-                        if( pushPos > 1.0 ) pushPos = 1.0;
-                        robot.pushServo.setPosition(pushPos);
+                        elbowPos -= stepSize;
+                        if( elbowPos < 0.0 ) elbowPos = 0.0;
+                        if( elbowPos > 1.0 ) elbowPos = 1.0;
+                        robot.elbowServo.setPosition(elbowPos);
                         break;
                     case 1 :
                         wristPos -= stepSize;
@@ -141,10 +114,10 @@ public class TeleopServoTest extends LinearOpMode {
             {
                 switch( selectedServo ) { // 0=push, 1=wrist
                     case 0 :
-                        pushPos += stepSize;
-                        if( pushPos < 0.0 ) pushPos = 0.0;
-                        if( pushPos > 1.0 ) pushPos = 1.0;
-                        robot.pushServo.setPosition(pushPos);
+                        elbowPos += stepSize;
+                        if( elbowPos < 0.0 ) elbowPos = 0.0;
+                        if( elbowPos > 1.0 ) elbowPos = 1.0;
+                        robot.elbowServo.setPosition(elbowPos);
                         break;
                     case 1 :
                         wristPos += stepSize;
