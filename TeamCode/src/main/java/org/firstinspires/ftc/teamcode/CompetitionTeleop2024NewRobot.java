@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -171,10 +172,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LF.setPower(LFPower);
         RF.setPower(RFPower);
 
-        //double intakePower;
 
-        //intakePower = (gamepad2.right_trigger) - gamepad2.left_trigger;
-        //intake.setPower(intakePower);
 
         //Send telemetry data of the motor power for wheels
         telemetry.addData("Left Front Motor","Speed: "+ LFPower);
@@ -232,12 +230,17 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         else if (gamepad2.b) {
             lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             lift.setPower(0.0);
+            leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftArm.setPower(0.0);
+            rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightArm.setPower(0.0);
         }
 
         else if (!autoLift)
         {
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lift.setPower(0.0);
+
         }
 
         //Code to increase height position
@@ -245,30 +248,29 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Allows the drivers to use a single button to open and close gripper
         double leftArmPosition = leftArm.getCurrentPosition();
 
-        if (leftArmPosition < utils.upEncode & leftArmPosition > utils.downEncode) {
+       // if (leftArmPosition < utils.upEncode & leftArmPosition >= utils.downEncode) {
             leftArm.setPower(gamepad2.right_stick_y);
             rightArm.setPower(gamepad2.right_stick_y);
-        } else {
+        /*} else {
             leftArm.setPower(0.0);
             rightArm.setPower(0.0);
-        }
-        //gamepad2.dpad_up
+        }*/
+       
 
-
-        //if (gamepad2.right_stick_y > 0.1) {
-        //    intake.setPosition(0.55);
-        //} else if (gamepad2.right_stick_y < -0.1) {
-        //    intake.setPosition(0.45);
-        //} else {
-        //    intake.setPosition(0.50);
-        //}
         intake.setPower(gamepad2.left_stick_y);
+        if (gamepad2.left_bumper) {
+            utils.setWrist(actuatorUtils.WristModes.DOWN);
+        }
+        else if (gamepad2.right_bumper) {
+            utils.setWrist(actuatorUtils.WristModes.UP);
+        }
 
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("leftArm: ", leftArm.getCurrentPosition());
         telemetry.addData("rightArm:", rightArm.getCurrentPosition());
         telemetry.addData("intake:", intake.getPower());
+        telemetry.addData("wrist:", wrist.getPosition());
         telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);
         telemetry.update();
