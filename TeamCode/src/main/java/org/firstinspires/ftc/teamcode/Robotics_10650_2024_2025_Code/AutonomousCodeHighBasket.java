@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 // Create an Autonomous program (Auto) that preselects a TeleOp (controller operated)
-@Autonomous(name = "AutonomousCode", preselectTeleOp = "TeleOpCode_RobotCentric")
-public class AutonomousCode extends LinearOpMode {
+@Autonomous(name = "AutonomousCodeHighBasket", preselectTeleOp = "TeleOpCode_RobotCentric")
+public class AutonomousCodeHighBasket extends LinearOpMode {
 
     // Execute the function from the RobotInitialize class
     RobotInitialize robot;
@@ -38,13 +38,19 @@ public class AutonomousCode extends LinearOpMode {
 
         // Main movement of drivetrain during Auto
         robot.goStraight(850, 500);
-        robot.strafeR(1100, 500);
-        robot.goStraight(500, 500);
-        robot.strafeL(50, 100);
-        robot.newTurnFunction(90);
-        robot.goStraight(200, 100);
 
-        // Shutdown all mechanisms when the code ends
-        robot.stopMechanisms();
+
+        //Old auto code (keep for now)
+        {
+//            robot.strafeR(1100, 500);
+//            robot.goStraight(500, 500);
+//            robot.strafeL(50, 100);
+//            robot.newTurnFunction(90);
+//            robot.goStraight(200, 100);
+            //}
+
+            // Shutdown all mechanisms when the code ends
+            robot.stopMechanisms();
+        }
     }
 }
