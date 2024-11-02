@@ -50,7 +50,7 @@ public class CompBotAuto extends LinearOpMode {
 
         setPivot(0);
 
-        
+
     }
 
     public void initRobot() {

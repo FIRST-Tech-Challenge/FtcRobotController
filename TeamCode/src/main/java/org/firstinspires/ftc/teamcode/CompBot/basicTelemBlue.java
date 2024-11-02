@@ -44,9 +44,9 @@ public class basicTelemBlue extends LinearOpMode {
 
   double pubLength = 0;
 
-  double encoderCountsPerInch = 111;
+  double encoderCountsPerInch = 100;
 
-  double encoderCountsPerDegree = 40; //needs adjusting
+  double encoderCountsPerDegree = 30; //needs adjusting
 
   static double TRACKWIDTH = 14;      //in inches
   static double WHEELBASE = 15;       //in inches
@@ -79,9 +79,9 @@ public class basicTelemBlue extends LinearOpMode {
     while (opModeIsActive()) {
 
       //game pad 1
-      double forBack = gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
+      double forBack = -gamepad1.left_stick_y; // Makes it so that the triggers cancel each other out if both are pulled at the same time
       double rotate = gamepad1.right_stick_x;
-      double strafe = gamepad1.left_stick_x;
+      double strafe = -gamepad1.left_stick_x;
 
       if (forBack != 0) { forwardBackward(forBack); }
       else if (rotate != 0) { rotate(rotate); }
@@ -148,9 +148,9 @@ public class basicTelemBlue extends LinearOpMode {
         BRMotor.setZeroPowerBehavior(BRAKE);
 
         FLMotor.setDirection(FORWARD);
-        BLMotor.setDirection(FORWARD);
-        FRMotor.setDirection(FORWARD);
-        BRMotor.setDirection(FORWARD);
+        BLMotor.setDirection(REVERSE);
+        FRMotor.setDirection(REVERSE);
+        BRMotor.setDirection(REVERSE);
 
         FLMotor.setPower(0);
         BLMotor.setPower(0);
