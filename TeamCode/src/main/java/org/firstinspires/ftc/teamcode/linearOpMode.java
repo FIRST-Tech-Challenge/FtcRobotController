@@ -80,12 +80,12 @@ public class linearOpMode extends LinearOpMode {
 
       // drive train controls
       double y = -gamepad1.left_stick_y;
-      double x = -gamepad1.left_stick_x;
+      double x = gamepad1.left_stick_x;
       double turn = gamepad1.right_stick_x;
 
       //linear slide power
-      double p = gamepad2.left_stick_x;
-      double c  = gamepad2.right_stick_y;
+      double ext = gamepad2.left_stick_x;
+      double abt  = gamepad2.right_stick_y;
       
       //input: theta and power
       //theta is where we want the direction the robot to go
@@ -129,8 +129,8 @@ public class linearOpMode extends LinearOpMode {
         clawIntakePostion = 1; // close
       }
 
-      slideAbdPower = c;
-      slideExtendPower = p;
+      slideAbdPower = abt;
+      slideExtendPower = ext;
       
 
       // Power to the wheels
