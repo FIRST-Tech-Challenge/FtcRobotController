@@ -49,6 +49,8 @@ public class CompBotAuto extends LinearOpMode {
         setSlide(0);
 
         setPivot(0);
+
+        
     }
 
     public void initRobot() {
