@@ -203,7 +203,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 ((DcMotorEx) viperSlide).setVelocity(4000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 vertical.setTargetPosition(VERTICAL_MIN);
-                ((DcMotorEx) vertical).setVelocity(1000);
+                ((DcMotorEx) vertical).setVelocity(700);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
@@ -218,7 +218,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             if (gamepad1.b) {
                 vertical.setTargetPosition(430);
-                ((DcMotorEx) vertical).setVelocity(2000);
+                ((DcMotorEx) vertical).setVelocity(1800);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(1900);
                 ((DcMotorEx) viperSlide).setVelocity(2000);
