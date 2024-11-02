@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.Hardware.Motors;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Hardware.Motors.DcMotorExComposition;
-
 public class MotorController extends DcMotorExComposition {
     private double lastPower = 0;
     DcMotor motor = null;
@@ -21,17 +19,11 @@ public class MotorController extends DcMotorExComposition {
         }
     }
 
-
-
     public double getPower(){
         return lastPower;
     }
     public double getMotorTolerance(){
         return motorTolerance;
     }
-    public void setTolerance() {
-        motorTolerance = 0.000001;
-    }
-
 
 }

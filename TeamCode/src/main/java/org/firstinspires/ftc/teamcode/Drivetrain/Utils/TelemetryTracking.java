@@ -9,6 +9,7 @@ public class TelemetryTracking {
     public TelemetryTracking() {
         packet = new TelemetryPacket();
         packet.fieldOverlay();
+
     }
     public TelemetryPacket updatePos (double xPos, double yPos,double thetaPos){
         packet.put("x", xPos);
