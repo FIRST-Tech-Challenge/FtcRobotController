@@ -82,12 +82,10 @@ public class Mecanum {
 
         this.update(new Vector2(vectorX, vectorY), rightStickX);
 
-        if(gp2.dpad_left){
+        if(gamepad.dpad_down){
             driveSpeed = 0.4;
-        } else if (gp2.dpad_right){
+        } else if (gamepad.dpad_up){
             driveSpeed = 1;
-        } else {
-            driveSpeed = 0.75;
         }
     }
 
@@ -103,10 +101,10 @@ public class Mecanum {
         double leftRearWheelPower = r * Math.sin(robotAngle) * Math.sqrt(2) + rightX;
         double rightRearWheelPower = r * Math.cos(robotAngle) * Math.sqrt(2) - rightX;
 
-        leftFrontDrive.setPower(leftFrontWheelPower);
-        rightFrontDrive.setPower(rightFrontWheelPower);
-        leftRearDrive.setPower(leftRearWheelPower);
-        rightRearDrive.setPower(rightRearWheelPower);
+        leftFrontDrive.setPower(leftFrontWheelPower * driveSpeed);
+        rightFrontDrive.setPower(rightFrontWheelPower * driveSpeed);
+        leftRearDrive.setPower(leftRearWheelPower * driveSpeed);
+        rightRearDrive.setPower(rightRearWheelPower * driveSpeed);
 
 
         if (this.debug) {

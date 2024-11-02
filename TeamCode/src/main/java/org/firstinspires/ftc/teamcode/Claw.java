@@ -26,23 +26,41 @@ public class Claw {
     }
 
     public void update(Gamepad gamepad) {
+        //claw and servo are switched in wiring, and I'm too lazy to fix
+        /*
         if(gamepad.x) {
-            if (isAPressed){
-                setClawPosition(0.242);
+            if (clawServo.getPosition() > 0.5){
+                setClawPosition(0);
             } else {
                 setClawPosition(0.80);
             }
             isAPressed = !isAPressed;
         }
+         */
+        if(gamepad.x) {
+            setClawPosition(0);
+        }
 
+        if (gamepad.y){
+            setClawPosition(0.8);
+        }
+        if (gamepad.a){
+            setJointPosition(0);
+        }
+        if(gamepad.b){
+            setJointPosition(0.26);
+        }
+
+        /*
         if(gamepad.a) {
-            if (isXPressed){
-                setJointPosition(0.242);
+            if (jointServo.getPosition() > 0.125){
+                setJointPosition(0);
             } else {
-                setJointPosition(0.606);
+                setJointPosition(0.26);
             }
             isXPressed = !isXPressed;
         }
+         */
     }
 
     public void setJointPosition(double pos){ jointServo.setPosition(pos); }

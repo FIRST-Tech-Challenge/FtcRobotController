@@ -14,18 +14,20 @@ public class SpecimanArm {
 
     public SpecimanArm(HardwareMap hardwareMap) {
         specimanMotor = hardwareMap.dcMotor.get(SPECIMAN_MOTOR_NAME);
-        specimanMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        specimanMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         claw = new SpecimenClaw(hardwareMap);
     }
 
     public void update(Gamepad gamepad) {
+        /*
         double power = 0;
         if(gamepad.dpad_up){
             ++power;
         } else if (gamepad.dpad_down){
             --power;
         }
-        update(power);
+        */
+        update(gamepad.left_stick_y);
         claw.update(gamepad);
     }
 

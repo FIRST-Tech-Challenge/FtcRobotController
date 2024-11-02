@@ -24,10 +24,10 @@ public class SpecimenClaw {
     public void update(Gamepad gamepad){
         //boolean a = gamepad.a && !aDown;
         //aDown = gamepad.a;
-        if( gamepad.right_bumper && clampDown) { releaseSpecimen(); }
+        if( gamepad.left_bumper) { releaseSpecimen(); }
         else if( gamepad.right_bumper){ grabSpecimen(); }
 
-        if(gamepad.right_bumper){ clampDown = !clampDown; }
+        //if(gamepad.left_bumper){ clampDown = !clampDown; }
     }
 
     public void setLeftPosition(double d){
