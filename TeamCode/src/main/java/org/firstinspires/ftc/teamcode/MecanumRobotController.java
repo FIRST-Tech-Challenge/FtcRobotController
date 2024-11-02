@@ -210,6 +210,7 @@ public class MecanumRobotController {
             strafe = Math.sin(direction * (Math.PI / 180));
         }
 
+        // Realized Math.cos and Math.sin here are redundant, as they equal 1 ultimately.
         double moveCountMult = Math.sqrt(Math.pow(Math.cos(direction * (Math.PI / 180)) * (1.0 / FORWARD_COUNTS_PER_INCH), 2) +
                                 Math.pow(Math.sin(direction * (Math.PI / 180)) * (1.0 / STRAFE_COUNTS_PER_INCH), 2));
 

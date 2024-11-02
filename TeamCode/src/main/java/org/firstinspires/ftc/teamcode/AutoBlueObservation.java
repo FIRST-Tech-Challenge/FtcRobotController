@@ -24,17 +24,19 @@ public class AutoBlueObservation extends LinearOpMode {
         // Initialize
         initialize();
         waitForStart();
-        // robotController.turnTo(45, TURN_SPEED);
-        robotController.distanceDrive(29, 180, DRIVE_SPEED);
-        robotController.sleep(2);
-        robotController.distanceDrive(7, 0, DRIVE_SPEED);
-        robotController.turnTo(180, TURN_SPEED);
-        robotController.distanceDrive(60, 270, DRIVE_SPEED);
-        robotController.distanceDrive(7, 180, DRIVE_SPEED);
-        robotController.sleep(2);
-        robotController.distanceDrive(24, 0, DRIVE_SPEED);
-        robotController.turnTo(135, TURN_SPEED);
-        robotController.sleep(5);
+
+        robotController.distanceDrive(24.186773244895647, 7.125016348901798, DRIVE_SPEED);
+        robotController.sleep(3.0);
+        robotController.distanceDrive(26.999999999999993, 270.0, DRIVE_SPEED);
+        robotController.distanceDrive(24.0, 0.0, DRIVE_SPEED);
+        robotController.distanceDrive(12.0, 270.0, DRIVE_SPEED);
+        robotController.distanceDrive(42.0, 180.0, DRIVE_SPEED);
+        robotController.distanceDrive(42.0, 0.0, DRIVE_SPEED);
+        robotController.distanceDrive(9.000000000000002, 270.0, DRIVE_SPEED);
+        robotController.distanceDrive(42.0, 180.0, DRIVE_SPEED);
+        robotController.distanceDrive(42.0, 0.0, DRIVE_SPEED);
+        robotController.distanceDrive(5.999999999999998, 270.0, DRIVE_SPEED);
+        robotController.distanceDrive(42.0, 180.0, DRIVE_SPEED);
     }
 
     public void initialize() {
