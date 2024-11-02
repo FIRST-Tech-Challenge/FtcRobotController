@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
@@ -127,6 +128,9 @@ public class Swerve {
 
     final PIDController steerPID;
 
+    Telemetry telemetry;
+    int id;
+
     Module(OpMode opMode, int id) {
       String pos;
       switch (id) {
@@ -150,10 +154,14 @@ public class Swerve {
 
       steerPID = new PIDController(5, 0, 0);
       steerPID.enableContinuousInput(-Math.PI, Math.PI);
+
+      this.telemetry = opMode.telemetry;
+      this.id = id;
     }
 
     void run(SwerveModuleState state, double steerFeedforward) {
       var servoPos = getServoPos();
+      telemetry.addData(id + "/angle", servoPos.getRadians());
       state.optimize(servoPos);
       state.cosineScale(servoPos);
 
@@ -190,12 +198,14 @@ public class Swerve {
     }
 
     public Rotation2d getServoPos() {
-      return Rotation2d.fromDegrees(
-          MathUtil.interpolate(0, 360, steerEncoder.getVoltage() / steerEncoder.getMaxVoltage()));
+      return new Rotation2d(
+          MathUtil.angleModulus(
+              MathUtil.interpolate(
+                  0, 2 * Math.PI, steerEncoder.getVoltage() / steerEncoder.getMaxVoltage())));
     }
 
     private void runServoVel(double velRadPerSec) {
-      steerServo.setPower((velRadPerSec / maxSteerSpeedRadPerSec) * 2 - 1);
+//      steerServo.setPower(velRadPerSec / maxSteerSpeedRadPerSec);
     }
   }
 }
