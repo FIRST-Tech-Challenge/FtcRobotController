@@ -12,8 +12,12 @@ public class DriveTrain
     private Motor bl;
     private Motor fr;
     private Motor br;
-    private BNO055IMU IMU;
-    //help im trapped within cyberspace I dont know where this message will appear but whatever you do DO NOT SPELL ICUP
+
+    private double drivePowerCoefficient = 1;//default
+    private double turnPowerCoefficient = 1;//default
+
+    //private BNO055IMU IMU;
+
     public DriveTrain(OpMode op)
     {
 
@@ -34,15 +38,15 @@ public class DriveTrain
     {//vroom
 
 
-        double x = power * Math.cos(theta) * 1.5;
-        double y = power * Math.sin(theta);
+        double x = power*drivePowerCoefficient * Math.cos(theta) * 1.5;
+        double y = power*drivePowerCoefficient * Math.sin(theta);
 
 
 
-        double flPower = y + x + turn;
-        double blPower = y - x + turn;
-        double frPower = y - x - turn;
-        double brPower = y + x - turn;
+        double flPower = y + x + turn*turnPowerCoefficient;
+        double blPower = y - x + turn*turnPowerCoefficient;
+        double frPower = y - x - turn*turnPowerCoefficient;
+        double brPower = y + x - turn*turnPowerCoefficient;
 
         double maxPower = 1;
         if(Math.abs(flPower) > maxPower || Math.abs(blPower) > maxPower
@@ -62,6 +66,13 @@ public class DriveTrain
         bl.setPower(blPower);
         fr.setPower(frPower);
         br.setPower(brPower);
+    }
+
+    public void setDrivePowerCoefficient(double coefficient){
+        drivePowerCoefficient = coefficient;
+    }
+    public void setTurnPowerCoefficient(double coefficient){
+        turnPowerCoefficient = coefficient;
     }
 
 }

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.bosons.Hardware.Controller;
 import com.bosons.Hardware.DriveTrain;
-import com.bosons.Hardware.arm;
+import com.bosons.Hardware.Arm;
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -19,25 +20,22 @@ import com.bosons.Hardware.arm;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
+@Config
 @TeleOp(name="TeleOp", group="Dev")
 
 public class TeleOpDev extends OpMode{
     // Declare HardWare.
     public Controller driverA = null;
     public DriveTrain driveTrain = null;
-    //public arm Arm = null;
+    public Arm arm = null;
 
-    //declare drive constants.
-    double drivePower  = 1;
-    double driveTurn  = 1;
 
     /*
      * Code to run ONCE when the Driver hits INIT
      */
     @Override
     public void init () {
-        //Arm = new arm(this,0.5);
+        arm = new Arm(this,0.5);
         driveTrain = new DriveTrain(this);
         driverA = new Controller(gamepad1);
 
@@ -84,8 +82,11 @@ public class TeleOpDev extends OpMode{
 
         double p = Math.sqrt((x * x) + (y * y));
         double theta = Math.atan2(y, x);
-        driveTrain.drive(p * drivePower, theta, turn * driveTurn); //updates the drivetrain inputs in the "DriveTrain" class
+        driveTrain.drive(p , theta, turn); //updates the drivetrain inputs in the "DriveTrain" class
         //------------------------------------------------------//
+
+        arm.updatePidLoop();
+
 
         //driveTrain.KinematicMove(leftX,leftY,rightY);
 

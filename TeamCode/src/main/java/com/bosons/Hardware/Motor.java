@@ -61,7 +61,7 @@ public class Motor //DCMotor Wrapper Class with added functionality and usb comm
     {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    public double getCurrentPosition(){
+    public int getCurrentPosition(){
         return motor.getCurrentPosition();
     }
 
