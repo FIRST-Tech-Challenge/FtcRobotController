@@ -83,13 +83,25 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backLeft.setPower(backLeftPower / 2);
             hardware.frontRight.setPower(frontRightPower / 2);
             hardware.backRight.setPower(backRightPower / 2);
+            if(gamepad2.dpad_up){
+            hardware.verticalLift.setPower(0.5);
 
+            }
+            else if(gamepad2.dpad_down){
+                hardware.verticalLift.setPower(-0.5);
+            }
+            else{
+                hardware.verticalLift.setPower(0.0);
+            }
+            int verticalPosition = hardware.encoderLift.getCurrentPosition();
+            telemetry.addData("Vertical position",verticalPosition);
             telemetry.addData("fl power", frontLeftPower);
             telemetry.addData("fr power", frontRightPower);
             telemetry.addData("bl power", backLeftPower);
             telemetry.addData("br power", backRightPower);
             telemetry.update();
         }
+
     }
 
     String formatAngle(AngleUnit angleUnit, double angle) {
