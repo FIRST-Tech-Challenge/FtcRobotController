@@ -21,7 +21,7 @@ public class OdometryFuse {
     private final DcMotor leftEncoder;
     private final DcMotor backEncoder;
 
-    public OdometryFuse(SparkFunOTOS myOtos, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor rightEncoder, DcMotor leftEncoder, DcMotor backEncoder) {
+    public OdometryFuse(SparkFunOTOS myOtos, DcMotor rightEncoder, DcMotor leftEncoder, DcMotor backEncoder) {
         this.myOtos = myOtos;
         this.rightEncoder = rightEncoder;
         this.leftEncoder = leftEncoder;
