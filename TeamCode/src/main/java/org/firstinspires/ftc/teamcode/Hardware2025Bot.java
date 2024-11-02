@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -169,6 +170,8 @@ public class Hardware2025Bot
     public double WRIST_SERVO_DROP = 0.500;
     final public static double WRIST_SERVO_DROP_ANGLE = 128.9;
 
+    public CRServo geckoServo = null;
+
     //Ultrasonic sensors
 //  private MaxSonarI2CXL sonarRangeF = null;
 
@@ -267,6 +270,9 @@ public class Hardware2025Bot
         wristServo = hwMap.servo.get("WristServo");             // servo port 1 (Expansion Hub)
         wristServoPos = hwMap.analogInput.get("WristServoPos"); // Analog port 0 (Expansion Hub)
         wristServo.setPosition(WRIST_SERVO_INIT);
+
+        geckoServo = hwMap.crservo.get("GeckoServo");           // servo port 2 (Expansion Hub)
+        geckoServo.setPower(0.0);
 
         // Initialize REV Control Hub IMU
         initIMU();

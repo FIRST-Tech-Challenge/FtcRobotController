@@ -24,8 +24,9 @@ public class TeleopServoTest extends LinearOpMode {
     boolean gamepad1_l_trigger_last,  gamepad1_l_trigger_now  = false;
     boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
 
-    int     selectedServo = 0;  // 0=push, 1=wrist
+    int     selectedServo = 0;  // 0=push, 1=wrist, 2=gecko
     double  elbowPos, wristPos;
+    boolean geckoOn = false;
     double  stepSize = 0.01;
     long    nanoTimeCurr=0, nanoTimePrev=0;
     double  elapsedTime, elapsedHz;
@@ -46,6 +47,7 @@ public class TeleopServoTest extends LinearOpMode {
         // Start each value at the initialization position
         elbowPos = robot.ELBOW_SERVO_INIT;
         wristPos = robot.WRIST_SERVO_INIT;
+        geckoOn = false;
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -65,7 +67,8 @@ public class TeleopServoTest extends LinearOpMode {
 
             //================ Update telemetry with current state ================
             telemetry.addData("Use CROSS to toggle between servos", " " );
-            switch( selectedServo ) { // 0=push, 1=wrist
+            telemetry.addData("Use left/right BUMPERS to index servos", " " );
+            switch( selectedServo ) { // 0=push, 1=wrist, 2=gecko
                 case 0 :
                     telemetry.addData("SELECTED:", "PushServo" );
                     telemetry.addData("value", "%.3f", elbowPos);
@@ -76,6 +79,10 @@ public class TeleopServoTest extends LinearOpMode {
                     telemetry.addData("value", "%.3f", wristPos );
                     telemetry.addData("Wrist Servo Angle", "%.1f",robot.getWristServoAngle());
                     break;
+                case 2 :
+                    telemetry.addData("SELECTED:", "GeckoServo" );
+                    telemetry.addData("value", "%s", ( (geckoOn)? "ON" : "off" ) );
+                    break;
                 default :
                     selectedServo = 0;
                     break;
@@ -85,13 +92,13 @@ public class TeleopServoTest extends LinearOpMode {
             if( gamepad1_cross_now && !gamepad1_cross_last)
             {
                 selectedServo += 1;
-                if( selectedServo > 1 ) selectedServo = 0;
+                if( selectedServo > 2 ) selectedServo = 0;
             } // cross
 
             //================ LEFT BUMPER DECREASES SERVO POSITION ================
             if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last)
             {
-                switch( selectedServo ) { // 0=push, 1=wrist
+                switch( selectedServo ) { // 0=push, 1=wrist, 2=gecko
                     case 0 :
                         elbowPos -= stepSize;
                         if( elbowPos < 0.0 ) elbowPos = 0.0;
@@ -104,6 +111,16 @@ public class TeleopServoTest extends LinearOpMode {
                         if( wristPos > 1.0 ) wristPos = 1.0;
                         robot.wristServo.setPosition(wristPos);
                         break;
+                    case 2 :
+                        if(geckoOn){
+                            robot.geckoServo.setPower(0.0);
+                            geckoOn = false;
+                        }
+                        else{
+                            robot.geckoServo.setPower(-1.0);
+                            geckoOn = true;
+                        }
+                        break;
                     default :
                         break;
                 } // switch()
@@ -112,7 +129,7 @@ public class TeleopServoTest extends LinearOpMode {
             //================ RIGHT BUMPER INCREASES SERVO POSITION ================
             else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last)
             {
-                switch( selectedServo ) { // 0=push, 1=wrist
+                switch( selectedServo ) { // 0=push, 1=wrist, 2=gecko
                     case 0 :
                         elbowPos += stepSize;
                         if( elbowPos < 0.0 ) elbowPos = 0.0;
@@ -124,6 +141,16 @@ public class TeleopServoTest extends LinearOpMode {
                         if( wristPos < 0.0 ) wristPos = 0.0;
                         if( wristPos > 1.0 ) wristPos = 1.0;
                         robot.wristServo.setPosition(wristPos);
+                        break;
+                    case 2 :
+                        if(geckoOn){
+                            robot.geckoServo.setPower(0.0);
+                            geckoOn = false;
+                        }
+                        else{
+                            robot.geckoServo.setPower(1.0);
+                            geckoOn = true;
+                        }
                         break;
                     default :
                         break;

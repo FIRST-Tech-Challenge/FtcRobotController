@@ -61,6 +61,8 @@ public class TeleopLift extends LinearOpMode {
     boolean liftTweaked  = false;  // Reminder to zero power when input stops
     boolean enableOdometry = false;
 
+    int geckoWheelState = 0;
+
     /* Declare OpMode members. */
     Hardware2025Bot robot = new Hardware2025Bot();
     @Override
@@ -155,6 +157,7 @@ public class TeleopLift extends LinearOpMode {
 //          processTiltControls();
             processPanAndTilt();
             ProcessViperLiftControls();
+            processWheelCollector();
 
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
@@ -447,7 +450,32 @@ public class TeleopLift extends LinearOpMode {
         robot.driveTrainMotors( -frontLeft, frontRight, -rearLeft, rearRight );
 
     } // processDriverCentricDriveMode
+    void processWheelCollector() {
+        if( gamepad1_cross_now && !gamepad1_cross_last)
+        {
+            //robot.elbowServo.setPosition(robot.ELBOW_SERVO_INIT);
+            //robot.wristServo.setPosition(robot.WRIST_SERVO_INIT);
 
+            switch(geckoWheelState){
+                case 0:
+                    robot.geckoServo.setPower(1.0);
+                    break;
+                case 1:
+                    robot.geckoServo.setPower(0.0);
+                    break;
+                case 2:
+                    robot.geckoServo.setPower(-1.0);
+                    break;
+                case 3:
+                    robot.geckoServo.setPower(0.0);
+                    break;
+                default: break;
+            } // switch()
+            geckoWheelState++;
+
+            if(geckoWheelState>3) geckoWheelState = 0;
+        }
+    }
     void processPanAndTilt() {
 
         // Pan movement
@@ -477,13 +505,16 @@ public class TeleopLift extends LinearOpMode {
 
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
+        /*
         if( gamepad1_cross_now && !gamepad1_cross_last)
         {
             // robot.turretPIDPosInit( robot.PAN_ANGLE_CENTER );
         }
+        */
+
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
-        else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
+        if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
             // Is the driver assisting with COLLECTION? (rotate turret toward substation)
             if( turretFrontToBack == false ) {
