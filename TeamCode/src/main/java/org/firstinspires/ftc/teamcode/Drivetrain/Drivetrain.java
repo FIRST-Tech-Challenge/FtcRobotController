@@ -38,14 +38,14 @@ public class Drivetrain {
     /**
      * Drive motors
      */
-    public MotorController motorLeftFront;
-    public MotorController motorLeftBack;
-    public MotorController motorRightBack;
-    public MotorController motorRightFront;
+    public DcMotorEx motorLeftFront = null;
+    public DcMotorEx motorLeftBack = null;
+    public DcMotorEx motorRightBack = null;
+    public DcMotorEx motorRightFront = null;
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
-    public static double distanceThreshold = 0.5;
+    public static double distanceThreshold = 0.2;
     public static double angleThreshold = 0.1;
 
     public SimpleMatrix prevWheelSpeeds = new SimpleMatrix( new double[][]{
@@ -69,16 +69,16 @@ public class Drivetrain {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        motorLeftFront = (MotorController) hardwareMap.get(DcMotorEx.class, "lfm");
-        motorLeftBack = (MotorController) hardwareMap.get(DcMotorEx.class, "lbm");
-        motorRightBack = (MotorController) hardwareMap.get(DcMotorEx.class, "rbm");
-        motorRightFront = (MotorController) hardwareMap.get(DcMotorEx.class, "rfm");
+        motorLeftFront = hardwareMap.get(DcMotorEx.class, "lfm");
+        motorLeftBack = hardwareMap.get(DcMotorEx.class, "lbm");
+        motorRightBack = hardwareMap.get(DcMotorEx.class, "rbm");
+        motorRightFront = hardwareMap.get(DcMotorEx.class, "rfm");
         //casting
 
-        motorLeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorRightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
         /**
          * Establish that motors will not be using their native encoders:
@@ -214,8 +214,8 @@ public class Drivetrain {
 
                 // Please please please, write a function in drivetrain called isClose or something, which does this checking for you!!!
                 // replace it with that in both the goToPose and the followPath
-                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold)){
-                    if (Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold) {
+                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))<distanceThreshold)){
+                    if (Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))<angleThreshold) {
                         setPower(stopMatrix);
                     }
                 }

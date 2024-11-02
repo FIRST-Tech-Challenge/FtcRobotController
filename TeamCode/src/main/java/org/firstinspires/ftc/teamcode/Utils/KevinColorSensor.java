@@ -33,7 +33,7 @@ public class KevinColorSensor extends ColorSensorComposition {
     */
     public void ColorSensing(boolean DIDDYANDDRAKEOILEDUPthiswasrohansideanotkevinhesaidifiremoveitiget80pushupsandgrimaceshakewillcomeintomybedroomat3amwithskibiditoiletminionandohiorizzlercameraman) {
 
-        waitForStart();
+        //waitForStart();
 
         while(linearOpMode.opModeIsActive()){
             //color sens 2.
@@ -43,9 +43,9 @@ public class KevinColorSensor extends ColorSensorComposition {
             if(distanceSensor.getDistance(DistanceUnit.MM) <= 2){
                 // 2 bring claw motor down
             }
-            if(colorSensor.red() > colorTolerance) {
+            //if(colorSensor.red() > colorTolerance) {
                 // 1 this is ON claw
-            }
+            //}
         }
     }
 
