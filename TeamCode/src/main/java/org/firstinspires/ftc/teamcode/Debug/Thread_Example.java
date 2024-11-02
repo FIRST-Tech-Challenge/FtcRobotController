@@ -3,9 +3,11 @@
 
 package org.firstinspires.ftc.teamcode.Debug;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /** Messing around with multithreading. Don't touch this. I mean it. Don't */
+@Disabled
 public class Thread_Example extends LinearOpMode {
 
   Thread thread1 =
