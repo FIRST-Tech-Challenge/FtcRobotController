@@ -196,7 +196,7 @@ public class MainMovement extends LinearOpMode {
         }
 
         if(Math.abs(gamepad2.left_stick_y) > joystickDeadzone){
-            linearSlide.setPower(gamepad2.left_stick_y);
+            linearSlide.setPower(gamepad2.left_stick_y / 2);
         }
 
     }
