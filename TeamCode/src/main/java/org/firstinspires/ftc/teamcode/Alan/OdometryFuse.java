@@ -136,8 +136,8 @@ public class OdometryFuse {
 //            //telemetry.addData("average x", "" + ((leftFront.getCurrentPosition() + pos.x) / 2));
 //            //telemetry.addData("average y", "" + ((leftBack.getCurrentPosition() + pos.y) / 2));
 //            telemetry.update();
-        }
-    }
+}
+
     /*
     NOTE!!!!!!!!!!
 
