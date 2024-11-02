@@ -60,7 +60,7 @@ public class TunePoseController extends LinearOpMode {
             );
             drivetrain.localize();
             //drivetrain.goToPose(desiredPose);
-            Actions.runBlocking(drivetrain.goToPose(desiredPose));
+            Actions.runBlocking(drivetrain.goToPose(desiredPose, 0));
             telemetry.addData("x", drivetrain.state.get(0,0));
             telemetry.addData("y", drivetrain.state.get(1,0));
             telemetry.addData("theta", drivetrain.state.get(2,0));

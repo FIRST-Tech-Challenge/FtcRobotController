@@ -50,9 +50,9 @@ public class GeometricController {
 
     // To be more consistent with PoseController, pass in SimpleMatrix Pose here,
     // then first two lines grab the x and y position from the pose.
-    public SimpleMatrix calculate(SimpleMatrix posPose, Path path){
-        double x = posPose.get(0,0);
-        double y = posPose.get(1,0);
+    public SimpleMatrix calculate(SimpleMatrix pose, Path path){
+        double x = pose.get(0,0);
+        double y = pose.get(1,0);
         // Assuming you read my Path class feedback, might want to change to path.getWaypoints() :-)
         double[][] wayPoints = path.getWaypoints();
 
@@ -106,14 +106,14 @@ public class GeometricController {
         // You are calling to thetaArray in the position spots!
         // See above: get the xy furthest point (furthestIntersectionPointXY)
         // and use that!
-        SimpleMatrix pose = new SimpleMatrix(
+        SimpleMatrix desiredPose = new SimpleMatrix(
             new double[]{
                     posArray.get(posArray.size()-1)[0],
                     posArray.get(posArray.size()-1)[1],
                     desiredTheta
             }
         );
-        return pose;
+        return desiredPose;
     }
     public void resetLookAhead(){
         lastLookaheadXY = 0;

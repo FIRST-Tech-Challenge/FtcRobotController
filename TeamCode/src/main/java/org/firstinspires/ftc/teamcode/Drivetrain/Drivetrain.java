@@ -38,10 +38,10 @@ public class Drivetrain {
     /**
      * Drive motors
      */
-    public MotorController motorLeftFront = null;
-    public MotorController motorLeftBack = null;
-    public MotorController motorRightBack = null;
-    public MotorController motorRightFront = null;
+    public MotorController motorLeftFront;
+    public MotorController motorLeftBack;
+    public MotorController motorRightBack;
+    public MotorController motorRightFront;
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
@@ -69,16 +69,6 @@ public class Drivetrain {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-<<<<<<< Updated upstream
-        motorLeftFront = hardwareMap.get(DcMotorEx.class, "lfm");
-        motorLeftBack = hardwareMap.get(DcMotorEx.class, "lbm");
-        motorRightBack = hardwareMap.get(DcMotorEx.class, "rbm");
-        motorRightFront = hardwareMap.get(DcMotorEx.class, "rfm");
-        motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-=======
         motorLeftFront = (MotorController) hardwareMap.get(DcMotorEx.class, "lfm");
         motorLeftBack = (MotorController) hardwareMap.get(DcMotorEx.class, "lbm");
         motorRightBack = (MotorController) hardwareMap.get(DcMotorEx.class, "rbm");
@@ -89,11 +79,6 @@ public class Drivetrain {
         motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         motorRightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         motorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
->>>>>>> Stashed changes
-        motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         /**
          * Establish that motors will not be using their native encoders:
@@ -171,7 +156,7 @@ public class Drivetrain {
         setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
         prevWheelSpeeds = wheelSpeeds;
     }*/
-    public Action goToPose(SimpleMatrix desiredPose) {
+    public Action goToPose(SimpleMatrix desiredPose, int step) {
         return new Action() {
             //private boolean initialized = false;
 
@@ -190,8 +175,9 @@ public class Drivetrain {
                 prevWheelSpeeds = wheelSpeeds;
                 if (Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold){
                     setPower(stopMatrix);
+                    opSwitch++;
                 }
-                return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold;
+                return opSwitch==step;
             }
         };
     }
@@ -232,7 +218,6 @@ public class Drivetrain {
                 if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold)){
                     if (Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold) {
                         setPower(stopMatrix);
-                        setOp();
                     }
                 }
                 return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),wheelSpeeds.get(0,0),wheelSpeeds.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-wheelSpeeds.get(2,0)))>angleThreshold;

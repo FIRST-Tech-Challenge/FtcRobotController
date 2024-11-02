@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 //import com.acmerobotics.roadrunner.Actions;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -67,11 +70,12 @@ public class TestAuton extends LinearOpMode {
                     }
             );
             drivetrain.localize();
-            if (drivetrain.opSwitch == 0){
-                Actions.runBlocking(drivetrain.goToPose(desiredPose));
-            } else {
-                Actions.runBlocking(drivetrain.goToPose(desiredPoseTwo));
-            }
+            Actions.runBlocking(new SequentialAction(
+                                drivetrain.goToPose(desiredPose, 0),
+
+                                drivetrain.goToPose(desiredPoseTwo, 1)
+
+            ));
             telemetry.addData("x", drivetrain.state.get(0,0));
             telemetry.addData("y", drivetrain.state.get(1,0));
             telemetry.addData("theta", drivetrain.state.get(2,0));
