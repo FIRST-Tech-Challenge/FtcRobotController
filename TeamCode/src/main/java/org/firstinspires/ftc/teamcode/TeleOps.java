@@ -22,22 +22,16 @@ public class TeleOps extends LinearOpMode {
 
         robot.init(hardwareMap);
 
-        robot.switchPipeline(1);
-        telemetry.addData("pipeline: 1", null);
-
         while (opModeInInit()) {
 
             if (gamepad1.dpad_right) {
 
-                robot.switchPipeline(1);
-                telemetry.addData("pipeline: 1", null);
+                telemetry.addData("pipeline: 1", robot.limelight.pipelineSwitch(1));
 
             }
             if (gamepad1.dpad_left) {
 
-                robot.switchPipeline(2);
-                telemetry.addData("pipeline: 2", null);
-
+                telemetry.addData("pipeline: 2", robot.limelight.pipelineSwitch(2));
             }
             telemetry.update();
 

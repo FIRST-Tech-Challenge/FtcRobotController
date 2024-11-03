@@ -13,14 +13,13 @@ public class LimelightBot extends GyroBot {
 
     public LLResult result = null;
     public Pose3D botpose = null;
-    private Limelight3A limelight;
+    public Limelight3A limelight;
 
     @Override
 
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         limelight = hwMap.get(Limelight3A.class, "limelight");
-
 
         limelight.pipelineSwitch(1);
 
@@ -34,16 +33,6 @@ public class LimelightBot extends GyroBot {
         super(opMode);
     }
 
-    public double horizontalDistance(){
-        result = limelight.getLatestResult();
-        return result.getTx();
-
-    }
-
-    public double verticalDistance(){
-        result = limelight.getLatestResult();
-        return result.getTy();
-    }
 
    public double[] detectOne(){
         double[] values = new double[3];
@@ -65,12 +54,6 @@ public class LimelightBot extends GyroBot {
        return values;
 
    }
-
-   public void switchPipeline(int pipeline){
-       limelight.pipelineSwitch(pipeline);
-   }
-
-    }
 
 
 }
