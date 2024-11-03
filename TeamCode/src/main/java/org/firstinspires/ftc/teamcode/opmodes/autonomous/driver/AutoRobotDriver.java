@@ -15,5 +15,9 @@ public abstract class AutoRobotDriver {
         this.driveTrain = driveTrain;
     }
 
+    public void stop() {
+        driveTrain.stop();
+    }
+
     public abstract void drive(double strafeSpeed, double forwardSpeed, double turnSpeed);
 }

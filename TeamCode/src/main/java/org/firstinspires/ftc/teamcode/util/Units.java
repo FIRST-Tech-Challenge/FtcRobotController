@@ -3,8 +3,14 @@ package org.firstinspires.ftc.teamcode.util;
 public class Units {
     private static final double INCHES_PER_METER = 39.3701;
 
+    private static final double INCHES_PER_MM = 0.0393701;
+
     public static double inchesToMeters(double inches) {
         return inches / INCHES_PER_METER;
+    }
+
+    public static double inchesToMMs(double inches) {
+        return inches / INCHES_PER_MM;
     }
 
     public static double metersToInches(double meters) {

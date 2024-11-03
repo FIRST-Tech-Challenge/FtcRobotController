@@ -4,12 +4,12 @@
 
 ### Motors
 
-| Motor Port | Name | Description       | Encoder          |
-|------------|------|-------------------|------------------|
-| 0          | FL   | Front Left motor  | Straight encoder |
-| 1          | FR   | Front Right motor | Strafe encoder   |
-| 2          | BL   | Back Left motor   | -                |
-| 3          | BR   | Back Right motor  | -                |
+| Motor Port | Name | Description       | Encoder |
+|------------|------|-------------------|---------|
+| 0          | FL   | Front Left motor  | -       |
+| 1          | FR   | Front Right motor | -       |
+| 2          | BL   | Back Left motor   | -       |
+| 3          | BR   | Back Right motor  | -       |
 
 ### Servos
 
@@ -39,7 +39,7 @@
 
 ## I2C
 
-| I2C Bus | Name        | Description         |
-|---------|-------------|---------------------|
-| 0       | -           | -                   |
-| 1       | ColorSensor | Intake color sensor |
+| I2C Bus | Name        | Description                                |
+|---------|-------------|--------------------------------------------|
+| 0       | -           | IMU(vert. deadwheel, horizontal deadwheel) |
+| 1       | ColorSensor | Intake color sensor                        |

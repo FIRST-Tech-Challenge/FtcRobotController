@@ -39,17 +39,17 @@ public class Tunables {
     /**
      * Rotation tolerance for trajectory
      */
-    public static final double ROTATION_TOLERANCE = Math.toRadians(2); // 2 degree
+    public static final double ROTATION_TOLERANCE = Math.toRadians(5); // 2 degree
 
     /**
      * x tolerance for trajectory
      */
-    public static final double X_TOLERANCE = Units.inchesToMeters(1);
+    public static final double X_TOLERANCE = Units.inchesToMeters(0.2);
 
     /**
      * y tolerance for trajectory
      */
-    public static final double Y_TOLERANCE = Units.inchesToMeters(1);
+    public static final double Y_TOLERANCE = Units.inchesToMeters(0.2);
 
     public static final double ODOMETER_POD_WHEEL_DIAMETER_MM = 48;
     public static final double ODOMETER_POD_TICKS_PER_REVOLUTION = 2000;
@@ -69,4 +69,9 @@ public class Tunables {
     public static final double ROTATION_KP = 1;
     public static final double ROTATION_KI = 0;
     public static final double ROTATION_KD = 0;
+
+    //Non trajectory auto parameters
+    public static final double STOPPING_DISTANCE = 0.2; //20% of distance used to slow
+    public static final double DRIVE_POWER = 0.5; //50% power when driving with no trajectory auto mode
+    public static final double TOLERANCE = 0.001; //10mm tolerance
 }
