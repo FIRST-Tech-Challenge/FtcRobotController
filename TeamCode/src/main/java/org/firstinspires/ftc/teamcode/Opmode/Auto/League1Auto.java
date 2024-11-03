@@ -35,6 +35,7 @@ public class League1Auto extends LinearOpMode {
     double oldTime = 0;
     double timeStamp = 0;
     PARKING parking = PARKING.NEAR;
+    boolean isThirdCycle = false;
 
     public void runOpMode() throws InterruptedException {
         //bulk reading
@@ -79,9 +80,18 @@ public class League1Auto extends LinearOpMode {
                 case REST:
                     break;
                 case PICKUP:
+                    if (isThirdCycle) {
+                        ActionStamp = timer.milliseconds();
+                        actionToggle = false;
+                    }
                     arm.deposit();
                     slides.preScore();
-                    currentAction = Actions.SLIDESEXTEND;
+                    if (isThirdCycle && timer.milliseconds() > ActionStamp + 500) {
+                        currentAction = Actions.SLIDESEXTEND;
+                    } else if (!isThirdCycle) {
+                        currentAction = Actions.SLIDESEXTEND;
+                    }
+
                     break;
                 case SLIDESEXTEND:
 //                    slides.score();
@@ -188,7 +198,6 @@ public class League1Auto extends LinearOpMode {
                     }
 
 
-
                     if (timer.milliseconds() > TimeStamp + 3500) {
 
                         timeToggle = true;
@@ -201,8 +210,8 @@ public class League1Auto extends LinearOpMode {
                         } else if (currentCycle == 3) {
                             if (parking == PARKING.NEAR) {
                                 currentState = State.PARKNEAR;
-                            } else if (parking==PARKING.FAR){
-                                currentState=State.PARKFAR;
+                            } else if (parking == PARKING.FAR) {
+                                currentState = State.PARKFAR;
                             }
                         }
                     }
@@ -239,6 +248,7 @@ public class League1Auto extends LinearOpMode {
                     }
                     break;
                 case CYCLE3:
+                    isThirdCycle = true;
                     drive.setTarget(new Pose2d(-18, 25.7, 39)); //third block
                     if (timeToggle) {
                         TimeStamp = timer.milliseconds();
@@ -270,8 +280,9 @@ public class League1Auto extends LinearOpMode {
                     }
                     if (timer.milliseconds() > TimeStamp + 4000) {
                         drive.setTarget(new Pose2d(76, 48, -33));
-
+                        timeToggle = true;
                     }
+
                     break;
 
 
@@ -303,9 +314,11 @@ public class League1Auto extends LinearOpMode {
             telemetry.update();
         }
     }
+
     enum State {
         DRIVETODEPOSIT, DEPOSIT, CYCLE1, CYCLE2, CYCLE3, PARKNEAR, PARKFAR
     }
+
     //(-18, 23.5, 30)
     enum Actions {
         PICKUP, SLIDESEXTEND, WRISTDEPOSIT, DEPOSIT, RESET, INTAKE, REST

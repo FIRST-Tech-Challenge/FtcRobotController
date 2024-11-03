@@ -110,7 +110,7 @@ public class SubmersibleClawTest extends LinearOpMode {
                     globalStateMachine = 0;
                 }
             } else if (globalStateMachine == 10) { // submersible intake
-                wrist.straight();
+                wrist.intake();
                 arm.preSubmerse();
                 claw.open();
                 globalStateMachine++;

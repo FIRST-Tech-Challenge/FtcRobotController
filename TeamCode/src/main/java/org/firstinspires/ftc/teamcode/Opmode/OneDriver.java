@@ -136,13 +136,13 @@ public class OneDriver extends LinearOpMode {
                     globalStateMachine = GlobalStateMachine.DEFAULT;
                 }
             } else if (globalStateMachine == GlobalStateMachine.BEGIN_SUBMERSIBLE) { // BEGIN SUBMERSIBLE
-                wrist.straight();
+                wrist.intake();
                 arm.preSubmerse();
                 claw.open();
                 slideInches = 0;
                 globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER) { // SUBMERSIBLE SLIDER
-                wrist.straight();
+                wrist.intake();
                 arm.preSubmerse();
                 claw.open();
                 double increment = inchesPerSecond * loopTime * (gamepad1.left_trigger - gamepad1.right_trigger);

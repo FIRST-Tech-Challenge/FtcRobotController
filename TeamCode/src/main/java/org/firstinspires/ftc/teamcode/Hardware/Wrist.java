@@ -20,15 +20,13 @@ public class Wrist {
     }
 
     public void intake() {
-        setPosition(.48);
+        setPosition(0.44);
     }
 
     public void deposit() {
         setPosition(.95);
     }
 
-    public void straight() {
-        setPosition(.5);
-    }
+
 
 }
