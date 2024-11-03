@@ -62,6 +62,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     boolean autoLift = false;
     boolean disableIMU = true;
     boolean game2back = false; //Used to override switch for arm in case of failure
+    boolean rightBumperPressed = false;
     Double initHeading = 0.0;
 
     //boolean touchIsPressed = false;
@@ -246,25 +247,21 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
-        double leftArmPosition = leftArm.getCurrentPosition();
+        leftArm.setPower(gamepad2.right_stick_y * armPower);
+        rightArm.setPower(gamepad2.right_stick_y * armPower);
 
-       // if (leftArmPosition < utils.upEncode & leftArmPosition >= utils.downEncode) {
-            leftArm.setPower(gamepad2.right_stick_y);
-            rightArm.setPower(gamepad2.right_stick_y);
-        /*} else {
-            leftArm.setPower(0.0);
-            rightArm.setPower(0.0);
-        }*/
-       
 
         intake.setPower(gamepad2.left_stick_y);
-        if (gamepad2.left_bumper) {
-            utils.setWrist(actuatorUtils.WristModes.DOWN);
+        if (gamepad2.right_bumper && ! rightBumperPressed) {
+            rightBumperPressed = true;
+            if (wrist.getPosition()==0.0)
+                utils.setWrist(actuatorUtils.WristModes.DOWN);
+            else
+                utils.setWrist(actuatorUtils.WristModes.UP);
         }
-        else if (gamepad2.right_bumper) {
-            utils.setWrist(actuatorUtils.WristModes.UP);
+        else if (!gamepad2.right_bumper) {
+            rightBumperPressed = false;
         }
-
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("leftArm: ", leftArm.getCurrentPosition());
