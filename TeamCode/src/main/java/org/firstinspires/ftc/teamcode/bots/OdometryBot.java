@@ -199,7 +199,7 @@ public class OdometryBot extends GyroBot {
         super.onTick();
         //thetaDEG = -getDeltaAngle();
 //        calculateCaseThree(rightFront.getCurrentPosition() - vLOffset, intake.getCurrentPosition() - vROffset, -rightRear.getCurrentPosition() - hOffset);
-                // must find a new motor encoders for the odometry pods
+                /** must find a new motor encoders for the odometry pods */
         if (isCoordinateDriving) {
             driveToCoordinateUpdate(globalTargetX, globalTargetY, globalTargetTheta, globalTolerance, globalAngleTol, globalMagnitude);
         }
