@@ -13,6 +13,7 @@ public class Pivot {
     public static final int MAX_POSITION = 0;
 
     private int targetPosition = 0;
+    private int offset;
     private PivotState currentState = PivotState.STOPPED;
 
     private enum PivotState {
@@ -21,14 +22,19 @@ public class Pivot {
         STOPPED
     }
 
-    public Pivot(DcMotorEx leftMotor, DcMotorEx rightMotor) {
+    public Pivot(DcMotorEx leftMotor, DcMotorEx rightMotor, int offset) {
         this.leftMotor = leftMotor;
         this.rightMotor = rightMotor;
+        this.offset = offset;
         leftMotor.setDirection(DcMotor.Direction.FORWARD);
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         resetEncoders();
+    }
+
+    public Pivot(DcMotorEx leftMotor, DcMotorEx rightMotor) {
+        this(leftMotor, rightMotor, 0);
     }
 
     private void setState(PivotState newState, double velocity) {
@@ -94,7 +100,7 @@ public class Pivot {
     }
 
     public void setTargetPosition(int position) {
-        targetPosition = position;
+        targetPosition = position + offset;
         leftMotor.setTargetPosition(position);
         rightMotor.setTargetPosition(position);
 
@@ -124,15 +130,15 @@ public class Pivot {
     }
 
     public int getLeftPosition() {
-        return leftMotor.getCurrentPosition();
+        return leftMotor.getCurrentPosition() - offset;
     }
 
     public int getRightPosition() {
-        return rightMotor.getCurrentPosition();
+        return rightMotor.getCurrentPosition() - offset;
     }
 
     public int getCurrentPosition() {
-        return (leftMotor.getCurrentPosition() + rightMotor.getCurrentPosition()) / 2;
+        return ((leftMotor.getCurrentPosition() + rightMotor.getCurrentPosition()) / 2) - offset;
     }
 
     public PivotState getCurrentState() {

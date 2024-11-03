@@ -73,8 +73,9 @@ public class MecanumDriver extends OpMode {
     public static int PIVOT_PICKUP_SPECIMEN = -430;
     public static int VIPER_PICKUP_SPECIMEN = 0;
     // About 60 degrees
-    public static int PIVOT_PLACE_SPECIMEN = -1060;
+    public static int PIVOT_PLACE_SPECIMEN = -1160;
     public static int VIPER_PLACE_SPECIMEN = 1200;
+    public static int PIVOT_POSITION_OFFSET_COUNTS = 100;
     public final boolean isFieldCentric = true;
 //    private Servo claw;
 //    private Servo wrist;
@@ -113,7 +114,8 @@ public class MecanumDriver extends OpMode {
         );
         pivot = new Pivot(
                 hardwareMap.get(DcMotorEx.class, "PIVOTLEFT"),
-                hardwareMap.get(DcMotorEx.class, "PIVOTRIGHT")
+                hardwareMap.get(DcMotorEx.class, "PIVOTRIGHT"),
+                PIVOT_POSITION_OFFSET_COUNTS
         );
         intake = new Intake(hardwareMap);
         robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
