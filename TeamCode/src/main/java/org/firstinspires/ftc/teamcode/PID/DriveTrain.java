@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import com.kalipsorobotics.fresh.localization.Odometry;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
