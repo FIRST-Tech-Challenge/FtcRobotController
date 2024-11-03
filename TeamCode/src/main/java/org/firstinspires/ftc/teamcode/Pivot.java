@@ -9,12 +9,6 @@ public class Pivot {
     private DcMotorEx rightMotor;
     private static final double DEFAULT_POWER = 0.8;
     private static final int POSITION_TOLERANCE = 10;
-
-    // Preset positions - adjust these for your robot
-    public static final int POSITION_DOWN = 0;
-    public static final int POSITION_PICKUP = 200;
-    public static final int POSITION_HALF = 500;
-    public static final int POSITION_UP = 900;
     public static final int MIN_POSITION = -1750;
     public static final int MAX_POSITION = 0;
 

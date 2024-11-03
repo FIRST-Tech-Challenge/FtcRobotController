@@ -50,7 +50,6 @@ public class AutoRedObservation extends LinearOpMode {
         robotController.distanceDrive(8.0, 90.0, DRIVE_SPEED);
         robotController.distanceDrive(39.0, 180.0, DRIVE_SPEED);
         robotController.distanceDrive(9.0, -0.0, DRIVE_SPEED);
-        robotController.distanceDrive(121.82364302548172, -99.9262455066517, DRIVE_SPEED);
     }
 
     public void initialize() {

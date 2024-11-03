@@ -70,6 +70,11 @@ public class MecanumDriver extends OpMode {
     private final static double WRIST_MAX_POS = 0.5;
     public static final double MAX_EXTENSION_BACK = 7.0;
     public static final double MAX_EXTENSION_FORWARD = 17.0;
+    public static int PIVOT_PICKUP_SPECIMEN = -430;
+    public static int VIPER_PICKUP_SPECIMEN = 0;
+    // About 60 degrees
+    public static int PIVOT_PLACE_SPECIMEN = -1060;
+    public static int VIPER_PLACE_SPECIMEN = 1200;
     public final boolean isFieldCentric = true;
 //    private Servo claw;
 //    private Servo wrist;
@@ -135,16 +140,17 @@ public class MecanumDriver extends OpMode {
         robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
                 gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
                 gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
+        double extensionBeyondChassis = viperSlide.getExtensionBeyondChassis(pivot.getAngleDegrees());
 
         double pivotPower = Math.min(MAX_PIVOT_VELOCITY, BASE_PIVOT_VELOCITY + (MAX_PIVOT_VELOCITY - BASE_PIVOT_VELOCITY) * (runtime.seconds() - pivotStartedTime) / PIVOT_RAMP_TIME);
         // Pivot
-        if (gamepad2.dpad_down) {
+        if (gamepad2.dpad_down && extensionBeyondChassis < MAX_EXTENSION_FORWARD) {
             if (!pivotStarted) {
                 pivotStartedTime = runtime.seconds();
                 pivotStarted = true;
             }
             pivot.move(pivotPower);
-        } else if (gamepad2.dpad_up) {
+        } else if (gamepad2.dpad_up && extensionBeyondChassis > -MAX_EXTENSION_BACK) {
             if (!pivotStarted) {
                 pivotStartedTime = runtime.seconds();
                 pivotStarted = true;
@@ -156,7 +162,6 @@ public class MecanumDriver extends OpMode {
         }
 
         double triggerPower = gamepad2.left_trigger - gamepad2.right_trigger;
-        double extensionBeyondChassis = viperSlide.getExtensionBeyondChassis(pivot.getAngleDegrees());
         // Viper
         if (triggerPower < 0 || (triggerPower != 0 && extensionBeyondChassis < MAX_EXTENSION_FORWARD && extensionBeyondChassis > -MAX_EXTENSION_BACK)) {
             viperSlide.move(triggerPower * VIPER_VELOCITY_CONSTANT);
@@ -164,16 +169,11 @@ public class MecanumDriver extends OpMode {
             viperSlide.hold();
         }
 
-        if (extensionBeyondChassis > MAX_EXTENSION_FORWARD) {
-            viperSlide.setTargetPosition((int) (1 / Math.cos(pivot.getAngleDegrees()) * (MAX_EXTENSION_FORWARD + ViperSlide.CHASSIS_TO_PIVOT_LENGTH) * ViperSlide.MOVE_COUNTS_PER_INCH));
-        } else if (-extensionBeyondChassis < MAX_EXTENSION_BACK) {
-            viperSlide.setTargetPosition((int) Math.abs((1 / Math.cos(pivot.getAngleDegrees()) * (MAX_EXTENSION_BACK + ViperSlide.CHASSIS_TO_PIVOT_LENGTH) * ViperSlide.MOVE_COUNTS_PER_INCH)));
-        }
-
         // Preset Viper Positions
-        if (gamepad2.left_bumper) {
+        // Currently disabled to make sure no extension beyond limits
+        /*if (gamepad2.left_bumper) {
             viperSlide.setTargetPosition(ViperSlide.MAX_POSITION);
-        } else if (gamepad2.right_bumper) {
+        } else*/ if (gamepad2.right_bumper) {
             viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
         }
 
@@ -199,6 +199,18 @@ public class MecanumDriver extends OpMode {
             } else {
                 intake.whack();
             }
+        }
+
+        // Pickup Preset
+        if (gamepad2.b) {
+            pivot.setTargetPosition(PIVOT_PICKUP_SPECIMEN);
+            viperSlide.setTargetPosition(VIPER_PICKUP_SPECIMEN);
+        }
+
+        // Place Preset
+        if (gamepad2.y) {
+            pivot.setTargetPosition(PIVOT_PLACE_SPECIMEN);
+            viperSlide.setTargetPosition(VIPER_PLACE_SPECIMEN);
         }
 
 //        if (gamepad2.dpad_left) {
