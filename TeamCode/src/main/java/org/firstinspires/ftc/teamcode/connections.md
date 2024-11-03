@@ -6,8 +6,8 @@
 
 | Motor Port | Name | Description       | Encoder          |
 |------------|------|-------------------|------------------|
-| 0          | FL   | Front Left motor  | Straight encoder |
-| 1          | FR   | Front Right motor | Strafe encoder   |
+| 0          | FL   | Front Left motor  |                  |
+| 1          | FR   | Front Right motor | -                |
 | 2          | BL   | Back Left motor   | -                |
 | 3          | BR   | Back Right motor  | -                |
 
@@ -39,6 +39,6 @@
 
 ## I2C
 
-| I2C Bus | Name       | Description                |
-|---------|------------|----------------------------|
-| 0       | -          | -                          |
+| I2C Bus | Name       | Description                               |
+|---------|------------|-------------------------------------------|
+| 0       | -          | IMU(vert. deadwheel, horizontal deadwheel)|
