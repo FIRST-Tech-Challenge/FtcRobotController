@@ -46,11 +46,11 @@ public class TeleOps extends LinearOpMode {
         while(opModeIsActive()){
             telemetry.setMsTransmissionInterval(11);
 
-            robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
+            //robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
                     gamepad1.right_stick_x*0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
                     gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.left_stick_button);
 
-            robot.resetAngle(gamepad1.x);
+           // robot.resetAngle(gamepad1.x);
 
             robot.onLoop(0, "manual drive");
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
