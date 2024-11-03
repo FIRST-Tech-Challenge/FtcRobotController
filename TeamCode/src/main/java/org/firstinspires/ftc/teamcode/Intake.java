@@ -12,6 +12,7 @@ public class Intake {
     private boolean whacked;
 
     public static final double MOVING_DISTANCE = 0.058;
+    public static final double LARGE_MOVING_DISTANCE = 0.08;
     public static final double LEFT_CLOSED_POSITION = 0.03488;
     public static final double RIGHT_CLOSED_POSITION = 0.7914;
     public static final double WHACK_POSITION = 0.2;
@@ -33,6 +34,12 @@ public class Intake {
     public void open() {
         leftServo.setPosition(LEFT_CLOSED_POSITION + MOVING_DISTANCE);
         rightServo.setPosition(RIGHT_CLOSED_POSITION + MOVING_DISTANCE);
+        isOpen = true;
+    }
+
+    public void largeOpen() {
+        leftServo.setPosition(LEFT_CLOSED_POSITION + LARGE_MOVING_DISTANCE);
+        rightServo.setPosition(RIGHT_CLOSED_POSITION + LARGE_MOVING_DISTANCE);
         isOpen = true;
     }
 

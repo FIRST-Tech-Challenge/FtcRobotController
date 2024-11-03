@@ -68,14 +68,14 @@ public class MecanumDriver extends OpMode {
     private final static double WHACK_COOLDOWN = 0.25;
     private final static double WRIST_MIN_POS = 0.0;
     private final static double WRIST_MAX_POS = 0.5;
-    public static final double MAX_EXTENSION_BACK = 7.0;
-    public static final double MAX_EXTENSION_FORWARD = 17.0;
-    public static int PIVOT_PICKUP_SPECIMEN = -430;
-    public static int VIPER_PICKUP_SPECIMEN = 0;
+    public static final double MAX_EXTENSION_BACK = 6.0;
+    public static final double MAX_EXTENSION_FORWARD = 15.0;
+    public static int PIVOT_PICKUP_SPECIMEN = -490;
+    public static int VIPER_PICKUP_SPECIMEN = ViperSlide.MIN_POSITION;
     // About 60 degrees
     public static int PIVOT_PLACE_SPECIMEN = -1160;
     public static int VIPER_PLACE_SPECIMEN = 1200;
-    public static int PIVOT_POSITION_OFFSET_COUNTS = 100;
+    public static int PIVOT_POSITION_OFFSET_COUNTS = 1375;
     public final boolean isFieldCentric = true;
 //    private Servo claw;
 //    private Servo wrist;
@@ -145,14 +145,21 @@ public class MecanumDriver extends OpMode {
         double extensionBeyondChassis = viperSlide.getExtensionBeyondChassis(pivot.getAngleDegrees());
 
         double pivotPower = Math.min(MAX_PIVOT_VELOCITY, BASE_PIVOT_VELOCITY + (MAX_PIVOT_VELOCITY - BASE_PIVOT_VELOCITY) * (runtime.seconds() - pivotStartedTime) / PIVOT_RAMP_TIME);
+        double currentLimit = MAX_EXTENSION_FORWARD;
+        if (pivot.getAngleDegrees() > 30) {
+            currentLimit -= 1;
+        }
+        if (pivot.getAngleDegrees() > 40) {
+            currentLimit -= 1;
+        }
         // Pivot
-        if (gamepad2.dpad_down && extensionBeyondChassis < MAX_EXTENSION_FORWARD) {
+        if (gamepad2.dpad_down && extensionBeyondChassis < currentLimit - 0.75) {
             if (!pivotStarted) {
                 pivotStartedTime = runtime.seconds();
                 pivotStarted = true;
             }
             pivot.move(pivotPower);
-        } else if (gamepad2.dpad_up && extensionBeyondChassis > -MAX_EXTENSION_BACK) {
+        } else if (gamepad2.dpad_up && extensionBeyondChassis > -MAX_EXTENSION_BACK + 0.75 && !(pivot.getAngleDegrees() > 100)) {
             if (!pivotStarted) {
                 pivotStartedTime = runtime.seconds();
                 pivotStarted = true;
@@ -165,7 +172,7 @@ public class MecanumDriver extends OpMode {
 
         double triggerPower = gamepad2.left_trigger - gamepad2.right_trigger;
         // Viper
-        if (triggerPower < 0 || (triggerPower != 0 && extensionBeyondChassis < MAX_EXTENSION_FORWARD && extensionBeyondChassis > -MAX_EXTENSION_BACK)) {
+    if (triggerPower < 0 || (triggerPower != 0 && extensionBeyondChassis < MAX_EXTENSION_FORWARD && extensionBeyondChassis > -MAX_EXTENSION_BACK) && pivot.getAngleDegrees() < 110) {
             viperSlide.move(triggerPower * VIPER_VELOCITY_CONSTANT);
         } else {
             viperSlide.hold();
@@ -205,14 +212,19 @@ public class MecanumDriver extends OpMode {
 
         // Pickup Preset
         if (gamepad2.b) {
-            pivot.setTargetPosition(PIVOT_PICKUP_SPECIMEN);
+            pivot.setTargetPosition(PIVOT_PICKUP_SPECIMEN + PIVOT_POSITION_OFFSET_COUNTS);
             viperSlide.setTargetPosition(VIPER_PICKUP_SPECIMEN);
         }
 
         // Place Preset
         if (gamepad2.y) {
-            pivot.setTargetPosition(PIVOT_PLACE_SPECIMEN);
+            pivot.setTargetPosition(PIVOT_PLACE_SPECIMEN + PIVOT_POSITION_OFFSET_COUNTS);
             viperSlide.setTargetPosition(VIPER_PLACE_SPECIMEN);
+        }
+
+        if (gamepad2.left_bumper) {
+            pivot.setTargetPosition(-1700 + PIVOT_POSITION_OFFSET_COUNTS);
+            viperSlide.setTargetPosition(1900);
         }
 
 //        if (gamepad2.dpad_left) {

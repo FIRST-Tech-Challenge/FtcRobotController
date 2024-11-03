@@ -250,7 +250,7 @@ public class MecanumRobotController {
                 move(speed, 0.0, 0.0, 0.0);
             }
 
-            if (distanceToDestinationInches < 0.75) {
+            if (distanceToDestinationInches < 1) {
                 break;
             }
         }

@@ -52,8 +52,8 @@ public class Pivot {
 
                 case HOLDING:
                     int currentPos = getCurrentPosition();
-                    leftMotor.setTargetPosition(currentPos);
-                    rightMotor.setTargetPosition(currentPos);
+                    leftMotor.setTargetPosition(currentPos + offset);
+                    rightMotor.setTargetPosition(currentPos + offset);
                     leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftMotor.setPower(DEFAULT_POWER);
