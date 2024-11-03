@@ -16,23 +16,22 @@ public class MeepMeepMain {
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(BlueRight(meepMeep))
+                .addEntity(BlueRightOption1(meepMeep))
                 .addEntity(BlueLeft(meepMeep))
-                .addEntity(RedRight(meepMeep))
+                .addEntity(RedRightOption2(meepMeep))
                 .addEntity(RedLeft(meepMeep))
                 .start();
     }
 
-    //generates path for BlueRight
-    private static RoadRunnerBotEntity BlueRight(MeepMeep meepMeep)
+    //begin auto runs
+
+    //generates path for BlueRightOption1
+    private static RoadRunnerBotEntity BlueRightOption1(MeepMeep meepMeep)
     {
         RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "blue");
         botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(-15, 63, Math.toRadians(-90)))
                 .splineTo(new Vector2d(-9,42), Math.toRadians(-90))
-
-                //hook preloaded specimen
-                .waitSeconds(1)
-
+                .waitSeconds(1)//hook preloaded specimen
                 .strafeTo(new Vector2d(-12,42))
                 .splineToSplineHeading(new Pose2d(-36,24, Math.toRadians(0)), Math.toRadians(-90))
                 .splineTo(new Vector2d(-42,12), Math.toRadians(180))
@@ -41,7 +40,9 @@ public class MeepMeepMain {
                 .strafeTo(new Vector2d(-45,24))
                 .splineTo(new Vector2d(-57,12), Math.toRadians(180))
                 .strafeTo(new Vector2d(-57,48))
-                .splineTo(new Vector2d(-63,63), Math.toRadians(180))
+                .strafeTo(new Vector2d(-57,42))
+                .waitSeconds(1)//wait for human player
+                .strafeTo(new Vector2d(-63,63))
                 .build());
 
         return botEntity;
@@ -51,15 +52,26 @@ public class MeepMeepMain {
     private static RoadRunnerBotEntity BlueLeft(MeepMeep meepMeep)
     {
         RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "blue");
-        botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(0, 0, 0))
-
+        botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(33, 63, Math.toRadians(-90)))
+                .splineTo(new Vector2d(48,48), Math.toRadians(45))
+                .waitSeconds(1)//deposit sample
+                .turnTo(Math.toRadians(-90))
+                .waitSeconds(1)//pick up sample
+                .turnTo(Math.toRadians(45))
+                .waitSeconds(1)//deposit sample
+                .strafeToLinearHeading(new Vector2d(58,48), Math.toRadians(-90))
+                .waitSeconds(1)//pick up sample
+                .strafeToLinearHeading(new Vector2d(48,48), Math.toRadians(45))
+                .waitSeconds(10)//deposit sample and wait for other alliance to park
+                .splineTo(new Vector2d(24,60), Math.toRadians(180))
+                .strafeTo(new Vector2d(-36,60))
                 .build());
 
         return botEntity;
     }
 
-    //generates path for RedRight
-    private static RoadRunnerBotEntity RedRight(MeepMeep meepMeep)
+    //generates path for RedRightOption2
+    private static RoadRunnerBotEntity RedRightOption2(MeepMeep meepMeep)
     {
         RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "red");
         botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(10, -63, Math.toRadians(90.0)))
@@ -91,6 +103,11 @@ public class MeepMeepMain {
 
         return botEntity;
     }
+
+    //end auto runs
+
+
+    //generates botEntities
     private static RoadRunnerBotEntity CreateBotEntity(MeepMeep meepMeep, String color)
     {
         ColorScheme c;
