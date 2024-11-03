@@ -11,7 +11,7 @@ public class OpMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            driveTrain.move(12, 0, 0, telemetry);
+            driveTrain.move(0, 12, 0, telemetry);
         }
 
     }
