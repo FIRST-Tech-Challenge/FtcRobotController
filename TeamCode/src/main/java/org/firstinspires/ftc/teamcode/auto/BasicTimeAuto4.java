@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-//@Autonomous(name="BasicTimeAuto")
-public class BasicTimeAuto extends LinearOpMode {
+@Autonomous(name="BasicTimeAuto4")
+public class BasicTimeAuto4 extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
@@ -35,11 +35,13 @@ public class BasicTimeAuto extends LinearOpMode {
 
         while(opModeIsActive())
         {
-                strafe = 0;
-                rotate = 0;
-                forward = -0.2;
-                robot.drive(forward,strafe,rotate);
+            strafe = 0;
+            rotate = 0;
+            forward = -0.2;
+            robot.drive(forward,strafe,rotate);
 
+            sleep(10000);
+            robot.drive(0,0,0);
         }
     }
 }
