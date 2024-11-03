@@ -28,7 +28,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.verticalLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -95,7 +95,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 hardware.verticalLift.setPower(0.0);
             }*/
             lift(hardware);
-            int verticalPosition = hardware.encoderLift.getCurrentPosition();
+            int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
             telemetry.addData("Vertical position",verticalPosition);
             telemetry.addData("fl power", frontLeftPower);
             telemetry.addData("fr power", frontRightPower);
@@ -122,17 +122,17 @@ public class MecanumTeleOp extends LinearOpMode {
     // lifts the vertical slides to a target position in ticks
     private void targetLift(Hardware hardware , int targetPosition){
 
-        hardware.verticalLift.setTargetPosition(targetPosition);
-        hardware.verticalLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalLift.setPower(0.5);
+        hardware.verticalSlide.setTargetPosition(targetPosition);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(0.5);
         while (true){
-            int verticalPosition = hardware.encoderLift.getCurrentPosition();
+            int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
             if (Math.abs (verticalPosition-targetPosition) < 5){
-                hardware.verticalLift.setPower(0);
+                hardware.verticalSlide.setPower(0);
                 break;
             }
         }
-        hardware.verticalLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
@@ -140,14 +140,14 @@ public class MecanumTeleOp extends LinearOpMode {
     private void lift(Hardware hardware ) {
 
         //Hardware hardware = new Hardware(hardwareMap);
-        int verticalPosition = hardware.encoderLift.getCurrentPosition();
+        int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
 
         if (gamepad2.dpad_up && verticalPosition < maxVerticalLiftTicks) {
-            hardware.verticalLift.setPower(0.5);
+            hardware.verticalSlide.setPower(0.5);
         } else if (gamepad2.dpad_down && verticalPosition > minVerticalLiftTicks) {
-            hardware.verticalLift.setPower(-0.5);
+            hardware.verticalSlide.setPower(-0.5);
         } else {
-            hardware.verticalLift.setPower(0.0);
+            hardware.verticalSlide.setPower(0.0);
         }
 
         if (gamepad2.a) {
