@@ -10,8 +10,8 @@ public class StrafeMovement extends BaseMovement {
     @Override
     protected void updateDrivingParameters() {
         strafeSpeed = currentSpeed;
-        forwardSpeed = getErrorCorrectionSpeed(startingPose.getX() - previousPose.getX());
-        rotationSpeed = getErrorCorrectionSpeed(startingPose.getHeading() - previousPose.getHeading());
+        forwardSpeed = getMoveErrorCorrection(startingPose.getX() - previousPose.getX());
+        rotationSpeed = getRotErrorCorrection(startingPose.getHeading() - previousPose.getHeading());
     }
 
     @Override

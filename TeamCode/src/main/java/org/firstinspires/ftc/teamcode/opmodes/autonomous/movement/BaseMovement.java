@@ -18,7 +18,8 @@ public abstract class BaseMovement {
     private static final double FORWARD_FACTOR = 1d;
     private static final double BACKWARD_FACTOR = -1d;
     private static final double ERROR_TOLERANCE = 0.01d;
-    private static final double ERROR_CORRECTION_CONVERSION = 5; //this converts distance to motor speed
+    private static final double ROT_TO_SPEED_CONVERSION = 5; //this converts distance to motor speed
+    private static final double DIST_TO_SPEED_CONVERSION = 5;
     double currentSpeed;
     double distance;
 
@@ -27,8 +28,8 @@ public abstract class BaseMovement {
 
     AutoRobotDriver driver;
 
-    PIDController errorCorrectionController = new PIDController(0.5,0,0);
-
+    PIDController moveErrorCorrectionController = new PIDController(0.5,0,0);
+    PIDController rotErrorCorrectionController = new PIDController(0.5,0,0);
 
     Supplier<Pose2d> poseSupplier;
 
@@ -55,8 +56,10 @@ public abstract class BaseMovement {
         this.poseSupplier = poseSupplier;
         accumulatedChanges = 0;
         this.driver = driver;
-        errorCorrectionController.setSetPoint(0);
-        errorCorrectionController.setTolerance(ERROR_TOLERANCE);
+        moveErrorCorrectionController.setSetPoint(0);
+        moveErrorCorrectionController.setTolerance(ERROR_TOLERANCE);
+        rotErrorCorrectionController.setSetPoint(0);
+        rotErrorCorrectionController.setTolerance(ERROR_TOLERANCE);
         error = 0;
         currentSpeed = directionFactor * NORMAL_SPEED;
         updateDrivingParameters();
@@ -126,13 +129,22 @@ public abstract class BaseMovement {
         return Math.abs((currPos - prePos) / distance) > .5;
     }
 
-    protected double getErrorCorrectionSpeed(double error) {
-        Log.i(LOG_TAG, String.format("error = %f", error));
-        double correctionDistance = errorCorrectionController.calculate(error);
+    protected double getRotErrorCorrection(double error) {
+        Log.i(LOG_TAG, String.format("rot error = %f", error));
+        double correctionDistance = rotErrorCorrectionController.calculate(error);
         if (error*correctionDistance<0) {
             correctionDistance = -correctionDistance;
         }
-        return correctionDistance*ERROR_CORRECTION_CONVERSION;
+        return correctionDistance*ROT_TO_SPEED_CONVERSION;
+    }
+
+    protected double getMoveErrorCorrection(double error) {
+        Log.i(LOG_TAG, String.format("move error = %f", error));
+        double correctionDistance = moveErrorCorrectionController.calculate(error);
+        if (error*correctionDistance<0) {
+            correctionDistance = -correctionDistance;
+        }
+        return correctionDistance*DIST_TO_SPEED_CONVERSION;
     }
 
     protected abstract void updateDrivingParameters();
