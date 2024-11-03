@@ -15,6 +15,8 @@ public class Pivot {
     public static final int POSITION_PICKUP = 200;
     public static final int POSITION_HALF = 500;
     public static final int POSITION_UP = 900;
+    public static final int MIN_POSITION = -1750;
+    public static final int MAX_POSITION = 0;
 
     private int targetPosition = 0;
     private PivotState currentState = PivotState.STOPPED;
@@ -81,6 +83,11 @@ public class Pivot {
     }
 
     public void move(double velocity) {
+        int currentPosition = getCurrentPosition();
+        if (velocity > 0 && currentPosition >= MAX_POSITION || velocity < 0 && currentPosition <= MIN_POSITION) {
+            setState(Pivot.PivotState.HOLDING, 0);
+            return;
+        }
         setState(PivotState.MOVING, velocity);
     }
 
@@ -116,6 +123,10 @@ public class Pivot {
     public boolean isDrifting() {
         int positionDifference = Math.abs(leftMotor.getCurrentPosition() - rightMotor.getCurrentPosition());
         return positionDifference > POSITION_TOLERANCE;
+    }
+
+    public double getAngleDegrees() {
+        return -(getCurrentPosition() + 430) / 10.5;
     }
 
     public int getLeftPosition() {

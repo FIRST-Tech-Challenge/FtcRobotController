@@ -10,8 +10,12 @@ public class ViperSlide {
     private DcMotorEx rightMotor;
     public static final double DEFAULT_POWER = 0.8;
     public static final int POSITION_TOLERANCE = 10;
+    public static final int MOVE_COUNTS_PER_INCH = 111;
+    public static final double BASE_ARM_LENGTH = 12;
+    public static final double CHASSIS_TO_PIVOT_LENGTH = 9;
     public static final int MIN_POSITION = 10;
     public static final int MAX_POSITION = 3000;   // Adjust for your robot
+    public static final int MAX_POSITION_HANG = 1320;
 
     // Preset positions - adjust these for your robot
     public static final int POSITION_GROUND = 0;
@@ -74,6 +78,14 @@ public class ViperSlide {
             leftMotor.setVelocity(velocity);
             rightMotor.setVelocity(velocity);
         }
+    }
+
+    public double getExtensionBeyondChassis(double angle) {
+        double extension = Math.max(Math.abs(Math.cos(Math.toRadians(angle)) * (((double) getCurrentPosition() / MOVE_COUNTS_PER_INCH) + BASE_ARM_LENGTH)) - CHASSIS_TO_PIVOT_LENGTH, 0);
+        if (angle > 90) {
+            extension *= -1;
+        }
+        return extension;
     }
 
     public void resetEncoders() {

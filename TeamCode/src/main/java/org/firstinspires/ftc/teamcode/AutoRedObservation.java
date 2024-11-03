@@ -24,18 +24,33 @@ public class AutoRedObservation extends LinearOpMode {
         // Initialize
         initialize();
         waitForStart();
-        // robotController.turnTo(45, TURN_SPEED);
-        robotController.distanceDrive(24, 0, DRIVE_SPEED);
-//        robotController.distanceDrive(29, 180, DRIVE_SPEED);
-//        robotController.sleep(2);
-//        robotController.distanceDrive(7, 0, DRIVE_SPEED);
-//        robotController.turnTo(180, TURN_SPEED);
-//        robotController.distanceDrive(60, 270, DRIVE_SPEED);
-//        robotController.distanceDrive(7, 180, DRIVE_SPEED);
-//        robotController.sleep(2);
-//        robotController.distanceDrive(24, 0, DRIVE_SPEED);
-//        robotController.turnTo(135, TURN_SPEED);
-//        robotController.sleep(5);
+        intake.close();
+        intake.unwhack();
+        pivot.setTargetPosition(-1170);
+        robotController.distanceDrive(25, -12.528807709151522, DRIVE_SPEED);
+        viperSlide.setTargetPosition(1280);
+        robotController.sleep(1);
+        pivot.setTargetPosition(-1000);
+        robotController.sleep(1);
+        viperSlide.setTargetPosition(750);
+        robotController.sleep(1);
+        intake.open();
+        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
+        robotController.sleep(1);
+        intake.close();
+
+        robotController.distanceDrive(27.0, 90.0, DRIVE_SPEED);
+        robotController.distanceDrive(27.0, -0.0, DRIVE_SPEED);
+        robotController.distanceDrive(9.0, 90.0, DRIVE_SPEED);
+        robotController.distanceDrive(39.0, 180.0, DRIVE_SPEED);
+        robotController.distanceDrive(39.0, -0.0, DRIVE_SPEED);
+        robotController.distanceDrive(8.0, 90.0, DRIVE_SPEED);
+        robotController.distanceDrive(39.0, 180.0, DRIVE_SPEED);
+        robotController.distanceDrive(39.0, -0.0, DRIVE_SPEED);
+        robotController.distanceDrive(8.0, 90.0, DRIVE_SPEED);
+        robotController.distanceDrive(39.0, 180.0, DRIVE_SPEED);
+        robotController.distanceDrive(9.0, -0.0, DRIVE_SPEED);
+        robotController.distanceDrive(121.82364302548172, -99.9262455066517, DRIVE_SPEED);
     }
 
     public void initialize() {

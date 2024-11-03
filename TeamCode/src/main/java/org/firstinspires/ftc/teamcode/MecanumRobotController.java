@@ -218,9 +218,9 @@ public class MecanumRobotController {
 
 
         int backLeftTarget = backLeft.getCurrentPosition() - forwardCounts + strafeCounts;
-        int backRightTarget = backRight.getCurrentPosition() - forwardCounts + strafeCounts;
+        int backRightTarget = backRight.getCurrentPosition() - forwardCounts - strafeCounts;
         int frontLeftTarget = frontLeft.getCurrentPosition() - forwardCounts - strafeCounts;
-        int frontRightTarget = frontRight.getCurrentPosition() - forwardCounts - strafeCounts;
+        int frontRightTarget = frontRight.getCurrentPosition() - forwardCounts + strafeCounts;
 
         backLeft.setTargetPosition(backLeftTarget);
         backRight.setTargetPosition(backRightTarget);
@@ -245,9 +245,13 @@ public class MecanumRobotController {
             robot.telemetry.addData("Distance To Target", distanceToDestination * moveCountMult);
             robot.telemetry.addData("", "");
             if (distanceToDestinationInches <= INCHES_LEFT_TO_SLOW_DOWN) {
-                move(speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, 0.0);
+                move(0.01 + speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, 0.0);
             } else {
                 move(speed, 0.0, 0.0, 0.0);
+            }
+
+            if (distanceToDestinationInches < 0.75) {
+                break;
             }
         }
 
