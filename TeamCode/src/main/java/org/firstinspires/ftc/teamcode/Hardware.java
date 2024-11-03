@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.hardware.MotorSet;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import org.firstinspires.ftc.teamcode.mmooover.TriOdoProvider;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     // left = left motor = exp 0 frontLeft
@@ -46,6 +48,10 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @AutoClearEncoder
     public DcMotor encoderRight;
 
+    @HardwareName("gyro")
+    public NavxMicroNavigationSensor gyro;
+
+
     @Override
     public DcMotor getLeftEncoder() { return encoderLeft; }
 
@@ -80,4 +86,5 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
                 backRight
         );
     }
+
 }
