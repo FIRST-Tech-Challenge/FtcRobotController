@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-@Autonomous(name="RedSideNet Auto")
-public class RedSideNetAuto extends LinearOpMode {
+@Autonomous(name="FarSideNet Auto")
+public class FarSideNetAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
@@ -40,7 +40,10 @@ public class RedSideNetAuto extends LinearOpMode {
         arm = new Arm(hardwareMap);
 
         waitForStart();
+        //wait for other team
+        sleep(5000);
 
+        //go forward
         strafe = 0;
         rotate = 0;
         forward = 0.4;
@@ -48,6 +51,7 @@ public class RedSideNetAuto extends LinearOpMode {
 
         sleep(2400);
 
+        //go back
         strafe = 0;
         rotate = 0;
         forward = -0.2;
@@ -56,13 +60,14 @@ public class RedSideNetAuto extends LinearOpMode {
 
         sleep(1000);
 
-
+        //start by changing this and going back
         strafe = 0;
         rotate = -0.5;
         forward = 0;
         robot.drive(forward,strafe,rotate);
 
         sleep(800);
+
 
         strafe = 0;
         rotate = 0;
