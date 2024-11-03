@@ -110,7 +110,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         setVertical(VERTICAL_MIN);                            // Lowering Arm
         strafeRight(0.5, 0.4);
         turnToHeading(0, 0.4);
-        moveBackward(2, 0.5);      // Todo: Change to 4 seconds before competition
+        moveBackward(4, 0.5);      // Todo: Change to 4 seconds before competition
         turnToHeading(0, 0.4);
         strafeLeft(2.5, 0.4);       // Positioning to park
         claw.close();                                         // Release tension on the claw
