@@ -18,9 +18,11 @@ public class SampleActionBasedOpMode extends ActionBasedOpMode {
     @Override
     protected void setupWaypointsAndActions() {
         Queue<BaseMovement> movements = new LinkedList<>();
-        movements.add(new ForwardMovement(1d));
-        movements.add(new RotationMovement(180d));
-        movements.add(new ForwardMovement(1d));
+        movements.add(new ForwardMovement(Units.inchesToMeters(24))); //rotation takes radians, movement takes meters
+        movements.add(new RotationMovement(Units.degreesToRadians(180)));
+        movements.add(new ForwardMovement(Units.inchesToMeters(48)));
+        movements.add(new RotationMovement(Units.degreesToRadians(-180)));
+        movements.add(new ForwardMovement(Units.inchesToMeters(24)));
 
         movementQueue.add(movements);
     }
