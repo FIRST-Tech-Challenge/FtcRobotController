@@ -78,7 +78,6 @@ public class FieldCentricDrive extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private IMU imu = null;
-    private Orientation angles = null;
     private ServoImplEx servo = null;
 
 
@@ -113,11 +112,8 @@ public class FieldCentricDrive extends LinearOpMode {
 
         // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
         imu = hardwareMap.get(IMU.class, "imu");
-        // TODO: this is the issue. the Rev Hub is not facing a normal direction
+        // this is the issue. the Rev Hub is not facing a normal direction
 //        // Adjust the orientation parameters to match your robot
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-//                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
@@ -125,7 +121,7 @@ public class FieldCentricDrive extends LinearOpMode {
 
         servo = hardwareMap.get(ServoImplEx.class, "servo");
 
-        Claw wrist = new Claw(servo, gamepad1, runtime);
+        Claw claw = new Claw(servo, gamepad1, runtime);
 
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
@@ -143,7 +139,7 @@ public class FieldCentricDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             updateRobot();
-            wrist.update();
+            claw.update();
         }
     }
 

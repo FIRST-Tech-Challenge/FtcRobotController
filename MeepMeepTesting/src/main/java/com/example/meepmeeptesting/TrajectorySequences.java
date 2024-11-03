@@ -4,13 +4,26 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.rowlandhall.meepmeep.roadrunner.DriveShim;
 import org.rowlandhall.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
 // import the poses
+
 import static com.example.meepmeeptesting.MeepMeepTesting.*;
 
 public class TrajectorySequences {
+    // reference: https://github.com/technototes/IntoTheDeep2024/blob/main/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/ViggoTesting.java#L19
 
-    public static TrajectorySequence coloredStraysTS(DriveShim drive) {
+    public static TrajectorySequence pushSamplesTS(DriveShim drive) {
         return drive.trajectorySequenceBuilder(coloredSampleStartPose)
                 // LOOP 1
+
+                // drop specimen
+                .lineToSplineHeading(new Pose2d(
+                        0 * redPoseAdjustment,
+                        37 * redPoseAdjustment,
+                        Math.toRadians(-90 + redAngleAdjustment)
+                ))
+                .addDisplacementMarker(() -> {
+                    // drop specimen
+                })
+
                 // go to pickup right
                 .lineToSplineHeading(new Pose2d(
                         -48 * redPoseAdjustment,
@@ -21,8 +34,12 @@ public class TrajectorySequences {
                     // pick up sample
                 })
 
-                // go to dropoff
+                // pause
+                .waitSeconds(0)
+
                 .setTangent(Math.toRadians(0 + redAngleAdjustment))
+
+                // go to dropoff
                 .splineToSplineHeading(
                         dropSamplePose,
                         Math.toRadians(10 + redAngleAdjustment)
@@ -38,14 +55,14 @@ public class TrajectorySequences {
                                 27 * redPoseAdjustment,
                                 Math.toRadians(180 + redAngleAdjustment)
                         ),
-                        Math.toRadians(235 + redAngleAdjustment)
+                        Math.toRadians(210 + redAngleAdjustment)
                 )
                 .addDisplacementMarker(() -> {
                     // pick up sample
                 })
                 // go to dropoff
                 .setTangent(Math.toRadians(45 + redAngleAdjustment))
-                .splineToSplineHeading(
+                .splineToLinearHeading(
                         dropSamplePose,
                         Math.toRadians(0 + redAngleAdjustment)
                 )
@@ -54,8 +71,8 @@ public class TrajectorySequences {
                 })
 
                 // go to pickup left
-                .setTangent(Math.toRadians(165 + redAngleAdjustment))
-                .splineToSplineHeading(new Pose2d(
+                .setTangent(Math.toRadians(190 + redAngleAdjustment))
+                .splineToLinearHeading(new Pose2d(
                                 -52 * redPoseAdjustment,
                                 27 * redPoseAdjustment,
                                 Math.toRadians(180 + redAngleAdjustment)
@@ -67,7 +84,7 @@ public class TrajectorySequences {
                 })
                 // go to dropoff
                 .setTangent(Math.toRadians(45 + redAngleAdjustment))
-                .splineToSplineHeading(
+                .splineToLinearHeading(
                         dropSamplePose,
                         Math.toRadians(0 + redAngleAdjustment)
                 )

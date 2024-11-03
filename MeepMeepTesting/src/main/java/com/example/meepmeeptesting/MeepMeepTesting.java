@@ -3,10 +3,13 @@ package com.example.meepmeeptesting;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.rowlandhall.meepmeep.MeepMeep;
 import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder;
+import org.rowlandhall.meepmeep.roadrunner.DriveShim;
 import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import org.rowlandhall.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
 
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.function.Function;
 
 public class MeepMeepTesting {
 
@@ -27,6 +30,8 @@ public class MeepMeepTesting {
     public static int redAngleAdjustment;
     public static int redPoseAdjustment;
 
+    public static Function<DriveShim, TrajectorySequence> currentTrajectorySequence;
+
     static {
         currentColor = COLOR.BLUE;
         redAngleAdjustment = 0;
@@ -46,6 +51,7 @@ public class MeepMeepTesting {
         if (switchToRed.equalsIgnoreCase("y")) {
             currentColor = COLOR.RED;
         }
+        System.out.println("current color: " + currentColor.toString());
 
         if (currentColor == COLOR.RED) {
             redAngleAdjustment = 180;
@@ -79,7 +85,22 @@ public class MeepMeepTesting {
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f);
 
+        // CHANGE THIS TO CHANGE THE CURRENT TRAJECTORY SEQUENCE
+        currentTrajectorySequence = TrajectorySequences::pushSamplesTS;
+
         while (true) {
+
+
+            RoadRunnerBotEntity newBot = new DefaultBotBuilder(meepMeep)
+                    .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+//                    .followTrajectorySequence(TrajectorySequences::coloredStraysTS);
+                    .followTrajectorySequence(currentTrajectorySequence::apply);
+
+            bots.add(newBot);
+            meepMeep.addEntity(newBot);
+
+            meepMeep.start();
+
 
             try {
                 System.out.print("enter new end heading(deg): ");
@@ -88,18 +109,13 @@ public class MeepMeepTesting {
             } catch (Exception e) {
                 System.out.println("exception occurred. try again");
             }
-
-            RoadRunnerBotEntity newBot = new DefaultBotBuilder(meepMeep)
-                    .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                    .followTrajectorySequence(TrajectorySequences::coloredStraysTS);
-
-            bots.add(newBot);
-            meepMeep.addEntity(newBot);
-
-            meepMeep.start();
+            System.out.println();
 
 
             System.out.println("next cycle");
+            // temp
+            return;
+            //
         }
     }
 
