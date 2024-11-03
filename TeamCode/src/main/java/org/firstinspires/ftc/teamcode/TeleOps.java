@@ -22,7 +22,7 @@ public class TeleOps extends LinearOpMode {
 
         robot.init(hardwareMap);
 
-//        robot.switchPipeline(1); commented out cuz not running
+        robot.switchPipeline(1);
         telemetry.addData("pipeline: 1", null);
 
         while (opModeInInit()) {
