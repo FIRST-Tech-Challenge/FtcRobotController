@@ -28,8 +28,10 @@ public class League1Auto extends LinearOpMode {
     Actions currentAction = Actions.PICKUP;
     boolean timeToggle = true;
     boolean actionToggle = true;
+    boolean actionToggleCycle=true;
     double TimeStamp = 0;
     double ActionStamp = 0;
+    double ActionStampCycle=0;
     int currentCycle = 0;
     ElapsedTime timer = new ElapsedTime();
     double oldTime = 0;
@@ -81,13 +83,15 @@ public class League1Auto extends LinearOpMode {
                     break;
                 case PICKUP:
                     if (isThirdCycle) {
-                        ActionStamp = timer.milliseconds();
-                        actionToggle = false;
+                         ActionStampCycle= timer.milliseconds();
+                        actionToggleCycle = false;
                     }
                     arm.deposit();
                     slides.preScore();
-                    if (isThirdCycle && timer.milliseconds() > ActionStamp + 500) {
+                    if (isThirdCycle && timer.milliseconds() > ActionStampCycle + 2500) {
+                        actionToggleCycle=true;
                         currentAction = Actions.SLIDESEXTEND;
+
                     } else if (!isThirdCycle) {
                         currentAction = Actions.SLIDESEXTEND;
                     }
@@ -153,7 +157,7 @@ public class League1Auto extends LinearOpMode {
                         actionToggle = false;
                     }
 
-                    slides.setTargetSlidesPosition(6);
+                    slides.setTargetSlidesPosition(8);
                     if (timer.milliseconds() > ActionStamp + 500) {
                         arm.intake();
                     }
@@ -309,6 +313,8 @@ public class League1Auto extends LinearOpMode {
             telemetry.addData("current state:", currentState.name());
             telemetry.addData("current action:", currentAction.name());
             telemetry.addData("current cycle:", currentCycle);
+            telemetry.addData("isThirdCycle:",isThirdCycle);
+            telemetry.addData("a: ", isThirdCycle && timer.milliseconds() > ActionStampCycle + 500);
 
 
             telemetry.update();

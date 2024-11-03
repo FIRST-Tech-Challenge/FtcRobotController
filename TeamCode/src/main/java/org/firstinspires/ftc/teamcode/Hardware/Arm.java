@@ -49,7 +49,7 @@ public class Arm {
     }
 
     public void deposit() {
-        setTargetArmPosition(95);
+        setTargetArmPosition(92);
     }
 
     public void preTake() {
