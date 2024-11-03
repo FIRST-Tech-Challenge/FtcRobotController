@@ -33,6 +33,14 @@ public class Hardware extends HardwareMapper {
     @HardwareName("backRight")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     public DcMotor backRight;
+
+    @HardwareName("verticalSlides")
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
+    public DcMotor verticalSlide;
+
+    @HardwareName("verticalSlides")
+    @AutoClearEncoder
+    public DcMotor encoderVerticalSlide;
     /*
         @HardwareName("frontLeft")
         @AutoClearEncoder
