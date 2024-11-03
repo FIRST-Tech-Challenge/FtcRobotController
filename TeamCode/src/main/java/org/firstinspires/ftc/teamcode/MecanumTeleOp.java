@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -125,7 +123,9 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.verticalSlide.setTargetPosition(targetPosition);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(0.5);
-        while (true){
+        ElapsedTime Timer = new ElapsedTime();
+        double timeoutSeconds = 3.0;
+        while (Timer.time() < timeoutSeconds){
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
             if (Math.abs (verticalPosition-targetPosition) < 5){
                 hardware.verticalSlide.setPower(0);
