@@ -82,20 +82,21 @@ public class League1Auto extends LinearOpMode {
                 case REST:
                     break;
                 case PICKUP:
-                    if (isThirdCycle) {
-                         ActionStampCycle= timer.milliseconds();
-                        actionToggleCycle = false;
+                    arm.deposit();
+                    slides.preScore();
+                    currentAction = Actions.SLIDESEXTEND;
+                    break;
+                case THIRDCYCLEPICKUP:
+                    if(actionToggle){
+                        ActionStamp=timer.milliseconds();
+                        actionToggle=false;
                     }
                     arm.deposit();
                     slides.preScore();
-                    if (isThirdCycle && timer.milliseconds() > ActionStampCycle + 2500) {
-                        actionToggleCycle=true;
-                        currentAction = Actions.SLIDESEXTEND;
-
-                    } else if (!isThirdCycle) {
-                        currentAction = Actions.SLIDESEXTEND;
+                    if(timer.milliseconds()>ActionStamp+500){
+                        actionToggle=true;
+                        currentAction=Actions.SLIDESEXTEND;
                     }
-
                     break;
                 case SLIDESEXTEND:
 //                    slides.score();
@@ -198,7 +199,12 @@ public class League1Auto extends LinearOpMode {
                     if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
-                        currentAction = Actions.PICKUP;
+                        if(!(currentCycle==3)){
+                            currentAction = Actions.PICKUP;
+                        } else if (currentCycle==3){
+                            currentAction=Actions.THIRDCYCLEPICKUP;
+                        }
+
                     }
 
 
@@ -327,7 +333,7 @@ public class League1Auto extends LinearOpMode {
 
     //(-18, 23.5, 30)
     enum Actions {
-        PICKUP, SLIDESEXTEND, WRISTDEPOSIT, DEPOSIT, RESET, INTAKE, REST
+        PICKUP, SLIDESEXTEND, WRISTDEPOSIT, DEPOSIT, RESET, INTAKE, THIRDCYCLEPICKUP, REST
 
     }
 
