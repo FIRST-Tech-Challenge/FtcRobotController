@@ -10,8 +10,9 @@ public class PivotBot extends LimelightBot {
 
     public int slideTarget = 0;
     public int slideTarget2 = 0;
-    public DcMotorEx Motor = null;
-    public DcMotorEx Slide = null;
+    public DcMotorEx pivotMotor = null;
+    public DcMotorEx slideMotor = null;
+    
     public int pivotPosition = 0;
 
     private int slidePower = 200;
@@ -26,19 +27,19 @@ public class PivotBot extends LimelightBot {
     @Override
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
-        Motor = hwMap.get(DcMotorEx.class, "Pivot Motor");
-        Motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Motor.setPower(0);
+        pivotMotor = hwMap.get(DcMotorEx.class, "Pivot Motor");
+        pivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pivotMotor.setPower(0);
 
-        Slide = hwMap.get(DcMotorEx.class, "slide");
-        Slide.setDirection(DcMotorSimple.Direction.REVERSE);
-        Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Slide.setPower(0);
+        slideMotor = hwMap.get(DcMotorEx.class, "slide");
+        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setPower(0);
     }
 
     public PivotBot(LinearOpMode opMode) {
@@ -46,32 +47,32 @@ public class PivotBot extends LimelightBot {
     }
 
     public int getSlidePosition() {
-        return Motor.getCurrentPosition();
+        return pivotMotor.getCurrentPosition();
     }
 
     protected void onTick() {
         super.onTick();
-        Motor.setTargetPosition(slideTarget);
-        Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Motor.setPower(0.3);
+        pivotMotor.setTargetPosition(slideTarget);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivotMotor.setPower(0.3);
 
-        Slide.setTargetPosition(slideTarget2);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(0.5);
+        slideMotor.setTargetPosition(slideTarget2);
+        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.5);
     }
 
     public void slideControl(boolean up, boolean down) {
         if (up) {
 //            slideTarget2 = 20;
-            if (Slide.getCurrentPosition() < 2000) {
-                Slide.setTargetPosition(Slide.getCurrentPosition() + 20);
-                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (slideMotor.getCurrentPosition() < 2000) {
+                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             if (down) {
 //            slideTarget2 = 2000;
-                if (Slide.getCurrentPosition() > 20)
-                    Slide.setTargetPosition(Slide.getCurrentPosition() - 20);
-                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (slideMotor.getCurrentPosition() > 20)
+                    slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - 20);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 //        if (Math.abs(Slide.getCurrentPosition() - slideTarget2) < 3){
 //            Slide.setPower(0);
@@ -81,20 +82,20 @@ public class PivotBot extends LimelightBot {
 
         public void slideMove(int pos){
             //depending on the number, move the slide
-            Slide.setTargetPosition(pos);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slideMotor.setTargetPosition(pos);
+            slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
         public void pivotControl(boolean up, boolean down){
             if (up) {
                 slideTarget = 0;
-                Motor.setTargetPosition(Motor.getCurrentPosition() + 20);
-                Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                pivotMotor.setTargetPosition(pivotMotor.getCurrentPosition() + 20);
+                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             if (down) {
                 slideTarget = 900;
-                Motor.setTargetPosition(Motor.getCurrentPosition() - 20);
-                Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                pivotMotor.setTargetPosition(pivotMotor.getCurrentPosition() - 20);
+                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 //        if (Math.abs(Motor.getCurrentPosition() - slideTarget) < 3){
 //            Motor.setPower(0);
@@ -102,9 +103,11 @@ public class PivotBot extends LimelightBot {
         }
 
         public void pivotTo(int pos){
-            Motor.setTargetPosition(pos);
-            Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            pivotMotor.setTargetPosition(pos);
+            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+
+
 
     }
 

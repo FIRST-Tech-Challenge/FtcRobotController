@@ -22,7 +22,7 @@ public class TeleOps extends LinearOpMode {
 
         robot.init(hardwareMap);
 
-        robot.switchPipeline(1);
+//        robot.switchPipeline(1); commented out cuz not running
         telemetry.addData("pipeline: 1", null);
 
         while (opModeInInit()) {
@@ -57,7 +57,7 @@ public class TeleOps extends LinearOpMode {
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
             robot.slideControl(gamepad1.dpad_left, gamepad1.dpad_right);
 
-            telemetry.addData("slide position: ", robot.Slide.getCurrentPosition());
+            telemetry.addData("slide position: ", robot.slideMotor.getCurrentPosition());
 
             double[] values = robot.detectOne();
 
