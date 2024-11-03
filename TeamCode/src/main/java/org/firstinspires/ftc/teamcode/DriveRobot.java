@@ -1,24 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
-@TeleOp(name="Competition Teleop2024NewRobot", group="Iterative Opmode")
-public class CompetitionTeleop2024NewRobot extends OpMode {
+@TeleOp(name="Drive Robot", group="Iterative Opmode")
+public class DriveRobot extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     //Declare the wheels
@@ -81,7 +71,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         RF = hardwareMap.get(DcMotor.class, "RF");
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
-        intake = hardwareMap.get(CRServo.class, "intake");
+       /* intake = hardwareMap.get(CRServo.class, "intake");
         leftArm = hardwareMap.get(DcMotor.class, "leftArm");
         rightArm = hardwareMap.get(DcMotor.class, "rightArm");
         lift = hardwareMap.get(DcMotor.class, "lift");
@@ -90,6 +80,8 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
 
         intake.setPower(0.0);
+        */
+
         //imu = hardwareMap.get(IMU.class, "imu");
         //IMU.Parameters parameters = new IMU.Parameters(
         //        new RevHubOrientationOnRobot(
@@ -115,7 +107,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         RF.setDirection(DcMotor.Direction.REVERSE);
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
-        lift.setDirection(DcMotor.Direction.REVERSE);
+       /* lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setPower(0);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftArm.setDirection(DcMotor.Direction.REVERSE);
@@ -123,7 +115,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         leftArm.setPower(0);
         leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightArm.setPower(0);
-        rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); */
 
 
 
@@ -187,15 +179,13 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Code for gamepad2
         //Toggle auto and manual mode
 
-        if (gamepad2.back) {
-            game2back = !game2back;
-        }
+
 
 
 
 
         //Moves the arm up
-        if (gamepad2.left_trigger >= .1)
+      /*  if (gamepad2.left_trigger >= .1)
         {
             autoLift = false;
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -270,6 +260,8 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         telemetry.addData("wrist:", wrist.getPosition());
         telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);
+
+       */
         telemetry.update();
         //telemetry.addData("positionTarget: ", "%.2f", positionTarget);
 
