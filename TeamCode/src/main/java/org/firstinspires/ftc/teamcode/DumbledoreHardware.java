@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,10 +11,9 @@ import org.firstinspires.ftc.teamcode.hardware.MotorSet;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import org.firstinspires.ftc.teamcode.mmooover.TriOdoProvider;
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 
 
-public class Hardware extends HardwareMapper implements TriOdoProvider {
+public class DumbledoreHardware extends HardwareMapper implements TriOdoProvider {
     // left = left motor = exp 0 frontLeft
     // right = right motor = ctr 0 frontRight
     // center = ctr 3 intake
@@ -53,7 +53,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
 
     @Override
-    public DcMotor getLeftEncoder() { return encoderLeft; }
+    public DcMotor getLeftEncoder() {
+        return encoderLeft;
+    }
 
     @Override
     public DcMotor getRightEncoder() {
@@ -65,31 +67,29 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         return encoderCenter;
     }
 
-    // Values calculated from [very scuffed] CAD measurements.
-
     @Override
     public double getTrackWidth() {
-        return 11.3385888;
+        return 14 + 7 / 16.;
     }
 
     @Override
     public double getForwardOffset() {
-        return 5.05905785;
-    }
-
-    @Override
-    public double getEncoderWheelRadius() {
-        return 1.25984 / 2.0;
+        return -(6 + 3 / 4.);
     }
 
     @Override
     public int getEncoderTicksPerRevolution() {
-        return 2000;
+        return 8192;
+    }
+
+    @Override
+    public double getEncoderWheelRadius() {
+        return 0.70;
     }
 
     public MotorSet driveMotors;
 
-    public Hardware(HardwareMap hwMap) {
+    public DumbledoreHardware(HardwareMap hwMap) {
         super(hwMap);
         driveMotors = new MotorSet(
                 frontLeft,

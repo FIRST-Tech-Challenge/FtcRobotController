@@ -14,10 +14,10 @@ import java.util.List;
 
 @TeleOp
 public class EncoderTrackingTest extends LinearOpMode {
-    private static final double ticksPerRotation = 8192.0;
-    private static final double radiusInches = 0.70;
-    private static final double trackWidth = 14 + 7 / 16.; // distance between two parallel encoders
-    private static final double forwardOffset = -(6 + 3 / 4.);
+    private double ticksPerRotation;
+    private double radiusInches = 0.70;
+    private double trackWidth; // distance between two parallel encoders
+    private double forwardOffset;
 
     private double tick2inch(int ticks) {
         return (ticks / ticksPerRotation) * 2 * PI * radiusInches;
@@ -26,6 +26,10 @@ public class EncoderTrackingTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Hardware hardware = new Hardware(hardwareMap);
+        ticksPerRotation = hardware.getEncoderTicksPerRevolution();
+        radiusInches = hardware.getEncoderWheelRadius();
+        trackWidth = hardware.getTrackWidth();
+        forwardOffset = hardware.getForwardOffset();
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
         allHubs.forEach(consumer -> {
             consumer.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
