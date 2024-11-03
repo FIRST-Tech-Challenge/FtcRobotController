@@ -20,9 +20,37 @@ public class Lift {
     int currentPosition;
     DcMotorEx liftMotorLeft;
     DcMotorEx liftMotorRight;
+    // For all of these, set up a tuner for the lift to tune these
+    // in FTC dash. Have the option to use any of the tuned distances motion profiles
 
+    // First off, you're gonna want to have the three FF
+    // tune-able constants
+    // kV and kA are for motion profile following
+    // kS would be to counteract gravity (should be just below when you
+    // see minimum movement from the sldies)
+
+    // Second off, you should have have the PID constants
+    // tune-able here specific to the lift
+    
+    // You should also have preset lift heights tuned
+    // You should have the following variables for converting ticks to heights (in inches)
+    // Spool radius, ticks/rev
+
+    // Also, have all of your lift heights tuned here as well
+
+    // Finally, ensure you instantiate your two touch sensors here.
+
+    // one more thing: instantiate motors and encoder separately using the Kevin stuff
+
+    // Set up motion profiles here as well. You will likely want to make the a_accel, a_deccel, v_max tune-able variables.
+    // distance gets passed into the 
+
+
+    // Side note: any member variable, use 'this.MEMBER_VARIABLE_HERE' so
+    // its easier to read
     public Lift(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
+        
         liftMotorLeft = hardwareMap.get(DcMotorEx.class, "liftMotorLeft");
         liftMotorRight = hardwareMap.get(DcMotorEx.class, "liftMotorRight");
         liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -42,6 +70,14 @@ public class Lift {
 
         currentPosition = 0;
     }
+
+
+    // Rather than having an action per basket, come up with descriptive names
+    // for all your heights and just pass those into the action
+    // so rename this to be more general
+
+    // In your action set up a motionProfile object NOT IN RUN, but as a "member variable"
+    // It should get set up when you pass in the string/enum for the height you want to go at
     public Action basketOne() {
         return new Action() {
             //private boolean initialized = false;
@@ -51,8 +87,10 @@ public class Lift {
                 //if (!initialized) {
                 //    initialized = true;
                 //}
+
+
                 currentPosition=liftMotorLeft.getCurrentPosition();
-                pid.calculate(24, currentPosition);
+                pid.calculate(24, currentPosition);  // Add feedforward to this!
                 liftMotorLeft.setPower(motorPower);
                 liftMotorRight.setPower(motorPower);
                 return currentPosition==24;
@@ -60,5 +98,6 @@ public class Lift {
         };
     }
 
+    // Write another action that uses the joystick to move up and down. 
 
 }
