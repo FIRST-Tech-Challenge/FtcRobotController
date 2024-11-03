@@ -157,8 +157,11 @@ public class League1Auto extends LinearOpMode {
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-
-                    slides.setTargetSlidesPosition(8);
+                    if(isThirdCycle){
+                        slides.setTargetSlidesPosition(8);
+                    }else {
+                        slides.setTargetSlidesPosition(7);
+                    }
                     if (timer.milliseconds() > ActionStamp + 500) {
                         arm.intake();
                     }
@@ -286,13 +289,16 @@ public class League1Auto extends LinearOpMode {
                         drive.setTarget(new Pose2d(76, 27, -90));
                     }
                     if (timer.milliseconds() > TimeStamp + 3000) {
-                        drive.setTarget(new Pose2d(76, 48, -90));
+                        drive.setTarget(new Pose2d(76, 55, -90));
                     }
                     if (timer.milliseconds() > TimeStamp + 4000) {
-                        drive.setTarget(new Pose2d(76, 48, -33));
+                        drive.setTarget(new Pose2d(76, 55, -33));
                         timeToggle = true;
+                        currentState=State.REST;
                     }
 
+                    break;
+                case REST:
                     break;
 
 
@@ -328,12 +334,12 @@ public class League1Auto extends LinearOpMode {
     }
 
     enum State {
-        DRIVETODEPOSIT, DEPOSIT, CYCLE1, CYCLE2, CYCLE3, PARKNEAR, PARKFAR
+        DRIVETODEPOSIT, DEPOSIT, CYCLE1, CYCLE2, CYCLE3, PARKNEAR, PARKFAR, REST
     }
 
     //(-18, 23.5, 30)
     enum Actions {
-        PICKUP, SLIDESEXTEND, WRISTDEPOSIT, DEPOSIT, RESET, INTAKE, THIRDCYCLEPICKUP, REST
+        PICKUP, SLIDESEXTEND, WRISTDEPOSIT, DEPOSIT, RESET, INTAKE, THIRDCYCLEPICKUP, REST, THIRDSLIDE
 
     }
 
