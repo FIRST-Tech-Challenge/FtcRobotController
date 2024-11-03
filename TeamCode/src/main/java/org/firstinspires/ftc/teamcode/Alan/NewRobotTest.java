@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.Alan;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 //test drive for new INTO THE DEEP robot
+@Disabled
 @TeleOp
 public class NewRobotTest extends LinearOpMode {
     @Override
