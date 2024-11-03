@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous.newAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.hardware;
 
@@ -9,14 +10,17 @@ import org.firstinspires.ftc.teamcode.hardware;
 public class wheelTest extends LinearOpMode {
     hardware hardware = new hardware();
 
+    int tickPer10cm = 100;
+    int tickPerCm = (int) tickPer10cm/10;
+
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
         setDirection();
-        //resetEncoders();
+        resetEncoders();
         waitForStart();
         while (opModeIsActive()) {
-            forward();
+            forward(tickPer10cm, 0.2);
             break;
         }
     }
@@ -32,11 +36,7 @@ public class wheelTest extends LinearOpMode {
         hardware.backLeft.setDirection(DcMotor.Direction.REVERSE);
         hardware.backRight.setDirection(DcMotor.Direction.FORWARD);
     }
-    private void forward(){
-    if(opModeIsActive())
-    {
-        int pos = 1000;
-        double speed = 0.2;
+    private void forward(int pos, double speed){
         setPos(pos);
         runToPos();
         while(hardware.frontLeft.getCurrentPosition() < pos){
@@ -46,7 +46,7 @@ public class wheelTest extends LinearOpMode {
         setSpeed(speed);
         resetEncoders();
         sleep(250);
-    }
+
 
 
     }

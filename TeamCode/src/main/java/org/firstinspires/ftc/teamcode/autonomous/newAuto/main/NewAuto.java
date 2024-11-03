@@ -22,6 +22,9 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
     final int open = 200;
     final int closed = 0;
 
+    final int tickPer10cm = 100;
+    final int tickPerCm = tickPer10cm/10;
+
     // Initialize motors and hardware components
     @Override
     public void initialize() {
@@ -254,17 +257,38 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
             case MANTIS:
                 targetPos = (int) (calculations.MANTIS_TICK_PER_INCH * inch);
                 hardware.mantis.setTargetPosition(targetPos);
-                hardware.mantis.setPower(speed);
+                hardware.mantis.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(hardware.mantis.getCurrentPosition() < targetPos) {
+                    hardware.mantis.setPower(speed);
+                    whileMotorsBusy();
+                }
+                hardware.mantis.setPower(0.1);
+                hardware.mantis.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                sleep(250);
                 break;
             case LIFT:
                 targetPos = (int) (calculations.LIFT_TICK_PER_INCH * inch);
                 hardware.lift.setTargetPosition(targetPos);
-                hardware.lift.setPower(speed);
+                hardware.mantis.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(hardware.lift.getCurrentPosition() < targetPos) {
+                    hardware.lift.setPower(speed);
+                    whileMotorsBusy();
+                }
+                hardware.lift.setPower(0.0);
+                hardware.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                sleep(250);
                 break;
             case HOPPER:
                 targetPos = (int) (calculations.HOPPER_TICK_PER_INCH * inch);
                 hardware.hopper.setTargetPosition(targetPos);
-                hardware.hopper.setPower(speed);
+                hardware.hopper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(hardware.hopper.getCurrentPosition() < targetPos) {
+                    hardware.hopper.setPower(speed);
+                    whileMotorsBusy();
+                }
+                hardware.hopper.setPower(0.0);
+                hardware.hopper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                sleep(250);
                 break;
         }
     }
@@ -360,7 +384,7 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
             int red = hardware.colorSensor.red();
             int blue = hardware.colorSensor.blue();
             int green = hardware.colorSensor.green();
-            movement(mainEnum.FORWARD, 100,0,calculations.DRIVE_SPEED);
+            movement(mainEnum.FORWARD, tickPer10cm,0,calculations.DRIVE_SPEED);
         }
     }
 }
