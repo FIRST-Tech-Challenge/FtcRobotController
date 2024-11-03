@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Alan;
+package org.firstinspires.ftc.teamcode.localization;
 
 
 
@@ -50,7 +50,7 @@ public class OdometryFuse {
 
     //configure SPARK FUN Otos
     @SuppressLint("DefaultLocale")
-    public String configureOtos(SparkFunOTOS myOtos) {
+    public String configureOtos() {
 
         myOtos.setLinearUnit(DistanceUnit.INCH);
 
