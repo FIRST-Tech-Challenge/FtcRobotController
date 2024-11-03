@@ -22,8 +22,7 @@ public class Drivetrain {
         }
 
         //todo: set reverse directions
-        dtMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
-        dtMotors[3].setDirection(DcMotorSimple.Direction.REVERSE);
+        dtMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
     }
 
@@ -49,7 +48,7 @@ public class Drivetrain {
         return gamepad;
     }
 
-    private static void drive(Vector vector, double rotation) {
+    public static void drive(Vector vector, double rotation) {
         dtMotors[0].setPower(Math.signum(vector.y + vector.x + rotation) * Math.max(DrivetrainConstants.minDriveSpeed, Math.min(DrivetrainConstants.maxDriveSpeed, Math.abs(vector.y + vector.x + rotation))));
         dtMotors[1].setPower(Math.signum(vector.y - vector.x + rotation) * Math.max(DrivetrainConstants.minDriveSpeed, Math.min(DrivetrainConstants.maxDriveSpeed, Math.abs(vector.y - vector.x + rotation))));
         dtMotors[2].setPower(Math.signum(vector.y - vector.x - rotation) * Math.max(DrivetrainConstants.minDriveSpeed, Math.min(DrivetrainConstants.maxDriveSpeed, Math.abs(vector.y - vector.x - rotation))));
