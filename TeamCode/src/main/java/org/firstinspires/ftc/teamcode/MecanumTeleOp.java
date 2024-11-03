@@ -116,37 +116,40 @@ public class MecanumTeleOp extends LinearOpMode {
     }
 
     /////////////////////////////////////////////
+    // lifts the vertical slides to a target position
+    private void targetLift(Hardware hardware , int targetPosition){
 
-    private void lift(Hardware hardware )
-    {
+        hardware.verticalLift.setTargetPosition(targetPosition);
+        hardware.verticalLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalLift.setPower(0.5);
+        while (true){
+            int verticalPosition = hardware.encoderLift.getCurrentPosition();
+            if (Math.abs (verticalPosition-targetPosition) < 5){
+                hardware.verticalLift.setPower(0);
+                break;
+            }
+        }
+        hardware.verticalLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+
+
+    private void lift(Hardware hardware ) {
 
         //Hardware hardware = new Hardware(hardwareMap);
         int verticalPosition = hardware.encoderLift.getCurrentPosition();
 
-        if (gamepad2.dpad_up){
+        if (gamepad2.dpad_up) {
             hardware.verticalLift.setPower(0.5);
-        }
-        else if(gamepad2.dpad_down){
+        } else if (gamepad2.dpad_down) {
             hardware.verticalLift.setPower(-0.5);
-        }
-        else{
+        } else {
             hardware.verticalLift.setPower(0.0);
         }
 
         if (gamepad2.a) {
-            int targetPosition = 360;
+            targetLift(hardware, 360);
 
-            hardware.verticalLift.setTargetPosition(targetPosition);
-            hardware.verticalLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hardware.verticalLift.setPower(0.5);
-            while (true){
-                verticalPosition = hardware.encoderLift.getCurrentPosition();
-                if (Math.abs (verticalPosition-targetPosition) < 5){
-                    hardware.verticalLift.setPower(0);
-                    break;
-                }
-            }
-            hardware.verticalLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 }
