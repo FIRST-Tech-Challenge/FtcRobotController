@@ -39,7 +39,7 @@ public class PinchBot extends PivotBot{
         }
     }
     public void rotate(double angle){
-
+        angle = angle;
         rotate.setPosition(angle);
     }
     public void pickUp(boolean button){
