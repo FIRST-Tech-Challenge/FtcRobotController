@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
@@ -12,8 +11,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-//@Autonomous(name="BasicClawAuto")
-public class ClawAuto extends LinearOpMode {
+@Autonomous(name="BasicTimeAuto4")
+public class BasicTimeAuto4 extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
@@ -23,10 +22,6 @@ public class ClawAuto extends LinearOpMode {
     double forward;
     double strafe;
     double rotate;
-    double limelightX;
-    double limeLightY;
-    int goToX;
-    int goToY;
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MechDrive(hardwareMap);
@@ -37,39 +32,16 @@ public class ClawAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         waitForStart();
+
         while(opModeIsActive())
         {
-            forward = 0;
             strafe = 0;
             rotate = 0;
+            forward = -0.2;
+            robot.drive(forward,strafe,rotate);
 
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-
-            String[] distance =limelight.getDistanceInInches();
-            telemetry.addData("Limelight Distance: ", distance[0] + ", " + distance[1]);
-
-            drive.updatePoseEstimate();
-
-            //Alt Auto move to different class
-            limelightX = Double.parseDouble(distance[0]);
-            limeLightY = Double.parseDouble(distance[1]);
-
-//            robot.drive(0.3,0,0);
-            goToX=0;
-            goToY = 0;
-//            if(Math.hypot(goToX-limelightX, goToY-limeLightY) > 48)
-//            {
-//                strafe = -0.3;
-//                robot.drive(forward, strafe, rotate);
-//                //problem as this record drive datat
-////                telemetry.addData("x", screen.roundData(drive.pose.position.x));
-////                telemetry.addData("y", screen.roundData(drive.pose.position.y));
-////                telemetry.addData("Yaw (deg)", screen.roundData(Math.toDegrees(drive.pose.heading.toDouble())));
-//                telemetry.update();
-//            }
-
-
-
+            sleep(10000);
+            robot.drive(0,0,0);
         }
     }
 }
