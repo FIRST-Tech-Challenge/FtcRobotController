@@ -4,12 +4,12 @@
 
 ### Motors
 
-| Motor Port | Name | Description       | Encoder          |
-|------------|------|-------------------|------------------|
-| 0          | FL   | Front Left motor  |                  |
-| 1          | FR   | Front Right motor | -                |
-| 2          | BL   | Back Left motor   | -                |
-| 3          | BR   | Back Right motor  | -                |
+| Motor Port | Name | Description       | Encoder |
+|------------|------|-------------------|---------|
+| 0          | FL   | Front Left motor  | -       |
+| 1          | FR   | Front Right motor | -       |
+| 2          | BL   | Back Left motor   | -       |
+| 3          | BR   | Back Right motor  | -       |
 
 ### Servos
 

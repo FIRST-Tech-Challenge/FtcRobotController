@@ -19,6 +19,8 @@ public class SampleActionBasedOpMode extends ActionBasedOpMode {
     protected void setupWaypointsAndActions() {
         Queue<BaseMovement> movements = new LinkedList<>();
         movements.add(new ForwardMovement(1d));
+        movements.add(new RotationMovement(180d));
+        movements.add(new ForwardMovement(1d));
 
         movementQueue.add(movements);
     }
