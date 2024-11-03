@@ -1,17 +1,21 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands.tankDriveBase;
 
+import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.subsystems.driveTrain.TankDriveSubsystem;
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
-public class TankArcadeDriveCommand extends SympleCommandBase<TankDriveSubsystem> {
+public class TankArcadeDriveCommand extends CommandBase {
     private final GamepadEx controller;
 
-    public TankArcadeDriveCommand(TankDriveSubsystem driveBase, GamepadEx controller) {
-        super(driveBase);
+    private final TankDriveSubsystem subsystem;
+
+    public TankArcadeDriveCommand(TankDriveSubsystem subsystem, GamepadEx controller) {
+        this.subsystem = subsystem;
         this.controller = controller;
+
+        addRequirements(subsystem);
     }
 
     @Override

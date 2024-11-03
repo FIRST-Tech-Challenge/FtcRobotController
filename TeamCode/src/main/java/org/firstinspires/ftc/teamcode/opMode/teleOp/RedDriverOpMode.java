@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.TeleOpRobotController;
 import org.firstinspires.ftc.teamcode.util.TeamColor;
+import org.firstinspires.ftc.teamcode.util.opModes.SympleCommandOpMode;
 
 @TeleOp(name = "Red Team - Driver")
-public class RedDriverOpMode extends DriverOpMode {
+public class RedDriverOpMode extends SympleCommandOpMode {
     @Override
     public void initialize() {
-        super.initialize(TeamColor.RED);
+        this.robotController = new TeleOpRobotController.Builder(this)
+                .teamColor(TeamColor.RED)
+                .build();
     }
 }

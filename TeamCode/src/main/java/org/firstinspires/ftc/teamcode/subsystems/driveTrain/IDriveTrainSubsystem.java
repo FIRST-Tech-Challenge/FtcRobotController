@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain;
 
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubsystem;
+import com.arcrobotics.ftclib.command.Subsystem;
 
-/**
- * Interface for {@link SympleSubsystem}s, use this interface on a subsystem to make it support the common drive train commands
- */
-public interface IDriveTrainSubsystem extends SympleSubsystem {
+import org.firstinspires.ftc.teamcode.util.LoggerSubsystem;
+
+public interface IDriveTrainSubsystem extends LoggerSubsystem, Subsystem {
     void moveSideMotors(double left, double right);
     double getForwardDistanceDriven();
     double getHeading();
