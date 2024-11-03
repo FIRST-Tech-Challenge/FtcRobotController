@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@Autonomous(name="BasicAutoDrive")
+//@Autonomous(name="BasicAutoDrive")
 public class BasicAutoDrive extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;

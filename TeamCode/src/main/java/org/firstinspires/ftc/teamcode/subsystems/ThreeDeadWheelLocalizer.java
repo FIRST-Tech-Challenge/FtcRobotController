@@ -24,23 +24,25 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.ThreeDeadWheelInputsMessage;
 
 import java.text.DecimalFormat;
-    @Config
-    public final class ThreeDeadWheelLocalizer implements Localizer {
-        public static class Params {
-            public double par0YTicks = 0.0; // y position of the first parallel encoder (in tick units)
-            public double par1YTicks = 1.0; // y position of the second parallel encoder (in tick units)
-            public double perpXTicks = 0.0; // x position of the perpendicular encoder (in tick units)
-        }
+@Config
+public final class ThreeDeadWheelLocalizer implements Localizer {
+    public static class Params {
+        //3.5 inches
+        public double par0YTicks = -1176; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = 1176; // y position of the second parallel encoder (in tick units)
+        //4.5 inches
+        public double perpXTicks = 1512; // x position of the perpendicular encoder (in tick units)
+    }
 
-        public static Params PARAMS = new Params();
+    public static Params PARAMS = new Params();
 
-        public final Encoder par0, par1, perp;
+    public final Encoder par0, par1, perp;
 
-        public final double ticksPerInch = 336.8779629; // Known ticks per inch
-        public final double inPerTick = 0.0029; // Calculated inches per tick
+    public final double ticksPerInch = 336.8779629; // Known ticks per inch
+    public final double inPerTick = 0.0029; // Calculated inches per tick
 
-        private int lastPar0Pos, lastPar1Pos, lastPerpPos;
-        private boolean initialized;
+    private int lastPar0Pos, lastPar1Pos, lastPerpPos;
+    private boolean initialized;
 
     private double xPos = 0.0, yPos = 0.0, heading = 0.0;
 
@@ -50,11 +52,12 @@ import java.text.DecimalFormat;
         //   the encoders should be plugged into the slot matching the named motor
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "BLM")));
         perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "BRM")));
 
-            FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
-        }
+//        par1.setDirection(DcMotorSimple.Direction.REVERSE);
+        FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
+    }
 
     public double getPoseEstimateX() {
         Twist2dDual<Time> twist = update(); // Calculate the change in position
@@ -87,49 +90,49 @@ import java.text.DecimalFormat;
         PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
         PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
 
-            FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
+        FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
 
-            if (!initialized) {
-                initialized = true;
-
-                lastPar0Pos = par0PosVel.position;
-                lastPar1Pos = par1PosVel.position;
-                lastPerpPos = perpPosVel.position;
-
-                return new Twist2dDual<>(
-                        Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
-                        DualNum.constant(0.0, 2)
-                );
-            }
-
-            int par0PosDelta = par0PosVel.position - lastPar0Pos;
-            int par1PosDelta = par1PosVel.position - lastPar1Pos;
-            int perpPosDelta = perpPosVel.position - lastPerpPos;
-
-            Twist2dDual<Time> twist = new Twist2dDual<>(
-                    new Vector2dDual<>(
-                            new DualNum<Time>(new double[]{
-                                    (PARAMS.par0YTicks * par1PosDelta - PARAMS.par1YTicks * par0PosDelta) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-                                    (PARAMS.par0YTicks * par1PosVel.velocity - PARAMS.par1YTicks * par0PosVel.velocity) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-                            }).times(inPerTick),
-                            new DualNum<Time>(new double[]{
-                                    (PARAMS.perpXTicks / (PARAMS.par0YTicks - PARAMS.par1YTicks) * (par1PosDelta - par0PosDelta) + perpPosDelta),
-                                    (PARAMS.perpXTicks / (PARAMS.par0YTicks - PARAMS.par1YTicks) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
-                            }).times(inPerTick)
-                    ),
-                    new DualNum<>(new double[]{
-                            (par0PosDelta - par1PosDelta) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-                            (par0PosVel.velocity - par1PosVel.velocity) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-                    })
-            );
+        if (!initialized) {
+            initialized = true;
 
             lastPar0Pos = par0PosVel.position;
             lastPar1Pos = par1PosVel.position;
             lastPerpPos = perpPosVel.position;
 
-            return twist;
+            return new Twist2dDual<>(
+                    Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
+                    DualNum.constant(0.0, 2)
+            );
         }
+
+        int par0PosDelta = par0PosVel.position - lastPar0Pos;
+        int par1PosDelta = par1PosVel.position - lastPar1Pos;
+        int perpPosDelta = perpPosVel.position - lastPerpPos;
+
+        Twist2dDual<Time> twist = new Twist2dDual<>(
+                new Vector2dDual<>(
+                        new DualNum<Time>(new double[]{
+                                (PARAMS.par0YTicks * par1PosDelta - PARAMS.par1YTicks * par0PosDelta) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
+                                (PARAMS.par0YTicks * par1PosVel.velocity - PARAMS.par1YTicks * par0PosVel.velocity) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
+                        }).times(inPerTick),
+                        new DualNum<Time>(new double[]{
+                                (PARAMS.perpXTicks / (PARAMS.par0YTicks - PARAMS.par1YTicks) * (par1PosDelta - par0PosDelta) + perpPosDelta),
+                                (PARAMS.perpXTicks / (PARAMS.par0YTicks - PARAMS.par1YTicks) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
+                        }).times(inPerTick)
+                ),
+                new DualNum<>(new double[]{
+                        (par0PosDelta - par1PosDelta) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
+                        (par0PosVel.velocity - par1PosVel.velocity) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
+                })
+        );
+
+        lastPar0Pos = par0PosVel.position;
+        lastPar1Pos = par1PosVel.position;
+        lastPerpPos = perpPosVel.position;
+
+        return twist;
     }
+}
 
 //    public Twist2dDual<Time> update() {
 //        PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
@@ -193,6 +196,10 @@ import java.text.DecimalFormat;
 //
 //        return twist;
 //    }
+
+
+
+
 
 
 
