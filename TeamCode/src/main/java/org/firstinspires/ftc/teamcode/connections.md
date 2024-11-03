@@ -19,9 +19,9 @@
 
 | Motor Port | Name           | Description                   | Encoder       |
 |------------|----------------|-------------------------------|---------------|
-| 0          | -              | -                             | -             |
-| 1          | DeliveryPivot  | Motor for delviery pivot      | Pivot encoder |
-| 2          | DeliverySlider | Motor for the delivery slider | Slide encoder |
+| 0          | DeliverySlider | Motor for the delivery slider | Slide encoder |
+| 1          | DeliveryPivot  | Motor for delivery pivot      | Pivot encoder |
+| 2          | -              | -                             | -             |
 | 3          | -              | -                             | -             |
 
 ### Servos
@@ -39,6 +39,7 @@
 
 ## I2C
 
-| I2C Bus | Name       | Description                |
-|---------|------------|----------------------------|
-| 0       | -          | -                          |
+| I2C Bus | Name        | Description         |
+|---------|-------------|---------------------|
+| 0       | -           | -                   |
+| 1       | ColorSensor | Intake color sensor |
