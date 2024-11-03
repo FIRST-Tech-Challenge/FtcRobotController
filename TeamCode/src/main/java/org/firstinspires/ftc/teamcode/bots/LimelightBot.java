@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
-public class LimelightBot extends GyroBot {
+public class LimelightBot extends FourWheelDriveBot {
 
     public LLResult result = null;
     public Pose3D botpose = null;
@@ -26,7 +26,6 @@ public class LimelightBot extends GyroBot {
         limelight.start();
 
 
-
     }
 
     public LimelightBot(LinearOpMode opMode) {
@@ -34,25 +33,26 @@ public class LimelightBot extends GyroBot {
     }
 
 
-   public double[] detectOne(){
+    public double[] detectOne() {
         double[] values = new double[3];
-       LLResult result = limelight.getLatestResult();
-       if(result != null) {
-           if (result.isValid()) {
-               double xDegree = result.getTx();
-               double yDegree = result.getTy();
-               double angle = result.getPythonOutput()[8];
+        LLResult result = limelight.getLatestResult();
+        if (result != null) {
+            if (result.isValid()) {
+                double xDegree = result.getTx();
+                double yDegree = result.getTy();
+                double angle = result.getPythonOutput()[8];
 
-               double xResult = xDegree;
-               double yResult = yDegree;
-               values[0] = xResult;
-               values[1] = yResult;
-               values[2] = angle;
-           }
-       }
+                double xResult = xDegree;
+                double yResult = yDegree;
+                values[0] = xResult;
+                values[1] = yResult;
+                values[2] = angle;
+            }
+        }
 
-       return values;
+        return values;
 
-   }
+    }
+}
 
 
