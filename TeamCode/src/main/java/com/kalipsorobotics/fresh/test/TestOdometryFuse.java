@@ -11,12 +11,21 @@ import org.firstinspires.ftc.teamcode.Alan.OdometryFuse;
 public class TestOdometryFuse  extends LinearOpMode {
     SparkFunOTOS myOtos;
     DcMotor leftFront;
-    DcMotor leftBack;
     DcMotor rightFront;
     DcMotor rightBack;
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
-        OdometryFuse odometryFuse = new OdometryFuse(myOtos, leftFront, leftBack, rightFront, rightBack);
+        OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightFront, leftFront, rightBack);
+        odometryFuse.configureOtos(myOtos);
+        waitForStart();
+
+        while (opModeIsActive()) {
+            telemetry.addData("" + odometryFuse.SparkUpdateData(), "");
+            telemetry.addLine();
+            telemetry.addData("" + odometryFuse.WheelUpdateData(), "");
+            telemetry.addLine();
+            telemetry.addData("" + odometryFuse.averageUpdateData(), "");
+        }
     }
 }

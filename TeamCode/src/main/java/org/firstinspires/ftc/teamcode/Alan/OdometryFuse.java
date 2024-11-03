@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-@TeleOp
+
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
     private final SparkFunOTOS myOtos;
