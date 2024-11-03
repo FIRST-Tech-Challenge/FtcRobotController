@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareMapper;
 import org.firstinspires.ftc.teamcode.hardware.HardwareName;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+
 
 public class Hardware extends HardwareMapper {
     // left = left motor = exp 0 frontLeft
@@ -32,19 +34,34 @@ public class Hardware extends HardwareMapper {
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     public DcMotor backRight;
 
-    @HardwareName("frontLeft")
+    @HardwareName("verticalSlides")
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     @AutoClearEncoder
-    public DcMotor encoderLeft;
+    public DcMotor verticalLift;
 
-    @HardwareName("intake")
+    @HardwareName("verticalSlides")
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     @AutoClearEncoder
-    public DcMotor encoderCenter;
+    public DcMotor encoderLift;
+    /*
+        @HardwareName("frontLeft")
+        @AutoClearEncoder
+        public DcMotor encoderLeft;
 
-    @HardwareName("frontRight")
-    @AutoClearEncoder
-    public DcMotor encoderRight;
+        @HardwareName("intake")
+        @AutoClearEncoder
+        public DcMotor encoderCenter;
+
+        @HardwareName("frontRight")
+        @AutoClearEncoder
+        public DcMotor encoderRight;
+    */
+    @HardwareName("gyro")
+    public NavxMicroNavigationSensor gyro;
+
 
     public Hardware(HardwareMap hwMap) {
         super(hwMap);
     }
+
 }
