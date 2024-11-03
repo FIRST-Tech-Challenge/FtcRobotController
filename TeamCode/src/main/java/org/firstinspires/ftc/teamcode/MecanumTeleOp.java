@@ -117,6 +117,8 @@ public class MecanumTeleOp extends LinearOpMode {
 
     int maxVerticalLiftTicks = 2300;
     int minVerticalLiftTicks= 0;
+    int highChamberTicks = 790;
+    int highBasketTicks = 2180;
     // lifts the vertical slides to a target position in ticks
     private void targetLift(Hardware hardware , int targetPosition){
 
@@ -125,9 +127,10 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.verticalSlide.setPower(0.5);
         ElapsedTime Timer = new ElapsedTime();
         double timeoutSeconds = 3.0;
+        int allowedErrorTicks = 5;
         while (Timer.time() < timeoutSeconds){
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
-            if (Math.abs (verticalPosition-targetPosition) < 5){
+            if (Math.abs (verticalPosition-targetPosition) < allowedErrorTicks){
                 hardware.verticalSlide.setPower(0);
                 break;
             }
@@ -150,9 +153,16 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.verticalSlide.setPower(0.0);
         }
 
-        if (gamepad2.a) {
-            targetLift(hardware, 360);
+        if (gamepad2.b) {
+            targetLift(hardware, highChamberTicks);
 
+        }
+
+        if (gamepad2.y) {
+            targetLift(hardware, highBasketTicks);
+        }
+        if (gamepad2.a) {
+            targetLift(hardware, 0);
         }
     }
 }
