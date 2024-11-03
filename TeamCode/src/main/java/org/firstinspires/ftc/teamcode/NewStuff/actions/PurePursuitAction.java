@@ -113,7 +113,7 @@ public class PurePursuitAction extends Action {
 
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
-        Log.d("purepursaction", "set target and set powers");
+        Log.d("purepursaction", "set target and set powers " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
 //        opModeUtilities.getTelemetry().addData("current pos", currentPos.toString());
 //        opModeUtilities.getTelemetry().addData("power x ", powerX);
@@ -123,6 +123,9 @@ public class PurePursuitAction extends Action {
 
     @Override
     public boolean checkDoneCondition() {
+
+        lastLine = path.getSegment(path.numSegments() - 1);
+
         if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 30
                 && odometry.getCurrentVelocity().isWithinThreshhold(30, 30, Math.toRadians(1))
                 && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(2)) {
@@ -144,7 +147,8 @@ public class PurePursuitAction extends Action {
             hasStarted = true;
         }
 
-        radius = 300;
+        Log.d("purepursaction", "entered update");
+
         follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
 
         if (!follow.isPresent()) {
@@ -154,13 +158,16 @@ public class PurePursuitAction extends Action {
         }
 
         if(follow.isPresent()) {
+            Log.d("purepursaction", "follow present: radius " + radius);
             lastLine = path.getSegment(path.numSegments() - 1);
             preferredAngle = lastLine.getHeadingDirection();
 //                opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
 //                opModeUtilities.getTelemetry().addData("follow point", follow);
             targetPosition(follow.get(), preferredAngle);
             Log.d("position", odometry.getCurrentPosition().toString());
-            Log.d("velocity", odometry.getCurrentVelocity().toString());
+            //Log.d("velocity", odometry.getCurrentVelocity().toString());
+
+            radius = 100;
         }
 
         //if (Thread.interrupted()) throw new InterruptedException();

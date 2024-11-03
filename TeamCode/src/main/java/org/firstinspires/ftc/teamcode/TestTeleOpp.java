@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.NewStuff.actions.PurePursuitAction;
+import org.firstinspires.ftc.teamcode.NewStuff.actions.TurnRobotAction;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.DriveTrain;
+import org.firstinspires.ftc.teamcode.NewStuff.modules.IMUModule;
 import org.firstinspires.ftc.teamcode.NewStuff.modules.Intake;
 import org.firstinspires.ftc.teamcode.NewStuff.OpModeUtilities;
 import org.firstinspires.ftc.teamcode.NewStuff.actions.code2023.Outtake2023;
@@ -27,6 +29,7 @@ public class TestTeleOpp extends LinearOpMode {
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         driveTrain = new DriveTrain(opModeUtilities);
         odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
+        IMUModule imu = new IMUModule(opModeUtilities);
 
 
         //define the actions; enter a condition (if any), target ticks, and module
@@ -55,10 +58,14 @@ public class TestTeleOpp extends LinearOpMode {
 //        outer.scheduleSequential(action3);
 
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
-        purePursuitAction.addPoint(400, 0);
-        purePursuitAction.addPoint(400, 400);
-        purePursuitAction.addPoint(0, 400);
-        purePursuitAction.addPoint(0, 0);
+//        purePursuitAction.addPoint(800, 0);
+//        purePursuitAction.addPoint(800, 1600);
+//        purePursuitAction.addPoint(0, 1600);
+//        purePursuitAction.addPoint(-800, 1600);
+        purePursuitAction.addPoint(0,0);
+        purePursuitAction.addPoint(50,0);
+
+        //TurnRobotAction turnRobotAction = new TurnRobotAction(90, driveTrain, imu);
 
         waitForStart();
 
@@ -70,7 +77,10 @@ public class TestTeleOpp extends LinearOpMode {
 //            action3.update();
 //            action4.update();
 
+            odometry.updatePosition();
             purePursuitAction.updateCheckDone();
+
+            //turnRobotAction.updateCheckDone();
 
 //            telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());
 //            telemetry.addData("drone launcher ticks", droneLauncher.wheel.getCurrentPosition());
