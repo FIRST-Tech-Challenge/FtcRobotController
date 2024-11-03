@@ -16,8 +16,10 @@ public class SamplePIDAutoOpMode extends PIDControlAutoOpMode {
     @Override
     protected void setupWaypointsAndActions() {
         List<Pose2d> waypoints = new ArrayList<>();
-        waypoints.add(new Pose2d(.2, 0, new Rotation2d(0)));
-        waypoints.add(new Pose2d(.2,.2,new Rotation2d(0)));
+        waypoints.add(new Pose2d(0, 0, new Rotation2d(0)));
+        waypoints.add(new Pose2d(1, 0, new Rotation2d(0)));
+        waypoints.add(new Pose2d(2,0,new Rotation2d(0)));
+//        waypoints.add(new Pose2d(2,.3,new Rotation2d(0)));
         wayPointsStack.push(waypoints);
 
         actions.push(new RunCommand(() -> {}));

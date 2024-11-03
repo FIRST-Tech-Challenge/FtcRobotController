@@ -128,6 +128,7 @@ public abstract class AutoOpMode extends OpModeTemplate {
     private void followTrajectory() {
         double elapsedTime = timer.seconds();
         Pose2d currentPose = driveTrain.getCurrentPose();
+//        addTelemetryData("curr_x=%f, curr_y=%f, heading=%f", currentPose.getX(), currentPose.getY(), currentPose.getHeading());
         Pose2d desiredPose = currentTrajectory.sample(elapsedTime).poseMeters;
         double duration = currentTrajectory.getTotalTimeSeconds();
 
@@ -266,7 +267,7 @@ public abstract class AutoOpMode extends OpModeTemplate {
     protected void addTelemetryData(String caption, Object... values) {
 //        RobotLog.i(TELEMETRY_CAPTION_PREFIX + caption, value);
         Log.i(LOG_TAG, String.format(TELEMETRY_CAPTION_PREFIX + caption, values));
-        telemetry.addData(TELEMETRY_CAPTION_PREFIX + caption, values);
+        telemetry.addData("AutoMpMode", String.format(TELEMETRY_CAPTION_PREFIX + caption, values));
     }
 
     protected void addTelemetryLine(String line) {

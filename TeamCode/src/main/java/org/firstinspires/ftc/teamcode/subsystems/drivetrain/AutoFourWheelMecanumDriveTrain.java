@@ -4,17 +4,16 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Tunables;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
+import org.firstinspires.ftc.teamcode.util.Units;
 
 /**
  * four wheel mecanum drive train for auto op mode, that hold references to odometers
@@ -22,33 +21,17 @@ import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
     private final Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0));
-
-    private DcMotor leftOdometry, rightOdometry;
     private DcMotor centerOdometry;
-
-//    private final HolonomicOdometry odometry;
-    private final DifferentialDriveOdometry odometry;
-
     private MecanumDriveKinematics driveKinematics;
-
-    IMU imu;
+    GoBildaPinpointDriver odo;
 
     public AutoFourWheelMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         super(hardwareMap, gamepad, telemetry, feedback);
 
-//        odometry = new HolonomicOdometry(
-//                () -> motorEncoderTicksToMeters(leftOdometry.getCurrentPosition()),
-//                () -> motorEncoderTicksToMeters(rightOdometry.getCurrentPosition()),
-//                this::getHeading,
-//                Tunables.TRACK_WIDTH,
-//                Tunables.CENTER_WHEEL_OFFSET);
-
-        odometry = new DifferentialDriveOdometry(new Rotation2d(getHeadingRadians()), INITIAL_POSE);
-
-        Translation2d frontLeftWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
-        Translation2d frontRightWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
-        Translation2d rearLeftWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
-        Translation2d rearRightWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
+        Translation2d frontLeftWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
+        Translation2d frontRightWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
+        Translation2d rearLeftWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
+        Translation2d rearRightWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
 
         driveKinematics = new MecanumDriveKinematics(
                 frontLeftWheelMeters, frontRightWheelMeters,
@@ -58,32 +41,29 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
     @Override
     protected void createAndInitHardwares(HardwareMap hardwareMap) {
         super.createAndInitHardwares(hardwareMap);
-        leftOdometry = hardwareMap.dcMotor.get("BL"); //new Motor(hardwareMap, "LO");
-        rightOdometry = hardwareMap.dcMotor.get("BR"); //new Motor(hardwareMap, "RO");
-//        centerOdometry = hardwareMap.dcMotor.get("FR"); //.dcMotor.get("CO"); //new Motor(hardwareMap, "CO");
 
-        leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftOdometry.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        centerOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        centerOdometry.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo.resetPosAndIMU();
+        odo.setOffsets(Units.inchesToMMs(-3.5), Units.inchesToMMs(0));
 
-        imu = hardwareMap.get(IMU.class, "imu");
-
-        IMU.Parameters imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
-        imu.initialize(imuParameters);
-        imu.resetYaw();
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
     }
 
     public Pose2d getCurrentPose() {
-        return odometry.getPoseMeters();
+        return toPose2d(odo.getPosition());
     }
 
     public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
         drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+    }
+
+    public void stop() {
+        drive.stop();
+        fL.motor.setPower(0);
+        fR.motor.setPower(0);
+        bL.motor.setPower(0);
+        bR.motor.setPower(0);
     }
 
     public void driveFieldCentric(double strafeSpeed, double forwardSpeed,
@@ -92,20 +72,22 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
     }
 
     public void updatePose() {
-        odometry.update(
-                new Rotation2d(getHeadingRadians()),
-                motorEncoderTicksToMeters(leftOdometry.getCurrentPosition()),
-                motorEncoderTicksToMeters(rightOdometry.getCurrentPosition()));
-
+        odo.update();
     }
 
-    public void resetPose(Pose2d pose) {
-        leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftOdometry.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void resetOdometryRotation() {
+        GoBildaPinpointDriver.Pose2D currentPose = odo.getPosition();
+        GoBildaPinpointDriver.Pose2D newPose = new GoBildaPinpointDriver.Pose2D(
+                DistanceUnit.MM,
+                currentPose.getX(DistanceUnit.MM),
+                currentPose.getY(DistanceUnit.MM),
+                AngleUnit.RADIANS,
+                0);
+        odo.setPosition(newPose);
+    }
 
-        odometry.resetPosition(pose, new Rotation2d(getHeadingRadians()));
+    public void resetOdometry() {
+        odo.resetPosAndIMU();
     }
 
     public MecanumDriveKinematics getDriveKinematics() {
@@ -121,6 +103,12 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
     }
 
     protected double getHeadingRadians() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return odo.getHeading();
+//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+
+    private static Pose2d toPose2d(GoBildaPinpointDriver.Pose2D pose2D) {
+        return new Pose2d(pose2D.getX(DistanceUnit.METER), pose2D.getY(DistanceUnit.METER),
+                new Rotation2d(pose2D.getHeading(AngleUnit.RADIANS)));
     }
 }

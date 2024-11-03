@@ -31,6 +31,16 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         bL.encoder.reset();
         bR.encoder.reset();
 
+        fL.setRunMode(Motor.RunMode.RawPower);
+        fR.setRunMode(Motor.RunMode.RawPower);
+        bL.setRunMode(Motor.RunMode.RawPower);
+        bR.setRunMode(Motor.RunMode.RawPower);
+
+//        fL.setInverted(false);
+//        fR.setInverted(true);
+//        bL.setInverted(false);
+//        bR.setInverted(true);
+
         fL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         fR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
