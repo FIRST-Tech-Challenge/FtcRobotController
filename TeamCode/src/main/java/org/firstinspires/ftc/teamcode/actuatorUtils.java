@@ -102,7 +102,7 @@ public class actuatorUtils {
         }
     }
     public static void setWrist(WristModes mode)  {
-        if (mode == WristModes.UP) {
+        if (mode == WristModes.DOWN) {
             wrist.setPosition(0.333);
 
         } else {
