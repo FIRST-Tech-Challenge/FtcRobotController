@@ -20,7 +20,6 @@ public class AutoCode extends LinearOpMode {
         Initialization period
         Motors are fetched from hardwareMap
          */
-
         frontLeft = hardwareMap.dcMotor.get("Front Left");
         frontRight = hardwareMap.dcMotor.get("Front Right");
         backLeft = hardwareMap.dcMotor.get("Back Left");
