@@ -17,5 +17,11 @@ public class PigeonHead {
         return(-headingChange);
     }
 
+    public double getPigeonHeadPos(Servo servo) {
+        return(servo.getPosition());
+    }
 
+    public void setPigeonHeadPos(Servo servo, double position) {
+        servo.setPosition(position)
+    }
 }
