@@ -30,9 +30,4 @@ public class WristCmd extends CommandBase {
         speed = speedParam;
         addRequirements(this.wristSub);
     }
-
-    @Override
-    public void execute(){
-        this.wristSub.setSpeed(speed);
-    }
 }

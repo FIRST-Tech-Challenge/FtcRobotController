@@ -12,12 +12,15 @@ public class AutoPinkAqua extends AutoCommandOpMode {
                 , turnCCW(90)
                 , drive(12)
                 , turnCW(90)
+
+                , drive(18)
+                , drive(-18)
                 /* do something with the arm*/
                 , drive(-2)
                 , turnCW(90)
-                , drive(12)
+                , drive(36)
                 , turnCCW(90)
-                , drive(12)
+                , drive(36)
         ));
     }
 }

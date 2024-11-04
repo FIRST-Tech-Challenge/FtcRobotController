@@ -8,14 +8,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.DriveCmd;
 import org.firstinspires.ftc.teamcode.commands.IntakeCmd;
+import org.firstinspires.ftc.teamcode.commands.MoveArm;
 import org.firstinspires.ftc.teamcode.commands.MoveArmToPos;
-import org.firstinspires.ftc.teamcode.commands.WristCmd;
+import org.firstinspires.ftc.teamcode.commands.MoveWristLeft;
+import org.firstinspires.ftc.teamcode.commands.MoveWristRight;
+import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSub;
 import org.firstinspires.ftc.teamcode.subsystems.WristSub;
-import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
-import org.firstinspires.ftc.teamcode.commands.MoveArm;
 
 
 @TeleOp(name = "Tele-op 2024-25")
@@ -32,9 +33,8 @@ public class TeleOp25 extends CommandOpMode {
     private IntakeCmd intakeOut;
     private IntakeCmd intakeOff;
     private WristSub wrist;
-    private WristCmd wristClockwise;
-    private WristCmd wristCounterClockwise;
-    private WristCmd wristOff;
+    private MoveWristLeft wristLeft;
+    private MoveWristRight wristRight;
     private ArmSub armSub;
     private MoveArm armUp;
     private MoveArm armDown;
@@ -59,9 +59,8 @@ public class TeleOp25 extends CommandOpMode {
         intakeOff = new IntakeCmd(intake, 0);
 
         wrist = new WristSub(hardwareMap, telemetry);
-        wristClockwise = new WristCmd(wrist, 1);
-        wristCounterClockwise = new WristCmd(wrist, -1);
-        wristOff = new WristCmd(wrist, 0);
+        wristRight = new MoveWristRight(wrist);
+        wristLeft = new MoveWristLeft(wrist,telemetry);
 
         // Y: Toggle field centric
         driverOp.getGamepadButton(GamepadKeys.Button.Y)
@@ -95,11 +94,8 @@ public class TeleOp25 extends CommandOpMode {
         // Wrist
         // D-Pad Up: Clockwise
         // D-Pad Down: Counter Clockwise
-        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristClockwise);
-        toolOp.getGamepadButton(GamepadKeys.Button.A).whenReleased(wristOff);
-
-        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(wristCounterClockwise);
-        toolOp.getGamepadButton(GamepadKeys.Button.B).whenReleased(wristOff);
+        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristLeft);
+        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(wristRight);
 
         register(drive);
         //register(linearSlide);

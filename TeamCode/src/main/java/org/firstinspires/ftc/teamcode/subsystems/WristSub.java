@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
+import org.firstinspires.ftc.teamcode.Constants.WristConstants;
 public class WristSub extends SubsystemBase {
     Telemetry telemetry;
 
-    public CRServo wrist;
+    public Servo wrist;
 
     public WristSub(HardwareMap hardwareMap, Telemetry tm) {
-        wrist = hardwareMap.get(CRServo.class, "wrist");
+        wrist = hardwareMap.get(Servo.class, "wrist");
         this.telemetry = tm;
     }
 
@@ -21,17 +21,22 @@ public class WristSub extends SubsystemBase {
 
     }
 
-    public CRServo getServo(){
+    public Servo getServo(){
         return wrist;
     }
 
     /**
-    * Sets the speed of the wrist.
+    * Sets the position of the wrist.
     *
-    * @param speed the speed to set the wrist to
+    * @param position the angle of the wrist
      */
-    public void setSpeed(double speed) {
-        telemetry.addData("Wrist called with speed of ", speed);
-        wrist.setPower(speed);
+    public void setPosition(double position) {
+        telemetry.addData("Wrist position set to ", position);
+        wrist.setPosition(position);
     }
+
+   public double getPosition () {
+        return wrist.getPosition();
+   }
+
 }
