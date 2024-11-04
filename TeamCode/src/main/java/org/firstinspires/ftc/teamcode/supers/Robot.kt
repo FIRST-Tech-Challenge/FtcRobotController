@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
-import org.firstinspires.ftc.teamcode.snav.SwerveDriveController
-import org.firstinspires.ftc.teamcode.snav.SwerveModule
 import org.firstinspires.ftc.teamcode.util.GamepadState
 
 
@@ -18,13 +16,9 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
     var lb: DcMotor
     var rt: DcMotor
     var rb: DcMotor
-    var sl: SwerveModule
-    var sr: SwerveModule
     private var motors: Array<DcMotor>
 
     var imu: IMU
-
-    var driveController: SwerveDriveController
 
     // Declare gamepads
     var gamepadState1: GamepadState = GamepadState()
@@ -45,16 +39,6 @@ class Robot (opMode: OpMode, resetEncoders: Boolean = true) {
         rb = hardwareMap.get(DcMotor::class.java, "rb")
 
         motors = arrayOf(lt, lb, rt, rb)
-
-        sl = SwerveModule(lt, lb, 14.35, 5.2, 40, 120, 20, 145.1, 1150, 4.0)
-        sr = SwerveModule(rt, rb, 14.35, 5.2, 40, 120, 20, 145.1, 1150, 4.0)
-
-        driveController = SwerveDriveController(sl, sr)
-
-        if (resetEncoders) {
-            sl.resetEncoders()
-            sr.resetEncoders()
-        }
 
         // Make sure all the motors are in what should be the default
         for (motor in motors) {
