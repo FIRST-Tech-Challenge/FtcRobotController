@@ -34,6 +34,8 @@ public class TeleOpDev extends OpMode{
     public DriveTrain driveTrain = null;
     public Arm arm = null;
 
+    public static double radius_arm = 0;
+    public static double theta_arm = -28;
 
     /*
      * Code to run ONCE when the Driver hits INIT
@@ -45,7 +47,6 @@ public class TeleOpDev extends OpMode{
         driverA = new Controller(gamepad1);
 
         telemetry.addData("Status", "Initialized");
-
     }
 
     /*
@@ -53,20 +54,7 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void init_loop () {
-        /*
-        Motor rightExt = new Motor("RightExt",this);
-        rightExt.setConstants(DcMotor.RunMode.RUN_TO_POSITION, DcMotor.ZeroPowerBehavior.BRAKE, DcMotorSimple.Direction.FORWARD);
-        rightExt.setPower(0.5);
-        rightExt.setTargetPosition(100);
-        ElapsedTime time = new ElapsedTime();
-        while(time.seconds()<3){
-
-        }
-        rightExt.setTargetPosition(0);
-        while(time.seconds()<6){
-
-        }
-    */
+        //arm.setPositionPolar(radius_arm,theta_arm);
     }
 
     /*
@@ -74,7 +62,7 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void start () {
-
+        arm.setPositionPolar(radius_arm,theta_arm);
     }
 
     /*
@@ -83,12 +71,19 @@ public class TeleOpDev extends OpMode{
     @Override
     public void loop () {
 
+        //if(extensionTarget>2190){
+        //    extensionTarget=2190;
+        //}
+        //else if(extensionTarget<0){
+        //    extensionTarget = 0;
+        //}
+        //arm.extendToTarget(extensionTarget,0.5);
 
         if (driverA.onButtonPress(Controller.Button.dPadUp)){
-            arm.extendToTarget(2190);
+            arm.extendToTarget(2190,0.5);
         }
         if (driverA.onButtonPress(Controller.Button.dPadDown)) {
-            arm.extendToTarget(0);
+            arm.extendToTarget(0,0.5);
         }
         if(driverA.toggleButtonState(Controller.Button.y)){
             driveTrain.setDrivePowerCoefficient(0.1);
@@ -109,27 +104,14 @@ public class TeleOpDev extends OpMode{
         driveTrain.drive(p , theta, turn); //updates the drivetrain inputs in the "DriveTrain" class
         //------------------------------------------------------//
 
-        arm.updatePidLoop();
+        //arm.updatePidLoop();
+        //arm.setPositionPolar(radius_arm,theta_arm);
+        arm.updatePosition();
 
 
-        //driveTrain.KinematicMove(leftX,leftY,rightY);
-
-        //telemetry.addData("Current Pip           | ",Arm.Pips);
-        //telemetry.addData("RightArmMotor Power   | ",Arm.RightArmMotor.getPower());
-        //telemetry.addData("RightArmMotor encoder | ",Arm.RightArmMotor.getCurrentPosition());
-        //telemetry.addLine();
-        //telemetry.addData("LeftArmMotor Power    | ",Arm.LeftArmMotor.getPower());
-        //telemetry.addData("LeftArmMotor encoder  | ",Arm.LeftArmMotor.getCurrentPosition());
 
         //YOU NEED THESE FOR CONTROLLER AND SAFTEY CHECKS
         driverA.updateAll();
-        arm.MotorCheck();
-        telemetry.addData("R power ", arm.rightExtendoMotor.getPower());
-        telemetry.addData("L power ", arm.leftExtendoMotor.getPower());
-        telemetry.addData("R pos ", arm.rightExtendoMotor.getCurrentPosition());
-        telemetry.addData("L pos ", arm.leftExtendoMotor.getCurrentPosition());
-        telemetry.addData("R target ", arm.rightExtendoMotor.getTargetPosition());
-        telemetry.addData("L target ", arm.leftExtendoMotor.getTargetPosition());
     }
 
     /*
