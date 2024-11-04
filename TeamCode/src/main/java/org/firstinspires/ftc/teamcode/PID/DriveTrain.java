@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.PID;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
@@ -25,10 +26,10 @@ public class DriveTrain {
         bLeft = hardwareMap.get(DcMotor.class, "bLeft");
         bRight = hardwareMap.get(DcMotor.class, "bRight");
 
-        fLeft.setDirection(DcMotor.Direction.REVERSE);
-        fRight.setDirection(DcMotor.Direction.FORWARD);
-        bLeft.setDirection(DcMotor.Direction.REVERSE);
-        bRight.setDirection(DcMotor.Direction.FORWARD);
+        fLeft.setDirection(DcMotor.Direction.FORWARD);
+        fRight.setDirection(DcMotor.Direction.REVERSE);
+        bLeft.setDirection(DcMotor.Direction.FORWARD);
+        bRight.setDirection(DcMotor.Direction.REVERSE);
 
         DcMotor[] motors = {fLeft, fRight, bLeft, bRight};
         for (DcMotor motor : motors) {
@@ -39,9 +40,9 @@ public class DriveTrain {
 
         otos = new OTOS(hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS"));
         otos.configureOtos();
-        xController = new PIDController(0.01, 0.0001);  // placeholder values
-        yController = new PIDController(0.01, 0.0001);
-        headingController = new PIDController(0.05, 0.02);
+        xController = new PIDController(0.04, 0.001, 0);  // placeholder values
+        yController = new PIDController(0.04, 0.001, 0);
+        headingController = new PIDController(0.05, 0, 0);
     }
 
     public void setPowers(double fLeftP, double fRightP, double bLeftP, double bRightP) {
@@ -64,19 +65,23 @@ public class DriveTrain {
         while (Math.abs(target.x - pos.x) > 0.5 ||
                 Math.abs(target.y - pos.y) > 0.5 ||
                 Math.abs(target.h - pos.h) > 5
-        ) {
+        ) {  // I think this while loop is causing an exit error
             pos = otos.getPosition();
 
-            double x = Range.clip(xController.calculate(pos.x, target.x), -1., 1.);
-            double y = Range.clip(yController.calculate(pos.y, target.y), -1., 1.);
-            double h = Range.clip(headingController.calculate(pos.h, target.h), -1., 1.);
+            double x = Range.clip(xController.calculate(pos.x, target.x), -1., 1.);  // strafe
+            double y = Range.clip(yController.calculate(pos.y, target.y), -1., 1.);  // forward
+            double h = Range.clip(headingController.calculate(pos.h, target.h), -1., 1.);  // turn
 
-            setPowers(x - y - h, x + y + h, x + y - h, x - y + h);
+            setPowers(y + x + h, y - x - h, y - x + h, y + x - h);
 
             telemetry.addLine(String.format("x | currently at %f, targeting %f, power %f", pos.x, target.x, x));
             telemetry.addLine(String.format("y | currently at %f, targeting %f, power %f", pos.y, target.y, y));
             telemetry.addLine(String.format("h | currently at %f, targeting %f, power %f", pos.h, target.h, h));
             telemetry.update();
+
+            System.out.printf("x | currently at %f, targeting %f, power %f\n", pos.x, target.x, x);
+            System.out.printf("y | currently at %f, targeting %f, power %f\n", pos.y, target.y, y);
+            System.out.printf("h | currently at %f, targeting %f, power %f\n", pos.h, target.h, h);
         }
     }
 }
