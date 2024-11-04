@@ -33,6 +33,8 @@ public class RobotInitialize {
     // Create servo variables
     CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
+    Servo hangR;
+    Servo hangL;
 
     Servo pitch;
     Servo clawRoll;
@@ -130,6 +132,17 @@ public class RobotInitialize {
             liftPitch.setZeroPowerBehavior(BRAKE);
 
         //Manipulator Servos
+
+            // Hang on submersible servos
+        hangL = opMode.hardwareMap.get(Servo.class, "hang l");
+        hangL.setPosition(0);
+
+
+        hangR = opMode.hardwareMap.get(Servo.class, "hang r");
+        //hangR.setDirection(Servo.Direction.REVERSE);
+        hangR.setPosition(1);
+
+
 
         //Continuous rotation Servo
         intake = opMode.hardwareMap.get(CRServo.class, "intake");

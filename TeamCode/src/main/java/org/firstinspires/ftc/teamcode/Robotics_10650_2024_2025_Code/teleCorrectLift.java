@@ -40,16 +40,15 @@ public class teleCorrectLift extends LinearOpMode{
             //telemetry.addData("clawPitch Pos",robot.pitch.getPosition());
 
 //            robot.liftPitch.setVelocit(500*gamepad2.right_stick_y);
-            robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ (gamepad1.left_stick_x*0.0001));
+            robot.hangR.setPosition(robot.hangR.getPosition()+ (gamepad1.right_stick_x*0.01));
 
-            robot.pitch.setPosition(robot.pitch.getPosition()+ (gamepad2.left_stick_x*0.0001));
+            robot.hangL.setPosition(robot.hangL.getPosition()+ (gamepad1.left_stick_x*0.001));
 
-            //i=i+Math.round(gamepad2.right_stick_y);
 
-           telemetry.addData("clawpos", robot.clawRoll.getPosition());
-           telemetry.addData("pitchpos", robot.pitch.getPosition());
+            telemetry.addData("hang r pos", robot.clawRoll.getPosition());
+           telemetry.addData("hang l pos", robot.pitch.getPosition());
 
-            telemetry.update();
+           telemetry.update();
         }
     }
 }
