@@ -71,13 +71,6 @@ public class TeleOpDev extends OpMode{
     @Override
     public void loop () {
 
-        //if(extensionTarget>2190){
-        //    extensionTarget=2190;
-        //}
-        //else if(extensionTarget<0){
-        //    extensionTarget = 0;
-        //}
-        //arm.extendToTarget(extensionTarget,0.5);
 
         if (driverA.onButtonPress(Controller.Button.dPadUp)){
             arm.extendToTarget(2190,0.5);

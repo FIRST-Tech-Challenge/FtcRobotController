@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class Motor //DCMotor Wrapper Class with added functionality and usb communication spam avoidance and speedometer
 {
 
-    private DcMotor motor;
+    private final DcMotor motor;
     private double lastPower;
 
     public Motor(String name, OpMode op)
