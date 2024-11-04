@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -29,10 +30,22 @@ public class Arm {
     private final double length = 0;
     private PIDFController anglePID = new PIDFController(0, 0, 0, 0);
     private DcMotorEx angleMotor;
-    private Servo extendServo;
+    private Servo extendServoLeft;
+
+    private Servo extendServoRight;
+
     private Telemetry telemetry;
     private TouchSensor touchSensor = null;
+
+    private AnalogInput analogLeft = null;
+
+    private AnalogInput analogRight = null;
     private boolean isDebug;
+
+    private double positionLeft;
+
+    private double positionRight;
+
 
     //arm constructor
     public Arm(OpMode opMode, boolean isDebug) {
@@ -41,8 +54,11 @@ public class Arm {
 
         this.isDebug = isDebug;
 
+        analogLeft = opMode.hardwareMap.get(AnalogInput.class ,"analogLeft");
+        analogRight = opMode.hardwareMap.get(AnalogInput.class ,"analogRight");
+
         angleMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AngleMotor");
-        extendServo = opMode.hardwareMap.get(Servo.class, "ExtendServo");
+        extendServoLeft = opMode.hardwareMap.get(Servo.class, "ExtendServo");
         touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
 
         anglePID.setTolerance(ANGLE_TOLERANCE);
@@ -109,12 +125,12 @@ public class Arm {
         this.angleMotor = angleMotor;
     }
 
-    public Servo getExtendServo() {
-        return extendServo;
+    public Servo getExtendServoLeft() {
+        return extendServoLeft;
     }
 
-    public void setExtendServo(Servo extendServo) {
-        this.extendServo = extendServo;
+    public void setExtendServoLeft(Servo extendServoLeft) {
+        this.extendServoLeft = extendServoLeft;
     }
 
     public double getANGLE_TOLERANCE() {
@@ -147,6 +163,34 @@ public class Arm {
 
     public double getEXTEND_CPR() {
         return EXTEND_CPR;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public Servo getExtendServoRight() {
+        return extendServoRight;
+    }
+
+    public void setExtendServoRight(Servo extendServoRight) {
+        this.extendServoRight = extendServoRight;
+    }
+
+    public AnalogInput getAnalogLeft() {
+        return analogLeft;
+    }
+
+    public void setAnalogLeft(AnalogInput analogLeft) {
+        this.analogLeft = analogLeft;
+    }
+
+    public AnalogInput getAnalogRight() {
+        return analogRight;
+    }
+
+    public void setAnalogRight(AnalogInput analogRight) {
+        this.analogRight = analogRight;
     }
 
     //an actions that sets the angle of the arm to the desired angle
@@ -184,13 +228,16 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            extendServo.setPosition(goal);
+            positionLeft = MathUtil.voltageToDegrees(analogLeft.getVoltage());
+            positionRight = MathUtil.voltageToDegrees(analogRight.getVoltage());
+            extendServoLeft.setPosition(goal);
+            extendServoRight.setPosition(goal);
             if (isDebug) {
-                telemetryPacket.put("servo (E) Power", extendServo.getPosition());
-                telemetry.addData("servo (E) Power", extendServo.getPosition());
+                telemetryPacket.put("servo (E) Power", extendServoLeft.getPosition());
+                telemetry.addData("servo (E) Power", extendServoLeft.getPosition());
 
             }
-            return extendServo.getPosition() == goal;
+            return extendServoLeft.getPosition() == goal &&extendServoRight.getPosition() == goal;
         }
     }
 

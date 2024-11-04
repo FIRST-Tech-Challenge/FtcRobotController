@@ -43,5 +43,8 @@ public class MathUtil {
         return ticks;
 
     }
+    public static double voltageToDegrees(double voltage){
+        return voltage/ 3.3*360;
+    }
 }
 
