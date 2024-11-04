@@ -62,7 +62,7 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void start () {
-        arm.setPositionPolar(radius_arm,theta_arm);
+
     }
 
     /*
@@ -98,7 +98,7 @@ public class TeleOpDev extends OpMode{
         //------------------------------------------------------//
 
         //arm.updatePidLoop();
-        //arm.setPositionPolar(radius_arm,theta_arm);
+        arm.setPositionPolar(radius_arm,theta_arm);
         arm.updatePosition();
 
 

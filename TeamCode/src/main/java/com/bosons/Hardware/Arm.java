@@ -96,15 +96,16 @@ public class Arm {
 
         radius_0 = getArmLength();
         theta_0 = getArmAngle();
-        slope = (r-radius_0)/(theta-theta_0);
+        slope = (r-radius_0)/(Math.toRadians(theta-theta_0));
+        opm.telemetry.addData("slope",slope);
     }
 
     public void updatePosition(){
         extendToTarget(extensionTarget,0.5);
         //r=r_0+m(t-t_0)
-        double incrementalTheta = -(Math.toRadians(theta_0)+(getArmLength()-radius_0)/slope);
+        double incrementalTheta = (Math.toRadians(theta_0)+(getArmLength()-radius_0)/slope);
         int incrementalTicks = (int)(incrementalTheta*ticks_in_degree);
-        updatePidLoop(incrementalTicks);
+        updatePidLoop(rotTarget);
         opm.telemetry.addData("inc_theta ",incrementalTheta);
     }
 
