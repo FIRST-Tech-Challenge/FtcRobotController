@@ -85,20 +85,60 @@ object WaypointSerializer {
         }
     }
 
-    fun deserialize2(target: DataInputStream): MutableList<Waypoint> {
-        assert(
-            target.readByte() == 'W'.code.toByte()
-                    && target.readByte() == 'P'.code.toByte()
-        ) { "Not a waypoint file (invalid magic)" }
-        val channels = target.readByte().toInt()
-        assert(
-            channels == 2
-        ) { "Waypoint file has wrong number of channels ($channels, expected 2)" }
+    @JvmOverloads
+    fun deserialize2(target: DataInputStream, withHeaders: Boolean = true): MutableList<Waypoint> {
+        if (withHeaders) {
+            assert(
+                target.readByte() == 'W'.code.toByte()
+                        && target.readByte() == 'P'.code.toByte()
+            ) { "Not a waypoint file (invalid magic)" }
+            val channels = target.readByte().toInt()
+            assert(
+                channels == 2
+            ) { "Waypoint file has wrong number of channels ($channels, expected 2)" }
+        }
         val count = target.readInt()
         val output: MutableList<Waypoint> = mutableListOf()
         repeat(count) {
             output.add(MinimalWaypoint(target.readDouble(), target.readDouble()))
         }
         return output
+    }
+
+    @JvmOverloads
+    fun deserialize3(target: DataInputStream, withHeaders: Boolean = true): MutableList<Waypoint3> {
+        if (withHeaders) {
+            assert(
+                target.readByte() == 'W'.code.toByte()
+                        && target.readByte() == 'P'.code.toByte()
+            ) { "Not a waypoint file (invalid magic)" }
+            val channels = target.readByte().toInt()
+            assert(
+                channels == 3
+            ) { "Waypoint file has wrong number of channels ($channels, expected 3)" }
+        }
+        val count = target.readInt()
+        val output: MutableList<Waypoint3> = mutableListOf()
+        repeat(count) {
+            output.add(Minimal3Waypoint(
+                target.readDouble(),
+                target.readDouble(),
+                target.readDouble()
+            ))
+        }
+        return output
+    }
+
+    fun deserializeAuto(target: DataInputStream): MutableList<out Waypoint> {
+        assert(
+            target.readByte() == 'W'.code.toByte()
+                    && target.readByte() == 'P'.code.toByte()
+        ) { "Not a waypoint file (invalid magic)" }
+        val channels = target.readByte().toInt()
+        return when (channels) {
+            2 -> deserialize2(target, false)
+            3 -> deserialize3(target, false)
+            else -> throw IllegalArgumentException("File contains an invalid number of channels ($channels), expected 2 or 3")
+        }
     }
 }

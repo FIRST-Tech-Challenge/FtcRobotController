@@ -6,6 +6,8 @@ import static java.lang.StrictMath.PI;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.hardware.Encoder;
+
 public class EncoderTracking {
 
     private double tick2inch(int ticks) {
@@ -22,7 +24,7 @@ public class EncoderTracking {
     double y = 0;
 
     double lastLeft, lastCenter, lastRight;
-    final DcMotor leftEncoder, centerEncoder, rightEncoder;
+    final Encoder leftEncoder, centerEncoder, rightEncoder;
 
     // TriOdoProvider provides the methods for the getting the encoders
     public EncoderTracking(TriOdoProvider encoderSource) {

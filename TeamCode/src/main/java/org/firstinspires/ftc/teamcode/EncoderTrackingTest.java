@@ -5,6 +5,7 @@ import static java.lang.StrictMath.PI;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
@@ -45,17 +46,22 @@ public class EncoderTrackingTest extends LinearOpMode {
         timer.reset();
         final double pow = 0.25;
         final double duration = 4.0;
-        hardware.frontLeft.setPower(pow);
-        hardware.frontRight.setPower(pow);
-        hardware.backLeft.setPower(pow);
-        hardware.backRight.setPower(pow);
+        hardware.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        hardware.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        hardware.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        hardware.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+//        hardware.frontLeft.setPower(pow);
+//        hardware.frontRight.setPower(pow);
+//        hardware.backLeft.setPower(pow);
+//        hardware.backRight.setPower(pow);
         while (opModeIsActive()) {
-            if (timer.time() > duration) {
-                hardware.frontLeft.setPower(0);
-                hardware.frontRight.setPower(0);
-                hardware.backLeft.setPower(0);
-                hardware.backRight.setPower(0);
-            }
+//            if (timer.time() > duration) {
+//                hardware.frontLeft.setPower(0);
+//                hardware.frontRight.setPower(0);
+//                hardware.backLeft.setPower(0);
+//                hardware.backRight.setPower(0);
+//            }
             encTrack.step();
             Pose pose = encTrack.getPose();
 

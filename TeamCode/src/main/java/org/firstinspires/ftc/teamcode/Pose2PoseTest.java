@@ -23,7 +23,7 @@ public class Pose2PoseTest extends LinearOpMode {
     public static final double ACCEPT_DIST = .25; // inch. euclidean distance
     public static final double ACCEPT_TURN = Math.toRadians(5);
     // power biases
-    public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.33, 1.0); // Calibration factors for strafe, forward, and turn.
+    public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
 
     @SuppressLint("DefaultLocale") // Android Lint should ignore warnings for DefaultLocale
     @Override
@@ -31,11 +31,17 @@ public class Pose2PoseTest extends LinearOpMode {
         Hardware hardware = new Hardware(hardwareMap);
         EncoderTracking tracker = new EncoderTracking(hardware);
         // Pose targets to go thru
+//        Pose[] targets = {
+//                new Pose(48, 0, Math.toRadians(90)),
+//                new Pose(48, 48, Math.toRadians(180)),
+//                new Pose(0, 48, Math.toRadians(270)),
+//                new Pose(0, 0, Math.toRadians(360))
+//        };
         Pose[] targets = {
-                new Pose(48, 0, Math.toRadians(90)),
-                new Pose(48, 48, Math.toRadians(180)),
-                new Pose(0, 48, Math.toRadians(270)),
-                new Pose(0, 0, Math.toRadians(360))
+                new Pose(24, 0, Math.toRadians(90)),
+//                new Pose(24, 24, Math.toRadians(0)),
+//                new Pose(0, 24, Math.toRadians(0)),
+//                new Pose(0, 0, Math.toRadians(0))
         };
         int targetIndex = 0; // Total poses in the set
         ElapsedTime timer = new ElapsedTime(); // Set timer object to reference the ElapsedTime object
@@ -52,7 +58,12 @@ public class Pose2PoseTest extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
+        telemetry.addLine("Initialized.");
+        telemetry.update();
+
         waitForStart(); // Wait for start button
+
+        telemetry.update();
 
         targetTime.reset(); // Restart times to prep for counting
         timer.reset();

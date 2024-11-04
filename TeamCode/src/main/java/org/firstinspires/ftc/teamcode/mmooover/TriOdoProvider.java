@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.mmooover;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.hardware.Encoder;
+
 // An interface describes what methods a class needs to have
 // The hardware.java has methods and other stuff that can be used no matter what robot hub thing
 // so we used the interface which describes what methods we will provide for this specific program
 public interface TriOdoProvider {
-    DcMotor getLeftEncoder();
-    DcMotor getRightEncoder();
-    DcMotor getCenterEncoder();
+    Encoder getLeftEncoder();
+    Encoder getRightEncoder();
+    Encoder getCenterEncoder();
 
     /**
      * Number of encoder ticks per revolution of the encoder wheel.

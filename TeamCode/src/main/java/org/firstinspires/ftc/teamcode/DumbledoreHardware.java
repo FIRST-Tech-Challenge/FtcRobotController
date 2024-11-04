@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.AutoClearEncoder;
+import org.firstinspires.ftc.teamcode.hardware.Encoder;
+import org.firstinspires.ftc.teamcode.hardware.EncoderFor;
 import org.firstinspires.ftc.teamcode.hardware.HardwareMapper;
 import org.firstinspires.ftc.teamcode.hardware.HardwareName;
 import org.firstinspires.ftc.teamcode.hardware.MotorSet;
@@ -36,34 +38,34 @@ public class DumbledoreHardware extends HardwareMapper implements TriOdoProvider
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     public DcMotor backRight;
 
-    @HardwareName("frontLeft")
+    @EncoderFor("frontLeft")
     @AutoClearEncoder
-    public DcMotor encoderLeft;
+    public Encoder encoderLeft;
 
-    @HardwareName("intake")
+    @EncoderFor("intake")
     @AutoClearEncoder
-    public DcMotor encoderCenter;
+    public Encoder encoderCenter;
 
-    @HardwareName("frontRight")
+    @EncoderFor("frontRight")
     @AutoClearEncoder
-    public DcMotor encoderRight;
+    public Encoder encoderRight;
 
     @HardwareName("gyro")
     public NavxMicroNavigationSensor gyro;
 
 
     @Override
-    public DcMotor getLeftEncoder() {
+    public Encoder getLeftEncoder() {
         return encoderLeft;
     }
 
     @Override
-    public DcMotor getRightEncoder() {
+    public Encoder getRightEncoder() {
         return encoderRight;
     }
 
     @Override
-    public DcMotor getCenterEncoder() {
+    public Encoder getCenterEncoder() {
         return encoderCenter;
     }
 
