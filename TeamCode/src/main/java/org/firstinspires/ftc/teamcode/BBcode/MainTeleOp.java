@@ -38,6 +38,111 @@ public class MainTeleOp extends LinearOpMode{
         double ticksPerDegree = 538.0/360.0;
         return (cosAngle*ticksPerDegree);
     }
+    private void handleGamepads(Arm arm, Viper viper, WristClaw wristClaw) {
+        //Controller A
+        //picking up
+        // if (gamepad1.a) {arm.MoveToHome();}
+
+        //clearance/specimen wall grab
+        //if (gamepad1.x) {arm.MoveToClearance();}
+
+        //hang
+        //if (gamepad1.right_bumper) {arm.MoveToHang();}
+
+        //specimen placement
+        //if (gamepad1.y) {arm.MoveToSpecimen();}
+
+        //high basket
+        //if (gamepad1.b) {arm.MoveToHighBasket();}
+
+        //Extend to 9 inches
+        //Low Basket
+        if (gamepad2.dpad_left) {
+            arm.MoveToSpecimen();
+            desiredViperState = ViperState.PrepareToHang;
+            viper.ExtendHalf(0.75);
+        }
+
+        //Extend to full length, limited to 18 inches at low angles
+        //High Basket
+        if (gamepad2.dpad_up) {
+            arm.MoveToHighBasket();
+            desiredViperState = ViperState.Dump;
+            viper.ExtendFull(0.75);
+            wristClaw.MoveDump();
+        }
+
+        //Extend to 3 inches, should be pressed first (add into space before opmode loop?)
+        if (gamepad2.dpad_down) {
+            wristClaw.MoveUp();
+            desiredViperState = ViperState.Closed;
+            viper.ExtendShort(1);
+            arm.MoveToClearance();
+        }
+
+        //brings arm down to pick up samples
+        if (gamepad2.dpad_right) {
+            wristClaw.MoveUp();
+            desiredViperState = ViperState.Closed;
+            viper.ExtendShort(1);
+            arm.MoveToHome();
+        }
+
+
+
+        //Open Claw
+        if(gamepad2.b) {
+            //Code for when B is pressed
+            //telemetry.addData("Controller 1", "B");
+            wristTelemetry.setValue(loopCounter);
+            telemetry.update();
+            wristClaw.OpenClaw();
+        }
+
+        //Bring the arm out to hang
+        if(gamepad2.left_trigger > 0) {
+            arm.MoveToHang();
+            desiredViperState = ViperState.PrepareToHang;
+            viper.ExtendHalf(0.5);
+        }
+
+        //Pull up the robot
+        if(gamepad2.right_trigger > 0) {
+            desiredViperState = ViperState.PrepareToHang;
+            viper.ExtendSpecimenhang(0.5);
+        }
+
+        //Close Claw
+        if(gamepad2.x) {
+            //Code for when B is pressed
+            //telemetry.addData("Controller 1", "B");
+            //wristTelemetry.setValue(loopCounter);
+            telemetry.update();
+            wristClaw.CloseClaw();
+        }
+
+        //Move Claw Up
+        if(gamepad2.y) {
+            wristClaw.MoveUp();
+        }
+
+        //Move Claw Down
+        if(gamepad2.a) {
+            wristClaw.MoveDown();
+        }
+
+        //bring the harm up to hang specimen
+        if (gamepad2.left_bumper) {
+            arm.MoveToSpecimen();
+            desiredViperState = ViperState.PrepareToHang;
+            viper.ExtendSpecimenhang(0.5);
+        }
+
+        //hang the specimens
+        if (gamepad2.right_bumper) {
+
+        }
+    }
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
@@ -46,7 +151,7 @@ public class MainTeleOp extends LinearOpMode{
         telemetry.setAutoClear(false);
         //Init for the other classes this opmode pulls methods from
         MecanumDrivetrain drivetrain = new MecanumDrivetrain(this);
-        Arm arm = new Arm(this);
+        Arm arm = new Arm(this, telemetryHelper);
         Viper viper = new Viper(this);
         WristClaw wristClaw = new WristClaw(this);
         arm.Reset();
@@ -68,106 +173,11 @@ public class MainTeleOp extends LinearOpMode{
             //Drive code
             drivetrain.Drive();
 
-            //Controller A
-            //picking up
-           // if (gamepad1.a) {arm.MoveToHome();}
-
-            //clearance/specimen wall grab
-            //if (gamepad1.x) {arm.MoveToClearance();}
-
-            //hang
-            //if (gamepad1.right_bumper) {arm.MoveToHang();}
-
-            //specimen placement
-            //if (gamepad1.y) {arm.MoveToSpecimen();}
-
-            //high basket
-            //if (gamepad1.b) {arm.MoveToHighBasket();}
-
-            //Extend to 9 inches
-            //Low Basket
-            if (gamepad2.dpad_left) {arm.MoveToSpecimen();}
-            {
-                desiredViperState = ViperState.PrepareToHang;
-                viper.ExtendHalf();
-            }
-
-            //Extend to full length, limited to 18 inches at low angles
-            //High Basket
-            if (gamepad2.dpad_up) {arm.MoveToHighBasket();}
-            {
-                desiredViperState = ViperState.Dump;
-                viper.ExtendFull();
-            }
-
-            //Extend to 3 inches, should be pressed first (add into space before opmode loop?)
-            if (gamepad2.dpad_down) {arm.MoveToClearance();}
-            {
-                desiredViperState = ViperState.Closed;
-                viper.ExtendShort();
-            }
-
-            //brings arm down to pick up samples
-            if (gamepad2.dpad_right) {arm.MoveToHome();}
-
+            handleGamepads(arm,viper,wristClaw);
             if (arm.getIsHome())
             {
                 arm.Stop();
             }
-
-            //Open Claw
-            if(gamepad2.b) {
-                //Code for when B is pressed
-                //telemetry.addData("Controller 1", "B");
-                wristTelemetry.setValue(loopCounter);
-                telemetry.update();
-                wristClaw.OpenClaw();
-            }
-
-            //Bring the arm out to hang
-            if(gamepad2.left_trigger > 0) {arm.MoveToHang();}
-            {
-                desiredViperState = ViperState.PrepareToHang;
-                viper.ExtendHalf();
-            }
-
-            //Pull up the robot
-            if(gamepad2.right_trigger > 0) {
-                desiredViperState = ViperState.PrepareToHang;
-                viper.ExtendSpecimenhang();
-            }
-
-            //Close Claw
-            if(gamepad2.x) {
-                //Code for when B is pressed
-                //telemetry.addData("Controller 1", "B");
-                //wristTelemetry.setValue(loopCounter);
-                telemetry.update();
-                wristClaw.CloseClaw();
-            }
-
-            //Move Claw Up
-            if(gamepad2.y) {
-                wristClaw.MoveUp();
-            }
-
-            //Move Claw Down
-            if(gamepad2.a) {
-                wristClaw.MoveDown();
-            }
-
-            //bring the harm up to hang specimen
-            if (gamepad2.left_bumper) {arm.MoveToSpecimen();}
-            {
-                desiredViperState = ViperState.PrepareToHang;
-                viper.ExtendSpecimenhang();
-            }
-
-            //hang the specimens
-            if (gamepad2.right_bumper) {
-
-            }
-
             telemetry.update();
             //Manual viper code (commented out)
 //            if (Math.abs((gamepad2.right_stick_y)) > 0.2 )

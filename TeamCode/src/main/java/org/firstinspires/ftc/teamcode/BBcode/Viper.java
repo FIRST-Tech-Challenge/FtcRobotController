@@ -17,19 +17,19 @@ public class Viper {
     //--------------------------
     //Variable Storage:
     //RPM 312 = 537.7 Ticks per Revolution
-    int fullExtend = 27;
+    int fullExtend = 24;
     int halfExtend = 9;
     int specimenhangExtend = 7;
     int shortExtend = 3;
     //--------------------------
 
-    public void ExtendFull() {ViperMotorCustom(fullExtend);}
-    public void ExtendShort() {ViperMotorCustom(shortExtend);}
-    public void ExtendHalf() {ViperMotorCustom(halfExtend);}
-    public void ExtendSpecimenhang() {ViperMotorCustom(specimenhangExtend);}
+    public void ExtendFull(double power) {ViperMotorCustom(fullExtend, power);}
+    public void ExtendShort(double power) {ViperMotorCustom(shortExtend, power);}
+    public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
+    public void ExtendSpecimenhang(double power) {ViperMotorCustom(specimenhangExtend, power);}
 
 
-    public void ViperMotorCustom(double lengthInches)
+    public void ViperMotorCustom(double lengthInches, double power)
     {
         if (_viperMotor == null)
         {
@@ -42,15 +42,16 @@ public class Viper {
 
         //int ticksPerInch = 1541;
         double ticksPerInch = 537.7/4.625;
-        boolean minimumAngleTrue = _armMotor.getCurrentPosition() < 500;
-        if (minimumAngleTrue) {
-            lengthInches = Math.min(lengthInches, 18);
-        }
+        //only need this if we have manual viper control
+//        boolean minimumAngleTrue = _armMotor.getCurrentPosition() < 500;
+//        if (minimumAngleTrue) {
+//            lengthInches = Math.min(lengthInches, 18);
+//        }
         _viperMotor.setDirection(DcMotor.Direction.REVERSE);
         int extensionTicks = (int)(lengthInches*ticksPerInch);
         _viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
         _viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        _viperMotor.setPower(0.3);
+        _viperMotor.setPower(power);
 
     }
 }
