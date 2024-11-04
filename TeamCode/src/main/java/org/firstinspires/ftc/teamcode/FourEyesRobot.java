@@ -8,12 +8,14 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drivetrains.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.ActiveIntake;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.ParkFlag;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 
 public class FourEyesRobot extends Mecanum {
@@ -25,6 +27,8 @@ public class FourEyesRobot extends Mecanum {
     Arm arm;
     Wrist wrist;
     Claw claw;
+
+    ParkFlag parkFlag;
     ActiveIntake activeIntake;
     //---------------------------------------------------------------------------------------------
     //----------------------------------Internal States--------------------------------------------
@@ -46,6 +50,7 @@ public class FourEyesRobot extends Mecanum {
         arm = new Arm(hardwareMap);
         wrist = new Wrist(hardwareMap);
         claw = new Claw(hardwareMap);
+        parkFlag = new ParkFlag(hardwareMap);
         activeIntake = new ActiveIntake(hardwareMap);
         currentState = ScoringType.SAMPLE;
     }
@@ -59,6 +64,7 @@ public class FourEyesRobot extends Mecanum {
         wrist.goToPosition(Wrist.WristStates.ParallelMode);
         activeIntake.deactivateIntake();
         claw.closeClaw();
+        parkFlag.stowFlag();
     }
 
     //---------------------------------------------------------------------------------------------
@@ -125,8 +131,8 @@ public class FourEyesRobot extends Mecanum {
         currentState = ScoringType.SPECIMEN;
     }
 
-    public void resetArm(){
-        arm.goToPosition(Arm.ArmState.REST_HEIGHT);
+    public void VerticalArm(){
+        arm.goToPosition(Arm.ArmState.VERTICAL_HEIGHT);
     }
 
     public void resetLift(){
@@ -245,6 +251,10 @@ public class FourEyesRobot extends Mecanum {
     }
     public void setWristPosition(double power){
         wrist.setPosition(power);
+    }
+
+    public void raiseFlag(){
+        parkFlag.raiseFlag();
     }
     //---------------------------------------------------------------------------------------------
     //----------------------------------Auto Actions Controls--------------------------------------

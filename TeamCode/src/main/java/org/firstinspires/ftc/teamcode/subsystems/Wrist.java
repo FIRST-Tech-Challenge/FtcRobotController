@@ -26,9 +26,9 @@ public class Wrist {
 
     private HashMap<WristStates, Double> wristPositions;
 
-    public final double LOWER_LIMIT = 0.53; // 0.25 = 90 degrees
-    public final double UPPER_LIMIT = 1;
-    public final double WRIST_PARALLEL = 0.76; // Servo position to be parallel when Arm Rotation = 0
+    public final double LOWER_LIMIT = 0; // 0.25 = 90 degrees
+    public final double UPPER_LIMIT = 0.55;
+    public final double WRIST_PARALLEL = 0.218; // Servo position to be parallel when Arm Rotation = 0
 
     private double lastAngle;
     private double callsPerSecond = 50;
@@ -55,7 +55,7 @@ public class Wrist {
         wristPositions.put(WristStates.ParallelMode, WRIST_PARALLEL);
         wristPositions.put(WristStates.SubHoverMode, WRIST_PARALLEL + 0.12);
         wristPositions.put(WristStates.SampleDepositMode, WRIST_PARALLEL + 0.03);
-        wristPositions.put(WristStates.SampleIntakeMode, WRIST_PARALLEL - 0.086); //0.694
+        wristPositions.put(WristStates.SampleIntakeMode, WRIST_PARALLEL - 0.015); //0.694
         wristPositions.put(WristStates.PerpendicularMode, WRIST_PARALLEL - 0.25); //Set 90 degrees off from parallel
     }
 

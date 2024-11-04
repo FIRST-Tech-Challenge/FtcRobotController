@@ -21,7 +21,7 @@ public class MeepMeepTesting {
                 .build();
         RoadRunnerBotEntity yellowBot2 = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(30, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
 
@@ -64,13 +64,19 @@ public class MeepMeepTesting {
                     //Lower lift/arm at the same time here
                     //Activate intake
                     .strafeTo(thirdSpike.plus(calculateOffset(180, intakeLength-5)))
-                    .strafeTo(basketDropOff)
+                    .strafeToLinearHeading(basketDropOff, Math.toRadians(225))
                     .waitSeconds(2) //Time to deposit
 
                 //Park
 //                        .turn(Math.toRadians(-90))
-                        .setTangent(Math.toRadians(90))
-                        .splineTo(new Vector2d(-24,-12),Math.toRadians(0))
+//                        .setTangent(Math.toRadians(-45))
+////                        .turn(Math.toRadians(-135))
+//                        .splineTo(new Vector2d(-55,-40),0)
+                        .setTangent(90)
+                        .splineToSplineHeading(new Pose2d(-24,-12,Math.toRadians(180)),Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(-48,-12),Math.toRadians(180))
+//                        .strafeToLinearHeading(new Vector2d(-24,-12),Math.toRadians(180))
+
                 .build());
 
 

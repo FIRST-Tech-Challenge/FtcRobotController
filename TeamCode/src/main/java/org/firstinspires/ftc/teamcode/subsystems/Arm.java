@@ -42,7 +42,8 @@ public class Arm {
         DEPOSIT_HEIGHT,
         DEPOSIT_HEIGHT_FORWARD,
 
-        REVERSE_SPECIMEN_HEIGHT
+        REVERSE_SPECIMEN_HEIGHT,
+        VERTICAL_HEIGHT
     }
 
     private HashMap<ArmState, Integer> armPositions;
@@ -88,6 +89,7 @@ public class Arm {
         armPositions.put(ArmState.BASE_HEIGHT,3170);
         armPositions.put(ArmState.REVERSE_SPECIMEN_HEIGHT, -60); // Adjust Once Measured
         armPositions.put(ArmState.DEPOSIT_HEIGHT_FORWARD, 2000);
+        armPositions.put(ArmState.VERTICAL_HEIGHT,1000);
 
     }
 

@@ -35,8 +35,8 @@ public class FourEyesTeleOp extends LinearOpMode {
                 controller2.b,
                 controller2.a,
                 controller2.x,
-                controller1.dpad_up,
-                controller1.dpad_down
+                controller2.dpad_up,
+                controller2.dpad_down
         };
 
 
@@ -72,11 +72,11 @@ public class FourEyesTeleOp extends LinearOpMode {
                 fourEyesRobot.depositSamplePos();
             }
             //Dpad Up
-            if(binding1[6].onPress()){
+            if(binding1[6].onPress() || binding2[4].onPress()){
                 fourEyesRobot.raiseClimb();
             }
             //Dpad Down
-            if(binding1[7].onPress()){
+            if(binding1[7].onPress() || binding2[5].onPress()){
                 fourEyesRobot.lowerClimb();
             }
 
@@ -117,14 +117,14 @@ public class FourEyesTeleOp extends LinearOpMode {
             if(binding2[2].onPress()){
                 fourEyesRobot.closeClaw();
             }
-            //Dpad Up
-            if(binding2[4].onHeldFor(2000)){
-                fourEyesRobot.resetIMU();
-            }
-            //Dpad Down
-            if(binding2[5].onHeldFor(1000)){
-                fourEyesRobot.toggleFieldCentric();
-            }
+//            //Dpad Up
+//            if(binding2[4].onHeldFor(2000)){
+//                fourEyesRobot.resetIMU();
+//            }
+//            //Dpad Down
+//            if(binding2[5].onHeldFor(1000)){
+//                fourEyesRobot.toggleFieldCentric();
+//            }
 
 
             fourEyesRobot.updatePID();
