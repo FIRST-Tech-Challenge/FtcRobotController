@@ -40,9 +40,9 @@ public class DriveTrain {
 
         otos = new OTOS(hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS"));
         otos.configureOtos();
-        xController = new PIDController(0.03, 0.0001);  // placeholder values
-        yController = new PIDController(0.03, 0.0001);
-        headingController = new PIDController(0.05, 0.02);
+        xController = new PIDController(0.04, 0.001, 0);  // placeholder values
+        yController = new PIDController(0.04, 0.001, 0);
+        headingController = new PIDController(0.05, 0, 0);
     }
 
     public void setPowers(double fLeftP, double fRightP, double bLeftP, double bRightP) {
