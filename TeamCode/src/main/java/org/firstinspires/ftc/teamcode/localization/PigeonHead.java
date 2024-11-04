@@ -22,6 +22,6 @@ public class PigeonHead {
     }
 
     public void setPigeonHeadPos(Servo servo, double position) {
-        servo.setPosition(position)
+        servo.setPosition(position);
     }
 }
