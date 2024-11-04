@@ -11,7 +11,7 @@ public class testthings extends LinearOpMode {
     MecanumHardAuto r = new MecanumHardAuto();
     @Override
     public void runOpMode() throws InterruptedException {
-        r.initRobot(this);
+        r.initRobot(this);//
 
         //4
         telemetry.update();
