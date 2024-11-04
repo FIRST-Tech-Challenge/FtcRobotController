@@ -21,6 +21,6 @@ public class Main extends OpMode {
         } else {
             slide.stop();
         }
-        telemetry.add("Slide target: ", slide.getTarget());
+//        telemetry.add("Slide target: ", slide.getTarget());
     }
 }
