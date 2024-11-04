@@ -9,11 +9,13 @@ public class PigeonHead {
     OpModeUtilities opModeUtilities;
     private final Servo servo;
 
-    public PigeonHead(Servo servo, SparkFunOTOS myOtos) {
+    public PigeonHead(Servo servo) {
         this.servo = servo;
     }
 
-    public double positionUpdate(double heading) {
-        return(-heading);
+    public double positionUpdate(double headingChange) {
+        return(-headingChange);
     }
+
+
 }

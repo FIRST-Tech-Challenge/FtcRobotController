@@ -21,8 +21,6 @@ public class OdometryFuse {
 
     public OdometryFuse(SparkFunOTOS myOtos, DcMotor rightEncoder, DcMotor leftEncoder, DcMotor backEncoder) {
         this.myOtos = myOtos;
-        myOtos.setLinearScalar(1.0);
-        myOtos.setAngularScalar(1.0);
         this.rightEncoder = rightEncoder;
         this.leftEncoder = leftEncoder;
         this.backEncoder = backEncoder;
