@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 @Disabled
+@Deprecated
 public class OneMotor extends OpMode {
     private DcMotor slide = null;
     @Override
