@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="The Aurabot TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="Aurabot TeleOp")
 public class TeleOp extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
@@ -37,7 +37,7 @@ public class TeleOp extends LinearOpMode {
     private Lift lift;
     private double liftPower;
     boolean reverseArm;
-    private double[] armPositions = {0.6, 0.3, 0.1, 0.0};
+    private double[] armPositions = {0.6, 0.3, 0.1};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
     private Climb climb;

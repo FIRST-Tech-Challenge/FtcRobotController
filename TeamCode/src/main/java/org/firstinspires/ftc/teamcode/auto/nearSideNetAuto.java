@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-@Autonomous(name="NearSideNet Auto")
+@Autonomous(name="Near Net")
 public class nearSideNetAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
