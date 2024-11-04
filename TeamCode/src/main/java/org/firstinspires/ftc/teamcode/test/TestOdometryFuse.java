@@ -25,15 +25,17 @@ public class TestOdometryFuse  extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "bRight");
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
         OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightFront, leftFront, rightBack);
-        telemetry.addData(odometryFuse.configureOtos(myOtos), "");
+        telemetry.addData("" + odometryFuse.configureOtos(myOtos), "");
+        telemetry.update();
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData(odometryFuse.SparkUpdateData(), "");
+            telemetry.addData("" + odometryFuse.SparkUpdateData(), "");
             telemetry.addLine();
-            telemetry.addData(odometryFuse.WheelUpdateData(), "");
+            telemetry.addData("" + odometryFuse.WheelUpdateData(), "");
             telemetry.addLine();
-            telemetry.addData(odometryFuse.averageUpdateData(), "");
+            telemetry.addData("" + odometryFuse.averageUpdateData(), "");
+            telemetry.update();
             Log.d("alan", "updated position on odometry");
         }
     }

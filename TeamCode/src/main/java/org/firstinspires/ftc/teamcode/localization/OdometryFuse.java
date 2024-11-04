@@ -42,7 +42,7 @@ public class OdometryFuse {
         SparkFunOTOS.Pose2D SparkFunOTOS;
         com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
-        return("ave x: " + ((((rightEncoder.getCurrentPosition() + leftEncoder.getCurrentPosition()) / 2) * TICKSTOINCH) + pos.x) / 2 + "\n" +
+        return("ave x: " + (((rightEncoder.getCurrentPosition() / 2) * TICKSTOINCH) + pos.x) / 2 + "\n" +
                 "ave y: " + ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2);
     }
 
