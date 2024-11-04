@@ -10,7 +10,7 @@ public class Pivot {
     private static final double DEFAULT_POWER = 0.8;
     private static final int POSITION_TOLERANCE = 10;
     public static final int MIN_POSITION = -1750;
-    public static final int MAX_POSITION = 0;
+    public static final int MAX_POSITION = 200;
 
     private int targetPosition = 0;
     private int offset;
@@ -101,8 +101,8 @@ public class Pivot {
 
     public void setTargetPosition(int position) {
         targetPosition = position + offset;
-        leftMotor.setTargetPosition(position);
-        rightMotor.setTargetPosition(position);
+        leftMotor.setTargetPosition(targetPosition);
+        rightMotor.setTargetPosition(targetPosition);
 
         // Only change mode and power if not already in RUN_TO_POSITION
         if (leftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {

@@ -212,18 +212,18 @@ public class MecanumDriver extends OpMode {
 
         // Pickup Preset
         if (gamepad2.b) {
-            pivot.setTargetPosition(PIVOT_PICKUP_SPECIMEN + PIVOT_POSITION_OFFSET_COUNTS);
+            pivot.setTargetPosition(PIVOT_PICKUP_SPECIMEN);
             viperSlide.setTargetPosition(VIPER_PICKUP_SPECIMEN);
         }
 
         // Place Preset
         if (gamepad2.y) {
-            pivot.setTargetPosition(PIVOT_PLACE_SPECIMEN + PIVOT_POSITION_OFFSET_COUNTS);
+            pivot.setTargetPosition(PIVOT_PLACE_SPECIMEN);
             viperSlide.setTargetPosition(VIPER_PLACE_SPECIMEN);
         }
 
         if (gamepad2.left_bumper) {
-            pivot.setTargetPosition(-1700 + PIVOT_POSITION_OFFSET_COUNTS);
+            pivot.setTargetPosition(-1700);
             viperSlide.setTargetPosition(1900);
         }
 
