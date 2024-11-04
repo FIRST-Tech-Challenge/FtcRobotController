@@ -48,7 +48,7 @@ public class OdometryFuse {
 
     //configure SPARK FUN Otos
     @SuppressLint("DefaultLocale")
-    public String configureOtos() {
+    public String configureOtos(SparkFunOTOS myOtos) {
 
         myOtos.setLinearUnit(DistanceUnit.INCH);
 
