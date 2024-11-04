@@ -125,10 +125,10 @@ public class TeleOpDev extends OpMode{
         driverA.updateAll();
         arm.MotorCheck();
         telemetry.addData("R power ", arm.rightExtendoMotor.getPower());
-        telemetry.addData("L power ", arm.leftExtendoMotor.getPower());
         telemetry.addData("R pos ", arm.rightExtendoMotor.getCurrentPosition());
-        telemetry.addData("L pos ", arm.leftExtendoMotor.getCurrentPosition());
         telemetry.addData("R target ", arm.rightExtendoMotor.getTargetPosition());
+        telemetry.addData("L power ", arm.leftExtendoMotor.getPower());
+        telemetry.addData("L pos ", arm.leftExtendoMotor.getCurrentPosition());
         telemetry.addData("L target ", arm.leftExtendoMotor.getTargetPosition());
     }
 
