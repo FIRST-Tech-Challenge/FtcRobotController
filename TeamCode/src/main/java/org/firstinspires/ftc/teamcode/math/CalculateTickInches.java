@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.math;
 
 public class CalculateTickInches {
 
-    double ticksPerRevolution = 537.7;
-    double wheelCircumfMm = 96 * Math.PI;
-    double ticksPerMm = ticksPerRevolution / wheelCircumfMm;
+    double ticksPerRevolution = 2000;
+    double odoCircumfMm = 48 * Math.PI;
+    double ticksPerMm = ticksPerRevolution / odoCircumfMm;
 
     double mmPerInch = 25.4;
 

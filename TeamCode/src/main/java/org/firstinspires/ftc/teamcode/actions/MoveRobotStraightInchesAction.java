@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.actions;
 
 import android.util.Log;
 
+import org.firstinspires.ftc.teamcode.localization.Odometry;
 import org.firstinspires.ftc.teamcode.math.CalculateTickInches;
 import org.firstinspires.ftc.teamcode.PID.PIDController2023;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
@@ -9,17 +10,19 @@ import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 public class MoveRobotStraightInchesAction extends Action {
     private static final double ERROR_TOLERANCE = 20;
     DriveTrain driveTrain;
+    Odometry odometry;
     PIDController2023 straightController;
     double targetTicks;
     double currentTicks;
     double error;
     CalculateTickInches calculateTickInches = new CalculateTickInches();
 
-    public MoveRobotStraightInchesAction(Action dependentAction, double targetInches, DriveTrain driveTrain) {
+    public MoveRobotStraightInchesAction(Action dependentAction, double targetInches, DriveTrain driveTrain, Odometry odometry) {
         this.dependentAction = dependentAction;
         straightController = new PIDController2023("straight", 0.0005, 0.0000015, 0.8, false);
         this.targetTicks = calculateTickInches.inchToTicksDriveTrain(targetInches);
         this.driveTrain = driveTrain;
+        this.odometry = odometry;
     }
 
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain) {
@@ -27,6 +30,7 @@ public class MoveRobotStraightInchesAction extends Action {
         straightController = new PIDController2023("straight", 0.0005, 0.0000015, 0.8, false);
         this.targetTicks = calculateTickInches.inchToTicksDriveTrain(targetInches);
         this.driveTrain = driveTrain;
+        this.odometry = odometry;
     }
 
     private void refreshError() {
@@ -51,7 +55,7 @@ public class MoveRobotStraightInchesAction extends Action {
     @Override
     public void update() {
 
-        this.currentTicks = driveTrain.getfLeftTicks();
+        this.currentTicks = odometry.countRight();
         Log.d("moverobot", "current ticks is " + currentTicks);
         Log.d("moverobot", "target inches is " + calculateTickInches.ticksToInchesDriveTrain(targetTicks));
 

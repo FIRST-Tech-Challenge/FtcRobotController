@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.math.MathFunctions;
 import org.firstinspires.ftc.teamcode.math.Position;
 import org.firstinspires.ftc.teamcode.math.Velocity;
 
@@ -43,14 +44,14 @@ public class Odometry {
         return ticks / TICKS_TO_MM;
     }
 
-    private double countRight() {
-        return -rightEncoder.getCurrentPosition();
+    public double countRight() {
+        return rightEncoder.getCurrentPosition();
     }
-    private double countLeft() {
-        return -leftEncoder.getCurrentPosition();
+    public double countLeft() {
+        return leftEncoder.getCurrentPosition();
     }
-    private double countBack() {
-        return backEncoder.getCurrentPosition();
+    public double countBack() {
+        return -backEncoder.getCurrentPosition();
     }
 
     private Velocity calculateRelativeDelta(double rightTicks, double leftTicks, double backTicks) {
@@ -94,9 +95,10 @@ public class Odometry {
                 relativeDelta.getX() * Math.cos(previousGlobalPosition.getTheta()) - relativeDelta.getY() * Math.sin(previousGlobalPosition.getTheta());
         double newY =
                 relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
-        return new Velocity(newX,
-                            newY,
-                            relativeDelta.getTheta());
+        double newTheta =
+                MathFunctions.angleWrapRad(relativeDelta.getTheta());
+        Log.d("thetavalue", "theta " + relativeDelta.getTheta() + " " + newTheta);
+        return new Velocity(newX, newY, newTheta);
     }
 
     private Position updateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {

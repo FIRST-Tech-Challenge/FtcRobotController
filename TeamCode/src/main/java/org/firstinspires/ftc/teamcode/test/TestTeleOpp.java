@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.localization.Odometry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -60,7 +62,7 @@ public class TestTeleOpp extends LinearOpMode {
 //        purePursuitAction.addPoint(0, 1600);
 //        purePursuitAction.addPoint(-800, 1600);
         purePursuitAction.addPoint(0,0);
-        purePursuitAction.addPoint(0,50);
+        purePursuitAction.addPoint(250,0);
 
         MoveRobotStraightInchesAction moveRobotStraightInchesAction = new MoveRobotStraightInchesAction(6, driveTrain);
 
@@ -77,7 +79,8 @@ public class TestTeleOpp extends LinearOpMode {
 //            action4.update();
 
             odometry.updatePosition();
-            moveRobotStraightInchesAction.updateCheckDone();
+            Log.d("position", odometry.getCurrentPosition().toString());
+            //moveRobotStraightInchesAction.updateCheckDone();
             //purePursuitAction.updateCheckDone();
 
             //turnRobotAction.updateCheckDone();
