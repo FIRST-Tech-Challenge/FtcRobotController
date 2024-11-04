@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,13 +25,14 @@ public class Teleop_live_2controllers extends LinearOpMode {
     DcMotor fl = null;
     DcMotor fr = null;
     DcMotor br = null;
-//    DcMotor m0 = null;
-//    DcMotor m1 = null;
+    DcMotor m0 = null;
+    DcMotor m1 = null;
     DcMotor m2 = null;
-//    DcMotor m3 = null;
+    DcMotor m3 = null;
     Servo s1 = null;
     Servo s2 = null;
     Servo s3 = null;
+    CRServo s4 = null;
     double left1Y, right1Y,left1X,right1X;
     double left2Y, right2Y, left2X, right2X;
     boolean flag_correction = true;
@@ -38,6 +40,9 @@ public class Teleop_live_2controllers extends LinearOpMode {
     boolean gamepad1x_previous = false;
     boolean gamepad1RB_previous = false;
     boolean gamepad1LB_previous = false;
+    boolean gamepad2RB_previous = false;
+    boolean gamepad2LB_previous = false;
+
     double m2Power, blPower, flPower,brPower, frPower;
     static final double DEADZONE = 0.1;
 
@@ -90,13 +95,14 @@ public class Teleop_live_2controllers extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        m0 = hardwareMap.get(DcMotor.class, "M0");
-//        m1 = hardwareMap.get(DcMotor.class, "M1");
+        m0 = hardwareMap.get(DcMotor.class, "M0");
+        m1 = hardwareMap.get(DcMotor.class, "M1");
         m2 = hardwareMap.get(DcMotor.class, "M2");
-//        m3 = hardwareMap.get(DcMotor.class, "M3");
+        m3 = hardwareMap.get(DcMotor.class, "M3");
         s1 = hardwareMap.get(Servo.class, "s1");
         s2 = hardwareMap.get(Servo.class, "s2");
         s3 = hardwareMap.get(Servo.class, "s3");
+        s4 = hardwareMap.get(CRServo.class,"s4");
         s1.setDirection(Servo.Direction.FORWARD);
 //        s2.setDirection(Servo.Direction.FORWARD);
          s3.setDirection(Servo.Direction.REVERSE);
@@ -104,9 +110,9 @@ public class Teleop_live_2controllers extends LinearOpMode {
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        m1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         m2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        m3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Initial settings
@@ -114,6 +120,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
         fl.setPower(0);
         br.setPower(0);
         fr.setPower(0);
+        s4.setPower(0);
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setPosition(0); // open
 
@@ -184,6 +191,17 @@ public class Teleop_live_2controllers extends LinearOpMode {
             }
             gamepad1LB_previous = gamepad1.left_bumper;
 
+
+
+
+            if (gamepad2.right_trigger > 0.2) {
+               s4.setPower(1);
+            }
+
+
+            if (gamepad2.left_trigger > 0.2) {
+                s4.setPower(-1);
+            }
 
 
             if (gamepad1.right_trigger > 0.2) {
