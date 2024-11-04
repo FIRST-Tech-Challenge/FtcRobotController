@@ -8,8 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 public class MecanumHardAuto extends Hardware {
-    final int TICKS_PER_INCH = 52;
+    final int TICKS_PER_INCH = 43;
     final int TICKS_PER_INCH_LINEAR_SLIDE = 52;
+
     final int TICKS_PER_INCH_ARM = 52;
     final double TPD = 14.45;//(2609/179.781417);
     final double mecanumMulti = 1/0.9;
@@ -368,11 +369,30 @@ public class MecanumHardAuto extends Hardware {
 
         setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (!getTolerance(Math.abs(linear_slide.getCurrentPosition()),  Math.abs(flm.getTargetPosition()),10)) {
+        while (!getTolerance(Math.abs(linear_slide.getCurrentPosition()),  Math.abs(linear_slide.getTargetPosition()),10)) {
             linear_slide.setPower(power);
         }
 //        waiter(5000);
         linear_slide.setPower(0);
+        waiter(pause);
+    }
+    public void setArm(double power, double inches){
+
+        inches *= TICKS_PER_INCH_ARM;
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setTargetPosition((int)Math.round(inches));
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (!getTolerance(Math.abs(arm.getCurrentPosition()),  Math.abs(arm.getTargetPosition()),10)) {
+            arm.setPower(power);
+        }
+//        waiter(5000);
+        arm.setPower(0);
         waiter(pause);
     }
     public void moveInches(double power, double inches, directions dir){
