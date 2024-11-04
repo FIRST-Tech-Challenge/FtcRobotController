@@ -98,6 +98,7 @@ public class DriveToPoint {
         }
 
         if (atTarget && (holdTimer.time() > holdTime)){
+            driveMecanums(0, 0, 0);
             return true;
         }
         return false;

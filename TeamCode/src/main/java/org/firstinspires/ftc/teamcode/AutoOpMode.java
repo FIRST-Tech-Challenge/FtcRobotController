@@ -20,31 +20,32 @@ import java.util.Timer;
 public class AutoOpMode extends LinearOpMode {
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-    private DriveToPoint nav = new DriveToPoint(this); //OpMode member for the point-to-point navigation class
+    private final DriveToPoint nav = new DriveToPoint(this); //OpMode member for the point-to-point navigation class
     private DcMotor rotateArmMotor = null;
     private DcMotor extendArmMotor = null;
-    private ElapsedTime timer = new ElapsedTime();
+    private final ElapsedTime timer = new ElapsedTime();
 
-    enum StateMachine{
+    // Auto State Machine
+    enum StateMachine {
         WAITING_FOR_START,
         DRIVE_TO_SUBMERSIBLE,
-        PLACE_SPECIMEN
+        PLACE_SPECIMEN,
         RELEASE_SPECIMEN,
-        DRIVE_TO_OBSERVATION_ZONE;
+        DRIVE_TO_OBSERVATION_ZONE,
+        END
     }
 
-    static final Pose2D SUBMERSIBLE_POS = new Pose2D(DistanceUnit.MM, 2000, -806, AngleUnit.DEGREES, 0);
-    static final Pose2D OBSERVATION_ZONE = new Pose2D(DistanceUnit.MM,0,-1200, AngleUnit.DEGREES,0);
+    // Field poses
+    static final Pose2D SUBMERSIBLE_POS = new Pose2D(DistanceUnit.MM, 500, -400, AngleUnit.DEGREES, 0);
+    static final Pose2D OBSERVATION_ZONE = new Pose2D(DistanceUnit.MM,0,-600, AngleUnit.DEGREES,0);
 
-    boolean armMoving = false;
-
-    final double SPEED = 0.3;
-    final double ARM_POWER = -0.3;
+    final double DRIVE_SPEED = 0.3;
+    final double ARM_POWER = -0.2;
     final double EXTEND_POWER = 0.3;
-    final int ARM_UP_MAX_POSITION = -2700;
+    final int ARM_UP_MAX_POSITION = -1000;
     final int ARM_DOWN_POSITION = 0;
-    final int EXT_MAX_POSITION = 10000;
-    final int EXT_PLACE_POSITION = 9000;
+    final int EXT_MAX_POSITION = 2000;
+    final int EXT_PLACE_POSITION = 900;
 
 
     @Override
@@ -69,24 +70,28 @@ public class AutoOpMode extends LinearOpMode {
         StateMachine stateMachine;
         stateMachine = StateMachine.WAITING_FOR_START;
 
-        // Output current status
-        telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset", odo.getXOffset());
-        telemetry.addData("Y offset", odo.getYOffset());
-        telemetry.addData("Device Version Number:", odo.getDeviceVersion());
-        telemetry.addData("Device Scalar", odo.getYawScalar());
-        Pose2D pos = odo.getPosition();
-        String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-        telemetry.addData("Position", data);
+        // Print current state
+        telemetry.addData("State: ", stateMachine);
+        telemetry.addData("Pose X(mm): ", odo.getPosition().getX(DistanceUnit.MM));
+        telemetry.addData("Pose Y(mm): ", odo.getPosition().getY(DistanceUnit.MM));
+        telemetry.addData("Pose Heading(deg): ", odo.getPosition().getHeading(AngleUnit.DEGREES));
         telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
-        //telemetry.addData("ExtensionPosition", armExtensionMotor.getCurrentPosition());
+        telemetry.addData("ExtensionPosition", extendArmMotor.getCurrentPosition());
         telemetry.update();
 
         // Wait for the game to start (driver presses START)
         waitForStart();
         resetRuntime();
 
+        //telemetry.setAutoClear(false);
+
         while (opModeIsActive()) {
+            telemetry.addData("State: ", stateMachine);
+            telemetry.addData("Pose X(mm): ", odo.getPosition().getX(DistanceUnit.MM));
+            telemetry.addData("Pose Y(mm): ", odo.getPosition().getY(DistanceUnit.MM));
+            telemetry.addData("Pose Heading(deg): ", odo.getPosition().getHeading(AngleUnit.DEGREES));
+            telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
+            telemetry.addData("ExtensionPosition", extendArmMotor.getCurrentPosition());
 
             // Pinpoint update must be called every cycle
             odo.update();
@@ -109,10 +114,13 @@ public class AutoOpMode extends LinearOpMode {
                 // (b) rotate arm to ARM_UP_MAX_POSITION
                 // (c) extend arm to EXT_MAX_POSITION
                 // When all three conditions met, move to next state (PLACE_SPECIMEN)
-                if (nav.driveTo(odo.getPosition(), SUBMERSIBLE_POS, SPEED, 3) &&
-                    armUp(ARM_UP_MAX_POSITION) &&
-                    armExtend(EXTEND_MAX_POSITION)) {
-                    stateMachine = StateMachine.PLACE_SPECIMEN;
+                boolean cond1 = nav.driveTo(odo.getPosition(), SUBMERSIBLE_POS, DRIVE_SPEED, 0);
+                boolean cond2 = armUp(ARM_UP_MAX_POSITION);
+                boolean cond3 = armExtend(EXT_MAX_POSITION);
+
+                //if all 3 conditions met, move to next state
+                if (cond1 && cond2 && cond3) {
+                        stateMachine = StateMachine.PLACE_SPECIMEN;
                 }
             }
 
@@ -121,7 +129,9 @@ public class AutoOpMode extends LinearOpMode {
             // Actions: retract arm until target location reached
             //----------------------------------------------------------
             if (stateMachine == StateMachine.PLACE_SPECIMEN){
-                if (armRetract(EXT_PLACE_POSITION)){
+                //boolean cond = armExtend(EXT_MAX_POSITION);
+                boolean cond = armDown(-500);
+                if (cond) {
                     stateMachine = StateMachine.RELEASE_SPECIMEN;
                 }
             }
@@ -134,38 +144,20 @@ public class AutoOpMode extends LinearOpMode {
                 // Release specimen
                 // TODO
                 stateMachine = StateMachine.DRIVE_TO_OBSERVATION_ZONE;
-                }
             }
 
             //----------------------------------------------------------
             // State: DRIVE_TO_OBSERVATION_ZONE
             // Actions: drive to observation zone and park
             //----------------------------------------------------------
-            if (stateMachine == StateMachine.DRIVE_TO_SUBMERSIBLE){
+            if (stateMachine == StateMachine.DRIVE_TO_OBSERVATION_ZONE) {
                 // Drive to observation zone
-                if (nav.driveTo(odo.getPosition(), OBSERVATION_ZONE, SPEED, 3) {
+                boolean cond = nav.driveTo(odo.getPosition(), OBSERVATION_ZONE, DRIVE_SPEED, 0);
+                if (cond) {
                     stateMachine = StateMachine.END;
+                }
             }
 
-            telemetry.addData("current state:",stateMachine);
-            pos = odo.getPosition();
-            data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-            telemetry.addData("Pose", data);
-            telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
-            telemetry.addData("ArmPower", rotateArmMotor.getPower());
-            //telemetry.addData("ExtendPosition", extendArmMotor.getCurrentPosition());
-            //telemetry.addData("ExtendPower", extendArmMotor.getPower());
-            telemetry.update();
-
-        }
-        while (opModeIsActive()) {
-            telemetry.addData("current state:",stateMachine);
-            pos = odo.getPosition();
-            data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-            telemetry.addData("Pose", data);
-            telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
-            telemetry.addData("ArmPower", rotateArmMotor.getPower());
-            //telemetry.addData("ExtensionPosition", armExtensionMotor.getCurrentPosition());
             telemetry.update();
         }
     }
@@ -177,7 +169,7 @@ public class AutoOpMode extends LinearOpMode {
             // raise arm
             rotateArmMotor.setPower(ARM_POWER);
         }
-        else { arm is <= newPosition so stop motor
+        else { // arm is <= newPosition so stop motor
             rotateArmMotor.setPower(0);
             done = true;
         }
@@ -185,13 +177,13 @@ public class AutoOpMode extends LinearOpMode {
     }
 
     // Move arm down until newPosition reached
-    private void armDown(int newPosition) {
+    private boolean armDown(int newPosition) {
         boolean done = false;
         if (rotateArmMotor.getCurrentPosition() < newPosition) {
             // lower arm
             rotateArmMotor.setPower(-ARM_POWER);
         }
-        else { arm is >= newPosition so stop motor
+        else { //arm is >= newPosition so stop motor
             rotateArmMotor.setPower(0);
             done = true;
         }
@@ -202,11 +194,11 @@ public class AutoOpMode extends LinearOpMode {
     private boolean armExtend(int newPosition) {
         boolean done = false;
         if (extendArmMotor.getCurrentPosition() < newPosition) {
-            // raise arm
+            // extend arm
             extendArmMotor.setPower(EXTEND_POWER);
         }
-        else { extension is >= newPosition so stop motor
-            rotateArmMotor.setPower(0);
+        else { //extension is >= newPosition so stop motor
+            extendArmMotor.setPower(0);
             done = true;
         }
         return done;
@@ -216,11 +208,11 @@ public class AutoOpMode extends LinearOpMode {
     private boolean armRetract(int newPosition) {
         boolean done = false;
         if (extendArmMotor.getCurrentPosition() > newPosition) {
-            // raise arm
+            // retract arm
             extendArmMotor.setPower(-EXTEND_POWER);
         }
-        else { extension is <= newPosition so stop motor
-            rotateArmMotor.setPower(0);
+        else { //extension is <= newPosition so stop motor
+            extendArmMotor.setPower(0);
             done = true;
         }
         return done;
