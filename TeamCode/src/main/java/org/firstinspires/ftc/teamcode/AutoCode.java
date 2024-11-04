@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
- * This code is the main central teleop code! The code in this file will run after the play button
- * is pressed, and is used during the player-controlled period.
-*/
+ * This code is the main central autonomous code! The code in this file will run once after the code
+ * is initialized, but cannot run during the player-controlled period.
+ */
 
-public class TeleopCode extends LinearOpMode {
+public class AutoCode extends LinearOpMode {
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -28,8 +28,6 @@ public class TeleopCode extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
 
-        }
     }
 }
