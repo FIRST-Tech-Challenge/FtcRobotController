@@ -48,7 +48,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     Servo claw = null;
     final double CLAW_MIN = 0.9;        // Claw is closed
     final double CLAW_MAX = 0.6;        // Claw is open
-    double claw_position = CLAW_MAX;
+    double claw_position = CLAW_MIN;
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -80,7 +80,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(CLAW_MAX);
+        claw.setPosition(CLAW_MIN);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");

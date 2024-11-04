@@ -102,7 +102,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         strafeRight(1.5, 0.4);       // Positioning to basket
         moveForward(0.4, 0.4);       // Positioning to basket
         turnToHeading(45, 0.4);           // Turn to basket, claw in position
-        moveForward(0.3, 0.3);
+        moveForward(0.35, 0.3);     // Move forward: Originally 0.3
         setClaw(CLAW_MAX);                                    // Drop the block
         moveBackward(0.3, 0.3);
         turnToHeading(-2, 0.4);            // Turning away from basket
@@ -112,7 +112,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         turnToHeading(0, 0.4);
         moveBackward(4, 0.5);      // Todo: Change to 4 seconds before competition
         turnToHeading(0, 0.4);
-        strafeLeft(2.5, 0.4);       // Positioning to park
+        strafeLeft(2.7, 0.4);       // Positioning to park
         claw.close();                                         // Release tension on the claw
 
         // End of autonomous program
