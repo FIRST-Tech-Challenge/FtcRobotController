@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,6 +26,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -83,13 +82,26 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backLeft.setPower(backLeftPower / 2);
             hardware.frontRight.setPower(frontRightPower / 2);
             hardware.backRight.setPower(backRightPower / 2);
+            /*if(gamepad2.dpad_up){
+                hardware.verticalLift.setPower(0.5);
 
+            }
+            else if(gamepad2.dpad_down){
+                hardware.verticalLift.setPower(-0.5);
+            }
+            else{
+                hardware.verticalLift.setPower(0.0);
+            }*/
+            lift(hardware);
+            int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
+            telemetry.addData("Vertical position",verticalPosition);
             telemetry.addData("fl power", frontLeftPower);
             telemetry.addData("fr power", frontRightPower);
             telemetry.addData("bl power", backLeftPower);
             telemetry.addData("br power", backRightPower);
             telemetry.update();
         }
+
     }
 
     String formatAngle(AngleUnit angleUnit, double angle) {
@@ -99,5 +111,58 @@ public class MecanumTeleOp extends LinearOpMode {
     @SuppressLint("DefaultLocale")
     String formatDegrees(double degrees) {
         return String.format("%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
+
+    /////////////////////////////////////////////
+
+    int maxVerticalLiftTicks = 2300;
+    int minVerticalLiftTicks= 0;
+    int highChamberTicks = 790;
+    int highBasketTicks = 2180;
+    // lifts the vertical slides to a target position in ticks
+    private void targetLift(Hardware hardware , int targetPosition){
+
+        hardware.verticalSlide.setTargetPosition(targetPosition);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(0.5);
+        ElapsedTime Timer = new ElapsedTime();
+        double timeoutSeconds = 3.0;
+        int allowedErrorTicks = 5;
+        while (Timer.time() < timeoutSeconds){
+            int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
+            if (Math.abs (verticalPosition-targetPosition) < allowedErrorTicks){
+                hardware.verticalSlide.setPower(0);
+                break;
+            }
+        }
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+
+
+    private void lift(Hardware hardware ) {
+
+        //Hardware hardware = new Hardware(hardwareMap);
+        int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
+
+        if (gamepad2.dpad_up && verticalPosition < maxVerticalLiftTicks) {
+            hardware.verticalSlide.setPower(0.5);
+        } else if (gamepad2.dpad_down && verticalPosition > minVerticalLiftTicks) {
+            hardware.verticalSlide.setPower(-0.5);
+        } else {
+            hardware.verticalSlide.setPower(0.0);
+        }
+
+        if (gamepad2.b) {
+            targetLift(hardware, highChamberTicks);
+
+        }
+
+        if (gamepad2.y) {
+            targetLift(hardware, highBasketTicks);
+        }
+        if (gamepad2.a) {
+            targetLift(hardware, 0);
+        }
     }
 }

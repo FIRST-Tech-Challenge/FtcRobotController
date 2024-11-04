@@ -38,6 +38,14 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     public DcMotor backRight;
 
+    @HardwareName("verticalSlides")
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
+    public DcMotor verticalSlide;
+
+    @HardwareName("verticalSlides")
+    @AutoClearEncoder
+    public DcMotor encoderVerticalSlide;
+
     @EncoderFor("frontLeft")
     @AutoClearEncoder
     @Reversed
