@@ -11,7 +11,7 @@ public class ForwardMovement extends BaseMovement {
     @Override
     protected void updateDrivingParameters() {
         strafeSpeed = getMoveErrorCorrection(previousPose.getY() - startingPose.getY());
-        forwardSpeed = currentSpeed;
+        forwardSpeed = getMainMovement(distance-accumulatedChanges);
         rotationSpeed = getRotErrorCorrection(startingPose.getHeading() - previousPose.getHeading());
     }
 

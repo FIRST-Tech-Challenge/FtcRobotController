@@ -156,10 +156,13 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
      * all remaining items from other stack, if nothing left, set state to FINISHED.
      */
     private void setupCurrentState(State state) {
-        sleep(100);
+
         if (currentState != null && currentState.equals(state)) {
             return;
         }
+        sleep(100);
+        driveTrain.resetOdo();
+
         addTelemetryData("Switching to %s mode", state);
         currentState = state;
         switch (currentState) {
