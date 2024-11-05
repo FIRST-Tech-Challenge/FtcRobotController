@@ -127,8 +127,8 @@ public class basicTelemBlue extends LinearOpMode {
         wrist.setPosition(x);
       }
 
-      telemetry.addData("Slide limit: ",pubLength);
-      telemetry.addData("Slide length: ",slide.getCurrentPosition());
+      telemetry.addData("Pivot encoder count: ",pivot.getCurrentPosition());
+      telemetry.addData("Slide encoder count: ",slide.getCurrentPosition());
       telemetry.update();
     }
   }
@@ -209,7 +209,7 @@ public class basicTelemBlue extends LinearOpMode {
         slide.setPower(0);
 
         limitSlide = 4750;
-        limitPivot = 3250;
+        limitPivot = 3000;
 
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
 
@@ -241,6 +241,8 @@ public class basicTelemBlue extends LinearOpMode {
   }
 
   public void setPivot(double x) {
+        if(gamepad2.b)
+            limitPivot+=250;
     if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
       x = 0;
     } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
@@ -254,6 +256,9 @@ public class basicTelemBlue extends LinearOpMode {
     if(slide.getCurrentPosition() > pubLength && x > 1)
       slide.setPower(-x*2);
     pivot.setPower(x);
+
+    if(limitPivot>3000)
+        limitPivot=3000;
   }
 
   /**
@@ -278,7 +283,6 @@ public class basicTelemBlue extends LinearOpMode {
     return arrayToReturn;
   }
 
-
   /**
    * Converts polar coordinates to cartesian
    * not used (yet)
@@ -300,7 +304,6 @@ public class basicTelemBlue extends LinearOpMode {
     return arrayToReturn;
   }
 
-
   /**
    * Moves the robot forward/backward based on desired power.<br>
    * Does not change the rotation of the robot at all
@@ -318,8 +321,6 @@ public class basicTelemBlue extends LinearOpMode {
     BRMotor.setPower(power);
     FRMotor.setPower(power);
   }
-
-
 
   public void strafe(double power) {
     // Set wheels for strafe
@@ -355,7 +356,6 @@ public class basicTelemBlue extends LinearOpMode {
       FRMotor.setPower(power);
   }
 
-
   /**
    * TODO this needs to be worked on nothing is done here
    *
@@ -375,7 +375,6 @@ public class basicTelemBlue extends LinearOpMode {
 
   }
 
-
   /**
    * TODO Possibly make this not run at full speed at all times by adding some sort of power input
    * Uses the IMU to move the robot to face forward
@@ -389,7 +388,6 @@ public class basicTelemBlue extends LinearOpMode {
     rotate(orientation);
   }
 
-
   /**
    * TODO All of this
    * Moves the robot to the detected specimen
@@ -397,7 +395,6 @@ public class basicTelemBlue extends LinearOpMode {
   public void moveToSpecimen() {
 
   }
-
 
   /**
    * TODO All of this as well
