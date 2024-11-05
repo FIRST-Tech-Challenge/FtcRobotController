@@ -43,3 +43,10 @@
 |---------|-------------|--------------------------------------------|
 | 0       | -           | IMU(vert. deadwheel, horizontal deadwheel) |
 | 1       | ColorSensor | Intake color sensor                        |
+
+## Digital
+
+| Port | Name  | Description  |
+|------|-------|--------------|
+| 0    | Red   | Feedback LED |
+| 1    | Green | Feedback LED |
