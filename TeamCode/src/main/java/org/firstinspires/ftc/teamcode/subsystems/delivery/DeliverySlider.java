@@ -19,13 +19,14 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    private int maxPosition = -3000;
-    private int minPosition = -200;
+    private int BasketDeliveryPosition = -3300;
+    private int CollapsedPosition = -100;
 
     private int currentTarget = 0;
 
-
     SonicPIDController pidController;
+
+    private boolean isTeleop = true;
 
     public DeliverySlider(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
@@ -41,43 +42,72 @@ public class DeliverySlider extends SonicSubsystemBase {
 
         //MoveToTransferPosition();
 
-        //pidController = new SonicPIDController(0.004, 0.0001, 0.0003);
+        pidController = new SonicPIDController(0.005, 0, 0);
+    }
+
+    private void SetTelop() {
+        this.isTeleop = true;
+    }
+
+    private void SetAuto() {
+        this.isTeleop = false;
     }
 
     public void Expand() {
+        SetTelop();
         motor.set(.75);
     }
 
     public void Collapse() {
+        SetTelop();
         motor.set(-.75);
     }
 
     public void Hold() {
+        SetTelop();
         motor.set(0);
     }
 
     public void MoveToDeliveryPosition() {
-
-        currentTarget = -3000;
+        SetAuto();
+        currentTarget = BasketDeliveryPosition;
     }
 
     public void MoveToTransferPosition() {
-        currentTarget = -100;
+        currentTarget = CollapsedPosition;
     }
 
     @Override
     public void periodic() {
         super.periodic();
 
-//        double position = motor.encoder.getPosition();
-//
-//        double power = pidController.calculatePIDAlgorithm(currentTarget - position);
-//
-//        telemetry.addData("target", position);
-//        telemetry.addData("position", position);
-//        telemetry.addData("power", power);
-//        telemetry.update();
-//
-//        motor.set(power);
+        double position = motor.encoder.getPosition();
+        telemetry.addData("target", currentTarget);
+        telemetry.addData("current", position);
+        telemetry.addData("telop", isTeleop);
+
+        if(!isTeleop) {
+            double power = pidController.calculatePIDAlgorithm(currentTarget - position);
+            telemetry.addData("power", power);
+
+
+            if(Math.abs(currentTarget - position) < 40) {
+                telemetry.addData("done", true);
+                motor.set(0);
+            }
+            else {
+                double minPower = .2;
+
+                if(Math.abs(power) < minPower) {
+                    telemetry.addData("minPower", true);
+
+                    power = minPower * Math.abs(power) / power;
+                }
+
+                motor.set(power);
+            }
+        }
+
+        telemetry.update();
     }
 }

@@ -110,7 +110,7 @@ public class RollingIntake extends SonicSubsystemBase {
     public double GetDepth() {
         if (colorSensor instanceof DistanceSensor) {
             double depth = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
-            telemetry.addData("Left distance (mm)", "%.3f", depth);
+            //telemetry.addData("Left distance (mm)", "%.3f", depth);
             return depth;
         }
 

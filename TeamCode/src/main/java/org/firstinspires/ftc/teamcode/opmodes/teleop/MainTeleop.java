@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -75,10 +76,16 @@ public class MainTeleop extends OpModeTemplate {
 
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
-                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake));
+                .whenHeld(new InstantCommand(deliverySlider::MoveToDeliveryPosition, deliverySlider));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
+                .whenHeld(new InstantCommand(deliverySlider::MoveToTransferPosition, deliverySlider));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenHeld(new InstantCommand(rollingIntake::SetElbowInIntakePosition, rollingIntake));
+                .whenHeld(new InstantCommand(deliveryPivot::AutoToDelivery, deliveryPivot));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
+                .whenHeld(new InstantCommand(deliveryPivot::AutoToIntake, deliveryPivot));
 
         // DRIVER Actions
 
