@@ -33,11 +33,11 @@ public class Teleop extends LinearOpMode {
             double x = -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
-            double denoimator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y - x + rx) / denoimator;
-            double backLeftPower = (y + x + rx) / denoimator;
-            double frontRightPower = (y + x - rx) / denoimator;
-            double backRightPower = (y - x - rx) / denoimator;
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y - x + rx) / denominator;
+            double backLeftPower = (y + x + rx) / denominator;
+            double frontRightPower = (y + x - rx) / denominator;
+            double backRightPower = (y - x - rx) / denominator;
 
             SimpleMatrix drivePowers = new SimpleMatrix(
                     new double[][]{

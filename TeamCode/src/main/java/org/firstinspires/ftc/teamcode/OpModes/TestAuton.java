@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 //import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -25,23 +26,18 @@ import org.firstinspires.ftc.teamcode.Drivetrain.Utils.TelemetryTracking;
  * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
  */
 @Config
-@Autonomous(name = "Test AAaAAAAAAAA", group = "Autonomous")
+@Autonomous(name = "Test Auton", group = "Autonomous")
 public class TestAuton extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
     // Use FTCDashboard
     FtcDashboard dashboard;
-    TelemetryTracking tracking;
-    public static double desiredX = 0;
-    public static double desiredY = 0;
-    public static double desiredTheta = 0;
     @Override
     public void runOpMode() {
         // Set dashboard
         drivetrain = new Drivetrain(hardwareMap);
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
-        tracking = new TelemetryTracking();
         ElapsedTime looptime = new ElapsedTime();
         SimpleMatrix desiredPose = new SimpleMatrix(
                 new double [][]{
@@ -67,35 +63,17 @@ public class TestAuton extends LinearOpMode {
         drivetrain.resetOp();
         waitForStart();
         looptime.reset();
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(
+            new ParallelAction(
+                new SequentialAction(
                 drivetrain.goToPose(desiredPose, 0),
 
                 drivetrain.goToPose(desiredPoseTwo, 1),
 
                 drivetrain.stopMotors()
-
-        ));
-        while (opModeIsActive()) {
-            drivetrain.localize();
-            telemetry.addData("x", drivetrain.state.get(0,0));
-            telemetry.addData("y", drivetrain.state.get(1,0));
-            telemetry.addData("theta", drivetrain.state.get(2,0));
-            telemetry.addData("desiredX", desiredX);
-            telemetry.addData("desiredY", desiredY);
-            telemetry.addData("desiredTheta", desiredTheta);
-            telemetry.addData("uLf", drivetrain.motorController.uLf);
-            telemetry.addData("uLb", drivetrain.motorController.uLb);
-            telemetry.addData("uRb", drivetrain.motorController.uRb);
-            telemetry.addData("uRf", drivetrain.motorController.uRf);
-            telemetry.addData("state", drivetrain.opSwitch);
-            //dashboard.sendTelemetryPacket(tracking.updatePos(drivetrain.state.get(0,0), drivetrain.state.get(1,0), drivetrain.state.get(2,0)));
-            TelemetryPacket packet = new TelemetryPacket();
-            packet.fieldOverlay();
-            packet.put("x", drivetrain.state.get(0,0));
-            packet.put("y", drivetrain.state.get(1,0));
-            packet.put("heading", drivetrain.state.get(2,0));
-            telemetry.update();
-            looptime.reset();
-        }
+                ),
+                drivetrain.updateTelemetry(telemetry)
+            )
+        );
     }
 }

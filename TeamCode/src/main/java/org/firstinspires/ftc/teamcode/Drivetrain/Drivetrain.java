@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -16,6 +17,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.ejml.simple.SimpleMatrix;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.GeometricController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
@@ -181,20 +183,8 @@ public class Drivetrain {
             }
         };
     }
-    public Action stopMotors() {
-        return new Action() {
-            //private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                //if (!initialized) {
-                //    initialized = true;
-                //}
-                localize();
-                setPower(stopMatrix);
-                return false;
-            }
-        };
+    public InstantAction stopMotors() {
+        return new InstantAction(()->setPower(stopMatrix));
     }
     public Action followPath(Path path) {
         return new Action() {
@@ -237,30 +227,21 @@ public class Drivetrain {
             }
         };
     }
-
-//    public Action followPath(double[][] coords) {
-//        return new Action() {
-//            //private boolean initialized = false;
-//
-//            @Override
-//            public boolean run(@NonNull TelemetryPacket packet) {
-//                //if (!initialized) {
-//                //    initialized = true;
-//                //}
-//                localize();
-//                SimpleMatrix furthestPoint = geometricController.calculate(state.get(0,0), state.get(1,0), coords);
-//                SimpleMatrix pose = state.extractMatrix(0,3,0,1);
-//                SimpleMatrix wheelSpeeds = poseControl.calculate(pose, furthestPoint);
-////                SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
-//                SimpleMatrix wheelAccelerations = new SimpleMatrix(4, 1);
-//                deltaT.reset();
-//                setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
-//                prevWheelSpeeds = wheelSpeeds;
-//                if (!(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold)){
-//                    setPower(stopMatrix);
-//                }
-//                return Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))>distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))>angleThreshold;
-//            }
-//        };
-//    }
+    public Action updateTelemetry(Telemetry telemetry) {
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                localize();
+                telemetry.addData("x", state.get(0,0));
+                telemetry.addData("y", state.get(1,0));
+                telemetry.addData("theta", state.get(2,0));
+                telemetry.addData("uLf", motorController.uLf);
+                telemetry.addData("uLb", motorController.uLb);
+                telemetry.addData("uRb", motorController.uRb);
+                telemetry.addData("uRf", motorController.uRf);
+                telemetry.update();
+                return true;
+            }
+        };
+    }
 }
