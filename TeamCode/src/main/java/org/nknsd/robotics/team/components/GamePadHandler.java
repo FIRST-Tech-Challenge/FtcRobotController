@@ -173,7 +173,7 @@ public class GamePadHandler implements NKNComponent {
         eventListeners.put(keyName, event);
     }
 
-    public void removeListener(GamepadButtons button, int gamepadNumber, boolean singular, String eventName) {
+    public void removeListener(GamepadButtons button, int gamepadNumber, String eventName, boolean singular) {
         String keyName;
         if (singular) {
             keyName = button.name() + ":" + gamepadNumber + ":" + "singular" + ":" + eventName;

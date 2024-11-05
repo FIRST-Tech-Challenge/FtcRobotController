@@ -37,15 +37,21 @@ public class ExtensionHandler implements NKNComponent {
         COLLECT(1565) {
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
-                return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PICKUP || rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PREPICKUP;
+                return     rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PICKUP
+                        || rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PREPICKUP;
             }
         },
 
-        // Temporarily decreased since we are aiming for low basket
         HIGH_BASKET(3100) {
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
                 return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.HIGH;
+            }
+        },
+        SPECIMEN(1232) {
+            @Override
+            boolean canGoToPosition(RotationHandler rotationHandler) {
+                return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.SPECIMEN;
             }
         };
 
