@@ -10,7 +10,8 @@ import org.firstinspires.ftc.teamcode.util.opModes.SympleCommandOpMode;
 public class RedDriverOpMode extends SympleCommandOpMode {
     @Override
     public void initialize() {
-        this.robotController = new TeleOpRobotController.Builder(this)
+        this.robotController = new TeleOpRobotController.Builder()
+                .initializeDefaults(this)
                 .teamColor(TeamColor.RED)
                 .build();
     }

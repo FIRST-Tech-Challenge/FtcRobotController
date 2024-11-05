@@ -71,13 +71,17 @@ public abstract class RobotControllerBase {
         protected String logFilePrefix;
         protected boolean logData;
 
-        public Builder(SympleCommandOpMode opMode) {
+        public Builder() {
+            this.logData = true;
+            this.logFilePrefix = "RobotController";
+        }
+
+        public Builder initializeDefaults(SympleCommandOpMode opMode) {
             this.hardwareMap = opMode.hardwareMap;
             this.telemetry = opMode.telemetry;
             this.driverController = opMode.gamepad1;
             this.actionController = opMode.gamepad2;
-            this.logData = true;
-            this.logFilePrefix = "RobotController";
+            return this;
         }
 
         public Builder hardwareMap(HardwareMap value) {

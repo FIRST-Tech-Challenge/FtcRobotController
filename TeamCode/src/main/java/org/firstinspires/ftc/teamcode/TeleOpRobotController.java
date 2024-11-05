@@ -57,8 +57,7 @@ public class TeleOpRobotController extends RobotControllerBase {
     public static class Builder extends RobotControllerBase.Builder {
         private TeamColor teamColor;
 
-        public Builder(SympleCommandOpMode opMode) {
-            super(opMode);
+        public Builder() {
             this.logFilePrefix = "TeleOp";
         }
 
@@ -67,6 +66,13 @@ public class TeleOpRobotController extends RobotControllerBase {
             return this;
         }
 
+        @Override
+        public Builder initializeDefaults(SympleCommandOpMode opMode) {
+            super.initializeDefaults(opMode);
+            return this;
+        }
+
+        @Override
         public TeleOpRobotController build() {
             return new TeleOpRobotController(this.hardwareMap, this.telemetry, this.driverController, this.actionController, this.teamColor, this.logFilePrefix, this.logData);
         }

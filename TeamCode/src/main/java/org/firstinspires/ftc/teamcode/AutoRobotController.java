@@ -47,11 +47,17 @@ public class AutoRobotController extends RobotControllerBase {
     }
 
     public static class Builder extends RobotControllerBase.Builder {
-        public Builder(SympleCommandOpMode opMode) {
-            super(opMode);
+        public Builder() {
             this.logFilePrefix = "Auto";
         }
 
+        @Override
+        public Builder initializeDefaults(SympleCommandOpMode opMode) {
+            super.initializeDefaults(opMode);
+            return this;
+        }
+
+        @Override
         public AutoRobotController build() {
             return new AutoRobotController(this.hardwareMap, this.telemetry, this.driverController, this.actionController, this.logFilePrefix, this.logData);
         }

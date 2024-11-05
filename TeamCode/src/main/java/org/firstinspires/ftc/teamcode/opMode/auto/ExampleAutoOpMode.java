@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.util.opModes.SympleCommandOpMode;
 public class ExampleAutoOpMode extends SympleCommandOpMode {
     @Override
     public void initialize() {
-        this.robotController = new AutoRobotController.Builder(this).build();
+        this.robotController = new AutoRobotController.Builder()
+                .initializeDefaults(this)
+                .build();
     }
 }
