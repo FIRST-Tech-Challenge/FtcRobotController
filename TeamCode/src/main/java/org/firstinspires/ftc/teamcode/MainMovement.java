@@ -32,6 +32,9 @@ public class MainMovement extends LinearOpMode {
 
     boolean open = false;
 
+    //speeds
+    private float clawSpeed = 1.0f;
+    private float linearSlideSpeed = 1.0f;
 
     @Override
     public void runOpMode() {
@@ -51,14 +54,15 @@ public class MainMovement extends LinearOpMode {
         waitForStart(); //waits for play on the driver hub :3
 
         while (opModeIsActive()) {
-            LjoystickX = gamepad1.left_stick_x;
+            LjoystickX = gamepad1.left_stick_x; //shouldn't this stuff be called before waitForStart?
             LjoystickY = gamepad1.left_stick_y;
             RjoystickX = gamepad1.right_stick_x;
             RjoystickY = gamepad1.right_stick_y;
 
-            epicRotationMovement(); // rotation on gary
+            epicRotationMovement(); // rotation on gary, the robot
             legendaryStrafeMovement(); // movement on gary
             LimbMovement();
+            telemetry.update(); //update output screen
         }
 
     }
@@ -155,11 +159,10 @@ public class MainMovement extends LinearOpMode {
                 telemetry.addData("Left Stick in LEFT quadrant", null);
 
             }
-            telemetry.update();
 
         } else {
             usingLStick = false;
-            setMotorPowers(0, 0, 0,0, 0);
+            setMotorPowers(0, 0, 0, 0, 0);
         }
 
 
@@ -176,6 +179,12 @@ public class MainMovement extends LinearOpMode {
 
     private void LimbMovement() {
 
+        if(open) {
+            telemetry.addData("chamber claw open, position = ", clawServo.getPosition());
+        } else {
+            telemetry.addData("chamber claw closed, position = ", clawServo.getPosition());
+        }
+
         //open or close chamber claw
         if(gamepad2.x){
             open = !open;
@@ -184,23 +193,25 @@ public class MainMovement extends LinearOpMode {
             } else {
                 clawServo.setPosition(0); //close
             }
-            sleep(250);
+            sleep(250); //creates cooldown for switching claw positions
 
         }
 
         //rotate chamber claw left
         if(gamepad2.left_trigger > 0){
-            clawRotate.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
+            clawRotate.setPower(clawSpeed * (gamepad2.left_trigger - gamepad2.right_trigger));
+            telemetry.addData("rotating chamber claw left", null)
         }
 
         //rotate chamber claw right
         if(gamepad2.right_trigger > 0){
-            clawRotate.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+            clawRotate.setPower(clawSpeed * (gamepad2.right_trigger - gamepad2.left_trigger));
+            telemetry.addData("rotating chamber claw right", null)
         }
 
-        //
+        // moves linear slide
         if(Math.abs(gamepad2.left_stick_y) > joystickDeadzone){
-            linearSlide.setPower(gamepad2.left_stick_y / 2);
+            linearSlide.setPower(linearSlideSpeed * gamepad2.left_stick_y / 2);
         }
 
     }
