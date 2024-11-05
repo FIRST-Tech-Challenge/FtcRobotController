@@ -70,18 +70,18 @@ public class TeleopServoTest extends LinearOpMode {
             telemetry.addData("Use left/right BUMPERS to index servos", " " );
             switch( selectedServo ) { // 0=push, 1=wrist, 2=gecko
                 case 0 :
-                    telemetry.addData("SELECTED:", "PushServo" );
-                    telemetry.addData("value", "%.3f", elbowPos);
+                    telemetry.addData("SELECTED:", "ElbowServo" );
+                    telemetry.addData("Elbow Servo Position", "%.3f", robot.getElbowServoPos() );
                     telemetry.addData("Elbow Servo Angle", "%.1f", robot.getElbowServoAngle());
                     break;
                 case 1 :
                     telemetry.addData("SELECTED:", "WristServo" );
-                    telemetry.addData("value", "%.3f", wristPos );
+                    telemetry.addData("Wrist Servo Position", "%.3f", robot.getWristServoPos() );
                     telemetry.addData("Wrist Servo Angle", "%.1f",robot.getWristServoAngle());
                     break;
                 case 2 :
-                    telemetry.addData("SELECTED:", "GeckoServo" );
-                    telemetry.addData("value", "%s", ( (geckoOn)? "ON" : "off" ) );
+                    telemetry.addData("SELECTED:", "IntakeServo" );
+                    telemetry.addData("Intake Servo power", "%.1f", robot.geckoServo.getPower() );
                     break;
                 default :
                     selectedServo = 0;

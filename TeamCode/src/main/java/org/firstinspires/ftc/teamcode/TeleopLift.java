@@ -59,7 +59,7 @@ public class TeleopLift extends LinearOpMode {
     boolean panAngleTweaked = false; // Has turret been manually moved
     boolean turretFrontToBack = false; // Is turret moving front-to-back or back-to-front ?
     boolean liftTweaked  = false;  // Reminder to zero power when input stops
-    boolean enableOdometry = false;
+    boolean enableOdometry = true;
 
     int geckoWheelState = 0;
 
@@ -153,11 +153,11 @@ public class TeleopLift extends LinearOpMode {
                 } // switch()
             } // processDpadDriveMode
 
+            processPanAndTilt();
 //          processPanControls();
 //          processTiltControls();
-            processPanAndTilt();
             ProcessViperLiftControls();
-            processWheelCollector();
+            processCollectorControls();
 
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
@@ -172,11 +172,14 @@ public class TeleopLift extends LinearOpMode {
 //                  rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
 //          telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
 //          telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
-            telemetry.addData("Viper ", "%d counts", robot.viperMotorPos );
+            telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
+            telemetry.addData("Tilt", "%d counts", robot.wormTiltMotorPos );
+            telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
+            telemetry.addData("Elbow", "%.1f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
+            telemetry.addData("Wrist", "%.1f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
 //          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
-
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
             robot.waitForTick(40);
         } // opModeIsActive
@@ -450,32 +453,8 @@ public class TeleopLift extends LinearOpMode {
         robot.driveTrainMotors( -frontLeft, frontRight, -rearLeft, rearRight );
 
     } // processDriverCentricDriveMode
-    void processWheelCollector() {
-        if( gamepad1_cross_now && !gamepad1_cross_last)
-        {
-            //robot.elbowServo.setPosition(robot.ELBOW_SERVO_INIT);
-            //robot.wristServo.setPosition(robot.WRIST_SERVO_INIT);
-
-            switch(geckoWheelState){
-                case 0:
-                    robot.geckoServo.setPower(1.0);
-                    break;
-                case 1:
-                    robot.geckoServo.setPower(0.0);
-                    break;
-                case 2:
-                    robot.geckoServo.setPower(-1.0);
-                    break;
-                case 3:
-                    robot.geckoServo.setPower(0.0);
-                    break;
-                default: break;
-            } // switch()
-            geckoWheelState++;
-
-            if(geckoWheelState>3) geckoWheelState = 0;
-        }
-    }
+    
+    /*---------------------------------------------------------------------------------*/
     void processPanAndTilt() {
 
         // Pan movement
@@ -497,6 +476,7 @@ public class TeleopLift extends LinearOpMode {
         }
     } // processPanAndTilt
 
+    /*---------------------------------------------------------------------------------*/
     void processPanControls() {
         boolean safeToManuallyLeft  = (robot.wormPanMotorPos > robot.PAN_ANGLE_HW_MIN);
         boolean safeToManuallyRight = (robot.wormPanMotorPos < robot.PAN_ANGLE_HW_MAX);
@@ -561,6 +541,7 @@ public class TeleopLift extends LinearOpMode {
 
     } // processPanControls
 
+    /*---------------------------------------------------------------------------------*/
     void processTiltControls() {
         boolean safeToManuallyLower = (robot.wormTiltMotorPos > robot.PAN_ANGLE_HW_MIN);
         boolean safeToManuallyRaise = (robot.wormTiltMotorPos < robot.PAN_ANGLE_HW_MAX);
@@ -683,5 +664,68 @@ public class TeleopLift extends LinearOpMode {
         } // manual_lift_control
 
     }  // ProcessLiftControls
+
+    /*---------------------------------------------------------------------------------*/
+    void processCollectorControls() {
+        // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
+        // - extends/lowers collector for grabbing samples
+        // - turns on the collector intake servo in FORWARD mode
+        if( gamepad2_circle_now && !gamepad2_circle_last)
+        {
+//          need PAN, TILT, and VIPER motor go-to-fixed positions (collecting position)
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            robot.geckoServo.setPower(-1.0);  // collect
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
+        // - turns off collector intake servo
+        // - raises collector for driving
+        if( gamepad2_cross_now && !gamepad2_cross_last)
+        {
+            robot.geckoServo.setPower(0.0);
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_SAFE);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_SAFE);
+//          need PAN, TILT, and VIPER motor go-to-fixed positions (driving position)
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 left or right bumpers
+        // - left enables the collector intake servo in REVERSE/score mode
+        // - right enables the collector intake servo in FORWARD/collect mode
+        if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
+        {
+          robot.geckoServo.setPower(1.0); // release/score sample into basket
+        }
+        else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
+        {
+          robot.geckoServo.setPower(-1.0);  // collect (resume after failed attempt)
+        }
+
+    }  // processCollectorControls
+
+    /*---------------------------------------------------------------------------------*/
+    void processCollectorIntake() {   // INITIAL DEMO TOOL -- obsolete??
+
+        if( gamepad1_cross_now && !gamepad1_cross_last)
+        {
+
+            switch(geckoWheelState){
+                case 0:
+                    robot.geckoServo.setPower(1.0);
+                    break;
+                case 1:
+                    robot.geckoServo.setPower(0.0);
+                    break;
+                case 2:
+                    robot.geckoServo.setPower(-1.0);
+                    break;
+                case 3:
+                    robot.geckoServo.setPower(0.0);
+                    break;
+                default: break;
+            } // switch()
+            geckoWheelState++;
+
+            if(geckoWheelState>3) geckoWheelState = 0;
+        }
+    } // processCollectorIntake
 
 } // TeleopLift

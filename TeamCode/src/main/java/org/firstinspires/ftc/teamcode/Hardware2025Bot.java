@@ -76,31 +76,22 @@ public class Hardware2025Bot
     // The math above assumes motor encoders.  For REV odometry pods, the counts per inch is different
     protected double COUNTS_PER_INCH2      = 1738.4;  // 8192 counts-per-rev / (1.5" omni wheel * PI)
 
-    //====== ODOMETRY ENCODERS (encoder values only!) =====
-    protected DcMotorEx rightOdometer      = null;
-    public int          rightOdometerCount = 0;       // current encoder count
-    public int          rightOdometerPrev  = 0;       // previous encoder count
-
-    protected DcMotorEx leftOdometer       = null;
-    public int          leftOdometerCount  = 0;       // current encoder count
-    public int          leftOdometerPrev   = 0;       // previous encoder count
-
-    protected DcMotorEx strafeOdometer      = null;
-    public int          strafeOdometerCount = 0;      // current encoder count
-    public int          strafeOdometerPrev  = 0;      // previous encoder count
-
     //====== Worm gear pan and tilt MOTORS (RUN_USING_ENCODER) =====
-    protected DcMotorEx wormPanMotor     = null;
-    public int          wormPanMotorTgt  = 0;       // RUN_TO_POSITION target encoder count
-    public int          wormPanMotorPos  = 0;       // current encoder count
-    public double       wormPanMotorVel  = 0.0;     // encoder counts per second
-    public double       wormPanMotorAmps = 0.0;     // current power draw (Amps)
+    protected DcMotorEx wormPanMotor       = null;
+    public int          wormPanMotorTgt    = 0;       // RUN_TO_POSITION target encoder count
+    public int          wormPanMotorPos    = 0;       // current encoder count
+    public double       wormPanMotorVel    = 0.0;     // encoder counts per second
+    public double       wormPanMotorAmps   = 0.0;     // current power draw (Amps)
+    public double       wormPanMotorSetPwr = 0.0;     // requested power setting
+    public double       wormPanMotorPwr    = 0.0;     // current power setting
 
-    protected DcMotorEx wormTiltMotor     = null;
-    public int          wormTiltMotorTgt  = 0;       // RUN_TO_POSITION target encoder count
-    public int          wormTiltMotorPos  = 0;       // current encoder count
-    public double       wormTiltMotorVel  = 0.0;     // encoder counts per second
-    public double       wormTiltMotorAmps = 0.0;     // current power draw (Amps)
+    protected DcMotorEx wormTiltMotor       = null;
+    public int          wormTiltMotorTgt    = 0;      // RUN_TO_POSITION target encoder count
+    public int          wormTiltMotorPos    = 0;      // current encoder count
+    public double       wormTiltMotorVel    = 0.0;    // encoder counts per second
+    public double       wormTiltMotorAmps   = 0.0;    // current power draw (Amps)
+    public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
+    public double       wormTiltMotorPwr    = 0.0;    // current power setting
 
     public double       PAN_ANGLE_HW_MAX    =  100.0;  // absolute encoder angles at maximum rotation RIGHT
     public double       PAN_ANGLE_CYCLE_R   =  133.5;
@@ -122,7 +113,7 @@ public class Hardware2025Bot
     public int          viperMotorPos    = 0;       // current encoder count
     public double       viperMotorVel    = 0.0;     // encoder counts per second
     public double       viperMotorAmps   = 0.0;     // current power draw (Amps)
-    public double       viperMotorSetPwr = 0.0;     // requestedd power setting
+    public double       viperMotorSetPwr = 0.0;     // requested power setting
     public double       viperMotorPwr    = 0.0;     // current power setting
 
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
@@ -151,24 +142,27 @@ public class Hardware2025Bot
     //====== COLLECTOR SERVOS =====
     public AnalogInput elbowServoPos = null;
     public Servo elbowServo = null;
-    public double ELBOW_SERVO_INIT = 0.350;
-    final public static double ELBOW_SERVO_INIT_ANGLE = 230.0;
-    public double ELBOW_SERVO_SAFE = 0.350;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
-    final public static double ELBOW_SERVO_SAFE_ANGLE = 184.0;
-    public double ELBOW_SERVO_GRAB = 0.350;  // Partially extend to align fingers inside pixels
-    final public static double ELBOW_SERVO_GRAB_ANGLE = 168.0;
-    public double ELBOW_SERVO_DROP = 0.350;  // Fully extend finger assembly toward the Backdrop
-    final public static double ELBOW_SERVO_DROP_ANGLE = 56.1;
-    final public static double ELBOW_SERVO_PIXEL_CLEAR_ANGLE = 90.0; // Pulling back from backdrop but cleared pixel
+    final public static double ELBOW_SERVO_INIT = 0.370;
+    final public static double ELBOW_SERVO_INIT_ANGLE = 224.0;
+    final public static double ELBOW_SERVO_SAFE = 0.370;  // Safe orientation for driving
+    final public static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
+    final public static double ELBOW_SERVO_GRAB = 0.330;  // Partially extend to align fingers inside pixels
+    final public static double ELBOW_SERVO_GRAB_ANGLE = 234.0;
+    final public static double ELBOW_SERVO_DROP = 0.350;  // Fully extend finger assembly toward the Backdrop
+    final public static double ELBOW_SERVO_DROP_ANGLE = 230.0;
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
-    public double WRIST_SERVO_INIT = 0.500;           // higher is counter-clockwise
-    final public static double WRIST_SERVO_INIT_ANGLE = 188.0; // no idea yet, will have to figure it out!
-    public double WRIST_SERVO_GRAB = 0.500;
-    final public static double WRIST_SERVO_GRAB_ANGLE = 183.5;
-    public double WRIST_SERVO_DROP = 0.500;
-    final public static double WRIST_SERVO_DROP_ANGLE = 128.9;
+    final public static double WRIST_SERVO_INIT = 0.500;
+    final public static double WRIST_SERVO_INIT_ANGLE = 188.0;
+    final public static double WRIST_SERVO_SAFE = 0.500;    // Safe orientation for driving
+    final public static double WRIST_SERVO_SAFE_ANGLE = 188.0;
+    final public static double WRIST_SERVO_GRAB = 0.860;
+    final public static double WRIST_SERVO_GRAB_ANGLE = 68.0;
+    final public static double WRIST_SERVO_RAISE = 0.570;    // Safe orientation for driving
+    final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;
+    final public static double WRIST_SERVO_DROP = 0.350;
+    final public static double WRIST_SERVO_DROP_ANGLE = 228.0;
 
     public CRServo geckoServo = null;
 
@@ -200,9 +194,9 @@ public class Hardware2025Bot
 
         // Locate the odometry controller in our hardware settings
         odom = hwMap.get(GoBildaPinpointDriver.class,"odom");      // Control Hub I2C port 3
-        odom.setOffsets(-135.0, -145.0);      // odometry pod locations relative center of robot
+        odom.setOffsets(-135.0, 145.0);      // odometry pod locations relative center of robot
         odom.setEncoderResolution( GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD ); // 4bar pods
-        odom.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odom.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odom.resetPosAndIMU();
 
         // Define and Initialize drivetrain motors
@@ -359,16 +353,26 @@ public class Hardware2025Bot
         rearRightMotorVel  = rearRightMotor.getVelocity();
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
+        //---- Viper Slide motor data ----
         viperMotorPos      = viperMotor.getCurrentPosition();
         viperMotorVel      = viperMotor.getVelocity();
         viperMotorPwr      = viperMotor.getPower();
+        //---- Worm drive PAN motor data ----
+        wormPanMotorPos    = wormPanMotor.getCurrentPosition();
+        wormPanMotorVel    = wormPanMotor.getVelocity();
+        wormPanMotorPwr    = wormPanMotor.getPower();
+        //---- Worm drive TILT motor data ----
+        wormTiltMotorPos    = wormTiltMotor.getCurrentPosition();
+        wormTiltMotorVel    = wormTiltMotor.getVelocity();
+        wormTiltMotorPwr    = wormTiltMotor.getPower();
         // NOTE: motor mA data is NOT part of the bulk-read, so increases cycle time!
 //      frontLeftMotorAmps  = frontLeftMotor.getCurrent(MILLIAMPS);
 //      frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
 //      rearRightMotorAmps  = rearRightMotor.getCurrent(MILLIAMPS);
 //      rearLeftMotorAmps   = rearLeftMotor.getCurrent(MILLIAMPS);
 //      viperMotorAmps      = viperMotor.getCurrent(MILLIAMPS);
-
+//      wormPanMotorAmps    = wormPanMotor.getCurrent(MILLIAMPS);
+//      wormTiltMotorAmps   = wormTiltMotor.getCurrent(MILLIAMPS);
     } // readBulkData
 
     /*--------------------------------------------------------------------------------------------*/
@@ -611,10 +615,12 @@ public class Hardware2025Bot
     public double getElbowServoAngle() {
         return (elbowServoPos.getVoltage() / 3.3) * 360.0;
     }
+    public double getElbowServoPos()   { return  elbowServo.getPosition(); };
 
     public double getWristServoAngle() {
         return (wristServoPos.getVoltage() / 3.3) * 360.0;
     }
+    public double getWristServoPos()   { return  wristServo.getPosition(); }
 
     /*--------------------------------------------------------------------------------------------*/
 
