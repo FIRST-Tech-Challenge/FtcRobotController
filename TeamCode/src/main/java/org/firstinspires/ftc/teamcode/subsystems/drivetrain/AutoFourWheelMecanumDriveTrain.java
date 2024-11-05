@@ -66,6 +66,10 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         bR.motor.setPower(0);
     }
 
+    public void resetOdo() {
+        odo.resetPosAndIMU();
+    }
+
     public void driveFieldCentric(double strafeSpeed, double forwardSpeed,
                                   double turnSpeed) {
         drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, 0);

@@ -30,6 +30,7 @@ public abstract class BaseMovement {
 
     PIDController moveErrorCorrectionController = new PIDController(0.5,0,0);
     PIDController rotErrorCorrectionController = new PIDController(0.5,0,0);
+    PIDController mainMovementController = new PIDController(0.35,0,0.1);
 
     Supplier<Pose2d> poseSupplier;
 
@@ -109,8 +110,12 @@ public abstract class BaseMovement {
         doDrive();
     }
 
-    private boolean isCloseToEnd() {
+    protected boolean isCloseToEnd() {
         return  getProgress() >= 0.8;
+    }
+
+    protected boolean isJustStarted() {
+        return getProgress() <= 0.2;
     }
 
     private double getProgress() {
@@ -145,6 +150,14 @@ public abstract class BaseMovement {
             correctionDistance = -correctionDistance;
         }
         return correctionDistance*DIST_TO_SPEED_CONVERSION;
+    }
+
+    protected double getMainMovement(double difference) {
+        double correctionDistance = mainMovementController.calculate(difference);
+        if (difference*correctionDistance<0) {
+            correctionDistance = -correctionDistance;
+        }
+        return Math.max(0.2,Math.min(correctionDistance*DIST_TO_SPEED_CONVERSION,0.7));
     }
 
     protected abstract void updateDrivingParameters();
