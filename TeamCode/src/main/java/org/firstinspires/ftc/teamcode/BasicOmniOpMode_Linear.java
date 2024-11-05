@@ -76,8 +76,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor towerMotor = null;
-    private DcMotor flipperMotor = null;
     private CRServo samplePickup = null;
+    private DcMotor flipperMotor = null;
 
 
 
@@ -94,8 +94,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         towerMotor = hardwareMap.get(DcMotor.class, "tower_motor");
-        flipperMotor = hardwareMap.get(DcMotor.class, "flipper_motor");
         samplePickup = hardwareMap.get(CRServo.class, "sample_pickup");
+        flipperMotor = hardwareMap.get(DcMotor.class, "flipper_motor");
 
         // ########################################################################################
         // !!! IMPORTANT Drive Information. Test your motor directions. !!!!!
@@ -116,10 +116,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
         towerMotor.setDirection(DcMotor.Direction.REVERSE);
-        flipperMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        flipperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         towerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flipperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         towerMotor.setTargetPosition(0);
 
         // Wait for the game to start (driver presses START)
@@ -139,19 +138,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double yaw = gamepad1.right_stick_x;
             boolean sample_in = gamepad1.x;
             boolean sample_out = gamepad1.y;
-            boolean flip_down = gamepad1.a;
-            boolean flip_up = gamepad1.b;
-
-
-
 
             boolean tower_up = gamepad2.dpad_up;
             boolean tower_down = gamepad2.dpad_down;
             boolean tower_top = gamepad2.y;
-            boolean tower_mid = gamepad2.x;
-            boolean tower_home = gamepad2.a;
-
-
+            boolean tower_low_basket = gamepad2.x;
+            boolean tower_bottom = gamepad2.b;
+            boolean tower_ground = gamepad2.a;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -173,144 +166,83 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 rightBackPower /= max;
             }
 
-
             //change this to output the current value of the encoder
-            if(gamepad1.a)
-            {
+            if (gamepad1.a) {
                 telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
-               telemetry.update();
-
-
-
+                telemetry.update();
             }
 
-
-
-            if(sample_in) {
-// samplePickup.setPosition(1);
+            if (sample_in) {
                 samplePickup.setPower(1);
-// robot.claw1.setPosition(0);
-// sleep(10);
             } else if (sample_out) {
-// samplePickup.setPosition(0);
                 samplePickup.setPower(-1);
-// robot.claw1.setPosition(1);
                 sleep(10);
-            } else {
-// samplePickup.setPower(0);
-// samplePickup.setPosition(0.5);
-// robot.claw1.setPosition(0.5);
-            }
+            } else {}
 
-
-            if(gamepad1.dpad_up && towerMotor.getCurrentPosition() <500){
+            if (tower_up && towerMotor.getCurrentPosition() < 5000) {
                 towerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 towerMotor.setPower(1);
-            }
-
-            if(gamepad1.dpad_up) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+            } else if (tower_top) {
                 towerMotor.setTargetPosition(4250);
-
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 towerMotor.setPower(.5);
 
                 telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
-            }
-
-            else if(gamepad1.dpad_right) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+            } else if (tower_low_basket) {
                 towerMotor.setTargetPosition(2500);
-
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 towerMotor.setPower(.5);
 
                 telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
-            }
-
-            else if(gamepad1.dpad_left) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
+            } else if (tower_ground) {
                 towerMotor.setTargetPosition(1700);
-
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 towerMotor.setPower(.5);
 
                 telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
-            }
-
-            else if(gamepad1.dpad_down) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
-                towerMotor.setTargetPosition(1200);
-
+            //set tower to pickup position
+            } else if (tower_bottom) {
+                towerMotor.setTargetPosition(800);
                 towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 towerMotor.setPower(.5);
 
                 telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
                 telemetry.update();
-            }
+            //move tower down until encoder at zero
+            }else if(tower_down && towerMotor.getCurrentPosition() < 0) {
+                towerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                towerMotor.setPower(-.75);
 
-
-
-            else if(gamepad1.left_bumper) {
-//                int newTargetPosition = (towerMotor.getCurrentPosition() + 18);
-                towerMotor.setTargetPosition(700);
-
-                towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                towerMotor.setPower(.5);
-
-                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
-                telemetry.update();
 
             }
+            else { }
 
-            else if (gamepad1.right_bumper) {
-                int newTargetPosition = (towerMotor.getCurrentPosition() + 10);
-                towerMotor.setTargetPosition(0);
-
-                towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                towerMotor.setPower(.5);
-
-                telemetry.addData("current:", "%7d", towerMotor.getCurrentPosition());
-                telemetry.update();
-
-
-
-            }else {
-                if(!towerMotor.isBusy()){
-                    towerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    towerMotor.setPower(0.0);}
-                else{}
-            }
-
-
-            if(flip_up){
+            //set flipper motor position
+            if (gamepad1.right_bumper) {
+                flipperMotor.setTargetPosition(50);
+                flipperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 flipperMotor.setPower(1);
-            }else if( flip_down){
-                flipperMotor.setPower(-.5);
-            }else{
-                flipperMotor.setPower(0);
+
+                telemetry.addData("current spot:", "%7d", flipperMotor.getCurrentPosition());
+                telemetry.update();
+
+            } else if (gamepad1.left_bumper) {
+                flipperMotor.setTargetPosition(2);
+                flipperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                flipperMotor.setPower(.5);
+
+                telemetry.addData("current Waffle:", "%7d", flipperMotor.getCurrentPosition());
+                telemetry.update();
+
+
+            } else {
+                if (!flipperMotor.isBusy()) {
+                    flipperMotor.setPower(0.0);
+                } else { }
             }
-
-
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            // 1) First get all the motors to take to correct positions on the robot
-            // by adjusting your Robot Configuration if necessary.
-            // 2) Then make sure they run in the correct direction by modifying the
-            // the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
- /*
- leftFrontPower = gamepad1.x ? 1.0 : 0.0; // X gamepad
- leftBackPower = gamepad1.a ? 1.0 : 0.0; // A gamepad
- rightFrontPower = gamepad1.y ? 1.0 : 0.0; // Y gamepad
- rightBackPower = gamepad1.b ? 1.0 : 0.0; // B gamepad
- */
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
