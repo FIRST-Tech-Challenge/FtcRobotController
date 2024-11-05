@@ -23,6 +23,8 @@ public class NKNAutonomous_Basic extends OpMode {
     // Whatever program is attached here will be loaded with all its glorious components
     private final NKNProgram program = new PushAuto();
 
+    // Hi I'm a comment
+
     // Code to run ONCE when the driver hits INIT
     @Override
     public void init() {
