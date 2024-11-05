@@ -368,7 +368,7 @@ public class MecanumRobotController {
         continuousDrive(forwardPower, strafePower, turn, DEFAULT_FIELD_CENTRIC);
     }
 
-    // Behavior: Turns the robot to a given angle
+    // Behavior: Turns the robot to a given angle.
     // Params:
     //      - double degrees: The angle to turn the robot to in degrees.
     //      - double speed: The speed at which the robot should turn.
