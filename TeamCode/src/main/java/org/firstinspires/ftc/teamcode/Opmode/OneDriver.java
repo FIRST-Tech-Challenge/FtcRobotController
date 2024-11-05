@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Hardware.Arm;
 import org.firstinspires.ftc.teamcode.Hardware.Claw;
 import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
+import org.firstinspires.ftc.teamcode.Hardware.Hang;
 import org.firstinspires.ftc.teamcode.Hardware.Slides;
 import org.firstinspires.ftc.teamcode.Hardware.Wrist;
 import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
@@ -30,6 +31,7 @@ public class OneDriver extends LinearOpMode {
         BEGIN_SUBMERSIBLE, SUBMERSIBLE_SLIDER, SUBMERSIBLE_INTAKE_OPEN, SUBMERSIBLE_INTAKE_CLOSE,
         SUBMERSIBLE_FINISH_1, SUBMERSIBLE_FINISH_2, RETURN_TO_MAIN
     }
+
     GlobalStateMachine globalStateMachine = GlobalStateMachine.DEFAULT;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,6 +45,7 @@ public class OneDriver extends LinearOpMode {
         Arm arm = new Arm(hardwareMap, drive.getArmMotor());
         Claw claw = new Claw(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
+        Hang hang = new Hang(hardwareMap);
         stickyGamepad gp = new stickyGamepad(gamepad1);
         waitForStart();
         double frequency = 0;
@@ -174,8 +177,14 @@ public class OneDriver extends LinearOpMode {
                     globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
                 }
             }
-
-
+            if (gamepad1.dpad_down){
+                hang.move(-1);
+            } else if (gamepad1.dpad_up){
+                hang.move(1);
+            }
+            else{
+                hang.move(0);
+            }
 
 
             double newTime = getRuntime();

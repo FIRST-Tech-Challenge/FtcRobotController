@@ -289,10 +289,10 @@ public class League1Auto extends LinearOpMode {
                         drive.setTarget(new Pose2d(76, 27, -90));
                     }
                     if (timer.milliseconds() > TimeStamp + 3000) {
-                        drive.setTarget(new Pose2d(76, 52, -90));
+                        drive.setTarget(new Pose2d(76, 49, -90));
                     }
                     if (timer.milliseconds() > TimeStamp + 4000) {
-                        drive.setTarget(new Pose2d(76, 52, -33));
+                        drive.setTarget(new Pose2d(76, 49, -33));
                         timeToggle = true;
                         currentState=State.REST;
                     }
