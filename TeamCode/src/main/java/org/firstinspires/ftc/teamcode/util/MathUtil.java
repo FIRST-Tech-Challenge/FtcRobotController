@@ -8,7 +8,7 @@ public class MathUtil {
     }
 
     public static double degToCounts(double deg, double maxCounts) {
-        return ((deg * maxCounts) / 360.0);
+        return ((deg * maxCounts) / 360.0f);
     }
 
     public static double encoderTicksToMeter(double ticks) {

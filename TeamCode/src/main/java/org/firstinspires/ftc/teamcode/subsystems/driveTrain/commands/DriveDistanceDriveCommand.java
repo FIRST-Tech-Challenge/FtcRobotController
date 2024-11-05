@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.DataLogger;
 @Config
 public class DriveDistanceDriveCommand extends CommandBase {
     public static final double Kp = 0.65;
-    private static final double MAX_POWER = 0.8f;
+    private static final double MAX_POWER = 0.8;
 
     private final PController pController;
     private final double finalPos;

@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.subsystems.driveTrain.IDriveTrainSubsystem
 import org.firstinspires.ftc.teamcode.util.DataLogger;
 
 public class RotateRobotByDegCommand extends CommandBase {
-    public static final double DEFAULT_KP = 0.05f;
-    private static final double MAX_POWER = 0.8f;
+    public static final double DEFAULT_KP = 0.05;
+    private static final double MAX_POWER = 0.8;
 
     private final PController pController;
     private final double degToRotate;
