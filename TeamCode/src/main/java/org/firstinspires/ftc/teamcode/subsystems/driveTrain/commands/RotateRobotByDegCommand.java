@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PController;
 
@@ -48,12 +49,13 @@ public class RotateRobotByDegCommand extends CommandBase {
 
         double power = Math.min(Math.max(rawPower, -MAX_POWER), MAX_POWER);
 
-        this.subsystem.getTelemetry().addData("power", power);
-        this.subsystem.getTelemetry().addData("dist left", distLeft);
-        this.subsystem.getTelemetry().addData("heading dist", headingDist);
-        this.subsystem.getTelemetry().addData("rel heading", this.subsystem.getHeading() - this.STARTING_ANGLE);
-        this.subsystem.getTelemetry().addData("heading", this.subsystem.getHeading());
-        this.subsystem.getTelemetry().update();
+        MultipleTelemetry telemetry = this.subsystem.getTelemetry();
+        telemetry.addData("power", power);
+        telemetry.addData("dist left", distLeft);
+        telemetry.addData("heading dist", headingDist);
+        telemetry.addData("rel heading", this.subsystem.getHeading() - this.STARTING_ANGLE);
+        telemetry.addData("heading", this.subsystem.getHeading());
+        telemetry.update();
 
         this.subsystem.moveSideMotors(power, -power);
     }

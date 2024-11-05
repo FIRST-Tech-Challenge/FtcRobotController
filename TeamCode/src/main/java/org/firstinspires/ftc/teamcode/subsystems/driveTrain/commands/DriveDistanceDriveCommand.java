@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PController;
 
@@ -50,12 +51,12 @@ public class DriveDistanceDriveCommand extends CommandBase {
 
         double power = Math.min(Math.max(rawPower, -MAX_POWER), MAX_POWER);
 
-
-        this.subsystem.getTelemetry().addData("power", power);
-        this.subsystem.getTelemetry().addData("dist", driveDistance);
-        this.subsystem.getTelemetry().addData("rel motor encoder", this.subsystem.getForwardDistanceDriven() - this.STARTING_POS);
-        this.subsystem.getTelemetry().addData("motor encoder", this.subsystem.getForwardDistanceDriven());
-        this.subsystem.getTelemetry().update();
+        MultipleTelemetry telemetry = this.subsystem.getTelemetry();
+        telemetry.addData("power", power);
+        telemetry.addData("dist", driveDistance);
+        telemetry.addData("rel motor encoder", this.subsystem.getForwardDistanceDriven() - this.STARTING_POS);
+        telemetry.addData("motor encoder", this.subsystem.getForwardDistanceDriven());
+        telemetry.update();
 
         this.subsystem.moveSideMotors(power, power);
     }
