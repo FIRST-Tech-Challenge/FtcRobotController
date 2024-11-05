@@ -176,25 +176,29 @@ public class MainMovement extends LinearOpMode {
 
     private void LimbMovement() {
 
+        //open or close chamber claw
         if(gamepad2.x){
             open = !open;
             if(open) {
-                clawServo.setPosition(1);
+                clawServo.setPosition(1); //open
             } else {
-                clawServo.setPosition(0);
+                clawServo.setPosition(0); //close
             }
             sleep(250);
 
         }
 
+        //rotate chamber claw left
         if(gamepad2.left_trigger > 0){
             clawRotate.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
         }
 
+        //rotate chamber claw right
         if(gamepad2.right_trigger > 0){
             clawRotate.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
         }
 
+        //
         if(Math.abs(gamepad2.left_stick_y) > joystickDeadzone){
             linearSlide.setPower(gamepad2.left_stick_y / 2);
         }
