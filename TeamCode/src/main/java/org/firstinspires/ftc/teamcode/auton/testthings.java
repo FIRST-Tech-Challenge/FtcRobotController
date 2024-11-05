@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.myUtil.Hardware;
 import org.firstinspires.ftc.teamcode.myUtil.MecanumHardAuto;
 
-@Autonomous(name="bucket auton")
+@Autonomous(name="testthings")
 public class testthings extends LinearOpMode {
     MecanumHardAuto r = new MecanumHardAuto();
     @Override
@@ -17,7 +17,7 @@ public class testthings extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        r.setLinearSlide(0.5, 20);
-        r.setArm(0.5,20);
+//        r.setLinearSlide(0.5, 20);
+        r.setArm(0.8,20);
     }
 }

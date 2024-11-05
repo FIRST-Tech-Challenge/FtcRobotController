@@ -365,9 +365,9 @@ public class MecanumHardAuto extends Hardware {
         linear_slide.setTargetPosition((int)Math.round(inches));
         linear_slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
-
-        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//
+//        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (!getTolerance(Math.abs(linear_slide.getCurrentPosition()),  Math.abs(linear_slide.getTargetPosition()),10)) {
             linear_slide.setPower(power);
@@ -384,9 +384,6 @@ public class MecanumHardAuto extends Hardware {
         arm.setTargetPosition((int)Math.round(inches));
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
-
-        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (!getTolerance(Math.abs(arm.getCurrentPosition()),  Math.abs(arm.getTargetPosition()),10)) {
             arm.setPower(power);

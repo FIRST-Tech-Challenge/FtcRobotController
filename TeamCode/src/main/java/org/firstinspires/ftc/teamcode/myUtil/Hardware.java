@@ -47,7 +47,7 @@ public class Hardware {
             frm.setDirection(DcMotorSimple.Direction.REVERSE);
             flm.setDirection(DcMotorSimple.Direction.REVERSE);
             blm.setDirection(DcMotorSimple.Direction.FORWARD);
-            brm.setDirection(DcMotorSimple.Direction.FORWARD);
+            brm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         }catch (Exception e) {
             opMode.telemetry.addLine("Drive motors are uninitiated, the robot will not drive forward or backwards");
