@@ -15,6 +15,7 @@ public class HatredAndDepression2 extends LinearOpMode {
     static private DcMotor BRW;
     static private DcMotor ArmL;
     static private DcMotor ArmR;
+    static private double armSpeed = .25;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,35 +37,35 @@ public class HatredAndDepression2 extends LinearOpMode {
             telemetry.update();
             tgtPower = this.gamepad1.left_stick_y;
             tgtPower2 = this.gamepad1.left_stick_x;
-
+            // FLW is the only right moving wheel :(
             if(gamepad1.left_stick_y > 0.3 || gamepad1.left_stick_y < -0.3) {
                 //forward and backwards
                 FLW.setPower(tgtPower);
-                //BLW.setPower(tgtPower);
-                //FRW.setPower(-tgtPower);
-                //BRW.setPower(-tgtPower);
+                BLW.setPower(-tgtPower);
+                FRW.setPower(tgtPower);
+                BRW.setPower(tgtPower);
             } else if (gamepad1.left_stick_x > 0.3 || gamepad1.left_stick_x < -0.3) {
                 FLW.setPower(-tgtPower2);
-                BLW.setPower(-tgtPower2);
-                FRW.setPower(-tgtPower2);
-                BRW.setPower(-tgtPower2);
+                BLW.setPower(tgtPower2);
+                FRW.setPower(tgtPower2);
+                BRW.setPower(tgtPower2);
             } else if (gamepad1.left_bumper) {
                 FLW.setPower(0.5);
-                BLW.setPower(-0.5);
-                FRW.setPower(0.5);
-                BRW.setPower(-0.5);
-            } else if (gamepad1.right_bumper) {
-                FLW.setPower(-0.5);
                 BLW.setPower(0.5);
                 FRW.setPower(-0.5);
                 BRW.setPower(0.5);
+            } else if (gamepad1.right_bumper) {
+                FLW.setPower(-0.5);
+                BLW.setPower(-0.5);
+                FRW.setPower(0.5);
+                BRW.setPower(-0.5);
             } else if (gamepad1.left_trigger > .75 && !stop) {
                 new Thread(() -> {
                     try {
                         FLW.setPower(.5);
-                        BLW.setPower(-.5);
-                        FRW.setPower(.5);
-                        BRW.setPower(-.5);
+                        BLW.setPower(.5);
+                        FRW.setPower(-.5);
+                        BRW.setPower(.5);
                         Thread.sleep(210);
                         disablePowerWheels();
 
@@ -77,13 +78,12 @@ public class HatredAndDepression2 extends LinearOpMode {
                 }).start();
 
             } else if (gamepad1.right_trigger > .75 && !stop) {
-
                 new Thread(() -> {
                     try {
                         FLW.setPower(-.5);
-                        BLW.setPower(.5);
-                        FRW.setPower(-.5);
-                        BRW.setPower(.5);
+                        BLW.setPower(-.5);
+                        FRW.setPower(.5);
+                        BRW.setPower(-.5);
                         Thread.sleep(210);
                         disablePowerWheels();
 
@@ -93,29 +93,29 @@ public class HatredAndDepression2 extends LinearOpMode {
                     } catch(Exception e) {
                     }
                 }).start();
-            } else if(gamepad1.dpad_up) {
-                FLW.setPower(1);
-                // wrong, should go forward
-            } else if(gamepad1.dpad_down){
-                FRW.setPower(1);
-                // right, just change 1 to -1
-            } else if(gamepad1.dpad_left){
-                BLW.setPower(1);
-                // right
-            } else if(gamepad1.dpad_right){
-                BRW.setPower(1);
-                // right
-            }else {
+            } else if (gamepad1.circle) {
+                new Thread(() -> {
+                    try {
+                        if (armSpeed == .25) {
+                            armSpeed = .5;
+                        } else if (armSpeed == .5) {
+                            armSpeed = .25;
+                        }
+                        Thread.sleep(500);
+                    } catch (Exception e) {
+                    }
+                });
+            } else {
                 disablePowerWheels();
             }
 
             //arm
             if(gamepad1.right_stick_y > 0.5){
-                ArmL.setPower(.5);
-                ArmR.setPower(-.5);
+                ArmL.setPower(-armSpeed);
+                ArmR.setPower(armSpeed);
             }else if(gamepad1.right_stick_y < -0.5) {
-                ArmL.setPower(-.5);
-                ArmR.setPower(.5);
+                ArmL.setPower(armSpeed);
+                ArmR.setPower(-armSpeed);
             }else {
                 disableArmMotors();
             }
@@ -146,6 +146,7 @@ public class HatredAndDepression2 extends LinearOpMode {
         telemetry.addData("ArmR Power:", ArmR.getPower());
         telemetry.addData("Left Stick X:", tgtPower2);
         telemetry.addData("Left Stick Y:", tgtPower);
+        telemetry.addData("Arm Rise Speed:", armSpeed);
         telemetry.update();
     }
 }
