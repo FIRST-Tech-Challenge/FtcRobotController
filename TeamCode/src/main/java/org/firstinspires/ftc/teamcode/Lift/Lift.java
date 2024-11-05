@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Lift;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,14 +13,25 @@ import org.firstinspires.ftc.teamcode.Controllers.FeedForward;
 import org.firstinspires.ftc.teamcode.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Utils.MotionProfile;
 
+@Config
 public class Lift {
     HardwareMap hardwareMap;
-    FeedForward feedForward;
+    FeedForward feedForwardLeft;
+    FeedForward feedForwardRight;
     PID pid;
     int motorPower;
     int currentPosition;
     DcMotorEx liftMotorLeft;
     DcMotorEx liftMotorRight;
+    public static double kA=0.12;
+    public static double kV=0.13;
+    public static double kSL=0.067;
+    public static double kSR=0.067;
+    public static double kP = 0.25;
+    public static double kI = 0;
+    public static double kD = 0;
+    double spoolRadius = 1.0;
+    int ticksPerRev = 1024;
     // For all of these, set up a tuner for the lift to tune these
     // in FTC dash. Have the option to use any of the tuned distances motion profiles
 
@@ -69,31 +81,35 @@ public class Lift {
         liftMotorRight.setPower(0);
 
         currentPosition = 0;
+        feedForwardLeft = new FeedForward(kV, kA, kSL);
+        feedForwardRight = new FeedForward(kV, kA, kSR);
+        pid = new PID(kP, kI, kD);
     }
 
-
+    private int inchesToTicks(double inches) {
+        return (int) ((inches / (2 * Math.PI * spoolRadius)) * ticksPerRev);
+    }
     // Rather than having an action per basket, come up with descriptive names
     // for all your heights and just pass those into the action
     // so rename this to be more general
 
     // In your action set up a motionProfile object NOT IN RUN, but as a "member variable"
     // It should get set up when you pass in the string/enum for the height you want to go at
-    public Action basketOne() {
-        return new Action() {
-            //private boolean initialized = false;
+    public Action moveToHeight(double targetHeightInches) {
+        int targetPosition = inchesToTicks(targetHeightInches);
 
+        return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                //if (!initialized) {
-                //    initialized = true;
-                //}
+                int currentPosition = liftMotorLeft.getCurrentPosition();
+                double ffPowerLeft = feedForwardLeft.calculate(0, targetPosition - currentPosition);
+                double ffPowerRight = feedForwardLeft.calculate(0, targetPosition - currentPosition);
+                double pidPower = pid.calculate(targetPosition, currentPosition);
 
-
-                currentPosition=liftMotorLeft.getCurrentPosition();
-                pid.calculate(24, currentPosition);  // Add feedforward to this!
                 liftMotorLeft.setPower(motorPower);
                 liftMotorRight.setPower(motorPower);
-                return currentPosition==24;
+
+                return Math.abs(targetPosition - currentPosition) < 10;
             }
         };
     }
