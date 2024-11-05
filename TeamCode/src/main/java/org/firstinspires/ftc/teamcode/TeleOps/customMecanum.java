@@ -181,11 +181,11 @@ public class customMecanum extends OpMode {
 
         if(gamepad2.left_bumper) {
             r.linear_slide.setDirection(DcMotorSimple.Direction.REVERSE);
-            r.linear_slide.setPower(0.3);
+            r.linear_slide.setPower(0.6);
         }
         else if(gamepad2.right_bumper){
             r.linear_slide.setDirection(DcMotorSimple.Direction.FORWARD);
-            r.linear_slide.setPower(0.3);
+            r.linear_slide.setPower(0.6);
         }else{
             r.linear_slide.setPower(0);
         }
@@ -208,8 +208,11 @@ public class customMecanum extends OpMode {
             r.claw.setPosition(0);
         }
 
-        r.arm1.setPosition(Math.abs(gamepad2.left_stick_y - 1) * 0.5);
-
+        if(gamepad2.left_stick_y == 0){
+            r.arm1.setPosition(0.3);
+        }else {
+            r.arm1.setPosition(Math.abs(gamepad2.left_stick_y) * 0.5);
+        }
 
         if(gamepad2.right_stick_y > 0){
             r.arm.setDirection(DcMotorSimple.Direction.REVERSE);
