@@ -210,7 +210,7 @@ public class customMecanum extends OpMode {
 
         if(gamepad2.left_stick_y == 0){
             r.arm1.setPosition(0.3);
-        }else {
+        }else {//
             r.arm1.setPosition(Math.abs(gamepad2.left_stick_y) * 0.5);
         }
 
