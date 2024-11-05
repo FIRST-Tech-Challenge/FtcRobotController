@@ -200,13 +200,13 @@ public class MainMovement extends LinearOpMode {
         //rotate chamber claw left
         if(gamepad2.left_trigger > 0){
             clawRotate.setPower(clawSpeed * (gamepad2.left_trigger - gamepad2.right_trigger));
-            telemetry.addData("rotating chamber claw left", null)
+            telemetry.addData("rotating chamber claw left", null);
         }
 
         //rotate chamber claw right
         if(gamepad2.right_trigger > 0){
             clawRotate.setPower(clawSpeed * (gamepad2.right_trigger - gamepad2.left_trigger));
-            telemetry.addData("rotating chamber claw right", null)
+            telemetry.addData("rotating chamber claw right", null);
         }
 
         // moves linear slide
