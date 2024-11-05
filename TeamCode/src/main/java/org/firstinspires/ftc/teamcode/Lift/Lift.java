@@ -32,7 +32,7 @@ public class Lift {
     public static double kP = 0.25;
     public static double kI = 0;
     public static double kD = 0;
-    double spoolRadius = 1.404; // [in]
+    double spoolRadius =  0.702; // [in]
     int ticksPerRev = 1024;
     public static double maxAcceleration = 50.0;
     public static double maxVelocity = 60;
