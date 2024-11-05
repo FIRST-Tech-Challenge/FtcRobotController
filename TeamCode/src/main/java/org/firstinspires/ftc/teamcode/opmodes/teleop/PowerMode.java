@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 public enum PowerMode {
-    REGULAR(.5),
-    NITRO(.8),
+    REGULAR(.8),
+    NITRO(1),
     SLOW(.3);
 
     PowerMode(double powerRatio) {

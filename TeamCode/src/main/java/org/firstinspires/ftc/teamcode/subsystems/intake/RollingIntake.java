@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems.intake;
 
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 
@@ -20,11 +21,17 @@ public class RollingIntake extends SonicSubsystemBase {
     private Servo elbowServo;
 
 
+    NormalizedColorSensor colorSensor;
+
     private Telemetry telemetry;
 
     GamepadEx gamepad;
 
     private DriverFeedback feedback;
+
+    private IntakeState state;
+
+    private enum IntakeState { Hold, Intake, Outtake }
 
     public RollingIntake(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
@@ -33,32 +40,69 @@ public class RollingIntake extends SonicSubsystemBase {
 
         this.elbowServo = hardwareMap.get(Servo.class, "Elbow");
 
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+
         this.gamepad = gamepad;
         this.telemetry = telemetry;
         this.feedback = feedback;
 
         this.elbowServo.setPosition(0.5);
+
+        state = IntakeState.Hold;
     }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+
+        if(state == IntakeState.Intake) {
+            double d = GetDepth();
+
+            if(d > 40) {
+                this.leftServo.setPower(1);
+                this.rightServo.setPower(-1);
+            } else {
+                Hold();
+                telemetry.addLine("Auto stop");
+            }
+        } else if (state == IntakeState.Outtake) {
+            this.leftServo.setPower(-1);
+            this.rightServo.setPower(1);
+        } else {
+            this.leftServo.setPower(0);
+            this.rightServo.setPower(0);
+        }
+    }
+
     public void SetElbowInIntakePosition() {
         this.elbowServo.setPosition(0.5);
     }
+
     public void SetElbowInSpecimenPosition() {
         this.elbowServo.setPosition(0.85);
-
     }
 
     public void Intake() {
-        this.leftServo.setPower(1);
-        this.rightServo.setPower(-1);
+        state = IntakeState.Intake;
     }
 
     public void Outtake() {
-        this.leftServo.setPower(-1);
-        this.rightServo.setPower(1);
+        state = IntakeState.Outtake;
     }
 
     public void Hold(){
-        this.leftServo.setPower(0);
-        this.rightServo.setPower(0);
+        state = IntakeState.Hold;
     }
+
+    public double GetDepth() {
+        if (colorSensor instanceof DistanceSensor) {
+            double depth = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
+            telemetry.addData("Left distance (mm)", "%.3f", depth);
+            return depth;
+        }
+
+        return 1000000;
+    }
+
 }

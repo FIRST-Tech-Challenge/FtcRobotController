@@ -37,6 +37,8 @@ public class FourWheelMecanumTeleOp extends OpModeTemplate {
 
         switchToMode(PowerMode.REGULAR);
 
+        // OPERATOR Actions
+
         // Delivery Pivot
         new Trigger(() -> gamepad2.right_stick_y > 0.5)
                 .whenActive(new InstantCommand(deliveryPivot::RotateTowardsIntake, deliveryPivot))
@@ -63,13 +65,24 @@ public class FourWheelMecanumTeleOp extends OpModeTemplate {
                 .whenActive(new InstantCommand(deliverySlider::Collapse, deliverySlider))
                 .whenInactive(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new InstantCommand(rollingIntake::Intake, rollingIntake))
-                .whenReleased(new InstantCommand(rollingIntake::Hold, rollingIntake));
+        // Intake and Outtake
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(rollingIntake::Outtake, rollingIntake))
-                .whenReleased(new InstantCommand(rollingIntake::Hold, rollingIntake));
+        new Trigger(() -> gamepad2.right_trigger > 0.5)
+                .whenActive(new InstantCommand(rollingIntake::Intake, rollingIntake))
+                .whenInactive(new InstantCommand(rollingIntake::Hold, rollingIntake));
+
+        new Trigger(() -> gamepad2.left_trigger > 0.5)
+                .whenActive(new InstantCommand(rollingIntake::Outtake, rollingIntake))
+                .whenInactive(new InstantCommand(rollingIntake::Hold, rollingIntake));
+
+        // Toggle wrist angle
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
+                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
+                .whenHeld(new InstantCommand(rollingIntake::SetElbowInIntakePosition, rollingIntake));
+
+        // DRIVER Actions
 
         // Drivetrain speed
         new Trigger(() -> gamepad1.right_trigger > 0.5)
@@ -86,12 +99,6 @@ public class FourWheelMecanumTeleOp extends OpModeTemplate {
         // servo test, for the speciman part claw thingy
         driverGamepad.getGamepadButton(GamepadKeys.Button.B)
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));
-
-        // Toggle wrist angle
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
-                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake));
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenHeld(new InstantCommand(rollingIntake::SetElbowInIntakePosition, rollingIntake));
 
         // Register all subsystems
         register(driveTrain, deliveryPivot, feedback, rollingIntake);
