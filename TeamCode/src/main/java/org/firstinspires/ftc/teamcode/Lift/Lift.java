@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.FeedForward;
 import org.firstinspires.ftc.teamcode.Controllers.PID;
@@ -33,6 +34,9 @@ public class Lift {
     public static double kD = 0;
     double spoolRadius = 1.0;
     int ticksPerRev = 1024;
+    public static double maxAcceleration = 50.0;
+    public static double maxVelocity = 60;
+    boolean reverse;
     // For all of these, set up a tuner for the lift to tune these
     // in FTC dash. Have the option to use any of the tuned distances motion profiles
 
@@ -98,14 +102,16 @@ public class Lift {
     // It should get set up when you pass in the string/enum for the height you want to go at
     public Action moveToHeight(double targetHeightInches) {
         int targetPosition = inchesToTicks(targetHeightInches);
-
+        boolean reverse = targetPosition < 0;
+        MotionProfile motionProfile = new MotionProfile(targetPosition, maxVelocity, maxAcceleration, maxAcceleration, reverse);
+        ElapsedTime t = new ElapsedTime();
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 int currentPosition = liftMotorLeft.getCurrentPosition();
-                double ffPowerLeft = feedForwardLeft.calculate(0, targetPosition - currentPosition);
-                double ffPowerRight = feedForwardLeft.calculate(0, targetPosition - currentPosition);
-                double pidPower = pid.calculate(targetPosition, currentPosition);
+                double ffPowerLeft = feedForwardLeft.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
+                double ffPowerRight = feedForwardLeft.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
+                double pidPower = pid.calculate(motionProfile.getPos(t.seconds()), currentPosition);
                 motorPowerLeft = pidPower+ffPowerLeft;
                 motorPowerRight = pidPower+ffPowerRight;
                 liftMotorLeft.setPower(motorPowerLeft);
@@ -115,6 +121,5 @@ public class Lift {
         };
     }
 
-    // Write another action that uses the joystick to move up and down. 
-
+    // Write another action that uses the joystick to move up and down.
 }
