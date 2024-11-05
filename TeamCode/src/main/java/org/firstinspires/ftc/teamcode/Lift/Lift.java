@@ -19,7 +19,8 @@ public class Lift {
     FeedForward feedForwardLeft;
     FeedForward feedForwardRight;
     PID pid;
-    int motorPower;
+    double motorPowerLeft;
+    double motorPowerRight;
     int currentPosition;
     DcMotorEx liftMotorLeft;
     DcMotorEx liftMotorRight;
@@ -105,10 +106,10 @@ public class Lift {
                 double ffPowerLeft = feedForwardLeft.calculate(0, targetPosition - currentPosition);
                 double ffPowerRight = feedForwardLeft.calculate(0, targetPosition - currentPosition);
                 double pidPower = pid.calculate(targetPosition, currentPosition);
-
-                liftMotorLeft.setPower(motorPower);
-                liftMotorRight.setPower(motorPower);
-
+                motorPowerLeft = pidPower+ffPowerLeft;
+                motorPowerRight = pidPower+ffPowerRight;
+                liftMotorLeft.setPower(motorPowerLeft);
+                liftMotorRight.setPower(motorPowerRight);
                 return Math.abs(targetPosition - currentPosition) < 10;
             }
         };
