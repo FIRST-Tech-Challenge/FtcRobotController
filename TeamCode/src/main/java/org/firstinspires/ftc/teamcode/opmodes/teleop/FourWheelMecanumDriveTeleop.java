@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
 
-@TeleOp (name = "test_teleop")
+//@TeleOp (name = "test_teleop")
 @SuppressWarnings("unused")
 public class FourWheelMecanumDriveTeleop extends OpModeTemplate {
 

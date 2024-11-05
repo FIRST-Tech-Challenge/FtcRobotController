@@ -55,20 +55,32 @@ public class RollingIntake extends SonicSubsystemBase {
     public void periodic() {
         super.periodic();
 
+        double d = GetDepth();
+
+        if(d >= 40) {
+            feedback.TurnLedRed();
+        } else {
+            feedback.TurnLedGreen();
+        }
 
         if(state == IntakeState.Intake) {
-            double d = GetDepth();
-
             if(d > 40) {
-                this.leftServo.setPower(1);
-                this.rightServo.setPower(-1);
+                this.leftServo.setPower(-1);
+                this.rightServo.setPower(1);
             } else {
                 Hold();
+                feedback.DriverRumbleBlip();
+                feedback.OperatorRumbleLeft();
                 telemetry.addLine("Auto stop");
             }
         } else if (state == IntakeState.Outtake) {
-            this.leftServo.setPower(-1);
-            this.rightServo.setPower(1);
+            if(d > 130) {
+                feedback.DriverRumbleBlip();
+                feedback.OperatorRumbleLeft();
+            }
+            this.leftServo.setPower(1);
+            this.rightServo.setPower(-1);
+
         } else {
             this.leftServo.setPower(0);
             this.rightServo.setPower(0);

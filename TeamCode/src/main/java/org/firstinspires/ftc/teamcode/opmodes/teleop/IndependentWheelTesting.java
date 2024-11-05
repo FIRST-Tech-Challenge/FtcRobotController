@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.IndependentCtrlWheelMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 
-@TeleOp (name = "wheel_test")
+//@TeleOp (name = "wheel_test")
 @SuppressWarnings("unused")
 public class IndependentWheelTesting extends OpModeTemplate {
 

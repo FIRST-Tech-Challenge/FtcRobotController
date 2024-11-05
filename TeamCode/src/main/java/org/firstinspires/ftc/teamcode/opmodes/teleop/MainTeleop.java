@@ -11,15 +11,14 @@ import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSlider;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 
 /**
  * This is old mainTeleop
  */
-@TeleOp (name = "main_teleop")
+@TeleOp
 @SuppressWarnings("unused")
-public class FourWheelMecanumTeleOp extends OpModeTemplate {
+public class MainTeleop extends OpModeTemplate {
 
     private TeleFourWheelMecanumDriveTrain driveTrain;
 
@@ -30,7 +29,6 @@ public class FourWheelMecanumTeleOp extends OpModeTemplate {
         DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
         DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback);
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback);
-        IntakeSlider intakeSlider = new IntakeSlider(hardwareMap, operatorGamepad, telemetry, feedback);
         RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
 
         driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback);
@@ -96,6 +94,7 @@ public class FourWheelMecanumTeleOp extends OpModeTemplate {
         // Robot direction
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));
+
         // servo test, for the speciman part claw thingy
         driverGamepad.getGamepadButton(GamepadKeys.Button.B)
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));

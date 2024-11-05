@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.feedback;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,14 +14,34 @@ public class DriverFeedback extends SubsystemBase {
 
     private final Telemetry telemetry;
 
-    private final int RumbleTime = 1500;
+    private DigitalChannel redLED;
+
+    private DigitalChannel greenLED;
+
+    private final int RumbleTime = 500;
 
     public DriverFeedback(HardwareMap hardwareMap, GamepadEx driverGamepad, GamepadEx operatorGamepad, Telemetry telemetry) {
         this.driverGamepad = driverGamepad;
         this.operatorGamepad = operatorGamepad;
         this.telemetry = telemetry;
+
+        redLED = hardwareMap.get(DigitalChannel.class, "Red");
+        greenLED = hardwareMap.get(DigitalChannel.class, "Green");
+
+        // Set mode to output
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
+    public void TurnLedRed() {
+        redLED.setState(false);
+        greenLED.setState(true);
+    }
+
+    public void TurnLedGreen() {
+        redLED.setState(true);
+        greenLED.setState(false);
+    }
     // Driver rumbles
 
     public void DriverStopRumble() {
