@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.COMPETITIONCODE;
 import com.parshwa.drive.tele.Drive;
 import com.parshwa.drive.tele.DriveModes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,6 +31,7 @@ public class Teleop extends LinearOpMode {
     private DcMotor sc, sr;
     @Override
     public void runOpMode() throws InterruptedException {
+        RevTouchSensor touchSensor = hardwareMap.get(RevTouchSensor.class, "touch");
         clawServo.init(hardwareMap, "cs");
         clawRotateServo.init(hardwareMap, "crs");
         clawRotateServo2.init(hardwareMap, "crs2");
@@ -61,23 +63,29 @@ public class Teleop extends LinearOpMode {
             if(gamepad1.right_bumper){
                 SPED = SPED * 2.0;
             }
-
+            telemetry.addLine(String.valueOf(touchSensor.getValue()));
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
             //driver2
-            SM.move(gamepad2.left_stick_y,gamepad2.right_stick_x, true);
+            SM.move(gamepad2.left_stick_y,gamepad2.right_stick_x, gamepad2.right_trigger > 0.1);
+            if(gamepad2.left_trigger > 0.1){
+                SM.setPos(487);
+            }
+            if(touchSensor.isPressed()){
+                SM.reset();
+            }
             telemetry.addLine(String.valueOf(sr.getCurrentPosition()));
             telemetry.addLine(String.valueOf(gamepad2.right_stick_x));
             if(gamepad2.b) {
                 clawRotateServo.setServoPosition(0.1);
             }
             if(gamepad2.a) {
-                clawRotateServo.setServoPosition(0.0);
+                clawRotateServo.setServoPosition(0.05);
             }
             if(gamepad2.y) {
-                clawRotateServo.setServoPosition(0.6);
+                clawRotateServo.setServoPosition(0.4);
             }
             if(gamepad2.x) {
-                clawRotateServo.setServoPosition(0.7);
+                clawRotateServo.setServoPosition(0.6);
             }
             if(gamepad2.right_bumper){
                 clawServo.setServoPosition(0.39);
@@ -94,7 +102,7 @@ public class Teleop extends LinearOpMode {
             }else if(gamepad2.dpad_down){
                 clawRotateServo2.setServoPosition(0.9);
             }else{
-                clawRotateServo2.setServoPosition(0.55);
+                clawRotateServo2.setServoPosition(0.5);
             }
         }
         File ThreadManger = AppUtil.getInstance().getSettingsFile("ThreadManger.txt");

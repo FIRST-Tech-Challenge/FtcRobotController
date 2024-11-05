@@ -12,10 +12,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Drive implements DriveInterface {
     private  Telemetry telemetry;
-    private DcMotor FrontLeftMotor;
-    private DcMotor FrontRightMotor;
-    private DcMotor BackLeftMotor;
-    private DcMotor BackRightMotor;
+    private DcMotor frontLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor backRightMotor;
     private DriveBuilder builder = new DriveBuilder();
     /**
      * This function is used to move the robot using inputs from controller
@@ -92,14 +92,21 @@ public class Drive implements DriveInterface {
         leftBackPower  = (forward - strafe + rotate) * speed;
         rightBackPower = (forward + strafe - rotate) * speed;
 
-        FrontRightMotor.setPower(rightFrontPower);
-        BackRightMotor.setPower(rightBackPower);
-        FrontLeftMotor.setPower(leftFrontPower);
-        BackLeftMotor.setPower(leftBackPower);
-        FrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        double max = Math.max(1.0,Math.max(rightBackPower,Math.max(rightFrontPower,Math.max(leftBackPower,leftFrontPower))));
+
+        leftFrontPower /= max;
+        rightFrontPower/= max;
+        leftBackPower  /= max;
+        rightBackPower /= max;
+
+        frontRightMotor.setPower(rightFrontPower);
+        backRightMotor.setPower(rightBackPower);
+        frontLeftMotor.setPower(leftFrontPower);
+        backLeftMotor.setPower(leftBackPower);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     private void FeildOreintedMode(double forward, double strafe, double rotate){
         double speed = builder.getSpeed();
@@ -177,19 +184,19 @@ public class Drive implements DriveInterface {
      * This initilizes all the required parts of this module
      * **/
     public void init(@NonNull HardwareMap hardwareMap, Telemetry telemetry) {
-        FrontLeftMotor  = hardwareMap.dcMotor.get(builder.getLeftFront());
-        FrontRightMotor = hardwareMap.dcMotor.get(builder.getRightFront());
-        BackLeftMotor   = hardwareMap.dcMotor.get(builder.getLeftBack());
-        BackRightMotor  = hardwareMap.dcMotor.get(builder.getRightBack());
+        frontLeftMotor = hardwareMap.dcMotor.get(builder.getLeftFront());
+        frontRightMotor = hardwareMap.dcMotor.get(builder.getRightFront());
+        backLeftMotor = hardwareMap.dcMotor.get(builder.getLeftBack());
+        backRightMotor = hardwareMap.dcMotor.get(builder.getRightBack());
 
-        FrontLeftMotor.setDirection(builder.getMotorOrientationLeftFront());
-        FrontRightMotor.setDirection(builder.getMotorOrientationRightFront());
-        BackLeftMotor.setDirection(builder.getMotorOrientationLeftBack());
-        BackRightMotor.setDirection(builder.getMotorOrientationRightBack());
-        FrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setDirection(builder.getMotorOrientationLeftFront());
+        frontRightMotor.setDirection(builder.getMotorOrientationRightFront());
+        backLeftMotor.setDirection(builder.getMotorOrientationLeftBack());
+        backRightMotor.setDirection(builder.getMotorOrientationRightBack());
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.telemetry = telemetry;
         telemetry.addLine("Done initilizing drive");
         telemetry.update();
