@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,10 +11,10 @@ public class Odometry_Info {
     DcMotorEx odoBack = null;
 
     /*static variables for odometry sensor stats*/
-    static double odoTPM = 2000;
+    static double odoTPM = 2000.0;
     static double C = 2*Math.PI*16;
-    static double L = 172;
-    static double B = 146;
+    static double L = 19.05;
+    static double B = 146.0;
 
     /* Variables to notate the current positions of the robot*/
     double Xc = 0.0;
@@ -47,9 +48,13 @@ public class Odometry_Info {
         Cn2 = C*(odoLeft.getCurrentPosition()/odoTPM);
         Cn3 = C*(odoBack.getCurrentPosition()/odoTPM);
 
-        Xc += (Cn1+Cn2/2);
-        cur0 += (Cn2-Cn1/L);
-        Xp += (Cn3 - (B*cur0));
+        Xc = ((Cn1+Cn2)/2);
+        Theta0 = cur0;
+        cur0 = ((Cn2-Cn1)/L)*6;
+        Xp = (Cn3 - (B*cur0));
+
+        curX = (Xc*Math.cos(Theta0) - Xp*Math.sin(Theta0));
+        curY = (Xc*Math.sin(Theta0) + Xp*Math.cos(Theta0));
     }
 
     public void setTargetPos(double x, double y, double O){
@@ -65,6 +70,16 @@ public class Odometry_Info {
         else{
             return false;
         }
+    }
+
+    public void resetEncoders(){
+        odoLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        odoRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        odoBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        odoLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        odoRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        odoBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 }

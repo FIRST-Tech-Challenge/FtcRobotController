@@ -86,6 +86,7 @@ public class JarlsCHasse {
         double leftBackPower = y-x+rx;
         double rightBackPower = y+x-rx;
 
+
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
