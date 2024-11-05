@@ -133,6 +133,11 @@ public class basicTelemBlue extends LinearOpMode {
     }
   }
 
+  public void topBucketPreset(){
+      //setPivot();
+      //setSlide();
+  }
+
     /**
      * Initializes the robot.<br>
      * Starts all the devices and maps where they go
@@ -209,7 +214,7 @@ public class basicTelemBlue extends LinearOpMode {
         slide.setPower(0);
 
         limitSlide = 4750;
-        limitPivot = 3000;
+        limitPivot = 2750;
 
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
 
@@ -241,8 +246,8 @@ public class basicTelemBlue extends LinearOpMode {
   }
 
   public void setPivot(double x) {
-        if(gamepad2.b)
-            limitPivot+=250;
+        if(gamepad2.left_bumper)
+            limitPivot+=500;
     if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
       x = 0;
     } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
@@ -257,8 +262,8 @@ public class basicTelemBlue extends LinearOpMode {
       slide.setPower(-x*2);
     pivot.setPower(x);
 
-    if(limitPivot>3000)
-        limitPivot=3000;
+    if(limitPivot>2750)
+        limitPivot=2750;
   }
 
   /**
