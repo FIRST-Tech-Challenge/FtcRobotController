@@ -19,6 +19,7 @@ public class AutonomousHandler {
     private ElapsedTime timer = new ElapsedTime();
     private double servoWaitStart = timer.milliseconds();
     private boolean waiting = false;
+    private double stateStartTime = timer.milliseconds();
 
     public AutonomousHandler(HashMap<Integer, SystemState> pathList, ArmSubSystem armSubSystem, DriveBaseSubsystem driveBaseSystem, int StartAtStep, Telemetry thisTelemetry) {
         systemStateReference = StartAtStep;
@@ -39,7 +40,7 @@ public class AutonomousHandler {
     public void periodicFunction() {
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("Auto Stage", systemStateReference);
-        if (driveSubSys.isAtReference(packet, timer.milliseconds()) && armSubSys.isAtReference(packet)) {
+        if ((driveSubSys.isAtReference(packet, timer.milliseconds()) && armSubSys.isAtReference(packet)) || ((stateStartTime + (Objects.requireNonNull(path.get(systemStateReference)).ignorePosTime * 1000)) < timer.milliseconds())) {
             if (Objects.requireNonNull(path.get(systemStateReference + 1)).wristPosition == null) {
                 theTelemetry.addData("driveSystemStopped", "yes");
                 packet.put("driveSystemStopped", "yes");
@@ -50,6 +51,7 @@ public class AutonomousHandler {
                 waiting = true;
             } else if (timer.milliseconds() > (servoWaitStart + 1500)) {
                 waiting = false;
+                stateStartTime = timer.milliseconds();
                 theTelemetry.addData("driveSystemStopped", "changing");
                 packet.put("driveSystemStopped", "changing");
                 systemStateReference = systemStateReference + 1;

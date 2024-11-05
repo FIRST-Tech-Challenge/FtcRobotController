@@ -67,12 +67,12 @@ public class ArmSubSystem {
             case CHAMBER_B:
                 positionalZone = armPoseZone.CHAMBER;
                 extendoReference = 0;
-                capstanReference = 400;
+                capstanReference = 250;
                 break;
             case CHAMBER_A:
                 positionalZone = armPoseZone.CHAMBER;
                 extendoReference = 0;
-                capstanReference = 600;
+                capstanReference = 400;
                 break;
             case BASKET:
                 positionalZone = armPoseZone.OTHER;
@@ -194,7 +194,7 @@ public class ArmSubSystem {
             int capInt = cap.getCurrentPosition();
             int extendoInt = extendo.getCurrentPosition();
             boolean b = (extendoInt < (50 + extendoReference)) && (extendoInt > (extendoReference - 50));
-            boolean a = (capInt < (30 + capstanReference)) && (capInt > (capstanReference - 30));
+            boolean a = (capInt < (15 + capstanReference)) && (capInt > (capstanReference - 15));
             telemetry.addData("CapAcceptable", a);
             telemetry.addData("ExtendoAcceptable", b);
             packet.put("ExtendoAcceptable", b);

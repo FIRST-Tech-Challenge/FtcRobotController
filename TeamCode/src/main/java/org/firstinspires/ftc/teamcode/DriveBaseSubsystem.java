@@ -106,8 +106,8 @@ public class DriveBaseSubsystem {
 
     void periodicUpdate(TelemetryPacket packet) {
         currentPose.set(_odometry.getPosition());
-        driveMech(-translationX.getOutput((float) currentPose.y, (float) goal.x, packet, "transX"), translationY.getOutput((float) currentPose.x, (float) goal.y, packet, "transY"), headingPID.getOutput((float) -currentPose.h, (float) goal.h, packet, "head"), Math.toRadians(currentPose.h), packet);
-        telemetry.addData("Current Pose", "(" + currentPose.x + ", " + currentPose.y + ", " + currentPose.x + ")");
+        driveMech(-translationX.getOutput((float) -currentPose.y, (float) goal.x, packet, "transX"), translationY.getOutput((float) -currentPose.x, (float) goal.y, packet, "transY"), headingPID.getOutput((float) -currentPose.h, (float) goal.h, packet, "head"), Math.toRadians(currentPose.h), packet);
+        telemetry.addData("Current Pose", "(" + -currentPose.x + ", " + currentPose.y + ", " + currentPose.h + ")");
         telemetry.addData("Goal Pose", "(" + goal.x + ", " + goal.y + ", " + goal.x + ")");
         packet.fieldOverlay().fillRect(currentPose.y, currentPose.x, 18,18);
         packet.put("x", currentPose.y);
@@ -123,12 +123,12 @@ public class DriveBaseSubsystem {
     public boolean isAtReference(TelemetryPacket packet, double time) {
         boolean x, y, h;
         if (time > 20000) {
-            x = ((goal.x-2) < currentPose.y) && (currentPose.y < (goal.x + 2));
-            y = ((goal.y-2) < currentPose.x) && (currentPose.x < (goal.y + 2));
+            x = ((goal.x-2) < -currentPose.y) && (-currentPose.y < (goal.x + 2));
+            y = ((goal.y-2) < -currentPose.x) && (-currentPose.x < (goal.y + 2));
             h = Math.abs(Math.abs(currentPose.h) - Math.abs(goal.h)) < 6;
         } else {
-            x = ((goal.x-1) < currentPose.y) && (currentPose.y < (goal.x + 1));
-            y = ((goal.y-1) < currentPose.x) && (currentPose.x < (goal.y + 1));
+            x = ((goal.x-1) < -currentPose.y) && (-currentPose.y < (goal.x + 1));
+            y = ((goal.y-1) < -currentPose.x) && (-currentPose.x < (goal.y + 1));
             h = Math.abs(Math.abs(currentPose.h) - Math.abs(goal.h)) < 4;
         }
 //        boolean h = ((goal.x - 2) < -currentPose.h) && (-currentPose.h < (goal.h + 2));
