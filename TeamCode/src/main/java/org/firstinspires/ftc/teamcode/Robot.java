@@ -55,8 +55,8 @@ public class Robot {
 
         driveSubsystem.setDefaultCommand(defaultDriveCommand);
 
-        Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
-        speedVariationTrigger.whileActiveContinuous(() -> driveSubsystem.setSpeedMultiplier(Math.abs(driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - 1) * 0.4 + 0.2));
+        Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
+        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());
         speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
@@ -75,6 +75,7 @@ public class Robot {
 
     public void run() {
         CommandScheduler.getInstance().run();
+        opMode.telemetry.addData("Speed Multiplier",driveSubsystem.speedMultiplier);
         opMode.telemetry.addData("Y axis:", driverGamepad.getLeftY());
         opMode.telemetry.addData("Is fieldcentric?",driveSubsystem.fieldCentric);
         opMode.telemetry.update();

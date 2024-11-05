@@ -30,7 +30,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final BHI260IMU imu;
 
-    private double speedMultiplier = 1.0;
+    public double speedMultiplier = 1.0;
     public boolean fieldCentric = true;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
@@ -119,4 +119,12 @@ public class DriveSubsystem extends SubsystemBase {
     private double getHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
+
+    public void changeSpeedMultiplier(){
+        if (speedMultiplier ==1){
+            speedMultiplier = 0.5;
+        }else{speedMultiplier=1;
+        }
+    }
 }
+
