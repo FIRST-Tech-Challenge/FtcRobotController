@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 import org.firstinspires.ftc.teamcode.*;
 
-@Autonomous(name="TeleOp", group = "Real")
+@Autonomous(name="Autonomous", group = "Real")
 public class Parking_with_roadrunner extends LinearOpMode {
 
     @Override
@@ -30,18 +30,18 @@ public class Parking_with_roadrunner extends LinearOpMode {
         robot.configureAutoSetting();
 
         int InchToTile= org.firstinspires.ftc.teamcode.Constants.INCH_TO_TILE;
-        Pose2d initialPose = new Pose2d(1.5*InchToTile, 0, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(1.5*InchToTile, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        boolean isTouchingLowRung=true;
+        boolean isTouchingLowRung=false;
 
         TrajectoryActionBuilder touchLowRung = drive.actionBuilder(initialPose)
-                        .lineToYConstantHeading(2.5*InchToTile)
-                                .lineToXConstantHeading(2.5*InchToTile);
+                        .strafeTo(new Vector2d(1.5*InchToTile,2.5*InchToTile))
+                                .strafeTo(new Vector2d(2.5*InchToTile,2.5*InchToTile));
 
         TrajectoryActionBuilder parkObzone = drive.actionBuilder(initialPose)
-                        .lineToYConstantHeading(0.5*InchToTile)
-                                .lineToX(5.5*InchToTile);
+                .strafeTo(new Vector2d(6.5*InchToTile,0*InchToTile));
+
 
         waitForStart();
 

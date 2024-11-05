@@ -92,10 +92,10 @@ public class DriveSubsystem extends SubsystemBase {
         backRightMotor.setPower(Range.clip((forward + strafe - turn), -1, 1) * speedMultiplier);
     }
 
-    public void setSpeedMultiplier(double multiplier) {
-        speedMultiplier = Range.clip(multiplier, 0, 1);
-    }
-
+    //public void setSpeedMultiplier(double multiplier) {
+    //    speedMultiplier = Range.clip(multiplier, 0, 1);
+    //}
+    //it is useless after changing the speed multiplier :( keep it anyways
     public void resetGyro() {
         imu.resetYaw();
     }

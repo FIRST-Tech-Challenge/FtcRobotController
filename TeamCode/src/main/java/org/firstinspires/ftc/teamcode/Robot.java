@@ -57,7 +57,7 @@ public class Robot {
 
         Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
         speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());
-        speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
+        //speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
         resetGyro.whenActive(() -> driveSubsystem.resetGyro());
