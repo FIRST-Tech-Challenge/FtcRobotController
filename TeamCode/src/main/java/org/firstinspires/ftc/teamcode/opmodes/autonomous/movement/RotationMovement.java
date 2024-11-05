@@ -9,7 +9,7 @@ public class RotationMovement extends BaseMovement {
 
     @Override
     protected void updateDrivingParameters() {
-        rotationSpeed = getMainMovement(distance-accumulatedChanges);
+        rotationSpeed = isCloseToEnd() || isJustStarted() ? .2 : getMainMovement(distance-accumulatedChanges);
         strafeSpeed = 0;
         forwardSpeed = 0;
 
