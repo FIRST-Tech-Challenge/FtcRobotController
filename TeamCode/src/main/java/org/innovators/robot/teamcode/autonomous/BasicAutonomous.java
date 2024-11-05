@@ -1,10 +1,13 @@
 package org.innovators.robot.teamcode.autonomous;
+import static org.innovators.robot.teamcode.util.Constants.SERVO_POWER_DOWN;
+import static org.innovators.robot.teamcode.util.Constants.SERVO_POWER_UP;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.innovators.robot.teamcode.hardware.RobotHardware;
 import org.innovators.robot.teamcode.util.Constants;
 
-@Autonomous(name="Basic Autonomous", group="Autonomous")
+@Autonomous(name="Autonomous", group="Autonomous")
 public class BasicAutonomous extends LinearOpMode {
     protected RobotHardware robot = new RobotHardware();
 
@@ -31,32 +34,32 @@ public class BasicAutonomous extends LinearOpMode {
         driveBackward(Constants.DRIVE_SPEED, 500); // Drive backward at 50% power for 500 milliseconds
     }
 
-    private void driveForward(double power, long time) {
-        robot.leftDrive.setPower(power);
-        robot.rightDrive.setPower(power);
+    protected void driveForward(double power, long time) {
+        robot.leftDriveMotor.setPower(power);
+        robot.rightDriveMotor.setPower(power);
         sleep(time);
         stopDriving();
     }
 
-    private void driveBackward(double power, long time) {
-        robot.leftDrive.setPower(-power);
-        robot.rightDrive.setPower(-power);
+    protected void driveBackward(double power, long time) {
+        robot.leftDriveMotor.setPower(-power);
+        robot.rightDriveMotor.setPower(-power);
         sleep(time);
         stopDriving();
     }
 
     private void stopDriving() {
-        robot.leftDrive.setPower(0);
-        robot.rightDrive.setPower(0);
+        robot.leftDriveMotor.setPower(0);
+        robot.rightDriveMotor.setPower(0);
     }
 
-    private void pickUpBlock() {
-        robot.armServo.setPosition(1.0); // Adjust the position as needed to pick up the block
+    protected void pickUpBlock() {
+        robot.armWristTorqueServo.setPosition(SERVO_POWER_UP); // Adjust the position as needed to pick up the block
         sleep(500); // Wait for the servo to move
     }
 
-    private void dropBlock() {
-        robot.armServo.setPosition(0.0); // Adjust the position as needed to drop the block
+    protected void dropBlock() {
+        robot.armWristTorqueServo.setPosition(SERVO_POWER_DOWN); // Adjust the position as needed to drop the block
         sleep(500); // Wait for the servo to move
     }
 }

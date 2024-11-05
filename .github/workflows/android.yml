@@ -20,8 +20,24 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 30
+        build-tools: '30.0.3'
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-          
+    - name: Run lint checks
+      run: ./gradlew lint
+    - name: Run tests
+      run: ./gradlew test
+    - name: Build APK
+      run: ./gradlew assembleRelease
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: TeamCode-release.apk
+        path: app/build/outputs/apk/release/app-release.apk

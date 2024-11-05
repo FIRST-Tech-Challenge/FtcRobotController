@@ -1,36 +1,38 @@
 package org.innovators.robot.teamcode.hardware;
+import static org.innovators.robot.teamcode.util.Constants.SERVO_POWER_DOWN;
+import static org.innovators.robot.teamcode.util.Constants.SERVO_POWER_MID;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class RobotHardware {
-    public DcMotor leftDrive = null;
-    public DcMotor rightDrive = null;
+    public DcMotor leftDriveMotor = null;
+    public DcMotor rightDriveMotor = null;
     public DcMotor armExtensionMotor = null;
-    public DcMotor geckoWheelMotor = null;
-    public Servo armServo = null;
+    public Servo armWristTorqueServo = null;
+    public Servo geckoWheelSpeedServo = null;
     HardwareMap hwMap = null;
 
     public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
 
         // Two motor wheel driving
-        leftDrive = hwMap.get(DcMotor.class, "left_drive");
-        rightDrive = hwMap.get(DcMotor.class, "right_drive");
-        armServo = hwMap.get(Servo.class, "arm_servo");
+        leftDriveMotor = hwMap.get(DcMotor.class, "left_drive_motor");
+        rightDriveMotor = hwMap.get(DcMotor.class, "right_drive_motor");
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftDriveMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        // arm, armExtension and gecko wheel
-        armServo = hwMap.get(Servo.class, "arm_servo");
+        // armExtension wrist and gecko wheel
         armExtensionMotor = hwMap.get(DcMotor.class, "arm_extension_motor");
-        geckoWheelMotor = hwMap.get(DcMotor.class, "gecko_wheel_motor");
+        armWristTorqueServo = hwMap.get(Servo.class, "arm_wrist_torque_servo");
+        geckoWheelSpeedServo = hwMap.get(Servo.class, "gecko_wheel_speed_servo");
 
-        armServo.setPosition(0.0);
         armExtensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armExtensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        geckoWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armWristTorqueServo.setPosition(SERVO_POWER_MID);
+        geckoWheelSpeedServo.setPosition(SERVO_POWER_DOWN);
     }
 }
 

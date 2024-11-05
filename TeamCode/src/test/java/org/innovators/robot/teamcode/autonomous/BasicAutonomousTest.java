@@ -1,25 +1,66 @@
 package org.innovators.robot.teamcode.autonomous;
 
-import static org.junit.Assert.assertEquals;
-
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import org.innovators.robot.teamcode.hardware.RobotHardware;
-import org.junit.Test;
+import org.innovators.robot.teamcode.util.Constants;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.*;
 
 public class BasicAutonomousTest {
 
-    // NOT WORKING
-    @Test
-    public void testAutonomousRoutine() {
-        BasicAutonomous autonomousOpMode = new BasicAutonomous();
-        autonomousOpMode.robot = new RobotHardware();
-        autonomousOpMode.runOpMode();
+    private BasicAutonomous basicAutonomous;
+    @Mock
+    private RobotHardware mockRobotHardware;
+    @Mock
+    private DcMotor mockLeftDriveMotor;
+    @Mock
+    private DcMotor mockRightDriveMotor;
+    @Mock
+    private Servo mockArmWristTorqueServo;
 
-        // Simulate the autonomous period
-        autonomousOpMode.waitForStart();
-        autonomousOpMode.loop();
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        basicAutonomous = spy(new BasicAutonomous());
+        basicAutonomous.robot = mockRobotHardware;
 
-        assertEquals(0.5, autonomousOpMode.robot.leftDrive.getPower(), 0.01);
-        assertEquals(0.5, autonomousOpMode.robot.rightDrive.getPower(), 0.01);
+        // Ensure that the robot hardware components are properly mocked
+        mockRobotHardware.leftDriveMotor = mockLeftDriveMotor;
+        mockRobotHardware.rightDriveMotor = mockRightDriveMotor;
+        mockRobotHardware.armWristTorqueServo = mockArmWristTorqueServo;
     }
 
+    @Test
+    @DisplayName("Test runOpMode")
+    public void testRunOpMode() throws InterruptedException {
+        // Mock the hardware map initialization
+        doNothing().when(mockRobotHardware).init(any());
+
+        // Mock the waitForStart method to prevent it from blocking
+        doNothing().when(basicAutonomous).waitForStart();
+
+        // Run the op mode
+        basicAutonomous.runOpMode();
+
+        // Verify the sequence of operations
+        InOrder inOrder = inOrder(mockRobotHardware, mockLeftDriveMotor, mockRightDriveMotor, mockArmWristTorqueServo);
+        inOrder.verify(mockRobotHardware).init(any());
+        inOrder.verify(mockLeftDriveMotor).setPower(Constants.DRIVE_SPEED);
+        inOrder.verify(mockRightDriveMotor).setPower(Constants.DRIVE_SPEED);
+        inOrder.verify(mockLeftDriveMotor).setPower(0);
+        inOrder.verify(mockRightDriveMotor).setPower(0);
+        inOrder.verify(mockArmWristTorqueServo).setPosition(1.0);
+        inOrder.verify(mockArmWristTorqueServo).setPosition(0.0);
+        inOrder.verify(mockLeftDriveMotor).setPower(-Constants.DRIVE_SPEED);
+        inOrder.verify(mockRightDriveMotor).setPower(-Constants.DRIVE_SPEED);
+        inOrder.verify(mockLeftDriveMotor).setPower(0);
+        inOrder.verify(mockRightDriveMotor).setPower(0);
+    }
 }
