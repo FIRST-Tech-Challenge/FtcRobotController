@@ -58,7 +58,8 @@ public class Arm {
         analogRight = opMode.hardwareMap.get(AnalogInput.class ,"analogRight");
 
         angleMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AngleMotor");
-        extendServoLeft = opMode.hardwareMap.get(Servo.class, "ExtendServo");
+        extendServoLeft = opMode.hardwareMap.get(Servo.class, "ExtendServoLeft");
+        extendServoRight = opMode.hardwareMap.get(Servo.class, "ExtendServoRight");
         touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
 
         anglePID.setTolerance(ANGLE_TOLERANCE);
