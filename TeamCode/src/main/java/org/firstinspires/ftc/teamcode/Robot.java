@@ -56,7 +56,7 @@ public class Robot {
         driveSubsystem.setDefaultCommand(defaultDriveCommand);
 
         Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
-        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());
+        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());//feedback from driver: changed the speed multiplier to left trigger and changed by toggle
         //speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));

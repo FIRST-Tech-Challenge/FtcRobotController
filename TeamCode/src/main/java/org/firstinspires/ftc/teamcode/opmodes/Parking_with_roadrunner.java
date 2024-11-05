@@ -30,22 +30,29 @@ public class Parking_with_roadrunner extends LinearOpMode {
         robot.configureAutoSetting();
 
         int InchToTile= org.firstinspires.ftc.teamcode.Constants.INCH_TO_TILE;
+        //tell the bot where it starts
         Pose2d initialPose = new Pose2d(1.5*InchToTile, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
+        //decide where we should park
         boolean isTouchingLowRung=false;
 
+
+        //in vector 2d, x-axis is the our-net-zone to opponent-ob-zone side,y-axis is our-net-zone to our-ob-zone
+        //The robot starts from the 1 and a half tile from net zone,touching the wall facing opponent
+
         TrajectoryActionBuilder touchLowRung = drive.actionBuilder(initialPose)
-                        .strafeTo(new Vector2d(1.5*InchToTile,2.5*InchToTile))
-                                .strafeTo(new Vector2d(2.5*InchToTile,2.5*InchToTile));
+                        .strafeTo(new Vector2d(2.5*InchToTile,1.5*InchToTile))
+                                .strafeTo(new Vector2d(2.5*InchToTile,2.5*InchToTile));//trying to touch the low rung
 
         TrajectoryActionBuilder parkObzone = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(6.5*InchToTile,0*InchToTile));
+                .strafeTo(new Vector2d(0*InchToTile,6.5*InchToTile));//drive straight into ob zone
 
 
         waitForStart();
 
         Action trajectoryActionChosen;
+        //decide where we should park
         if (isTouchingLowRung) {
             trajectoryActionChosen = touchLowRung.build();
         } else {
@@ -62,7 +69,7 @@ public class Parking_with_roadrunner extends LinearOpMode {
 
 
 
-            drive.updatePoseEstimate();
+            drive.updatePoseEstimate();//show where the bot think itself at
 
             telemetry.addData("x", drive.pose.position.x);
             telemetry.addData("y", drive.pose.position.y);

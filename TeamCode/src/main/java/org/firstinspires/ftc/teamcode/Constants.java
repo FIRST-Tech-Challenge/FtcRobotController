@@ -42,4 +42,5 @@ public abstract class Constants {
     }
 
     public static final int INCH_TO_TILE = 24;
+
 }
