@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,9 +11,12 @@ public class Slide {
     private int maxTicks = 0;
     private double maxSpeed = 0.0;
     private double ticksPerInch = 0;
+    private ExtendMotorDirection extendMotorDirection = ExtendMotorDirection.Forward;
 
-    Slide(String motor, int maxTicks, double maxSpeed, double ticksPerInch) {
+    public enum ExtendMotorDirection {Forward, Reverse};
+    public Slide(String motor, ExtendMotorDirection extendMotorDirection, int maxTicks, double maxSpeed, double ticksPerInch) {
         this.motorName = motor;
+        this.extendMotorDirection = extendMotorDirection;
         this.maxTicks = maxTicks;
         this.maxSpeed = maxSpeed;
         this.ticksPerInch = ticksPerInch;
@@ -23,19 +25,20 @@ public class Slide {
     public void Init(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, motorName);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(extendMotorDirection == ExtendMotorDirection.Forward ? DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE);
     }
 
     public void Extend(double power) {
         //extend with the power
         motor.setTargetPosition(maxTicks);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(Math.min(power, maxSpeed));
     }
 
     public void Retract(double power) {
         //extend with the power
         motor.setTargetPosition(0);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(Math.min(power, maxSpeed));
     }
 
@@ -51,5 +54,6 @@ public class Slide {
         motor.setTargetPosition(0);
         motor.setPower(0);
     }
+
 }
 

@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import java.util.concurrent.TimeUnit;
+
 import org.firstinspires.ftc.robotcore.internal.network.WifiUtil;
 import org.firstinspires.ftc.teamcode.hardware.MecanumEncoder;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.internal.system.SystemProperties;
+import org.firstinspires.ftc.teamcode.hardware.Slide;
 
 @TeleOp
 public class drive extends OpMode {
@@ -19,8 +14,8 @@ public class drive extends OpMode {
     private String TESTBOT = "24342-RC";
     private Telemetry.Item telPathDebug = null;
     private MecanumEncoder drive = new MecanumEncoder(this);
-    private Slide intakeSlide = new Slide("intakeslide", 1300, 1.0, 114.28);
-    private Slide clawSlide = new Slide("clawslide", 1300, 1.0,114.28);
+    private Slide intakeSlide = new Slide("intakeslide", Slide.ExtendMotorDirection.Forward, 1300, 1.0, 114.28);
+    private Slide clawSlide = new Slide("clawslide", Slide.ExtendMotorDirection.Reverse, 4500, 1.0,114.28);
     private String wifiSsid = "";
 
     public void processClawArmUpDown() {
