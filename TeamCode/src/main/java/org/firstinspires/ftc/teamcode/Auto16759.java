@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -14,16 +15,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Locale;
 import java.util.Timer;
 
-@Autonomous(name="AutoPinpoint")
+@Autonomous(name="Auto16759")
 //@Disabled
 
-public class AutoOpMode extends LinearOpMode {
+public class Auto16759 extends LinearOpMode {
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     private final DriveToPoint nav = new DriveToPoint(this); //OpMode member for the point-to-point navigation class
     private DcMotor rotateArmMotor = null;
     private DcMotor extendArmMotor = null;
     private final ElapsedTime timer = new ElapsedTime();
+
+    private DcMotor leftFrontDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor leftBackDrive;
+    private DcMotor rightBackDrive;
 
     // Auto State Machine
     enum StateMachine {
@@ -53,12 +59,15 @@ public class AutoOpMode extends LinearOpMode {
         Timer t;
 
         // Initialize the Pinpoint
-        initPinpoint();
+        //initPinpoint();
+
+        // Initialize motors
+        initializeMotors();
 
         // Initiaize DriveToPoint
-        nav.initializeMotors();
-        nav.setXYCoefficients(.01,0,2.0,DistanceUnit.MM,12);
-        nav.setYawCoefficients(3.1,0,2.0, AngleUnit.DEGREES,2);
+//        nav.initializeMotors();
+//        nav.setXYCoefficients(.01,0,2.0,DistanceUnit.MM,12);
+//        nav.setYawCoefficients(3.1,0,2.0, AngleUnit.DEGREES,2);
 
         // Initialize motors and servos
         rotateArmMotor = hardwareMap.get(DcMotor.class, "rotate");
@@ -120,7 +129,7 @@ public class AutoOpMode extends LinearOpMode {
 
                 //if all 3 conditions met, move to next state
                 if (cond1 && cond2 && cond3) {
-                        stateMachine = StateMachine.PLACE_SPECIMEN;
+                    stateMachine = StateMachine.PLACE_SPECIMEN;
                 }
             }
 
@@ -162,6 +171,24 @@ public class AutoOpMode extends LinearOpMode {
         }
     }
 
+    public void initializeMotors() {
+        // Initialize the hardware variables. Note that the strings used here must correspond
+        // to the names assigned during the robot configuration step on the DS or RC devices.
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
 
     // Move arm up until the newPosition reached
     private boolean armUp(int newPosition) {
@@ -224,7 +251,7 @@ public class AutoOpMode extends LinearOpMode {
         odo.setOffsets(-101.6, -120.65); //these are tuned for 3110-0002-0001 Product Insight #1
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                                 GoBildaPinpointDriver.EncoderDirection.REVERSED);
+                GoBildaPinpointDriver.EncoderDirection.REVERSED);
         odo.resetPosAndIMU();
     }
 }
