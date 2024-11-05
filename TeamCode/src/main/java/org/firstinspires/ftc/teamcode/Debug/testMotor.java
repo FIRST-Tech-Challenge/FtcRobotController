@@ -1,7 +1,4 @@
-// Copyright (c) 2024-2025 FTC 13532
-// All rights reserved.
-
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Debug;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
