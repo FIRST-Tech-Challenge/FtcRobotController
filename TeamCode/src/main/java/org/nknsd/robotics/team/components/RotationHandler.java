@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RotationHandler implements NKNComponent {
 
+    public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 4;
     final double threshold;
     final double P_CONSTANT;
     final double I_CONSTANT;
@@ -48,11 +49,14 @@ public class RotationHandler implements NKNComponent {
         this.extensionHandler = extensionHandler;
     }
 
-
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         motor = hardwareMap.dcMotor.get(motorName);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        if (potHandler.getPotVoltage() < 2.5) { // Arm is already rotated out when initializing, so we can move to pickup position
+            targetRotationPosition = RotationPositions.PICKUP;
+        }
         return true;
     }
 
@@ -131,13 +135,11 @@ public class RotationHandler implements NKNComponent {
     }
 
     public boolean isAtTargetPosition() {
-        return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold;
+        return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold * 2;
     }
 
-    public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 4;
-
     public enum RotationPositions {
-        PICKUP(1.1), PREPICKUP(1.40), HIGH(2.4), RESTING(3.3), PARKING(2.19);
+        PICKUP(1), PREPICKUP(1.40), HIGH(2.4), RESTING(3.3);
 
         public final double target;
 

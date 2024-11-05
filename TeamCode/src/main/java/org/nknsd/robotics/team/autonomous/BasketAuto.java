@@ -3,9 +3,13 @@ package org.nknsd.robotics.team.autonomous;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
+import org.nknsd.robotics.team.autoSteps.AutoStepAbsoluteControl;
+import org.nknsd.robotics.team.autoSteps.AutoStepExtendArm;
 import org.nknsd.robotics.team.autoSteps.AutoStepMove;
 import org.nknsd.robotics.team.autoSteps.AutoStepMoveNRotate;
 import org.nknsd.robotics.team.autoSteps.AutoStepRotateArm;
+import org.nknsd.robotics.team.autoSteps.AutoStepServo;
+import org.nknsd.robotics.team.autoSteps.AutoStepSleep;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
@@ -18,8 +22,7 @@ import org.nknsd.robotics.team.components.autonomous.AutoHeart;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PushAuto extends NKNProgram {
-
+public class BasketAuto extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Step List
@@ -58,7 +61,7 @@ public class PushAuto extends NKNProgram {
         RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.005, 10, true);
         components.add(rotationHandler);
 
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.35);
+        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.7);
         components.add(extensionHandler);
 
         IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
@@ -68,62 +71,61 @@ public class PushAuto extends NKNProgram {
         // Linking
         rotationHandler.link(potentiometerHandler, extensionHandler);
         extensionHandler.link(rotationHandler);
+
         autoSkeleton.link(wheelHandler, rotationHandler, extensionHandler, intakeSpinnerHandler, flowSensorHandler, imuComponent);
         assembleList(stepList, autoHeart, autoSkeleton);
     }
 
     private void assembleList(List<NKNAutoStep> stepList, AutoHeart autoHeart, AutoSkeleton autoSkeleton) {
-        //Move forward
-        AutoStepMove step0 = new AutoStepMove(0, 0.2);
-        stepList.add(step0);
+        // Declare steps
+        AutoStepSleep sleep = new AutoStepSleep(700);
 
-        //Deposit blue sample
-        AutoStepMove step1 = new AutoStepMove(-0.45, 0);
-        stepList.add(step1);
+        AutoStepAbsoluteControl orientToBasket = new AutoStepAbsoluteControl(-0.65, 0.35, -135);
+        AutoStepMoveNRotate pickUpFirstYellow = new AutoStepMoveNRotate(0.87, 0.9, -70);
+        AutoStepMove slightYellowPlaceAdjust = new AutoStepMove(-0.07, 0.05);
+        AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(0, 2, 90);
+        AutoStepMove driveInToPark = new AutoStepMove(0.57, 0);
 
+        AutoStepRotateArm rotateToHigh = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
+        AutoStepRotateArm rotateToPickup = new AutoStepRotateArm(RotationHandler.RotationPositions.PICKUP);
+        AutoStepRotateArm rotateToRest = new AutoStepRotateArm(RotationHandler.RotationPositions.RESTING);
+        AutoStepRotateArm rotateToPrepickup = new AutoStepRotateArm(RotationHandler.RotationPositions.PREPICKUP);
 
-        //Head to c5
-        AutoStepMove step2 = new AutoStepMove(0.62, 0);
-        stepList.add(step2);
+        AutoStepExtendArm extendToHigh = new AutoStepExtendArm(ExtensionHandler.ExtensionPositions.HIGH_BASKET);
+        AutoStepExtendArm retract = new AutoStepExtendArm(ExtensionHandler.ExtensionPositions.RESTING);
 
-        AutoStepMove step3 = new AutoStepMove(0, 1.5);
-        stepList.add(step3);
+        AutoStepServo releaseBlock = new AutoStepServo(IntakeSpinnerHandler.HandStates.RELEASE, 1200);
+        AutoStepServo gripBlock = new AutoStepServo(IntakeSpinnerHandler.HandStates.GRIP, 400);
+        AutoStepServo neutralServo = new AutoStepServo(IntakeSpinnerHandler.HandStates.REST, 0);
 
+        // Put away first block
+        stepList.add(orientToBasket);
+        stepList.add(rotateToHigh);
+        stepList.add(extendToHigh);
+        stepList.add(releaseBlock);
+        stepList.add(retract);
 
-        //Align with middle sample and bring it down
-        AutoStepMove step4 = new AutoStepMove(-0.66, 0);
-        stepList.add(step4);
+        // Get second block
+        stepList.add(pickUpFirstYellow);
+        stepList.add(gripBlock);
+        stepList.add(rotateToPickup);
+        stepList.add(sleep);
+        stepList.add(rotateToRest);
 
-        AutoStepMove step5 = new AutoStepMove(0, -1.4);
-        stepList.add(step5);
+        // Place second block
+        stepList.add(orientToBasket);
+        stepList.add(slightYellowPlaceAdjust);
+        stepList.add(rotateToHigh);
+        stepList.add(extendToHigh);
+        stepList.add(releaseBlock);
+        stepList.add(retract);
 
-
-//        //Head up and bring right sample down
-//        AutoStepU step6 = new AutoStepU(1.6);
-//        stepList.add(step6);
-//
-//        AutoStepR step7 = new AutoStepR(0.35);
-//        stepList.add(step7);
-//
-//        AutoStepAdjustTarget step7_5 = new AutoStepAdjustTarget(-0.2, 0);
-//        stepList.add(step7_5);
-//
-//        AutoStepD step8 = new AutoStepD(1.5);
-//        stepList.add(step8);
-
-
-        //Head to observation zone
-        AutoStepMoveNRotate step9 = new AutoStepMoveNRotate(0, 1.45, 90);
-        stepList.add(step9);
-
-        AutoStepRotateArm lowerArm = new AutoStepRotateArm(RotationHandler.RotationPositions.PREPICKUP);
-        stepList.add(lowerArm);
-
-        AutoStepMove step11 = new AutoStepMove(1.1, 0);
-        stepList.add(step11);
-
-        AutoStepRotateArm raiseArm = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
-        stepList.add(raiseArm);
+        // Parking!
+        stepList.add(alignToPark);
+        stepList.add(rotateToPrepickup);
+        stepList.add(driveInToPark);
+        stepList.add(rotateToHigh);
+        stepList.add(sleep);
 
 
         autoHeart.linkSteps(stepList, autoSkeleton);

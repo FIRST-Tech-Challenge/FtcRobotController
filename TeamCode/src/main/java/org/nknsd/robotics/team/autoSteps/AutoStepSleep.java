@@ -1,4 +1,4 @@
-package org.nknsd.robotics.team.autonomous.steps;
+package org.nknsd.robotics.team.autoSteps;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -6,14 +6,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.team.autonomous.AutoSkeleton;
 
-public class AutoStepAdjustTarget implements NKNAutoStep {
-    AutoSkeleton autoSkeleton;
-    private double xDist;
-    private double yDist;
+import java.util.concurrent.TimeUnit;
 
-    public AutoStepAdjustTarget(double xDist, double yDist) {
-        this.xDist = xDist;
-        this.yDist = yDist;
+public class AutoStepSleep implements NKNAutoStep {
+    AutoSkeleton autoSkeleton;
+    private final long time;
+    private long startTime;
+
+    public AutoStepSleep(long time) {
+        this.time = time;
     }
 
     @Override
@@ -23,14 +24,16 @@ public class AutoStepAdjustTarget implements NKNAutoStep {
     }
 
     public void begin(ElapsedTime runtime, Telemetry telemetry) {
-        autoSkeleton.setTargetPosition(autoSkeleton.targetPositions[0] + xDist, autoSkeleton.targetPositions[1] + yDist); // X/Y are weird, sorry future me!
+        startTime = runtime.now(TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void run(Telemetry telemetry) {}
 
     @Override
-    public boolean isDone(ElapsedTime runtime) {return true;}
+    public boolean isDone(ElapsedTime runtime) {
+        return runtime.now(TimeUnit.MILLISECONDS) - startTime > time;
+    }
 
     @Override
     public String getName() {

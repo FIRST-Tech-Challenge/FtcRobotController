@@ -1,4 +1,4 @@
-package org.nknsd.robotics.team.autonomous.steps;
+package org.nknsd.robotics.team.autoSteps;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -6,17 +6,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.team.autonomous.AutoSkeleton;
 
-public class AutoStepMoveNRotate implements NKNAutoStep {
+public class AutoStepAbsoluteControl implements NKNAutoStep {
     AutoSkeleton autoSkeleton;
     boolean done = false;
-    private double heading;
-    private double xDist;
-    private double yDist;
+    private final double heading;
+    private final double xTarg;
+    private final double yTarg;
 
-    public AutoStepMoveNRotate(double xDist, double yDist, double heading) {
+    public AutoStepAbsoluteControl(double xTarg, double yTarg, double heading) {
         this.heading = heading;
-        this.xDist = xDist;
-        this.yDist = yDist;
+        this.xTarg = xTarg;
+        this.yTarg = yTarg;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class AutoStepMoveNRotate implements NKNAutoStep {
     }
 
     public void begin(ElapsedTime runtime, Telemetry telemetry) {
-        autoSkeleton.setTargetPosition(autoSkeleton.targetPositions[0] + xDist, autoSkeleton.targetPositions[1] + yDist);
+        autoSkeleton.setTargetPosition(xTarg, yTarg);
         autoSkeleton.setTargetRotation(heading);
     }
 

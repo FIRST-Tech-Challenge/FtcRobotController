@@ -1,4 +1,4 @@
-package org.nknsd.robotics.team.autonomous.steps;
+package org.nknsd.robotics.team.autoSteps;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
