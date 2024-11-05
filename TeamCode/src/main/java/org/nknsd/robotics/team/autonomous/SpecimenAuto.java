@@ -22,7 +22,7 @@ import org.nknsd.robotics.team.components.autonomous.AutoHeart;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BasketAuto extends NKNProgram {
+public class SpecimenAuto extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Step List
@@ -78,55 +78,29 @@ public class BasketAuto extends NKNProgram {
 
     private void assembleList(List<NKNAutoStep> stepList, AutoHeart autoHeart, AutoSkeleton autoSkeleton) {
         // Declare steps
-        AutoStepSleep sleep = new AutoStepSleep(700);
+        AutoStepSleep sleep = new AutoStepSleep(200);
 
-        AutoStepAbsoluteControl orientToBasket = new AutoStepAbsoluteControl(-0.7, 0.35, -135);
-        AutoStepMoveNRotate pickUpFirstYellow = new AutoStepMoveNRotate(0.92, 0.9, -70);
-        AutoStepMove slightYellowPlaceAdjust = new AutoStepMove(-0.07, 0.05);
-        AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(-0.05, 2, 90);
-        AutoStepMove driveInToPark = new AutoStepMove(0.57, 0);
+        AutoStepMove moveToBar = new AutoStepMove(0, 1.1);
 
-        AutoStepRotateArm rotateToHigh = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
-        AutoStepRotateArm rotateToPickup = new AutoStepRotateArm(RotationHandler.RotationPositions.PICKUP);
-        AutoStepRotateArm rotateToRest = new AutoStepRotateArm(RotationHandler.RotationPositions.RESTING);
-        AutoStepRotateArm rotateToPrepickup = new AutoStepRotateArm(RotationHandler.RotationPositions.PREPICKUP);
+        AutoStepRotateArm rotateToSpecimen = new AutoStepRotateArm(RotationHandler.RotationPositions.SPECIMEN);
 
-        AutoStepExtendArm extendToHigh = new AutoStepExtendArm(ExtensionHandler.ExtensionPositions.HIGH_BASKET);
-        AutoStepExtendArm retract = new AutoStepExtendArm(ExtensionHandler.ExtensionPositions.RESTING);
+        AutoStepExtendArm extendToSpecimen = new AutoStepExtendArm(ExtensionHandler.ExtensionPositions.SPECIMEN);
 
-        AutoStepServo releaseBlock = new AutoStepServo(IntakeSpinnerHandler.HandStates.RELEASE, 1200);
-        AutoStepServo gripBlock = new AutoStepServo(IntakeSpinnerHandler.HandStates.GRIP, 400);
-        AutoStepServo neutralServo = new AutoStepServo(IntakeSpinnerHandler.HandStates.REST, 0);
+        AutoStepServo grip = new AutoStepServo(IntakeSpinnerHandler.HandStates.GRIP, 0);
+        AutoStepServo release = new AutoStepServo(IntakeSpinnerHandler.HandStates.RELEASE, 500);
 
-        // Put away first block
-        stepList.add(orientToBasket);
-        stepList.add(rotateToHigh);
-        stepList.add(extendToHigh);
-        stepList.add(releaseBlock);
-        stepList.add(retract);
 
-        // Get second block
-        stepList.add(pickUpFirstYellow);
-        stepList.add(gripBlock);
-        stepList.add(rotateToPickup);
+
+        // Create path
+        // Approach bar and align arm
+        stepList.add(moveToBar);
+        stepList.add(rotateToSpecimen);
+        stepList.add(grip);
+
+        // Deposit specimen
+        stepList.add(extendToSpecimen);
         stepList.add(sleep);
-        stepList.add(rotateToRest);
-
-        // Place second block
-        stepList.add(orientToBasket);
-        stepList.add(slightYellowPlaceAdjust);
-        stepList.add(rotateToHigh);
-        stepList.add(extendToHigh);
-        stepList.add(releaseBlock);
-        stepList.add(retract);
-
-        // Parking!
-        stepList.add(alignToPark);
-        stepList.add(rotateToPrepickup);
-        stepList.add(driveInToPark);
-        stepList.add(rotateToHigh);
-        stepList.add(sleep);
-
+        stepList.add(release);
 
         autoHeart.linkSteps(stepList, autoSkeleton);
     }
