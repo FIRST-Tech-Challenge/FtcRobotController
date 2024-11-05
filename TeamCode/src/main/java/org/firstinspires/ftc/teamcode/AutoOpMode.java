@@ -42,7 +42,7 @@ public class AutoOpMode extends LinearOpMode {
     final double DRIVE_SPEED = 0.3;
     final double ARM_POWER = -0.2;
     final double EXTEND_POWER = 0.3;
-    final int ARM_UP_MAX_POSITION = -1000;
+    final int ARM_UP_MAX_POSITION = -2000;
     final int ARM_DOWN_POSITION = 0;
     final int EXT_MAX_POSITION = 2000;
     final int EXT_PLACE_POSITION = 900;
@@ -57,7 +57,7 @@ public class AutoOpMode extends LinearOpMode {
 
         // Initiaize DriveToPoint
         nav.initializeMotors();
-        nav.setXYCoefficients(.005,0,2.0,DistanceUnit.MM,12);
+        nav.setXYCoefficients(.01,0,2.0,DistanceUnit.MM,12);
         nav.setYawCoefficients(3.1,0,2.0, AngleUnit.DEGREES,2);
 
         // Initialize motors and servos
@@ -130,7 +130,7 @@ public class AutoOpMode extends LinearOpMode {
             //----------------------------------------------------------
             if (stateMachine == StateMachine.PLACE_SPECIMEN){
                 //boolean cond = armExtend(EXT_MAX_POSITION);
-                boolean cond = armDown(-500);
+                boolean cond = armRetract(EXT_PLACE_POSITION);
                 if (cond) {
                     stateMachine = StateMachine.RELEASE_SPECIMEN;
                 }
