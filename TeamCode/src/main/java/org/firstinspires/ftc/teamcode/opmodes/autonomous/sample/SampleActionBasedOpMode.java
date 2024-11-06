@@ -18,11 +18,18 @@ public class SampleActionBasedOpMode extends ActionBasedOpMode {
     @Override
     protected void setupWaypointsAndActions() {
         Queue<BaseMovement> movements = new LinkedList<>();
-        movements.add(new ForwardMovement(Units.inchesToMeters(24))); //rotation takes radians, movement takes meters
-        movements.add(new RotationMovement(Units.degreesToRadians(180)));
-        movements.add(new ForwardMovement(Units.inchesToMeters(48)));
-        movements.add(new RotationMovement(Units.degreesToRadians(-180)));
-        movements.add(new ForwardMovement(Units.inchesToMeters(24)));
+        movements.add(new ForwardMovement(Units.inchesToMeters(30))); //rotation takes radians, movement takes meters
+//        movements.add(new StrafeMovement(Units.inchesToMeters(24))); // temp
+//        movements.add(new RotationMovement(Units.degreesToRadians(90)));
+        movements.add(new StrafeMovement(Units.inchesToMeters(-30)));
+        movements.add(new RotationMovement(Units.degreesToRadians(-90)));
+        movements.add(new ForwardMovement(Units.inchesToMeters(30)));
+        movements.add(new StrafeMovement(Units.inchesToMeters(30)));
+//        movements.add(new RotationMovement(Units.degreesToRadians(180)));
+//        movements.add(new StrafeMovement(Units.inchesToMeters(24))); // temp
+//        movements.add(new ForwardMovement(Units.inchesToMeters(48)));
+//        movements.add(new RotationMovement(Units.degreesToRadians(-180)));
+//        movements.add(new ForwardMovement(Units.inchesToMeters(24)));
 
         movementQueue.add(movements);
     }

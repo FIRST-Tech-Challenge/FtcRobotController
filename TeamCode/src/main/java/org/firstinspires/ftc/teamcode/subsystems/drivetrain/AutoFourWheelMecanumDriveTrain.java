@@ -90,10 +90,6 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         odo.setPosition(newPose);
     }
 
-    public void resetOdometry() {
-        odo.resetPosAndIMU();
-    }
-
     public MecanumDriveKinematics getDriveKinematics() {
         return driveKinematics;
     }

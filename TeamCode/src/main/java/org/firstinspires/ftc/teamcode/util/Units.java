@@ -24,4 +24,15 @@ public class Units {
     public static double radiansToDegrees(double radians) {
         return Math.toDegrees(radians);
     }
+
+    public static double normalizeAngleDifference(double diff) {
+        // Normalize to -π to π
+        if (diff > Math.PI) {
+            diff -= 2 * Math.PI;
+        } else if (diff < -Math.PI) {
+            diff += 2 * Math.PI;
+        }
+
+        return diff;
+    }
 }
