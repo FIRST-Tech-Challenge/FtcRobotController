@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
+import org.nknsd.robotics.team.components.ExtensionHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +17,9 @@ public class RotationHandler implements NKNComponent {
     public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 4;
     final double threshold;
     final double P_CONSTANT;
+    final double EXTENDED_P_CONSTANT;
     final double I_CONSTANT;
+    final double EXTENDED_I_CONSTANT;
     final double errorCap;
     final boolean enableErrorClear;
     private final String motorName;
@@ -29,11 +32,13 @@ public class RotationHandler implements NKNComponent {
     private DcMotor motor;
     private ExtensionHandler extensionHandler;
 
-    public RotationHandler(String motorName, double threshold, double P_CONSTANT, double I_CONSTANT, double errorCap, boolean enableErrorClear) {
+    public RotationHandler(String motorName, double threshold, double P_CONSTANT,double EXTENDED_P_CONSTANT, double I_CONSTANT,double EXTENDED_I_CONSTANT, double errorCap, boolean enableErrorClear) {
         this.motorName = motorName;
         this.threshold = threshold;
         this.P_CONSTANT = P_CONSTANT;
+        this.EXTENDED_P_CONSTANT = EXTENDED_P_CONSTANT;
         this.I_CONSTANT = I_CONSTANT;
+        this.EXTENDED_I_CONSTANT = EXTENDED_I_CONSTANT;
         this.errorCap = errorCap;
         this.enableErrorClear = enableErrorClear;
     }
@@ -120,7 +125,6 @@ public class RotationHandler implements NKNComponent {
         if (Math.abs(diff) <= threshold) {
             return 0;
         }
-
         if (resError > errorCap) {
             resError = errorCap;
         } else if (resError < -errorCap) {
@@ -130,8 +134,11 @@ public class RotationHandler implements NKNComponent {
         if (oppositeSigns(diff, resError) && enableErrorClear) {
             resError = diff;
         }
-
-        return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
+        if (extensionHandler.targetPosition() != ExtensionHandler.ExtensionPositions.HIGH_BASKET) {
+            return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
+        } else {
+            return ((diff * EXTENDED_P_CONSTANT) + (resError * EXTENDED_I_CONSTANT));
+        }
     }
 
     public boolean isAtTargetPosition() {

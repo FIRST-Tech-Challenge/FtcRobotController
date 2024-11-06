@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.BasicNKNProgram;
 import org.nknsd.robotics.team.FlowSensorTestProgram;
 
 import java.util.concurrent.TimeUnit;

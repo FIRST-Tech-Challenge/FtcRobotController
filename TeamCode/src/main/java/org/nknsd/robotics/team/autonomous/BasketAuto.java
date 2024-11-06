@@ -58,7 +58,7 @@ public class BasketAuto extends NKNProgram {
 
 
         // Arm Stuff
-        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.005, 10, true);
+        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38,0.5, 0.005, 0.009,10, true);
         components.add(rotationHandler);
 
         ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.7);

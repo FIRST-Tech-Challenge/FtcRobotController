@@ -6,12 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
+import org.nknsd.robotics.team.AlternateMovementNKNProgram;
 import org.nknsd.robotics.team.BasicMovementNKNProgram;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Basic OpMode (Robot Oriented)")
-public class NKNOpMode_Basic extends OpMode {
+@TeleOp(name = "Basic OpMode (Driver Oriented)")
+public class NKNOpMode_Alt extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     //Time counters are in milliseconds
@@ -20,7 +21,7 @@ public class NKNOpMode_Basic extends OpMode {
     // We use these two to delay telemetry outputs to ~200 milliseconds
 
     // Whatever program is attached here will be loaded with all its glorious components
-    private final NKNProgram program = new BasicMovementNKNProgram();
+    private final NKNProgram program = new AlternateMovementNKNProgram();
 
     // Code to run ONCE when the driver hits INIT
     @Override

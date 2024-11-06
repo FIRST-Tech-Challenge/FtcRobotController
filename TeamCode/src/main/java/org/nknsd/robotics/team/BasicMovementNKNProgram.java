@@ -9,13 +9,13 @@ import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.PotentiometerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.drivers.AdvancedWheelDriver;
-import org.nknsd.robotics.team.components.drivers.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.components.drivers.EACDriver;
+import org.nknsd.robotics.team.components.drivers.WheelDriver;
 
 import java.util.List;
 
-public class BasicNKNProgram extends NKNProgram {
+public class BasicMovementNKNProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Misc
@@ -38,7 +38,7 @@ public class BasicNKNProgram extends NKNProgram {
 
 
         // Arm
-        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.1, 1, false);
+        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38,0.5, 0.005, 0.009,10, true);
         components.add(rotationHandler);
         //telemetryEnabled.add(rotationHandler);
 
@@ -51,7 +51,7 @@ public class BasicNKNProgram extends NKNProgram {
 
 
         // Driver
-        AdvancedWheelDriver wheelDriver = new AdvancedWheelDriver(0, 1, 5, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_Y, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_X, GamePadHandler.GamepadSticks.RIGHT_JOYSTICK_X);
+        WheelDriver wheelDriver = new WheelDriver(0, 1, 5, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_Y, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_X, GamePadHandler.GamepadSticks.RIGHT_JOYSTICK_X);
         components.add(wheelDriver);
         telemetryEnabled.add(wheelDriver);
 
@@ -61,7 +61,7 @@ public class BasicNKNProgram extends NKNProgram {
 
 
         // Link the components to each other
-        wheelDriver.link(gamePadHandler, wheelHandler, imuComponent);
+        wheelDriver.link(gamePadHandler, wheelHandler);
         rotationHandler.link(potentiometerHandler, extensionHandler);
         extensionHandler.link(rotationHandler);
         eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler);
