@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.driver.AutoRobotDriver;
+import org.firstinspires.ftc.teamcode.util.Units;
 
 import java.util.function.Supplier;
 
@@ -14,12 +15,13 @@ public abstract class BaseMovement {
     static final String LOG_TAG = BaseMovement.class.getSimpleName();
     private static final double NORMAL_SPEED = 0.5d;
     private static final double SLOW_SPEED = 0.2d;
+    private static final double ERROR_CORRECTION_SPEED = 0.2d;
 
     private static final double FORWARD_FACTOR = 1d;
     private static final double BACKWARD_FACTOR = -1d;
     private static final double ERROR_TOLERANCE = 0.01d;
-    private static final double ROT_TO_SPEED_CONVERSION = 5; //this converts distance to motor speed
-    private static final double DIST_TO_SPEED_CONVERSION = 5;
+    private static final double ROT_TO_SPEED_CONVERSION = 3; //this converts distance to motor speed
+    private static final double DIST_TO_SPEED_CONVERSION = 2;
     double currentSpeed;
     double distance;
 
@@ -43,6 +45,8 @@ public abstract class BaseMovement {
     double error;
 
     double strafeSpeed, forwardSpeed, rotationSpeed;
+
+    boolean usePID = false;
     public BaseMovement(double distance) {
         Log.i(LOG_TAG, String.format("distance = %f", distance));
         this.distance = distance;
@@ -102,7 +106,7 @@ public abstract class BaseMovement {
             return;
         }
 
-        if (isCloseToEnd()) {
+        if (isCloseToEnd() || isJustStarted()) {
             currentSpeed = SLOW_SPEED * directionFactor;
         }
 
@@ -136,28 +140,53 @@ public abstract class BaseMovement {
 
     protected double getRotErrorCorrection(double error) {
         Log.i(LOG_TAG, String.format("rot error = %f", error));
-        double correctionDistance = rotErrorCorrectionController.calculate(error);
-        if (error*correctionDistance<0) {
-            correctionDistance = -correctionDistance;
+        if (usePID) {
+            double normalizedError = Units.normalizeAngleDifference(error);
+            double correctionDistance = rotErrorCorrectionController.calculate(normalizedError);
+            if (normalizedError * correctionDistance < 0) {
+                correctionDistance = -correctionDistance;
+            }
+            return correctionDistance * ROT_TO_SPEED_CONVERSION;
+        } else {
+            double normalizedError = Units.normalizeAngleDifference(error);
+
+            if (Math.abs(normalizedError) >= ERROR_TOLERANCE) {
+                double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (normalizedError >= 0 ? 1 : -1);
+                Log.i(LOG_TAG, "Rotation error too much, correction speed set to: " +  errorCorrectionSpeed);
+                return normalizedError * ROT_TO_SPEED_CONVERSION;
+            }
+            return 0;
         }
-        return correctionDistance*ROT_TO_SPEED_CONVERSION;
     }
 
     protected double getMoveErrorCorrection(double error) {
         Log.i(LOG_TAG, String.format("move error = %f", error));
-        double correctionDistance = moveErrorCorrectionController.calculate(error);
-        if (error*correctionDistance<0) {
-            correctionDistance = -correctionDistance;
+        if (usePID) {
+            double correctionDistance = moveErrorCorrectionController.calculate(error);
+            if (error * correctionDistance < 0) {
+                correctionDistance = -correctionDistance;
+            }
+            return correctionDistance * DIST_TO_SPEED_CONVERSION;
+        } else {
+            if (Math.abs(error) > ERROR_TOLERANCE) {
+                double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (error >= 0 ? 1 : -1);
+                Log.i(LOG_TAG, "move error too much, correction speed set to: " +  errorCorrectionSpeed);
+                return errorCorrectionSpeed;
+            }
+            return 0;
         }
-        return correctionDistance*DIST_TO_SPEED_CONVERSION;
     }
 
     protected double getMainMovement(double difference) {
-        double correctionDistance = mainMovementController.calculate(difference);
-        if (difference*correctionDistance<0) {
-            correctionDistance = -correctionDistance;
+        if (usePID) {
+            double correctionDistance = mainMovementController.calculate(difference);
+            if (difference * correctionDistance < 0) {
+                correctionDistance = -correctionDistance;
+            }
+            return Math.max(0.2, Math.min(correctionDistance * DIST_TO_SPEED_CONVERSION, 0.7));
+        } else {
+            return currentSpeed;
         }
-        return Math.max(0.2,Math.min(correctionDistance*DIST_TO_SPEED_CONVERSION,0.7));
     }
 
     protected abstract void updateDrivingParameters();

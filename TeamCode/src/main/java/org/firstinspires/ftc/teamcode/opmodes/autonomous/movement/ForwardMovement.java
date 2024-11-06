@@ -10,9 +10,9 @@ public class ForwardMovement extends BaseMovement {
 
     @Override
     protected void updateDrivingParameters() {
-        strafeSpeed = isCloseToEnd() || isJustStarted() ? 0 : getMoveErrorCorrection(previousPose.getY() - startingPose.getY());
-        forwardSpeed = isCloseToEnd() || isJustStarted() ? .2 : getMainMovement(distance-accumulatedChanges);
-        rotationSpeed = isCloseToEnd() || isJustStarted() ? 0 : getRotErrorCorrection(startingPose.getHeading() - previousPose.getHeading());
+        strafeSpeed = 0;//getMoveErrorCorrection(previousPose.getY() - startingPose.getY());
+        forwardSpeed = getMainMovement(distance-accumulatedChanges);
+        rotationSpeed = getRotErrorCorrection(startingPose.getHeading() - previousPose.getHeading());
     }
 
     @Override

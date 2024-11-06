@@ -92,6 +92,7 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
             sleep(250);
             currentMove = currentMovements.poll();
             assert currentMove != null;
+//            driveTrain.resetOdo();
             addTelemetryLine(String.format("Switched to movement %s", currentMove.getClass().getSimpleName()));
             if (currentMove instanceof ForwardMovement) {
                 currentMove.start(driveTrain.getCurrentPose().getX(), robotDriver, () -> driveTrain.getCurrentPose());
