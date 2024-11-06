@@ -8,9 +8,9 @@ import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOd
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.SwerveDriveKinematics;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.SwerveModuleState;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.PIDController;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.SimpleMotorFeedforward;
@@ -27,74 +28,73 @@ public class Swerve {
 
   private final GoBildaPinpointDriver odometry;
 
-  private final SwerveSetpointGenerator setpointGenerator;
-  private SwerveSetpointGenerator.SwerveSetpoint lastSetpoint;
+  private final SwerveDriveKinematics kinematics;
   private final double drivebaseRadius;
 
   private final Module[] modules = new Module[4];
 
+  private final Telemetry telemetry;
+
   public Swerve(OpMode opMode) {
     odometry = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-    odometry.setOffsets(0, 0);
+    odometry.setOffsets(110, 30);
     odometry.setEncoderResolution(goBILDA_4_BAR_POD);
     odometry.setEncoderDirections(FORWARD, FORWARD);
 
     double trackLengthMeters = .31;
     double trackWidthMeters = .38;
-    setpointGenerator =
-        new SwerveSetpointGenerator(
-            new Translation2d[] {
-              new Translation2d(trackLengthMeters / 2, trackWidthMeters / 2),
-              new Translation2d(trackLengthMeters / 2, -trackWidthMeters / 2),
-              new Translation2d(-trackLengthMeters / 2, trackWidthMeters / 2),
-              new Translation2d(-trackLengthMeters / 2, -trackWidthMeters / 2)
-            },
-            new SwerveSetpointGenerator.ModuleLimits(
-                Module.maxDriveSpeedMetersPerSec,
-                Module.maxDriveSpeedMetersPerSec / .25,
-                Module.maxSteerSpeedRadPerSec));
+    kinematics =
+        new SwerveDriveKinematics(
+            new Translation2d(trackLengthMeters / 2, trackWidthMeters / 2),
+            new Translation2d(trackLengthMeters / 2, -trackWidthMeters / 2),
+            new Translation2d(-trackLengthMeters / 2, trackWidthMeters / 2),
+            new Translation2d(-trackLengthMeters / 2, -trackWidthMeters / 2));
     drivebaseRadius = Math.hypot(trackLengthMeters / 2, trackWidthMeters / 2);
 
-    SwerveModuleState[] initStates = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
       modules[i] = new Module(opMode, i);
-      initStates[i] = new SwerveModuleState(0, modules[i].getServoPos());
     }
 
-    lastSetpoint =
-        new SwerveSetpointGenerator.SwerveSetpoint(new ChassisSpeeds(), initStates, new double[4]);
+    odometry.resetHeading();
+
+    this.telemetry = opMode.telemetry;
   }
 
-  public void drive(ChassisSpeeds speeds, double dt) {
-    var setpoint = setpointGenerator.generateSetpoint(lastSetpoint, speeds, dt);
+  
+
+  public void drive(ChassisSpeeds speeds) {
+    var setpoint = kinematics.toSwerveModuleStates(speeds);
 
     for (int i = 0; i < 4; i++) {
-      modules[i].run(setpoint.moduleStates()[i], setpoint.steerFeedforwards()[i]);
+      modules[i].run(setpoint[i]);
     }
-
-    lastSetpoint = setpoint;
   }
 
-  public void teleopDrive(double xInput, double yInput, double yawInput, double dt) {
+  public void fieldRelativeDrive(ChassisSpeeds speeds) {
+    var deviceStatus = odometry.getDeviceStatus();
+    var gyroOk = deviceStatus == GoBildaPinpointDriver.DeviceStatus.READY;
+    telemetry.addData("Swerve/Pinpoint status", gyroOk ? "OK" : deviceStatus.name());
+    var yaw = gyroOk ? odometry.getHeading() : new Rotation2d();
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, yaw));
+    telemetry.addData("Swerve/Yaw", yaw.getDegrees());
+  }
+
+  public void teleopDrive(double xInput, double yInput, double yawInput) {
     var translationalMagnitude = Math.hypot(xInput, yInput);
     if (translationalMagnitude > 1) {
       xInput /= translationalMagnitude;
       yInput /= translationalMagnitude;
     }
 
-    drive(
+    fieldRelativeDrive(
         new ChassisSpeeds(
             xInput * Module.maxDriveSpeedMetersPerSec,
             yInput * Module.maxDriveSpeedMetersPerSec,
-            yawInput * (Module.maxDriveSpeedMetersPerSec / drivebaseRadius)),
-        dt);
+            yawInput * (Module.maxDriveSpeedMetersPerSec / drivebaseRadius)));
   }
 
   public Pose2d getPose() {
-    return new Pose2d(
-        odometry.getPosX() / 1000.0,
-        odometry.getPosY() / 1000.0,
-        new Rotation2d(odometry.getHeading()));
+    return odometry.getPose();
   }
 
   public void periodic() {
@@ -115,12 +115,12 @@ public class Swerve {
       conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
       maxDriveSpeedMetersPerSec = ((maxMotorVelocity / gearRatio)) * wheelCircumferenceMeters;
 
-      double maxSpeedSecondsPer60Degrees = .14 * .667;
+      double maxSpeedSecondsPer60Degrees = .14 * .863;
       maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
     }
 
     final DcMotorEx driveMotor;
-    final CRServo steerServo;
+    final Servo steerServo;
     final AnalogInput steerEncoder;
 
     final PIDController drivePID;
@@ -142,14 +142,14 @@ public class Swerve {
       }
 
       driveMotor = (DcMotorEx) opMode.hardwareMap.dcMotor.get(pos + "Motor");
-      steerServo = opMode.hardwareMap.crservo.get(pos + "Servo");
+      steerServo = opMode.hardwareMap.servo.get(pos + "Servo");
       steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
 
-      if (pos.equals("FL") || pos.equals("FR")) {
+      if (pos.equals("FR") || pos.equals("BR")) {
         driveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
       }
 
-      drivePID = new PIDController(0 / maxDriveSpeedMetersPerSec, 0, 0);
+      drivePID = new PIDController(.5 / maxDriveSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
       steerPID = new PIDController(5, 0, 0);
@@ -159,9 +159,8 @@ public class Swerve {
       this.id = id;
     }
 
-    void run(SwerveModuleState state, double steerFeedforward) {
+    void run(SwerveModuleState state) {
       var servoPos = getServoPos();
-      telemetry.addData(id + "/angle", servoPos.getRadians());
       state.optimize(servoPos);
       state.cosineScale(servoPos);
 
@@ -169,9 +168,9 @@ public class Swerve {
           driveFeedforward.calculate(state.speedMetersPerSecond)
               + drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond));
 
-      runServoVel(
-          steerFeedforward
-              + steerPID.calculate(getServoPos().getRadians(), state.angle.getRadians()));
+      telemetry.addData(
+          "Swerve/Module " + id + "/Angle error", state.angle.getDegrees() - servoPos.getDegrees());
+      runServoVel(steerPID.calculate(getServoPos().getRadians(), state.angle.getRadians()));
     }
 
     public double getDrivePosition() {
@@ -200,12 +199,11 @@ public class Swerve {
     public Rotation2d getServoPos() {
       return new Rotation2d(
           MathUtil.angleModulus(
-              MathUtil.interpolate(
-                  0, 2 * Math.PI, steerEncoder.getVoltage() / steerEncoder.getMaxVoltage())));
+              (Math.PI * 2) * (steerEncoder.getVoltage() / steerEncoder.getMaxVoltage())));
     }
 
     private void runServoVel(double velRadPerSec) {
-//      steerServo.setPower(velRadPerSec / maxSteerSpeedRadPerSec);
+      steerServo.setPosition(((-velRadPerSec / maxSteerSpeedRadPerSec) + 1) / 2);
     }
   }
 }
