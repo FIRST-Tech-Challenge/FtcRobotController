@@ -624,15 +624,10 @@ public class TeleopLift extends LinearOpMode {
         {   // Move lift to MID-SCORING position
 //           robot.startLiftMove( robot.VIPER_EXTEND_MID );
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
-        else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
-        {   // Move lift to LOW-SCORING position
-//           robot.startLiftMove( robot.VIPER_EXTEND_LOW );
-        }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Move lift to STORED position
-//            robot.startLiftStore(  );
+//           robot.startLiftStore();
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -699,33 +694,16 @@ public class TeleopLift extends LinearOpMode {
           robot.geckoServo.setPower(-1.0);  // collect (resume after failed attempt)
         }
 
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
+        else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
+        {   // Position for scoring a specimen on the submersible bar
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_BAR);
+        }
+
     }  // processCollectorControls
 
     /*---------------------------------------------------------------------------------*/
-    void processCollectorIntake() {   // INITIAL DEMO TOOL -- obsolete??
 
-        if( gamepad1_cross_now && !gamepad1_cross_last)
-        {
-
-            switch(geckoWheelState){
-                case 0:
-                    robot.geckoServo.setPower(1.0);
-                    break;
-                case 1:
-                    robot.geckoServo.setPower(0.0);
-                    break;
-                case 2:
-                    robot.geckoServo.setPower(-1.0);
-                    break;
-                case 3:
-                    robot.geckoServo.setPower(0.0);
-                    break;
-                default: break;
-            } // switch()
-            geckoWheelState++;
-
-            if(geckoWheelState>3) geckoWheelState = 0;
-        }
-    } // processCollectorIntake
 
 } // TeleopLift

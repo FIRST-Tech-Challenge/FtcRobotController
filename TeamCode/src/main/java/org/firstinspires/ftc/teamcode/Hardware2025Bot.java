@@ -119,17 +119,18 @@ public class Hardware2025Bot
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
     public boolean      viperMotorBusy     = false;
     public double       VIPER_RAISE_POWER  =  1.000; // Motor power used to RAISE viper slide
-    public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current height
+    public double       VIPER_HOLD_POWER   =  0.002; // Motor power used to HOLD viper slide at current height
     public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to LOWER viper slide
 
-    // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3
-    public int          VIPER_EXTEND_ZERO  = 0;      // 435 Encoder count when fully retracted (may need to be adjustable??)
-    public int          VIPER_EXTEND_AUTO  = 482;    // 435 Encoder count when raised to just above the bin (safe to rotate - auto)
-    public int          VIPER_EXTEND_BIN   = 519;    // 435 Encoder count when raised to just above the bin (safe to rotate - teleop)
-    public int          VIPER_EXTEND_LOW   = 537;    // 435 Encoder count when raised to lowest possible scoring position
-    public int          VIPER_EXTEND_MID   = 1038;   // 435 Encoder count when raised to medium scoring height
-    public int          VIPER_EXTEND_HIGH  = 1482;   // 435 Encoder count when raised to upper scoring height
-    public int          VIPER_EXTEND_FULL  = 2149;   // 435 Encoder count when fully extended (never exceed this count!)
+    // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3 counts
+    // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
+    public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
+    public int          VIPER_EXTEND_AUTO  = 482;    // raised to just above the bin (safe to rotate - auto)
+    public int          VIPER_EXTEND_BIN   = 519;    // raised to just above the bin (safe to rotate - teleop)
+    public int          VIPER_EXTEND_LOW   = 537;    // raised to lowest possible scoring position
+    public int          VIPER_EXTEND_MID   = 1038;   // raised to medium scoring height
+    public int          VIPER_EXTEND_HIGH  = 1482;   // raised to upper scoring height
+    public int          VIPER_EXTEND_FULL  = 3000;   // fully extended (never exceed this count!)
     PIDControllerLift   liftPidController;           // PID parameters for the lift motors
     public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
     public double       liftMotorPID_i     =  0.000; //  Raise i = integral
@@ -150,6 +151,8 @@ public class Hardware2025Bot
     final public static double ELBOW_SERVO_GRAB_ANGLE = 234.0;
     final public static double ELBOW_SERVO_DROP = 0.350;  // Fully extend finger assembly toward the Backdrop
     final public static double ELBOW_SERVO_DROP_ANGLE = 230.0;
+    final public static double ELBOW_SERVO_BAR  = 0.650;  // For scoring a specimen on the sumersible bar
+    final public static double ELBOW_SERVO_BAR_ANGLE = 133.0;
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
@@ -163,6 +166,8 @@ public class Hardware2025Bot
     final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;
     final public static double WRIST_SERVO_DROP = 0.350;
     final public static double WRIST_SERVO_DROP_ANGLE = 228.0;
+    final public static double WRIST_SERVO_BAR = 0.600;
+    final public static double WRIST_SERVO_BAR_ANGLE = 147.0;
 
     public CRServo geckoServo = null;
 
@@ -487,6 +492,7 @@ public class Hardware2025Bot
     } // setRunToPosition
 
     public ElapsedTime viperSlideTimer = new ElapsedTime();
+
     /*--------------------------------------------------------------------------------------------*/
     /* viperSlideExtension()                                                                      */
     /* NOTE: Comments online say the firmware that executes the motor RUN_TO_POSITION logic want  */
@@ -542,6 +548,8 @@ public class Hardware2025Bot
         LOWERING
     }
     public LiftStoreActivity liftStoreState = LiftStoreActivity.IDLE;
+
+    private ElapsedTime liftStoreTimer = new ElapsedTime();
 
     public void abortViperSlideExtension()
     {
@@ -743,5 +751,140 @@ public class Hardware2025Bot
             }
         } // liftMotorPIDAuto
     } // liftPIDPosRun
+
+    private ElapsedTime liftMoveTimer = new ElapsedTime();
+    private int liftMoveTarget;
+
+    public void startLiftMove(int liftTarget)
+    {
+        // Ensure pre-conditions are met
+        if( true /* (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
+                (pixelGrabState == PixelGrabActivity.IDLE) &&
+                (pixelScoreState == PixelScoreActivity.IDLE) */ ) {
+            // startViperSlideExtension handles lift power vs lower power
+            liftMoveTarget = liftTarget;
+            startViperSlideExtension(liftMoveTarget);
+            liftMoveTimer.reset();
+            liftMoveState = LiftMoveActivity.LIFTING_SAFE;
+        }
+    }
+    public void processLiftMove() {
+        switch(liftMoveState){
+            // Make sure we are over the bin to rotate
+            case LIFTING_SAFE:
+                // We are above the pixel bin and can start rotating
+                if(viperMotorPos >= VIPER_EXTEND_BIN) {
+                    // This shouldn't happen, but make sure we aren't moving below
+                    // the pixel bin height before starting wrist movement. Moving below
+                    // pixel bin should use the store activity.
+                    if(liftMoveTarget >= VIPER_EXTEND_BIN) {
+                        wristServo.setPosition(WRIST_SERVO_DROP);
+                    }
+                    liftMoveTimer.reset();
+                    liftMoveState = LiftMoveActivity.LIFTING;
+                }
+                // This is a timeout, the lift could not get above the bin, we probably
+                // want to stop here.
+                else if(liftMoveTimer.milliseconds() > 2000.0) {
+//                    telemetry.addData("processLiftMove", "Timed out lifting safe");
+//                    telemetry.addData("processLiftMove", "Lift Target: %d Lift Position: %d", liftMoveTarget, viperMotorsPos);
+//                    telemetry.update();
+//                    telemetrySleep();
+                    liftMoveTimer.reset();
+                    liftMoveState = LiftMoveActivity.IDLE;
+                }
+                break;
+            case LIFTING:
+                // We are at our desired height
+                if(!viperMotorBusy) {
+                    liftMoveTimer.reset();
+                    liftMoveState = LiftMoveActivity.ROTATING;
+                }
+                // This is a timeout, the lift could not get to target, we got above the  bin
+                // so we can do our thing, but not sure why we didn't hit target.
+                else if(liftMoveTimer.milliseconds() > 5000.0) {
+//                    telemetry.addData("processLiftMove", "Timed out lifting");
+//                    telemetry.addData("processLiftMove", "Lift Target: %d Lift Position: %d", liftMoveTarget, viperMotorsPos);
+//                    telemetry.update();
+//                    telemetrySleep();
+                    liftMoveTimer.reset();
+                    liftMoveState = LiftMoveActivity.ROTATING;
+                }
+                break;
+            case ROTATING:
+                // We have rotated to the desired position
+                if(getWristServoAngle() <= WRIST_SERVO_DROP_ANGLE) {
+                    liftMoveState = LiftMoveActivity.IDLE;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we rotated.
+                else if(liftMoveTimer.milliseconds() > 1000.0) {
+//                    telemetry.addData("processLiftMove", "Timed out rotating");
+//                    telemetry.addData("processLiftMove", "Wrist: %.2f", getWristServoAngle());
+                    // Pull back to the safe/stored position
+//                    telemetry.update();
+//                    telemetrySleep();
+                    liftMoveState = LiftMoveActivity.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    public void startLiftStore()
+    {
+        // Ensure pre-conditions are met
+        if( /* (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
+                (pixelGrabState == PixelGrabActivity.IDLE) &&
+                (pixelScoreState == PixelScoreActivity.IDLE) && */
+                (viperMotorPos >= VIPER_EXTEND_BIN)) {
+            // Rotate elbow/wrist to safe position
+            elbowServo.setPosition(ELBOW_SERVO_SAFE);
+            wristServo.setPosition(WRIST_SERVO_SAFE);
+            liftStoreTimer.reset();
+            liftStoreState = LiftStoreActivity.ROTATING;
+        }
+    } // startLiftStore
+
+    public void processLiftStore() {
+        switch(liftStoreState){
+            // Make sure the fingers are in a safe position
+            case ROTATING:
+                if( /* (getPushServoAngle() >= PUSH_SERVO_SAFE_ANGLE) && */
+                        (getWristServoAngle() >= WRIST_SERVO_GRAB_ANGLE)) {
+                    liftStoreState = LiftStoreActivity.LOWERING;
+                    startViperSlideExtension(VIPER_EXTEND_ZERO);
+                    liftStoreTimer.reset();
+                }
+                // This is a timeout, the fingers are not safe, abort.
+                else if(liftStoreTimer.milliseconds() > 1500.0) {
+//                    telemetry.addData("processLiftStore", "Timed out rotating");
+//                    telemetry.addData("processLiftStore", "Push: %.2f Wrist: %.2f", getPushServoAngle(), getWristServoAngle());
+//                    telemetry.update();
+//                    telemetrySleep();
+                    liftStoreState = LiftStoreActivity.IDLE;
+                }
+                break;
+            case LOWERING:
+                // We are at our desired height
+                if(!viperMotorBusy) {
+                    liftStoreState = LiftStoreActivity.IDLE;
+                }
+                // This is a timeout, the lift could not fully lower.
+                else if(liftStoreTimer.milliseconds() > 5000.0) {
+//                    telemetry.addData("processLiftStore", "Timed out lowering");
+//                    telemetry.addData("processLiftStore", "Lift Position: %d", viperMotorsPos);
+//                    telemetry.update();
+//                    telemetrySleep();
+                    liftStoreState = LiftStoreActivity.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    } // processLiftStore
 
 } /* Hardware2025Bot */
