@@ -29,7 +29,21 @@ public class DriveServoTest extends LinearOpMode {
     }
 
     waitForStart();
+    boolean leftPressed = false;
+    boolean rightPressed = false;
+    double power = 1;
     while (opModeIsActive()) {
+      if (gamepad1.left_bumper && !leftPressed) {
+        power += .01;
+      }
+      leftPressed = gamepad1.left_bumper;
+      if (gamepad1.right_bumper && !rightPressed) {
+        power -= .01;
+      }
+      rightPressed = gamepad1.right_bumper;
+
+      telemetry.addData("Power", power);
+
       for (int i = 0; i < 4; i++) {
         String pos;
         boolean run;
@@ -53,13 +67,11 @@ public class DriveServoTest extends LinearOpMode {
           default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
         }
 
-        double commanded = run ? (gamepad1.left_stick_y + 1) / 2 : 0.5;
+        double commanded = run ? (1 - power) / 2 : 0.5;
         servos[i].setPosition(commanded);
 
         telemetry.addData(
-            pos + "/position",
-            (sensors[i].getVoltage() / sensors[i].getMaxVoltage()) * 360);
-        telemetry.addData(pos + "/commanded", commanded);
+            pos + "/position", (sensors[i].getVoltage() / sensors[i].getMaxVoltage()) * 360);
       }
       telemetry.update();
     }
