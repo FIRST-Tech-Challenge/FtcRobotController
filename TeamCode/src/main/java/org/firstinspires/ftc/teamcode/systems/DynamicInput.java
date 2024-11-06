@@ -34,7 +34,8 @@ public class DynamicInput {
     public static class DirectionalOutput {
         public double up, right, down, left, rotation, x, y;
 
-        public DirectionalOutput(double up, double right, double down, double left, double rotateRight, double rotateLeft) {
+        public DirectionalOutput(double up, double right, double down, double left, double rotateRight,
+                double rotateLeft) {
             this.up = up;
             this.right = right;
             this.down = down;
@@ -53,34 +54,60 @@ public class DynamicInput {
         public boolean justExtendActuator, justRetractActuator, justGroundActuator;
 
         public ConvertedInputs(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
-                               Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
-                               boolean prevExtend, boolean prevRetract, boolean prevGround) {
+                Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
+                boolean prevExtend, boolean prevRetract, boolean prevGround) {
 
-            this.extendActuator = subCtrl.y;
-            this.retractActuator = subCtrl.x;
-            this.groundActuator = subCtrl.b;
+            this.extendActuator = getButtonState(subCtrl, subSettings.buttonMapping.extendActuator);
+            this.retractActuator = getButtonState(subCtrl, subSettings.buttonMapping.retractActuator);
+            this.groundActuator = getButtonState(subCtrl, subSettings.buttonMapping.groundActuator);
             this.actuatorBusy = extendActuator || retractActuator || groundActuator;
-            this.clawRight = subCtrl.right_trigger > subSettings.trigger_threshold;
-            this.clawLeft = subCtrl.left_trigger > subSettings.trigger_threshold;
-            this.wristUp = subCtrl.right_bumper;
-            this.wristDown = subCtrl.left_bumper;
-            this.ascendActuatorExtend = subCtrl.dpad_up;
-            this.ascendActuatorRetract = subCtrl.dpad_down;
-            this.ascendActuatorChange = subCtrl.dpad_right;
+            this.clawRight = getAxisValue(subCtrl, subSettings.buttonMapping.clawRight) > subSettings.trigger_threshold;
+            this.clawLeft = getAxisValue(subCtrl, subSettings.buttonMapping.clawLeft) > subSettings.trigger_threshold;
+            this.wristUp = getButtonState(subCtrl, subSettings.buttonMapping.wristUp);
+            this.wristDown = getButtonState(subCtrl, subSettings.buttonMapping.wristDown);
+            this.ascendActuatorExtend = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorExtend);
+            this.ascendActuatorRetract = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorRetract);
+            this.ascendActuatorChange = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorChange);
 
             // Determine if buttons were just pressed
             this.justExtendActuator = extendActuator && !prevExtend;
             this.justRetractActuator = retractActuator && !prevRetract;
             this.justGroundActuator = groundActuator && !prevGround;
         }
+
+        private boolean getButtonState(Gamepad gamepad, Settings.GamepadButton button) {
+            return switch (button) {
+                case A -> gamepad.a;
+                case B -> gamepad.b;
+                case X -> gamepad.x;
+                case Y -> gamepad.y;
+                case DPAD_UP -> gamepad.dpad_up;
+                case DPAD_DOWN -> gamepad.dpad_down;
+                case DPAD_LEFT -> gamepad.dpad_left;
+                case DPAD_RIGHT -> gamepad.dpad_right;
+                case LEFT_BUMPER -> gamepad.left_bumper;
+                case RIGHT_BUMPER -> gamepad.right_bumper;
+            };
+        }
+
+        private double getAxisValue(Gamepad gamepad, Settings.GamepadAxis axis) {
+            return switch (axis) {
+                case LEFT_TRIGGER -> gamepad.left_trigger;
+                case RIGHT_TRIGGER -> gamepad.right_trigger;
+            };
+        }
     }
 
     // Generates the directional output based on controller input
     public DirectionalOutput directional() {
-        double upPower = (mainCtrl.left_stick_y < 0 ? -mainCtrl.left_stick_y : 0) + ((mainCtrl.dpad_up ? 1 : 0) * mainSettings.dpad_sensitivity);
-        double downPower = (mainCtrl.left_stick_y > 0 ? mainCtrl.left_stick_y : 0) + ((mainCtrl.dpad_down ? 1 : 0) * mainSettings.dpad_sensitivity);
-        double rightPower = (mainCtrl.left_stick_x > 0 ? mainCtrl.left_stick_x : 0) + ((mainCtrl.dpad_right ? 1 : 0) * mainSettings.dpad_sensitivity);
-        double leftPower = (mainCtrl.left_stick_x < 0 ? -mainCtrl.left_stick_x : 0) + ((mainCtrl.dpad_left ? 1 : 0) * mainSettings.dpad_sensitivity);
+        double upPower = (mainCtrl.left_stick_y < 0 ? -mainCtrl.left_stick_y : 0)
+                + ((mainCtrl.dpad_up ? 1 : 0) * mainSettings.dpad_sensitivity);
+        double downPower = (mainCtrl.left_stick_y > 0 ? mainCtrl.left_stick_y : 0)
+                + ((mainCtrl.dpad_down ? 1 : 0) * mainSettings.dpad_sensitivity);
+        double rightPower = (mainCtrl.left_stick_x > 0 ? mainCtrl.left_stick_x : 0)
+                + ((mainCtrl.dpad_right ? 1 : 0) * mainSettings.dpad_sensitivity);
+        double leftPower = (mainCtrl.left_stick_x < 0 ? -mainCtrl.left_stick_x : 0)
+                + ((mainCtrl.dpad_left ? 1 : 0) * mainSettings.dpad_sensitivity);
         double rotationRight = mainCtrl.right_bumper ? mainSettings.bumper_sensitivity : 0;
         double rotationLeft = mainCtrl.left_bumper ? mainSettings.bumper_sensitivity : 0;
 
@@ -101,7 +128,8 @@ public class DynamicInput {
     }
 
     // Method to switch between different control profiles
-    public void switchProfile(Settings.DefaultGamepadSettings mainSettings, Settings.DefaultGamepadSettings subSettings) {
+    public void switchProfile(Settings.DefaultGamepadSettings mainSettings,
+            Settings.DefaultGamepadSettings subSettings) {
         this.mainSettings = mainSettings;
         this.subSettings = subSettings;
     }
