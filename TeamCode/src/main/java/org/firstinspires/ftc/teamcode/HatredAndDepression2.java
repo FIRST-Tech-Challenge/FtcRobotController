@@ -15,7 +15,6 @@ public class HatredAndDepression2 extends LinearOpMode {
     static private DcMotor BRW;
     static private DcMotor ArmL;
     static private DcMotor ArmR;
-    static private double armSpeed = .25;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,11 +24,11 @@ public class HatredAndDepression2 extends LinearOpMode {
         FRW = hardwareMap.get(DcMotor.class, "FRW");
         ArmL = hardwareMap.get(DcMotor.class, "ArmL");
         ArmR = hardwareMap.get(DcMotor.class, "ArmR");
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -37,6 +36,7 @@ public class HatredAndDepression2 extends LinearOpMode {
             telemetry.update();
             tgtPower = this.gamepad1.left_stick_y;
             tgtPower2 = this.gamepad1.left_stick_x;
+
             // FLW is the only right moving wheel :(
             if(gamepad1.left_stick_y > 0.3 || gamepad1.left_stick_y < -0.3) {
                 //forward and backwards
@@ -93,29 +93,17 @@ public class HatredAndDepression2 extends LinearOpMode {
                     } catch(Exception e) {
                     }
                 }).start();
-            } else if (gamepad1.circle) {
-                new Thread(() -> {
-                    try {
-                        if (armSpeed == .25) {
-                            armSpeed = .5;
-                        } else if (armSpeed == .5) {
-                            armSpeed = .25;
-                        }
-                        Thread.sleep(500);
-                    } catch (Exception e) {
-                    }
-                });
             } else {
                 disablePowerWheels();
             }
 
             //arm
             if(gamepad1.right_stick_y > 0.5){
-                ArmL.setPower(-armSpeed);
-                ArmR.setPower(armSpeed);
+                ArmL.setPower(0.5);
+                ArmR.setPower(-0.5);
             }else if(gamepad1.right_stick_y < -0.5) {
-                ArmL.setPower(armSpeed);
-                ArmR.setPower(-armSpeed);
+                ArmL.setPower(-0.5);
+                ArmR.setPower(0.5);
             }else {
                 disableArmMotors();
             }
@@ -146,7 +134,6 @@ public class HatredAndDepression2 extends LinearOpMode {
         telemetry.addData("ArmR Power:", ArmR.getPower());
         telemetry.addData("Left Stick X:", tgtPower2);
         telemetry.addData("Left Stick Y:", tgtPower);
-        telemetry.addData("Arm Rise Speed:", armSpeed);
         telemetry.update();
     }
 }
