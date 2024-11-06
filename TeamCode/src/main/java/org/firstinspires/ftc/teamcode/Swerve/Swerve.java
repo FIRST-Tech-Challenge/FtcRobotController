@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.Utils;
 public class Swerve {
 
   private final GoBildaPinpointDriver odometry;
+  private GoBildaPinpointDriver.DeviceStatus odometryStatus;
 
   private final SwerveDriveKinematics kinematics;
   private final double drivebaseRadius;
@@ -55,12 +56,17 @@ public class Swerve {
       modules[i] = new Module(opMode, i);
     }
 
-    odometry.resetHeading();
+    odometry.resetPosAndIMU();
+    try {
+      Thread.sleep((long) (.25 * 1e3));
+    } catch (final InterruptedException ex) {
+      Thread.currentThread().interrupt();
+    }
+    odometry.update();
+    odometryStatus = odometry.getDeviceStatus();
 
     this.telemetry = opMode.telemetry;
   }
-
-  
 
   public void drive(ChassisSpeeds speeds) {
     var setpoint = kinematics.toSwerveModuleStates(speeds);
@@ -71,10 +77,10 @@ public class Swerve {
   }
 
   public void fieldRelativeDrive(ChassisSpeeds speeds) {
-    var deviceStatus = odometry.getDeviceStatus();
-    var gyroOk = deviceStatus == GoBildaPinpointDriver.DeviceStatus.READY;
-    telemetry.addData("Swerve/Pinpoint status", gyroOk ? "OK" : deviceStatus.name());
-    var yaw = gyroOk ? odometry.getHeading() : new Rotation2d();
+    var yaw =
+        odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY
+            ? odometry.getHeading()
+            : new Rotation2d();
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, yaw));
     telemetry.addData("Swerve/Yaw", yaw.getDegrees());
   }
@@ -99,6 +105,10 @@ public class Swerve {
 
   public void periodic() {
     odometry.update();
+    odometryStatus = odometry.getDeviceStatus();
+    telemetry.addData(
+        "Swerve/Pinpoint status",
+        odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY ? "OK" : odometryStatus.name());
   }
 
   private static final class Module {
