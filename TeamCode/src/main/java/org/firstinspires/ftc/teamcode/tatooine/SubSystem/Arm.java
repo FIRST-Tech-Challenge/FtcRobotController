@@ -60,7 +60,7 @@ public class Arm {
         angleMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AngleMotor");
         extendServoLeft = opMode.hardwareMap.get(Servo.class, "ExtendServoLeft");
         extendServoRight = opMode.hardwareMap.get(Servo.class, "ExtendServoRight");
-        touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
+        //touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
 
         anglePID.setTolerance(ANGLE_TOLERANCE);
         init();
@@ -142,6 +142,7 @@ public class Arm {
         return EXTEND_TOLERANCE;
     }
 
+
     public TouchSensor getTouchSensor() {
         return touchSensor;
     }
@@ -198,9 +199,9 @@ public class Arm {
     public Action setAngle(double angle) {
         moveAngle move = new moveAngle();
         move.setGoal(angle);
-        if (touchSensor.isPressed()) {
-            resetAngleEncoder();
-        }
+//        if (touchSensor.isPressed()) {
+//            resetAngleEncoder();
+//        }
         if (isDebug) {
             telemetry.addData("the new ang ", angle);
         }
