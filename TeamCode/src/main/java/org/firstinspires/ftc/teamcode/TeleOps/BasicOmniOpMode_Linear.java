@@ -91,8 +91,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-
-
         waitForStart();
         runtime.reset();
 
@@ -103,10 +101,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
-            double slideDriveJoystick = gamepad2.right_stick_y;
+            //To switch the neg value given to pos value.
+            double slideDriveJoystick = -gamepad2.right_stick_y;
 
             //Check to make sure the joystick is actually being moved instead of it just getting bumped.
             driveBase.driveRobot(axial, lateral, yaw);
-
+            driveBase.teleOpSlideDrive(slideDriveJoystick);
         }
     }}

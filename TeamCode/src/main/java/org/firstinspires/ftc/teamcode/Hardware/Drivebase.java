@@ -488,12 +488,35 @@ public class Drivebase {
 
     public void teleOpSlideDrive(double power) {
         if (power > 0.05 || power < -0.05) {
-            leftSlideDrive.setPower(power);
-            rightSlideDrive.setPower(power);
-        } else {
+            //check if you;ve reached the limit.
+            if(leftSlideDrive.getCurrentPosition() > 6000 || rightSlideDrive.getCurrentPosition() > 6000) {
+                //if limit's been reached and power is negative(persons trying to go back in).
+                if(power < 0) {
+                    leftSlideDrive.setPower(power);
+                    rightSlideDrive.setPower(power);
+                }
+                //limit has been reached so can't go out.
+                else
+                {
+                    leftSlideDrive.setPower(0);
+                    rightSlideDrive.setPower(0);
+                }
+            }
+            //limit hasn't been reached so neg or pos power can be applied.
+            else
+            {
+                leftSlideDrive.setPower(power);
+                rightSlideDrive.setPower(power);
+            }
+        }
+        //no joystick power applied.
+        else
+        {
             leftSlideDrive.setPower(0);
             rightSlideDrive.setPower(0);
         }
+
+        sendTelemetry(true);
     }
     public void encoderSlide(double speed,
                              double leftInches, double rightInches,
@@ -576,7 +599,7 @@ public class Drivebase {
         telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
         telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
         telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", leftSpeed, rightSpeed);
-        telemetry.addData("Starting at",  "%7d :%7d", leftSlideDrive.getCurrentPosition(), rightSlideDrive.getCurrentPosition());
+        telemetry.addData("CurEncoders:",  "%7d :%7d", leftSlideDrive.getCurrentPosition(), rightSlideDrive.getCurrentPosition());
         telemetry.update();
     }
 
