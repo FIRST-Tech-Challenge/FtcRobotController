@@ -15,7 +15,6 @@ public class Wrist {
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
 
-
     public Wrist(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
@@ -50,7 +49,6 @@ public class Wrist {
             return Position.UNKNOWN;
         }
     }
-
 
     public enum Position {
         HORIZONTAL,

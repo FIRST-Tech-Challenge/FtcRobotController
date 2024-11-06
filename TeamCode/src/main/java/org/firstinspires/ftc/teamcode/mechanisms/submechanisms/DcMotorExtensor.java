@@ -13,7 +13,7 @@ public class DcMotorExtensor implements Extensor {
     public DcMotorExtensor(@NonNull BaseRobot baseRobot) {
         this.leftMotor = baseRobot.hardwareMap.get(DcMotor.class, "extensorLeft");
         this.rightMotor = baseRobot.hardwareMap.get(DcMotor.class, "extensorRight");
-        this.currentPosition = Position.HOVER;  // Initialize to default position
+        this.currentPosition = Position.HOVER; // Initialize to default position
     }
 
     public void setPosition(double position) {

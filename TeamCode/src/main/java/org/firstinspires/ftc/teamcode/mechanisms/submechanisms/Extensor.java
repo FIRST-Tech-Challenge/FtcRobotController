@@ -23,6 +23,8 @@ public interface Extensor {
     void setPosition(Position position);
 
     void extend();
+
     void retract();
+
     void ground();
 }

@@ -42,7 +42,8 @@ public class BaseRobot {
     private boolean actuatorReleased = true;
     private boolean clawReleasedL = true;
 
-    public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, LinearOpMode parentOp, Telemetry telemetry) {
+    public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, LinearOpMode parentOp,
+            Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.parentOp = parentOp;
         this.input = new DynamicInput(primaryGamepad, auxGamepad);
@@ -70,11 +71,9 @@ public class BaseRobot {
         motors.put("rearLeft", rearLeftMotor);
         motors.put("rearRight", rearRightMotor);
 
-
         if (Settings.Deploy.ARM) {
             arm = new Arm(this);
         }
-
 
         if (Settings.Deploy.ODOMETRY) {
             odometry = new Odometry(this);
@@ -86,7 +85,6 @@ public class BaseRobot {
     public void shutDown() {
         logger.stop();
     }
-
 
     public void driveGamepads() {
         gamepadPrimary();
@@ -102,12 +100,10 @@ public class BaseRobot {
         double rearLeft = drivePower - strafePower + rotation;
         double rearRight = drivePower + strafePower - rotation;
 
-
         // Normalize the power values to stay within the range [-1, 1]
         double max = Math.max(
                 Math.max(Math.abs(frontLeft), Math.abs(frontRight)),
-                Math.max(Math.abs(rearLeft), Math.abs(rearRight))
-        );
+                Math.max(Math.abs(rearLeft), Math.abs(rearRight)));
         if (max > 1.0) {
             frontLeft /= max;
             frontRight /= max;
@@ -121,7 +117,6 @@ public class BaseRobot {
         rearRightMotor.setPower(rearRight);
     }
 
-
     public void gamepadPrimary() {
         DynamicInput.DirectionalOutput directionalOutput = input.directional();
 
@@ -130,7 +125,7 @@ public class BaseRobot {
         double drivePower = directionalOutput.y;
 
         /*
-            Drives the motors based on the given power/rotation
+         * Drives the motors based on the given power/rotation
          */
         mecanumDrive(drivePower, strafePower, rotation);
     }
@@ -220,4 +215,3 @@ public class BaseRobot {
         }
     }
 }
-

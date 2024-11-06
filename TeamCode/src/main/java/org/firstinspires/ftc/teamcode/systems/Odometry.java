@@ -42,14 +42,19 @@ public class Odometry {
     public void update() {
 
         // Calculate distance traveled by each wheel
-        double frontLeftDistance = (frontLeftMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION) * (Math.PI * WHEEL_DIAMETER_INCHES);
-        double frontRightDistance = (frontRightMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION) * (Math.PI * WHEEL_DIAMETER_INCHES);
-        double rearLeftDistance = (rearLeftMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION) * (Math.PI * WHEEL_DIAMETER_INCHES);
-        double rearRightDistance = (rearRightMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION) * (Math.PI * WHEEL_DIAMETER_INCHES);
+        double frontLeftDistance = (frontLeftMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION)
+                * (Math.PI * WHEEL_DIAMETER_INCHES);
+        double frontRightDistance = (frontRightMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION)
+                * (Math.PI * WHEEL_DIAMETER_INCHES);
+        double rearLeftDistance = (rearLeftMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION)
+                * (Math.PI * WHEEL_DIAMETER_INCHES);
+        double rearRightDistance = (rearRightMotor.getCurrentPosition() / COUNTS_PER_REVOLUTION)
+                * (Math.PI * WHEEL_DIAMETER_INCHES);
 
         // Calculate robot's movement and update position
         double distanceTraveled = (frontLeftDistance + frontRightDistance + rearLeftDistance + rearRightDistance) / 4.0;
-        double deltaHeading = (frontLeftDistance - frontRightDistance + rearLeftDistance - rearRightDistance) / (4.0 * WHEEL_DIAMETER_INCHES);
+        double deltaHeading = (frontLeftDistance - frontRightDistance + rearLeftDistance - rearRightDistance)
+                / (4.0 * WHEEL_DIAMETER_INCHES);
 
         double deltaX = distanceTraveled * Math.cos(heading + (deltaHeading / 2.0));
         double deltaY = distanceTraveled * Math.sin(heading + (deltaHeading / 2.0));
@@ -61,7 +66,6 @@ public class Odometry {
         // Normalize heading angle between 0 and 2*pi
         heading = (2 * Math.PI + heading) % (2 * Math.PI);
     }
-
 
     // Function to reset position and heading to zero
     public void reset() {
@@ -148,7 +152,6 @@ public class Odometry {
         setMotorPower(0);
     }
 
-
     // Function to move to a specific position
     public void moveToPosition(double targetX, double targetY) {
         // Calculate distance and angle to the target position
@@ -168,7 +171,8 @@ public class Odometry {
         final double ANGLE_THRESHOLD = Math.toRadians(5); // Example angle threshold in radians, adjust as needed
 
         while (distanceToTarget > DISTANCE_THRESHOLD || Math.abs(angleDifference) > ANGLE_THRESHOLD) {
-            // Recalculate the differences in position and angle in case they change during movement
+            // Recalculate the differences in position and angle in case they change during
+            // movement
             deltaX = targetX - xPosition;
             deltaY = targetY - yPosition;
             distanceToTarget = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -200,7 +204,6 @@ public class Odometry {
         frontRightMotor.setPower(-strafePower);
         rearRightMotor.setPower(strafePower);
     }
-
 
     private void setMotorPowers(double leftPower, double rightPower) {
         // Apply the calculated powers to the left and right motors

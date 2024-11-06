@@ -21,7 +21,9 @@ public class BlueRight extends LinearOpMode {
                 auto.run("blue right");
             }
         } catch (RuntimeException e) {
-            /* The ShutdownManager has thrown a RuntimeException because the opmode has been stopped from the driver hub.
+            /*
+             * The ShutdownManager has thrown a RuntimeException because the opmode has been
+             * stopped from the driver hub.
              * No cleanup is needed, because it is handled in the shutdown manager.
              */
         }

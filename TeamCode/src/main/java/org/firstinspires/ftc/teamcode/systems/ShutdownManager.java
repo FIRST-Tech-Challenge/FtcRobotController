@@ -35,7 +35,6 @@ public class ShutdownManager {
         }, 0, 500); // Schedule the check every 500ms
     }
 
-
     private void shutdown() {
         // Perform other cleanup or shutdown actions
         baseRobot.shutDown();

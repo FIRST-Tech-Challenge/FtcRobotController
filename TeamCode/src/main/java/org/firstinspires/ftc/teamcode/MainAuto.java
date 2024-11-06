@@ -49,8 +49,8 @@ public class MainAuto {
         // we are in the center by the rungs
         // move to the human player
         baseRobot.odometry.moveCounts("backward", 50); // TODO tune
-        baseRobot.odometry.moveCounts("right", 50);  // TODO tune
-        baseRobot.odometry.moveCounts("tright", 50);  // TODO tune
+        baseRobot.odometry.moveCounts("right", 50); // TODO tune
+        baseRobot.odometry.moveCounts("tright", 50); // TODO tune
         getSpecimenFromHumanPlayer();
     }
 
@@ -75,7 +75,6 @@ public class MainAuto {
         baseRobot.arm.claw.setRightServo(false);
         pause(1000);
     }
-
 
     public void placeOnChamber(String mode, ChamberHeight chamberHeight) {
         baseRobot.odometry.update(); // Update robot's current position
