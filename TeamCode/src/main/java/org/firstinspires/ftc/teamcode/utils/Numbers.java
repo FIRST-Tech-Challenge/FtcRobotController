@@ -106,16 +106,4 @@ public class Numbers {
     public static double querp(double a, double b, double t) {
         return lerp(a, b, Math.abs(t) * t);
     }
-
-    public static double interpolate(double a, double b, double startTime, double length, double currentTime, TriFunction<Double, Double, Double, Double> interpolationFunction) {
-        double elapsedTime = currentTime - startTime;
-        if (elapsedTime >= length)
-            return b;
-
-        if (elapsedTime <= 0)
-            return a;
-
-        double t = elapsedTime/length;
-        return interpolationFunction.apply(a, b, t);
-    }
 }
