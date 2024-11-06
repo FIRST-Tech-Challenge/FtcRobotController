@@ -258,7 +258,7 @@ public class localization extends LinearOpMode {
             double trueX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) + prevX;
             double trueY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) + prevY;
 
-            // Update robot's global position
+            // Update robot's global position TEST LUCCA
             robotX = trueX;
             robotY = trueY;
             robotHeading = currentHeading;
