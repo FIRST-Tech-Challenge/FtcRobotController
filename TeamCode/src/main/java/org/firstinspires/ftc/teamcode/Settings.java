@@ -7,6 +7,8 @@ public class Settings {
     // makes strafing faster or slower
     public static final double strafe_power_coefficient = 1.2;
     public static final double tileLengthFeet = 2;
+    public static double ms_needed_to_park = 10000;
+
 
     public static class DefaultGamepadSettings {
         public double left_stick_sensitivity = 1.0;
@@ -48,6 +50,8 @@ public class Settings {
         public static final boolean ODOMETRY = true;
         public static final boolean DEBUG = true;
         public static final boolean VICTORY = false;
+
+        public static final boolean SKIP_AUTONOMOUS = false;
 
     }
 

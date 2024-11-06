@@ -11,7 +11,7 @@ public class BlueRight extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        BaseRobot baseRobot = new BaseRobot(hardwareMap, gamepad1, gamepad2, telemetry);
+        BaseRobot baseRobot = new BaseRobot(hardwareMap, gamepad1, gamepad2, this, telemetry);
         MainAuto auto = new MainAuto(baseRobot, "blue");
         ShutdownManager shutdownManager = new ShutdownManager(this, baseRobot, auto);
         waitForStart();

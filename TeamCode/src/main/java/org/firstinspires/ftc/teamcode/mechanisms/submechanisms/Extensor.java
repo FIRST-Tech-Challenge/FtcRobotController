@@ -4,11 +4,10 @@ public interface Extensor {
 
     // Enum for named positions
     enum Position {
-        GROUND(0.0),
+        PICKUP(0.0),
         HOVER(0.15),
-        LEVEL0(0.3),
-        LEVEL1(0.66),
-        LEVEL2(1.0);
+        LOW_RUNG(0.66),
+        HIGH_RUNG(1.0);
 
         private final double value;
 

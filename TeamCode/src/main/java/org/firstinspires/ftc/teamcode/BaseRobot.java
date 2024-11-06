@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -30,6 +32,7 @@ public class BaseRobot {
     public final DynamicInput input;
     public final HardwareMap hardwareMap;
     public final LinearActuator linearActuator;
+    public final OpMode parentOp;
     public final Telemetry telemetry;
     public final Logger logger;
     public Arm arm;
@@ -39,8 +42,9 @@ public class BaseRobot {
     private boolean actuatorReleased = true;
     private boolean clawReleasedL = true;
 
-    public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, Telemetry telemetry) {
+    public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, LinearOpMode parentOp, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
+        this.parentOp = parentOp;
         this.input = new DynamicInput(primaryGamepad, auxGamepad);
         this.telemetry = telemetry;
         this.logger = new Logger(this);
@@ -173,7 +177,7 @@ public class BaseRobot {
             if (input.pressed().wristUp) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             } else if (input.pressed().wristDown) {
-                arm.wrist.setPosition(Wrist.Position.BOARD);
+                arm.wrist.setPosition(Wrist.Position.RUNG);
             }
         }
 
