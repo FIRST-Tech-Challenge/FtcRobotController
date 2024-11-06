@@ -7,8 +7,9 @@ public class Extension {
     DcMotorEx motor;
     HardwareMap hardwareMap;
 
-    public Intake(HardwareMap hardwareMap){
-        this.hardwareMap = hardwareMap;
-        motor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-    }
+//    public Intake(HardwareMap hardwareMap){
+//        this.hardwareMap = hardwareMap;
+//        motor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+//    }
+
 }

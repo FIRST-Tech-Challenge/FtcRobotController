@@ -14,20 +14,33 @@ public class Arm {
     Servo servoWrist;
     Servo servoArmLeft;
     Servo servoArmRight;
-    public Arm(HardwareMap hardwareMap){
+    public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         servoWrist = hardwareMap.get(Servo.class, "servoWrist");
         servoArmLeft = hardwareMap.get(Servo.class, "servoArmLeft");
         servoArmRight = hardwareMap.get(Servo.class, "servoArmRight");
     }
+
+    public enum Hawk {
+        wrist(10),
+        open(12),
+        close(15);
+
+        private final int tu;
+        Hawk(int value) {
+            this.tu = value;
+        }
+    }
+
+
     public Action servoWrist(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
                 //end pos of claw finding
-                servoWrist.setPosition(0.5);
-                servoArmLeft.setPosition(0);
-                servoArmRight.setPosition(0);
+//                servoWrist.setPosition(Hawk.open);
+//                servoArmLeft.setPosition(Hawk.close);
+//                servoArmRight.setPosition(Hawk.wrist);
                 // parameter -1, 0   0, 1
                 return false;
             }

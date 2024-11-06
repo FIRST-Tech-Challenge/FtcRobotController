@@ -29,12 +29,30 @@ public class Claw {
             }
         };
     }
+
+    public enum tua {
+        OPEN(12),
+        CLOSE(15),
+        MIDDLE(18);
+
+        private final int value;
+
+        tua(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+
     public Action clawClose(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                servoLeft.setPosition(0);
-                servoRight.setPosition(0);
+//                servoLeft.setPosition(tua.CLOSE);
+//                servoRight.setPosition(tua.OPEN);
                 // set position
                 return false;
             }
