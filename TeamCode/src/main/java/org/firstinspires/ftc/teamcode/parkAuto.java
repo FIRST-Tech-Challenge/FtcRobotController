@@ -2,19 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 //import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.roadrunner.Vector2d;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RRLocalizationRead;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,8 +20,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.roadrunner.Vector2d;
 import org.firstinspires.ftc.teamcode.RRLocalizationRead;
 
-@Autonomous(name = "auto", group = "autos")
-public class blueAutoYellow extends LinearOpMode {
+@Autonomous(name = "park auto", group = "autos")
+public class parkAuto extends LinearOpMode {
 
     public RRLocalizationRead localizationRead;
     public DcMotor frontL;
@@ -36,18 +32,11 @@ public class blueAutoYellow extends LinearOpMode {
     Servo inTakeClaw;
     Servo inTakeFlipExpansion;
     ElapsedTime totalTime = new ElapsedTime();
-    public IMU imu;
 
 
 
-@Override
+    @Override
     public void runOpMode() {
-    imu = hardwareMap.get(IMU.class, "imu");
-    // change it to match the actual orientation of the rev control hub
-    IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-    imu.initialize(parameters);
         localizationRead = new RRLocalizationRead();
         localizationRead.initLocalization(hardwareMap);
         backL = hardwareMap.get(DcMotor.class, "backL");
@@ -55,52 +44,22 @@ public class blueAutoYellow extends LinearOpMode {
         frontR = hardwareMap.get(DcMotor.class, "frontR");
         backR = hardwareMap.get(DcMotor.class, "backR");
 
-    frontL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    backL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    frontR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    backR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-    backL.setDirection(DcMotorSimple.Direction.REVERSE);
+        backL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-    inTakeFlipExpansion = hardwareMap.servo.get("itfe"); // port 1
-    inTakeClaw = hardwareMap.servo.get(("itc")); // port 3
-
-    inTakeClaw.setPosition(1);
+        inTakeFlipExpansion = hardwareMap.servo.get("itfe"); // port 1
+        inTakeClaw = hardwareMap.servo.get(("itc")); // port 3
 
         waitForStart();
 
         if (opModeIsActive()) {
-            inTakeFlipExpansion.setPosition(0);
-            sleep(1000);
-            moveForwardByInches(300.0, 10);  // Moves the robot forward by 10 inches
-            inTakeClaw.setPosition(.76);
-            sleep(1000);
-            moveBackwardByInches(-300.0, 3);
-            turnToZero(2);
-            moveBackwardByInches(-300, 7);
-        }
-    }
-    ////////////////////////////////////////////////////////////////////////////////
-    public double returnGyroYaw()
-    {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    public double getAngle()
-    {
-        return Math.toDegrees(returnGyroYaw());
-    }
+            moveForwardByInches(60.0, 10);  // Moves the robot forward by 10 inches
 
-    void turnToZero(double timeOut)
-    {
-        timeOut = totalTime.seconds() + timeOut;
-        while (opModeIsActive() && Math.abs(getAngle()) > Math.abs(2.5) && totalTime.seconds() <= timeOut)
-        {
-            backL.setPower(.1);
-            frontL.setPower(.1);
-            backR.setPower(-.1);
-            frontR.setPower(-.1);
         }
     }
 
@@ -110,39 +69,34 @@ public class blueAutoYellow extends LinearOpMode {
         double targetY = initialPosition.y + inches;  // Assuming "forward" is along the y-axis
         timeOut = totalTime.seconds() + timeOut;
 
-        double frontSpeed = .3;
-
         // Move forward until we reach the target distance
-        while (opModeIsActive() && totalTime.seconds() <= timeOut) {
-            backL.setPower(frontSpeed);// Apply forward power
-            backR.setPower(frontSpeed);
-            frontL.setPower(frontSpeed);// Apply forward power
-            frontR.setPower(frontSpeed);
+        while (opModeIsActive() && (localizationRead.returnPose().position.y < targetY) && totalTime.seconds() <= timeOut) {
+            backL.setPower(.3);// Apply forward power
+            backR.setPower(.3);
+            frontL.setPower(.3);// Apply forward power
+            frontR.setPower(.3);
             localizationRead.returnPose();  // Update position each loop
         }
 
         // Stop the robot once the target position is reached
         backL.setPower(0);// Apply forward power
-        backR.setPower(0); // back right
+        backR.setPower(0);
         frontL.setPower(0);// Apply forward power
         frontR.setPower(0);
     }
 
     public void moveBackwardByInches(double inches, double timeOut) {
         // Record the initial position
-
-        double backSpeed = -.3;
-
         Vector2d initialPosition = localizationRead.returnPose().position;
         double targetY = initialPosition.y + inches;  // Assuming "forward" is along the y-axis
         timeOut = totalTime.seconds() + timeOut;
 
         // Move forward until we reach the target distance
-        while (opModeIsActive() && totalTime.seconds() <= timeOut) {
-            backL.setPower(backSpeed);// Apply forward power
-            backR.setPower(backSpeed);
-            frontL.setPower(backSpeed);// Apply forward power
-            frontR.setPower(backSpeed);
+        while (opModeIsActive() && (localizationRead.returnPose().position.y > targetY && totalTime.seconds() >= timeOut)) {
+            backL.setPower(-.3);// Apply forward power
+            backR.setPower(-.3);
+            frontL.setPower(-.3);// Apply forward power
+            frontR.setPower(-.3);
             localizationRead.returnPose();  // Update position each loop
         }
 

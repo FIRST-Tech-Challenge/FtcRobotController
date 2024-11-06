@@ -30,13 +30,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class teleop extends OpMode {
 
     // Testing
-    boolean testingActive = true;
+    boolean testingActive = false;
     double lastTestTime = 0;
 
     // Field centric stuff
     boolean usingFC = false;
     double initialAngle = 0;
     double prevFCPressTime = 0;
+
+    double curPowerFL = 0;
+    double curPowerFR = 0;
+    double curPowerBL = 0;
+    double curPowerBR = 0;
+    //double tarPower = 0;
+    double prevTimeFL = 0;
+    double prevTimeFR = 0;
+    double prevTimeBL = 0;
+    double prevTimeBR = 0;
+
 
     // File reading stuff
     File file;
@@ -56,13 +67,27 @@ public class teleop extends OpMode {
 
     // Mechanism stuff
     double CLOSED_OT_POS = 0;
-    double OPEN_OT_POS = 1;
+    double OPEN_OT_POS = .5;
+    double clawInc = 0;
+    double lastClawTime;
     double UP_OT_FLIP_POS = 0;
     double DOWN_OT_FLIP_POS = 1;
-    double CLOSED_IT_POS = 0;
-    double OPEN_IT_POS = 1;
-    double UP_IT_FLIP_POS = 0;
-    double DOWN_IT_FLIP_POS = 1;
+    double UP_OT_PIVOT_POS = 1;
+    double DOWN_OT_PIVOT_POS = 0;
+
+    double PERP_IT_POS = 0;
+    double PAR_IT_POS = .33;
+    double CLOSED_IT_POS = 1;
+    double OPEN_IT_POS = .76;
+    double UP_IT_FLIP_POS = .7;
+    double DOWN_IT_FLIP_POS = .42;
+    double MID_IT_FLIP_POS = .5;
+    double OUT_IT_FLIP_POS = 0;
+    double OUT_DOWN_IT_FLIP_POS = .26;
+
+
+    boolean upPivotOT = true;
+    double pivotTimeOT = 0;
 
     // Total time. Never reset.
     ElapsedTime totalTime = new ElapsedTime();
@@ -143,7 +168,8 @@ public class teleop extends OpMode {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // field ease stuff
         localizationRead = new RRLocalizationRead();
@@ -155,6 +181,7 @@ public class teleop extends OpMode {
     @Override
     public void loop() {
 
+        telemetry.addData("Pos: ", localizationRead.returnPose());
         if (gamepad1.left_bumper && gamepad1.right_bumper && gamepad1.dpad_up && totalTime.milliseconds() > lastTestTime + 500)
         {
             if (testingActive)
@@ -166,18 +193,107 @@ public class teleop extends OpMode {
         if (testingActive)
             runTesting();
         else {
-            setOutTakeLift();
+            //setOutTakeLift();
             setInTakeLift();
             setInTakeClawGrab();
             setInTakeFlip();
-            setOutTakeFlip();
-            setOutTakeClawGrab();
+            //setOutTakeFlip();
+        //    setOutTakeClawGrab();
+            setInTakeRotator();
 
-            readFile();
+
+           // readFile();
 
             runMotors();
+            telemetry.update();
         }
     }
+
+    ////////////////////////////////////////////////////
+    double acceleratorFR(double tarPower)
+    {
+        double dt = (totalTime.milliseconds() - prevTimeFR) / 1000.0;
+        prevTimeFR = totalTime.milliseconds();
+        int multiplier = 0;
+        if (tarPower > curPowerFR)
+        {
+            multiplier = 1;
+        }
+        else if (tarPower < curPowerFR)
+        {
+            multiplier = -1;
+        }
+        else
+            multiplier = 0;
+
+        curPowerFR += ((2 * dt) * multiplier);
+        telemetry.addData("curPower", curPowerFR);
+        telemetry.addData("dt", dt);
+        telemetry.addData("mult", multiplier);
+        telemetry.addData("tp", tarPower);
+        return tarPower;
+    }
+    ////////////////////////////////////////////////////
+    double acceleratorFL(double tarPower)
+    {
+        double dt = (totalTime.milliseconds() - prevTimeFL) / 1000.0;
+        prevTimeFL = totalTime.milliseconds();
+        int multiplier = 0;
+        if (tarPower > curPowerFL)
+        {
+            multiplier = 1;
+        }
+        else if (tarPower < curPowerFL)
+        {
+            multiplier = -1;
+        }
+        else
+            multiplier = 0;
+
+        curPowerFL += ((2 * dt) * multiplier);
+        return tarPower;
+    }
+    ////////////////////////////////////////////////////
+    double acceleratorBR(double tarPower)
+    {
+        double dt = (totalTime.milliseconds() - prevTimeBR) / 1000.0;
+        prevTimeBR = totalTime.milliseconds();
+        int multiplier = 0;
+        if (tarPower > curPowerBR)
+        {
+            multiplier = 1;
+        }
+        else if (tarPower < curPowerBR)
+        {
+            multiplier = -1;
+        }
+        else
+            multiplier = 0;
+
+        curPowerBR += ((2 * dt) * multiplier);
+        return tarPower;
+    }
+    ////////////////////////////////////////////////////
+    double acceleratorBL(double tarPower)
+    {
+        double dt = (totalTime.milliseconds() - prevTimeBL) / 1000.0;
+        prevTimeBL = totalTime.milliseconds();
+        int multiplier = 0;
+        if (tarPower > curPowerBL)
+        {
+            multiplier = 1;
+        }
+        else if (tarPower < curPowerBL)
+        {
+            multiplier = -1;
+        }
+        else
+            multiplier = 0;
+
+        curPowerBL += ((2 * dt) * multiplier);
+        return tarPower;
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     void runTesting()
@@ -264,7 +380,7 @@ public class teleop extends OpMode {
     ////////////////////////////////////////////////////////////////////////////////
     public double returnGyroYaw()
     {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -280,39 +396,92 @@ public class teleop extends OpMode {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeClawGrab(){
-        if (gamepad2.a)
-            outTakeClaw.setPosition(CLOSED_OT_POS);
-        if (gamepad2.b)
-            outTakeClaw.setPosition(OPEN_OT_POS);
+        if (gamepad2.x && lastClawTime < totalTime.milliseconds() - 500)
+        {
+            lastClawTime = totalTime.milliseconds();
+            clawInc += .1;
+            outTakeClaw.setPosition(clawInc);
+            outTakeClaw.setDirection(Servo.Direction.REVERSE);
+        }
+            //outTakeClaw.setPosition(CLOSED_OT_POS);
+        if (gamepad2.y && lastClawTime < totalTime.milliseconds() - 500)
+        {
+            lastClawTime = totalTime.milliseconds();
+            clawInc -= .1;
+            outTakeClaw.setPosition(clawInc);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeFlip(){
-        if (gamepad2.x)
-            outTakeClaw.setPosition(DOWN_OT_FLIP_POS);
-        if (gamepad2.y)
-            outTakeClaw.setPosition(UP_OT_FLIP_POS);
+        if (gamepad2.left_trigger > .1)
+            outTakeLargePivotControl.setPosition(DOWN_OT_FLIP_POS);
+        if (gamepad2.right_trigger > .1)
+            outTakeLargePivotControl.setPosition(UP_OT_FLIP_POS);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    public void setOutTakePivot(){
+        if (gamepad2.dpad_right && pivotTimeOT < totalTime.milliseconds() - 500)
+        {
+            if (upPivotOT)
+            {
+                outTakeClawPivot.setPosition(DOWN_OT_PIVOT_POS);
+                upPivotOT = false;
+            }
+            else
+            {
+                outTakeClawPivot.setPosition(UP_OT_PIVOT_POS);
+                upPivotOT = true;
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeClawGrab(){
-        if (gamepad2.dpad_left)
+        if (gamepad2.a)
             inTakeClaw.setPosition(CLOSED_IT_POS);
-        if (gamepad2.dpad_right)
+        if (gamepad2.b)
             inTakeClaw.setPosition(OPEN_IT_POS);
+        if (gamepad2.dpad_right)
+            inTakeClaw.setPosition(.65);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeFlip(){
         if (gamepad2.dpad_up)
-            inTakeClaw.setPosition(UP_IT_FLIP_POS);
+            inTakeFlipExpansion.setPosition(UP_IT_FLIP_POS);
         if (gamepad2.dpad_down)
-            inTakeClaw.setPosition(DOWN_IT_FLIP_POS);
+            inTakeFlipExpansion.setPosition(DOWN_IT_FLIP_POS);
+        if (gamepad2.dpad_left)
+        {
+            inTakeFlipExpansion.setPosition(MID_IT_FLIP_POS);
+        }
+        if (gamepad2.x)
+            inTakeFlipExpansion.setPosition(OUT_IT_FLIP_POS);
+        if (gamepad2.y)
+            inTakeFlipExpansion.setPosition(OUT_DOWN_IT_FLIP_POS);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    public void setInTakeRotator(){
+        if (gamepad2.left_bumper)
+            inTakeRotator.setPosition(PAR_IT_POS);
+        if (gamepad2.right_bumper)
+            inTakeRotator.setPosition(PERP_IT_POS);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeLift(){
         inTakeLift.setPower(gamepad2.right_stick_y);
+        if (gamepad2.left_trigger > .1)
+        {
+            inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+        if (gamepad2.right_trigger > .1)
+        {
+            inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -428,10 +597,10 @@ public class teleop extends OpMode {
             double multiplier = Math.max(1 - gamepad1.right_trigger, .25);
 
             double power = Math.min(Math.abs(y) + Math.abs(x), 1);
-            frontLeftMotor.setPower((power * cos + power * sin + rx) * multiplier);
-            backLeftMotor.setPower((power * cos - power * sin + rx) * multiplier);
-            frontRightMotor.setPower((power * cos - power * sin - rx) * multiplier);
-            backRightMotor.setPower((power * cos + power * sin - rx) * multiplier);
+            frontLeftMotor.setPower(acceleratorFL((power * cos + power * sin + rx) * multiplier));
+            backLeftMotor.setPower(acceleratorBL((power * cos - power * sin + rx) * multiplier));
+            frontRightMotor.setPower(acceleratorFR((power * cos - power * sin - rx) * multiplier));
+            backRightMotor.setPower(acceleratorBR((power * cos + power * sin - rx) * multiplier));
         }
         else {
             double y = -gamepad1.left_stick_y;
@@ -439,17 +608,17 @@ public class teleop extends OpMode {
             double rx = gamepad1.right_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = - (y + x + rx) / denominator;
+            double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
             double multiplier = Math.max(1 - gamepad1.right_trigger, .25) ;
 
-            frontLeftMotor.setPower(frontLeftPower * multiplier);
-            backLeftMotor.setPower(backLeftPower * multiplier);
-            frontRightMotor.setPower(frontRightPower * multiplier);
-            backRightMotor.setPower(backRightPower * multiplier);
+            frontLeftMotor.setPower(acceleratorFL(frontLeftPower * multiplier));
+            backLeftMotor.setPower(acceleratorBL(backLeftPower * multiplier));
+            frontRightMotor.setPower(acceleratorFR(frontRightPower * multiplier));
+            backRightMotor.setPower(acceleratorBR(backRightPower * multiplier));
         }
     }
 
