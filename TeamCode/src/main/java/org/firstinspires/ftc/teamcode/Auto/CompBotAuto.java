@@ -30,13 +30,10 @@ public class CompBotAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         initRobot();
-
         initSlide();
-
         waitForStart();
 
         setSlide(4250);   //change to edit drop spot
-
         setPivot(75);     //change to edit drop spot
 
         sleep(1000);
@@ -45,12 +42,8 @@ public class CompBotAuto extends LinearOpMode {
 
         sleep(500);
         intakeL.setPosition(0.5);
-
-        setSlide(0);
-
         setPivot(0);
-
-
+        setSlide(0);
     }
 
     public void initRobot() {
@@ -118,7 +111,6 @@ public class CompBotAuto extends LinearOpMode {
         if (x > 0 && slide.getCurrentPosition() > pubLength) {
             x = 0;
         }
-        // TODO: add forced move for slide based on pivot
         slide.setPower(x);
     }
 
