@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
@@ -28,9 +29,16 @@ public class MainAuto extends LinearOpMode {
     private DcMotor rightBack; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
     private DcMotor leftFront; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
     private DcMotor rightFront; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
+    private Servo clawServo;
 
     @Override
     public void runOpMode() {
+        leftBack  = hardwareMap.get(DcMotor.class, "bl");
+        rightBack  = hardwareMap.get(DcMotor.class, "br");
+        leftFront  = hardwareMap.get(DcMotor.class, "fl");
+        rightFront  = hardwareMap.get(DcMotor.class, "fr");
+
+        clawServo = hardwareMap.get(Servo.class, "clawServo");
         telemetry.addData("Starting pos: ", leftBack.getCurrentPosition());
         telemetry.update();
         waitForStart();
@@ -95,6 +103,14 @@ public class MainAuto extends LinearOpMode {
             leftFront.setPower(0);
             rightFront.setPower(0);
             sleep(100);
+        }
+    }
+
+    void moveClaw(boolean open) {
+        if(open) {
+            clawServo.setPosition(0);
+        } else {
+            clawServo.setPosition(1);
         }
     }
 }
