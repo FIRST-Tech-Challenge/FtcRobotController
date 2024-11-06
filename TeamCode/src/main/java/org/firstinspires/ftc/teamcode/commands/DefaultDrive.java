@@ -22,7 +22,7 @@ public class DefaultDrive extends CommandBase {
 
     @Override
     public void execute() {
-        drivetrain.driveFieldCentric(strafe.getAsDouble() * 0.7, fwd.getAsDouble() * 0.7, rot.getAsDouble() * 0.5);
+        drivetrain.driveFieldCentric(fwd.getAsDouble() * 0.7, strafe.getAsDouble() * 0.7, rot.getAsDouble() * 0.5);
     }
 
     @Override

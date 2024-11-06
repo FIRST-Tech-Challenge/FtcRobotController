@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake extends SubsystemBase {
 
-    private CRServo intakePower;
     private Servo intakePivot;
     private Servo intakeExt;
+    private IntakeState state;
 
     public enum IntakeState {
         HOME,
@@ -20,8 +20,8 @@ public class Intake extends SubsystemBase {
     public Intake(HardwareMap hMap) {
 
         this.intakePivot = hMap.get(Servo.class, "IntakePivot");
-        this.intakePower = hMap.get(CRServo.class, "IntakePower");
         this.intakeExt = hMap.get(Servo.class, "IntakeExt");
+        this.state = IntakeState.HOME;
 
     }
 
@@ -36,19 +36,17 @@ public class Intake extends SubsystemBase {
 
     }
 
-    public void rollerIntake() {
-        intakePower.setPower(1);
+    public IntakeState getState() {
+        return state;
     }
 
-    public void rollerStop() {
-        intakePower.setPower(0);
-    }
-
-    public void rollerOuttake() {
-        intakePower.setPower(-1);
+    public void setState(IntakeState state) {
+        this.state = state;
     }
 
     public void setPivot(IntakeState state) {
+
+        this.state = state;
 
         switch(state) {
             case HOME:
