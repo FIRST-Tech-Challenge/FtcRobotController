@@ -255,36 +255,12 @@ public class localization extends LinearOpMode {
             }
 
             double headingAverage = (prevHeading + currentHeading) / 2.0;
-<<<<<<< Updated upstream
-            double deltaX = relDeltaX * Math.cos(currentHeading) - relDeltaY * Math.sin(currentHeading) + prevVertical;
-            double deltaY = relDeltaY * Math.cos(currentHeading) + relDeltaX * Math.sin(currentHeading) + prevHorizontal;
-
-            // Update robot's global position
-            robotX += deltaX;
-            robotY += deltaY;
-          
-            // Convert the change in encoder ticks to inches
-            deltaVertical /= TICKS_PER_INCH;
-            deltaHorizontal /= TICKS_PER_INCH;
-
-            // Step 3: Arc handling - Use average heading for position update
-            //double headingAverage = (prevHeading + currentHeading) / 2.0;
-            //double deltaX = deltaVertical * Math.cos(headingAverage) - deltaHorizontal * Math.sin(headingAverage);
-            //double deltaY = deltaVertical * Math.sin(headingAverage) + deltaHorizontal * Math.cos(headingAverage);
-
-            // Step 4: Simpson's Rule Integration for smoother movement approximation
-            double deltaXSimpson = WEIGHT * ((prevVertical + 4.0 * deltaX + prevVertical) / 3.0);
-            double deltaYSimpson = WEIGHT * ((prevHorizontal + 4.0 * deltaY + prevHorizontal) / 3.0);
-
-=======
             double trueX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) + prevX;
             double trueY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) + prevY;
 
             // Update robot's global position
             robotX = trueX;
             robotY = trueY;
->>>>>>> Stashed changes
-
             robotHeading = currentHeading;
 
             // Step 5: IMU Calibration Handling - Detect if the IMU drifts too much
@@ -455,7 +431,4 @@ public class localization extends LinearOpMode {
     }
 }
 */
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
