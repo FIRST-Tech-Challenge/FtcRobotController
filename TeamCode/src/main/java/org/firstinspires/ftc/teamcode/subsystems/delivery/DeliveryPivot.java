@@ -21,9 +21,9 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    private int StartPositionFromCalibration = 1915;
+    private int StartPositionFromCalibration = 1975;
 
-    private int DeliveryPositionFromStart = 600;
+    private int DeliveryPositionFromStart = 250;
 
     private int IntakePositionFromStart = -1600;
 
@@ -95,6 +95,12 @@ public class DeliveryPivot extends SonicSubsystemBase {
         SetAuto();
         this.currentTarget = IntakePositionFromStart;
     }
+
+    public void AutoToStart() {
+        SetAuto();
+        this.currentTarget = 0;
+    }
+
     @Override
     public void periodic() {
         super.periodic();

@@ -46,7 +46,8 @@ public class RollingIntake extends SonicSubsystemBase {
         this.telemetry = telemetry;
         this.feedback = feedback;
 
-        this.elbowServo.setPosition(0.5);
+        this.elbowServo.setPosition(1);
+        //this.SetElbowInIntakePosition();
 
         state = IntakeState.Hold;
     }
@@ -87,12 +88,24 @@ public class RollingIntake extends SonicSubsystemBase {
         }
     }
 
-    public void SetElbowInIntakePosition() {
-        this.elbowServo.setPosition(0.5);
+    public void SetElbowInSpecimenPosition() {
+        this.elbowServo.setPosition(0);
     }
 
-    public void SetElbowInSpecimenPosition() {
-        this.elbowServo.setPosition(0.85);
+    public void SetElbowInIntakePosition() {
+        this.elbowServo.setPosition(.62);
+    }
+
+    boolean isElbowInIntake = true;
+
+    public void ToggleElbowPosition() {
+        if(isElbowInIntake) {
+            SetElbowInSpecimenPosition();
+        } else {
+            SetElbowInIntakePosition();
+        }
+
+        isElbowInIntake = !isElbowInIntake;
     }
 
     public void Intake() {

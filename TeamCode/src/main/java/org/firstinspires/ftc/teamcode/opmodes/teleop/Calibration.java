@@ -26,7 +26,7 @@ public class Calibration extends OpModeTemplate {
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback);
         RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
 
-        TeleFourWheelMecanumDriveTrain driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback);
+        TeleFourWheelMecanumDriveTrain driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
         new Trigger(() -> gamepad2.right_stick_y > 0.5)
                 .whenActive(new InstantCommand(deliveryPivot::RotateTowardsDelivery, deliveryPivot))
@@ -46,6 +46,9 @@ public class Calibration extends OpModeTemplate {
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
                 .whenHeld(new InstantCommand(deliveryPivot::Calibrate, deliveryPivot));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
+                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake));
 
         // Register all subsystems
         register(deliveryPivot, deliverySlider, driveTrain, rollingIntake, feedback);

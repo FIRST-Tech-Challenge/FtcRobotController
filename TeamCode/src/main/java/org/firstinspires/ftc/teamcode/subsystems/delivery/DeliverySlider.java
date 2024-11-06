@@ -82,24 +82,24 @@ public class DeliverySlider extends SonicSubsystemBase {
         super.periodic();
 
         double position = motor.encoder.getPosition();
-        telemetry.addData("target", currentTarget);
-        telemetry.addData("current", position);
-        telemetry.addData("telop", isTeleop);
+        //telemetry.addData("target", currentTarget);
+        //telemetry.addData("current", position);
+        //telemetry.addData("telop", isTeleop);
 
         if(!isTeleop) {
             double power = pidController.calculatePIDAlgorithm(currentTarget - position);
-            telemetry.addData("power", power);
+            //telemetry.addData("power", power);
 
 
             if(Math.abs(currentTarget - position) < 40) {
-                telemetry.addData("done", true);
+                //telemetry.addData("done", true);
                 motor.set(0);
             }
             else {
                 double minPower = .2;
 
                 if(Math.abs(power) < minPower) {
-                    telemetry.addData("minPower", true);
+                    //telemetry.addData("minPower", true);
 
                     power = minPower * Math.abs(power) / power;
                 }
@@ -108,6 +108,6 @@ public class DeliverySlider extends SonicSubsystemBase {
             }
         }
 
-        telemetry.update();
+        //telemetry.update();
     }
 }

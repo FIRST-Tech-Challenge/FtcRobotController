@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
+import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 /**
  * This is old mainTeleop
@@ -31,8 +32,10 @@ public class MainTeleop extends OpModeTemplate {
         DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback);
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback);
         RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
+        LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
 
-        driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback);
+
+        driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, limeLight);
 
         switchToMode(PowerMode.REGULAR);
 
@@ -87,6 +90,18 @@ public class MainTeleop extends OpModeTemplate {
         operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
                 .whenHeld(new InstantCommand(deliveryPivot::AutoToIntake, deliveryPivot));
 
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake));
+
+        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(driveTrain::AlignTx, driveTrain));
+
+        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(driveTrain::AlignTy, driveTrain));
+
         // DRIVER Actions
 
         // Drivetrain speed
@@ -107,7 +122,7 @@ public class MainTeleop extends OpModeTemplate {
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));
 
         // Register all subsystems
-        register(driveTrain, deliveryPivot, feedback, rollingIntake);
+        register(driveTrain, deliveryPivot, feedback, rollingIntake, limeLight);
 
         // update telemetry every loop
         schedule(SounderBotBaseRunCommand.createTelemetryEnabledOnlyInstance(telemetry));

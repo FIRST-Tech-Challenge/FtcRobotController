@@ -22,7 +22,7 @@ public class FourWheelMecanumDriveTeleop extends OpModeTemplate {
 
         DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
 
-        driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback);
+        driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
         switchToMode(PowerMode.REGULAR);
 
