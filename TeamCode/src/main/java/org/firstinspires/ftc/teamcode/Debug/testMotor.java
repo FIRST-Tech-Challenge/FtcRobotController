@@ -37,6 +37,12 @@ public class testMotor extends LinearOpMode {
       else if(gamepad1.a)
         x = -1;
       FRMotor.setPower(x);
+      
+      telemetry.addData("BL motor power: ",BLMotor.getPower());
+      telemetry.addData("BR motor power: ",BRMotor.getPower());
+      telemetry.addData("FL motor power: ",FLMotor.getPower());
+      telemetry.addData("FR motor power: ",FRMotor.getPower());
+      telemetry.update();
     }
   }
 
