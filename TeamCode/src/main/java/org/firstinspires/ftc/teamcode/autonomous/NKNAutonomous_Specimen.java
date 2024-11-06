@@ -7,11 +7,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.autonomous.BasketAuto;
+import org.nknsd.robotics.team.autonomous.SpecimenAuto;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Actually Good Auto")
-public class NKNAutonomous_Comp extends OpMode {
+@Autonomous(name = "Score Specimen on Bar (IN DEV)")
+public class NKNAutonomous_Specimen extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     //Time counters are in milliseconds
@@ -20,7 +21,7 @@ public class NKNAutonomous_Comp extends OpMode {
     // We use these two to delay telemetry outputs to ~200 milliseconds
 
     // Whatever program is attached here will be loaded with all its glorious components
-    private final NKNProgram program = new BasketAuto();
+    private final NKNProgram program = new SpecimenAuto();
 
     // Code to run ONCE when the driver hits INIT
     @Override

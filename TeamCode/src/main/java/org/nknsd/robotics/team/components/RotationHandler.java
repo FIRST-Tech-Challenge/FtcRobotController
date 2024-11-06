@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RotationHandler implements NKNComponent {
 
-    public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 4;
+    public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 5;
     final double threshold;
     final double P_CONSTANT;
     final double EXTENDED_P_CONSTANT;
@@ -146,7 +146,7 @@ public class RotationHandler implements NKNComponent {
     }
 
     public enum RotationPositions {
-        PICKUP(1), PREPICKUP(1.40), HIGH(2.4), RESTING(3.3);
+        PICKUP(1.03), PREPICKUP(1.50), HIGH(2.44), RESTING(3.339), SPECIMEN(2.26);
 
         public final double target;
 

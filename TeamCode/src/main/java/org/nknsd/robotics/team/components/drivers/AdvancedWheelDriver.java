@@ -22,6 +22,7 @@ public class AdvancedWheelDriver implements NKNComponent {
     private WheelHandler wheelHandler;
 
     private double moveSpeedMultiplier;
+    private boolean imuCorrection = true;
 
     Runnable speedUp = new Runnable() {
         @Override
@@ -40,6 +41,13 @@ public class AdvancedWheelDriver implements NKNComponent {
             }
         }
     };
+
+    Runnable disableAutonomousIMUCorrection = new Runnable() {
+        @Override
+        public void run() {
+            imuCorrection = false;
+        }
+    };
     private Gamepad gamepad;
     private IMUComponent imuComponent;
 
@@ -56,6 +64,8 @@ public class AdvancedWheelDriver implements NKNComponent {
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         moveSpeedMultiplier = 0;
         this.gamepad = gamepad1;
+
+        gamePadHandler.addListener(GamePadHandler.GamepadButtons.Y, 1, "disableAutonomousIMUYawCorrection", true, disableAutonomousIMUCorrection);
         return true;
     }
 
@@ -68,6 +78,8 @@ public class AdvancedWheelDriver implements NKNComponent {
     public void start(ElapsedTime runtime, Telemetry telemetry) {
         gamePadHandler.addListener(GamePadHandler.GamepadButtons.RIGHT_BUMPER, 1, "speedUp", true, speedUp);
         gamePadHandler.addListener(GamePadHandler.GamepadButtons.LEFT_BUMPER, 1, "speedDown", true, speedDown);
+
+        gamePadHandler.removeListener(GamePadHandler.GamepadButtons.Y, 1, "disableAutonomousIMUYawCorrection", true);
     }
 
     @Override
@@ -83,7 +95,11 @@ public class AdvancedWheelDriver implements NKNComponent {
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
-        wheelHandler.absoluteVectorToMotion(strafeStick.getValue(gamepad) * moveSpeedMultiplier, forwardStick.getValue(gamepad) * moveSpeedMultiplier, turnStick.getValue(gamepad) * moveSpeedMultiplier, imuComponent.getYaw(), telemetry);
+        double yaw = imuComponent.getYaw();
+        if (imuCorrection) {
+            yaw += 90;
+        }
+        wheelHandler.absoluteVectorToMotion(strafeStick.getValue(gamepad) * moveSpeedMultiplier, forwardStick.getValue(gamepad) * moveSpeedMultiplier, turnStick.getValue(gamepad) * moveSpeedMultiplier, yaw, telemetry);
     }
 
     @Override

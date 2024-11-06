@@ -41,7 +41,7 @@ public class AlternateMovementNKNProgram extends NKNProgram {
         components.add(rotationHandler);
         //telemetryEnabled.add(rotationHandler);
 
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.7);
+        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 1);
         components.add(extensionHandler);
         //telemetryEnabled.add(extensionHandler);
 
