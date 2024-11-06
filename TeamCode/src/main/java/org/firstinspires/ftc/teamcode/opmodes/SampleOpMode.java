@@ -119,12 +119,12 @@ public class SampleOpMode extends CommandOpMode {
                 }
             }));
 
-        scoreAtBucket.whenPressed(new ScoreAtBucket(drivetrain, arm, elevator));
+        //ScoreAtBucket.whenPressed(new ScoreAtBucket(drivetrain, arm, elevator));
 
 
-        elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 35));
+        //elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 35));
 
-        elevatorDownButton.whenPressed(new ElevatorGoTo(elevator, 0));
+       //elevatorDownButton.whenPressed(new ElevatorGoTo(elevator, 0));
 
         CommandScheduler.getInstance().setDefaultCommand(elevator, new ManualElevatorCommand(elevator,
                 () -> (operator.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) - operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)), telemetry));
