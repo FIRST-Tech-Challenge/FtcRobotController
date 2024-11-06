@@ -76,26 +76,43 @@ public class DynamicInput {
         }
 
         private boolean getButtonState(Gamepad gamepad, Settings.GamepadButton button) {
-            return switch (button) {
-                case A -> gamepad.a;
-                case B -> gamepad.b;
-                case X -> gamepad.x;
-                case Y -> gamepad.y;
-                case DPAD_UP -> gamepad.dpad_up;
-                case DPAD_DOWN -> gamepad.dpad_down;
-                case DPAD_LEFT -> gamepad.dpad_left;
-                case DPAD_RIGHT -> gamepad.dpad_right;
-                case LEFT_BUMPER -> gamepad.left_bumper;
-                case RIGHT_BUMPER -> gamepad.right_bumper;
-            };
+            switch (button) {
+                case A:
+                    return gamepad.a;
+                case B:
+                    return gamepad.b;
+                case X:
+                    return gamepad.x;
+                case Y:
+                    return gamepad.y;
+                case DPAD_UP:
+                    return gamepad.dpad_up;
+                case DPAD_DOWN:
+                    return gamepad.dpad_down;
+                case DPAD_LEFT:
+                    return gamepad.dpad_left;
+                case DPAD_RIGHT:
+                    return gamepad.dpad_right;
+                case LEFT_BUMPER:
+                    return gamepad.left_bumper;
+                case RIGHT_BUMPER:
+                    return gamepad.right_bumper;
+                default:
+                    throw new IllegalArgumentException("Unexpected button: " + button);
+            }
         }
 
         private double getAxisValue(Gamepad gamepad, Settings.GamepadAxis axis) {
-            return switch (axis) {
-                case LEFT_TRIGGER -> gamepad.left_trigger;
-                case RIGHT_TRIGGER -> gamepad.right_trigger;
-            };
+            switch (axis) {
+                case LEFT_TRIGGER:
+                    return gamepad.left_trigger;
+                case RIGHT_TRIGGER:
+                    return gamepad.right_trigger;
+                default:
+                    throw new IllegalArgumentException("Unexpected axis: " + axis);
+            }
         }
+
     }
 
     // Generates the directional output based on controller input
