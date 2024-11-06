@@ -73,6 +73,10 @@ public class Arm {
     //init function
     public void init() {
         //TODO change directions if needed
+        extendServoRight.setDirection(Servo.Direction.REVERSE);
+        extendServoLeft.setDirection(Servo.Direction.REVERSE);
+        extendServoLeft.setPosition(0);
+        extendServoRight.setPosition(0);
         //angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //extendMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();

@@ -20,11 +20,11 @@ import org.firstinspires.ftc.teamcode.RoadRunner.messages.ThreeDeadWheelInputsMe
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
-        public double par0YTicks = -10298.651584770068;
+        public double par0YTicks = -7448.968612548164;
         //public double par0YTicks = -2369.7230641368787; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = 11586.426601848287;
+        public double par1YTicks = 7719.537966877904;
         //public double par1YTicks = 2427.1598412821827; // y position of the second parallel encoder (in tick units)
-        public double perpXTicks =  -6434.357788559214;
+        public double perpXTicks =  -11146.421923393827;
         //public double perpXTicks = -805.1190472263876; // x position of the perpendicular encoder (in tick units)
     }
 
@@ -40,14 +40,13 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
         //TODO: Sort out if it is front left or back left for perp encoder
         //MOTORS: front right is par0 (C0), back right is par1 (C3), front left is perp (E0)
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "RBM"))); //left enc
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "LFM"))); //left enc
         par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "LBM"))); //right enc
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "RFM")));
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "RBM")));
 
         perp.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.inPerTick = inPerTick;
-
         FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
     }
 
