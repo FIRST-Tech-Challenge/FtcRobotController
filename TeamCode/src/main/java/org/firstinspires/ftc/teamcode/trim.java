@@ -8,23 +8,21 @@ To get the trim to work
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 public class trim {
-    private float totalTrim = 1f;
-    private float leftTrim = 1f;
-    private float rightTrim = 1f;
-    private final float trimAmount = 0.01f;
+    private static float totalTrim = 1f;
+    private static float leftTrim = 1f;
+    private static float rightTrim = 1f;
+    private static final float TRIMAMMOUNT = 0.01f;
 
-    public float trimLeft() {
+    public static float trimLeft() {
         return leftTrim;
     }
 
-    public float trimRight() {
+    public static float trimRight() {
         return rightTrim;
     }
 
-    private void Trim(float amount) {
+    private static void Trim(float amount) {
         totalTrim += amount;
         if (totalTrim < 1) {
             rightTrim = 1;
@@ -45,12 +43,12 @@ public class trim {
             totalTrim=2;
         }
     }
-    public void update(){
+    public static void update(){
         if (gamepad1.dpad_left){
-            Trim(-trimAmount);
+            Trim(-TRIMAMMOUNT);
         }
         if (gamepad1.dpad_right){
-            Trim(trimAmount);
+            Trim(TRIMAMMOUNT);
         }
     }
 }
