@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name = "RambotsPurpleTeleOp")
 public class linearOpMode extends LinearOpMode {
@@ -16,8 +18,16 @@ public class linearOpMode extends LinearOpMode {
   private DcMotor slideAbduction2 = null;
 
   //  private  DcMotor MaybeIntake = null;
-  private Servo clawIntake = null;
-  private double clawIntakePostion = 1;
+  // TODO get rid of clawIntake
+  private Servo clawIntake = null; // delete this later
+  private double clawIntakePostion = 1; // delete this later
+
+  private CRServo leftIntake = null;
+  private CRServo rightIntake = null;
+  private double intakePower = 0;
+
+  // THE BUTTON
+  private TouchSensor button = null;
 
   @Override
   public void runOpMode() {
@@ -39,6 +49,9 @@ public class linearOpMode extends LinearOpMode {
 
     //Takers
     clawIntake = hardwareMap.get(Servo.class, "clawIntake");
+    leftIntake = hardwareMap.get(CRServo.class, "l_intake");
+    rightIntake = hardwareMap.get(CRServo.class, "r_intake");
+    button = hardwareMap.get(TouchSensor.class, "button");
 
 //    MaybeIntake = hardwareMap.get(DcMotor.class, "intake");
     //Setting the direction for the motor on where to rotate
@@ -51,6 +64,8 @@ public class linearOpMode extends LinearOpMode {
 
     //claw
     clawIntake.setDirection(Servo.Direction.REVERSE);
+    leftIntake.setDirection(CRServo.Direction.FORWARD);
+    rightIntake.setDirection(CRServo.Direction.REVERSE);
 
     //linear slide
     slideExtension.setDirection(DcMotor.Direction.FORWARD);
@@ -149,6 +164,7 @@ public class linearOpMode extends LinearOpMode {
       //Telemetry
       telemetry.addData("X", x);
       telemetry.addData("Y", y);
+      telemetry.addData("Button Pressed: ", button.isPressed());
       telemetry.update();
 
     }
