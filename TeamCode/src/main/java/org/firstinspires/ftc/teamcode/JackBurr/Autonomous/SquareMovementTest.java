@@ -19,17 +19,18 @@ public class SquareMovementTest extends OpMode {
         drive = new SampleMecanumDrive(hardwareMap);
 
         forward = drive.trajectoryBuilder(new Pose2d())
-                .forward(10)
+                .forward(30)
                 .build();
-        backward = drive.trajectoryBuilder(new Pose2d())
-                .back(10)
+        right = drive.trajectoryBuilder(forward.end())
+                .strafeRight(30)
                 .build();
-        left = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(10)
+        backward = drive.trajectoryBuilder(right.end())
+                .back(30)
                 .build();
-        right = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(10)
+        left = drive.trajectoryBuilder(backward.end())
+                .strafeLeft(30)
                 .build();
+
     }
 
     @Override
