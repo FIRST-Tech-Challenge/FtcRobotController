@@ -26,6 +26,7 @@ public class BasicAutonomousTest {
     private Servo mockArmWristTorqueServo;
 
     @BeforeEach
+    @DisplayName("Test basic autonomous setup")
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         basicAutonomous = spy(new BasicAutonomous());

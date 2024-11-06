@@ -15,6 +15,7 @@ public class RobotHardwareTest {
     private HardwareMap mockHardwareMap;
 
     @BeforeEach
+    @DisplayName("Test robot hardware setup")
     public void setUp() {
         // Initialize the RobotHardware instance
         mockRobot = new RobotHardware();
