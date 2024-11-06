@@ -54,7 +54,7 @@ public class basicTelemBlue extends LinearOpMode {
 
   public void runOpMode() throws InterruptedException {
 
-    initRobot(); // Does all the robot stuff
+    initRobot(); // initializes the robot
 
     /**
      * controls for game pad 1:
@@ -77,6 +77,7 @@ public class basicTelemBlue extends LinearOpMode {
 
     waitForStart();
 
+      //waits for start then sets all of the servos
       FLServo.setPosition(0.50);
       BLServo.setPosition(0.50);
       FRServo.setPosition(0.50);
@@ -101,7 +102,8 @@ public class basicTelemBlue extends LinearOpMode {
         FRMotor.setPower(0);
       }
 
-      //call move arm
+      // game pad 2
+        // sets arm
       slideLimit();
       setSlide(-gamepad2.right_stick_y);
       setPivot(gamepad2.left_stick_y);
@@ -134,6 +136,11 @@ public class basicTelemBlue extends LinearOpMode {
   }
 
   public void topBucketPreset(){
+      //setPivot();
+      //setSlide();
+  }
+
+  public void toTopSpecimenRung(){
       //setPivot();
       //setSlide();
   }
