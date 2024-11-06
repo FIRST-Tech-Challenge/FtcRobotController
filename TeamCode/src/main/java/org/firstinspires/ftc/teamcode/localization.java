@@ -179,7 +179,7 @@ public class localization extends LinearOpMode {
 
     // Position variables
     private double robotX = 0, robotY = 0, robotHeading = 0; // curr x pos for robot, curr y pos, and curr heading
-    private double prevVertical = 0, prevHorizontal = 0; // previous x and previous y
+    private double prevX = 0, prevY = 0; // previous x and previous y
     private double prevHeading = 0; // previous heading
 
     // Constants for odometry calculation
@@ -211,8 +211,8 @@ public class localization extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Read current encoder values
-            double currentVertical = verticalOdom.getCurrentPosition();
-            double currentHorizontal = horizontalOdom.getCurrentPosition();
+            double currentX = verticalOdom.getCurrentPosition();
+            double currentY = horizontalOdom.getCurrentPosition();
           
             // Get the robot's current heading (in radians)
             double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -225,33 +225,37 @@ public class localization extends LinearOpMode {
             }
 
             // Step 2: Error Handling - Check for outlier encoder values (noise or error in encoder data)
-            double deltaVertical = currentVertical - prevVertical;
-            double deltaHorizontal = currentHorizontal - prevHorizontal;
+            double deltaX = currentX - prevX;
+            double deltaY = currentY - prevY;
             // Convert the change in encoder ticks to inches
-            deltaVertical /= TICKS_PER_INCH;
-            deltaHorizontal /= TICKS_PER_INCH;
+            deltaX /= TICKS_PER_INCH;
+            deltaY /= TICKS_PER_INCH;
 
-            if (Math.abs(deltaVertical) > MAX_ENCODER_TICKS_PER_UPDATE || Math.abs(deltaHorizontal) > MAX_ENCODER_TICKS_PER_UPDATE) {
+            if (Math.abs(deltaX) > MAX_ENCODER_TICKS_PER_UPDATE || Math.abs(deltaY) > MAX_ENCODER_TICKS_PER_UPDATE) {
                 telemetry.addData("Warning", "Encoder Ticks Too Large - Possible Error Detected");
-                deltaVertical = 0; // Ignore outliers to avoid incorrect position updates
-                deltaHorizontal = 0;
+                deltaX = 0; // Ignore outliers to avoid incorrect position updates
+                deltaY = 0;
             }
-
 
             // Step 3: Arc handling - Use average heading for position update
             double radiusX;
             double radiusY;
-            if (deltaHeading != 0){
-                radiusX = deltaVertical / deltaHeading;
-                radiusY = deltaHorizontal / deltaHeading;
-            } else {
-                radiusX = deltaVertical;
-                radiusY = deltaHorizontal;
+            double relDeltaX;
+            double relDeltaY;
+            if (deltaHeading != 0) {
+                radiusX = deltaX / deltaHeading;
+                radiusY = deltaY / deltaHeading;
+
+                relDeltaX = radiusX * Math.sin(deltaHeading) - radiusY * (1 - Math.cos(deltaHeading));
+                relDeltaY = radiusY * Math.sin(deltaHeading) + radiusX * (1 - Math.cos(deltaHeading));
             }
-            double relDeltaX = radiusX * Math.sin(deltaHeading) - radiusY * (1 - Math.cos(deltaHeading));
-            double relDeltaY = radiusY * Math.sin(deltaHeading) + radiusX * (1 - Math.cos(deltaHeading));
+            else{
+                relDeltaX = deltaX;
+                relDeltaY = deltaY;
+            }
 
             double headingAverage = (prevHeading + currentHeading) / 2.0;
+<<<<<<< Updated upstream
             double deltaX = relDeltaX * Math.cos(currentHeading) - relDeltaY * Math.sin(currentHeading) + prevVertical;
             double deltaY = relDeltaY * Math.cos(currentHeading) + relDeltaX * Math.sin(currentHeading) + prevHorizontal;
 
@@ -272,6 +276,14 @@ public class localization extends LinearOpMode {
             double deltaXSimpson = WEIGHT * ((prevVertical + 4.0 * deltaX + prevVertical) / 3.0);
             double deltaYSimpson = WEIGHT * ((prevHorizontal + 4.0 * deltaY + prevHorizontal) / 3.0);
 
+=======
+            double trueX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) + prevX;
+            double trueY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) + prevY;
+
+            // Update robot's global position
+            robotX = trueX;
+            robotY = trueY;
+>>>>>>> Stashed changes
 
             robotHeading = currentHeading;
 
@@ -283,8 +295,8 @@ public class localization extends LinearOpMode {
 
 
             // Step 6: Store previous values for the next loop iteration
-            prevVertical = currentVertical;
-            prevHorizontal = currentHorizontal;
+            prevX = trueX;
+            prevY = trueY;
             prevHeading = currentHeading;
 
             // Output telemetry data for debugging
@@ -443,3 +455,7 @@ public class localization extends LinearOpMode {
     }
 }
 */
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes

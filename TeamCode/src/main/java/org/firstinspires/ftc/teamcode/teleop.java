@@ -31,7 +31,10 @@ public class teleop extends OpMode {
 
     // Testing
     boolean testingActive = false;
+<<<<<<< Updated upstream
     double lastTestTime = 0;
+=======
+>>>>>>> Stashed changes
 
     // Field centric stuff
     boolean usingFC = false;

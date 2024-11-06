@@ -30,15 +30,12 @@ public class newLocalization extends LinearOpMode {
     private static final double IMU_CALIBRATION_THRESHOLD = 0.1; // Allowable IMU drift before recalibration
     private static final double MAX_ENCODER_TICKS_PER_UPDATE = 1000; // Max allowed ticks per update to detect encoder errors
 
-    private static int i;
-
     public void runOpMode() throws InterruptedException{
 
         // Initialize odometry wheels
         verticalOdom = hardwareMap.get(DcMotorEx.class, "backL");
         horizontalOdom = hardwareMap.get(DcMotorEx.class, "frontR");
         imu = hardwareMap.get(IMU.class, "imu");
-        i = 0;
 
         verticalOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontalOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,6 +77,7 @@ public class newLocalization extends LinearOpMode {
             }
 
             // Step 3: Arc handling - Use average heading for relative position update
+<<<<<<< Updated upstream
             double radiusX = 0;
             double radiusY = 0;
             if (deltaHeading != 0){
@@ -95,11 +93,36 @@ public class newLocalization extends LinearOpMode {
 
             double deltaX = prevVertical + relDeltaX * Math.cos(currentHeading) - relDeltaY * Math.sin(currentHeading);
             double deltaY = prevHorizontal + relDeltaY * Math.cos(currentHeading) + relDeltaX * Math.sin(currentHeading);
+=======
+            double radiusX;
+            double radiusY;
+            double relDeltaX;
+            double relDeltaY;
+            if (deltaHeading != 0) {
+                radiusX = deltaVertical / deltaHeading;
+                radiusY = deltaHorizontal / deltaHeading;
+
+                relDeltaX = radiusX * Math.sin(deltaHeading) - radiusY * (1 - Math.cos(deltaHeading));
+                relDeltaY = radiusY * Math.sin(deltaHeading) + radiusX * (1 - Math.cos(deltaHeading));
+            }
+            else{
+                relDeltaX = deltaVertical;
+                relDeltaY = deltaHorizontal;
+            }
+
+            double headingAverage = (prevHeading + currentHeading) / 2.0;
+            double deltaX = relDeltaX * Math.cos(headingAverage) - relDeltaY * Math.sin(headingAverage) + prevVertical;
+            double deltaY = relDeltaY * Math.cos(headingAverage) + relDeltaX * Math.sin(headingAverage) + prevHorizontal;
+
+            /*
+            double deltaXSimpson = WEIGHT * (deltaX / 3) * (prevVertical + 4.0 * deltaX + currentVertical);
+            double deltaYSimpson = WEIGHT * (deltaY / 3) * (prevHorizontal + 4.0 * deltaY + currentHorizontal);
+            */
+>>>>>>> Stashed changes
 
             robotX = deltaX;
             robotY = deltaY;
             robotHeading = currentHeading;
-
 
             // Step 5: IMU Calibration Handling - Detect if the IMU drifts too much
             if (Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > IMU_CALIBRATION_THRESHOLD) {
