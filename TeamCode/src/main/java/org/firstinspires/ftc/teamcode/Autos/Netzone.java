@@ -10,7 +10,7 @@ public class Netzone extends LinearOpMode {
     private double DRIVE_SPEED = .75;
     private double TURN_SPEED = .5;
 
-    private double SIDE_SPEED = .25;
+    private double SIDE_SPEED = .2;
 
     public void runOpMode() {
         Drivebase drivebase = new Drivebase(hardwareMap, this::opModeIsActive, telemetry);
@@ -35,22 +35,28 @@ public class Netzone extends LinearOpMode {
         sleep(500);
 
         //Transition between first score and second score.
+        drivebase.turnToHeading(TURN_SPEED, 75);
         drivebase.driveStraight(DRIVE_SPEED, -46, 75);
         drivebase.driveSideways(SIDE_SPEED, 14, 75);
 
         //Score second.
         drivebase.turnToHeading(TURN_SPEED, 90);
-        drivebase.driveStraight(DRIVE_SPEED, 44, 90);
+        drivebase.driveStraight(DRIVE_SPEED, 47, 90);
 
         //Score third.
-        drivebase.driveStraight(DRIVE_SPEED, -44, 90);
-        drivebase.driveSideways(SIDE_SPEED, 14, 90);
+        drivebase.driveStraight(DRIVE_SPEED, -47, 90);
+        sleep(500);
+        drivebase.driveSideways(SIDE_SPEED, 8.7, 90);
         drivebase.driveStraight(DRIVE_SPEED, 42, 90);
 
         //Park
         drivebase.driveStraight(DRIVE_SPEED, -4, 90);
+        //Get away from the wall before turning.
+        drivebase.driveSideways(SIDE_SPEED, -8, 90);
+        //Continue parking.
         drivebase.turnToHeading(TURN_SPEED, 180);
-        drivebase.driveStraight(1, 112, 180);
-        drivebase.driveSideways(SIDE_SPEED, 14, 90);
+        drivebase.driveStraight(1, 104, 180);
+        sleep(500);
+        drivebase.driveSideways(SIDE_SPEED, 14, 180);
     }
 }

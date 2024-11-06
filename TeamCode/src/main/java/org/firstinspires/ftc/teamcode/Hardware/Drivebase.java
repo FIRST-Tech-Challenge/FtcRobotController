@@ -33,6 +33,7 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -71,14 +72,18 @@ import static java.lang.Thread.sleep;
  */
 
 public class Drivebase {
-    private DcMotor         leftSlide   = null;
-    private DcMotor         rightSlide  = null;
-    private ElapsedTime     runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
     private final Supplier<Boolean> opModeIsActive;
     private final Telemetry telemetry;
     /* Declare OpMode members. */
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
+    private CRServo clawRotate;
+    private Servo clawPosition;
+    private DcMotor leftSlideDrive;
+    private DcMotor rightSlideDrive;
+    private DcMotor leftSlideRotate;
+    private DcMotor rightSlideRotate;
     private final DcMotor FLDrive;
     private final DcMotor FRDrive;
     private final DcMotor BLDrive;
@@ -107,9 +112,13 @@ public class Drivebase {
     public final double ARM_DOWN_POWER = -0.45;
     // TODO: change this number once we do encoder math for the correct number.
     static final double COUNTS_PER_MOTOR_REV = (1.0+(46.0/17.0)) * (1.0+(46.0/11.0)) * 28.0; //Originated from https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
+    static final double  COUNTS_PER_MOTOR_REV_223RPM = (1.0+(46.0/11.0)) * (1.0+(46.0/11.0)) * 28.0; //Originated from https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-26-9-1-ratio-24mm-length-8mm-rex-shaft-223-rpm-3-3-5v-encoder/
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_INCHES = 104/25.4;   //mm to inches.
+    static final double SLIDE_GEAR_REDUCTION = 1.0;
+    static final double WHEEL_DIAMETER_INCHES = 104.0/25.4;   //mm to inches.
+    static final double BELT_WHEEL_DIAMETER_INCHES = 38.2/25.4; //mm to inches. //Originated from https://www.gobilda.com/2mm-pitch-gt2-hub-mount-timing-belt-pulley-14mm-bore-60-tooth/.
     public final static double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double COUNTS_PER_INCH_SLIDES = (COUNTS_PER_MOTOR_REV_223RPM * SLIDE_GEAR_REDUCTION) / (BELT_WHEEL_DIAMETER_INCHES * Math.PI);
     static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.2;     // Max turn speed to limit turn rate.
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
@@ -126,8 +135,18 @@ public class Drivebase {
         BLDrive = hardwareMap.dcMotor.get("BLDrive");
         BRDrive = hardwareMap.dcMotor.get("BRDrive");
 
-        //leftSlide  = hardwareMap.get(DcMotor.class, "left_slide");
-        //rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
+        leftSlideDrive = hardwareMap.dcMotor.get("leftSlideDrive");
+        rightSlideDrive = hardwareMap.dcMotor.get("rightSlideDrive");
+        //leftSlideRotate = hardwareMap.dcMotor.get("leftSlideRotate");
+        //rightSlideRotate= hardwareMap.dcMotor.get("rightSlideRotate");
+
+        // Define and initialize ALL installed servos.
+        //clawRotate = hardwareMap.get(CRServo.class, "clawRotate");
+        //clawPosition = hardwareMap.servo.get("clawPosition");
+
+        //2 motors for rotation of slides. 2 for extension of slides.
+        //For claw, 1 servo for rotation(rotates like swerve) and one for opening and closing.
+        //right arm stick = extension. Left arm motor = rotation, gamepad = 2.
 
         imu = hardwareMap.get(IMU.class, "IMU");
         this.telemetry = telemetry;
@@ -137,13 +156,16 @@ public class Drivebase {
         imu.initialize(parameters);
         imu.resetYaw();
 
-
         this.opModeIsActive = opModeIsActive;
 
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlideDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlideDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftSlideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rightSlideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -152,9 +174,11 @@ public class Drivebase {
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftSlideDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightSlideDrive.setDirection(DcMotor.Direction.REVERSE);
+        //clawRotate.setDirection(CRServo.Direction.FORWARD);
 
-        //leftSlide.setDirection(DcMotor.Direction.REVERSE);
-        //rightSlide.setDirection(DcMotor.Direction.FORWARD);
+        //clawPosition.setPosition(MID_SERVO);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -162,17 +186,15 @@ public class Drivebase {
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftSlideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightSlideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Define and initialize ALL installed servos.
-        //clawWrist = hardwareMap.servo.get("clawWrist");
-        //clawFingers = hardwareMap.servo.get("clawFingers");
-        //clawWrist.setPosition(MID_SERVO);
-        //clawFingers.setPosition(MID_SERVO);
+        leftSlideDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlideDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //leftSlideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightSlideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**
@@ -463,7 +485,16 @@ public class Drivebase {
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
         return Range.clip(headingError * proportionalGain, -1, 1);
     }
-    /*
+
+    public void teleOpSlideDrive(double power) {
+        if (power > 0.05 || power < -0.05) {
+            leftSlideDrive.setPower(power);
+            rightSlideDrive.setPower(power);
+        } else {
+            leftSlideDrive.setPower(0);
+            rightSlideDrive.setPower(0);
+        }
+    }
     public void encoderSlide(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
@@ -473,26 +504,26 @@ public class Drivebase {
         // Ensure that the OpMode is still active
         if (opModeIsActive.get()) {
 
-            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = leftSlide.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightSlide.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            leftSlide.setTargetPosition(newLeftTarget);
-            rightSlide.setTargetPosition(newRightTarget);
+            newLeftTarget = leftSlideDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH_SLIDES);
+            newRightTarget = rightSlideDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH_SLIDES);
+            leftSlideDrive.setTargetPosition(newLeftTarget);
+            rightSlideDrive.setTargetPosition(newRightTarget);
 
             // Turn On RUN_TO_POSITION
-            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlideDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightSlideDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftSlide.setPower(Math.abs(speed));
-            rightSlide.setPower(Math.abs(speed));
+            leftSlideDrive.setPower(Math.abs(speed));
+            rightSlideDrive.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -502,34 +533,34 @@ public class Drivebase {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive.get() &&
                     (runtime.seconds() < timeoutS) &&
-                    (leftSlide.isBusy() && rightSlide.isBusy())) {
+                    (leftSlideDrive.isBusy() && rightSlideDrive.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d",
-                        leftSlide.getCurrentPosition(), rightSlide.getCurrentPosition());
+                        leftSlideDrive.getCurrentPosition(), rightSlideDrive.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            leftSlide.setPower(0);
-            rightSlide.setPower(0);
+            leftSlideDrive.setPower(0);
+            rightSlideDrive.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //sleep(250);   // optional pause after each move.
         }
     }
-     */
+
 
     /**
      *  Display the various control parameters while driving
      *
      * @param straight  Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
      */
-    private void sendTelemetry(boolean straight) {
+    public void sendTelemetry(boolean straight) {
 
         if (straight) {
             telemetry.addData("Motion", "Drive Straight");
@@ -545,7 +576,7 @@ public class Drivebase {
         telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
         telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
         telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", leftSpeed, rightSpeed);
-        //telemetry.addData("Starting at",  "%7d :%7d", leftSlide.getCurrentPosition(), rightSlide.getCurrentPosition());
+        telemetry.addData("Starting at",  "%7d :%7d", leftSlideDrive.getCurrentPosition(), rightSlideDrive.getCurrentPosition());
         telemetry.update();
     }
 
