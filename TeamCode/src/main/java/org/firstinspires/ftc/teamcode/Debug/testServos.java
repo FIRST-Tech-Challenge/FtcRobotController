@@ -50,11 +50,7 @@ public class testServos extends LinearOpMode {
       BRServo.setPosition(set);
 
       // sets telemetry
-      addTelemetry(
-          FLServo.getPosition(),
-          FRServo.getPosition(),
-          BLServo.getPosition(),
-          BRServo.getPosition());
+      addTelemetry(FLServo.getPosition(), FRServo.getPosition(), BLServo.getPosition(), BRServo.getPosition());
     }
   }
 

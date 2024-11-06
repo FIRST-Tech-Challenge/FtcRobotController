@@ -18,9 +18,9 @@ public class CompBotAuto extends LinearOpMode {
 
     double pubLength = 0;
 
-    double encoderCountsPerInch = 111; //needs adjusting
+    double encoderCountsPerInch = 100; //needs adjusting
 
-    double encoderCountsPerDegree = 40;
+    double encoderCountsPerDegree = 30;
 
     boolean test = false;
 
