@@ -23,6 +23,7 @@ public class testMotor extends LinearOpMode {
 
     while (opModeIsActive()) {
       BLMotor.setPower(-gamepad1.left_stick_y);
+
       BRMotor.setPower(-gamepad1.right_stick_y);
 
       int x = 0;
@@ -32,12 +33,13 @@ public class testMotor extends LinearOpMode {
         x = -1;
       FLMotor.setPower(x);
 
+      x = 0;
       if(gamepad1.y)
         x = 1;
       else if(gamepad1.a)
         x = -1;
       FRMotor.setPower(x);
-      
+
       telemetry.addData("BL motor power: ",BLMotor.getPower());
       telemetry.addData("BR motor power: ",BRMotor.getPower());
       telemetry.addData("FL motor power: ",FLMotor.getPower());
