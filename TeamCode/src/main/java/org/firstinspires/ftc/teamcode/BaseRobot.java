@@ -123,7 +123,7 @@ public class BaseRobot {
 
 
     public void gamepadPrimary() {
-        DynamicInput.DirectionalOutput directionalOutput = input.getDirectionalOutput();
+        DynamicInput.DirectionalOutput directionalOutput = input.directional();
 
         double rotation = directionalOutput.rotation;
         double strafePower = directionalOutput.x;
@@ -141,21 +141,21 @@ public class BaseRobot {
         // RT: Open right claw | LT: Open left claw
         if (Settings.Deploy.ARM) {
             if (extensorReleased) {
-                if (input.pressed().retractActuator) {
+                if (input.action().retractActuator) {
                     extensorReleased = false;
                     arm.extensor.retract();
-                } else if (input.pressed().extendActuator) {
+                } else if (input.action().extendActuator) {
                     extensorReleased = false;
                     arm.extensor.extend();
-                } else if (input.pressed().groundActuator) {
+                } else if (input.action().groundActuator) {
                     extensorReleased = false;
                     arm.extensor.ground();
                 }
-            } else if (input.pressed().actuatorBusy) {
+            } else if (input.action().actuatorBusy) {
                 extensorReleased = true;
             }
 
-            if (input.pressed().clawRight) {
+            if (input.action().clawRight) {
                 if (clawReleasedR) {
                     clawReleasedR = false;
                     arm.claw.setRightServo(!arm.claw.openedR);
@@ -163,7 +163,7 @@ public class BaseRobot {
             } else {
                 clawReleasedR = true;
             }
-            if (input.pressed().clawLeft) {
+            if (input.action().clawLeft) {
                 if (clawReleasedL) {
                     clawReleasedL = false;
                     arm.claw.setLeftServo(!arm.claw.openedL);
@@ -174,24 +174,24 @@ public class BaseRobot {
 
             // UP: Set the wrist to up
             // DOWN: Set the wrist to down
-            if (input.pressed().wristUp) {
+            if (input.action().wristUp) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            } else if (input.pressed().wristDown) {
+            } else if (input.action().wristDown) {
                 arm.wrist.setPosition(Wrist.Position.RUNG);
             }
         }
 
-        if (input.pressed().ascendActuatorExtend) {
+        if (input.action().ascendActuatorExtend) {
             linearActuator.extend();
-        } else if (input.pressed().ascendActuatorRetract) {
+        } else if (input.action().ascendActuatorRetract) {
             linearActuator.retract();
         } else {
             linearActuator.stop();
         }
-        if (input.pressed().ascendActuatorChange && actuatorReleased) {
+        if (input.action().ascendActuatorChange && actuatorReleased) {
             linearActuator.changePosition();
             actuatorReleased = false;
-        } else if (!input.pressed().ascendActuatorChange) {
+        } else if (!input.action().ascendActuatorChange) {
             actuatorReleased = true;
         }
     }
