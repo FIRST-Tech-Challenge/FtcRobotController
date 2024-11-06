@@ -105,7 +105,7 @@ public class AutoCodeToNetZone extends LinearOpMode {
                 if (dropSpecimen) {
 
                     //TODO: adjust the distance during testing
-                    distanceToSub = 25;
+                    distanceToSub = 26;
                     telemetry.addData("Distance To Sub: ", distanceToSub);
                     telemetry.update();
 

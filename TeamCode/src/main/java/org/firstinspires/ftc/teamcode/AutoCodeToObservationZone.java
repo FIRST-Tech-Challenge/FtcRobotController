@@ -84,7 +84,7 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                 if (dropSpecimen) {
                     telemetry.addData("Move Forward to reach subermersible  ", "");
                     //TODO: adjust the distance during testing
-                    int distanceToSub = 22;
+                    int distanceToSub = 26;
                     telemetry.addData("Distance To Sub: ", distanceToSub);
                     telemetry.update();
                     sleep(1500);
@@ -102,6 +102,17 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                     sleep(2000);
 
                     grabberManager.OpenOrCloseGrabber(true);
+                    telemetry.addData("Open Grabber", "");
+                    telemetry.update();
+                    sleep(2000);
+
+                    armPosition = 0.4; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos: ", armPosition);
+                    telemetry.update();
+                    sleep(2000);
+
+                    grabberManager.OpenOrCloseGrabber(false);
                     telemetry.addData("Open Grabber", "");
                     telemetry.update();
                     sleep(2000);
