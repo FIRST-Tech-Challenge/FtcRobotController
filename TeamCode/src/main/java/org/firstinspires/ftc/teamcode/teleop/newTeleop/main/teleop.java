@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.mainEnum;
@@ -33,7 +34,7 @@ public class teleop extends LinearOpMode implements teleop_interface {
             //Servos
             hardware.wrist = hardwareMap.get(Servo.class, "wrist");
             hardware.grabber = hardwareMap.get(CRServo.class, "grabber");
-            hardware.door = hardwareMap.get(CRServo.class, "door");
+            hardware.door = hardwareMap.get(Servo.class, "door");
 
             //Sensors
             hardware.colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -149,16 +150,16 @@ public class teleop extends LinearOpMode implements teleop_interface {
 
     // Control the gripper's position
     @Override
-    public void claw(mainEnum state, double power, int pos) {
-        switch (state){
+    public void claw(mainEnum motor, int state) {
+        switch (motor){
             case GRABBER:
-                hardware.grabber.setPower(power); // Set the position of the grabber servo
+                hardware.grabber.setPower(state); // Set the position of the grabber servo
                 break;
             case WRIST:
-                hardware.wrist.setPosition(pos); // Set the position of the grabber servo
+                hardware.wrist.setPosition(state); // Set the position of the grabber servo
                 break;
             case DOOR:
-                hardware.door.setPower(power);
+                hardware.door.setPosition(state);
                 break;
         }
     }
@@ -235,43 +236,42 @@ public class teleop extends LinearOpMode implements teleop_interface {
         int collect = 1; // Position to collect block
         int release = -1; //Position to release block
 
-        int open = 1; // Position to open the door
-        int close = -1; // Position to close the door
+        int open = 100; // Position to open the door
+        int close = 0; // Position to close the door
 
         //TODO find up and down position
         int up = 200; // sets position for wrist to go up
         int down = -200; // sets position for wrist to go down
 
-        mainEnum state = null;
-        int power = 0;
-        int pos = 0;
+        mainEnum motor = null;
+        int state = 0;
         // Control gripper based on button presses
         if (gamepad2.x) {
-            state = mainEnum.GRABBER;
-            power = collect;
+            motor = mainEnum.GRABBER;
+            state = collect;
         } else if (gamepad2.y) {
-            state = mainEnum.GRABBER;
-            power = release;
+            motor = mainEnum.GRABBER;
+            state = release;
         }
 
         if (gamepad2.right_trigger > 0){
-            state = mainEnum.WRIST;
-            pos = up;
+            motor = mainEnum.WRIST;
+            state = up;
         }else if (gamepad2.left_trigger > 0){
-            state = mainEnum.WRIST;
-            pos = down;
+            motor = mainEnum.WRIST;
+            state = down;
         }
 
         if(gamepad2.dpad_up){
-            state = mainEnum.DOOR;
-            power = open;
+            motor = mainEnum.DOOR;
+            state = open;
         }else if (gamepad2.dpad_down){
-            state = mainEnum.DOOR;
-            power = close;
+            motor = mainEnum.DOOR;
+            state = close;
         }
 
-        if (state != null) {
-            claw(state, power, pos);
+        if (motor != null) {
+            claw(motor, state);
         }
     }
 

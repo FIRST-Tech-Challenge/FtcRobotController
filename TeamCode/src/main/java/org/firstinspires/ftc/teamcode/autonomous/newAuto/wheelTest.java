@@ -46,9 +46,6 @@ public class wheelTest extends LinearOpMode {
         setSpeed(speed);
         resetEncoders();
         sleep(250);
-
-
-
     }
     private void setSpeed(double speed){
         hardware.frontLeft.setPower(speed);

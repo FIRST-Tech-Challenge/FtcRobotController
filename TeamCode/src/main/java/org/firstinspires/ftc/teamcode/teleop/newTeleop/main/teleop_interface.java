@@ -12,7 +12,7 @@ public interface teleop_interface {
 
     void movement(double vertical, double strafe, double turn);
     void arm(mainEnum state, double speed);
-    void claw(mainEnum state, double power, int pos);
+    void claw(mainEnum motor,int state);
 
     void finalMovement();
     void finalArm();

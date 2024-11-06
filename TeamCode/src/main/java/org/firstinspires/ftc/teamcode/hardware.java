@@ -20,7 +20,7 @@ public class hardware {
 
     public CRServo grabber;
     public Servo wrist;
-    public CRServo door;
+    public Servo door;
 
     public ColorSensor colorSensor;
 
