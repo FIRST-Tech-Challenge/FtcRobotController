@@ -102,8 +102,8 @@ public class basicTelemBlue extends LinearOpMode {
         FRMotor.setPower(0);
       }
 
-      // game pad 2
-        // sets arm
+      //game pad 2
+        //sets arm
       slideLimit();
       setSlide(-gamepad2.right_stick_y);
       setPivot(gamepad2.left_stick_y);
@@ -129,6 +129,7 @@ public class basicTelemBlue extends LinearOpMode {
         wrist.setPosition(x);
       }
 
+      //telemetry stuff (not needed for actual competition, just there for testing purposes)
       telemetry.addData("Pivot encoder count: ",pivot.getCurrentPosition());
       telemetry.addData("Slide encoder count: ",slide.getCurrentPosition());
       telemetry.update();
