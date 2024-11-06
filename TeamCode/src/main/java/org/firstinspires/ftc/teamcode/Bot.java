@@ -35,7 +35,7 @@ public class Bot {
 
     //Statistics for measurements
     public static final int MAX_EXT = -2648;
-    public static final double MIN_EXTEND = 0;
+     public static final double MIN_EXTEND = 0;
 
     public static final int LEFT_LIFT_MAX = 7255;
     public static final int LEFT_LIFT_MIN = -101;
@@ -622,7 +622,7 @@ public class Bot {
      */
     public void autoIntake(double time){
         this.setArmPos(-230);
-        this.setExtendPos(8.0);
+        this.setExtendPos(8.39);
         this.runIntakeForTime(time, 1);
         this.setExtendPos(0.0);
         this.setArmPos(0);
