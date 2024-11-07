@@ -17,14 +17,6 @@ public class MoveRobotStraightInchesAction extends Action {
     double error;
     CalculateTickInches calculateTickInches = new CalculateTickInches();
 
-    public MoveRobotStraightInchesAction(Action dependentAction, double targetInches, DriveTrain driveTrain, Odometry odometry) {
-        this.dependentAction = dependentAction;
-        straightController = new PIDController2023("straight", 0.0005, 0.0000015, 0.8, false);
-        this.targetTicks = calculateTickInches.inchToTicksDriveTrain(targetInches);
-        this.driveTrain = driveTrain;
-        this.odometry = odometry;
-    }
-
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain) {
         this.dependentAction = new DoneStateAction();
         straightController = new PIDController2023("straight", 0.0005, 0.0000015, 0.8, false);

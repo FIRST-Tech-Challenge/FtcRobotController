@@ -9,13 +9,14 @@ public abstract class Action {
     public boolean getIsDone() {
         return isDone;
     }
-    void setDependentAction(Action newAction) {
+    public void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
     }
     Action getDependentAction() {
         return this.dependentAction;
     }
 
+    //updates the action
     public void updateCheckDone() {
         if (isDone) { return; } //if i'm done never update
         if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
@@ -30,6 +31,8 @@ public abstract class Action {
         return isDone;
     }
 
+    //what condition the action needs to fulfill in order to be done
     public abstract boolean checkDoneCondition();
+    //motor power, etc
     public abstract void update();
 }

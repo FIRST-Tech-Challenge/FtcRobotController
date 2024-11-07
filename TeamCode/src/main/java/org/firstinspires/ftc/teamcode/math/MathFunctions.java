@@ -4,13 +4,12 @@ package org.firstinspires.ftc.teamcode.math;
 
 public class MathFunctions {
     public static double angleWrapRad(double angle) {
-        while (angle < -Math.PI){
+        angle = angle % (2 * Math.PI);
+        if (angle > Math.PI) {
+            angle -= 2 * Math.PI;
+        } else if (angle < -Math.PI) {
             angle += 2 * Math.PI;
         }
-        while (angle > Math.PI){
-            angle -= 2 * Math.PI;
-        }
-
         return angle;
     }
 

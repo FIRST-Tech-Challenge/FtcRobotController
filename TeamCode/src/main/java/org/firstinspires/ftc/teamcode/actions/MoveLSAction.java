@@ -16,15 +16,6 @@ public class MoveLSAction extends Action {
     double currentTicks;
     double error;
 
-
-    public MoveLSAction(Action dependentAction, double targetTicks, Outtake2024 outtake) {
-        this.outtake = outtake;
-        linearSlide = outtake.linearSlide;
-        linearSlideTwo = outtake.linearSlideTwo;
-        this.dependentAction = dependentAction;
-        this.targetTicks = targetTicks;
-    }
-
     public MoveLSAction(double targetTicks, Outtake2024 outtake) {
         this.outtake = outtake;
         linearSlide = outtake.linearSlide;

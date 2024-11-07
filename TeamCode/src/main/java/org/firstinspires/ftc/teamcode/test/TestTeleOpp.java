@@ -65,6 +65,7 @@ public class TestTeleOpp extends LinearOpMode {
         purePursuitAction.addPoint(250,0);
 
         MoveRobotStraightInchesAction moveRobotStraightInchesAction = new MoveRobotStraightInchesAction(6, driveTrain);
+        moveRobotStraightInchesAction.setDependentAction(purePursuitAction);
 
         //TurnRobotAction turnRobotAction = new TurnRobotAction(90, driveTrain, imu);
 

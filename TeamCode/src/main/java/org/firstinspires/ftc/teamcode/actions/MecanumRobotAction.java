@@ -20,14 +20,6 @@ public class MecanumRobotAction extends Action {
     double ERROR_TOLERANCE_IN_TICKS = 10;
     int counter = 0;
 
-    public MecanumRobotAction(Action dependentAction, double inches, DriveTrain driveTrain) {
-        this.dependentAction = dependentAction;
-        this.driveTrain = driveTrain;
-        fLeftMecanumController = new PIDController2023("fl mecanum", 0.005, 0.0000005, 0.4, true);
-        bRightMecanumController = new PIDController2023("br mecanum", 0.005, 0.0000005, 0.4, true);
-        this.targetTicks = fLeftMecanumController.convertInchesToTicks(inches);
-    }
-
     public MecanumRobotAction(double inches, DriveTrain driveTrain) {
         this.dependentAction = new DoneStateAction();
         this.driveTrain = driveTrain;

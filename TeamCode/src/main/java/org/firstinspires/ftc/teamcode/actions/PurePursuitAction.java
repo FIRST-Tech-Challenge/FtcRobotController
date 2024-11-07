@@ -40,18 +40,6 @@ public class PurePursuitAction extends Action {
     double radius;
     Optional<Point> follow;
 
-    public PurePursuitAction(DriveTrain driveTrain, Odometry odometry, Action dependentAction) {
-        this.driveTrain = driveTrain;
-        this.odometry = odometry;
-
-        this.pidX = new PidNav(1. / 300, 0, 0);
-        this.pidY = new PidNav(1. / 300, 0, 0);
-        this.pidAngle = new PidNav(3 / 3.14, 0, 0);
-        Log.d("purepursaction", "constructed");
-
-        this.dependentAction = dependentAction;
-    }
-
     public PurePursuitAction(DriveTrain driveTrain, Odometry odometry) {
         this.driveTrain = driveTrain;
         this.odometry = odometry;

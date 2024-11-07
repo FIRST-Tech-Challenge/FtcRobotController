@@ -24,13 +24,6 @@ public class TurnRobotAction extends Action {
     double ERROR_TOLERANCE = 0.5; //degrees
     double error;
 
-    public TurnRobotAction(Action dependentAction, double targetDegrees, DriveTrain driveTrain, IMUModule imu) {
-        this.dependentAction = dependentAction;
-        this.targetDegrees = targetDegrees;
-        this.driveTrain = driveTrain;
-        this.imu = imu.getIMU();
-    }
-
     public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, IMUModule imu) {
         this.dependentAction = new DoneStateAction();
         this.targetDegrees = targetDegrees;
