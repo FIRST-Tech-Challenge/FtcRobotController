@@ -14,9 +14,10 @@ public class Elevator extends SubsystemBase {
 
     private Telemetry telemetry;
     private DcMotorEx motor;
-    private DcMotorEx pivot;
+    //private DcMotorEx pivot;
     private TouchSensor bottomLimit;
     private boolean extending;
+    private boolean isHomed;
     private int extendingPosition;
     private boolean retracting;
     private int retractingPosition;
@@ -27,17 +28,18 @@ public class Elevator extends SubsystemBase {
         motor = hm.get(DcMotorEx.class, "Extend");
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pivot = hm.get(DcMotorEx.class, "Tilt");
-        pivot.setDirection(DcMotorSimple.Direction.FORWARD);
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        pivot = hm.get(DcMotorEx.class, "Tilt");
+//        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+//        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottomLimit = hm.get(TouchSensor.class, "Touch");
         telemetry = tm;
 
-        extend(0.5);
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {}
-        retract();
+//        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motor.setPower(0.1);
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {}
+//        retract();
     }
 
     public void extend(){
@@ -58,10 +60,10 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    public void extend(int position) {
-        extendingPosition = position;
-        extend(0.5);
-    }
+//    public void extend(int position) {
+//        extendingPosition = position;
+//        extend(0.5);
+//    }
 
     public void retract(){
         retract(-0.5);
@@ -81,20 +83,15 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    public void retract(int position) {
-        retractingPosition = position;
-        retract(-0.5);
-    }
-
-    public void setPower(double whatPower) {
-        if (whatPower<0) {
-            retract(whatPower);
-        } else if (whatPower>0) {
-            extend(whatPower);
-        } else {
-            brake();
-        }
-    }
+//    public void setPower(double whatPower) {
+//        if (whatPower<0) {
+//            retract(whatPower);
+//        } else if (whatPower>0) {
+//            extend(whatPower);
+//        } else {
+//            brake();
+//        }
+//    }
 
     public void brake(){
         telemetry.addData("ElevatorState", "stop");
@@ -102,19 +99,8 @@ public class Elevator extends SubsystemBase {
         motor.setPower(0);
     }
 
-    public void tilt(double degrees) {
-         int ticks = (int) Math.round(DEGREE_TO_TICK_MULTIPLIER * degrees);
-         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         pivot.setTargetPosition(ticks);
-    }
-
-    public void tilt(double power, boolean ignored) {
-        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        pivot.setPower(power);
-    }
-
     public double getDistance(){
-        return -motor.getCurrentPosition();
+        return motor.getCurrentPosition();
     }
 
     public boolean isRetracted(){
@@ -125,18 +111,20 @@ public class Elevator extends SubsystemBase {
         return getDistance() >= 3300 || getDistance() == extendingPosition;
     }
 
+    //this function fires every cycle, at about 50hz, so anything in here will effectively be the default state
     @Override
     public void periodic() {
         telemetry.addData("ElevatorIsRetracted", isRetracted());
         telemetry.addData("ElevatorIsExtended", isExtended());
         telemetry.addData("ElevatorDistance", getDistance());
-        telemetry.update();
+        telemetry.addData("IsHomed", isHomed);
 
         if (bottomLimit.isPressed() && !extending && !retracting) {
+            isHomed = true;
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        if (isRetracted() && retracting) {
+        if (bottomLimit.isPressed() && retracting) {
             retracting = false;
             retractingPosition = Integer.MIN_VALUE;
             brake();
