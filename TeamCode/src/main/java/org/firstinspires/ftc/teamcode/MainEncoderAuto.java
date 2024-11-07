@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import androidx.annotation.VisibleForTesting;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -10,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
 @Disabled
-public class MainAuto extends LinearOpMode {
+public class MainEncoderAuto extends LinearOpMode {
     ///////////////////////////////psuedocode///////////////////////////////
     //(robot is 17 inches long)
     //move right 24 inches
@@ -24,11 +23,10 @@ public class MainAuto extends LinearOpMode {
     private ElapsedTime     runtime = new ElapsedTime();
     static final double countsPerRev = 1440;
     static final double wheelDiameter = 3.5;     // For figuring circumference (in inches)
-    static final double countsPerInch  = countsPerRev / (wheelDiameter * 3.141592653589793238462643383279502884197169399375);
-    private DcMotor leftBack; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor rightBack; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
-    private DcMotor leftFront; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor rightFront; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
+    static final double countsPerInch  = countsPerRev / (wheelDiameter * Math.PI);
+    static final double slideCountsPerInch = 1440;
+    private DcMotor leftBack, rightBack, leftFront, rightFront; //Initializes direct current main wheel motors for the driving function of our robot, gary.
+    private DcMotor linearSlide;
     private Servo clawServo;
 
     @Override
@@ -37,6 +35,7 @@ public class MainAuto extends LinearOpMode {
         rightBack  = hardwareMap.get(DcMotor.class, "br");
         leftFront  = hardwareMap.get(DcMotor.class, "fl");
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
+        linearSlide = hardwareMap.get(DcMotor.class, "linearSlide");
 
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         telemetry.addData("Starting pos: ", leftBack.getCurrentPosition());
@@ -47,7 +46,7 @@ public class MainAuto extends LinearOpMode {
         //extend linear slide up to second ladder
         driveInches(7, 1, dir.FORWARD, 5);
         //move slide down slightly (clip specimen on second ladder)
-        //release claw
+        moveClaw(false);
         //move slide up slightly
         driveInches(3, 1, dir.BACKWARD, 5);
         driveInches(30, 1, dir.LEFT, 5);
@@ -89,12 +88,17 @@ public class MainAuto extends LinearOpMode {
         }
         if(opModeIsActive()) {
             runtime.reset();
-            targetPos = lbDir + (int)(inches * countsPerInch);
+            targetPos = (int)(inches * countsPerInch);
+            leftBack.setTargetPosition(targetPos + leftBack.getCurrentPosition());
+            rightBack.setTargetPosition(targetPos + rightBack.getCurrentPosition());
+            leftFront.setTargetPosition(targetPos + leftFront.getCurrentPosition());
+            rightFront.setTargetPosition(targetPos + rightFront.getCurrentPosition());
+
             leftBack.setPower(lbDir * speed);
             rightBack.setPower(rbDir * speed);
             leftFront.setPower(lfDir * speed);
             rightFront.setPower(rfDir * speed);
-            while(opModeIsActive() && timeoutS < runtime.seconds()) {
+            while(opModeIsActive() && timeoutS < runtime.seconds() && (leftBack.isBusy() && rightBack.isBusy() && leftFront.isBusy() && rightFront.isBusy())) {
                 telemetry.addData("currently going", String.valueOf(direction), " to ", targetPos);
                 telemetry.update();
             }
@@ -106,11 +110,38 @@ public class MainAuto extends LinearOpMode {
         }
     }
 
-    void moveClaw(boolean open) {
+    private void moveClaw(boolean open) {
         if(open) {
-            clawServo.setPosition(0);
-        } else {
             clawServo.setPosition(1);
+        } else {
+            clawServo.setPosition(0);
         }
     }
+
+    private void moveSlide(float inches, float speed, boolean up, float timeoutS) {
+        int dir = 1;
+        if(!up) {
+            dir = -1;
+        }
+        if(opModeIsActive()) {
+            runtime.reset();
+            int targetPos = linearSlide.getCurrentPosition() + (int)(inches * slideCountsPerInch);
+            linearSlide.setPower(dir * speed);
+            while(opModeIsActive() && timeoutS < runtime.seconds() && linearSlide.isBusy()) {
+                telemetry.addData("linear slide currently going", up ? "up": "down", " to ", targetPos);
+                telemetry.update();
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
