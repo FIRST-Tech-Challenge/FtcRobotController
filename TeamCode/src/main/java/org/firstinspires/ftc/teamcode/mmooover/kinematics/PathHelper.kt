@@ -1,51 +1,76 @@
 package org.firstinspires.ftc.teamcode.mmooover.kinematics
 
 class PathHelper internal constructor() {
-    interface Keyframe
-    interface XYKeyframe : Keyframe {
-        val x: Double
-        val y: Double
-    }
-
-    interface RotKeyframe : Keyframe {
-        val r: Double
-    }
-
-    data class XYKeyframeImpl(override val x: Double, override val y: Double) : XYKeyframe
-    data class RotKeyframeImpl(override val r: Double) : RotKeyframe
-    data class ComboKeyframeImpl(
-        override val x: Double,
-        override val y: Double,
-        override val r: Double
-    ) : XYKeyframe, RotKeyframe
 
     val Number.deg get() = Math.toRadians(this.toDouble())
 
-    val keyframes: MutableList<Keyframe> = mutableListOf()
+    val commands: MutableList<AuthoringCommand> = mutableListOf()
 
-    fun k(r: Number) = keyframes.add(RotKeyframeImpl(r.toDouble()))
-    fun k(x: Number, y: Number) = keyframes.add(XYKeyframeImpl(x.toDouble(), y.toDouble()))
-    fun k(x: Number, y: Number, r: Number) =
-        keyframes.add(ComboKeyframeImpl(x.toDouble(), y.toDouble(), r.toDouble()))
+    fun r(r: Number) = commands.add(RImpl(r.toDouble()))
+    fun m(x: Number, y: Number) = commands.add(XYImpl(x.toDouble(), y.toDouble()))
+    fun m(x: Number, y: Number, r: Number) = commands.add(XYRImpl(x.toDouble(), y.toDouble(), r.toDouble()))
+    fun run(target: String) = commands.add(RunImpl(target))
+    fun launch(target: String) = commands.add(RunAsyncImpl(target))
+    fun await(target: String) = commands.add(AwaitImpl(target))
 
-    fun generate(): List<TimedWaypoint3> {
-        assert(keyframes.size >= 2) { "Not enough keyframes (need at least 2, have ${keyframes.size})" }
+    fun generate2(): List<BytecodeUnit> {
+        // break into 'move segments' and 'function segments'.
+        // true: move
+        // false: function
+        val segments: MutableList<Pair<Boolean, List<AuthoringCommand>>> = mutableListOf()
+        var cursor = 0
+        while (cursor < commands.size) {
+            // Peek the first element to determine the type
+            val segment: MutableList<AuthoringCommand> = mutableListOf()
+            var command = commands[cursor]
+            val mode = command is MotionCommand
+            // Repeat while that type continues to match
+            while (when (mode) {
+                true -> command is MotionCommand
+                false -> command !is MotionCommand
+            }) {
+                segment.add(command)
+                if (++cursor >= commands.size) break
+                command = commands[cursor]
+            }
+            // Pack and store
+            segments.add(Pair(mode, segment))
+        }
+        val units: MutableList<BytecodeUnit> = mutableListOf()
+        // compile segments
+        for ((mode, segment) in segments) {
+            if (mode) {
+                // technically a noop but makes typechecker happy
+                val typedSegment = segment.filterIsInstance<MotionCommand>()
+                units.addAll(generateMovePart(typedSegment))
+            } else {
+                for (part in segment) {
+                    if (part is BytecodeUnit) units.add(part)
+                    else throw IllegalStateException("Not sure what to do with ${part::class.simpleName} here...")
+                }
+            }
+        }
+        return units
+    }
+
+    fun generateMovePart(moveCommands: List<MotionCommand>): List<MoveCommand> {
+        assert(moveCommands.size >= 2) { "Not enough keyframes (need at least 2, have ${moveCommands.size})" }
         // Assert that the first and last keyframes are at least XY
-        assert(keyframes[0] is XYKeyframe) { "First keyframe must have X/Y data" }
-        assert(keyframes.last() is XYKeyframe) { "Last keyframe must have X/Y data" }
+        assert(moveCommands[0] is XYCommand) { "First keyframe must have X/Y data" }
+        assert(moveCommands.last() is XYCommand) { "Last keyframe must have X/Y data" }
 
-        val xyFrames: MutableList<XYKeyframe> = mutableListOf()
+        val xyCommands: MutableList<XYCommand> = mutableListOf()
         val mapping: MutableList<Int> = mutableListOf()
         val isExact: MutableList<Boolean> = mutableListOf()
         val fractionals: MutableList<Double> = mutableListOf()
 
         var mapI = -1
         var splitCount = -1
-        for (kf in keyframes) {
-            if (kf is XYKeyframe) {
+        for (kf in moveCommands) {
+            if (kf is XYCommand) {
                 mapping.add(++mapI)
                 isExact.add(true)
-                xyFrames.add(kf)
+                xyCommands.add(kf)
                 fractionals.add(0.0)
                 if (splitCount > 0) {
                     val onePart = 1.0 / (splitCount + 1)
@@ -64,8 +89,8 @@ class PathHelper internal constructor() {
 
         // Generate the X/Y curves
         val xyCurves = CubicSplineSolver.solve2DMultiSegment(
-            xyFrames.map { it.x }.toDoubleArray(),
-            xyFrames.map { it.y }.toDoubleArray()
+            xyCommands.map { it.x }.toDoubleArray(),
+            xyCommands.map { it.y }.toDoubleArray()
         )
         val timings = buildList {
             for (item in xyCurves) add(item.offset + item.tFrom)
@@ -75,8 +100,8 @@ class PathHelper internal constructor() {
         val timing: MutableList<Double> = mutableListOf()
         val rotValues: MutableList<Double> = mutableListOf()
 
-        for ((i, key) in keyframes.withIndex()) {
-            if (key !is RotKeyframe) continue
+        for ((i, key) in moveCommands.withIndex()) {
+            if (key !is RCommand) continue
             if (isExact[i]) {
                 timing.add(timings[mapping[i]])
             } else {

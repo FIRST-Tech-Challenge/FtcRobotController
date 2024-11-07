@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.test.localization
 
-import org.firstinspires.ftc.teamcode.mmooover.kinematics.WaypointSerializer
+import org.firstinspires.ftc.teamcode.mmooover.kinematics.CommandSerializer
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.path
 import org.junit.jupiter.api.Test
 import java.io.DataOutputStream
@@ -17,17 +17,20 @@ class PathGenerator {
 
     @Test
     fun `generate blue right auto v1`() {
-        val triads = path {
-            k(0, 0, 0.deg)
-            k(0, 48)
-            k(48, 48, 90.deg)
-        }.generate()
+        val commands = path {
+            m(0, 0, 0.deg)
+            m(0, 48)
+            m(48, 48, 90.deg)
+            run("ScoreHigh")
+            m(48, 48, 90.deg)
+            m(48, 24, 180.deg)
+        }.generate2()
 
         val outFile = getTestOutputDir().resolve("AutoBlueRight1.bin")
         if (outFile.exists()) outFile.delete()
         outFile.outputStream().use {
             DataOutputStream(it).use { out ->
-                WaypointSerializer.serialize3(triads, out)
+                CommandSerializer.serialize(commands, out)
             }
         }
     }

@@ -2,12 +2,10 @@ package org.firstinspires.ftc.teamcode.mmooover
 
 import android.os.Environment
 import android.util.Log
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.mmooover.kinematics.Waypoint3
-import org.firstinspires.ftc.teamcode.mmooover.kinematics.WaypointSerializer
+import org.firstinspires.ftc.teamcode.mmooover.kinematics.BytecodeUnit
+import org.firstinspires.ftc.teamcode.mmooover.kinematics.CommandSerializer
 import java.io.DataInputStream
 import java.io.File
-import java.io.InputStream
 
 class PathRunner3(filepath: File) {
     companion object {
@@ -17,14 +15,14 @@ class PathRunner3(filepath: File) {
     }
 
     // Intentionally immutable.
-    val waypoints: List<Waypoint3>
+    val waypoints: List<BytecodeUnit>
 
     init {
         if (!filepath.exists()) throw IllegalArgumentException("The file specified doesn't exist")
         Log.i("PathRunner3", "Loading waypoints from $filepath, hold on...")
         waypoints = filepath.inputStream().use { fileIn ->
             DataInputStream(fileIn).use { dataIn ->
-                WaypointSerializer.deserialize3(dataIn)
+                CommandSerializer.deserialize(dataIn)
             }
         }
         Log.i("PathRunner3", "Loaded ${waypoints.size} waypoints.")

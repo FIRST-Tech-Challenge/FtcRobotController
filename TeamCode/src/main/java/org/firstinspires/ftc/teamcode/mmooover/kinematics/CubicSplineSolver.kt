@@ -19,6 +19,13 @@ private inline fun DoubleArray.mapInPlace(transform: (Double) -> Double) {
     }
 }
 
+
+interface Timed {
+    val t: Double
+}
+interface TimedWaypoint: XYCommand, Timed
+interface TimedWaypoint3: XYRCommand, Timed, MoveCommand
+
 data class CubicSpline @JvmOverloads constructor(
     val a: Double,
     val b: Double,
@@ -70,7 +77,7 @@ data class CubicSplinePair(val id: Int, val x: CubicSpline, val y: CubicSpline) 
         val totalDistance: Double,
         override val t: Double,
         val tVirt: Double,
-    ) : TimedWaypoint() {
+    ) : TimedWaypoint {
         override fun toString(): String = "(%.4f, %.4f <t:%.4f (real %.4f by %d) | d:%.4f>)".format(
             x,
             y,
@@ -287,9 +294,8 @@ object CubicSplineSolver {
         }
         return result
     }
-
     data class TW3Impl(override val t: Double, override val x: Double, override val y: Double,
-                       override val r: Double): TimedWaypoint3()
+                       override val r: Double): TimedWaypoint3
 
     /**
      * 'zip' this set of waypoints with a third channel of splines.
