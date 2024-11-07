@@ -93,7 +93,7 @@ public class Hardware2025Bot
     public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
     public double       wormTiltMotorPwr    = 0.0;    // current power setting
 
-    public double       PAN_ANGLE_HW_MAX    =  100.0;  // absolute encoder angles at maximum rotation RIGHT
+    public double       PAN_ANGLE_HW_MAX    =  400.0;  // absolute encoder angles at maximum rotation RIGHT
     public double       PAN_ANGLE_CYCLE_R   =  133.5;
     public double       PAN_ANGLE_AUTO_M_R  =  137.0;  // scoring the autonomous pre-load cone (RIGHT MED)
     public double       PAN_ANGLE_AUTO_R    =  117.5;  // scoring the autonomous pre-load cone (RIGHT HIGH)
@@ -105,7 +105,10 @@ public class Hardware2025Bot
     public double       PAN_ANGLE_AUTO_L    = -124.5;  // scoring the autonomous pre-load cone (LEFT HIGH)
     public double       PAN_ANGLE_CYCLE_L   = -133.5;
     public double       PAN_ANGLE_AUTO_M_L  = -141.0;  // scoring the autonomous pre-load cone (LEFT MED)
-    public double       PAN_ANGLE_HW_MIN    = -100.0;  // absolute encoder angles at maximum rotation LEFT
+    public double       PAN_ANGLE_HW_MIN    = -400.0;  // absolute encoder angles at maximum rotation LEFT
+
+    public double       TILT_ANGLE_HW_MAX   =  4000.0;  // encoder at maximum rotation UP/BACK
+    public double       TILT_ANGLE_HW_MIN   = -2000.0;  // encoder at maximum rotation DOWN/FWD
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
@@ -119,14 +122,14 @@ public class Hardware2025Bot
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
     public boolean      viperMotorBusy     = false;
     public double       VIPER_RAISE_POWER  =  1.000; // Motor power used to RAISE viper slide
-    public double       VIPER_HOLD_POWER   =  0.002; // Motor power used to HOLD viper slide at current height
+    public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current height
     public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to LOWER viper slide
 
     // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3 counts
     // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
     public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
     public int          VIPER_EXTEND_AUTO  = 482;    // raised to just above the bin (safe to rotate - auto)
-    public int          VIPER_EXTEND_BIN   = 519;    // raised to just above the bin (safe to rotate - teleop)
+    public int          VIPER_EXTEND_BIN   = 1230;   // extended for collection
     public int          VIPER_EXTEND_LOW   = 537;    // raised to lowest possible scoring position
     public int          VIPER_EXTEND_MID   = 1038;   // raised to medium scoring height
     public int          VIPER_EXTEND_HIGH  = 1482;   // raised to upper scoring height
@@ -143,25 +146,25 @@ public class Hardware2025Bot
     //====== COLLECTOR SERVOS =====
     public AnalogInput elbowServoPos = null;
     public Servo elbowServo = null;
-    final public static double ELBOW_SERVO_INIT = 0.370;
-    final public static double ELBOW_SERVO_INIT_ANGLE = 224.0;
+    final public static double ELBOW_SERVO_INIT = 0.350;
+    final public static double ELBOW_SERVO_INIT_ANGLE = 229.0;
     final public static double ELBOW_SERVO_SAFE = 0.370;  // Safe orientation for driving
     final public static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
     final public static double ELBOW_SERVO_GRAB = 0.330;  // Partially extend to align fingers inside pixels
     final public static double ELBOW_SERVO_GRAB_ANGLE = 234.0;
-    final public static double ELBOW_SERVO_DROP = 0.350;  // Fully extend finger assembly toward the Backdrop
-    final public static double ELBOW_SERVO_DROP_ANGLE = 230.0;
+    final public static double ELBOW_SERVO_DROP = 0.330;  // Fully extend finger assembly toward the Backdrop
+    final public static double ELBOW_SERVO_DROP_ANGLE = 234.0;
     final public static double ELBOW_SERVO_BAR  = 0.650;  // For scoring a specimen on the sumersible bar
     final public static double ELBOW_SERVO_BAR_ANGLE = 133.0;
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
-    final public static double WRIST_SERVO_INIT = 0.500;
-    final public static double WRIST_SERVO_INIT_ANGLE = 188.0;
-    final public static double WRIST_SERVO_SAFE = 0.500;    // Safe orientation for driving
-    final public static double WRIST_SERVO_SAFE_ANGLE = 188.0;
-    final public static double WRIST_SERVO_GRAB = 0.860;
-    final public static double WRIST_SERVO_GRAB_ANGLE = 68.0;
+    final public static double WRIST_SERVO_INIT = 0.159;
+    final public static double WRIST_SERVO_INIT_ANGLE = 288.0;
+    final public static double WRIST_SERVO_SAFE = 0.340;    // Safe orientation for driving
+    final public static double WRIST_SERVO_SAFE_ANGLE = 234.0;
+    final public static double WRIST_SERVO_GRAB = 0.880;
+    final public static double WRIST_SERVO_GRAB_ANGLE = 56.0;
     final public static double WRIST_SERVO_RAISE = 0.570;    // Safe orientation for driving
     final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;
     final public static double WRIST_SERVO_DROP = 0.350;

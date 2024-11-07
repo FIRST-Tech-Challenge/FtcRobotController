@@ -56,10 +56,12 @@ public class TeleopLift extends LinearOpMode {
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
-    boolean panAngleTweaked = false; // Has turret been manually moved
-    boolean turretFrontToBack = false; // Is turret moving front-to-back or back-to-front ?
-    boolean liftTweaked  = false;  // Reminder to zero power when input stops
-    boolean enableOdometry = true;
+    boolean geckoServoCollecting = false; // Is the collector servo currently intaking (true) or OFF (false);
+    boolean geckoServoEjecting   = false; // Is the collector servo currently ejecting (true) or OFF (false);
+    boolean panAngleTweaked      = false; // Reminder to zero power when PAN  input stops
+    boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
+    boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
+    boolean enableOdometry       = true;  // Process/report odometry updates?
 
     int geckoWheelState = 0;
 
@@ -153,9 +155,9 @@ public class TeleopLift extends LinearOpMode {
                 } // switch()
             } // processDpadDriveMode
 
-            processPanAndTilt();
-//          processPanControls();
-//          processTiltControls();
+//          processPanAndTilt();
+            processPanControls();
+            processTiltControls();
             ProcessViperLiftControls();
             processCollectorControls();
 
@@ -458,7 +460,7 @@ public class TeleopLift extends LinearOpMode {
     void processPanAndTilt() {
 
         // Pan movement
-        if(Math.abs(gamepad2.left_stick_x) > 0.10) {
+        if(Math.abs(gamepad2.left_stick_x) > 0.20) {
             double panPower = (gamepad2.left_stick_x > 0.0)? 0.10 : -0.10;
             robot.wormPanMotor.setPower(panPower);
         }
@@ -481,55 +483,30 @@ public class TeleopLift extends LinearOpMode {
         boolean safeToManuallyLeft  = (robot.wormPanMotorPos > robot.PAN_ANGLE_HW_MIN);
         boolean safeToManuallyRight = (robot.wormPanMotorPos < robot.PAN_ANGLE_HW_MAX);
         double  gamepad2_left_stick = gamepad2.left_stick_x;
-        boolean manual_turret_control = ( Math.abs(gamepad2_left_stick) > 0.05 );
-
-        //===================================================================
-        // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
-        /*
-        if( gamepad1_cross_now && !gamepad1_cross_last)
-        {
-            // robot.turretPIDPosInit( robot.PAN_ANGLE_CENTER );
-        }
-        */
+        boolean manual_pan_control = ( Math.abs(gamepad2_left_stick) > 0.15 );
 
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
         if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
-            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-            if( turretFrontToBack == false ) {
-                // robot.turretPIDPosInit( robot.PAN_ANGLE_COLLECT_R );
-            }
-            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-            else {  // liftFrontToBack == true
-                // robot.turretPIDPosInit( -50.5 );
-            }
         }
         // Check for an OFF-to-ON toggle of the gamepad1 RIGHT BUMPER
         else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
         {
-            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-            if( turretFrontToBack == false ) {
-                // robot.turretPIDPosInit( robot.PAN_ANGLE_COLLECT_L );
-            }
-            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-            else {   // liftFrontToBack == true
-                // robot.turretPIDPosInit( +50.5 );
-            }
         }
 
         //===================================================================
-        else if( manual_turret_control || panAngleTweaked) {
+        else if( manual_pan_control || panAngleTweaked) {
             // Does user want to rotate turret LEFT (negative joystick input)
-            if( safeToManuallyLeft && (gamepad2_left_stick < -0.10) ) {
+            if( safeToManuallyLeft && (gamepad2_left_stick < -0.15) ) {
                 double motorPower = 0.20 * gamepad2_left_stick; // NEGATIVE
-                robot.wormPanMotor.setPower( motorPower );   // 0% to -25%
+                robot.wormPanMotor.setPower( motorPower );   // -3% to -20%
                 panAngleTweaked = true;
             }
             // Does user want to rotate turret RIGHT (positive joystick input)
-            else if( safeToManuallyRight && (gamepad2_left_stick > 0.10) ) {
+            else if( safeToManuallyRight && (gamepad2_left_stick > 0.15) ) {
                 double motorPower = 0.20 * gamepad2_left_stick; // POSITIVE
-                robot.wormPanMotor.setPower( motorPower );   // 0% to +25%
+                robot.wormPanMotor.setPower( motorPower );   // +3% to +20%
                 panAngleTweaked = true;
             }
             // No more input?  Time to stop turret movement!
@@ -537,16 +514,16 @@ public class TeleopLift extends LinearOpMode {
                 robot.wormPanMotor.setPower( 0.0 );
                 panAngleTweaked = false;
             }
-        } // manual_turret_control
+        } // manual_pan_control
 
     } // processPanControls
 
     /*---------------------------------------------------------------------------------*/
     void processTiltControls() {
-        boolean safeToManuallyLower = (robot.wormTiltMotorPos > robot.PAN_ANGLE_HW_MIN);
-        boolean safeToManuallyRaise = (robot.wormTiltMotorPos < robot.PAN_ANGLE_HW_MAX);
-        double  gamepad2_left_stick = gamepad2.left_stick_x;
-        boolean manual_turret_control = ( Math.abs(gamepad2_left_stick) > 0.05 );
+        boolean safeToManuallyLower = (robot.wormTiltMotorPos > robot.TILT_ANGLE_HW_MIN);
+        boolean safeToManuallyRaise = (robot.wormTiltMotorPos < robot.TILT_ANGLE_HW_MAX);
+        double  gamepad2_right_stick = gamepad2.right_stick_y;
+        boolean manual_tilt_control = ( Math.abs(gamepad2_right_stick) > 0.10 );
 
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
@@ -558,48 +535,28 @@ public class TeleopLift extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
         else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
-            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-            if( turretFrontToBack == false ) {
-                // robot.turretPIDPosInit( robot.PAN_ANGLE_COLLECT_R );
-            }
-            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-            else {  // liftFrontToBack == true
-                // robot.turretPIDPosInit( -50.5 );
-            }
-        }
-        // Check for an OFF-to-ON toggle of the gamepad1 RIGHT BUMPER
-        else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
-        {
-            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-            if( turretFrontToBack == false ) {
-                // robot.turretPIDPosInit( robot.PAN_ANGLE_COLLECT_L );
-            }
-            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-            else {   // liftFrontToBack == true
-                // robot.turretPIDPosInit( +50.5 );
-            }
         }
 
         //===================================================================
-        else if( manual_turret_control || panAngleTweaked) {
-            // Does user want to rotate turret LEFT (negative joystick input)
-            if( safeToManuallyLower && (gamepad2_left_stick < -0.10) ) {
-                double motorPower = 0.20 * gamepad2_left_stick; // NEGATIVE
-                robot.wormPanMotor.setPower( motorPower );   // 0% to -25%
-                panAngleTweaked = true;
+        else if( manual_tilt_control || tiltAngleTweaked) {
+            // Does user want to rotate turret DOWN (negative joystick input)
+            if( safeToManuallyLower && (gamepad2_right_stick < -0.10) ) {
+                double motorPower = 0.30 * gamepad2_right_stick; // NEGATIVE
+                robot.wormTiltMotor.setPower( motorPower );   // -3% to -30%
+                tiltAngleTweaked = true;
             }
-            // Does user want to rotate turret RIGHT (positive joystick input)
-            else if( safeToManuallyRaise && (gamepad2_left_stick > 0.10) ) {
-                double motorPower = 0.20 * gamepad2_left_stick; // POSITIVE
-                robot.wormPanMotor.setPower( motorPower );   // 0% to +25%
-                panAngleTweaked = true;
+            // Does user want to rotate turret UP (positive joystick input)
+            else if( safeToManuallyRaise && (gamepad2_right_stick > 0.10) ) {
+                double motorPower = 0.60 * gamepad2_right_stick; // POSITIVE
+                robot.wormTiltMotor.setPower( motorPower );   // +6% to +60%
+                tiltAngleTweaked = true;
             }
             // No more input?  Time to stop turret movement!
-            else if(panAngleTweaked) {
-                robot.wormPanMotor.setPower( 0.0 );
-                panAngleTweaked = false;
+            else if(tiltAngleTweaked) {
+                robot.wormTiltMotor.setPower( 0.0 );
+                tiltAngleTweaked = false;
             }
-        } // manual_turret_control
+        } // manual_tilt_control
 
     } // processTiltControls
 
@@ -663,36 +620,46 @@ public class TeleopLift extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void processCollectorControls() {
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
-        // - extends/lowers collector for grabbing samples
-        // - turns on the collector intake servo in FORWARD mode
+        // - rotates the wrist/elbow to the floor collection orientation
+        // TODO: check tilt motor for safe height above floor!
         if( gamepad2_circle_now && !gamepad2_circle_last)
         {
-//          need PAN, TILT, and VIPER motor go-to-fixed positions (collecting position)
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-            robot.geckoServo.setPower(-1.0);  // collect
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
-        // - turns off collector intake servo
-        // - raises collector for driving
+        // - rotates the wrist/elbow to the horizontal transport position
+        // TODO: check tilt motor for safe height above floor!
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {
-            robot.geckoServo.setPower(0.0);
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_SAFE);
             robot.wristServo.setPosition(robot.WRIST_SERVO_SAFE);
-//          need PAN, TILT, and VIPER motor go-to-fixed positions (driving position)
         }
         // Check for an OFF-to-ON toggle of the gamepad2 left or right bumpers
-        // - left enables the collector intake servo in REVERSE/score mode
         // - right enables the collector intake servo in FORWARD/collect mode
+        // - left enables the collector intake servo in REVERSE/eject/score mode
         if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
         {
-          robot.geckoServo.setPower(1.0); // release/score sample into basket
-        }
+            if( geckoServoEjecting ) {
+               robot.geckoServo.setPower( 0.0 );  // toggle eject OFF
+               geckoServoEjecting = false;
+            } else /* not ejecting */ {
+               robot.geckoServo.setPower( 1.0 );  // toggle eject ON
+               geckoServoEjecting = true;
+            }
+            geckoServoCollecting = false;      // (we can't be doing this)
+        } // l_bumper
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
         {
-          robot.geckoServo.setPower(-1.0);  // collect (resume after failed attempt)
-        }
+            if( geckoServoCollecting ) {
+               robot.geckoServo.setPower( 0.0 );  // toggle collect OFF
+               geckoServoCollecting = false;
+            } else /* not collecting */ {
+               robot.geckoServo.setPower( -1.0 ); // toggle collect ON
+               geckoServoCollecting = true;
+            }
+            geckoServoEjecting = false;           // (we can't be doing this)
+        } // r_bumper
 
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
