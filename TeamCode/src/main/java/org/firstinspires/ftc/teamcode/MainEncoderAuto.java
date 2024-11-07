@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
 @Disabled
 public class MainEncoderAuto extends LinearOpMode {
-    ///////////////////////////////psuedocode///////////////////////////////
+    ///////////////////////////////pseudocode///////////////////////////////
     //(robot is 17 inches long)
     //move right 24 inches
     //extend linear slide up to second ladder
@@ -43,24 +43,25 @@ public class MainEncoderAuto extends LinearOpMode {
         waitForStart();
 
         driveInches(24, 1, dir.RIGHT, 5);
-        //extend linear slide up to second ladder
+        moveSlide(20, 1, true, 5);
         driveInches(7, 1, dir.FORWARD, 5);
-        //move slide down slightly (clip specimen on second ladder)
+        moveSlide(2, 1, false, 1);
         moveClaw(false);
-        //move slide up slightly
+        moveSlide(2, 1, true, 1);
         driveInches(3, 1, dir.BACKWARD, 5);
         driveInches(30, 1, dir.LEFT, 5);
         driveInches(24, 1, dir.FORWARD, 5);
+        moveSlide(12, 1, false, 1);
 
     }
-    enum dir {
+    protected enum dir {
         LEFT,
         RIGHT,
         FORWARD,
         BACKWARD
 
     }
-    private void driveInches(float inches, float speed, dir direction, float timeoutS) {
+    protected void driveInches(float inches, float speed, dir direction, float timeoutS) {
         int lbDir = 1;
         int rbDir = 1;
         int lfDir = 1;
@@ -110,7 +111,7 @@ public class MainEncoderAuto extends LinearOpMode {
         }
     }
 
-    private void moveClaw(boolean open) {
+    protected void moveClaw(boolean open) {
         if(open) {
             clawServo.setPosition(1);
         } else {
@@ -118,30 +119,21 @@ public class MainEncoderAuto extends LinearOpMode {
         }
     }
 
-    private void moveSlide(float inches, float speed, boolean up, float timeoutS) {
+    protected void moveSlide(float inches, float speed, boolean up, float timeoutS) {
         int dir = 1;
-        if(!up) {
+        if (!up) {
             dir = -1;
         }
-        if(opModeIsActive()) {
+        if (opModeIsActive()) {
             runtime.reset();
-            int targetPos = linearSlide.getCurrentPosition() + (int)(inches * slideCountsPerInch);
+            int targetPos = linearSlide.getCurrentPosition() + (int) (inches * slideCountsPerInch);
             linearSlide.setPower(dir * speed);
-            while(opModeIsActive() && timeoutS < runtime.seconds() && linearSlide.isBusy()) {
-                telemetry.addData("linear slide currently going", up ? "up": "down", " to ", targetPos);
+            while (opModeIsActive() && timeoutS < runtime.seconds() && linearSlide.isBusy()) {
+                telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", targetPos);
                 telemetry.update();
             }
         }
     }
 
-
-
-
-
-
-
-
-
-
-
 }
+
