@@ -3,18 +3,13 @@ package org.firstinspires.ftc.teamcode.systems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
+import org.firstinspires.ftc.teamcode.Settings;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class Odometry {
-    // Constants for encoder counts per revolution and wheel diameter
-    final double COUNTS_PER_REVOLUTION = 100; // Example value, adjust based on your motor encoders
-    final double WHEEL_DIAMETER_INCHES = 3.5; // Example value in inches, adjust based on your robot's wheels
-    /**
-     * makes default autonomous movement faster or slower on a scale from 0-1.
-     * normally 0.25.
-     * values above 0.6 will experience unacceptable amounts of encoder inaccuracy.
-     */
-    final double default_autonomous_speed = 0.38;
+    final double COUNTS_PER_REVOLUTION = Settings.Hardware.COUNTS_PER_REVOLUTION;
+    final double WHEEL_DIAMETER_INCHES = Settings.Hardware.WHEEL_DIAMETER_INCHES;
+    final double default_autonomous_speed = Settings.Movement.default_autonomous_speed;
     private final BaseRobot baseRobot;
     private final DcMotor frontLeftMotor;
     private final DcMotor frontRightMotor;

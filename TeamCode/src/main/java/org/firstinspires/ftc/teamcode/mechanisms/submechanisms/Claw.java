@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
+import org.firstinspires.ftc.teamcode.Settings;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class Claw {
@@ -12,10 +13,6 @@ public class Claw {
     // public static TouchSensor pixelSensor;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
-    private final double openValueR = 0.35;
-    private final double closedValueR = -0.2;
-    private final double openValueL = 1;
-    private final double closedValueL = 0.55;
     public boolean opened = true;
     public boolean openedR = true;
     public boolean openedL = true;
@@ -36,14 +33,14 @@ public class Claw {
 
     /* Set the right servo; true = open, false = close */
     public void setRightServo(boolean open) {
-        double position = open ? openValueR : closedValueR;
+        double position = open ? Settings.Hardware.Servo.Claw.RIGHT_OPEN : Settings.Hardware.Servo.Claw.RIGHT_CLOSED;
         clawServoR.setPosition(position);
         openedR = open;
     }
 
     /* Set the left servo; true = open, false = close */
     public void setLeftServo(boolean open) {
-        double position = open ? openValueL : closedValueL;
+        double position = open ? Settings.Hardware.Servo.Claw.LEFT_OPEN : Settings.Hardware.Servo.Claw.LEFT_CLOSED;
         clawServoL.setPosition(position);
         openedL = open;
     }

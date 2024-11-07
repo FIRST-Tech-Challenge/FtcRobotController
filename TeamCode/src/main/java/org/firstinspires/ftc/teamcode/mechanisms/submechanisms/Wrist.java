@@ -4,14 +4,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
+import org.firstinspires.ftc.teamcode.Settings;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class Wrist {
     public static double position = 0;
     public final Servo wristServo;
-    public final double boardPos = 0.075;
-    public final double transitPos = 0.5;
-    public final double horizPos = 0.45;
+    public final double boardPos = Settings.Hardware.Servo.Wrist.BOARD_POSITION;
+    public final double transitPos = Settings.Hardware.Servo.Wrist.TRANSIT_POSITION;
+    public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
 
