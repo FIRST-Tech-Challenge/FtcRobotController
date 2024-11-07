@@ -21,10 +21,11 @@ public class SwerveTeleop extends LinearOpMode {
 //    public static double GEAR_RATIO = 4*2.88 / // output wheel speed / input motor speed
 //    public static final double TICKS_PER_REV = ; // tickers per revolution
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFront = null;
-    private DcMotor leftBack = null;
-    private DcMotor rightFront = null;
-//    private DcMotor rightBack = null;
+
+    private DcMotor leftFront;
+    private DcMotor leftBack;
+    private DcMotor rightFront;
+    private DcMotor rightBack = null;
 
     private CRServo testServo = null;
 
@@ -35,8 +36,8 @@ public class SwerveTeleop extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leftFront  = hardwareMap.get(DcMotor.class, "liftMotor2");
-        leftBack  = hardwareMap.get(DcMotor.class, "liftMotor1");
+        leftFront  = hardwareMap.get(DcMotor.class, "frontLeft");
+        leftBack  = hardwareMap.get(DcMotor.class, "front");
         rightFront  = hardwareMap.get(DcMotor.class, "intakeMotor");
 //        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
