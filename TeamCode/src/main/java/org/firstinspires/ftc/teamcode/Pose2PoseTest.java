@@ -9,6 +9,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.mmooover.Ramps;
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
@@ -38,9 +39,10 @@ public class Pose2PoseTest extends LinearOpMode {
 //                new Pose(0, 0, Math.toRadians(360))
 //        };
         Pose[] targets = {
-                new Pose(24, 0, Math.toRadians(90)),
-//                new Pose(24, 24, Math.toRadians(0)),
-//                new Pose(0, 24, Math.toRadians(0)),
+//                new Pose(8, 19, Math.toRadians(-45)),
+//                new Pose(36, 12, Math.toRadians(-180)),
+                new Pose(24, 0, Math.toRadians(0)),
+                new Pose(48, 0, Math.toRadians(90)),
 //                new Pose(0, 0, Math.toRadians(0))
         };
         int targetIndex = 0; // Total poses in the set
@@ -50,7 +52,7 @@ public class Pose2PoseTest extends LinearOpMode {
         // Set pftp to reference the PFTP object, set pose to (x, y, angle) --> (0, 0, 0)
         PoseFromToProcessor pftp = new PoseFromToProcessor(Pose.ORIGIN);
         Motion lastAction = null; // Store the previous action as empty (No actions have been recorded yet)
-        Speed2Power speed2Power = new Speed2Power(0.2); // Set a speed2Power corresponding to a speed of 0.15 seconds
+        Speed2Power speed2Power = new Speed2Power(0.25); // Set a speed2Power corresponding to a speed of 0.15 seconds
         Ramps ramps = new Ramps(
                 Ramps.linear(2.0),
                 Ramps.linear(1/12.0),
@@ -96,9 +98,12 @@ public class Pose2PoseTest extends LinearOpMode {
                 double angular = p.subtractAngle(targets[targetIndex]);
                 if (linear > ACCEPT_DIST || abs(angular) > ACCEPT_TURN) {
                     targetTime.reset();
+                } else {
+                    RobotLog.i("Getting to the target");
                 }
                 // Waits at the target for one second
                 if (targetTime.time() > 1.0) {
+                    RobotLog.i("Got to the target");
                     targetIndex++;
                     wait = true;
                     timer.reset();
