@@ -11,10 +11,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** @noinspection unused */
+/**
+ * Main TeleOp class for driver-controlled period.
+ * Handles controller profile selection and robot operation during matches.
+ */
 @TeleOp(name = "MainOp", group = "TeleOp")
 public class MainOp extends LinearOpMode {
 
+    /**
+     * Main execution flow:
+     * 1. Displays controller profile selection menu
+     * 2. Initializes robot with selected profiles
+     * 3. Runs main control loop for driver operation
+     * 4. Handles shutdown when OpMode ends
+     */
     @Override
     public void runOpMode() {
         // Show profile selection menu for both controllers

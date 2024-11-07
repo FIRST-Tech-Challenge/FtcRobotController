@@ -33,7 +33,10 @@ public class Odometry {
         this.heading = 0.0;
     }
 
-    // Function to update position and heading based on encoder readings
+    /**
+     * Updates the robot's position based on encoder readings
+     * Calculates changes in x, y position and heading
+     */
     public void update() {
 
         // Calculate distance traveled by each wheel
@@ -80,10 +83,14 @@ public class Odometry {
         rearRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveCounts(String direction, double counts) {
-        moveCounts(direction, counts, default_autonomous_speed);
-    }
-
+    /**
+     * Moves the robot a specified distance using encoder counts
+     * 
+     * @param direction Movement direction ("forward", "backward", "left", "right",
+     *                  "tleft", "tright")
+     * @param counts    Number of encoder counts to move
+     * @param speed     Motor power to use (0.0 to 1.0)
+     */
     public void moveCounts(String direction, double counts, double speed) {
         reset();
         // Calculate target counts for each motor based on the given counts
@@ -147,7 +154,13 @@ public class Odometry {
         setMotorPower(0);
     }
 
-    // Function to move to a specific position
+    /**
+     * Moves the robot to a specific position on the field
+     * Uses proportional control for smooth movement
+     * 
+     * @param targetX Target X coordinate
+     * @param targetY Target Y coordinate
+     */
     public void moveToPosition(double targetX, double targetY) {
         // Calculate distance and angle to the target position
         double deltaX = targetX - xPosition;

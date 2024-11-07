@@ -8,14 +8,23 @@ import org.firstinspires.ftc.teamcode.MainAuto;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/** @noinspection FieldCanBeLocal, unused */
+/**
+ * Manages graceful shutdown of robot systems.
+ * Monitors OpMode status and ensures proper cleanup of resources.
+ */
 public class ShutdownManager {
     private final LinearOpMode linearOpMode;
     private final BaseRobot baseRobot;
     private final MainAuto mainAuto;
-
     private final Timer timer;
 
+    /**
+     * Creates a new shutdown manager
+     * 
+     * @param linearOpMode Current OpMode instance
+     * @param baseRobot    Reference to main robot instance
+     * @param mainAuto     Reference to autonomous controller
+     */
     public ShutdownManager(LinearOpMode linearOpMode, BaseRobot baseRobot, MainAuto mainAuto) {
         this.linearOpMode = linearOpMode;
         this.baseRobot = baseRobot;
@@ -23,6 +32,10 @@ public class ShutdownManager {
         this.timer = new Timer();
     }
 
+    /**
+     * Schedules periodic checks for OpMode status
+     * Initiates shutdown sequence if OpMode becomes inactive
+     */
     public void scheduleShutdownCheck() {
         timer.schedule(new TimerTask() {
             @Override

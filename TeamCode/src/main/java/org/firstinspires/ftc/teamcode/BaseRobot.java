@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -41,10 +40,20 @@ public class BaseRobot {
     private final boolean actuatorReleased = true;
     private boolean clawReleasedL = true;
 
+    /**
+     * Core robot class that manages hardware initialization and basic
+     * functionality.
+     * Serves as the foundation for both autonomous and teleop operations.
+     * Key Features:
+     * - Hardware mapping and initialization
+     * - Motor configuration and control
+     * - Mechanism management (arm, odometry, etc.)
+     * - Drive system implementation
+     */
     public BaseRobot(HardwareMap hardwareMap, DynamicInput input, LinearOpMode parentOp, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.parentOp = parentOp;
-        this.input = input;
+        this.input = inpÏut;
         this.telemetry = telemetry;
         this.logger = new Logger(this);
         // Initialize and configure the motors
@@ -87,6 +96,13 @@ public class BaseRobot {
         gamepadAuxiliary();
     }
 
+    /**
+     * Implements mecanum drive calculations and motor control
+     * 
+     * @param drivePower  Forward/backward power (-1.0 to 1.0)
+     * @param strafePower Left/right strafe power (-1.0 to 1.0)
+     * @param rotation    Rotational power (-1.0 to 1.0)
+     */
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
@@ -113,6 +129,10 @@ public class BaseRobot {
         rearRightMotor.setPower(rearRight);
     }
 
+    /**
+     * Processes primary gamepad inputs for robot movement
+     * Handles boost/brake modifiers and applies power to drive system
+     */
     public void gamepadPrimary() {
         DynamicInput.DirectionalOutput directionalOutput = input.directional();
         DynamicInput.ConvertedInputs convertedOutput = input.action();
@@ -131,6 +151,10 @@ public class BaseRobot {
         mecanumDrive(drivePower, strafePower, rotation);
     }
 
+    /**
+     * Processes auxiliary gamepad inputs for mechanism control
+     * Manages arm, claw, and wrist operations
+     */
     public void gamepadAuxiliary() {
         // Arm manager, the main auxiliary function
         // Y: Extend arm upwards | X: Retract arm

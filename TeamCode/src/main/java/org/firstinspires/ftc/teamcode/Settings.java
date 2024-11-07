@@ -4,21 +4,32 @@ import java.lang.reflect.Field;
 
 /** @noinspection unused */
 public class Settings {
-    // Core timing settings
-    public static double ms_needed_to_park = 10000;
+    /**
+     * Core timing settings for autonomous operations
+     */
+    public static final double ms_needed_to_park = 10000; // Time in milliseconds needed to ensure safe parking
 
     // Movement settings
     public static class Movement {
+        /**
+         * Multiplier applied to strafe movements to compensate for mechanical
+         * differences
+         */
         public static final double strafe_power_coefficient = 1.2;
+        /** Standard FTC field tile length in feet */
         public static final double tileLengthFeet = 2;
+        /** Default speed for autonomous movements */
         public static final double default_autonomous_speed = 0.38;
+        /** Maximum allowed speed during autonomous */
         public static final double max_autonomous_speed = 0.6;
     }
 
     // Hardware settings
     public static class Hardware {
         // Odometry
+        /** Encoder counts per full motor revolution */
         public static final double COUNTS_PER_REVOLUTION = 100;
+        /** Diameter of the odometry wheels in inches */
         public static final double WHEEL_DIAMETER_INCHES = 3.5;
 
         // Servo positions
@@ -41,6 +52,7 @@ public class Settings {
     // Autonomous settings
     public static class Autonomous {
         public static class Movement {
+            /** Encoder counts for moving forward one unit */
             public static final double FORWARD_COUNTS = 100;
             public static final double BACKWARD_COUNTS = 100;
             public static final double STRAFE_COUNTS = 50;
@@ -48,6 +60,7 @@ public class Settings {
         }
 
         public static class Timing {
+            /** Pause duration after claw operations (milliseconds) */
             public static final long CLAW_PAUSE = 500;
             public static final long WRIST_PAUSE = 1000;
             public static final long EXTENSOR_PAUSE = 2500;
@@ -61,6 +74,7 @@ public class Settings {
 
     // Gamepad settings
     public static class DefaultGamepadSettings {
+        /** Sensitivity multiplier for left stick input */
         public double left_stick_sensitivity = 1.0;
         public double dpad_sensitivity = 0.3;
         public double bumper_sensitivity = 0.8;
@@ -68,13 +82,18 @@ public class Settings {
         public double default_movement_speed = 0.1; // TODO: Tune
 
         // Add button mapping configuration
-        public ButtonMapping buttonMapping;
+        public final ButtonMapping buttonMapping;
 
         public DefaultGamepadSettings() {
             this.buttonMapping = new ButtonMapping();
         }
 
-        // Add boost curve function
+        /**
+         * Applies a mathematical curve to the boost input to adjust control response
+         * 
+         * @param input Raw input value between 0 and 1
+         * @return Modified input value between 0 and 1
+         */
         public double applyBoostCurve(double input) {
             // Default implementation: simple clamp between 0 and 1
             return Math.max(0, Math.min(1, input));
@@ -85,23 +104,23 @@ public class Settings {
         // Actuator controls
         public GamepadButton extendActuator = GamepadButton.Y;
         public GamepadButton retractActuator = GamepadButton.X;
-        public GamepadButton groundActuator = GamepadButton.B;
+        public final GamepadButton groundActuator = GamepadButton.B;
 
         // Claw controls
-        public GamepadAxis clawRight = GamepadAxis.RIGHT_TRIGGER;
-        public GamepadAxis clawLeft = GamepadAxis.LEFT_TRIGGER;
+        public final GamepadAxis clawRight = GamepadAxis.RIGHT_TRIGGER;
+        public final GamepadAxis clawLeft = GamepadAxis.LEFT_TRIGGER;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;
         public GamepadButton wristDown = GamepadButton.LEFT_BUMPER;
 
         // Ascend actuator controls
-        public GamepadButton ascendActuatorExtend = GamepadButton.DPAD_UP;
-        public GamepadButton ascendActuatorRetract = GamepadButton.DPAD_DOWN;
-        public GamepadButton ascendActuatorChange = GamepadButton.DPAD_RIGHT;
+        public final GamepadButton ascendActuatorExtend = GamepadButton.DPAD_UP;
+        public final GamepadButton ascendActuatorRetract = GamepadButton.DPAD_DOWN;
+        public final GamepadButton ascendActuatorChange = GamepadButton.DPAD_RIGHT;
 
-        public GamepadAxis boost = GamepadAxis.RIGHT_TRIGGER;
-        public GamepadAxis brake = GamepadAxis.LEFT_TRIGGER;
+        public final GamepadAxis boost = GamepadAxis.RIGHT_TRIGGER;
+        public final GamepadAxis brake = GamepadAxis.LEFT_TRIGGER;
     }
 
     public enum GamepadButton {
@@ -176,9 +195,9 @@ public class Settings {
     }
 
     public static class ControllerProfile {
-        public String name;
-        public DefaultGamepadSettings mainGamepad;
-        public DefaultGamepadSettings subGamepad;
+        public final String name;
+        public final DefaultGamepadSettings mainGamepad;
+        public final DefaultGamepadSettings subGamepad;
 
         public ControllerProfile(String name, DefaultGamepadSettings main, DefaultGamepadSettings sub) {
             this.name = name;

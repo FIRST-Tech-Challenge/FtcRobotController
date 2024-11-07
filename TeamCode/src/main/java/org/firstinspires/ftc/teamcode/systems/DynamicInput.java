@@ -26,8 +26,8 @@ public class DynamicInput {
 
     // Unified output structure
     public static class Combined {
-        public DirectionalOutput directional;
-        public ConvertedInputs actions;
+        public final DirectionalOutput directional;
+        public final ConvertedInputs actions;
 
         public Combined(DirectionalOutput directionalOutput, ConvertedInputs convertedInputs) {
             this.directional = directionalOutput;
@@ -37,7 +37,7 @@ public class DynamicInput {
 
     // Directional output class for movement and rotation
     public static class DirectionalOutput {
-        public double up, right, down, left, rotation, x, y;
+        public final double up, right, down, left, rotation, x, y;
 
         public DirectionalOutput(double up, double right, double down, double left, double rotateRight,
                 double rotateLeft) {
@@ -53,11 +53,11 @@ public class DynamicInput {
 
     // Button data structure with justPressed logic
     public static class ConvertedInputs {
-        public boolean extendActuator, retractActuator, groundActuator, actuatorBusy;
-        public boolean clawRight, clawLeft, wristUp, wristDown;
-        public boolean ascendActuatorExtend, ascendActuatorRetract, ascendActuatorChange;
-        public boolean justExtendActuator, justRetractActuator, justGroundActuator;
-        public double boostAmount, brakeAmount;
+        public final boolean extendActuator, retractActuator, groundActuator, actuatorBusy;
+        public final boolean clawRight, clawLeft, wristUp, wristDown;
+        public final boolean ascendActuatorExtend, ascendActuatorRetract, ascendActuatorChange;
+        public final boolean justExtendActuator, justRetractActuator, justGroundActuator;
+        public final double boostAmount, brakeAmount;
 
         public ConvertedInputs(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,

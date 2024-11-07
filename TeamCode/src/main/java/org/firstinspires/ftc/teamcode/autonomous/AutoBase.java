@@ -12,15 +12,33 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Base autonomous operation class that handles initial configuration and robot
+ * setup.
+ * Provides a menu system for selecting starting position and color, then
+ * executes
+ * the autonomous routine.
+ */
 @Autonomous(name = "Main Autonomous", group = "Autonomous")
 public abstract class AutoBase extends LinearOpMode {
+    /** Selected alliance color (Red/Blue) */
     protected String color;
+
+    /** Selected starting position (Left/Right) */
     protected String position;
 
+    /** Menu options for autonomous configuration */
     private static final String[] MENU_OPTIONS = {
             "Red Left", "Red Right", "Blue Left", "Blue Right", "Confirm"
     };
 
+    /**
+     * Main autonomous execution flow:
+     * 1. Displays configuration menu
+     * 2. Initializes robot systems
+     * 3. Executes autonomous routine
+     * 4. Handles shutdown
+     */
     @Override
     public void runOpMode() {
         // Menu initialization

@@ -12,12 +12,23 @@ public class MainAuto {
     private final HardwareMap hardwareMap;
     private final Logger logger;
 
+    /**
+     * Creates a new autonomous controller instance
+     * 
+     * @param base  Base robot instance to control
+     * @param color Selected alliance color
+     */
     public MainAuto(BaseRobot base, String color) {
         this.baseRobot = base;
         this.hardwareMap = baseRobot.hardwareMap;
         this.logger = baseRobot.logger;
     }
 
+    /**
+     * Executes the main autonomous routine
+     * 
+     * @param mode Selected autonomous mode (e.g., "red left", "blue right")
+     */
     public void run(String mode) {
 
         if (Settings.Deploy.SKIP_AUTONOMOUS) {
@@ -42,6 +53,14 @@ public class MainAuto {
         }
     }
 
+    /**
+     * Retrieves the next specimen from the collection area
+     * Sequence:
+     * 1. Move to collection position
+     * 2. Position arm for pickup
+     * 3. Grab specimen
+     * 4. Return to safe position
+     */
     private void getNextSpecimen() {
         baseRobot.odometry.moveCounts("backward", Settings.Autonomous.Movement.BACKWARD_COUNTS);
         baseRobot.odometry.moveCounts("right", Settings.Autonomous.Movement.STRAFE_COUNTS);
@@ -49,6 +68,15 @@ public class MainAuto {
         getSpecimenFromHumanPlayer();
     }
 
+    /**
+     * Coordinates with human player to receive specimen
+     * Sequence:
+     * 1. Position arm in neutral position
+     * 2. Open claw
+     * 3. Move to pickup position
+     * 4. Close claw on specimen
+     * 5. Return to hover position
+     */
     private void getSpecimenFromHumanPlayer() {
         baseRobot.arm.wrist.setPosition(Wrist.Position.NEUTRAL);
         baseRobot.arm.claw.open();
@@ -59,18 +87,12 @@ public class MainAuto {
         baseRobot.arm.extensor.setPosition(Extensor.Position.HOVER);
     }
 
-    private void dropSample() {
-        baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-        baseRobot.arm.extensor.ground();
-        pause(1000);
-        baseRobot.arm.claw.setRightServo(true);
-        pause(500);
-        baseRobot.arm.extensor.setPosition(Extensor.Position.HOVER);
-        baseRobot.arm.wrist.setPosition(Wrist.Position.NEUTRAL);
-        baseRobot.arm.claw.setRightServo(false);
-        pause(1000);
-    }
-
+    /**
+     * Places specimen on the scoring chamber
+     * 
+     * @param mode          Current autonomous mode
+     * @param chamberHeight Target chamber height (HIGH/LOW)
+     */
     public void placeOnChamber(String mode, ChamberHeight chamberHeight) {
         baseRobot.odometry.update(); // Update robot's current position
 
@@ -90,6 +112,11 @@ public class MainAuto {
         }
     }
 
+    /**
+     * Places a specimen on the chamber during cycling sequence
+     * 
+     * @param chamberHeight Target chamber height (HIGH/LOW)
+     */
     public void placeNextSpecimenOnChamber(ChamberHeight chamberHeight) {
         baseRobot.odometry.update(); // Update robot's current position
 
@@ -98,6 +125,11 @@ public class MainAuto {
         placeSpecimen(chamberHeight);
     }
 
+    /**
+     * Executes the specimen placement sequence
+     * 
+     * @param chamberHeight Target chamber height (HIGH/LOW)
+     */
     private void placeSpecimen(ChamberHeight chamberHeight) {
         Extensor.Position placeHeight;
         if (chamberHeight == ChamberHeight.HIGH) {
@@ -118,11 +150,21 @@ public class MainAuto {
         pause(2000);
     }
 
+    /**
+     * Moves robot to parking position based on selected mode
+     * 
+     * @param mode Current autonomous mode
+     */
     public void park(String mode) {
         baseRobot.odometry.moveCounts("backward", 100); // TODO tune
         baseRobot.odometry.moveCounts("right", 100); // TODO tune
     }
 
+    /**
+     * Emergency parking routine - moves directly to parking position
+     * 
+     * @param mode Current autonomous mode
+     */
     public void immediatelyPark(String mode) {
         switch (mode) {
             case "red right":
@@ -136,6 +178,10 @@ public class MainAuto {
         }
     }
 
+    /**
+     * Executes victory celebration sequence if enabled
+     * Performs a series of movements and claw operations
+     */
     public void victory() {
         // do a lil dance
         baseRobot.arm.claw.open();
@@ -151,6 +197,11 @@ public class MainAuto {
         pause(500);
     }
 
+    /**
+     * Utility method to pause execution
+     * 
+     * @param ms Milliseconds to pause
+     */
     private void pause(long ms) {
         try {
             Thread.sleep(ms);
@@ -159,8 +210,13 @@ public class MainAuto {
         }
     }
 
+    /**
+     * Enum defining possible chamber heights for scoring
+     */
     public enum ChamberHeight {
+        /** Lower scoring position */
         LOW,
+        /** Upper scoring position */
         HIGH
     }
 }
