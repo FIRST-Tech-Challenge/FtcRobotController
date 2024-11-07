@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 import org.firstinspires.ftc.teamcode.Systems.Servos;
 
@@ -10,33 +11,33 @@ import org.firstinspires.ftc.teamcode.Systems.Servos;
 public class TeleMain extends LinearOpMode {
 
     Motors motors;
-    Servos servos;
+    //Servos servos;
+    Input input;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         motors = new Motors(hardwareMap);
-        servos = new Servos(hardwareMap);
+        //servos = new Servos(hardwareMap);
+        input = new Input(hardwareMap);
 
-        /*
-
-        Run anything you put here once
-        You can put things here that need to be initialized
-        Usually variables would go here
-        For example creating string = ">:)";
-        */
         waitForStart();
+
+        double move;
+        double spin;
+        double strafe;
 
         while (opModeIsActive())
         {
-            /*
+            move = gamepad1.left_stick_y * 100;
+            spin = gamepad1.right_stick_x * 100;
+            strafe = gamepad1.left_stick_x * 100;
 
-            Repeat anything here over and over and over and over and over and over...
-            Put the actual part of the code here
-            For example detecting when a gamepad moves a joystick to move a motor
+            input.Move(move);
+            input.Spin(spin);
+            input.Strafe(strafe);
 
-
-             */
         }
     }
 }

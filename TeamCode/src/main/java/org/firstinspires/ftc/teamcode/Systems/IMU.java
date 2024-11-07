@@ -14,14 +14,15 @@ public class IMU {
 
     BHI260IMU imu;
 
-    public IMU()
+    public
+    IMU()
     {
         imu = hardwareMap.get(BHI260IMU.class, "imu");
 
         imu.initialize(
                 new com.qualcomm.robotcore.hardware.IMU.Parameters(
-                        new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                                                     RevHubOrientationOnRobot.UsbFacingDirection.FORWARD) ));
+                        new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                                                     RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD) ));
     }
 
     public double getAngle(double angle) {
