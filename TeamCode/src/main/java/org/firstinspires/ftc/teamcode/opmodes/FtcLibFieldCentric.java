@@ -4,8 +4,12 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "FtcLibFieldCentric")
 public class FtcLibFieldCentric extends LinearOpMode {
@@ -14,7 +18,7 @@ public class FtcLibFieldCentric extends LinearOpMode {
     // uses field-centric or robot-centric driving styles. The
     // differences between them can be read here in the docs:
     // https://docs.ftclib.org/ftclib/features/drivebases#control-scheme
-    static final boolean FIELD_CENTRIC = false;
+    static final boolean FIELD_CENTRIC = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,8 +50,13 @@ public class FtcLibFieldCentric extends LinearOpMode {
         //
         // (unapologetically stolen from the road-runner-quickstart)
 
-        RevIMU imu = new RevIMU(hardwareMap);
-        imu.init();
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
 
         // the extended gamepad object
         GamepadEx driverOp = new GamepadEx(gamepad1);
@@ -107,9 +116,9 @@ public class FtcLibFieldCentric extends LinearOpMode {
                 // optional fifth parameter for squared inputs
                 drive.driveFieldCentric(
                         driverOp.getLeftX(),
-                        driverOp.getLeftY(),
+                        -driverOp.getLeftY(),
                         driverOp.getRightX(),
-                        imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
+                        imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES),   // gyro value passed in here must be in degrees
                         false
                 );
             }

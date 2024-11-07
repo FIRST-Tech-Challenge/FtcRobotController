@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import com.arcrobotics.ftclib.controller.PIDController;
+
+
 
 @Config
 @TeleOp(name = "FieldCentric")
@@ -18,6 +21,10 @@ public class FieldCentric extends LinearOpMode {
         public double speedMult = 1;
         public double turnMult = 1;
         public double autoAngleMult = 0.005;
+
+        public double kP = 0.5;
+        public double kI = 0.5;
+        public double kD = 0.5;
     }
     public static Params PARAMS = new Params();
 
@@ -26,6 +33,9 @@ public class FieldCentric extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        PIDController pid = new PIDController(PARAMS.kP, PARAMS.kI, PARAMS.kD);
+
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
@@ -82,11 +92,14 @@ public class FieldCentric extends LinearOpMode {
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             telemetry.addData("Angle", Math.toDegrees(botHeading));
 
+            //Calls the function that calculates how much we should resist the error
+            double FixError = pid.calculate();
+
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
             double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
-            rotX = rotX * PARAMS.speedMult;
+            rotX *= PARAMS.speedMult;
             rotY *= PARAMS.speedMult;
             rx *= PARAMS.turnMult;
 
@@ -95,6 +108,8 @@ public class FieldCentric extends LinearOpMode {
             telemetry.addData("rx:", rx);
             telemetry.addData("wanted angle",wantedAngle);
 
+            //trying to add the fix to the rotation to the current rotation (didn't work, perhaps because of the parameters, perhaps because I didn't understand the library)
+            rx += FixError;
 
             // Counteract imperfect strafing
 
