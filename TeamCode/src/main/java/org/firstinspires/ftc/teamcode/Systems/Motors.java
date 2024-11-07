@@ -32,10 +32,10 @@ public class Motors {
         driveTrainMotors[2].setDirection(DcMotor.Direction.FORWARD);
         driveTrainMotors[3].setDirection(DcMotor.Direction.FORWARD);
 
-        driveTrainMotors[0].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrainMotors[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrainMotors[2].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrainMotors[3].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        driveTrainMotors[0].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        driveTrainMotors[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        driveTrainMotors[2].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        driveTrainMotors[3].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -46,20 +46,20 @@ public class Motors {
         driveTrainMotors[motorNumber].setPower(actualPower);
     }
 
-    public double GetDistance(int motorNumber)
-    {
-        double CPR = PPR * 4; //count per rotation
-        double position = driveTrainMotors[motorNumber].getCurrentPosition();
-
-        double revolutions = position/CPR;
-
-        double angle = revolutions * 360;
-        double angleNormalized = angle % 360;
-
-        double circumference = Math.PI * wheelDiameter;
-
-        return circumference * revolutions; // return distance
-    }
+//    public double GetDistance(int motorNumber)
+//    {
+//        double CPR = PPR * 4; //count per rotation
+//        double position = driveTrainMotors[motorNumber].getCurrentPosition();
+//
+//        double revolutions = position/CPR;
+//
+//        double angle = revolutions * 360;
+//        double angleNormalized = angle % 360;
+//
+//        double circumference = Math.PI * wheelDiameter;
+//
+//        return circumference * revolutions; // return distance
+//    }
 
 //    private void CalculatePower()
 //    {
