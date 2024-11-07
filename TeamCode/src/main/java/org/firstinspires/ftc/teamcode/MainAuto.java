@@ -4,20 +4,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
 import org.firstinspires.ftc.teamcode.systems.Logger;
-import org.firstinspires.ftc.teamcode.systems.SampleFinder;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class MainAuto {
     private final BaseRobot baseRobot;
-    private final SampleFinder sampleFinder;
     private final HardwareMap hardwareMap;
     private final Logger logger;
 
     public MainAuto(BaseRobot base, String color) {
         this.baseRobot = base;
         this.hardwareMap = baseRobot.hardwareMap;
-        this.sampleFinder = new SampleFinder(baseRobot, color);
         this.logger = baseRobot.logger;
     }
 
