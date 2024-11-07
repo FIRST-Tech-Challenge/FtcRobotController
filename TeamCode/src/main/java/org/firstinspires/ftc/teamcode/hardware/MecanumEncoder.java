@@ -181,7 +181,6 @@ public class MecanumEncoder {
         frontRight.setPower(frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
-        backRight.getVelocity()
     }
 
     public void drive(double frontLeftPower, double frontRightPower,

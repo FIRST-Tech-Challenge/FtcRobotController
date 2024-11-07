@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.Slide;
 
 @TeleOp
-public class drive extends OpMode {
+public class teleopDrive extends OpMode {
 
     private String TESTBOT = "24342-RC";
     private Telemetry.Item telPathDebug = null;
