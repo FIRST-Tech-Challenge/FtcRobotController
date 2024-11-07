@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Red Left", group = "Autonomous")
-public class RedLeft extends AutoBase {
-    public RedLeft() {
-        super("red", "left");
+@Autonomous(name = "Blue Left", group = "Autonomous")
+public class BlueLeft extends AutoBase {
+    public BlueLeft() {
+        super("blue", "left");
     }
 }
