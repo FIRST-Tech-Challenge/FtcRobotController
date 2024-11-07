@@ -2,7 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 import org.firstinspires.ftc.teamcode.Settings.ControllerProfile;
+import org.firstinspires.ftc.teamcode.systems.DynamicInput;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /** @noinspection unused */
 @TeleOp(name = "MainOp", group = "TeleOp")
@@ -10,52 +17,104 @@ public class MainOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Show profile selection menu before initializing robot
-        ControllerProfile selectedProfile = Settings.DEFAULT_PROFILE;
+        // Show profile selection menu for both controllers
+        AtomicReference<ControllerProfile> mainProfile = new AtomicReference<>(Settings.DEFAULT_PROFILE);
+        final ControllerProfile[] subProfile = { Settings.DEFAULT_PROFILE };
         boolean menuActive = true;
+        AtomicInteger mainSelection = new AtomicInteger();
+        final int[] subSelection = { 0 };
+        AtomicBoolean mainConfirmed = new AtomicBoolean(false);
+        final boolean[] subConfirmed = { false };
 
         while (!isStarted() && !isStopRequested() && menuActive) {
+            // Build options array
             String[] options = new String[Settings.AVAILABLE_PROFILES.length + 1];
             for (int i = 0; i < Settings.AVAILABLE_PROFILES.length; i++) {
                 options[i] = Settings.AVAILABLE_PROFILES[i].name;
             }
             options[options.length - 1] = "Confirm";
 
-            telemetry.addLine("Select Controller Profile:");
-            telemetry.addData("Current Selection", selectedProfile.name);
+            // Display menu header
+            telemetry.addLine("=== Controller Profile Selection ===");
 
-            // Handle profile selection using gamepad
-            if (gamepad1.dpad_up) {
-                int currentIndex = getCurrentProfileIndex(selectedProfile);
-                if (currentIndex > 0) {
-                    selectedProfile = Settings.AVAILABLE_PROFILES[currentIndex - 1];
+            // Main Controller Menu
+            if (!mainConfirmed.get()) {
+                telemetry.addLine("\nMain Controller (Gamepad 1):");
+                for (int i = 0; i < options.length; i++) {
+                    telemetry.addData(i == mainSelection.get() ? ">" : " ", options[i]);
                 }
-                sleep(250); // Debounce
-            } else if (gamepad1.dpad_down) {
-                int currentIndex = getCurrentProfileIndex(selectedProfile);
-                if (currentIndex < Settings.AVAILABLE_PROFILES.length - 1) {
-                    selectedProfile = Settings.AVAILABLE_PROFILES[currentIndex + 1];
+            }
+
+            // Sub Controller Menu
+            if (!subConfirmed[0]) {
+                telemetry.addLine("\nSub Controller (Gamepad 2):");
+                for (int i = 0; i < options.length; i++) {
+                    telemetry.addData(i == subSelection[0] ? ">" : " ", options[i]);
                 }
-                sleep(250); // Debounce
-            } else if (gamepad1.a) {
+            }
+
+            // Handle controller inputs with debounce
+            handleControllerInput(gamepad1, !mainConfirmed.get(), () -> {
+                if (gamepad1.dpad_up) {
+                    mainSelection.set((mainSelection.get() - 1 + options.length) % options.length);
+                } else if (gamepad1.dpad_down) {
+                    mainSelection.set((mainSelection.get() + 1) % options.length);
+                } else if (gamepad1.a) {
+                    if (mainSelection.get() < Settings.AVAILABLE_PROFILES.length) {
+                        mainProfile.set(Settings.AVAILABLE_PROFILES[mainSelection.get()]);
+                    } else {
+                        mainConfirmed.set(true);
+                    }
+                }
+            });
+
+            handleControllerInput(gamepad2, !subConfirmed[0], () -> {
+                if (gamepad2.dpad_up) {
+                    subSelection[0] = (subSelection[0] - 1 + options.length) % options.length;
+                } else if (gamepad2.dpad_down) {
+                    subSelection[0] = (subSelection[0] + 1) % options.length;
+                } else if (gamepad2.a) {
+                    if (subSelection[0] < Settings.AVAILABLE_PROFILES.length) {
+                        subProfile[0] = Settings.AVAILABLE_PROFILES[subSelection[0]];
+                    } else {
+                        subConfirmed[0] = true;
+                    }
+                }
+            });
+
+            // Display selections
+            telemetry.addLine("\nSelected Profiles:");
+            telemetry.addData("Main Controller", mainProfile.get().name + (mainConfirmed.get() ? " (Confirmed)" : ""));
+            telemetry.addData("Sub Controller", subProfile[0].name + (subConfirmed[0] ? " (Confirmed)" : ""));
+
+            // Check for menu completion
+            if (mainConfirmed.get() && subConfirmed[0]) {
                 menuActive = false;
             }
 
             telemetry.update();
         }
 
-        // Initialize robot with selected profile
-        BaseRobot baseRobot = new BaseRobot(hardwareMap, gamepad1, gamepad2, this, telemetry, selectedProfile);
-        waitForStart();
+        // Initialize robot systems
+        DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2, mainProfile.get(), subProfile[0]);
+        BaseRobot baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
 
+        // Main loop
+        waitForStart();
         while (opModeIsActive()) {
             baseRobot.driveGamepads();
-
             if (Settings.Deploy.ODOMETRY) {
                 baseRobot.odometry.update();
             }
         }
         baseRobot.shutDown();
+    }
+
+    private void handleControllerInput(Gamepad gamepad, boolean active, Runnable handler) {
+        if (active && (gamepad.dpad_up || gamepad.dpad_down || gamepad.a)) {
+            handler.run();
+            sleep(250); // Debounce
+        }
     }
 
     private int getCurrentProfileIndex(ControllerProfile profile) {

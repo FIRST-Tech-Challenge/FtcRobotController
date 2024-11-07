@@ -41,11 +41,10 @@ public class BaseRobot {
     private final boolean actuatorReleased = true;
     private boolean clawReleasedL = true;
 
-    public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, LinearOpMode parentOp,
-            Telemetry telemetry) {
+    public BaseRobot(HardwareMap hardwareMap, DynamicInput input, LinearOpMode parentOp, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.parentOp = parentOp;
-        this.input = new DynamicInput(primaryGamepad, auxGamepad);
+        this.input = input;
         this.telemetry = telemetry;
         this.logger = new Logger(this);
         // Initialize and configure the motors
