@@ -488,46 +488,40 @@ public class Drivebase {
 
     public void teleOpSlideDrive(double power) {
         if (power > 0.05 || power < -0.05) {
-            //check if you've reached the limit.
+            //set upper limit.
+            //check if you've reached the upper limit.
             if(leftSlideDrive.getCurrentPosition() > 6000 || rightSlideDrive.getCurrentPosition() > 6000) {
-                //if limit's been reached and power is negative(persons trying to go back in).
+                //if upper limit's been reached and person is trying to bring slides in let them.
                 if(power < 0) {
                     leftSlideDrive.setPower(power);
                     rightSlideDrive.setPower(power);
                 }
-                //limit has been reached so can't go out.
-
+                //upper limit's been reached and person is trying to bring slides out further so stop them.
                 else {
                     leftSlideDrive.setPower(0);
                     rightSlideDrive.setPower(0);
                 }
             }
             //set lower limit.
-            //if the slides have reached their limit.
+            //check if you've reached the lower limit.
             else if(leftSlideDrive.getCurrentPosition() <= 100 || rightSlideDrive.getCurrentPosition() <= 100) {
-                //can go back in
-                //can go out
-
-                //if slides have reached their limit and person's trying to bring slides out.
+                //if slides have reached their lower limit and person's trying to bring slides out let them.
                 if(power > 0) {
                     leftSlideDrive.setPower(power);
                     rightSlideDrive.setPower(power);
                 }
-                //limit's been reached and person is trying to bring slides in further.
+                //limit's been reached and person is trying to bring slides in further so stop them.
                 else {
                     leftSlideDrive.setPower(0);
                     rightSlideDrive.setPower(0);
                 }
             }
-            //limit hasn't been reached so neg or pos power can be applied.
+            //neither limit has been reached so slides can go in or out.
             else
             {
                 leftSlideDrive.setPower(power);
                 rightSlideDrive.setPower(power);
             }
-
-
-            //limit hasn't been reached so can go either way.
         }
         //no joystick power applied.
         else
