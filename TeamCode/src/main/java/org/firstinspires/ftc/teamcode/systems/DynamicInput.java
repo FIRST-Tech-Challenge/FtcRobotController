@@ -74,8 +74,10 @@ public class DynamicInput {
             this.ascendActuatorExtend = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorExtend);
             this.ascendActuatorRetract = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorRetract);
             this.ascendActuatorChange = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorChange);
-            this.boostAmount = getAxisValue(mainCtrl, mainSettings.buttonMapping.boostAmount);
-            this.brakeAmount = getAxisValue(mainCtrl, mainSettings.buttonMapping.brakeAmount);
+            this.boostAmount = mainSettings.applyBoostCurve(
+                    getAxisValue(mainCtrl, mainSettings.buttonMapping.boost));
+            this.brakeAmount = mainSettings.applyBoostCurve(
+                    getAxisValue(mainCtrl, mainSettings.buttonMapping.brake));
 
             // Determine if buttons were just pressed
             this.justExtendActuator = extendActuator && !prevExtend;
