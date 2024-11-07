@@ -55,7 +55,6 @@ public class MecanumDrivetrain {
         drive = gamepad1.left_stick_y;
         turn = gamepad1.right_stick_x * -1;
         strafe = gamepad1.left_stick_x * -1;
-        if (gamepad1.right_trigger > 0) {speedMultiplier = 1;}
         if (gamepad1.left_trigger > 0) {speedMultiplier = 0.25;}
 
         boolean isDriveDisabled = false; //Debugging flag to disable drive code
