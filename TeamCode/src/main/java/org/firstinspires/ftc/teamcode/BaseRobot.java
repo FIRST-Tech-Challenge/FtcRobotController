@@ -31,15 +31,18 @@ public class BaseRobot {
     public final DynamicInput input;
     public final HardwareMap hardwareMap;
     public final OpMode parentOp;
+
     public final Telemetry telemetry;
     public final Logger logger;
     public Arm arm;
     public Odometry odometry;
+    private boolean extensorReleased = true;
     private boolean clawReleasedR = true;
+    private final boolean actuatorReleased = true;
     private boolean clawReleasedL = true;
 
     public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, LinearOpMode parentOp,
-            Telemetry telemetry) {
+                     Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.parentOp = parentOp;
         this.input = new DynamicInput(primaryGamepad, auxGamepad);
@@ -74,8 +77,6 @@ public class BaseRobot {
         if (Settings.Deploy.ODOMETRY) {
             odometry = new Odometry(this);
         }
-
-
     }
 
     public void shutDown() {
@@ -89,7 +90,7 @@ public class BaseRobot {
 
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
-        strafePower *= Settings.strafe_power_coefficient;
+        strafePower *= Settings.Movement.strafe_power_coefficient;
 
         double frontLeft = drivePower + strafePower + rotation;
         double frontRight = drivePower - strafePower - rotation;
@@ -130,7 +131,22 @@ public class BaseRobot {
         // Arm manager, the main auxiliary function
         // Y: Extend arm upwards | X: Retract arm
         // RT: Open right claw | LT: Open left claw
-           
+        if (Settings.Deploy.ARM) {
+            if (extensorReleased) {
+                if (input.action().retractActuator) {
+                    extensorReleased = false;
+                    arm.extensor.retract();
+                } else if (input.action().extendActuator) {
+                    extensorReleased = false;
+                    arm.extensor.extend();
+                } else if (input.action().groundActuator) {
+                    extensorReleased = false;
+                    arm.extensor.ground();
+                }
+            } else if (input.action().actuatorBusy) {
+                extensorReleased = true;
+            }
+
             if (input.action().clawRight) {
                 if (clawReleasedR) {
                     clawReleasedR = false;
@@ -156,7 +172,7 @@ public class BaseRobot {
                 arm.wrist.setPosition(Wrist.Position.RUNG);
             }
         }
-    
+    }
 
     private void setMode(DcMotor.RunMode mode) {
         // Set motor mode for all motors
