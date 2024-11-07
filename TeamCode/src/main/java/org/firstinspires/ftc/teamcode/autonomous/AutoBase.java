@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.MainAuto;
 import org.firstinspires.ftc.teamcode.systems.ShutdownManager;
@@ -23,28 +24,28 @@ public abstract class AutoBase extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Show GUI menu before initializing robot
-        gamepad1.type(Gamepad.LED_PATTERN_SOLID);
-        boolean menuActive = true;
-
-        while (!isStarted() && !isStopRequested() && menuActive) {
-            String[] options = { "Red Left", "Red Right", "Blue Left", "Blue Right", "Confirm" };
-            String message = "Select Auto Configuration:";
-
-            gamepad1.runLedEffect(options);
-            int selection = gamepad1(message, options);
-
-            if (selection >= 0 && selection < 4) {
-                // Parse selection
-                color = selection < 2 ? "red" : "blue";
-                position = selection % 2 == 0 ? "left" : "right";
-            } else if (selection == 4) {
-                menuActive = false;
-            }
-
-            telemetry.addData("Selected Configuration", color + " " + position);
-            telemetry.update();
-        }
+//        // Show GUI menu before initializing robot
+//        gamepad1.type(Gamepad.LED_PATTERN_SOLID);
+//        boolean menuActive = true;
+//
+//        while (!isStarted() && !isStopRequested() && menuActive) {
+//            String[] options = { "Red Left", "Red Right", "Blue Left", "Blue Right", "Confirm" };
+//            String message = "Select Auto Configuration:";
+//
+//            gamepad1.runLedEffect(options);
+//            int selection = gamepad1(message, options);
+//
+//            if (selection >= 0 && selection < 4) {
+//                // Parse selection
+//                color = selection < 2 ? "red" : "blue";
+//                position = selection % 2 == 0 ? "left" : "right";
+//            } else if (selection == 4) {
+//                menuActive = false;
+//            }
+//
+//            telemetry.addData("Selected Configuration", color + " " + position);
+//            telemetry.update();
+//        }
 
         // Initialize robot after selection is complete
         BaseRobot baseRobot = new BaseRobot(hardwareMap, gamepad1, gamepad2, this, telemetry);
