@@ -488,7 +488,7 @@ public class Drivebase {
 
     public void teleOpSlideDrive(double power) {
         if (power > 0.05 || power < -0.05) {
-            //check if you;ve reached the limit.
+            //check if you've reached the limit.
             if(leftSlideDrive.getCurrentPosition() > 6000 || rightSlideDrive.getCurrentPosition() > 6000) {
                 //if limit's been reached and power is negative(persons trying to go back in).
                 if(power < 0) {
@@ -496,8 +496,25 @@ public class Drivebase {
                     rightSlideDrive.setPower(power);
                 }
                 //limit has been reached so can't go out.
-                else
-                {
+
+                else {
+                    leftSlideDrive.setPower(0);
+                    rightSlideDrive.setPower(0);
+                }
+            }
+            //set lower limit.
+            //if the slides have reached their limit.
+            else if(leftSlideDrive.getCurrentPosition() <= 100 || rightSlideDrive.getCurrentPosition() <= 100) {
+                //can go back in
+                //can go out
+
+                //if slides have reached their limit and person's trying to bring slides out.
+                if(power > 0) {
+                    leftSlideDrive.setPower(power);
+                    rightSlideDrive.setPower(power);
+                }
+                //limit's been reached and person is trying to bring slides in further.
+                else {
                     leftSlideDrive.setPower(0);
                     rightSlideDrive.setPower(0);
                 }
@@ -508,6 +525,9 @@ public class Drivebase {
                 leftSlideDrive.setPower(power);
                 rightSlideDrive.setPower(power);
             }
+
+
+            //limit hasn't been reached so can go either way.
         }
         //no joystick power applied.
         else
@@ -515,6 +535,8 @@ public class Drivebase {
             leftSlideDrive.setPower(0);
             rightSlideDrive.setPower(0);
         }
+
+
 
         sendTelemetry(true);
     }
