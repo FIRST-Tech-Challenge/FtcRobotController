@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.mainEnum;
@@ -17,6 +16,25 @@ import org.firstinspires.ftc.teamcode.hardware;
 public class teleop extends LinearOpMode implements teleop_interface {
     // Instance of the hardware class to manage robot components
     final hardware hardware = new hardware();
+
+    @Override
+    public void runOpMode() {
+        // Initialize the OpMode
+        initialize(); // Initialize hardware
+        setDirection();// Set motor directions
+        setBrakes();//Sets the motor brakes
+        telemetryInit(); // Send initial telemetry data
+
+        waitForStart(); // Wait for the start signal
+
+        // Main loop for control   ing the robot during teleop
+        while (opModeIsActive()) {
+            whileMotorsBusy(); //Sends info about motors
+            finalMovement(); // Control robot movement
+            finalArm(); // Control robot arm
+            finalGrabber(); // Control gripper
+        }
+    }
 
     @Override
     public void initialize() {
@@ -195,8 +213,8 @@ public class teleop extends LinearOpMode implements teleop_interface {
     // Method for controlling the arm based on gamepad input
     @Override
     public void finalArm() {
-        mainEnum state = null; // Initialize state
-        double armSpeed = 0; // Initialize arm speed
+        mainEnum state; // Initialize state
+        double armSpeed; // Initialize arm speed
         double reduction = 0.65; // Initializes arm reduction speed, used for lift
         // Determine arm state and speed based on gamepad input
         if(gamepad2.right_stick_y > 0) {
@@ -223,19 +241,15 @@ public class teleop extends LinearOpMode implements teleop_interface {
             state = mainEnum.LIFT; // Set state to LIFT
             armSpeed = -gamepad2.left_trigger;// Use right stick Y for speed
         }
-
-        if(state != null) {
             arm(state, armSpeed);
-        }// Call arm method with determined state and speed
     }
 
     // Method for controlling the gripper based on gamepad input
     @Override
     public void finalGrabber() {
-        //TODO find open and close position
         int collect = 1; // Position to collect block
         int release = -1; //Position to release block
-
+        //TODO find open and close position
         int open = 100; // Position to open the door
         int close = 0; // Position to close the door
 
@@ -272,25 +286,6 @@ public class teleop extends LinearOpMode implements teleop_interface {
 
         if (motor != null) {
             claw(motor, state);
-        }
-    }
-
-    @Override
-    public void runOpMode() {
-        // Initialize the OpMode
-        initialize(); // Initialize hardware
-        setDirection();// Set motor directions
-        setBrakes();//Sets the motor brakes
-        telemetryInit(); // Send initial telemetry data
-
-        waitForStart(); // Wait for the start signal
-
-        // Main loop for control   ing the robot during teleop
-        while (opModeIsActive()) {
-            whileMotorsBusy(); //Sends info about motors
-            finalMovement(); // Control robot movement
-            finalArm(); // Control robot arm
-            finalGrabber(); // Control gripper
         }
     }
 }
