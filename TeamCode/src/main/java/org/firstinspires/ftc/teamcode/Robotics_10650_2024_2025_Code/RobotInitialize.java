@@ -213,6 +213,8 @@ public class RobotInitialize {
         return globalAngle;
     }
 
+    double inchesToEncoderTicks;
+
     // This function makes the robot travel a relativeDistance specified by the parameter relativeDistance
     // This parameter is measured in encoder ticks; the other parameter, velocity, is
     // a decimal value that determines how fast the robot will go
@@ -221,6 +223,9 @@ public class RobotInitialize {
         // of the average robot encoder reading
         // The relativeDistance is current position plus or minus the value that is being moved
         // RELATIVE DISTANCE MEASUREMENT IN USE
+        inchesToEncoderTicks = (distance*5267.65)/(12.56637061*13.7);
+        opMode.telemetry.addData("Receives a value in IN and converts to encoder ticks", inchesToEncoderTicks);
+
         int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
         // It only moves if the distance to the final location is greater than or equal to 10 encoder
@@ -251,6 +256,8 @@ public class RobotInitialize {
         }
         stopMechanisms();
     }
+
+
 
     // Makes the robot strafe right by determining where the robot is currently
     // located and where it is trying to go it does not return anything and

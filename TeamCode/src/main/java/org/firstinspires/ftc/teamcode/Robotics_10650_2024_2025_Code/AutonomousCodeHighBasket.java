@@ -5,6 +5,8 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Import all of the necessary FTC libraries and code
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -37,7 +39,8 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
 //        robot.intakeToggle(1);
 
         // Main movement of drivetrain during Auto
-        robot.goStraight(100, 500);
+        robot.goStraight(0, 500); // 500 is good velocity for now
+        Log.d("Testing Value ", String.valueOf((robot.inchesToEncoderTicks)));
 
 
         //Old auto code (keep for now)

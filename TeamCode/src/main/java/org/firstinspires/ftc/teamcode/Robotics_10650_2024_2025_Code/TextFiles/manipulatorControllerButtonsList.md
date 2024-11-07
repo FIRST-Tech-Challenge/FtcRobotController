@@ -28,3 +28,5 @@ inwards
 (Intake reach up) D-Pad_Up: Moves the intake mechanism forwards (back to the default position)
 
 (Intake reach down) D-Pad_Down: Moves the intake mechanism backwards (from the default position)
+
+Square: Puts the lift extender all the way back down and the lift pitch to approximately vertical
