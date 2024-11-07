@@ -80,7 +80,7 @@ public class FieldCentric extends LinearOpMode {
 
         imu.resetYaw();
         double FixError = pid.calculate(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS),
-                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.PI);
+                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
