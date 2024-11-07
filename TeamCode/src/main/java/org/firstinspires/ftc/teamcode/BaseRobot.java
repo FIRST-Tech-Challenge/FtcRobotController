@@ -184,6 +184,9 @@ public class BaseRobot {
         } else {
             linearActuator.stop();
         }
+
+        
+
         if (input.pressed().ascendActuatorChange && actuatorReleased) {
             linearActuator.changePosition();
             actuatorReleased = false;
