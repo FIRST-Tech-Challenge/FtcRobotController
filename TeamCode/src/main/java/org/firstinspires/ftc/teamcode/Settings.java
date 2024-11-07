@@ -104,7 +104,7 @@ public class Settings {
         public GamepadAxis brake = GamepadAxis.LEFT_TRIGGER;
     }
 
-    public static enum GamepadButton {
+    public enum GamepadButton {
         // Face buttons
         A, B, X, Y,
 
@@ -112,12 +112,12 @@ public class Settings {
         DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT,
 
         // Shoulder buttons
-        LEFT_BUMPER, RIGHT_BUMPER;
+        LEFT_BUMPER, RIGHT_BUMPER
 
         // Add documentation for each button group
     }
 
-    public static enum GamepadAxis {
+    public enum GamepadAxis {
         LEFT_TRIGGER, RIGHT_TRIGGER
     }
 

@@ -16,19 +16,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class AutoBase extends LinearOpMode {
     protected String color;
     protected String position;
-    private final String defaultColor;
-    private final String defaultPosition;
 
     private static final String[] MENU_OPTIONS = {
             "Red Left", "Red Right", "Blue Left", "Blue Right", "Confirm"
     };
-
-    protected AutoBase(String defaultColor, String defaultPosition) {
-        this.defaultColor = defaultColor;
-        this.defaultPosition = defaultPosition;
-        this.color = defaultColor;
-        this.position = defaultPosition;
-    }
 
     @Override
     public void runOpMode() {

@@ -25,13 +25,13 @@ public class DynamicInput {
     }
 
     // Unified output structure
-    public static class DynamicInputOutput {
-        public DirectionalOutput directionalOutput;
-        public ConvertedInputs convertedInputs;
+    public static class Combined {
+        public DirectionalOutput directional;
+        public ConvertedInputs actions;
 
-        public DynamicInputOutput(DirectionalOutput directionalOutput, ConvertedInputs convertedInputs) {
-            this.directionalOutput = directionalOutput;
-            this.convertedInputs = convertedInputs;
+        public Combined(DirectionalOutput directionalOutput, ConvertedInputs convertedInputs) {
+            this.directional = directionalOutput;
+            this.actions = convertedInputs;
         }
     }
 
@@ -155,19 +155,17 @@ public class DynamicInput {
     }
 
     // Method to switch between different control profiles
-    public void switchProfile(String profileName) {
+    public void switchProfiles(String mainProfileName, String subProfileName) {
         for (Settings.ControllerProfile profile : Settings.AVAILABLE_PROFILES) {
-            if (profile.name.equals(profileName)) {
+            if (profile.name.equals(mainProfileName)) {
                 this.mainProfile = profile;
                 this.mainSettings = profile.mainGamepad;
+            }
+            if (profile.name.equals(subProfileName)) {
+                this.subProfile = profile;
                 this.subSettings = profile.subGamepad;
-                return;
             }
         }
-        throw new IllegalArgumentException("Profile not found: " + profileName);
     }
 
-    public String getCurrentProfileName() {
-        return mainProfile.name;
-    }
 }
