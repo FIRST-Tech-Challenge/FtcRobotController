@@ -1,4 +1,4 @@
-package org.nknsd.robotics.team;
+package org.nknsd.robotics.team.programs;
 
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;

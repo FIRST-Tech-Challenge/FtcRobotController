@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.BasicMovementNKNProgram;
+import org.nknsd.robotics.team.programs.BasicMovementNKNProgram;
 
 import java.util.concurrent.TimeUnit;
 
