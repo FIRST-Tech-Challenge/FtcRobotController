@@ -62,9 +62,10 @@ public class OctQuad extends SubsystemBase {
     public void periodic() {
 
         // read encoder values
-        OdometryRightEncoder = octoquad.readSinglePosition(0);
-        OdometryLeftEncoder = octoquad.readSinglePosition(1);
-        OdometryFrontEncoder = octoquad.readSinglePosition(2);
+//        TODO
+//        OdometryRightEncoder = octoquad.readSinglePosition(0);
+//        OdometryLeftEncoder = octoquad.readSinglePosition(1);
+//        OdometryFrontEncoder = octoquad.readSinglePosition(2);
     }
 
     // methods to return encoder values of odometry pods
