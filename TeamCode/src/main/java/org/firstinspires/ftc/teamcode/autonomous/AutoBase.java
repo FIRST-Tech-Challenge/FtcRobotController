@@ -5,10 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.MainAuto;
 import org.firstinspires.ftc.teamcode.systems.ShutdownManager;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 import org.firstinspires.ftc.teamcode.Settings;
+import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,12 +42,10 @@ public abstract class AutoBase extends LinearOpMode {
             telemetry.addLine("\nSelect Starting Position:");
 
             // Display options with cursor
-            for (int i = 0; i < MENU_OPTIONS.length; i++) {
-                telemetry.addData(i == currentSelection.get() ? ">" : " ", MENU_OPTIONS[i]);
-            }
+            MenuHelper.displayMenuOptions(telemetry, MENU_OPTIONS, currentSelection.get());
 
             // Handle controller input with debounce
-            handleControllerInput(gamepad1, true, () -> {
+            MenuHelper.handleControllerInput(this, gamepad1, true, () -> {
                 if (gamepad1.dpad_up) {
                     currentSelection.set((currentSelection.get() - 1 + MENU_OPTIONS.length) % MENU_OPTIONS.length);
                 } else if (gamepad1.dpad_down) {
@@ -84,13 +81,6 @@ public abstract class AutoBase extends LinearOpMode {
             }
         } catch (RuntimeException e) {
             // Shutdown handled by ShutdownManager
-        }
-    }
-
-    private void handleControllerInput(Gamepad gamepad, boolean active, Runnable handler) {
-        if (active && (gamepad.dpad_up || gamepad.dpad_down || gamepad.a)) {
-            handler.run();
-            sleep(250); // Debounce
         }
     }
 }

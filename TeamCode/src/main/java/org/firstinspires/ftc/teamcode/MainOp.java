@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Settings.ControllerProfile;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
+import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,21 +41,17 @@ public class MainOp extends LinearOpMode {
             // Main Controller Menu
             if (!mainConfirmed.get()) {
                 telemetry.addLine("\nMain Controller (Gamepad 1):");
-                for (int i = 0; i < options.length; i++) {
-                    telemetry.addData(i == mainSelection.get() ? ">" : " ", options[i]);
-                }
+                MenuHelper.displayMenuOptions(telemetry, options, mainSelection.get());
             }
 
             // Sub Controller Menu
             if (!subConfirmed[0]) {
                 telemetry.addLine("\nSub Controller (Gamepad 2):");
-                for (int i = 0; i < options.length; i++) {
-                    telemetry.addData(i == subSelection[0] ? ">" : " ", options[i]);
-                }
+                MenuHelper.displayMenuOptions(telemetry, options, subSelection[0]);
             }
 
             // Handle controller inputs with debounce
-            handleControllerInput(gamepad1, !mainConfirmed.get(), () -> {
+            MenuHelper.handleControllerInput(this, gamepad1, !mainConfirmed.get(), () -> {
                 if (gamepad1.dpad_up) {
                     mainSelection.set((mainSelection.get() - 1 + options.length) % options.length);
                 } else if (gamepad1.dpad_down) {
@@ -68,7 +65,7 @@ public class MainOp extends LinearOpMode {
                 }
             });
 
-            handleControllerInput(gamepad2, !subConfirmed[0], () -> {
+            MenuHelper.handleControllerInput(this, gamepad2, !subConfirmed[0], () -> {
                 if (gamepad2.dpad_up) {
                     subSelection[0] = (subSelection[0] - 1 + options.length) % options.length;
                 } else if (gamepad2.dpad_down) {
@@ -108,22 +105,6 @@ public class MainOp extends LinearOpMode {
             }
         }
         baseRobot.shutDown();
-    }
-
-    private void handleControllerInput(Gamepad gamepad, boolean active, Runnable handler) {
-        if (active && (gamepad.dpad_up || gamepad.dpad_down || gamepad.a)) {
-            handler.run();
-            sleep(250); // Debounce
-        }
-    }
-
-    private int getCurrentProfileIndex(ControllerProfile profile) {
-        for (int i = 0; i < Settings.AVAILABLE_PROFILES.length; i++) {
-            if (Settings.AVAILABLE_PROFILES[i].name.equals(profile.name)) {
-                return i;
-            }
-        }
-        return 0;
     }
 
 }
