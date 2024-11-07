@@ -84,36 +84,6 @@ public abstract class RobotControllerBase {
             return this;
         }
 
-        public Builder hardwareMap(HardwareMap value) {
-            this.hardwareMap = value;
-            return this;
-        }
-
-        public Builder telemetry(Telemetry value) {
-            this.telemetry = value;
-            return this;
-        }
-
-        public Builder driverController(Gamepad value) {
-            this.driverController = value;
-            return this;
-        }
-
-        public Builder actionController(Gamepad value) {
-            this.actionController = value;
-            return this;
-        }
-
-        public Builder logFilePrefix(String value) {
-            this.logFilePrefix = value;
-            return this;
-        }
-
-        public Builder logData(boolean value) {
-            this.logData = value;
-            return this;
-        }
-
         public abstract RobotControllerBase build();
     }
 }
