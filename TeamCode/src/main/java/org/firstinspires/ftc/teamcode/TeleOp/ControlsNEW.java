@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
 public class ControlsNEW extends LinearOpMode {
-
     public final RobotHardware robot = new RobotHardware();
     public Base driveControl;
 
