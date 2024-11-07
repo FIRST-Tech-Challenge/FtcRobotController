@@ -53,7 +53,7 @@ public class BaseRobot {
     public BaseRobot(HardwareMap hardwareMap, DynamicInput input, LinearOpMode parentOp, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.parentOp = parentOp;
-        this.input = inpÏut;
+        this.input = input;
         this.telemetry = telemetry;
         this.logger = new Logger(this);
         // Initialize and configure the motors

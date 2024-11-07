@@ -5,7 +5,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
 
-/** @noinspection FieldCanBeLocal, unused */
+/**
+ * Handles robot position tracking and autonomous movement using wheel encoders.
+ * Implements dead reckoning to maintain position awareness and execute precise
+ * movements.
+ * 
+ * Features:
+ * - Real-time position and heading tracking
+ * - Encoder-based movement commands
+ * - Autonomous navigation to specific coordinates
+ * - Support for different movement types (forward, strafe, turn)
+ */
 public class Odometry {
     final double COUNTS_PER_REVOLUTION = Settings.Hardware.COUNTS_PER_REVOLUTION;
     final double WHEEL_DIAMETER_INCHES = Settings.Hardware.WHEEL_DIAMETER_INCHES;
@@ -15,8 +25,22 @@ public class Odometry {
     private final DcMotor frontRightMotor;
     private final DcMotor rearLeftMotor;
     private final DcMotor rearRightMotor;
+
+    /**
+     * Current X position of the robot on the field (in inches)
+     */
     public double xPosition;
+
+    /**
+     * Current Y position of the robot on the field (in inches)
+     */
     public double yPosition;
+
+    /**
+     * Current heading of the robot in radians (0 to 2π)
+     * 0/2π = facing positive X axis
+     * π/2 = facing positive Y axis
+     */
     public double heading;
 
     // Constructor
@@ -34,8 +58,15 @@ public class Odometry {
     }
 
     /**
-     * Updates the robot's position based on encoder readings
-     * Calculates changes in x, y position and heading
+     * Updates the robot's position and heading based on encoder readings.
+     * Should be called regularly (preferably in a loop) to maintain accurate
+     * positioning.
+     * 
+     * Calculation process:
+     * 1. Reads current encoder values from all wheels
+     * 2. Converts encoder counts to distance traveled
+     * 3. Uses wheel movements to calculate position and heading changes
+     * 4. Updates stored position and heading values
      */
     public void update() {
 
@@ -65,7 +96,11 @@ public class Odometry {
         heading = (2 * Math.PI + heading) % (2 * Math.PI);
     }
 
-    // Function to reset position and heading to zero
+    /**
+     * Resets all position tracking to zero and resets encoder counts.
+     * Should be called at the start of autonomous operations or when
+     * establishing a new reference point.
+     */
     public void reset() {
         xPosition = 0.0;
         yPosition = 0.0;
@@ -84,11 +119,22 @@ public class Odometry {
     }
 
     /**
-     * Moves the robot a specified distance using encoder counts
+     * Moves the robot a specified distance using encoder counts with default speed
      * 
      * @param direction Movement direction ("forward", "backward", "left", "right",
      *                  "tleft", "tright")
-     * @param counts    Number of encoder counts to move
+     * @param counts    Distance to move in encoder counts
+     */
+    public void moveCounts(String direction, double counts) {
+        moveCounts(direction, counts, default_autonomous_speed);
+    }
+
+    /**
+     * Moves the robot a specified distance using encoder counts with custom speed
+     * 
+     * @param direction Movement direction ("forward", "backward", "left", "right",
+     *                  "tleft", "tright")
+     * @param counts    Distance to move in encoder counts
      * @param speed     Motor power to use (0.0 to 1.0)
      */
     public void moveCounts(String direction, double counts, double speed) {
@@ -155,11 +201,18 @@ public class Odometry {
     }
 
     /**
-     * Moves the robot to a specific position on the field
-     * Uses proportional control for smooth movement
+     * Navigates the robot to a specific position on the field using proportional
+     * control
+     * Automatically handles both rotation and translation to reach the target
      * 
-     * @param targetX Target X coordinate
-     * @param targetY Target Y coordinate
+     * @param targetX Target X coordinate in inches
+     * @param targetY Target Y coordinate in inches
+     * 
+     *                Movement process:
+     *                1. Calculates distance and angle to target
+     *                2. Rotates to face target location
+     *                3. Moves toward target while maintaining heading
+     *                4. Fine-tunes position when near target
      */
     public void moveToPosition(double targetX, double targetY) {
         // Calculate distance and angle to the target position
@@ -206,6 +259,11 @@ public class Odometry {
         setMotorPower(0.0);
     }
 
+    /**
+     * Sets strafe movement power for mecanum drive
+     * 
+     * @param strafePower Power level for strafing (-1.0 to 1.0)
+     */
     private void setStrafePowers(double strafePower) {
         frontLeftMotor.setPower(strafePower);
         rearLeftMotor.setPower(-strafePower);
@@ -213,6 +271,12 @@ public class Odometry {
         rearRightMotor.setPower(strafePower);
     }
 
+    /**
+     * Sets differential drive powers for tank-style movement
+     * 
+     * @param leftPower  Power for left side motors (-1.0 to 1.0)
+     * @param rightPower Power for right side motors (-1.0 to 1.0)
+     */
     private void setMotorPowers(double leftPower, double rightPower) {
         // Apply the calculated powers to the left and right motors
         frontLeftMotor.setPower(leftPower);
@@ -222,6 +286,11 @@ public class Odometry {
 
     }
 
+    /**
+     * Sets the same power level to all drive motors
+     * 
+     * @param power Power level for all motors (-1.0 to 1.0)
+     */
     private void setMotorPower(double power) {
         setMotorPowers(power, power);
     }
