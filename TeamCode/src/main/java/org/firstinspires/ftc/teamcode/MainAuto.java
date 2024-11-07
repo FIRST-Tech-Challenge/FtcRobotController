@@ -46,11 +46,9 @@ public class MainAuto {
     }
 
     private void getNextSpecimen() {
-        // we are in the center by the rungs
-        // move to the human player
-        baseRobot.odometry.moveCounts("backward", 50); // TODO tune
-        baseRobot.odometry.moveCounts("right", 50); // TODO tune
-        baseRobot.odometry.moveCounts("tright", 50); // TODO tune
+        baseRobot.odometry.moveCounts("backward", Settings.Autonomous.Movement.BACKWARD_COUNTS);
+        baseRobot.odometry.moveCounts("right", Settings.Autonomous.Movement.STRAFE_COUNTS);
+        baseRobot.odometry.moveCounts("tright", Settings.Autonomous.Movement.TURN_COUNTS);
         getSpecimenFromHumanPlayer();
     }
 

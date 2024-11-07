@@ -4,11 +4,62 @@ import java.lang.reflect.Field;
 
 /** @noinspection unused */
 public class Settings {
-    // makes strafing faster or slower
-    public static final double strafe_power_coefficient = 1.2;
-    public static final double tileLengthFeet = 2;
+    // Core timing settings
     public static double ms_needed_to_park = 10000;
 
+    // Movement settings
+    public static class Movement {
+        public static final double strafe_power_coefficient = 1.2;
+        public static final double tileLengthFeet = 2;
+        public static final double default_autonomous_speed = 0.38;
+        public static final double max_autonomous_speed = 0.6;
+    }
+
+    // Hardware settings
+    public static class Hardware {
+        // Odometry
+        public static final double COUNTS_PER_REVOLUTION = 100;
+        public static final double WHEEL_DIAMETER_INCHES = 3.5;
+
+        // Servo positions
+        public static class Servo {
+            public static class Claw {
+                public static final double RIGHT_OPEN = 0.35;
+                public static final double RIGHT_CLOSED = -0.2;
+                public static final double LEFT_OPEN = 1.0;
+                public static final double LEFT_CLOSED = 0.55;
+            }
+
+            public static class Wrist {
+                public static final double BOARD_POSITION = 0.075;
+                public static final double TRANSIT_POSITION = 0.5;
+                public static final double HORIZONTAL_POSITION = 0.45;
+            }
+        }
+    }
+
+    // Autonomous settings
+    public static class Autonomous {
+        public static class Movement {
+            public static final double FORWARD_COUNTS = 100;
+            public static final double BACKWARD_COUNTS = 100;
+            public static final double STRAFE_COUNTS = 50;
+            public static final double TURN_COUNTS = 50;
+        }
+
+        public static class Timing {
+            public static final long CLAW_PAUSE = 500;
+            public static final long WRIST_PAUSE = 1000;
+            public static final long EXTENSOR_PAUSE = 2500;
+        }
+
+        public static class ColorSensor {
+            public static final int COLOR_THRESHOLD = 500;
+            public static final int SAMPLE_COUNT = 30;
+        }
+    }
+
+    // Gamepad settings
     public static class DefaultGamepadSettings {
         public double left_stick_sensitivity = 1.0;
         public double dpad_sensitivity = 0.3;
@@ -81,6 +132,22 @@ public class Settings {
         }
     }
 
+    // Deploy flags
+    public static class Deploy {
+        // Core Mechanisms
+        public static final boolean ARM = true;
+
+        // Navigation Systems
+        public static final boolean ODOMETRY = true;
+
+        // Development Features
+        public static final boolean DEBUG = true;
+        public static final boolean SKIP_AUTONOMOUS = false;
+
+        // Special Features
+        public static final boolean VICTORY = false;
+    }
+
     public static String getDisabledFlags() {
         StringBuilder enabledFlags = new StringBuilder();
 
@@ -96,21 +163,6 @@ public class Settings {
         }
 
         return enabledFlags.toString();
-    }
-
-    public static class Deploy {
-        // Core Mechanisms
-        public static final boolean ARM = true;
-
-        // Navigation Systems
-        public static final boolean ODOMETRY = true;
-
-        // Development Features
-        public static final boolean DEBUG = true;
-        public static final boolean SKIP_AUTONOMOUS = false;
-
-        // Special Features
-        public static final boolean VICTORY = false;
     }
 
 }
