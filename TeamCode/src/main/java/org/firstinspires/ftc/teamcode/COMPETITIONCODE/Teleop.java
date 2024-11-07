@@ -56,25 +56,38 @@ public class Teleop extends LinearOpMode {
         telemetry.addLine("initilized");
         telemetry.update();
         waitForStart();
-
+        clawServo.setServoPosition(0.39);
+        clawRotateServo.setServoPosition(0.7);
+        clawRotateServo2.setServoPosition(0.55);
         while (!isStopRequested()){
             //driver1
-            SPED = gamepad1.right_trigger / 2.0;
-            if(gamepad1.right_bumper){
-                SPED = SPED * 2.0;
-            }
-            telemetry.addLine(String.valueOf(touchSensor.getValue()));
+            SPED = gamepad1.right_trigger;
+
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
             //driver2
-            SM.move(gamepad2.left_stick_y,gamepad2.right_stick_x, gamepad2.right_trigger > 0.1);
-            if(gamepad2.left_trigger > 0.1){
-                SM.setPos(487);
+            int target = -3000;
+            int target2 = 0;
+            if(gamepad1.a){
+                SM.setPos2(target2);
+            }
+            if(gamepad1.y){
+                SM.setPos2(target);
+            }
+            SM.move(gamepad2.start?gamepad2.left_stick_y*2.0:gamepad2.left_stick_y);
+            telemetry.addLine("Slide Pos:" + String.valueOf(sc.getCurrentPosition()));
+            if(-gamepad2.right_stick_y <= -0.3){
+                SM.setPos(0);
+            }
+            if(gamepad2.left_trigger > 0.3){
+               sr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+            if(-gamepad2.right_stick_y >= 0.3){
+                SM.setPos(1025);
             }
             if(touchSensor.isPressed()){
                 SM.reset();
             }
             telemetry.addLine(String.valueOf(sr.getCurrentPosition()));
-            telemetry.addLine(String.valueOf(gamepad2.right_stick_x));
             if(gamepad2.b) {
                 clawRotateServo.setServoPosition(0.1);
             }

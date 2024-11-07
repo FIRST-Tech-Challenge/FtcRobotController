@@ -5,10 +5,11 @@ import android.graphics.Color;
 import androidx.annotation.ColorInt;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.servoManger;
-
+@Disabled
 @TeleOp(name="CLAW GET")
 public class clawposgetter extends LinearOpMode {
     private servoManger clawServo = new servoManger();

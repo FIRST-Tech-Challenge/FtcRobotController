@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.COMPETITIONCODE;
 
 import com.parshwa.drive.auto.AutoDriverBetaV1;
-import com.parshwa.drive.auto.Directions;
 import com.parshwa.drive.tele.Drive;
 import com.parshwa.drive.tele.DriveModes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -10,20 +9,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.SliderManger;
 import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.servoManger;
 
-import java.io.File;
 import java.util.Locale;
 
-@Autonomous(name = "auto")
-public class AUTO extends LinearOpMode {
+@Autonomous(name = "left auto")
+public class LEFTAUTO extends LinearOpMode {
     private AutoDriverBetaV1 autoDriver = new AutoDriverBetaV1();
     private Drive driver = new Drive();
 
@@ -70,7 +66,7 @@ public class AUTO extends LinearOpMode {
         telemetry.addLine("initilized");
         telemetry.update();
         waitForStart();
-        clawServo.setServoPosition(0.39);
+        clawServo.setServoPosition(0.0);
         clawRotateServo.setServoPosition(0.7);
         clawRotateServo2.setServoPosition(0.55);
         boolean completed = false;
@@ -80,10 +76,26 @@ public class AUTO extends LinearOpMode {
             telemetry.addData("Position", data);
             completed = autoDriver.move(dropSample1);
         }
+        boolean rotated = false;
+        while(!isStopRequested() && rotated){
+            Pose2D pos = autoDriver.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addLine(data);
+            rotated = true;
+        }
+        boolean extended = false;
+        int target = -3000;
+        while(!isStopRequested() && extended){
+            Pose2D pos = autoDriver.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            extended = Math.abs(sc.getCurrentPosition()-target) <= 10;
+            SM.setPos2(target);
+        }
         while(!isStopRequested() && !gamepad1.a){
             Pose2D pos = autoDriver.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addLine(data);
+            SM.move(gamepad1.left_stick_y);
         }
         completed = false;
         while(!isStopRequested() && !completed){
