@@ -90,7 +90,7 @@ public abstract class HardwareMapper {
             new DeviceAnnotation<>(
                     Reversed.class,
                     Encoder.class,
-                    (annotation, target) -> target.isFlipped = true
+                    (annotation, target) -> target.setFlipped(true)
             );
 
     static final DeviceAnnotation<ZeroPower, DcMotor> zeroPower =
@@ -156,7 +156,7 @@ public abstract class HardwareMapper {
             throw new RuntimeException("Hardware: '" + annotation.value() + "' not found, expecting a DcMotor to drive a Encoder for field " + field.getName() + " in " + this.getClass().getSimpleName());
         }
 
-        Encoder wrapper = new Encoder(result);
+        Encoder wrapper = new MotorEncoder(result);
         try {
             field.set(this, wrapper);
         } catch (IllegalAccessException e) {

@@ -16,6 +16,11 @@ import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
+    public static final double TRACK_WIDTH = 11.3385888;
+    public static final double FORWARD_OFFSET = 5.05905785;
+    public static final double ENC_WHEEL_RADIUS = 1.25984 / 2.0;
+    public static final int ENC_TICKS_PER_REV = 2000;
+
     // left = left motor = exp 0 frontLeft
     // right = right motor = ctr 0 frontRight
     // center = ctr 3 intake
@@ -64,6 +69,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public NavxMicroNavigationSensor gyro;
 
 
+
     @Override
     public Encoder getLeftEncoder() { return encoderLeft; }
 
@@ -76,27 +82,27 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public Encoder getCenterEncoder() {
         return encoderCenter;
     }
-
     // Values calculated from [very scuffed] CAD measurements.
+
 
     @Override
     public double getTrackWidth() {
-        return 11.3385888;
+        return TRACK_WIDTH;
     }
 
     @Override
     public double getForwardOffset() {
-        return 5.05905785;
+        return FORWARD_OFFSET;
     }
 
     @Override
     public double getEncoderWheelRadius() {
-        return 1.25984 / 2.0;
+        return ENC_WHEEL_RADIUS;
     }
 
     @Override
     public int getEncoderTicksPerRevolution() {
-        return 2000;
+        return ENC_TICKS_PER_REV;
     }
 
     public MotorSet driveMotors;

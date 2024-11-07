@@ -1,14 +1,10 @@
-package org.firstinspires.ftc.teamcode.test
+package org.firstinspires.ftc.teamcode.test.localization
 
-import org.firstinspires.ftc.teamcode.mmooover.kinematics.CubicSplinePair
-import org.firstinspires.ftc.teamcode.mmooover.kinematics.CubicSplineSolver
-import org.firstinspires.ftc.teamcode.mmooover.kinematics.PathHelper
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.WaypointSerializer
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.path
 import org.junit.jupiter.api.Test
 import java.io.DataOutputStream
 import java.io.File
-import kotlin.math.PI
 
 
 class PathGenerator {
