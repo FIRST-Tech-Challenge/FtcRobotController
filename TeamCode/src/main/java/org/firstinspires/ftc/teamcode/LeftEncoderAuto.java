@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name="LeftEncoderAuto", group="Robot")
 @Disabled
-public class LeftEncoderAuto extends MainEncoderAuto{
-
+public class LeftEncoderAuto extends MainEncoderAuto {
     public void runOpMode() {
         // Call the parent class method to use its setup
         super.runOpMode();
@@ -18,6 +17,6 @@ public class LeftEncoderAuto extends MainEncoderAuto{
         driveInches(3, 1, dir.BACKWARD, 5);
         driveInches(30, 1, dir.LEFT, 5);
         driveInches(24, 1, dir.FORWARD, 5);
-        moveSlide(12, 1, false, 1);*/
+        moveSlide(12, 1, false, 1);
     }
 }
