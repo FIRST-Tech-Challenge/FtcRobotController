@@ -42,7 +42,7 @@ public class BaseRobot {
     private boolean clawReleasedL = true;
 
     public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, LinearOpMode parentOp,
-                     Telemetry telemetry) {
+            Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.parentOp = parentOp;
         this.input = new DynamicInput(primaryGamepad, auxGamepad);
