@@ -112,7 +112,7 @@ public class Logger {
 
     public void time(String name) {
         long currentTime = System.nanoTime();
-        //noinspection DataFlowIssue
+        // noinspection DataFlowIssue
         long startTime = timeMap.getOrDefault(name, currentTime);
 
         long elapsedTime = currentTime - startTime;

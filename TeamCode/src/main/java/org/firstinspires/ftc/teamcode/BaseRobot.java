@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -30,6 +32,7 @@ public class BaseRobot {
     public final DynamicInput input;
     public final HardwareMap hardwareMap;
     public final LinearActuator linearActuator;
+    public final OpMode parentOp;
     public final Telemetry telemetry;
     public final Logger logger;
     public Arm arm;
@@ -39,8 +42,10 @@ public class BaseRobot {
     private boolean actuatorReleased = true;
     private boolean clawReleasedL = true;
 
-    public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, Telemetry telemetry) {
+    public BaseRobot(HardwareMap hardwareMap, Gamepad primaryGamepad, Gamepad auxGamepad, LinearOpMode parentOp,
+            Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
+        this.parentOp = parentOp;
         this.input = new DynamicInput(primaryGamepad, auxGamepad);
         this.telemetry = telemetry;
         this.logger = new Logger(this);
@@ -66,11 +71,9 @@ public class BaseRobot {
         motors.put("rearLeft", rearLeftMotor);
         motors.put("rearRight", rearRightMotor);
 
-
         if (Settings.Deploy.ARM) {
             arm = new Arm(this);
         }
-
 
         if (Settings.Deploy.ODOMETRY) {
             odometry = new Odometry(this);
@@ -82,7 +85,6 @@ public class BaseRobot {
     public void shutDown() {
         logger.stop();
     }
-
 
     public void driveGamepads() {
         gamepadPrimary();
@@ -98,12 +100,10 @@ public class BaseRobot {
         double rearLeft = drivePower - strafePower + rotation;
         double rearRight = drivePower + strafePower - rotation;
 
-
         // Normalize the power values to stay within the range [-1, 1]
         double max = Math.max(
                 Math.max(Math.abs(frontLeft), Math.abs(frontRight)),
-                Math.max(Math.abs(rearLeft), Math.abs(rearRight))
-        );
+                Math.max(Math.abs(rearLeft), Math.abs(rearRight)));
         if (max > 1.0) {
             frontLeft /= max;
             frontRight /= max;
@@ -117,16 +117,15 @@ public class BaseRobot {
         rearRightMotor.setPower(rearRight);
     }
 
-
     public void gamepadPrimary() {
-        DynamicInput.DirectionalOutput directionalOutput = input.getDirectionalOutput();
+        DynamicInput.DirectionalOutput directionalOutput = input.directional();
 
         double rotation = directionalOutput.rotation;
         double strafePower = directionalOutput.x;
         double drivePower = directionalOutput.y;
 
         /*
-            Drives the motors based on the given power/rotation
+         * Drives the motors based on the given power/rotation
          */
         mecanumDrive(drivePower, strafePower, rotation);
     }
@@ -137,21 +136,21 @@ public class BaseRobot {
         // RT: Open right claw | LT: Open left claw
         if (Settings.Deploy.ARM) {
             if (extensorReleased) {
-                if (input.pressed().retractActuator) {
+                if (input.action().retractActuator) {
                     extensorReleased = false;
                     arm.extensor.retract();
-                } else if (input.pressed().extendActuator) {
+                } else if (input.action().extendActuator) {
                     extensorReleased = false;
                     arm.extensor.extend();
-                } else if (input.pressed().groundActuator) {
+                } else if (input.action().groundActuator) {
                     extensorReleased = false;
                     arm.extensor.ground();
                 }
-            } else if (input.pressed().actuatorBusy) {
+            } else if (input.action().actuatorBusy) {
                 extensorReleased = true;
             }
 
-            if (input.pressed().clawRight) {
+            if (input.action().clawRight) {
                 if (clawReleasedR) {
                     clawReleasedR = false;
                     arm.claw.setRightServo(!arm.claw.openedR);
@@ -159,7 +158,7 @@ public class BaseRobot {
             } else {
                 clawReleasedR = true;
             }
-            if (input.pressed().clawLeft) {
+            if (input.action().clawLeft) {
                 if (clawReleasedL) {
                     clawReleasedL = false;
                     arm.claw.setLeftServo(!arm.claw.openedL);
@@ -170,16 +169,16 @@ public class BaseRobot {
 
             // UP: Set the wrist to up
             // DOWN: Set the wrist to down
-            if (input.pressed().wristUp) {
+            if (input.action().wristUp) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            } else if (input.pressed().wristDown) {
-                arm.wrist.setPosition(Wrist.Position.BOARD);
+            } else if (input.action().wristDown) {
+                arm.wrist.setPosition(Wrist.Position.RUNG);
             }
         }
 
-        if (input.pressed().ascendActuatorExtend) {
+        if (input.action().ascendActuatorExtend) {
             linearActuator.extend();
-        } else if (input.pressed().ascendActuatorRetract) {
+        } else if (input.action().ascendActuatorRetract) {
             linearActuator.retract();
         } else {
             linearActuator.stop();
@@ -187,10 +186,10 @@ public class BaseRobot {
 
         
 
-        if (input.pressed().ascendActuatorChange && actuatorReleased) {
+        if (input.action().ascendActuatorChange && actuatorReleased) {
             linearActuator.changePosition();
             actuatorReleased = false;
-        } else if (!input.pressed().ascendActuatorChange) {
+        } else if (!input.action().ascendActuatorChange) {
             actuatorReleased = true;
         }
     }
@@ -219,4 +218,3 @@ public class BaseRobot {
         }
     }
 }
-

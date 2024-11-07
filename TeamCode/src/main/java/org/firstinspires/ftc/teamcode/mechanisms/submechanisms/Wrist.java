@@ -15,7 +15,6 @@ public class Wrist {
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
 
-
     public Wrist(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
@@ -25,10 +24,10 @@ public class Wrist {
 
     public void setPosition(Position newPosition) {
         switch (newPosition) {
-            case BOARD:
+            case RUNG:
                 position = boardPos;
                 break;
-            case TRANSIT:
+            case NEUTRAL:
                 position = transitPos;
                 break;
             default:
@@ -41,9 +40,9 @@ public class Wrist {
 
     public Position position() {
         if (position == boardPos) {
-            return Position.BOARD;
+            return Position.RUNG;
         } else if (position == transitPos) {
-            return Position.TRANSIT;
+            return Position.NEUTRAL;
         } else if (position == horizPos) {
             return Position.HORIZONTAL;
         } else {
@@ -51,11 +50,10 @@ public class Wrist {
         }
     }
 
-
     public enum Position {
         HORIZONTAL,
-        BOARD,
-        TRANSIT,
+        RUNG,
+        NEUTRAL,
         UNKNOWN,
     }
 

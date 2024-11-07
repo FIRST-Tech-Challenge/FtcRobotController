@@ -29,7 +29,8 @@ public class LinearActuator {
     }
 
     public void extend() {
-        if (!((actuatorServo.getPosition() < uprightValue + 0.05) && (actuatorServo.getPosition() > uprightValue - 0.05))) {
+        if (!((actuatorServo.getPosition() < uprightValue + 0.05)
+                && (actuatorServo.getPosition() > uprightValue - 0.05))) {
             return;
         }
         if (actuatorMotor.getCurrentPosition() < maxActuatorLength - 100) {
@@ -61,6 +62,5 @@ public class LinearActuator {
             actuatorServo.setPosition(restingValue);
         }
     }
-
 
 }

@@ -13,7 +13,7 @@ public class ServoExtensor implements Extensor {
     public ServoExtensor(@NonNull BaseRobot baseRobot) {
         this.leftServo = baseRobot.hardwareMap.get(Servo.class, "extensorLeft");
         this.rightServo = baseRobot.hardwareMap.get(Servo.class, "extensorRight");
-        this.currentPosition = Position.GROUND;  // Initialize to ground position
+        this.currentPosition = Position.PICKUP; // Initialize to ground position
     }
 
     public void setPosition(double position) {
@@ -46,6 +46,6 @@ public class ServoExtensor implements Extensor {
 
     @Override
     public void ground() {
-        setPosition(Position.GROUND);
+        setPosition(Position.PICKUP);
     }
 }
