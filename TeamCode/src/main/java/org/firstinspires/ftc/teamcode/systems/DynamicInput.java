@@ -54,6 +54,7 @@ public class DynamicInput {
         public boolean clawRight, clawLeft, wristUp, wristDown;
         public boolean ascendActuatorExtend, ascendActuatorRetract, ascendActuatorChange;
         public boolean justExtendActuator, justRetractActuator, justGroundActuator;
+        public double boostAmount, brakeAmount;
 
         public ConvertedInputs(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
@@ -70,6 +71,8 @@ public class DynamicInput {
             this.ascendActuatorExtend = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorExtend);
             this.ascendActuatorRetract = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorRetract);
             this.ascendActuatorChange = getButtonState(subCtrl, subSettings.buttonMapping.ascendActuatorChange);
+            this.boostAmount = getAxisValue(mainCtrl, mainSettings.buttonMapping.boostAmount);
+            this.brakeAmount = getAxisValue(mainCtrl, mainSettings.buttonMapping.brakeAmount);
 
             // Determine if buttons were just pressed
             this.justExtendActuator = extendActuator && !prevExtend;

@@ -116,10 +116,15 @@ public class BaseRobot {
 
     public void gamepadPrimary() {
         DynamicInput.DirectionalOutput directionalOutput = input.directional();
+        DynamicInput.ConvertedInputs convertedOutput = input.action();
 
+        double boost = convertedOutput.boostAmount;
+        double brake = convertedOutput.brakeAmount;
+        // TODO: IMPLEMENT USER PROFILE
+        double powerMultiplier = 1 + boost - brake;
         double rotation = directionalOutput.rotation;
-        double strafePower = directionalOutput.x;
-        double drivePower = directionalOutput.y;
+        double strafePower = directionalOutput.x * powerMultiplier;
+        double drivePower = directionalOutput.y * powerMultiplier;
 
         /*
          * Drives the motors based on the given power/rotation

@@ -65,6 +65,7 @@ public class Settings {
         public double dpad_sensitivity = 0.3;
         public double bumper_sensitivity = 0.8;
         public double trigger_threshold = 0.1;
+        public double default_movement_speed = 0.1; // TODO: Tune
 
         // Add button mapping configuration
         public ButtonMapping buttonMapping;
@@ -92,6 +93,9 @@ public class Settings {
         public GamepadButton ascendActuatorExtend = GamepadButton.DPAD_UP;
         public GamepadButton ascendActuatorRetract = GamepadButton.DPAD_DOWN;
         public GamepadButton ascendActuatorChange = GamepadButton.DPAD_RIGHT;
+
+        public GamepadAxis boostAmount = GamepadAxis.RIGHT_TRIGGER;
+        public GamepadAxis brakeAmount = GamepadAxis.LEFT_TRIGGER;
     }
 
     public static enum GamepadButton {

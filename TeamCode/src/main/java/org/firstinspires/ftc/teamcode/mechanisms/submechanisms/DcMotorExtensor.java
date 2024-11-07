@@ -16,6 +16,7 @@ public class DcMotorExtensor implements Extensor {
         this.currentPosition = Position.HOVER; // Initialize to default position
     }
 
+    //  Sets target position
     public void setPosition(double position) {
         // Logic to control DC motor position using encoders
         int targetPosition = (int) (position * 1000); // Convert position to encoder counts
@@ -25,6 +26,7 @@ public class DcMotorExtensor implements Extensor {
         rightMotor.setPower(1.0);
     }
 
+    //  Converts position name to double
     @Override
     public void setPosition(@NonNull Position position) {
         this.currentPosition = position;
