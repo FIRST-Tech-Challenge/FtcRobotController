@@ -44,9 +44,16 @@ public class Settings {
     }
 
     public static enum GamepadButton {
+        // Face buttons
         A, B, X, Y,
+
+        // D-pad
         DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT,
-        LEFT_BUMPER, RIGHT_BUMPER
+
+        // Shoulder buttons
+        LEFT_BUMPER, RIGHT_BUMPER;
+
+        // Add documentation for each button group
     }
 
     public static enum GamepadAxis {
@@ -92,26 +99,18 @@ public class Settings {
     }
 
     public static class Deploy {
-        /*
-         * Define deployment flags here;
-         * An in-progress build with experiment features won't crash
-         * and problems will be able to be isolated if you just
-         * uncheck dysfunctional deployment flags first.
-         * 
-         * Working on a new or experimental feature?
-         * Flag it so that we can disable it easily!
-         */
-
-        // mechanisms
+        // Core Mechanisms
         public static final boolean ARM = true;
 
-        // magic
+        // Navigation Systems
         public static final boolean ODOMETRY = true;
-        public static final boolean DEBUG = true;
-        public static final boolean VICTORY = false;
 
+        // Development Features
+        public static final boolean DEBUG = true;
         public static final boolean SKIP_AUTONOMOUS = false;
 
+        // Special Features
+        public static final boolean VICTORY = false;
     }
 
 }
