@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.routines.Routine;
@@ -67,5 +68,10 @@ public class ClawSystem extends Subsystem
 
     public ClawSystem(Routine routine) {
         super(routine);
+        claw_servo_l = routine.hardwareMap.get(Servo.class, "claw_servo_l");
+        claw_servo_r = routine.hardwareMap.get(Servo.class, "claw_servo_r");
+        shoulder_servo = routine.hardwareMap.get(Servo.class, "shoulder_servo");
+
+        claw_servo_r.setDirection(Servo.Direction.REVERSE);
     }
 }
