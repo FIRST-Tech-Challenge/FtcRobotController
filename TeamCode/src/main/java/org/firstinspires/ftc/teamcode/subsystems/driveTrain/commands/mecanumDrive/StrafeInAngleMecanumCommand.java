@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands.mecanumDrive;
 
+import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PController;
 
 import org.firstinspires.ftc.teamcode.subsystems.driveTrain.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
-public class StrafeInAngleMecanumCommand extends SympleCommandBase<MecanumDriveSubsystem> {
+public class StrafeInAngleMecanumCommand extends CommandBase {
     private final double angle;
     private final double meters;
 
@@ -13,8 +13,12 @@ public class StrafeInAngleMecanumCommand extends SympleCommandBase<MecanumDriveS
     private double STARTING_SIDE_DIST = 0;
     private PController pController;
 
+    private final MecanumDriveSubsystem subsystem;
+
     public StrafeInAngleMecanumCommand(MecanumDriveSubsystem subsystem, double angle, double meters) {
-        super(subsystem);
+        this.subsystem = subsystem;
+        addRequirements(subsystem);
+
         this.angle = angle + 90;
         this.meters = meters;
     }

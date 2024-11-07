@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PController;
 
 import org.firstinspires.ftc.teamcode.subsystems.driveTrain.IDriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
-public class RotateRobotByDegCommand extends SympleCommandBase<IDriveTrainSubsystem> {
-    public static final double defaultKp = 0.05f;
-    private static final double MAX_POWER = 0.8f;
+public class RotateRobotByDegCommand extends CommandBase {
+    public static final double DEFAULT_KP = 0.05;
+    private static final double MAX_POWER = 0.8;
 
     private final PController pController;
     private final double degToRotate;
@@ -16,8 +17,11 @@ public class RotateRobotByDegCommand extends SympleCommandBase<IDriveTrainSubsys
     private int timesDone = 0;
     private double STARTING_ANGLE;
 
-    public RotateRobotByDegCommand(IDriveTrainSubsystem driveBaseSubsystem, double degToRotate, double kp) {
-        super(driveBaseSubsystem);
+    private final IDriveTrainSubsystem subsystem;
+
+    public RotateRobotByDegCommand(IDriveTrainSubsystem subsystem, double degToRotate, double kp) {
+        this.subsystem = subsystem;
+        addRequirements(subsystem);
 
         this.pController = new PController(kp);
         this.pController.setTolerance(2.5);
@@ -25,7 +29,7 @@ public class RotateRobotByDegCommand extends SympleCommandBase<IDriveTrainSubsys
     }
 
     public RotateRobotByDegCommand(IDriveTrainSubsystem driveBaseSubsystem, double degToRotate) {
-        this(driveBaseSubsystem, degToRotate, defaultKp);
+        this(driveBaseSubsystem, degToRotate, DEFAULT_KP);
     }
 
     @Override
@@ -33,7 +37,7 @@ public class RotateRobotByDegCommand extends SympleCommandBase<IDriveTrainSubsys
         super.initialize();
         this.STARTING_ANGLE = this.subsystem.getHeading();
         this.pController.setSetPoint(Math.IEEEremainder(degToRotate + STARTING_ANGLE, 360));
-        this.getDataLogger().addData(DataLogger.DataType.INFO, this.getDataLoggerPrefix() + "Rotating " + this.degToRotate + "deg");
+        this.subsystem.getDataLogger().addData(DataLogger.DataType.INFO, "RotateRobotCommand: " + "Rotating " + this.degToRotate + "deg");
     }
 
     @Override
@@ -45,12 +49,13 @@ public class RotateRobotByDegCommand extends SympleCommandBase<IDriveTrainSubsys
 
         double power = Math.min(Math.max(rawPower, -MAX_POWER), MAX_POWER);
 
-        this.getTelemetry().addData("power", power);
-        this.getTelemetry().addData("dist left", distLeft);
-        this.getTelemetry().addData("heading dist", headingDist);
-        this.getTelemetry().addData("rel heading", this.subsystem.getHeading() - this.STARTING_ANGLE);
-        this.getTelemetry().addData("heading", this.subsystem.getHeading());
-        this.getTelemetry().update();
+        MultipleTelemetry telemetry = this.subsystem.getTelemetry();
+        telemetry.addData("power", power);
+        telemetry.addData("dist left", distLeft);
+        telemetry.addData("heading dist", headingDist);
+        telemetry.addData("rel heading", this.subsystem.getHeading() - this.STARTING_ANGLE);
+        telemetry.addData("heading", this.subsystem.getHeading());
+        telemetry.update();
 
         this.subsystem.moveSideMotors(power, -power);
     }

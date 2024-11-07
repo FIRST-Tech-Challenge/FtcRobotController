@@ -2,26 +2,44 @@ package org.firstinspires.ftc.teamcode.util.opModes;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
+import org.firstinspires.ftc.teamcode.RobotControllerBase;
+
+import top.symple.symplegraphdisplay.SympleGraphDisplay;
+
 public abstract class SympleCommandOpMode extends CommandOpMode {
-    /**
-     * runs when the robot exist the init mode and enters to the run mode
-     */
-    public void sympleStart() {
-    }
+    protected RobotControllerBase robotController;
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        initialize();
+    public void runOpMode() {
+        this.initialize();
 
-        waitForStart();
+        if(robotController == null) {
+            telemetry.addData("Err", "Please initialize the robot first");
+            this.reset();
+            return;
+        }
 
-        sympleStart();
+        robotController.createKeyBindings();
+        robotController.initialize();
+
+        // runs when in init mode
+        while (this.opModeInInit() && !this.isStopRequested()) {
+            robotController.initializeLoop();
+            SympleGraphDisplay.getInstance().run();
+        }
+
+        this.waitForStart();
+
+        robotController.postInitialize();
 
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {
-            run();
+            this.run();
+            robotController.run();
+            SympleGraphDisplay.getInstance().run();
         }
 
-        reset();
+        robotController.postRun();
+        this.reset();
     }
 }

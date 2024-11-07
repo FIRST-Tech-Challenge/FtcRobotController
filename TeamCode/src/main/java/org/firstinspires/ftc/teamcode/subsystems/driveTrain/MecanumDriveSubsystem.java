@@ -1,24 +1,30 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.RobotController;
+import org.firstinspires.ftc.teamcode.managers.RobotPositionManager;
 import org.firstinspires.ftc.teamcode.maps.MotorMap;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubsystemBase;
-
 import java.util.HashMap;
 
-public class MecanumDriveSubsystem extends SympleSubsystemBase implements IDriveTrainSubsystem {
+public class MecanumDriveSubsystem extends SubsystemBase implements IDriveTrainSubsystem {
+    private final MultipleTelemetry telemetry;
+    private final DataLogger dataLogger;
+
     private final HashMap<MotorNames, MotorEx> motors = new HashMap<>();
 
-    public MecanumDriveSubsystem(RobotController robotController) {
-        super(robotController);
+    public MecanumDriveSubsystem(HardwareMap hardwareMap, MultipleTelemetry telemetry, DataLogger dataLogger) {
+        this.telemetry = telemetry;
+        this.dataLogger = dataLogger;
+
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Getting motors");
-        this.motors.put(MotorNames.FRONT_RIGHT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_FRONT_RIGHT.getId()));
-        this.motors.put(MotorNames.FRONT_LEFT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_FRONT_LEFT.getId()));
-        this.motors.put(MotorNames.BACK_LEFT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_BACK_LEFT.getId()));
-        this.motors.put(MotorNames.BACK_RIGHT, new MotorEx(robotController.getHardwareMap(), MotorMap.LEG_BACK_RIGHT.getId()));
+        this.motors.put(MotorNames.FRONT_RIGHT, new MotorEx(hardwareMap, MotorMap.LEG_FRONT_RIGHT.getId()));
+        this.motors.put(MotorNames.FRONT_LEFT, new MotorEx(hardwareMap, MotorMap.LEG_FRONT_LEFT.getId()));
+        this.motors.put(MotorNames.BACK_LEFT, new MotorEx(hardwareMap, MotorMap.LEG_BACK_LEFT.getId()));
+        this.motors.put(MotorNames.BACK_RIGHT, new MotorEx(hardwareMap, MotorMap.LEG_BACK_RIGHT.getId()));
 
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Inverting motors");
         this.motors.get(MotorNames.FRONT_RIGHT).setInverted(true);
@@ -45,16 +51,26 @@ public class MecanumDriveSubsystem extends SympleSubsystemBase implements IDrive
 
     @Override
     public double getForwardDistanceDriven() {
-        return this.robotController.getRobotPositionManager().getRightWheelDistanceDriven();
+        return RobotPositionManager.getInstance().getRightWheelDistanceDriven();
     }
 
     public double getSideDistanceDriven() {
-        return this.robotController.getRobotPositionManager().getBackWheelDistanceDriven();
+        return RobotPositionManager.getInstance().getBackWheelDistanceDriven();
     }
 
     @Override
     public double getHeading() {
-        return this.robotController.getRobotPositionManager().getHeadingByGyro();
+        return RobotPositionManager.getInstance().getHeadingByGyro();
+    }
+
+    @Override
+    public DataLogger getDataLogger() {
+        return this.dataLogger;
+    }
+
+    @Override
+    public MultipleTelemetry getTelemetry() {
+        return this.telemetry;
     }
 
     public enum MotorNames {

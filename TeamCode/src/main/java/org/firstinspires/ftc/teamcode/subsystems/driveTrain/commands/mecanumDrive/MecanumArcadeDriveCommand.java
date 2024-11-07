@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands.mecanumDrive;
 
+import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.subsystems.driveTrain.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleCommandBase;
 
-public class MecanumArcadeDriveCommand extends SympleCommandBase<MecanumDriveSubsystem> {
+public class MecanumArcadeDriveCommand extends CommandBase {
     private final GamepadEx gamepad;
 
-    public MecanumArcadeDriveCommand(MecanumDriveSubsystem mecanumDriveSubsystem, GamepadEx gamepad) {
-        super(mecanumDriveSubsystem);
+    private final MecanumDriveSubsystem subsystem;
+
+    public MecanumArcadeDriveCommand(MecanumDriveSubsystem subsystem, GamepadEx gamepad) {
+        this.subsystem = subsystem;
         this.gamepad = gamepad;
+
+        addRequirements(subsystem);
     }
 
     @Override

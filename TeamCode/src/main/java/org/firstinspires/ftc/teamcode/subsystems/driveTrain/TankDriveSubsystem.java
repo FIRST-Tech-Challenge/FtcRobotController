@@ -1,22 +1,29 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.RobotController;
+import org.firstinspires.ftc.teamcode.managers.RobotPositionManager;
 import org.firstinspires.ftc.teamcode.util.DataLogger;
-import org.firstinspires.ftc.teamcode.util.subsystems.SympleSubsystemBase;
 
 // THIS CODE IS OUTDATED AND DIDN'T GET TESTED ON THE NEW ROBOT!
-public class TankDriveSubsystem extends SympleSubsystemBase implements IDriveTrainSubsystem {
+public class TankDriveSubsystem extends SubsystemBase implements IDriveTrainSubsystem {
+    private final MultipleTelemetry telemetry;
+    private final DataLogger dataLogger;
+
     private boolean invert = false;
 
     private final MotorEx leftMotor, rightMotor;
 
-    public TankDriveSubsystem(RobotController robotController) {
-        super(robotController);
+    public TankDriveSubsystem(HardwareMap hardwareMap, MultipleTelemetry telemetry, DataLogger dataLogger) {
+        this.telemetry = telemetry;
+        this.dataLogger = dataLogger;
+
         this.getDataLogger().addData(DataLogger.DataType.INFO, this.getClass().getSimpleName() + ": Getting motors");
-        this.rightMotor = new MotorEx(robotController.getHardwareMap(), "right_wheels");
-        this.leftMotor = new MotorEx(robotController.getHardwareMap(), "left_wheels");
+        this.rightMotor = new MotorEx(hardwareMap, "right_wheels");
+        this.leftMotor = new MotorEx(hardwareMap, "left_wheels");
         this.rightMotor.setInverted(true);
     }
 
@@ -32,12 +39,22 @@ public class TankDriveSubsystem extends SympleSubsystemBase implements IDriveTra
 
     @Override
     public double getForwardDistanceDriven() {
-        return this.robotController.getRobotPositionManager().getRightWheelDistanceDriven();
+        return RobotPositionManager.getInstance().getRightWheelDistanceDriven();
     }
 
     @Override
     public double getHeading() {
-        return this.robotController.getRobotPositionManager().getHeadingByGyro();
+        return RobotPositionManager.getInstance().getHeadingByGyro();
+    }
+
+    @Override
+    public MultipleTelemetry getTelemetry() {
+        return this.telemetry;
+    }
+
+    @Override
+    public DataLogger getDataLogger() {
+        return this.dataLogger;
     }
 
     public void setInverted(boolean invert) {

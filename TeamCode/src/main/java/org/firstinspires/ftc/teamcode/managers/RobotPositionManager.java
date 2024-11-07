@@ -4,10 +4,10 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.RobotController;
 import org.firstinspires.ftc.teamcode.maps.SensorMap;
 import org.firstinspires.ftc.teamcode.subsystems.driveTrain.DriveConstants;
 import org.firstinspires.ftc.teamcode.util.MathUtil;
@@ -20,14 +20,16 @@ public class RobotPositionManager {
 
     private final double startingAngle;
 
-    public RobotPositionManager(RobotController robotController) {
+    private static RobotPositionManager instance;
+
+    private RobotPositionManager(HardwareMap hardwareMap) {
         BHI260IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIRECTION, DriveConstants.USB_FACING_DIRECTION));
-        this.imu = robotController.getHardwareMap().get(BHI260IMU.class, "imu");
+        this.imu = hardwareMap.get(BHI260IMU.class, "imu");
         this.imu.initialize(parameters);
 
-        this.rightDeadWheel = new MotorEx(robotController.getHardwareMap(), SensorMap.DEAD_WHEEL_RIGHT.getId());
-        this.leftDeadWheel = new MotorEx(robotController.getHardwareMap(), SensorMap.DEAD_WHEEL_LEFT.getId());
-        this.backDeadWheel = new MotorEx(robotController.getHardwareMap(), SensorMap.DEAD_WHEEL_BACK.getId());
+        this.rightDeadWheel = new MotorEx(hardwareMap, SensorMap.DEAD_WHEEL_RIGHT.getId());
+        this.leftDeadWheel = new MotorEx(hardwareMap, SensorMap.DEAD_WHEEL_LEFT.getId());
+        this.backDeadWheel = new MotorEx(hardwareMap, SensorMap.DEAD_WHEEL_BACK.getId());
 
         this.rightDeadWheel.encoder.setDirection(Motor.Direction.REVERSE);
         this.leftDeadWheel.encoder.setDirection(Motor.Direction.REVERSE);
@@ -38,6 +40,14 @@ public class RobotPositionManager {
         this.backDeadWheel.resetEncoder();
 
         this.startingAngle = getHeadingByGyro();
+    }
+
+    public static void init(HardwareMap hardwareMap) {
+        instance = new RobotPositionManager(hardwareMap);
+    }
+
+    public static RobotPositionManager getInstance() {
+        return instance;
     }
 
     public double getHeadingByGyro() {
