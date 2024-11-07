@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.CommandGroups;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
+import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 // Example Sequential Command Group
@@ -20,8 +21,14 @@ public class ArmStowLow extends SequentialCommandGroup {
                 // folds the wrist in 0
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
 
+                //wait for 5 seconds
+                new Pause(5),
+
                 // lifts the shoulder up 55 degrees
                 new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(55)),
+
+                //wait for 5 seconds
+                new Pause(5),
 
                 // folds the elbow in 0
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(0))
