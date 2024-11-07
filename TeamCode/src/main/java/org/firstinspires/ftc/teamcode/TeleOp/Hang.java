@@ -1,12 +1,18 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.TeleOp.RobotHardware;
+
 
 public class Hang {
 
     public final RobotHardware robot;
+    private final LinearOpMode opMode;
 
     // Constructor that takes RobotHardware as a parameter
-    public Hang(RobotHardware robot) {
+    public Hang(RobotHardware robot, LinearOpMode opMode) {
         this.robot = robot;
+        this.opMode = opMode;
     }
 
     // Hang Programming
@@ -22,11 +28,7 @@ public class Hang {
     private void setHangPower(double power) {
         robot.leftHang.setPower(power);
         robot.rightHang.setPower(power);
-        try {
-            Thread.sleep(100); // Short pause for smooth movement
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        opMode.sleep(100);
         robot.leftHang.setPower(0);
         robot.rightHang.setPower(0);
     }

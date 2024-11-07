@@ -17,8 +17,8 @@ public class ControlsNEW extends LinearOpMode {
     public void runOpMode() {
         robot.init(hardwareMap); // Initialize robot hardware
         driveControl = new Base(robot); // Initialize Control1 with RobotHardware
-        clawControl = new Claw(robot); // Initialize Control2 with RobotHardware
-        hangControl = new Hang(robot); // Initialize Hang with RobotHardware
+        clawControl = new Claw(robot, this ); // Initialize Control2 with RobotHardware
+        hangControl = new Hang(robot, this); // Initialize Hang with RobotHardware
 
         waitForStart();
 

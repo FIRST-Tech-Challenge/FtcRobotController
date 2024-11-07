@@ -1,19 +1,28 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Claw {
 
     public final RobotHardware robot;
+    private final LinearOpMode opMode;
 
     // Constructor that takes RobotHardware as a parameter
-    public Claw(RobotHardware robot) {
+    public Claw(RobotHardware robot, LinearOpMode opMode) {
         this.robot = robot;
+        this.opMode = opMode;
     }
 
     public void controlClaw(boolean buttonA, boolean buttonY, boolean buttonX, boolean buttonB, boolean rightStickButton, boolean leftBumper, boolean rightBumper) {
             if (buttonA) {
                 setClawPower(1);
+                opMode.sleep(100);
+                setClawPower(0);
             } else if (buttonY) {
                 setClawPower(-1);
+                opMode.sleep(100);
+                setClawPower(0);
             }
 
             if (buttonX) {
@@ -40,11 +49,7 @@ public class Claw {
         private void setClawPower ( double power) {
             robot.leftClaw.setPower(power);
             robot.rightClaw.setPower(power);
-            try {
-                Thread.sleep(100); // Short pause for smooth movement
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            opMode.sleep(100);
             robot.leftClaw.setPower(0);
             robot.rightClaw.setPower(0);
         }
