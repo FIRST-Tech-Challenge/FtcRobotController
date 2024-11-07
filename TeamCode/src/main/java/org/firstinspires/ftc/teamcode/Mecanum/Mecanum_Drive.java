@@ -80,7 +80,7 @@ public class Mecanum_Drive extends LinearOpMode {
 
   public void moveFieldCentric(double FBPower, double LRPower, double turnPower) {
     double[] desireMove = cartesianToPolar(LRPower, FBPower);
-    double heading = odo.getHeading() - desireMove[1];
+    double heading = odo.getHeading().getRadians() - desireMove[1];
     desireMove = cartesianToPolar(desireMove[0], heading);
 
     moveRobot(desireMove[1], desireMove[0], turnPower);

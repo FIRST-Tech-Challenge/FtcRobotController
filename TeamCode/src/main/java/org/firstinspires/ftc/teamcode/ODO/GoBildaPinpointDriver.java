@@ -15,9 +15,9 @@ import com.qualcomm.robotcore.util.TypeConversion;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Translation2d;
 
 @I2cDeviceType
 @DeviceProperties(
@@ -28,8 +28,6 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
 
   private int deviceStatus = 0;
   private int loopTime = 0;
-  private int xEncoderValue = 0;
-  private int yEncoderValue = 0;
   private float xPosition = 0;
   private float yPosition = 0;
   private float hOrientation = 0;
@@ -242,8 +240,6 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     byte[] bArr = deviceClient.read(Register.BULK_READ.bVal, 40);
     deviceStatus = byteArrayToInt(Arrays.copyOfRange(bArr, 0, 4), ByteOrder.LITTLE_ENDIAN);
     loopTime = byteArrayToInt(Arrays.copyOfRange(bArr, 4, 8), ByteOrder.LITTLE_ENDIAN);
-    xEncoderValue = byteArrayToInt(Arrays.copyOfRange(bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
-    yEncoderValue = byteArrayToInt(Arrays.copyOfRange(bArr, 12, 16), ByteOrder.LITTLE_ENDIAN);
     xPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 16, 20), ByteOrder.LITTLE_ENDIAN);
     yPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 20, 24), ByteOrder.LITTLE_ENDIAN);
     hOrientation = byteArrayToFloat(Arrays.copyOfRange(bArr, 24, 28), ByteOrder.LITTLE_ENDIAN);
@@ -322,8 +318,15 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
    *     left
    */
   public void setEncoderDirections(EncoderDirection xEncoder, EncoderDirection yEncoder) {
+    if (xEncoder == EncoderDirection.FORWARD) {
+      writeInt(Register.DEVICE_CONTROL, 1 << 5);
+    }
     if (xEncoder == EncoderDirection.REVERSED) {
       writeInt(Register.DEVICE_CONTROL, 1 << 4);
+    }
+
+    if (yEncoder == EncoderDirection.FORWARD) {
+      writeInt(Register.DEVICE_CONTROL, 1 << 3);
     }
     if (yEncoder == EncoderDirection.REVERSED) {
       writeInt(Register.DEVICE_CONTROL, 1 << 2);
@@ -349,99 +352,40 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
   }
 
   /**
-   * Sets the encoder resolution in ticks per mm of the odometry pods. <br>
-   * You can find this number by dividing the counts-per-revolution of your encoder by the
-   * circumference of the wheel.
-   *
-   * @param ticks_per_mm should be somewhere between 10 ticks/mm and 100 ticks/mm a goBILDA Swingarm
-   *     pod is ~13.26291192
-   */
-  public void setEncoderResolution(double ticks_per_mm) {
-    writeByteArray(
-        Register.MM_PER_TICK, (floatToByteArray((float) ticks_per_mm, ByteOrder.LITTLE_ENDIAN)));
-  }
-
-  /**
-   * Tuning this value should be unnecessary.<br>
-   * The goBILDA Odometry Computer has a per-device tuned yaw offset already applied when you
-   * receive it.<br>
-   * <br>
-   * This is a scalar that is applied to the gyro's yaw value. Increasing it will mean it will
-   * report more than one degree for every degree the sensor fusion algorithm measures. <br>
-   * <br>
-   * You can tune this variable by rotating the robot a large amount (10 full turns is a good
-   * starting place) and comparing the amount that the robot rotated to the amount measured.
-   * Rotating the robot exactly 10 times should measure 3600°. If it measures more or less, divide
-   * moved amount by the measured amount and apply that value to the Yaw Offset.<br>
-   * <br>
-   * If you find that to get an accurate heading number you need to apply a scalar of more than
-   * 1.05, or less than 0.95, your device may be bad. Please reach out to tech@gobilda.com
-   *
-   * @param yawOffset A scalar for the robot's heading.
-   */
-  public void setYawScalar(double yawOffset) {
-    writeByteArray(
-        Register.YAW_SCALAR, (floatToByteArray((float) yawOffset, ByteOrder.LITTLE_ENDIAN)));
-  }
-
-  /**
    * Send a position that the Pinpoint should use to track your robot relative to. You can use this
    * to update the estimated position of your robot with new external sensor data, or to run a robot
-   * in field coordinates. <br>
-   * <br>
-   * This overrides the current position. <br>
-   * <br>
-   * <strong>Using this feature to track your robot's position in field coordinates:</strong> <br>
-   * When you start your code, send a Pose2D that describes the starting position on the field of
-   * your robot. <br>
-   * Say you're on the red alliance, your robot is against the wall and closer to the audience side,
-   * and the front of your robot is pointing towards the center of the field. You can send a
-   * setPosition with something like -600mm x, -1200mm Y, and 90 degrees. The pinpoint would then
-   * always keep track of how far away from the center of the field you are. <br>
-   * <br>
-   * <strong>Using this feature to update your position with additional sensors: </strong><br>
-   * Some robots have a secondary way to locate their robot on the field. This is commonly Apriltag
-   * localization in FTC, but it can also be something like a distance sensor. Often these external
-   * sensors are absolute (meaning they measure something about the field) so their data is very
-   * accurate. But they can be slower to read, or you may need to be in a very specific position on
-   * the field to use them. In that case, spend most of your time relying on the Pinpoint to
-   * determine your location. Then when you pull a new position from your secondary sensor, send a
-   * setPosition command with the new position. The Pinpoint will then track your movement relative
-   * to that new, more accurate position.
+   * in field coordinates.
+   *
+   * <p>This overrides the current position.
    *
    * @param pos a Pose2D describing the robot's new position.
    */
-  public Pose2D setPosition(Pose2D pos) {
+  public void resetPosition(Pose2d pos) {
+    resetTranslation(pos.getTranslation());
+    resetHeading(pos.getRotation());
+  }
+
+  public void resetTranslation(Translation2d translation) {
     writeByteArray(
         Register.X_POSITION,
-        (floatToByteArray((float) pos.getX(DistanceUnit.MM), ByteOrder.LITTLE_ENDIAN)));
+        (floatToByteArray((float) (translation.getX() / 1000.0), ByteOrder.LITTLE_ENDIAN)));
     writeByteArray(
         Register.Y_POSITION,
-        (floatToByteArray((float) pos.getY(DistanceUnit.MM), ByteOrder.LITTLE_ENDIAN)));
+        (floatToByteArray((float) (translation.getY() / 1000.0), ByteOrder.LITTLE_ENDIAN)));
+  }
+
+  public void resetHeading() {
+    resetHeading(Rotation2d.kZero);
+  }
+
+  public void resetHeading(Rotation2d heading) {
     writeByteArray(
         Register.H_ORIENTATION,
-        (floatToByteArray((float) pos.getHeading(AngleUnit.RADIANS), ByteOrder.LITTLE_ENDIAN)));
-    return pos;
+        (floatToByteArray((float) heading.getRadians(), ByteOrder.LITTLE_ENDIAN)));
   }
 
-  /**
-   * Checks the deviceID of the Odometry Computer. Should return 1.
-   *
-   * @return 1 if device is functional.
-   */
-  public int getDeviceID() {
-    return readInt(Register.DEVICE_ID);
-  }
-
-  /**
-   * @return the firmware version of the Odometry Computer
-   */
-  public int getDeviceVersion() {
-    return readInt(Register.DEVICE_VERSION);
-  }
-
-  public float getYawScalar() {
-    return readFloat(Register.YAW_SCALAR);
+  public Pose2d getPose() {
+    return new Pose2d(getPosX(), getPosY(), getHeading());
   }
 
   /**
@@ -489,52 +433,38 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
   }
 
   /**
-   * @return the raw value of the X (forward) encoder in ticks
-   */
-  public int getEncoderX() {
-    return xEncoderValue;
-  }
-
-  /**
-   * @return the raw value of the Y (strafe) encoder in ticks
-   */
-  public int getEncoderY() {
-    return yEncoderValue;
-  }
-
-  /**
-   * @return the estimated X (forward) position of the robot in mm
+   * @return the estimated X (forward) position of the robot in m
    */
   public double getPosX() {
-    return xPosition;
+    return xPosition * 1000.0;
   }
 
   /**
-   * @return the estimated Y (Strafe) position of the robot in mm
+   * @return the estimated Y (Strafe) position of the robot in m
    */
   public double getPosY() {
-    return yPosition;
+    return yPosition * 1000.0;
   }
 
   /**
    * @return the estimated H (heading) position of the robot in Radians
    */
-  public double getHeading() {
-    return hOrientation;
+  public Rotation2d getHeading() {
+    return new Rotation2d(hOrientation);
   }
 
   /**
-   * @return the estimated X (forward) velocity of the robot in mm/sec
+   * @return the estimated X (forward) velocity of the robot in m/sec
    */
   public double getVelX() {
-    return xVelocity;
+    return xVelocity * 1000.0;
   }
 
   /**
-   * @return the estimated Y (strafe) velocity of the robot in mm/sec
+   * @return the estimated Y (strafe) velocity of the robot in m/sec
    */
   public double getVelY() {
-    return yVelocity;
+    return yVelocity * 1000.0;
   }
 
   /**
@@ -542,37 +472,5 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
    */
   public double getHeadingVelocity() {
     return hVelocity;
-  }
-
-  /**
-   * <strong> This uses its own I2C read, avoid calling this every loop. </strong>
-   *
-   * @return the user-set offset for the X (forward) pod
-   */
-  public float getXOffset() {
-    return readFloat(Register.X_POD_OFFSET);
-  }
-
-  /**
-   * <strong> This uses its own I2C read, avoid calling this every loop. </strong>
-   *
-   * @return the user-set offset for the Y (strafe) pod
-   */
-  public float getYOffset() {
-    return readFloat(Register.Y_POD_OFFSET);
-  }
-
-  /**
-   * @return a Pose2D containing the estimated position of the robot
-   */
-  public Pose2D getPosition() {
-    return new Pose2D(DistanceUnit.MM, xPosition, yPosition, AngleUnit.RADIANS, hOrientation);
-  }
-
-  /**
-   * @return a Pose2D containing the estimated velocity of the robot, velocity is unit per second
-   */
-  public Pose2D getVelocity() {
-    return new Pose2D(DistanceUnit.MM, xVelocity, yVelocity, AngleUnit.RADIANS, hVelocity);
   }
 }

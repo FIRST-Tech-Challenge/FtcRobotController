@@ -15,20 +15,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class SwerveTeleOp extends LinearOpMode {
   @Override
   public void runOpMode() {
+    telemetry.setMsTransmissionInterval(50);
+
     var swerve = new Swerve(this);
 
     waitForStart();
-    double lastTime = System.nanoTime() / 1e9;
     while (opModeIsActive()) {
-      double currentTime = System.nanoTime() / 1e9;
       swerve.teleopDrive(
           -gamepad1.left_stick_y,
           -gamepad1.left_stick_x,
-          -gamepad1.left_stick_x,
-          currentTime - lastTime);
+          -gamepad1.right_stick_x);
       swerve.periodic();
       telemetry.update();
-      lastTime = currentTime;
     }
   }
 }

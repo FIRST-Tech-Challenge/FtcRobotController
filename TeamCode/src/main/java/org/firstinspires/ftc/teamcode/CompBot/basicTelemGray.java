@@ -301,7 +301,7 @@ public class basicTelemGray extends LinearOpMode {
    * <p>As long as this function is called, it will try to rotate back to facing forward
    */
   public void rotateToCenter() {
-    double orientation = odo.getHeading();
+    double orientation = odo.getHeading().getRadians();
     telemetry.addData("Yaw angle", orientation);
 
     rotate(orientation);

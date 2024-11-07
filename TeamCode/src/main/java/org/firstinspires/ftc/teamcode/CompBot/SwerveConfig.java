@@ -157,7 +157,7 @@ public class SwerveConfig {
    * <p>As long as this function is called, it will try to rotate back to facing forward
    */
   public void centerRobot() {
-    double orientation = odo.getHeading();
+    double orientation = odo.getHeading().getRadians();
 
     rotate(orientation);
   }
