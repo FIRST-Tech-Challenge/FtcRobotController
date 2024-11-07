@@ -165,4 +165,62 @@ public class Settings {
         return enabledFlags.toString();
     }
 
+    public static class ControllerProfile {
+        public String name;
+        public DefaultGamepadSettings mainGamepad;
+        public DefaultGamepadSettings subGamepad;
+
+        public ControllerProfile(String name, DefaultGamepadSettings main, DefaultGamepadSettings sub) {
+            this.name = name;
+            this.mainGamepad = main;
+            this.subGamepad = sub;
+        }
+    }
+
+    public static final ControllerProfile DEFAULT_PROFILE = new ControllerProfile(
+            "default",
+            new DefaultGamepadSettings(),
+            new DefaultGamepadSettings());
+
+    public static final ControllerProfile BBOONSTRA_PROFILE = new ControllerProfile(
+            "bboonstra",
+            new DefaultGamepadSettings() {
+                {
+                    // Customize main gamepad settings
+                    dpad_sensitivity = 0.8;
+                    bumper_sensitivity = 0.7;
+                }
+            },
+            new DefaultGamepadSettings() {
+                {
+                    // Customize sub gamepad settings
+                    buttonMapping.extendActuator = GamepadButton.Y;
+                    buttonMapping.retractActuator = GamepadButton.A;
+                    trigger_threshold = 0.2;
+                }
+            });
+
+    public static final ControllerProfile CISRAEL_PROFILE = new ControllerProfile(
+            "cisrael",
+            new DefaultGamepadSettings() {
+                {
+                    // Customize main gamepad settings
+                    dpad_sensitivity = 0.6;
+                    bumper_sensitivity = 0.9;
+                }
+            },
+            new DefaultGamepadSettings() {
+                {
+                    // Customize sub gamepad settings
+                    buttonMapping.wristUp = GamepadButton.DPAD_RIGHT;
+                    buttonMapping.wristDown = GamepadButton.DPAD_LEFT;
+                    trigger_threshold = 0.15;
+                }
+            });
+
+    public static final ControllerProfile[] AVAILABLE_PROFILES = {
+            DEFAULT_PROFILE,
+            BBOONSTRA_PROFILE,
+            CISRAEL_PROFILE
+    };
 }

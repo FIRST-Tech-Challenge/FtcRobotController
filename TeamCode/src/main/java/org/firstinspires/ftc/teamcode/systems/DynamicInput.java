@@ -8,6 +8,7 @@ public class DynamicInput {
     private final Gamepad subCtrl;
     private Settings.DefaultGamepadSettings mainSettings;
     private Settings.DefaultGamepadSettings subSettings;
+    private Settings.ControllerProfile currentProfile;
 
     // Track previous button states for justPressed functionality
     private boolean prevExtendActuator, prevRetractActuator, prevGroundActuator;
@@ -15,8 +16,9 @@ public class DynamicInput {
     public DynamicInput(Gamepad gamepad1, Gamepad gamepad2) {
         this.mainCtrl = gamepad1;
         this.subCtrl = gamepad2;
-        this.mainSettings = new Settings.DefaultGamepadSettings();
-        this.subSettings = new Settings.DefaultGamepadSettings();
+        this.currentProfile = Settings.DEFAULT_PROFILE;
+        this.mainSettings = currentProfile.mainGamepad;
+        this.subSettings = currentProfile.subGamepad;
     }
 
     // Unified output structure
@@ -145,9 +147,19 @@ public class DynamicInput {
     }
 
     // Method to switch between different control profiles
-    public void switchProfile(Settings.DefaultGamepadSettings mainSettings,
-            Settings.DefaultGamepadSettings subSettings) {
-        this.mainSettings = mainSettings;
-        this.subSettings = subSettings;
+    public void switchProfile(String profileName) {
+        for (Settings.ControllerProfile profile : Settings.AVAILABLE_PROFILES) {
+            if (profile.name.equals(profileName)) {
+                this.currentProfile = profile;
+                this.mainSettings = profile.mainGamepad;
+                this.subSettings = profile.subGamepad;
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Profile not found: " + profileName);
+    }
+
+    public String getCurrentProfileName() {
+        return currentProfile.name;
     }
 }
