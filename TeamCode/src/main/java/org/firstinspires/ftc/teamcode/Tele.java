@@ -23,7 +23,7 @@ public  class Tele extends Robot {
     private void Init() {
         // Initialize Robot
         Initialize(DcMotor.RunMode.RUN_WITHOUT_ENCODER, new double[]{0, 0, AL_Ang},
-                                                        new double[]{0, 0, 0, 0});
+                new double[]{0, 0, 0, 0});
 
         controller = new Controller(1.3, 0.23, 0.01, 0 , 0.15, toRadian(0.75));
 
@@ -67,8 +67,8 @@ public  class Tele extends Robot {
         boolean lt_Pressed = LT >= 0.25;
         boolean rl_Pressed = RT >= 0.25;
         double Lift_Power = lt_Pressed ? (curPos < 0          ?  0   : -LT) :
-                            rl_Pressed ? (curPos > 4800       ?  0   :  RT) :
-                            autoLift   ? (curPos > targetLift ? -0.3 :  1)  : 0;
+                rl_Pressed ? (curPos > 4800       ?  0   :  RT) :
+                        autoLift   ? (curPos > targetLift ? -0.3 :  1)  : 0;
         LiftPower(Lift_Power);
 
     }
@@ -97,5 +97,3 @@ public  class Tele extends Robot {
         }
     }
 }
-
-

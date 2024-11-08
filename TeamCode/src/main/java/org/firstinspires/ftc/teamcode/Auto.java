@@ -10,6 +10,8 @@ import java.util.List;
 @Autonomous(name="Auto", group = "In")
 public class Auto extends Robot {
 
+    boolean On = false;
+
     private void Init() {
         // Initialize Robot
         Initialize(DcMotor.RunMode.RUN_WITHOUT_ENCODER, new double[]{0, 0, 0},
@@ -27,16 +29,33 @@ public class Auto extends Robot {
 
     }
 
+    private void FrontArm() {
+        if (!On) {
+            SetServoPos(1, Ll , Rr);
+            On = true;
+            return;
+        }
+        SetServoPos(0, Ll, Rr);
+        On = false;
+        int x =1;
+    }
+
+
     public void runOpMode() {
         Init();
         WaitForStart();
         if (opModeIsActive()) {
-//            move(1.0, 1.0, 90.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
+            while (opModeIsActive()) {
+//            move(1.00, 1.0, -90.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
 //                    new double[]{0.12, 0.081, 0.0, 0.0},new double[]{0.1, 0.041, 0.0, 0.0}, 0.0);
-            move(1.00, 1.0, -90.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
-                    new double[]{0.12, 0.081, 0.0, 0.0},new double[]{0.1, 0.041, 0.0, 0.0}, 0.0);
-            move(0.00, 0.0, 180.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
-                    new double[]{0.12, 0.09, 0.0, 0.0},new double[]{0.1, 0.041, 0.0, 0.0}, 0.1);
+                FrontArm();
+                sleep(1000);
+//            move(0.00, 0.0, 180.0, new double[]{0.14, 0.1, 0.1}, new double[]{2.4, 0.3, 0.01, 0.0},
+//                    new double[]{0.12, 0.09, 0.0, 0.0},new double[]{0.1, 0.041, 0.0, 0.0}, 0.1);
+                FrontArm();
+
+
+            }
         }
     }
 }

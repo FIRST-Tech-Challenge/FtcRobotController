@@ -43,7 +43,7 @@ public abstract class Robot extends LinearOpMode {
     public double         theta, Posx, Posy, heading, n, CurPosLift, Lift_Power, dn1, dn2, dn3, dyaw ;
     //    // update encoder
     int                   left_encoder_pos , right_encoder_pos , center_encoder_pos ,
-                          prev_left_encoder_pos, prev_right_encoder_pos, prev_center_encoder_pos = 0;
+            prev_left_encoder_pos, prev_right_encoder_pos, prev_center_encoder_pos = 0;
     double                CurrentYaw, OldYaw         = 0;
     private double Current_Time = System.nanoTime() * 1E-9;
     private double Last_Time = Current_Time;
@@ -83,30 +83,6 @@ public abstract class Robot extends LinearOpMode {
         prev_center_encoder_pos = center_encoder_pos;
         Last_yaw = yaw;
 
-//        CurrentYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-//        double alpha = 0.8;
-//        dn1 = alpha * dn1 + (1 - alpha) * (Old1Position - Current1Position) * cm_per_tick;
-//        dn2 = alpha * dn2 + (1 - alpha) * (Old2Position - Current2Position) * cm_per_tick;
-//        dn3 = (Current3Position - Old3Position) * cm_per_tick;
-//        dyaw = CurrentYaw - OldYaw;
-
-
-
-//        double dy = (dn1 + dn2) / 2;
-//        double dx = dn3 - B * dyaw;
-//
-//        double deltaY = dy * Math.cos(CurrentYaw) - dx * Math.sin(CurrentYaw);
-//        double deltaX = dy * Math.sin(CurrentYaw) + dx * Math.cos(CurrentYaw);
-//
-//        Posy -= deltaY;
-//        Posx += deltaX;
-//        theta += (dn1 - dn2) / L;
-//
-//        Old1Position = Current1Position;
-//        Old2Position = Current2Position;
-//        Old3Position = Current3Position;
-//        OldYaw = CurrentYaw;
     }
 
     public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
@@ -133,7 +109,7 @@ public abstract class Robot extends LinearOpMode {
             double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
             double Move_Factor = Range.clip(this.Current_Time - this.Last_Time, 0, 1);
             MovePower((y2 - x2 - r) / d * Move_Factor, (y2 + x2 + r) / d * Move_Factor,
-                      (y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor);
+                    (y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor);
 //            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             telemetry.addData("Move_Factor", Move_Factor);
             telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
@@ -146,7 +122,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("ErrorY", DelthaY.Error);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Vx == 0.0 && Vy == 0 && r == 0) {
+            if (Vx == 0.0 && Vy == 0.1 && r == 0) {
                 IS_Complete += 1;
                 if (IS_Complete > 100) break;
                 continue;
@@ -159,8 +135,8 @@ public abstract class Robot extends LinearOpMode {
 
     public void MovePower(double Front_Left, double Front_Right,
                           double Back_Left,  double Back_Right) {
-        FL.setPower(Front_Left * 0.9);
-        FR.setPower(Front_Right * 0.9);
+        FL.setPower(Front_Left);
+        FR.setPower(Front_Right);
         BL.setPower(Back_Left);
         BR.setPower(Back_Right);
     }
@@ -177,21 +153,51 @@ public abstract class Robot extends LinearOpMode {
         BL.setMode(moveMode);
         BR.setMode(moveMode);
     }
+    public double SetServoPos(double pos, float[] minMax, Servo L_servo, Servo R_servo) {
+        pos = Range.clip(pos, minMax[0], minMax[1]);
+        L_servo.setPosition(pos);
+        R_servo.setPosition(pos);
+        return pos;
+    }
+
+    public double SetServoPos(double pos, Servo L_servo, Servo R_servo) {
+        pos = Range.clip(pos, 0, 1);
+        L_servo.setPosition(pos);
+        R_servo.setPosition(pos);
+        return pos;
+    }
+
+    public double SetServoPos(double pos, float[] minMax, Servo servo){
+        pos = Range.clip(pos, minMax[0], minMax[1]);
+        servo.setPosition(pos);
+        return pos;
+    }
+
+    public double SetServoPos(double pos, Servo servo){
+        pos = Range.clip(pos, 0, 1);
+        servo.setPosition(pos);
+        return pos;
+    }
     public void Initialize(DcMotor.RunMode moveMode, double[] DuoServoAng, double[] ServoAng) {
         imu = hardwareMap.get(IMU.class,       "imu");
         FL  = hardwareMap.get(DcMotorEx.class, "Front_Left");    FR  = hardwareMap.get(DcMotorEx.class, "Front_Right");
         BL  = hardwareMap.get(DcMotorEx.class, "Back_Left");     BR  = hardwareMap.get(DcMotorEx.class, "Back_Right");
+        LA  = hardwareMap.get(Servo.class, "Left_arm");          RA  = hardwareMap.get(Servo.class, "Right_arm");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL ;
         encoder2 = FR;
         encoder3 = BL;
 
         // Initialize IMU
-      imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection .RIGHT)));
         // Reverse Servo
+        Ll.setDirection(Servo.Direction.REVERSE);
+        LA.setDirection(Servo.Direction.REVERSE);
         // Set Servo Position
+        SetServoPos(DuoServoAng[0], LA, RA);
+        SetServoPos(DuoServoAng[0], Ll, Rr);
         // setMode Motors
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
