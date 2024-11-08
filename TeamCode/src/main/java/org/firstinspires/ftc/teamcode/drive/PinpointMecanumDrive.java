@@ -310,7 +310,8 @@ public class PinpointMecanumDrive extends MecanumDrive {
     @Override
     public double getRawExternalHeading() {
         //return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-        return getLocalizer().getHeading;
+        //return getLocalizer().getHeading;
+        return 0.0;
     }
 
     @Override

@@ -62,9 +62,9 @@ public class RightPath extends LinearOpMode {
         utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
         move.initialize(drive, utils);
 
-        utils.setArm(actuatorUtils.ArmModes.UP);
+        //utils.setArm(actuatorUtils.ArmModes.UP);
         utils.setIntake(actuatorUtils.IntakeModes.OFF);
-        utils.setWrist(actuatorUtils.WristModes.DOWN);
+        utils.setWrist(actuatorUtils.WristModes.UP);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -77,11 +77,11 @@ public class RightPath extends LinearOpMode {
 
         move.driveSeq(startPose.getX()+12,startPose.getY(),0);
         move.driveSeq(-54,-54,-135);
-        utils.setArm(actuatorUtils.ArmModes.DOWN);
+        //utils.setArm(actuatorUtils.ArmModes.DOWN);
         utils.setIntake(actuatorUtils.IntakeModes.OUT);
         sleep(2000);
         utils.setIntake(actuatorUtils.IntakeModes.OFF);
-        utils.setArm(actuatorUtils.ArmModes.UP);
+        //utils.setArm(actuatorUtils.ArmModes.UP);
         sleep(1000);
         Pose2d pose = drive.getPoseEstimate();
         fUtils.setPose(pose);
