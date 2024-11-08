@@ -127,14 +127,22 @@ public class DynamicInput {
 
     // Generates the directional output based on controller input
     public DirectionalOutput directional() {
-        double upPower = (mainCtrl.left_stick_y < 0 ? -mainCtrl.left_stick_y : 0)
-                + ((mainCtrl.dpad_up ? 1 : 0) * mainSettings.dpad_sensitivity);
-        double downPower = (mainCtrl.left_stick_y > 0 ? mainCtrl.left_stick_y : 0)
-                + ((mainCtrl.dpad_down ? 1 : 0) * mainSettings.dpad_sensitivity);
-        double rightPower = (mainCtrl.left_stick_x > 0 ? mainCtrl.left_stick_x : 0)
-                + ((mainCtrl.dpad_right ? 1 : 0) * mainSettings.dpad_sensitivity);
-        double leftPower = (mainCtrl.left_stick_x < 0 ? -mainCtrl.left_stick_x : 0)
-                + ((mainCtrl.dpad_left ? 1 : 0) * mainSettings.dpad_sensitivity);
+        // Get stick-based movement
+        double upPower = (mainCtrl.left_stick_y < 0 ? -mainCtrl.left_stick_y : 0);
+        double downPower = (mainCtrl.left_stick_y > 0 ? mainCtrl.left_stick_y : 0);
+        double rightPower = (mainCtrl.left_stick_x > 0 ? mainCtrl.left_stick_x : 0);
+        double leftPower = (mainCtrl.left_stick_x < 0 ? -mainCtrl.left_stick_x : 0);
+
+        // Add dpad absolute movement
+        if (mainCtrl.dpad_up)
+            upPower = mainSettings.dpad_movement_speed;
+        if (mainCtrl.dpad_down)
+            downPower = mainSettings.dpad_movement_speed;
+        if (mainCtrl.dpad_right)
+            rightPower = mainSettings.dpad_movement_speed;
+        if (mainCtrl.dpad_left)
+            leftPower = mainSettings.dpad_movement_speed;
+
         double rotationRight = mainCtrl.right_bumper ? mainSettings.bumper_sensitivity : 0;
         double rotationLeft = mainCtrl.left_bumper ? mainSettings.bumper_sensitivity : 0;
 

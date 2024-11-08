@@ -4,8 +4,10 @@ import java.lang.reflect.Field;
 
 /** @noinspection unused */
 public class Settings {
-    /** Time in milliseconds needed to ensure safe parking -
-     * if there is more time than this, the robot will try to score more points. */
+    /**
+     * Time in milliseconds needed to ensure safe parking -
+     * if there is more time than this, the robot will try to score more points.
+     */
     public static final double ms_needed_to_park = 10000;
 
     // Movement settings
@@ -72,7 +74,8 @@ public class Settings {
     public static class DefaultGamepadSettings {
         /** Sensitivity multiplier for left stick input */
         public double left_stick_sensitivity = 1.0;
-        public double dpad_sensitivity = 0.3;
+        /** Speed for dpad-based absolute movement, from 0 to 1 */
+        public double dpad_movement_speed = 0.3;
         public double bumper_sensitivity = 0.8;
         public double trigger_threshold = 0.1;
 
@@ -210,7 +213,7 @@ public class Settings {
             new DefaultGamepadSettings() {
                 {
                     // Customize main gamepad settings
-                    dpad_sensitivity = 0.8;
+                    dpad_movement_speed = 0.8;
                     bumper_sensitivity = 0.7;
                 }
 
@@ -232,7 +235,7 @@ public class Settings {
             "cisrael",
             new DefaultGamepadSettings() {
                 {
-                    dpad_sensitivity = 0.6;
+                    dpad_movement_speed = 0.6;
                     bumper_sensitivity = 0.9;
                 }
 
