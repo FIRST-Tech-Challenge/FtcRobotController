@@ -130,8 +130,8 @@ public class BaseRobot {
      * Handles boost/brake modifiers and applies power to drive system
      */
     public void gamepadPrimary() {
-        DynamicInput.DirectionalOutput directions = input.directional();
-        DynamicInput.ConvertedInputs actions = input.action();
+        DynamicInput.Movements directions = input.getMovements();
+        DynamicInput.Actions actions = input.getActions();
 
         double boost = actions.boostAmount;
         double brake = actions.brakeAmount;
@@ -153,7 +153,7 @@ public class BaseRobot {
      */
     public void gamepadAuxiliary() {
         if (Settings.Deploy.ARM) {
-            DynamicInput.ConvertedInputs actions = input.action();
+            DynamicInput.ContextualActions actions = input.getContextualActions();
 
             if (actions.justRetractActuator) {
                 arm.extensor.retract();

@@ -27,45 +27,82 @@ public class DynamicInput {
         this.subSettings = subProfile.subGamepad;
     }
 
-    // Unified output structure
-    public static class Combined {
-        public final DirectionalOutput directional;
-        public final ConvertedInputs actions;
-
-        public Combined(DirectionalOutput directionalOutput, ConvertedInputs convertedInputs) {
-            this.directional = directionalOutput;
-            this.actions = convertedInputs;
-        }
-    }
-
-    // Directional output class for movement and rotation
-    public static class DirectionalOutput {
+    public static class Movements {
         public final double up, right, down, left, rotation, x, y;
+        private final Gamepad mainCtrl;
+        private final Settings.DefaultGamepadSettings mainSettings;
 
-        public DirectionalOutput(double up, double right, double down, double left, double rotateRight,
-                double rotateLeft) {
-            this.up = up;
-            this.right = right;
-            this.down = down;
-            this.left = left;
-            this.rotation = rotateRight - rotateLeft;
+        public Movements(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings) {
+            this.mainCtrl = mainCtrl;
+            this.mainSettings = mainSettings;
+
+            // Move logic from movements() method here
+            double leftStickY = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_Y),
+                    mainSettings.stick_deadzone);
+            double leftStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_X),
+                    mainSettings.stick_deadzone);
+            double rightStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.RIGHT_STICK_X),
+                    mainSettings.stick_deadzone);
+
+            // Apply sensitivities and inversion
+            leftStickY *= mainSettings.invert_y_axis ? -1 : 1;
+            leftStickX *= mainSettings.invert_x_axis ? -1 : 1;
+
+            double upPower = (leftStickY < 0 ? -leftStickY : 0) * mainSettings.left_stick_sensitivity;
+            double downPower = (leftStickY > 0 ? leftStickY : 0) * mainSettings.left_stick_sensitivity;
+            double rightPower = (leftStickX > 0 ? leftStickX : 0) * mainSettings.left_stick_sensitivity;
+            double leftPower = (leftStickX < 0 ? -leftStickX : 0) * mainSettings.left_stick_sensitivity;
+
+            // Add dpad absolute movement using mapped buttons
+            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_UP))
+                upPower = mainSettings.dpad_movement_speed;
+            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_DOWN))
+                downPower = mainSettings.dpad_movement_speed;
+            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_RIGHT))
+                rightPower = mainSettings.dpad_movement_speed;
+            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_LEFT))
+                leftPower = mainSettings.dpad_movement_speed;
+
+            // Handle rotation based on settings
+            double rotationRight = 0;
+            double rotationLeft = 0;
+
+            if (mainSettings.use_right_stick_rotation) {
+                double rotation = rightStickX * mainSettings.right_stick_sensitivity;
+                rotationRight = rotation > 0 ? rotation : 0;
+                rotationLeft = rotation < 0 ? -rotation : 0;
+            } else {
+                rotationRight = getButtonState(mainCtrl, Settings.GamepadButton.RIGHT_BUMPER)
+                        ? mainSettings.bumper_rotation_speed
+                        : 0;
+                rotationLeft = getButtonState(mainCtrl, Settings.GamepadButton.LEFT_BUMPER)
+                        ? mainSettings.bumper_rotation_speed
+                        : 0;
+            }
+
+            // Set final values
+            this.up = upPower;
+            this.right = rightPower;
+            this.down = downPower;
+            this.left = leftPower;
+            this.rotation = rotationRight - rotationLeft;
             this.y = up - down;
             this.x = right - left;
         }
+
+        private double applyDeadzone(double value, double deadzone) {
+            return Math.abs(value) > deadzone ? value : 0;
+        }
     }
 
-    // Button data structure with justPressed logic
-    public static class ConvertedInputs {
+    public static class Actions {
         public final boolean extendActuator, retractActuator, groundActuator, actuatorBusy;
         public final boolean clawRight, clawLeft, wristUp, wristDown;
         public final boolean ascendActuatorExtend, ascendActuatorRetract, ascendActuatorChange;
-        public final boolean justExtendActuator, justRetractActuator, justGroundActuator;
         public final double boostAmount, brakeAmount;
 
-        public ConvertedInputs(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
-                Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
-                boolean prevExtend, boolean prevRetract, boolean prevGround) {
-
+        public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
+                Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
             this.extendActuator = getButtonState(subCtrl, subSettings.buttonMapping.extendActuator);
             this.retractActuator = getButtonState(subCtrl, subSettings.buttonMapping.retractActuator);
             this.groundActuator = getButtonState(subCtrl, subSettings.buttonMapping.groundActuator);
@@ -84,94 +121,46 @@ public class DynamicInput {
                     getAxisValue(mainCtrl, mainSettings.buttonMapping.boost));
             this.brakeAmount = mainSettings.applyBoostCurve(
                     getAxisValue(mainCtrl, mainSettings.buttonMapping.brake));
+        }
+    }
 
-            // Determine if buttons were just pressed
+    public static class ContextualActions extends Actions {
+        public final boolean justExtendActuator, justRetractActuator, justGroundActuator;
+        private final boolean prevExtendActuator, prevRetractActuator, prevGroundActuator;
+
+        public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
+                Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
+                boolean prevExtend, boolean prevRetract, boolean prevGround) {
+            super(mainCtrl, mainSettings, subCtrl, subSettings);
+
+            this.prevExtendActuator = prevExtend;
+            this.prevRetractActuator = prevRetract;
+            this.prevGroundActuator = prevGround;
+
             this.justExtendActuator = extendActuator && !prevExtend;
             this.justRetractActuator = retractActuator && !prevRetract;
             this.justGroundActuator = groundActuator && !prevGround;
         }
     }
 
-    // Generates the directional output based on controller input
-    public DirectionalOutput directional() {
-        // Get mapped stick values with deadzone
-        double leftStickY = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_Y),
-                mainSettings.stick_deadzone);
-        double leftStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_X),
-                mainSettings.stick_deadzone);
-        double rightStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.RIGHT_STICK_X),
-                mainSettings.stick_deadzone);
-
-        // Apply sensitivities and inversion
-        leftStickY *= mainSettings.invert_y_axis ? -1 : 1;
-        leftStickX *= mainSettings.invert_x_axis ? -1 : 1;
-
-        double upPower = (leftStickY < 0 ? -leftStickY : 0) * mainSettings.left_stick_sensitivity;
-        double downPower = (leftStickY > 0 ? leftStickY : 0) * mainSettings.left_stick_sensitivity;
-        double rightPower = (leftStickX > 0 ? leftStickX : 0) * mainSettings.left_stick_sensitivity;
-        double leftPower = (leftStickX < 0 ? -leftStickX : 0) * mainSettings.left_stick_sensitivity;
-
-        // Add dpad absolute movement using mapped buttons
-        if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_UP))
-            upPower = mainSettings.dpad_movement_speed;
-        if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_DOWN))
-            downPower = mainSettings.dpad_movement_speed;
-        if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_RIGHT))
-            rightPower = mainSettings.dpad_movement_speed;
-        if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_LEFT))
-            leftPower = mainSettings.dpad_movement_speed;
-
-        // Handle rotation based on settings
-        double rotationRight = 0;
-        double rotationLeft = 0;
-
-        if (mainSettings.use_right_stick_rotation) {
-            double rotation = rightStickX * mainSettings.right_stick_sensitivity;
-            rotationRight = rotation > 0 ? rotation : 0;
-            rotationLeft = rotation < 0 ? -rotation : 0;
-        } else {
-            rotationRight = getButtonState(mainCtrl, Settings.GamepadButton.RIGHT_BUMPER)
-                    ? mainSettings.bumper_rotation_speed
-                    : 0;
-            rotationLeft = getButtonState(mainCtrl, Settings.GamepadButton.LEFT_BUMPER)
-                    ? mainSettings.bumper_rotation_speed
-                    : 0;
-        }
-
-        return new DirectionalOutput(upPower, rightPower, downPower, leftPower, rotationRight, rotationLeft);
+    public Movements getMovements() {
+        return new Movements(mainCtrl, mainSettings);
     }
 
-    // Add this helper method to handle stick axes
-    private static double getAxisValue(Gamepad gamepad, Settings.GamepadAxis axis) {
-        switch (axis) {
-            case LEFT_TRIGGER:
-                return gamepad.left_trigger;
-            case RIGHT_TRIGGER:
-                return gamepad.right_trigger;
-            case LEFT_STICK_X:
-                return gamepad.left_stick_x;
-            case LEFT_STICK_Y:
-                return gamepad.left_stick_y;
-            case RIGHT_STICK_X:
-                return gamepad.right_stick_x;
-            case RIGHT_STICK_Y:
-                return gamepad.right_stick_y;
-            default:
-                throw new IllegalArgumentException("Unexpected axis: " + axis);
-        }
+    public Actions getActions() {
+        return new Actions(mainCtrl, mainSettings, subCtrl, subSettings);
     }
 
-    // Generates all inputs data with justPressed tracking
-    public ConvertedInputs action() {
-        ConvertedInputs convertedInputs = new ConvertedInputs(mainCtrl, mainSettings, subCtrl, subSettings,
+    public ContextualActions getContextualActions() {
+        ContextualActions actions = new ContextualActions(mainCtrl, mainSettings, subCtrl, subSettings,
                 prevExtendActuator, prevRetractActuator, prevGroundActuator);
 
-        // Update previous states for justPressed tracking
-        prevExtendActuator = convertedInputs.extendActuator;
-        prevRetractActuator = convertedInputs.retractActuator;
-        prevGroundActuator = convertedInputs.groundActuator;
+        // Update previous states
+        prevExtendActuator = actions.extendActuator;
+        prevRetractActuator = actions.retractActuator;
+        prevGroundActuator = actions.groundActuator;
 
-        return convertedInputs;
+        return actions;
     }
 
     // Method to switch between different control profiles
@@ -221,8 +210,22 @@ public class DynamicInput {
         }
     }
 
-    private double applyDeadzone(double value, double deadzone) {
-        return Math.abs(value) > deadzone ? value : 0;
+    private static double getAxisValue(Gamepad gamepad, Settings.GamepadAxis axis) {
+        switch (axis) {
+            case LEFT_TRIGGER:
+                return gamepad.left_trigger;
+            case RIGHT_TRIGGER:
+                return gamepad.right_trigger;
+            case LEFT_STICK_X:
+                return gamepad.left_stick_x;
+            case LEFT_STICK_Y:
+                return gamepad.left_stick_y;
+            case RIGHT_STICK_X:
+                return gamepad.right_stick_x;
+            case RIGHT_STICK_Y:
+                return gamepad.right_stick_y;
+            default:
+                throw new IllegalArgumentException("Unexpected axis: " + axis);
+        }
     }
-
 }
