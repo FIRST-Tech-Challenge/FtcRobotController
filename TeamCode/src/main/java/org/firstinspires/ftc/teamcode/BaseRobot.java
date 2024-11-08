@@ -35,10 +35,6 @@ public class BaseRobot {
     public final Logger logger;
     public Arm arm;
     public Odometry odometry;
-    private boolean extensorReleased = true;
-    private boolean clawReleasedR = true;
-    private final boolean actuatorReleased = true;
-    private boolean clawReleasedL = true;
 
     /**
      * Core robot class that manages hardware initialization and basic
@@ -156,47 +152,27 @@ public class BaseRobot {
      * Manages arm, claw, and wrist operations
      */
     public void gamepadAuxiliary() {
-        // Arm manager, the main auxiliary function
-        // Y: Extend arm upwards | X: Retract arm
-        // RT: Open right claw | LT: Open left claw
         if (Settings.Deploy.ARM) {
-            if (extensorReleased) {
-                if (input.action().retractActuator) {
-                    extensorReleased = false;
-                    arm.extensor.retract();
-                } else if (input.action().extendActuator) {
-                    extensorReleased = false;
-                    arm.extensor.extend();
-                } else if (input.action().groundActuator) {
-                    extensorReleased = false;
-                    arm.extensor.ground();
-                }
-            } else if (input.action().actuatorBusy) {
-                extensorReleased = true;
+            DynamicInput.ConvertedInputs actions = input.action();
+
+            if (actions.justRetractActuator) {
+                arm.extensor.retract();
+            } else if (actions.justExtendActuator) {
+                arm.extensor.extend();
+            } else if (actions.justGroundActuator) {
+                arm.extensor.ground();
             }
 
-            if (input.action().clawRight) {
-                if (clawReleasedR) {
-                    clawReleasedR = false;
-                    arm.claw.setRightServo(!arm.claw.openedR);
-                }
-            } else {
-                clawReleasedR = true;
+            if (actions.clawRight) {
+                arm.claw.setRightServo(!arm.claw.openedR);
             }
-            if (input.action().clawLeft) {
-                if (clawReleasedL) {
-                    clawReleasedL = false;
-                    arm.claw.setLeftServo(!arm.claw.openedL);
-                }
-            } else {
-                clawReleasedL = true;
+            if (actions.clawLeft) {
+                arm.claw.setLeftServo(!arm.claw.openedL);
             }
 
-            // UP: Set the wrist to up
-            // DOWN: Set the wrist to down
-            if (input.action().wristUp) {
+            if (actions.wristUp) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            } else if (input.action().wristDown) {
+            } else if (actions.wristDown) {
                 arm.wrist.setPosition(Wrist.Position.RUNG);
             }
         }
