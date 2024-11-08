@@ -75,7 +75,9 @@ public class ArmTesting extends OpMode {
         telemetry.addData("Scoring position", scoringArmMotor.getCurrentPosition());
         telemetry.addData("Collection position", collectionArmMotor.getCurrentPosition());
 
-        if (controller2.pressed(Controller.Button.A))
+        if (controller2.pressed(Controller.Button.A)) {
             armClaw.setPosition(clawClosed ? 0.2 : 0);
+            clawClosed = !clawClosed;
+        }
     }
 }
