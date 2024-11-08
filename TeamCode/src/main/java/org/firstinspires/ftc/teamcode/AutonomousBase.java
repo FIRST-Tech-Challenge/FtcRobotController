@@ -14,6 +14,9 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -28,8 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
-//  HardwarePixelbot robot = new HardwarePixelbot(telemetry);
-    HardwareMinibot robot = new HardwareMinibot();
+    Hardware2025Bot robot = new Hardware2025Bot();
 
     static final int     DRIVE_TO             = 1;       // ACCURACY: tighter tolerances, and slows then stops at final position
     static final int     DRIVE_THRU           = 2;       // SPEED: looser tolerances, and leave motors running (ready for next command)
@@ -62,20 +64,20 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double STRAFE_MULTIPLIER = 1.5;
     static final double MIN_SPIN_RATE      = 0.05;    // Minimum power to turn the robot
     static final double MIN_DRIVE_POW      = 0.05;    // Minimum speed to move the robot
-//  static final double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_POW*MIN_DRIVE_POW+MIN_DRIVE_POW*MIN_DRIVE_POW);
+    static final double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_POW*MIN_DRIVE_POW+MIN_DRIVE_POW*MIN_DRIVE_POW);
 
     // NOTE: Initializing the odometry global X-Y and ANGLE to 0-0 and 0deg means the frame of reference for all movements is
     // the starting positiong/orientation of the robot.  An alternative is to make the bottom-left corner of the field the 0-0
     // point, with 0deg pointing forward.  That allows all absolute driveToPosition() commands to be an absolute x-y location
     // on the field.
-    double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
-    double robotGlobalYCoordinatePosition       = 0.0;
-    double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
+    double robotGlobalXCoordinatePosition       = 0.0;   // inches
+    double robotGlobalYCoordinatePosition       = 0.0;   // inches
+    double robotOrientationRadians              = 0.0;   // radians 0deg (straight forward)
 
     // Odometry values corrected by external source, IE AprilTags
 //  FieldCoordinate robotGlobalCoordinateCorrectedPosition = new FieldCoordinate(0.0, 0.0, 0.0);
 
-    double autoXpos                             = 0.0;   // Keeps track of our Autonomous X-Y position and Angle commands. 
+    double autoXpos                             = 0.0;   // Keeps track of our Autonomous X-Y position and Angle commands.
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
@@ -336,7 +338,11 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     public void performEveryLoop() {
         robot.readBulkData();
-//      globalCoordinatePositionUpdate();
+        robot.odom.update();
+        Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
+        robotGlobalXCoordinatePosition = pos.getY(DistanceUnit.INCH);   // opposite x/y from goBilda pinpoint
+        robotGlobalYCoordinatePosition = pos.getX(DistanceUnit.INCH);
+        robotOrientationRadians       = -pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward)
     } // performEveryLoop
 
     // Create a time stamped folder in
@@ -966,8 +972,8 @@ public abstract class AutonomousBase extends LinearOpMode {
                              int driveType) {
         boolean reachedDestination = false;
         // Not sure why, but the x and y are backwards
-        double xWorld = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (backward! see notes)
-        double yWorld = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
+        double xWorld = robotGlobalYCoordinatePosition;  // inches (backward! see notes)
+        double yWorld = robotGlobalXCoordinatePosition;  // inches
         double xMovement, yMovement, turnMovement;
         // Not sure why, but the x and y are backwards
         double deltaX = yTarget - xWorld;
@@ -1029,10 +1035,10 @@ public abstract class AutonomousBase extends LinearOpMode {
 
         // Convert from cm to inches
         double errorMultiplier = 0.033;
-//      double speedMin = MIN_DRIVE_MAGNITUDE;
+        double speedMin = MIN_DRIVE_MAGNITUDE;
         double allowedError = (driveType == DRIVE_THRU) ? 2.75 : 0.5;
 
-        return (driveToXY(yTarget, xTarget, angleTarget, 0.0 /*speedMin*/, speedMax, errorMultiplier,
+        return (driveToXY(yTarget, xTarget, angleTarget, speedMin, speedMax, errorMultiplier,
                 allowedError, driveType));
     }
 
@@ -1125,9 +1131,9 @@ public abstract class AutonomousBase extends LinearOpMode {
     public boolean moveToPosition( double xTarget, double yTarget, double angleTarget,
                                     double speedMax, double turnMax, int driveType ) {
         // Convert current robot X,Y position from encoder-counts to inches
-        double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (X/Y backward! see notes)
-        double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
-        double angle_world = robotOrientationRadians;                              // radians
+        double x_world = robotGlobalYCoordinatePosition;  // inches (X/Y backward! see notes)
+        double y_world = robotGlobalXCoordinatePosition;  // inches
+        double angle_world = robotOrientationRadians;     // radians
         // Compute distance and angle-offset to the target point
         double distanceToPoint   = Math.sqrt( Math.pow((xTarget - x_world),2.0) + Math.pow((yTarget - y_world),2.0) );
         double distToPointAbs    = Math.abs( distanceToPoint );

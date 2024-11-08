@@ -85,7 +85,6 @@ public abstract class Teleop extends LinearOpMode {
     Gamepad.RumbleEffect rumblePixelBinSingle;
     Gamepad.RumbleEffect rumblePixelBinDouble;
 
-
     // sets unique behavior based on alliance
     public abstract void setAllianceSpecificBehavior();
 
@@ -135,7 +134,7 @@ public abstract class Teleop extends LinearOpMode {
                 robot.odom.update();
                 Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
                 String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}",
-                      pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), pos.getHeading(AngleUnit.DEGREES));
+                      pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), -pos.getHeading(AngleUnit.DEGREES));
                 telemetry.addData("Position", posStr);
                 Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
                 String velStr = String.format(Locale.US,"{X,Y: %.1f, %.1f in/sec, HVel: %.2f deg/sec}",
@@ -196,6 +195,7 @@ public abstract class Teleop extends LinearOpMode {
             processPanControls();
             processTiltControls();
             ProcessViperLiftControls();
+            robot.processViperSlideExtension();
             processCollectorControls();
 
             // Compute current cycle time
@@ -563,7 +563,7 @@ public abstract class Teleop extends LinearOpMode {
         boolean safeToManuallyLower = (robot.wormTiltMotorPos > robot.TILT_ANGLE_HW_MIN);
         boolean safeToManuallyRaise = (robot.wormTiltMotorPos < robot.TILT_ANGLE_HW_MAX);
         double  gamepad2_right_stick = gamepad2.right_stick_y;
-        boolean manual_tilt_control = ( Math.abs(gamepad2_right_stick) > 0.10 );
+        boolean manual_tilt_control = ( Math.abs(gamepad2_right_stick) > 0.08 );
 
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
@@ -580,15 +580,15 @@ public abstract class Teleop extends LinearOpMode {
         //===================================================================
         else if( manual_tilt_control || tiltAngleTweaked) {
             // Does user want to rotate turret DOWN (negative joystick input)
-            if( safeToManuallyLower && (gamepad2_right_stick < -0.10) ) {
-                double motorPower = 0.30 * gamepad2_right_stick; // NEGATIVE
-                robot.wormTiltMotor.setPower( motorPower );   // -3% to -30%
+            if( safeToManuallyLower && (gamepad2_right_stick < -0.08) ) {
+                double motorPower = 0.95 * gamepad2_right_stick; // NEGATIVE
+                robot.wormTiltMotor.setPower( motorPower );   // -8% to -95%
                 tiltAngleTweaked = true;
             }
             // Does user want to rotate turret UP (positive joystick input)
-            else if( safeToManuallyRaise && (gamepad2_right_stick > 0.10) ) {
-                double motorPower = 0.60 * gamepad2_right_stick; // POSITIVE
-                robot.wormTiltMotor.setPower( motorPower );   // +6% to +60%
+            else if( safeToManuallyRaise && (gamepad2_right_stick > 0.08) ) {
+                double motorPower = 0.95 * gamepad2_right_stick; // POSITIVE
+                robot.wormTiltMotor.setPower( motorPower );   // +8% to +95%
                 tiltAngleTweaked = true;
             }
             // No more input?  Time to stop turret movement!
@@ -602,8 +602,8 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void ProcessViperLiftControls() {
-        boolean safeToManuallyLower = (robot.viperMotorPos > robot.VIPER_EXTEND_ZERO);
-        boolean safeToManuallyRaise = (robot.viperMotorPos < robot.VIPER_EXTEND_FULL);
+        boolean safeToManuallyRetract = (robot.viperMotorPos > robot.VIPER_EXTEND_ZERO);
+        boolean safeToManuallyExtend  = (robot.viperMotorPos < robot.VIPER_EXTEND_FULL1);
         // Capture user inputs ONCE, in case they change during processing of this code
         // or we want to scale them down
         double  gamepad2_left_trigger  = gamepad2.left_trigger  * 1.00;
@@ -614,22 +614,22 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Move lift to HIGH-SCORING position
-//           robot.startLiftMove( robot.VIPER_EXTEND_BASKET );
+            robot.startLiftMove( robot.VIPER_EXTEND_BASKET );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Extend lift to the specimen-scoring hook-above-the-bar height
 //           robot.startLiftMove( robot.VIPER_EXTEND_HOOK );
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
-        else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
+        else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Move lift to STORED position
-//           robot.startLiftStore();
+            robot.startLiftMove( robot.VIPER_EXTEND_GRAB );
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
             // Does user want to manually RAISE the lift?
-            if( safeToManuallyRaise && (gamepad2_right_trigger > 0.25) ) {
+            if( safeToManuallyExtend && (gamepad2_right_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
                 robot.abortViperSlideExtension();
                 viperPower = gamepad2_right_trigger;
@@ -637,7 +637,7 @@ public abstract class Teleop extends LinearOpMode {
                 liftTweaked = true;
             }
             // Does user want to manually LOWER the lift?
-            else if( safeToManuallyLower && (gamepad2_left_trigger > 0.25) ) {
+            else if( safeToManuallyRetract && (gamepad2_left_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
                 robot.abortViperSlideExtension();
                 viperPower = robot.VIPER_LOWER_POWER;
@@ -701,8 +701,8 @@ public abstract class Teleop extends LinearOpMode {
             geckoServoEjecting = false;           // (we can't be doing this)
         } // r_bumper
 
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
-        else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
+        else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Position for scoring a specimen on the submersible bar
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR);

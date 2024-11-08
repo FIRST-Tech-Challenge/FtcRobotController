@@ -2,11 +2,16 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.toDegrees;
+
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This program implements robot movement based on Gyro heading and encoder counts.
@@ -82,13 +87,13 @@ public class AutonomousLeftRed extends AutonomousBase {
         // UNIT TEST: The following methods verify our basic robot actions.
         // Comment them out when not being tested.
 //      testGyroDrive();
-//      unitTestOdometryDrive();
+        unitTestOdometryDrive();
         //---------------------------------------------------------------------------------
 
         //---------------------------------------------------------------------------------
         // AUTONOMOUS ROUTINE:  The following method is our main autonomous.
         // Comment it out if running one of the unit tests above.
-        mainAutonomous();
+//      mainAutonomous();
         //---------------------------------------------------------------------------------
 
         telemetry.addData("Program", "Complete");
@@ -115,11 +120,16 @@ public class AutonomousLeftRed extends AutonomousBase {
     // TEST CODE: Verify odometry-based motion functions against a tape measure
     private void unitTestOdometryDrive() {
         // Drive forward 12"
-        driveToPosition( 12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
+        driveToPosition( 12.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU );
         // Strafe right 12"
-        driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
+        driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU );
         // Turn 180 deg
-        driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
+        driveToPosition( 12.0, 12.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
+        // Report the final odometry position/orientation
+        telemetry.addData("Final", "x=%.1f, y=%.1f, %.1f deg",
+                robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, toDegrees(robotOrientationRadians) );
+        telemetry.update();
+        sleep( 7000 );
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/

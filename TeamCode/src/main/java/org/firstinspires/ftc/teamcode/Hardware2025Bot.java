@@ -93,21 +93,12 @@ public class Hardware2025Bot
     public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
     public double       wormTiltMotorPwr    = 0.0;    // current power setting
 
-    public double       PAN_ANGLE_HW_MAX    =  400.0;  // absolute encoder angles at maximum rotation RIGHT
-    public double       PAN_ANGLE_CYCLE_R   =  133.5;
-    public double       PAN_ANGLE_AUTO_M_R  =  137.0;  // scoring the autonomous pre-load cone (RIGHT MED)
-    public double       PAN_ANGLE_AUTO_R    =  117.5;  // scoring the autonomous pre-load cone (RIGHT HIGH)
-    public double       PAN_ANGLE_5STACK_L  =  118.0;
-    public double       PAN_ANGLE_COLLECT_R =   21.9;
-    public double       PAN_ANGLE_CENTER    =    0.0;  // turret centered
-    public double       PAN_ANGLE_COLLECT_L =  -21.9;
-    public double       PAN_ANGLE_5STACK_R  = -103.0;
-    public double       PAN_ANGLE_AUTO_L    = -124.5;  // scoring the autonomous pre-load cone (LEFT HIGH)
-    public double       PAN_ANGLE_CYCLE_L   = -133.5;
-    public double       PAN_ANGLE_AUTO_M_L  = -141.0;  // scoring the autonomous pre-load cone (LEFT MED)
-    public double       PAN_ANGLE_HW_MIN    = -400.0;  // absolute encoder angles at maximum rotation LEFT
+    public double       PAN_ANGLE_HW_MAX    =  200.0;  // encoder angles at maximum rotation RIGHT
+    public double       PAN_ANGLE_HW_BASKET =    0.0;  // encoder for rotation back to the basket for scoring
+    public double       PAN_ANGLE_HW_MIN    = -575.0;  // encoder angles at maximum rotation LEFT
 
-    public double       TILT_ANGLE_HW_MAX   =  4000.0;  // encoder at maximum rotation UP/BACK
+    public double       TILT_ANGLE_HW_MAX   =  3675.0;  // encoder at maximum rotation UP/BACK (horizontal = -200)
+    public double       TILT_ANGLE_BASKET   =  3675.0;  // encoder at rotation back to the basket for scoring
     public double       TILT_ANGLE_HW_MIN   = -2000.0;  // encoder at maximum rotation DOWN/FWD
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
@@ -129,10 +120,11 @@ public class Hardware2025Bot
     // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
     public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
     public int          VIPER_EXTEND_AUTO  = 482;    // extend for collecting during auto
-    public int          VIPER_EXTEND_GRAB  = 1230;   // extend for collection from submersible
+    public int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
     public int          VIPER_EXTEND_HOOK  = 1038;   // raised to where the specimen hook is above the high bar
-    public int          VIPER_EXTEND_BASKET= 1482;   // raised to basket-scoring height
-    public int          VIPER_EXTEND_FULL  = 3000;   // fully extended (never exceed this count!)
+    public int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
+    public int          VIPER_EXTEND_FULL1 = 2250;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
+    public int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
     PIDControllerLift   liftPidController;           // PID parameters for the lift motors
     public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
     public double       liftMotorPID_i     =  0.000; //  Raise i = integral
@@ -532,8 +524,8 @@ public class Hardware2025Bot
     public void startViperSlideExtension(int targetEncoderCount )
     {
         // Range-check the target
-        if( targetEncoderCount < VIPER_EXTEND_ZERO ) targetEncoderCount = VIPER_EXTEND_ZERO;
-        if( targetEncoderCount > VIPER_EXTEND_FULL ) targetEncoderCount = VIPER_EXTEND_FULL;
+        if( targetEncoderCount < VIPER_EXTEND_ZERO  ) targetEncoderCount = VIPER_EXTEND_ZERO;
+        if( targetEncoderCount > VIPER_EXTEND_FULL2 ) targetEncoderCount = VIPER_EXTEND_FULL2;
         // Configure target encoder count
         viperMotor.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
