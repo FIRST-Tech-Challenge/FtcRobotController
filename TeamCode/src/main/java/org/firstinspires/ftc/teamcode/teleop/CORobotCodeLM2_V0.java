@@ -61,6 +61,7 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
             handleArmAndSlideControl();
             handleIntake();
             handleBucketControl();
+            handleSpec();
 
             telemetry.update();
         }
@@ -198,6 +199,14 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
             bucketServo.setPosition(0.27); // Default position
         } else if (gamepad2.y) {
             bucketServo.setPosition(0.9); // Release position
+        }
+    }
+    private void handleSpec(){
+        if (gamepad2.b) {
+            specServo.setPosition(0.2); //open spec claw
+        }
+        if (gamepad2.x) {
+            specServo.setPosition(0.8); //closed spec claw
         }
     }
 }
