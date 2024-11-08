@@ -153,6 +153,19 @@ public abstract class Robot extends LinearOpMode {
         BL.setMode(moveMode);
         BR.setMode(moveMode);
     }
+    public void Turn(double degs, double stopSecond) {
+        double rads = Math.toRadians(degs);
+        while (opModeIsActive()) {
+            double yaw   = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double error =  WrapRads(rads - yaw);
+            double r     =  AtTargetRange(error, 0, Math.toRadians(30)) ? 0.2 : 0.6;
+            if (error < 0) r = -r;
+            MovePower(r, -r, r,-r);
+
+            if (AtTargetRange(error, 0, 0.05)) break;
+        }
+        Break(stopSecond);
+    }
     public void LiftPower(double liftPower) {
         LL.setPower(liftPower);
         RL.setPower(liftPower);
