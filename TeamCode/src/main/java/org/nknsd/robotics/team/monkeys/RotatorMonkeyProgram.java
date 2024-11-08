@@ -14,7 +14,7 @@ public class RotatorMonkeyProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Create extension handler so that the rotator can be linked to it
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.8);
+        ExtensionHandler extensionHandler = new ExtensionHandler();
         components.add(extensionHandler);
         telemetryEnabled.add(extensionHandler);
 
@@ -23,7 +23,7 @@ public class RotatorMonkeyProgram extends NKNProgram {
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
 
-        RotationHandler rotationHandler = new RotationHandler("motorArmRotate", 0.05, 0.8, 0.02, 5, true);
+        RotationHandler rotationHandler = new RotationHandler();
         components.add(rotationHandler);
         telemetryEnabled.add(rotationHandler);
 

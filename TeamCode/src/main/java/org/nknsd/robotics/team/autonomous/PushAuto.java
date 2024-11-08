@@ -48,17 +48,15 @@ public class PushAuto extends NKNProgram {
 
 
         // Wheel Handler
-        WheelHandler wheelHandler = new WheelHandler(
-                "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFL", "motorBL"}
-        );
+        WheelHandler wheelHandler = new WheelHandler();
         components.add(wheelHandler);
 
 
         // Arm Stuff
-        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.005, 10, true);
+        RotationHandler rotationHandler = new RotationHandler ();
         components.add(rotationHandler);
 
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.35);
+        ExtensionHandler extensionHandler = new ExtensionHandler();
         components.add(extensionHandler);
 
         IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");

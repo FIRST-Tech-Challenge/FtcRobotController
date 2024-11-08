@@ -11,9 +11,9 @@ import org.nknsd.robotics.framework.NKNComponent;
 import java.util.concurrent.TimeUnit;
 
 public class ExtensionHandler implements NKNComponent {
-    private final String extenderName;
-    private final boolean doInvertMotor;
-    private final double motorPower;
+    private final String extenderName = "motorArmExtend";
+    private final boolean doInvertMotor = true;
+    private final double motorPower = 1;
     private DcMotor motor;          // extender motor
     private RotationHandler rotationHandler;  //Connects to the arm rotator to read from it
     private static final double SAFE_ARM_ROTATION_VALUE = 1.5;
@@ -64,10 +64,7 @@ public class ExtensionHandler implements NKNComponent {
         abstract boolean canGoToPosition(RotationHandler rotationHandler);
     }
 
-    public ExtensionHandler(String extenderName, boolean doInvertMotor, double motorPower) {
-        this.extenderName = extenderName;
-        this.doInvertMotor = doInvertMotor;
-        this.motorPower = motorPower;
+    public ExtensionHandler() {
     }
     
     @Override
