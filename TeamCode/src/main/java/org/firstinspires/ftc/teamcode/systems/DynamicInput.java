@@ -16,6 +16,9 @@ public class DynamicInput {
 
     public DynamicInput(Gamepad gamepad1, Gamepad gamepad2, Settings.ControllerProfile mainProfile,
             Settings.ControllerProfile subProfile) {
+        if (gamepad1 == null || gamepad2 == null || mainProfile == null || subProfile == null) {
+            throw new IllegalArgumentException("All constructor parameters must be non-null");
+        }
         this.mainCtrl = gamepad1;
         this.subCtrl = gamepad2;
         this.mainProfile = mainProfile;
@@ -92,18 +95,12 @@ public class DynamicInput {
     // Generates the directional output based on controller input
     public DirectionalOutput directional() {
         // Get mapped stick values with deadzone
-        double leftStickY = Math
-                .abs(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_Y)) > mainSettings.stick_deadzone
-                        ? getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_Y)
-                        : 0;
-        double leftStickX = Math
-                .abs(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_X)) > mainSettings.stick_deadzone
-                        ? getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_X)
-                        : 0;
-        double rightStickX = Math
-                .abs(getAxisValue(mainCtrl, Settings.GamepadAxis.RIGHT_STICK_X)) > mainSettings.stick_deadzone
-                        ? getAxisValue(mainCtrl, Settings.GamepadAxis.RIGHT_STICK_X)
-                        : 0;
+        double leftStickY = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_Y),
+                mainSettings.stick_deadzone);
+        double leftStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_X),
+                mainSettings.stick_deadzone);
+        double rightStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.RIGHT_STICK_X),
+                mainSettings.stick_deadzone);
 
         // Apply sensitivities and inversion
         leftStickY *= mainSettings.invert_y_axis ? -1 : 1;
@@ -179,15 +176,21 @@ public class DynamicInput {
 
     // Method to switch between different control profiles
     public void switchProfiles(String mainProfileName, String subProfileName) {
+        boolean mainFound = false, subFound = false;
         for (Settings.ControllerProfile profile : Settings.AVAILABLE_PROFILES) {
             if (profile.name.equals(mainProfileName)) {
                 this.mainProfile = profile;
                 this.mainSettings = profile.mainGamepad;
+                mainFound = true;
             }
             if (profile.name.equals(subProfileName)) {
                 this.subProfile = profile;
                 this.subSettings = profile.subGamepad;
+                subFound = true;
             }
+        }
+        if (!mainFound || !subFound) {
+            throw new IllegalArgumentException("Invalid profile name(s)");
         }
     }
 
@@ -216,6 +219,10 @@ public class DynamicInput {
             default:
                 throw new IllegalArgumentException("Unexpected button: " + button);
         }
+    }
+
+    private double applyDeadzone(double value, double deadzone) {
+        return Math.abs(value) > deadzone ? value : 0;
     }
 
 }
