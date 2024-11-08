@@ -27,14 +27,20 @@ public class SlideFunctions {
         double slidePowerConst = 0.7; //max power of slide
         double slidePower = -gamepad2.left_stick_y;
 
-        //insert slide safety stuff here >.<
-
         slideMotor.setPower(slidePower * slidePowerConst);
 
         //display of power and position of motor
         int slidePosition= slideMotor.getCurrentPosition();
         telemetry.addData("Slide power","%4.2f", slidePower);
         telemetry.addData("Slide Position", slidePosition);
+
+        if (slidePosition == -800 && slidePower>0){
+            slideMotor.setPower(0);
+        } else if (slidePosition==0 && slidePower<0) {
+            slideMotor.setPower(0);
+        } else {
+            slideMotor.setPower(slidePower * slidePowerConst);
+        }
 
     }
 
