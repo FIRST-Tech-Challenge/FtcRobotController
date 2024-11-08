@@ -715,7 +715,7 @@ public class Hardware2025Bot
         if( /* (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
                 (pixelGrabState == PixelGrabActivity.IDLE) &&
                 (pixelScoreState == PixelScoreActivity.IDLE) && */
-                (viperMotorPos >= VIPER_EXTEND_BIN)) {
+                (viperMotorPos >= VIPER_EXTEND_GRAB)) {
             // Rotate elbow/wrist to safe position
             elbowServo.setPosition(ELBOW_SERVO_SAFE);
             wristServo.setPosition(WRIST_SERVO_SAFE);
