@@ -19,10 +19,10 @@ public class LeftAuto extends LinearOpMode {
         //0=horizontal
         //extend pos is in inches(2 digits)
 
-        //drives forward and drops the preloaded Californium :)
-        robot.encoderDrive(1,21);
-        robot.setArmPos(1050);
-        robot.setExtendPos(12.0);
+        //drives forward and plants a C4 on the referee's back
+        robot.encoderDrive(1,19.48898);
+        robot.setArmPos(1045);
+        robot.setExtendPos(13.94);
         robot.setArmPos(550);
         robot.runIntakeForTime(1.0, -1);
         robot.setExtendPos(0.5);
@@ -31,16 +31,16 @@ public class LeftAuto extends LinearOpMode {
         robot.encoderStrafe(1, 33);
         robot.encoderTurn(1,180);
         robot.encoderDrive(1,-37);
-        robot.encoderStrafe(1, -17.5);
+        robot.encoderStrafe(1, -17.1);
         //sample 1
-        robot.encoderDrive(1, 9.8898);
+        robot.encoderDrive(1, 10.3);
         robot.autoIntake(1.5);
         robot.encoderDrive(1, 25);
         robot.setExtendPos(0);
         robot.setArmPos(1150);
         robot.encoderTurn(1,42.58898);
 
-        robot.encoderDrive(1,18);
+        robot.encoderDrive(1,7);
 
         robot.setArmPos(1000);
         robot.setExtendPos(-3550);
