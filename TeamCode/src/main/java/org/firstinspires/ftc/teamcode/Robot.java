@@ -20,7 +20,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 public abstract class Robot extends LinearOpMode {
     public IMU imu;
     public VisionPortal visionPortal;
-    public Servo LA, RA, LH, RH, ALL, ARL, IT, DP, ADP;
+    public Servo Ll, Rr, LA, RA, RC, Claw, LJ, RJ, Box;
     public DcMotorEx FL, FR, BL, BR, RL, LL,  encoder1, encoder2, encoder3 ;
     public int FL_Target, FR_Target, BL_Target, BR_Target;
     public final double[] tileSize            = {60.96, 60.96};  // Width * Length
