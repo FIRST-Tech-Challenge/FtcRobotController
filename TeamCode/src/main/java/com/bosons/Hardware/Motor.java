@@ -65,13 +65,13 @@ public class Motor //DCMotor Wrapper Class with added functionality and usb comm
 
     public int getTargetPosition(){return motor.getTargetPosition();}
     public boolean burnCheck(int acceptableError) {
-        int targetDist = Math.abs(getTargetPosition() - getCurrentPosition());
-        if (targetDist <= acceptableError) {
-            setPower(0);
-            return true;
+        int targetDist = Math.abs(getTargetPosition() - getCurrentPosition());//get positional error;
+        if (targetDist <= acceptableError) {//check if error is acceptable;
+            setPower(0);//shut off power to prevent burning;
+            return true;//if within range of target;
         }
         else {
-            return false;
+            return false;//if not within range of target;
         }
     }
     }

@@ -11,7 +11,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 public class Arm {
+    //opMode for telemetry and hardware map;
     public OpMode opm;
+
+    //arm extension motors
     public Motor rightExtendoMotor;
     public Motor leftExtendoMotor;
 
@@ -23,19 +26,28 @@ public class Arm {
     public static double p = 0.0016, i = 0.01, d = 0.00005;
     public static double f = 0.15;
     public static int rotTarget = 0;
-    private final double ticks_in_degree = 8192/360;
     //---------------------//
     public int extensionTarget = 0;
     public int acceptableExtensionError = 30;
     public int maxExtensionTicks = 2185;
     public double Power = 0.0;
 
-    private double ticks_per_cm = (2190/48.96);
+    //Constants
+    private final double ticks_in_degree = (8192/360.0);
+    private final double ticks_per_cm = (2190/48.96);
 
+    //Motion Profiling bullshit
     private double slope;
     private double radius_0;
     private double theta_0;
 
+    //Motion Smoothing Timer;
+    private int thetaTicksInitial;
+    private int thetaTicks;
+    private ElapsedTime smoothingTimer = new ElapsedTime();
+    private double timeSlope;
+    //private double previousTime;
+    private final int acceptableRotationError = (int)(3*ticks_in_degree);//(degrees)*(ticks per degree) = ticks
 
 
     public Arm(OpMode op, double power){
@@ -69,7 +81,7 @@ public class Arm {
         double pid = controller.calculate(armPos,target);
         double ff = Math.cos(Math.toRadians(target/ticks_in_degree))*f;
 
-        double power = pid + ff;
+        double power = (pid + ff)*0.5;
 
         if(armPos>100||target>100) {
             rightRotationMotor.setPower(power);
@@ -83,9 +95,37 @@ public class Arm {
         opm.telemetry.addData("target ",target);
     }
 
+    public void setPositionPolarSmooth(double r, double theta, double seconds){//Slows down the movement over a set time;
+        //convert r (cm) to ticks
+        extensionTarget = (int)((r-40.8)*ticks_per_cm);//subtract the fixed length of the arm
+        if(extensionTarget>maxExtensionTicks){extensionTarget=maxExtensionTicks;}
+        if(extensionTarget<0){extensionTarget=0;}
+        //convert theta (degrees) to ticks
+        thetaTicks = (int)((theta+28)*ticks_in_degree);//subtract the initial -28 degree position of the arm
+        if(thetaTicks>2700){thetaTicks=2700;}
+        if(thetaTicks<0){thetaTicks=0;}
+
+        timeSlope = (thetaTicks-thetaTicksInitial)/(seconds*1000);//ticks per milisecond
+        //previousTime = 0;
+        smoothingTimer.reset();
+    }
+    public void updatePositionSmooth(){
+        if(Math.abs(thetaTicks-rotTarget)>acceptableRotationError) {
+            //double deltaTime = smoothingTimer.milliseconds()-previousTime;
+            //previousTime = smoothingTimer.milliseconds();
+            //add (or subtract if slope is negative) ticks over time until target met
+            rotTarget = (int) (thetaTicksInitial + timeSlope * smoothingTimer.milliseconds());// initial position +/- ticksPerMilisecond
+            if(rotTarget>2700){rotTarget=2700;}
+            if(rotTarget<0){rotTarget=0;}
+        }
+        else{
+            rotTarget = thetaTicks;
+        }
+    }
+
     public void setPositionPolar(double r,double theta){
         //convert r (cm) to extension
-        int extensionTicks = (int)((r-38.4)*ticks_per_cm);//subtract the fixed length of the arm
+        int extensionTicks = (int)((r-40.8)*ticks_per_cm);//subtract the fixed length of the arm
         if(extensionTicks>maxExtensionTicks){extensionTicks=maxExtensionTicks;}
         //convert theta (cm) to encoder
         int rotationTicks = (int)((theta+28)*ticks_in_degree);//subtract the initial -28 degree position of the arm
@@ -94,26 +134,29 @@ public class Arm {
         extensionTarget = extensionTicks;
         rotTarget = rotationTicks;
 
-        radius_0 = getArmLength();
-        theta_0 = getArmAngle();
-        slope = (r-radius_0)/(Math.toRadians(theta-theta_0));
-        opm.telemetry.addData("slope",slope);
+        //radius_0 = getArmLength();
+        //theta_0 = getArmAngle();
+        //slope = (r-radius_0)/(Math.toRadians(theta-theta_0));
+        //opm.telemetry.addData("t-t0",theta-theta_0);
+        //opm.telemetry.addData("slope",slope);
     }
 
     public void updatePosition(){
         extendToTarget(extensionTarget,0.5);
         //r=r_0+m(t-t_0)
-        double incrementalTheta = (Math.toRadians(theta_0)+(getArmLength()-radius_0)/slope);
-        int incrementalTicks = (int)(incrementalTheta*ticks_in_degree);
+        //double incrementalTheta = (Math.toRadians(theta_0)+(getArmLength()-radius_0)/slope);
+        //int incrementalTicks = (int)(incrementalTheta*ticks_in_degree);
         updatePidLoop(rotTarget);
-        opm.telemetry.addData("inc_theta ",incrementalTheta);
+        //opm.telemetry.addData("inc_theta ",incrementalTheta);
+        opm.telemetry.addData("armAngle ", getArmAngle());
+        opm.telemetry.addData("armLength ",getArmLength());
     }
 
     public double getArmAngle(){
-        return (leftRotationMotor.getCurrentPosition()/ticks_per_cm)-28;
+        return (leftRotationMotor.getCurrentPosition()/ticks_in_degree)-28;
     }
     public double getArmLength(){
-        return ((leftExtendoMotor.getCurrentPosition()+rightExtendoMotor.getCurrentPosition())/2.0)/(ticks_per_cm)+38.4+2.4;
+        return ((leftExtendoMotor.getCurrentPosition()+rightExtendoMotor.getCurrentPosition())/2.0)/(ticks_per_cm)+40.8;
     }
 
     public void setPositionCartesian(double x, double y){
@@ -141,7 +184,29 @@ public class Arm {
         leftExtendoMotor.setPower(0);
     }
 
-    public enum postition{
+    public enum position{
         topBucket
+    }
+
+    public class pose {
+        public double theta;
+        public double radius;
+        public double x;
+        public double y;
+        public double wrist;
+        public pose(double r, double angle, double wristServoPosition){
+            radius = r;
+            theta = angle;
+            wrist = wristServoPosition;
+            x = radius*Math.cos(theta);
+            y = radius*Math.sin(theta);
+        }
+        //public pose(double xPos, double yPos, double wristServoPosition){
+        //    x = xPos;
+        //    y = yPos;
+        //    wrist = wristServoPosition;
+        //    r = radius*Math.cos(theta);
+        //    theta = radius*Math.sin(theta);
+        //}
     }
 }

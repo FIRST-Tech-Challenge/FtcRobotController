@@ -33,9 +33,10 @@ public class TeleOpDev extends OpMode{
     public Controller driverA = null;
     public DriveTrain driveTrain = null;
     public Arm arm = null;
+    public ElapsedTime armTimer = new ElapsedTime(1000);
 
-    public static double radius_arm = 0;
-    public static double theta_arm = -28;
+    //public static double radius_arm = 0;
+    //public static double theta_arm = -28;
 
     /*
      * Code to run ONCE when the Driver hits INIT
@@ -72,15 +73,15 @@ public class TeleOpDev extends OpMode{
     public void loop () {
 
 
-        if (driverA.onButtonPress(Controller.Button.dPadUp)){
-            arm.extendToTarget(2190,0.5);
-        }
-        if (driverA.onButtonPress(Controller.Button.dPadDown)) {
-            arm.extendToTarget(0,0.5);
-        }
+        //if (driverA.onButtonPress(Controller.Button.dPadUp)){
+        //    arm.extendToTarget(2190,0.5);
+        //}
+        //if (driverA.onButtonPress(Controller.Button.dPadDown)) {
+        //    arm.extendToTarget(0,0.5);
+        //}
         if(driverA.toggleButtonState(Controller.Button.y)){
-            driveTrain.setDrivePowerCoefficient(0.1);
-            driveTrain.setTurnPowerCoefficient(0.1);
+            driveTrain.setDrivePowerCoefficient(0.5);
+            driveTrain.setTurnPowerCoefficient(0.5);
         }
         else{
             driveTrain.setDrivePowerCoefficient(1);
@@ -98,11 +99,26 @@ public class TeleOpDev extends OpMode{
         //------------------------------------------------------//
 
         //arm.updatePidLoop();
-        arm.setPositionPolar(radius_arm,theta_arm);
-        arm.updatePosition();
+        //arm.setPositionPolar(radius_arm,theta_arm);
 
+        if(driverA.toggleButtonState(Controller.Button.y)){
+            if(driverA.onButtonPress(Controller.Button.y)){
+                arm.setPositionPolarSmooth(84.6,90,5);
+            }
+            armTimer.reset();
+            arm.updatePositionSmooth();
+        }
+        else{
+            if(armTimer.seconds()<3){
+                arm.setPositionPolar(0,90-(3000/armTimer.milliseconds())*90);//smooth transition over three seconds
+            }
+            else {
+                arm.setPositionPolar(0,-28);//let the arm drop to home after delay
+            }
+            arm.updatePosition();
+        }
 
-
+        telemetry.addData("button Y",driverA.toggleButtonState(Controller.Button.y));
         //YOU NEED THESE FOR CONTROLLER AND SAFTEY CHECKS
         driverA.updateAll();
     }
