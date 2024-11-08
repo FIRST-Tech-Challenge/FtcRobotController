@@ -149,8 +149,8 @@ public class Hardware2025Bot
     final public static double ELBOW_SERVO_INIT_ANGLE = 229.0;
     final public static double ELBOW_SERVO_SAFE = 0.370;  // Safe orientation for driving
     final public static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
-    final public static double ELBOW_SERVO_GRAB = 0.330;  // For collecting off the field
-    final public static double ELBOW_SERVO_GRAB_ANGLE = 234.0;
+    final public static double ELBOW_SERVO_GRAB = 0.340;  // For collecting off the field
+    final public static double ELBOW_SERVO_GRAB_ANGLE = 231.0;
     final public static double ELBOW_SERVO_DROP = 0.330;  // For scoring in the basket
     final public static double ELBOW_SERVO_DROP_ANGLE = 234.0;
     final public static double ELBOW_SERVO_BAR  = 0.650;  // For scoring a specimen on the sumersible bar
@@ -162,8 +162,8 @@ public class Hardware2025Bot
     final public static double WRIST_SERVO_INIT_ANGLE = 288.0;
     final public static double WRIST_SERVO_SAFE = 0.340;    // Safe orientation for driving
     final public static double WRIST_SERVO_SAFE_ANGLE = 234.0;
-    final public static double WRIST_SERVO_GRAB = 0.880;
-    final public static double WRIST_SERVO_GRAB_ANGLE = 56.0;
+    final public static double WRIST_SERVO_GRAB = 0.860;
+    final public static double WRIST_SERVO_GRAB_ANGLE = 67.0;
     final public static double WRIST_SERVO_RAISE = 0.570;    // Safe orientation for driving
     final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;
     final public static double WRIST_SERVO_DROP = 0.350;
