@@ -8,17 +8,23 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
+import org.nknsd.robotics.team.components.ExtensionHandler;
 
 import java.util.concurrent.TimeUnit;
 
 public class RotationHandler implements NKNComponent {
 
-    final double threshold;
-    final double P_CONSTANT;
-    final double I_CONSTANT;
-    final double errorCap;
-    final boolean enableErrorClear;
-    private final String motorName;
+    public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 5;
+    final double threshold = 0.05;
+    final double P_CONSTANT = 0.38;
+    final double EXTENDED_P_CONSTANT = 0.5;
+    final double I_CONSTANT = 0.005;
+    final double EXTENDED_I_CONSTANT = 0.009;
+    final double D_CONSTANT = 0;
+    final double EXTENDED_D_CONSTANT = 0;
+    final double errorCap = 10;
+    final boolean enableErrorClear = true;
+    private final String motorName = "motorArmRotate";
     public RotationPositions targetRotationPosition = RotationPositions.RESTING;
     PotentiometerHandler potHandler;
     double diff;
@@ -28,14 +34,7 @@ public class RotationHandler implements NKNComponent {
     private DcMotor motor;
     private ExtensionHandler extensionHandler;
 
-    public RotationHandler(String motorName, double threshold, double P_CONSTANT, double I_CONSTANT, double errorCap, boolean enableErrorClear) {
-        this.motorName = motorName;
-        this.threshold = threshold;
-        this.P_CONSTANT = P_CONSTANT;
-        this.I_CONSTANT = I_CONSTANT;
-        this.errorCap = errorCap;
-        this.enableErrorClear = enableErrorClear;
-    }
+    public RotationHandler() {}
 
     @Override
     public void stop(ElapsedTime runtime, Telemetry telemetry) {
@@ -48,11 +47,14 @@ public class RotationHandler implements NKNComponent {
         this.extensionHandler = extensionHandler;
     }
 
-
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         motor = hardwareMap.dcMotor.get(motorName);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        if (potHandler.getPotVoltage() < 2.5) { // Arm is already rotated out when initializing, so we can move to pickup position
+            targetRotationPosition = RotationPositions.PICKUP;
+        }
         return true;
     }
 
@@ -116,7 +118,6 @@ public class RotationHandler implements NKNComponent {
         if (Math.abs(diff) <= threshold) {
             return 0;
         }
-
         if (resError > errorCap) {
             resError = errorCap;
         } else if (resError < -errorCap) {
@@ -126,18 +127,19 @@ public class RotationHandler implements NKNComponent {
         if (oppositeSigns(diff, resError) && enableErrorClear) {
             resError = diff;
         }
-
-        return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
+        if (extensionHandler.targetPosition() != ExtensionHandler.ExtensionPositions.HIGH_BASKET) {
+            return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
+        } else {
+            return ((diff * EXTENDED_P_CONSTANT) + (resError * EXTENDED_I_CONSTANT));
+        }
     }
 
     public boolean isAtTargetPosition() {
-        return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold;
+        return Math.abs(targetRotationPosition.target - motor.getCurrentPosition()) <= threshold * 2;
     }
 
-    public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 4;
-
     public enum RotationPositions {
-        PICKUP(1.1), PREPICKUP(1.40), HIGH(2.4), RESTING(3.3), PARKING(2.19);
+        PICKUP(1.03), PREPICKUP(1.50), HIGH(2.44), RESTING(3.339), SPECIMEN(2.26);
 
         public final double target;
 

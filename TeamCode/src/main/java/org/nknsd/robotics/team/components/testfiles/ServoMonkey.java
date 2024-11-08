@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
-import org.nknsd.robotics.team.components.IntakeServoHandler;
+import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 
 import java.util.concurrent.TimeUnit;
 
 public class ServoMonkey implements NKNComponent {
-    private IntakeServoHandler intakeServoHandler;
+    private IntakeSpinnerHandler intakeSpinnerHandler;
     private Tests currentTest = Tests.DO_NOTHING;
 
     private enum Tests {
@@ -83,20 +83,20 @@ public class ServoMonkey implements NKNComponent {
     private void runTest(Tests tests) {
         switch (tests) {
             case DO_NOTHING:
-                intakeServoHandler.setServoPower(0);
+                intakeSpinnerHandler.setServoPower(IntakeSpinnerHandler.HandStates.TRUE_STOP);
                 break;
 
             case TARGET_FORWARD:
-                intakeServoHandler.setServoPower(1.0);
+                intakeSpinnerHandler.setServoPower(IntakeSpinnerHandler.HandStates.GRIP);
                 break;
 
             case TARGET_BACKWARD:
-                intakeServoHandler.setServoPower(-1.0);
+                intakeSpinnerHandler.setServoPower(IntakeSpinnerHandler.HandStates.RELEASE);
                 break;
         }
     }
 
-    public void link(IntakeServoHandler intakeServoHandler) {
-        this.intakeServoHandler = intakeServoHandler;
+    public void link(IntakeSpinnerHandler intakeSpinnerHandler) {
+        this.intakeSpinnerHandler = intakeSpinnerHandler;
     }
 }

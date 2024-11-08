@@ -4,6 +4,7 @@ import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.autoSteps.AutoStepMove;
+import org.nknsd.robotics.team.autoSteps.AutoStepSleep;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
@@ -16,8 +17,7 @@ import org.nknsd.robotics.team.components.autonomous.AutoHeart;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ObservationZoneAuto extends NKNProgram {
-
+public class TestingAuto extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Step List
@@ -69,13 +69,19 @@ public class ObservationZoneAuto extends NKNProgram {
     }
 
     private void assembleList(List<NKNAutoStep> stepList, AutoHeart autoHeart, AutoSkeleton autoSkeleton) {
-        //Move forward a little
-        AutoStepMove step0 = new AutoStepMove(0, 0.2);
-        stepList.add(step0);
+        AutoStepMove right1 = new AutoStepMove(1, 0);
+        AutoStepMove left1 = new AutoStepMove(-1, 0);
+        AutoStepMove up1 = new AutoStepMove(0, 1);
+        AutoStepMove down1 = new AutoStepMove(0, -1);
+        AutoStepSleep sleep = new AutoStepSleep(750);
 
-        //Move right into the obs zone
-        AutoStepMove step1 = new AutoStepMove(1.5, 0);
-        stepList.add(step1);
+        stepList.add(right1);
+        stepList.add(sleep);
+        stepList.add(left1);
+        stepList.add(sleep);
+        stepList.add(up1);
+        stepList.add(sleep);
+        stepList.add(down1);
 
         autoHeart.linkSteps(stepList, autoSkeleton);
     }

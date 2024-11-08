@@ -1,23 +1,29 @@
-package org.nknsd.robotics.team.components;
+package org.nknsd.robotics.team.components.testfiles;
 
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
+import org.nknsd.robotics.team.components.GamePadHandler;
 
-public class PotentiometerHandler implements NKNComponent {
-    private final String potName = "armPot";
-
-    private AnalogInput pot;
-
-    public PotentiometerHandler() {}
+public class EventHandlerTester implements NKNComponent {
+    private GamePadHandler gamePadHandler;
+    private int pressCount = 0;
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
-        pot = hardwareMap.get(AnalogInput.class, this.potName);
+
+
+        Runnable event = new Runnable() {
+            @Override
+            public void run() {
+                pressCount++;
+            }
+        };
+
+        gamePadHandler.addListener(GamePadHandler.GamepadButtons.A, 1, "sayA", true, event);
         return true;
     }
 
@@ -38,7 +44,7 @@ public class PotentiometerHandler implements NKNComponent {
 
     @Override
     public String getName() {
-        return "PotentiometerHandler";
+        return null;
     }
 
     @Override
@@ -48,10 +54,10 @@ public class PotentiometerHandler implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("POT", pot.getVoltage());
+        telemetry.addData("press count",pressCount);
     }
 
-    public double getPotVoltage() {
-        return pot.getVoltage();
+    public void link(GamePadHandler gamePadHandler) {
+        this.gamePadHandler = gamePadHandler;
     }
 }

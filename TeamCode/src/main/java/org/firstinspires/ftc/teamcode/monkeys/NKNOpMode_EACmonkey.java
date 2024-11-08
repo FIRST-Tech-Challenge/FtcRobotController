@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.monkeys;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.programs.FlowSensorTestProgram;
+import org.nknsd.robotics.team.monkeys.EACmonkeyProgram;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Flow Sensor Test", group="Tests")
-public class NKNOpMode_FlowSensorTest extends OpMode {
+@TeleOp(name = "EAC Monkey", group="Tests")
+public class NKNOpMode_EACmonkey extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     //Time counters are in milliseconds
@@ -20,7 +20,7 @@ public class NKNOpMode_FlowSensorTest extends OpMode {
     // We use these two to delay telemetry outputs to ~200 milliseconds
 
     // Whatever program is attached here will be loaded with all its glorious components
-    private final NKNProgram program = new FlowSensorTestProgram();
+    private final NKNProgram program = new EACmonkeyProgram();
 
     // Code to run ONCE when the driver hits INIT
     @Override

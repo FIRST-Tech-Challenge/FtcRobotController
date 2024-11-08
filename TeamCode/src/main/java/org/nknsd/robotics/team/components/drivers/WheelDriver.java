@@ -7,11 +7,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.team.components.GamePadHandler;
-import org.nknsd.robotics.team.components.IMUComponent;
 import org.nknsd.robotics.team.components.WheelHandler;
 
 // Adds events to gamepad to control the wheels
-public class AdvancedWheelDriver implements NKNComponent {
+public class WheelDriver implements NKNComponent {
     private final double speedMin;
     private final double speedMax;
     private final double speedStepAmount;
@@ -22,7 +21,6 @@ public class AdvancedWheelDriver implements NKNComponent {
     private WheelHandler wheelHandler;
 
     private double moveSpeedMultiplier;
-    private boolean imuCorrection = true;
 
     Runnable speedUp = new Runnable() {
         @Override
@@ -41,31 +39,21 @@ public class AdvancedWheelDriver implements NKNComponent {
             }
         }
     };
-
-    Runnable disableAutonomousIMUCorrection = new Runnable() {
-        @Override
-        public void run() {
-            imuCorrection = false;
-        }
-    };
     private Gamepad gamepad;
-    private IMUComponent imuComponent;
 
-    public AdvancedWheelDriver(double speedMin, double speedMax, int speedSteps, GamePadHandler.GamepadSticks forwardStick, GamePadHandler.GamepadSticks strafeStick, GamePadHandler.GamepadSticks turnStick) {
+    public WheelDriver(double speedMin, double speedMax, int speedSteps, GamePadHandler.GamepadSticks forwardStick, GamePadHandler.GamepadSticks strafeStick, GamePadHandler.GamepadSticks turnStick) {
         this.speedMin = speedMin;
         this.speedMax = speedMax;
         this.forwardStick = forwardStick;
         this.strafeStick = strafeStick;
         this.turnStick = turnStick;
-        speedStepAmount = (speedMax - speedMin) / 5;
+        speedStepAmount = (speedMax - speedMin) / speedSteps;
     }
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         moveSpeedMultiplier = 0;
         this.gamepad = gamepad1;
-
-        gamePadHandler.addListener(GamePadHandler.GamepadButtons.Y, 1, "disableAutonomousIMUYawCorrection", true, disableAutonomousIMUCorrection);
         return true;
     }
 
@@ -78,8 +66,6 @@ public class AdvancedWheelDriver implements NKNComponent {
     public void start(ElapsedTime runtime, Telemetry telemetry) {
         gamePadHandler.addListener(GamePadHandler.GamepadButtons.RIGHT_BUMPER, 1, "speedUp", true, speedUp);
         gamePadHandler.addListener(GamePadHandler.GamepadButtons.LEFT_BUMPER, 1, "speedDown", true, speedDown);
-
-        gamePadHandler.removeListener(GamePadHandler.GamepadButtons.Y, 1, "disableAutonomousIMUYawCorrection", true);
     }
 
     @Override
@@ -89,17 +75,27 @@ public class AdvancedWheelDriver implements NKNComponent {
 
     @Override
     public String getName() {
-        return "AdvancedWheelDriver";
+        return "WheelDriver";
     }
 
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
-        double yaw = imuComponent.getYaw();
-        if (imuCorrection) {
-            yaw += 90;
-        }
-        wheelHandler.absoluteVectorToMotion(strafeStick.getValue(gamepad) * moveSpeedMultiplier, forwardStick.getValue(gamepad) * moveSpeedMultiplier, turnStick.getValue(gamepad) * moveSpeedMultiplier, yaw, telemetry);
+        wheelHandler.relativeVectorToMotion(forwardStick.getValue(gamepad) * moveSpeedMultiplier, strafeStick.getValue(gamepad) * moveSpeedMultiplier, turnStick.getValue(gamepad) * moveSpeedMultiplier);
+//        double y = 0; double x = 0;
+//        if (GamePadHandler.GamepadButtons.DPAD_UP.detect(gamepad)) {
+//            y = 0.4;
+//        } else if (GamePadHandler.GamepadButtons.DPAD_DOWN.detect(gamepad)) {
+//            y = -0.4;
+//        }
+//
+//        if (GamePadHandler.GamepadButtons.DPAD_RIGHT.detect(gamepad)) {
+//            x = 0.4;
+//        } else if (GamePadHandler.GamepadButtons.DPAD_LEFT.detect(gamepad)) {
+//            x = -0.4;
+//        }
+//
+//        wheelHandler.relativeVectorToMotion(y * moveSpeedMultiplier, x * moveSpeedMultiplier, 0);
     }
 
     @Override
@@ -108,9 +104,8 @@ public class AdvancedWheelDriver implements NKNComponent {
         telemetry.addData("Raw Speed", moveSpeedMultiplier);
     }
 
-    public void link(GamePadHandler gamePadHandler, WheelHandler wheelHandler, IMUComponent imuComponent) {
+    public void link(GamePadHandler gamePadHandler, WheelHandler wheelHandler) {
         this.gamePadHandler = gamePadHandler;
         this.wheelHandler = wheelHandler;
-        this.imuComponent = imuComponent;
     }
 }

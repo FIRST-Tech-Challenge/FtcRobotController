@@ -11,9 +11,9 @@ import org.nknsd.robotics.framework.NKNComponent;
 import java.util.concurrent.TimeUnit;
 
 public class ExtensionHandler implements NKNComponent {
-    private final String extenderName;
-    private final boolean doInvertMotor;
-    private final double motorPower;
+    private final String extenderName = "motorArmExtend";
+    private final boolean doInvertMotor = true;
+    private final double motorPower = 1;
     private DcMotor motor;          // extender motor
     private RotationHandler rotationHandler;  //Connects to the arm rotator to read from it
     private static final double SAFE_ARM_ROTATION_VALUE = 1.5;
@@ -21,6 +21,10 @@ public class ExtensionHandler implements NKNComponent {
     private double lastResetAttempt = 200;
 
     private ExtensionPositions target = ExtensionPositions.RESTING;
+
+    public boolean isExtensionDone() {
+        return (Math.abs(motor.getCurrentPosition() - target.position) <= 15);
+    }
 
     public enum ExtensionPositions {
         RESTING(0) {
@@ -33,15 +37,21 @@ public class ExtensionHandler implements NKNComponent {
         COLLECT(1565) {
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
-                return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PICKUP || rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PREPICKUP;
+                return     rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PICKUP
+                        || rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.PREPICKUP;
             }
         },
 
-        // Temporarily decreased since we are aiming for low basket
-        HIGH_BASKET(2000) { //~3100
+        HIGH_BASKET(3100) {
             @Override
             boolean canGoToPosition(RotationHandler rotationHandler) {
                 return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.HIGH;
+            }
+        },
+        SPECIMEN(1232) {
+            @Override
+            boolean canGoToPosition(RotationHandler rotationHandler) {
+                return rotationHandler.targetRotationPosition == RotationHandler.RotationPositions.SPECIMEN;
             }
         };
 
@@ -54,10 +64,7 @@ public class ExtensionHandler implements NKNComponent {
         abstract boolean canGoToPosition(RotationHandler rotationHandler);
     }
 
-    public ExtensionHandler(String extenderName, boolean doInvertMotor, double motorPower) {
-        this.extenderName = extenderName;
-        this.doInvertMotor = doInvertMotor;
-        this.motorPower = motorPower;
+    public ExtensionHandler() {
     }
     
     @Override
@@ -119,6 +126,12 @@ public class ExtensionHandler implements NKNComponent {
         if (extensionPosition.canGoToPosition(rotationHandler)) {
             motor.setTargetPosition(extensionPosition.position);
             target = extensionPosition;
+
+            if (extensionPosition == ExtensionPositions.COLLECT) {
+                motor.setPower(motorPower / 2);
+            } else {
+                motor.setPower(motorPower);
+            }
             return true;
         }
         return false;
