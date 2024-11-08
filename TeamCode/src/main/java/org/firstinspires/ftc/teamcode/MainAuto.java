@@ -62,9 +62,9 @@ public class MainAuto {
      * 4. Return to safe position
      */
     private void getNextSpecimen() {
-        baseRobot.odometry.moveCounts("backward", Settings.Autonomous.Movement.BACKWARD_COUNTS);
-        baseRobot.odometry.moveCounts("right", Settings.Autonomous.Movement.STRAFE_COUNTS);
-        baseRobot.odometry.moveCounts("tright", Settings.Autonomous.Movement.TURN_COUNTS);
+        baseRobot.odometry.moveCounts("backward", 100); // TODO tune
+        baseRobot.odometry.moveCounts("right", 100);
+        baseRobot.odometry.moveCounts("tright", Settings.Autonomous.Movement.TURN_NINETY_DEGREES);
         getSpecimenFromHumanPlayer();
     }
 

@@ -29,7 +29,7 @@ public class BaseRobot {
     public final DcMotor rearRightMotor;
     public final DynamicInput input;
     public final HardwareMap hardwareMap;
-    public final OpMode parentOp;
+    public final LinearOpMode parentOp;
 
     public final Telemetry telemetry;
     public final Logger logger;

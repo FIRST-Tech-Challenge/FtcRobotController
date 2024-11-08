@@ -69,7 +69,7 @@ public class Settings {
             /** Encoder counts for moving forward one unit */
             public static final double FWD_ONE_TILE = 100; // TODO tune
             public static final double STRAFE_ONE_TILE = 50; // TODO tune
-            public static final double TURN_COUNTS = 50; // TODO tune
+            public static final double TURN_NINETY_DEGREES = 50; // TODO tune
         }
 
         public static class Timing {

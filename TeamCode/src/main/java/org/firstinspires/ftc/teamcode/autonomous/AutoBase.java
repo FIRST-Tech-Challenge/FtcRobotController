@@ -78,6 +78,7 @@ public abstract class AutoBase extends LinearOpMode {
         // Initialize robot systems
         DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2,
                 Settings.DEFAULT_PROFILE, Settings.DEFAULT_PROFILE);
+
         BaseRobot baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
         MainAuto auto = new MainAuto(baseRobot, color);
         ShutdownManager shutdownManager = new ShutdownManager(this, baseRobot, auto);
