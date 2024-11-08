@@ -49,8 +49,12 @@ public class ArmTesting extends OpMode {
             armVelocity += 0.1;
         else if (gamepad1.dpad_down)
             armVelocity -= 0.1;
-
-        scoringArmMotor.setVelocity(yInput * armVelocity * GEAR_RATIO);
+        if (!(scoringArmMotor.getCurrentPosition() >= 0 && yInput > 0) && !(scoringArmMotor.getCurrentPosition() <= -2150 && yInput > 0)) {
+            scoringArmMotor.setVelocity(yInput * armVelocity * GEAR_RATIO);
+        }
+        else {
+            telemetry.addLine("LIMIT REACHED FOR COLLECTION HARM");
+        }
         collectionArmMotor.setPower(controller.axis(Controller.Axis.LeftStickX));
 
         if (controller.pressed(Controller.Button.B)) {
