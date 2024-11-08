@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.teamcode.xendy;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.utils.DriveChassis;
 import org.firstinspires.ftc.teamcode.utils.Numbers;
+import org.firstinspires.ftc.teamcode.utils.RobotSaveState;
 import org.firstinspires.ftc.teamcode.utils.controller.Controller;
 import org.firstinspires.ftc.teamcode.utils.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.controller.PowerCurve;
-//
-@Autonomous(name="Auto Test")
-public class XendysNotCopyrightedAutonomousProgram extends OpMode {
+
+import java.util.HashMap;
+
+@TeleOp(name="Wild O Wolf Record")
+public class WildOWolfRecord extends OpMode {
     private DriveChassis chassis;
     private double maxSpeed = 50;
     private final static float HORIZONTAL_BALANCE = 1.1f;
@@ -42,13 +45,11 @@ public class XendysNotCopyrightedAutonomousProgram extends OpMode {
         controller1.update(gamepad1);
         controller2.update(gamepad2);
 
-
         // Update the orientation of the robot each loop
         orientation = chassis.imu.getRobotYawPitchRollAngles();
         yaw = orientation.getYaw();
         yawRad = orientation.getYaw(AngleUnit.RADIANS);
         normalizedYaw = Numbers.normalizeAngle(yaw);
-
 
         telemetry.addData("Yaw", yaw);
         telemetry.addData("Yaw Rad", yawRad);
@@ -81,6 +82,7 @@ public class XendysNotCopyrightedAutonomousProgram extends OpMode {
         telemetry.addData("Rotation Input", rotationInput);
         telemetry.addData("Turn Power", turnPower);
 
+        saveState(horizontalMovePower, verticalMovePower, turnPower);
 
         double denominator = Math.max(Math.abs(verticalMovePower) + Math.abs(horizontalMovePower) + Math.abs(turnPower), 1);
 
@@ -98,7 +100,17 @@ public class XendysNotCopyrightedAutonomousProgram extends OpMode {
 //        telemetry.update();
     }
 
-    public Action createAction() {
-        return new Action();
+    @Override
+    public void stop() {
+        saveToFile();
+    }
+
+    private HashMap<Double, RobotSaveState> robotStates = new HashMap<>();
+    private void saveState(double horizontalPower, double verticalPower, double rotationalPower) {
+        robotStates.put(getRuntime(), new RobotSaveState(horizontalPower, verticalPower, rotationalPower));
+    }
+
+    private void saveToFile() {
+
     }
 }
