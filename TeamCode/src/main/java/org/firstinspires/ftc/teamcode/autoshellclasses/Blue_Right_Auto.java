@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
+import org.bluebananas.ftc.roadrunneractions.ActionBuilder;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -38,26 +39,10 @@ public class Blue_Right_Auto extends LinearOpMode {
         PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
 
-        Action PushSample;
         Action ExampleTrajectory2;
         Action wait;
 
-
-        PushSample = drive.actionBuilder(initialPose)
-                .splineTo(new Vector2d(-9,42), Math.toRadians(-90))
-                .waitSeconds(1)//hook preloaded specimen
-                .strafeTo(new Vector2d(-12,42))
-                .splineToSplineHeading(new Pose2d(-36,24, Math.toRadians(0)), Math.toRadians(-90))
-                .splineTo(new Vector2d(-42,12), Math.toRadians(180))
-                .strafeTo(new Vector2d(-45,12))
-                .strafeTo(new Vector2d(-45,48))
-                .strafeTo(new Vector2d(-45,24))
-                .splineTo(new Vector2d(-57,12), Math.toRadians(180))
-                .strafeTo(new Vector2d(-57,48))
-                .strafeTo(new Vector2d(-57,42))
-                .waitSeconds(1)//wait for human player to pick up samples
-                .strafeTo(new Vector2d(-63,63))
-                .build();
+        Action PushSample = ActionBuilder.BlueRightOption1(drive::actionBuilder);
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.update();
