@@ -53,10 +53,10 @@ public class BaseRobot {
         this.telemetry = telemetry;
         this.logger = new Logger(this);
         // Initialize and configure the motors
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
-        rearLeftMotor = hardwareMap.get(DcMotor.class, "rearLeft");
-        rearRightMotor = hardwareMap.get(DcMotor.class, "rearRight");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_LEFT_MOTOR);
+        frontRightMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_RIGHT_MOTOR);
+        rearLeftMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.REAR_LEFT_MOTOR);
+        rearRightMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.REAR_RIGHT_MOTOR);
 
         // IF A WHEEL IS GOING THE WRONG DIRECTION CHECK WIRING red/black
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -69,10 +69,10 @@ public class BaseRobot {
         rearLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rearRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motors.put("frontLeft", frontLeftMotor);
-        motors.put("frontRight", frontRightMotor);
-        motors.put("rearLeft", rearLeftMotor);
-        motors.put("rearRight", rearRightMotor);
+        motors.put(Settings.Hardware.IDs.FRONT_LEFT_MOTOR, frontLeftMotor);
+        motors.put(Settings.Hardware.IDs.FRONT_RIGHT_MOTOR, frontRightMotor);
+        motors.put(Settings.Hardware.IDs.REAR_LEFT_MOTOR, rearLeftMotor);
+        motors.put(Settings.Hardware.IDs.REAR_RIGHT_MOTOR, rearRightMotor);
 
         if (Settings.Deploy.ARM) {
             arm = new Arm(this);

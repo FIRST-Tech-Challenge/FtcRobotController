@@ -19,7 +19,7 @@ public class Wrist {
     public Wrist(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
-        wristServo = hardwareMap.get(Servo.class, "wrist");
+        wristServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.WRIST);
         setPosition(Position.HORIZONTAL);
     }
 

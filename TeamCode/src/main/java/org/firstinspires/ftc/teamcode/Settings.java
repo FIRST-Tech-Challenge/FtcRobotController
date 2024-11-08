@@ -46,6 +46,21 @@ public class Settings {
                 public static final double HORIZONTAL_POSITION = 0.45;
             }
         }
+
+        public static class IDs {
+            // Drive motors
+            public static final String FRONT_LEFT_MOTOR = "frontLeft";
+            public static final String FRONT_RIGHT_MOTOR = "frontRight";
+            public static final String REAR_LEFT_MOTOR = "rearLeft";
+            public static final String REAR_RIGHT_MOTOR = "rearRight";
+
+            // Arm components
+            public static final String EXTENSOR_LEFT = "extensorLeft";
+            public static final String EXTENSOR_RIGHT = "extensorRight";
+            public static final String WRIST = "wrist";
+            public static final String CLAW_LEFT = "clawL";
+            public static final String CLAW_RIGHT = "clawR";
+        }
     }
 
     // Autonomous settings

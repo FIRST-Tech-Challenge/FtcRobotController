@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.BaseRobot;
+import org.firstinspires.ftc.teamcode.Settings;
 
 public class ServoExtensor implements Extensor {
     private final Servo leftServo;
@@ -11,9 +12,9 @@ public class ServoExtensor implements Extensor {
     private Position currentPosition;
 
     public ServoExtensor(@NonNull BaseRobot baseRobot) {
-        this.leftServo = baseRobot.hardwareMap.get(Servo.class, "extensorLeft");
-        this.rightServo = baseRobot.hardwareMap.get(Servo.class, "extensorRight");
-        this.currentPosition = Position.PICKUP; // Initialize to ground position
+        this.leftServo = baseRobot.hardwareMap.get(Servo.class, Settings.Hardware.IDs.EXTENSOR_LEFT);
+        this.rightServo = baseRobot.hardwareMap.get(Servo.class, Settings.Hardware.IDs.EXTENSOR_RIGHT);
+        this.currentPosition = Position.PICKUP;
     }
 
     public void setPosition(double position) {

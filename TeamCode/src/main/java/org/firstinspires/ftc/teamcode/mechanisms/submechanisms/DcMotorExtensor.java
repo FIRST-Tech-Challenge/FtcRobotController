@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.BaseRobot;
+import org.firstinspires.ftc.teamcode.Settings;
 
 public class DcMotorExtensor implements Extensor {
     private final DcMotor leftMotor;
@@ -11,12 +12,12 @@ public class DcMotorExtensor implements Extensor {
     private Position currentPosition;
 
     public DcMotorExtensor(@NonNull BaseRobot baseRobot) {
-        this.leftMotor = baseRobot.hardwareMap.get(DcMotor.class, "extensorLeft");
-        this.rightMotor = baseRobot.hardwareMap.get(DcMotor.class, "extensorRight");
-        this.currentPosition = Position.HOVER; // Initialize to default position
+        this.leftMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_LEFT);
+        this.rightMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_RIGHT);
+        this.currentPosition = Position.HOVER;
     }
 
-    //  Sets target position
+    // Sets target position
     public void setPosition(double position) {
         // Logic to control DC motor position using encoders
         int targetPosition = (int) (position * 1000); // Convert position to encoder counts
@@ -26,7 +27,7 @@ public class DcMotorExtensor implements Extensor {
         rightMotor.setPower(1.0);
     }
 
-    //  Converts position name to double
+    // Converts position name to double
     @Override
     public void setPosition(@NonNull Position position) {
         this.currentPosition = position;

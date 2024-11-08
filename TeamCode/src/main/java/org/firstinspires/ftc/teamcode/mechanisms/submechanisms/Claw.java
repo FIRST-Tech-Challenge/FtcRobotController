@@ -20,8 +20,8 @@ public class Claw {
     public Claw(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
-        clawServoR = hardwareMap.get(Servo.class, "clawR");
-        clawServoL = hardwareMap.get(Servo.class, "clawL");
+        clawServoR = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW_RIGHT);
+        clawServoL = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW_LEFT);
         clawServoR.setDirection(Servo.Direction.REVERSE);
         close();
         try {
