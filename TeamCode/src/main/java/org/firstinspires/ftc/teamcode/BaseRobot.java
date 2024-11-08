@@ -134,16 +134,16 @@ public class BaseRobot {
      * Handles boost/brake modifiers and applies power to drive system
      */
     public void gamepadPrimary() {
-        DynamicInput.DirectionalOutput directionalOutput = input.directional();
-        DynamicInput.ConvertedInputs convertedOutput = input.action();
+        DynamicInput.DirectionalOutput directions = input.directional();
+        DynamicInput.ConvertedInputs actions = input.action();
 
-        double boost = convertedOutput.boostAmount;
-        double brake = convertedOutput.brakeAmount;
-        // TODO: IMPLEMENT USER PROFILE
+        double boost = actions.boostAmount;
+        double brake = actions.brakeAmount;
+
         double powerMultiplier = 1 + boost - brake;
-        double rotation = directionalOutput.rotation;
-        double strafePower = directionalOutput.x * powerMultiplier;
-        double drivePower = directionalOutput.y * powerMultiplier;
+        double rotation = directions.rotation;
+        double strafePower = directions.x * powerMultiplier;
+        double drivePower = directions.y * powerMultiplier;
 
         /*
          * Drives the motors based on the given power/rotation

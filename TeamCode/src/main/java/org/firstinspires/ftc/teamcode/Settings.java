@@ -4,10 +4,9 @@ import java.lang.reflect.Field;
 
 /** @noinspection unused */
 public class Settings {
-    /**
-     * Core timing settings for autonomous operations
-     */
-    public static final double ms_needed_to_park = 10000; // Time in milliseconds needed to ensure safe parking
+    /** Time in milliseconds needed to ensure safe parking -
+     * if there is more time than this, the robot will try to score more points. */
+    public static final double ms_needed_to_park = 10000;
 
     // Movement settings
     public static class Movement {
@@ -20,21 +19,19 @@ public class Settings {
         public static final double tileLengthFeet = 2;
         /** Default speed for autonomous movements */
         public static final double default_autonomous_speed = 0.38;
-        /** Maximum allowed speed during autonomous */
-        public static final double max_autonomous_speed = 0.6;
     }
 
     // Hardware settings
     public static class Hardware {
-        // Odometry
         /** Encoder counts per full motor revolution */
-        public static final double COUNTS_PER_REVOLUTION = 100;
+        public static final double COUNTS_PER_REVOLUTION = 100; // TODO tune
         /** Diameter of the odometry wheels in inches */
         public static final double WHEEL_DIAMETER_INCHES = 3.5;
 
         // Servo positions
         public static class Servo {
             public static class Claw {
+                /** Values for open and closed positions on the claw */
                 public static final double RIGHT_OPEN = 0.35;
                 public static final double RIGHT_CLOSED = -0.2;
                 public static final double LEFT_OPEN = 1.0;
@@ -53,10 +50,9 @@ public class Settings {
     public static class Autonomous {
         public static class Movement {
             /** Encoder counts for moving forward one unit */
-            public static final double FORWARD_COUNTS = 100;
-            public static final double BACKWARD_COUNTS = 100;
-            public static final double STRAFE_COUNTS = 50;
-            public static final double TURN_COUNTS = 50;
+            public static final double FWD_ONE_TILE = 100; // TODO tune
+            public static final double STRAFE_ONE_TILE = 50; // TODO tune
+            public static final double TURN_COUNTS = 50; // TODO tune
         }
 
         public static class Timing {
@@ -79,9 +75,7 @@ public class Settings {
         public double dpad_sensitivity = 0.3;
         public double bumper_sensitivity = 0.8;
         public double trigger_threshold = 0.1;
-        public double default_movement_speed = 0.1; // TODO: Tune
 
-        // Add button mapping configuration
         public final ButtonMapping buttonMapping;
 
         public DefaultGamepadSettings() {
@@ -153,7 +147,7 @@ public class Settings {
 
         public static DefaultGamepadSettings israel() {
             DefaultGamepadSettings settings = new DefaultGamepadSettings();
-            // Customize button mappings for CIsrael
+            // custom button mappings for conner
             settings.buttonMapping.extendActuator = GamepadButton.B;
             settings.buttonMapping.retractActuator = GamepadButton.X;
             // ... add other customizations
