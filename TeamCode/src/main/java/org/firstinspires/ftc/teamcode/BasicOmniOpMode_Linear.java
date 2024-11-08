@@ -24,6 +24,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     double rightFrontPower = 0;
     double leftBackPower = 0;
     double rightBackPower = 0;
+    boolean wheelClimb = false;
 
     // Collect joystick position data
     double axial = 0;
@@ -47,8 +48,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // This chunk controls our claw
     Servo claw = null;
-    final double CLAW_MIN = 0.6;        // Claw is closed
-    final double CLAW_MAX = 0.9;        // Claw is open
+    final double CLAW_MIN = 0.05;        // Claw is closed
+    final double CLAW_MAX = 0.43;        // Claw is open
     double claw_position = CLAW_MIN;
 
     final ElapsedTime runtime = new ElapsedTime();
@@ -118,24 +119,31 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            if (wheelClimb == false) {
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
+            }
+
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
             verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
             // Setting vertical into initial climb position
             if (gamepad1.dpad_up) {
-                vertical.setTargetPosition(Math.min(VERTICAL_MAX, verticalPosition + 50));
-                ((DcMotorEx) vertical).setVelocity(2000);
+                wheelClimb = true;
+                // Hook on to the bar
+                vertical.setTargetPosition(2800);
+                ((DcMotorEx) vertical).setVelocity(3000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                vertical.setTargetPosition(2793);
+                // Collapse robot to hang
+                vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                vertical.setPower(-0.8);
+                leftBackDrive.setPower(0.5);
+                rightBackDrive.setPower(0.5);
             }
             else if (gamepad1.dpad_down) {
-                vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                vertical.setPower(-0.2);
             }
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely raise further
                 vertical.setTargetPosition(Math.min(VERTICAL_MAX, verticalPosition + 50));
@@ -179,10 +187,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the claw
             if (gamepad1.right_bumper && claw_position < CLAW_MAX) {
-                claw_position += 0.01;
+                claw_position += 0.02;
             }
             if (gamepad1.left_bumper && claw_position > CLAW_MIN) {
-                claw_position -= 0.01;
+                claw_position -= 0.015;
             }
             claw.setPosition(claw_position);
 
@@ -224,7 +232,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 ((DcMotorEx) viperSlide).setVelocity(2000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-
             // Show the elapsed game time and wheel power.
             printDataOnScreen();
         }
