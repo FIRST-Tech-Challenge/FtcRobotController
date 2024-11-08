@@ -28,7 +28,8 @@ public class SampleActionBasedOpMode extends ActionBasedOpMode {
 //        movements.add(new ForwardMovement(Units.inchesToMeters(sideLen)));
 //        movements.add(new RotationMovement(Units.degreesToRadians(90)));
 
-        movements.add(new RotationMovement(Units.degreesToRadians(270)));
+        movements.add(new StrafeMovement(Units.inchesToMeters(40)));
+        movements.add(new StrafeMovement(Units.inchesToMeters(-40)));
         movementQueue.add(movements);
     }
 }

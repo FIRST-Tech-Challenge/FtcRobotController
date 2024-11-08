@@ -213,5 +213,4 @@ public abstract class BaseMovement {
     protected double getErrorCorrectionSpeed() {
         return ERROR_CORRECTION_SPEED;
     }
-
 }
