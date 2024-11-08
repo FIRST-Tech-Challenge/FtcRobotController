@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.COMPETITIONCODE;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
+
 import com.parshwa.drive.tele.Drive;
 import com.parshwa.drive.tele.DriveModes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -9,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -56,30 +59,38 @@ public class Teleop extends LinearOpMode {
         telemetry.addLine("initilized");
         telemetry.update();
         waitForStart();
-        clawServo.setServoPosition(0.39);
+        clawServo.setServoPosition(0.0);
         clawRotateServo.setServoPosition(0.7);
         clawRotateServo2.setServoPosition(0.55);
         while (!isStopRequested()){
             //driver1
-            SPED = gamepad1.right_trigger;
+            SPED = gamepad1.right_trigger /= 3.0;
 
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
             //driver2
-            int target = -3000;
-            int target2 = 0;
-            if(gamepad1.a){
-                SM.setPos2(target2);
-            }
-            if(gamepad1.y){
-                SM.setPos2(target);
-            }
-            SM.move(gamepad2.start?gamepad2.left_stick_y*2.0:gamepad2.left_stick_y);
+            SM.move(gamepad2.left_stick_y);
             telemetry.addLine("Slide Pos:" + String.valueOf(sc.getCurrentPosition()));
             if(-gamepad2.right_stick_y <= -0.3){
                 SM.setPos(0);
             }
             if(gamepad2.left_trigger > 0.3){
-               sr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                clawRotateServo.setServoPosition(0.4);
+                safeWaitSeconds(0.5);
+                SM.setPos(1025);
+                safeWaitSeconds(1);
+                SM.setPos2(-3000);
+                safeWaitSeconds(2);
+                sc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                clawRotateServo.setServoPosition(0.6);
+                safeWaitSeconds(0.5);
+                clawServo.setServoPosition(0.39);
+                safeWaitSeconds(0.5);
+                clawRotateServo.setServoPosition(0.4);
+                safeWaitSeconds(0.5);
+                SM.setPos2(0);
+                safeWaitSeconds(1);
+                SM.setPos(0);
+                safeWaitSeconds(2);
             }
             if(-gamepad2.right_stick_y >= 0.3){
                 SM.setPos(1025);
@@ -120,5 +131,11 @@ public class Teleop extends LinearOpMode {
         }
         File ThreadManger = AppUtil.getInstance().getSettingsFile("ThreadManger.txt");
         ReadWriteFile.writeFile(ThreadManger, "STOP");
+    }
+    public void safeWaitSeconds(double time) {
+        ElapsedTime timer = new ElapsedTime(SECONDS);
+        timer.reset();
+        while (!isStopRequested() && timer.time() < time) {
+        }
     }
 }
