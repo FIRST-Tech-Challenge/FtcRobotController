@@ -17,11 +17,6 @@ public class linearOpMode extends LinearOpMode {
   private DcMotor slideAbduction = null;
   private DcMotor slideAbduction2 = null;
 
-  //  private  DcMotor MaybeIntake = null;
-  // TODO get rid of clawIntake
-  private Servo clawIntake = null; // delete this later
-  private double clawIntakePostion = 1; // delete this later
-
   private CRServo leftIntake = null;
   private CRServo rightIntake = null;
   private double intakePower = 0;
@@ -48,7 +43,6 @@ public class linearOpMode extends LinearOpMode {
     slideAbduction.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
     //Takers
-    clawIntake = hardwareMap.get(Servo.class, "clawIntake");
     leftIntake = hardwareMap.get(CRServo.class, "l_intake");
     rightIntake = hardwareMap.get(CRServo.class, "r_intake");
     button = hardwareMap.get(TouchSensor.class, "button");
@@ -63,7 +57,6 @@ public class linearOpMode extends LinearOpMode {
     backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
     //claw
-    clawIntake.setDirection(Servo.Direction.REVERSE);
     leftIntake.setDirection(CRServo.Direction.FORWARD);
     rightIntake.setDirection(CRServo.Direction.REVERSE);
 
@@ -128,25 +121,13 @@ public class linearOpMode extends LinearOpMode {
       //if A on the controller is pressed it will check if the claw is closed
       // HOTFIX: A is open, B is close
       if (gamepad2.a) {
-        clawIntakePostion = 0; // open
-
-        //if it's closed
-        // if (clawIntakePostion == 1) {
-        //   //Set claw position to open
-        //   clawIntakePostion = 0;
-        // }
-        // //if it's open
-        // else {
-        //   //Set claw position to closed
-        //   clawIntakePostion = 1;
-        // }
-      } else if(gamepad2.b){
-        clawIntakePostion = 1; // close
+        intakePower = 1;
+      } else if(gamepad2.b || button.isPressed()){
+        intakePower = 0;
       }
 
       slideAbdPower = abt;
       slideExtendPower = ext;
-      
 
       // Power to the wheels
       frontLeftMotor.setPower(leftFront);
@@ -156,11 +137,13 @@ public class linearOpMode extends LinearOpMode {
 
       // Power to the arm
       slideAbduction.setPower(slideAbdPower);
-      slideExtension.setPower(slideExtendPower);
       slideAbduction2.setPower(slideAbdPower);
+      slideExtension.setPower(slideExtendPower);
 
-      // Power to the Claw
-      clawIntake.setPosition(clawIntakePostion);
+      // Power to the intake
+      leftIntake.setPower(intakePower);
+      rightIntake.setPower(intakePower);
+
       //Telemetry
       telemetry.addData("X", x);
       telemetry.addData("Y", y);
