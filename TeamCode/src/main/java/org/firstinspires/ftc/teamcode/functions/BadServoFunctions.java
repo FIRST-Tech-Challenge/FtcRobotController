@@ -9,56 +9,55 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class BadServoFunctions {
         public Servo wristServo;
+        public Servo wristServo2;
         public Servo clawServo;
         // Variables to store positions for wrist and claw
 
-        double wristPosition = 0.5; // Starting position for wrist
+        double wristPosition = 0.5; // Starting position for wrist 1
+        double wristPosition2 = 0.5; // Starting position for wrist 2
         double clawPosition = 0.5; // Starting position for claw
 
     public BadServoFunctions(HardwareMap hardwareMap){
-        wristServo=hardwareMap.get(Servo.class,"wrist_y");
+        wristServo=hardwareMap.get(Servo.class,"wrist_1");
+        wristServo2=hardwareMap.get(Servo.class,"wrist_2");
         clawServo=hardwareMap.get(Servo.class,"claw");
     }
         // Method to control the wrist position
         public void controlWrist (Gamepad gamepad1, Telemetry telemetry){
-            double wristAdjustment = 0.01; // Tune this for smooth movement
-
-            // Adjust wrist position based on gamepad input
-            if (gamepad1.dpad_up) {
-                wristPosition += wristAdjustment;
-            } else if (gamepad1.dpad_down) {
-                wristPosition -= wristAdjustment;
+            // good wrist
+            if (gamepad1.a) {
+                wristServo.setPosition(0.5);
             }
 
-            // Ensure wristPosition stays within 0 to 1
-            wristPosition = Math.max(0, Math.min(1, wristPosition));
-
-            // Set the wrist servo to the updated position
-            wristServo.setPosition(wristPosition);
-
-            // Send telemetry data to the driver station
-            telemetry.addData("Wrist Position", wristPosition);
-            telemetry.update();
+            // Minimum position used for testing purposes
+            if (gamepad1.b) {
+                wristServo.setPosition(0);
+            }
+            if (gamepad1.x){
+                wristServo2.setPosition(0.5);
+            }
+            if (gamepad1.y){
+                wristServo2.setPosition(0);
+            }
+            // Get position of the wrist and display on driver station for feedback
+            double wristPosition = wristServo.getPosition();
+            double wristPosition2 = wristServo2.getPosition();
+            telemetry.addData("Wrist Position 1", wristPosition);
+            telemetry.addData("Wrist Position 2",wristPosition2);
         }
 
-        // Method to control the claw position
+
+    // Method to control the claw position
         public void controlClaw (Gamepad gamepad1, Telemetry telemetry){
-            double clawAdjustment = 0.01; // Tune this for smooth movement
+           if(gamepad1.right_bumper){
+               clawServo.setPosition(0);
+           }
 
-            // Adjust claw position based on gamepad input
-            if (gamepad1.a) {  // For example, "A" button opens the claw
-                clawPosition += clawAdjustment;
-            } else if (gamepad1.b) {  // "B" button closes the claw
-                clawPosition -= clawAdjustment;
-            }
-
-            // Ensure clawPosition stays within 0 to 1
-            clawPosition = Math.max(0, Math.min(1, clawPosition));
-
-            // Set the claw servo to the updated position
-            clawServo.setPosition(clawPosition);
-
+           if (gamepad1.left_bumper){
+               clawServo.setPosition(1);
+           }
             // Send telemetry data to the driver station
+            double clawPosition = clawServo.getPosition();
             telemetry.addData("Claw Position", clawPosition);
             telemetry.update();
         }
