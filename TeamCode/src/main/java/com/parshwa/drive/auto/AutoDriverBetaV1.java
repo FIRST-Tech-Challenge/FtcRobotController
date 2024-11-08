@@ -96,15 +96,17 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
                 headingSpeed = robotPos.getHeading(AngleUnit.DEGREES) <= 0.0 ? -0.2: 0.2;
             }
             double currentDiff = Math.sqrt(Math.pow(XDiff,2) + Math.pow(YDiff,2));
-            double speed = 0.25;
+            double speed = 0.35;
             if(Math.abs(XDiff) <= 10.0 && Math.abs(YDiff) <= 10.0){
                 speed = 0.1;
+                newXSpeed /= 2;
+                newYSpeed /= 2;
             }else{
                 if(Math.abs(XDiff) <= 10.0){
-                    newXSpeed /= 5;
+                    newXSpeed /= 4;
                 }
                 if(Math.abs(YDiff) <= 10.0){
-                    newYSpeed /= 5;
+                    newYSpeed /= 4;
                 }
             }
             if(newXSpeed == 0.0 && newYSpeed == 0.0){
@@ -116,34 +118,30 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
             double Finaly = finalPos.getY(DistanceUnit.MM);
             double x = robotPos.getX(DistanceUnit.MM);
             double y = robotPos.getY(DistanceUnit.MM);
+            double TotalXDiff = Finalx - ((Pose2D) startPos.get(id)).getX(DistanceUnit.MM);
+            double TotalYDiff = Finaly - ((Pose2D) startPos.get(id)).getY(DistanceUnit.MM);
             double XDiff = Finalx - x;
             double YDiff = Finaly - y;
-            double maximum = Math.max(1.0,Math.abs(XDiff));
-            maximum = Math.max(maximum, Math.abs(YDiff));
-            double newXSpeed = XDiff / maximum;
-            double newYSpeed = YDiff / maximum;
+            double XGreater = Math.max(1.0,Math.abs(XDiff));
+            double YGreater = Math.max(1.0, Math.abs(YDiff));
+            double newXSpeed = XDiff / XGreater;
+            double newYSpeed = YDiff / YGreater;
             if(Math.abs(XDiff) <= 1.0){
                 newXSpeed = 0.0;
             }
             if(Math.abs(YDiff) <= 1.0){
                 newYSpeed = 0.0;
             }
-            double currentHed = robotPos.getHeading(AngleUnit.DEGREES);
-            double targetHed = finalPos.getHeading(AngleUnit.DEGREES);
-            currentHed = AngleUnit.normalizeDegrees(currentHed);
-            targetHed = AngleUnit.normalizeDegrees(targetHed);
-            double headingDiff = targetHed - currentHed;
-            double headingSpeed = Math.abs(headingDiff) >= 1.0 ? headingDiff / Math.abs(headingDiff) : headingDiff;
-            if(Math.abs(headingDiff) >= 180.0){
-                headingSpeed = -headingSpeed;
+            double headingSpeed = 0.0;
+            Pose2D start = (Pose2D) startPos.get(id);
+            double TotalHeadDiff = start.getHeading(AngleUnit.DEGREES) - robotPos.getHeading(AngleUnit.DEGREES);
+            if(TotalHeadDiff-Math.abs(robotPos.getHeading(AngleUnit.DEGREES)) >= 5.0){
+                headingSpeed = robotPos.getHeading(AngleUnit.DEGREES) <= 0.0 ? -0.2: 0.2;
             }
-            double speed = 0.2;
-            if(targetHed <= currentHed + 2.0 && targetHed >= currentHed - 2.0){
+            if(Math.abs(robotPos.getHeading(AngleUnit.DEGREES)-TotalHeadDiff) <= 1.0){
                 completed = true;
-                movementControler.move(0.0,0.0,0.0,0.5);
-            }else{
-                movementControler.move(newXSpeed,newYSpeed,headingSpeed,speed);
             }
+            movementControler.move(newXSpeed, newYSpeed, headingSpeed);
         } else if(typeIds.get(id) == CurveTo){
             completed = true;
         } else {
