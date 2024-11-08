@@ -7,6 +7,8 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -43,11 +45,40 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         super.createAndInitHardwares(hardwareMap);
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-        odo.resetPosAndIMU();
-        odo.setOffsets(Units.inchesToMMs(-3.5), Units.inchesToMMs(0));
+    }
 
+    private void initOdo(Runnable sleeper) {
+        boolean initResult = odo.initialize();
+        sleeper.run();
+        odo.resetPosAndIMU();
+        sleeper.run();
+        sleeper.run();
+        RobotLog.i("GoBildaPinpointDriver init result: " + initResult);
+        telemetry.addData("init result", initResult);
+        telemetry.update();
+//        int attempts = 0;
+//        while (odo.getDeviceStatus() != GoBildaPinpointDriver.DeviceStatus.READY && attempts < 10) {
+//            sleeper.run();
+//            attempts ++;
+//            telemetry.addData("odo status", odo.getDeviceStatus());
+//            telemetry.addData("attempt", attempts);
+//            telemetry.update();
+//        }
+
+        telemetry.addData("odo status after init", odo.getDeviceStatus());
+        telemetry.update();
+        odo.setOffsets(Units.inchesToMMs(-3.5), Units.inchesToMMs(0));
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+    }
+
+    public void init(Runnable sleeper) {
+        initOdo(sleeper);
+    }
+
+    public void recalibrateOdo() {
+        odo.recalibrateIMU();
     }
 
     public Pose2d getCurrentPose() {
@@ -60,10 +91,10 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
     public void stop() {
         drive.stop();
-        fL.motor.setPower(0);
-        fR.motor.setPower(0);
-        bL.motor.setPower(0);
-        bR.motor.setPower(0);
+//        fL.motor.setPower(0);
+//        fR.motor.setPower(0);
+//        bL.motor.setPower(0);
+//        bR.motor.setPower(0);
     }
 
     public void resetOdo() {
@@ -77,6 +108,16 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
     public void updatePose() {
         odo.update();
+    }
+
+    public boolean isOdoReady() {
+        if (odo.getDeviceStatus() != GoBildaPinpointDriver.DeviceStatus.READY) {
+            telemetry.addLine("IMU status: " + odo.getDeviceStatus());
+            telemetry.update();
+            return false;
+        }
+
+        return true;
     }
 
     public void resetOdometryRotation() {

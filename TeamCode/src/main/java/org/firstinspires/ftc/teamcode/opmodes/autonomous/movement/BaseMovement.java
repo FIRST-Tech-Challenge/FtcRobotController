@@ -13,13 +13,13 @@ import java.util.function.Supplier;
 public abstract class BaseMovement {
 
     static final String LOG_TAG = BaseMovement.class.getSimpleName();
-    private static final double NORMAL_SPEED = 0.5d;
-    private static final double SLOW_SPEED = 0.2d;
-    private static final double ERROR_CORRECTION_SPEED = 0.2d;
+    private static final double NORMAL_SPEED = 0.6d;
+    private static final double SLOW_SPEED = 0.3d;
+    private static final double ERROR_CORRECTION_SPEED = 0.3d;
 
     private static final double FORWARD_FACTOR = 1d;
     private static final double BACKWARD_FACTOR = -1d;
-    private static final double ERROR_TOLERANCE = 0.01d;
+    private static final double ERROR_TOLERANCE = 0.05d;
     private static final double ROT_TO_SPEED_CONVERSION = 3; //this converts distance to motor speed
     private static final double DIST_TO_SPEED_CONVERSION = 2;
     double currentSpeed;
@@ -79,6 +79,7 @@ public abstract class BaseMovement {
             return;
         }
 
+
         Pose2d newPose = poseSupplier.get();
 
         double newReading = getCurrentDrivingReading(newPose);
@@ -95,7 +96,7 @@ public abstract class BaseMovement {
             return;
         }
 
-        Log.i(LOG_TAG, String.format("newReading = %f", newReading));
+//        Log.i(LOG_TAG, String.format("newReading = %f", newReading));
 
         accumulatedChanges += Math.abs(newReading - prevReading);
         previousPose = newPose;
@@ -139,7 +140,7 @@ public abstract class BaseMovement {
     }
 
     protected double getRotErrorCorrection(double error) {
-        Log.i(LOG_TAG, String.format("rot error = %f", error));
+//        Log.i(LOG_TAG, String.format("rot error = %f", error));
         if (usePID) {
             double normalizedError = Units.normalizeAngleDifference(error);
             double correctionDistance = rotErrorCorrectionController.calculate(normalizedError);
@@ -148,12 +149,15 @@ public abstract class BaseMovement {
             }
             return correctionDistance * ROT_TO_SPEED_CONVERSION;
         } else {
+            if (isJustStarted() || isCloseToEnd()) {
+                return 0;
+            }
             double normalizedError = Units.normalizeAngleDifference(error);
 
             if (Math.abs(normalizedError) >= ERROR_TOLERANCE) {
                 double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (normalizedError >= 0 ? 1 : -1);
                 Log.i(LOG_TAG, "Rotation error too much, correction speed set to: " +  errorCorrectionSpeed);
-                return normalizedError * ROT_TO_SPEED_CONVERSION;
+                return ERROR_CORRECTION_SPEED;
             }
             return 0;
         }
@@ -168,11 +172,11 @@ public abstract class BaseMovement {
             }
             return correctionDistance * DIST_TO_SPEED_CONVERSION;
         } else {
-            if (Math.abs(error) > ERROR_TOLERANCE) {
-                double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (error >= 0 ? 1 : -1);
-                Log.i(LOG_TAG, "move error too much, correction speed set to: " +  errorCorrectionSpeed);
-                return errorCorrectionSpeed;
-            }
+//            if (Math.abs(error) > ERROR_TOLERANCE) {
+//                double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (error >= 0 ? 1 : -1);
+//                Log.i(LOG_TAG, "move error too much, correction speed set to: " +  errorCorrectionSpeed);
+//                return errorCorrectionSpeed;
+//            }
             return 0;
         }
     }

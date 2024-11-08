@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.PIDControlAutoOpMo
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "sample PID auto mode", preselectTeleOp = "main_teleop")
+//@Autonomous(name = "sample PID auto mode", preselectTeleOp = "main_teleop")
 public class SamplePIDAutoOpMode extends PIDControlAutoOpMode {
 
     @Override

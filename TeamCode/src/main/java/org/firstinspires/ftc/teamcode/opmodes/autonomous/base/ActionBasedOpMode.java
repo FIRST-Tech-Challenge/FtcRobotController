@@ -49,6 +49,7 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
         driverFeedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
         driveTrain = new AutoFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, driverFeedback);
 
+        driveTrain.init(() -> sleep(100));
         robotDriver = createRobotDriver();
         register(driveTrain);
 
@@ -56,6 +57,7 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
 
         setupCurrentState(getInitState());
 
+        sleep(250);
         schedule(new SounderBotBaseRunCommand<AutoFourWheelMecanumDriveTrain>(driveTrain, telemetry, this::onEachCycle) {
             @Override
             public boolean isFinished() {
@@ -84,16 +86,20 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
     }
 
     private void performMovements() {
+//        if (!driveTrain.isOdoReady()) {
+//            return;
+//        }
         if (currentMove == null || currentMove.isFinished()) {
             if (currentMovements.isEmpty()) {
                 setupCurrentState(State.PERFORMING_ACTION);
                 return;
             }
-            sleep(250);
+
             currentMove = currentMovements.poll();
             assert currentMove != null;
-//            driveTrain.resetOdo();
+            sleep(500);
             addTelemetryLine(String.format("Switched to movement %s", currentMove.getClass().getSimpleName()));
+            driveTrain.updatePose();
             if (currentMove instanceof ForwardMovement) {
                 currentMove.start(driveTrain.getCurrentPose().getX(), robotDriver, () -> driveTrain.getCurrentPose());
             } else if (currentMove instanceof StrafeMovement) {
@@ -102,9 +108,9 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
                 currentMove.start(driveTrain.getCurrentPose().getRotation().getRadians(), robotDriver,  () -> driveTrain.getCurrentPose());
             }
         } else {
+            driveTrain.updatePose();
             currentMove.onEachCycle();
         }
-        driveTrain.updatePose();
         Pose2d current = driveTrain.getCurrentPose();
 
         addTelemetryLine(String.format(Locale.getDefault(),"%s: x=%f, y=%f, rotation=%f", currentMove.getClass().getSimpleName(), current.getX(), current.getY(), current.getRotation().getRadians()));
