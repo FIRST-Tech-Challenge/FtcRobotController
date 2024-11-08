@@ -16,7 +16,7 @@ public class DriveChassis {
     // Initialize our motors
     protected DcMotorEx leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
     protected DcMotorEx horizontalSlideMotor, verticalSlideMotor, endPivotMotor;
-    protected Servo intakeEffector, bucket;
+    protected Servo claw, bucket;
 
     // Info about our robots design
     protected final int TICKS_PER_REVOLUTION = 28;
@@ -48,7 +48,7 @@ public class DriveChassis {
         horizontalSlideMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "horizontalSlide");
         verticalSlideMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "verticalSlide");
         endPivotMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "endPivotMotor");
-        intakeEffector = hardwareMap.get(Servo.class, "intakeEffector");
+        claw = hardwareMap.get(Servo.class, "intakeEffector");
         // bucket = hardwareMap.get(Servo.class, "bucket");
         // Instantiate the imu
         imu = hardwareMap.get(IMU.class, "imu");

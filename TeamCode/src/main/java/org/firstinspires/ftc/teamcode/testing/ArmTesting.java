@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,13 +22,17 @@ public class ArmTesting extends OpMode {
     private double armVelocity = 1;
 
     private DcMotorEx scoringArmMotor;
-    private DcMotorEx collectionArmMotor;
+    private DcMotorEx collectionArmMotor, pivotArm;
     private Servo armClaw;
 
     @Override
     public void init() {
         scoringArmMotor = hardwareMap.get(DcMotorEx.class, "verticalSlide");
         collectionArmMotor = hardwareMap.get(DcMotorEx.class, "horizontalSlide");
+
+        scoringArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        collectionArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 //        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         armClaw = hardwareMap.get(Servo.class, "intakeEffector");
         armClaw.setPosition(0);
@@ -49,6 +54,8 @@ public class ArmTesting extends OpMode {
         collectionArmMotor.setPower(controller.axis(Controller.Axis.LeftStickX));
 
         telemetry.addData("Arm Velocity", armVelocity);
+        telemetry.addData("Scoring position", scoringArmMotor.getCurrentPosition());
+        telemetry.addData("Collection position", collectionArmMotor.getCurrentPosition());
 
         if (controller.pressed(Controller.Button.A))
             armClaw.setPosition(clawClosed ? 0.2 : 0);
