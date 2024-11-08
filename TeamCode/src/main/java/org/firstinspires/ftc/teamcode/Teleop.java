@@ -108,7 +108,7 @@ public abstract class Teleop extends LinearOpMode {
                 .addStep(0.0, 1.0, 250)  //  Rumble RIGHT motor 100% for 250 mSec
                 .build();
 
-        // Initialize robot hardware
+        // Initialize robot hardware (not autonomous mode)
         robot.init(hardwareMap,false);
 
         setAllianceSpecificBehavior();

@@ -97,8 +97,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     int         initMenuMax      = 6;    // we have 6 total entries
 //  String[]    initMenuStr  = new String[initMenuMax];
 
-    int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both Backdrop & Audience sides
-    int         trussDelaySec    = 0;     // 2: wait [seconds] under the truss -- applies only to Audience side
+    int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both left/rigth starting positions
+    int         parkDelaySec     = 0;     // 2: wait [seconds] before parking in observation zone -- applies to that parking zone
 
     boolean     audienceYellow   = false;  // 3: score yellow pixel on audience side (true=yes; false=just park?)
     boolean     yellowOnLeft     = true;   // 4: drop yellow pixel in backdrop on left? (true=LEFT; false=RIGHT)
@@ -110,8 +110,11 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     String[]    parkLocationStr = {"NONE", "LEFT", "RIGHT"};
 
-    ElapsedTime autonomousTimer = new ElapsedTime();
-    ElapsedTime motionTimer = new ElapsedTime();
+    ElapsedTime autonomousTimer     = new ElapsedTime();  // overall
+    ElapsedTime motionTimer         = new ElapsedTime();  // for driving
+    ElapsedTime autoViperMotorTimer = new ElapsedTime();
+    ElapsedTime autoTiltMotorTimer  = new ElapsedTime();
+    ElapsedTime autoPanMotorTimer   = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
     boolean gamepad1_circle_last,   gamepad1_circle_now  =false;
@@ -229,14 +232,14 @@ public abstract class AutonomousBase extends LinearOpMode {
                 break;
             case 2 : // TRUSS DELAY [sec]
                 if( nextValue ) {
-                    if (trussDelaySec < 9) {
-                        trussDelaySec++;
+                    if (parkDelaySec < 9) {
+                        parkDelaySec++;
                     }
                 } // next
 
                 if( prevValue ) {
-                    if (trussDelaySec > 0) {
-                        trussDelaySec--;
+                    if (parkDelaySec > 0) {
+                        parkDelaySec--;
                     }
                 } // prev
                 break;
@@ -285,7 +288,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
         // Update our telemetry
         telemetry.addData("Start Delay",  "%d sec %s", startDelaySec, ((initMenuSelected==1)? "<-":"  ") );
-        telemetry.addData("Truss Delay", "%d sec %s", trussDelaySec, ((initMenuSelected==2)? "<-":"  ") );
+        telemetry.addData("Truss Delay", "%d sec %s", parkDelaySec, ((initMenuSelected==2)? "<-":"  ") );
         telemetry.addData("Audience Yellow", "%s %s", (audienceYellow)? "Yes" : "No",
                 ((initMenuSelected==3)? "<-":"  "));
         telemetry.addData("Place Yellow","%s %s", (yellowOnLeft)? "LEFT" : "RIGHT",
@@ -298,6 +301,15 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.update();
     } // processAutonomousInitMenu
 
+    /*--------------------------------------------------------------------------------------------*/
+    // Resets odometry starting position and angle to zero accumulated encoder counts
+    public void resetGlobalCoordinatePosition(){
+        robot.odom.resetPosAndIMU();
+        robotGlobalXCoordinatePosition = 0.0;
+        robotGlobalYCoordinatePosition = 0.0;
+        robotOrientationRadians        = 0.0;
+    } // resetGlobalCoordinatePosition
+
     /*---------------------------------------------------------------------------------*/
     public void performEveryLoop() {
         robot.readBulkData();
@@ -308,7 +320,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         robotOrientationRadians       = -pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward)
     } // performEveryLoop
 
-    // Create a time stamped folder in
+    /*---------------------------------------------------------------------------------*/
+    // Create a time stamped folder in the Robot Control flash file storage
     public void createAutoStorageFolder( boolean isRed, boolean isLeft ) {
         // Create a subdirectory based on DATE
 //      String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
@@ -335,6 +348,103 @@ public abstract class AutonomousBase extends LinearOpMode {
         File baseDir = new File(storageDir);
         baseDir.mkdirs();
     }
+
+    /*---------------------------------------------------------------------------------*/
+    void autoViperMotorMoveToTarget(int targetEncoderCount )
+    {
+        // Configure target encoder count
+        robot.viperMotor.setTargetPosition( targetEncoderCount );
+        // Enable RUN_TO_POSITION mode
+        robot.viperMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Are we raising or lowering the lift?
+        boolean directionUpward = (targetEncoderCount > robot.viperMotorPos)? true : false;
+        // Set the power used to get there (NOTE: for RUN_TO_POSITION, always use a POSITIVE
+        // power setting, no matter which way the motor must rotate to achieve that target.
+        double motorPower = (directionUpward)? 1.0 : 0.5;
+        // Begin our timer and start the movement
+        autoViperMotorTimer.reset();
+        robot.viperMotor.setPower( motorPower );
+    } // autoViperMotorMoveToTarget
+
+    boolean autoViperMotorMoving() {
+        boolean viperDone = false;
+        // Did the movement finish?
+        if( !robot.viperMotor.isBusy() ) {
+           viperDone = true;
+           robot.viperMotor.setMode( DcMotor.RunMode.RUN_USING_ENCODER );
+           robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        // Did we timeout?
+        else if( autoViperMotorTimer.milliseconds() > 5000 ) {
+           viperDone = true;
+           robot.viperMotor.setMode( DcMotor.RunMode.RUN_USING_ENCODER );
+           robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        else {
+            // wait a little longer
+        }
+        return viperDone;
+    } // autoViperMotorWaitToComplete
+
+    /*---------------------------------------------------------------------------------*/
+    void autoTiltMotorMoveToTarget(int targetEncoderCount )
+    {
+        // Configure target encoder count
+        robot.wormTiltMotor.setTargetPosition( targetEncoderCount );
+        // Enable RUN_TO_POSITION mode
+        robot.wormTiltMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Begin our timer and start the movement
+        autoTiltMotorTimer.reset();
+        robot.wormTiltMotor.setPower( 0.80 );
+    } // autoTiltMotorMoveToTarget
+
+    boolean autoTiltMotorMoving() {
+        boolean tiltDone = false;
+        // Did the movement finish?
+        if( !robot.wormTiltMotor.isBusy() ) {
+            tiltDone = true;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        // Did we timeout?
+        else if( autoTiltMotorTimer.milliseconds() > 5000 ) {
+            tiltDone = true;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        else {
+            // wait a little longer
+        }
+        return tiltDone;
+    } // autoTiltMotorWaitToComplete
+
+    /*---------------------------------------------------------------------------------*/
+    void autoPanMotorMoveToTarget(int targetEncoderCount )
+    {
+        // Configure target encoder count
+        robot.wormPanMotor.setTargetPosition( targetEncoderCount );
+        // Enable RUN_TO_POSITION mode
+        robot.wormPanMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Begin our timer and start the movement
+        autoPanMotorTimer.reset();
+        robot.wormPanMotor.setPower( 0.80 );
+    } // autoPanMotorMoveToTarget
+
+    boolean autoPanMotorMoving() {
+        boolean panDone = false;
+        // Did the movement finish?
+        if( !robot.wormPanMotor.isBusy() ) {
+            panDone = true;
+            robot.wormPanMotor.setPower( 0.0 );
+        }
+        // Did we timeout?
+        else if( autoPanMotorTimer.milliseconds() > 5000 ) {
+            panDone = true;
+            robot.wormPanMotor.setPower( 0.0 );
+        }
+        else {
+            // wait a little longer
+        }
+        return panDone;
+    } // autoPanMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
     void driveAndRotate(double drivePower, double turnPower) {
@@ -1234,26 +1344,6 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
         return angleDegrees;
     } // AngleWrapDegrees
-    
-    /*--------------------------------------------------------------------------------------------*/
-    // Sets odometry starting position and ensures zero accumulated encoder counts
-    public void setGlobalCoordinatePosition(double robotRadians,
-                                            double robotGlobalX, double robotGlobalY){
-        // Read starting odomentry counts (so "prev" becomes "this" on next cycle)
-//      robot.readBulkData();
-        // Set our starting position (x/y & angle)
-//        robotOrientationRadians        = robotRadians;   // 0deg (straight forward)
-//        robotGlobalXCoordinatePosition = robotGlobalX;   // in odometer counts
-//        robotGlobalYCoordinatePosition = robotGlobalY;
-    } // setGlobalCoordinatePosition
 
-    /*--------------------------------------------------------------------------------------------*/
-    // Sets odometry corrected position values
-    public void setCorrectedGlobalCoordinatePosition(double robotRadians,
-                                            double robotGlobalX, double robotGlobalY){
- //       synchronized(AprilTagProcessorImplCallback.positionLock) {
- //           robotGlobalCoordinateCorrectedPosition.setLocation(robotGlobalX, robotGlobalY, robotRadians);
- //     }
-    } // setCorrectedGlobalCoordinatePosition
 
 } // AutonomousBase

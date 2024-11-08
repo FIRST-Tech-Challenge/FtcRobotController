@@ -100,11 +100,12 @@ public class Hardware2025Bot
     public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
     public double       wormTiltMotorPwr    = 0.0;    // current power setting
 
-    public double       TILT_ANGLE_HW_MAX   =  3675.0;  // encoder at maximum rotation UP/BACK (horizontal = -200)
-    public double       TILT_ANGLE_BASKET   =  3675.0;  // encoder at rotation back to the basket for scoring
-    public double       TILT_ANGLE_HANG1    =  300.0;   // encoder when preparing for level 2 ascent
-    public double       TILT_ANGLE_HANG2    =  400.0;   // encoder at the end of level 2 ascent
-    public double       TILT_ANGLE_HW_MIN   = -2000.0;  // encoder at maximum rotation DOWN/FWD
+    public int          TILT_ANGLE_HW_MAX   =  3675;  // encoder at maximum rotation UP/BACK (horizontal = -200)
+    public int          TILT_ANGLE_BASKET   =  3675;  // encoder at rotation back to the basket for scoring
+    public int          TILT_ANGLE_HANG1    =  300;   // encoder when preparing for level 2 ascent
+    public int          TILT_ANGLE_HANG2    =  400;   // encoder at the end of level 2 ascent
+    public int          TILT_ANGLE_SPECIMEN =  500;   // encoder when tilted up for autonomous specimen scoring
+    public int          TILT_ANGLE_HW_MIN   = -2000;  // encoder at maximum rotation DOWN/FWD
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
