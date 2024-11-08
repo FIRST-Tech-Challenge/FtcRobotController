@@ -106,7 +106,7 @@ public class actuatorUtils {
             wrist.setPosition(0.333);
 
         } else {
-            wrist.setPosition(0.0);
+            wrist.setPosition(0.667);
         }
     }
     public static void setLift(LiftLevel mode) {

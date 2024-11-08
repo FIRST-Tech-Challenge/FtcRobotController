@@ -63,6 +63,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     boolean disableIMU = true;
     boolean game2back = false; //Used to override switch for arm in case of failure
     boolean rightBumperPressed = false;
+    boolean leftBumperPressed = false;
     Double initHeading = 0.0;
 
     //boolean touchIsPressed = false;
@@ -254,15 +255,20 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         intake.setPower(gamepad2.left_stick_y);
         if (gamepad2.right_bumper && ! rightBumperPressed) {
             rightBumperPressed = true;
-            if (wrist.getPosition()==0.0)
-                utils.setWrist(actuatorUtils.WristModes.DOWN);
-            else
-                utils.setWrist(actuatorUtils.WristModes.UP);
+            if (wrist.getPosition()<1.0)
+                wrist.setPosition(wrist.getPosition()+0.333);
         }
         else if (!gamepad2.right_bumper) {
             rightBumperPressed = false;
         }
 
+        if (gamepad2.left_bumper && !leftBumperPressed) {
+            leftBumperPressed = true;
+            if (wrist.getPosition() > 0.0)
+                wrist.setPosition(wrist.getPosition() - 0.333);
+        } else if (!gamepad2.left_bumper) {
+            leftBumperPressed = false;
+        }
         // Show the elapsed game time and wheel power.
         telemetry.addData("leftArm: ", leftArm.getCurrentPosition());
         telemetry.addData("rightArm:", rightArm.getCurrentPosition());

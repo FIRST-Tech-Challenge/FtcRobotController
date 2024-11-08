@@ -70,7 +70,7 @@ public class LeftPath extends LinearOpMode {
 
         utils.setArm(actuatorUtils.ArmModes.UP);
         utils.setIntake(actuatorUtils.IntakeModes.OFF);
-        utils.setWrist(actuatorUtils.WristModes.DOWN);
+        utils.setWrist(actuatorUtils.WristModes.UP);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
