@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.xendy;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.utils.DriveChassis;
+
 @Autonomous(name = "Forward Only Autonomous", group="XendySimpleTeleop")
 public class XendySimpleAutonomous extends OpMode {
-    XendyChassis chassis;
+    DriveChassis chassis;
     @Override
     public void init() {
-        chassis = new XendyChassis(this);
+        chassis = new DriveChassis(this);
     }
 
     public final double speed = 0.25;

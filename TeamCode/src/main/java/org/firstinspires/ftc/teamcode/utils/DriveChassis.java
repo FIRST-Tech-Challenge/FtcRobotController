@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,16 +14,16 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 public class DriveChassis {
     // Initialize our motors
-    protected DcMotorEx leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
-    protected DcMotorEx horizontalSlideMotor, verticalSlideMotor, endPivotMotor;
-    protected Servo claw, bucket;
+    public DcMotorEx leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
+    public DcMotorEx horizontalSlideMotor, verticalSlideMotor, endPivotMotor;
+    public Servo claw, bucket;
 
     // Info about our robots design
-    protected final int TICKS_PER_REVOLUTION = 28;
-    protected final double DRIVE_GEAR_RATIO = 20;
-    protected final double WHEEL_CIRCUMFERENCE = 23.94; // In CM
+    public final int TICKS_PER_REVOLUTION = 28;
+    public final double DRIVE_GEAR_RATIO = 20;
+    public final double WHEEL_CIRCUMFERENCE = 23.94; // In CM
 
-    protected IMU imu;
+    public IMU imu;
 
     public DriveChassis(OpMode opMode) {
         HardwareMap hardwareMap = opMode.hardwareMap;
