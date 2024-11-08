@@ -108,14 +108,17 @@ public class EACDriver implements NKNComponent {
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
-        if (takeButton.detect(gamePadHandler.getGamePad2())) {
-            servoHandler.setServoPower(-0.3);
-        } else if (releaseButton.detect(gamePadHandler.getGamePad2())) {
-            servoHandler.setServoPower(0.3);
-        } else {
-            servoHandler.setServoPower(-0.06);
+            if (takeButton.detect(gamePadHandler.getGamePad2())) {
+                servoHandler.setServoPower(-0.3);
+            } else if (releaseButton.detect(gamePadHandler.getGamePad2())) {
+                servoHandler.setServoPower(0.3);
+            } else if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.COLLECT) {
+                servoHandler.setServoPower(-0.3);
+            } else {
+                servoHandler.setServoPower(-0.06);
+            }
         }
-    }
+
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
