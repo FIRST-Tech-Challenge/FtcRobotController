@@ -15,27 +15,28 @@ public class Auto extends Robot {
     private void Init() {
         // Initialize Robot
         Initialize(DcMotor.RunMode.RUN_WITHOUT_ENCODER, new double[]{0, 0, 0},
-                new double[]{0.3, 0, 0.1, 0});
+                new double[]{0, 0, 0});
         imu.resetYaw();
 
     }
 
     private void WaitForStart() {
         while (!isStarted() && !isStopRequested()) {
-            Posx = 0;
-            Posy = 0;
-            heading = 0;
         }
 
     }
 
     private void FrontArm() {
         if (!On) {
+            SetServoPos(1, Claw);
             SetServoPos(1, Ll , Rr);
+            SetServoPos(1, LA , RA);
+
             On = true;
             return;
         }
         SetServoPos(0, Ll, Rr);
+        SetServoPos(0, LA , RA);
         On = false;
         int x =1;
     }

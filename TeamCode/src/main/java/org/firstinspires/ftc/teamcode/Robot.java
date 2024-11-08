@@ -153,6 +153,10 @@ public abstract class Robot extends LinearOpMode {
         BL.setMode(moveMode);
         BR.setMode(moveMode);
     }
+    public void LiftPower(double liftPower) {
+        LL.setPower(liftPower);
+        RL.setPower(liftPower);
+    }
     public double SetServoPos(double pos, float[] minMax, Servo L_servo, Servo R_servo) {
         pos = Range.clip(pos, minMax[0], minMax[1]);
         L_servo.setPosition(pos);
@@ -182,6 +186,7 @@ public abstract class Robot extends LinearOpMode {
         imu = hardwareMap.get(IMU.class,       "imu");
         FL  = hardwareMap.get(DcMotorEx.class, "Front_Left");    FR  = hardwareMap.get(DcMotorEx.class, "Front_Right");
         BL  = hardwareMap.get(DcMotorEx.class, "Back_Left");     BR  = hardwareMap.get(DcMotorEx.class, "Back_Right");
+        LL  = hardwareMap.get(DcMotorEx.class, "Left_lift");     RL  = hardwareMap.get(DcMotorEx.class, "Right_lift");
         LA  = hardwareMap.get(Servo.class, "Left_arm");          RA  = hardwareMap.get(Servo.class, "Right_arm");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL ;
@@ -195,34 +200,37 @@ public abstract class Robot extends LinearOpMode {
         // Reverse Servo
         Ll.setDirection(Servo.Direction.REVERSE);
         LA.setDirection(Servo.Direction.REVERSE);
+        LJ.setDirection(Servo.Direction.REVERSE);
         // Set Servo Position
         SetServoPos(DuoServoAng[0], LA, RA);
-        SetServoPos(DuoServoAng[0], Ll, Rr);
+        SetServoPos(DuoServoAng[1], Ll, Rr);
+        SetServoPos(DuoServoAng[2], LJ, RJ);
+        SetServoPos(ServoAng[0], RC);
+        SetServoPos(ServoAng[1], Claw);
+        SetServoPos(ServoAng[2], Box);
+
         // setMode Motors
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MoveMode(moveMode);
 
         // Reverse Motors
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        RL.setDirection(DcMotorSimple.Direction.REVERSE);
         // SetBehavior Motors
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // SetPower Motors
         MovePower(0, 0, 0, 0);
+        LL.setPower(0);
+        RL.setPower(0);
     }
-
-    public void LiftPower(double liftPower) {
-        LL.setPower(liftPower);
-        RL.setPower(liftPower);
-    }
-
 }
