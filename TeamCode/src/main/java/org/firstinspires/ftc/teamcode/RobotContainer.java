@@ -15,6 +15,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowLow;
+import org.firstinspires.ftc.teamcode.CommandGroups.DepositePos;
+import org.firstinspires.ftc.teamcode.CommandGroups.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.CommandGroups.HuntingPos;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
@@ -115,9 +118,15 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(125)));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DepositePos());
+
+
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
+
         driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new HuntingPos());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new DropToGrab());
 
        // driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(0)));
 
