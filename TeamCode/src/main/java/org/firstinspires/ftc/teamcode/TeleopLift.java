@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -15,7 +16,7 @@ import java.util.Locale;
  * TeleOp DriveTrain Only (with test modes).
  */
 @TeleOp(name="Teleop-Lift", group="7592")
-//@Disabled
+@Disabled
 public class TeleopLift extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Single Wheel Control
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
@@ -182,8 +183,9 @@ public class TeleopLift extends LinearOpMode {
 //          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
+
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
-            robot.waitForTick(40);
+//          robot.waitForTick(40);
         } // opModeIsActive
 
     } // runOpMode
@@ -200,6 +202,7 @@ public class TeleopLift extends LinearOpMode {
         gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
         gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
         gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
+//      gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -214,9 +217,10 @@ public class TeleopLift extends LinearOpMode {
         gamepad2_dpad_right_last = gamepad2_dpad_right_now;  gamepad2_dpad_right_now = gamepad2.dpad_right;
         gamepad2_l_bumper_last   = gamepad2_l_bumper_now;    gamepad2_l_bumper_now   = gamepad2.left_bumper;
         gamepad2_r_bumper_last   = gamepad2_r_bumper_now;    gamepad2_r_bumper_now   = gamepad2.right_bumper;
-        //    gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
-        //    gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
-    } // captureGamepad2Buttons    /*---------------------------------------------------------------------------------*/
+//      gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
+//      gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
+    } // captureGamepad2Buttons
+
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
@@ -574,12 +578,12 @@ public class TeleopLift extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Move lift to HIGH-SCORING position
-//           robot.startLiftMove( robot.VIPER_EXTEND_HIGH );
+//           robot.startLiftMove( robot.VIPER_EXTEND_BASKET );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
-        {   // Move lift to MID-SCORING position
-//           robot.startLiftMove( robot.VIPER_EXTEND_MID );
+        {   // Extend lift to the specimen-scoring hook-above-the-bar height
+//           robot.startLiftMove( robot.VIPER_EXTEND_HOOK );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)

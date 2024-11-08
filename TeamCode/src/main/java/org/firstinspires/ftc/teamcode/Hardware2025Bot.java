@@ -128,11 +128,10 @@ public class Hardware2025Bot
     // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3 counts
     // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
     public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
-    public int          VIPER_EXTEND_AUTO  = 482;    // raised to just above the bin (safe to rotate - auto)
-    public int          VIPER_EXTEND_BIN   = 1230;   // extended for collection
-    public int          VIPER_EXTEND_LOW   = 537;    // raised to lowest possible scoring position
-    public int          VIPER_EXTEND_MID   = 1038;   // raised to medium scoring height
-    public int          VIPER_EXTEND_HIGH  = 1482;   // raised to upper scoring height
+    public int          VIPER_EXTEND_AUTO  = 482;    // extend for collecting during auto
+    public int          VIPER_EXTEND_GRAB  = 1230;   // extend for collection from submersible
+    public int          VIPER_EXTEND_HOOK  = 1038;   // raised to where the specimen hook is above the high bar
+    public int          VIPER_EXTEND_BASKET= 1482;   // raised to basket-scoring height
     public int          VIPER_EXTEND_FULL  = 3000;   // fully extended (never exceed this count!)
     PIDControllerLift   liftPidController;           // PID parameters for the lift motors
     public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
@@ -150,16 +149,16 @@ public class Hardware2025Bot
     final public static double ELBOW_SERVO_INIT_ANGLE = 229.0;
     final public static double ELBOW_SERVO_SAFE = 0.370;  // Safe orientation for driving
     final public static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
-    final public static double ELBOW_SERVO_GRAB = 0.330;  // Partially extend to align fingers inside pixels
+    final public static double ELBOW_SERVO_GRAB = 0.330;  // For collecting off the field
     final public static double ELBOW_SERVO_GRAB_ANGLE = 234.0;
-    final public static double ELBOW_SERVO_DROP = 0.330;  // Fully extend finger assembly toward the Backdrop
+    final public static double ELBOW_SERVO_DROP = 0.330;  // For scoring in the basket
     final public static double ELBOW_SERVO_DROP_ANGLE = 234.0;
     final public static double ELBOW_SERVO_BAR  = 0.650;  // For scoring a specimen on the sumersible bar
     final public static double ELBOW_SERVO_BAR_ANGLE = 133.0;
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
-    final public static double WRIST_SERVO_INIT = 0.159;
+    final public static double WRIST_SERVO_INIT = 0.159;          // rotation can hit the floor
     final public static double WRIST_SERVO_INIT_ANGLE = 288.0;
     final public static double WRIST_SERVO_SAFE = 0.340;    // Safe orientation for driving
     final public static double WRIST_SERVO_SAFE_ANGLE = 234.0;
@@ -494,7 +493,37 @@ public class Hardware2025Bot
         rearRightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
     } // setRunToPosition
 
-    public ElapsedTime viperSlideTimer = new ElapsedTime();
+    /*--------------------------------------------------------------------------------------------*/
+    public double getElbowServoAngle() {
+        return (elbowServoPos.getVoltage() / 3.3) * 360.0;
+    }
+    public double getElbowServoPos()   { return  elbowServo.getPosition(); };
+
+    public double getWristServoAngle() {
+        return (wristServoPos.getVoltage() / 3.3) * 360.0;
+    }
+    public double getWristServoPos()   { return  wristServo.getPosition(); }
+
+    public enum LiftMoveActivity {
+        IDLE,
+        LIFTING_SAFE,
+        LIFTING,
+        ROTATING
+    }
+    public LiftMoveActivity liftMoveState = LiftMoveActivity.IDLE;
+
+    public enum LiftStoreActivity {
+        IDLE,
+        ROTATING,
+        LOWERING
+    }
+    public LiftStoreActivity liftStoreState = LiftStoreActivity.IDLE;
+
+    public  ElapsedTime viperSlideTimer = new ElapsedTime();
+    private ElapsedTime liftMoveTimer   = new ElapsedTime();
+    private ElapsedTime liftStoreTimer  = new ElapsedTime();
+
+    private int liftMoveTarget;
 
     /*--------------------------------------------------------------------------------------------*/
     /* viperSlideExtension()                                                                      */
@@ -537,23 +566,7 @@ public class Hardware2025Bot
             }
         }
     } // processViperSlideExtension
-    public enum LiftMoveActivity {
-        IDLE,
-        LIFTING_SAFE,
-        LIFTING,
-        ROTATING
-    }
-    public LiftMoveActivity liftMoveState = LiftMoveActivity.IDLE;
-
-    public enum LiftStoreActivity {
-        IDLE,
-        ROTATING,
-        LOWERING
-    }
-    public LiftStoreActivity liftStoreState = LiftStoreActivity.IDLE;
-
-    private ElapsedTime liftStoreTimer = new ElapsedTime();
-
+    
     public void abortViperSlideExtension()
     {
         // Have we commanded an AUTOMATIC lift movement that we need to terminate so we
@@ -571,97 +584,8 @@ public class Hardware2025Bot
         }
     } // abortViperSlideExtension
 
-/*
-    public int singleSonarRangeF() {
-        //Query the current range sensor reading and wait for a response
-        return sonarRangeF.getDistanceSync();
-    } // singleSonarRangeF
-
-    enum UltrasonicsInstances
-    {
-        SONIC_RANGE_LEFT,
-        SONIC_RANGE_RIGHT,
-        SONIC_RANGE_FRONT,
-        SONIC_RANGE_BACK;
-    }
-
-    enum UltrasonicsModes
-    {
-        SONIC_FIRST_PING,
-        SONIC_MOST_RECENT;
-    }
-    public int slowSonarRange( UltrasonicsInstances sensorInstance ) {
-        // This is the SLOW version that sends an ultrasonic ping, waits 50 msec for the result,
-        // and returns a value.  The returned valued is based on SINGLE reading (no averaging).
-        // This version is intended for 1-time readings where the 50msec is okay (not control loops).
-        int cm = 0;
-        switch( sensorInstance ) {
-            case SONIC_RANGE_FRONT : cm = sonarRangeF.getDistanceSync(); break;
-            default                : cm = 0;
-        } // switch()
-        return cm;
-    } // slowSonarRange
-
-    public int fastSonarRange( UltrasonicsInstances sensorInstance, UltrasonicsModes mode ) {
-        // This is the FAST version that assumes there's a continuous sequence of pings being
-        // triggered so it simply returns the "most recent" answer (no waiting!). This function is
-        // intended for control loops that can't afford to incur a 50msec delay in the loop time.
-        // The first call should pass SONIC_FIRST_PING and ignore the result; All subsequent calls
-        // (assuming at least 50 msec has elapsed) should pass SONIC_MOST_RECENT and use the distance
-        // returned.
-        int cm = 0;
-        switch( sensorInstance ) {
-            case SONIC_RANGE_FRONT : cm = sonarRangeF.getDistanceAsync(); break;
-            default                : cm = 0;
-        } // switch()
-        // Do we need to zero-out the value returned (likely from another time/place)?
-        if( mode == Hardware2025Bot.UltrasonicsModes.SONIC_FIRST_PING ) {
-            cm = 0;
-        }
-        // Return
-        return cm;
-    } // fastSonarRange
-*/
     /*--------------------------------------------------------------------------------------------*/
-    public double getElbowServoAngle() {
-        return (elbowServoPos.getVoltage() / 3.3) * 360.0;
-    }
-    public double getElbowServoPos()   { return  elbowServo.getPosition(); };
-
-    public double getWristServoAngle() {
-        return (wristServoPos.getVoltage() / 3.3) * 360.0;
-    }
-    public double getWristServoPos()   { return  wristServo.getPosition(); }
-
-    /*--------------------------------------------------------------------------------------------*/
-
-    /***
-     *
-     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
-     * periodic tick.  This is used to compensate for varying processing times for each cycle.
-     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
-     *
-     * @param periodMs  Length of wait cycle in mSec.
-     */
-    public void waitForTick(long periodMs) {
-
-        long  remaining = periodMs - (long)period.milliseconds();
-
-        // sleep for the remaining portion of the regular cycle period.
-        if (remaining > 0) {
-            try {
-                sleep(remaining);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        // Reset the cycle clock for the next pass.
-        period.reset();
-    } /* waitForTick() */
-
-    /*--------------------------------------------------------------------------------------------*/
-    public void liftMotorsSetPower( double motorPower )
+    public void liftMotorSetPower( double motorPower )
     {
         // Are we stopping? (allow that no matter what the current liftAngle or power setting)
         if( Math.abs(motorPower) <= 0.0001 ) {
@@ -672,56 +596,7 @@ public class Hardware2025Bot
             viperMotorSetPwr = restrictDeltaPower( motorPower, viperMotorSetPwr, 0.333 );
         }
         viperMotor.setPower( viperMotorSetPwr );
-    } // liftMotorsSetPower
-
-    /*--------------------------------------------------------------------------------------------*/
-    /* liftPIDPosInit()                                                                           */
-    /* - newAngle = desired lift angle                                                            */
-    public void liftPIDPosInit( int newPosition )
-    {
-        // 120mm per rotation, 5.8 motor rotations
-        // 1150 rpm motor = 145.1 ticks per rotation
-        // 841 ticks total, but we have listed 580
-        // starting with 580 ticks for 27.4" extension
-        // or 21.17 ticks per inch
-        // Current distance from target (degrees)
-        int ticksToGo = newPosition - viperMotorPos;
-        double pStaticLift  = 0.007;
-        // Voltage doesn't seem as important on the arm minimum. Probably don't have to do
-        // interpolated voltage. For example 0.13 power was not able to move arm at low voltage
-        // and also could not at fresh battery voltage. 0.131 was able to at low voltage.
-        // pStaticLower 0.130 @ 12.54V
-        // pStaticLift  0.320 @ 12.81V
-//      double pSin = getInterpolatedMinPower();
-
-        liftPidController = new PIDControllerLift( liftMotorPID_p, liftMotorPID_i, liftMotorPID_d,
-                pStaticLift );
-
-        // Are we ALREADY at the specified ticks?
-        // +/- 10 ticks is about +/-0.5" error
-        if( Math.abs(ticksToGo) <= 10 )
-            return;
-
-        liftPidController.reset();
-
-        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
-        liftMotorsSetPower( 0.0 );
-
-        // Establish a new target angle & reset counters
-        liftMotorPIDAuto = true;
-        liftTarget = newPosition;
-        liftMotorCycles = 0;
-        liftMotorWait   = 0;
-
-        // If logging instrumentation, begin a new dataset now:
-//      if( liftMotorLogging ) {
-//          turretMotorLogVbat = readBatteryExpansionHub();
-//          liftMotorLogIndex  = 0;
-//          liftMotorLogEnable = true;
-//          liftMotorTimer.reset();
-//      }
-
-    } // liftPIDPosInit
+    } // liftMotorSetPower
 
     /*--------------------------------------------------------------------------------------------*/
     /* liftPIDPosRun()                                                                            */
@@ -736,12 +611,12 @@ public class Hardware2025Bot
             int ticksToGoAbs = Math.abs(ticksToGo);
             int waitCycles = (teleopMode) ? 2 : 2;
             double power = liftPidController.update(liftTarget, viperMotorPos);
-            liftMotorsSetPower(power);
+            liftMotorSetPower(power);
             // Have we achieved the target?
             // (temporarily limit to 16 cycles when verifying any major math changes!)
 //          if( liftMotorCycles >= 16 ) {
             if( ticksToGoAbs <= 10 ) {
-                liftMotorsSetPower( 0.0 );
+                liftMotorSetPower( 0.0 );
                 if( ++liftMotorWait >= waitCycles ) {
                     liftMotorPIDAuto = false;
 //                  writeLiftLog();
@@ -755,9 +630,6 @@ public class Hardware2025Bot
         } // liftMotorPIDAuto
     } // liftPIDPosRun
 
-    private ElapsedTime liftMoveTimer = new ElapsedTime();
-    private int liftMoveTarget;
-
     public void startLiftMove(int liftTarget)
     {
         // Ensure pre-conditions are met
@@ -770,17 +642,18 @@ public class Hardware2025Bot
             liftMoveTimer.reset();
             liftMoveState = LiftMoveActivity.LIFTING_SAFE;
         }
-    }
+    } // startLiftMove
+    
     public void processLiftMove() {
         switch(liftMoveState){
             // Make sure we are over the bin to rotate
             case LIFTING_SAFE:
                 // We are above the pixel bin and can start rotating
-                if(viperMotorPos >= VIPER_EXTEND_BIN) {
+                if(viperMotorPos >= VIPER_EXTEND_GRAB) {
                     // This shouldn't happen, but make sure we aren't moving below
                     // the pixel bin height before starting wrist movement. Moving below
                     // pixel bin should use the store activity.
-                    if(liftMoveTarget >= VIPER_EXTEND_BIN) {
+                    if(liftMoveTarget >= VIPER_EXTEND_GRAB) {
                         wristServo.setPosition(WRIST_SERVO_DROP);
                     }
                     liftMoveTimer.reset();
@@ -834,7 +707,7 @@ public class Hardware2025Bot
             default:
                 break;
         }
-    }
+    } // processLiftMove
 
     public void startLiftStore()
     {
@@ -889,5 +762,30 @@ public class Hardware2025Bot
                 break;
         }
     } // processLiftStore
+
+    /***
+     *
+     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
+     * periodic tick.  This is used to compensate for varying processing times for each cycle.
+     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
+     *
+     * @param periodMs  Length of wait cycle in mSec.
+     */
+    public void waitForTick(long periodMs) {
+
+        long  remaining = periodMs - (long)period.milliseconds();
+
+        // sleep for the remaining portion of the regular cycle period.
+        if (remaining > 0) {
+            try {
+                sleep(remaining);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // Reset the cycle clock for the next pass.
+        period.reset();
+    } /* waitForTick() */
 
 } /* Hardware2025Bot */
