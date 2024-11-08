@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
@@ -82,23 +83,27 @@ public class Hardware2025Bot
     public int          wormPanMotorPos    = 0;       // current encoder count
     public double       wormPanMotorVel    = 0.0;     // encoder counts per second
     public double       wormPanMotorAmps   = 0.0;     // current power draw (Amps)
+    public double       wormPanMotorAmpsPk = 0.0;     // peak power draw (Amps)
     public double       wormPanMotorSetPwr = 0.0;     // requested power setting
     public double       wormPanMotorPwr    = 0.0;     // current power setting
+
+    public double       PAN_ANGLE_HW_MAX    =  200.0;  // encoder angles at maximum rotation RIGHT
+    public double       PAN_ANGLE_HW_BASKET =    0.0;  // encoder for rotation back to the basket for scoring
+    public double       PAN_ANGLE_HW_MIN    = -575.0;  // encoder angles at maximum rotation LEFT
 
     protected DcMotorEx wormTiltMotor       = null;
     public int          wormTiltMotorTgt    = 0;      // RUN_TO_POSITION target encoder count
     public int          wormTiltMotorPos    = 0;      // current encoder count
     public double       wormTiltMotorVel    = 0.0;    // encoder counts per second
     public double       wormTiltMotorAmps   = 0.0;    // current power draw (Amps)
+    public double       wormTiltMotorAmpsPk = 0.0;    // peak power draw (Amps) 312rpm = 9.2A @ 12V
     public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
     public double       wormTiltMotorPwr    = 0.0;    // current power setting
 
-    public double       PAN_ANGLE_HW_MAX    =  200.0;  // encoder angles at maximum rotation RIGHT
-    public double       PAN_ANGLE_HW_BASKET =    0.0;  // encoder for rotation back to the basket for scoring
-    public double       PAN_ANGLE_HW_MIN    = -575.0;  // encoder angles at maximum rotation LEFT
-
     public double       TILT_ANGLE_HW_MAX   =  3675.0;  // encoder at maximum rotation UP/BACK (horizontal = -200)
     public double       TILT_ANGLE_BASKET   =  3675.0;  // encoder at rotation back to the basket for scoring
+    public double       TILT_ANGLE_HANG1    =  300.0;   // encoder when preparing for level 2 ascent
+    public double       TILT_ANGLE_HANG2    =  400.0;   // encoder at the end of level 2 ascent
     public double       TILT_ANGLE_HW_MIN   = -2000.0;  // encoder at maximum rotation DOWN/FWD
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
@@ -107,32 +112,36 @@ public class Hardware2025Bot
     public int          viperMotorPos    = 0;       // current encoder count
     public double       viperMotorVel    = 0.0;     // encoder counts per second
     public double       viperMotorAmps   = 0.0;     // current power draw (Amps)
+    public double       viperMotorAmpsPk = 0.0;     // peak power draw (Amps) 312rpm = 9.2A @ 12V
     public double       viperMotorSetPwr = 0.0;     // requested power setting
     public double       viperMotorPwr    = 0.0;     // current power setting
 
+    public ElapsedTime  viperSlideTimer    = new ElapsedTime();
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
     public boolean      viperMotorBusy     = false;
-    public double       VIPER_RAISE_POWER  =  1.000; // Motor power used to RAISE viper slide
-    public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current height
-    public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to LOWER viper slide
+    public double       VIPER_RAISE_POWER  =  1.000; // Motor power used to EXTEND viper slide
+    public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current extension
+    public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to RETRACT viper slide
 
     // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3 counts
     // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
     public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
     public int          VIPER_EXTEND_AUTO  = 482;    // extend for collecting during auto
+    public int          VIPER_EXTEND_HANG1 = 900;    // extend to this to prepare for level 2 ascent
+    public int          VIPER_EXTEND_HANG2 = 800;    // retract to this extension during level 2 ascent
     public int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
     public int          VIPER_EXTEND_HOOK  = 1038;   // raised to where the specimen hook is above the high bar
     public int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
     public int          VIPER_EXTEND_FULL1 = 2250;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
     public int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
-    PIDControllerLift   liftPidController;           // PID parameters for the lift motors
-    public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
-    public double       liftMotorPID_i     =  0.000; //  Raise i = integral
-    public double       liftMotorPID_d     = -0.007; //  Raise d = derivative
-    public boolean      liftMotorPIDAuto   = false;  // Automatic movement in progress (PID)
-    public int          liftMotorCycles    = 0;      // Automatic movement cycle count
-    public int          liftMotorWait      = 0;      // Automatic movement wait count (truly there! not just passing thru)
-    public int          liftTarget         = 0;      // Automatic movement target ticks
+//  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
+//  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
+//  public double       liftMotorPID_i     =  0.000; //  Raise i = integral
+//  public double       liftMotorPID_d     = -0.007; //  Raise d = derivative
+//  public boolean      liftMotorPIDAuto   = false;  // Automatic movement in progress (PID)
+//  public int          liftMotorCycles    = 0;      // Automatic movement cycle count
+//  public int          liftMotorWait      = 0;      // Automatic movement wait count (truly there! not just passing thru)
+//  public int          liftTarget         = 0;      // Automatic movement target ticks
 
     //====== COLLECTOR SERVOS =====
     public AnalogInput elbowServoPos = null;
@@ -375,6 +384,23 @@ public class Hardware2025Bot
     } // readBulkData
 
     /*--------------------------------------------------------------------------------------------*/
+    public void updateAscendMotorAmps() {
+
+        // monitor the viper slide motor current needed to lift robot during ascent       
+        viperMotorAmps = viperMotor.getCurrent(CurrentUnit.AMPS);
+        if( viperMotorAmps > viperMotorAmpsPk ) viperMotorAmpsPk = viperMotorAmps;
+
+        // monitor the arm tilt motor current needed fold robot up from floor during ascent       
+        wormTiltMotorAmps = wormTiltMotor.getCurrent(CurrentUnit.AMPS);
+        if( wormTiltMotorAmps > wormTiltMotorAmpsPk ) wormTiltMotorAmpsPk = wormTiltMotorAmps;
+
+        // monitor the arm pan motor current needed to keep arm from rotating during ascent       
+        wormPanMotorAmps = wormPanMotor.getCurrent(CurrentUnit.AMPS);
+        if( wormPanMotorAmps > wormPanMotorAmpsPk ) wormPanMotorAmpsPk = wormPanMotorAmps;
+        
+    } // updateAscendMotorAmps
+
+    /*--------------------------------------------------------------------------------------------*/
     // This is a slow operation (involves an I2C reading) so only do it as needed
     public double readBatteryControlHub() {
         // Update local variable and then return that value
@@ -496,29 +522,8 @@ public class Hardware2025Bot
     }
     public double getWristServoPos()   { return  wristServo.getPosition(); }
 
-    public enum LiftMoveActivity {
-        IDLE,
-        LIFTING_SAFE,
-        LIFTING,
-        ROTATING
-    }
-    public LiftMoveActivity liftMoveState = LiftMoveActivity.IDLE;
-
-    public enum LiftStoreActivity {
-        IDLE,
-        ROTATING,
-        LOWERING
-    }
-    public LiftStoreActivity liftStoreState = LiftStoreActivity.IDLE;
-
-    public  ElapsedTime viperSlideTimer = new ElapsedTime();
-    private ElapsedTime liftMoveTimer   = new ElapsedTime();
-    private ElapsedTime liftStoreTimer  = new ElapsedTime();
-
-    private int liftMoveTarget;
-
     /*--------------------------------------------------------------------------------------------*/
-    /* viperSlideExtension()                                                                      */
+    /* startViperSlideExtension()                                                                 */
     /* NOTE: Comments online say the firmware that executes the motor RUN_TO_POSITION logic want  */
     /* the setup commands in this order: setTargetPosition(), setMode(), setPower().              */
     public void startViperSlideExtension(int targetEncoderCount )
@@ -540,7 +545,7 @@ public class Hardware2025Bot
         // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
         viperMotorAutoMove = true;
         viperMotorBusy = true;
-    } // viperSlideExtension
+    } // startViperSlideExtension
 
     public void processViperSlideExtension()
     {
@@ -548,13 +553,13 @@ public class Hardware2025Bot
         if( viperMotorAutoMove ) {
             if (!viperMotor.isBusy()) {
                 viperMotorBusy = false;
-                // Timeout reaching destination.
+            // Timeout reaching destination.
             } else if (viperSlideTimer.milliseconds() > 5000) {
                 viperMotorBusy = false;
-                //telemetry.addData("processViperSlideExtension", "Movement timed out.");
-                //telemetry.addData("processViperSlideExtension", "Position: %d", viperMotor.getCurrentPosition());
-                //telemetry.update();
-                //telemetrySleep();
+              //telemetry.addData("processViperSlideExtension", "Movement timed out.");
+              //telemetry.addData("processViperSlideExtension", "Position: %d", viperMotor.getCurrentPosition());
+              //telemetry.update();
+              //telemetrySleep();
             }
         }
     } // processViperSlideExtension
@@ -569,14 +574,53 @@ public class Hardware2025Bot
            // the weight of the lift will immediately drop it back down.
            viperMotor.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
            viperMotor.setPower( VIPER_HOLD_POWER );
-            liftMoveState = LiftMoveActivity.IDLE;
-            liftStoreState = LiftStoreActivity.IDLE;
+//         liftMoveState = LiftMoveActivity.IDLE;
+//         liftStoreState = LiftStoreActivity.IDLE;
            viperMotorAutoMove = false;
            viperMotorBusy = false;
         }
     } // abortViperSlideExtension
 
     /*--------------------------------------------------------------------------------------------*/
+ /*
+ 
+    private int liftMoveTarget;
+
+    private ElapsedTime liftMoveTimer   = new ElapsedTime();
+    private ElapsedTime liftStoreTimer  = new ElapsedTime();
+
+    public enum LiftMoveActivity {
+        IDLE,
+        LIFTING_SAFE,
+        LIFTING,
+        ROTATING
+    }
+    public LiftMoveActivity liftMoveState = LiftMoveActivity.IDLE;
+
+    public enum LiftStoreActivity {
+        IDLE,
+        ROTATING,
+        LOWERING
+    }
+    public LiftStoreActivity liftStoreState = LiftStoreActivity.IDLE;
+
+    //--------------------------------------------------------------------------------------------
+    public void startLiftMove(int liftTarget)
+    {
+        // Ensure pre-conditions are met
+        if( (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
+            (pixelGrabState == PixelGrabActivity.IDLE) &&
+            (pixelScoreState == PixelScoreActivity.IDLE) ) {
+            // startViperSlideExtension handles lift power vs lower power
+            liftMoveTarget = liftTarget;
+            startViperSlideExtension(liftMoveTarget);
+            liftMoveTimer.reset();
+            liftMoveState = LiftMoveActivity.LIFTING_SAFE;
+        }
+    } // startLiftMove
+
+    //--------------------------------------------------------------------------------------------
+
     public void liftMotorSetPower( double motorPower )
     {
         // Are we stopping? (allow that no matter what the current liftAngle or power setting)
@@ -590,8 +634,6 @@ public class Hardware2025Bot
         viperMotor.setPower( viperMotorSetPwr );
     } // liftMotorSetPower
 
-    /*--------------------------------------------------------------------------------------------*/
-    /* liftPIDPosRun()                                                                            */
     public void liftPIDPosRun( boolean teleopMode )
     {
         // Has an automatic movement been initiated?
@@ -622,20 +664,6 @@ public class Hardware2025Bot
         } // liftMotorPIDAuto
     } // liftPIDPosRun
 
-    public void startLiftMove(int liftTarget)
-    {
-        // Ensure pre-conditions are met
-        if( true /* (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
-                (pixelGrabState == PixelGrabActivity.IDLE) &&
-                (pixelScoreState == PixelScoreActivity.IDLE) */ ) {
-            // startViperSlideExtension handles lift power vs lower power
-            liftMoveTarget = liftTarget;
-            startViperSlideExtension(liftMoveTarget);
-            liftMoveTimer.reset();
-            liftMoveState = LiftMoveActivity.LIFTING_SAFE;
-        }
-    } // startLiftMove
-    
     public void processLiftMove() {
         switch(liftMoveState){
             // Make sure we are over the bin to rotate
@@ -704,10 +732,10 @@ public class Hardware2025Bot
     public void startLiftStore()
     {
         // Ensure pre-conditions are met
-        if( /* (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
-                (pixelGrabState == PixelGrabActivity.IDLE) &&
-                (pixelScoreState == PixelScoreActivity.IDLE) && */
-                (viperMotorPos >= VIPER_EXTEND_GRAB)) {
+        if(  (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
+             (pixelGrabState == PixelGrabActivity.IDLE) &&
+             (pixelScoreState == PixelScoreActivity.IDLE) &&
+             (viperMotorPos >= VIPER_EXTEND_GRAB)) {
             // Rotate elbow/wrist to safe position
             elbowServo.setPosition(ELBOW_SERVO_SAFE);
             wristServo.setPosition(WRIST_SERVO_SAFE);
@@ -720,8 +748,8 @@ public class Hardware2025Bot
         switch(liftStoreState){
             // Make sure the fingers are in a safe position
             case ROTATING:
-                if( /* (getPushServoAngle() >= PUSH_SERVO_SAFE_ANGLE) && */
-                        (getWristServoAngle() >= WRIST_SERVO_GRAB_ANGLE)) {
+                if( (getPushServoAngle() >= PUSH_SERVO_SAFE_ANGLE) &&
+                    (getWristServoAngle() >= WRIST_SERVO_GRAB_ANGLE)) {
                     liftStoreState = LiftStoreActivity.LOWERING;
                     startViperSlideExtension(VIPER_EXTEND_ZERO);
                     liftStoreTimer.reset();
@@ -754,7 +782,7 @@ public class Hardware2025Bot
                 break;
         }
     } // processLiftStore
-
+*/
     /***
      *
      * waitForTick implements a periodic delay. However, this acts like a metronome with a regular

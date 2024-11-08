@@ -110,37 +110,8 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     String[]    parkLocationStr = {"NONE", "LEFT", "RIGHT"};
 
-    int         fiveStackCycles = 0;      // 6: number of white pixels to score from 5-stack (only Audience side for now)
-    int         fiveStackHeight = 5;      // Remaining pixels on 5-stack (always starts at 5); Dictates collector height
-
     ElapsedTime autonomousTimer = new ElapsedTime();
     ElapsedTime motionTimer = new ElapsedTime();
-
-    // Instrumentation for optimizing ABORT times
-    double   timeNow;
-    int      timeIndex = 0;
-    double[] timePoleDrive    = {0,0,0,0,0,0};  // Time to drive to pole
-    double[] timePoleScore    = {0,0,0,0,0,0};  // Time to alignToPole() and scoreCone()
-    double[] timeStackDrive   = {0,0,0,0,0,0};  // Time we arrive at 5-stack using moveToConeStack()
-    double[] timeStackCollect = {0,0,0,0,0,0};  // Time to collect the next cone off the 5-stack
-
-    // Instrumentation for optimizing drive-to positions
-    double[] anglePole0       = {0,0,0,0,0,0};  // Turret angle when we ARRIVE at pole
-    double[] anglePole1       = {0,0,0,0,0,0};  //                      DEPART
-
-    double[] odomPoleX0       = {0,0,0,0,0,0};  // Odometry X position when we ARRIVE at pole
-    double[] odomPoleX1       = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomPoleY0       = {0,0,0,0,0,0};  // Odometry Y position when we ARRIVE at pole
-    double[] odomPoleY1       = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomPoleAng0     = {0,0,0,0,0,0};  // Odometry Angle when we ARRIVE at pole
-    double[] odomPoleAng1     = {0,0,0,0,0,0};  //                        DEPART
-
-    double[] odomStackX0      = {0,0,0,0,0,0};  // Odometry X position when we ARRIVE at 5-stack
-    double[] odomStackX1      = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomStackY0      = {0,0,0,0,0,0};  // Odometry Y position when we ARRIVE at 5-stack
-    double[] odomStackY1      = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomStackAng0    = {0,0,0,0,0,0};  // Odometry Angle when we ARRIVE at 5-stack
-    double[] odomStackAng1    = {0,0,0,0,0,0};  //                        DEPART
 
     // gamepad controls for changing autonomous options
     boolean gamepad1_circle_last,   gamepad1_circle_now  =false;
@@ -152,31 +123,23 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_dpad_left_last, gamepad1_dpad_left_now = false;
     boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 
-    // Vision stuff
+    // Vision stuff (CHANGE) limelight
     boolean leftCameraInitialized = false;
     boolean backCameraInitialized = false;
     boolean rightCameraInitialized = false;
 
-    protected VisionPortal visionPortalBack;
-//  protected CenterstageSuperPipeline pipelineBack;
-
-    // AprilTag variables
-    protected AprilTagProcessor aprilTag;
-//  protected AprilTagProcessorImplCallback aprilTagCallback;
-    protected AprilTagDetection detectionData = null;     // Used to hold the data for a detected AprilTag
-    
     protected boolean atBackdropLeftDetected   = false;
     protected int     atBackdropLeftTag        = 0;
     protected double  atBackdropLeftDistance   = 0.0;   // inches
     protected double  atBackdropLeftStrafe     = 0.0;   // inches
     protected double  atBackdropLeftAngle      = 0.0;   // degrees
-    
+
     protected boolean atBackdropCenterDetected = false;
     protected int     atBackdropCenterTag      = 0;
     protected double  atBackdropCenterDistance = 0.0;   // inches
     protected double  atBackdropCenterStrafe   = 0.0;   // inches
     protected double  atBackdropCenterAngle    = 0.0;   // degrees
-    
+
     protected boolean atBackdropRightDetected  = false;
     protected int     atBackdropRightTag       = 0;
     protected double  atBackdropRightDistance  = 0.0;   // inches
@@ -304,15 +267,15 @@ public abstract class AutonomousBase extends LinearOpMode {
 
             case 6 : // HOW MANY PIXELS DO WE SCORE FROM 5-STACK?
                 if( nextValue ) {
-                    if (fiveStackCycles < 1) {
-                        fiveStackCycles++;
-                    }
+//                    if (fiveStackCycles < 1) {
+//                        fiveStackCycles++;
+//                    }
                 } // next
 
                 if( prevValue ) {
-                    if (fiveStackCycles > 0) {
-                        fiveStackCycles--;
-                    }
+//                    if (fiveStackCycles > 0) {
+//                        fiveStackCycles--;
+//                    }
                 } // prev
                 break;
             default : // recover from bad state
@@ -330,7 +293,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
                 ((initMenuSelected==5)? "<-":"  "));
 
-        telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
+//      telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
         telemetry.addData(">","version 124" );
         telemetry.update();
     } // processAutonomousInitMenu
@@ -669,7 +632,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             performEveryLoop();
- //           sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
+ //         sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
             sensorDistance = 10;
 
             distanceError = sensorDistance - distanceFromWall;
@@ -864,7 +827,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     //============================ ODOMETRY-BASED NAVIGATION FUNCTIONS ============================
     public void driveToPosition(double yTarget, double xTarget, double angleTarget,
-                                   double speedMax, double turnMax, int driveType) {
+                                double speedMax, double turnMax, int driveType) {
         // Loop until we get to destination.
         performEveryLoop();
         while(!driveToXY(yTarget, xTarget, angleTarget,
@@ -884,7 +847,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param turnMax - Highest value to use for turn speed.
      */
     public void rotateToAngle(double angleTarget,
-                                 double turnMax) {
+                              double turnMax) {
         // Move the robot away from the wall.
         performEveryLoop();
         rotateToAngle(angleTarget, true);
@@ -968,8 +931,8 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @return - Boolean true we have reached destination, false we have not
      */
     protected boolean driveToXY(double yTarget, double xTarget, double angleTarget, double speedMin,
-                             double speedMax, double errorMultiplier, double errorAllowed,
-                             int driveType) {
+                                double speedMax, double errorMultiplier, double errorAllowed,
+                                int driveType) {
         boolean reachedDestination = false;
         // Not sure why, but the x and y are backwards
         double xWorld = robotGlobalYCoordinatePosition;  // inches (backward! see notes)
@@ -1031,7 +994,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @return - Boolean true we have reached destination, false we have not
      */
     protected boolean driveToXY(double yTarget, double xTarget, double angleTarget,
-                             double speedMax, int driveType) {
+                                double speedMax, int driveType) {
 
         // Convert from cm to inches
         double errorMultiplier = 0.033;

@@ -77,6 +77,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean panAngleTweaked      = false; // Reminder to zero power when PAN  input stops
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
+    boolean ascent2started       = false; // Do we need to monitor currents and set min holding power?
     boolean enableOdometry       = true;  // Process/report odometry updates?
 
     int geckoWheelState = 0;
@@ -195,8 +196,9 @@ public abstract class Teleop extends LinearOpMode {
             processPanControls();
             processTiltControls();
             ProcessViperLiftControls();
-            robot.processViperSlideExtension();
             processCollectorControls();
+            processLevel2Ascent();
+            performEveryLoopTeleop();
 
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
@@ -225,6 +227,11 @@ public abstract class Teleop extends LinearOpMode {
         } // opModeIsActive
 
     } // runOpMode
+
+    /*---------------------------------------------------------------------------------*/
+    void performEveryLoopTeleop() {
+       robot.processViperSlideExtension();        
+    } // performEveryLoopTeleop
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
@@ -613,18 +620,24 @@ public abstract class Teleop extends LinearOpMode {
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
-        {   // Move lift to HIGH-SCORING position
-            robot.startLiftMove( robot.VIPER_EXTEND_BASKET );
+        {   // Extend lift to the basket-scoring position
+            robot.startViperSlideExtension( robot.VIPER_EXTEND_BASKET );
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_SAFE);
+//          robot.elbowServo.setPosition(robot.ELBOW_SERVO_DROP);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_SAFE);
+//          robot.wristServo.setPosition(robot.WRIST_SERVO_DROP);
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Extend lift to the specimen-scoring hook-above-the-bar height
-//           robot.startLiftMove( robot.VIPER_EXTEND_HOOK );
+//           robot.startViperSlideExtension( robot.VIPER_EXTEND_HOOK );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
-        {   // Move lift to STORED position
-            robot.startLiftMove( robot.VIPER_EXTEND_GRAB );
+        {   // Retract lift to the collection position
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            robot.startViperSlideExtension( robot.VIPER_EXTEND_GRAB );
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -661,7 +674,7 @@ public abstract class Teleop extends LinearOpMode {
     void processCollectorControls() {
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         // - rotates the wrist/elbow to the floor collection orientation
-        // TODO: check tilt motor for safe height above floor!
+        // TODO: check tilt motor for safe height above floor for wrist rotation!
         if( gamepad2_circle_now && !gamepad2_circle_last)
         {
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
@@ -669,11 +682,18 @@ public abstract class Teleop extends LinearOpMode {
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
         // - rotates the wrist/elbow to the horizontal transport position
-        // TODO: check tilt motor for safe height above floor!
+        // TODO: check tilt motor for safe height above floor for wrist rotation!
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_SAFE);
             robot.wristServo.setPosition(robot.WRIST_SERVO_SAFE);
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
+        // - rotates the wrist/elbow to the vertical init position
+        if( gamepad2_square_now && !gamepad2_square_last )
+        {
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_INIT);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_INIT);
         }
         // Check for an OFF-to-ON toggle of the gamepad2 left or right bumpers
         // - right enables the collector intake servo in FORWARD/collect mode
@@ -711,6 +731,52 @@ public abstract class Teleop extends LinearOpMode {
     }  // processCollectorControls
 
     /*---------------------------------------------------------------------------------*/
+    void processLevel2Ascent() {
 
+        // First instance of BOTH gamepad1 left/right bumpers initiates ascent
+        if( gamepad1_l_bumper_now && gamepad1_r_bumper_now && !ascent2started )
+        {
+            robot.wristServo.setPosition(robot.WRIST_SERVO_INIT);
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_INIT);
+            ascent2started = true;
+        }
+
+        // Check for emergency ASCENT ABORT button
+        if( gamepad1_touchpad_now && !gamepad1_touchpad_last ) {
+            robot.viperMotor.setPower( 0.0 );
+            robot.wormTiltMotor.setPower( 0.0 );
+            robot.wormPanMotor.setPower( 0.0 );
+            ascent2started = false;
+        }
+
+        // Level 2 ascent underway...
+        if( ascent2started ) {
+            // Monitor motor currents
+            robot.updateAscendMotorAmps();
+            telemetry.addData("Viper Motor", "%.1f Amp (%.1f peak)", 
+               robot.viperMotorAmps, robot.viperMotorAmpsPk );
+            telemetry.addData("Tilt Motor", "%.1f Amp (%.1f peak)",
+               robot.wormTiltMotorAmps, robot.wormTiltMotorAmpsPk );
+            telemetry.addData("Pan Motor", "%.1f Amp (%.1f peak)", 
+               robot.wormPanMotorAmps, robot.wormPanMotorAmpsPk );
+            // Do we need to further retract viper slide motor?            
+            boolean viperRetractionIncomplete = (robot.viperMotorPos > robot.VIPER_EXTEND_HANG2)? true : false;
+            boolean viperMotorLoadOkay = (robot.viperMotorAmps < 8.5)? true : false;
+            if( viperRetractionIncomplete && viperMotorLoadOkay ) {
+                robot.viperMotor.setPower( -1.0 );
+            } else {
+                robot.viperMotor.setPower( -0.10 );  // hold power
+            }
+            // Do we need to further store the robot drivetrain?
+            boolean tiltRetractionIncomplete = (robot.wormTiltMotorPos < robot.TILT_ANGLE_HANG2)? true : false;
+            boolean tiltMotorLoadOkay = (robot.wormTiltMotorAmps < 8.5)? true : false;
+            if( viperRetractionIncomplete && viperMotorLoadOkay ) {
+                robot.wormTiltMotor.setPower( 0.30 );   // test at lower  power!!!
+            } else {
+                robot.wormTiltMotor.setPower( 0.0 );  // worm reverse torque holds motor
+            }
+        } // ascent2started
+
+    }  // processLevel2Ascent
 
 } // TeleopLift
