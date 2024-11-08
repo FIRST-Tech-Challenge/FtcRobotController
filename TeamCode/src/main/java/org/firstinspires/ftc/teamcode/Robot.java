@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Utilize.*;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -47,6 +48,7 @@ public abstract class Robot extends LinearOpMode {
     private double Current_Time = System.nanoTime() * 1E-9;
     private double Last_Time = Current_Time;
     private double Last_yaw;
+
 
 
     public void Odomentry() {
@@ -210,6 +212,11 @@ public abstract class Robot extends LinearOpMode {
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // SetPower Motors
         MovePower(0, 0, 0, 0);
+    }
+
+    public void LiftPower(double liftPower) {
+        LL.setPower(liftPower);
+        RL.setPower(liftPower);
     }
 
 }

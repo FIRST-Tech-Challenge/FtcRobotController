@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name="Tele")
-public class Tele extends Robot {
+public  class Tele extends Robot {
 
     private Controller controller;
 
@@ -17,7 +17,7 @@ public class Tele extends Robot {
     int targetLift = 0;
     double setpoint = 0, H_Ang = 0, AL_Ang = 0, AD_Ang = 0;
     boolean autoLift = false, V_Pressed = false, VisBusy = false, ITisOn = false, tp_Pressed = false,
-            H_disable = false, r_disable = false;
+            H_disable = false, r_disable = false, hl_Pressed = false, ll_Pressed = false;
     double CurrentTime = System.nanoTime() * 1E-9,  lastRXtime = CurrentTime;
 
     private void Init() {
@@ -57,6 +57,22 @@ public class Tele extends Robot {
         telemetry.addData("setpoint", toDegree(setpoint));
         telemetry.addData("error", controller.Error);
     }
+
+    public void lift(){
+        double  curPos     = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
+        double LT = gamepad1.left_trigger;
+        double RT = gamepad1.right_trigger;
+        double Lpos = LL.getCurrentPosition();
+        double Rpos = RL.getCurrentPosition();
+        boolean lt_Pressed = LT >= 0.25;
+        boolean rl_Pressed = RT >= 0.25;
+        double Lift_Power = lt_Pressed ? (curPos < 0          ?  0   : -LT) :
+                            rl_Pressed ? (curPos > 4800       ?  0   :  RT) :
+                            autoLift   ? (curPos > targetLift ? -0.3 :  1)  : 0;
+        LiftPower(Lift_Power);
+
+    }
+
     @Override
     public void runOpMode() {
         Init();
@@ -65,6 +81,7 @@ public class Tele extends Robot {
             while (opModeIsActive()) {
                 Odomentry();
                 Movement();
+                lift();
 
 //                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
                 telemetry.addData("LRM", "%6d  %6d %6d", left_encoder_pos, right_encoder_pos, center_encoder_pos);
@@ -80,4 +97,5 @@ public class Tele extends Robot {
         }
     }
 }
+
 
