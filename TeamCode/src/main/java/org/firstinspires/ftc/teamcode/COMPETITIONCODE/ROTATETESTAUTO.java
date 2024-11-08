@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.COMPETITIONCODE;
 
 import com.parshwa.drive.auto.AutoDriverBetaV1;
+import com.parshwa.drive.auto.Directions;
 import com.parshwa.drive.tele.Drive;
 import com.parshwa.drive.tele.DriveModes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -18,8 +19,8 @@ import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.servoManger;
 
 import java.util.Locale;
 
-@Autonomous(name = "right auto", preselectTeleOp = "teleop")
-public class RIGHTAUTO extends LinearOpMode {
+@Autonomous(name = "rotate auto", preselectTeleOp = "teleop")
+public class ROTATETESTAUTO extends LinearOpMode {
     private AutoDriverBetaV1 autoDriver = new AutoDriverBetaV1();
     private Drive driver = new Drive();
 
@@ -56,7 +57,7 @@ public class RIGHTAUTO extends LinearOpMode {
         //TODO: SET UP MULTIAUTOMODE
         //TODO: SET UP ROTATIONS
         //IMPORTANT: DO THE TODOS
-        int parkPos = autoDriver.lineTo(0.0,-1000.0,1.0);
+        int parkPos = autoDriver.rotateRobot(45, Directions.RightRotateDirection);
         telemetry.addLine("initilized");
         telemetry.update();
         waitForStart();
