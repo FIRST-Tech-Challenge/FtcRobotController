@@ -35,7 +35,7 @@ public class Bot {
 
     //Statistics for measurements
     public static final int MAX_EXT = -2648;
-     public static final double MIN_EXTEND = 0;
+    public static final double MIN_EXTEND = 0;
 
     public static final int LEFT_LIFT_MAX = 7255;
     public static final int LEFT_LIFT_MIN = -101;
@@ -58,7 +58,7 @@ public class Bot {
     private static final double TICKS_PER_INCH_EXT = MAX_EXT / MAX_DISTANCE;
 
     private static final int BUFFER = 10;
-    
+
     /**
      * Constructor for Bot object
      * @param opMode
@@ -89,7 +89,7 @@ public class Bot {
         rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        leftLift = map.get(DcMotor.class, "left_lift");//giveing the motors a name for codeing
+        leftLift = map.get(DcMotor.class, "left_lift");
         rightLift = map.get(DcMotor.class, "right_lift");
 
         extendArmMotor = map.get(DcMotor.class, "extend_arm");
@@ -190,7 +190,7 @@ public class Bot {
 
     /**
      * Set Lift Power for hang
-     * @param liftPower pwoer for lift
+     * @param liftPower power for lift
      */
     public void setLift(
             double liftPower
@@ -469,7 +469,8 @@ public class Bot {
         this.setArmPos(MAX_PIVOT-BUFFER);
         this.setExtendPos(5.0);
         this.encoderLift(RIGHT_LIFT_MIN/2, LEFT_LIFT_MIN/2);
-        opMode.sleep(2000); //give time for bot to stop swaying
+        opMode.sleep(2000);
+        //give time for bot to stop swayint
         this.encoderLift(RIGHT_LIFT_MAX- BUFFER*50, LEFT_LIFT_MAX-BUFFER*50);
 
 
