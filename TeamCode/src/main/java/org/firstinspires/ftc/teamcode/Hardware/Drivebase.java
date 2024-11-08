@@ -487,7 +487,8 @@ public class Drivebase {
     }
 
     public void teleOpSlideDrive(double power) {
-        if (power > 0.05 || power < -0.05) {
+        //moving slide code.
+        if(power > 0.05 || power < -0.05) {
             //set upper limit.
             //check if you've reached the upper limit.
             if(leftSlideDrive.getCurrentPosition() > 6000 || rightSlideDrive.getCurrentPosition() > 6000) {
@@ -524,17 +525,14 @@ public class Drivebase {
             }
         }
         //no joystick power applied.
-        else
-        {
+        else {
             leftSlideDrive.setPower(0);
             rightSlideDrive.setPower(0);
         }
-
-
-
         sendTelemetry(true);
     }
-    public void encoderSlide(double speed,
+
+    public void autoEncoderSlide(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
         int newLeftTarget;
@@ -588,9 +586,12 @@ public class Drivebase {
             // Turn off RUN_TO_POSITION
             leftSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //sleep(250);   // optional pause after each move.
         }
+    }
+    //pos power's rotating upwards.
+    //neg power's rotating downwards.
+    public void slideRotate(double power) {
+
     }
 
 

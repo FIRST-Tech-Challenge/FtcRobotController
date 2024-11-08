@@ -103,6 +103,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             //To switch the neg value given to pos value.
             double slideDriveJoystick = -gamepad2.right_stick_y;
+            //Need to ask if I should invert this.
+            double slideRotateJoystick = gamepad2.left_stick_y;
 
             //Check to make sure the joystick is actually being moved instead of it just getting bumped.
             driveBase.driveRobot(axial, lateral, yaw);

@@ -98,9 +98,9 @@ public class SlideAuto extends LinearOpMode {
 
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //50.5 inches is max extension.
-        drivebase.encoderSlide(SLIDE_SPEED,  25.5,  25.5, 30.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        drivebase.autoEncoderSlide(SLIDE_SPEED,  25.5,  25.5, 30.0);  // S1: Forward 47 Inches with 5 Sec timeout
         sleep(15000);
-        drivebase.encoderSlide(SLIDE_SPEED,  -25.5,  -25.5, 30.0);
+        drivebase.autoEncoderSlide(SLIDE_SPEED,  -25.5,  -25.5, 30.0);
         //drivebase.addTelemetry(telemetry);
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
