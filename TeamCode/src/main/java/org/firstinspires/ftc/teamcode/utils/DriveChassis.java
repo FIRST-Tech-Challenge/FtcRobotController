@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class DriveChassis {
     // Initialize our motors
     public DcMotorEx leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
+    // -50 to -2150
     public DcMotorEx horizontalSlideMotor, verticalSlideMotor, endPivotMotor;
     public Servo claw, bucket;
 

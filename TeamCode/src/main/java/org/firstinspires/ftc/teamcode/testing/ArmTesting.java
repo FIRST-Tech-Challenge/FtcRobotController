@@ -53,6 +53,15 @@ public class ArmTesting extends OpMode {
         scoringArmMotor.setVelocity(yInput * armVelocity * GEAR_RATIO);
         collectionArmMotor.setPower(controller.axis(Controller.Axis.LeftStickX));
 
+        if (controller.pressed(Controller.Button.B)) {
+            collectionArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            collectionArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if (controller.pressed(Controller.Button.Y)) {
+            scoringArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            scoringArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
         telemetry.addData("Arm Velocity", armVelocity);
         telemetry.addData("Scoring position", scoringArmMotor.getCurrentPosition());
         telemetry.addData("Collection position", collectionArmMotor.getCurrentPosition());
