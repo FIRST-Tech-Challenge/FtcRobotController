@@ -76,8 +76,25 @@ public class Settings {
         public double left_stick_sensitivity = 1.0;
         /** Speed for dpad-based absolute movement, from 0 to 1 */
         public double dpad_movement_speed = 0.3;
-        public double bumper_sensitivity = 0.8;
         public double trigger_threshold = 0.1;
+
+        /** Deadzone for stick inputs to prevent drift */
+        public double stick_deadzone = 0.05;
+
+        /** Sensitivity multiplier for right stick input */
+        public double right_stick_sensitivity = 1.0;
+
+        /** Bumper rotation speed */
+        public double bumper_rotation_speed = 0.8;
+
+        /** Whether to invert Y axis controls */
+        public boolean invert_y_axis = false;
+
+        /** Whether to invert X axis controls */
+        public boolean invert_x_axis = false;
+
+        /** Whether to use right stick for rotation instead of bumpers */
+        public boolean use_right_stick_rotation = false;
 
         public final ButtonMapping buttonMapping;
 
@@ -134,7 +151,9 @@ public class Settings {
     }
 
     public enum GamepadAxis {
-        LEFT_TRIGGER, RIGHT_TRIGGER
+        LEFT_TRIGGER, RIGHT_TRIGGER,
+        LEFT_STICK_X, LEFT_STICK_Y,
+        RIGHT_STICK_X, RIGHT_STICK_Y
     }
 
     // Define preset profiles
@@ -214,7 +233,7 @@ public class Settings {
                 {
                     // Customize main gamepad settings
                     dpad_movement_speed = 0.8;
-                    bumper_sensitivity = 0.7;
+                    bumper_rotation_speed = 0.7;
                 }
 
                 @Override
@@ -236,7 +255,7 @@ public class Settings {
             new DefaultGamepadSettings() {
                 {
                     dpad_movement_speed = 0.6;
-                    bumper_sensitivity = 0.9;
+                    bumper_rotation_speed = 0.9;
                 }
 
                 @Override

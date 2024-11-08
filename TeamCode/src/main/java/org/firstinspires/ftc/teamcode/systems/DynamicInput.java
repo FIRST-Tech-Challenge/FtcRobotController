@@ -127,11 +127,16 @@ public class DynamicInput {
 
     // Generates the directional output based on controller input
     public DirectionalOutput directional() {
-        // Get stick-based movement
-        double upPower = (mainCtrl.left_stick_y < 0 ? -mainCtrl.left_stick_y : 0);
-        double downPower = (mainCtrl.left_stick_y > 0 ? mainCtrl.left_stick_y : 0);
-        double rightPower = (mainCtrl.left_stick_x > 0 ? mainCtrl.left_stick_x : 0);
-        double leftPower = (mainCtrl.left_stick_x < 0 ? -mainCtrl.left_stick_x : 0);
+        // Update stick sensitivities to use the correct values
+        double leftStickY = Math.abs(mainCtrl.left_stick_y) > mainSettings.stick_deadzone ? mainCtrl.left_stick_y : 0;
+        double leftStickX = Math.abs(mainCtrl.left_stick_x) > mainSettings.stick_deadzone ? mainCtrl.left_stick_x : 0;
+        double rightStickX = Math.abs(mainCtrl.right_stick_x) > mainSettings.stick_deadzone ? mainCtrl.right_stick_x
+                : 0;
+
+        double upPower = (leftStickY < 0 ? -leftStickY : 0) * mainSettings.left_stick_sensitivity;
+        double downPower = (leftStickY > 0 ? leftStickY : 0) * mainSettings.left_stick_sensitivity;
+        double rightPower = (leftStickX > 0 ? leftStickX : 0) * mainSettings.left_stick_sensitivity;
+        double leftPower = (leftStickX < 0 ? -leftStickX : 0) * mainSettings.left_stick_sensitivity;
 
         // Add dpad absolute movement
         if (mainCtrl.dpad_up)
@@ -143,8 +148,20 @@ public class DynamicInput {
         if (mainCtrl.dpad_left)
             leftPower = mainSettings.dpad_movement_speed;
 
-        double rotationRight = mainCtrl.right_bumper ? mainSettings.bumper_sensitivity : 0;
-        double rotationLeft = mainCtrl.left_bumper ? mainSettings.bumper_sensitivity : 0;
+        // Handle rotation based on settings
+        double rotationRight = 0;
+        double rotationLeft = 0;
+
+        if (mainSettings.use_right_stick_rotation) {
+            // Use right stick for rotation with correct sensitivity
+            double rotation = rightStickX * mainSettings.right_stick_sensitivity;
+            rotationRight = rotation > 0 ? rotation : 0;
+            rotationLeft = rotation < 0 ? -rotation : 0;
+        } else {
+            // Use bumpers for rotation
+            rotationRight = mainCtrl.right_bumper ? mainSettings.bumper_rotation_speed : 0;
+            rotationLeft = mainCtrl.left_bumper ? mainSettings.bumper_rotation_speed : 0;
+        }
 
         return new DirectionalOutput(upPower, rightPower, downPower, leftPower, rotationRight, rotationLeft);
     }
