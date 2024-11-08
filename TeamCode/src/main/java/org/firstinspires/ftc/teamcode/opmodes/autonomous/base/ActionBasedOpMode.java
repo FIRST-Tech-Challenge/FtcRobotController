@@ -81,6 +81,7 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
                 break;
             case FINISHED:
                 // do nothing
+                finished = true;
                 break;
         }
     }
@@ -94,21 +95,32 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
                 setupCurrentState(State.PERFORMING_ACTION);
                 return;
             }
+//            if (currentMove != null && currentMove instanceof RotationMovement) {
+//                driveTrain.resetOdo();
+//            }
 
+            if (currentMove != null) {
+                driveTrain.resetOdo();
+            }
             currentMove = currentMovements.poll();
             assert currentMove != null;
             sleep(500);
             addTelemetryLine(String.format("Switched to movement %s", currentMove.getClass().getSimpleName()));
             driveTrain.updatePose();
+//            sleep(100);
             if (currentMove instanceof ForwardMovement) {
-                currentMove.start(driveTrain.getCurrentPose().getX(), robotDriver, () -> driveTrain.getCurrentPose());
+                currentMove.start(driveTrain.getCurrentPose().getX(), robotDriver,
+                        () -> driveTrain.getCurrentPose(), () -> driveTrain.getHeadingFromInternalIMUAsRadians());
             } else if (currentMove instanceof StrafeMovement) {
-                currentMove.start(driveTrain.getCurrentPose().getY(), robotDriver, () -> driveTrain.getCurrentPose());
+                currentMove.start(driveTrain.getCurrentPose().getY(), robotDriver,
+                        () -> driveTrain.getCurrentPose(), () -> driveTrain.getHeadingFromInternalIMUAsRadians());
             } else if (currentMove instanceof RotationMovement) {
-                currentMove.start(driveTrain.getCurrentPose().getRotation().getRadians(), robotDriver,  () -> driveTrain.getCurrentPose());
+                currentMove.start(driveTrain.getCurrentPose().getRotation().getRadians(), robotDriver,
+                        () -> driveTrain.getCurrentPose(), () -> driveTrain.getHeadingFromInternalIMUAsRadians());
             }
         } else {
             driveTrain.updatePose();
+//            sleep(100);
             currentMove.onEachCycle();
         }
         Pose2d current = driveTrain.getCurrentPose();

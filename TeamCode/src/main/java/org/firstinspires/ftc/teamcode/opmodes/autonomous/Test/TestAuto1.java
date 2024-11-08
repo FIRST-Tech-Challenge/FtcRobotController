@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.Units;
 import java.util.Queue;
 import java.util.LinkedList;
 
-@Autonomous(name = "Test Auto 1", preselectTeleOp = "main_teleop")
+//@Autonomous(name = "Test Auto 1", preselectTeleOp = "main_teleop")
 public class TestAuto1 extends ActionBasedOpMode {
 
     @Override

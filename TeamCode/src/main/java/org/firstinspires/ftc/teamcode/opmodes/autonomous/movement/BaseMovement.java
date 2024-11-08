@@ -15,7 +15,7 @@ public abstract class BaseMovement {
     static final String LOG_TAG = BaseMovement.class.getSimpleName();
     private static final double NORMAL_SPEED = 0.6d;
     private static final double SLOW_SPEED = 0.3d;
-    private static final double ERROR_CORRECTION_SPEED = 0.3d;
+    private static final double ERROR_CORRECTION_SPEED = 0.2d;
 
     private static final double FORWARD_FACTOR = 1d;
     private static final double BACKWARD_FACTOR = -1d;
@@ -35,6 +35,7 @@ public abstract class BaseMovement {
     PIDController mainMovementController = new PIDController(0.35,0,0.1);
 
     Supplier<Pose2d> poseSupplier;
+    Supplier<Double> internalHeadingSupplier;
 
     double directionFactor;
 
@@ -54,19 +55,23 @@ public abstract class BaseMovement {
         directionFactor = distance > 0 ? FORWARD_FACTOR : BACKWARD_FACTOR;
     }
 
-    public void start(double startPosition, AutoRobotDriver driver, Supplier<Pose2d> poseSupplier) {
+    public void start(double startPosition, AutoRobotDriver driver, Supplier<Pose2d> poseSupplier, Supplier<Double> internalHeadingSupplier) {
         Log.i(LOG_TAG, String.format("startPosition = %f", startPosition));
-        startingPose = poseSupplier.get();
-        previousPose = startingPose;
+
         this.poseSupplier = poseSupplier;
+        this.internalHeadingSupplier = internalHeadingSupplier;
+
         accumulatedChanges = 0;
         this.driver = driver;
+        error = 0;
         moveErrorCorrectionController.setSetPoint(0);
         moveErrorCorrectionController.setTolerance(ERROR_TOLERANCE);
         rotErrorCorrectionController.setSetPoint(0);
         rotErrorCorrectionController.setTolerance(ERROR_TOLERANCE);
-        error = 0;
-        currentSpeed = directionFactor * NORMAL_SPEED;
+        currentSpeed = directionFactor * getNormalSpeed();
+
+        startingPose = poseSupplier.get();
+        previousPose = startingPose;
         updateDrivingParameters();
         doDrive();
     }
@@ -81,7 +86,8 @@ public abstract class BaseMovement {
 
 
         Pose2d newPose = poseSupplier.get();
-
+//        Log.i(LOG_TAG, "new pose = " + newPose);
+        Log.i(LOG_TAG, String.format("new pose: x=%f, y=%f, heading=%f", newPose.getX(), newPose.getY(), newPose.getHeading()));
         double newReading = getCurrentDrivingReading(newPose);
         double prevReading = getCurrentDrivingReading(previousPose);
 
@@ -96,7 +102,7 @@ public abstract class BaseMovement {
             return;
         }
 
-//        Log.i(LOG_TAG, String.format("newReading = %f", newReading));
+        Log.i(LOG_TAG, String.format("newReading = %f", newReading));
 
         accumulatedChanges += Math.abs(newReading - prevReading);
         previousPose = newPose;
@@ -108,7 +114,7 @@ public abstract class BaseMovement {
         }
 
         if (isCloseToEnd() || isJustStarted()) {
-            currentSpeed = SLOW_SPEED * directionFactor;
+            currentSpeed = getSlowSpeed() * directionFactor;
         }
 
         updateDrivingParameters();
@@ -157,7 +163,7 @@ public abstract class BaseMovement {
             if (Math.abs(normalizedError) >= ERROR_TOLERANCE) {
                 double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (normalizedError >= 0 ? 1 : -1);
                 Log.i(LOG_TAG, "Rotation error too much, correction speed set to: " +  errorCorrectionSpeed);
-                return ERROR_CORRECTION_SPEED;
+                return getErrorCorrectionSpeed();
             }
             return 0;
         }
@@ -172,11 +178,11 @@ public abstract class BaseMovement {
             }
             return correctionDistance * DIST_TO_SPEED_CONVERSION;
         } else {
-//            if (Math.abs(error) > ERROR_TOLERANCE) {
-//                double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (error >= 0 ? 1 : -1);
-//                Log.i(LOG_TAG, "move error too much, correction speed set to: " +  errorCorrectionSpeed);
-//                return errorCorrectionSpeed;
-//            }
+            if (Math.abs(error) > ERROR_TOLERANCE) {
+                double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (error >= 0 ? 1 : -1) * directionFactor;
+                Log.i(LOG_TAG, "move error too much, correction speed set to: " +  errorCorrectionSpeed);
+                return errorCorrectionSpeed;
+            }
             return 0;
         }
     }
@@ -195,5 +201,17 @@ public abstract class BaseMovement {
 
     protected abstract void updateDrivingParameters();
     protected abstract double getCurrentDrivingReading(Pose2d pose);
+
+    protected double getNormalSpeed() {
+        return NORMAL_SPEED;
+    }
+
+    protected double getSlowSpeed() {
+        return SLOW_SPEED;
+    }
+
+    protected double getErrorCorrectionSpeed() {
+        return ERROR_CORRECTION_SPEED;
+    }
 
 }

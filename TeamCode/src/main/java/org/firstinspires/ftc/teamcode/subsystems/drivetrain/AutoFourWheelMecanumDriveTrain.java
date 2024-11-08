@@ -5,9 +5,11 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,10 +24,10 @@ import org.firstinspires.ftc.teamcode.util.Units;
  */
 public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
-    private final Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0));
-    private DcMotor centerOdometry;
     private MecanumDriveKinematics driveKinematics;
     GoBildaPinpointDriver odo;
+
+    IMU internalIMU;
 
     public AutoFourWheelMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         super(hardwareMap, gamepad, telemetry, feedback);
@@ -45,6 +47,12 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         super.createAndInitHardwares(hardwareMap);
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        internalIMU = hardwareMap.get(IMU.class, "imu");
+        internalIMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+        )));
+        internalIMU.resetYaw();
     }
 
     private void initOdo(Runnable sleeper) {
@@ -56,14 +64,6 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         RobotLog.i("GoBildaPinpointDriver init result: " + initResult);
         telemetry.addData("init result", initResult);
         telemetry.update();
-//        int attempts = 0;
-//        while (odo.getDeviceStatus() != GoBildaPinpointDriver.DeviceStatus.READY && attempts < 10) {
-//            sleeper.run();
-//            attempts ++;
-//            telemetry.addData("odo status", odo.getDeviceStatus());
-//            telemetry.addData("attempt", attempts);
-//            telemetry.update();
-//        }
 
         telemetry.addData("odo status after init", odo.getDeviceStatus());
         telemetry.update();
@@ -89,14 +89,6 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
     }
 
-    public void stop() {
-        drive.stop();
-//        fL.motor.setPower(0);
-//        fR.motor.setPower(0);
-//        bL.motor.setPower(0);
-//        bR.motor.setPower(0);
-    }
-
     public void resetOdo() {
         odo.resetPosAndIMU();
     }
@@ -108,27 +100,6 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
     public void updatePose() {
         odo.update();
-    }
-
-    public boolean isOdoReady() {
-        if (odo.getDeviceStatus() != GoBildaPinpointDriver.DeviceStatus.READY) {
-            telemetry.addLine("IMU status: " + odo.getDeviceStatus());
-            telemetry.update();
-            return false;
-        }
-
-        return true;
-    }
-
-    public void resetOdometryRotation() {
-        GoBildaPinpointDriver.Pose2D currentPose = odo.getPosition();
-        GoBildaPinpointDriver.Pose2D newPose = new GoBildaPinpointDriver.Pose2D(
-                DistanceUnit.MM,
-                currentPose.getX(DistanceUnit.MM),
-                currentPose.getY(DistanceUnit.MM),
-                AngleUnit.RADIANS,
-                0);
-        odo.setPosition(newPose);
     }
 
     public MecanumDriveKinematics getDriveKinematics() {
@@ -143,9 +114,8 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         return (ticks / Tunables.MOTOR_ENCODER_TICKS_PER_REVOLUTION) * Tunables.MECANUM_WHEEL_DIAMETER_MM * Math.PI / 1000;
     }
 
-    protected double getHeadingRadians() {
-        return odo.getHeading();
-//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    public double getHeadingFromInternalIMUAsRadians() {
+        return internalIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
     private static Pose2d toPose2d(GoBildaPinpointDriver.Pose2D pose2D) {

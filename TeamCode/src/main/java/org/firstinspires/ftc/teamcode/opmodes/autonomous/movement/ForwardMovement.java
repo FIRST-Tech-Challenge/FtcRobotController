@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.movement;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.geometry.Pose2d;
 
 public class ForwardMovement extends BaseMovement {
@@ -10,9 +12,10 @@ public class ForwardMovement extends BaseMovement {
 
     @Override
     protected void updateDrivingParameters() {
-        strafeSpeed = 0;//getMoveErrorCorrection(previousPose.getY() - startingPose.getY());
+        strafeSpeed = getMoveErrorCorrection(previousPose.getY() - startingPose.getY());
         forwardSpeed = getMainMovement(distance-accumulatedChanges);
-        rotationSpeed = getRotErrorCorrection(startingPose.getHeading() - previousPose.getHeading());
+        Log.i(LOG_TAG, "error correction speed: " + getRotErrorCorrection(startingPose.getHeading() - previousPose.getHeading()));
+        rotationSpeed = getRotErrorCorrection(startingPose.getHeading() - previousPose.getHeading()) * .05;
     }
 
     @Override

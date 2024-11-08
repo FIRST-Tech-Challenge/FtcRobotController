@@ -19,4 +19,19 @@ public class RotationMovement extends BaseMovement {
     protected double getCurrentDrivingReading(Pose2d pose) {
         return pose.getRotation().getRadians();
     }
+
+//    @Override
+//    protected double getNormalSpeed() {
+//        return .;
+//    }
+//
+//    @Override
+//    protected double getSlowSpeed() {
+//        return .1;
+//    }
+//
+//    @Override
+//    protected double getErrorCorrectionSpeed() {
+//        return .1;
+//    }
 }

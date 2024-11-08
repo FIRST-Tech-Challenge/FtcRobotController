@@ -20,17 +20,21 @@ public class DriverFeedback extends SubsystemBase {
 
     private final int RumbleTime = 500;
 
+    private final boolean withLED = true;
+
     public DriverFeedback(HardwareMap hardwareMap, GamepadEx driverGamepad, GamepadEx operatorGamepad, Telemetry telemetry) {
         this.driverGamepad = driverGamepad;
         this.operatorGamepad = operatorGamepad;
         this.telemetry = telemetry;
 
-        redLED = hardwareMap.get(DigitalChannel.class, "Red");
-        greenLED = hardwareMap.get(DigitalChannel.class, "Green");
+        if (withLED) {
+            redLED = hardwareMap.get(DigitalChannel.class, "Red");
+            greenLED = hardwareMap.get(DigitalChannel.class, "Green");
 
-        // Set mode to output
-        redLED.setMode(DigitalChannel.Mode.OUTPUT);
-        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+            // Set mode to output
+            redLED.setMode(DigitalChannel.Mode.OUTPUT);
+            greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+        }
     }
 
     public void TurnLedRed() {
