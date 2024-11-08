@@ -27,7 +27,7 @@ public class BasicMovementNKNProgram extends NKNProgram {
 
 
         // Sensor
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
         //telemetryEnabled.add(potentiometerHandler);
 
@@ -44,7 +44,7 @@ public class BasicMovementNKNProgram extends NKNProgram {
         components.add(extensionHandler);
         //telemetryEnabled.add(extensionHandler);
 
-        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler();
         components.add(intakeSpinnerHandler);
 
 

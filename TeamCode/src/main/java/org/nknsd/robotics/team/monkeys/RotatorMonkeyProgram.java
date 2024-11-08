@@ -19,7 +19,7 @@ public class RotatorMonkeyProgram extends NKNProgram {
         telemetryEnabled.add(extensionHandler);
 
         // Creating components we actually want
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
 

@@ -15,7 +15,7 @@ public class PotentiometerProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Pot
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
     }

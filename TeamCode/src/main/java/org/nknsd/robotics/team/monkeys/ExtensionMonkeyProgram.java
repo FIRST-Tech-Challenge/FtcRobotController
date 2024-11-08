@@ -13,10 +13,10 @@ public class ExtensionMonkeyProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Create pot and arm rotator so that the extensionHandler can be linked to them
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
 
-        RotationHandler rotationHandler = new RotationHandler ();
+        RotationHandler rotationHandler = new RotationHandler();
         components.add(rotationHandler);
 
         // Actual components we actually use

@@ -33,7 +33,7 @@ public class TestingAuto extends NKNProgram {
 
 
         // Sensors
-        FlowSensorHandler flowSensorHandler = new FlowSensorHandler("sensor_otos", 0.590551, 3.54331, 0);
+        FlowSensorHandler flowSensorHandler = new FlowSensorHandler();
         components.add(flowSensorHandler);
         telemetryEnabled.add(flowSensorHandler);
 
@@ -41,7 +41,7 @@ public class TestingAuto extends NKNProgram {
         components.add(imuComponent);
         //telemetryEnabled.add(imuComponent);
 
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
 
 
@@ -57,7 +57,7 @@ public class TestingAuto extends NKNProgram {
         ExtensionHandler extensionHandler = new ExtensionHandler();
         components.add(extensionHandler);
 
-        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler();
         components.add(intakeSpinnerHandler);
 
 

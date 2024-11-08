@@ -17,7 +17,7 @@ public class EACmonkeyProgram extends NKNProgram {
         components.add(extensionHandler);
         telemetryEnabled.add(extensionHandler);
 
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
 
@@ -25,7 +25,7 @@ public class EACmonkeyProgram extends NKNProgram {
         components.add(rotationHandler);
         telemetryEnabled.add(rotationHandler);
 
-        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler();
         components.add(intakeSpinnerHandler);
         telemetryEnabled.add(intakeSpinnerHandler);
 

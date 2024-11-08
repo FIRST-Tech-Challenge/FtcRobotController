@@ -24,7 +24,7 @@ public class FlowSensorTestProgram extends NKNProgram {
         //telemetryEnabled.add(wheelHandler);
 
         // Flow Sensory Handler
-        FlowSensorHandler flowSensorHandler = new FlowSensorHandler("sensor_otos", 0.590551, 3.54331, 0);
+        FlowSensorHandler flowSensorHandler = new FlowSensorHandler();
         components.add(flowSensorHandler);
         telemetryEnabled.add(flowSensorHandler);
 

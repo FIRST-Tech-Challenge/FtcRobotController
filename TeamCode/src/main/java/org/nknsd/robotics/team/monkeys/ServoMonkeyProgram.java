@@ -10,7 +10,7 @@ import java.util.List;
 public class ServoMonkeyProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
-        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler();
         components.add(intakeSpinnerHandler);
         telemetryEnabled.add(intakeSpinnerHandler);
 

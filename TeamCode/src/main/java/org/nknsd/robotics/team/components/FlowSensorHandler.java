@@ -42,16 +42,12 @@ public class FlowSensorHandler implements NKNComponent {
 
     SparkFunOTOS flowSensor;
 
-    String flowName;
-    double xOffset;
-    double yOffset;
+    String flowName = "sensor_otos";
+    double xOffset = 0.590551;
+    double yOffset = 3.54331;
     double hOffset;
 
-    public FlowSensorHandler(String flowName, double xOffset, double yOffset, double hOffset) {
-        this.flowName = flowName;
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
-        this.hOffset = hOffset;
+    public FlowSensorHandler() {
     }
 
     private void configureOtos(double xOffset, double yOffset, double hOffset) {

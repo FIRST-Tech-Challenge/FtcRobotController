@@ -11,10 +11,10 @@ import org.nknsd.robotics.framework.NKNComponent;
 public class IntakeSpinnerHandler implements NKNComponent {
 
     CRServo servo;
-    String servoName;
+    String servoName = "intakeServo";
 
-    public IntakeSpinnerHandler(String servoName) {
-        this.servoName = servoName;
+    public IntakeSpinnerHandler() {
+
     }
     public void setServoPower (HandStates handStates){
         servo.setPower(handStates.power);
