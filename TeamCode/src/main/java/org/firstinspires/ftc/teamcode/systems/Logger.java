@@ -64,6 +64,11 @@ public class Logger {
     }
 
     private void periodic() {
+        // Only run if the OpMode is active
+        if (!baseRobot.parentOp.opModeIsActive()) {
+            return;
+        }
+
         // Add permanent lines
         processQueue(permanentQueue, LogType.PERMANENT);
 

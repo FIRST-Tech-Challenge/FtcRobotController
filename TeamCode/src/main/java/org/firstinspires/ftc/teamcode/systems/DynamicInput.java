@@ -29,13 +29,8 @@ public class DynamicInput {
 
     public static class Movements {
         public final double up, right, down, left, rotation, x, y;
-        private final Gamepad mainCtrl;
-        private final Settings.DefaultGamepadSettings mainSettings;
 
         public Movements(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings) {
-            this.mainCtrl = mainCtrl;
-            this.mainSettings = mainSettings;
-
             // Move logic from movements() method here
             double leftStickY = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_Y),
                     mainSettings.stick_deadzone);
