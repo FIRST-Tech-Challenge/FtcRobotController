@@ -9,22 +9,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
 public class WheelHandler implements NKNComponent {
-    private final String flName; // We pass in the names of the wheels during construction so that we can change them easier
-    private final String frName;
-    private final String blName;
-    private final String brName;
-    private final String[] invertedNames; // Names in this array are reversed during initialization
+    private final String flName = "motorFL"; // We pass in the names of the wheels during construction so that we can change them easier
+    private final String frName = "motorFR";
+    private final String blName = "motorBL";
+    private final String brName = "motorBR";
+    private final String[] invertedNames = new String[]{"motorFL", "motorBL"}; // Names in this array are reversed during initialization
 
     private DcMotor motorFR; private DcMotor motorBR; private DcMotor motorFL; private DcMotor motorBL;
 
 
-    public WheelHandler(String flName,String frName,String blName,String brName,String[] invertedNames){
-        this.flName = flName;
-        this.frName = frName;
-        this.blName = blName;
-        this.brName = brName;
-
-        this.invertedNames = invertedNames;
+    public WheelHandler(){
     }
 
     // Helper function to check if the given motor name needs to be reversed

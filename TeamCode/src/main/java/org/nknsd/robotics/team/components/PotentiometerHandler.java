@@ -9,13 +9,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
 public class PotentiometerHandler implements NKNComponent {
-    private final String potName;
+    private final String potName = "armPot";
 
     private AnalogInput pot;
 
-    public PotentiometerHandler(String potName) {
-        this.potName = potName;
-    }
+    public PotentiometerHandler() {}
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {

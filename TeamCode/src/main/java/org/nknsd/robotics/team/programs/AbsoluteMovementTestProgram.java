@@ -19,14 +19,12 @@ public class AbsoluteMovementTestProgram extends NKNProgram {
         //telemetryEnabled.add(gamePadHandler);
 
         // Wheel Handler
-        WheelHandler wheelHandler = new WheelHandler(
-                "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFL", "motorBL"}
-        );
+        WheelHandler wheelHandler = new WheelHandler();
         components.add(wheelHandler);
         //telemetryEnabled.add(wheelHandler);
 
         // Flow Sensory Handler
-        FlowSensorHandler flowSensorHandler = new FlowSensorHandler("sensor_otos", 0.590551, 3.54331, 0);
+        FlowSensorHandler flowSensorHandler = new FlowSensorHandler();
         components.add(flowSensorHandler);
         //telemetryEnabled.add(flowSensorHandler);
 

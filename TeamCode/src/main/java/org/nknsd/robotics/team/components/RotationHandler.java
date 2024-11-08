@@ -15,14 +15,16 @@ import java.util.concurrent.TimeUnit;
 public class RotationHandler implements NKNComponent {
 
     public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 5;
-    final double threshold;
-    final double P_CONSTANT;
-    final double EXTENDED_P_CONSTANT;
-    final double I_CONSTANT;
-    final double EXTENDED_I_CONSTANT;
-    final double errorCap;
-    final boolean enableErrorClear;
-    private final String motorName;
+    final double threshold = 0.05;
+    final double P_CONSTANT = 0.38;
+    final double EXTENDED_P_CONSTANT = 0.5;
+    final double I_CONSTANT = 0.005;
+    final double EXTENDED_I_CONSTANT = 0.009;
+    final double D_CONSTANT = 0;
+    final double EXTENDED_D_CONSTANT = 0;
+    final double errorCap = 10;
+    final boolean enableErrorClear = true;
+    private final String motorName = "motorArmRotate";
     public RotationPositions targetRotationPosition = RotationPositions.RESTING;
     PotentiometerHandler potHandler;
     double diff;
@@ -32,16 +34,7 @@ public class RotationHandler implements NKNComponent {
     private DcMotor motor;
     private ExtensionHandler extensionHandler;
 
-    public RotationHandler(String motorName, double threshold, double P_CONSTANT,double EXTENDED_P_CONSTANT, double I_CONSTANT,double EXTENDED_I_CONSTANT, double errorCap, boolean enableErrorClear) {
-        this.motorName = motorName;
-        this.threshold = threshold;
-        this.P_CONSTANT = P_CONSTANT;
-        this.EXTENDED_P_CONSTANT = EXTENDED_P_CONSTANT;
-        this.I_CONSTANT = I_CONSTANT;
-        this.EXTENDED_I_CONSTANT = EXTENDED_I_CONSTANT;
-        this.errorCap = errorCap;
-        this.enableErrorClear = enableErrorClear;
-    }
+    public RotationHandler() {}
 
     @Override
     public void stop(ElapsedTime runtime, Telemetry telemetry) {

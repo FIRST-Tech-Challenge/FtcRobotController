@@ -35,7 +35,7 @@ public class PushAuto extends NKNProgram {
 
 
         // Sensors
-        FlowSensorHandler flowSensorHandler = new FlowSensorHandler("sensor_otos", 0.590551, 3.54331, 0);
+        FlowSensorHandler flowSensorHandler = new FlowSensorHandler();
         components.add(flowSensorHandler);
         telemetryEnabled.add(flowSensorHandler);
 
@@ -43,25 +43,23 @@ public class PushAuto extends NKNProgram {
         components.add(imuComponent);
         //telemetryEnabled.add(imuComponent);
 
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
 
 
         // Wheel Handler
-        WheelHandler wheelHandler = new WheelHandler(
-                "motorFL", "motorFR", "motorBL", "motorBR", new String[]{"motorFL", "motorBL"}
-        );
+        WheelHandler wheelHandler = new WheelHandler();
         components.add(wheelHandler);
 
 
         // Arm Stuff
-        RotationHandler rotationHandler = new RotationHandler ("motorArmRotate", 0.05, 0.38, 0.005, 10, true);
+        RotationHandler rotationHandler = new RotationHandler ();
         components.add(rotationHandler);
 
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.35);
+        ExtensionHandler extensionHandler = new ExtensionHandler();
         components.add(extensionHandler);
 
-        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler();
         components.add(intakeSpinnerHandler);
 
 

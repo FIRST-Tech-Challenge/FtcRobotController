@@ -13,19 +13,19 @@ import java.util.List;
 public class EACmonkeyProgram extends NKNProgram {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
-        ExtensionHandler extensionHandler = new ExtensionHandler("motorArmExtend", true, 0.8);
+        ExtensionHandler extensionHandler = new ExtensionHandler();
         components.add(extensionHandler);
         telemetryEnabled.add(extensionHandler);
 
-        PotentiometerHandler potentiometerHandler = new PotentiometerHandler("armPot");
+        PotentiometerHandler potentiometerHandler = new PotentiometerHandler();
         components.add(potentiometerHandler);
         telemetryEnabled.add(potentiometerHandler);
 
-        RotationHandler rotationHandler = new RotationHandler("motorArmRotate", 0.05, 0.8, 0.02, 5, true);
+        RotationHandler rotationHandler = new RotationHandler();
         components.add(rotationHandler);
         telemetryEnabled.add(rotationHandler);
 
-        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler("intakeServo");
+        IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler();
         components.add(intakeSpinnerHandler);
         telemetryEnabled.add(intakeSpinnerHandler);
 
