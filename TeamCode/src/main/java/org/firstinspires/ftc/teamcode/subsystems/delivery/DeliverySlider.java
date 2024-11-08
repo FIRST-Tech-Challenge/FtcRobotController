@@ -42,7 +42,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
         //MoveToTransferPosition();
 
-        pidController = new SonicPIDController(0.005, 0, 0);
+        pidController = new SonicPIDController(0.08, 0, 0);
     }
 
     private void SetTelop() {
@@ -55,12 +55,12 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void Expand() {
         SetTelop();
-        motor.set(.75);
+        motor.set(1);
     }
 
     public void Collapse() {
         SetTelop();
-        motor.set(-.75);
+        motor.set(-1);
     }
 
     public void Hold() {
