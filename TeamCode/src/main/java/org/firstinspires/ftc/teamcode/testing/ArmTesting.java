@@ -20,16 +20,18 @@ public class ArmTesting extends OpMode {
     private double armVelocity = 8;
 
     private DcMotorEx scoringArmMotor;
-    private DcMotorEx collectionArmMotor, pivotArm;
+    private DcMotorEx collectionArmMotor, endPivotMotor;
     private Servo armClaw;
 
     @Override
     public void init() {
         scoringArmMotor = hardwareMap.get(DcMotorEx.class, "verticalSlide");
         collectionArmMotor = hardwareMap.get(DcMotorEx.class, "horizontalSlide");
+        endPivotMotor = hardwareMap.get(DcMotorEx.class, "endPivotMotor");
 
         scoringArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         collectionArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        endPivotMotor.setMode();
         collectionArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 //        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
