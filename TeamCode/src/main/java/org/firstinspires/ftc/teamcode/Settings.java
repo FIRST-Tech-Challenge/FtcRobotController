@@ -36,8 +36,8 @@ public class Settings {
                 /** Values for open and closed positions on the claw */
                 public static final double RIGHT_OPEN = -0.2;
                 public static final double RIGHT_CLOSED = 0.5;
-                public static final double LEFT_OPEN = 1;
-                public static final double LEFT_CLOSED = 0.5;
+                public static final double LEFT_OPEN = -1;
+                public static final double LEFT_CLOSED = 1; // TODO TUNE
             }
 
             public static class Wrist {

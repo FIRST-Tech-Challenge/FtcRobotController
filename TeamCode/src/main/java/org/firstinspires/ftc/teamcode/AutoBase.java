@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * the autonomous routine.
  */
 @Autonomous(name = "Main Autonomous", group = "Autonomous")
-public abstract class AutoBase extends LinearOpMode {
+public class AutoBase extends LinearOpMode {
     /** Selected alliance color (Red/Blue) */
     String color;
 
