@@ -34,10 +34,10 @@ public class Settings {
         public static class Servo {
             public static class Claw {
                 /** Values for open and closed positions on the claw */
-                public static final double RIGHT_OPEN = -0.2;
-                public static final double RIGHT_CLOSED = 0.5;
-                public static final double LEFT_OPEN = -1;
-                public static final double LEFT_CLOSED = 1; // TODO TUNE
+                public static final double RIGHT_OPEN = 0.7;
+                public static final double RIGHT_CLOSED = 0.4;
+                public static final double LEFT_OPEN = 0.55;
+                public static final double LEFT_CLOSED = 0.9; // TODO TUNE
             }
 
             public static class Wrist {
@@ -224,7 +224,7 @@ public class Settings {
 
         // Development Features
         public static final boolean DEBUG = true;
-        public static final boolean SKIP_AUTONOMOUS = false;
+        public static final boolean SKIP_AUTONOMOUS = true;
 
         // Special Features
         public static final boolean VICTORY = false;

@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Autonomous(name = "Main Autonomous", group = "Autonomous")
 public class AutoBase extends LinearOpMode {
     /** Selected alliance color (Red/Blue) */
-    String color;
+    String color = "Red";
 
     /** Selected starting position (Left/Right) */
-    String position;
+    String position = "Left";
 
     /** Menu options for autonomous configuration */
     private static final String[] MENU_OPTIONS = {
@@ -54,7 +54,7 @@ public class AutoBase extends LinearOpMode {
         sleep(500); // Add a small delay for hardware initialization
 
         AtomicBoolean menuActive = new AtomicBoolean(true);
-        AtomicInteger currentSelection = new AtomicInteger();
+        AtomicInteger currentSelection = new AtomicInteger(0);
 
         // Menu loop
         while (!isStarted() && !isStopRequested() && menuActive.get()) {
@@ -73,8 +73,9 @@ public class AutoBase extends LinearOpMode {
                     currentSelection.set((currentSelection.get() + 1) % MENU_OPTIONS.length);
                 } else if (gamepad1.a) {
                     if (currentSelection.get() < MENU_OPTIONS.length - 1) {
-                        color = MENU_OPTIONS[currentSelection.get()].split(" ")[1];
-                        position = MENU_OPTIONS[currentSelection.get()].split(" ")[2];
+                        String[] parts = MENU_OPTIONS[currentSelection.get()].split(" ");
+                        color = parts[0]; // "Red" or "Blue"
+                        position = parts[1]; // "Left" or "Right"
                     } else {
                         menuActive.set(false);
                     }
@@ -83,7 +84,8 @@ public class AutoBase extends LinearOpMode {
 
             // Display current selection
             telemetry.addLine("\nSelected Configuration:");
-            telemetry.addData("Position", color + " " + position);
+            telemetry.addData("Position",
+                    (color != null && position != null) ? color + " " + position : "Not selected");
             telemetry.update();
         }
 
