@@ -9,7 +9,6 @@ import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOd
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
@@ -68,8 +67,12 @@ public class Swerve {
     this.telemetry = opMode.telemetry;
   }
 
+  private final double speedMult = .75;
+
   public void drive(ChassisSpeeds speeds) {
     var setpoint = kinematics.toSwerveModuleStates(speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        setpoint, Module.maxDriveSpeedMetersPerSec * speedMult);
 
     for (int i = 0; i < 4; i++) {
       modules[i].run(setpoint[i]);
@@ -94,9 +97,9 @@ public class Swerve {
 
     fieldRelativeDrive(
         new ChassisSpeeds(
-            xInput * Module.maxDriveSpeedMetersPerSec,
-            yInput * Module.maxDriveSpeedMetersPerSec,
-            yawInput * (Module.maxDriveSpeedMetersPerSec / drivebaseRadius)));
+            xInput * Module.maxDriveSpeedMetersPerSec * speedMult,
+            yInput * Module.maxDriveSpeedMetersPerSec * speedMult,
+            yawInput * (Module.maxDriveSpeedMetersPerSec * speedMult / drivebaseRadius)));
   }
 
   public Pose2d getPose() {
@@ -156,10 +159,6 @@ public class Swerve {
       steerServo = opMode.hardwareMap.servo.get(pos + "Servo");
       steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
 
-      if (pos.equals("FR") || pos.equals("BR")) {
-        driveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-      }
-
       drivePID = new PIDController(.5 / maxDriveSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
@@ -181,7 +180,7 @@ public class Swerve {
               + drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond));
 
       telemetry.addData(
-          "Swerve/Module " + id + "/Angle error", state.angle.getDegrees() - servoPos.getDegrees());
+          "Swerve/Module " + id + "/Angle error", state.angle.minus(servoPos).getDegrees());
       runServoVel(steerPID.calculate(getServoPos().getRadians(), state.angle.getRadians()));
     }
 
