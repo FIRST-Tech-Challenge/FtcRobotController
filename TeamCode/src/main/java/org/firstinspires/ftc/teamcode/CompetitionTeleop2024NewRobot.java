@@ -32,8 +32,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
     //Declare variables used for our arm lift
 
     // positive Y is upward on joystick, left and right
-    private DcMotor leftArm = null; //Located on Expansion Hub- Motor port 1
-    private DcMotor rightArm = null; //Located on Expansion Hub- Motor port 2
+    private DcMotor arm = null; //Located on Expansion Hub- Motor port 1
     private Servo wrist = null; //Located on Expansion Hub- Servo port 0
     // positive Y on right joystick will be intake, negative = outtake
     private CRServo intake = null; //Located on Expansion Hub- Servo port 2
@@ -83,12 +82,11 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
         intake = hardwareMap.get(CRServo.class, "intake");
-        leftArm = hardwareMap.get(DcMotor.class, "leftArm");
-        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         lift = hardwareMap.get(DcMotor.class, "lift");
         wrist = hardwareMap.get(Servo.class, "wrist");
         utils = new actuatorUtils();
-        utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
+        utils.initializeActuator(lift, arm, intake, wrist);
 
         intake.setPower(0.0);
         //imu = hardwareMap.get(IMU.class, "imu");
@@ -119,12 +117,10 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setPower(0);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftArm.setDirection(DcMotor.Direction.REVERSE);
-        rightArm.setDirection(DcMotor.Direction.REVERSE);
-        leftArm.setPower(0);
-        leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArm.setPower(0);
-        rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setDirection(DcMotor.Direction.REVERSE);
+        arm.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
 
 
@@ -232,10 +228,9 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         else if (gamepad2.b) {
             lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             lift.setPower(0.0);
-            leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftArm.setPower(0.0);
-            rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightArm.setPower(0.0);
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            arm.setPower(0.0);
+
         }
 
         else if (!autoLift)
@@ -248,8 +243,8 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
-        leftArm.setPower(gamepad2.right_stick_y * armPower);
-        rightArm.setPower(gamepad2.right_stick_y * armPower);
+        arm.setPower(gamepad2.right_stick_y * armPower);
+
 
 
         intake.setPower(gamepad2.left_stick_y);
@@ -270,8 +265,8 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
             leftBumperPressed = false;
         }
         // Show the elapsed game time and wheel power.
-        telemetry.addData("leftArm: ", leftArm.getCurrentPosition());
-        telemetry.addData("rightArm:", rightArm.getCurrentPosition());
+        telemetry.addData("arm: ",arm.getCurrentPosition());
+        telemetry.addData("lift: ",lift.getCurrentPosition());
         telemetry.addData("intake:", intake.getPower());
         telemetry.addData("wrist:", wrist.getPosition());
         telemetry.addData("Status","Run Time: "+runtime.toString());

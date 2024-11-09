@@ -25,8 +25,8 @@ public class LeftPath extends LinearOpMode {
     private actuatorUtils utils;
     private moveUtils move;
 
-    private DcMotor leftArm = null; //Located on Expansion Hub- Servo port 0
-    private DcMotor rightArm = null; //Located on Expansion Hub- Servo port 0
+    private DcMotor arm = null; //Located on Expansion Hub- Servo port 0
+
     private CRServo intake = null; //Located on Expansion Hub- Servo port 0
     private DcMotor lift = null;
     private Servo wrist = null; //Located on Expansion Hub- Servo port 0
@@ -48,8 +48,7 @@ public class LeftPath extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         utils = new actuatorUtils();
         lift = hardwareMap.get(DcMotor.class, "lift");
-        leftArm = hardwareMap.get(DcMotor.class, "leftArm");
-        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         intake = hardwareMap.get(CRServo.class, "intake");
         wrist = hardwareMap.get(Servo.class,"wrist");
         Pose2d startPose = new Pose2d(-63, 15,0);
@@ -65,12 +64,12 @@ public class LeftPath extends LinearOpMode {
         fUtils = new fileUtils();
         desiredHeading = getHeading();
 
-        utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
+        utils.initializeActuator(lift, arm, intake, wrist);
         move.initialize(drive, utils);
 
-        utils.setArm(actuatorUtils.ArmModes.UP);
+       // utils.setArm(actuatorUtils.ArmModes.UP);
         utils.setIntake(actuatorUtils.IntakeModes.OFF);
-        utils.setWrist(actuatorUtils.WristModes.UP);
+        utils.setWrist(actuatorUtils.WristModes.DOWN);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -83,23 +82,23 @@ public class LeftPath extends LinearOpMode {
 
 
         move.driveSeq(startPose.getX()+12,startPose.getY(),0);
+        utils.setArm(actuatorUtils.ArmModes.UP);
         utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
         move.driveSeq(-52,52,135);
        // utils.setLift(actuatorUtils.LiftLevel.HIGH_BASKET);
        // sleep(3000);
         //move.driveSeq(-57,57,135);
         //sleep(1000);
-        utils.setArm(actuatorUtils.ArmModes.REST);
         utils.setIntake(actuatorUtils.IntakeModes.OUT);
         sleep(2000);
-        utils.setArm(actuatorUtils.ArmModes.UP);
+        utils.setArm(actuatorUtils.ArmModes.REST);
         utils.setIntake(actuatorUtils.IntakeModes.OFF);
         move.driveSeq(-36,36,135);
         sleep(1000);
-        utils.setLift(actuatorUtils.LiftLevel.LOW_BASKET);
+        utils.setLift(actuatorUtils.LiftLevel.PARK);
         move.driveSeq(-12,36,-90);
         move.driveSeq(-12,24,-90);
-        utils.setArm(actuatorUtils.ArmModes.REST);
+       // utils.setArm(actuatorUtils.ArmModes.REST);
         sleep(1000);
         Pose2d pose = drive.getPoseEstimate();
         fUtils.setPose(pose);

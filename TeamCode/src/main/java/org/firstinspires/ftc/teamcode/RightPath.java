@@ -20,8 +20,7 @@ public class RightPath extends LinearOpMode {
     private actuatorUtils utils;
     private moveUtils move;
 
-    private DcMotor leftArm = null; //Located on Expansion Hub- Servo port 0
-    private DcMotor rightArm = null; //Located on Expansion Hub- Servo port 0
+    private DcMotor arm = null; //Located on Expansion Hub- Servo port 0
     private CRServo intake = null; //Located on Expansion Hub- Servo port 0
     private DcMotor lift = null;
     private Servo wrist = null; //Located on Expansion Hub- Servo port 0
@@ -42,8 +41,7 @@ public class RightPath extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         utils = new actuatorUtils();
         lift = hardwareMap.get(DcMotor.class, "lift");
-        leftArm = hardwareMap.get(DcMotor.class, "leftArm");
-        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         intake = hardwareMap.get(CRServo.class, "intake");
         wrist = hardwareMap.get(Servo.class,"wrist");
         Pose2d startPose = new Pose2d(-63, -15,0);
@@ -59,7 +57,7 @@ public class RightPath extends LinearOpMode {
         fUtils = new fileUtils();
         desiredHeading = getHeading();
 
-        utils.initializeActuator(lift, leftArm, rightArm, intake, wrist);
+        utils.initializeActuator(lift, arm, intake, wrist);
         move.initialize(drive, utils);
 
         //utils.setArm(actuatorUtils.ArmModes.UP);
