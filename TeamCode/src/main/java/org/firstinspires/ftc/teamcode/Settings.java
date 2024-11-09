@@ -140,6 +140,7 @@ public class Settings {
         public GamepadButton extendExtensor = GamepadButton.Y;
         public GamepadButton retractExtensor = GamepadButton.X;
         public final GamepadButton groundExtensor = GamepadButton.B;
+        public final GamepadButton floorExtensor = GamepadButton.A;
 
         // Movement controls
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
@@ -158,9 +159,10 @@ public class Settings {
         public GamepadButton wristDown = GamepadButton.LEFT_BUMPER;
 
         // Ascend extensor controls
-        public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_UP;
-        public final GamepadButton ascendExtensorRetract = GamepadButton.DPAD_DOWN;
-        public final GamepadButton ascendExtensorChange = GamepadButton.DPAD_RIGHT;
+        public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_RIGHT;
+        public final GamepadButton ascendExtensorRetract = GamepadButton.DPAD_LEFT;
+        public final GamepadButton ascendExtensorGround = GamepadButton.DPAD_DOWN;
+        public final GamepadButton ascendExtensorFloor = GamepadButton.DPAD_UP;
 
         public final GamepadAxis boost = GamepadAxis.RIGHT_TRIGGER;
         public final GamepadAxis brake = GamepadAxis.LEFT_TRIGGER;
@@ -197,27 +199,6 @@ public class Settings {
         LEFT_TRIGGER, RIGHT_TRIGGER,
         LEFT_STICK_X, LEFT_STICK_Y,
         RIGHT_STICK_X, RIGHT_STICK_Y
-    }
-
-    // Define preset profiles
-    public static class ControlProfiles {
-        public static DefaultGamepadSettings boonstra() {
-            DefaultGamepadSettings settings = new DefaultGamepadSettings();
-            // Customize button mappings for BBoonstra
-            settings.buttonMapping.extendExtensor = GamepadButton.Y;
-            settings.buttonMapping.retractExtensor = GamepadButton.A;
-            // ... add other customizations
-            return settings;
-        }
-
-        public static DefaultGamepadSettings israel() {
-            DefaultGamepadSettings settings = new DefaultGamepadSettings();
-            // custom button mappings for conner
-            settings.buttonMapping.extendExtensor = GamepadButton.B;
-            settings.buttonMapping.retractExtensor = GamepadButton.X;
-            // ... add other customizations
-            return settings;
-        }
     }
 
     // Deploy flags
@@ -312,6 +293,26 @@ public class Settings {
                     buttonMapping.wristUp = GamepadButton.DPAD_RIGHT;
                     buttonMapping.wristDown = GamepadButton.DPAD_LEFT;
                     trigger_threshold = 0.15;
+                }
+            });
+
+    public static final ControllerProfile RSHARMA_PROFILE = new ControllerProfile(
+            "rsharma",
+            new DefaultGamepadSettings() {
+                {
+                    dpad_movement_speed = 0.5;
+                    bumper_rotation_speed = 0.9;
+                }
+
+                @Override
+                public double applyBoostCurve(double input) {
+                    return BoostCurves.linear(input);
+                }
+            },
+            new DefaultGamepadSettings() {
+                {
+                    // Customize sub gamepad settings
+                    trigger_threshold = 0.1;
                 }
             });
 
