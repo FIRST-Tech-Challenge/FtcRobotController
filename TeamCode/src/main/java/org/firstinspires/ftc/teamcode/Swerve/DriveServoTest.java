@@ -31,7 +31,7 @@ public class DriveServoTest extends LinearOpMode {
     waitForStart();
     boolean leftPressed = false;
     boolean rightPressed = false;
-    double power = 1;
+    double power = 0;
     while (opModeIsActive()) {
       if (gamepad1.left_bumper && !leftPressed) {
         power += .01;

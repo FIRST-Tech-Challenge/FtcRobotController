@@ -144,29 +144,11 @@ public class Swerve {
 
     Module(OpMode opMode, int id) {
       String pos;
-      double driveKs;
-      double steerKs;
       switch (id) {
-        case 0 -> {
-          pos = "FL";
-          driveKs = 0;
-          steerKs = 0;
-        }
-        case 1 -> {
-          pos = "FR";
-          driveKs = 0;
-          steerKs = 0;
-        }
-        case 2 -> {
-          pos = "BL";
-          driveKs = 0;
-          steerKs = 0;
-        }
-        case 3 -> {
-          pos = "BR";
-          driveKs = 0;
-          steerKs = 0;
-        }
+        case 0 -> pos = "FL";
+        case 1 -> pos = "FR";
+        case 2 -> pos = "BL";
+        case 3 -> pos = "BR";
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
 
@@ -179,11 +161,11 @@ public class Swerve {
       }
 
       drivePID = new PIDController(.5 / maxDriveSpeedMetersPerSec, 0, 0);
-      driveFeedforward = new SimpleMotorFeedforward(driveKs, 1 / maxDriveSpeedMetersPerSec);
+      driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
       steerPID = new PIDController(5, 0, 0);
       steerPID.enableContinuousInput(-Math.PI, Math.PI);
-      steerFeedforward = new SimpleMotorFeedforward(steerKs, 1 / maxSteerSpeedRadPerSec);
+      steerFeedforward = new SimpleMotorFeedforward(0, 1 / maxSteerSpeedRadPerSec);
 
       this.telemetry = opMode.telemetry;
       this.id = id;
