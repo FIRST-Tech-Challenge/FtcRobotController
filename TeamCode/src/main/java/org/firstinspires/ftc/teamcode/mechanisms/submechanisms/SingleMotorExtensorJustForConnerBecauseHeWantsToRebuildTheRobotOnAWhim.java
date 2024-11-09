@@ -23,9 +23,8 @@ public class SingleMotorExtensorJustForConnerBecauseHeWantsToRebuildTheRobotOnAW
         singleMotorExtensorJustForConnerBecauseHeRebuiltTheRobotOnAWhimMotor
                 .setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        setPosition(Position.HOVER);
-
         // Set to RUN_TO_POSITION mode for position control
+        singleMotorExtensorJustForConnerBecauseHeRebuiltTheRobotOnAWhimMotor.setTargetPosition(Position.HOVER.getValue());
         singleMotorExtensorJustForConnerBecauseHeRebuiltTheRobotOnAWhimMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         singleMotorExtensorJustForConnerBecauseHeRebuiltTheRobotOnAWhimMotor
                 .setDirection(DcMotorSimple.Direction.REVERSE);
