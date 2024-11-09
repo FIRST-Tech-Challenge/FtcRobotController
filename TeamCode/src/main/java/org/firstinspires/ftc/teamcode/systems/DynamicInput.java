@@ -95,7 +95,7 @@ public class DynamicInput {
 
     public static class Actions {
         public final boolean extendExtensor, retractExtensor, groundExtensor, extensorBusy;
-        public final boolean clawRight, clawLeft, wristUp, wristDown;
+        public final double clawRight, clawLeft, wristUp, wristDown;
         public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorChange;
         public final double boostAmount, brakeAmount;
 
@@ -105,8 +105,8 @@ public class DynamicInput {
             this.retractExtensor = getButtonState(subCtrl, subSettings.buttonMapping.retractExtensor);
             this.groundExtensor = getButtonState(subCtrl, subSettings.buttonMapping.groundExtensor);
             this.extensorBusy = extendExtensor || retractExtensor || groundExtensor;
-            this.clawRight = getButtonState(subCtrl, subSettings.buttonMapping.clawRight);
-            this.clawLeft = getButtonState(subCtrl, subSettings.buttonMapping.clawLeft);
+            this.clawRight = getAxisValue(subCtrl, subSettings.buttonMapping.clawRight);
+            this.clawLeft = getAxisValue(subCtrl, subSettings.buttonMapping.clawLeft);
             this.wristUp = getButtonState(subCtrl, subSettings.buttonMapping.wristUp);
             this.wristDown = getButtonState(subCtrl, subSettings.buttonMapping.wristDown);
             this.ascendExtensorExtend = getButtonState(subCtrl,
