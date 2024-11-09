@@ -199,27 +199,6 @@ public class Settings {
         RIGHT_STICK_X, RIGHT_STICK_Y
     }
 
-    // Define preset profiles
-    public static class ControlProfiles {
-        public static DefaultGamepadSettings boonstra() {
-            DefaultGamepadSettings settings = new DefaultGamepadSettings();
-            // Customize button mappings for BBoonstra
-            settings.buttonMapping.extendExtensor = GamepadButton.Y;
-            settings.buttonMapping.retractExtensor = GamepadButton.A;
-            // ... add other customizations
-            return settings;
-        }
-
-        public static DefaultGamepadSettings israel() {
-            DefaultGamepadSettings settings = new DefaultGamepadSettings();
-            // custom button mappings for conner
-            settings.buttonMapping.extendExtensor = GamepadButton.B;
-            settings.buttonMapping.retractExtensor = GamepadButton.X;
-            // ... add other customizations
-            return settings;
-        }
-    }
-
     // Deploy flags
     public static class Deploy {
         // Core Mechanisms
@@ -312,6 +291,26 @@ public class Settings {
                     buttonMapping.wristUp = GamepadButton.DPAD_RIGHT;
                     buttonMapping.wristDown = GamepadButton.DPAD_LEFT;
                     trigger_threshold = 0.15;
+                }
+            });
+
+    public static final ControllerProfile RSHARMA_PROFILE = new ControllerProfile(
+            "rsharma",
+            new DefaultGamepadSettings() {
+                {
+                    dpad_movement_speed = 0.5;
+                    bumper_rotation_speed = 0.9;
+                }
+
+                @Override
+                public double applyBoostCurve(double input) {
+                    return BoostCurves.linear(input);
+                }
+            },
+            new DefaultGamepadSettings() {
+                {
+                    // Customize sub gamepad settings
+                    trigger_threshold = 0.1;
                 }
             });
 
