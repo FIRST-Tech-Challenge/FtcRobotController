@@ -31,7 +31,8 @@ public class KevinColorSensor extends ColorSensorComposition {
     *  2 : checks to see if piece in intake is less than 2 mm
     *  3 : checks to see if second piece is in intake
     */
-    public void ColorSensing(boolean DIDDYANDDRAKEOILEDUPthiswasrohansideanotkevinhesaidifiremoveitiget80pushupsandgrimaceshakewillcomeintomybedroomat3amwithskibiditoiletminionandohiorizzlercameraman) {
+    public void ColorSensing(boolean red) {
+        //red as in team color
 
         //waitForStart();
 
