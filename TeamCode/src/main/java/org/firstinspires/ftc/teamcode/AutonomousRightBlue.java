@@ -135,8 +135,6 @@ public class AutonomousRightBlue extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous() {
 
-//      double pos_y=0, pos_x=0, pos_angle=-90.0;
-
         // Do we start with an initial delay?
         if( startDelaySec > 0 ) {
             sleep( startDelaySec * 1000 );

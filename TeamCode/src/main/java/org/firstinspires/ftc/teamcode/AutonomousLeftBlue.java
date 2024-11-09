@@ -27,9 +27,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
-@Autonomous(name="Autonomous Right-Red", group="7592", preselectTeleOp = "Teleop-Red")
+@Autonomous(name="Autonomous Left-Blue", group="7592", preselectTeleOp = "Teleop-Blue")
 //@Disabled
-public class AutonomousRightRed extends AutonomousBase {
+public class AutonomousLeftBlue extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -144,7 +144,7 @@ public class AutonomousRightRed extends AutonomousBase {
         scoreSpecimenPreload();
 
         // Score the preloaded specimen
-        parkInObservation();
+         parkSafeButNoPoints();
 
     } // mainAutonomous
 
@@ -166,7 +166,7 @@ public class AutonomousRightRed extends AutonomousBase {
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
             // shift away from alliance partner
-            gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
+            gyroDrive(DRIVE_SPEED_20, DRIVE_X, 3.0, 999.9, DRIVE_TO );
             robot.driveTrainMotorsZero();
             do {
                 if( !opModeIsActive() ) break;
@@ -253,15 +253,35 @@ public class AutonomousRightRed extends AutonomousBase {
 
     } // scoreSpecimenPreload
 
-    private void parkInObservation() {
-        // Back up from submersible
-        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, -23.0, 999.9, DRIVE_TO );
-        double startAngle = getAngle();
-        gyroTurn(TURN_SPEED_40, (startAngle + 135) );   // Turn CW 135 degrees
-        // Drive forward toward the wall
-        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 35.0, 999.9, DRIVE_TO );
-        // Strafe sideways toward the human player
-        gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
-    } // parkInObservation
+    private void parkSafeButNoPoints() {
+        if( opModeIsActive() ) {
+            // Back up from submersible
+            // gyroDrive(DRIVE_SPEED_40, DRIVE_Y, -12.0, 999.9, DRIVE_TO );
+            double startAngle = getAngle();
+            gyroTurn(TURN_SPEED_40, (startAngle - 45) );   // Turn CCW 45 degrees
+            // Drive forward toward the wall
+            gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 38.0, 999.9, DRIVE_THRU );
+        } // opModeIsActive
 
-} /* AutonomousRightRed */
+        if( opModeIsActive() ) {
+            // Strafe towards submersible
+            gyroDrive(DRIVE_SPEED_40, DRIVE_X, 32.0, 999.9, DRIVE_THRU );
+            // Drive backward
+            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -19, 999.9, DRIVE_TO );
+        } // opModeIsActive
+
+        if( opModeIsActive() ) {
+            autoViperMotorMoveToTarget( robot.VIPER_EXTEND_GRAB);
+            autoTiltMotorMoveToTarget( robot.TILT_ANGLE_BASKET);
+            do {
+                if( !opModeIsActive() ) break;
+                // wait for lift/tilt to finish...
+                sleep( 150 );
+                // update all our status
+                performEveryLoop();
+            } while( autoTiltMotorMoving() || autoViperMotorMoving() );
+        } // opModeIsActive
+
+    } // parkSafeButNoPoints
+
+} /* AutonomousLeftBlue */

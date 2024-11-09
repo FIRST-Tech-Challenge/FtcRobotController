@@ -254,11 +254,13 @@ public class Hardware2025Bot
         wormPanMotor.setPower( 0.0 );
         wormTiltMotor.setPower( 0.0 );
 
-        wormPanMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wormTiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if( isAutonomous ) {
+            wormPanMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wormTiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wormPanMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wormPanMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } // not for teleop
 
         wormPanMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wormTiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -267,8 +269,10 @@ public class Hardware2025Bot
         viperMotor = hwMap.get(DcMotorEx.class,"viperMotor");  // Expansion Hub port 2
         viperMotor.setDirection(DcMotor.Direction.REVERSE);   // positive motor power extends
         viperMotor.setPower( 0.0 );
-        viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if( isAutonomous ) {
+            viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
         viperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         elbowServo = hwMap.servo.get("ElbowServo");             // servo port 0 (Expansion Hub)

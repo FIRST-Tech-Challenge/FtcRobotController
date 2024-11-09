@@ -191,16 +191,6 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
                 ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
 
-        // If vision pipeline disagrees with forced alliance setting, report it
-//        if( forceAlliance && (redAlliance != pipelineBack.redAlliance) )
-//            telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineBack.redAlliance)? "RED":"BLUE");
-
-//        telemetry.addData("TeamProp", " Hue("  + pipelineBack.targetHue +
-//                ") L:"   + pipelineBack.avg1   +
-//                " C:"    + pipelineBack.avg2   +
-//                " R:"    + pipelineBack.avg3   +
-//                " Zone:" + pipelineBack.spikeMark );
-
         // Shift DOWN one menu entry?
         if( nextEntry ) {
             initMenuSelected++;
@@ -289,16 +279,12 @@ public abstract class AutonomousBase extends LinearOpMode {
 
         // Update our telemetry
         telemetry.addData("Start Delay",  "%d sec %s", startDelaySec, ((initMenuSelected==1)? "<-":"  ") );
-        telemetry.addData("Truss Delay", "%d sec %s", parkDelaySec, ((initMenuSelected==2)? "<-":"  ") );
-        telemetry.addData("Audience Yellow", "%s %s", (audienceYellow)? "Yes" : "No",
-                ((initMenuSelected==3)? "<-":"  "));
-        telemetry.addData("Place Yellow","%s %s", (yellowOnLeft)? "LEFT" : "RIGHT",
-                ((initMenuSelected==4)? "<-":"  "));
+        telemetry.addData("Park Delay", "%d sec %s", parkDelaySec, ((initMenuSelected==2)? "<-":"  ") );
         telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
                 ((initMenuSelected==5)? "<-":"  "));
 
 //      telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
-        telemetry.addData(">","version 124" );
+        telemetry.addData(">","version 100" );
         telemetry.update();
     } // processAutonomousInitMenu
 
