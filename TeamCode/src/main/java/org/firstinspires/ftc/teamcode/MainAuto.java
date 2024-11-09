@@ -171,11 +171,11 @@ public class MainAuto {
         switch (mode) {
             case "red right":
             case "blue right":
-                baseRobot.odometry.moveCounts("right", 50);
+                baseRobot.odometry.moveCounts("right", 50); // TODO! TUNE THIS IMMEDIATELY
                 break;
             case "red left":
             case "blue left":
-                baseRobot.odometry.moveCounts("right", 80);
+                baseRobot.odometry.moveCounts("right", 80); // TODO! TUNE THIS IMMEDIATELY
                 break;
         }
     }

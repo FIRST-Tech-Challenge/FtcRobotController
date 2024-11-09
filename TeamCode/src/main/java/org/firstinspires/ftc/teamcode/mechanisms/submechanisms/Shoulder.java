@@ -12,6 +12,9 @@ public class Shoulder {
     private final String LOG_PREFIX = "Shoulder: ";
 
     public Shoulder(@NonNull BaseRobot baseRobot) {
+        if (!Settings.Deploy.SHOULDER) {
+            return;
+        }
         this.shoulderMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.SHOULDER);
         this.shoulderMotor.setDirection(DcMotor.Direction.FORWARD);
         this.shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -27,11 +30,16 @@ public class Shoulder {
         shoulderMotor.setTargetPosition(targetPosition);
         shoulderMotor.setPower(Settings.Hardware.SHOULDER_POWER);
 
-//        baseRobot.logger.update(LOG_PREFIX + "Target Degrees", String.format("%.2f°", position));
-//        baseRobot.logger.update(LOG_PREFIX + "Target Ticks", String.valueOf(targetPosition));
-//        baseRobot.logger.update(LOG_PREFIX + "Current Position", String.valueOf(currentPosition));
-//        baseRobot.logger.update(LOG_PREFIX + "Power", String.valueOf(Settings.Hardware.SHOULDER_POWER));
-//        baseRobot.logger.update(LOG_PREFIX + "Mode", shoulderMotor.getMode().toString());
+        // baseRobot.logger.update(LOG_PREFIX + "Target Degrees", String.format("%.2f°",
+        // position));
+        // baseRobot.logger.update(LOG_PREFIX + "Target Ticks",
+        // String.valueOf(targetPosition));
+        // baseRobot.logger.update(LOG_PREFIX + "Current Position",
+        // String.valueOf(currentPosition));
+        // baseRobot.logger.update(LOG_PREFIX + "Power",
+        // String.valueOf(Settings.Hardware.SHOULDER_POWER));
+        // baseRobot.logger.update(LOG_PREFIX + "Mode",
+        // shoulderMotor.getMode().toString());
     }
 
     // Converts position name to double
