@@ -86,17 +86,20 @@ public class Mekanism {
               // kG needs to be scaled with the sin of angle
               * Math.sin(
                   Units.degreesToRadians(
-                      90 - (pivot.getCurrentPosition() * encoderCountsPerDegree)));
+                      90 - (pivot.getCurrentPosition() / encoderCountsPerDegree)));
 
-    double encoderCountsPerInch = 100;
+    // TODO: Tuning is very vibes based because this value is very wrong, fix it
+    double encoderCountsPerInch = 85;
     pubLength =
-        Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree))
-            * (46 * encoderCountsPerInch);
-    if (pubLength <= 2950) {
-      pubLength = 2950;
-    }
-    if (x > 0 && slide.getCurrentPosition() > pubLength) {
-      x = 0;
+        Math.min(
+            (29.5 * encoderCountsPerInch)
+                / Math.max(
+                    Math.cos(
+                        Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
+                    1e-6), // Prevent divide by 0
+            46 * encoderCountsPerInch); // Limit extension
+    if (slide.getCurrentPosition() > pubLength) {
+      x = -.5;
     }
 
     slide.setPower(x);
@@ -120,7 +123,7 @@ public class Mekanism {
   public void homeArm() {
     while (limitSwitch.getState()) {
       pivot.setPower(-.75);
-      slide.setPower(-.01);
+      slide.setPower(-0.5);
     }
 
     pivot.setPower(.00);
@@ -129,7 +132,7 @@ public class Mekanism {
       Thread.sleep(250);
     } catch (final InterruptedException ex) {
       Thread.currentThread().interrupt();
-    };
+    }
     pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
