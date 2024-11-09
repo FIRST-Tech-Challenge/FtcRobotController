@@ -166,28 +166,41 @@ public class Teleop_live_2controllers extends LinearOpMode {
                 intake_constant = !intake_constant;
                 telemetry.addData("intake",intake_constant);
                 telemetry.update();
-                s1.setDirection(Servo.Direction.FORWARD);
+//                s1.setDirection(Servo.Direction.FORWARD);
 
 
-                if (intake_constant) {
-                    s1.setPosition(0);
-                    //Extend
-                } else {
-                    s1.setPosition(1);
-                    //Retract
-                }
+//                if (intake_constant) {
+//                    s1.setPosition(0);
+//                    //Extend
+//                } else {
+//                    s1.setPosition(1);
+//                    //Retract
+//                }
             }
+
+           if(gamepad2.a){
+               m0.setPower(-1);
+           }else{
+               m0.setPower(0);
+           }
+
+           if(gamepad2.b){
+               m0.setPower(0.3);
+           }else {
+               m0.setPower(0);
+           }
+
             gamepad1x_previous = gamepad1.x;
 
             if (gamepad1.right_bumper != gamepad1RB_previous&& gamepad1.right_bumper) {
                 s1.setDirection(Servo.Direction.FORWARD);
-                s2.setPosition(0); // open
+                s1.setPosition(0); // open
             }
             gamepad1RB_previous = gamepad1.right_bumper;
 
             if (gamepad1.left_bumper != gamepad1LB_previous&& gamepad1.left_bumper) {
                 s1.setDirection(Servo.Direction.REVERSE);
-                s2.setPosition(1); //close
+                s1.setPosition(1); //close
             }
             gamepad1LB_previous = gamepad1.left_bumper;
 
@@ -254,7 +267,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
                 flPower = (Range.clip(flPow, -THRESH_WM_POWER, THRESH_WM_POWER));
                 blPower = (Range.clip(blPow, -THRESH_WM_POWER, THRESH_WM_POWER));
-                frPower = (Range.clip(-frPow, -THRESH_WM_POWER, THRESH_WM_POWER));
+                frPower = (Range.clip(frPow, -THRESH_WM_POWER, THRESH_WM_POWER));
                 brPower = (Range.clip(brPow, -THRESH_WM_POWER, THRESH_WM_POWER));
 
                 telemetry.addData("first Angle", myRobotOrientation.firstAngle);
