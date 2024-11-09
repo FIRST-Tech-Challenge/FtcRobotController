@@ -15,7 +15,11 @@ buildscript {
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
 <<<<<<< HEAD
+<<<<<<< HEAD
         classpath 'com.android.tools.build:gradle:8.7.2'
+=======
+        classpath 'com.android.tools.build:gradle:8.6.1'
+>>>>>>> parent of d44ec0d (I did some stuff)
 =======
         classpath 'com.android.tools.build:gradle:8.6.1'
 >>>>>>> parent of d44ec0d (I did some stuff)
