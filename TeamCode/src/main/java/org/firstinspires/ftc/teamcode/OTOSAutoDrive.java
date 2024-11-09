@@ -116,12 +116,20 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MAX);                             // Raising Arm
         setViper(VIPER_MAX);                                   // Extending Viper
         driveToLoc(3, 14, 20);
-        claw.setPosition(CLAW_MAX);
+        setClaw(CLAW_MAX);                            // Drop the block
         sleep(500);
         driveToLoc(34, 0, 0);
         setViper(1800);
-        setVertical(100);
-        sleep(10000);
+        setVertical(100, 1500);
+        setClaw(CLAW_MIN);
+        setVertical(VERTICAL_MAX);
+        setViper(VIPER_MAX);
+        driveToLoc(12, 10, 45);
+        sleep(300);
+        setClaw(CLAW_MAX);
+        driveToLoc(17, 5, 45);
+        setViper(VIPER_MIN);
+        setVertical(VERTICAL_MIN);
         /*
         strafeRight(1.5, 0.4);       // Positioning to basket
         moveForward(0.4, 0.4);       // Positioning to basket
@@ -151,6 +159,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         ((DcMotorEx) viperSlide).setVelocity(2000);
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         sleep(2000);
+        RobotLog.vv("Rockin' Robots", "Viper set to %d", viperSlide.getCurrentPosition());
     }
 
     public void setVertical(int height){
