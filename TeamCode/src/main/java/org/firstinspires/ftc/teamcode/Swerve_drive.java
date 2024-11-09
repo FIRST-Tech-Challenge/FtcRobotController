@@ -87,14 +87,7 @@ public class Swerve_drive extends LinearOpMode {
             double leftStickY = gamepad1.left_stick_y;
             double rightStickY = gamepad1.right_stick_y;
             double deadzone = 0;
-
-            leftpoddirection = 0;
-            if (leftStickX > 0) {
-                leftpoddirection = 0.5;
-            } else {
-                leftpoddirection = 0;
-            }
-
+            
             // left wheel
 
             leftpodposition = Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x));
