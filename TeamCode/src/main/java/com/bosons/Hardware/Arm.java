@@ -27,7 +27,7 @@ public class Arm {
     public static double f = 0.15;
     public static int rotTarget = 0;
     //---------------------//
-    public int extensionTarget = 0;
+    public static int extensionTarget = 0;
     public int acceptableExtensionError = 30;
     public int maxExtensionTicks = 2185;
     public double Power = 0.0;
@@ -36,12 +36,14 @@ public class Arm {
     private final double ticks_in_degree = (8192/360.0);
     private final double ticks_per_cm = (2190/48.96);
 
-    //Motion Profiling bullshit
+    /*
+    Motion Profiling bullshit
     private double slope;
     private double radius_0;
     private double theta_0;
+    */
 
-    //Motion Smoothing Timer;
+    //Motion Smoothing;
     private int thetaTicksInitial;
     private int thetaTicks;
     private ElapsedTime smoothingTimer = new ElapsedTime();
@@ -105,22 +107,23 @@ public class Arm {
         if(thetaTicks>2700){thetaTicks=2700;}
         if(thetaTicks<0){thetaTicks=0;}
 
+        //set the change in ticks over the set interval
+        thetaTicksInitial = leftRotationMotor.getCurrentPosition();
         timeSlope = (thetaTicks-thetaTicksInitial)/(seconds*1000);//ticks per milisecond
-        //previousTime = 0;
         smoothingTimer.reset();
     }
     public void updatePositionSmooth(){
-        if(Math.abs(thetaTicks-rotTarget)>acceptableRotationError) {
-            //double deltaTime = smoothingTimer.milliseconds()-previousTime;
-            //previousTime = smoothingTimer.milliseconds();
-            //add (or subtract if slope is negative) ticks over time until target met
-            rotTarget = (int) (thetaTicksInitial + timeSlope * smoothingTimer.milliseconds());// initial position +/- ticksPerMilisecond
+        //if(Math.abs(thetaTicks-rotTarget)>acceptableRotationError) {
+            // initial position +/- ticksPerMilisecond*miliseconds
+            rotTarget = (int) (thetaTicksInitial + timeSlope * smoothingTimer.milliseconds());
             if(rotTarget>2700){rotTarget=2700;}
             if(rotTarget<0){rotTarget=0;}
-        }
-        else{
-            rotTarget = thetaTicks;
-        }
+            opm.telemetry.addData("smoothing: Target = ",rotTarget);
+        //}
+        //else{
+        //    rotTarget = thetaTicks;
+        //}
+        updatePosition();
     }
 
     public void setPositionPolar(double r,double theta){

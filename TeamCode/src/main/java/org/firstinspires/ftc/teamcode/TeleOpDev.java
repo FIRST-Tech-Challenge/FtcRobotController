@@ -102,15 +102,15 @@ public class TeleOpDev extends OpMode{
         //arm.setPositionPolar(radius_arm,theta_arm);
 
         if(driverA.toggleButtonState(Controller.Button.y)){
-            if(driverA.onButtonPress(Controller.Button.y)){
+            //if(driverA.onButtonPress(Controller.Button.y)){
                 arm.setPositionPolarSmooth(84.6,90,5);
-            }
+            //}
             armTimer.reset();
             arm.updatePositionSmooth();
         }
         else{
-            if(armTimer.seconds()<3){
-                arm.setPositionPolar(0,90-(3000/armTimer.milliseconds())*90);//smooth transition over three seconds
+            if(armTimer.seconds()<2){
+                arm.setPositionPolar(0,90-(armTimer.milliseconds()/2000)*100);//smooth transition over three seconds
             }
             else {
                 arm.setPositionPolar(0,-28);//let the arm drop to home after delay
