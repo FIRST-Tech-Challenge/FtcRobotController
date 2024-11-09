@@ -12,10 +12,11 @@ public class Position {
     }
     //add point to vector
     public Position add(Velocity velocity) {
+        double theta = this.theta + velocity.getTheta();
         return new Position (
             this.x + velocity.getX(),
             this.y + velocity.getY(),
-            this.theta + velocity.getTheta()
+            MathFunctions.angleWrapRad(theta)
         );
     }
 

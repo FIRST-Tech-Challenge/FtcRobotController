@@ -84,7 +84,10 @@ public class Odometry {
         double relDeltaY =
                 +strafeRadius * Math.sin(relativeDelta.getTheta()) + forwardRadius * (1 - Math.cos(relativeDelta.getTheta()));
 
-        Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relativeDelta.getTheta());
+        double relDeltaTheta =
+                MathFunctions.angleWrapRad(relativeDelta.getTheta());
+
+        Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
         Log.d("odometry", "arcDelta " + arcDelta.toString());
         return arcDelta;
     }
@@ -97,14 +100,16 @@ public class Odometry {
                 relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
         double newTheta =
                 MathFunctions.angleWrapRad(relativeDelta.getTheta());
-        Log.d("thetavalue", "theta " + relativeDelta.getTheta() + " " + newTheta);
+
         return new Velocity(newX, newY, newTheta);
     }
 
     private Position updateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {
         Velocity globalDelta = rotate(relativeDelta, previousGlobalPosition);
 
-        return previousGlobalPosition.add(globalDelta);
+        Position position = previousGlobalPosition.add(globalDelta);
+        Log.d("thetavalue", "theta " + position.getTheta());
+        return position;
     }
 
     public void run() throws InterruptedException{
@@ -133,6 +138,7 @@ public class Odometry {
         prevTime = currentTime;
 
         currentPosition = updateGlobal(relativeDelta, currentPosition);
+        Log.d("currentpos", "current pos " + currentPosition.getTheta());
 
         prevRightTicks = rightTicks;
         prevLeftTicks = leftTicks;

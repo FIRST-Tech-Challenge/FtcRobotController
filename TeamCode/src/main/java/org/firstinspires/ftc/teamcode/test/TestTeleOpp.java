@@ -57,17 +57,9 @@ public class TestTeleOpp extends LinearOpMode {
 //        outer.scheduleSequential(action3);
 
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
-//        purePursuitAction.addPoint(800, 0);
-//        purePursuitAction.addPoint(800, 1600);
-//        purePursuitAction.addPoint(0, 1600);
-//        purePursuitAction.addPoint(-800, 1600);
         purePursuitAction.addPoint(0,0);
-        purePursuitAction.addPoint(250,0);
-
-        MoveRobotStraightInchesAction moveRobotStraightInchesAction = new MoveRobotStraightInchesAction(6, driveTrain);
-        moveRobotStraightInchesAction.setDependentAction(purePursuitAction);
-
-        //TurnRobotAction turnRobotAction = new TurnRobotAction(90, driveTrain, imu);
+        purePursuitAction.addPoint(400,0);
+        purePursuitAction.addPoint(400,-400);
 
         waitForStart();
 
@@ -81,10 +73,7 @@ public class TestTeleOpp extends LinearOpMode {
 
             odometry.updatePosition();
             Log.d("position", odometry.getCurrentPosition().toString());
-            //moveRobotStraightInchesAction.updateCheckDone();
-            //purePursuitAction.updateCheckDone();
-
-            //turnRobotAction.updateCheckDone();
+            purePursuitAction.updateCheckDone();
 
 //            telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());
 //            telemetry.addData("drone launcher ticks", droneLauncher.wheel.getCurrentPosition());
