@@ -117,11 +117,10 @@ public class Mekanism {
     pivot.setPower(x);
   }
 
-  public void moveClaw(boolean intake, boolean outtake) {
-    // TODO: Does intake and outtake need their names flipped?
-    if (intake) {
+  public void moveClaw(boolean outtake, boolean intake) {
+    if (outtake) {
       intakeL.setPosition(1);
-    } else if (outtake) {
+    } else if (intake) {
       intakeL.setPosition(0);
     } else {
       intakeL.setPosition(.5);
