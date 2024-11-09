@@ -38,6 +38,7 @@ public class Shoulder {
         setPosition(positions[nextIndex]);
     }
 
+    /** Position, in degrees, from the resting position to the wanted position */
     public enum Position {
         // ! TODO TUNE all of these
         RESTING(0.0),

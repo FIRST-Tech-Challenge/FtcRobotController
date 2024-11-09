@@ -144,6 +144,9 @@ public class Settings {
         public final GamepadAxis moveSideways = GamepadAxis.LEFT_STICK_X;
         public final GamepadAxis rotate = GamepadAxis.RIGHT_STICK_X;
 
+        public GamepadButton rotateRight = GamepadButton.RIGHT_BUMPER;
+        public GamepadButton rotateLeft = GamepadButton.LEFT_BUMPER;
+
         // Claw controls
         public final GamepadAxis clawRight = GamepadAxis.RIGHT_TRIGGER;
         public final GamepadAxis clawLeft = GamepadAxis.LEFT_TRIGGER;

@@ -70,10 +70,10 @@ public class DynamicInput {
                 rotationRight = rotation > 0 ? rotation : 0;
                 rotationLeft = rotation < 0 ? -rotation : 0;
             } else {
-                rotationRight = getButtonState(mainCtrl, Settings.GamepadButton.RIGHT_BUMPER)
+                rotationRight = getButtonState(mainCtrl, mainSettings.buttonMapping.rotateRight)
                         ? mainSettings.bumper_rotation_speed
                         : 0;
-                rotationLeft = getButtonState(mainCtrl, Settings.GamepadButton.LEFT_BUMPER)
+                rotationLeft = getButtonState(mainCtrl, mainSettings.buttonMapping.rotateLeft)
                         ? mainSettings.bumper_rotation_speed
                         : 0;
             }
@@ -105,8 +105,8 @@ public class DynamicInput {
             this.retractExtensor = getButtonState(subCtrl, subSettings.buttonMapping.retractExtensor);
             this.groundExtensor = getButtonState(subCtrl, subSettings.buttonMapping.groundExtensor);
             this.extensorBusy = extendExtensor || retractExtensor || groundExtensor;
-            this.clawRight = getAxisValue(subCtrl, subSettings.buttonMapping.clawRight) > subSettings.trigger_threshold;
-            this.clawLeft = getAxisValue(subCtrl, subSettings.buttonMapping.clawLeft) > subSettings.trigger_threshold;
+            this.clawRight = getButtonState(subCtrl, subSettings.buttonMapping.clawRight);
+            this.clawLeft = getButtonState(subCtrl, subSettings.buttonMapping.clawLeft);
             this.wristUp = getButtonState(subCtrl, subSettings.buttonMapping.wristUp);
             this.wristDown = getButtonState(subCtrl, subSettings.buttonMapping.wristDown);
             this.ascendExtensorExtend = getButtonState(subCtrl,
