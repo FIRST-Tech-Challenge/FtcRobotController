@@ -87,7 +87,7 @@ public class Swerve_drive extends LinearOpMode {
             double leftStickY = gamepad1.left_stick_y;
             double rightStickY = gamepad1.right_stick_y;
             double deadzone = 0;
-            
+
             // left wheel
 
             leftpodposition = Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x));
@@ -97,7 +97,7 @@ public class Swerve_drive extends LinearOpMode {
 
             // Quadrant 1
 
-            if (leftStickY > 0 || rightStickX > 0) {
+            if (leftStickY > 0 && rightStickX > 0) {
                 if (Math.abs(leftStickX) > deadzone) {
                     leftservo.setPosition(leftServoPosition + 0.5);
                 }
@@ -115,7 +115,7 @@ public class Swerve_drive extends LinearOpMode {
             }
             // quadrant 2
 
-            if (leftStickY > 0 || rightStickX < 0);
+            if (leftStickY > 0 && rightStickX < 0);
                 if (Math.abs(leftStickX) > deadzone) {
                     leftservo.setPosition(leftServoPosition);
                 }
@@ -132,7 +132,7 @@ public class Swerve_drive extends LinearOpMode {
                 }
             // quadrant 3
 
-            if (leftStickY < 0 || rightStickX < 0);
+            if (leftStickY < 0 && rightStickX < 0);
                 if (Math.abs(leftStickX) > deadzone) {
                     leftservo.setPosition(leftServoPosition + 0.5);
                 }
@@ -149,7 +149,7 @@ public class Swerve_drive extends LinearOpMode {
                 }
             // quadrant 4
 
-            if (leftStickY < 0 || rightStickX > 0);
+            if (leftStickY < 0 && rightStickX > 0);
                 if (Math.abs(leftStickX) > deadzone) {
                     leftservo.setPosition(leftServoPosition);
                 }
