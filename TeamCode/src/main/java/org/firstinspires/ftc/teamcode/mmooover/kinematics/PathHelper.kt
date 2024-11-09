@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.mmooover.kinematics
 
 class PathHelper internal constructor() {
+    data class LinearMoveCommand(
+        val x: Double,
+        val y: Double,
+        val r: Double
+    ): AuthoringCommand
 
     val Number.deg get() = Math.toRadians(this.toDouble())
 
@@ -11,6 +16,7 @@ class PathHelper internal constructor() {
     fun r(r: Number) = commands.add(RImpl(r.toDouble()))
     fun m(x: Number, y: Number) = commands.add(XYImpl(x.toDouble(), y.toDouble()))
     fun m(x: Number, y: Number, r: Number) = commands.add(XYRImpl(x.toDouble(), y.toDouble(), r.toDouble()))
+    fun line(x: Number, y: Number, r: Number) = commands.add(LinearMoveCommand(x.toDouble(), y.toDouble(), r.toDouble()))
     fun run(target: String) = commands.add(RunImpl(target))
     fun launch(target: String) = commands.add(RunAsyncImpl(target))
     fun await(target: String) = commands.add(AwaitImpl(target))
@@ -27,13 +33,17 @@ class PathHelper internal constructor() {
             var command = commands[cursor]
             val mode = command is MotionCommand
             // Repeat while that type continues to match
-            while (when (mode) {
-                true -> command is MotionCommand
-                false -> command !is MotionCommand
-            }) {
+            if (mode) {
+                while (command is MotionCommand) {
+                    segment.add(command)
+                    if (++cursor >= commands.size) break
+                    command = commands[cursor]
+                }
+                segments.add(Pair(true, segment))
+            }
+            else {
                 segment.add(command)
-                if (++cursor >= commands.size) break
-                command = commands[cursor]
+                cursor++
             }
             // Pack and store
             segments.add(Pair(mode, segment))
@@ -47,9 +57,9 @@ class PathHelper internal constructor() {
                 // technically a noop but makes typechecker happy
                 val typedSegment = segment.filterIsInstance<MotionCommand>().toMutableList()
                 assert(typedSegment.isNotEmpty()) { "Empty motion block, somehow" }
-                if (i > 0 && autoInsertHolds) {
+                if (autoInsertHolds && autoInsertSlot != null) {
                     val first = typedSegment[0]
-                    if (!autoInsertSlot!!.approx(first)) {
+                    if (!autoInsertSlot.approx(first)) {
 
                     }
                 }
@@ -58,8 +68,11 @@ class PathHelper internal constructor() {
                 autoInsertSlot = generatedBytecode.last()
             } else {
                 for (part in segment) {
-                    if (part is BytecodeUnit) units.add(part)
-                    else throw IllegalStateException("Not sure what to do with ${part::class.simpleName} here...")
+                    when (part) {
+                        is BytecodeUnit -> units.add(part)
+                        is LinearMoveCommand -> units.add(MoveImpl(part.x, part.y, part.r))
+                        else -> throw IllegalStateException("Not sure what to do with ${part::class.simpleName} here...")
+                    }
                 }
             }
             i++
