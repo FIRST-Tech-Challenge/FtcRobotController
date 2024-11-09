@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -34,14 +35,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 3000;
+    final int VERTICAL_MAX = 1700;
     final int VERTICAL_MAX_VIPER = 1200;
     int verticalAdjustedMin = 0;
     int verticalPosition = VERTICAL_MIN;
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX_WIDE = 2500;
+    final int VIPER_MAX_WIDE = 2500; // TODO: Are we longer than 42" when the claw is open?
     final int VIPER_MAX_TALL = 3100;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
@@ -131,7 +132,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             verticalPosition = vertical.getCurrentPosition();
             verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
             // Setting vertical into initial climb position
-            if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_up) { // TODO: I don't think we are ready to do all of this with one button. I think we need to keep it
+                                    // as two buttons for now. When we are better programmers we will be able to do this.
                 wheelClimb = true;
                 // Hook on to the bar
                 vertical.setTargetPosition(2800);
@@ -211,12 +213,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 ((DcMotorEx) viperSlide).setVelocity(4000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 vertical.setTargetPosition(VERTICAL_MIN);
-                ((DcMotorEx) vertical).setVelocity(350);
+                ((DcMotorEx) vertical).setVelocity(350); // TODO: Do you like this value?
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             // X/Square: The viper slide is completely back but the vertical is in submersible position.
             if (gamepad1.x) {
-                vertical.setTargetPosition(430);
+                vertical.setTargetPosition(430); // TODO: Do you like this value? Does it work on both sides of the submersible?
                 ((DcMotorEx) vertical).setVelocity(3000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(0);
@@ -224,8 +226,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
-            if (gamepad1.b) {
-                vertical.setTargetPosition(350);
+            if (gamepad1.b) { // Should this button open the claw?
+                vertical.setTargetPosition(350); // TODO: Do you like this value? Does it work on both sides of the submersible?
                 ((DcMotorEx) vertical).setVelocity(1800);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(1900);
@@ -243,7 +245,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Run Time", "%.1f", runtime.seconds());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        RobotLog.vv("RockinRobots", "%4.2f, %4.2f, %4.2f, %4.2f", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+        //RobotLog.vv("RockinRobots", "%4.2f, %4.2f, %4.2f, %4.2f", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
         telemetry.addData("Joystick Axial", "%4.2f", axial);
         telemetry.addData("Joystick Lateral", "%4.2f", lateral);
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
@@ -255,6 +257,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
         telemetry.addData("Vertical Adjusted Min", "%d", verticalAdjustedMin);
+        RobotLog.vv("Rockin", "Vert Velocity: %.1f, Vert Power: %.1f, Vert Power Consumption: %.1f, Vert Position: %d",
+                ((DcMotorEx) vertical).getVelocity(),  vertical.getPower(), ((DcMotorEx)vertical).getCurrent(CurrentUnit.AMPS), vertical.getCurrentPosition());
 
         telemetry.update();
     }
