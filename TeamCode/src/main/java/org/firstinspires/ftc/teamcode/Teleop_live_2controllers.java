@@ -196,11 +196,15 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
             if (gamepad2.right_trigger > 0.2) {
                s4.setPower(1);
+            }else if (gamepad2.right_trigger < 0.1) {
+                s4.setPower(0);
             }
 
 
             if (gamepad2.left_trigger > 0.2) {
                 s4.setPower(-1);
+            }else if (gamepad2.left_trigger < 0.1) {
+                s4.setPower(0);
             }
 
 

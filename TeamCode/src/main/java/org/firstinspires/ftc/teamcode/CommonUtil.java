@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.CommonUtil;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -53,7 +54,7 @@ public class CommonUtil extends LinearOpMode {
     Servo s2 = null;
     Servo s3 = null;
 
-
+    CRServo s4 = null;
 
     //All Our functions!
 
@@ -87,6 +88,7 @@ public class CommonUtil extends LinearOpMode {
         s2 = hardwareMap.get(Servo.class, "s2");
         s3 = hardwareMap.get(Servo.class, "s3");
         s3 = hardwareMap.get(Servo.class, "s3");
+        s4 = hardwareMap.get(CRServo.class, "s4");
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setDirection(Servo.Direction.FORWARD);
         s3.setDirection(Servo.Direction.REVERSE);
@@ -138,6 +140,16 @@ public class CommonUtil extends LinearOpMode {
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void intakeOn(){
+        s4.setPower(1);
+    }
+    public void intakeReverse(){
+        s4.setPower(-1);
+    }
+    public void intakeOff(){
+        s4.setPower(0);
     }
 
     public double PID_Turn (double targetAngle, double currentAngle, String minPower) {
