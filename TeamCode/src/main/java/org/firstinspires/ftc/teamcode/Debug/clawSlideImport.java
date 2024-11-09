@@ -3,19 +3,17 @@
 
 package org.firstinspires.ftc.teamcode.Debug;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class clawSlideImport extends LinearOpMode {
 
   DcMotor slide, pivot, hang;
-  //DigitalChannel slideLimit;
+  // DigitalChannel slideLimit;
 
   Servo intakeL, intakeR;
   int limitSlide, limitPivot;
@@ -32,14 +30,14 @@ public class clawSlideImport extends LinearOpMode {
       if (gamepad2.a) {
         intakeL.setPosition(1);
         intakeR.setPosition(1);
-      } else if(gamepad2.b){
+      } else if (gamepad2.b) {
         intakeL.setPosition(0);
         intakeR.setPosition(0);
       }
 
       setSlide(-gamepad2.right_stick_y);
       setPivot(-gamepad2.left_stick_y);
-      //telemetry.addData("SL", slideLimit.getState());
+      // telemetry.addData("SL", slideLimit.getState());
       telemetry.update();
     }
   }
@@ -47,7 +45,7 @@ public class clawSlideImport extends LinearOpMode {
   public void initRobot() {
     slide = hardwareMap.get(DcMotor.class, "slide");
     pivot = hardwareMap.get(DcMotor.class, "pivot");
-    //slideLimit = hardwareMap.get(DigitalChannel.class, "slideLimit");
+    // slideLimit = hardwareMap.get(DigitalChannel.class, "slideLimit");
 
     slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -72,7 +70,7 @@ public class clawSlideImport extends LinearOpMode {
     intakeL.setDirection(Servo.Direction.REVERSE);
     intakeR.setDirection(Servo.Direction.REVERSE);
 
-    hang = hardwareMap.get(DcMotor.class,"hang");
+    hang = hardwareMap.get(DcMotor.class, "hang");
     hang.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     hang.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
