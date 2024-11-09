@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.sample.SamplePIDAutoOpM
  * <p>Commented out code shows how to switch to field centric driver</p>
  * <p>see @{link {@link SamplePIDAutoOpMode#setupWaypointsAndActions()}} for how to setup trajectory and actions</p>
  */
-@Autonomous(name = "blue PID r-centric auto mode", preselectTeleOp = "main_teleop")
+//@Autonomous(name = "blue PID r-centric auto mode", preselectTeleOp = "main_teleop")
 public class BluePIDRobotCentricAutoOpMode extends PIDControlAutoOpMode {
     @Override
     protected void setupWaypointsAndActions() {
