@@ -27,4 +27,6 @@ public interface Extensor {
     void retract();
 
     void ground();
+
+    void floor();
 }
