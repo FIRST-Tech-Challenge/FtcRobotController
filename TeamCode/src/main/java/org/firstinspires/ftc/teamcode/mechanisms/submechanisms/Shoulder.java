@@ -38,7 +38,7 @@ public class Shoulder {
         setPosition(positions[nextIndex]);
     }
 
-    enum Position {
+    public enum Position {
         // ! TODO TUNE all of these
         RESTING(0.0),
         HIGH_BASKET(20.0),
