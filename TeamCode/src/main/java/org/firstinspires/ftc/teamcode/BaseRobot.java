@@ -162,7 +162,7 @@ public class BaseRobot {
             } else if (actions.justGroundExtensor) {
                 arm.extensor.ground();
             } else if (actions.justFloorExtensor) {
-                arm.extensor.floor();
+                arm.extensor.ceiling();
             }
 
             if (actions.clawRight > 0.2) {

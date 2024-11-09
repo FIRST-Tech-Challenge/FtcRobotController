@@ -28,5 +28,5 @@ public interface Extensor {
 
     void ground();
 
-    void floor();
+    void ceiling();
 }

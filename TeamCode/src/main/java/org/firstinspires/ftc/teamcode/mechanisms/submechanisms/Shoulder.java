@@ -14,7 +14,6 @@ public class Shoulder {
         this.shoulderMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.SHOULDER);
         this.shoulderMotor.setDirection(DcMotor.Direction.FORWARD);
         this.shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.currentPosition = Position.RESTING;
         setPosition(Position.RESTING); // Set initial position
         this.shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

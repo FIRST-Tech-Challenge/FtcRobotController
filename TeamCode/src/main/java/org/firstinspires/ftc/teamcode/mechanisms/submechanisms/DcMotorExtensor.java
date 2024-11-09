@@ -56,5 +56,5 @@ public class DcMotorExtensor implements Extensor {
     }
 
     @Override
-    public void floor() {setPosition(Position.HIGH_RUNG);}
+    public void ceiling() {setPosition(Position.HIGH_RUNG);}
 }

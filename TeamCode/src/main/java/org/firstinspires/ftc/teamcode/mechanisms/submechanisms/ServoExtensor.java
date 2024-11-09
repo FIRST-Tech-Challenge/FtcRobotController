@@ -49,4 +49,9 @@ public class ServoExtensor implements Extensor {
     public void ground() {
         setPosition(Position.PICKUP);
     }
+
+    @Override
+    public void ceiling() {
+        setPosition(Position.HIGH_RUNG);
+    }
 }

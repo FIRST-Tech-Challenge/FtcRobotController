@@ -12,7 +12,7 @@ public class DynamicInput {
     private Settings.ControllerProfile subProfile;
 
     // Track previous button states for justPressed functionality
-    private boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevFloorExtensor;
+    private boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor;
 
     public DynamicInput(Gamepad gamepad1, Gamepad gamepad2, Settings.ControllerProfile mainProfile,
             Settings.ControllerProfile subProfile) {
@@ -94,10 +94,10 @@ public class DynamicInput {
     }
 
     public static class Actions {
-        public final boolean extendExtensor, retractExtensor, groundExtensor, floorExtensor, extensorBusy;
+        public final boolean extendExtensor, retractExtensor, groundExtensor, ceilingExtensor, extensorBusy;
         public final double clawRight, clawLeft;
         public final boolean wristUp, wristDown;
-        public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorGround, ascendExtensorFloor;
+        public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorGround, ascendExtensorCeiling;
         public final double boostAmount, brakeAmount;
 
         public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
@@ -105,7 +105,7 @@ public class DynamicInput {
             this.extendExtensor = getButtonState(subCtrl, subSettings.buttonMapping.extendExtensor);
             this.retractExtensor = getButtonState(subCtrl, subSettings.buttonMapping.retractExtensor);
             this.groundExtensor = getButtonState(subCtrl, subSettings.buttonMapping.groundExtensor);
-            this.floorExtensor = getButtonState(subCtrl, subSettings.buttonMapping.floorExtensor);
+            this.ceilingExtensor = getButtonState(subCtrl, subSettings.buttonMapping.ceilingExtensor);
             this.extensorBusy = extendExtensor || retractExtensor || groundExtensor;
             this.clawRight = getAxisValue(subCtrl, subSettings.buttonMapping.clawRight);
             this.clawLeft = getAxisValue(subCtrl, subSettings.buttonMapping.clawLeft);
@@ -117,8 +117,8 @@ public class DynamicInput {
                     subSettings.buttonMapping.ascendExtensorRetract);
             this.ascendExtensorGround = getButtonState(subCtrl,
                     subSettings.buttonMapping.ascendExtensorGround);
-            this.ascendExtensorFloor = getButtonState(subCtrl,
-                    subSettings.buttonMapping.ascendExtensorFloor);
+            this.ascendExtensorCeiling = getButtonState(subCtrl,
+                    subSettings.buttonMapping.ascendExtensorCeiling);
             this.boostAmount = mainSettings.applyBoostCurve(
                     getAxisValue(mainCtrl, mainSettings.buttonMapping.boost));
             this.brakeAmount = mainSettings.applyBoostCurve(
@@ -127,24 +127,24 @@ public class DynamicInput {
     }
 
     public static class ContextualActions extends Actions {
-        public final boolean justExtendExtensor, justRetractExtensor, justGroundExtensor, justFloorExtensor;
-        private final boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevFloorExtensor;
+        public final boolean justExtendExtensor, justRetractExtensor, justGroundExtensor, justCeilingExtensor;
+        private final boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor;
         public final boolean shoulderUp, shoulderDown;
 
         public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
-                boolean prevExtend, boolean prevRetract, boolean prevGround, boolean prevFloor) {
+                boolean prevExtend, boolean prevRetract, boolean prevGround, boolean prevCeiling) {
             super(mainCtrl, mainSettings, subCtrl, subSettings);
 
             this.prevExtendExtensor = prevExtend;
             this.prevRetractExtensor = prevRetract;
             this.prevGroundExtensor = prevGround;
-            this.prevFloorExtensor = prevFloor;
+            this.prevCeilingExtensor = prevCeiling;
 
             this.justExtendExtensor = extendExtensor && !prevExtend;
             this.justRetractExtensor = retractExtensor && !prevRetract;
             this.justGroundExtensor = groundExtensor && !prevGround;
-            this.justFloorExtensor = floorExtensor && !prevFloor;
+            this.justCeilingExtensor = ceilingExtensor && !prevCeiling;
 
             this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp);
             this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown);
@@ -161,13 +161,13 @@ public class DynamicInput {
 
     public ContextualActions getContextualActions() {
         ContextualActions actions = new ContextualActions(mainCtrl, mainSettings, subCtrl, subSettings,
-                prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevFloorExtensor);
+                prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor);
 
         // Update previous states
         prevExtendExtensor = actions.extendExtensor;
         prevRetractExtensor = actions.retractExtensor;
         prevGroundExtensor = actions.groundExtensor;
-        prevFloorExtensor = actions.floorExtensor;
+        prevCeilingExtensor = actions.ceilingExtensor;
 
         return actions;
     }

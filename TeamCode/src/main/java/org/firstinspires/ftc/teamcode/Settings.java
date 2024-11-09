@@ -140,7 +140,7 @@ public class Settings {
         public GamepadButton extendExtensor = GamepadButton.Y;
         public GamepadButton retractExtensor = GamepadButton.X;
         public final GamepadButton groundExtensor = GamepadButton.B;
-        public final GamepadButton floorExtensor = GamepadButton.A;
+        public final GamepadButton ceilingExtensor = GamepadButton.A;
 
         // Movement controls
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
@@ -162,7 +162,7 @@ public class Settings {
         public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_RIGHT;
         public final GamepadButton ascendExtensorRetract = GamepadButton.DPAD_LEFT;
         public final GamepadButton ascendExtensorGround = GamepadButton.DPAD_DOWN;
-        public final GamepadButton ascendExtensorFloor = GamepadButton.DPAD_UP;
+        public final GamepadButton ascendExtensorCeiling = GamepadButton.DPAD_UP;
 
         public final GamepadAxis boost = GamepadAxis.RIGHT_TRIGGER;
         public final GamepadAxis brake = GamepadAxis.LEFT_TRIGGER;
