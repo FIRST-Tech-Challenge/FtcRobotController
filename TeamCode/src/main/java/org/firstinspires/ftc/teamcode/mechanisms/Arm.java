@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
+import org.firstinspires.ftc.teamcode.Settings;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Claw;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.DcMotorExtensor;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
@@ -27,8 +28,12 @@ public class Arm {
         extensor = new SingleMotorExtensorJustForConnerBecauseHeWantsToRebuildTheRobotOnAWhim(baseRobot);
         baseRobot.logger.add("✓ Extensor initialized", Logger.LogType.DEBUG);
 
-        shoulder = new Shoulder(baseRobot);
-        baseRobot.logger.add("✓ Shoulder initialized", Logger.LogType.DEBUG);
+        if (Settings.Deploy.SHOULDER) {
+            shoulder = new Shoulder(baseRobot);
+            baseRobot.logger.add("✓ Shoulder initialized", Logger.LogType.DEBUG);
+        } else {
+            shoulder = null;
+        }
 
         baseRobot.logger.add("All Arm Components Initialized", Logger.LogType.DEBUG);
     }

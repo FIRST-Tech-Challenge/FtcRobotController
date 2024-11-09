@@ -178,10 +178,12 @@ public class BaseRobot {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
 
-            if (actions.shoulderUp) {
-                arm.shoulder.setPosition(Shoulder.Position.HIGH_RUNG);
-            } else if (actions.shoulderDown) {
-                arm.shoulder.setPosition(Shoulder.Position.RESTING);
+            if (Settings.Deploy.SHOULDER) {
+                if (actions.shoulderUp) {
+                    arm.shoulder.setPosition(Shoulder.Position.HIGH_RUNG);
+                } else if (actions.shoulderDown) {
+                    arm.shoulder.setPosition(Shoulder.Position.RESTING);
+                }
             }
         }
     }

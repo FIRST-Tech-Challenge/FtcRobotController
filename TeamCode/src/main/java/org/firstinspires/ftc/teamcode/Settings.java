@@ -217,6 +217,7 @@ public class Settings {
     public static class Deploy {
         // Core Mechanisms
         public static final boolean ARM = true;
+        public static final boolean SHOULDER = false;
 
         // Navigation Systems
         public static final boolean ODOMETRY = true;
