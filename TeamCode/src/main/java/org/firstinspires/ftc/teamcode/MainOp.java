@@ -29,12 +29,12 @@ public class MainOp extends LinearOpMode {
     public void runOpMode() {
         // Show profile selection menu for both controllers
         AtomicReference<ControllerProfile> mainProfile = new AtomicReference<>(Settings.DEFAULT_PROFILE);
-        final ControllerProfile[] subProfile = { Settings.DEFAULT_PROFILE };
+        AtomicReference<ControllerProfile> subProfile = new AtomicReference<>(Settings.DEFAULT_PROFILE);
         boolean menuActive = true;
         AtomicInteger mainSelection = new AtomicInteger();
-        final int[] subSelection = { 0 };
+        AtomicInteger subSelection = new AtomicInteger();
         AtomicBoolean mainConfirmed = new AtomicBoolean(false);
-        final boolean[] subConfirmed = { false };
+        AtomicBoolean subConfirmed = new AtomicBoolean(false);
 
         while (!isStarted() && !isStopRequested() && menuActive) {
             // Build options array
@@ -54,9 +54,9 @@ public class MainOp extends LinearOpMode {
             }
 
             // Sub Controller Menu
-            if (!subConfirmed[0]) {
+            if (!subConfirmed.get()) {
                 telemetry.addLine("\nSub Controller (Gamepad 2):");
-                MenuHelper.displayMenuOptions(telemetry, options, subSelection[0]);
+                MenuHelper.displayMenuOptions(telemetry, options, subSelection.get());
             }
 
             // Handle controller inputs with debounce
@@ -74,16 +74,16 @@ public class MainOp extends LinearOpMode {
                 }
             });
 
-            MenuHelper.handleControllerInput(this, gamepad2, !subConfirmed[0], () -> {
+            MenuHelper.handleControllerInput(this, gamepad2, !subConfirmed.get(), () -> {
                 if (gamepad2.dpad_up) {
-                    subSelection[0] = (subSelection[0] - 1 + options.length) % options.length;
+                    subSelection.set((subSelection.get() - 1 + options.length) % options.length);
                 } else if (gamepad2.dpad_down) {
-                    subSelection[0] = (subSelection[0] + 1) % options.length;
+                    subSelection.set((subSelection.get() + 1) % options.length);
                 } else if (gamepad2.a) {
-                    if (subSelection[0] < Settings.AVAILABLE_PROFILES.length) {
-                        subProfile[0] = Settings.AVAILABLE_PROFILES[subSelection[0]];
+                    if (subSelection.get() < Settings.AVAILABLE_PROFILES.length) {
+                        subProfile.set(Settings.AVAILABLE_PROFILES[subSelection.get()]);
                     } else {
-                        subConfirmed[0] = true;
+                        subConfirmed.set(true);
                     }
                 }
             });
@@ -91,10 +91,10 @@ public class MainOp extends LinearOpMode {
             // Display selections
             telemetry.addLine("\nSelected Profiles:");
             telemetry.addData("Main Controller", mainProfile.get().name + (mainConfirmed.get() ? " (Confirmed)" : ""));
-            telemetry.addData("Sub Controller", subProfile[0].name + (subConfirmed[0] ? " (Confirmed)" : ""));
+            telemetry.addData("Sub Controller", subProfile.get().name + (subConfirmed.get() ? " (Confirmed)" : ""));
 
             // Check for menu completion
-            if (mainConfirmed.get() && subConfirmed[0]) {
+            if (mainConfirmed.get() && subConfirmed.get()) {
                 menuActive = false;
             }
 
@@ -102,7 +102,7 @@ public class MainOp extends LinearOpMode {
         }
 
         // Initialize robot systems
-        DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2, mainProfile.get(), subProfile[0]);
+        DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2, mainProfile.get(), subProfile.get());
         BaseRobot baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
 
         // Main loop
