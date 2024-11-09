@@ -72,12 +72,12 @@ class PoseFromToProcessor(origin: Pose) {
 
     @SuppressLint("DefaultLocale")
     fun dump() {
-        StringBuilder().apply {
+        Log.i("data", buildString {
             append("x_i: ")
             xi.forEach { append(String.format("%.4f", it)).append(", ") }
             append("\ny_i: ")
             yi.forEach { append(String.format("%.4f", it)).append(", ") }
-        }.also { Log.i("data", it.toString()) }
+        })
     }
 
     fun getMotionToTarget(target: Pose, robot: TriOdoProvider): Motion {

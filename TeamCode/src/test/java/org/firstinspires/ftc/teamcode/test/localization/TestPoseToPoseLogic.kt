@@ -35,14 +35,14 @@ class TestPoseToPoseLogic {
         internal fun finalize() {
             if (problems.isEmpty()) return
             val withLabels = problems.size > 1
-            throw AssertionError(StringBuilder().apply {
+            throw AssertionError(buildString {
                 if (withLabels) append("${problems.size} failures:\n")
                 for ((i, problem) in problems.withIndex()) {
                     if (i > 0) append("\n")
                     if (withLabels) append("${i + 1}: ")
                     append(problem)
                 }
-            }.toString())
+            })
         }
     }
     internal fun validate(motion: Motion, configure: AssertHelper.() -> Unit) {

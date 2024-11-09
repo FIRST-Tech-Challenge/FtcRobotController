@@ -6,6 +6,8 @@ class PathHelper internal constructor() {
 
     val commands: MutableList<AuthoringCommand> = mutableListOf()
 
+    var autoInsertHolds = true
+
     fun r(r: Number) = commands.add(RImpl(r.toDouble()))
     fun m(x: Number, y: Number) = commands.add(XYImpl(x.toDouble(), y.toDouble()))
     fun m(x: Number, y: Number, r: Number) = commands.add(XYRImpl(x.toDouble(), y.toDouble(), r.toDouble()))
@@ -17,7 +19,7 @@ class PathHelper internal constructor() {
         // break into 'move segments' and 'function segments'.
         // true: move
         // false: function
-        val segments: MutableList<Pair<Boolean, List<AuthoringCommand>>> = mutableListOf()
+        val segments: MutableList<Pair<Boolean, MutableList<AuthoringCommand>>> = mutableListOf()
         var cursor = 0
         while (cursor < commands.size) {
             // Peek the first element to determine the type
@@ -38,17 +40,29 @@ class PathHelper internal constructor() {
         }
         val units: MutableList<BytecodeUnit> = mutableListOf()
         // compile segments
+        var i = 0
+        var autoInsertSlot: XYRCommand? = null
         for ((mode, segment) in segments) {
             if (mode) {
                 // technically a noop but makes typechecker happy
-                val typedSegment = segment.filterIsInstance<MotionCommand>()
-                units.addAll(generateMovePart(typedSegment))
+                val typedSegment = segment.filterIsInstance<MotionCommand>().toMutableList()
+                assert(typedSegment.isNotEmpty()) { "Empty motion block, somehow" }
+                if (i > 0 && autoInsertHolds) {
+                    val first = typedSegment[0]
+                    if (!autoInsertSlot!!.approx(first)) {
+
+                    }
+                }
+                val generatedBytecode = generateMovePart(typedSegment)
+                units.addAll(generatedBytecode)
+                autoInsertSlot = generatedBytecode.last()
             } else {
                 for (part in segment) {
                     if (part is BytecodeUnit) units.add(part)
                     else throw IllegalStateException("Not sure what to do with ${part::class.simpleName} here...")
                 }
             }
+            i++
         }
         return units
     }

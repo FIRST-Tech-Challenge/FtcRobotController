@@ -5,6 +5,9 @@ import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.nio.charset.Charset
+import kotlin.math.abs
+
+const val EPSILON = 1e-6
 
 /*
  * This file provides minimal interfaces for the various types used for waypoints
@@ -52,15 +55,39 @@ interface MotionCommand
 interface XYCommand : AuthoringCommand, MotionCommand {
     val x: Double
     val y: Double
+
+    infix fun approx(other: Any?) = when(other) {
+        null -> false
+        !is XYCommand -> false
+        else -> abs(other.x - this.x) <= EPSILON && abs(other.y - this.y) <= EPSILON
+    }
 }
 data class XYImpl(override val x: Double, override val y: Double): XYCommand
 
 interface RCommand : AuthoringCommand, MotionCommand {
     val r: Double
+
+    infix fun approx(other: Any?) = when(other) {
+        null -> false
+        !is RCommand -> false
+        else -> abs(other.r - this.r) <= EPSILON
+    }
 }
 data class RImpl(override val r: Double): RCommand
 
-interface XYRCommand : XYCommand, RCommand
+interface XYRCommand : XYCommand, RCommand {
+    companion object {
+        fun zip(xy: XYCommand, r: RCommand) = XYRImpl(xy.x, xy.y, r.r)
+    }
+
+    override fun approx(other: Any?): Boolean = when(other) {
+        null -> false
+        !is XYRCommand -> false
+        else -> abs(other.x - this.x) <= EPSILON
+                && abs(other.y - this.y) <= EPSILON
+                && abs(other.r - this.r) <= EPSILON
+    }
+}
 
 data class XYRImpl(
     override val x: Double,
