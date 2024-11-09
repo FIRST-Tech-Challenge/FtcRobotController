@@ -31,10 +31,9 @@ public class SimpleDebugTeleOp extends OpMode {
             inputSpeed = 0;
         }
 
-        if (gamepad1.a) {
-            power = inputSpeed * .5;
+        if (gamepad1.b) {
+            power = inputSpeed;
         }
-
         motorTest.setPower(power);
     }
 }
