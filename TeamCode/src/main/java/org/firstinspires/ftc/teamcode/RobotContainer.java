@@ -53,6 +53,9 @@ public class RobotContainer {
     // active OpMode - used so any subsystem and command and access it and its members
     public static CommandOpMode ActiveOpMode;
 
+    // team alliance color = false if robot on blue alliance, true for red
+    public static boolean isRedAlliance=false;
+
     // FTC dashboard and telemetries
     public static FtcDashboard DashBoard;
     public static Telemetry DBTelemetry;
@@ -93,7 +96,12 @@ public class RobotContainer {
     //
 
     // Robot initialization for teleop - Run this once at start of teleop
-    public static void Init_TeleOp(CommandOpMode mode) {
+    // mode - current opmode that is being run
+    // RedAlliance - true if robot in red alliance, false if blue
+    public static void Init_TeleOp(CommandOpMode mode, boolean RedAlliance) {
+        // set alliance colour
+        isRedAlliance = RedAlliance;
+
         // Initialize robot subsystems
         Init(mode);
 
@@ -160,9 +168,16 @@ public class RobotContainer {
 
 
     // Robot initialization for auto - Run this once at start of auto
-    public static void Init_Auto(CommandOpMode mode) {
+    // mode - current opmode that is being run
+    // RedAlliance - true if robot in red alliance, false if blue
+    public static void Init_Auto(CommandOpMode mode, boolean RedAlliance) {
+        // set alliance colour
+        isRedAlliance = RedAlliance;
+
         // Initialize robot subsystems
         Init(mode);
+
+        // perform any autonomous-specific initialization here
     }
 
     // robot initialization - common to both auto and teleop
