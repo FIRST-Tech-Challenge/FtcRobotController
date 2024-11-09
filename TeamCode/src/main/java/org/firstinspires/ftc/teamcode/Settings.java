@@ -41,7 +41,7 @@ public class Settings {
             }
 
             public static class Wrist {
-                public static final double BOARD_POSITION = 0.075;
+                public static final double BOARD_POSITION = 1.0; // TODO tune this is just a test
                 public static final double TRANSIT_POSITION = 0.5;
                 public static final double HORIZONTAL_POSITION = 0.45;
             }
@@ -76,7 +76,7 @@ public class Settings {
             public static final int HIGH_RUNG = 1000;
 
             // Motor power settings
-            public static final double MOVEMENT_POWER = 0.33; // Adjust based on testing
+            public static final double MOVEMENT_POWER = 0.1; // Adjust based on testing
         }
     }
 
