@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.test.localization
 
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.CommandSerializer
+import org.firstinspires.ftc.teamcode.mmooover.kinematics.PathHelper
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.path
 import org.junit.jupiter.api.Test
 import java.io.DataOutputStream
@@ -15,16 +16,25 @@ class PathGenerator {
         return path
     }
 
+    private fun PathHelper.scoreHighBasket() {
+        line(8, 19, (-45).deg)
+        run("scoreHighBasket")
+    }
+
     @Test
     fun `generate blue right auto v1`() {
         val commands = path {
-            autoInsertHolds = true
-            m(0, 0, 0.deg)
-            m(0, 48)
-            m(48, 48, 90.deg)
-            run("ScoreHigh")
-            // automatic insertion happens here
-            m(48, 24, 180.deg)
+            scoreHighBasket()
+            line(28, 12, (-180).deg)
+            run("intake")
+            scoreHighBasket()
+            line(28, 22, (-180).deg)
+            run("intake")
+            scoreHighBasket()
+            m(8, 19, (-45).deg)
+            m(65, 12, 90.deg)
+            m(65, -8, 90.deg)
+            run("park")
         }.generate2()
 
         val outFile = getTestOutputDir().resolve("AutoBlueRight1.bin")
