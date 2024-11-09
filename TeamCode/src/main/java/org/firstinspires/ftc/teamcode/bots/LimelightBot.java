@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
-public class LimelightBot extends FourWheelDriveBot {
+public class LimelightBot extends GyroBot {
 
     public LLResult result = null;
     public Pose3D botpose = null;
@@ -52,6 +52,10 @@ public class LimelightBot extends FourWheelDriveBot {
 
         return values;
 
+    }
+
+    public void switchPipeline(int pipeline){
+        limelight.pipelineSwitch(pipeline);
     }
 }
 
