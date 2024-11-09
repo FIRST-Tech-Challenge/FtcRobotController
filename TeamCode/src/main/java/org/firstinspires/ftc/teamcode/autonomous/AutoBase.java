@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Autonomous(name = "Main Autonomous", group = "Autonomous")
 public abstract class AutoBase extends LinearOpMode {
     /** Selected alliance color (Red/Blue) */
-    protected String color;
+    String color;
 
     /** Selected starting position (Left/Right) */
-    protected String position;
+    String position;
 
     /** Menu options for autonomous configuration */
     private static final String[] MENU_OPTIONS = {
@@ -41,11 +41,22 @@ public abstract class AutoBase extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        waitForStart();
-        // Menu initialization
+        // Initialize robot systems FIRST, before the menu
+        DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2,
+                Settings.DEFAULT_PROFILE, Settings.DEFAULT_PROFILE);
+        BaseRobot baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
+
+        // Add initialization status
+        telemetry.addData("Status", "Initializing...");
+        telemetry.update();
+
+        // Give hardware time to initialize
+        sleep(500); // Add a small delay for hardware initialization
+
         AtomicBoolean menuActive = new AtomicBoolean(true);
         AtomicInteger currentSelection = new AtomicInteger();
 
+        // Menu loop
         while (!isStarted() && !isStopRequested() && menuActive.get()) {
             // Display menu header
             telemetry.addLine("=== Autonomous Configuration ===");
@@ -76,16 +87,19 @@ public abstract class AutoBase extends LinearOpMode {
             telemetry.update();
         }
 
-        // Initialize robot systems
-        DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2,
-                Settings.DEFAULT_PROFILE, Settings.DEFAULT_PROFILE);
-        BaseRobot baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
+        // Create remaining components after menu selection
         MainAuto auto = new MainAuto(baseRobot, color);
         ShutdownManager shutdownManager = new ShutdownManager(this, baseRobot, auto);
-
-        // Run autonomous
         shutdownManager.scheduleShutdownCheck();
+
+        // Add ready status
+        telemetry.addData("Status", "Ready to start!");
+        telemetry.addData("Configuration", color + " " + position);
+        telemetry.update();
+
+        // Now wait for start
         waitForStart();
+
         try {
             if (opModeIsActive()) {
                 auto.run(color + " " + position);
