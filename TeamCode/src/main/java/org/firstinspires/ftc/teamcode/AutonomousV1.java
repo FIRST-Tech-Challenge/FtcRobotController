@@ -26,7 +26,7 @@ public class AutonomousV1 extends LinearOpMode {
 
         telemetry.update();
 
-        odometryBot.driveToCoordinate(0, 0, 0, 1000, 0.5, false);
+        odometryBot.driveToCoordinate(1000, 0, 0, 1000, 0.5, false);
         odometryBot.waitForCoordinateDrive();
 
     }
