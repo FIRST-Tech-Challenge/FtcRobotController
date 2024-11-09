@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 
 @TeleOp(name = "basic telemetry for blue robot", group = "CompBot")
 public class basicTelemBlue extends LinearOpMode {
@@ -221,7 +223,7 @@ public class basicTelemBlue extends LinearOpMode {
         pivot.setPower(0);
         slide.setPower(0);
 
-        limitSlide = 4750;
+        limitSlide = 4200;
         limitPivot = 2750;
 
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
@@ -238,12 +240,17 @@ public class basicTelemBlue extends LinearOpMode {
   public void setSlide(double x) {
     if (slide.getCurrentPosition() >= limitSlide && x > 0) {
       x = 0;
-    } else if (slide.getCurrentPosition() <= -limitSlide && x < 0) {
+    } else if (slide.getCurrentPosition() <= 0 && x < 0) {
       x = 0;
     }
+
+      if(x==0)
+          x = MathUtil.interpolate(.00125, .005, MathUtil.inverseInterpolate(0, limitSlide, slide.getCurrentPosition())) * Math.sin(Units.degreesToRadians(90-(pivot.getCurrentPosition() * encoderCountsPerDegree)));
+
     if (x > 0 && slide.getCurrentPosition() > pubLength) {
       x = 0;
     }
+
     slide.setPower(x);
   }
 
@@ -266,6 +273,7 @@ public class basicTelemBlue extends LinearOpMode {
       x = .5;
     if (x < -1)
       x = -.5;
+
     if(slide.getCurrentPosition() > pubLength && x > 1)
       slide.setPower(-x*2);
     pivot.setPower(x);

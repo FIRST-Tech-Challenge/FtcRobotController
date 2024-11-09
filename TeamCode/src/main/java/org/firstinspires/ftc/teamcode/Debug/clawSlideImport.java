@@ -11,12 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Disabled
 @TeleOp
 public class clawSlideImport extends LinearOpMode {
 
-  DcMotor slide, pivot;
-  DigitalChannel slideLimit;
+  DcMotor slide, pivot, hang;
+  //DigitalChannel slideLimit;
 
   Servo intakeL, intakeR;
   int limitSlide, limitPivot;
@@ -33,14 +32,14 @@ public class clawSlideImport extends LinearOpMode {
       if (gamepad2.a) {
         intakeL.setPosition(1);
         intakeR.setPosition(1);
-      } else {
+      } else if(gamepad2.b){
         intakeL.setPosition(0);
         intakeR.setPosition(0);
       }
 
       setSlide(-gamepad2.right_stick_y);
       setPivot(-gamepad2.left_stick_y);
-      telemetry.addData("SL", slideLimit.getState());
+      //telemetry.addData("SL", slideLimit.getState());
       telemetry.update();
     }
   }
@@ -48,7 +47,7 @@ public class clawSlideImport extends LinearOpMode {
   public void initRobot() {
     slide = hardwareMap.get(DcMotor.class, "slide");
     pivot = hardwareMap.get(DcMotor.class, "pivot");
-    slideLimit = hardwareMap.get(DigitalChannel.class, "slideLimit");
+    //slideLimit = hardwareMap.get(DigitalChannel.class, "slideLimit");
 
     slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -67,11 +66,18 @@ public class clawSlideImport extends LinearOpMode {
 
     // servos
 
-    intakeL = hardwareMap.get(Servo.class, "left");
-    intakeR = hardwareMap.get(Servo.class, "right");
+    intakeL = hardwareMap.get(Servo.class, "intake");
+    intakeR = hardwareMap.get(Servo.class, "wrist");
 
     intakeL.setDirection(Servo.Direction.REVERSE);
     intakeR.setDirection(Servo.Direction.REVERSE);
+
+    hang = hardwareMap.get(DcMotor.class,"hang");
+    hang.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    hang.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    hang.setDirection(DcMotorSimple.Direction.FORWARD);
+    hang.setPower(.01);
   }
 
   public void setSlide(double x) {
@@ -82,6 +88,7 @@ public class clawSlideImport extends LinearOpMode {
       x = 0;
     }
     slide.setPower(x);
+    hang.setPower(x);
     telemetry.addData("set slide x 2", x);
   }
 
