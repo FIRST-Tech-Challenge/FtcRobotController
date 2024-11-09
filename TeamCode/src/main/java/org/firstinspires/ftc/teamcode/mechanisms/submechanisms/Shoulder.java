@@ -12,9 +12,6 @@ public class Shoulder {
     private final String LOG_PREFIX = "Shoulder: ";
 
     public Shoulder(@NonNull BaseRobot baseRobot) {
-        if (!Settings.Deploy.SHOULDER) {
-            return;
-        }
         this.shoulderMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.SHOULDER);
         this.shoulderMotor.setDirection(DcMotor.Direction.FORWARD);
         this.shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
