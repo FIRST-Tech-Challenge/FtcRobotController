@@ -32,7 +32,8 @@ public class Claw {
         double position = open ? Settings.Hardware.Servo.Claw.RIGHT_OPEN : Settings.Hardware.Servo.Claw.RIGHT_CLOSED;
         clawServoR.setPosition(position);
         openedR = open;
-        baseRobot.logger.update(LOG_PREFIX + "Right Position", String.format("%.3f (Open: %b)", position, open));
+        baseRobot.logger.update(LOG_PREFIX + "Right Position", String.format("%.3f (Open: %b)", clawServoR.getPosition(), open));
+        baseRobot.logger.update(LOG_PREFIX + "Right Target Position", String.format("%.3f (Open: %b)", position, open));
     }
 
     /* Set the left servo; true = open, false = close */
@@ -40,7 +41,8 @@ public class Claw {
         double position = open ? Settings.Hardware.Servo.Claw.LEFT_OPEN : Settings.Hardware.Servo.Claw.LEFT_CLOSED;
         clawServoL.setPosition(position);
         openedL = open;
-        baseRobot.logger.update(LOG_PREFIX + "Left Position", String.format("%.3f (Open: %b)", position, open));
+        baseRobot.logger.update(LOG_PREFIX + "Left Position", String.format("%.3f (Open: %b)", clawServoL.getPosition(), open));
+        baseRobot.logger.update(LOG_PREFIX + "Left Target Position", String.format("%.3f (Open: %b)", position, open));
     }
 
     /* Open both servos */
