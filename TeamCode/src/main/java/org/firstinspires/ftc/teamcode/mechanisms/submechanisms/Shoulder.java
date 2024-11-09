@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Settings;
 public class Shoulder {
     private final DcMotor shoulderMotor;
     private Position currentPosition;
+    private final String LOG_PREFIX = "Shoulder: ";
 
     public Shoulder(@NonNull BaseRobot baseRobot) {
         this.shoulderMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.SHOULDER);
@@ -21,8 +22,16 @@ public class Shoulder {
     // Sets target position
     public void setPosition(double position) {
         int targetPosition = (int) (position * Settings.Hardware.SHOULDER_TICKS_PER_DEGREE);
+        int currentPosition = shoulderMotor.getCurrentPosition();
+
         shoulderMotor.setTargetPosition(targetPosition);
         shoulderMotor.setPower(Settings.Hardware.SHOULDER_POWER);
+
+        baseRobot.logger.update(LOG_PREFIX + "Target Degrees", String.format("%.2f°", position));
+        baseRobot.logger.update(LOG_PREFIX + "Target Ticks", String.valueOf(targetPosition));
+        baseRobot.logger.update(LOG_PREFIX + "Current Position", String.valueOf(currentPosition));
+        baseRobot.logger.update(LOG_PREFIX + "Power", String.valueOf(Settings.Hardware.SHOULDER_POWER));
+        baseRobot.logger.update(LOG_PREFIX + "Mode", shoulderMotor.getMode().toString());
     }
 
     // Converts position name to double

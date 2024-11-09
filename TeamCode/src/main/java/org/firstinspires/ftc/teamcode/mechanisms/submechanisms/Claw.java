@@ -16,6 +16,7 @@ public class Claw {
     public boolean opened = true;
     public boolean openedR = true;
     public boolean openedL = true;
+    private final String LOG_PREFIX = "Claw: ";
 
     public Claw(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
@@ -31,6 +32,7 @@ public class Claw {
         double position = open ? Settings.Hardware.Servo.Claw.RIGHT_OPEN : Settings.Hardware.Servo.Claw.RIGHT_CLOSED;
         clawServoR.setPosition(position);
         openedR = open;
+        baseRobot.logger.update(LOG_PREFIX + "Right Position", String.format("%.3f (Open: %b)", position, open));
     }
 
     /* Set the left servo; true = open, false = close */
@@ -38,6 +40,7 @@ public class Claw {
         double position = open ? Settings.Hardware.Servo.Claw.LEFT_OPEN : Settings.Hardware.Servo.Claw.LEFT_CLOSED;
         clawServoL.setPosition(position);
         openedL = open;
+        baseRobot.logger.update(LOG_PREFIX + "Left Position", String.format("%.3f (Open: %b)", position, open));
     }
 
     /* Open both servos */

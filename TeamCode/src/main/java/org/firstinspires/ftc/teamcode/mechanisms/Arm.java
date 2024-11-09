@@ -14,9 +14,20 @@ public class Arm {
     public final Shoulder shoulder;
 
     public Arm(BaseRobot baseRobot) {
+        baseRobot.logger.add("Initializing Arm Components...", Logger.LogType.DEBUG);
+
         claw = new Claw(baseRobot);
+        baseRobot.logger.add("✓ Claw initialized", Logger.LogType.DEBUG);
+
         wrist = new Wrist(baseRobot);
+        baseRobot.logger.add("✓ Wrist initialized", Logger.LogType.DEBUG);
+
         extensor = new DcMotorExtensor(baseRobot);
+        baseRobot.logger.add("✓ Extensor initialized", Logger.LogType.DEBUG);
+
         shoulder = new Shoulder(baseRobot);
+        baseRobot.logger.add("✓ Shoulder initialized", Logger.LogType.DEBUG);
+
+        baseRobot.logger.add("All Arm Components Initialized", Logger.LogType.DEBUG);
     }
 }

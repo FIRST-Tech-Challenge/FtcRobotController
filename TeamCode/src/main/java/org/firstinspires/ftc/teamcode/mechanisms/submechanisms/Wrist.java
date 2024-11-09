@@ -15,6 +15,7 @@ public class Wrist {
     public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
+    private final String LOG_PREFIX = "Wrist: ";
 
     public Wrist(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
@@ -24,6 +25,7 @@ public class Wrist {
     }
 
     public void setPosition(Position newPosition) {
+        double oldPosition = position;
         switch (newPosition) {
             case RUNG:
                 position = boardPos;
@@ -35,8 +37,9 @@ public class Wrist {
                 position = horizPos;
                 break;
         }
-        baseRobot.logger.update("wrist position", "0" + position);
         wristServo.setPosition(position);
+        baseRobot.logger.update(LOG_PREFIX + "Position",
+                String.format("%s (%.3f → %.3f)", newPosition, oldPosition, position));
     }
 
     public Position position() {

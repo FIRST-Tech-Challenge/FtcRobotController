@@ -13,6 +13,7 @@ public class DcMotorExtensor implements Extensor {
     private final DcMotor rightMotor;
     private final BaseRobot baseRobot;
     private Position currentPosition;
+    private final String LOG_PREFIX = "Extensor: ";
 
     public DcMotorExtensor(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
@@ -35,12 +36,20 @@ public class DcMotorExtensor implements Extensor {
     // Sets target position
     public void setPosition(double position) {
         int targetPosition = (int) position;
+        int leftCurrent = leftMotor.getCurrentPosition();
+        int rightCurrent = rightMotor.getCurrentPosition();
+
         leftMotor.setTargetPosition(targetPosition);
         rightMotor.setTargetPosition(targetPosition);
         leftMotor.setPower(Settings.Hardware.Extensor.MOVEMENT_POWER);
         rightMotor.setPower(Settings.Hardware.Extensor.MOVEMENT_POWER);
-        baseRobot.logger.update("dcmotorextensor position", String.valueOf(targetPosition));
 
+        baseRobot.logger.update(LOG_PREFIX + "Target", String.valueOf(targetPosition));
+        baseRobot.logger.update(LOG_PREFIX + "Left Current", String.valueOf(leftCurrent));
+        baseRobot.logger.update(LOG_PREFIX + "Right Current", String.valueOf(rightCurrent));
+        baseRobot.logger.update(LOG_PREFIX + "Power", String.valueOf(Settings.Hardware.Extensor.MOVEMENT_POWER));
+        baseRobot.logger.update(LOG_PREFIX + "Mode",
+                String.format("L:%s R:%s", leftMotor.getMode(), rightMotor.getMode()));
     }
 
     // Converts position name to double
