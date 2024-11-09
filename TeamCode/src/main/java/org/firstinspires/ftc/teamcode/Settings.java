@@ -41,10 +41,10 @@ public class Settings {
             }
 
             public static class Wrist {
-                public static final double HORIZONTAL_POSITION = -0.5;
+                public static final double HORIZONTAL_POSITION = 0.5;
                 public static final double CHAMBER_POSITION = -0.75;
                 public static final double BASKET_POSITION = -0.7;
-                public static final double VERTICAL_POSITION = -1.0;
+                public static final double VERTICAL_POSITION = -0.5;
             }
         }
 
@@ -72,12 +72,12 @@ public class Settings {
         public static class Extensor {
             // Positions in encoder ticks
             public static final int PICKUP = 0;
-            public static final int HOVER = 20;
-            public static final int LOW_RUNG = 100;
-            public static final int HIGH_RUNG = 200;
+            public static final int HOVER = -20;
+            public static final int LOW_RUNG = -500;
+            public static final int HIGH_RUNG = -1000;
 
             // Motor power settings
-            public static final double MOVEMENT_POWER = 0.1; // Adjust based on testing
+            public static final double MOVEMENT_POWER = 0.5; // Adjust based on testing
         }
     }
 
@@ -149,10 +149,10 @@ public class Settings {
 
     public static class ButtonMapping {
         // Extensor controls
-        public GamepadButton extendExtensor = GamepadButton.Y;
+        public GamepadButton extendExtensor = GamepadButton.B;
         public GamepadButton retractExtensor = GamepadButton.X;
-        public final GamepadButton groundExtensor = GamepadButton.B;
-        public final GamepadButton ceilingExtensor = GamepadButton.A;
+        public final GamepadButton groundExtensor = GamepadButton.A;
+        public final GamepadButton ceilingExtensor = GamepadButton.Y;
 
         // Movement controls
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;

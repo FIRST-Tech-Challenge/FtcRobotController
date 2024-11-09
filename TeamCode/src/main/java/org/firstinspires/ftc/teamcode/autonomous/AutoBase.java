@@ -41,6 +41,7 @@ public abstract class AutoBase extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
+        waitForStart();
         // Menu initialization
         AtomicBoolean menuActive = new AtomicBoolean(true);
         AtomicInteger currentSelection = new AtomicInteger();
