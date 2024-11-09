@@ -37,19 +37,17 @@ public class DcMotorExtensor implements Extensor {
         int targetPosition = (int) position;
         leftMotor.setTargetPosition(targetPosition);
         rightMotor.setTargetPosition(targetPosition);
-        leftMotor.setPower(1.0);
-        rightMotor.setPower(1.0);
-        baseRobot.logger.update("dcmotorextensor position", String.valueOf(targetPosition));
         leftMotor.setPower(Settings.Hardware.Extensor.MOVEMENT_POWER);
         rightMotor.setPower(Settings.Hardware.Extensor.MOVEMENT_POWER);
+        baseRobot.logger.update("dcmotorextensor position", String.valueOf(targetPosition));
+
     }
 
     // Converts position name to double
     @Override
     public void setPosition(@NonNull Position position) {
         this.currentPosition = position;
-        this.
-        setPosition(position.getValue()); // Use the value associated with the enum
+        this.setPosition(position.getValue()); // Use the value associated with the enum
     }
 
     public void extend() {
