@@ -1,5 +1,8 @@
 repositories {
     mavenCentral()
+    maven{
+        url='https://maven.brott.dev'
+    }
     google() // Needed for androidx
 }
 //def f = file('drive.aar')

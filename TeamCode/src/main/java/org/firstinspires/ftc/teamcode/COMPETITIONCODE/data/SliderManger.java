@@ -33,7 +33,7 @@ public class SliderManger {
         rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void setPos2(int pos){
-        controller.setPower(0.75);
+        controller.setPower(1);
         controller.setTargetPosition(pos);
         controller.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

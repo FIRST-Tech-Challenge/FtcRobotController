@@ -231,4 +231,20 @@ public class Drive implements DriveInterface {
     public void change(DcMotorSimple.Direction MotorOrientationRightFront, DcMotorSimple.Direction MotorOrientationRightBack, DcMotorSimple.Direction MotorOrientationLeftFront, DcMotorSimple.Direction MotorOrientationLeftBack){
         builder.oreintaion(MotorOrientationRightFront,MotorOrientationRightBack,MotorOrientationLeftFront,MotorOrientationLeftBack);
     }
+    public DcMotor getFrontLeftMotor() {
+        return frontLeftMotor;
+    }
+
+    public DcMotor getFrontRightMotor() {
+        return frontRightMotor;
+    }
+
+    public DcMotor getBackLeftMotor() {
+        return backLeftMotor;
+    }
+
+    public DcMotor getBackRightMotor() {
+        return backRightMotor;
+    }
+
 }

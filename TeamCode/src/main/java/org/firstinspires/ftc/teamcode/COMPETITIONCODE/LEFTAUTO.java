@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.COMPETITIONCODE;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 
 import com.parshwa.drive.auto.AutoDriverBetaV1;
+import com.parshwa.drive.auto.GoBildaPinpointDriver;
 import com.parshwa.drive.tele.Drive;
 import com.parshwa.drive.tele.DriveModes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -31,6 +32,8 @@ public class LEFTAUTO extends LinearOpMode {
     private servoManger clawServo = new servoManger();
     private servoManger clawRotateServo = new servoManger();
     private servoManger clawRotateServo2 = new servoManger();
+
+    private IMU imu;
     @Override
     public void runOpMode() throws InterruptedException {
         clawServo.init(hardwareMap, "cs");
@@ -45,7 +48,7 @@ public class LEFTAUTO extends LinearOpMode {
         SM.init(sc,sr);
 
         RevHubOrientationOnRobot orientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,RevHubOrientationOnRobot.UsbFacingDirection.UP);
-        IMU imu = hardwareMap.get(IMU.class, "imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientation));
         driver.change(imu);
         driver.change("RFM","RBM","LFM","LBM");
@@ -59,10 +62,10 @@ public class LEFTAUTO extends LinearOpMode {
         //TODO: SET UP MULTIAUTOMODE
         //TODO: SET UP ROTATIONS
         //IMPORTANT: DO THE TODOS
-        int dropSample1 = autoDriver.lineTo(-425.0,1381.5,1.0);
-        int pickupSample2mid = autoDriver.lineTo(-600.0,1000.0,1.0);
-        int pickupSample2 = autoDriver.lineTo(-700.0,1000.0,1.0);
-        int dropSample2 = autoDriver.lineTo(-425.0,1381.5,1.0);
+        int dropSample1 = autoDriver.lineTo(-322.5,1107.5,1.0);
+        int pickupSample2mid = autoDriver.lineTo(-600.0,1025.0,1.0);
+        int pickupSample2 = autoDriver.lineTo(-750.0,1025.0,1.0);
+        int dropSample2 = autoDriver.lineTo(-322.5,1107.5,1.0);
         int pickupSample3 = autoDriver.lineTo(-700.0,1500.0,1.0);
         int dropSample3 = autoDriver.lineTo(-900.0,1500.0,1.0);
         int pickupSample4 = autoDriver.lineTo(-700.0,1500.0,1.0);
@@ -80,9 +83,10 @@ public class LEFTAUTO extends LinearOpMode {
             telemetry.addData("Position", data);
             completed = autoDriver.move(dropSample1);
         }
+        turnAngle(-45);
         clawRotateServo.setServoPosition(0.4);
         safeWaitSeconds(0.5);
-        int RotateTarget = 1015;
+        int RotateTarget = 675;
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
             SM.setPos(RotateTarget);
         }
@@ -90,7 +94,7 @@ public class LEFTAUTO extends LinearOpMode {
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
             SM.setPos2(target);
         }
-        clawRotateServo.setServoPosition(0.45);
+        clawRotateServo.setServoPosition(0.6);
         safeWaitSeconds(0.5);
         clawServo.setServoPosition(0.39);
         safeWaitSeconds(0.5);
@@ -104,6 +108,9 @@ public class LEFTAUTO extends LinearOpMode {
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
             SM.setPos(RotateTarget);
         }
+        turnAngle(0);
+        sr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         completed = false;
         while(!isStopRequested() && !completed){
             Pose2D pos = autoDriver.getPosition();
@@ -127,9 +134,10 @@ public class LEFTAUTO extends LinearOpMode {
             telemetry.addData("Position", data);
             completed = autoDriver.move(dropSample2);
         }
+        turnAngle(-45);
         clawRotateServo.setServoPosition(0.4);
         safeWaitSeconds(0.5);
-        RotateTarget = 1015;
+        RotateTarget = 675;
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
             SM.setPos(RotateTarget);
         }
@@ -137,7 +145,7 @@ public class LEFTAUTO extends LinearOpMode {
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
             SM.setPos2(target);
         }
-        clawRotateServo.setServoPosition(0.45);
+        clawRotateServo.setServoPosition(0.6);
         safeWaitSeconds(0.5);
         clawServo.setServoPosition(0.39);
         safeWaitSeconds(0.5);
@@ -151,6 +159,7 @@ public class LEFTAUTO extends LinearOpMode {
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
             SM.setPos(RotateTarget);
         }
+        turnAngle(0);
         while(!isStopRequested() && !gamepad1.a){
             Pose2D pos = autoDriver.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
@@ -210,5 +219,42 @@ public class LEFTAUTO extends LinearOpMode {
         timer.reset();
         while (!isStopRequested() && timer.time() < time) {
         }
+    }
+    public void turnAngle(double turnAngle) {
+        double error, currentHeadingAngle, driveMotorsPower;
+        GoBildaPinpointDriver odo = autoDriver.getOdo();
+        DcMotor frontLeftMotor = driver.getFrontLeftMotor();
+        DcMotor backLeftMotor = driver.getBackLeftMotor();
+        DcMotor frontRightMotor = driver.getFrontRightMotor();
+        DcMotor backRightMotor = driver.getBackRightMotor();
+        error = turnAngle - Math.toDegrees(odo.getHeading());
+        while (opModeIsActive() && ((error > 0.5) || (error < -0.5))) {
+            odo.update();
+            telemetry.addData("X: ", odo.getPosX());
+            telemetry.addData("Y: ", odo.getPosY());
+            telemetry.addData("Heading Odo: ", Math.toDegrees(odo.getHeading()));
+            telemetry.update();
+
+            driveMotorsPower = error / 200;
+
+            if ((driveMotorsPower < 0.2) && (driveMotorsPower > 0)) {
+                driveMotorsPower = 0.2;
+            } else if ((driveMotorsPower > -0.2) && (driveMotorsPower < 0)) {
+                driveMotorsPower = -0.2;
+            }
+
+            // Positive power causes left turn
+            frontLeftMotor.setPower(-driveMotorsPower);
+            backLeftMotor.setPower(-driveMotorsPower);
+            frontRightMotor.setPower(driveMotorsPower);
+            backRightMotor.setPower(driveMotorsPower);
+
+            currentHeadingAngle = Math.toDegrees(odo.getHeading());
+            error = turnAngle - currentHeadingAngle;
+        }
+        frontLeftMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backRightMotor.setPower(0);
     }
 }

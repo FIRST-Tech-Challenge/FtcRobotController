@@ -64,11 +64,13 @@ public class Teleop extends LinearOpMode {
         clawRotateServo2.setServoPosition(0.55);
         while (!isStopRequested()){
             //driver1
-            SPED = gamepad1.right_trigger /= 3.0;
-
+            SPED = gamepad1.right_trigger;
+            if(gamepad1.right_bumper){
+                SPED /= 2.0;
+            }
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
             //driver2
-            SM.move(gamepad2.left_stick_y);
+            SM.move(gamepad2.left_stick_y + 0.01  > 1.0 && gamepad2.left_stick_y > 0.0 ? gamepad2.left_stick_y : gamepad2.left_stick_y + 0.01);
             telemetry.addLine("Slide Pos:" + String.valueOf(sc.getCurrentPosition()));
             if(-gamepad2.right_stick_y <= -0.3){
                 SM.setPos(0);
@@ -76,24 +78,32 @@ public class Teleop extends LinearOpMode {
             if(gamepad2.left_trigger > 0.3){
                 clawRotateServo.setServoPosition(0.4);
                 safeWaitSeconds(0.5);
-                SM.setPos(1025);
-                safeWaitSeconds(1);
-                SM.setPos2(-3000);
-                safeWaitSeconds(2);
-                sc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                clawRotateServo.setServoPosition(0.6);
+                int RotateTarget = 675;
+                while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
+                    SM.setPos(RotateTarget);
+                }
+                int target = -3000;
+                while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
+                    SM.setPos2(target);
+                }
+                clawRotateServo.setServoPosition(0.45);
                 safeWaitSeconds(0.5);
                 clawServo.setServoPosition(0.39);
                 safeWaitSeconds(0.5);
-                clawRotateServo.setServoPosition(0.4);
+                clawRotateServo.setServoPosition(0.05);
                 safeWaitSeconds(0.5);
-                SM.setPos2(0);
-                safeWaitSeconds(1);
-                SM.setPos(0);
-                safeWaitSeconds(2);
+                target = 0;
+                while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
+                    SM.setPos2(target);
+                }
+                RotateTarget = 0;
+                while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
+                    SM.setPos(RotateTarget);
+                }
+                sc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             if(-gamepad2.right_stick_y >= 0.3){
-                SM.setPos(1025);
+                SM.setPos(675);
             }
             if(touchSensor.isPressed()){
                 SM.reset();
@@ -128,6 +138,7 @@ public class Teleop extends LinearOpMode {
             }else{
                 clawRotateServo2.setServoPosition(0.5);
             }
+            //SM.setPos2(sc.getCurrentPosition());
         }
         File ThreadManger = AppUtil.getInstance().getSettingsFile("ThreadManger.txt");
         ReadWriteFile.writeFile(ThreadManger, "STOP");

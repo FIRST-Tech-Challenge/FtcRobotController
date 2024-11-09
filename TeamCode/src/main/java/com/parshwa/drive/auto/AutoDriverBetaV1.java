@@ -96,11 +96,59 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
                 headingSpeed = robotPos.getHeading(AngleUnit.DEGREES) <= 0.0 ? -0.2: 0.2;
             }
             double currentDiff = Math.sqrt(Math.pow(XDiff,2) + Math.pow(YDiff,2));
-            double speed = 0.35;
+            double speed = 0.5;
+            boolean less1000 = false;
+            boolean less500 = false;
+            boolean less250 = false;
+            boolean less100 = false;
+            if(currentDiff < 1000.0){
+                less1000 = true;
+            }
+            if(currentDiff < 500.0){
+                less500 = true;
+            }
+            if(currentDiff < 250.0){
+                less250 = true;
+            }
+            if(currentDiff < 100.0){
+                less100 = true;
+            }
+            if(less100){
+                newYSpeed /= 4.5;
+                newXSpeed /= 4.5;
+            }
+            if(!less100 && less250){
+                if(XDiff > YDiff){
+                    newYSpeed /= 4;
+                }else if(YDiff > XDiff){
+                    newXSpeed /= 4;
+                }else{
+                    newYSpeed /= 4;
+                    newXSpeed /= 4;
+                }
+            }else if(!less250 && less500){
+                if(XDiff > YDiff){
+                    newYSpeed /= 3;
+                }else if(YDiff > XDiff){
+                    newXSpeed /= 3;
+                }else{
+                    newYSpeed /= 3;
+                    newXSpeed /= 3;
+                }
+            }else if(!less500 && less1000){
+                if(XDiff > YDiff){
+                    newYSpeed /= 2;
+                }else if(YDiff > XDiff){
+                    newXSpeed /= 2;
+                }else{
+                    newYSpeed /= 2;
+                    newXSpeed /= 2;
+                }
+            }
+
+            /*double speed = 0.25;
             if(Math.abs(XDiff) <= 10.0 && Math.abs(YDiff) <= 10.0){
                 speed = 0.1;
-                newXSpeed /= 2;
-                newYSpeed /= 2;
             }else{
                 if(Math.abs(XDiff) <= 10.0){
                     newXSpeed /= 4;
@@ -108,7 +156,7 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
                 if(Math.abs(YDiff) <= 10.0){
                     newYSpeed /= 4;
                 }
-            }
+            }*/
             if(newXSpeed == 0.0 && newYSpeed == 0.0){
                 completed = true;
             }
@@ -164,5 +212,9 @@ public class AutoDriverBetaV1 implements AutoDriverInterface {
         typeIds.add(id, Rotate);
         startPos.add(id, robotPos);
         return id;
+    }
+
+    public GoBildaPinpointDriver getOdo() {
+        return odoComp;
     }
 }
