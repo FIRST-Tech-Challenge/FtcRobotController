@@ -64,10 +64,10 @@ public class testServos extends LinearOpMode {
 
   public void initRobot() {
 
-    FLServo = hardwareMap.get(Servo.class, "FLServo");
-    FRServo = hardwareMap.get(Servo.class, "FRServo");
-    BLServo = hardwareMap.get(Servo.class, "BLServo");
-    BRServo = hardwareMap.get(Servo.class, "BRServo");
+    FLServo = hardwareMap.get(Servo.class, "ramp 1");
+    FRServo = hardwareMap.get(Servo.class, "ramp 2");
+    BLServo = hardwareMap.get(Servo.class, "dne");
+    BRServo = hardwareMap.get(Servo.class, "dne 2");
 
     FLServo.setDirection(Servo.Direction.FORWARD);
     FRServo.setDirection(Servo.Direction.FORWARD);

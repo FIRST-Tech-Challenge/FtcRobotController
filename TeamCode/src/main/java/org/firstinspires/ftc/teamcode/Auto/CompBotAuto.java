@@ -30,11 +30,11 @@ public class CompBotAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         initRobot();
-        initSlide();
         waitForStart();
+        initSlide();
 
-        setSlide(4250);   //change to edit drop spot
-        setPivot(75);     //change to edit drop spot
+        setSlide(4180);   //change to edit drop spot
+        setPivot(840);     //change to edit drop spot
 
         sleep(1000);
 
