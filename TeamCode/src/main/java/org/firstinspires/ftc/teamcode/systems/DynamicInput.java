@@ -95,7 +95,8 @@ public class DynamicInput {
 
     public static class Actions {
         public final boolean extendExtensor, retractExtensor, groundExtensor, extensorBusy;
-        public final double clawRight, clawLeft, wristUp, wristDown;
+        public final double clawRight, clawLeft;
+        public final boolean wristUp, wristDown;
         public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorChange;
         public final double boostAmount, brakeAmount;
 

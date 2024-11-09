@@ -163,10 +163,10 @@ public class BaseRobot {
                 arm.extensor.ground();
             }
 
-            if (actions.clawRight) {
+            if (actions.clawRight > 0.2) {
                 arm.claw.setRightServo(!arm.claw.openedR);
             }
-            if (actions.clawLeft) {
+            if (actions.clawLeft > 0.2) {
                 arm.claw.setLeftServo(!arm.claw.openedL);
             }
 
