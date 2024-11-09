@@ -19,16 +19,16 @@ public class Hang {
 
     public void controlHang(boolean dpad_down, boolean dpad_up) {
         if (dpad_down) {
-            setHangPower(1); // Hang Down
+            setHangPower(1, 100); // Hang Down
         } else if (dpad_up) {
-            setHangPower(-1); // Hang Up
+            setHangPower(-1, 100); // Hang Up
         }
     }
 
-    private void setHangPower(double power) {
+    public void setHangPower(double power, int time) {
         robot.leftHang.setPower(power);
         robot.rightHang.setPower(power);
-        opMode.sleep(100);
+        opMode.sleep(time);
         robot.leftHang.setPower(0);
         robot.rightHang.setPower(0);
     }

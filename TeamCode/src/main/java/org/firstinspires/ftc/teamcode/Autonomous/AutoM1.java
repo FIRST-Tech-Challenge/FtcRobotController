@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.teamcode.TeleOp.Claw;
 import org.firstinspires.ftc.teamcode.TeleOp.RobotHardware;
+import org.firstinspires.ftc.teamcode.TeleOp.Hang;
 
-@Autonomous
+@Autonomous (name = "AutoM1", preselectTeleOp = "ControlsNEW")
 public class AutoM1 extends LinearOpMode {
 
     public final RobotHardware robot = new RobotHardware();
@@ -14,6 +16,9 @@ public class AutoM1 extends LinearOpMode {
         // Initialize robot hardware and AutoBase
         robot.init(hardwareMap);
         AutoFunctions autoFunctions = new AutoFunctions(robot, this);
+        Hang hangControls = new Hang(robot, this);
+        Claw clawControls = new Claw(robot,this);
+        clawControls.setClawServo(1, 0.3);
 
         waitForStart();
 
@@ -21,9 +26,17 @@ public class AutoM1 extends LinearOpMode {
 
         if (opModeIsActive()) {
             // Use basePower method from AutoBase
-            autoFunctions.basePower(0.5, 1000);
-            autoFunctions.clawPower(0.5, 10000);
-
+            clawControls.setClawPower(-1,500);
+            clawControls.setClawRotation(0.40, 0.61 );
+            sleep(2000);
+            autoFunctions.shftPower(0.6,800);
+            sleep(500);
+            autoFunctions.basePower(0.6, 750);
+            clawControls.setClawRotation(0.65, 0.34);
+            sleep(500);
+            clawControls.setClawServo(0.3,1);
+            sleep(500);
+            autoFunctions.basePower(-0.6, 800);
         }
     }
 }

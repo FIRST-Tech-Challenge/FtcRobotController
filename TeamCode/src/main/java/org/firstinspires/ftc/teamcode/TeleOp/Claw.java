@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Claw {
 
     public final RobotHardware robot;
-    private final LinearOpMode opMode;
+    public final LinearOpMode opMode;
 
     // Constructor that takes RobotHardware as a parameter
     public Claw(RobotHardware robot, LinearOpMode opMode) {
@@ -16,19 +16,15 @@ public class Claw {
 
     public void controlClaw(boolean buttonA, boolean buttonY, boolean buttonX, boolean buttonB, boolean rightStickButton, boolean leftBumper, boolean rightBumper) {
             if (buttonA) {
-                setClawPower(1);
-                opMode.sleep(100);
-                setClawPower(0);
+                setClawPower(1,100);
             } else if (buttonY) {
-                setClawPower(-1);
-                opMode.sleep(100);
-                setClawPower(0);
+                setClawPower(-1,100);
             }
 
             if (buttonX) {
                 setClawRotation(0.5, 0.41); // Halfway
             } else if (buttonB) {
-                setClawRotation(1, 0.09); // Down
+                setClawRotation(0.95, 0.14); // Down
             } else if (rightStickButton) {
                 setClawRotation(0.2, 0.71); // Up
             }
@@ -40,21 +36,21 @@ public class Claw {
             }
         }
 
-        private void setClawServo ( double leftPos, double rightPos){
+        public void setClawServo ( double leftPos, double rightPos){
 
             robot.rightClawServo.setPosition(rightPos);
             robot.leftClawServo.setPosition(leftPos);
         }
 
-        private void setClawPower ( double power) {
+        public void setClawPower ( double power, int time) {
             robot.leftClaw.setPower(power);
             robot.rightClaw.setPower(power);
-            opMode.sleep(100);
+            opMode.sleep(time);
             robot.leftClaw.setPower(0);
             robot.rightClaw.setPower(0);
         }
 
-        private void setClawRotation ( double leftPos, double rightPos){
+        public void setClawRotation ( double leftPos, double rightPos){
             robot.leftRotation.setPosition(leftPos);
             robot.rightRotation.setPosition(rightPos);
         }

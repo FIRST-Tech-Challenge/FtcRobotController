@@ -28,6 +28,19 @@ public class AutoFunctions {
         robot.frontLeftMotor.setPower(0);
         opMode.sleep(1000);
     }
+    public void shftPower (double power, int time ) {
+        robot.frontRightMotor.setPower(-power);
+        robot.backRightMotor.setPower(power);
+        robot.backLeftMotor.setPower(-power);
+        robot.frontLeftMotor.setPower(power);
+        opMode.sleep(time);
+        // Stop all motors
+        robot.frontRightMotor.setPower(0);
+        robot.backRightMotor.setPower(0);
+        robot.backLeftMotor.setPower(0);
+        robot.frontLeftMotor.setPower(0);
+        opMode.sleep(1000);
+    }
     public void clawPower (double power, int time) {
         robot.leftClaw.setPower(power);
         robot.rightClaw.setPower(power);
