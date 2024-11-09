@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 public class Mekanism {
   private final DcMotorEx pivot;
   private final DcMotorEx slide;
-  // Limit switch is never used??? - Tada
+
   private final DigitalChannel limitSwitch;
 
   private final Servo intakeL;
@@ -115,6 +115,27 @@ public class Mekanism {
     // The above makes this if statement impossible to trigger??? - Tada
     if (slide.getCurrentPosition() > pubLength && x > 1) slide.setPower(-x * 2);
     pivot.setPower(x);
+  }
+
+  public void homeArm() {
+    while (limitSwitch.getState()) {
+      pivot.setPower(-.75);
+      slide.setPower(-.01);
+    }
+
+    pivot.setPower(.00);
+    slide.setPower(.00);
+    try {
+      Thread.sleep(250);
+    } catch (final InterruptedException ex) {
+      Thread.currentThread().interrupt();
+    };
+    pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    pivot.setPower(.00);
   }
 
   public void moveClaw(boolean outtake, boolean intake) {
