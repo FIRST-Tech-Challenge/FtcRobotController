@@ -3,9 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 
 @TeleOp
 public class SimpleDebugTeleOp extends OpMode {
@@ -13,20 +10,27 @@ public class SimpleDebugTeleOp extends OpMode {
     final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
     DcMotor motorTest;
+    boolean useRightStick = false;
 
     @Override
     public void init() {
       motorTest = hardwareMap.get(DcMotor.class, "motorTest");
-
-
-
     }
 
     @Override
     public void loop() {
         double power = 0;
 
-        double inputSpeed = -gamepad1.left_stick_y;
+        if (gamepad1.y) {
+            useRightStick = true;
+        }
+
+        double inputSpeed;
+        if (useRightStick) {
+            inputSpeed = -gamepad1.right_stick_y;
+        } else {
+            inputSpeed = -gamepad1.left_stick_y;
+        }
 
         // put some "slop" in, in case joystick is too sensitive
         if (Math.abs(inputSpeed) < .1) {
@@ -43,6 +47,7 @@ public class SimpleDebugTeleOp extends OpMode {
         telemetry.addData("position", "%7d", motorTest.getCurrentPosition());
 
         double degrees = motorTest.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
+
         telemetry.addData("tickAngles", "%.1f", degrees);
     }
 }
