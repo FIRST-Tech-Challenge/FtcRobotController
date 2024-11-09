@@ -77,7 +77,7 @@ public class Settings {
             public static final int HIGH_RUNG = 1000;
 
             // Motor power settings
-            public static final double MOVEMENT_POWER = 0.1; // Adjust based on testing
+            public static final double MOVEMENT_POWER = 1; // Adjust based on testing
         }
     }
 

@@ -17,7 +17,7 @@ public class SingleMotorExtensorJustForConnerBecauseHeWantsToRebuildTheRobotOnAW
     public SingleMotorExtensorJustForConnerBecauseHeWantsToRebuildTheRobotOnAWhim(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.singleMotorExtensorJustForConnerBecauseHeRebuiltTheRobotOnAWhimMotor = baseRobot.hardwareMap
-                .get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_RIGHT);
+                .get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_LEFT);
 
         // Reset encoders
         singleMotorExtensorJustForConnerBecauseHeRebuiltTheRobotOnAWhimMotor

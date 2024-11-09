@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Test Servo Positions", group = "Test")
+@TeleOp(name = "Test Servo Positions", group = "TeleOp")
 public class TestServoExtensor extends LinearOpMode {
     private Servo wrist;
     private Servo clawL;
