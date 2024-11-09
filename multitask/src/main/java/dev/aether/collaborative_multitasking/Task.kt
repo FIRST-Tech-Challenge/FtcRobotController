@@ -2,6 +2,8 @@
 
 package dev.aether.collaborative_multitasking
 
+import dev.aether.collaborative_multitasking.ITask.State
+
 /*
 @startuml
 hide empty description
@@ -44,15 +46,7 @@ typealias Runnable = () -> Unit
 
 class Task(
     internal var scheduler: Scheduler,
-) {
-    enum class State(val order: Int) {
-        NotStarted(0),
-        Starting(1),
-        Ticking(2),
-        Finishing(3),
-        Finished(4),
-        Cancelled(4),
-    }
+): ITask {
 
     var state: State = State.NotStarted
         private set

@@ -4,11 +4,12 @@ package dev.aether.collaborative_multitasking
 
 import kotlin.math.ceil
 import kotlin.math.max
+import dev.aether.collaborative_multitasking.ITask.State
 
 class MultitaskScheduler
 @JvmOverloads constructor(private val throwDebuggingErrors: Boolean = false) : Scheduler() {
     private val locks: MutableMap<String, Int?> = mutableMapOf()
-    private val tasks: MutableMap<Int, Task> = mutableMapOf()
+    private val tasks: MutableMap<Int, ITask> = mutableMapOf()
     private val lockIdName: MutableMap<String, SharedResource> = mutableMapOf()
 
     companion object {
@@ -42,7 +43,7 @@ class MultitaskScheduler
         private set
     private var tickCount = 0
 
-    private fun selectState(state: Task.State): List<Task> {
+    private fun selectState(state: State): List<ITask> {
         return tasks.values.filter { it.state == state }
     }
 
@@ -51,13 +52,13 @@ class MultitaskScheduler
     }
 
     private fun tickMarkStartable() {
-        selectState(Task.State.NotStarted)
+        selectState(State.NotStarted)
             .filter {
                 it.invokeCanStart()
             }
             .forEach {
                 if (allFreed(it.requirements())) {
-                    it.setState(Task.State.Starting)
+                    it.setState(State.Starting)
                     // acquire locks
                     for (lock in it.requirements()) {
                         println("$it acquired $lock")
@@ -73,14 +74,14 @@ class MultitaskScheduler
     }
 
     private fun tickStartMarked() {
-        selectState(Task.State.Starting)
+        selectState(State.Starting)
             .forEach {
                 try {
                     it.invokeOnStart()
                     if (it.invokeIsCompleted()) {
-                        it.setState(Task.State.Finishing)
+                        it.setState(State.Finishing)
                     } else {
-                        it.setState(Task.State.Ticking)
+                        it.setState(State.Ticking)
                     }
                 } catch (e: Exception) {
                     System.err.println(
@@ -95,11 +96,11 @@ class MultitaskScheduler
     }
 
     private fun tickTick() {
-        selectState(Task.State.Ticking)
+        selectState(State.Ticking)
             .forEach {
                 try {
                     it.invokeOnTick()
-                    if (it.invokeIsCompleted()) it.setState(Task.State.Finishing)
+                    if (it.invokeIsCompleted()) it.setState(State.Finishing)
                 } catch (e: Exception) {
                     System.err.println(String.format("Error while ticking %s:", it.toString()))
                     e.printStackTrace()
@@ -108,13 +109,13 @@ class MultitaskScheduler
     }
 
     private fun tickFinish() {
-        val candidates = selectState(Task.State.Finishing)
+        val candidates = selectState(State.Finishing)
         candidates.forEach(::release)
     }
 
-    private fun release(task: Task, cancel: Boolean = false) {
-        val targetState = if (cancel) Task.State.Cancelled else Task.State.Finished
-        if (task.state == Task.State.NotStarted) {
+    private fun release(task: ITask, cancel: Boolean = false) {
+        val targetState = if (cancel) State.Cancelled else State.Finished
+        if (task.state == State.NotStarted) {
             task.setState(targetState)
             return
         }
@@ -163,9 +164,9 @@ class MultitaskScheduler
         var cancelled = 0
         for (task in tasks.values) {
             when (task.state) {
-                Task.State.NotStarted -> waiting++
-                Task.State.Finished -> done++
-                Task.State.Cancelled -> cancelled++
+                State.NotStarted -> waiting++
+                State.Finished -> done++
+                State.Cancelled -> cancelled++
                 else -> progress++
             }
         }
@@ -189,7 +190,7 @@ class MultitaskScheduler
         )
     }
 
-    private fun displayTaskNoStatus(task: Task, indent: Int, writeLine: (String) -> Unit) {
+    private fun displayTaskNoStatus(task: ITask, indent: Int, writeLine: (String) -> Unit) {
         writeLine(buildString {
             append(" ".repeat(indent))
             append("#%d (%s)".format(task.myId, task.name))
@@ -199,10 +200,10 @@ class MultitaskScheduler
     }
 
     fun displayStatus(withFinished: Boolean, withNotStarted: Boolean, writeLine: (String) -> Unit) {
-        val notStartedList: MutableList<Task> = mutableListOf()
-        val inProgressList: MutableList<Task> = mutableListOf()
-        val finishedList: MutableList<Task> = mutableListOf()
-        val cancelledList: MutableList<Task> = mutableListOf()
+        val notStartedList: MutableList<ITask> = mutableListOf()
+        val inProgressList: MutableList<ITask> = mutableListOf()
+        val finishedList: MutableList<ITask> = mutableListOf()
+        val cancelledList: MutableList<ITask> = mutableListOf()
         var waiting = 0
         var progress = 0
         var done = 0
@@ -210,15 +211,15 @@ class MultitaskScheduler
         var total = tasks.size
         for (task in tasks.values) {
             when (task.state) {
-                Task.State.NotStarted -> {
+                State.NotStarted -> {
                     waiting++
                     notStartedList.add(task)
                 }
-                Task.State.Finished -> {
+                State.Finished -> {
                     done++
                     finishedList.add(task)
                 }
-                Task.State.Cancelled -> {
+                State.Cancelled -> {
                     cancelled++
                     cancelledList.add(task)
                 }
@@ -255,7 +256,7 @@ class MultitaskScheduler
         return task
     }
 
-    override fun register(task: Task): Int {
+    override fun register(task: ITask): Int {
         val id = nextId++
         tasks[id] = task
         for (lock in task.requirements()) {
@@ -272,9 +273,9 @@ class MultitaskScheduler
 
     override fun panic() {
         for (task in tasks.values) {
-            if (task.state == Task.State.Finished || task.state == Task.State.NotStarted || task.state == Task.State.Cancelled) continue
+            if (task.state == State.Finished || task.state == State.NotStarted || task.state == State.Cancelled) continue
             task.invokeOnFinish()
-            task.setState(Task.State.Finished)
+            task.setState(State.Finished)
         }
 
         for (lock in lockIdName.values) {
@@ -283,7 +284,7 @@ class MultitaskScheduler
     }
 
     fun hasJobs(): Boolean {
-        return tasks.values.any { it.state != Task.State.Finished && !it.daemon }
+        return tasks.values.any { it.state != State.Finished && !it.daemon }
     }
 
     fun runToCompletion(ok: () -> Boolean) {
@@ -298,30 +299,30 @@ class MultitaskScheduler
      */
 
     override fun filteredStop(
-        predicate: (Task) -> Boolean,
+        predicate: (ITask) -> Boolean,
         cancel: Boolean,
         dropNonStarted: Boolean
     ) {
         tasks.values
-            .filter { it.state != Task.State.Finished && it.state != Task.State.NotStarted && it.state != Task.State.Cancelled }
+            .filter { it.state != State.Finished && it.state != State.NotStarted && it.state != State.Cancelled }
             .filter(predicate)
             .forEach {
                 release(it, cancel)
             }
         if (dropNonStarted) {
             val dropped = tasks.filterInPlace { k, v ->
-                v.state == Task.State.NotStarted && predicate(v)
+                v.state == State.NotStarted && predicate(v)
             }
             println("dropped ${dropped.size} tasks: ${dropped.joinToString(", ")}")
         }
     }
 
-    override fun filteredStop(predicate: (Task) -> Boolean, cancel: Boolean) = filteredStop(
+    override fun filteredStop(predicate: (ITask) -> Boolean, cancel: Boolean) = filteredStop(
         predicate,
         cancel = cancel, dropNonStarted = false
     )
 
-    override fun filteredStop(predicate: (Task) -> Boolean) = filteredStop(
+    override fun filteredStop(predicate: (ITask) -> Boolean) = filteredStop(
         predicate,
         cancel = true,
         dropNonStarted = false

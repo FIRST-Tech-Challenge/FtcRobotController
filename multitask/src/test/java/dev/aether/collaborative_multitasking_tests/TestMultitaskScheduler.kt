@@ -3,6 +3,7 @@ package dev.aether.collaborative_multitasking_tests
 import dev.aether.collaborative_multitasking.MultitaskScheduler
 import dev.aether.collaborative_multitasking.SharedResource
 import dev.aether.collaborative_multitasking.Task
+import dev.aether.collaborative_multitasking.ITask.State
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -40,7 +41,7 @@ internal class TestMultitaskScheduler {
             }
             isCompleted { -> false }
         }
-        assertEquals(Task.State.NotStarted, task.state, "task not in NotStarted state")
+        assertEquals(State.NotStarted, task.state, "task not in NotStarted state")
         scheduler.tick()
         assert(onStartCalled) { "onStart not called" }
         assert(onTickCalled) { "onTick not called" }
@@ -54,7 +55,7 @@ internal class TestMultitaskScheduler {
             isCompleted { _, scheduler -> scheduler.getTicks() >= tickCount }
         }
         scheduler.runToCompletion { true } // blocking
-        assertEquals(Task.State.Finished, task.state, "task not in Finished state")
+        assertEquals(State.Finished, task.state, "task not in Finished state")
         assert(scheduler.getTicks() >= tickCount) { "scheduler stopped early" }
     }
 

@@ -6,15 +6,15 @@ abstract class Scheduler {
     open fun isResourceInUse(resource: SharedResource): Boolean = false
     abstract fun tick()
     abstract fun getTicks(): Int
-    internal abstract fun register(task: Task): Int
+    internal abstract fun register(task: ITask): Int
     abstract val nextId: Int
 
     abstract fun panic()
 
-    abstract fun filteredStop(predicate: (Task) -> Boolean, cancel: Boolean)
-    abstract fun filteredStop(predicate: (Task) -> Boolean)
+    abstract fun filteredStop(predicate: (ITask) -> Boolean, cancel: Boolean)
+    abstract fun filteredStop(predicate: (ITask) -> Boolean)
     abstract fun filteredStop(
-        predicate: (Task) -> Boolean,
+        predicate: (ITask) -> Boolean,
         cancel: Boolean,
         dropNonStarted: Boolean
     )
