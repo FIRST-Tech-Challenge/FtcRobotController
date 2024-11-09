@@ -60,7 +60,11 @@ public class Settings {
             public static final String WRIST = "wrist";
             public static final String CLAW_LEFT = "clawL";
             public static final String CLAW_RIGHT = "clawR";
+            public static final String SHOULDER = "shoulder";
         }
+
+        public static final double SHOULDER_TICKS_PER_DEGREE = 10.0; // TODO: Tune this value
+        public static final double SHOULDER_POWER = 0.5; // Adjust based on your needs
     }
 
     // Autonomous settings
@@ -130,10 +134,15 @@ public class Settings {
     }
 
     public static class ButtonMapping {
-        // Actuator controls
-        public GamepadButton extendActuator = GamepadButton.Y;
-        public GamepadButton retractActuator = GamepadButton.X;
-        public final GamepadButton groundActuator = GamepadButton.B;
+        // Extensor controls
+        public GamepadButton extendExtensor = GamepadButton.Y;
+        public GamepadButton retractExtensor = GamepadButton.X;
+        public final GamepadButton groundExtensor = GamepadButton.B;
+
+        // Movement controls
+        public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
+        public final GamepadAxis moveSideways = GamepadAxis.LEFT_STICK_X;
+        public final GamepadAxis rotate = GamepadAxis.RIGHT_STICK_X;
 
         // Claw controls
         public final GamepadAxis clawRight = GamepadAxis.RIGHT_TRIGGER;
@@ -143,13 +152,23 @@ public class Settings {
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;
         public GamepadButton wristDown = GamepadButton.LEFT_BUMPER;
 
-        // Ascend actuator controls
-        public final GamepadButton ascendActuatorExtend = GamepadButton.DPAD_UP;
-        public final GamepadButton ascendActuatorRetract = GamepadButton.DPAD_DOWN;
-        public final GamepadButton ascendActuatorChange = GamepadButton.DPAD_RIGHT;
+        // Ascend extensor controls
+        public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_UP;
+        public final GamepadButton ascendExtensorRetract = GamepadButton.DPAD_DOWN;
+        public final GamepadButton ascendExtensorChange = GamepadButton.DPAD_RIGHT;
 
         public final GamepadAxis boost = GamepadAxis.RIGHT_TRIGGER;
         public final GamepadAxis brake = GamepadAxis.LEFT_TRIGGER;
+
+        // Single-direction movement controls
+        public GamepadButton moveUp = GamepadButton.DPAD_UP;
+        public GamepadButton moveDown = GamepadButton.DPAD_DOWN;
+        public GamepadButton moveLeft = GamepadButton.DPAD_LEFT;
+        public GamepadButton moveRight = GamepadButton.DPAD_RIGHT;
+
+        // Shoulder controls
+        public GamepadButton shoulderUp = GamepadButton.LEFT_STICK_BUTTON;
+        public GamepadButton shoulderDown = GamepadButton.RIGHT_STICK_BUTTON;
     }
 
     public enum GamepadButton {
@@ -160,9 +179,13 @@ public class Settings {
         DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT,
 
         // Shoulder buttons
-        LEFT_BUMPER, RIGHT_BUMPER
+        LEFT_BUMPER, RIGHT_BUMPER,
 
-        // Add documentation for each button group
+        // Center buttons
+        START, BACK, GUIDE,
+
+        // Stick buttons
+        LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON
     }
 
     public enum GamepadAxis {
@@ -176,8 +199,8 @@ public class Settings {
         public static DefaultGamepadSettings boonstra() {
             DefaultGamepadSettings settings = new DefaultGamepadSettings();
             // Customize button mappings for BBoonstra
-            settings.buttonMapping.extendActuator = GamepadButton.Y;
-            settings.buttonMapping.retractActuator = GamepadButton.A;
+            settings.buttonMapping.extendExtensor = GamepadButton.Y;
+            settings.buttonMapping.retractExtensor = GamepadButton.A;
             // ... add other customizations
             return settings;
         }
@@ -185,8 +208,8 @@ public class Settings {
         public static DefaultGamepadSettings israel() {
             DefaultGamepadSettings settings = new DefaultGamepadSettings();
             // custom button mappings for conner
-            settings.buttonMapping.extendActuator = GamepadButton.B;
-            settings.buttonMapping.retractActuator = GamepadButton.X;
+            settings.buttonMapping.extendExtensor = GamepadButton.B;
+            settings.buttonMapping.retractExtensor = GamepadButton.X;
             // ... add other customizations
             return settings;
         }
@@ -259,8 +282,8 @@ public class Settings {
             new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
-                    buttonMapping.extendActuator = GamepadButton.Y;
-                    buttonMapping.retractActuator = GamepadButton.A;
+                    buttonMapping.extendExtensor = GamepadButton.Y;
+                    buttonMapping.retractExtensor = GamepadButton.A;
                     trigger_threshold = 0.2;
                 }
             });

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.systems.Logger;
 import org.firstinspires.ftc.teamcode.systems.Odometry;
 import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Shoulder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -154,11 +155,11 @@ public class BaseRobot {
         if (Settings.Deploy.ARM) {
             DynamicInput.ContextualActions actions = input.getContextualActions();
 
-            if (actions.justRetractActuator) {
+            if (actions.justRetractExtensor) {
                 arm.extensor.retract();
-            } else if (actions.justExtendActuator) {
+            } else if (actions.justExtendExtensor) {
                 arm.extensor.extend();
-            } else if (actions.justGroundActuator) {
+            } else if (actions.justGroundExtensor) {
                 arm.extensor.ground();
             }
 
@@ -173,6 +174,12 @@ public class BaseRobot {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             } else if (actions.wristDown) {
                 arm.wrist.setPosition(Wrist.Position.RUNG);
+            }
+
+            if (actions.shoulderUp) {
+                arm.shoulder.setPosition(Shoulder.Position.HIGH_RUNG);
+            } else if (actions.shoulderDown) {
+                arm.shoulder.setPosition(Shoulder.Position.RESTING);
             }
         }
     }

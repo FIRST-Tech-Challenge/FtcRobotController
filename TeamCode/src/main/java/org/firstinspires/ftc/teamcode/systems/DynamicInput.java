@@ -12,7 +12,7 @@ public class DynamicInput {
     private Settings.ControllerProfile subProfile;
 
     // Track previous button states for justPressed functionality
-    private boolean prevExtendActuator, prevRetractActuator, prevGroundActuator;
+    private boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor;
 
     public DynamicInput(Gamepad gamepad1, Gamepad gamepad2, Settings.ControllerProfile mainProfile,
             Settings.ControllerProfile subProfile) {
@@ -31,12 +31,15 @@ public class DynamicInput {
         public final double up, right, down, left, rotation, x, y;
 
         public Movements(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings) {
-            // Move logic from movements() method here
-            double leftStickY = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_Y),
+            // Get mapped axis values with deadzone
+            double leftStickY = applyDeadzone(
+                    getAxisValue(mainCtrl, mainSettings.buttonMapping.moveForward),
                     mainSettings.stick_deadzone);
-            double leftStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.LEFT_STICK_X),
+            double leftStickX = applyDeadzone(
+                    getAxisValue(mainCtrl, mainSettings.buttonMapping.moveSideways),
                     mainSettings.stick_deadzone);
-            double rightStickX = applyDeadzone(getAxisValue(mainCtrl, Settings.GamepadAxis.RIGHT_STICK_X),
+            double rightStickX = applyDeadzone(
+                    getAxisValue(mainCtrl, mainSettings.buttonMapping.rotate),
                     mainSettings.stick_deadzone);
 
             // Apply sensitivities and inversion
@@ -48,14 +51,14 @@ public class DynamicInput {
             double rightPower = (leftStickX > 0 ? leftStickX : 0) * mainSettings.left_stick_sensitivity;
             double leftPower = (leftStickX < 0 ? -leftStickX : 0) * mainSettings.left_stick_sensitivity;
 
-            // Add dpad absolute movement using mapped buttons
-            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_UP))
+            // Add absolute movement using mapped buttons
+            if (getButtonState(mainCtrl, mainSettings.buttonMapping.moveUp))
                 upPower = mainSettings.dpad_movement_speed;
-            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_DOWN))
+            if (getButtonState(mainCtrl, mainSettings.buttonMapping.moveDown))
                 downPower = mainSettings.dpad_movement_speed;
-            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_RIGHT))
+            if (getButtonState(mainCtrl, mainSettings.buttonMapping.moveRight))
                 rightPower = mainSettings.dpad_movement_speed;
-            if (getButtonState(mainCtrl, Settings.GamepadButton.DPAD_LEFT))
+            if (getButtonState(mainCtrl, mainSettings.buttonMapping.moveLeft))
                 leftPower = mainSettings.dpad_movement_speed;
 
             // Handle rotation based on settings
@@ -91,27 +94,27 @@ public class DynamicInput {
     }
 
     public static class Actions {
-        public final boolean extendActuator, retractActuator, groundActuator, actuatorBusy;
+        public final boolean extendExtensor, retractExtensor, groundExtensor, extensorBusy;
         public final boolean clawRight, clawLeft, wristUp, wristDown;
-        public final boolean ascendActuatorExtend, ascendActuatorRetract, ascendActuatorChange;
+        public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorChange;
         public final double boostAmount, brakeAmount;
 
         public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
-            this.extendActuator = getButtonState(subCtrl, subSettings.buttonMapping.extendActuator);
-            this.retractActuator = getButtonState(subCtrl, subSettings.buttonMapping.retractActuator);
-            this.groundActuator = getButtonState(subCtrl, subSettings.buttonMapping.groundActuator);
-            this.actuatorBusy = extendActuator || retractActuator || groundActuator;
+            this.extendExtensor = getButtonState(subCtrl, subSettings.buttonMapping.extendExtensor);
+            this.retractExtensor = getButtonState(subCtrl, subSettings.buttonMapping.retractExtensor);
+            this.groundExtensor = getButtonState(subCtrl, subSettings.buttonMapping.groundExtensor);
+            this.extensorBusy = extendExtensor || retractExtensor || groundExtensor;
             this.clawRight = getAxisValue(subCtrl, subSettings.buttonMapping.clawRight) > subSettings.trigger_threshold;
             this.clawLeft = getAxisValue(subCtrl, subSettings.buttonMapping.clawLeft) > subSettings.trigger_threshold;
             this.wristUp = getButtonState(subCtrl, subSettings.buttonMapping.wristUp);
             this.wristDown = getButtonState(subCtrl, subSettings.buttonMapping.wristDown);
-            this.ascendActuatorExtend = getButtonState(subCtrl,
-                    subSettings.buttonMapping.ascendActuatorExtend);
-            this.ascendActuatorRetract = getButtonState(subCtrl,
-                    subSettings.buttonMapping.ascendActuatorRetract);
-            this.ascendActuatorChange = getButtonState(subCtrl,
-                    subSettings.buttonMapping.ascendActuatorChange);
+            this.ascendExtensorExtend = getButtonState(subCtrl,
+                    subSettings.buttonMapping.ascendExtensorExtend);
+            this.ascendExtensorRetract = getButtonState(subCtrl,
+                    subSettings.buttonMapping.ascendExtensorRetract);
+            this.ascendExtensorChange = getButtonState(subCtrl,
+                    subSettings.buttonMapping.ascendExtensorChange);
             this.boostAmount = mainSettings.applyBoostCurve(
                     getAxisValue(mainCtrl, mainSettings.buttonMapping.boost));
             this.brakeAmount = mainSettings.applyBoostCurve(
@@ -120,21 +123,25 @@ public class DynamicInput {
     }
 
     public static class ContextualActions extends Actions {
-        public final boolean justExtendActuator, justRetractActuator, justGroundActuator;
-        private final boolean prevExtendActuator, prevRetractActuator, prevGroundActuator;
+        public final boolean justExtendExtensor, justRetractExtensor, justGroundExtensor;
+        private final boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor;
+        public final boolean shoulderUp, shoulderDown;
 
         public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
                 boolean prevExtend, boolean prevRetract, boolean prevGround) {
             super(mainCtrl, mainSettings, subCtrl, subSettings);
 
-            this.prevExtendActuator = prevExtend;
-            this.prevRetractActuator = prevRetract;
-            this.prevGroundActuator = prevGround;
+            this.prevExtendExtensor = prevExtend;
+            this.prevRetractExtensor = prevRetract;
+            this.prevGroundExtensor = prevGround;
 
-            this.justExtendActuator = extendActuator && !prevExtend;
-            this.justRetractActuator = retractActuator && !prevRetract;
-            this.justGroundActuator = groundActuator && !prevGround;
+            this.justExtendExtensor = extendExtensor && !prevExtend;
+            this.justRetractExtensor = retractExtensor && !prevRetract;
+            this.justGroundExtensor = groundExtensor && !prevGround;
+
+            this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp);
+            this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown);
         }
     }
 
@@ -148,12 +155,12 @@ public class DynamicInput {
 
     public ContextualActions getContextualActions() {
         ContextualActions actions = new ContextualActions(mainCtrl, mainSettings, subCtrl, subSettings,
-                prevExtendActuator, prevRetractActuator, prevGroundActuator);
+                prevExtendExtensor, prevRetractExtensor, prevGroundExtensor);
 
         // Update previous states
-        prevExtendActuator = actions.extendActuator;
-        prevRetractActuator = actions.retractActuator;
-        prevGroundActuator = actions.groundActuator;
+        prevExtendExtensor = actions.extendExtensor;
+        prevRetractExtensor = actions.retractExtensor;
+        prevGroundExtensor = actions.groundExtensor;
 
         return actions;
     }
@@ -200,6 +207,16 @@ public class DynamicInput {
                 return gamepad.left_bumper;
             case RIGHT_BUMPER:
                 return gamepad.right_bumper;
+            case START:
+                return gamepad.start;
+            case BACK:
+                return gamepad.back;
+            case LEFT_STICK_BUTTON:
+                return gamepad.left_stick_button;
+            case RIGHT_STICK_BUTTON:
+                return gamepad.right_stick_button;
+            case GUIDE:
+                return gamepad.guide;
             default:
                 throw new IllegalArgumentException("Unexpected button: " + button);
         }
