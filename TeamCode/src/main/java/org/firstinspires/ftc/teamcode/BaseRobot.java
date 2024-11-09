@@ -62,7 +62,7 @@ public class BaseRobot {
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         rearLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        rearRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        rearRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
