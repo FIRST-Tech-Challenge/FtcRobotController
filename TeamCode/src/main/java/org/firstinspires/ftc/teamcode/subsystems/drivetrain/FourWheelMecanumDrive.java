@@ -16,6 +16,8 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
 
     protected Motor fL, fR, bL, bR;
 
+    private static final boolean revertMotor = false;
+
     public FourWheelMecanumDrive(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         super(hardwareMap, gamepad, telemetry, feedback);
     }
@@ -27,8 +29,10 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         this.fR = new Motor(hardwareMap, "FR");
         this.bR = new Motor(hardwareMap, "BR");
 
-        this.fR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.bR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        if (revertMotor) {
+            this.fR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+            this.bR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
 
         fL.encoder.reset();
         fR.encoder.reset();

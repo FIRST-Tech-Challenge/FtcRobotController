@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public abstract class BaseMovement {
 
     static final String LOG_TAG = BaseMovement.class.getSimpleName();
-    private static final double NORMAL_SPEED = 0.6d;
+    protected static final double NORMAL_SPEED = 0.6d;
     private static final double SLOW_SPEED = 0.3d;
     private static final double ERROR_CORRECTION_SPEED = 0.2d;
 
@@ -87,7 +87,7 @@ public abstract class BaseMovement {
 
         Pose2d newPose = poseSupplier.get();
 //        Log.i(LOG_TAG, "new pose = " + newPose);
-        Log.i(LOG_TAG, String.format("new pose: x=%f, y=%f, heading=%f", newPose.getX(), newPose.getY(), newPose.getHeading()));
+//        Log.i(LOG_TAG, String.format("new pose: x=%f, y=%f, heading=%f", newPose.getX(), newPose.getY(), newPose.getHeading()));
         double newReading = getCurrentDrivingReading(newPose);
         double prevReading = getCurrentDrivingReading(previousPose);
 
@@ -102,11 +102,11 @@ public abstract class BaseMovement {
             return;
         }
 
-        Log.i(LOG_TAG, String.format("newReading = %f", newReading));
+//        Log.i(LOG_TAG, String.format("newReading = %f", newReading));
 
         accumulatedChanges += Math.abs(newReading - prevReading);
         previousPose = newPose;
-        Log.i(LOG_TAG, String.format("%s accumulated/target = %f/%f, progress = %f", getClass().getSimpleName(), accumulatedChanges, Math.abs(distance), getProgress()));
+//        Log.i(LOG_TAG, String.format("%s accumulated/target = %f/%f, progress = %f", getClass().getSimpleName(), accumulatedChanges, Math.abs(distance), getProgress()));
         if (getProgress() >= 1) {
             driver.stop();
             finished = true;
@@ -119,6 +119,16 @@ public abstract class BaseMovement {
 
         updateDrivingParameters();
         doDrive();
+    }
+
+
+    public String getStatics() {
+        double xDiff = previousPose.getX() - startingPose.getX();
+        double yDiff = previousPose.getY() - startingPose.getY();
+        double rotated = previousPose.getHeading() - startingPose.getHeading();
+        return getClass().getSimpleName() + "x travel (inches) = " + Units.metersToInches(xDiff) +
+                ", y travel (inches) = " + Units.metersToInches(yDiff) +
+                ", rotation (degree) = " + Units.radiansToDegrees(rotated);
     }
 
     protected boolean isCloseToEnd() {
@@ -162,7 +172,7 @@ public abstract class BaseMovement {
 
             if (Math.abs(normalizedError) >= ERROR_TOLERANCE) {
                 double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (normalizedError >= 0 ? 1 : -1);
-                Log.i(LOG_TAG, "Rotation error too much, correction speed set to: " +  errorCorrectionSpeed);
+//                Log.i(LOG_TAG, "Rotation error too much, correction speed set to: " +  errorCorrectionSpeed);
                 return getErrorCorrectionSpeed();
             }
             return 0;
@@ -170,7 +180,7 @@ public abstract class BaseMovement {
     }
 
     protected double getMoveErrorCorrection(double error) {
-        Log.i(LOG_TAG, String.format("move error = %f", error));
+//        Log.i(LOG_TAG, String.format("move error = %f", error));
         if (usePID) {
             double correctionDistance = moveErrorCorrectionController.calculate(error);
             if (error * correctionDistance < 0) {
@@ -180,7 +190,7 @@ public abstract class BaseMovement {
         } else {
             if (Math.abs(error) > ERROR_TOLERANCE) {
                 double errorCorrectionSpeed = ERROR_CORRECTION_SPEED * (error >= 0 ? 1 : -1) * directionFactor;
-                Log.i(LOG_TAG, "move error too much, correction speed set to: " +  errorCorrectionSpeed);
+//                Log.i(LOG_TAG, "move error too much, correction speed set to: " +  errorCorrectionSpeed);
                 return errorCorrectionSpeed;
             }
             return 0;

@@ -22,4 +22,9 @@ public class ForwardMovement extends BaseMovement {
     protected double getCurrentDrivingReading(Pose2d pose) {
         return pose.getX();
     }
+
+    @Override
+    protected double getMainMovement(double difference) {
+        return NORMAL_SPEED * 1.2;
+    }
 }

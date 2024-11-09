@@ -23,12 +23,16 @@ public class SounderBotBaseRunCommand<T extends BasicDriveTrain> extends RunComm
 
     private boolean finished;
 
+    private static final boolean updateTelemetryAtEndOfRun = true;
+
     public SounderBotBaseRunCommand(@Nullable T driveTrain, @NonNull Telemetry telemetry, @NonNull Runnable toRun, Subsystem... requirements) {
         super(() -> {
             try {
                 toRun.run();
             } finally {
-                telemetry.update();
+                if (updateTelemetryAtEndOfRun) {
+                    telemetry.update();
+                }
             }
         }, addDriveTrainToRequirements(driveTrain, requirements));
         this.driveTrain = driveTrain;
