@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Claw;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.DcMotorExtensor;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Shoulder;
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.SingleMotorExtensorJustForConnerBecauseHeWantsToRebuildTheRobotOnAWhim;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 
 public class Arm {
@@ -22,7 +23,7 @@ public class Arm {
         wrist = new Wrist(baseRobot);
         baseRobot.logger.add("✓ Wrist initialized", Logger.LogType.DEBUG);
 
-        extensor = new DcMotorExtensor(baseRobot);
+        extensor = new SingleMotorExtensorJustForConnerBecauseHeWantsToRebuildTheRobotOnAWhim(baseRobot);
         baseRobot.logger.add("✓ Extensor initialized", Logger.LogType.DEBUG);
 
         shoulder = new Shoulder(baseRobot);
