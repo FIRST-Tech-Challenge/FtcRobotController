@@ -102,7 +102,8 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-
+        strafePower = -strafePower; // ! TODO strafe power is provided in the opposite space by dynamic input, fix
+                                    // this later
         double frontLeft = drivePower + strafePower + rotation;
         double frontRight = drivePower - strafePower - rotation;
         double rearLeft = drivePower - strafePower + rotation;
