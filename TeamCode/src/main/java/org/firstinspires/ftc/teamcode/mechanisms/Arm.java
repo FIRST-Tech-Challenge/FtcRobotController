@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Shoulder;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.SingleMotorExtensorJustForConnerBecauseHeWantsToRebuildTheRobotOnAWhim;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
+import org.firstinspires.ftc.teamcode.systems.Logger;
 
 public class Arm {
     public final Wrist wrist;
