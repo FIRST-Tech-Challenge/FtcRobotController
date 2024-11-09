@@ -24,11 +24,6 @@ public class Claw {
         clawServoL = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW_LEFT);
         clawServoR.setDirection(Servo.Direction.REVERSE);
         close();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     /* Set the right servo; true = open, false = close */

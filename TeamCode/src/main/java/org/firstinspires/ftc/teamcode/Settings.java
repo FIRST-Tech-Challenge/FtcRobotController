@@ -26,7 +26,7 @@ public class Settings {
     // Hardware settings
     public static class Hardware {
         /** Encoder counts per full motor revolution */
-        public static final double COUNTS_PER_REVOLUTION = 100; // TODO tune
+        public static final double COUNTS_PER_REVOLUTION = 10323.84; // ish? may need to recalculate later
         /** Diameter of the odometry wheels in inches */
         public static final double WHEEL_DIAMETER_INCHES = 3.5;
 
