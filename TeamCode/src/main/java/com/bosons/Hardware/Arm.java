@@ -5,8 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
@@ -17,6 +19,10 @@ public class Arm {
     //arm extension motors
     public Motor rightExtendoMotor;
     public Motor leftExtendoMotor;
+
+    //Wrist/intake servos
+    private Servo wristServo;
+    private CRServo intakeServo;
 
     //Rotation motor and pid//
     public Motor rightRotationMotor;
@@ -35,6 +41,7 @@ public class Arm {
     //Constants
     private final double ticks_in_degree = (8192/360.0);
     private final double ticks_per_cm = (2190/48.96);
+    public final double maxExtensionCM = 84.6;
 
     /*
     Motion Profiling bullshit
@@ -75,6 +82,17 @@ public class Arm {
         controller = new PIDController(p,i,d);
         opm.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        wristServo = op.hardwareMap.get(Servo.class,"wrist");
+        intakeServo = op.hardwareMap.get(CRServo.class,"intake");
+        intakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+
+    }
+
+    public void setWristServo(double pos){
+        wristServo.setPosition(pos);
+    }
+    public void setIntakePower(double power){
+        intakeServo.setPower(power);
     }
 
     public void updatePidLoop(int target){
@@ -112,18 +130,38 @@ public class Arm {
         timeSlope = (thetaTicks-thetaTicksInitial)/(seconds*1000);//ticks per milisecond
         smoothingTimer.reset();
     }
+
+    public void setPositionCartesianSmooth(double x,double y, double seconds){
+        double theta = Math.atan(x/y);
+        double r = Math.sqrt((x*x)+(y*y));
+        if(r>maxExtensionCM){
+            x = maxExtensionCM*Math.cos(theta);
+            y = maxExtensionCM*Math.sin(theta);
+            r = Math.sqrt((x*x)+(y*y));
+        }
+        setPositionPolarSmooth(r,theta,seconds);
+    }
     public void updatePositionSmooth(){
-        //if(Math.abs(thetaTicks-rotTarget)>acceptableRotationError) {
+        if(Math.abs(thetaTicks-rotTarget)>acceptableRotationError) {
             // initial position +/- ticksPerMilisecond*miliseconds
             rotTarget = (int) (thetaTicksInitial + timeSlope * smoothingTimer.milliseconds());
             if(rotTarget>2700){rotTarget=2700;}
             if(rotTarget<0){rotTarget=0;}
             opm.telemetry.addData("smoothing: Target = ",rotTarget);
-        //}
-        //else{
-        //    rotTarget = thetaTicks;
-        //}
+        }
+        else{
+            rotTarget = thetaTicks;
+        }
         updatePosition();
+    }
+
+    public boolean isSmoothing(){
+        opm.telemetry.addData("rotTarget = ",rotTarget);
+        opm.telemetry.addData("thetaTicks",thetaTicks);
+        if(rotTarget == thetaTicks){
+            return false;
+        }
+        else return true;
     }
 
     public void setPositionPolar(double r,double theta){

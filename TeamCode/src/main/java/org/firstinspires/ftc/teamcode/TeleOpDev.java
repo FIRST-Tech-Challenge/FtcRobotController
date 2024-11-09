@@ -8,6 +8,7 @@ import com.bosons.Hardware.Controller;
 import com.bosons.Hardware.DriveTrain;
 import com.bosons.Hardware.Arm;
 import com.bosons.Hardware.Motor;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -56,6 +57,8 @@ public class TeleOpDev extends OpMode{
     @Override
     public void init_loop () {
         //arm.setPositionPolar(radius_arm,theta_arm);
+        //driverA.updateAll();
+        //telemetry.addData("button Y",driverA.toggleButtonState(Controller.Button.y));
     }
 
     /*
@@ -63,7 +66,9 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void start () {
-
+        //driverA.updateAll();
+        arm.setWristServo(0);
+        arm.setPositionPolar(0,-28);
     }
 
     /*
@@ -79,14 +84,14 @@ public class TeleOpDev extends OpMode{
         //if (driverA.onButtonPress(Controller.Button.dPadDown)) {
         //    arm.extendToTarget(0,0.5);
         //}
-        if(driverA.toggleButtonState(Controller.Button.y)){
-            driveTrain.setDrivePowerCoefficient(0.5);
-            driveTrain.setTurnPowerCoefficient(0.5);
-        }
-        else{
-            driveTrain.setDrivePowerCoefficient(1);
-            driveTrain.setTurnPowerCoefficient(1);
-        }
+        //if(driverA.toggleButtonState(Controller.Button.y)){
+        //    driveTrain.setDrivePowerCoefficient(0.5);
+        //    driveTrain.setTurnPowerCoefficient(0.5);
+        //}
+        //else{
+        //    driveTrain.setDrivePowerCoefficient(1);
+        //    driveTrain.setTurnPowerCoefficient(1);
+        //}
 
         //setting up controller input to drivetrain output ratios//
         double x = -driverA.getAnalogValue(Controller.Joystick.LeftX) * 1.5;
@@ -101,24 +106,51 @@ public class TeleOpDev extends OpMode{
         //arm.updatePidLoop();
         //arm.setPositionPolar(radius_arm,theta_arm);
 
-        if(driverA.toggleButtonState(Controller.Button.y)){
-            //if(driverA.onButtonPress(Controller.Button.y)){
-                arm.setPositionPolarSmooth(84.6,90,5);
-            //}
-            armTimer.reset();
-            arm.updatePositionSmooth();
+
+        //Intake Controls
+        if(driverA.onButtonHold(Controller.Button.a)){
+            arm.setIntakePower(1);
+        }
+        else if(driverA.onButtonHold(Controller.Button.b)){
+            arm.setIntakePower(-1);
         }
         else{
-            if(armTimer.seconds()<2){
-                arm.setPositionPolar(0,90-(armTimer.milliseconds()/2000)*100);//smooth transition over three seconds
-            }
-            else {
-                arm.setPositionPolar(0,-28);//let the arm drop to home after delay
-            }
-            arm.updatePosition();
+            arm.setIntakePower(0);
         }
 
-        telemetry.addData("button Y",driverA.toggleButtonState(Controller.Button.y));
+        //Arm Controls
+        if(driverA.toggleButtonState(Controller.Button.y)){
+            if(!arm.isSmoothing()){
+                arm.setPositionPolarSmooth(84.6,90,2);
+            }
+            //armTimer.reset();
+            arm.updatePositionSmooth();
+            driveTrain.setDrivePowerCoefficient(0.5);
+            driveTrain.setTurnPowerCoefficient(0.5);
+        }
+        else if(driverA.toggleButtonState(Controller.Button.dPadRight)){
+            if(driverA.onButtonHold(Controller.Button.a)){
+                if(!arm.isSmoothing()){
+                    arm.setPositionPolarSmooth(65,-10,1);
+                }
+            }
+            else{
+                if(!arm.isSmoothing()){
+                    arm.setPositionPolarSmooth(65,0,1.5);
+                }
+            }
+        }
+        else{
+            //arm.setPositionPolar(0,90-(armTimer.milliseconds()/2000)*100);//smooth transition over two seconds
+            if(!arm.isSmoothing()){
+                arm.setPositionPolarSmooth(0,-28,3);
+            }
+            arm.updatePositionSmooth();
+            driveTrain.setDrivePowerCoefficient(1);
+            driveTrain.setTurnPowerCoefficient(1);
+        }
+
+        telemetry.addData("Smoothing? ",arm.isSmoothing());
         //YOU NEED THESE FOR CONTROLLER AND SAFTEY CHECKS
         driverA.updateAll();
     }
