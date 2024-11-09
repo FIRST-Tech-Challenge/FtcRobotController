@@ -3,15 +3,19 @@ package org.firstinspires.ftc.teamcode.mechanisms.submechanisms;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
 
 public class DcMotorExtensor implements Extensor {
     private final DcMotor leftMotor;
     private final DcMotor rightMotor;
+    private final BaseRobot baseRobot;
     private Position currentPosition;
 
     public DcMotorExtensor(@NonNull BaseRobot baseRobot) {
+        this.baseRobot = baseRobot;
         this.leftMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_LEFT);
         this.rightMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_RIGHT);
 
@@ -24,6 +28,8 @@ public class DcMotorExtensor implements Extensor {
         // Set to RUN_TO_POSITION mode for position control
         leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.currentPosition = Position.HOVER;
     }
 
     // Sets target position
@@ -33,16 +39,17 @@ public class DcMotorExtensor implements Extensor {
         rightMotor.setTargetPosition(targetPosition);
         leftMotor.setPower(1.0);
         rightMotor.setPower(1.0);
+        baseRobot.logger.update("dcmotorextensor position", String.valueOf(targetPosition));
     }
 
     // Converts position name to double
     @Override
     public void setPosition(@NonNull Position position) {
         this.currentPosition = position;
+        this.
         setPosition(position.getValue()); // Use the value associated with the enum
     }
 
-    @Override
     public void extend() {
         // Move to the next position in the enum, looping back to the start if needed
         Position[] positions = Position.values();

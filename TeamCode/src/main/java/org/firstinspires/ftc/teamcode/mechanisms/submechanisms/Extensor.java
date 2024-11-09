@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechanisms.submechanisms;
 
+import org.firstinspires.ftc.teamcode.Settings;
+
 public interface Extensor {
 
     // Enum for named positions

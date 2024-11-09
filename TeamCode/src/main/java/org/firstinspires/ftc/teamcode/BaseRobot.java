@@ -172,7 +172,6 @@ public class BaseRobot {
             if (actions.clawLeft > 0.2) {
                 arm.claw.setLeftServo(!arm.claw.openedL);
             }
-
             if (actions.wristUp) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             } else if (actions.wristDown) {
