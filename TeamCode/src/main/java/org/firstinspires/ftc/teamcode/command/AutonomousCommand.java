@@ -48,6 +48,7 @@ public class AutonomousCommand extends CommandBase {
         }
         finally {
             pivot.MoveToStartInAuto();
+            slider.CollapseMinInAuto();
         }
     }
 

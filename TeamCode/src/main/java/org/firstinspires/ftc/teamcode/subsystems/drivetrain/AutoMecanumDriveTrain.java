@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Tunables;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
+import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import org.firstinspires.ftc.teamcode.util.Units;
 
 /**
@@ -30,8 +31,12 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
     long waitTimeNano = 300 * 1000;
 
-    public AutoMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
+    LimeLight limeLight;
+
+    public AutoMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
         super(hardwareMap, gamepad, telemetry, feedback);
+
+        this.limeLight = limeLight;
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         odo.resetPosAndIMU();
@@ -85,7 +90,7 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
     }
 
     public void DriveToTarget(double targetX, double targetY) {
-        double minPower = 0.25;
+        double minPower = 0.2;
         double distanceTolerance = 5;
 
         telemetry.addLine("Driving");
@@ -205,7 +210,7 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
                 }
             }
 
-            driveMotorsPower = -.6 * error;
+            driveMotorsPower = -.4 * error;
 
             if(Math.abs(driveMotorsPower) < minPower) {
                 driveMotorsPower = minPower * Math.signum(driveMotorsPower);
@@ -232,6 +237,152 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         bL.motor.setPower(0);
         fR.motor.setPower(0);
         bR.motor.setPower(0);
+    }
+
+    public void AlignTx() {
+        LimeLight.LimelightResult result = limeLight.GetResult();
+        double min = 0.2;
+
+
+        if(result != null) {
+            double tx = result.getTx();
+            telemetry.addLine("AlignTx");
+
+            telemetry.addData("tx", tx);
+
+            while(Math.abs(tx) > 1.0) {
+
+                double power = tx * -0.01;
+                if (Math.abs(power) < min) {
+                    power = min * Math.signum(power);
+                }
+                telemetry.addData("turn power", power);
+
+                drive.driveRobotCentric(0, power, 0);
+
+                result = limeLight.GetResult();
+
+                if (result == null) {
+                    break;
+                }
+
+                tx = result.getTx();
+
+                telemetry.update();
+            }
+        }
+        else {
+            telemetry.addLine("No sample found");
+        }
+
+        telemetry.update();
+
+        drive.stop();
+
+    }
+
+    public void AlignTy() {
+        LimeLight.LimelightResult result = limeLight.GetResult();
+        double min = 0.2;
+
+        if(result != null) {
+            double ty = result.getTy() - 3.0;
+
+            while(Math.abs(ty) > 1) {
+
+                double power = ty * -0.01;
+                if(Math.abs(power) < min) {
+                    power = min * Math.signum(power);
+                }
+                drive.driveRobotCentric(0, 0, -1 * power);
+
+                result = limeLight.GetResult();
+
+                if(result == null) {
+                    telemetry.addLine("cannot find sample");
+                    break;
+                }
+
+                ty = result.getTy();
+            }
+
+            drive.stop();
+        }
+    }
+
+    public double GetPosX() {
+        odo.update();
+
+        return odo.getPosX();
+    }
+
+    public double GetPosY() {
+        odo.update();
+
+        return odo.getPosY();
+    }
+
+    public void Forward(double distanceInMm) {
+        double min = 0.2;
+
+        odo.update();
+        double x1 = odo.getPosX();
+        double y1 = odo.getPosY();
+
+        while(true) {
+
+                odo.update();
+                double x2 = odo.getPosX();
+                double y2 = odo.getPosY();
+
+                double currentDistance = Math.sqrt((x2 - x1) * (x2 - x1)  + (y2 - y1) * (y2 - y1) );
+
+                double error = distanceInMm - currentDistance;
+
+                if(Math.abs(error) < 5) {
+                    break;
+                }
+
+
+                double power = error * -0.02;
+                if(Math.abs(power) < min) {
+                    power = min * Math.signum(power);
+                }
+                drive.driveRobotCentric(0, 0, -1 * power);
+         }
+
+            drive.stop();
+    }
+
+
+    public void TurnRelative(double turnInDegrees) {
+        double min = 0.2;
+
+        double turnInRadians = Math.toRadians(turnInDegrees);
+
+        odo.update();
+        double start = odo.getHeading();
+
+        while(true) {
+
+            odo.update();
+            double current = odo.getHeading();
+
+            double error = turnInRadians - current;
+
+            if(Math.abs(error) < Math.toRadians(1)) {
+                break;
+            }
+
+            double power = error * -0.02;
+            if(Math.abs(power) < min) {
+                power = min * Math.signum(power);
+            }
+
+            drive.driveRobotCentric(0, -power, 0);
+        }
+
+        drive.stop();
     }
 
 }

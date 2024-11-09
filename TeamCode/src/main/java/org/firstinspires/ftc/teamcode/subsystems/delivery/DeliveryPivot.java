@@ -27,7 +27,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private int IntakePositionFromStart = -1500;
 
-    private int SampleIntakePositionFromStart = -1725;
+    private int SampleIntakePositionFromStart = -1800;
 
     private int StartPositionFromStart = 0;
 

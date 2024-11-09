@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrai
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
+import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 /**
  * This is old mainTeleop
@@ -33,7 +34,8 @@ public class OdometryTest extends OpModeTemplate {
         DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, null);
         DeliverySlider slider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, null);
         RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
-        AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, null);
+        LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
+        AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, null, limeLight);
 
         rollingIntake.SetElbowInIntakePosition();
 

@@ -34,7 +34,6 @@ public class MainTeleop extends OpModeTemplate {
         RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
         LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
 
-
         driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, limeLight);
 
         switchToMode(PowerMode.REGULAR);
@@ -131,6 +130,16 @@ public class MainTeleop extends OpModeTemplate {
     @Override
     public void run() {
         super.run();
+    }
+
+    boolean fastMode = true;
+    private void ToggleSpeed() {
+
+        if(fastMode) {
+            switchToMode(PowerMode.NITRO);
+        } else {
+            switchToMode(PowerMode.SLOW);
+        }
     }
 
     private void switchToNitroMode() {

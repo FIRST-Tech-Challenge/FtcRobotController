@@ -32,7 +32,7 @@ public abstract class AutoOpModeBase extends OpModeTemplate {
         slider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, null);
         rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
         limeLight = new LimeLight(hardwareMap, telemetry);
-        driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, null);
+        driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, null, limeLight);
 
         register(driveTrain, pivot, slider, rollingIntake, feedback, limeLight);
 

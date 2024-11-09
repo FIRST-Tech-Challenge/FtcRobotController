@@ -58,6 +58,10 @@ public class TeleFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
             drive.stop();
         }
+        else {
+            telemetry.addLine("No sample found");
+            telemetry.update();
+        }
     }
 
     public void AlignTy() {

@@ -46,8 +46,6 @@ public abstract class BasicDriveTrain extends SubsystemBase {
         this.telemetry = telemetry;
         this.feedback = feedback;
 
-        this.feedback.DriverControllerGreen();
-
 //        this.fL.encoder.reset();
     }
 

@@ -16,36 +16,52 @@ public class Red_F3 extends AutoOpModeBase {
     public void executeOpMode() {
 
         rollingIntake.SetElbowInIntakePosition();
-        driveTrain.DriveToTarget(300, 400);
+        DeliverSample();
+
+        driveTrain.DriveToTarget(400, 300);
+        Wait(300);
+        driveTrain.TurnAngle(0);
+
+        driveTrain.AlignTx();
+        driveTrain.AlignTy();
+
+        driveTrain.TurnRelative(5);
+        driveTrain.Forward(120);
+
+        pivot.MoveToIntakeInAuto();
+
+        rollingIntake.IntakeInAuto();
+        Wait(300);
+
+        pivot.MoveToIntakeSampleInAuto();
+        Wait(500);
+
+        rollingIntake.HoldInAuto();
+
+        pivot.MoveToDeliveryInAuto();
+
+        DeliverSample();
+
+        driveTrain.DriveToTarget(1500, 0);
+
+    }
+
+    private void DeliverSample() {
+        driveTrain.DriveToTarget(270, 400);
         driveTrain.TurnAngle(125);
 
         pivot.MoveToDeliveryInAuto();
         slider.ExtendMaxInAuto();
 
-        driveTrain.DriveToTarget(200, 400);
+        driveTrain.DriveToTarget(80, 400);
 
         rollingIntake.OuttakeInAuto();
-        Wait(500);
+        Wait(00);
         rollingIntake.HoldInAuto();
 
-        Wait(10000);
-
-//        rollingIntake.SetElbowInIntakePosition();
-//
-//        rollingIntake.IntakeInAuto();
-//
-//        pivot.MoveToIntakeInAuto();
-//
-//        pivot.MoveToIntakeSampleInAuto();
-//        Wait(300);
-//        rollingIntake.HoldInAuto();
-//
-//        pivot.MoveToDeliveryInAuto();
-//
-//        rollingIntake.OuttakeInAuto();
-//        Wait(500);
-//        rollingIntake.HoldInAuto();
-
+        driveTrain.DriveToTarget(300, 400);
+        slider.CollapseMinInAuto();
+        pivot.MoveToStartInAuto();
     }
 
 }
