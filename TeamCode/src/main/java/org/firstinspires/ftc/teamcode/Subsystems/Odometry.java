@@ -75,9 +75,9 @@ public class Odometry extends SubsystemBase {
 
         double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
-        double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
+        double fieldForwardChange = ForwardChange * Math.cos(-IMUHeading) - LateralChange * Math.sin(-IMUHeading);
 
-        double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
+        double fieldLateralChange = ForwardChange * Math.sin(-IMUHeading) + LateralChange * Math.cos(-IMUHeading);
 
         fieldX += fieldForwardChange;// += means is equal to and add fieldForwardChange to itself
 

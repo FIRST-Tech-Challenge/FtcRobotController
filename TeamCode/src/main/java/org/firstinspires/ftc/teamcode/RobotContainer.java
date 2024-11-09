@@ -164,6 +164,9 @@ public class RobotContainer {
         // whenReleased - runs once when button is released
         // togglewhenPressed - turns command on and off at each button press
 
+        CommandScheduler.getInstance().schedule(new ArmStowLow());
+        odometry.setCurrentPos(new Pose2d(1.1,1.7,new Rotation2d(-90*Math.PI/180.0)));
+
     }
 
 

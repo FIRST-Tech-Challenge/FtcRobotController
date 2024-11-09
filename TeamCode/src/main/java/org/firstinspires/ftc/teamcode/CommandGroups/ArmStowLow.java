@@ -19,37 +19,19 @@ public class ArmStowLow extends SequentialCommandGroup {
 
         addCommands (
 
-
-
-                // folds the elbow in 0
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(0)),
-
-                //wait for 5 seconds
-                new Pause(2),
-
                 // lifts the shoulder up 55 degrees
                 new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(60)),
 
-                //wait for 5 seconds
-                new Pause(2),
-
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(135)),
                 // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0))
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
 
+                //wait for 5 seconds
+                 new Pause(2),
 
+                // folds the elbow in 0
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(0))
 
-
-
-
-
-
-
-
-
-
-        // new command1
-        // new command2
-        // new command3
         );
     }
 
