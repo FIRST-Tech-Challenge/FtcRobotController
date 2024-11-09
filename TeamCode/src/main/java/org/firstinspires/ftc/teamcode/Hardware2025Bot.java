@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
-import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
 
 /*
  * Hardware class for goBilda robot (12"x15" chassis with 96mm/3.8" goBilda mecanum wheels)
@@ -102,9 +101,12 @@ public class Hardware2025Bot
 
     public int          TILT_ANGLE_HW_MAX   =  3675;  // encoder at maximum rotation UP/BACK (horizontal = -200)
     public int          TILT_ANGLE_BASKET   =  3675;  // encoder at rotation back to the basket for scoring
-    public int          TILT_ANGLE_HANG1    =  300;   // encoder when preparing for level 2 ascent
-    public int          TILT_ANGLE_HANG2    =  400;   // encoder at the end of level 2 ascent
-    public int          TILT_ANGLE_SPECIMEN =  500;   // encoder when tilted up for autonomous specimen scoring
+    public int          TILT_ANGLE_HANG1    =  1400;  // encoder when preparing for level 2 ascent
+    public int          TILT_ANGLE_HANG2    =   400;   // encoder at the end of level 2 ascent
+    public int          TILT_ANGLE_ZERO     =     0;   // encoder for parking fullyh reset in auto
+    public int          TILT_ANGLE_DRIVE    =   200;   // encoder for parking in auto or driving around
+    public int          TILT_ANGLE_AUTO1    =  2005;  // tilted up for autonomous specimen scoring (above bar)
+    public int          TILT_ANGLE_AUTO2    =  1780;  // tilted up for autonomous specimen scoring (clipped)
     public int          TILT_ANGLE_HW_MIN   = -2000;  // encoder at maximum rotation DOWN/FWD
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
@@ -128,10 +130,11 @@ public class Hardware2025Bot
     // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
     public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
     public int          VIPER_EXTEND_AUTO  = 482;    // extend for collecting during auto
-    public int          VIPER_EXTEND_HANG1 = 900;    // extend to this to prepare for level 2 ascent
-    public int          VIPER_EXTEND_HANG2 = 800;    // retract to this extension during level 2 ascent
+    public int          VIPER_EXTEND_HANG1 = 2050;   // extend to this to prepare for level 2 ascent
+    public int          VIPER_EXTEND_HANG2 = 500;    // retract to this extension during level 2 ascent
     public int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
-    public int          VIPER_EXTEND_HOOK  = 1038;   // raised to where the specimen hook is above the high bar
+    public int          VIPER_EXTEND_AUTO1 = 1400;   // raised to where the specimen hook is above the high bar
+    public int          VIPER_EXTEND_AUTO2 =  980;   // retract to clip the specimen to the bar
     public int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
     public int          VIPER_EXTEND_FULL1 = 2250;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
     public int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
@@ -155,8 +158,9 @@ public class Hardware2025Bot
     final public static double ELBOW_SERVO_GRAB_ANGLE = 231.0;
     final public static double ELBOW_SERVO_DROP = 0.330;  // For scoring in the basket
     final public static double ELBOW_SERVO_DROP_ANGLE = 234.0;
-    final public static double ELBOW_SERVO_BAR  = 0.650;  // For scoring a specimen on the sumersible bar
-    final public static double ELBOW_SERVO_BAR_ANGLE = 133.0;
+    final public static double ELBOW_SERVO_BAR1 = 0.525;  // For scoring a specimen on the submersible bar (partial rotate)
+    final public static double ELBOW_SERVO_BAR2 = 0.700;  // For scoring a specimen on the sumersible bar (fully rotated)
+    final public static double ELBOW_SERVO_BAR_ANGLE = 116.0;
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
@@ -170,8 +174,9 @@ public class Hardware2025Bot
     final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;
     final public static double WRIST_SERVO_DROP = 0.350;
     final public static double WRIST_SERVO_DROP_ANGLE = 228.0;
-    final public static double WRIST_SERVO_BAR = 0.600;
-    final public static double WRIST_SERVO_BAR_ANGLE = 147.0;
+    final public static double WRIST_SERVO_BAR1 = 0.400;
+    final public static double WRIST_SERVO_BAR2 = 0.640;
+    final public static double WRIST_SERVO_BAR_ANGLE = 134.0;
 
     public CRServo geckoServo = null;
 

@@ -1,6 +1,7 @@
 /* FTC Team 7572 - Version 1.0 (11/01/2024) */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * TeleOp Servo Test Program
  */
 @TeleOp(name="Teleop-ServoTest", group="7592")
-//@Disabled
+@Disabled
 public class TeleopServoTest extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  //
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  //

@@ -27,9 +27,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
-@Autonomous(name="Autonomous Left-Red", group="7592", preselectTeleOp = "Teleop-Red")
+@Autonomous(name="Autonomous Right-Red", group="7592", preselectTeleOp = "Teleop-Red")
 //@Disabled
-public class AutonomousLeftRed extends AutonomousBase {
+public class AutonomousRightRed extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -266,4 +266,4 @@ public class AutonomousLeftRed extends AutonomousBase {
         gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
     } // parkInObservation
 
-} /* AutonomousLeftRed */
+} /* AutonomousRightRed */

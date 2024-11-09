@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 import android.os.Environment;
@@ -304,7 +305,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*--------------------------------------------------------------------------------------------*/
     // Resets odometry starting position and angle to zero accumulated encoder counts
     public void resetGlobalCoordinatePosition(){
-        robot.odom.resetPosAndIMU();
+//      robot.odom.resetPosAndIMU();
         robotGlobalXCoordinatePosition = 0.0;
         robotGlobalYCoordinatePosition = 0.0;
         robotOrientationRadians        = 0.0;
@@ -315,9 +316,9 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.readBulkData();
         robot.odom.update();
         Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
-        robotGlobalXCoordinatePosition = pos.getY(DistanceUnit.INCH);   // opposite x/y from goBilda pinpoint
-        robotGlobalYCoordinatePosition = pos.getX(DistanceUnit.INCH);
-        robotOrientationRadians       = -pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward)
+        robotGlobalXCoordinatePosition = pos.getX(DistanceUnit.INCH);   // opposite x/y from goBilda pinpoint
+        robotGlobalYCoordinatePosition = pos.getY(DistanceUnit.INCH);
+        robotOrientationRadians        = -pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward)
     } // performEveryLoop
 
     /*---------------------------------------------------------------------------------*/
@@ -367,23 +368,21 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // autoViperMotorMoveToTarget
 
     boolean autoViperMotorMoving() {
-        boolean viperDone = false;
+        boolean viperMoving = true;
         // Did the movement finish?
         if( !robot.viperMotor.isBusy() ) {
-           viperDone = true;
-           robot.viperMotor.setMode( DcMotor.RunMode.RUN_USING_ENCODER );
+            viperMoving = false;
            robot.viperMotor.setPower( 0.001 );   // hold
         }
         // Did we timeout?
-        else if( autoViperMotorTimer.milliseconds() > 5000 ) {
-           viperDone = true;
-           robot.viperMotor.setMode( DcMotor.RunMode.RUN_USING_ENCODER );
+        else if( autoViperMotorTimer.milliseconds() > 3000 ) {
+            viperMoving = false;
            robot.viperMotor.setPower( 0.001 );   // hold
         }
         else {
             // wait a little longer
         }
-        return viperDone;
+        return viperMoving;
     } // autoViperMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
@@ -399,21 +398,21 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // autoTiltMotorMoveToTarget
 
     boolean autoTiltMotorMoving() {
-        boolean tiltDone = false;
+        boolean tiltMoving = true;
         // Did the movement finish?
         if( !robot.wormTiltMotor.isBusy() ) {
-            tiltDone = true;
+            tiltMoving = false;
             robot.wormTiltMotor.setPower( 0.0 );
         }
         // Did we timeout?
-        else if( autoTiltMotorTimer.milliseconds() > 5000 ) {
-            tiltDone = true;
+        else if( autoTiltMotorTimer.milliseconds() > 3000 ) {
+            tiltMoving = false;
             robot.wormTiltMotor.setPower( 0.0 );
         }
         else {
             // wait a little longer
         }
-        return tiltDone;
+        return tiltMoving;
     } // autoTiltMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
@@ -429,21 +428,21 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // autoPanMotorMoveToTarget
 
     boolean autoPanMotorMoving() {
-        boolean panDone = false;
+        boolean panMoving = true;
         // Did the movement finish?
         if( !robot.wormPanMotor.isBusy() ) {
-            panDone = true;
+            panMoving = false;
             robot.wormPanMotor.setPower( 0.0 );
         }
         // Did we timeout?
         else if( autoPanMotorTimer.milliseconds() > 5000 ) {
-            panDone = true;
+            panMoving = false;
             robot.wormPanMotor.setPower( 0.0 );
         }
         else {
             // wait a little longer
         }
-        return panDone;
+        return panMoving;
     } // autoPanMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
@@ -944,6 +943,9 @@ public abstract class AutonomousBase extends LinearOpMode {
                 speedMax, driveType)
                 && opModeIsActive()) {
             performEveryLoop();
+            telemetry.addData("Drive", "x=%.1f, y=%.1f, %.1f deg",
+                    robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, toDegrees(robotOrientationRadians) );
+            telemetry.update();
         }
 
         // Fix the angle if we didn't reach angle in the drive
@@ -1044,9 +1046,8 @@ public abstract class AutonomousBase extends LinearOpMode {
                                 double speedMax, double errorMultiplier, double errorAllowed,
                                 int driveType) {
         boolean reachedDestination = false;
-        // Not sure why, but the x and y are backwards
-        double xWorld = robotGlobalYCoordinatePosition;  // inches (backward! see notes)
-        double yWorld = robotGlobalXCoordinatePosition;  // inches
+        double xWorld = robotGlobalXCoordinatePosition;  // inches
+        double yWorld = robotGlobalYCoordinatePosition;  // inches
         double xMovement, yMovement, turnMovement;
         // Not sure why, but the x and y are backwards
         double deltaX = yTarget - xWorld;
@@ -1109,7 +1110,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Convert from cm to inches
         double errorMultiplier = 0.033;
         double speedMin = MIN_DRIVE_MAGNITUDE;
-        double allowedError = (driveType == DRIVE_THRU) ? 2.75 : 0.5;
+        double allowedError = (driveType == DRIVE_THRU) ? 2.50 : 0.5;
 
         return (driveToXY(yTarget, xTarget, angleTarget, speedMin, speedMax, errorMultiplier,
                 allowedError, driveType));

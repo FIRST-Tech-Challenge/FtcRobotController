@@ -8,10 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.util.Locale;
-import android.util.Size;
 
 /**
  * TeleOp Full Control.
@@ -78,7 +76,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
     boolean ascent2started       = false; // Do we need to monitor currents and set min holding power?
-    boolean enableOdometry       = true;  // Process/report odometry updates?
+    boolean enableOdometry       = false; // Process/report odometry updates?
 
     int geckoWheelState = 0;
 	
@@ -135,7 +133,7 @@ public abstract class Teleop extends LinearOpMode {
                 robot.odom.update();
                 Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
                 String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}",
-                      pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), -pos.getHeading(AngleUnit.DEGREES));
+                      pos.getY(DistanceUnit.INCH), pos.getX(DistanceUnit.INCH), -pos.getHeading(AngleUnit.DEGREES));
                 telemetry.addData("Position", posStr);
                 Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
                 String velStr = String.format(Locale.US,"{X,Y: %.1f, %.1f in/sec, HVel: %.2f deg/sec}",
@@ -197,7 +195,7 @@ public abstract class Teleop extends LinearOpMode {
             processTiltControls();
             ProcessViperLiftControls();
             processCollectorControls();
-            processLevel2Ascent();
+//          processLevel2Ascent();
             performEveryLoopTeleop();
 
             // Compute current cycle time
@@ -329,7 +327,7 @@ public abstract class Teleop extends LinearOpMode {
         }
         //========= POSITIVE JOYSTICK INPUTS =========
         else if( valueIn > 0.0 ) {
-            if( valueIn < 0.33 ) {                      // NOTE: approx 0.06 required to **initiate** rotation
+            if( valueIn < 0.33 ) {                      // NOTE: approx 0.06 requfired to **initiate** rotation
                 valueOut = (0.25 * valueIn) + 0.0650;   // 0.02=0.070  0.33=0.1475
             }
             else if( valueIn < 0.60 ) {
@@ -635,8 +633,10 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Retract lift to the collection position
-            robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
-            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            // TO DO: If raised to the basket, do this auto before lowering
+            // (don't want to do it if we use this backing out of sumbersimble
+            // robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
+            // robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
             robot.startViperSlideExtension( robot.VIPER_EXTEND_GRAB );
         }
         //===================================================================
@@ -674,7 +674,7 @@ public abstract class Teleop extends LinearOpMode {
     void processCollectorControls() {
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         // - rotates the wrist/elbow to the floor collection orientation
-        // TODO: check tilt motor for safe height above floor for wrist rotation!
+        // TO DO: check tilt motor for safe height above floor for wrist rotation!
         if( gamepad2_circle_now && !gamepad2_circle_last)
         {
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
@@ -682,7 +682,7 @@ public abstract class Teleop extends LinearOpMode {
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
         // - rotates the wrist/elbow to the horizontal transport position
-        // TODO: check tilt motor for safe height above floor for wrist rotation!
+        // TO DO: check tilt motor for safe height above floor for wrist rotation!
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_SAFE);
@@ -724,8 +724,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Position for scoring a specimen on the submersible bar
-            robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR);
-            robot.wristServo.setPosition(robot.WRIST_SERVO_BAR);
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
         }
 
     }  // processCollectorControls
