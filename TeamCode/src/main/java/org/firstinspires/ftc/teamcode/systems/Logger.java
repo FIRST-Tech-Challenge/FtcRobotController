@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
@@ -39,6 +41,10 @@ public class Logger {
 
     private final ScheduledFuture<?> scheduledTask;
 
+    FtcDashboard dashboard;
+    Telemetry dashboardTelemetry;
+
+
     /**
      * Creates a new Logger instance
      * 
@@ -51,6 +57,9 @@ public class Logger {
         permanentQueue = new LinkedList<>();
         debugQueue = new LinkedList<>();
         liveQueue = new LinkedList<>();
+
+        dashboard = FtcDashboard.getInstance();
+        dashboardTelemetry = dashboard.getTelemetry();
 
         // Initialize with permanent section
         telemetry.log().add("-- Permanent --");
@@ -169,6 +178,7 @@ public class Logger {
      */
     public void update(String caption, String data) {
         updateableData.put(caption, data);
+        dashboardTelemetry.update();
     }
 
     public enum LogType {

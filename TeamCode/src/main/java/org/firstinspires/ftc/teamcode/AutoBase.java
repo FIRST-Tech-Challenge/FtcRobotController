@@ -91,8 +91,6 @@ public class AutoBase extends LinearOpMode {
 
         // Create remaining components after menu selection
         MainAuto auto = new MainAuto(baseRobot, color);
-        ShutdownManager shutdownManager = new ShutdownManager(this, baseRobot, auto);
-        shutdownManager.scheduleShutdownCheck();
 
         // Add ready status
         telemetry.addData("Status", "Ready to start!");

@@ -1,29 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.lang.reflect.Field;
+import com.acmerobotics.dashboard.config.Config;
 
+@Config
 /** @noinspection unused */
 public class Settings {
     /**
      * Time in milliseconds needed to ensure safe parking -
      * if there is more time than this, the robot will try to score more points.
      */
-    public static final double ms_needed_to_park = 10000;
+    public static double ms_needed_to_park = 10000;
 
     // Movement settings
+    @Config
     public static class Movement {
         /**
          * Multiplier applied to strafe movements to compensate for mechanical
          * differences
          */
-        public static final double strafe_power_coefficient = 1.2;
+        public static double strafe_power_coefficient = 1.2;
         /** Standard FTC field tile length in feet */
         public static final double tileLengthFeet = 2;
         /** Default speed for autonomous movements */
-        public static final double default_autonomous_speed = 0.38;
+        public static double default_autonomous_speed = 0.38;
     }
 
     // Hardware settings
+    @Config
     public static class Hardware {
         /** Encoder counts per full motor revolution */
         public static final double COUNTS_PER_REVOLUTION = 10323.84; // ish? may need to recalculate later
@@ -31,23 +35,27 @@ public class Settings {
         public static final double WHEEL_DIAMETER_INCHES = 3.5;
 
         // Servo positions
+        @Config
         public static class Servo {
+            @Config
             public static class Claw {
                 /** Values for open and closed positions on the claw */
-                public static final double RIGHT_OPEN = 0.7;
-                public static final double RIGHT_CLOSED = 0.4;
-                public static final double LEFT_OPEN = 0.55;
-                public static final double LEFT_CLOSED = 0.9; // TODO TUNE
+                public static double RIGHT_OPEN = 0.7;
+                public static double RIGHT_CLOSED = 0.4;
+                public static double LEFT_OPEN = 0.55;
+                public static double LEFT_CLOSED = 0.9; // TODO TUNE
             }
 
+            @Config
             public static class Wrist {
-                public static final double HORIZONTAL_POSITION = 0.5;
-                public static final double CHAMBER_POSITION = -0.75;
-                public static final double BASKET_POSITION = -0.7;
-                public static final double VERTICAL_POSITION = -0.5;
+                public static double HORIZONTAL_POSITION = 0.5;
+                public static double CHAMBER_POSITION = -0.75;
+                public static double BASKET_POSITION = -0.7;
+                public static double VERTICAL_POSITION = -0.5;
             }
         }
 
+        @Config
         public static class IDs {
             // Drive motors
             public static final String FRONT_LEFT_MOTOR = "frontLeft";
@@ -67,39 +75,44 @@ public class Settings {
         public static final double SHOULDER_GEAR_RATIO = 2;
         public static final double SHOULDER_TICKS_PER_DEGREE = Hardware.COUNTS_PER_REVOLUTION * SHOULDER_GEAR_RATIO
                 / 360.0;
-        public static final double SHOULDER_POWER = 0.5; // Adjust based on your needs
+        public static double SHOULDER_POWER = 0.5; // Adjust based on your needs
 
+        @Config
         public static class Extensor {
             // Positions in encoder ticks
-            public static final int PICKUP = 0;
-            public static final int HOVER = -20;
-            public static final int LOW_RUNG = -500;
-            public static final int HIGH_RUNG = -1000;
+            public static int PICKUP = 0;
+            public static int HOVER = -20;
+            public static int LOW_RUNG = -500;
+            public static int HIGH_RUNG = -1000;
 
             // Motor power settings
-            public static final double MOVEMENT_POWER = 0.5; // Adjust based on testing
+            public static double MOVEMENT_POWER = 0.5; // Adjust based on testing
         }
     }
 
     // Autonomous settings
+    @Config
     public static class Autonomous {
+        @Config
         public static class Movement {
             /** Encoder counts for moving forward one unit */
-            public static final double FWD_ONE_TILE = 100; // TODO tune
-            public static final double STRAFE_ONE_TILE = 50; // TODO tune
-            public static final double TURN_NINETY_DEGREES = 50; // TODO tune
+            public static double FWD_ONE_TILE = 100; // TODO tune
+            public static double STRAFE_ONE_TILE = 50; // TODO tune
+            public static double TURN_NINETY_DEGREES = 50; // TODO tune
         }
 
+        @Config
         public static class Timing {
             /** Pause duration after claw operations (milliseconds) */
-            public static final long CLAW_PAUSE = 500;
-            public static final long WRIST_PAUSE = 1000;
-            public static final long EXTENSOR_PAUSE = 2500;
+            public static long CLAW_PAUSE = 500;
+            public static long WRIST_PAUSE = 1000;
+            public static long EXTENSOR_PAUSE = 2500;
         }
 
+        @Config
         public static class ColorSensor {
-            public static final int COLOR_THRESHOLD = 500;
-            public static final int SAMPLE_COUNT = 30;
+            public static int COLOR_THRESHOLD = 500;
+            public static int SAMPLE_COUNT = 30;
         }
     }
 

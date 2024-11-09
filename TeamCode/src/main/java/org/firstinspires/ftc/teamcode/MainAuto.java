@@ -168,16 +168,22 @@ public class MainAuto {
      * @param mode Current autonomous mode
      */
     public void immediatelyPark(String mode) {
-        switch (mode) {
+        switch (mode.toLowerCase()) {
+            // TODO this all sucks
             case "red right":
             case "blue right":
-                baseRobot.odometry.moveCounts("right", 50); // TODO! TUNE THIS IMMEDIATELY
+                baseRobot.mecanumDrive(0, -0.5, 0);
+                pause(2000);
+                baseRobot.mecanumDrive(0, 0, 0);
                 break;
             case "red left":
             case "blue left":
-                baseRobot.odometry.moveCounts("right", 80); // TODO! TUNE THIS IMMEDIATELY
+                baseRobot.mecanumDrive(0, 0.5, 0);
+                pause(2000);
+                baseRobot.mecanumDrive(0, 0, 0);
                 break;
         }
+        baseRobot.telemetry.addData("Yes, we are parking as ", mode);
     }
 
     /**

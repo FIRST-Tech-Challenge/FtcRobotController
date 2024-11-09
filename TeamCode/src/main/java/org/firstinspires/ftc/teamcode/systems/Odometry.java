@@ -141,14 +141,7 @@ public class Odometry {
         reset();
         // Calculate target counts for each motor based on the given counts
         double targetCounts = counts * COUNTS_PER_REVOLUTION / (Math.PI * WHEEL_DIAMETER_INCHES);
-        baseRobot.telemetry.addData("FL Position", frontLeftMotor.getCurrentPosition());
-        baseRobot.telemetry.addData("FR Position", frontRightMotor.getCurrentPosition());
-        baseRobot.telemetry.addData("RL Position", rearLeftMotor.getCurrentPosition());
-        baseRobot.telemetry.addData("RR Position", rearRightMotor.getCurrentPosition());
-        baseRobot.telemetry.addData("Target Counts", targetCounts);
-        baseRobot.telemetry.addData("Direction", direction);
-        baseRobot.telemetry.addData("Speed", speed);
-        baseRobot.telemetry.update();
+
         switch (direction.toLowerCase()) {
             case "forward":
                 while (Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts
@@ -180,6 +173,13 @@ public class Odometry {
                         && Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts
                         && Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts) {
                     setStrafePowers(speed); // Example power, adjust as needed for right movement
+                    baseRobot.logger.update("FL Position: ", ""+frontLeftMotor.getCurrentPosition());
+                    baseRobot.logger.update("FR Position: ", ""+frontRightMotor.getCurrentPosition());
+                    baseRobot.logger.update("RL Position: ", ""+rearLeftMotor.getCurrentPosition());
+                    baseRobot.logger.update("RR Position: ", ""+rearRightMotor.getCurrentPosition());
+                    baseRobot.logger.update("Target Counts" , ""+targetCounts);
+                    baseRobot.logger.update("Direction ", ""+direction);
+                    baseRobot.logger.update("Speed ", ""+speed);
                 }
                 break;
             case "tleft":
