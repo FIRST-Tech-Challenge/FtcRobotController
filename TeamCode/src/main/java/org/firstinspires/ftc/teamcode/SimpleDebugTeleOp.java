@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCapt
 @TeleOp
 public class SimpleDebugTeleOp extends OpMode {
 
+    final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
+
     DcMotor motorTest;
 
     @Override
@@ -31,9 +33,16 @@ public class SimpleDebugTeleOp extends OpMode {
             inputSpeed = 0;
         }
 
-        if (gamepad1.b) {
+        if (gamepad1.a) {
             power = inputSpeed;
         }
         motorTest.setPower(power);
+
+        telemetry.addData("power","%.1f", power);
+
+        telemetry.addData("position", "%7d", motorTest.getCurrentPosition());
+
+        double degrees = motorTest.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
+        telemetry.addData("tickAngles", "%.1f", degrees);
     }
 }
