@@ -147,7 +147,7 @@ public class VirtualDriveTrain extends SubsystemBase {
         MecanumDriveWheelSpeeds WheelSpeeds;
         WheelSpeeds = driveKinematics.toWheelSpeeds(driveChassisSpeeds, new Translation2d(0,0));
 
-        // normalize wheel speeds so no wheel exceeds maximum attanable (in m/s)
+        // normalize wheel speeds so no wheel exceeds maximum attainable (in m/s)
         WheelSpeeds.normalize(MAX_SPEED);
 
         // temporary - store our requested chassis speed
