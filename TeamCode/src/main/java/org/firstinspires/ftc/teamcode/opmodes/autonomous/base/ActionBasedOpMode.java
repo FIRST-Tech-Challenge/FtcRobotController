@@ -57,7 +57,7 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
 
         setupCurrentState(getInitState());
 
-        sleep(250);
+        sleep(100);
         schedule(new SounderBotBaseRunCommand<AutoFourWheelMecanumDriveTrain>(driveTrain, telemetry, this::onEachCycle) {
             @Override
             public boolean isFinished() {
@@ -82,6 +82,7 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
             case FINISHED:
                 // do nothing
                 finished = true;
+                telemetry.update();
                 break;
         }
     }
@@ -101,6 +102,9 @@ public abstract class ActionBasedOpMode extends OpModeTemplate {
 
             if (currentMove != null) {
                 driveTrain.resetOdo();
+                String statics = currentMove.getStatics();
+                telemetry.addData(currentMove.getClass().getSimpleName(), statics);
+                Log.i(LOG_TAG, statics);
             }
             currentMove = currentMovements.poll();
             assert currentMove != null;

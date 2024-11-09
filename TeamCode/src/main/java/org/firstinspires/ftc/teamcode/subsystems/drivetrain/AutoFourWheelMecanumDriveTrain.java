@@ -61,12 +61,7 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
         odo.resetPosAndIMU();
         sleeper.run();
         sleeper.run();
-        RobotLog.i("GoBildaPinpointDriver init result: " + initResult);
-        telemetry.addData("init result", initResult);
-        telemetry.update();
 
-        telemetry.addData("odo status after init", odo.getDeviceStatus());
-        telemetry.update();
         odo.setOffsets(Units.inchesToMMs(-3.5), Units.inchesToMMs(0));
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
