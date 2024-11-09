@@ -34,7 +34,7 @@ public class SlideFunctions {
     }
 
 
-    public void SlidePosition(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry){
+    public void SlideControl(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry){
 
         double slidePowerConst = 0.9; //max power of slide
         double slidePower = -gamepad2.left_stick_y;
@@ -43,7 +43,7 @@ public class SlideFunctions {
         int slidePosition= slideMotor.getCurrentPosition();
 
         //slide safety
-        if ((slidePosition <= -800) && (slidePower>0)){
+        if ((slidePosition >= 1000) && (slidePower>0)|| slideSafety.isPressed() && slidePower<0){
             slideMotor.setPower(0);
         } else if (slideSafety.isPressed() && slidePower<0 ){
             slideMotor.setPower(0);
@@ -55,7 +55,7 @@ public class SlideFunctions {
         telemetry.addData("Slide Position", slidePosition);
     }
 
-    public void ArmPosition(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
+    public void ArmControl(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
         double armPower = gamepad2.right_stick_y;
         armMotor.setPower(armPower);
 
