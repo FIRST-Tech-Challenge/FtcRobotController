@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.SimpleAutoOpMode;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "sample simple auto mode", preselectTeleOp = "main_teleop")
+//@Autonomous(name = "sample simple auto mode", preselectTeleOp = "main_teleop")
 public class SampleSimpleAutoOpMode extends SimpleAutoOpMode {
 
     @Override
