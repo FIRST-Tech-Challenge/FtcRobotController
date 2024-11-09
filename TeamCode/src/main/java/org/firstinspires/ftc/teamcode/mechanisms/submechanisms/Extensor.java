@@ -4,18 +4,18 @@ public interface Extensor {
 
     // Enum for named positions
     enum Position {
-        PICKUP(0.0),
-        HOVER(0.15),
-        LOW_RUNG(0.66),
-        HIGH_RUNG(1.0);
+        PICKUP(Settings.Hardware.Extensor.PICKUP),
+        HOVER(Settings.Hardware.Extensor.HOVER),
+        LOW_RUNG(Settings.Hardware.Extensor.LOW_RUNG),
+        HIGH_RUNG(Settings.Hardware.Extensor.HIGH_RUNG);
 
-        private final double value;
+        private final int value;
 
-        Position(double value) {
+        Position(int value) {
             this.value = value;
         }
 
-        public double getValue() {
+        public int getValue() {
             return value;
         }
     }

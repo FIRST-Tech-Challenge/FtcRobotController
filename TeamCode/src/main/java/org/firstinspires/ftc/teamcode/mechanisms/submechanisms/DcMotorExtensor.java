@@ -14,13 +14,21 @@ public class DcMotorExtensor implements Extensor {
     public DcMotorExtensor(@NonNull BaseRobot baseRobot) {
         this.leftMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_LEFT);
         this.rightMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.EXTENSOR_RIGHT);
-        this.currentPosition = Position.HOVER;
+
+        // Reset encoders
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        setPosition(Position.HOVER);
+
+        // Set to RUN_TO_POSITION mode for position control
+        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     // Sets target position
     public void setPosition(double position) {
-        // Logic to control DC motor position using encoders
-        int targetPosition = (int) (position * 1000); // Convert position to encoder counts
+        int targetPosition = (int) position; // No need to multiply, values are already in ticks
         leftMotor.setTargetPosition(targetPosition);
         rightMotor.setTargetPosition(targetPosition);
         leftMotor.setPower(1.0);
@@ -56,5 +64,7 @@ public class DcMotorExtensor implements Extensor {
     }
 
     @Override
-    public void ceiling() {setPosition(Position.HIGH_RUNG);}
+    public void ceiling() {
+        setPosition(Position.HIGH_RUNG);
+    }
 }
