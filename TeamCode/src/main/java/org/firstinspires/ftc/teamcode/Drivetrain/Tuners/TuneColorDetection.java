@@ -9,42 +9,51 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class TuneColorDetection extends LinearOpMode {
 
     private Limelight3A limelight;
-    private int currentPipeline = 1;  // Variable to keep track of the active pipeline
+    private int currentPipeline = 2;  // Starting pipeline for detecting red
 
     @Override
     public void runOpMode() {
+        // Initialize Limelight
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         telemetry.setMsTransmissionInterval(11);
 
-        // Initialize the pipeline to 1 or any desired starting pipeline
+        // Set the initial pipeline for red detection
         limelight.pipelineSwitch(currentPipeline);
         limelight.start();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            // Get the detected color using the new method
+            // Get color detection result
             String detectedColor = getColorResults();
 
             // Display the detected color
             telemetry.addData("Detected Color", detectedColor);
 
-            LLResult result = limelight.getLatestResult();
-            if (result != null) {
-                if (result.isValid()) {
-                    // Get position and size of detected color
-                    double tx = result.getTx();  // X offset
-                    double ty = result.getTy();  // Y offset
-                    double ta = result.getTa();  // Area
-
-                    // Display other color detection data on telemetry
-                    telemetry.addData("tx", tx);
-                    telemetry.addData("ty", ty);
-                    telemetry.addData("Area", ta);
-                }
+            // If no valid color is detected, cycle through the pipelines
+            if (detectedColor.equals("None")) {
+                telemetry.addData("Status", "No color detected, switching pipeline.");
+                cyclePipeline();  // Switch to the next pipeline
+            } else {
+                // If a valid color is detected, stop switching
+                telemetry.addData("Status", "Color detected.");
             }
+
             telemetry.update();
+        }
+    }
+
+    /**
+     * Cycles through the color detection pipelines: red -> blue -> yellow -> red...
+     */
+    public void cyclePipeline() {
+        if (currentPipeline == 2) {
+            setPipeline(3);  // Switch to blue detection
+        } else if (currentPipeline == 3) {
+            setPipeline(4);  // Switch to yellow detection
+        } else if (currentPipeline == 4) {
+            setPipeline(2);  // Switch back to red detection
         }
     }
 
@@ -70,11 +79,11 @@ public class TuneColorDetection extends LinearOpMode {
             // Check the current pipeline to determine the detected color
             switch (currentPipeline) {
                 case 2:
-                    return "Red";   // Pipeline 2 is set for detecting red
+                    return "Red";   // Pipeline 2 detects red
                 case 3:
-                    return "Blue";  // Pipeline 3 is set for detecting blue
+                    return "Blue";  // Pipeline 3 detects blue
                 case 4:
-                    return "Yellow"; // Pipeline 4 is set for detecting yellow
+                    return "Yellow"; // Pipeline 4 detects yellow
                 default:
                     return "Unknown";  // No specific color is associated with this pipeline
             }
@@ -82,6 +91,4 @@ public class TuneColorDetection extends LinearOpMode {
         return "None"; // No valid detection found
     }
 }
-
-
 
