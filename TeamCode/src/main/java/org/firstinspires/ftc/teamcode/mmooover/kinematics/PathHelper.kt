@@ -6,6 +6,12 @@ class PathHelper internal constructor() {
 
     val commands: MutableList<AuthoringCommand> = mutableListOf()
 
+    /**
+     * Automatically insert matching XYR commands when starting a **new motion block after the first**.
+     *
+     * This means that you don't have to re-enter the last position and rotation keyframe after
+     * using [run]/[launch]/[await].
+     */
     var autoInsertHolds = true
 
     fun r(r: Number) = commands.add(RImpl(r.toDouble()))
@@ -47,10 +53,10 @@ class PathHelper internal constructor() {
                 // technically a noop but makes typechecker happy
                 val typedSegment = segment.filterIsInstance<MotionCommand>().toMutableList()
                 assert(typedSegment.isNotEmpty()) { "Empty motion block, somehow" }
-                if (i > 0 && autoInsertHolds) {
+                if (autoInsertHolds && autoInsertSlot != null) {
                     val first = typedSegment[0]
-                    if (!autoInsertSlot!!.approx(first)) {
-
+                    if (!autoInsertSlot.approx(first)) {
+                        typedSegment.add(0, autoInsertSlot)
                     }
                 }
                 val generatedBytecode = generateMovePart(typedSegment)

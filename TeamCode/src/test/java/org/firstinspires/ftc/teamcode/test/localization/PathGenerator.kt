@@ -18,11 +18,12 @@ class PathGenerator {
     @Test
     fun `generate blue right auto v1`() {
         val commands = path {
+            autoInsertHolds = true
             m(0, 0, 0.deg)
             m(0, 48)
             m(48, 48, 90.deg)
             run("ScoreHigh")
-            m(48, 48, 90.deg)
+            // automatic insertion happens here
             m(48, 24, 180.deg)
         }.generate2()
 

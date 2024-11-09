@@ -20,8 +20,18 @@ const val EPSILON = 1e-6
  * data, because they represent the entirety of the available data.
  */
 
+/**
+ * Commands that are supported when 'authoring' the path; used in the path{} function
+ * and other generators.
+ */
 interface AuthoringCommand
 
+/**
+ * Commands that can be dumped to / loaded from a file support this interface.
+ *
+ * @see BytecodeUnit.import
+ * @see BytecodeUnit.export
+ */
 interface BytecodeUnit {
     companion object {
         fun import(target: DataInputStream): BytecodeUnit = when (target.readByte()) {
@@ -52,6 +62,9 @@ interface BytecodeUnit {
  */
 interface MotionCommand
 
+/**
+ * Command describing the position of the robot.
+ */
 interface XYCommand : AuthoringCommand, MotionCommand {
     val x: Double
     val y: Double
@@ -64,6 +77,9 @@ interface XYCommand : AuthoringCommand, MotionCommand {
 }
 data class XYImpl(override val x: Double, override val y: Double): XYCommand
 
+/**
+ * Command describing the rotation of the robot.
+ */
 interface RCommand : AuthoringCommand, MotionCommand {
     val r: Double
 
@@ -75,6 +91,9 @@ interface RCommand : AuthoringCommand, MotionCommand {
 }
 data class RImpl(override val r: Double): RCommand
 
+/**
+ * Command describing position and rotation.
+ */
 interface XYRCommand : XYCommand, RCommand {
     companion object {
         fun zip(xy: XYCommand, r: RCommand) = XYRImpl(xy.x, xy.y, r.r)
@@ -95,6 +114,10 @@ data class XYRImpl(
     override val r: Double
 ): XYRCommand
 
+/**
+ * Interface describing commands that interact with the 'procedure calling' interface.
+ * This means that they hold a 'event name' that the Command is operating on.
+ */
 interface RPCCommand {
     companion object {
         internal fun <T> importPartial(target: DataInputStream, make: (String) -> T): T {
@@ -122,6 +145,10 @@ interface RPCCommand {
     val eventName: String
 }
 
+/**
+ * Run this event 'synchronously' (as in 'wait for process to finish before continuing',
+ * not 'block main loop until complete')
+ */
 interface RunCommand : AuthoringCommand, BytecodeUnit, RPCCommand {
     companion object {
         fun import(target: DataInputStream) = RPCCommand.importPartial(target, ::RunImpl)
@@ -137,6 +164,10 @@ interface RunCommand : AuthoringCommand, BytecodeUnit, RPCCommand {
 }
 data class RunImpl(override val eventName: String): RunCommand
 
+/**
+ * Launch this event to run in parallel with the next sections of the path.
+ * @see AwaitCommand
+ */
 interface RunAsyncCommand : AuthoringCommand, BytecodeUnit, RPCCommand {
     companion object {
         fun import(target: DataInputStream) = RPCCommand.importPartial(target, ::RunAsyncImpl)
@@ -152,6 +183,10 @@ interface RunAsyncCommand : AuthoringCommand, BytecodeUnit, RPCCommand {
 }
 data class RunAsyncImpl(override val eventName: String): RunAsyncCommand
 
+/**
+ * Wait for the completion of an event by name. Similar to 'joining' a thread.
+ * @see RunAsyncCommand
+ */
 interface AwaitCommand : AuthoringCommand, BytecodeUnit, RPCCommand {
     companion object {
         fun import(target: DataInputStream) = RPCCommand.importPartial(target, ::AwaitImpl)
@@ -167,6 +202,9 @@ interface AwaitCommand : AuthoringCommand, BytecodeUnit, RPCCommand {
 }
 data class AwaitImpl(override val eventName: String): AwaitCommand
 
+/**
+ * Bytecode-supporting variant of the [XYRCommand] interface.
+ */
 interface MoveCommand : BytecodeUnit, XYRCommand {
     companion object {
         fun import(target: DataInputStream) = MoveImpl(

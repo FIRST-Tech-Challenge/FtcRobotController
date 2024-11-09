@@ -27,4 +27,8 @@ class Player(filepath: File) {
         }
         Log.i("PathRunner3", "Loaded ${commands.size} waypoints.")
     }
+
+    fun update() {
+
+    }
 }
