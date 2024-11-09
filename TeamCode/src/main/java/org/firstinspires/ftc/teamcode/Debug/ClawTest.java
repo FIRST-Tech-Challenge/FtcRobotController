@@ -15,12 +15,12 @@ public class ClawTest extends LinearOpMode {
   Mekanism mek = new Mekanism(this);
 
   public void runOpMode() throws InterruptedException {
-//
-//    mek.initMekanism();
-//
-//    waitForStart();
-//    while (opModeIsActive()) {
-//      mek.moveClaw(gamepad1.left_trigger);
-//    }
+    //
+    //    mek.initMekanism();
+    //
+    //    waitForStart();
+    //    while (opModeIsActive()) {
+    //      mek.moveClaw(gamepad1.left_trigger);
+    //    }
   }
 }
