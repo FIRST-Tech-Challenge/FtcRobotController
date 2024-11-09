@@ -42,7 +42,7 @@ public class TeleFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
                 double power = tx * -0.03;
                 if(Math.abs(power) < min) {
-                    power = min * Math.abs(power) / power;
+                    power = min * Math.signum(power);
                 }
                 telemetry.addData("turn power", tx * -0.01);
                 drive.driveRobotCentric(0, 0, power);
@@ -71,7 +71,7 @@ public class TeleFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
                 double power = ty * -0.02;
                 if(Math.abs(power) < min) {
-                    power = min * Math.abs(power) / power;
+                    power = min * Math.signum(power);
                 }
                 drive.driveRobotCentric(0, power, 0);
 

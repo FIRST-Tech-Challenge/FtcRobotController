@@ -27,6 +27,11 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private int IntakePositionFromStart = -1500;
 
+    private int SampleIntakePositionFromStart = -1725;
+
+    private int StartPositionFromStart = 0;
+
+
     private boolean isTeleop = true;
 
     private int currentTarget = 0;
@@ -134,4 +139,55 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
         //telemetry.update();
     }
+
+    public void MoveToIntakeInAuto() {
+        MoveToPositionInAuto(IntakePositionFromStart);
+    }
+
+    public void MoveToDeliveryInAuto() {
+        MoveToPositionInAuto(DeliveryPositionFromStart);
+    }
+
+    public void MoveToStartInAuto() {
+        MoveToPositionInAuto(StartPositionFromStart);
+    }
+
+
+    public void MoveToPositionInAuto(double target) {
+        while(true) {
+
+            double position = motor.encoder.getPosition();
+
+            double power = pidController.calculatePIDAlgorithm(target - position);
+
+            if(Math.abs(target - position) < 40) {
+                motor.set(0);
+                break;
+            }
+            else {
+                double minPower = .2;
+
+                if (Math.abs(power) < minPower) {
+                    //telemetry.addData("minPower", true);
+
+                    power = minPower * Math.abs(power) / power;
+                }
+
+                motor.set(power);
+            }
+
+        }
+    }
+
+    public void MoveToIntakeSampleInAuto() {
+        double position = motor.encoder.getPosition();
+
+        motor.set(-0.5);
+        while(position > SampleIntakePositionFromStart) {
+            position = motor.encoder.getPosition();
+        }
+
+        motor.set(0);
+    }
+
 }

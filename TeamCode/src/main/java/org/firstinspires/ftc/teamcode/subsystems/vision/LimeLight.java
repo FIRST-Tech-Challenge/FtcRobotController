@@ -41,8 +41,6 @@ public class LimeLight extends SonicSubsystemBase {
     public void periodic() {
         super.periodic();
 
-        telemetry.addData("source", "limelight");
-
         if(limelight != null) {
             LLResult result = limelight.getLatestResult();
             if (result != null) {

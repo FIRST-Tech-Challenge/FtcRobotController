@@ -110,4 +110,36 @@ public class DeliverySlider extends SonicSubsystemBase {
 
         //telemetry.update();
     }
+
+    public void ExtendMaxInAuto() {
+        MoveToPositionInAuto(BasketDeliveryPosition);
+    }
+
+    public void CollapseMinInAuto() {
+        MoveToPositionInAuto(CollapsedPosition);
+    }
+
+    public void MoveToPositionInAuto(double target) {
+        while(true) {
+
+            double position = motor.encoder.getPosition();
+
+            double power = pidController.calculatePIDAlgorithm(target - position);
+
+            if(Math.abs(target - position) < 40) {
+                motor.set(0);
+                break;
+            }
+            else {
+                double minPower = .2;
+
+                if (Math.abs(power) < minPower) {
+
+                    power = minPower * Math.abs(power) / power;
+                }
+
+                motor.set(power);
+            }
+        }
+    }
 }

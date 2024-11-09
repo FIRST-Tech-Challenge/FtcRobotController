@@ -47,7 +47,7 @@ public class RollingIntake extends SonicSubsystemBase {
         this.feedback = feedback;
 
         this.elbowServo.setPosition(1);
-        //this.SetElbowInIntakePosition();
+        this.SetElbowInInStart();
 
         state = IntakeState.Hold;
     }
@@ -57,6 +57,10 @@ public class RollingIntake extends SonicSubsystemBase {
         super.periodic();
 
         double d = GetDepth();
+
+
+        //telemetry.addData("distance", d);
+        //telemetry.update();
 
         if(d >= 40) {
             feedback.TurnLedRed();
@@ -70,14 +74,14 @@ public class RollingIntake extends SonicSubsystemBase {
                 this.rightServo.setPower(1);
             } else {
                 Hold();
-                feedback.DriverRumbleBlip();
-                feedback.OperatorRumbleLeft();
+                //feedback.DriverRumbleBlip();
+                //feedback.OperatorRumbleLeft();
                 telemetry.addLine("Auto stop");
             }
         } else if (state == IntakeState.Outtake) {
             if(d > 130) {
-                feedback.DriverRumbleBlip();
-                feedback.OperatorRumbleLeft();
+                //feedback.DriverRumbleBlip();
+                //feedback.OperatorRumbleLeft();
             }
             this.leftServo.setPower(1);
             this.rightServo.setPower(-1);
@@ -94,6 +98,10 @@ public class RollingIntake extends SonicSubsystemBase {
 
     public void SetElbowInIntakePosition() {
         this.elbowServo.setPosition(.62);
+    }
+
+    public void SetElbowInInStart() {
+        this.elbowServo.setPosition(1);
     }
 
     boolean isElbowInIntake = true;
@@ -130,4 +138,18 @@ public class RollingIntake extends SonicSubsystemBase {
         return 1000000;
     }
 
+    public void IntakeInAuto() {
+        this.leftServo.setPower(-1);
+        this.rightServo.setPower(1);
+    }
+
+    public void OuttakeInAuto() {
+        this.leftServo.setPower(1);
+        this.rightServo.setPower(-1);
+    }
+
+    public void HoldInAuto() {
+        this.leftServo.setPower(0);
+        this.rightServo.setPower(0);
+    }
 }

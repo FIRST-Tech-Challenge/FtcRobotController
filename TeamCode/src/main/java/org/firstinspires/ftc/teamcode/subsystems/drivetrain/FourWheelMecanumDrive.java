@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.drivetrain;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -25,6 +26,9 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         this.bL = new Motor(hardwareMap, "BL");
         this.fR = new Motor(hardwareMap, "FR");
         this.bR = new Motor(hardwareMap, "BR");
+
+        this.fR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.bR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         fL.encoder.reset();
         fR.encoder.reset();

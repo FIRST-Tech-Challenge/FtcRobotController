@@ -17,4 +17,13 @@ public abstract class OpModeTemplate extends CommandOpMode {
          // update telemetry every loop
         schedule(new RunCommand(telemetry::update));
     }
+
+    public void Wait(long timeout) {
+        try {
+            synchronized (this) {
+                wait(timeout);
+            }
+        } catch (java.lang.InterruptedException e) {
+        }
+    }
 }
