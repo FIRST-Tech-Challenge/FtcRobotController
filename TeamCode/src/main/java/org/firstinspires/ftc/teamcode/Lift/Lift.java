@@ -8,27 +8,29 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.FeedForward;
 import org.firstinspires.ftc.teamcode.Controllers.PID;
+import org.firstinspires.ftc.teamcode.Hardware.Motors.Encoder;
+import org.firstinspires.ftc.teamcode.Hardware.Motors.Motor;
 import org.firstinspires.ftc.teamcode.Utils.MotionProfile;
 
 @Config
 public class Lift {
     HardwareMap hardwareMap;
-    FeedForward feedForwardLeft;
-    FeedForward feedForwardRight;
+    FeedForward feedForward;
     PID pid;
-    double motorPowerLeft;
-    double motorPowerRight;
+    double motorPower;
     int currentPosition;
-    DcMotorEx liftMotorLeft;
-    DcMotorEx liftMotorRight;
+    Motor liftMotorLeft;
+    Motor liftMotorRight;
+    Encoder encoder;
+    TouchSensor limiter;
     public static double kA=0.12;
     public static double kV=0.13;
-    public static double kSL=0.067;
-    public static double kSR=0.067;
+    public static double kS=0.067;
     public static double kP = 0.25;
     public static double kI = 0;
     public static double kD = 0;
@@ -37,39 +39,16 @@ public class Lift {
     public static double maxAcceleration = 50.0;
     public static double maxVelocity = 60;
     boolean reverse;
-    // For all of these, set up a tuner for the lift to tune these
-    // in FTC dash. Have the option to use any of the tuned distances motion profiles
 
-    // First off, you're gonna want to have the three FF
-    // tune-able constants
-    // kV and kA are for motion profile following
-    // kS would be to counteract gravity (should be just below when you
-    // see minimum movement from the sldies)
-
-    // Second off, you should have have the PID constants
-    // tune-able here specific to the lift
-    
-    // You should also have preset lift heights tuned
-    // You should have the following variables for converting ticks to heights (in inches)
-    // Spool radius, ticks/rev
-
-    // Also, have all of your lift heights tuned here as well
-
-    // Finally, ensure you instantiate your two touch sensors here.
-
-    // one more thing: instantiate motors and encoder separately using the Kevin stuff
-
-    // Set up motion profiles here as well. You will likely want to make the a_accel, a_deccel, v_max tune-able variables.
-    // distance gets passed into the 
+    // FIGURE OUT LIMIT SWITCHES/TOUCH SENSORS THEY SHOULD BE HERE
 
 
-    // Side note: any member variable, use 'this.MEMBER_VARIABLE_HERE' so
-    // its easier to read
     public Lift(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         
-        liftMotorLeft = hardwareMap.get(DcMotorEx.class, "liftMotorLeft");
-        liftMotorRight = hardwareMap.get(DcMotorEx.class, "liftMotorRight");
+        liftMotorLeft = new Motor(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"));
+        liftMotorRight = new Motor(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
+        encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -86,37 +65,53 @@ public class Lift {
         liftMotorRight.setPower(0);
 
         currentPosition = 0;
-        feedForwardLeft = new FeedForward(kV, kA, kSL);
-        feedForwardRight = new FeedForward(kV, kA, kSR);
+        feedForward = new FeedForward(kV, kA, kS);
         pid = new PID(kP, kI, kD);
+        limiter = hardwareMap.get(TouchSensor.class, "liftTouch");
     }
 
+    // FUNCTION TO RESET CURRENT ENCODER POSITION WHEN LIMIT SWITCHES ARE HIT
+    private void checkLimit(){
+        if (limiter.isPressed()){
+            encoder.resetEncoder();
+        }
+    }
+
+    // You should not need this. Do your control with respect to height in inches
     private int inchesToTicks(double inches) {
         return (int) ((inches / (2 * Math.PI * spoolRadius)) * ticksPerRev);
     }
-    // Rather than having an action per basket, come up with descriptive names
-    // for all your heights and just pass those into the action
-    // so rename this to be more general
 
-    // In your action set up a motionProfile object NOT IN RUN, but as a "member variable"
-    // It should get set up when you pass in the string/enum for the height you want to go at
-    public Action moveToHeight(double targetHeightInches) {
-        int targetPosition = inchesToTicks(targetHeightInches);
-        boolean reverse = targetPosition < 0;
-        MotionProfile motionProfile = new MotionProfile(targetPosition, maxVelocity, maxAcceleration, maxAcceleration, reverse);
+    // See above but rename the parameter to targetHeight
+    public Action moveToHeight(double targetHeight) {
+
+        // You have edge cases. Motion profiles should work with a DISTANCE not target position.
+        // You may run into a case where your current position is not zero and your target is
+        // the basket height. You should get the sign of the difference between target and
+        // current, then use that to set the reverse boolean in the motion profile. Then use the
+        // absolute value of the difference to set the distance.
+
+        reverse = !(targetHeight - currentPosition >= 0);
+
+        MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxAcceleration, reverse);
+
+        // When you call getPos from the motion profile, you're getting a distance NOT a target. How 
+        // can you solve this? Hint: add two things.
+        
         ElapsedTime t = new ElapsedTime();
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                int currentPosition = liftMotorLeft.getCurrentPosition();
-                double ffPowerLeft = feedForwardLeft.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
-                double ffPowerRight = feedForwardLeft.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
+                checkLimit();
+                int currentPosition = encoder.getCurrentPosition();
+
+                // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
+                double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
                 double pidPower = pid.calculate(motionProfile.getPos(t.seconds()), currentPosition);
-                motorPowerLeft = pidPower+ffPowerLeft;
-                motorPowerRight = pidPower+ffPowerRight;
-                liftMotorLeft.setPower(motorPowerLeft);
-                liftMotorRight.setPower(motorPowerRight);
-                return Math.abs(targetPosition - currentPosition) < 10;
+                motorPower = pidPower+ffPower;
+                liftMotorLeft.setPower(motorPower);
+                liftMotorRight.setPower(motorPower);
+                return Math.abs(targetHeight - currentPosition) < 0.1;
             }
         };
     }

@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -24,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Drivetrain.Controllers.PoseController;
 import org.firstinspires.ftc.teamcode.Drivetrain.Geometry.Path;
 import org.firstinspires.ftc.teamcode.Drivetrain.Localizers.TwoWheelOdometery;
 import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
-import org.firstinspires.ftc.teamcode.Hardware.Motors.MotorController;
+import org.firstinspires.ftc.teamcode.Hardware.Motors.Motor;
 
 public class Drivetrain {
     /**
@@ -40,10 +39,10 @@ public class Drivetrain {
     /**
      * Drive motors
      */
-    public DcMotorEx motorLeftFront = null;
-    public DcMotorEx motorLeftBack = null;
-    public DcMotorEx motorRightBack = null;
-    public DcMotorEx motorRightFront = null;
+    public Motor motorLeftFront = null;
+    public Motor motorLeftBack = null;
+    public Motor motorRightBack = null;
+    public Motor motorRightFront = null;
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
@@ -71,10 +70,10 @@ public class Drivetrain {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        motorLeftFront = hardwareMap.get(DcMotorEx.class, "lfm");
-        motorLeftBack = hardwareMap.get(DcMotorEx.class, "lbm");
-        motorRightBack = hardwareMap.get(DcMotorEx.class, "rbm");
-        motorRightFront = hardwareMap.get(DcMotorEx.class, "rfm");
+        motorLeftFront = new Motor(hardwareMap.get(DcMotorEx.class, "lfm"));
+        motorLeftBack = new Motor(hardwareMap.get(DcMotorEx.class, "lbm"));
+        motorRightBack = new Motor(hardwareMap.get(DcMotorEx.class, "rbm"));
+        motorRightFront = new Motor(hardwareMap.get(DcMotorEx.class, "rfm"));
         //casting
 
         motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);

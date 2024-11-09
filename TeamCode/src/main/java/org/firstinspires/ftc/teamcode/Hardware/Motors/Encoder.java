@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode.Hardware.Motors;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.Hardware.Motors.DcMotorExComposition;
-
-public class Encoder extends DcMotorExComposition {
+public class Encoder {
     private DcMotorEx encoder;
     private int pos = 0;
     public Encoder(DcMotorEx encoder) {
-        super();
         this.encoder = encoder;
     }
 
@@ -26,6 +23,7 @@ public class Encoder extends DcMotorExComposition {
         pos = 0;
     }
     public int getCurrentPosition(){
+        updateEncoder();
         return pos;
     }
     public double getVelocity(){
