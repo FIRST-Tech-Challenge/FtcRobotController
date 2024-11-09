@@ -118,7 +118,7 @@ public class Lift {
             }
         };
     }
-    public Action moveLift(double targetHeight) {
+    public Action moveLift() {
         int initialPos = currentPosition;
         return new Action() {
             @Override
