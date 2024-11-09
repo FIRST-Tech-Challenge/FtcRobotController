@@ -40,4 +40,5 @@ dependencies {
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
     implementation "com.github.jdhs-ftc:road-runner-ftc-otos:a425f97d46"
     implementation 'org.ftclib.ftclib:core:2.1.1'
+    implementation "com.acmerobotics.dashboard:dashboard:0.4.4"
 }
