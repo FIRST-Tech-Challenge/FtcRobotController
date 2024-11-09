@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Drivetrain.Tuners;
-import static org.firstinspires.ftc.teamcode.Claw.Claw.clawState.close;
-import static org.firstinspires.ftc.teamcode.Claw.Claw.clawState.open;
+import static org.firstinspires.ftc.teamcode.Claw.Claw.clawState.CLOSE;
+import static org.firstinspires.ftc.teamcode.Claw.Claw.clawState.OPEN;
+
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.Claw.Claw;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -18,10 +20,10 @@ public class TuneClaw extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad2.right_bumper){
-                Actions.runBlocking(claw.servoClaw(open));
+                Actions.runBlocking(claw.servoClaw(OPEN));
             }
             if (gamepad2.left_bumper) {
-                Actions.runBlocking(claw.servoClaw(close));
+                Actions.runBlocking(claw.servoClaw(CLOSE));
             }
         }
     }

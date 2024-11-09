@@ -19,21 +19,21 @@ public class Arm {
     }
 
     public enum armState {
-        retract,
-        extend
+        RETRACT,
+        EXTEND
     }
 
     public Action servoArm(armState stateofArm){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                if (stateofArm == armState.retract) {
+                if (stateofArm == armState.RETRACT) {
                     servoArmLeft.setPosition(0.5);
                     servoArmRight.setPosition(0.5);
                     servoWrist.setPosition(-0.5);
 
                 }
-                if (stateofArm == armState.extend) {
+                if (stateofArm == armState.EXTEND) {
                     servoArmLeft.setPosition(-1);
                     servoArmLeft.setPosition(-1);
                     servoWrist.setPosition(0);

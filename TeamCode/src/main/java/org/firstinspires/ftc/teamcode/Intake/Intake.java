@@ -18,17 +18,15 @@ public class Intake {
         this.hardwareMap = hardwareMap;
         motor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
     }
-
     public void intakeIn(){
         motor.setPower(0.5);
     }
-
     public void intakeOut(){
         motor.setPower(-0.5);
     }
 
 
-    public Action intakeInto(){
+    public Action intake(){
         return new Action(){
             @Override
             public boolean run(@NonNull TelemetryPacket packet){
@@ -38,7 +36,7 @@ public class Intake {
         };
     }
 
-    public Action intakeOutto(){
+    public Action outtake(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {

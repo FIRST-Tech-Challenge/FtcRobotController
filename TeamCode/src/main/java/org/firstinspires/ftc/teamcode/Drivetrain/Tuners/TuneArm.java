@@ -18,10 +18,10 @@ public class TuneArm extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.right_bumper){
-                Actions.runBlocking(arm.servoArm(Arm.armState.extend));
+                Actions.runBlocking(arm.servoArm(Arm.armState.EXTEND));
             }
             if (gamepad1.left_bumper) {
-                Actions.runBlocking(arm.servoArm(Arm.armState.retract));
+                Actions.runBlocking(arm.servoArm(Arm.armState.RETRACT));
             }
         }
     }

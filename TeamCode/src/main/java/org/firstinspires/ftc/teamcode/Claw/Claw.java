@@ -18,17 +18,17 @@ public class Claw {
     }
 
     public enum clawState {
-        close,
-        open
+        CLOSE,
+        OPEN
     }
     public Action servoClaw(clawState stateofClaw){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                if (stateofClaw == clawState.open) {
+                if (stateofClaw == clawState.OPEN) {
                     clawServo.setPosition(1);
                 }
-                if (stateofClaw == clawState.close) {
+                if (stateofClaw == clawState.CLOSE) {
                     clawServo.setPosition(0);
                 }
                 // servo parameter -1, 0   0, 1
