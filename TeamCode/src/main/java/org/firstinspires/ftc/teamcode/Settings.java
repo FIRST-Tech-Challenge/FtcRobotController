@@ -63,7 +63,9 @@ public class Settings {
             public static final String SHOULDER = "shoulder";
         }
 
-        public static final double SHOULDER_TICKS_PER_DEGREE = 10.0; // TODO: Tune this value
+        public static final double SHOULDER_GEAR_RATIO = 2;
+        public static final double SHOULDER_TICKS_PER_DEGREE = Hardware.COUNTS_PER_REVOLUTION * SHOULDER_GEAR_RATIO
+                / 360.0;
         public static final double SHOULDER_POWER = 0.5; // Adjust based on your needs
     }
 
