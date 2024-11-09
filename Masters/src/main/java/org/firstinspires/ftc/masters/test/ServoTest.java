@@ -13,13 +13,13 @@ public class ServoTest extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    Servo servo = hardwareMap.servo.get("servo");
-
     public void runOpMode() throws InterruptedException {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         telemetry.update();
+
+        Servo servo = hardwareMap.servo.get("servo");
 
         waitForStart();
 
