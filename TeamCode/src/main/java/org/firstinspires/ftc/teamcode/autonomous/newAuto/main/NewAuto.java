@@ -41,7 +41,7 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
 
             //Servos
             hardware.grabber = hardwareMap.get(CRServo.class, "grabber");
-            hardware.door = hardwareMap.get(CRServo.class, "door");
+            hardware.door = hardwareMap.get(Servo.class, "door");
             hardware.wrist = hardwareMap.get(Servo.class, "wrist");
 
             //Sensors
@@ -304,11 +304,11 @@ public class NewAuto extends LinearOpMode implements newAuto_interface {
                 break;
             case OPEN:
                 power = 1;
-                hardware.door.setPower(power);
+                hardware.door.setPosition(power);
                 break;
             case CLOSE:
                 power = -1;
-                hardware.door.setPower(power);
+                hardware.door.setPosition(power);
                 break;
             case GRAB:
                 power = 1;
