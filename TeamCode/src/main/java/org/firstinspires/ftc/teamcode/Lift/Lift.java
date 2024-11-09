@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Lift;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -99,6 +101,7 @@ public class Lift {
         // can you solve this? Hint: add two things.
         
         ElapsedTime t = new ElapsedTime();
+        int initialPos = currentPosition;
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -107,11 +110,23 @@ public class Lift {
 
                 // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
-                double pidPower = pid.calculate(motionProfile.getPos(t.seconds()), currentPosition);
+                double pidPower = pid.calculate(initialPos+motionProfile.getPos(t.seconds()), currentPosition);
                 motorPower = pidPower+ffPower;
                 liftMotorLeft.setPower(motorPower);
                 liftMotorRight.setPower(motorPower);
                 return Math.abs(targetHeight - currentPosition) < 0.1;
+            }
+        };
+    }
+    public Action moveLift(double targetHeight) {
+        int initialPos = currentPosition;
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                checkLimit();
+                liftMotorLeft.setPower(gamepad1.left_stick_y);
+                liftMotorRight.setPower(gamepad1.left_stick_y);
+                return gamepad1.left_stick_y != 0;
             }
         };
     }

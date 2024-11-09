@@ -1,19 +1,28 @@
 package org.firstinspires.ftc.teamcode.Drivetrain.Tuners;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
 
 @Autonomous(name = "Test Color Detection", group = "Autonomous")
 public class TuneColorDetection extends LinearOpMode {
 
     private Limelight3A limelight;
     private int currentPipeline = 2;  // Starting pipeline for detecting red
+    Drivetrain drivetrain = null;
 
+    // Use FTCDashboard
+    FtcDashboard dashboard;
     @Override
     public void runOpMode() {
         // Initialize Limelight
+        drivetrain = new Drivetrain(hardwareMap);
+        dashboard = FtcDashboard.getInstance();
+        telemetry = dashboard.getTelemetry();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         telemetry.setMsTransmissionInterval(11);
