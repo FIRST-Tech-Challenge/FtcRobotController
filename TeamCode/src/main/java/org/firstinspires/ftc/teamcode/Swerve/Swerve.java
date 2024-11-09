@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.SwerveDriveKinema
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.SwerveModuleState;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.PIDController;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.SimpleMotorFeedforward;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.filter.SlewRateLimiter;
 import org.firstinspires.ftc.teamcode.Utils;
 
 public class Swerve {
@@ -34,6 +35,11 @@ public class Swerve {
   private final Module[] modules = new Module[4];
 
   private final Telemetry telemetry;
+
+  private final double speedMult;
+  private final SlewRateLimiter xLimiter;
+  private final SlewRateLimiter yLimiter;
+  private final SlewRateLimiter yawLimiter;
 
   public Swerve(OpMode opMode) {
     odometry = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "odo");
@@ -65,11 +71,24 @@ public class Swerve {
     odometryStatus = odometry.getDeviceStatus();
 
     this.telemetry = opMode.telemetry;
+
+    speedMult = .75;
+    double timeToFull = .25;
+
+    xLimiter = new SlewRateLimiter((Module.maxDriveSpeedMetersPerSec * speedMult) / timeToFull);
+    yLimiter = new SlewRateLimiter((Module.maxDriveSpeedMetersPerSec * speedMult) / timeToFull);
+    yawLimiter =
+        new SlewRateLimiter(
+            ((Module.maxDriveSpeedMetersPerSec / drivebaseRadius) * speedMult) / timeToFull);
   }
 
-  private final double speedMult = .75;
-
   public void drive(ChassisSpeeds speeds) {
+    speeds =
+        new ChassisSpeeds(
+            xLimiter.calculate(speeds.vxMetersPerSecond),
+            yLimiter.calculate(speeds.vyMetersPerSecond),
+            yawLimiter.calculate(speeds.omegaRadiansPerSecond));
+
     var setpoint = kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpoint, Module.maxDriveSpeedMetersPerSec * speedMult);
