@@ -10,9 +10,11 @@ import org.firstinspires.ftc.teamcode.Settings;
 public class Wrist {
     public static double position = 0;
     public final Servo wristServo;
-    public final double boardPos = Settings.Hardware.Servo.Wrist.BOARD_POSITION;
-    public final double transitPos = Settings.Hardware.Servo.Wrist.TRANSIT_POSITION;
+    public final double verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
+    public final double chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
+    public final double basketPos = Settings.Hardware.Servo.Wrist.BASKET_POSITION;
     public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
+
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
     private final String LOG_PREFIX = "Wrist: ";
@@ -27,11 +29,14 @@ public class Wrist {
     public void setPosition(Position newPosition) {
         double oldPosition = position;
         switch (newPosition) {
-            case RUNG:
-                position = boardPos;
+            case VERTICAL:
+                position = verticalPos;
                 break;
-            case NEUTRAL:
-                position = transitPos;
+            case CHAMBER:
+                position = chamberPos;
+                break;
+            case BASKET:
+                position = basketPos;
                 break;
             default:
                 position = horizPos;
@@ -43,10 +48,12 @@ public class Wrist {
     }
 
     public Position position() {
-        if (position == boardPos) {
-            return Position.RUNG;
-        } else if (position == transitPos) {
-            return Position.NEUTRAL;
+        if (position == verticalPos) {
+            return Position.VERTICAL;
+        } else if (position == chamberPos) {
+            return Position.CHAMBER;
+        } else if (position == basketPos) {
+            return Position.BASKET;
         } else if (position == horizPos) {
             return Position.HORIZONTAL;
         } else {
@@ -56,8 +63,9 @@ public class Wrist {
 
     public enum Position {
         HORIZONTAL,
-        RUNG,
-        NEUTRAL,
+        VERTICAL,
+        CHAMBER,
+        BASKET,
         UNKNOWN,
     }
 

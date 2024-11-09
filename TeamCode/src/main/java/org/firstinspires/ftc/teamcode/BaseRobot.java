@@ -173,9 +173,9 @@ public class BaseRobot {
                 arm.claw.setLeftServo(!arm.claw.openedL);
             }
             if (actions.wristUp) {
-                arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
+                arm.wrist.setPosition(Wrist.Position.VERTICAL);
             } else if (actions.wristDown) {
-                arm.wrist.setPosition(Wrist.Position.RUNG);
+                arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
 
             if (actions.shoulderUp) {

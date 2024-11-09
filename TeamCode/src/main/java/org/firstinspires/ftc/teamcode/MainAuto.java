@@ -78,10 +78,12 @@ public class MainAuto {
      * 5. Return to hover position
      */
     private void getSpecimenFromHumanPlayer() {
-        baseRobot.arm.wrist.setPosition(Wrist.Position.NEUTRAL);
+        baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
         baseRobot.arm.claw.open();
         baseRobot.arm.extensor.setPosition(Extensor.Position.PICKUP);
         pause(500);
+        baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
+        pause(100);
         baseRobot.arm.claw.close();
         pause(250);
         baseRobot.arm.extensor.setPosition(Extensor.Position.HOVER);
@@ -139,13 +141,13 @@ public class MainAuto {
         }
 
         baseRobot.arm.extensor.setPosition(placeHeight);
-        baseRobot.arm.wrist.setPosition(Wrist.Position.RUNG);
+        baseRobot.arm.wrist.setPosition(Wrist.Position.CHAMBER);
         baseRobot.odometry.moveCounts("forward", 60, 0.1);
         pause(2500);
         baseRobot.arm.claw.open();
         pause(1000);
         baseRobot.odometry.moveCounts("backward", 10, 0.1);
-        baseRobot.arm.wrist.setPosition(Wrist.Position.NEUTRAL);
+        baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
         baseRobot.arm.extensor.setPosition(Extensor.Position.HOVER);
         pause(2000);
     }

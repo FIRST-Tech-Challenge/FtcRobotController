@@ -41,9 +41,10 @@ public class Settings {
             }
 
             public static class Wrist {
-                public static final double BOARD_POSITION = 1.0; // TODO tune this is just a test
-                public static final double TRANSIT_POSITION = 0.5;
-                public static final double HORIZONTAL_POSITION = 0.45;
+                public static final double HORIZONTAL_POSITION = -0.5;
+                public static final double CHAMBER_POSITION = -0.75;
+                public static final double BASKET_POSITION = -0.7;
+                public static final double VERTICAL_POSITION = -1.0;
             }
         }
 
