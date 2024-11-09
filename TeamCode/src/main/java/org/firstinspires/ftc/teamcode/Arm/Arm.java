@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Arm;
 
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,34 +18,26 @@ public class Arm {
         servoArmRight = hardwareMap.get(Servo.class, "servoArmRight");
     }
 
-    public enum kwah {
-        haut {
-            @Override
-            int servoone() {
-                return 14;
-            }
-            @Override
-            int servotwo() {
-                return 12;
-            }
-            @Override
-            int servothree(){
-                return 18;
-            }
-        };
-        abstract int servoone();
-        abstract int servotwo();
-        abstract int servothree();
+    public enum armState {
+        retract,
+        extend
     }
 
-    public Action servoWrist(){
+    public Action servoArm(armState stateofArm){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-//                servoWrist.setPosition(Hawk.OPEN);
-//                servoArmLeft.setPosition(Hawk.CLOSE);
-//                servoArmRight.setPosition(Hawk.WRIST);
-                // servo parameter -1, 0   0, 1
+                if (stateofArm == armState.retract) {
+                    servoArmLeft.setPosition(0.5);
+                    servoArmRight.setPosition(0.5);
+                    servoWrist.setPosition(-0.5);
+
+                }
+                if (stateofArm == armState.extend) {
+                    servoArmLeft.setPosition(-1);
+                    servoArmLeft.setPosition(-1);
+                    servoWrist.setPosition(0);
+                }
                 return false;
             }
         };
