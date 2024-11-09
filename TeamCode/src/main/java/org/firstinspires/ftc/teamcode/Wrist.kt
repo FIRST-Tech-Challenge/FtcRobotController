@@ -32,7 +32,7 @@ class Wrist(private val lServo: Servo, private val rServo: Servo) {
     }
 
     fun getTwist(): Double {
-        return lServo.position - rServo.position
+        return abs(lServo.position - rServo.position)
     }
 }
 
