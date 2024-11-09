@@ -71,9 +71,12 @@ public class Settings {
         public static class Extensor {
             // Positions in encoder ticks
             public static final int PICKUP = 0;
-            public static final int HOVER = 150; // Small lift off ground
-            public static final int LOW_RUNG = 660; // Position for lower hanging
-            public static final int HIGH_RUNG = 1000; // Position for highest hanging
+            public static final int HOVER = 150;
+            public static final int LOW_RUNG = 660;
+            public static final int HIGH_RUNG = 1000;
+
+            // Motor power settings
+            public static final double MOVEMENT_POWER = 0.33; // Adjust based on testing
         }
     }
 

@@ -28,11 +28,11 @@ public class DcMotorExtensor implements Extensor {
 
     // Sets target position
     public void setPosition(double position) {
-        int targetPosition = (int) position; // No need to multiply, values are already in ticks
+        int targetPosition = (int) position;
         leftMotor.setTargetPosition(targetPosition);
         rightMotor.setTargetPosition(targetPosition);
-        leftMotor.setPower(1.0);
-        rightMotor.setPower(1.0);
+        leftMotor.setPower(Settings.Hardware.Extensor.MOVEMENT_POWER);
+        rightMotor.setPower(Settings.Hardware.Extensor.MOVEMENT_POWER);
     }
 
     // Converts position name to double
