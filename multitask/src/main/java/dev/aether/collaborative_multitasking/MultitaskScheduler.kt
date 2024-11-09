@@ -1,3 +1,5 @@
+@file:Suppress("DefaultLocale")
+
 package dev.aether.collaborative_multitasking
 
 import kotlin.math.ceil
@@ -185,6 +187,60 @@ class MultitaskScheduler
             percentile(s, 0.99),
             percentile(s, 1.0)
         )
+    }
+
+    private fun displayTaskNoStatus(task: Task, indent: Int, writeLine: (String) -> Unit) {
+        writeLine(buildString {
+            append(" ".repeat(indent))
+            append("#%d (%s)".format(task.myId, task.name))
+            if(task.daemon) append(" daemon")
+            if(task.onRequest()) append(" startReq")
+        })
+    }
+
+    fun displayStatus(withFinished: Boolean, withNotStarted: Boolean, writeLine: (String) -> Unit) {
+        val notStartedList: MutableList<Task> = mutableListOf()
+        val inProgressList: MutableList<Task> = mutableListOf()
+        val finishedList: MutableList<Task> = mutableListOf()
+        val cancelledList: MutableList<Task> = mutableListOf()
+        var waiting = 0
+        var progress = 0
+        var done = 0
+        var cancelled = 0
+        var total = tasks.size
+        for (task in tasks.values) {
+            when (task.state) {
+                Task.State.NotStarted -> {
+                    waiting++
+                    notStartedList.add(task)
+                }
+                Task.State.Finished -> {
+                    done++
+                    finishedList.add(task)
+                }
+                Task.State.Cancelled -> {
+                    cancelled++
+                    cancelledList.add(task)
+                }
+                else -> {
+                    progress++
+                    inProgressList.add(task)
+                }
+            }
+        }
+        writeLine("%d tasks: %d WAIT > %d RUN > %d STOP (%d done, %d cancel)".format(total, waiting, progress, done + cancelled, done, cancelled))
+        if (withNotStarted) {
+            writeLine("%d not started:".format(waiting))
+            for (task in notStartedList) displayTaskNoStatus(task, 4, writeLine)
+        }
+        writeLine("%d in progress:".format(progress))
+        for (task in inProgressList) displayTaskNoStatus(task, 4, writeLine)
+        if (withFinished) {
+            writeLine("%d finished:".format(done))
+            for (task in finishedList) displayTaskNoStatus(task, 4, writeLine)
+            writeLine("%d cancelled:".format(cancelled))
+            for (task in cancelledList) displayTaskNoStatus(task, 4, writeLine)
+        }
     }
 
     override fun getTicks(): Int {

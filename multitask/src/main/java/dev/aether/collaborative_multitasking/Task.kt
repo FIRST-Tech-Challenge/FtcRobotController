@@ -76,6 +76,11 @@ class Task(
 
     private var requirements: MutableSet<SharedResource> = mutableSetOf()
 
+    private var startRequested = false
+    fun requestStart() {
+        startRequested = true
+    }
+
     internal var canStart: TaskQuery2<Boolean> = { _: Task, _: Scheduler -> true }
     internal var onStart: TaskAction2 = { _: Task, _: Scheduler -> }
     private var onTick: TaskAction2 = { _: Task, _: Scheduler -> }
@@ -89,6 +94,8 @@ class Task(
     var myId: Int? = null
         private set
 
+    fun onRequest() = startRequested
+
     fun canStart(block: TaskQuery2<Boolean>) {
         canStart = block
     }
@@ -100,6 +107,8 @@ class Task(
     fun canStart(block: Producer<Boolean>) {
         canStart = { _: Task, _: Scheduler -> block() }
     }
+
+    fun startOnRequest() = canStart(::onRequest)
 
     fun invokeCanStart(): Boolean {
         return canStart(this, scheduler)
