@@ -161,7 +161,7 @@ public class BaseRobot {
                 arm.extensor.extend();
             } else if (actions.justGroundExtensor) {
                 arm.extensor.ground();
-            } else if (actions.justFloorExtensor) {
+            } else if (actions.justCeilingExtensor) {
                 arm.extensor.ceiling();
             }
 
