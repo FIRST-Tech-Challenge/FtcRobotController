@@ -21,6 +21,7 @@ public class MecanumTeleOp extends LinearOpMode {
     @Override
 
     public void runOpMode() {
+        double topspeed = 1.0;
         Hardware hardware = new Hardware(hardwareMap);
         hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -78,10 +79,10 @@ public class MecanumTeleOp extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            hardware.frontLeft.setPower(frontLeftPower / 2);
-            hardware.backLeft.setPower(backLeftPower / 2);
-            hardware.frontRight.setPower(frontRightPower / 2);
-            hardware.backRight.setPower(backRightPower / 2);
+            hardware.frontLeft.setPower(frontLeftPower * topspeed);
+            hardware.backLeft.setPower(backLeftPower * topspeed);
+            hardware.frontRight.setPower(frontRightPower * topspeed);
+            hardware.backRight.setPower(backRightPower * topspeed);
             /*if(gamepad2.dpad_up){
                 hardware.verticalLift.setPower(0.5);
 
