@@ -45,16 +45,15 @@ typealias TaskAction1 = TaskQuery1<Unit>
 typealias Runnable = () -> Unit
 
 class Task(
-    internal var scheduler: Scheduler,
-): ITask {
-
-    var state: State = State.NotStarted
+    override var scheduler: Scheduler,
+): TaskWithWaitFor() {
+    override var state: State = State.NotStarted
         private set
 
     var startedAt: Int? = null
         private set
 
-    fun setState(newState: State) {
+    override fun transition(newState: State) {
         println("$this: transition: ${state.name} -> ${newState.name}")
         if (state.order > newState.order) {
             throw IllegalStateException("cannot move from ${state.name} to ${newState.name}")
@@ -70,9 +69,9 @@ class Task(
 
     private var requirements: MutableSet<SharedResource> = mutableSetOf()
 
-    private var startRequested = false
-    fun requestStart() {
-        startRequested = true
+    override var isStartRequested = false
+    override fun requestStart() {
+        isStartRequested = true
     }
 
     internal var canStart: TaskQuery2<Boolean> = { _: Task, _: Scheduler -> true }
@@ -82,13 +81,10 @@ class Task(
     private var onFinish: TaskAction2 = { _: Task, _: Scheduler -> }
     private var then: TaskAction2 = { _: Task, _: Scheduler -> }
 
-    var name: String = "unnamed task"
+    override var name: String = "unnamed task"
 
-    var daemon = false
-    var myId: Int? = null
-        private set
-
-    fun onRequest() = startRequested
+    override var daemon = false
+    override var myId: Int? = null
 
     fun canStart(block: TaskQuery2<Boolean>) {
         canStart = block
@@ -104,8 +100,8 @@ class Task(
 
     fun startOnRequest() = canStart(::onRequest)
 
-    fun invokeCanStart(): Boolean {
-        return canStart(this, scheduler)
+    override fun invokeCanStart(): Boolean {
+        return super.invokeCanStart() && canStart(this, scheduler)
     }
 
     fun onStart(block: TaskAction2) {
@@ -120,7 +116,7 @@ class Task(
         onStart = { _: Task, _: Scheduler -> block() }
     }
 
-    fun invokeOnStart() {
+    override fun invokeOnStart() {
         onStart(this, scheduler)
     }
 
@@ -136,7 +132,7 @@ class Task(
         onTick = { _: Task, _: Scheduler -> block() }
     }
 
-    fun invokeOnTick() {
+    override fun invokeOnTick() {
         onTick(this, scheduler)
     }
 
@@ -152,7 +148,7 @@ class Task(
         isCompleted = { _: Task, _: Scheduler -> block() }
     }
 
-    fun invokeIsCompleted(): Boolean {
+    override fun invokeIsCompleted(): Boolean {
         return isCompleted(this, scheduler)
     }
 
@@ -168,13 +164,8 @@ class Task(
         onFinish = { _: Task, _: Scheduler -> block() }
     }
 
-    fun invokeOnFinish() {
+    override fun invokeOnFinish() {
         onFinish(this, scheduler)
-    }
-
-    @JvmOverloads
-    fun requestStop(cancel: Boolean = true) {
-        scheduler.filteredStop({ it == this }, cancel)
     }
 
     operator fun SharedResource.unaryPlus() {
@@ -189,39 +180,12 @@ class Task(
         requirements.add(lockName)
     }
 
-    fun requirements(): Set<SharedResource> {
+    override fun requirements(): Set<SharedResource> {
         return requirements.toSet()
     }
 
     internal fun register() {
         myId = scheduler.register(this)
-    }
-
-    fun then(configure: Task.() -> Unit): Task {
-        val task = Task(scheduler)
-        task.name = MultitaskScheduler.getCaller()
-        task.configure()
-        then(task)
-        task.register() // ready to go
-        return task
-    }
-
-    fun then(task: Task): Task {
-        val capturedCanStart = task.canStart
-        task.canStart = { that: Task, scheduler2: Scheduler ->
-            if (this.state == State.Cancelled) {
-                task.requestStop()
-                false
-            } else {
-                capturedCanStart(that, scheduler2) && this.state == State.Finished
-            }
-        }
-        return task
-    }
-
-    fun then(polyChain: Pair<Task, Task>): Task {
-        this.then(polyChain.first)
-        return polyChain.second
     }
 
     fun apply(configure: Task.() -> Unit) {
@@ -231,4 +195,7 @@ class Task(
     override fun toString(): String {
         return "task $myId '$name'"
     }
+
+    override fun hashCode() = (myId ?: 0) * name.hashCode()
+    override fun equals(other: Any?) = this === other
 }

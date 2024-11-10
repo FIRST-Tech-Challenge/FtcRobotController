@@ -58,7 +58,7 @@ class MultitaskScheduler
             }
             .forEach {
                 if (allFreed(it.requirements())) {
-                    it.setState(State.Starting)
+                    it.transition(State.Starting)
                     // acquire locks
                     for (lock in it.requirements()) {
                         println("$it acquired $lock")
@@ -79,9 +79,9 @@ class MultitaskScheduler
                 try {
                     it.invokeOnStart()
                     if (it.invokeIsCompleted()) {
-                        it.setState(State.Finishing)
+                        it.transition(State.Finishing)
                     } else {
-                        it.setState(State.Ticking)
+                        it.transition(State.Ticking)
                     }
                 } catch (e: Exception) {
                     System.err.println(
@@ -100,7 +100,7 @@ class MultitaskScheduler
             .forEach {
                 try {
                     it.invokeOnTick()
-                    if (it.invokeIsCompleted()) it.setState(State.Finishing)
+                    if (it.invokeIsCompleted()) it.transition(State.Finishing)
                 } catch (e: Exception) {
                     System.err.println(String.format("Error while ticking %s:", it.toString()))
                     e.printStackTrace()
@@ -116,7 +116,7 @@ class MultitaskScheduler
     private fun release(task: ITask, cancel: Boolean = false) {
         val targetState = if (cancel) State.Cancelled else State.Finished
         if (task.state == State.NotStarted) {
-            task.setState(targetState)
+            task.transition(targetState)
             return
         }
         try {
@@ -130,7 +130,7 @@ class MultitaskScheduler
             )
             e.printStackTrace()
         }
-        task.setState(targetState)
+        task.transition(targetState)
         for (lock in task.requirements()) {
             if (locks[lock.id] != task.myId) {
                 if (throwDebuggingErrors)
@@ -275,7 +275,7 @@ class MultitaskScheduler
         for (task in tasks.values) {
             if (task.state == State.Finished || task.state == State.NotStarted || task.state == State.Cancelled) continue
             task.invokeOnFinish()
-            task.setState(State.Finished)
+            task.transition(State.Finished)
         }
 
         for (lock in lockIdName.values) {

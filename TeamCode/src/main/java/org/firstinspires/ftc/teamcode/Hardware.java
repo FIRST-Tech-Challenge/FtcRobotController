@@ -14,8 +14,14 @@ import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import org.firstinspires.ftc.teamcode.mmooover.TriOdoProvider;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 
+import dev.aether.collaborative_multitasking.SharedResource;
+
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
+    public static class Locks {
+        public static final SharedResource DriveMotors = new SharedResource("DriveMotors");
+    }
+
     public static final double TRACK_WIDTH = 11.3385888;
     public static final double FORWARD_OFFSET = 5.05905785;
     public static final double ENC_WHEEL_RADIUS = 1.25984 / 2.0;

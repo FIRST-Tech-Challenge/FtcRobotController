@@ -32,7 +32,7 @@ interface AuthoringCommand
  * @see BytecodeUnit.import
  * @see BytecodeUnit.export
  */
-interface BytecodeUnit {
+sealed interface BytecodeUnit {
     companion object {
         fun import(target: DataInputStream): BytecodeUnit = when (target.readByte()) {
             Kind.MOVE.bytecodeID -> MoveCommand.import(target)
