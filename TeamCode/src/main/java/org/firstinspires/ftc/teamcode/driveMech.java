@@ -32,11 +32,22 @@ public class driveMech {
         backRightMotor.setPower(backRightPower);
     }
 
-    public void drive(double forward, double strafe, double rotate) {
-        double frontLeft = Range.clip(forward + strafe + rotate, -1.0, 1.0);
-        double frontRight = Range.clip(forward - strafe - rotate, -1.0,1.0);
-        double backLeft = Range.clip(forward - strafe + rotate, -1.0, 1.0);
-        double backRight = Range.clip(forward + strafe - rotate, -1.0, 1.0);
+    public void drive(double forward, double rotate) {
+        double frontLeft = 0;
+        double frontRight = 0;
+        double backLeft = 0;
+        double backRight = 0;
+        if ((forward > 0.1 || forward < -0.1) && (rotate < 0.15 && rotate > -0.15)) {
+            frontLeft = -forward;
+            frontRight = -forward;
+            backLeft = -forward;
+            backRight = -forward;
+        } else if ((rotate > 0.1 || rotate < -0.1) && (forward < 0.15 && forward > -0.15)) {
+            frontLeft = rotate;
+            frontRight = -rotate;
+            backLeft = rotate;
+            backRight = -rotate;
+        }
         setPower(frontLeft, frontRight, backLeft, backRight);
     }
 }

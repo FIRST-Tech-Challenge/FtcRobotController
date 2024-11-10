@@ -65,10 +65,9 @@ public class bestOpMode extends OpMode
     @Override
     public void loop() {
         double forwardBackward = -gamepad1.left_stick_y;
-        double strafe = gamepad1.left_stick_x;
         double turn = gamepad1.right_stick_x;
 
-        drive.drive(forwardBackward, strafe, turn);
+        drive.drive(forwardBackward, turn);
     }
 
     @Override
