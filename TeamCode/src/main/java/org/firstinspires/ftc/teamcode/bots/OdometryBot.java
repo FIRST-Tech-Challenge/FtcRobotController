@@ -11,7 +11,7 @@ import com.stormbots.MiniPID;
 
 import java.io.OutputStreamWriter;
 
-public class OdometryBot extends GyroBot {
+public class OdometryBot extends PinchBot {
 
     public DcMotor horizontal = null;
     public DcMotor verticalRight = null;
@@ -198,8 +198,8 @@ public class OdometryBot extends GyroBot {
         //outputEncoders();
         super.onTick();
         //thetaDEG = -getDeltaAngle();
-//        calculateCaseThree(rightFront.getCurrentPosition() - vLOffset, intake.getCurrentPosition() - vROffset, -rightRear.getCurrentPosition() - hOffset);
-                // must find a new motor encoders for the odometry pods
+        calculateCaseThree(slideMotor.getCurrentPosition() - vLOffset, leftRear.getCurrentPosition() - vROffset, pivotMotor.getCurrentPosition() - hOffset);
+                /** must find a new motor encoders for the odometry pods */
         if (isCoordinateDriving) {
             driveToCoordinateUpdate(globalTargetX, globalTargetY, globalTargetTheta, globalTolerance, globalAngleTol, globalMagnitude);
         }

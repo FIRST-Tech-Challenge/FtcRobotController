@@ -8,13 +8,8 @@ import com.qualcomm.robotcore.util.SerialNumber;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class PinchBot extends PivotBot{
-    static final double VERTICAL_OFFSET = 0;
-    static final double VERTICAL_PROPORTION = 1;
-    static final double HORIZONTAL_PROPORTION = 1;
-    static final double ROTATIONAL_PROPORTION = 1;
-    static final double CENTER_POSITION = 0;
 
-    public boolean isOpen = false;
+    private boolean isOpen = false;
 
     public Servo pinch;
     public Servo rotate;
@@ -25,38 +20,49 @@ public class PinchBot extends PivotBot{
 
 
     public void init(HardwareMap hardwareMap){
+        super.init(hardwareMap);
         pinch = hardwareMap.get(Servo.class, "pinch");
         rotate = hardwareMap.get(Servo.class, "rotate");
     }
 
-    public void pinchControl(){
-        isOpen = !isOpen;
-        if(isOpen){
+    protected void onTick() {
+        super.onTick();
+
+    }
+
+    public void pinchControl(boolean open, boolean close){
+
+        if (open) {
+
+            isOpen = true;
             pinch.setPosition(0.5);
+
         }
-        if(!isOpen){
-            pinch.setPosition(0);
+        if (close) {
+
+            isOpen = false;
+            pinch.setPosition(1);
+
         }
     }
-    public void rotate(double angle){
-        angle = angle;
-        rotate.setPosition(angle);
+    public void rotate(double angle){ //5216 - 4706
+        rotate.setPosition(0.5);
     }
     public void pickUp(boolean button){
         // use horizontalDistance() to move robot and verticalDistance() to move slide
         // figure out how to find angle and use rotate(angle)
-        double[] position = detectOne();
-        double x = position[0];
-        double y = position[1];
-        double theta = position[2];
-        slideMove((int) ((y + VERTICAL_OFFSET)*VERTICAL_PROPORTION)); //move slide vertically
-        driveStraightByDistance(90, x*HORIZONTAL_PROPORTION, 2);
-        rotate(theta * ROTATIONAL_PROPORTION);
+        //double[] position = detectOne();
+        //double x = position[0];
+        //double y = position[1];
+        //double theta = position[2];
+        //slideMove((int) ((y + VERTICAL_OFFSET)*VERTICAL_PROPORTION)); //move slide vertically
+        //driveStraightByDistance(90, x*HORIZONTAL_PROPORTION, 2);
+        //rotate(theta * ROTATIONAL_PROPORTION);
         isOpen = false;
-        pinchControl();
+        //pinchControl();
 
-        slideControl(false, true);
-        rotate(CENTER_POSITION);
+        //slideControl(false, true);
+        //rotate(CENTER_POSITION);
 
     }
 }

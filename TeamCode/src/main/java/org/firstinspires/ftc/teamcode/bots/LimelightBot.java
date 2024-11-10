@@ -13,7 +13,7 @@ public class LimelightBot extends GyroBot {
 
     public LLResult result = null;
     public Pose3D botpose = null;
-    private Limelight3A limelight;
+    public Limelight3A limelight;
 
     @Override
 
@@ -21,11 +21,9 @@ public class LimelightBot extends GyroBot {
         super.init(ahwMap);
         limelight = hwMap.get(Limelight3A.class, "limelight");
 
-
         limelight.pipelineSwitch(1);
 
         limelight.start();
-
 
 
     }
@@ -34,42 +32,31 @@ public class LimelightBot extends GyroBot {
         super(opMode);
     }
 
-    public double horizontalDistance(){
-        result = limelight.getLatestResult();
-        return result.getTx();
 
-    }
-
-    public double verticalDistance(){
-        result = limelight.getLatestResult();
-        return result.getTy();
-    }
-
-   public double[] detectOne(){
+    public double[] detectOne() {
         double[] values = new double[3];
-       LLResult result = limelight.getLatestResult();
-       if(result != null) {
-           if (result.isValid()) {
-               double xDegree = result.getTx();
-               double yDegree = result.getTy();
-               double angle = result.getPythonOutput()[8];
+        LLResult result = limelight.getLatestResult();
+        if (result != null) {
+            if (result.isValid()) {
+                double xDegree = result.getTx();
+                double yDegree = result.getTy();
+                double angle = result.getPythonOutput()[8];
 
-               double xResult = xDegree;
-               double yResult = yDegree;
-               values[0] = xResult;
-               values[1] = yResult;
-               values[2] = angle;
-           }
-       }
+                double xResult = xDegree;
+                double yResult = yDegree;
+                values[0] = xResult;
+                values[1] = yResult;
+                values[2] = angle;
+            }
+        }
 
-       return values;
-
-   }
-
-   public void switchPipeline(int pipeline){
-       limelight.pipelineSwitch(pipeline);
-   }
+        return values;
 
     }
+
+    public void switchPipeline(int pipeline){
+        limelight.pipelineSwitch(pipeline);
+    }
+}
 
 

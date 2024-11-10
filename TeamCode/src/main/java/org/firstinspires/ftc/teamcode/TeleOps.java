@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.bots.LimelightBot;
+import org.firstinspires.ftc.teamcode.bots.PivotBot;
 import org.firstinspires.ftc.teamcode.bots.PinchBot;
 
 @TeleOp(name = "Drive")
@@ -22,6 +23,7 @@ public class TeleOps extends LinearOpMode {
 
         robot.init(hardwareMap);
 
+
         robot.switchPipeline(1);
         telemetry.addData("pipeline: 1", null);
 
@@ -30,13 +32,13 @@ public class TeleOps extends LinearOpMode {
             if (gamepad1.dpad_right) {
 
                 robot.switchPipeline(1);
-                telemetry.addData("pipeline: 1", null);
+                telemetry.addData("pipeline", "red");
 
             }
             if (gamepad1.dpad_left) {
 
                 robot.switchPipeline(2);
-                telemetry.addData("pipeline: 2", null);
+                telemetry.addData("pipeline", "blue");
 
             }
             telemetry.update();
@@ -54,16 +56,26 @@ public class TeleOps extends LinearOpMode {
             robot.resetAngle(gamepad1.x);
 
             robot.onLoop(0, "manual drive");
+
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
             robot.slideControl(gamepad1.dpad_left, gamepad1.dpad_right);
-
-            telemetry.addData("slide position: ", robot.slideMotor.getCurrentPosition());
+            robot.pinchControl(gamepad1.a, gamepad1.b);
 
             double[] values = robot.detectOne();
 
             telemetry.addData("tx: ", values[0]);
             telemetry.addData("ty: ", values[1]);
             telemetry.addData("angle: ", values[2]);
+
+            telemetry.addData("slide position", robot.getSlidePosition());
+            telemetry.addData("pivot position", robot.getPivotPosition());
+
+            if (robot.pivotOutOfRange) {
+
+                telemetry.addData("ERROR", "Pivot is out of Range");
+
+            }
+
             telemetry.update();
 
 

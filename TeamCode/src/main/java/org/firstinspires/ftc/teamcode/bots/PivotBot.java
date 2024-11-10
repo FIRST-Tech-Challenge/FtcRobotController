@@ -8,31 +8,27 @@ package org.firstinspires.ftc.teamcode.bots;
 
 public class PivotBot extends LimelightBot {
 
+    private int maximumPivot = 1500;
+    private int minumimPivot = 200;
+    public boolean pivotOutOfRange = false;
+
     public int slideTarget = 0;
-    public int slideTarget2 = 0;
-    public DcMotorEx pivotMotor = null;
-    public DcMotorEx slideMotor = null;
-    
-    public int pivotPosition = 0;
+    public int pivotTarget = minumimPivot;
 
-    private int slidePower = 200;
+    private double pivotPower = 0;
 
-    private final int limitMax = 200;
-
-    public boolean isDown = true;
-    protected boolean isEndOfAuto = false;
-
-    public final double endPosition = 300;
+    private DcMotorEx pivotMotor = null;
+    private DcMotorEx slideMotor = null;
 
     @Override
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         pivotMotor = hwMap.get(DcMotorEx.class, "Pivot Motor");
-        pivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        pivotMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pivotMotor.setPower(0);
+        pivotMotor.setPower(pivotPower);
 
         slideMotor = hwMap.get(DcMotorEx.class, "slide");
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -47,65 +43,83 @@ public class PivotBot extends LimelightBot {
     }
 
     public int getSlidePosition() {
+        return slideMotor.getCurrentPosition();
+    }
+
+    public int getPivotPosition() {
         return pivotMotor.getCurrentPosition();
     }
 
     protected void onTick() {
         super.onTick();
-        pivotMotor.setTargetPosition(slideTarget);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pivotMotor.setPower(0.3);
 
-        slideMotor.setTargetPosition(slideTarget2);
+        if (pivotTarget > minumimPivot - 100 && pivotTarget < maximumPivot + 100){
+
+            pivotOutOfRange = false;
+
+            pivotMotor.setTargetPosition(pivotTarget);
+            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            if (getPivotPosition() > maximumPivot - 300 || getPivotPosition() < minumimPivot + 300) {
+
+                pivotMotor.setPower(0.6);
+
+            } else {
+
+                pivotMotor.setPower(pivotPower);
+
+            }
+
+        } else {
+
+            pivotOutOfRange = true;
+
+            pivotPower = 0;
+            pivotMotor.setPower(0);
+
+        }
+
+        slideMotor.setTargetPosition(slideTarget);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotor.setPower(0.5);
     }
 
     public void slideControl(boolean up, boolean down) {
         if (up) {
-//            slideTarget2 = 20;
-            if (slideMotor.getCurrentPosition() < 2000) {
-                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
+            if (slideMotor.getCurrentPosition() < 1950) {
+                slideTarget = slideMotor.getCurrentPosition() + 50;
+                slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            if (down) {
-//            slideTarget2 = 2000;
-                if (slideMotor.getCurrentPosition() > 20)
-                    slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - 20);
+        }
+        if (down) {
+            if (slideMotor.getCurrentPosition() > 110) {
+                slideTarget = slideMotor.getCurrentPosition() - 50;
+                slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-//        if (Math.abs(Slide.getCurrentPosition() - slideTarget2) < 3){
-//            Slide.setPower(0);
-//        }
         }
     }
 
-        public void slideMove(int pos){
-            //depending on the number, move the slide
-            slideMotor.setTargetPosition(pos);
-            slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void pivotControl(boolean up, boolean down){
+        if (up) {
+            pivotTarget = maximumPivot;
+            pivotPower = 0.7;
+//            pivotMotor.setTargetPosition(pivotTarget);
+//            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+        if (down) {
+            pivotTarget = minumimPivot;
+            pivotPower = 0.3;
+//            pivotMotor.setTargetPosition(pivotTarget);
+//            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+    }
 
-        public void pivotControl(boolean up, boolean down){
-            if (up) {
-                slideTarget = 0;
-                pivotMotor.setTargetPosition(pivotMotor.getCurrentPosition() + 20);
-                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
-            if (down) {
-                slideTarget = 900;
-                pivotMotor.setTargetPosition(pivotMotor.getCurrentPosition() - 20);
-                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
-//        if (Math.abs(Motor.getCurrentPosition() - slideTarget) < 3){
-//            Motor.setPower(0);
-//        }
-        }
-
-        public void pivotTo(int pos){
-            pivotMotor.setTargetPosition(pos);
-            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+    public void pivotTo(int pos){
+        pivotMotor.setTargetPosition(pos);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
 
 
