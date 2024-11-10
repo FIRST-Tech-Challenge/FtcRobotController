@@ -15,6 +15,7 @@ public class Red_F3 extends AutoOpModeBase {
     @Override
     public void executeOpMode() {
 
+
         rollingIntake.SetElbowInIntakePosition();
         DeliverSample();
 
@@ -47,7 +48,9 @@ public class Red_F3 extends AutoOpModeBase {
 
         DeliverSample();
 
-        driveTrain.DriveToTarget(1200, 200);
+        driveTrain.DriveToTarget(1500, 200);
+
+        pivot.MoveToStartInAuto();
     }
 
     private void DeliverSample() {

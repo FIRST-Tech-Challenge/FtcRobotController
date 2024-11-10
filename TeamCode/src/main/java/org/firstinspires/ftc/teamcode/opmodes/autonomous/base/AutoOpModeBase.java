@@ -23,36 +23,37 @@ public abstract class AutoOpModeBase extends OpModeTemplate {
 
     private AutonomousCommand autonomousCommand;
 
-    @Override
-    public void reset() {
-        if (autonomousCommand != null) {
-            autonomousCommand.cancel();
-        }
-
-        try {
-            if (rollingIntake != null) {
-                rollingIntake.HoldInAuto();
-                rollingIntake.SetElbowInInStart();
-            }
-            if (pivot != null) {
-                pivot.MoveToStartInAuto();
-            }
-            if (slider != null) {
-                slider.CollapseMinInAuto();
-            }
-            if (driveTrain != null) {
-                driveTrain.stop();
-            }
-
-            sleep(500);
-        } catch (Exception e) {
-            telemetry.addData("CleaupError",e.getMessage());
-            telemetry.update();
-        }
-        super.end();
-        super.reset();
-
-    }
+//    @Override
+//    public void reset() {
+//        if (autonomousCommand != null) {
+//            autonomousCommand.cancel();
+//            autonomousCommand.end(true);
+//        }
+//
+//        try {
+//            if (rollingIntake != null) {
+//                rollingIntake.HoldInAuto();
+//                rollingIntake.SetElbowInInStart();
+//            }
+//            if (pivot != null) {
+//                pivot.MoveToStartInAuto();
+//            }
+//            if (slider != null) {
+//                slider.CollapseMinInAuto();
+//            }
+//            if (driveTrain != null) {
+//                driveTrain.stop();
+//            }
+//
+//            sleep(500);
+//        } catch (Exception e) {
+//            telemetry.addData("CleaupError",e.getMessage());
+//            telemetry.update();
+//        }
+//        super.end();
+//        super.reset();
+//
+//    }
 
     @Override
     public void initialize() {

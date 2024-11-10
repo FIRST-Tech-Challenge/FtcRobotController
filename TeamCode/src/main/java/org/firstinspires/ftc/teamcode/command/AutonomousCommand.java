@@ -38,6 +38,7 @@ public class AutonomousCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        opMode.initialize();
     }
 
     @Override
@@ -48,15 +49,14 @@ public class AutonomousCommand extends CommandBase {
         }
         finally {
             pivot.MoveToStartInAuto();
-            slider.CollapseMinInAuto();
         }
     }
 
     @Override
     public void end(boolean interrupted) {
+        opMode.end();
+        opMode.stop();
         driveTrain.stop();
-        pivot.MoveToStartInAuto();
-        slider.CollapseMinInAuto();
     }
 
     @Override

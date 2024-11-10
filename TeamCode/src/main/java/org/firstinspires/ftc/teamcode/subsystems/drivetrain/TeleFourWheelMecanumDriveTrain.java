@@ -25,7 +25,7 @@ public class TeleFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
     }
 
     public TeleFourWheelMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
-        super(hardwareMap, gamepad, telemetry, feedback, false);
+        super(hardwareMap, gamepad, telemetry, feedback, true);
         this.limeLight = limeLight;
     }
 
