@@ -12,7 +12,6 @@ import org.apache.commons.math3.analysis.function.Abs;
 
 public class EncoderOffsetTesting extends LinearOpMode {
 
-    public CRServo axon = hardwareMap.get(CRServo.class, "armServo1");
     public AbsoluteAnalogEncoder encoder =  new AbsoluteAnalogEncoder(hardwareMap.get(AnalogInput.class, "someHWMapName"), 3.3);
 
     @Override

@@ -23,14 +23,14 @@ public class SwerveModule {
 
 
     public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e) {
-        motor = m;
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motor = m;
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        servo = s;
+            servo = s;
 
-        enc = e;
+            enc = e;
 
 
 
+        }
     }
-}

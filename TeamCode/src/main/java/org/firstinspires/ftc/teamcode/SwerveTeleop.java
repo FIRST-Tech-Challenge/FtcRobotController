@@ -21,32 +21,31 @@ public class SwerveTeleop extends LinearOpMode {
 //    public static double GEAR_RATIO = 4*2.88 / // output wheel speed / input motor speed
 //    public static final double TICKS_PER_REV = ; // tickers per revolution
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFront = null;
-    private DcMotor leftBack = null;
-    private DcMotor rightFront = null;
-//    private DcMotor rightBack = null;
+    private DcMotor leftFront;
+    private DcMotor leftBack;
+    private DcMotor rightFront;
+    private DcMotor rightBack;
 
-    private CRServo testServo = null;
+    private CRServo sleftFront;
 
-//    private AbsoluteAnalogEncoder encoder;
+    private AbsoluteAnalogEncoder eleftFront;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leftFront  = hardwareMap.get(DcMotor.class, "liftMotor2");
-        leftBack  = hardwareMap.get(DcMotor.class, "liftMotor1");
+        leftFront  = hardwareMap.get(DcMotor.class, "frontRight");
+        leftBack  = hardwareMap.get(DcMotor.class, "frontLeft");
         rightFront  = hardwareMap.get(DcMotor.class, "intakeMotor");
 //        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
-        testServo = hardwareMap.get(CRServo.class, "armServo1");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
