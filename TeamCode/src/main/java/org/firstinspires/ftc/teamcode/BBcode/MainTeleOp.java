@@ -66,7 +66,7 @@ public class MainTeleOp extends LinearOpMode{
 
         //Extend to full length, limited to 18 inches at low angles
         //High Basket
-        if (gamepad.left_trigger > 0 && gamepad.dpad_up) {
+        if ((gamepad.left_trigger > 0 && gamepad.dpad_up) || (desiredViperState == ViperState.Dump && arm.get_armMotor().getCurrentPosition()<150) ) {
             arm.MoveToHighBasket();
             desiredViperState = ViperState.Dump;
             viper.ExtendFull(0.75);

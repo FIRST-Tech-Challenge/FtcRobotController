@@ -30,6 +30,11 @@ public class Arm {
     {
         return _armMotor.getCurrentPosition() < 10;
     }
+
+    public DcMotorEx get_armMotor() {
+        return _armMotor;
+    }
+
     public void Stop()
     {
         _armMotor.setPower(0);
