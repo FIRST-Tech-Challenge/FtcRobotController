@@ -38,7 +38,7 @@ public class AutonomousCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        opMode.initialize();
+        //opMode.initialize();
     }
 
     @Override

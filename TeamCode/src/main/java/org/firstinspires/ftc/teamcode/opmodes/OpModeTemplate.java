@@ -15,7 +15,7 @@ public abstract class OpModeTemplate extends CommandOpMode {
         operatorGamepad = new GamepadEx(gamepad2);
 
          // update telemetry every loop
-        schedule(new RunCommand(telemetry::update));
+//        schedule(new RunCommand(telemetry::update));
     }
 
     public void Wait(long timeout) {
@@ -29,11 +29,11 @@ public abstract class OpModeTemplate extends CommandOpMode {
 
     public void end() {
         super.stop();
-        if (driverGamepad != null) {
-            driverGamepad = null;
-        }
-        if (operatorGamepad != null) {
-            operatorGamepad = null;
-        }
+//        if (driverGamepad != null) {
+//            driverGamepad = null;
+//        }
+//        if (operatorGamepad != null) {
+//            operatorGamepad = null;
+//        }
     }
 }
