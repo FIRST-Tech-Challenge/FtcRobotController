@@ -49,13 +49,14 @@ public class Teleop extends OpMode {
         yawRad = orientation.getYaw(AngleUnit.RADIANS);
         normalizedYaw = Numbers.normalizeAngle(yaw);
 
-
         telemetry.addData("Yaw", yaw);
         telemetry.addData("Yaw Rad", yawRad);
         telemetry.addData("Normalized Yaw", normalizedYaw);
 
         float moveXInput = controller1.axis(Axis.LeftStickX, PowerCurve.Quadratic);
         float moveYInput = controller1.axis(Axis.LeftStickY, PowerCurve.Quadratic);
+        float armXInput = controller2.axis(Axis.RightStickX, PowerCurve.Cubic);
+        float armYInput = controller2.axis(Axis.LeftStickY, PowerCurve.Cubic);
         float rotationInput = controller1.axis(Axis.RightStickX, PowerCurve.Cubic);
 
         if (controller1.pressed(Button.RightBumper))
