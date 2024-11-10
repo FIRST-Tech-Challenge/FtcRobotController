@@ -18,9 +18,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
+    private Hardware hardware;
+
     @Override
     public void runOpMode() {
-        Hardware hardware = new Hardware(hardwareMap);
+        hardware = new Hardware(hardwareMap);
         hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -177,11 +179,28 @@ public class MecanumTeleOp extends LinearOpMode {
         return (int) (degrees / 360.0 * 537.7);
     }
 
+    private double getArmPosDeg() {
+        double rotations = hardware.arm.getCurrentPosition() / 537.7;
+        // 0 = straight down
+        return rotations * 360.0;
+    }
+
+    private boolean checkedArmGoto(double degrees) {
+        if (hardware.encoderVerticalSlide.getCurrentPosition() < liftMinClearanceTicks) {
+            double current = getArmPosDeg();
+            if (degrees > 5 && degrees < 35) return false;
+            if (current < 5 && degrees >= 35) return false;
+            if (current > 35 && degrees < 5) return false;
+        }
+        armTargetPosDeg = degrees;
+        return true;
+    }
+
     private void arm(Hardware hardware) {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
         // 537.7 ppr
         DcMotor arm = hardware.arm;
-        double stick_pos = -gamepad2.left_stick_y;
+        double stick_pos = -gamepad2.right_stick_y;
         double rotations = arm.getCurrentPosition() / 537.7;
         double degrees = rotations * 360.0; // 0 = straight down
         // Negative: towards front;
