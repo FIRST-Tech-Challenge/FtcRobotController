@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -59,6 +61,7 @@ public class DriveTrain {
         setFRightPower(fRightPower);
         setBLeftPower(bLeftPower);
         setBRightPower(bRightPower);
+        Log.d("purepursaction_power", "power " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
     }
 
     public void setPower(double power) {

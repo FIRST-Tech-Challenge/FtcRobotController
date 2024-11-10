@@ -41,9 +41,9 @@ public class PurePursuitAction extends Action {
         this.driveTrain = driveTrain;
         this.odometry = odometry;
 
-        this.pidX = new PidNav(1. / 300, 0, 0);
-        this.pidY = new PidNav(1. / 300, 0, 0);
-        this.pidAngle = new PidNav(3 / 3.14, 0, 0);
+        this.pidX = new PidNav(1. / 900, 0, 0);
+        this.pidY = new PidNav(1. / 900, 0, 0);
+        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
         Log.d("purepursaction", "constructed");
 
         this.dependentAction = new DoneStateAction();
@@ -59,11 +59,14 @@ public class PurePursuitAction extends Action {
         Vector currentToTarget = Vector.between(currentPos.toPoint(), target);
 
         double distanceToTarget = currentToTarget.getLength();
-        double targetAngle = currentToTarget.getHeadingDirection();
         double targetDirection = currentToTarget.getHeadingDirection();
 
-        if (distanceToTarget < 100) {
+        double targetAngle;
+        if (distanceToTarget <= 100) {
             targetAngle = preferredAngle;
+        } else {
+            targetAngle = -currentToTarget.getHeadingDirection();
+            Log.d("purepursaction", "target angle is " + targetAngle);
         }
 
         double angleError = MathFunctions.angleWrapRad(targetAngle - currentPos.getTheta());
@@ -84,16 +87,16 @@ public class PurePursuitAction extends Action {
         Log.d("purepursy", "set y " + powerY);
 
         double powerAngle = Range.clip(pidAngle.getPower(angleError), -1, 1);
-//        if(Math.abs(angleError) < 0.05) {
+//        if(Math.abs(angleError) < 0.5) {
 //            powerAngle = 0;
 //        }
 
 //        opModeUtilities.getTelemetry().addData("power angle", powerAngle);
 
-        double fLeftPower = powerX - powerY - powerAngle;
-        double fRightPower = powerX + powerY + powerAngle;
-        double bLeftPower = powerX + powerY - powerAngle;
-        double bRightPower = powerX - powerY + powerAngle;
+        double fLeftPower = powerX - powerY + powerAngle;
+        double fRightPower = powerX + powerY - powerAngle;
+        double bLeftPower = powerX + powerY + powerAngle;
+        double bRightPower = powerX - powerY - powerAngle;
 
         Log.d("purepursactions", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
@@ -105,10 +108,10 @@ public class PurePursuitAction extends Action {
             bLeftPower /= biggestPower;
             bRightPower /= biggestPower;
         }
+        //92.66611361922297, -235.81741858351225
 
+        Log.d("purespursaction", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
-
-        Log.d("purepursaction", "set target and set powers " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
 //        opModeUtilities.getTelemetry().addData("current pos", currentPos.toString());
 //        opModeUtilities.getTelemetry().addData("power x ", powerX);
@@ -121,13 +124,13 @@ public class PurePursuitAction extends Action {
 
         lastLine = path.getSegment(path.numSegments() - 1);
 
-        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 30
-                && odometry.getCurrentVelocity().isWithinThreshhold(30, 30, Math.toRadians(1))
-                && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(2)) {
+        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 80 //30, 30, 30, 1, 10
+                && odometry.getCurrentVelocity().isWithinThreshhold(100, 100, Math.toRadians(5))
+                && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(3)) {
             //opModeUtilities.getTelemetry().addLine("breake");
             //opModeUtilities.getTelemetry().update();
             driveTrain.setPower(0, 0, 0, 0);
-            Log.d("purepursaction", "done");
+            Log.d("purepursaction_done", "done");
             return true;
         } else {
             return false;
@@ -138,11 +141,11 @@ public class PurePursuitAction extends Action {
     public void update() {
         if(!hasStarted) {
             path = new Path(pathPoints);
-            Log.d("purepursaction", "set path");
+            //Log.d("purepursaction", "set path");
             hasStarted = true;
         }
 
-        Log.d("purepursaction", "entered update");
+        //Log.d("purepursaction", "entered update");
 
         follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
 
@@ -153,16 +156,17 @@ public class PurePursuitAction extends Action {
         }
 
         if (follow.isPresent()) {
-            Log.d("purepursaction", "follow present: radius " + radius);
+            Log.d("purepursaction", "follow present " + follow.get().getX() + " " + follow.get().getY());
             lastLine = path.getSegment(path.numSegments() - 1);
             preferredAngle = lastLine.getHeadingDirection();
+            Log.d("purepursaction", "preferred angle " + preferredAngle);
 //                opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
 //                opModeUtilities.getTelemetry().addData("follow point", follow);
             targetPosition(follow.get(), preferredAngle);
-            Log.d("position", odometry.getCurrentPosition().toString());
+            //Log.d("position", odometry.getCurrentPosition().toString());
             //Log.d("velocity", odometry.getCurrentVelocity().toString());
 
-            radius = 300;
+            radius = 50;
         }
 
         //if (Thread.interrupted()) throw new InterruptedException();

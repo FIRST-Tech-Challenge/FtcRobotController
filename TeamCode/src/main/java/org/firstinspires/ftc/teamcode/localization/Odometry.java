@@ -60,7 +60,7 @@ public class Odometry {
         double deltaMecanumDistance = ticksToMM(backTicks - prevBackTicks);
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
-        double deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
+        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
         double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID * deltaTheta);
         return new Velocity(
                 deltaX,
@@ -100,7 +100,6 @@ public class Odometry {
                 relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
         double newTheta =
                 MathFunctions.angleWrapRad(relativeDelta.getTheta());
-
         return new Velocity(newX, newY, newTheta);
     }
 

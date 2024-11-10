@@ -33,8 +33,9 @@ public class TestPurePursuit extends LinearOpMode {
             try (var inner = HardwareTaskScope.open()) {
                 List<Point> pathPoints = new ArrayList<Point>() {{
                     add(new Point(0, 0));
-                    add(new Point(400, 0));
-                    add(new Point(400, 400));
+                    //add(new Point(400, 0));
+                    add(new Point(0,100));
+                    //add(new Point(400, 400));
 //                    add(new Point(1800, 600));
 //                    add(new Point(1800, 0));
                 }};

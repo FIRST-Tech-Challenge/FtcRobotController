@@ -38,6 +38,7 @@ public class Vector {
     public double dot(Vector other) {
         return (this.getX() * other.getX()) + (this.getY() * other.getY());
     }
+
     public double getHeadingDirection() {
         double theta = Math.atan2(this.getY(), this.getX());
         return theta;
