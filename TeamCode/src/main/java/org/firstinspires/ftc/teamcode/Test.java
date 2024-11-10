@@ -11,7 +11,7 @@ public class Test  extends LinearOpMode {
         waitForStart();
         if(opModeIsActive()){
             while(opModeIsActive()){
-                telemetry.addData("Test", true);
+                telemetry.addData("Test", false);
                 telemetry.update();
             }
             //DataUpdate.active = false;
