@@ -23,10 +23,9 @@ public class TestOuttakeActions extends LinearOpMode {
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
         final double CIRCUMFERENCE_OF_SPOOL = 2 * Math.PI * 18;
-
-
-        double TICKS_PER_MM = CIRCUMFERENCE_OF_SPOOL / 145.1 ;
+        double TICKS_PER_MM = CIRCUMFERENCE_OF_SPOOL / 145.1;
 
         // Sets a power to start
         double power = 0.5;
@@ -58,20 +57,6 @@ public class TestOuttakeActions extends LinearOpMode {
             } else if (gamepad1.dpad_down) {
                 power = Math.min(1, power + 0.05);
             }
-
-            /*
-            if (currentGamepadA && !prevGamepadA) {
-                setTargetHeight(linearSlide, linearSlideTwo, power, TICKS_PER_INCH);
-            } else if (currentGamepadA && !prevGamepadA) {
-                setTargetHeight(OuttakeHeight.WALL_HEIGHT, linearSlide, linearSlideTwo, power, TICKS_PER_INCH);
-            } else if (currentGamepadA && !prevGamepadA) {
-                setTargetHeight(OuttakeHeight.LOW_BAR, linearSlide, linearSlideTwo, power, TICKS_PER_INCH);
-            } else if (currentGamepadA && !prevGamepadA) {
-                setTargetHeight(OuttakeHeight.HIGH_BAR, linearSlide, linearSlideTwo, power, TICKS_PER_INCH);
-            } else if (currentGamepadA && !prevGamepadA) {
-                setTargetHeight(OuttakeHeight.HIGH_BASKET, linearSlide, linearSlideTwo, power, TICKS_PER_INCH);
-            }
-            */
 
             // Calculate and display encoder position in inches
             double encoderPosition = linearSlideTwo.getCurrentPosition();
