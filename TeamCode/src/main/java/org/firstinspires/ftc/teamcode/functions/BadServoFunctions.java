@@ -28,15 +28,15 @@ public class BadServoFunctions {
 
 
             // horrible wrist
-            if (gamepad2.y && wristPosition < 1) {
+            if (gamepad2.y) {
                 wristServo.setPosition(1);
-            } else if (gamepad2.x && wristPosition > 0){
+            } else if (gamepad2.x){
                 wristServo.setPosition(0);
             }
 
-            if (gamepad2.a && wristPosition2<1){
+            if (gamepad2.a){
                 wristServo2.setPosition(1);
-            } else if (gamepad2.b && wristPosition2>0) {
+            } else if (gamepad2.b) {
                 wristServo2.setPosition(0);
             }
 
@@ -50,9 +50,9 @@ public class BadServoFunctions {
             clawServo.setPosition(0.5); // Starting position for claw
             double clawPosition = clawServo.getPosition();
 
-           if(gamepad2.right_bumper && clawPosition<0){
+           if(gamepad2.right_bumper){
                clawServo.setPosition(0);
-           } else if (gamepad2.left_bumper && clawPosition>-1) {
+           } else if (gamepad2.left_bumper) {
                clawServo.setPosition(-1);
            }
 
