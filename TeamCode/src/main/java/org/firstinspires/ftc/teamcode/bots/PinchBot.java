@@ -8,13 +8,8 @@ import com.qualcomm.robotcore.util.SerialNumber;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class PinchBot extends PivotBot{
-    static final double VERTICAL_OFFSET = 0;
-    static final double VERTICAL_PROPORTION = 1;
-    static final double HORIZONTAL_PROPORTION = 1;
-    static final double ROTATIONAL_PROPORTION = 1;
-    static final double CENTER_POSITION = 0;
 
-    public boolean isOpen = false;
+    private boolean isOpen = false;
 
     public Servo pinch;
     public Servo rotate;
@@ -30,18 +25,28 @@ public class PinchBot extends PivotBot{
         rotate = hardwareMap.get(Servo.class, "rotate");
     }
 
-    public void pinchControl(){
-        isOpen = !isOpen;
-        if(isOpen){
+    protected void onTick() {
+        super.onTick();
+
+    }
+
+    public void pinchControl(boolean open, boolean close){
+
+        if (open) {
+
+            isOpen = true;
             pinch.setPosition(0.5);
+
         }
-        if(!isOpen){
-            pinch.setPosition(0);
+        if (close) {
+
+            isOpen = false;
+            pinch.setPosition(1);
+
         }
     }
-    public void rotate(double angle){
-        angle = angle;
-        rotate.setPosition(angle);
+    public void rotate(double angle){ //5216 - 4706
+        rotate.setPosition(0.5);
     }
     public void pickUp(boolean button){
         // use horizontalDistance() to move robot and verticalDistance() to move slide
