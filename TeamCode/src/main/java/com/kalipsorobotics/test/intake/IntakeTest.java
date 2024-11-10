@@ -20,7 +20,7 @@ public class IntakeTest extends LinearOpMode {
 
         waitForStart();
 
-        double position = 0.1;
+        double position = 0.2;
 
         while (opModeIsActive()) {
 
