@@ -162,7 +162,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             gets the current Position (x & y in inches, and heading in radians) of the robot, and prints it.
              */
             Pose2d pos = odo.getPositionRR();
-            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, pos.heading.toDouble());
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
             telemetry.addData("Position", data);
 
 
