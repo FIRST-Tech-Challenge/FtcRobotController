@@ -62,10 +62,10 @@ public class LEFTAUTO extends LinearOpMode {
         //TODO: SET UP MULTIAUTOMODE
         //TODO: SET UP ROTATIONS
         //IMPORTANT: DO THE TODOS
-        int dropSample1 = autoDriver.lineTo(-322.5,1107.5,1.0);
-        int pickupSample2mid = autoDriver.lineTo(-600.0,1025.0,1.0);
-        int pickupSample2 = autoDriver.lineTo(-750.0,1025.0,1.0);
-        int dropSample2 = autoDriver.lineTo(-322.5,1107.5,1.0);
+        int dropSample1 = autoDriver.lineTo(-317.5,1105.0,1.0);
+        int pickupSample2mid = autoDriver.lineTo(-580.0,1045.0,1.0);
+        int pickupSample2 = autoDriver.lineTo(-735.0,1045.0,1.0);
+        int dropSample2 = autoDriver.lineTo(-317.5,1105.0,1.0);
         int pickupSample3 = autoDriver.lineTo(-700.0,1500.0,1.0);
         int dropSample3 = autoDriver.lineTo(-900.0,1500.0,1.0);
         int pickupSample4 = autoDriver.lineTo(-700.0,1500.0,1.0);
@@ -73,7 +73,7 @@ public class LEFTAUTO extends LinearOpMode {
         telemetry.addLine("initilized");
         telemetry.update();
         waitForStart();
-        clawServo.setServoPosition(0.0);
+        clawServo.setServoPosition(0.33);
         clawRotateServo.setServoPosition(0.7);
         clawRotateServo2.setServoPosition(0.55);
         boolean completed = false;
@@ -90,15 +90,19 @@ public class LEFTAUTO extends LinearOpMode {
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
             SM.setPos(RotateTarget);
         }
-        int target = -3000;
+        int target = -2830;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
             SM.setPos2(target);
         }
         clawRotateServo.setServoPosition(0.6);
         safeWaitSeconds(0.5);
-        clawServo.setServoPosition(0.39);
+        clawServo.setServoPosition(0.7);
+        safeWaitSeconds(0.5);
+        clawServo.setServoPosition(0.33);
         safeWaitSeconds(0.5);
         clawRotateServo.setServoPosition(0.05);
+        safeWaitSeconds(0.5);
+        clawServo.setServoPosition(0.7);
         safeWaitSeconds(0.5);
         target = 0;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
@@ -125,7 +129,7 @@ public class LEFTAUTO extends LinearOpMode {
             telemetry.addData("Position", data);
             completed = autoDriver.move(pickupSample2);
         }
-        clawServo.setServoPosition(0.0);
+        clawServo.setServoPosition(0.33);
         safeWaitSeconds(0.5);
         completed = false;
         while(!isStopRequested() && !completed){
@@ -141,15 +145,19 @@ public class LEFTAUTO extends LinearOpMode {
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
             SM.setPos(RotateTarget);
         }
-        target = -3000;
+        target = -2830;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
             SM.setPos2(target);
         }
         clawRotateServo.setServoPosition(0.6);
         safeWaitSeconds(0.5);
-        clawServo.setServoPosition(0.39);
+        clawServo.setServoPosition(0.7);
+        safeWaitSeconds(0.5);
+        clawServo.setServoPosition(0.33);
         safeWaitSeconds(0.5);
         clawRotateServo.setServoPosition(0.05);
+        safeWaitSeconds(0.5);
+        clawServo.setServoPosition(0.7);
         safeWaitSeconds(0.5);
         target = 0;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
@@ -159,6 +167,8 @@ public class LEFTAUTO extends LinearOpMode {
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
             SM.setPos(RotateTarget);
         }
+        clawServo.setServoPosition(0.7);
+        safeWaitSeconds(0.5);
         turnAngle(0);
         while(!isStopRequested() && !gamepad1.a){
             Pose2D pos = autoDriver.getPosition();
