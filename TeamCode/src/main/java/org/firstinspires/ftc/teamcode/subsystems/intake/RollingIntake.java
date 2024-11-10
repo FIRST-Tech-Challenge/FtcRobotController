@@ -69,15 +69,15 @@ public class RollingIntake extends SonicSubsystemBase {
         }
 
         if(state == IntakeState.Intake) {
-            if(d > 40) {
+            //if(d > 40) {
                 this.leftServo.setPower(-1);
                 this.rightServo.setPower(1);
-            } else {
-                Hold();
+            //} else {
+            //    Hold();
                 //feedback.DriverRumbleBlip();
                 //feedback.OperatorRumbleLeft();
-                telemetry.addLine("Auto stop");
-            }
+            //    telemetry.addLine("Auto stop");
+            //}
         } else if (state == IntakeState.Outtake) {
             if(d > 130) {
                 //feedback.DriverRumbleBlip();
@@ -93,11 +93,11 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void SetElbowInSpecimenPosition() {
-        this.elbowServo.setPosition(0);
+        this.elbowServo.setPosition(.3);
     }
 
     public void SetElbowInIntakePosition() {
-        this.elbowServo.setPosition(.62);
+        this.elbowServo.setPosition(.4);
     }
 
     public void SetElbowInInStart() {

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.delivery;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,13 +23,15 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    private int StartPositionFromCalibration = 1975;
+    private int StartPositionFromCalibration = 1975 - 310;
 
-    private int DeliveryPositionFromStart = 250;
+    private int DeliveryPositionFromStart = 250 + 310;
 
-    private int IntakePositionFromStart = -1500;
+    private int IntakePositionFromStart = -1500 + 310;
 
-    private int SampleIntakePositionFromStart = -1800;
+    private int SampleIntakePositionFromStart = -1800 + 310;
+
+    private int SliderCheckLimit = -625;
 
     private int StartPositionFromStart = 0;
 
@@ -37,6 +41,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
     private int currentTarget = 0;
 
     SonicPIDController pidController;
+
+    private double recordedPosition;
 
     public DeliveryPivot(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
@@ -48,6 +54,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
         this.gamepad = gamepad;
         this.telemetry = telemetry;
         this.feedback = feedback;
+
+        this.recordedPosition = 0;
 
         pidController = new SonicPIDController(0.005, 0, 0.000);
     }
@@ -135,6 +143,16 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
                 motor.set(power);
             }
+        } else {
+            if (motor.get() != 0 && position != 0) {
+                recordedPosition = position;
+            }
+            double currentPower = motor.get();
+            String action = currentPower > 0 ? "up" : (currentPower < 0 ? "down" : "stop");
+            Log.i("armControl", "pivot position = " + position + ", current action: " + action + ", too low? " + (lowEnoughToLimitSlider() ? "yes" : "no"));
+//            if (!isCurrentPositionWithinLimit()) {
+//                motor.stopMotor();
+//            }
         }
 
         //telemetry.update();
@@ -188,6 +206,10 @@ public class DeliveryPivot extends SonicSubsystemBase {
         }
 
         motor.set(0);
+    }
+
+    public boolean lowEnoughToLimitSlider() {
+        return motor.encoder.getPosition() < SliderCheckLimit;
     }
 
 }

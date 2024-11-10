@@ -31,6 +31,7 @@ public class MainTeleop extends OpModeTemplate {
         DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
         DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback);
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback);
+        deliverySlider.setPivotLowEnoughSupplier(deliveryPivot::lowEnoughToLimitSlider);
         RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
         LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
         HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);

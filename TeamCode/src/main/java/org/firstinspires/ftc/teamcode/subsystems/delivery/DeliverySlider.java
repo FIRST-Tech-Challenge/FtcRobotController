@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.delivery;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+
+import java.util.function.Supplier;
 
 public class DeliverySlider extends SonicSubsystemBase {
 
@@ -22,11 +26,15 @@ public class DeliverySlider extends SonicSubsystemBase {
     private int BasketDeliveryPosition = -3300;
     private int CollapsedPosition = -100;
 
+    private int ExtendLimit = -1100;
+
     private int currentTarget = 0;
 
     SonicPIDController pidController;
 
     private boolean isTeleop = true;
+
+    private Supplier<Boolean> pivotLowEnoughSupplier;
 
     public DeliverySlider(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
@@ -68,6 +76,12 @@ public class DeliverySlider extends SonicSubsystemBase {
         motor.set(0);
     }
 
+    public void MoveToValidPosition() {
+        SetAuto();
+        currentTarget = ExtendLimit + 50;
+    }
+
+
     public void MoveToDeliveryPosition() {
         SetAuto();
         currentTarget = BasketDeliveryPosition;
@@ -82,6 +96,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         super.periodic();
 
         double position = motor.encoder.getPosition();
+        Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
         //telemetry.addData("target", currentTarget);
         //telemetry.addData("current", position);
         //telemetry.addData("telop", isTeleop);
@@ -105,6 +120,16 @@ public class DeliverySlider extends SonicSubsystemBase {
                 }
 
                 motor.set(power);
+            }
+        } else {
+//            Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
+            if (pivotLowEnoughSupplier != null
+                    && pivotLowEnoughSupplier.get()
+                    && Math.abs(motor.get()) > 0
+                    && position < ExtendLimit) {
+                motor.stopMotor();
+                MoveToValidPosition();
+
             }
         }
 
@@ -141,5 +166,9 @@ public class DeliverySlider extends SonicSubsystemBase {
                 motor.set(power);
             }
         }
+    }
+
+    public void setPivotLowEnoughSupplier(Supplier<Boolean> pivotLowEnoughSupplier) {
+        this.pivotLowEnoughSupplier = pivotLowEnoughSupplier;
     }
 }
