@@ -43,12 +43,14 @@ public class OdometryFuse {
     }
 
     public Point Filter(Point sparkPoint, Point wheelPoint) {
-        if ((sparkPoint.getX() - wheelPoint.getX() < 3) && (sparkPoint.getY() - wheelPoint.getY() < 3) && (sparkPoint.getX() - wheelPoint.getX() > -3) && (sparkPoint.getY() - wheelPoint.getY() < -3)) { return(WheelUpdateData()); }
+        int diffenceDebug = 2;
+        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(WheelUpdateData()); }
         else { return(SparkUpdateData()); }
     }
 
     public Point CollectData() {
-        Filter(SparkUpdateData(), WheelUpdateData());
+        Point point = Filter(SparkUpdateData(), WheelUpdateData());
+        return(point);
     }
 
     //configure SPARK FUN Otos
