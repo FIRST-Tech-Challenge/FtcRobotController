@@ -16,8 +16,6 @@ public class MeepMeep1 {
                 .build();
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -61.5, Math.toRadians(90)))
-                        .lineToY(-34)
-                        .waitSeconds(2)
                         .lineToY(-31)
                         .waitSeconds(1)
                         .lineToY(-34)
