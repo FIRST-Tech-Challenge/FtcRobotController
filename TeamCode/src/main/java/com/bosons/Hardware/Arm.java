@@ -91,6 +91,7 @@ public class Arm {
     public void setWristServo(double pos){
         wristServo.setPosition(pos);
     }
+
     public void setIntakePower(double power){
         intakeServo.setPower(power);
     }
@@ -101,7 +102,7 @@ public class Arm {
         double pid = controller.calculate(armPos,target);
         double ff = Math.cos(Math.toRadians(target/ticks_in_degree))*f;
 
-        double power = (pid + ff)*0.5;
+        double power = (pid + ff);//*0.5;
 
         if(armPos>100||target>100) {
             rightRotationMotor.setPower(power);
@@ -142,16 +143,18 @@ public class Arm {
         setPositionPolarSmooth(r,theta,seconds);
     }
     public void updatePositionSmooth(){
-        if(Math.abs(thetaTicks-rotTarget)>acceptableRotationError) {
+        if(rotTarget!=thetaTicks) {
             // initial position +/- ticksPerMilisecond*miliseconds
             rotTarget = (int) (thetaTicksInitial + timeSlope * smoothingTimer.milliseconds());
             if(rotTarget>2700){rotTarget=2700;}
             if(rotTarget<0){rotTarget=0;}
             opm.telemetry.addData("smoothing: Target = ",rotTarget);
         }
-        else{
+
+        if((timeSlope>0 && rotTarget>thetaTicks)||(timeSlope<0 && rotTarget<thetaTicks)||(timeSlope==0)){
             rotTarget = thetaTicks;
-        }
+        }//prevent any overshooting
+
         updatePosition();
     }
 
@@ -196,8 +199,16 @@ public class Arm {
     public double getArmAngle(){
         return (leftRotationMotor.getCurrentPosition()/ticks_in_degree)-28;
     }
+    public void resetArmAngle(){
+        leftRotationMotor.resetEncoder();
+    }
     public double getArmLength(){
         return ((leftExtendoMotor.getCurrentPosition()+rightExtendoMotor.getCurrentPosition())/2.0)/(ticks_per_cm)+40.8;
+    }
+
+    public void resetArmLength(){
+        leftExtendoMotor.resetEncoder();
+        rightExtendoMotor.resetEncoder();
     }
 
     public void setPositionCartesian(double x, double y){

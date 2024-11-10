@@ -35,6 +35,7 @@ public class TeleOpDev extends OpMode{
     public DriveTrain driveTrain = null;
     public Arm arm = null;
     public ElapsedTime armTimer = new ElapsedTime(1000);
+    public static double testPhi = 0;
 
     //public static double radius_arm = 0;
     //public static double theta_arm = -28;
@@ -59,6 +60,7 @@ public class TeleOpDev extends OpMode{
         //arm.setPositionPolar(radius_arm,theta_arm);
         //driverA.updateAll();
         //telemetry.addData("button Y",driverA.toggleButtonState(Controller.Button.y));
+        //arm.setWristAngle(testPhi);
     }
 
     /*
@@ -76,7 +78,6 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void loop () {
-
 
         //if (driverA.onButtonPress(Controller.Button.dPadUp)){
         //    arm.extendToTarget(2190,0.5);
@@ -121,31 +122,42 @@ public class TeleOpDev extends OpMode{
         //Arm Controls
         if(driverA.toggleButtonState(Controller.Button.y)){
             if(!arm.isSmoothing()){
-                arm.setPositionPolarSmooth(84.6,90,2);
+                arm.setPositionPolarSmooth(84.6,90,1);
             }
             //armTimer.reset();
             arm.updatePositionSmooth();
+            arm.setWristServo(0.3);
             driveTrain.setDrivePowerCoefficient(0.5);
             driveTrain.setTurnPowerCoefficient(0.5);
         }
-        else if(driverA.toggleButtonState(Controller.Button.dPadRight)){
+        else if(driverA.toggleButtonState(Controller.Button.x)){
             if(driverA.onButtonHold(Controller.Button.a)){
                 if(!arm.isSmoothing()){
-                    arm.setPositionPolarSmooth(65,-10,1);
+                    arm.setPositionPolarSmooth(65,-6,0.5);
+                    arm.setWristServo(0.9);
                 }
             }
             else{
                 if(!arm.isSmoothing()){
-                    arm.setPositionPolarSmooth(65,0,1.5);
+                    arm.setPositionPolarSmooth(65,15,0.5);
+                    arm.setWristServo(0.5);
                 }
             }
+            arm.updatePositionSmooth();
         }
         else{
             //arm.setPositionPolar(0,90-(armTimer.milliseconds()/2000)*100);//smooth transition over two seconds
             if(!arm.isSmoothing()){
-                arm.setPositionPolarSmooth(0,-28,3);
+                arm.setPositionPolarSmooth(0,-28,1);
+            }
+            if(arm.getArmAngle()<-28){
+                arm.resetArmAngle();
+            }
+            if(arm.getArmLength()<40.8){
+                arm.resetArmLength();
             }
             arm.updatePositionSmooth();
+            arm.setWristServo(0);
             driveTrain.setDrivePowerCoefficient(1);
             driveTrain.setTurnPowerCoefficient(1);
         }
