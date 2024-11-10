@@ -67,7 +67,7 @@ public class CommonUtil extends LinearOpMode {
         // map imu
         imu = hardwareMap.get(BHI260IMU.class,"imu");
         myIMUParameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,RevHubOrientationOnRobot.UsbFacingDirection.UP )
+                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)
         );
         imu.initialize(myIMUParameters);
         imu.resetYaw();
