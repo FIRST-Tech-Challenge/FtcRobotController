@@ -53,6 +53,7 @@ public class CommonUtil extends LinearOpMode {
     Servo s1 = null;
     Servo s2 = null;
     Servo s3 = null;
+    Servo s5 = null;
 
     CRServo s4 = null;
 
@@ -89,6 +90,7 @@ public class CommonUtil extends LinearOpMode {
         s3 = hardwareMap.get(Servo.class, "s3");
         s3 = hardwareMap.get(Servo.class, "s3");
         s4 = hardwareMap.get(CRServo.class, "s4");
+        s5 = hardwareMap.get(Servo.class,"s5");
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setDirection(Servo.Direction.FORWARD);
         s3.setDirection(Servo.Direction.REVERSE);
@@ -151,7 +153,17 @@ public class CommonUtil extends LinearOpMode {
     public void intakeOff(){
         s4.setPower(0);
     }
-
+    public void armUp() { m0.setPower(-1); }
+    public void armDown() { m0.setPower(0.3); }
+    public void armOff() { m0.setPower(0); }
+    public void clawOpen() { s5.setDirection(Servo.Direction.FORWARD);
+        s5.setPosition(1); }
+    public void clawClose() { s5.setDirection(Servo.Direction.REVERSE);
+        s5.setPosition(1); }
+    public void basketUp() { s3.setDirection(Servo.Direction.FORWARD);
+        s3.setPosition(0.5); }
+    public void basketDown() { s3.setDirection(Servo.Direction.FORWARD);
+        s3.setPosition(1); }
     public double PID_Turn (double targetAngle, double currentAngle, String minPower) {
         double sign = 1;
         double power = (targetAngle - currentAngle) * 0.01; // was 0.05
@@ -351,10 +363,10 @@ public class CommonUtil extends LinearOpMode {
         s2.setPosition(0.147);
     }
 
-    public void clawOpen()
-    {
-        s1.setPosition(0.4);
-    }
+    //public void clawOpen()
+    //{
+    //    s1.setPosition(0.4);
+    //}
 
     public void wristBent()
     {
@@ -551,51 +563,37 @@ public class CommonUtil extends LinearOpMode {
 
     }
 
-    public void extend(double power, int encoderAbsCounts) {
+    public void slideUp(double power, int encoderAbsCounts) {
         m2.setDirection(DcMotor.Direction.FORWARD);
-        m3.setDirection(DcMotor.Direction.FORWARD);
         m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        m3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        m3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Start count", m2.getCurrentPosition());
-        telemetry.addData("Start count", m3.getCurrentPosition());
         telemetry.update();
 
         while (m2.getCurrentPosition() > -encoderAbsCounts){
             m2.setPower(-power);
-            m3.setPower(power);
             telemetry.addData("Count M2",m2.getCurrentPosition());
-            telemetry.addData("Count M3",m3.getCurrentPosition());
             telemetry.update();
             idle();
         }
         m2.setPower(0); // set power to 0 so the motor stops running
-        m3.setPower(0);
 
     }
 
-    public void retract(double power, int encoderAbsCounts) {
+    public void slideDown(double power, int encoderAbsCounts) {
         m2.setDirection(DcMotor.Direction.FORWARD);
-        m3.setDirection(DcMotor.Direction.FORWARD);
         m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        m3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        m3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Start count", m2.getCurrentPosition());
-        telemetry.addData("Start count", m3.getCurrentPosition());
         telemetry.update();
 
         while (m2.getCurrentPosition() < encoderAbsCounts){
             m2.setPower(power);
-            m3.setPower(-power);
             telemetry.addData("Count M2",m2.getCurrentPosition());
-            telemetry.addData("Count M3",m3.getCurrentPosition());
             telemetry.update();
             idle();
         }
         m2.setPower(0); // set power to 0 so the motor stops running
-        m3.setPower(0);
 
     }
 
