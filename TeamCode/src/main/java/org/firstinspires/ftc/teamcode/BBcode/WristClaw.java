@@ -15,8 +15,8 @@ public class WristClaw {
     }
     //-----------------------------------------
     //Variable Storage:
-    double openPosition = 0.2;
-    double closePosition = 0.57;
+    double openPosition = 0.57;
+    double closePosition = 0.2;
     double upPosition = 0.755;
     double flipPosition = 0.45;
     double downPosition = 0.36;
