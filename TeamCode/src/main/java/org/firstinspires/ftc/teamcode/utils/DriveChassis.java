@@ -16,13 +16,14 @@ public class DriveChassis {
     // Initialize our motors
     public DcMotorEx leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
     // -50 to -2150
-    public DcMotorEx horizontalSlideMotor, verticalSlideMotor, endPivotMotor;
+    public DcMotorEx collectionArmMotor, scoringArmMotor, endPivotMotor;
     public Servo claw, bucket;
 
     // Info about our robots design
     public final int TICKS_PER_REVOLUTION = 28;
     public final double DRIVE_GEAR_RATIO = 20;
     public final double WHEEL_CIRCUMFERENCE = 23.94; // In CM
+    public final double ARM_GEAR_RATIO = 60;
 
     public IMU imu;
 
@@ -46,11 +47,24 @@ public class DriveChassis {
         rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Other motors (Arms, end effectors, etc)
-        horizontalSlideMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "horizontalSlide");
-        verticalSlideMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "verticalSlide");
+        collectionArmMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "horizontalSlide");
+        scoringArmMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "verticalSlide");
         endPivotMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "endPivotMotor");
+
+        scoringArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        collectionArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        endPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        scoringArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        collectionArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        endPivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         claw = hardwareMap.get(Servo.class, "intakeEffector");
         bucket = hardwareMap.get(Servo.class, "bucket");
+
+        claw.setPosition(0);
+        bucket.setPosition(0);
+
         // Instantiate the imu
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(

@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.utils.controller.PowerCurve;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @TeleOp(name="XendyNotSimpleAutonomous")
 public class XendyNotSimpleAutonomous extends OpMode {
@@ -48,18 +47,17 @@ public class XendyNotSimpleAutonomous extends OpMode {
         chassis = new DriveChassis(this);
         if (!RECORDED_DATA.isEmpty()) {
             states = Arrays.stream(RECORDED_DATA.split("\\|")).map(this::loadStateFromString).collect(Collectors.toCollection(ArrayList::new));
-            chassis.verticalSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            chassis.horizontalSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            chassis.scoringArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            chassis.collectionArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             chassis.endPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            chassis.verticalSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            chassis.horizontalSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            chassis.scoringArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            chassis.collectionArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             chassis.endPivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-
             // change these to be reasonable later
-            chassis.verticalSlideMotor.setVelocity(0);
-            chassis.horizontalSlideMotor.setVelocity(0);
+            chassis.scoringArmMotor.setVelocity(0);
+            chassis.collectionArmMotor.setVelocity(0);
             chassis.endPivotMotor.setVelocity(0);
 
             resetRuntime();
@@ -118,12 +116,12 @@ public class XendyNotSimpleAutonomous extends OpMode {
                 clawClosed = !bucketDown;
             }
             double xInput = controller2.axis(Controller.Axis.LeftStickX);
-            if (chassis.horizontalSlideMotor.getCurrentPosition() >= 0 && xInput > 0 || chassis.horizontalSlideMotor.getCurrentPosition() <= -2150 && xInput < 0) {
-                chassis.horizontalSlideMotor.setVelocity(0);
+            if (chassis.collectionArmMotor.getCurrentPosition() >= 0 && xInput > 0 || chassis.collectionArmMotor.getCurrentPosition() <= -2150 && xInput < 0) {
+                chassis.collectionArmMotor.setVelocity(0);
                 telemetry.addLine("LIMIT REACHED FOR COLLECTION ARM");
             }
             else {
-                chassis.horizontalSlideMotor.setVelocity(xInput * 500);
+                chassis.collectionArmMotor.setVelocity(xInput * 500);
             }
 
             saveRobotState(horizontalMovePower, verticalMovePower, rotationInput != 0 ? normalizedYaw : targetRotation);
@@ -133,8 +131,8 @@ public class XendyNotSimpleAutonomous extends OpMode {
             horizontalMovePower = currentState.mX;
             verticalMovePower = currentState.mY;
             turnPower = Numbers.turnCorrectionSpeed(normalizedYaw, currentState.yaw);
-            chassis.verticalSlideMotor.setTargetPosition(currentState.verticalSlidePosition);
-            chassis.horizontalSlideMotor.setTargetPosition(currentState.horizontalSlidePosition);
+            chassis.scoringArmMotor.setTargetPosition(currentState.verticalSlidePosition);
+            chassis.collectionArmMotor.setTargetPosition(currentState.horizontalSlidePosition);
             chassis.endPivotMotor.setTargetPosition(currentState.pivotPosition);
             chassis.bucket.setPosition(currentState.bucketPosition);
             chassis.claw.setPosition(currentState.clawPosition);
@@ -161,7 +159,7 @@ public class XendyNotSimpleAutonomous extends OpMode {
         states.add(new SaveState(horzPow, vertPow, cYaw));
     }
 
-    class SaveState {
+    private class SaveState {
         public double t;
         public double mX, mY, yaw;
         public int verticalSlidePosition;
@@ -174,8 +172,8 @@ public class XendyNotSimpleAutonomous extends OpMode {
             mX = horzPow;
             mY = vertPow;
             yaw = cYaw;
-            verticalSlidePosition = chassis.verticalSlideMotor.getCurrentPosition();
-            horizontalSlidePosition = chassis.horizontalSlideMotor.getCurrentPosition();
+            verticalSlidePosition = chassis.scoringArmMotor.getCurrentPosition();
+            horizontalSlidePosition = chassis.collectionArmMotor.getCurrentPosition();
             pivotPosition = chassis.endPivotMotor.getCurrentPosition();
             bucketPosition = chassis.bucket.getPosition();
             clawPosition = chassis.claw.getPosition();
@@ -192,6 +190,7 @@ public class XendyNotSimpleAutonomous extends OpMode {
             telemetry.addData("bucket", bucketPosition);
         }
     }
+
     public SaveState loadStateFromString(String s) {
         String[] splits = s.split(":");
         SaveState state = new SaveState(0, 0, 0);
