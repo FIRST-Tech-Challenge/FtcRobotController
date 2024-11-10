@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.Hardware.Hang;
 import org.firstinspires.ftc.teamcode.Hardware.Slides;
 import org.firstinspires.ftc.teamcode.Hardware.Wrist;
+import org.firstinspires.ftc.teamcode.RoboActions;
 import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
 import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -39,6 +40,7 @@ public class OneDriverLynx extends LinearOpMode {
     GlobalStateMachine globalStateMachine = GlobalStateMachine.DEFAULT;
     public List<LynxModule> modules;
     public LynxModule CONTROL_HUB;
+    RoboActions actions;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -57,6 +59,8 @@ public class OneDriverLynx extends LinearOpMode {
         double frequency = 0;
         double loopTime = 0;
         modules = hardwareMap.getAll(LynxModule.class);
+        actions = new RoboActions(arm, slides);
+
         for (LynxModule m : modules) {
             m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             if (m.isParent() && LynxConstants.isEmbeddedSerialNumber(m.getSerialNumber())) CONTROL_HUB = m;
@@ -129,8 +133,7 @@ public class OneDriverLynx extends LinearOpMode {
                     slides.floorIntake();
                 }
             } else if (globalStateMachine == GlobalStateMachine.READY_DEPOSIT) { // READY DEPOSIT
-                arm.deposit();
-                slides.preScore();
+                actions.preScore();
                 wrist.intake();
             } else if (globalStateMachine == GlobalStateMachine.SLIDES_BEGIN_SCORE) { // SLIDES BEGIN SCORE
                 slides.score();

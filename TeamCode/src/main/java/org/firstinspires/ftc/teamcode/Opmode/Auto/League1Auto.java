@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Claw;
 import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.Hardware.Slides;
 import org.firstinspires.ftc.teamcode.Hardware.Wrist;
+import org.firstinspires.ftc.teamcode.RoboActions;
 import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class League1Auto extends LinearOpMode {
     double timeStamp = 0;
     PARKING parking = PARKING.NEAR;
     boolean isThirdCycle = false;
-
+    RoboActions actions;
     public void runOpMode() throws InterruptedException {
         //bulk reading
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -56,7 +57,7 @@ public class League1Auto extends LinearOpMode {
         Claw claw = new Claw(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
         stickyGamepad gp = new stickyGamepad(gamepad1);
-
+        actions = new RoboActions(arm, slides);
         while (opModeInInit()) {
             claw.close();
             wrist.intake();
@@ -82,8 +83,7 @@ public class League1Auto extends LinearOpMode {
                 case REST:
                     break;
                 case PICKUP:
-                    arm.deposit();
-                    slides.preScore();
+                    actions.preScore();
                     currentAction = Actions.SLIDESEXTEND;
                     break;
                 case THIRDCYCLEPICKUP:
@@ -91,8 +91,7 @@ public class League1Auto extends LinearOpMode {
                         ActionStamp=timer.milliseconds();
                         actionToggle=false;
                     }
-                    arm.deposit();
-                    slides.preScore();
+                    actions.preScore();
                     if(timer.milliseconds()>ActionStamp+500){
                         actionToggle=true;
                         currentAction=Actions.SLIDESEXTEND;

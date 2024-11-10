@@ -16,6 +16,7 @@ public class Arm {
     private static final double TICKS_TO_DEGREES = 0.1602564102564103;
     public static double targetArmPosition = 100;
     public static double sKp = 0.07, sKi = 0, sKd = 0.004;
+    public static double powerA = 0.7, powerB = -0.7;
     private final DcMotorEx a;
     private final DcMotorEx armEncoder;
     private final PID armController;
@@ -26,7 +27,7 @@ public class Arm {
         a = hardwareMap.get(DcMotorEx.class, "arm");
         this.armEncoder = armEncoder;
         this.armController = new PID(new PID.Coefficients(sKp, sKi, sKd), () -> (this.getCurrentArmPosition()) - targetArmPosition, factor -> {
-            this.a.setPower(M.clamp(factor, 0.7, -0.7)); //b is down
+            this.a.setPower(M.clamp(factor, powerA, powerB)); //b is down
         });
 
     }
