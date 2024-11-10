@@ -20,7 +20,7 @@ public class PinchBot extends PivotBot{
 
 
     private double servoMax = 0.78;
-    private double servoMin = 0.45;
+    private double servoMin = 0.43;
     public PinchBot(LinearOpMode opMode) {
         super(opMode);
     }
@@ -30,6 +30,9 @@ public class PinchBot extends PivotBot{
         super.init(hardwareMap);
         pinch = hardwareMap.get(Servo.class, "pinch");
         rotate = hardwareMap.get(Servo.class, "rotate");
+
+        pinch.setPosition(1);
+        rotate.setPosition(servoMin);
     }
 
     protected void onTick() {
