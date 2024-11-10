@@ -137,7 +137,7 @@ public class DeliverySlider extends SonicSubsystemBase {
     }
 
     public void ExtendMaxInAuto() {
-        MoveToPositionInAuto(BasketDeliveryPosition);
+        MoveToPositionInAuto(BasketDeliveryPosition + 100);
     }
 
     public void CollapseMinInAuto() {

@@ -90,7 +90,7 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
     }
 
     public void DriveToTarget(double targetX, double targetY) {
-        double minPower = 0.2;
+        double minPower = 0.3;
         double distanceTolerance = 5;
 
         telemetry.addLine("Driving");
@@ -118,8 +118,9 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
                 }
             }
 
-            double x = 0.002*(targetX - odo.getPosX());
-            double y = -0.002*(targetY - odo.getPosY());
+            // Battery reading of 13.49 required a Kp of 0.015
+            double x = 0.0015*(targetX - odo.getPosX());
+            double y = -0.0015*(targetY - odo.getPosY());
 
             double botHeading = odo.getHeading();
 
@@ -239,7 +240,7 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         bR.motor.setPower(0);
     }
 
-    public void AlignTx() {
+    public boolean AlignTx() {
         LimeLight.LimelightResult result = limeLight.GetResult();
         double min = 0.2;
 
@@ -273,12 +274,13 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         }
         else {
             telemetry.addLine("No sample found");
+            return false;
         }
 
         telemetry.update();
 
         drive.stop();
-
+        return true;
     }
 
     public void AlignTy() {

@@ -55,6 +55,8 @@ public class AutonomousCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         driveTrain.stop();
+        pivot.MoveToStartInAuto();
+        slider.CollapseMinInAuto();
     }
 
     @Override

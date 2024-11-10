@@ -18,15 +18,20 @@ public class Red_F3 extends AutoOpModeBase {
         rollingIntake.SetElbowInIntakePosition();
         DeliverSample();
 
-        driveTrain.DriveToTarget(400, 300);
+        driveTrain.DriveToTarget(400, 200);
         Wait(300);
         driveTrain.TurnAngle(0);
+        Wait(300);
 
-        driveTrain.AlignTx();
+        if (!driveTrain.AlignTx()) {
+            telemetry.addLine("Cannot find sample");
+            telemetry.update();
+        }
+
         driveTrain.AlignTy();
 
-        driveTrain.TurnRelative(5);
-        driveTrain.Forward(120);
+        driveTrain.TurnRelative(20);
+        driveTrain.Forward(60);
 
         pivot.MoveToIntakeInAuto();
 
@@ -42,24 +47,26 @@ public class Red_F3 extends AutoOpModeBase {
 
         DeliverSample();
 
-        driveTrain.DriveToTarget(1500, 0);
-
+        driveTrain.DriveToTarget(1200, 200);
     }
 
     private void DeliverSample() {
-        driveTrain.DriveToTarget(270, 400);
+        driveTrain.DriveToTarget(350, 400);
         driveTrain.TurnAngle(125);
 
         pivot.MoveToDeliveryInAuto();
         slider.ExtendMaxInAuto();
 
-        driveTrain.DriveToTarget(80, 400);
+        driveTrain.DriveToTarget(250, 400);
+        driveTrain.TurnAngle(140);
 
         rollingIntake.OuttakeInAuto();
-        Wait(00);
+        Wait(1500);
         rollingIntake.HoldInAuto();
 
-        driveTrain.DriveToTarget(300, 400);
+        driveTrain.DriveToTarget(350, 400);
+        driveTrain.TurnAngle(125);
+
         slider.CollapseMinInAuto();
         pivot.MoveToStartInAuto();
     }

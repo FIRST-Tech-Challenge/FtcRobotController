@@ -40,7 +40,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
         this.elbowServo = hardwareMap.get(Servo.class, "Elbow");
 
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+        //colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
 
         this.gamepad = gamepad;
         this.telemetry = telemetry;
@@ -56,17 +56,11 @@ public class RollingIntake extends SonicSubsystemBase {
     public void periodic() {
         super.periodic();
 
-        double d = GetDepth();
+        //double d = GetDepth();
 
 
         //telemetry.addData("distance", d);
         //telemetry.update();
-
-        if(d >= 40) {
-            feedback.TurnLedRed();
-        } else {
-            feedback.TurnLedGreen();
-        }
 
         if(state == IntakeState.Intake) {
             //if(d > 40) {
@@ -79,10 +73,10 @@ public class RollingIntake extends SonicSubsystemBase {
             //    telemetry.addLine("Auto stop");
             //}
         } else if (state == IntakeState.Outtake) {
-            if(d > 130) {
+            //if(d > 130) {
                 //feedback.DriverRumbleBlip();
                 //feedback.OperatorRumbleLeft();
-            }
+            //}
             this.leftServo.setPower(1);
             this.rightServo.setPower(-1);
 
@@ -128,7 +122,7 @@ public class RollingIntake extends SonicSubsystemBase {
         state = IntakeState.Hold;
     }
 
-    public double GetDepth() {
+ /*   public double GetDepth() {
         if (colorSensor instanceof DistanceSensor) {
             double depth = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
             //telemetry.addData("Left distance (mm)", "%.3f", depth);
@@ -136,7 +130,7 @@ public class RollingIntake extends SonicSubsystemBase {
         }
 
         return 1000000;
-    }
+    }*/
 
     public void IntakeInAuto() {
         this.leftServo.setPower(-1);
@@ -144,11 +138,16 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void OuttakeInAuto() {
+        telemetry.addLine("Trying to outtake");
+        telemetry.update();
         this.leftServo.setPower(1);
         this.rightServo.setPower(-1);
     }
 
     public void HoldInAuto() {
+        telemetry.addLine("Trying to outtake");
+        telemetry.update();
+
         this.leftServo.setPower(0);
         this.rightServo.setPower(0);
     }
