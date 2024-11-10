@@ -30,7 +30,7 @@ public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
     IMU internalIMU;
 
     public AutoFourWheelMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
-        super(hardwareMap, gamepad, telemetry, feedback);
+        super(hardwareMap, gamepad, telemetry, feedback, false);
 
         Translation2d frontLeftWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
         Translation2d frontRightWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);

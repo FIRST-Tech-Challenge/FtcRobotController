@@ -10,7 +10,7 @@ public class IndependentCtrlWheelMecanumDriveTrain extends FourWheelMecanumDrive
     // y -> fl, b -> fr, x -> bl, a -> br
     private double power_fl, power_fr, power_bl, power_br;
     public IndependentCtrlWheelMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
-        super(hardwareMap, gamepad, telemetry, feedback);
+        super(hardwareMap, gamepad, telemetry, feedback, false);
     }
 
     @Override

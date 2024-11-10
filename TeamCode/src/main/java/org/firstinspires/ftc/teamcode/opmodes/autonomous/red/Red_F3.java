@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.AutoOpModeBase;
 
-@Autonomous(name = "_Red > Start F2", group = "Red alliance", preselectTeleOp="MainTeleOp")
+@Autonomous(name = "_Red > Start F2", preselectTeleOp="MainTeleop")
 public class Red_F3 extends AutoOpModeBase {
 
     @Override

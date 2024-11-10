@@ -29,8 +29,12 @@ public abstract class BasicDriveTrain extends SubsystemBase {
 
     protected DriverFeedback feedback;
 
-    public BasicDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
+    protected boolean revertMotor = false;
 
+
+    public BasicDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, boolean revertMotor) {
+
+        this.revertMotor = revertMotor;
         /* instantiate motors */
         createAndInitHardwares(hardwareMap);
 

@@ -34,7 +34,7 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
     LimeLight limeLight;
 
     public AutoMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
-        super(hardwareMap, gamepad, telemetry, feedback);
+        super(hardwareMap, gamepad, telemetry, feedback, true);
 
         this.limeLight = limeLight;
 
@@ -59,16 +59,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
         odo.update();
 
-        boolean addTelemetry = false;
-        if(addTelemetry) {
-            telemetry.addLine("Tel");
-            telemetry.addData("x: ", odo.getPosX());
-            telemetry.addData("y: ", odo.getPosY());
-            telemetry.addData("heading: ", Math.toDegrees(odo.getHeading()));
-
-
-            telemetry.update();
-        }
     }
 
     public void DriveToTargetOp() {
@@ -93,18 +83,8 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         double minPower = 0.3;
         double distanceTolerance = 5;
 
-        telemetry.addLine("Driving");
-        telemetry.update();
-
         while (true) {
             odo.update();
-            telemetry.addData("tx: ", targetX);
-            telemetry.addData("ty: ", targetY);
-
-            telemetry.addData("x: ", odo.getPosX());
-            telemetry.addData("y: ", odo.getPosY());
-            telemetry.addData("heading: ", Math.toDegrees(odo.getHeading()));
-            telemetry.update();
 
             if(((Math.abs(targetX - odo.getPosX()) < distanceTolerance) && (Math.abs(targetY - odo.getPosY())) < distanceTolerance)) {
                 // Give a 100ms to identify overshoot
@@ -132,13 +112,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
             double backLeftPower = (rotX - rotY) / denominator;
             double frontRightPower = (rotX - rotY) / denominator;
             double backRightPower = (rotX + rotY) / denominator;
-
-            telemetry.addData("fl", frontLeftPower);
-            telemetry.addData("bL", backLeftPower);
-            telemetry.addData("fR", frontRightPower);
-            telemetry.addData("bR", backRightPower);
-
-            telemetry.update();
 
             if(Math.abs(frontLeftPower) < minPower) {
                 frontLeftPower = minPower * Math.signum(frontLeftPower);
@@ -189,13 +162,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
 
         double error = targetAngleInRadians - odo.getHeading();
-        telemetry.addLine("Tel");
-        telemetry.addData("x: ", odo.getPosX());
-        telemetry.addData("y: ", odo.getPosY());
-        telemetry.addData("heading: ", Math.toDegrees(odo.getHeading()));
-        telemetry.addData("error", error);
-
-        telemetry.update();
 
         while (true) {
 
@@ -226,12 +192,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
             odo.update();
             error = targetAngleInRadians - odo.getHeading();
 
-            telemetry.addData("x: ", odo.getPosX());
-            telemetry.addData("y: ", odo.getPosY());
-            telemetry.addData("heading: ", Math.toDegrees(odo.getHeading()));
-            telemetry.addData("error", error);
-
-            telemetry.update();
         }
 
         fL.motor.setPower(0);

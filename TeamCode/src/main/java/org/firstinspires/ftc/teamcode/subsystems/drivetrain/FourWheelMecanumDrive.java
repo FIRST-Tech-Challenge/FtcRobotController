@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
+import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 /**
  * for wheel macanum drive train that hold references to 4 wheels and init them.
@@ -16,10 +17,9 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
 
     protected Motor fL, fR, bL, bR;
 
-    private static final boolean revertMotor = false;
 
-    public FourWheelMecanumDrive(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
-        super(hardwareMap, gamepad, telemetry, feedback);
+    public FourWheelMecanumDrive(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, boolean revertMotors) {
+        super(hardwareMap, gamepad, telemetry, feedback, revertMotors);
     }
 
     @Override
@@ -32,6 +32,7 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         if (revertMotor) {
             this.fR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
             this.bR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         }
 
         fL.encoder.reset();
