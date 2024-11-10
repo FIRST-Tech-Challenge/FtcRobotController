@@ -70,7 +70,7 @@ public class Teleop extends LinearOpMode {
             }
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
             //driver2
-            SM.move(gamepad2.left_stick_y + 0.01  > 1.0 && gamepad2.left_stick_y > 0.0 ? gamepad2.left_stick_y : gamepad2.left_stick_y + 0.01);
+            SM.move(gamepad2.left_stick_y + 0.01  > 1.0 && sc.getCurrentPosition() < 20 && sr.getCurrentPosition() > 600 ? gamepad2.left_stick_y : gamepad2.left_stick_y + 0.01);
             telemetry.addLine("Slide Pos:" + String.valueOf(sc.getCurrentPosition()));
             if(-gamepad2.right_stick_y <= -0.3){
                 SM.setPos(0);
