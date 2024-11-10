@@ -17,5 +17,4 @@ public class LinkageServoAction {
         linkageServo.setPosition(position);
     }
 
-
 }
