@@ -4,6 +4,7 @@ package com.kalipsorobotics.localization;
 
 import android.annotation.SuppressLint;
 
+import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -17,13 +18,11 @@ public class OdometryFuse {
     OpModeUtilities opModeUtilities;
     private final SparkFunOTOS myOtos;
     private final DcMotor rightEncoder;
-    private final DcMotor leftEncoder;
     private final DcMotor backEncoder;
 
     public OdometryFuse(SparkFunOTOS myOtos, DcMotor rightEncoder, DcMotor leftEncoder, DcMotor backEncoder) {
         this.myOtos = myOtos;
         this.rightEncoder = rightEncoder;
-        this.leftEncoder = leftEncoder;
         this.backEncoder = backEncoder;
     }
     public Point WheelUpdateData() {
