@@ -2,17 +2,20 @@ package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+
+import java.util.ArrayList;
 
 @Autonomous
 public class SampleAuto01 extends OpMode {
-    SampleMecanumDrive drive;
-    Pose2d start_pos = new Pose2d(0,0,0);
-    Pose2d current_position = start_pos;
+    public SampleMecanumDrive drive;
+    public Pose2d start_pos = new Pose2d(0,0,0);
+    public Pose2d current_position = start_pos;
+    public ArrayList movesList = new ArrayList();
     Pose2d end = null;
     @Override
     public void init() {
@@ -24,6 +27,15 @@ public class SampleAuto01 extends OpMode {
         drive.setPoseEstimate(start_pos);
         current_position = moveForward(60);
         current_position = turnLeft(90);
+        current_position = moveForward(48);
+        current_position = turnLeft(60);
+        current_position = moveForward(64);
+        wait_seconds(2);
+        current_position = moveBackward(64);
+        current_position = turnRight(60);
+        current_position = moveBackward(48);
+        current_position = turnRight(90);
+        current_position = moveBackward(60);
     }
 
     @Override
@@ -33,13 +45,12 @@ public class SampleAuto01 extends OpMode {
 
     @Override
     public void stop(){
-        current_position = turnRight(90);
-        current_position = moveBackward(60);
+
     }
 
     public Pose2d moveForward(double distance){
         Trajectory trajectory;
-        if(end == null) {
+        if(current_position == null) {
             trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
                     .forward(distance)
                     .build();
@@ -51,7 +62,6 @@ public class SampleAuto01 extends OpMode {
         }
         drive.followTrajectory(trajectory);
         drive.updatePoseEstimate();
-        end = trajectory.end();
         return trajectory.end();
     }
 
@@ -123,7 +133,7 @@ public class SampleAuto01 extends OpMode {
         }
         drive.followTrajectorySequence(trajectory);
         drive.updatePoseEstimate();
-        end = trajectory.end();
+        end = drive.getPoseEstimate();
         return trajectory.end();
     }
 
@@ -140,9 +150,15 @@ public class SampleAuto01 extends OpMode {
                     .build();
         }
         drive.followTrajectorySequence(trajectory);
-
-        end = trajectory.end();
+        drive.updatePoseEstimate();
+        end = drive.getPoseEstimate();
         return trajectory.end();
+    }
+    public void wait_seconds(double seconds){
+        TrajectorySequence ts = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .waitSeconds(seconds) // Waits 3 seconds
+                .build();
+        drive.followTrajectorySequence(ts);
     }
 
 }
