@@ -50,7 +50,7 @@ public class DriveChassis {
         verticalSlideMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "verticalSlide");
         endPivotMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "endPivotMotor");
         claw = hardwareMap.get(Servo.class, "intakeEffector");
-        // bucket = hardwareMap.get(Servo.class, "bucket");
+        bucket = hardwareMap.get(Servo.class, "bucket");
         // Instantiate the imu
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(

@@ -16,6 +16,11 @@ public class Controller {
     }
 
     public enum Button {
+        // Dpads
+        DPadLeft,
+        DPadRight,
+        DPadUp,
+        DPadDown,
         // XBOX / Logitech
         A,
         B,
@@ -110,6 +115,14 @@ public class Controller {
                 return g.left_stick_button;
             case RightStick:
                 return g.right_stick_button;
+            case DPadDown:
+                return g.dpad_down;
+            case DPadUp:
+                return g.dpad_up;
+            case DPadLeft:
+                return g.dpad_left;
+            case DPadRight:
+                return g.dpad_right;
             default:
                 throw new IllegalArgumentException();
         }
