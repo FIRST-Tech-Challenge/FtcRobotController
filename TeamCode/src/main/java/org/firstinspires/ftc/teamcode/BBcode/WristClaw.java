@@ -19,7 +19,7 @@ public class WristClaw {
     double closePosition = 0.57;
     double upPosition = 0.755;
     double flipPosition = 0.45;
-    double downPosition = 0.3725;
+    double downPosition = 0.36;
     double dumpPosition = 0.25;
     double centerPosition = 0.5;
     double wristInit = 0.755;
