@@ -8,17 +8,32 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utils.Vector;
 import org.firstinspires.ftc.teamcode.robotSubSystems.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.robotSubSystems.Elevator.Elevator;
+import org.firstinspires.ftc.teamcode.robotSubSystems.Intake.Intake;
+import org.firstinspires.ftc.teamcode.robotSubSystems.Intake.IntakeState;
+
 @TeleOp(name = "Test")
 public class Test extends OpMode {
+
+    IntakeState intakeState = IntakeState.OFF;
     @Override
     public void init() {
         Drivetrain.init(hardwareMap);
         Gyro.init(hardwareMap);
+        Intake.init(hardwareMap);
+        Elevator.init(hardwareMap);
     }
     @Override
     public void loop() {
+        if (gamepad1.back) {Gyro.resetGyro();}
+        if (gamepad1.a) {intakeState = intakeState.IN;}
+        if (gamepad1.b) {intakeState = intakeState.OFF;}
+        if (gamepad1.y) {intakeState = intakeState.OUT;}
+
+
+        Elevator.operate(-gamepad1.right_stick_y);
+        Intake.operate(intakeState);
         Drivetrain.operate(new Vector(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger);
-        if (gamepad1.back) {Gyro.resetGyro();};
         telemetry.addData("Gyro", Gyro.getAngle());
     }
 }
