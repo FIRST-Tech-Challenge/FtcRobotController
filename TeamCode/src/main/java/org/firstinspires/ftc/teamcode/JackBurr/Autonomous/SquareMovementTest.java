@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
 public class SquareMovementTest extends OpMode {
@@ -38,13 +39,27 @@ public class SquareMovementTest extends OpMode {
     @Override
     public void start() {
         drive.followTrajectory(forward);
+        drive.updatePoseEstimate();
+        wait_seconds(0.3);
         drive.followTrajectory(right);
+        drive.updatePoseEstimate();
+        wait_seconds(0.3);
         drive.followTrajectory(backward);
+        drive.updatePoseEstimate();
+        wait_seconds(0.3);
         drive.followTrajectory(left);
+        drive.updatePoseEstimate();
     }
 
     @Override
     public void loop(){
 
+    }
+
+    public void wait_seconds(double seconds){
+        TrajectorySequence ts = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .waitSeconds(seconds) // Waits 3 seconds
+                .build();
+        drive.followTrajectorySequence(ts);
     }
 }
