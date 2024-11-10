@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-@Autonomous(name="ramAuto", group="Auto")
-public class ramAuro extends OpMode {
+@Autonomous(name="tstAto", group="Auto")
+public class testAto extends OpMode {
     private AutonomousHandler autoHandler;
 
     @Override
@@ -64,143 +64,94 @@ public class ramAuro extends OpMode {
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(0,10,0),
-                armPose.CHAMBER_A,
+                new SparkFunOTOS.Pose2D(5,0,0),
+                armPose.AUTO_1,
                 wristState.UP,
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(0,15,0),
-                armPose.CHAMBER_A,
+                new SparkFunOTOS.Pose2D(5,5,0),
+                armPose.AUTO_1,
                 wristState.UP,
                 clawState.CLOSED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,22,0),
-                armPose.CHAMBER_A,
-                wristState.UP,
-                clawState.CLOSED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,22,0),
-                armPose.CHAMBER_B,
-                wristState.UP,
-                clawState.CLOSED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,22,0),
-                armPose.CHAMBER_B,
-                wristState.UP,
-                clawState.OPENED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,10,0),
-                armPose.REST,
-                wristState.UP,
-                clawState.OPENED
         );
         instructionHandler.addInstruction(
                 5,
                 new SparkFunOTOS.Pose2D(0,5,0),
-                armPose.REST,
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-24,10,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(0,0,0),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-24,50,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(5,0,0),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-36,50,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(5,5,0),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-36,30,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(0,5,0),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-36,15,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(5,0,0),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-36,10,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(5,5,0),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-36,50,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(0,5,0),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-44,50,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(5,0,-90),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-44,30,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(5,5,90),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-44,20,0),
-                armPose.REST,
+                new SparkFunOTOS.Pose2D(0,5,180),
+                armPose.AUTO_1,
                 wristState.UP,
-                clawState.OPENED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(-44,15,0),
-                armPose.REST,
-                wristState.UP,
-                clawState.OPENED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(-44,10,0),
-                armPose.REST,
-                wristState.UP,
-                clawState.OPENED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(-44,25,180),
-                armPose.REST,
-                wristState.UP,
-                clawState.OPENED
+                clawState.CLOSED
         );
         // ACS & DBS & Handler
         ArmSubSystem armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);

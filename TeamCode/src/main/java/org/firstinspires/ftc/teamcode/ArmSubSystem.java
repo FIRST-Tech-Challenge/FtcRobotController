@@ -66,8 +66,8 @@ public class ArmSubSystem {
                 break;
             case CHAMBER_B:
                 positionalZone = armPoseZone.CHAMBER;
-                extendoReference = 2300;
-                capstanReference = 425;
+                extendoReference = 0;
+                capstanReference = 315;
                 break;
             case CHAMBER_A:
                 positionalZone = armPoseZone.CHAMBER;

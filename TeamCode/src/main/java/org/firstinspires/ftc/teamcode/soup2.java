@@ -24,8 +24,8 @@ public class soup2 extends OpMode {
     private RevTouchSensor Lswitch;
 
     // Servo Button Toggles
-    private boolean LSLowerOut;
-    private boolean LSLowerToggling;
+    private boolean LSLowerOut = true;
+    private boolean LSLowerToggling = false;
     private double LSLowerPos;
     private boolean LSTopOut;
     private boolean LSTopToggling;
@@ -141,25 +141,10 @@ public class soup2 extends OpMode {
         if ((gamepad2.a || gamepad1.a) && !LSLowerToggling) {
             LSLowerOut = !LSLowerOut;
             LSLowerToggling = true;
-            if (LSLowerOut) {
-                telemetry.speak("Claw Up");
-                LSLowerPos = 1;
-            } else {
-                telemetry.speak("Claw Down");
-                LSLowerPos = 0.3;
-            }
         }
         if ((!gamepad2.a) && (!gamepad1.a)) {
             LSLowerToggling = false;
         }
-        if (gamepad2.dpad_down || gamepad1.dpad_down) {
-            LSLowerPos = LSLowerPos - 0.01;
-        }
-        if (gamepad2.dpad_up || gamepad1.dpad_up) {
-            LSLowerPos = LSLowerPos + 0.01;
-        }
-        LSLower.setPosition(LSLowerPos + lolclock);
-
         // Linear Servo Top
         if ((gamepad2.x ||gamepad1.x) && !LSTopToggling) {
             LSTopOut = !LSTopOut;
@@ -169,13 +154,15 @@ public class soup2 extends OpMode {
             LSTopToggling = false;
         }
         if (LSTopOut) {
-            telemetry.speak("Wrist Open");
             LSTop.setPosition(0.75 + lolclock);
         } else {
-            telemetry.speak("Wrist Close");
             LSTop.setPosition(0 + lolclock);
         }
-
+        if (LSLowerOut) {
+            LSLower.setPosition(0.9 + lolclock);
+        } else {
+            LSLower.setPosition(0.2 + lolclock);
+        }
         // Telemetry for debugging
         SparkFunOTOS.Pose2D pos = odometry.getPosition();
         telemetry.addData("OdoX", pos.x);
