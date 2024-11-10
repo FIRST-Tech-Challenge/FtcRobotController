@@ -26,4 +26,14 @@ public abstract class OpModeTemplate extends CommandOpMode {
         } catch (java.lang.InterruptedException e) {
         }
     }
+
+    public void end() {
+        super.stop();
+        if (driverGamepad != null) {
+            driverGamepad = null;
+        }
+        if (operatorGamepad != null) {
+            operatorGamepad = null;
+        }
+    }
 }
