@@ -141,37 +141,25 @@ public class Odometry {
         reset();
         // Calculate target counts for each motor based on the given counts
         double targetCounts = counts * COUNTS_PER_REVOLUTION / (Math.PI * WHEEL_DIAMETER_INCHES);
-
+        
         switch (direction.toLowerCase()) {
             case "forward":
-                while (Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts) {
+                while (encoderCorrectionCheck(frontLeftMotor,frontRightMotor,rearLeftMotor,rearRightMotor,targetCounts)) {
                     setMotorPower(speed); // Example power, adjust as needed
                 }
                 break;
             case "backward":
-                while (Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts) {
+                while (encoderCorrectionCheck(frontLeftMotor,frontRightMotor,rearLeftMotor,rearRightMotor,targetCounts)) {
                     setMotorPower(-speed); // Example power, adjust as needed
                 }
                 break;
             case "left":
-                while (Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts) {
+                while (encoderCorrectionCheck(frontLeftMotor,frontRightMotor,rearLeftMotor,rearRightMotor,targetCounts)) {
                     setStrafePowers(-speed); // Example power, adjust as needed for left movement
                 }
                 break;
             case "right":
-                while (Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts) {
+                while (encoderCorrectionCheck(frontLeftMotor,frontRightMotor,rearLeftMotor,rearRightMotor,targetCounts)) {
                     setStrafePowers(speed); // Example power, adjust as needed for right movement
                     baseRobot.logger.update("FL Position: ", ""+frontLeftMotor.getCurrentPosition());
                     baseRobot.logger.update("FR Position: ", ""+frontRightMotor.getCurrentPosition());
@@ -183,18 +171,12 @@ public class Odometry {
                 }
                 break;
             case "tleft":
-                while (Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts) {
+                while (encoderCorrectionCheck(frontLeftMotor,frontRightMotor,rearLeftMotor,rearRightMotor,targetCounts)) {
                     setMotorPowers(-speed / 1.75, speed / 1.5); // Example power, adjust as needed for right movement
                 }
                 break;
             case "tright":
-                while (Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts
-                        && Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts) {
+                while (encoderCorrectionCheck(frontLeftMotor,frontRightMotor,rearLeftMotor,rearRightMotor,targetCounts)) {
                     setMotorPowers(speed / 1.75, -speed / 1.5); // Example power, adjust as needed for right movement
                 }
                 break;
@@ -205,6 +187,31 @@ public class Odometry {
 
         // Stop the robot after reaching the target counts
         setMotorPower(0);
+    }
+
+    /**
+     * Checks if 3 of the 4 motors have past the target counts to correct encoder errors on the 4th
+     *
+     * @param targetCounts Target Encoder value for stopping motor calculated in moveCounts
+     */
+    private boolean encoderCorrectionCheck(DcMotor frontLeftMotor, DcMotor frontRightMotor,
+                                           DcMotor rearLeftMotor, DcMotor rearRightMotor,
+                                           double targetCounts) {
+        boolean[] hasMetTarget = {
+                Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts,
+                Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts,
+                Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts,
+                Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts
+        };
+        int totalTrues = 0;
+
+        for (boolean motorHasMetTarget : hasMetTarget) {
+            if (motorHasMetTarget) {
+                totalTrues++;
+            }
+        }
+
+        return totalTrues >= Settings.Autonomous.Movement.ENCODERS_NEEDED_TO_CORRECT_ODOMETRY;
     }
 
     /**
@@ -301,4 +308,5 @@ public class Odometry {
     private void setMotorPower(double power) {
         setMotorPowers(power, power);
     }
+
 }
