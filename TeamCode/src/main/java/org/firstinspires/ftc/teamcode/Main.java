@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 @TeleOp
 public class Main extends LinearOpMode {
-    public static class Data_Update extends Thread {
+    /*public static class Data_Update extends Thread {
 
         public volatile boolean active = true;
         Main main = new Main();
@@ -36,7 +36,7 @@ public class Main extends LinearOpMode {
 
 
         }
-    }
+    }*/
 
     private static volatile HashMap<String, Float> ControllerData = new HashMap<String, Float>();
     //private Controls_Update ControlsUpdate = new Controls_Update();
@@ -72,6 +72,7 @@ public class Main extends LinearOpMode {
             while(opModeIsActive()){
                 //telemetry.addData("Test", true);
                 telemetry.update();
+                upd
             }
             //DataUpdate.active = false;
         }
@@ -102,6 +103,7 @@ public class Main extends LinearOpMode {
         telemetry.addData(name, data);
     }
     public void updateData(){
+        addData("test", "Test");
         addData("Controller 1 left stick", (Main.GetControllerDataItem("LeftStickX1") + "," + Main.GetControllerDataItem("LeftStickY1")));
         addData("Controller 1 right stick", (Main.GetControllerDataItem("RightStickX1") + "," + Main.GetControllerDataItem("RightStickY1")));
         addData("Controller 1 left trigger", (float)Main.GetControllerDataItem("LeftTrigger1"));
