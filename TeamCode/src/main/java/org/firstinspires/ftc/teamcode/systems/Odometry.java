@@ -208,6 +208,31 @@ public class Odometry {
     }
 
     /**
+     * Checks if 3 of the 4 motors have past the target counts to correct encoder errors on the 4th
+     *
+     * @param targetCounts Target Encoder value for stopping motor calculated in moveCounts
+     */
+    private boolean encoderCorrectionCheck(DcMotor frontLeftMotor, DcMotor frontRightMotor,
+                                           DcMotor rearLeftMotor, DcMotor rearRightMotor,
+                                           double targetCounts) {
+        boolean[] hasMetTarget = {
+                Math.abs(frontLeftMotor.getCurrentPosition()) < targetCounts,
+                Math.abs(frontRightMotor.getCurrentPosition()) < targetCounts,
+                Math.abs(rearLeftMotor.getCurrentPosition()) < targetCounts,
+                Math.abs(rearRightMotor.getCurrentPosition()) < targetCounts
+        };
+        int totalTrues = 0;
+
+        for (boolean motorHasMetTarget : hasMetTarget) {
+            if (motorHasMetTarget) {
+                totalTrues++;
+            }
+        }
+
+        return totalTrues >= Settings.Autonomous.Movement.ENCODERS_NEEDED_TO_CORRECT_ODOMETRY;
+    }
+
+    /**
      * Navigates the robot to a specific position on the field using proportional
      * control
      * Automatically handles both rotation and translation to reach the target
@@ -301,4 +326,5 @@ public class Odometry {
     private void setMotorPower(double power) {
         setMotorPowers(power, power);
     }
+
 }
