@@ -41,6 +41,12 @@ public class Hardware extends HardwareMapper {
     @HardwareName("verticalSlides")
     @AutoClearEncoder
     public DcMotor encoderVerticalSlide;
+
+    @HardwareName("arm")
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
+    @AutoClearEncoder
+    public DcMotor arm;
+
     /*
         @HardwareName("frontLeft")
         @AutoClearEncoder
