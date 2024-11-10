@@ -11,17 +11,16 @@ public class TestLinkageServo extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double power = 0.5;
+        double Speed = 0.5;
         waitForStart();
         while (opModeIsActive()) {
-
 
             telemetry.addData("LinkageServoPos", linkageServo.getPosition());
             telemetry.update();
             if (gamepad1.right_stick_y < 0) {
-                linkagePos += power;
+                linkagePos += Speed;
             } else if (gamepad1.right_stick_y > 0) {
-                linkagePos -= power;
+                linkagePos -= Speed;
             }
 
             if (linkagePos < 0) {
@@ -31,17 +30,12 @@ public class TestLinkageServo extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                power = Math.max(0.1, power - 0.05);
+                Speed = Math.max(0.1, Speed - 0.05);
             } else if (gamepad1.dpad_down) {
-                power = Math.min(1, power + 0.05);
+                Speed = Math.min(1, Speed + 0.05);
             }
 
             linkageServo.setPosition(linkagePos);
-
-
         }
-
-
     }
-
 }
