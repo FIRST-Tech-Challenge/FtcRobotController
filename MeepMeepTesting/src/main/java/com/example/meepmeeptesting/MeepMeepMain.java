@@ -18,7 +18,8 @@ public class MeepMeepMain {
                 .setBackgroundAlpha(0.95f)
                 .addEntity(BlueRightOption1(meepMeep))
                 .addEntity(BlueLeft(meepMeep))
-                .addEntity(RedRightOption2(meepMeep))
+                .addEntity(RedRightOption1(meepMeep))
+                //.addEntity(RedRightOption2(meepMeep))
                 .addEntity(RedLeft(meepMeep))
                 .start();
     }
@@ -70,6 +71,29 @@ public class MeepMeepMain {
         return botEntity;
     }
 
+    //generates path for RedRightOption1
+    private static RoadRunnerBotEntity RedRightOption1(MeepMeep meepMeep)
+    {
+        RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "red");
+        botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(15, -63, Math.toRadians(90)))
+                .splineTo(new Vector2d(9,-42), Math.toRadians(90))
+                .waitSeconds(1)//hook preloaded specimen
+                .strafeTo(new Vector2d(12,-42))
+                .splineToSplineHeading(new Pose2d(36,-24, Math.toRadians(180)), Math.toRadians(90))
+                .splineTo(new Vector2d(42,-12), Math.toRadians(0))
+                .strafeTo(new Vector2d(45,-12))
+                .strafeTo(new Vector2d(45,-48))
+                .strafeTo(new Vector2d(45,-24))
+                .splineTo(new Vector2d(57,-12), Math.toRadians(0))
+                .strafeTo(new Vector2d(57,-48))
+                .strafeTo(new Vector2d(57,-42))
+                .waitSeconds(1)//wait for human player
+                .strafeTo(new Vector2d(63,-63))
+                .build());
+
+        return botEntity;
+    }
+
     //generates path for RedRightOption2
     private static RoadRunnerBotEntity RedRightOption2(MeepMeep meepMeep)
     {
@@ -97,8 +121,19 @@ public class MeepMeepMain {
     private static RoadRunnerBotEntity RedLeft(MeepMeep meepMeep)
     {
         RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "red");
-        botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(0, 0, 0))
-
+        botEntity.runAction(botEntity.getDrive().actionBuilder(new Pose2d(-33, -63, Math.toRadians(90)))
+                .splineTo(new Vector2d(-48,-48), Math.toRadians(-135))
+                .waitSeconds(1)//deposit sample
+                .turnTo(Math.toRadians(90))
+                .waitSeconds(1)//pick up sample
+                .turnTo(Math.toRadians(-135))
+                .waitSeconds(1)//deposit sample
+                .strafeToLinearHeading(new Vector2d(-58,-48), Math.toRadians(90))
+                .waitSeconds(1)//pick up sample
+                .strafeToLinearHeading(new Vector2d(-48,-48), Math.toRadians(-135))
+                .waitSeconds(10)//deposit sample and wait for other alliance to park
+                .splineTo(new Vector2d(-24,-60), Math.toRadians(0))
+                .strafeTo(new Vector2d(36,-60))
                 .build());
 
         return botEntity;
