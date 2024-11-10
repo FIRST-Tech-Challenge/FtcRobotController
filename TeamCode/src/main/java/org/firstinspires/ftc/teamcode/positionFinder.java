@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@TeleOp(name="POSFINDER-Auto Test", group="TeleOp Test")
+@TeleOp(name="POSFINDER", group="TeleOp Test")
 public class positionFinder extends OpMode {
     public static float p = 0.005F;
     public static float i = 0;
@@ -63,6 +63,7 @@ public class positionFinder extends OpMode {
     private ServoImplEx LSLower;
     private ServoImplEx LSTop;
     private double lolclock = 0.01;
+    private SparkFunOTOS odometry;
 
 
     @Override
@@ -75,9 +76,11 @@ public class positionFinder extends OpMode {
         Lswitch = hardwareMap.get(RevTouchSensor.class, "Lswitch");
         LSLower = hardwareMap.get(ServoImplEx.class, "LSLower");
         LSTop = hardwareMap.get(ServoImplEx.class, "LSTop");
+        odometry = hardwareMap.get(SparkFunOTOS.class, "odometry");
         capPID.init(p, i, d);
         cap.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        odometry.setPosition(new SparkFunOTOS.Pose2D(0,0,0));
     }
 
     @Override
@@ -96,6 +99,6 @@ public class positionFinder extends OpMode {
 
         telemetry.addData("Capstan Pos", cap.getCurrentPosition());
         telemetry.addData("Extendo Pos", extendo.getCurrentPosition());
-
+        telemetry.addData("Drive Pos", "(" + odometry.getPosition().x + ", " + odometry.getPosition().y + ", " + odometry.getPosition().h + ")");
     }
 }

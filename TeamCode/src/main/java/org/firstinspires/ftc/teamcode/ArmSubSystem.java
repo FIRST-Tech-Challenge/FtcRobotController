@@ -66,13 +66,13 @@ public class ArmSubSystem {
                 break;
             case CHAMBER_B:
                 positionalZone = armPoseZone.CHAMBER;
-                extendoReference = 0;
-                capstanReference = 250;
+                extendoReference = 2300;
+                capstanReference = 425;
                 break;
             case CHAMBER_A:
                 positionalZone = armPoseZone.CHAMBER;
                 extendoReference = 0;
-                capstanReference = 400;
+                capstanReference = 385;
                 break;
             case BASKET:
                 positionalZone = armPoseZone.OTHER;
@@ -107,15 +107,24 @@ public class ArmSubSystem {
         }
     }
     public void setManipulatorReference(wristState stateOfWrist, clawState stateOfClaw) {
-        if (stateOfWrist == wristState.UP) {
-            wristReference = 0.75f;
-        } else {
-            wristReference = 0f;
+        switch (stateOfWrist) {
+            case UP:
+                wristReference = 0.75f;
+                break;
+            case DOWN:
+                wristReference = 0f;
+                break;
         }
-        if (stateOfClaw == clawState.CLOSED) {
-            clawReference = 0.1f;
-        } else {
-            clawReference = 1f;
+        switch (stateOfClaw) {
+            case LOOSE:
+                clawReference = 0.2f;
+                break;
+            case CLOSED:
+                clawReference = 0.1f;
+                break;
+            case OPENED:
+                clawReference = 1f;
+                break;
         }
     }
     public void periodicUpdate(TelemetryPacket packet) {

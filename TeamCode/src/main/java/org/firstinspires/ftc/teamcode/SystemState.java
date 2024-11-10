@@ -8,11 +8,4 @@ public class SystemState {
     wristState wristPosition;
     clawState clawPosition;
     double ignorePosTime;
-    public void init(SparkFunOTOS.Pose2D drivePosition, armPose poseOfArm, wristState wristPose, clawState clawPose, double ignorePosTime) {
-        armPosition = poseOfArm;
-        drivePose = drivePosition;
-        wristPosition = wristPose;
-        clawPosition = clawPose;
-        this.ignorePosTime = ignorePosTime;
-    }
 }

@@ -12,6 +12,12 @@ public class PIDController {
     private ElapsedTime timer;
     private float previousReference = 0;
 
+    public void resetPID(float p, float i, float d) {
+        this.p = p;
+        this.i = i;
+        this.d = d;
+    }
+
     public void init(float Xp, float Xi, float Xd) {
         p = Xp;
         i = Xi;

@@ -35,8 +35,12 @@ public class AutonomousHandler {
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("CapstanPosition", "INIT");
         packet.put("Capstan", "INIT");
-
     }
+
+    public void resetPID(float p, float i, float d) {
+        driveSubSys.changePID(p, i, d);
+    }
+
     public void periodicFunction() {
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("Auto Stage", systemStateReference);
