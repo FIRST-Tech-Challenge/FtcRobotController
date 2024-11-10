@@ -22,6 +22,7 @@ public class SquareMovementTest extends OpMode {
         forward = drive.trajectoryBuilder(startPose)
                 .forward(30)
                 .build();
+        //Need to add new trajectories with .waitSeconds(0.2) after each movement
         right = drive.trajectoryBuilder(forward.end())
                 .strafeRight(30)
                 .build();
