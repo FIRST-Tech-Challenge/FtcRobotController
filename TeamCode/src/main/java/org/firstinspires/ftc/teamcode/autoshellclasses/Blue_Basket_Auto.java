@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.bluebananas.ftc.roadrunneractions.ActionBuilder;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.BBcode.WristClaw;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -47,7 +48,9 @@ public class Blue_Basket_Auto extends LinearOpMode {
             telemetry.update();
         }
 
-
+        WristClaw wristClaw = new WristClaw(this);
+        wristClaw.MoveWristInit();
+        wristClaw.CloseClaw();
         telemetry.update();
         waitForStart();
 
