@@ -39,9 +39,6 @@ public class Blue_Right_Auto extends LinearOpMode {
         PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
 
-        Action ExampleTrajectory2;
-        Action wait;
-
         Action PushSample = ActionBuilder.BlueRightOption1(drive::actionBuilder);
 
         while (!isStopRequested() && !opModeIsActive()) {
@@ -56,16 +53,11 @@ public class Blue_Right_Auto extends LinearOpMode {
         if (isStopRequested()) return;
 
 
-        Action trajectoryPurpleChosen;
-        Action trajectoryYellowChosen;
-        Action trajectoryCloseOutChosen;
-
-
-
-
         Actions.runBlocking(
                 new SequentialAction(
                         // JOSHUANOTE: This is where you put the final set of actions.
+                        //ActionBuilder.BlueRightOption1(drive::actionBuilder)
+                        PushSample
                 )
         );
 

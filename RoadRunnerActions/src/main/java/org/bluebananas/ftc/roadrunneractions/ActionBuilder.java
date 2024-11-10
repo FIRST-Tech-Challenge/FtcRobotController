@@ -30,21 +30,24 @@ public class ActionBuilder {
                 .build();
     }
     //generates path for BlueLeft
-    public static Action BlueLeft(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
+    public static Action BlueBasket(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
     {
-        Pose2d startPose = new Pose2d(33, 63, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(31, 63, Math.toRadians(0));
         TrajectoryActionBuilder builder = builderFunction.apply(startPose);
         return builder
-                .splineTo(new Vector2d(48,48), Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(42,42), Math.toRadians(45))
                 .waitSeconds(1)//deposit sample
+                .splineTo(new Vector2d(53, 53), Math.toRadians(45))
                 .turnTo(Math.toRadians(-90))
                 .waitSeconds(1)//pick up sample
-                .turnTo(Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(42,42), Math.toRadians(45))
                 .waitSeconds(1)//deposit sample
+                .splineTo(new Vector2d(53, 53), Math.toRadians(45))                .waitSeconds(1)//deposit sample
                 .strafeToLinearHeading(new Vector2d(58,48), Math.toRadians(-90))
                 .waitSeconds(1)//pick up sample
-                .strafeToLinearHeading(new Vector2d(48,48), Math.toRadians(45))
-                .waitSeconds(10)//deposit sample and wait for other alliance to park
+                .strafeToLinearHeading(new Vector2d(42,42), Math.toRadians(45))
+                .waitSeconds(1)//deposit sample
+                .splineTo(new Vector2d(53, 53), Math.toRadians(45))                .waitSeconds(1)//deposit sample and wait for other alliance to park
                 .splineTo(new Vector2d(24,60), Math.toRadians(180))
                 .strafeTo(new Vector2d(-36,60))
                 .build();

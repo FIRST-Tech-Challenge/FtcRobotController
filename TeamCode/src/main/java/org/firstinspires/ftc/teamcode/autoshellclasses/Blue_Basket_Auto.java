@@ -36,17 +36,13 @@ public class Blue_Basket_Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90));
+        Pose2d initialPose = new Pose2d(31, 63, Math.toRadians(0));
         // JOSHUANOTE: Here is where the trajectories are intitialized and defined.
         //PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
 
 
-        Action ExampleTrajectory2;
-        Action wait;
-
-        Action PushSample = ActionBuilder.BlueRightOption1(drive::actionBuilder);
-        DcMotorEx _leftFront = hardwareMap.tryGet(DcMotorEx.class, "leftFront");
+        Action PushSample = ActionBuilder.BlueBasket(drive::actionBuilder);
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.update();
         }
@@ -60,25 +56,9 @@ public class Blue_Basket_Auto extends LinearOpMode {
 
 
         Action trajectory;
-        Action trajectoryYellowChosen;
-        Action trajectoryCloseOutChosen;
 
-        Pose2d startPose= new Pose2d(-15, 63, Math.toRadians(-90));
-        TrajectoryActionBuilder builder = drive.actionBuilder(startPose);
-        trajectory = builder
-                .splineTo(new Vector2d(48,48), Math.toRadians(45))
-                .waitSeconds(1)//deposit sample
-                .turnTo(Math.toRadians(-90))
-                .waitSeconds(1)//pick up sample
-                .turnTo(Math.toRadians(45))
-                .waitSeconds(1)//deposit sample
-                .strafeToLinearHeading(new Vector2d(58,48), Math.toRadians(-90))
-                .waitSeconds(1)//pick up sample
-                .strafeToLinearHeading(new Vector2d(48,48), Math.toRadians(45))
-                .waitSeconds(10)//deposit sample and wait for other alliance to park
-                .splineTo(new Vector2d(24,60), Math.toRadians(180))
-                .strafeTo(new Vector2d(-36,60))
-                .build();
+
+        trajectory = ActionBuilder.BlueBasket(drive::actionBuilder);
 
 
         Actions.runBlocking(
