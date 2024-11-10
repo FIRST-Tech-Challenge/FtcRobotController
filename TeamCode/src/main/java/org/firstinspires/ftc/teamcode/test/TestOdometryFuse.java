@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.localization.OdometryFuse;
 import org.firstinspires.ftc.teamcode.utilities.OpModeUtilities;
 
@@ -30,11 +29,7 @@ public class TestOdometryFuse  extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("" + odometryFuse.SparkUpdateData(), "");
-            telemetry.addLine();
-            telemetry.addData("" + odometryFuse.WheelUpdateData(), "");
-            telemetry.addLine();
-            telemetry.addData("" + odometryFuse.averageUpdateData(), "");
+            telemetry.addData("" + odometryFuse.CollectData(), "");
             telemetry.update();
             Log.d("alan", "updated position on odometry");
         }

@@ -26,25 +26,31 @@ public class OdometryFuse {
         this.leftEncoder = leftEncoder;
         this.backEncoder = backEncoder;
     }
-    public String WheelUpdateData() {
+    public Point WheelUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
-        return("R wheel x: " + rightEncoder.getCurrentPosition() * TICKSTOINCH + "\n" +
-                "L wheel x: " + leftEncoder.getCurrentPosition() * TICKSTOINCH + "\n" +
-                "B wheel y: " + backEncoder.getCurrentPosition() * TICKSTOINCH);
+        return(new Point(backEncoder.getCurrentPosition(), rightEncoder.getCurrentPosition()));
     }
-    public String SparkUpdateData() {
+    public Point SparkUpdateData() {
         SparkFunOTOS.Pose2D SparkFunOTOS;
         com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return("Spark x: " + pos.x + "\n" +
-                "Spark y: " + pos.y + "\n" +
-                "Spark h: " + pos.h);
+        return(new Point(pos.x, pos.y));
     }
-    public String averageUpdateData() {
+    public Point AverageUpdateData() {
         SparkFunOTOS.Pose2D SparkFunOTOS;
-        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
-        return("ave x: " + (((rightEncoder.getCurrentPosition() / 2) * TICKSTOINCH) + pos.x) / 2 + "\n" +
-                "ave y: " + ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2);
+        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
+    }
+
+    public Point Filter(Point sparkPoint, Point wheelPoint) {
+        int diffenceDebug = 2;
+        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(WheelUpdateData()); }
+        else { return(SparkUpdateData()); }
+    }
+
+    public Point CollectData() {
+        Point point = Filter(SparkUpdateData(), WheelUpdateData());
+        return(point);
     }
 
     //configure SPARK FUN Otos
