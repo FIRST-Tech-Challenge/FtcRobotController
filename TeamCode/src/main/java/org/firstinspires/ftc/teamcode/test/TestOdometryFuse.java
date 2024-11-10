@@ -29,11 +29,7 @@ public class TestOdometryFuse  extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("" + odometryFuse.SparkUpdateData(), "");
-            telemetry.addLine();
-            telemetry.addData("" + odometryFuse.WheelUpdateData(), "");
-            telemetry.addLine();
-            telemetry.addData("" + odometryFuse.AverageUpdateData(), "");
+            telemetry.addData("" + odometryFuse.CollectData(), "");
             telemetry.update();
             Log.d("alan", "updated position on odometry");
         }

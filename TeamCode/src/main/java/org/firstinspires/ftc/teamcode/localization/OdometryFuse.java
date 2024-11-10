@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.localization;
 
 
 import android.annotation.SuppressLint;
-import android.graphics.Path;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -43,10 +42,13 @@ public class OdometryFuse {
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
     }
 
-    public Void Filter(Point sparkPoint, Point wheelPoint, Boolean square, Boolean curve) {
-        //if statement? if robot moving x or y
-        //return either wheel odo or sparkfun odo depends on test results
-        //still needs to be tested
+    public Point Filter(Point sparkPoint, Point wheelPoint) {
+        if ((sparkPoint.getX() - wheelPoint.getX() < 3) && (sparkPoint.getY() - wheelPoint.getY() < 3) && (sparkPoint.getX() - wheelPoint.getX() > -3) && (sparkPoint.getY() - wheelPoint.getY() < -3)) { return(WheelUpdateData()); }
+        else { return(SparkUpdateData()); }
+    }
+
+    public Point CollectData() {
+        Filter(SparkUpdateData(), WheelUpdateData());
     }
 
     //configure SPARK FUN Otos
