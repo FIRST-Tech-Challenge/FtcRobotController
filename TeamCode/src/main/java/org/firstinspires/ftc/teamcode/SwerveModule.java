@@ -21,9 +21,9 @@ public class SwerveModule {
     private CRServo servo;
     private AbsoluteAnalogEncoder enc;
     private PIDFController contr;
-    public static double P = 1;
-    public static double I = 1;
-    public static double D = 1;
+    private double P = 1;
+    private double I = 1;
+    private double D = 1;
     private final double WHEEL_RAD = 2.67717; //inches might change irl due to wheel squish
     private final double DRIVE_RATIO = (52 * 2 * 2)/18.0; //208/18
     private final double AZIMUTH_RATIO = 1.0; //for now
@@ -44,7 +44,7 @@ public class SwerveModule {
 
     public void azimtuh(double pos){ //in RADianz
         servo.setPower(1);
-        
+
     }
     public void drive(){
 
