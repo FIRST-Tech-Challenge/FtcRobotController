@@ -43,14 +43,10 @@ public class OdometryFuse {
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
     }
 
-    public Point Filter(Point sparkPoint, Point wheelPoint, Boolean square, Boolean curve) {
-        if (square & !curve) {
-            return(WheelUpdateData());
-        } else if (curve & !square) {
-            return(WheelUpdateData());
-        } else {
-            return(SparkUpdateData());
-        }
+    public Void Filter(Point sparkPoint, Point wheelPoint, Boolean square, Boolean curve) {
+        //if statement? if robot moving x or y
+        //return either wheel odo or sparkfun odo depends on test results
+        //still needs to be tested
     }
 
     //configure SPARK FUN Otos
