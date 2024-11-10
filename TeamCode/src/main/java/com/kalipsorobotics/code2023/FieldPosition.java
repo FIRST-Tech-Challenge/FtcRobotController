@@ -7,14 +7,14 @@ class FieldPosition {
     ALLIANCE_COLOR allianceColor;
 
     public enum ALLIANCE_COLOR {
-        RED, BLUE;
+        RED, BLUE
     }
 
     int wantedAprTagId;
 
 
     public enum PROP_LOCATION {
-        INNER, OUTER, CENTER;
+        INNER, OUTER, CENTER
     }
 
     PROP_LOCATION propLocation;

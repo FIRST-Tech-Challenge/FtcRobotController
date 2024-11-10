@@ -1,5 +1,6 @@
 package com.kalipsorobotics.test.intake;
 
+import com.kalipsorobotics.actions.intake.LinkageServoAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,10 +18,12 @@ public class IntakeTest extends LinearOpMode {
         Intake intake = new Intake(opModeUtilities);
         IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake);
         IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
+        LinkageServoAction linkageServoAction = new LinkageServoAction(intake);
 
         waitForStart();
 
         double position = 0.5;
+        double linkagePos = 0.5;
 
         while (opModeIsActive()) {
 
@@ -38,9 +41,11 @@ public class IntakeTest extends LinearOpMode {
                 intakePivotAction.goToPosition(position);
             }
 
+
+
+
         }
 
     }
-
 
 }

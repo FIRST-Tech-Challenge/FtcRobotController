@@ -13,6 +13,5 @@ public class DoneStateAction extends Action {
 
     @Override
     public void update() {
-        return;
     }
 }

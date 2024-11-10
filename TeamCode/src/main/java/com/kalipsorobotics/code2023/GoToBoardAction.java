@@ -147,23 +147,11 @@ class GoToBoardAction extends Action {
     @Override
     public boolean checkDoneCondition() {
         if(propLocation == FieldPosition.PROP_LOCATION.INNER) {
-            if (actionInner.getIsDone()) {
-                return true;
-            } else {
-                return false;
-            }
+            return actionInner.getIsDone();
         } else if(propLocation == FieldPosition.PROP_LOCATION.OUTER) {
-            if (actionOuter.getIsDone()) {
-                return true;
-            } else {
-                return false;
-            }
+            return actionOuter.getIsDone();
         } else {
-            if (actionCenter.getIsDone()) {
-                return true;
-            } else {
-                return false;
-            }
+            return actionCenter.getIsDone();
         }
     }
 

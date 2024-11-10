@@ -9,7 +9,7 @@ public class IntakeDoorAction {
     private Intake intake;
     private Servo intakeDoor;
 
-    public void IntakeDoorAction(Intake intake) {
+    public IntakeDoorAction(Intake intake) {
         this.intake = intake;
         this.intakeDoor = intake.getSampleDoor();
     }
