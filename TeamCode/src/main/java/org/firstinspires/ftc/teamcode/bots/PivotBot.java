@@ -8,7 +8,7 @@ package org.firstinspires.ftc.teamcode.bots;
 
 public class PivotBot extends LimelightBot {
 
-    private int maximumPivot = 1500;
+    private int maximumPivot = 1300;
     private int minumimPivot = 200;
     public boolean pivotOutOfRange = false;
 
@@ -119,6 +119,11 @@ public class PivotBot extends LimelightBot {
     public void pivotTo(int pos){
         pivotMotor.setTargetPosition(pos);
         pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void moveSlide(int pos){
+        slideMotor.setTargetPosition(pos);
+        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 

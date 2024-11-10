@@ -198,7 +198,7 @@ public class OdometryBot extends PinchBot {
         //outputEncoders();
         super.onTick();
         //thetaDEG = -getDeltaAngle();
-        calculateCaseThree(slideMotor.getCurrentPosition() - vLOffset, leftRear.getCurrentPosition() - vROffset, pivotMotor.getCurrentPosition() - hOffset);
+//        calculateCaseThree(slideMotor.getCurrentPosition() - vLOffset, leftRear.getCurrentPosition() - vROffset, pivotMotor.getCurrentPosition() - hOffset);
                 /** must find a new motor encoders for the odometry pods */
         if (isCoordinateDriving) {
             driveToCoordinateUpdate(globalTargetX, globalTargetY, globalTargetTheta, globalTolerance, globalAngleTol, globalMagnitude);
