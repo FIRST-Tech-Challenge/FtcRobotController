@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.localization;
 
 
 import android.annotation.SuppressLint;
+import android.graphics.Path;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -35,11 +36,21 @@ public class OdometryFuse {
         com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(pos.x, pos.y));
     }
-    public Point averageUpdateData() {
+    public Point AverageUpdateData() {
         SparkFunOTOS.Pose2D SparkFunOTOS;
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
         com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
+    }
+
+    public Point Filter(Point sparkPoint, Point wheelPoint, Boolean square, Boolean curve) {
+        if (square & !curve) {
+            return(WheelUpdateData());
+        } else if (curve & !square) {
+            return(WheelUpdateData());
+        } else {
+            return(SparkUpdateData());
+        }
     }
 
     //configure SPARK FUN Otos

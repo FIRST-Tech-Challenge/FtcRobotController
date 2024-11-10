@@ -1,20 +1,15 @@
-package org.firstinspires.ftc.teamcode.Alan;
+package org.firstinspires.ftc.teamcode.test;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 
 
 
 @TeleOp
-public class fieldOrientedDrive2 extends LinearOpMode {
+public class TestFieldOrientedDrive extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
     private BNO055IMU imu;
