@@ -64,9 +64,7 @@ public class TeleOps extends LinearOpMode {
 
             double[] values = robot.detectOne();
 
-            telemetry.addData("tx: ", values[0]);
-            telemetry.addData("ty: ", values[1]);
-            telemetry.addData("angle: ", values[2]);
+            telemetry.addData("angle: ", values[0]);
 
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());

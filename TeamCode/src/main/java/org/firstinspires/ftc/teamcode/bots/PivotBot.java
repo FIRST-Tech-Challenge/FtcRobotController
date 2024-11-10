@@ -9,11 +9,11 @@ package org.firstinspires.ftc.teamcode.bots;
 public class PivotBot extends LimelightBot {
 
     private int maximumPivot = 1300;
-    private int minumimPivot = 200;
+    private int minumimPivot = -100;
     public boolean pivotOutOfRange = false;
 
-    public int slideTarget = 0;
-    public int pivotTarget = minumimPivot;
+    public int slideTarget = 110;
+    public int pivotTarget = 100;
 
     private double pivotPower = 0.5;
 
@@ -40,10 +40,6 @@ public class PivotBot extends LimelightBot {
         pivotMotor.setTargetPosition(pivotTarget);
         pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivotPower = 0.5;
-
-        slideMotor.setTargetPosition(50);
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.5);
     }
 
     public PivotBot(LinearOpMode opMode) {
@@ -68,6 +64,7 @@ public class PivotBot extends LimelightBot {
             pivotMotor.setTargetPosition(pivotTarget);
             pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+//            pivotPower = 0.3 + ((Math.abs(pivotTarget - pivotMotor.getCurrentPosition()) / maximumPivot) * 0.5);
             pivotMotor.setPower(0.6);
 
         } else {
@@ -91,7 +88,7 @@ public class PivotBot extends LimelightBot {
             }
         }
         if (down) {
-            if (slideMotor.getCurrentPosition() > 110) {
+            if (slideMotor.getCurrentPosition() > 170) {
                 slideTarget = slideMotor.getCurrentPosition() - (slideMotor.getCurrentPosition() / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -100,15 +97,29 @@ public class PivotBot extends LimelightBot {
     }
 
     public void pivotControl(boolean up, boolean down){
+//        if (slideMotor.getCurrentPosition() < 200) {
+//            if (up) {
+//                pivotTarget = maximumPivot;
+//                pivotPower = 0.6;
+//            }
+//            if (down) {
+//                pivotTarget = minumimPivot;
+//                pivotPower = 0.6;
+//            }
+//        }
         if (up) {
-            pivotTarget = maximumPivot;
-//            pivotMotor.setTargetPosition(pivotTarget);
-//            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (pivotMotor.getCurrentPosition() < maximumPivot) {
+                pivotTarget = pivotMotor.getCurrentPosition() + ((maximumPivot - pivotMotor.getCurrentPosition()) / 10);
+                pivotMotor.setTargetPosition(pivotTarget);
+                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
         }
         if (down) {
-            pivotTarget = minumimPivot;
-//            pivotMotor.setTargetPosition(pivotTarget);
-//            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (pivotMotor.getCurrentPosition() > minumimPivot) {
+                pivotTarget = pivotMotor.getCurrentPosition() - (pivotMotor.getCurrentPosition() / 10);
+                pivotMotor.setTargetPosition(pivotTarget);
+                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
         }
     }
 

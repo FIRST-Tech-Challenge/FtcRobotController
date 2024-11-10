@@ -38,15 +38,8 @@ public class LimelightBot extends GyroBot {
         LLResult result = limelight.getLatestResult();
         if (result != null) {
             if (result.isValid()) {
-                double xDegree = result.getTx();
-                double yDegree = result.getTy();
-                double angle = result.getPythonOutput()[8];
-
-                double xResult = xDegree;
-                double yResult = yDegree;
-                values[0] = xResult;
-                values[1] = yResult;
-                values[2] = angle;
+                double angle = result.getPythonOutput()[0];
+                values[0] = angle;
             }
         }
 

@@ -19,8 +19,8 @@ public class PinchBot extends PivotBot{
     private double servoPos;
 
 
-    private double servoMax = 0.78;
-    private double servoMin = 0.43;
+    private double servoMax = 0.93;
+    private double servoMin = 0.63;
     public PinchBot(LinearOpMode opMode) {
         super(opMode);
     }
@@ -31,8 +31,8 @@ public class PinchBot extends PivotBot{
         pinch = hardwareMap.get(Servo.class, "pinch");
         rotate = hardwareMap.get(Servo.class, "rotate");
 
-        pinch.setPosition(1);
-        rotate.setPosition(servoMin);
+        pinch.setPosition(0.5);
+        rotate.setPosition(0.78);
     }
 
     protected void onTick() {
