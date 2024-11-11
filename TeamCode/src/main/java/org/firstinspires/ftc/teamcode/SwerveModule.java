@@ -29,7 +29,7 @@ public class SwerveModule {
     private final double TPR = 28 * DRIVE_RATIO; //ticks per 1 wheel irl rotation;
 
 
-    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e, double sp, double si, double sd) {
+    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e, double r, double sp, double si, double sd) {
         motor = m;
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -53,5 +53,9 @@ public class SwerveModule {
             servo.setPower(output);
         }
 
+    }
+
+    public void drive (double pos, double x, double y) {
+        
     }
 }

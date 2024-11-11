@@ -50,6 +50,10 @@ public class SwerveTeleop extends LinearOpMode {
     public static final double E_BACK_LEFT_OFFSET = 1.1;//myArbitraryRadValue
     public static final double E_BACK_RIGHT_OFFSET = 1.1;//myArbitraryRadValue
 
+    public final double TRACKWIDTH = 12.6378;
+    public final double WHEELBASE = 12.6378;
+
+
 
     @Override
     public void runOpMode() {
@@ -89,12 +93,13 @@ public class SwerveTeleop extends LinearOpMode {
         eleftBack.zero(E_BACK_LEFT_OFFSET);
         erightBack.zero(E_BACK_RIGHT_OFFSET);
 
-        //actual module stuff
-        rightFront = new SwerveModule(mrightFront, srightFront, erightFront, 1, 1, 1);
-        leftFront = new SwerveModule(mleftFront, sleftFront, eleftFront, 1, 1, 1);
-        leftBack = new SwerveModule(mleftBack, sleftBack, eleftBack, 1, 1, 1);
-        rightBack = new SwerveModule(mrightBack, srightBack, erightBack, 1, 1, 1);
 
+
+        //actual module stuff
+        rightFront = new SwerveModule(mrightFront, srightFront, erightFront, Math.hypot(TRACKWIDTH/2, WHEELBASE/2), 1, 1, 1);
+        leftFront = new SwerveModule(mleftFront, sleftFront, eleftFront, Math.hypot(TRACKWIDTH/2, WHEELBASE/2), 1, 1, 1);
+        leftBack = new SwerveModule(mleftBack, sleftBack, eleftBack, Math.hypot(TRACKWIDTH/2, WHEELBASE/2), 1, 1, 1);
+        rightBack = new SwerveModule(mrightBack, srightBack, erightBack, Math.hypot(TRACKWIDTH/2, WHEELBASE/2), 1, 1, 1);
 
 
         // Wait for the game to start (driver presses START)
