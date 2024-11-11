@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "OdometryFuse testing")
+@TeleOp(name = "Fresh OdometryFuse")
 public class TestOdometryFuse  extends LinearOpMode {
     SparkFunOTOS myOtos;
     DcMotor rightFront;
@@ -23,6 +23,8 @@ public class TestOdometryFuse  extends LinearOpMode {
         OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightFront, rightBack);
         telemetry.addData("" + odometryFuse.configureOtos(myOtos), "");
         telemetry.update();
+        odometryFuse.wheelResetData();
+        odometryFuse.SparkResetData(true, 0.0);
         waitForStart();
         while (opModeIsActive()) {
             driveTrain.setPower(-gamepad1.right_stick_y);
