@@ -4,11 +4,11 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import com.kalipsorobotics.modules.Outtake2024;
+import com.kalipsorobotics.modules.Outtake;
 
 public class MoveLSAction extends Action {
 
-    Outtake2024 outtake;
+    Outtake outtake;
     DcMotor linearSlide, linearSlideTwo;
     final double ERROR_TOLERANCE = 50;
     final double P_CONSTANT = 0.0035;
@@ -16,10 +16,10 @@ public class MoveLSAction extends Action {
     double currentTicks;
     double error;
 
-    public MoveLSAction(double targetTicks, Outtake2024 outtake) {
+    public MoveLSAction(double targetTicks, Outtake outtake) {
         this.outtake = outtake;
-        linearSlide = outtake.linearSlide;
-        linearSlideTwo = outtake.linearSlideTwo;
+        linearSlide = outtake.linearSlide1;
+        linearSlideTwo = outtake.linearSlide2;
         this.dependentAction = new DoneStateAction();
         this.targetTicks = targetTicks;
     }

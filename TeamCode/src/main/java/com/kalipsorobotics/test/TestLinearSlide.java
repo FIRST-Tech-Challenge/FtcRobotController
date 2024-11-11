@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.kalipsorobotics.modules.Outtake2024;
+import com.kalipsorobotics.modules.Outtake;
 
 @TeleOp
 public class TestLinearSlide extends LinearOpMode {
@@ -15,7 +15,7 @@ public class TestLinearSlide extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         //OuttakeSlide linearSlide = new OuttakeSlide(opModeUtilities);
 
-        Outtake2024 outtake2024 = new Outtake2024(opModeUtilities);
+        Outtake outtake2024 = new Outtake(opModeUtilities);
 
         double lsStayUpPower = 0.1; //power LS motors need to be at to keep the slides up instead of dropping down
         double armPivotPos = 0.5;
@@ -28,14 +28,14 @@ public class TestLinearSlide extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                outtake2024.linearSlide.setPower(1);
-                outtake2024.linearSlideTwo.setPower(1);
+                outtake2024.linearSlide1.setPower(1);
+                outtake2024.linearSlide2.setPower(1);
             } else if (gamepad1.b) {
-                outtake2024.linearSlide.setPower(-1);
-                outtake2024.linearSlideTwo.setPower(-1);
+                outtake2024.linearSlide1.setPower(-1);
+                outtake2024.linearSlide2.setPower(-1);
             } else {
-                outtake2024.linearSlide.setPower(0);
-                outtake2024.linearSlideTwo.setPower(0);
+                outtake2024.linearSlide1.setPower(0);
+                outtake2024.linearSlide2.setPower(0);
             }
 
             //linearSlide.setPower((0.75*gamepad1.left_stick_y) - lsStayUpPower);
@@ -83,22 +83,22 @@ public class TestLinearSlide extends LinearOpMode {
 //            }
 
             //make sure linear slides don't crash all the way down; if position is low, turn off power on motors
-            if(Math.abs(outtake2024.linearSlide.getCurrentPosition()) < 15) {
-                outtake2024.linearSlide.setPower(0);
-                outtake2024.linearSlideTwo.setPower(0);
+            if(Math.abs(outtake2024.linearSlide1.getCurrentPosition()) < 15) {
+                outtake2024.linearSlide1.setPower(0);
+                outtake2024.linearSlide2.setPower(0);
             }
 
             if(gamepad1.left_bumper) {
                 leftBumperPressed = true;
             }
 
-            errorToZero = 25 - outtake2024.linearSlide.getCurrentPosition();
+            errorToZero = 25 - outtake2024.linearSlide1.getCurrentPosition();
 
             //REALLY basic one-button outtake stuff
             if(leftBumperPressed) {
-                outtake2024.linearSlide.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
-                outtake2024.linearSlideTwo.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
-                if(outtake2024.linearSlide.getCurrentPosition() < -700 && outtake2024.linearSlide.getCurrentPosition() > -800) {
+                outtake2024.linearSlide1.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
+                outtake2024.linearSlide2.setPower(Range.clip(0.03 * errorToZero, -0.9, 0.9));
+                if(outtake2024.linearSlide1.getCurrentPosition() < -700 && outtake2024.linearSlide1.getCurrentPosition() > -800) {
                     clawPos = 0.75;
                 }
 
@@ -107,7 +107,7 @@ public class TestLinearSlide extends LinearOpMode {
                 }
             }
 
-            telemetry.addData("lienar slides position", outtake2024.linearSlide.getCurrentPosition());
+            telemetry.addData("lienar slides position", outtake2024.linearSlide1.getCurrentPosition());
             telemetry.addData("arm pivot position", outtake2024.armPivot.getPosition());
             telemetry.addData("claw position", outtake2024.claw.getPosition());
             telemetry.update();

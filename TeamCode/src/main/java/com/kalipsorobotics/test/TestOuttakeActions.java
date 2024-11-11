@@ -41,8 +41,8 @@ public class TestOuttakeActions extends LinearOpMode {
 
             // Manual control with dpad for testing
             if (gamepad1.y) {
-                linearSlide.setPower(power);
-                linearSlideTwo.setPower(power);
+                linearSlide.setPower(power+0.1);
+                linearSlideTwo.setPower(power+0.1);
             } else if (gamepad1.a) {
                 linearSlide.setPower(-power);
                 linearSlideTwo.setPower(-power);
@@ -51,12 +51,6 @@ public class TestOuttakeActions extends LinearOpMode {
                 linearSlideTwo.setPower(0);
             }
 
-            // Adjust power with buttons
-            if (gamepad1.dpad_up) {
-                power = Math.max(0.1, power - 0.05);
-            } else if (gamepad1.dpad_down) {
-                power = Math.min(1, power + 0.05);
-            }
 
             // Calculate and display encoder position in inches
             double encoderPosition = linearSlideTwo.getCurrentPosition();

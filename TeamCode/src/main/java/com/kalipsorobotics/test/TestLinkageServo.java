@@ -6,28 +6,40 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class TestLinkageServo extends LinearOpMode {
-    Servo linkageServo = hardwareMap.get(Servo.class, "linkageServo");
+    Servo linkageServo;
+    Servo linkageServo2;
     double linkagePos = 0.5;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double Speed = 0.5;
-        waitForStart();
-        while (opModeIsActive()) {
+        linkageServo = hardwareMap.get(Servo.class, "linkageServo");
+        linkageServo2 = hardwareMap.get(Servo.class, "linkageServo2");
+        linkageServo.setPosition(linkagePos);
+        linkageServo2.setPosition(linkagePos);
 
-            telemetry.addData("LinkageServoPos", linkageServo.getPosition());
+        double Speed = 0.5;
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            double servoPos = linkageServo.getPosition();
+            double servoPos2 = linkageServo2.getPosition();
+
+            if (servoPos != servoPos2) {
+                telemetry.addData("Positions are not aligned, Servo 1:", servoPos);
+                telemetry.addData("Servo 2", servoPos2);
+            }
+            telemetry.addData("Linkage Pos: ", servoPos);
             telemetry.update();
+
             if (gamepad1.right_stick_y < 0) {
                 linkagePos += Speed;
             } else if (gamepad1.right_stick_y > 0) {
                 linkagePos -= Speed;
             }
 
-            if (linkagePos < 0) {
-                linkagePos = 0;
-            } else if (linkagePos > 1) {
-                linkagePos = 1;
-            }
+            linkagePos = Math.max(0, Math.min(1, linkagePos));
 
             if (gamepad1.dpad_up) {
                 Speed = Math.max(0.1, Speed - 0.05);
@@ -35,7 +47,10 @@ public class TestLinkageServo extends LinearOpMode {
                 Speed = Math.min(1, Speed + 0.05);
             }
 
+
+
             linkageServo.setPosition(linkagePos);
+            linkageServo2.setPosition(linkagePos);
         }
     }
 }
