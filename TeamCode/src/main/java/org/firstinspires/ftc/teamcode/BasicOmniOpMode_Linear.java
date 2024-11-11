@@ -36,12 +36,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     final int VERTICAL_MIN = 0;
     final int VERTICAL_MAX = 1700;
     final int VERTICAL_MAX_VIPER = 1200;
+    final int VERTICAL_CLIMB_POSITION = 2300;
     int verticalAdjustedMin = 0;
     int verticalPosition = VERTICAL_MIN;
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX_WIDE = 2500;
+    final int VIPER_MAX_WIDE = 2100;
     final int VIPER_MAX_TALL = 3100;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
@@ -49,7 +50,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     // This chunk controls our claw
     Servo claw = null;
     final double CLAW_MIN = 0.05;        // Claw is closed
-    final double CLAW_MAX = 0.43;        // Claw is open
+    final double CLAW_MAX = 0.32;        // Claw is open
     double claw_position = CLAW_MIN;
 
     final ElapsedTime runtime = new ElapsedTime();
@@ -85,7 +86,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         claw.setPosition(CLAW_MIN);
 
         // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("Status", "Initialized");     // TODO: create a better message
+        telemetry.addData("Ready", "press PLAY");
         telemetry.update();
         waitForStart();
         runtime.reset();
@@ -131,11 +132,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Setting vertical into initial climb position
             if (gamepad1.dpad_up) {
-                wheelClimb = true;
-                // Hook on to the bar
-                vertical.setTargetPosition(2800);                       // todo: This is a magic number so it should be a CAPS variable at the top
-                                                                        // todo: This likely causes us to exceed the max length. What should we do about that?
-                ((DcMotorEx) vertical).setVelocity(3000);
+                // Hook onto the bar
+                vertical.setTargetPosition(VERTICAL_CLIMB_POSITION);
+                ((DcMotorEx) vertical).setVelocity(2500);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             else if (gamepad1.dpad_down) {
@@ -160,7 +159,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 ((DcMotorEx) vertical).setVelocity(2000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            // todo: missing a comment
+            // If the left button is pressed AND it can safely lower without changing the viper
             else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MAX_VIPER) {
                 vertical.setTargetPosition(Math.max(VERTICAL_MAX_VIPER, verticalPosition - 50));
                 ((DcMotorEx) vertical).setVelocity(1500);
@@ -200,11 +199,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             // Control the claw
-            if (gamepad1.right_bumper && claw_position > CLAW_MAX) {
-                claw_position -= 0.02;
+            if (gamepad1.right_bumper && claw_position < CLAW_MAX) {
+                claw_position += 0.02;
             }
-            if (gamepad1.left_bumper && claw_position < CLAW_MIN) {
-                claw_position += 0.015;
+            if (gamepad1.left_bumper && claw_position > CLAW_MIN) {
+                claw_position -= 0.015;
             }
             claw.setPosition(claw_position);
 
@@ -218,7 +217,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
-            // A/X button: Bring the viper slide and put the vertical all the way down. // todo this comment isn't correct
+            // A/X button: Complete Retraction- Viper and vertical completely retracted and down
             if (gamepad1.a) {
                 viperSlide.setTargetPosition(VIPER_MIN);
                 ((DcMotorEx) viperSlide).setVelocity(4000);
@@ -228,9 +227,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
-            // X/Square: The viper slide is completely back but the vertical is in submersible position. // todo: instead of back, you should use retracted
+            // X/Square: The viper slide is completely retracted but the vertical is in submersible position.
             if (gamepad1.x) {
-                vertical.setTargetPosition(350);                        // todo: does this value work on both sides of the submersible?
+                vertical.setTargetPosition(325);
                 ((DcMotorEx) vertical).setVelocity(3000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(0);
@@ -240,7 +239,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
             if (gamepad1.b) {
-                vertical.setTargetPosition(350);                         // todo: does this value work on both sides of the submersible?
+                vertical.setTargetPosition(325);
                 ((DcMotorEx) vertical).setVelocity(1800);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(1900);
@@ -252,9 +251,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             printDataOnScreen();
         }
         claw.close();
-        // todo: add some code to protect our robot after the hang
+        vertical.setTargetPosition(100);
+        ((DcMotorEx) vertical).setVelocity(100);
+        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
     // Log all (relevant) info about the robot on the hub.
     private void printDataOnScreen() {
         telemetry.addData("Run Time", "%.1f", runtime.seconds());
@@ -264,7 +264,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Joystick Axial", "%4.2f", axial);
         telemetry.addData("Joystick Lateral", "%4.2f", lateral);
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
-        telemetry.addData("Claw position", "%4.2f", claw_position); // todo: we should print both the targeted position (this) and the actual position (claw.getPosition())
+        telemetry.addData("Target claw position", "%4.2f", claw_position);
+        telemetry.addData("Claw position", "4.2f", claw.getPosition());
         telemetry.addData("Viper Slide Velocity", "%4.2f", ((DcMotorEx) viperSlide).getVelocity());
         telemetry.addData("Viper power consumption", "%.1f", ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
