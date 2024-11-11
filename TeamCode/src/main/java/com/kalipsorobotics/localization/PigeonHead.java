@@ -20,6 +20,11 @@ public class PigeonHead {
         this.backEncoder = backEncoder;
     }
 
+    public void prepare() {
+        myOtos.resetTracking();
+        myOtos.calibrateImu();
+    }
+
     public void positionUpdate() {
         //might have to be fixed
         OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightEncoder, backEncoder);
