@@ -57,6 +57,11 @@ public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements Lo
         return new Pose2d(position.position.x, position.position.y, Math.toRadians(position.heading.toDouble()));
     }
 
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
     @SuppressLint("DefaultLocale")
     public String toString(){
         return String.format("X: %f\nY: %f\nHeading: %f",

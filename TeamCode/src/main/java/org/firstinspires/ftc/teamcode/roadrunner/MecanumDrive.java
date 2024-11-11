@@ -30,6 +30,7 @@ import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -48,6 +49,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.subsystems.PrimaryLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.SparkOdo;
 import org.firstinspires.ftc.teamcode.subsystems.ThreeEncoderLocalizer;
+import org.firstinspires.ftc.teamcode.utils.LimeLightWrapper;
 import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 
 import java.lang.Math;
@@ -247,7 +249,8 @@ public final class MecanumDrive {
 
         LocalizerInterface[] localizerArray = new LocalizerInterface[] {
                 new SparkOdo(hardwareMap),
-                new ThreeEncoderLocalizer(hardwareMap)
+                new ThreeEncoderLocalizer(hardwareMap),
+                new LimeLightWrapper(hardwareMap.get(Limelight3A.class, "limelight");)
         };
 //        localizer = new PrimaryLocalizer(localizerArray);
 

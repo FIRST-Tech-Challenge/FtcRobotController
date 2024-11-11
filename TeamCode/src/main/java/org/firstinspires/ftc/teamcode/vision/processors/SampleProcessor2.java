@@ -13,8 +13,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class SampleProcessor2 extends OpenCvPipeline implements VisionProcessor {
     public static final int START_X = 160;
-    public static final int FINISH_X = 270;
-    public static final int START_Y = 310;
+    public static final int FINISH_X = 290;
+    public static final int START_Y = 380;
     public static final int FINISH_Y = 480;
     public static final int THRESHOLD_FOR_COLOR = 150;
     private final Telemetry telemetry;

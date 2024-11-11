@@ -8,14 +8,15 @@ import com.acmerobotics.roadrunner.Pose2d;
 public interface LocalizerInterface {
 
     // This is a value to determine how accurate this localizer's data is
-    public double getWeight();
+    double getWeight();
 
     /* For our purposes, we only need 3 data points:
         - X Position (Inches)
         - Y Position (Inches)
         - Rotation (Radians)
     */
-    public Pose2d getPosition();
+    Pose2d getPosition();
+    boolean isValid();
 
 
 }

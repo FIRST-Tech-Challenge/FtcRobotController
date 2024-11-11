@@ -24,26 +24,10 @@ public class LimeLightWrapper implements LocalizerInterface{
     }
     private Color currentColor;
 
-    public final double M_TO_IN = 39.3700787402;
+    public final static double M_TO_IN = 39.3700787402;
     public double weight = 0.33;
 
     Limelight3A limelight;
-    //The position of each april tag on the field
-    public static final Vector2d[] APRIL_TAG_POSITIONS = new Vector2d[]{
-            //11
-            new Vector2d(-72,-48),
-            //12
-            new Vector2d(0,72),
-            //13
-            new Vector2d(72,-48),
-            //14
-            new Vector2d(72,48),
-            //15
-            new Vector2d(0,-72),
-            //16
-            new Vector2d(-72,48)
-
-    };
 
     public LimeLightWrapper(Limelight3A limelight3A) {
         limelight = limelight3A;
@@ -93,7 +77,7 @@ public class LimeLightWrapper implements LocalizerInterface{
     }
 
     //takes a pose3d from a distance from the tag and localizes it based on which April tag it is
-    public Pose3D inToMM(Pose3D pose3D) {
+    public static Pose3D MtoIN(Pose3D pose3D) {
         double x = (pose3D.getPosition().x*M_TO_IN);
         double y = (pose3D.getPosition().y*M_TO_IN);
         double z = (pose3D.getPosition().z*M_TO_IN);
@@ -118,13 +102,24 @@ public class LimeLightWrapper implements LocalizerInterface{
         double x = 0, y = 0, h = 0;
         LLResult result = getVaildResult();
         if (result != null){
-            Pose3D botpose = result.getBotpose();
+            Pose3D botpose = MtoIN(result.getBotpose());
             if (botpose != null) {
                 x = botpose.getPosition().x;
                 y = botpose.getPosition().y;
                 h = botpose.getOrientation().getYaw(AngleUnit.RADIANS);
             }
+            if(currentColor==Color.BLUE_SIDE) {
+                x *= -1;
+                y *= -1;
+                h *= -1;
+            }
         }
         return new Pose2d(x,y,h);
     }
+
+    @Override
+    public boolean isValid() {
+        return getVaildResult()!=null;
+    }
+
 }

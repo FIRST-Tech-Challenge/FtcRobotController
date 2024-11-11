@@ -149,6 +149,8 @@ public class Arm {
         armLeft.setPower(power);
         armRight.setPower(power);
         return power;
+
+        
     }
 
     /**
