@@ -40,11 +40,7 @@ class TurnIntakeWheelAction extends Action {
     @Override
     public boolean checkDoneCondition() {
         refreshError();
-        if (Math.abs(error) <= ERROR_TOLERANCE) {
-            return true;
-        } else {
-            return false;
-        }
+        return Math.abs(error) <= ERROR_TOLERANCE;
     }
 
     @Override

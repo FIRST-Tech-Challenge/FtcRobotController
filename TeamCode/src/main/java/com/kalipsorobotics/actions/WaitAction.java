@@ -15,9 +15,7 @@ public class WaitAction extends Action {
     @Override
     public boolean checkDoneCondition() {
         if (hasStarted) {
-            if (elapsedTime.seconds() >= waitTimeSeconds) {
-                return true;
-            }
+            return elapsedTime.seconds() >= waitTimeSeconds;
         }
 
         return false;

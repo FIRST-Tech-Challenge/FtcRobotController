@@ -1,20 +1,23 @@
 package com.kalipsorobotics.test;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class TestLinkageServo extends LinearOpMode {
-    Servo linkage = hardwareMap.get(Servo.class, "linkage");
+    Servo linkageServo = hardwareMap.get(Servo.class, "linkageServo");
     double linkagePos = 0.5;
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
         while (opModeIsActive()) {
 
 
-            telemetry.addData("LinkageServoPos", linkage.getPosition());
+            telemetry.addData("LinkageServoPos", linkageServo.getPosition());
             telemetry.update();
             if (gamepad1.right_stick_y < 0) {
                 linkagePos += 0.0095;
@@ -28,7 +31,7 @@ public class TestLinkageServo extends LinearOpMode {
                 linkagePos = 1;
             }
 
-            linkage.setPosition(linkagePos);
+            linkageServo.setPosition(linkagePos);
 
 
     }

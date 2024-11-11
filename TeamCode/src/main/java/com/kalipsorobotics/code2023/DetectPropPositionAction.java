@@ -79,14 +79,14 @@ class DetectPropPositionAction extends Action {
             //Log.d("color detection", String.valueOf(propProcessor.avgCenterCb));
             //Log.d("color detection", String.valueOf(markerProcessor.avgRightCb));
             //Log.d("color detection", String.valueOf(propProcessor.avgCenterCr));
-            Log.d("vision", "action: elapsed time" + String.valueOf(elapsedTime.milliseconds()));
+            Log.d("vision", "action: elapsed time" + elapsedTime.milliseconds());
             if ((elapsedTime.milliseconds() > time + visionTimeout) && position == PropDetector.PROP_POSITION.UNDETECTED) {
                 position = PropDetector.PROP_POSITION.CENTER;
                 Log.d("vision", "action: detected time out. Picking CENTER");
             }
         }
 
-        Log.d("vision", "action: done process, detected at" + String.valueOf(elapsedTime.milliseconds()));
+        Log.d("vision", "action: done process, detected at" + elapsedTime.milliseconds());
 
         //save marker position and apriltag position in robot class
         //todo

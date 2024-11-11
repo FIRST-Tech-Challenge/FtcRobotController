@@ -7,27 +7,29 @@ public class PIDController {
     private final double Ki;
     private final double Kd;
 
-    private double errorIntegral;
+    private double integralError;
     private double lastError;
     private double lastTime;
 
     public PIDController(double P, double I, double D) {
-        this.Kp = P;
-        this.Ki = I;
-        this.Kd = D;
+        Kp = P;
+        Ki = I;
+        Kd = D;
 
-        this.lastError = 0;
-        this.lastTime = SystemClock.elapsedRealtimeNanos();
+        integralError = 0;
+        lastError = 0;
+        lastTime = SystemClock.elapsedRealtimeNanos();
     }
 
     public double calculate(double current, double target) {
         double currentTime = SystemClock.elapsedRealtimeNanos();
-        double timeDelta = currentTime - lastTime;
+        double timeDelta = (currentTime - lastTime) / 1e9;
 
         double error = target - current;
+        integralError += error * timeDelta;
 
         double proportional = Kp * error;
-        double integral = Ki * error * timeDelta;
+        double integral = Ki * integralError;
         double derivative = Kd * (error - lastError) / timeDelta;
 
         lastTime = currentTime;
@@ -35,5 +37,4 @@ public class PIDController {
 
         return proportional + integral + derivative;
     }
-
 }

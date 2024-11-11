@@ -74,7 +74,7 @@ public class Odometry {
             return relativeDelta;
         }
 
-        Log.d("odometry", "linearDelta " + relativeDelta.toString());
+        Log.d("odometry", "linearDelta " + relativeDelta);
         double forwardRadius = relativeDelta.getX() / relativeDelta.getTheta();
         double strafeRadius = relativeDelta.getY() / relativeDelta.getTheta();
 
@@ -88,7 +88,7 @@ public class Odometry {
                 MathFunctions.angleWrapRad(relativeDelta.getTheta());
 
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
-        Log.d("odometry", "arcDelta " + arcDelta.toString());
+        Log.d("odometry", "arcDelta " + arcDelta);
         return arcDelta;
     }
 

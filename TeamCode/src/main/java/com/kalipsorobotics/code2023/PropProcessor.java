@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc;
 
 class PropProcessor implements VisionProcessor {
 
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     private Mat workingMatrix;
 
     double counter;

@@ -40,10 +40,7 @@ class TurnDroneLauncherWheelAction extends Action {
     @Override
     public boolean checkDoneCondition() {
         refreshError();
-        if (Math.abs(error) <= ERROR_TOLERANCE) {
-            return true;
-        }
-        return false;
+        return Math.abs(error) <= ERROR_TOLERANCE;
     }
 
     @Override

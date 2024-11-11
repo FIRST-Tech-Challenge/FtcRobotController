@@ -16,10 +16,10 @@ class Outtake2023 {
     public Servo hook;
     public Servo pigeonHeadServo;
 
-    private double PIGEON_HEAD_DEFAULT_POS = 0.5;
+    private final double PIGEON_HEAD_DEFAULT_POS = 0.5;
 
-    private double PIGEON_HEAD_ANGLE_MAX = PIGEON_HEAD_DEFAULT_POS + 0.18;
-    private double PIGEON_HEAD_ANGLE_MIN = PIGEON_HEAD_DEFAULT_POS - 0.18;
+    private final double PIGEON_HEAD_ANGLE_MAX = PIGEON_HEAD_DEFAULT_POS + 0.18;
+    private final double PIGEON_HEAD_ANGLE_MIN = PIGEON_HEAD_DEFAULT_POS - 0.18;
 
     public Outtake2023(OpModeUtilities opModeUtilities) {
 

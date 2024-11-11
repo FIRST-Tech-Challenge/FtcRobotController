@@ -11,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 class MarkerDetector extends OpenCvPipeline {
-    private Mat workingMatrix = new Mat();
+    private final Mat workingMatrix = new Mat();
 
     public PROP_POSITION position = PROP_POSITION.UNKNOWN;
 
@@ -29,13 +29,13 @@ class MarkerDetector extends OpenCvPipeline {
     double avgRightY;
     private static final int SUBMAT_WIDTH = 120;
     private static final int SUBMAT_HEIGHT = 120;
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     public enum ALLIANCE_COLOR {
-        RED, BLUE;
+        RED, BLUE
     }
 
     public enum PROP_POSITION {
-        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
+        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN
     }
 
     public MarkerDetector(Telemetry telemetry, ALLIANCE_COLOR color) {

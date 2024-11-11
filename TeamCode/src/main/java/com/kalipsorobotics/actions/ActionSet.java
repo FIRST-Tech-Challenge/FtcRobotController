@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ActionSet extends Action {
 
-    private ArrayList<Action> actions;
+    private final ArrayList<Action> actions;
     public ActionSet(Action dependentAction) {
         actions = new ArrayList<Action>();
         this.dependentAction = dependentAction;
