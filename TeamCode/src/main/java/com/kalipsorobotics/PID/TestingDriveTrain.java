@@ -88,14 +88,6 @@ public class TestingDriveTrain {
             telemetry.addLine(String.format("y | currently at %f, targeting %f, power %f\n", curY, target.y, y));
             telemetry.addLine(String.format("h | currently at %f, targeting %f, power %f\n", curH, target.h, h));
 
-            telemetry.addLine(
-                    String.valueOf(
-                    Math.abs(target.x - curX) > 0.2 ||
-                    Math.abs(target.y - curY) > 0.2 ||
-                    Math.abs(target.h - curH) > 5)
-            );
-            telemetry.update();
-
             System.out.printf("x | currently at %f, targeting %f, power %f\n", curX, target.x, x);
             System.out.printf("y | currently at %f, targeting %f, power %f\n", curY, target.y, y);
 //            System.out.printf("h | currently at %f, targeting %f, power %f\n", curH, target.h, h);
