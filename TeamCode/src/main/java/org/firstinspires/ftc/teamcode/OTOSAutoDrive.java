@@ -6,15 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous(name="Auto Drive", group="Robot")
 public class OTOSAutoDrive extends LinearOpMode {
@@ -33,35 +29,22 @@ public class OTOSAutoDrive extends LinearOpMode {
     private double leftBackPower = 0;
     private double rightBackPower = 0;
     double max = 0;
+
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
     final int VERTICAL_MAX = 1700;
-    int verticalAdjustedMin = 0;
-    int verticalPosition = VERTICAL_MIN;
+    final int VERTICAL_DEFAULT_SPEED = 2000;
+
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
     final int VIPER_MAX = 3100;
     final int VIPER_MIN = 0;
-    int viperSlidePosition = 0;
 
     // This chunk controls our claw
     Servo claw = null;
     final double CLAW_MIN = 0.9;    // Claw is closed
     final double CLAW_MAX = 0.7;    // Claw is open
-
-    final ElapsedTime runtime = new ElapsedTime();
-
-    // Software variables
-    static final double     DEFAULT_SPEED = 0.6;
-
-    private IMU imu = null;
-    static final double TURN_SPEED_ADJUSTMENT = 0.015;     // Larger is more responsive, but also less stable
-    static final double HEADING_ERROR_TOLERANCE = 1.0;    // How close must the heading get to the target before moving to next step.
-    static final double MAX_TURN_SPEED = 1.0;     // Max Turn speed to limit turn rate
-    static final double MIN_TURN_SPEED = 0.15;     // Min Turn speed to limit turn rate
-    private double turnSpeed = 0;
-    private double degreesToTurn = 0;
 
     @Override
     public void runOpMode() {
@@ -95,15 +78,8 @@ public class OTOSAutoDrive extends LinearOpMode {
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        imu.resetYaw();
-
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready");
-        telemetry.update();
-
-        telemetry.addData("Current Yaw", "%.0f", getHeading());
+        telemetry.addData("Ready", "You can press start");
         telemetry.update();
 
         configureOtos();
@@ -112,45 +88,45 @@ public class OTOSAutoDrive extends LinearOpMode {
         waitForStart();
 
         // Code here
-
-        setVertical(VERTICAL_MAX);                             // Raising Arm
-        setViper(VIPER_MAX);                                   // Extending Viper
-        driveToLoc(3, 14, 20);
-        setClaw(CLAW_MAX);                            // Drop the block
-        sleep(500);
+        setVertical(VERTICAL_MAX);                        // Raising Arm
+        sleep(300);
+        setViper(VIPER_MAX);                              // Extending Viper
+        driveToLoc(3, 14, 20);     // Go to basket
+        sleep(600);
+        setClaw(CLAW_MAX);                               // Drop the block
         driveToLoc(34, 0, 0);
         setViper(1800);
-        setVertical(100, 1500);
-        setClaw(CLAW_MIN);
+        setVertical(100, 1000);
+        sleep(1500);
+        setClaw(CLAW_MIN);                              // Grab second block
+        sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(12, 10, 45);
-        sleep(300);
-        setClaw(CLAW_MAX);
-        driveToLoc(17, 5, 45);
+        driveToLoc(12, 10, 45);   // Go to basket
+        sleep(600);
+        setClaw(CLAW_MAX);                              // Drop second block
+        driveToLoc(34, -3, 0);
+        setViper(700);
+        setVertical(100, 1500);
+        sleep(1300);
+        setClaw(CLAW_MIN);                              // Grab third block
+        sleep(100);
+        setVertical(VERTICAL_MAX);
+        setViper(VIPER_MAX);
+        driveToLoc(12, 10, 45);  // Go to basket
+        sleep(600);
+        setClaw(CLAW_MAX);                              // Drop third block
+
+        // Keep the robot safe:
+        driveToLoc(25, 0, 0);
         setViper(VIPER_MIN);
+        sleep(1500);
         setVertical(VERTICAL_MIN);
-        /*
-        strafeRight(1.5, 0.4);       // Positioning to basket
-        moveForward(0.4, 0.4);       // Positioning to basket
-        turnToHeading(45, 0.4);           // Turn to basket, claw in position
-        moveForward(0.35, 0.3);     // Move forward: Originally 0.3
-        setClaw(CLAW_MAX);                                    // Drop the block
-        moveBackward(0.3, 0.3);
-        turnToHeading(-2, 0.4);            // Turning away from basket
-        setViper(VIPER_MIN);                                  // Retracting Viper
-        setVertical(VERTICAL_MIN);                            // Lowering Arm
-        strafeRight(0.5, 0.4);
-        turnToHeading(0, 0.4);
-        moveBackward(4, 0.5);      // Todo: Change to 4 seconds before competition
-        turnToHeading(0, 0.4);
-        strafeLeft(2.7, 0.4);       // Positioning to park
-        */
-        claw.close();                                         // Release tension on the claw
+        claw.close();                                   // Release tension on the claw
+        sleep(5000);
 
         // End of autonomous program
-        telemetry.addData("Path", "Complete");
-        telemetry.addData("Current Yaw", "%.0f", getHeading());
+        telemetry.addData("Autonomous", "Complete");
         telemetry.update();
     }
 
@@ -158,60 +134,22 @@ public class OTOSAutoDrive extends LinearOpMode {
         viperSlide.setTargetPosition(length);
         ((DcMotorEx) viperSlide).setVelocity(2000);
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep(2000);
         RobotLog.vv("Rockin' Robots", "Viper set to %d", viperSlide.getCurrentPosition());
     }
 
     public void setVertical(int height){
-        vertical.setTargetPosition(height);
-        ((DcMotorEx) vertical).setVelocity(2000);
-        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep(1500);
+        setVertical(height, VERTICAL_DEFAULT_SPEED);
     }
 
     public void setVertical(int height, int speed){
         vertical.setTargetPosition(height);
         ((DcMotorEx) vertical).setVelocity(speed);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep(1500);
     }
 
     public void setClaw(double position){
         claw.setPosition(position);
         sleep(300);
-    }
-
-    private void acceleration(double secondsToDrive, double targetSpeed,
-                              double leftFrontDriveDirection, double rightFrontDriveDirection,
-                              double leftBackDriveDirection, double rightBackDriveDirection){
-        double currentSpeed = 0.0;
-
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < secondsToDrive)) {
-            double elapsedTime = runtime.seconds();
-
-            // Driving less than a second
-            if(secondsToDrive < 1){
-                currentSpeed = targetSpeed;
-            }
-            // Acceleration phase
-            if (elapsedTime < 1 && currentSpeed < targetSpeed) {
-                currentSpeed = currentSpeed + 0.01; // Increase the speed by 0.01 per second
-            }
-            // Deceleration phase
-            else if (elapsedTime > secondsToDrive - 1 && elapsedTime < secondsToDrive && currentSpeed > 0) {
-                currentSpeed = currentSpeed - 0.01; // Decrease the speed by 0.01 per second
-            }
-
-            leftFrontDrive.setPower(currentSpeed*leftFrontDriveDirection);
-            rightFrontDrive.setPower(currentSpeed*rightFrontDriveDirection);
-            leftBackDrive.setPower(currentSpeed*leftBackDriveDirection);
-            rightBackDrive.setPower(currentSpeed*rightBackDriveDirection);
-
-            telemetry.addData("Move forward: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        stopMoving();
     }
 
     private void stopMoving() {
@@ -221,82 +159,6 @@ public class OTOSAutoDrive extends LinearOpMode {
         rightBackDrive.setPower(0);
     }
 
-    private void moveForward(double secondsToDrive) {
-        moveForward(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void moveForward(double secondsToDrive, double speedToDrive) {
-        acceleration(secondsToDrive, speedToDrive, 1, 1, 1, 1);
-    }
-
-    private void moveBackward(double secondsToDrive) {
-        moveBackward(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void moveBackward(double secondsToDrive, double speedToDrive) {
-        acceleration(secondsToDrive, speedToDrive, -1, -1,-1,-1);
-    }
-
-    private void turnLeft(double secondsToDrive) {
-        turnLeft(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void turnLeft(double secondsToDrive, double speedToDrive) {
-        acceleration(secondsToDrive, speedToDrive, -1, 1, -1, 1);
-    }
-
-    private void turnRight(double secondsToDrive) {
-        turnRight(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void turnRight(double secondsToDrive, double speedToDrive) {
-        acceleration(secondsToDrive, speedToDrive, 1, -1, 1, -1);
-    }
-
-    private void strafeLeft(double secondsToDrive) {
-        strafeLeft(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void strafeLeft(double secondsToDrive, double speedToDrive) {
-        acceleration(secondsToDrive, speedToDrive, -1, 1, 1, -1);
-    }
-    private void strafeRight(double secondsToDrive) {
-        strafeRight(secondsToDrive, DEFAULT_SPEED);
-    }
-
-    private void strafeRight(double secondsToDrive, double speedToDrive) {
-        acceleration(secondsToDrive, speedToDrive, 1, -1, -1, 1);
-    }
-
-    public double getHeading() {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.DEGREES);
-    }
-
-    private void turnToHeading(double targetYaw) {
-        turnToHeading(targetYaw, DEFAULT_SPEED);
-    }
-
-    private void turnToHeading(double heading, double speedToDrive) {
-        degreesToTurn = heading - getHeading();
-
-        while (opModeIsActive() && (Math.abs(degreesToTurn) > HEADING_ERROR_TOLERANCE)) {
-            degreesToTurn = heading - getHeading();
-            if (degreesToTurn < -180) degreesToTurn += 360;
-            if (degreesToTurn > 180) degreesToTurn -= 360;
-
-            // Clip the speed to the maximum permitted value
-            turnSpeed = Range.clip(degreesToTurn * TURN_SPEED_ADJUSTMENT, -speedToDrive, speedToDrive);
-            if (turnSpeed < MIN_TURN_SPEED && turnSpeed >= 0) turnSpeed = MIN_TURN_SPEED;
-            if (turnSpeed > -MIN_TURN_SPEED && turnSpeed < 0) turnSpeed = -MIN_TURN_SPEED;
-
-            leftFrontDrive.setPower(-turnSpeed);
-            rightFrontDrive.setPower(turnSpeed);
-            leftBackDrive.setPower(-turnSpeed);
-            rightBackDrive.setPower(turnSpeed);
-        }
-        stopMoving();
-    }
     private void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
         telemetry.update();
@@ -380,6 +242,5 @@ public class OTOSAutoDrive extends LinearOpMode {
         stopMoving();
         RobotLog.vv("Rockin' Robots", "Done Moving: xDist: %.2f, yDist: %.2f, hDist: %.2f",
                 xDistance, yDistance, hDistance);
-
     }
 }
