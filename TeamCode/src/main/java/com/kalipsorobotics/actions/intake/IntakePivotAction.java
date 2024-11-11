@@ -4,17 +4,42 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import com.kalipsorobotics.modules.Intake;
 
+//0.75 down
+//~0.45 up
 public class IntakePivotAction {
-    Intake intake;
+    final private Intake intake;
+    private final Servo intakePivotServo;
 
-    Servo intakePivotServo;
+    private boolean isDown = true;
 
     public IntakePivotAction(Intake intake) {
         this.intake = intake;
         intakePivotServo = intake.getPivotServo();
     }
 
-    public void goToPosition(double position) {
+    public void setPosition(double position) {
         intakePivotServo.setPosition(position);
+    }
+
+    public void moveDown() {
+        setPosition(0.75);
+        isDown = true;
+    }
+
+    public void moveUp() {
+        setPosition(0.55);
+        isDown = false;
+    }
+
+    public void togglePosition() {
+        if (!isDown) {
+        moveDown();
+        } else {
+        moveUp();
+        }
+    }
+
+    public Intake getIntake() {
+        return intake;
     }
 }

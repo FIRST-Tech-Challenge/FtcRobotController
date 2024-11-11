@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.modules.OuttakePositions;
+import com.kalipsorobotics.modules.OuttakePositions;
 
 @TeleOp
 public class TestOuttakeActions extends LinearOpMode {

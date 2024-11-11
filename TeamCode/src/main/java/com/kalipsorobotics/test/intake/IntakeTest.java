@@ -1,5 +1,7 @@
 package com.kalipsorobotics.test.intake;
 
+import com.kalipsorobotics.actions.intake.IntakeDoorAction;
+import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,26 +19,56 @@ public class IntakeTest extends LinearOpMode {
         Intake intake = new Intake(opModeUtilities);
         IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake);
         IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
+        IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
+        IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
+
+
+        double pivotPosition = 0.5;
+        double doorPosition = 0.5;
+        double linkagePosition = 0.5;
+        double linkageSpeed =0.005;
+
+        intakePivotAction.moveDown();
+        intakeDoorAction.close();
+
 
         waitForStart();
-
-        double position = 0.5;
-
         while (opModeIsActive()) {
 
-            if (gamepad1.a) {
+            if (gamepad1.left_trigger > 0.5) {
                 intakeNoodleAction.run();
-            } else if (gamepad1.b) {
+            } else {
                 intakeNoodleAction.stop();
             }
 
             if (gamepad1.y) {
-                position = position + 0.01;
-                intakePivotAction.goToPosition(position);
+                pivotPosition = pivotPosition + 0.01;
+                intakePivotAction.setPosition(pivotPosition);
             } else if (gamepad1.x) {
-                position = position - 0.01;
-                intakePivotAction.goToPosition(position);
+                pivotPosition = pivotPosition - 0.01;
+                intakePivotAction.setPosition(pivotPosition);
             }
+
+            if (gamepad1.b) {
+                doorPosition = doorPosition + 0.01;
+                intakeDoorAction.open();
+            } else if (gamepad1.a) {
+                doorPosition = doorPosition - 0.01;
+                intakeDoorAction.close();
+            }
+
+            if (gamepad1.dpad_up) {
+                linkagePosition = linkagePosition + linkageSpeed;
+                intakeLinkageAction.moveIntakeSlide(linkagePosition);
+            } else if (gamepad1.dpad_down) {
+                linkagePosition = linkagePosition - linkageSpeed;
+                intakeLinkageAction.moveIntakeSlide(linkagePosition);
+            }
+
+            telemetry.addData("doorPosition", doorPosition);
+            telemetry.addData("linkagePosition", linkagePosition);
+            telemetry.addData("pivot position", pivotPosition);
+            telemetry.update();
 
         }
 

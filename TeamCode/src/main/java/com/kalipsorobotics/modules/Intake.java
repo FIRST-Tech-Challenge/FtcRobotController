@@ -9,8 +9,10 @@ public class Intake {
     private final OpModeUtilities opModeUtilities;
 
     private DcMotor noodleMotor;
-    private Servo pivotServo, sampleDoor;
+    private Servo pivotServo;
+    private Servo doorServo;
 
+    private Servo linkageServo1, linkageServo2;
     public Intake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
 
@@ -20,7 +22,9 @@ public class Intake {
     private void setUpHardware() {
         noodleMotor = opModeUtilities.getHardwareMap().dcMotor.get("intakeNoodleMotor");
         pivotServo = opModeUtilities.getHardwareMap().servo.get("intakePivotServo");
-        sampleDoor = opModeUtilities.getHardwareMap().servo.get("sampleDoorServo");
+        doorServo = opModeUtilities.getHardwareMap().servo.get("doorServo");
+        linkageServo1 = opModeUtilities.getHardwareMap().servo.get("linkageServo1");
+        linkageServo2 = opModeUtilities.getHardwareMap().servo.get("linkageServo2");
 
         noodleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         noodleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -38,7 +42,16 @@ public class Intake {
         return pivotServo;
     }
 
-    public Servo getSampleDoor() {
-        return sampleDoor;
+    public Servo getDoorServo() {
+        return doorServo;
     }
+
+    public Servo getLinkageServo1() {
+        return linkageServo1;
+    }
+
+    public Servo getLinkageServo2() {
+        return linkageServo2;
+    }
+
 }
