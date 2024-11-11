@@ -50,13 +50,13 @@ public class OdometryFuse {
 
     public Point Filter(Point sparkPoint, Point wheelPoint) {
         int diffenceDebug = 2;
-        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(WheelUpdateData()); }
+        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { ResetData(Boolean.FALSE, 0); return(WheelUpdateData()); }
         else { return(SparkUpdateData()); }
     }
-    public Void ResetData(Boolean reCalibrate) {
+    public void ResetData(Boolean reCalibrate, double heading) {
         myOtos.resetTracking();
         if (reCalibrate) { myOtos.calibrateImu(); }
-        return null;
+        myOtos.setOffset(new SparkFunOTOS.Pose2D(WheelUpdateData().getX(), WheelUpdateData().getY(), heading));
     }
 
     public Point CollectData() {
