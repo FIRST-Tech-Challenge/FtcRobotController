@@ -58,24 +58,24 @@ public class MecanumDrive {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         // drive model parameters
-        public double inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 0;
+        public double inPerTick = 0.0434782; // SparkFun OTOS Note: you can probably leave this at 1
+        public double lateralInPerTick = 0.0471744;
+        public double trackWidthTicks = 1162.83936748;
 
         // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
+        public double kS = 1.25259626838;
+        public double kV = 0.00420177457;
         public double kA = 0;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
+        public double maxWheelVel = 80;
         public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxProfileAccel = 70;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
@@ -140,7 +140,7 @@ public class MecanumDrive {
             backLeftMotorEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
             backRightMotorEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
             frontRightMotorEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
-            frontLeftMotorEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
+            frontLeftMotorEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
 
             imu = lazyImu.get();
 
@@ -231,7 +231,7 @@ public class MecanumDrive {
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -132,8 +132,6 @@ public class RoadRunnerAutonomousTest extends LinearOpMode {
                 .strafeTo(new Vector2d(48, 12))
                 .build();
 
-
-
         while (!isStopRequested() && !opModeIsActive()) {
         }
         waitForStart();
