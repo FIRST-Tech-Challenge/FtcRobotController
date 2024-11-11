@@ -7,9 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -25,7 +23,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     double rightFrontPower = 0;
     double leftBackPower = 0;
     double rightBackPower = 0;
-    boolean wheelClimb = false;
 
     // Collect joystick position data
     double axial = 0;
@@ -42,15 +39,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX_WIDE = 2500; // TODO: Are we longer than 42" when the claw is open?
+    final int VIPER_MAX_WIDE = 2500;
     final int VIPER_MAX_TALL = 3100;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
     // This chunk controls our claw
     Servo claw = null;
-    final double CLAW_MIN = 0.05;        // Claw is closed
-    final double CLAW_MAX = 0.43;        // Claw is open
+    final double CLAW_MIN = 0.9;        // Claw is closed
+    final double CLAW_MAX = 0.6;        // Claw is open
     double claw_position = CLAW_MIN;
 
     final ElapsedTime runtime = new ElapsedTime();
@@ -83,7 +80,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         claw = hardwareMap.get(Servo.class, "claw");
-        claw.setDirection(Servo.Direction.REVERSE);
         claw.setPosition(CLAW_MIN);
 
         // Wait for the game to start (driver presses PLAY)
@@ -120,32 +116,18 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             // Send calculated power to wheels
-            if (wheelClimb == false) {
-                leftFrontDrive.setPower(leftFrontPower);
-                rightFrontDrive.setPower(rightFrontPower);
-                leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);
-            }
-
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
             verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
-            // Setting vertical into initial climb position
-            if (gamepad1.dpad_up) { // TODO: I don't think we are ready to do all of this with one button. I think we need to keep it
-                                    // as two buttons for now. When we are better programmers we will be able to do this.
-                wheelClimb = true;
-                // Hook on to the bar
-                vertical.setTargetPosition(2800);
-                ((DcMotorEx) vertical).setVelocity(3000);
+            if (gamepad1.dpad_up) {
+                vertical.setTargetPosition(VERTICAL_MAX);
+                ((DcMotorEx) vertical).setVelocity(2000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                // Collapse robot to hang
-                vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                vertical.setPower(-0.8);
-                leftBackDrive.setPower(0.5);
-                rightBackDrive.setPower(0.5);
-            }
-            else if (gamepad1.dpad_down) {
             }
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {          // If the right button is pressed AND it can safely raise further
                 vertical.setTargetPosition(Math.min(VERTICAL_MAX, verticalPosition + 50));
@@ -164,6 +146,16 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                     viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 vertical.setTargetPosition(Math.max(verticalAdjustedMin, verticalPosition - 50));
+                ((DcMotorEx) vertical).setVelocity(1000);
+                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            else if (gamepad1.dpad_down) {
+                if (viperSlidePosition > VIPER_MAX_WIDE) {
+                    viperSlide.setTargetPosition(VIPER_MAX_WIDE);
+                    ((DcMotorEx) viperSlide).setVelocity(1000);
+                    viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
+                vertical.setTargetPosition(verticalAdjustedMin);
                 ((DcMotorEx) vertical).setVelocity(1000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
@@ -188,17 +180,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             // Control the claw
-            if (gamepad1.right_bumper && claw_position < CLAW_MAX) {
-                claw_position += 0.02;
+            if (gamepad1.right_bumper && claw_position > CLAW_MAX) {
+                claw_position -= 0.01;
             }
-            if (gamepad1.left_bumper && claw_position > CLAW_MIN) {
-                claw_position -= 0.015;
+            if (gamepad1.left_bumper && claw_position < CLAW_MIN) {
+                claw_position += 0.01;
             }
             claw.setPosition(claw_position);
 
             // Scoring button: All the way up and fully extended
-
-            // Y/Triangle: High basket scoring position.
             if (gamepad1.y) {
                 vertical.setTargetPosition(VERTICAL_MAX);
                 ((DcMotorEx) vertical).setVelocity(3000);
@@ -207,33 +197,34 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 ((DcMotorEx) viperSlide).setVelocity(2000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            // A/X button: Bring the viper slide and put the vertical all the way down.
+
             if (gamepad1.a) {
                 viperSlide.setTargetPosition(VIPER_MIN);
                 ((DcMotorEx) viperSlide).setVelocity(4000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 vertical.setTargetPosition(VERTICAL_MIN);
-                ((DcMotorEx) vertical).setVelocity(350); // TODO: Do you like this value?
+                ((DcMotorEx) vertical).setVelocity(700);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            // X/Square: The viper slide is completely back but the vertical is in submersible position.
+
             if (gamepad1.x) {
-                vertical.setTargetPosition(430); // TODO: Do you like this value? Does it work on both sides of the submersible?
+                vertical.setTargetPosition(430);
                 ((DcMotorEx) vertical).setVelocity(3000);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(0);
                 ((DcMotorEx) viperSlide).setVelocity(1500);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
-            if (gamepad1.b) { // Should this button open the claw?
-                vertical.setTargetPosition(350); // TODO: Do you like this value? Does it work on both sides of the submersible?
+
+            if (gamepad1.b) {
+                vertical.setTargetPosition(430);
                 ((DcMotorEx) vertical).setVelocity(1800);
                 vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viperSlide.setTargetPosition(1900);
                 ((DcMotorEx) viperSlide).setVelocity(2000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
+
             // Show the elapsed game time and wheel power.
             printDataOnScreen();
         }
@@ -245,7 +236,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Run Time", "%.1f", runtime.seconds());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        //RobotLog.vv("RockinRobots", "%4.2f, %4.2f, %4.2f, %4.2f", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
         telemetry.addData("Joystick Axial", "%4.2f", axial);
         telemetry.addData("Joystick Lateral", "%4.2f", lateral);
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
@@ -257,8 +247,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
         telemetry.addData("Vertical Adjusted Min", "%d", verticalAdjustedMin);
-        RobotLog.vv("Rockin", "Vert Velocity: %.1f, Vert Power: %.1f, Vert Power Consumption: %.1f, Vert Position: %d",
-                ((DcMotorEx) vertical).getVelocity(),  vertical.getPower(), ((DcMotorEx)vertical).getCurrent(CurrentUnit.AMPS), vertical.getCurrentPosition());
 
         telemetry.update();
     }
