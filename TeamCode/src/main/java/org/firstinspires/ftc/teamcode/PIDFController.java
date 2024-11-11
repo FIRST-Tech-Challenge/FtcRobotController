@@ -8,6 +8,13 @@ import androidx.annotation.Nullable;
 public final class PIDFController {
     public static final class PIDCoefficients {
         public double kP, kI, kD;
+
+        public PIDCoefficients(double p, double i, double d){
+            this.kP = p;
+            this.kI = i;
+            this.kD = d;
+
+        }
     }
 
     public interface FeedforwardFun {

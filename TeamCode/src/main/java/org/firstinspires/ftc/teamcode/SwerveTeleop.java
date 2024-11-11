@@ -76,6 +76,8 @@ public class SwerveTeleop extends LinearOpMode {
         sleftBack = hardwareMap.get(CRServo.class, "sbackLeft");
         srightBack = hardwareMap.get(CRServo.class, "sbackRight");
 
+        PIDFController.PIDCoefficients scoefRightFront = new PIDFController.PIDCoefficients(1.0, 1.0,1.0);
+
         //encoders stuff
         erightFront =  new AbsoluteAnalogEncoder(hardwareMap.get(AnalogInput.class, "efrontRight"), 3.3);
         eleftFront =  new AbsoluteAnalogEncoder(hardwareMap.get(AnalogInput.class, "efrontLeft"), 3.3);
@@ -88,7 +90,7 @@ public class SwerveTeleop extends LinearOpMode {
         erightBack.zero(E_BACK_RIGHT_OFFSET);
 
         //actual module stuff
-        rightFront = new SwerveModule(mrightFront, srightFront, erightFront);
+        rightFront = new SwerveModule(mrightFront, srightFront, erightFront, scoefRightFront);
         leftFront = new SwerveModule(mleftFront, sleftFront, eleftFront);
         leftBack = new SwerveModule(mleftBack, sleftBack, eleftBack);
         rightBack = new SwerveModule(mrightBack, srightBack, erightBack);

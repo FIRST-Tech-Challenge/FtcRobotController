@@ -20,7 +20,8 @@ public class SwerveModule {
     private DcMotorEx motor;
     private CRServo servo;
     private AbsoluteAnalogEncoder enc;
-    private PIDFController contr;
+    private PIDFController scontroller;
+    private PIDFController.PIDCoefficients scoeffs;
     private double P = 1;
     private double I = 1;
     private double D = 1;
@@ -30,7 +31,7 @@ public class SwerveModule {
     private final double TPR = 28*DRIVE_RATIO; //ticks per 1 wheel irl rotation;
 
 
-    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e) {
+    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e, PIDFController.PIDCoefficients scoef) {
             motor = m;
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -43,7 +44,6 @@ public class SwerveModule {
     }
 
     public void azimtuh(double pos){ //in RADianz
-        servo.setPower(1);
 
     }
     public void drive(){
