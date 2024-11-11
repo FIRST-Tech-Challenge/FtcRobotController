@@ -42,6 +42,12 @@ public class OdometryFuse {
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
     }
 
+    public double HeadingUpdateData() {
+        SparkFunOTOS.Pose2D SparkFunOTOS;
+        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        return(pos.h);
+    }
+
     public Point Filter(Point sparkPoint, Point wheelPoint) {
         int diffenceDebug = 2;
         if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(WheelUpdateData()); }
