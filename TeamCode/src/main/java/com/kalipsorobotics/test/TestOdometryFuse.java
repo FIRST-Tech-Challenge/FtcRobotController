@@ -21,7 +21,9 @@ public class TestOdometryFuse  extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addData("" + odometryFuse.CollectData(), "");
+            telemetry.addData("x: " + odometryFuse.CollectData().getX(), "");
+            telemetry.addData("y: " + odometryFuse.CollectData().getY(), "");
+            telemetry.addData("H: " + odometryFuse.HeadingUpdateData(), "");
             telemetry.update();
         }
     }

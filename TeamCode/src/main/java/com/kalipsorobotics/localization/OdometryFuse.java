@@ -28,7 +28,7 @@ public class OdometryFuse {
     }
     public Point WheelUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
-        return(new Point(backEncoder.getCurrentPosition(), rightEncoder.getCurrentPosition()));
+        return(new Point(backEncoder.getCurrentPosition() * TICKSTOINCH, rightEncoder.getCurrentPosition() * TICKSTOINCH));
     }
     public Point SparkUpdateData() {
         SparkFunOTOS.Pose2D SparkFunOTOS;
@@ -49,14 +49,15 @@ public class OdometryFuse {
 
     public Point Filter(Point sparkPoint, Point wheelPoint) {
         int diffenceDebug = 2;
-        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { ResetData(Boolean.FALSE, 0); return(WheelUpdateData()); }
+        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(SparkUpdateData()); }
         else { return(SparkUpdateData()); }
     }
-    public void ResetData(Boolean reCalibrate, double heading) {
+    public void SparkResetData(Boolean reCalibrate, double heading) {
         myOtos.resetTracking();
         if (reCalibrate) { myOtos.calibrateImu(); }
         myOtos.setOffset(new SparkFunOTOS.Pose2D(WheelUpdateData().getX(), WheelUpdateData().getY(), heading));
     }
+
 
     public Point CollectData() {
         Point point = Filter(SparkUpdateData(), WheelUpdateData());
