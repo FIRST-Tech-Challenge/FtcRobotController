@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.team.components.ExtensionHandler;
+import org.nknsd.robotics.team.helperClasses.PIDModel;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +23,7 @@ public class RotationHandler implements NKNComponent {
     final double EXTENDED_I_CONSTANT = 0.009;
     final double D_CONSTANT = 0;
     final double EXTENDED_D_CONSTANT = 0;
+
     final double errorCap = 10;
     final boolean enableErrorClear = true;
     private final String motorName = "motorArmRotate";
@@ -33,6 +35,8 @@ public class RotationHandler implements NKNComponent {
     double resError;
     private DcMotor motor;
     private ExtensionHandler extensionHandler;
+    private PIDModel normalPIDModel= new PIDModel(0.38,0.005,0.5) ;
+    private PIDModel extendedPIDModel = new PIDModel(0.5,0.005,1);
 
     public RotationHandler() {}
 
@@ -78,7 +82,7 @@ public class RotationHandler implements NKNComponent {
         long currentTime = runtime.time(TimeUnit.MILLISECONDS);
         if (currentTime >= targetTime) {
             current = potHandler.getPotVoltage();
-            double armPower = controlLoop(current);
+            double armPower = controlLoop(current, runtime);
 
             motor.setPower(armPower);
 
@@ -111,26 +115,19 @@ public class RotationHandler implements NKNComponent {
         return one * two < 0; // If the two have DIFFERENT signs, multiplying them will give us a negative number
     }
 
-    private double controlLoop(double current) {
+    private double controlLoop(double current, ElapsedTime runtime) {
         diff = (targetRotationPosition.target - current);
         resError += diff;
-
+        //calculates PID values
         if (Math.abs(diff) <= threshold) {
             return 0;
         }
-        if (resError > errorCap) {
-            resError = errorCap;
-        } else if (resError < -errorCap) {
-            resError = -errorCap;
-        }
-
-        if (oppositeSigns(diff, resError) && enableErrorClear) {
-            resError = diff;
-        }
-        if (extensionHandler.targetPosition() != ExtensionHandler.ExtensionPositions.HIGH_BASKET) {
-            return ((diff * P_CONSTANT) + (resError * I_CONSTANT));
+        if(extensionHandler.targetPosition() != ExtensionHandler.ExtensionPositions.HIGH_BASKET){
+            extendedPIDModel.resetError();
+            return normalPIDModel.calculate(current, targetRotationPosition.target, runtime);
         } else {
-            return ((diff * EXTENDED_P_CONSTANT) + (resError * EXTENDED_I_CONSTANT));
+            normalPIDModel.resetError();
+            return extendedPIDModel.calculate(current, targetRotationPosition.target, runtime);
         }
     }
 
