@@ -28,7 +28,9 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         // initialization of the control of the robot when start is pressed
         waitForStart();
 
-        robot.clawRoll.setPosition(0.0206);
+        //edit this to be valid for the dual mode servo
+        //initial position
+        robot.clawRoll.setPosition(0.1606);
 
         //robot.intake.setPower(0);
 
@@ -214,11 +216,16 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData(" extender curent pos", robot.liftExtender.getCurrentPosition());
             telemetry.addData("extender target pos", liftExtenderPosition);
 
-            telemetry.addData("Pitch CurrentPos",robot.liftPitch.getCurrentPosition());
-            telemetry.addData("Pitch TargetPos",liftPitchPosition);
+            telemetry.addData("claw pitch pos",robot.clawRoll.getPosition());
+            //telemetry.addData("Pitch TargetPos",liftPitchPosition);
 
-//            if (gamepad2.triangle) {
-//                robot.liftPitch.setPosition(2700, 0.3);
+//            if (gamepad1.left_bumper) {
+//                //edit this to be valid for the dual mode servo
+//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ 0.001);
+//            }
+//            if (gamepad1.right_bumper) {
+//                //edit this to be valid for the dual mode servo
+//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()- 0.001);
 //            }
 //
 //            if (gamepad2.cross) {
@@ -296,7 +303,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             // there is no controller input
             double pitchAngle = robot.liftPitch.getCurrentPosition()*(90)/2595;
             if (pitchAngle>=31.25){
-                maxLifEtxtension = 1300/(Math.sin(Math.toRadians(pitchAngle)));
+                maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle)));
             } else{
                 maxLifEtxtension = 2780;
 
@@ -344,7 +351,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 robot.liftExtender.setVelocity(1);
             }
 //
-
+            //ejaculates the block
             if (gamepad2.left_trigger != 0) {
                 robot.intake.setPower(-1.0);
                 telemetry.addData("intake power", robot.intake.getPower());
@@ -370,19 +377,18 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             if(gamepad2.dpad_down){
                //pitch moves up
                 //original value:0.1867
+
+                //edit this to be valid for the dual mode servo
                 robot.clawRoll.setPosition(0);
 
             }
             if(gamepad2.dpad_up){
                 //pitch moves down
                 //original value 0.125
-                robot.clawRoll.setPosition(0.0206);
+
+                //edit this to be valid for the dual mode servo
+                robot.clawRoll.setPosition(0.1606);
             }
-
-
-
-
-
 
 
             if (gamepad1.dpad_up) {
@@ -415,7 +421,9 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //                robot.liftPitch(726, 0.2);
 //                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
                 liftPitchPosition = 2000;
-                robot.clawRoll.setPosition(0.0206);
+
+                //edit this to be valid for the dual mode servo
+                robot.clawRoll.setPosition(0.1606);
             }
 
             if (gamepad2.square) {//slaps it in

@@ -39,8 +39,36 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
 //        robot.intakeToggle(1);
 
         // Main movement of drivetrain during Auto
-        robot.goStraight(0, 500); // 500 is good velocity for now
-        Log.d("Testing Value ", String.valueOf((robot.inchesToEncoderTicks)));
+        //robot.goStraight(1100, 500); // 500 is good velocity for now
+//        robot.goStraight(200, 500); // 500 is good velocity for now
+//        robot.newTurnFunction(90); // 500 is good velocity for now
+        robot.strafeR(120, 500);
+        robot.goStraight(480, 500); // 500 is good velocity for now
+        robot.liftExtender(2502, 800);
+        robot.liftPitch(272, 600);
+        robot.extake(1000);
+        robot.liftPitch(0, 600);
+        robot.liftExtender(0, 800);
+        robot.newTurnFunction(-90);// 500 is good velocity for now
+
+        robot.goStraight(300, 500);
+        //robot.strafeR(200, 500);
+
+
+
+
+
+
+
+
+
+        //robot.newTurnFunction()
+        //robot.strafeL(11, 500);
+
+
+
+
+        //Log.d("Testing Value ", String.valueOf((robot.inchesToEncoderTicks)));
 
 
         //Old auto code (keep for now)
