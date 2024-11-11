@@ -40,6 +40,7 @@ class EncoderTracking @JvmOverloads constructor(
     val centerEncoder: Encoder = encoderSource.getCenterEncoder()
     val rightEncoder: Encoder = encoderSource.getRightEncoder()
 
+    private val poseHistory: ArrayDeque<Pose> = ArrayDeque(4)
     private var lastTick = System.nanoTime()
     private var lastPose = Pose.ORIGIN
     private var deltaPose: Pose = Pose.ORIGIN
@@ -50,6 +51,7 @@ class EncoderTracking @JvmOverloads constructor(
         lastLeft = tick2inch(leftEncoder.getCurrentPosition())
         lastCenter = tick2inch(centerEncoder.getCurrentPosition())
         lastRight = tick2inch(rightEncoder.getCurrentPosition())
+        poseHistory.addLast(currentPose)
     }
 
     // Updates the pose
@@ -92,6 +94,11 @@ class EncoderTracking @JvmOverloads constructor(
         )
 
         /*
+        Push the new pose onto the queue
+         */
+        if (poseHistory.size == 4) poseHistory.removeFirst()
+        poseHistory.addLast(currentPose)
+        /*
         this relies on the fact that currentPose creates a new Pose instance
         holding x, y, and heading.
          */
@@ -100,10 +107,10 @@ class EncoderTracking @JvmOverloads constructor(
     }
 
     // Gets current pose
-    fun getPose(): Pose {
-        return Pose(
-            x, y, heading
-        )
+    fun getPose() = currentPose
+
+    fun estimateVelocity() {
+
     }
 
     fun getMotionToTarget(target: Pose, robot: TriOdoProvider): Motion {

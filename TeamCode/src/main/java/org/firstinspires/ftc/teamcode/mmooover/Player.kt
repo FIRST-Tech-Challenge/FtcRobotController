@@ -17,17 +17,64 @@ import org.firstinspires.ftc.teamcode.mmooover.kinematics.RunCommand
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch
 import java.io.DataInputStream
 import java.io.File
+import java.lang.Math.toRadians
+
+abstract class Configurable<T : Configurable<T>> {
+    @Suppress("UNCHECKED_CAST")
+    inline operator fun invoke(configure: T.() -> Unit) {
+        (this as T).configure()
+    }
+}
 
 class Player(
     filepath: File,
     override val scheduler: Scheduler,
     val encoders: EncoderTracking,
     val eventHandlers: Map<String, () -> ITask>,
+    val options: PlayerConfiguration
 ) : TaskWithWaitFor() {
+
+    constructor(
+        filepath: File,
+        scheduler: Scheduler,
+        encoders: EncoderTracking,
+        eventHandlers: Map<String, () -> ITask>,
+        configure: PlayerConfiguration.() -> Unit
+    ): this(filepath, scheduler, encoders, eventHandlers, PlayerConfiguration.of(configure))
+
     companion object {
         fun getPathfileByName(name: String): File {
             return Environment.getExternalStorageDirectory().resolve("paths").resolve("$name.bin")
         }
+    }
+
+    val Number.deg get() = toRadians(this.toDouble())
+    val Number.rad get() = this.toDouble()
+
+    @DslMarker
+    private annotation class PlayerConfigurationDsl
+
+    @PlayerConfigurationDsl
+    class PlayerConfiguration : Configurable<PlayerConfiguration>() {
+        companion object {
+            fun of(configure: PlayerConfiguration.() -> Unit): PlayerConfiguration {
+                val pc = PlayerConfiguration()
+                pc.configure()
+                return pc
+            }
+        }
+
+        val Number.deg get() = toRadians(this.toDouble())
+        val Number.rad get() = this.toDouble()
+
+        @PlayerConfigurationDsl
+        class LenienceRules(var radius: Double, var angleDelta: Double, var maxVel: Double) : Configurable<LenienceRules>() {
+            val Number.deg get() = toRadians(this.toDouble())
+            val Number.rad get() = this.toDouble()
+        }
+
+        val blocking = LenienceRules(0.5, 5.deg, 6.0)
+        val nonBlocking = LenienceRules(2.0, 15.deg, -1.0)
     }
 
     operator fun invoke(configure: Player.() -> Unit): Player {
@@ -130,6 +177,26 @@ class Player(
         val targetPose = command.pose
         val currentPose = encoders.getPose()
         val linDist = currentPose.linearDistanceTo(targetPose)
+        val angDist = currentPose.subtractAngle(targetPose)
+        val targets = if (isNextBlocking()) options.blocking else options.nonBlocking
+        encoders.lastPose
+    }
+
+    fun checkAwait(awaitCommand: AwaitCommand): Boolean {
+        TODO()
+    }
+
+    fun isNextBlocking(): Boolean {
+        // we need to grab a local copy so that the compiler can
+        // assert that the value cannot change between check and use
+        val nextCommand = nextCommand
+        return when (nextCommand) {
+            is AwaitCommand -> TODO()
+            is MoveCommand -> false
+            is RunAsyncCommand -> false
+            is RunCommand -> true
+            null -> true
+        }
     }
 
     fun doIt() {

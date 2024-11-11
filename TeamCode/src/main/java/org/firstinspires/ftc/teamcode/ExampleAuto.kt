@@ -1,32 +1,32 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.util.RobotLog
 import dev.aether.collaborative_multitasking.MultitaskScheduler
+import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking
+import org.firstinspires.ftc.teamcode.mmooover.Player
 
 @TeleOp
 class ExampleAuto: LinearOpMode() {
     override fun runOpMode() {
-        val schedule = MultitaskScheduler()
-        val objective = schedule.task {
-            startOnRequest()
-            onStart { ->
-                RobotLog.i("oh yeah we're back in business")
+        val scheduler = MultitaskScheduler()
+        val h = Hardware(hardwareMap)
+        val enc = EncoderTracking(h)
+        val player = Player(
+            Player.getPathfileByName("example.bin"),
+            scheduler,
+            enc,
+            mapOf()
+        ) {
+            nonBlocking {
+                radius = 2.0
+                angleDelta = 45.deg
             }
-            isCompleted { -> true }
         }
+        player.requestStart()
         waitForStart()
         while (opModeIsActive()) {
-            schedule.tick()
-            if (gamepad1.a) objective.requestStart()
-            telemetry.addData(
-                "Current task state",
-                objective.state
-            )
-            schedule.displayStatus(true, true, telemetry::addLine)
-            telemetry.update()
+            scheduler.tick()
         }
     }
 }
