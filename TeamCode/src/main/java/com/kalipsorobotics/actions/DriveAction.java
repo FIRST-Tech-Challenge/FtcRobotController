@@ -42,6 +42,9 @@ public class DriveAction {
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    public void setOpModeUtilities(OpModeUtilities opModeUtilities) {
+        this.opModeUtilities = opModeUtilities;
+    }
     public void Move(Gamepad gamepad) {
         double forward = -gamepad.left_stick_y;
         double turn = gamepad.right_stick_x;
