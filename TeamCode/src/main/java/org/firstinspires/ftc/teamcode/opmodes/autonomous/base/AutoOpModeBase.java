@@ -56,6 +56,45 @@ public abstract class AutoOpModeBase extends OpModeTemplate {
 //    }
 
     @Override
+    public void reset() {
+        // Cancel the autonomous command if it's still running
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
+        }
+
+        try {
+            // Return all mechanisms to safe positions
+            if (rollingIntake != null) {
+                rollingIntake.HoldInAuto();
+                rollingIntake.SetElbowInInStart();
+            }
+
+            if (pivot != null) {
+                pivot.MoveToStartInAuto();
+            }
+
+            if (slider != null) {
+                slider.CollapseMinInAuto();
+            }
+
+            if (driveTrain != null) {
+                driveTrain.stop();
+            }
+
+            // Brief pause to allow mechanisms to reach safe positions
+            sleep(500);
+
+        } catch (Exception e) {
+            telemetry.addData("Cleanup Error", e.getMessage());
+            telemetry.update();
+        }
+
+        end();
+        // Call parent reset to handle CommandScheduler cleanup
+        super.reset();
+    }
+
+    @Override
     public void initialize() {
         super.initialize();
 
@@ -72,6 +111,8 @@ public abstract class AutoOpModeBase extends OpModeTemplate {
         schedule(autonomousCommand);
 
     }
+
+
 
     /*
         Callback method to be overridden by AutoOpMode subclass
