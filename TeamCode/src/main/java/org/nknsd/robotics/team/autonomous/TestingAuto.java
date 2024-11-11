@@ -25,7 +25,7 @@ public class TestingAuto extends NKNProgram {
 
 
         // Core mover
-        AutoSkeleton autoSkeleton = new AutoSkeleton(0.3, 0.8, 1.5);
+        AutoSkeleton autoSkeleton = new AutoSkeleton(0.7, 0.1, 1.5);
 
         AutoHeart autoHeart = new AutoHeart(stepList);
         components.add(autoHeart);
@@ -76,12 +76,12 @@ public class TestingAuto extends NKNProgram {
         AutoStepSleep sleep = new AutoStepSleep(1500);
 
         stepList.add(right1);
-        stepList.add(sleep);
-        stepList.add(left1);
-        stepList.add(sleep);
-        stepList.add(up1);
-        stepList.add(sleep);
-        stepList.add(down1);
+//        stepList.add(sleep);
+//        stepList.add(left1);
+//        stepList.add(sleep);
+//        stepList.add(up1);
+//        stepList.add(sleep);
+//        stepList.add(down1);
 
         autoHeart.linkSteps(stepList, autoSkeleton);
     }

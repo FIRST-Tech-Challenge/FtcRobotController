@@ -2,6 +2,8 @@ package org.nknsd.robotics.team.helperClasses;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.concurrent.TimeUnit;
 
 public class PIDModel {
@@ -21,22 +23,51 @@ public class PIDModel {
 
     public double calculate(double processVar, double setPoint, ElapsedTime runtime) { // First is the current pos, second is the target pos
         double error = setPoint - processVar;
+        long now = runtime.now(TimeUnit.MILLISECONDS) / 10;
 
         // P
         double p = error * kP;
 
         // I
-        errCumulative += error;
+        errCumulative += error * (now - lastCall);
         double i = errCumulative * kI;
 
         // D
         double d = 0;
         if (lastCall != 0) {
-            d = (error - errPrev) / (runtime.now(TimeUnit.MILLISECONDS) - lastCall);
+            d = (error - errPrev) / (now - lastCall);
             d *= kD;
         }
         errPrev = error;
-        lastCall = runtime.now(TimeUnit.MILLISECONDS);
+        lastCall = now;
+
+        return p + i + d;
+    }
+
+    public double calculateWithTelemetry(double processVar, double setPoint, ElapsedTime runtime, Telemetry telemetry) { // First is the current pos, second is the target pos
+        double error = setPoint - processVar;
+        long now = runtime.now(TimeUnit.MILLISECONDS) / 10;
+
+        // P
+        double p = error * kP;
+        telemetry.addData("P", p);
+
+        // I
+        errCumulative += error * (now - lastCall);
+        double i = errCumulative * kI;
+        telemetry.addData("I", i);
+
+        // D
+        double d = 0;
+        if (lastCall != 0) {
+            d = (error - errPrev) / (now - lastCall);
+            d *= kD;
+        }
+        telemetry.addData("D", d);
+        telemetry.addData("Time Between", now - lastCall);
+        telemetry.addData("Err Prev", errPrev);
+        errPrev = error;
+        lastCall = now;
 
         return p + i + d;
     }

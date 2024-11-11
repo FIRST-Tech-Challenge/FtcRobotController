@@ -24,8 +24,10 @@ public class AutoSkeleton {
     private ExtensionHandler extensionHandler;
     private double targetRotation = 0;
     private IntakeSpinnerHandler intakeSpinnerHandler;
-
-    private PIDModel movementPID = new PIDModel(0, 0, 0);
+    private PIDModel movementPIDx;
+    private PIDModel movementPIDy;
+    private boolean xDirPos = true;
+    private boolean yDirPos = true;
 
 
 
@@ -33,6 +35,13 @@ public class AutoSkeleton {
         this.maxSpeed = maxSpeed;
         this.movementMargin = movementMargin;
         this.turnMargin = turnMargin;
+
+        // Creating PID
+        double kP = 1;
+        double kI = 0.012;
+        double kD = 5;
+        movementPIDx = new PIDModel(kP, kI, kD);
+        movementPIDy = new PIDModel(kP, kI, kD);
     }
 
     public void link(WheelHandler wheelHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeSpinnerHandler intakeSpinnerHandler, FlowSensorHandler flowSensorHandler, IMUComponent imuComponent) {
@@ -46,6 +55,11 @@ public class AutoSkeleton {
 
     public void setTargetPosition(double x, double y) {
         targetPositions[0] = x; targetPositions[1] = y;
+        movementPIDx.resetError(); movementPIDy.resetError();
+
+        FlowSensorHandler.PoseData pos = flowSensorHandler.getOdometryData().pos;
+        xDirPos = pos.x < x;
+        yDirPos = pos.y < y;
     }
 
     public void setTargetRotation(double turning) {
@@ -88,11 +102,23 @@ public class AutoSkeleton {
             return true;
         }
 
+        if (xDist > 0 ^ xDirPos) {
+            movementPIDx.resetError();
+            xDirPos = !xDirPos;
+        }
+//        if (yDist > 0 ^ yDirPos) {
+//            movementPIDy.resetError();
+//            yDirPos = !yDirPos;
+//        }
 
         // Calculate force to use
-        x = movementPID.calculate(x, targetPositions[0], runtime);
-        y = movementPID.calculate(y, targetPositions[1], runtime);
+        x = movementPIDx.calculateWithTelemetry(x, targetPositions[0], runtime, telemetry);
+        y = movementPIDy.calculateWithTelemetry(y, targetPositions[1], runtime, telemetry);
         double turning = targetRotation - yaw;
+        turning /= 15;
+
+        x = Math.max(Math.min(x, maxSpeed), -maxSpeed);
+        y = Math.max(Math.min(y, maxSpeed), -maxSpeed);
 
         telemetry.addData("Speed X", x);
         telemetry.addData("Speed Y", y);
