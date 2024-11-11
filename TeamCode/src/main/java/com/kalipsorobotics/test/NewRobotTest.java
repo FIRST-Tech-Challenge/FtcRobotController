@@ -1,4 +1,4 @@
-package com.kalipsorobotics.Alan;
+package com.kalipsorobotics.test;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
