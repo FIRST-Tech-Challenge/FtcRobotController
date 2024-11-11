@@ -92,6 +92,13 @@ public class CommonUtil extends LinearOpMode {
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setDirection(Servo.Direction.FORWARD);
         s3.setDirection(Servo.Direction.REVERSE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 

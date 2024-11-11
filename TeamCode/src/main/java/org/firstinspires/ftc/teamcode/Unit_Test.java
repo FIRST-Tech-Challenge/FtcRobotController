@@ -65,6 +65,7 @@ public class Unit_Test extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
+        setZeroPowerBehavior();
         clawClosed();
         wristFlat();
 
@@ -72,41 +73,43 @@ public class Unit_Test extends CommonUtil {
         waitForStart();
 
         while (opModeIsActive()) {
-            moveForward_wDistance_wGyro(10,0.5);
-            sleep(500);
+//            moveForward_wDistance_wGyro(10,0.5);
+//            sleep(500);
+//
+//            moveBackwards_wDistance_wGyro(10,0.5);
+//            sleep(500);
+//
+//            moveSideways_wCorrection("right",10,0.35);
+//            sleep(500);
+//
+//            moveSideways_wCorrection("left",10,0.35);
+//            sleep(500);
+//
+//            turn("left",90);
+//            sleep(500);
+//
+//            turn("right",90);
+//            sleep(500);
+//
+//            intake(1000);
+//            sleep(500);
+//
+//            extend(1,2000);
+//            sleep(500);
+//            clawClosed();
+//            wristBent();
+//            sleep(500);
+//            clawOpen();
+//            sleep(500);
+//            clawClosed();
+//            wristFlat();
+//            sleep(500);
+//            retract(1,2000);
+//            sleep(500);
+//            drone_Test();
 
-            moveBackwards_wDistance_wGyro(10,0.5);
-            sleep(500);
-
-            moveSideways_wCorrection("right",10,0.35);
-            sleep(500);
-
-            moveSideways_wCorrection("left",10,0.35);
-            sleep(500);
-
-            turn("left",90);
-            sleep(500);
-
-            turn("right",90);
-            sleep(500);
-
-            intake(1000);
-            sleep(500);
-
-            extend(1,2000);
-            sleep(500);
-            clawClosed();
-            wristBent();
-            sleep(500);
-            clawOpen();
-            sleep(500);
-            clawClosed();
-            wristFlat();
-            sleep(500);
-            retract(1,2000);
-            sleep(500);
-            drone_Test();
-            sleep(9000000);
+         encoder_test(500);
+         sleep(9000000);
 
         }
     }
