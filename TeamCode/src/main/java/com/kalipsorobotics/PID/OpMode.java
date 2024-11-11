@@ -21,7 +21,7 @@ public class OpMode extends LinearOpMode {
                 driveTrain.move(6, 0, 0, telemetry);
                 flag = true;
             }
-//            Point pos = driveTrain.odometryFuse.CollectData();
+//            Point pos = driveTrain.odometryFuse.PointCollectData();
 //            double heading = driveTrain.otos.getPosition().h;
 //            telemetry.addLine(String.format("x | currently at %f", pos.getX()));
 //            telemetry.addLine(String.format("y | currently at %f", pos.getY()));

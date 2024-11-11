@@ -62,7 +62,7 @@ public class TestingDriveTrain {
 
     @SuppressLint("DefaultLocale")
     public void move(double dx, double dy, double dh, Telemetry telemetry) {
-        Point pos = odometryFuse.CollectData();  // current
+        Point pos = odometryFuse.PointCollectData();  // current
         double curX = pos.getX();
         double curY = pos.getY();
         double curH = otos.getPosition().h;
@@ -73,7 +73,7 @@ public class TestingDriveTrain {
                 Math.abs(target.y - curY) > 0.2 ||
                 Math.abs(target.h - curH) > 5
         ) {  // I think this while loop is causing an exit error
-            pos = odometryFuse.CollectData();
+            pos = odometryFuse.PointCollectData();
             curX = pos.getX();
             curY = pos.getY();
             curH = otos.getPosition().h;

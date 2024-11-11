@@ -28,7 +28,7 @@ public class PigeonHead {
     public void positionUpdate() {
         //might have to be fixed
         OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightEncoder, backEncoder);
-        double heading = odometryFuse.HeadingUpdateData();
+        double heading = odometryFuse.HeadingUpdateData("right");
         servo.setPosition(-heading);
     }
 
