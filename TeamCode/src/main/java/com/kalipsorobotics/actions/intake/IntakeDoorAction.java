@@ -15,11 +15,11 @@ public class IntakeDoorAction {
     }
 
     public void open() {
-        intakeDoor.setPosition();
+        intakeDoor.setPosition(0);
     }
 
     public void close() {
-        intakeDoor.setPosition();
+        intakeDoor.setPosition(0);
     }
 
     public Intake getIntake() {

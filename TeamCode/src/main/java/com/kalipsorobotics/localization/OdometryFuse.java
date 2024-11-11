@@ -73,7 +73,7 @@ public class OdometryFuse {
 
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         myOtos.setOffset(offset);
-
+        myOtos.setLinearScalar(1/1.165);
 
 
         myOtos.calibrateImu();
