@@ -232,13 +232,13 @@ public class Teleop_live_2controllers extends LinearOpMode {
             //Basket
             if (gamepad1.right_trigger > 0.2) {
                 s3.setDirection(Servo.Direction.FORWARD);
-                s3.setPosition(0.5); // open
+                s3.setPosition(0.5); //up
             }
 
 
             if (gamepad1.left_trigger > 0.2) {
                 s3.setDirection(Servo.Direction.FORWARD);
-                s3.setPosition(1); //close
+                s3.setPosition(1); //down
             }
 
 
