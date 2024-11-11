@@ -1,8 +1,4 @@
-package com.kalipsorobotics.test;
-
-import android.util.Log;
-
-import com.kalipsorobotics.localization.OdometryFuse;
+package com.kalipsorobotics.test; import com.kalipsorobotics.localization.OdometryFuse;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
