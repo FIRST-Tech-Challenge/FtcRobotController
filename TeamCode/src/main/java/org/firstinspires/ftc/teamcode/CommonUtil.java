@@ -32,7 +32,7 @@ public class CommonUtil extends LinearOpMode {
 
     Orientation myRobotOrientation;
 
-    double ENC2DIST = 4593.0/102.0; //2000.0/48.0; // FW/BW
+    double ENC2DIST = 200/29; //2000.0/48.0; // FW/BW
     double ENC2DIST_SIDEWAYS = 2911.0/57.0;
     ElapsedTime timer = new ElapsedTime();
 
@@ -182,17 +182,26 @@ public class CommonUtil extends LinearOpMode {
         return power;
     }
 
-    public double PID_FB (double targetEC, double currentEC)
+    public double PID_FB (double targetEC, double currentEC, double Mpower)
     {
-        double power = (targetEC -currentEC)*0.0003;
-        if (power < 0)
-        {
-            power = 0;
+        double power = (targetEC -currentEC)*0.003;
+        if (power > Mpower) {
+            power = Mpower;
+        }else if(power < -1*(Mpower)){
+            power = -1*(Mpower);
         }
-        else if (power < 0.1)
-        {
-            power = 0.1;
-        }
+        //if (power < 0.1)
+        //{
+        //    power = 0.1;
+        //}
+        //if (power < 0)
+        //{
+        //    power = 0;
+        //}
+        //else if (power < 0.1)
+        //{
+        //    power = 0.1;
+        //}
         return power;
     }
 
@@ -234,6 +243,7 @@ public class CommonUtil extends LinearOpMode {
 
         // Resetting encoder counts
         resetMotorEncoderCounts();
+        double power2 = 0;
 
         // Setting motor to run in runToPosition
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -247,17 +257,21 @@ public class CommonUtil extends LinearOpMode {
             myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             currZAngle = myRobotOrientation.thirdAngle;
             double correction = PID_Turn(0,currZAngle,"off");
+            correction = 0;
             currEncoderCount = bl.getCurrentPosition();
-            double power = PID_FB(encoderAbsCounts,Math.abs(currEncoderCount));
+            double power = PID_FB(encoderAbsCounts,Math.abs(currEncoderCount),Mpower);
+            //power=Mpower;
 
             bl.setPower(power-correction);
             fl.setPower(power-correction);
-            fr.setPower(power+correction);
-            br.setPower(power+correction);
+            fr.setPower(power-correction);
+            br.setPower(power-correction);
             telemetry.addData("fw:power", power);
             telemetry.addData("fw:correction", correction);
             telemetry.update();
-
+            sleep(50);
+            setMotorToZeroPower();
+            sleep(10);
             // quick correct for angle if it is greater than 10 [Aarush]
             double absError_angle = Math.abs(currZAngle);
             if (absError_angle > 10)
@@ -273,9 +287,18 @@ public class CommonUtil extends LinearOpMode {
 //            else
 //                // nothing to do
 //            idle();
-        }
-        turnToZeroAngle();
 
+        }
+
+
+        telemetry.addData("fw:currEncoderCount", currEncoderCount);
+        telemetry.addData("fw:currZAngle", currZAngle);
+        telemetry.update();
+//        bl.setPower(-1);
+//        fl.setPower(-1);
+//        fr.setPower(-1);
+//        br.setPower(-1);
+//        sleep(100);
         // apply zero power to avoid continuous power to the wheels
         setMotorToZeroPower();
 
@@ -285,6 +308,10 @@ public class CommonUtil extends LinearOpMode {
         currZAngle = myRobotOrientation.thirdAngle;
         telemetry.addData("fw:currEncoderCount", currEncoderCount);
         telemetry.addData("fw:currZAngle", currZAngle);
+        telemetry.update();
+        sleep(1000);
+        telemetry.addData("final fw:currEncoderCount", currEncoderCount);
+        telemetry.addData("final fw:currZAngle", currZAngle);
         telemetry.update();
         return (currEncoderCount);
     }
@@ -317,7 +344,7 @@ public class CommonUtil extends LinearOpMode {
             currZAngle = myRobotOrientation.thirdAngle;
             double correction = PID_Turn(0,currZAngle,"off");
             currEncoderCount = bl.getCurrentPosition();
-            double power = PID_FB(encoderAbsCounts,Math.abs(currEncoderCount));
+            double power = PID_FB(encoderAbsCounts,Math.abs(currEncoderCount),Mpower);
 
             bl.setPower(-power-correction);
             fl.setPower(-power-correction);
@@ -535,7 +562,7 @@ public class CommonUtil extends LinearOpMode {
         return (currEncoderCount);
     }
 
-    public void encoder_test(double encoderAbsCounts)
+    public void encoder_test(double encoderAbsCounts, double power)
     {
         bl.setDirection(DcMotor.Direction.REVERSE);
         fl.setDirection(DcMotor.Direction.REVERSE);
@@ -547,21 +574,32 @@ public class CommonUtil extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        while (bl.getCurrentPosition() > -encoderAbsCounts) {
+        while (bl.getCurrentPosition() < encoderAbsCounts) {
             myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-            bl.setPower(-0.3);
-            fl.setPower(-0.3);
-            fr.setPower(-0.3);
-            br.setPower(-0.3);
+            bl.setPower(power);
+            fl.setPower(power);
+            fr.setPower(power);
+            br.setPower(power);
             telemetry.update();
             idle();
         }
+//        bl.setPower(-2*power);
+//        fl.setPower(-2*power);
+        fr.setPower(-2*power);
+//        br.setPower(-2*power);
+        sleep(200);
         bl.setPower(0);
         fl.setPower(0);
         fr.setPower(0);
         br.setPower(0);
 
+        telemetry.addData("encoder count b1",bl.getCurrentPosition());
+        telemetry.addData("encoder count br",br.getCurrentPosition());
+        telemetry.addData("encoder count fl",fl.getCurrentPosition());
+        telemetry.addData("encoder count fr",fr.getCurrentPosition());
+        telemetry.update();
 
+        sleep(5000);
         telemetry.addData("encoder count b1",bl.getCurrentPosition());
         telemetry.addData("encoder count br",br.getCurrentPosition());
         telemetry.addData("encoder count fl",fl.getCurrentPosition());

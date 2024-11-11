@@ -107,8 +107,9 @@ public class Unit_Test extends CommonUtil {
 //            retract(1,2000);
 //            sleep(500);
 //            drone_Test();
-
-         encoder_test(500);
+//         encoder_test(200,0.3);
+            moveForward_wDistance_wGyro(24,0.1);
+            moveForward_wDistance_wGyro(24,0.1);
          sleep(9000000);
 
         }

@@ -159,7 +159,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
             } else if (gamepad1.a) {
                 m2Power = -1;
             } else {
-                m2Power = 0;
+                m2Power = 0.05;
             }
 
 
