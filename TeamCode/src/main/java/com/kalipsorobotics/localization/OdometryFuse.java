@@ -36,7 +36,6 @@ public class OdometryFuse {
         return(new Point(pos.x, pos.y));
     }
     public Point AverageUpdateData() {
-        SparkFunOTOS.Pose2D SparkFunOTOS;
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
         com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
