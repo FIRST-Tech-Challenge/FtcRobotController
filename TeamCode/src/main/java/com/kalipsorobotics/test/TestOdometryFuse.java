@@ -23,8 +23,6 @@ public class TestOdometryFuse  extends LinearOpMode {
         OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightFront, rightBack);
         telemetry.addData("" + odometryFuse.configureOtos(myOtos), "");
         telemetry.update();
-        odometryFuse.wheelResetData();
-        odometryFuse.SparkResetData(true, 0.0);
         waitForStart();
         while (opModeIsActive()) {
             driveTrain.setPower(-gamepad1.right_stick_y);

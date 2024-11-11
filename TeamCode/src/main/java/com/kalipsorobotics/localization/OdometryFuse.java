@@ -24,6 +24,8 @@ public class OdometryFuse {
         this.myOtos = myOtos;
         this.rightEncoder = rightEncoder;
         this.backEncoder = backEncoder;
+        wheelResetData();
+        SparkResetData(true, 0.0);
     }
     public Point WheelUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
