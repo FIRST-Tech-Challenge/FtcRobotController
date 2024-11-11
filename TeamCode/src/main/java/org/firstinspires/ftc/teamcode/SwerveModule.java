@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,33 +22,36 @@ public class SwerveModule {
     private DcMotorEx motor;
     private CRServo servo;
     private AbsoluteAnalogEncoder enc;
-    private PIDFController scontroller;
-    private PIDFController.PIDCoefficients scoeffs;
-    private double P = 1;
-    private double I = 1;
-    private double D = 1;
+    private com.arcrobotics.ftclib.controller.PIDController scontroller;
     private final double WHEEL_RAD = 2.67717; //inches might change irl due to wheel squish
-    private final double DRIVE_RATIO = (52 * 2 * 2)/18.0; //208/18
+    private final double DRIVE_RATIO = (52 * 2 * 2) / 18.0; //208/18
     private final double AZIMUTH_RATIO = 1.0; //for now
-    private final double TPR = 28*DRIVE_RATIO; //ticks per 1 wheel irl rotation;
+    private final double TPR = 28 * DRIVE_RATIO; //ticks per 1 wheel irl rotation;
 
 
-    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e, PIDFController.PIDCoefficients scoef) {
-            motor = m;
-            motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e, double sp, double si, double sd) {
+        motor = m;
+        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-            servo = s;
+        servo = s;
 
-            enc = e;
+        enc = e;
 
-
-    }
-
-    public void azimtuh(double pos){ //in RADianz
+        scontroller = new PIDController(sp, si, sd);
 
     }
-    public void drive(){
+
+    public void azimtuh(double pos) { //in RADianz
+        scontroller.setSetPoint(pos);
+
+        while (!scontroller.atSetPoint()) {
+            double output = scontroller.calculate(
+                    enc.getCurrentPosition(), pos  // the measured value and the setpoint
+            );
+
+            servo.setPower(output);
+        }
 
     }
 }

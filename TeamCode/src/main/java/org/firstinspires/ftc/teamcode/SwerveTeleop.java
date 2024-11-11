@@ -90,10 +90,10 @@ public class SwerveTeleop extends LinearOpMode {
         erightBack.zero(E_BACK_RIGHT_OFFSET);
 
         //actual module stuff
-        rightFront = new SwerveModule(mrightFront, srightFront, erightFront, scoefRightFront);
-        leftFront = new SwerveModule(mleftFront, sleftFront, eleftFront);
-        leftBack = new SwerveModule(mleftBack, sleftBack, eleftBack);
-        rightBack = new SwerveModule(mrightBack, srightBack, erightBack);
+        rightFront = new SwerveModule(mrightFront, srightFront, erightFront, 1, 1, 1);
+        leftFront = new SwerveModule(mleftFront, sleftFront, eleftFront, 1, 1, 1);
+        leftBack = new SwerveModule(mleftBack, sleftBack, eleftBack, 1, 1, 1);
+        rightBack = new SwerveModule(mrightBack, srightBack, erightBack, 1, 1, 1);
 
 
 
