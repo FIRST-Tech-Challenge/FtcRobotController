@@ -21,7 +21,7 @@ public abstract class AutoOpModeBase extends OpModeTemplate {
 
     protected DriverFeedback feedback;
 
-    private AutonomousCommand autonomousCommand;
+    protected AutonomousCommand autonomousCommand;
 
 //    @Override
 //    public void reset() {

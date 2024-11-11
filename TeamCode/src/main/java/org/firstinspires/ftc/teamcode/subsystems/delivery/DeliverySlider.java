@@ -24,7 +24,7 @@ public class DeliverySlider extends SonicSubsystemBase {
     private DriverFeedback feedback;
 
     private int BasketDeliveryPosition = -3300;
-    private int CollapsedPosition = -100;
+    private int CollapsedPosition = -90;
 
     private int ExtendLimit = -1100;
 

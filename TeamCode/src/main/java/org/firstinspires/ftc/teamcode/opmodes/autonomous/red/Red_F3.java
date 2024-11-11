@@ -48,9 +48,14 @@ public class Red_F3 extends AutoOpModeBase {
 
         DeliverSample();
 
-        driveTrain.DriveToTarget(1500, 200);
+        driveTrain.DriveToTarget(1500, 150);
 
         pivot.MoveToStartInAuto();
+
+        driveTrain.stop();
+
+        autonomousCommand.end(true);
+
     }
 
     private void DeliverSample() {
@@ -67,7 +72,7 @@ public class Red_F3 extends AutoOpModeBase {
         Wait(1500);
         rollingIntake.HoldInAuto();
 
-        driveTrain.DriveToTarget(350, 400);
+        driveTrain.DriveToTarget(350, 250);
         driveTrain.TurnAngle(125);
 
         slider.CollapseMinInAuto();
