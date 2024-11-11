@@ -7,11 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.bosons.Hardware.Controller;
 import com.bosons.Hardware.DriveTrain;
 import com.bosons.Hardware.Arm;
-import com.bosons.Hardware.Motor;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -34,11 +29,7 @@ public class TeleOpDev extends OpMode{
     public Controller driverA = null;
     public DriveTrain driveTrain = null;
     public Arm arm = null;
-    public ElapsedTime armTimer = new ElapsedTime(1000);
-    public static double testPhi = 0;
 
-    //public static double radius_arm = 0;
-    //public static double theta_arm = -28;
 
     /*
      * Code to run ONCE when the Driver hits INIT
@@ -57,10 +48,6 @@ public class TeleOpDev extends OpMode{
      */
     @Override
     public void init_loop () {
-        //arm.setPositionPolar(radius_arm,theta_arm);
-        //driverA.updateAll();
-        //telemetry.addData("button Y",driverA.toggleButtonState(Controller.Button.y));
-        //arm.setWristAngle(testPhi);
     }
 
     /*
@@ -122,7 +109,7 @@ public class TeleOpDev extends OpMode{
         //Arm Controls
         if(driverA.toggleButtonState(Controller.Button.y)){
             if(!arm.isSmoothing()){
-                arm.setPositionPolarSmooth(84.6,90,1);
+                arm.positionArm(Arm.Mode.Bucket,Arm.Height.High,1);//MAKE SURE YOU CHECK THIS
             }
             //armTimer.reset();
             arm.updatePositionSmooth();
@@ -131,15 +118,14 @@ public class TeleOpDev extends OpMode{
             driveTrain.setTurnPowerCoefficient(0.5);
         }
         else if(driverA.toggleButtonState(Controller.Button.x)){
-            if(driverA.onButtonHold(Controller.Button.a)){
-                if(!arm.isSmoothing()){
-                    arm.setPositionPolarSmooth(65,-6,0.5);
+            if(!arm.isSmoothing()){
+                if(driverA.onButtonHold(Controller.Button.a)){
+
+                    arm.positionArm(Arm.Mode.Bucket,Arm.Height.High,0.5);//MAKE SURE YOU CHECK THIS
                     arm.setWristServo(0.9);
                 }
-            }
-            else{
-                if(!arm.isSmoothing()){
-                    arm.setPositionPolarSmooth(65,15,0.5);
+                else{
+                    arm.positionArm(Arm.Mode.Bucket,Arm.Height.High,0.5);//MAKE SURE YOU CHECK THIS
                     arm.setWristServo(0.5);
                 }
             }
@@ -148,7 +134,7 @@ public class TeleOpDev extends OpMode{
         else{
             //arm.setPositionPolar(0,90-(armTimer.milliseconds()/2000)*100);//smooth transition over two seconds
             if(!arm.isSmoothing()){
-                arm.setPositionPolarSmooth(0,-28,1);
+                arm.positionArm(Arm.Mode.Intake, Arm.Height.Low,0.5);//MAKE SURE YOU CHECK THIS
             }
             if(arm.getArmAngle()<-28){
                 arm.resetArmAngle();
@@ -163,7 +149,7 @@ public class TeleOpDev extends OpMode{
         }
 
         telemetry.addData("Smoothing? ",arm.isSmoothing());
-        //YOU NEED THESE FOR CONTROLLER AND SAFTEY CHECKS
+        //YOU NEED THESE FOR CONTROLLER AND SAFETY CHECKS
         driverA.updateAll();
     }
 

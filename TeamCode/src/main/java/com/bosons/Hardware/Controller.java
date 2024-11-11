@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  *      PUT THIS AT THE END OF YOUR LOOP SO THAT TOGGLE AND STICKY BUTTONS HAVE PROPER FUNCTIONALITY
  *      driverA.updateAll();
  *      you can replace driverA with anything else.
+ *      also do NOT stack button checks it makes the code do some funky stuff
  */
 
 public class Controller{
