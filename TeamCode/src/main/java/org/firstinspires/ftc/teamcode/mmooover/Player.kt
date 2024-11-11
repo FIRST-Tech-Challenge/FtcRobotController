@@ -14,18 +14,25 @@ import org.firstinspires.ftc.teamcode.mmooover.kinematics.CommandSerializer
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.MoveCommand
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.RunAsyncCommand
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.RunCommand
+import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch
 import java.io.DataInputStream
 import java.io.File
 
 class Player(
     filepath: File,
     override val scheduler: Scheduler,
+    val encoders: EncoderTracking,
     val eventHandlers: Map<String, () -> ITask>,
 ) : TaskWithWaitFor() {
     companion object {
         fun getPathfileByName(name: String): File {
             return Environment.getExternalStorageDirectory().resolve("paths").resolve("$name.bin")
         }
+    }
+
+    operator fun invoke(configure: Player.() -> Unit): Player {
+        this.configure()
+        return this
     }
 
     // Intentionally immutable.
@@ -39,6 +46,7 @@ class Player(
 
     var startedAt: Int? = null
         private set
+    var done = false
 
     override fun transition(newState: State) {
         println("$this: transition: ${state.name} -> ${newState.name}")
@@ -54,14 +62,20 @@ class Player(
         state = newState
     }
 
-    override fun invokeOnStart() {}
+    override fun invokeOnStart() {
+        clockTimer.clear()
+    }
 
-    override fun invokeOnTick() {}
+    override fun invokeOnTick() {
+        updateData()
+        if (!done)
+            doIt()
+    }
 
     override fun invokeIsCompleted(): Boolean {
         // Completed when all the waypoints are completed.
         // TODO: or not.
-        return false
+        return done
     }
 
     override fun invokeOnFinish() {}
@@ -85,6 +99,7 @@ class Player(
     var cursor = 0
     var currentCommand: BytecodeUnit
     var nextCommand: BytecodeUnit? = null
+    val clockTimer = LoopStopwatch()
 
     init {
         if (!filepath.exists()) throw IllegalArgumentException("The file specified doesn't exist.")
@@ -103,11 +118,28 @@ class Player(
         Log.i("PathRunner3", "Loaded ${commands.size} waypoints.")
     }
 
-    fun doIt(): Nothing = when(currentCommand) {
-        is AwaitCommand -> TODO()
-        is MoveCommand -> TODO()
-        is RunAsyncCommand -> TODO()
-        is RunCommand -> TODO()
+    /**
+     * Things to run every frame.
+     */
+    fun updateData() {
+        encoders.step()
+        clockTimer.click()
+    }
+
+    fun doMove(command: MoveCommand) {
+        val targetPose = command.pose
+        val currentPose = encoders.getPose()
+        val linDist = currentPose.linearDistanceTo(targetPose)
+    }
+
+    fun doIt() {
+        val command = currentCommand
+        return when (command) {
+            is AwaitCommand -> TODO()
+            is MoveCommand -> doMove(command)
+            is RunAsyncCommand -> TODO()
+            is RunCommand -> TODO()
+        }
     }
 
     fun nextCommand() {

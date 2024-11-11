@@ -3,6 +3,7 @@
 package org.firstinspires.ftc.teamcode.mmooover.kinematics
 
 import android.annotation.SuppressLint
+import org.firstinspires.ftc.teamcode.mmooover.Pose
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -23,8 +24,9 @@ private inline fun DoubleArray.mapInPlace(transform: (Double) -> Double) {
 interface Timed {
     val t: Double
 }
-interface TimedWaypoint: XYCommand, Timed
-interface TimedWaypoint3: XYRCommand, Timed, MoveCommand
+
+interface TimedWaypoint : XYCommand, Timed
+interface TimedWaypoint3 : XYRCommand, Timed, MoveCommand
 
 data class CubicSpline @JvmOverloads constructor(
     val a: Double,
@@ -294,8 +296,13 @@ object CubicSplineSolver {
         }
         return result
     }
-    data class TW3Impl(override val t: Double, override val x: Double, override val y: Double,
-                       override val r: Double): TimedWaypoint3
+
+    data class TW3Impl(
+        override val t: Double, override val x: Double, override val y: Double,
+        override val r: Double,
+    ) : TimedWaypoint3 {
+        override val pose by lazy { Pose(x, y, r) }
+    }
 
     /**
      * 'zip' this set of waypoints with a third channel of splines.

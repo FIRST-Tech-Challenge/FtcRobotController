@@ -224,10 +224,12 @@ interface MoveCommand : BytecodeUnit, XYRCommand {
         target.writeDouble(r)
     }
 
-    fun toPose(): Pose = Pose(x, y, r)
+    val pose: Pose
 }
 data class MoveImpl(
     override val x: Double,
     override val y: Double,
     override val r: Double
-): MoveCommand
+): MoveCommand {
+    override val pose by lazy { Pose(x, y, r) }
+}
