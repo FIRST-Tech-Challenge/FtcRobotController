@@ -44,8 +44,8 @@ public class TestingDriveTrain {
         odometryFuse = new OdometryFuse(otos, fRight, bRight);
         odometryFuse.configureOtos(otos);
 
-        xController = new PIDController(0, 0, 0);  // placeholder values
-        yController = new PIDController(0.05, 0.007, 0);
+        xController = new PIDController(0.075, 0.015, 0.01);  // placeholder values
+        yController = new PIDController(0.05, 0.0065, 0.012);
         headingController = new PIDController(0, 0, 0);
     }
 
@@ -84,14 +84,19 @@ public class TestingDriveTrain {
 
             setPowers(y + x + h, y - x - h, y - x + h, y + x - h);
 
-            System.out.println(pos);
-
             telemetry.addLine(String.format("x | currently at %f, targeting %f, power %f\n", curX, target.x, x));
             telemetry.addLine(String.format("y | currently at %f, targeting %f, power %f\n", curY, target.y, y));
             telemetry.addLine(String.format("h | currently at %f, targeting %f, power %f\n", curH, target.h, h));
+
+            telemetry.addLine(
+                    String.valueOf(
+                    Math.abs(target.x - curX) > 0.2 ||
+                    Math.abs(target.y - curY) > 0.2 ||
+                    Math.abs(target.h - curH) > 5)
+            );
             telemetry.update();
 
-//            System.out.printf("x | currently at %f, targeting %f, power %f\n", curX, target.x, x);
+            System.out.printf("x | currently at %f, targeting %f, power %f\n", curX, target.x, x);
             System.out.printf("y | currently at %f, targeting %f, power %f\n", curY, target.y, y);
 //            System.out.printf("h | currently at %f, targeting %f, power %f\n", curH, target.h, h);
         }

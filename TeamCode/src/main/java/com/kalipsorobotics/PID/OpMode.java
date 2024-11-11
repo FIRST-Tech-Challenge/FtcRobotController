@@ -18,7 +18,7 @@ public class OpMode extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (!flag) {
-                driveTrain.move(0, 12, 0, telemetry);
+                driveTrain.move(6, 0, 0, telemetry);
                 flag = true;
             }
 //            Point pos = driveTrain.odometryFuse.CollectData();
