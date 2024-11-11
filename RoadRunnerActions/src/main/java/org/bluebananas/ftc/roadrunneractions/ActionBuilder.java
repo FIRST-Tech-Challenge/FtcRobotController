@@ -4,12 +4,13 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-
 import java.util.function.Function;
 
 public class ActionBuilder {
-    //generates path for BlueRightOption1
-    public static Action BlueRightOption1(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
+//Begin Blue Paths
+
+    //Path for BlueSpecimen
+    public static Action BlueSpecimen(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
     {
         Pose2d startPose= new Pose2d(-15, 63, Math.toRadians(-90));
         TrajectoryActionBuilder builder = builderFunction.apply(startPose);
@@ -29,7 +30,8 @@ public class ActionBuilder {
                 .strafeTo(new Vector2d(-63,63))
                 .build();
     }
-    //generates path for BlueLeft
+
+    //Path for BlueBasket
     public static Action BlueBasket(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
     {
         Vector2d basket_clear_position = new Vector2d(42, 42);
@@ -70,6 +72,43 @@ public class ActionBuilder {
                 .strafeTo(new Vector2d(-36,60))
                 .build();
     }
+
+//End Blue Paths
+
+//Begin Red Paths
+
+    //Path for RedSpecimen
+    public static Action RedSpecimen(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
+    {
+        Pose2d startPose = new Pose2d(15, -63, Math.toRadians(90));
+        TrajectoryActionBuilder builder = builderFunction.apply(startPose);
+        return builder
+                .splineTo(new Vector2d(9,-42), Math.toRadians(90))
+                .waitSeconds(1)//hook preloaded specimen
+                .strafeTo(new Vector2d(12,-42))
+                .splineToSplineHeading(new Pose2d(36,-24, Math.toRadians(180)), Math.toRadians(90))
+                .splineTo(new Vector2d(42,-12), Math.toRadians(0))
+                .strafeTo(new Vector2d(45,-12))
+                .strafeTo(new Vector2d(45,-48))
+                .strafeTo(new Vector2d(45,-24))
+                .splineTo(new Vector2d(57,-12), Math.toRadians(0))
+                .strafeTo(new Vector2d(57,-48))
+                .strafeTo(new Vector2d(57,-42))
+                .waitSeconds(1)//wait for human player
+                .strafeTo(new Vector2d(63,-63))
+                .build();
+
+    }
+
+    //Path for RedBasket
+    public static Action RedBasket(Function<Pose2d, TrajectoryActionBuilder> builderFunction) {
+        Pose2d startPose = new Pose2d(0, 0, 0);
+        TrajectoryActionBuilder builder = builderFunction.apply(startPose);
+        return builder
+                .build();
+    }
+
+    //Path for RedRightOption2
     public static Action RedRightOption2(Function<Pose2d, TrajectoryActionBuilder> builderFunction) {
         Pose2d startPose = new Pose2d(10, -63, Math.toRadians(90.0));
         TrajectoryActionBuilder builder = builderFunction.apply(startPose);
@@ -90,10 +129,5 @@ public class ActionBuilder {
                 .build();
     }
 
-    public static Action RedLeft(Function<Pose2d, TrajectoryActionBuilder> builderFunction) {
-        Pose2d startPose = new Pose2d(0, 0, 0);
-        TrajectoryActionBuilder builder = builderFunction.apply(startPose);
-        return builder
-                .build();
-    }
+//End Red Paths
 }

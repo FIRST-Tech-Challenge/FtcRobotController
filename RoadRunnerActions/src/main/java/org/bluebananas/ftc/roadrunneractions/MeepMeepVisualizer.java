@@ -14,20 +14,21 @@ public class MeepMeepVisualizer {
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(BlueRightOption1(meepMeep))
+                .addEntity(BlueSpecimen(meepMeep))
                 .addEntity(BlueLeft(meepMeep))
                 .addEntity(RedRightOption2(meepMeep))
-                .addEntity(RedLeft(meepMeep))
+                .addEntity(RedBasket(meepMeep))
+                .addEntity(RedSpecimen(meepMeep))
                 .start();
     }
 
     //begin auto runs
 
     //generates path for BlueRightOption1
-    private static RoadRunnerBotEntity BlueRightOption1(MeepMeep meepMeep)
+    private static RoadRunnerBotEntity BlueSpecimen(MeepMeep meepMeep)
     {
         RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "blue");
-        botEntity.runAction(ActionBuilder.BlueRightOption1(botEntity.getDrive()::actionBuilder));
+        botEntity.runAction(ActionBuilder.BlueSpecimen(botEntity.getDrive()::actionBuilder));
         return botEntity;
     }
 
@@ -47,9 +48,15 @@ public class MeepMeepVisualizer {
     }
 
     //generates path for RedLeft
-    private static RoadRunnerBotEntity RedLeft(MeepMeep meepMeep) {
+    private static RoadRunnerBotEntity RedBasket(MeepMeep meepMeep) {
         RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "red");
-        botEntity.runAction(ActionBuilder.RedLeft(botEntity.getDrive()::actionBuilder));
+        botEntity.runAction(ActionBuilder.RedBasket(botEntity.getDrive()::actionBuilder));
+        return botEntity;
+    }
+
+    private static RoadRunnerBotEntity RedSpecimen(MeepMeep meepMeep) {
+        RoadRunnerBotEntity botEntity = CreateBotEntity(meepMeep, "red");
+        botEntity.runAction(ActionBuilder.RedSpecimen(botEntity.getDrive()::actionBuilder));
         return botEntity;
     }
 
