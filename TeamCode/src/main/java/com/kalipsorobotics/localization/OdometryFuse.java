@@ -94,9 +94,16 @@ public class OdometryFuse {
         } else { return false; }
     }
 
+    public boolean autoMecanum(double x, double y) {
+        final Point offset = PointCollectData();
+        while (true) {
+            if (PointCollectData().getY() - offset.getY() > y &&
+                    PointCollectData().getX() - offset.getX() > x) return true;
+        }
+    }
+
     public Point PointCollectData() {
-        Point point = Filter(SparkUpdateData(), WheelUpdateData());
-        return(point);
+        return(Filter(SparkUpdateData(), WheelUpdateData()));
     }
 
     @SuppressLint("DefaultLocale")
