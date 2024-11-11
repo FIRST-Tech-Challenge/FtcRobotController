@@ -30,7 +30,7 @@ public class Arm {
     private final double length = 0;
     private PIDFController anglePID = new PIDFController(0, 0, 0, 0);
     private DcMotorEx angleMotor;
-    private Servo extendServoLeft;
+    private  Servo extendServoLeft;
 
     private Servo extendServoRight;
 
@@ -53,6 +53,7 @@ public class Arm {
         telemetry = opMode.telemetry;
 
         this.isDebug = isDebug;
+        opMode.telemetry.addData("second constructor",true);
 
         analogLeft = opMode.hardwareMap.get(AnalogInput.class ,"analogLeft");
         analogRight = opMode.hardwareMap.get(AnalogInput.class ,"analogRight");
@@ -63,20 +64,22 @@ public class Arm {
         //touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
 
         anglePID.setTolerance(ANGLE_TOLERANCE);
+        opMode.telemetry.update();
         init();
     }
 
     public Arm(OpMode opMode) {
-        new Arm(opMode, false);
+        opMode.telemetry.addData("first constructor",true);
+        new Arm(opMode,false);
     }
 
     //init function
     public void init() {
         //TODO change directions if needed
-        extendServoRight.setDirection(Servo.Direction.REVERSE);
-        extendServoLeft.setDirection(Servo.Direction.REVERSE);
-        extendServoLeft.setPosition(0);
-        extendServoRight.setPosition(0);
+        //extendServoRight.setDirection(Servo.Direction.REVERSE);
+        //extendServoLeft.setDirection(Servo.Direction.REVERSE);
+        extendServoLeft.setPosition(0.1);
+        extendServoRight.setPosition(0.1);
         //angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //extendMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
@@ -216,7 +219,7 @@ public class Arm {
     public Action setExtension(double extension) {
         moveExtension move = new moveExtension();
         move.setGoal(extension);
-        telemetry.addData("the new extension ", extension);
+        //telemetry.addData("the new extension ", extension);
         return move;
     }
 
