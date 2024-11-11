@@ -30,8 +30,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final BHI260IMU imu;
 
-    private double speedMultiplier = 1.0;
-    private boolean fieldCentric = true;
+    public double speedMultiplier = 1.0;
+    public boolean fieldCentric = true;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -92,10 +92,10 @@ public class DriveSubsystem extends SubsystemBase {
         backRightMotor.setPower(Range.clip((forward + strafe - turn), -1, 1) * speedMultiplier);
     }
 
-    public void setSpeedMultiplier(double multiplier) {
-        speedMultiplier = Range.clip(multiplier, 0, 1);
-    }
-
+    //public void setSpeedMultiplier(double multiplier) {
+    //    speedMultiplier = Range.clip(multiplier, 0, 1);
+    //}
+    //it is useless after changing the speed multiplier :( keep it anyways
     public void resetGyro() {
         imu.resetYaw();
     }
@@ -119,4 +119,12 @@ public class DriveSubsystem extends SubsystemBase {
     private double getHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
+
+    public void changeSpeedMultiplier(){
+        if (speedMultiplier ==1){
+            speedMultiplier = 0.5;
+        }else{speedMultiplier=1;
+        }
+    }
 }
+
