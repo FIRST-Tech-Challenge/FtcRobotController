@@ -54,10 +54,14 @@ public class MecanumTeleOp extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
+        double yaw_offset = 0.0;
         while (opModeIsActive()) {
 
             Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-            double botheading = angles.firstAngle;
+            if (gamepad1.back) {
+                yaw_offset = angles.firstAngle;
+            }
+            double botheading = angles.firstAngle - yaw_offset;
             telemetry.addData("Heading", formatAngle(angles.angleUnit, botheading));
 //                    .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
 //                    .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
