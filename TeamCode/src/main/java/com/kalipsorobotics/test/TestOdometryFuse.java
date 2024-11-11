@@ -1,4 +1,6 @@
-package com.kalipsorobotics.test; import com.kalipsorobotics.localization.OdometryFuse;
+package com.kalipsorobotics.test;
+
+import com.kalipsorobotics.localization.OdometryFuse;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
