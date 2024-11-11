@@ -45,9 +45,9 @@ public class DriveTrain {
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
        // testMotorDeleteLater = opModeUtilities.getHardwareMap().dcMotor.get("testMotor");
     }
+
     public void setFLeftPower(double power) { fLeft.setPower(power); }
 
     public void setFRightPower(double power) { fRight.setPower(power); }

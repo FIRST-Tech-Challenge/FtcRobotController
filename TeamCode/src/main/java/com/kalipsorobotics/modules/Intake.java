@@ -43,17 +43,8 @@ public class Intake {
         return pivotServo;
     }
 
-<<<<<<< HEAD
     public Servo getDoorServo() {
         return doorServo;
-=======
-    public Servo getSampleDoor() {
-        return doorServo;
-    }
-
-    public Servo getLinkageServo() {
-        return linkageServo;
->>>>>>> refs/remotes/origin/master
     }
 
     public Servo getLinkageServo1() {
