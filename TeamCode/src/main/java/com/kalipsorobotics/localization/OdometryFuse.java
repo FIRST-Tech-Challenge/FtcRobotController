@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
+import java.util.Collection;
+
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
     private final SparkFunOTOS myOtos;
@@ -63,7 +65,34 @@ public class OdometryFuse {
         if (reCalibrate) { myOtos.calibrateImu(); }
         myOtos.setOffset(new SparkFunOTOS.Pose2D(WheelUpdateData().getX(), WheelUpdateData().getY(), heading));
     }
+    public boolean autoTurn(Double degree, String direction) {
+        final double offset = HeadingUpdateData(direction);
+        while (true) {
+            if (HeadingUpdateData(direction) - offset > degree) {
+                break;
+            }
+        }
+        return(true);
+    }
 
+    public boolean autoForward(double inches, String XorY) {
+        final double offset;
+        if (XorY.equalsIgnoreCase("x")) {
+            offset = PointCollectData().getX();
+            while (true) {
+                if (PointCollectData().getX() - offset > inches) {
+                    return true;
+                }
+            }
+        } else if (XorY.equalsIgnoreCase("y")) {
+            offset = PointCollectData().getY();
+            while (true) {
+                if (PointCollectData().getY() - offset > inches) {
+                    return true;
+                }
+            }
+        } else { return false; }
+    }
 
     public Point PointCollectData() {
         Point point = Filter(SparkUpdateData(), WheelUpdateData());
