@@ -28,7 +28,6 @@ public class autoRoadRunnerITD extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //Servo specsServo = hardwareMap.get(Servo.class, "specsServo");
         //DcMotor rightSlideMotor = hardwareMap.get(DcMotor.class, "rightSlideMotor");
-        waitForStart();
         Pose2d beginPose = new Pose2d(0, -61.5, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder trajectory = drive.actionBuilder(beginPose)
@@ -49,6 +48,15 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .waitSeconds(1)
                 .lineToY(-40)
                 .strafeTo(new Vector2d(47, -61));
-                Action trajectoryAction = trajectory.build();
+        Action trajectoryAction = trajectory.build();
+
+
+        waitForStart();
+        Actions.runBlocking(
+                new ParallelAction(
+                        trajectoryAction
+                )
+        );
+
     }
 }

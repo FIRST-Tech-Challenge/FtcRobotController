@@ -25,6 +25,7 @@ public class MeepMeep1 {
                         .strafeTo(new Vector2d(47,-51))
                         .lineToY(-58)
                         .lineToY(-45)
+                        .waitSeconds(3)
                         .lineToY(-60.5)
                         .waitSeconds(2)
                         .lineToY(-45)
