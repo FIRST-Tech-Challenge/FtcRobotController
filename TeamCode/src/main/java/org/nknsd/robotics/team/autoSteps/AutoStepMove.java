@@ -23,8 +23,8 @@ public class AutoStepMove implements NKNAutoStep {
     }
 
     @Override
-    public void run(Telemetry telemetry) {
-        done = autoSkeleton.runToPosition(telemetry);
+    public void run(Telemetry telemetry, ElapsedTime runtime) {
+        done = autoSkeleton.runToPosition(telemetry, runtime);
     }
 
     @Override

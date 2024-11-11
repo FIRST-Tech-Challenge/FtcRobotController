@@ -73,7 +73,7 @@ public class TestingAuto extends NKNProgram {
         AutoStepMove left1 = new AutoStepMove(-1, 0);
         AutoStepMove up1 = new AutoStepMove(0, 1);
         AutoStepMove down1 = new AutoStepMove(0, -1);
-        AutoStepSleep sleep = new AutoStepSleep(750);
+        AutoStepSleep sleep = new AutoStepSleep(1500);
 
         stepList.add(right1);
         stepList.add(sleep);

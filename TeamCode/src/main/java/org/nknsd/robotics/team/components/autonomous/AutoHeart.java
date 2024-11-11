@@ -59,7 +59,7 @@ public class AutoHeart implements NKNComponent {
         }
 
         NKNAutoStep step = stepList.get(currentStep);
-        step.run(telemetry);
+        step.run(telemetry, runtime);
 
         if (step.isDone(runtime)) {
             currentStep ++;
