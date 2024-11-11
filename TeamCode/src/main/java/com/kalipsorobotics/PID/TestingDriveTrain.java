@@ -41,7 +41,7 @@ public class TestingDriveTrain {
         }
 
         otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        odometryFuse = new OdometryFuse(otos, fRight, fLeft, bRight);
+        odometryFuse = new OdometryFuse(otos, fRight, bRight);
         odometryFuse.configureOtos(otos);
 
         xController = new PIDController(0, 0, 0);  // placeholder values
