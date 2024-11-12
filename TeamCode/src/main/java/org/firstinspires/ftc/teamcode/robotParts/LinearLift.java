@@ -12,7 +12,7 @@ public class LinearLift {
     private DcMotor lift;
     private final double INCHTOENCH = 115.35;
 
-    private final double LINMAX = 3900;
+    private final double LINMAX = 3000;
 
     public void init(HardwareMap hwMap){
         this.lift = hwMap.get(DcMotor.class, "lift");
@@ -20,27 +20,37 @@ public class LinearLift {
         this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.lift.setDirection(DcMotorSimple.Direction.REVERSE);
     }
+
+    public void reInit(){
+        this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.lift.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
     public void setPower(double power){
         this.lift.setPower(power);
     }
     public double getPos(){
-        return lift.getCurrentPosition();
+        return this.lift.getCurrentPosition();
     }
     public void gotoPosition(double positionInches){
         CustomPID c1 = new CustomPID(new double[]{.000001, 0.00004, 0.00001});
-        c1.setSetpoint(positionInches * INCHTOENCH+17);
-        double[] outputs = c1.calculateGivenRaw(lift.getCurrentPosition());
-        double power = outputs[0];
-        lift.setPower(power);
+        c1.setSetpoint(positionInches);
+        while ((positionInches-this.lift.getCurrentPosition()) > 45){
+            double[] outputs = c1.calculateGivenRaw(this.lift.getCurrentPosition());
+            double power = outputs[0];
+            this.lift.setPower(power);
+        }
+        this.lift.setPower(0.0);
     }
     public void moveLift(double gamepadInput){
-        if (Math.abs(lift.getCurrentPosition()) < LINMAX) {
-            lift.setPower(-1 * gamepadInput);
+        if (Math.abs(this.lift.getCurrentPosition()) < LINMAX) {
+            this.lift.setPower(-0.3 * gamepadInput);
         } else {
-            lift.setPower(-0.2);
+            this.lift.setPower(-0.15);
         }
     }
     public DcMotor getLift() {
-        return lift;
+        return this.lift;
     }
 }

@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
-import org.checkerframework.checker.units.qual.C;
-
 
 @TeleOp
 @Config
