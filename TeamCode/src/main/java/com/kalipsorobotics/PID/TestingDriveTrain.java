@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.SystemClock;
 
 import com.kalipsorobotics.localization.OdometryFuse;
+import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
@@ -66,9 +67,10 @@ public class TestingDriveTrain {
     public void move(double dx, double dy, double dh, Telemetry telemetry) {
         double startingTime = SystemClock.elapsedRealtimeNanos();
         Point pos = odometryFuse.PointCollectData();  // current
-        double curX = pos.getX();
-        double curY = pos.getY();
-        double curH = otos.getPosition().h;
+        double curX = -pos.getX();
+        double curY = -pos.getY();
+        double curH = MathFunctions.angleWrapDeg(odometryFuse.HeadingUpdateData("leftwq" +
+                ""));
 
         Pose2D target = new Pose2D(curX + dx, curY + dy, curH + dh);
         System.out.println(xController);
@@ -82,7 +84,7 @@ public class TestingDriveTrain {
             pos = odometryFuse.PointCollectData();
             curX = -pos.getX();  // odometryfuse returns negative
             curY = -pos.getY();
-            curH = otos.getPosition().h;
+            curH = MathFunctions.angleWrapDeg(odometryFuse.HeadingUpdateData("left"));
 
             double x = Range.clip(xController.calculate(curX, target.x), -1., 1.);
             double y = Range.clip(yController.calculate(curY, target.y), -1., 1.);

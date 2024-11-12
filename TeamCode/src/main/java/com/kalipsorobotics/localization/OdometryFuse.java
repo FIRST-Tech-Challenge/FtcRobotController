@@ -32,24 +32,21 @@ public class OdometryFuse {
         return(new Point(backEncoder.getCurrentPosition() * TICKSTOINCH, rightEncoder.getCurrentPosition() * TICKSTOINCH));
     }
     public Point SparkUpdateData() {
-        SparkFunOTOS.Pose2D SparkFunOTOS;
-        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(-pos.x, -pos.y));
     }
     public Point AverageUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
-        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
     }
 
     public double HeadingUpdateData(String direction) {
         if (direction.equals("right")) {
-            SparkFunOTOS.Pose2D SparkFunOTOS;
-            com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
             return(-pos.h); }
         else if (direction.equals("left")) {
-            SparkFunOTOS.Pose2D SparkFunOTOS;
-            com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
             return(pos.h); }
         else { return(0.0); }
     }
@@ -117,16 +114,13 @@ public class OdometryFuse {
     public String configureOtos(SparkFunOTOS myOtos) {
 
         myOtos.setLinearUnit(DistanceUnit.INCH);
-
         myOtos.setAngularUnit(AngleUnit.DEGREES);
 
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         myOtos.setOffset(offset);
         myOtos.setLinearScalar(1/1.165);
 
-
         myOtos.calibrateImu();
-
         myOtos.resetTracking();
 
         SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);

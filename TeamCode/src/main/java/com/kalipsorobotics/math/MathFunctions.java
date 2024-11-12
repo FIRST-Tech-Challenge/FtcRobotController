@@ -14,6 +14,10 @@ public class MathFunctions {
         return angle;
     }
 
+    public static double angleWrapDeg(double angle) {
+        return Math.toDegrees(angleWrapRad(Math.toRadians(angle)));
+    }
+
     public static double maxAbsValueDouble(double a, double... others) {
 
         double max = a;
