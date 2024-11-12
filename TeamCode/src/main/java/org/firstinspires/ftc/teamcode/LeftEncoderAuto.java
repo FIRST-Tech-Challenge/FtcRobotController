@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+
+import static android.os.SystemClock.sleep;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
