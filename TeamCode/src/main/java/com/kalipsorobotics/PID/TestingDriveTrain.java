@@ -45,9 +45,10 @@ public class TestingDriveTrain {
         odometryFuse = new OdometryFuse(otos, fRight, bRight);
         odometryFuse.configureOtos(otos);
 
-        xController = new PIDController(0.075, 0.015, 0.01, "xController");  // placeholder values
+        // tuned w/ lightweight testing drivetrain
+        xController = new PIDController(0.075, 0.015, 0.01, "xController");
         yController = new PIDController(0.05, 0.0065, 0.012, "yController");
-        headingController = new PIDController(0, 0, 0, "hController");
+        headingController = new PIDController(0.01, 0.0005, 0, "hController");
     }
 
     public void setPowers(double fLeftP, double fRightP, double bLeftP, double bRightP) {
@@ -75,7 +76,7 @@ public class TestingDriveTrain {
         System.out.println(headingController);
 
         while (
-                (Math.abs(target.x - curX) > 0.2 || Math.abs(target.y - curY) > 0.2 || Math.abs(target.h - curH) > 5)
+                (Math.abs(target.x - curX) > 0.1 || Math.abs(target.y - curY) > 0.1 || Math.abs(target.h - curH) > 2)
                         && ((SystemClock.elapsedRealtimeNanos() - startingTime) / 1e9) < 5
         ) {  // I think this while loop is causing an exit error
             pos = odometryFuse.PointCollectData();

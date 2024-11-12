@@ -15,10 +15,9 @@ public class OpMode extends LinearOpMode {
         TestingDriveTrain driveTrain = new TestingDriveTrain(hardwareMap);
         waitForStart();
 
-        boolean flag = false;
         PIDController activeController = driveTrain.xController;
-        Gamepad current = new Gamepad();
         Gamepad prev = new Gamepad();
+        Gamepad current = new Gamepad();
 
         double xMovement = 6;
         double yMovement = 0;
@@ -31,32 +30,29 @@ public class OpMode extends LinearOpMode {
             if (current.dpad_left && !prev.dpad_left) {
                 xMovement -= 1;
             }
-            if (gamepad1.dpad_right && !prev.dpad_right) {
+            if (current.dpad_right && !prev.dpad_right) {
                 xMovement += 1;
             }
-            if (gamepad1.dpad_up && !prev.dpad_up) {
+            if (current.dpad_up && !prev.dpad_up) {
                 yMovement += 1;
             }
-            if (gamepad1.dpad_down && !prev.dpad_down) {
+            if (current.dpad_down && !prev.dpad_down) {
                 yMovement -= 1;
             }
-            if (gamepad1.left_trigger > 0.5 && prev.left_trigger == 0) {
-                hMovement += 5;
-            }
-            if (gamepad1.right_trigger > 0.5 && prev.right_trigger == 0) {
-                hMovement -= 5;
+            if (current.right_bumper && !prev.right_bumper) {
+                hMovement += current.left_bumper ? -10 : 10;
             }
 
-            if (gamepad1.x && !prev.x) {
-                activeController.chKp(0.001);
+            if (current.x && !prev.x) {
+                activeController.chKp(current.left_bumper ? -0.001 : 0.001);
             }
-            if (gamepad1.y && !prev.y) {
-                activeController.chKi(0.0005);
+            if (current.y && !prev.y) {
+                activeController.chKi(current.left_bumper ? -0.0005 : 0.0005);
             }
-            if (gamepad1.a && !prev.a) {
-                activeController.chKd(0.001);
+            if (current.a && !prev.a) {
+                activeController.chKd(current.left_bumper ? -0.0005 : 0.0005);
             }
-            if (gamepad1.b && !prev.b) {
+            if (current.b && !prev.b) {
                 PIDController newController = null;
                 if (activeController == driveTrain.xController) {
                     newController = driveTrain.yController;
@@ -73,16 +69,17 @@ public class OpMode extends LinearOpMode {
             telemetry.addLine(String.format("Using %s", activeController));
             telemetry.addLine(String.format("Moving X by %f, Y by %f, H by %f", xMovement, yMovement, hMovement));
 
-            if (gamepad1.start && !flag) {
+            if (gamepad1.start && !prev.start) {
+                driveTrain.xController.reset();
+                driveTrain.yController.reset();
+                driveTrain.headingController.reset();
+
+                driveTrain.otos.resetTracking();
+                driveTrain.otos.calibrateImu();
+                System.out.println("Reset PID Controller");
                 driveTrain.move(xMovement, yMovement, hMovement, telemetry);
-                flag = true;
             }
 
-            if (gamepad1.back) {
-                flag = false;
-                activeController.reset();
-                System.out.println("Reset PID Controller");
-            }
 
             Point pos = driveTrain.odometryFuse.PointCollectData();
             double heading = driveTrain.otos.getPosition().h;
