@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * TeleOp mode for controlling the robot. Integrates driving, arm, slide, and intake systems.
  * Uses PIDF controllers to manage motor movements for precise positioning.
  */
+@Config
 @TeleOp
 public class CORobotCodeLM2_V0 extends LinearOpMode {
 
@@ -25,7 +27,7 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
     // Define hardware components
     private DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
     private Servo rightWristServo, specServo, bucketServo;
-    private CRServo activeIntake;
+    private Servo clawIntake;
     private IMU imu;
 
     // PIDF values and position constants
@@ -49,13 +51,13 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         // Wait for start
         telemetry.addLine("Initialized. Ready to start.");
         telemetry.update();
+        setupPosition();
         waitForStart();
 
 
 
         if (isStopRequested()) return;
 
-        setupPosition();
         while (opModeIsActive()) {
             handleDriving();
             handleArmAndSlideControl();
@@ -106,11 +108,11 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         rightWristServo = hardwareMap.get(Servo.class, "rightWristServo");
         specServo = hardwareMap.get(Servo.class, "specServo");
         bucketServo = hardwareMap.get(Servo.class, "bucketServo");
-        activeIntake = hardwareMap.get(CRServo.class, "activeIntake");
+        clawIntake = hardwareMap.get(Servo.class, "clawIntake");
 
         // Initialize PIDF controllers for the arm and slide
-        armController = new PIDFMotorController(intakeArmMotor, 0, 0, 0, 0, ARM_TICKS_IN_DEGREES);
-        slideController = new PIDFMotorController(rightSlideMotor, 0, 0, 0, 0, SLIDE_TICKS_IN_DEGREES);
+        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, ARM_TICKS_IN_DEGREES);
+        slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, SLIDE_TICKS_IN_DEGREES);
 
         // Set directions for drivetrain motors
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -171,23 +173,21 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         } else if (gamepad1.x) {
             armController.driveToPosition(200);
             rightWristServo.setPosition(0.5);
+        } else if (gamepad2.dpad_up) {
+            slideController.driveToPosition(2250);
+        } else if (gamepad2.dpad_down) {
+            slideController.driveToPosition(1750);
         }
-
-        // Manual control for slide using gamepad2's left stick
-        double slidePower = gamepad2.left_stick_y;
-        slideController.driveToPosition((int) (slidePower * 1000));  // Adjust target as needed
     }
 
     /**
      * Controls the intake system based on gamepad inputs.
      */
     private void handleIntake() {
-        if (gamepad1.right_bumper) {
-            activeIntake.setPower(-1);
-        } else if (gamepad1.b) {
-            activeIntake.setPower(1);
-        } else {
-            activeIntake.setPower(0);
+         if (gamepad1.right_bumper) {
+            clawIntake.setPosition(1);
+        } else if (gamepad1.left_bumper){
+            clawIntake.setPosition(0);
         }
     }
 
