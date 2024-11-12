@@ -8,6 +8,7 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -85,6 +86,8 @@ public class RobotInitialize {
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
+
         // Resetting the encoders (distance measurement sensors)
         // and then start them again on program start
         // Repeat for all motors
@@ -141,8 +144,6 @@ public class RobotInitialize {
         hangR = opMode.hardwareMap.get(Servo.class, "hang r");
         //hangR.setDirection(Servo.Direction.REVERSE);
         hangR.setPosition(1);
-
-
 
         //Continuous rotation Servo
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
@@ -223,8 +224,10 @@ public class RobotInitialize {
         // of the average robot encoder reading
         // The relativeDistance is current position plus or minus the value that is being moved
         // RELATIVE DISTANCE MEASUREMENT IN USE
-        inchesToEncoderTicks = (distance*5267.65)/(12.56637061*13.7);
-        opMode.telemetry.addData("Receives a value in IN and converts to encoder ticks", inchesToEncoderTicks);
+
+        //Is supposed to be in inches
+        //inchesToEncoderTicks = (distance*5267.65)/(12.56637061*13.7);
+        //opMode.telemetry.addData("Receives a value in IN and converts to encoder ticks", inchesToEncoderTicks);
 
         int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
@@ -258,7 +261,6 @@ public class RobotInitialize {
     }
 
 
-
     // Makes the robot strafe right by determining where the robot is currently
     // located and where it is trying to go it does not return anything and
     // has parameters of the distance it needs to travel (measured in encoder ticks)
@@ -268,7 +270,7 @@ public class RobotInitialize {
         // Go forwards or backwards
         //if difference <10 then stop
         // 10 is the accuracy tolerance in 10 encoder ticks
-        while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
+        while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 14) {
             //if
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
@@ -279,9 +281,6 @@ public class RobotInitialize {
                 bLeft.setVelocity(velocity);
                 bRight.setVelocity(-velocity);
 
-//                while (){
-//
-//                }
                 opMode.telemetry.addData("position", getPosStrafe());
                 opMode.telemetry.addData("relative distance", relativeDistance);
                 opMode.telemetry.addData("old pos", getAverageEncoderValue());
@@ -291,8 +290,25 @@ public class RobotInitialize {
                 setDrivetrainMotorVelocity(0);
             }
         }
-        stopMechanisms();
+        //stopMechanisms();
     }
+    // Parameter of time that it is run in milliseconds
+    public void extake(double time){
+        double intakeRunTime = time;
+        long x = System.currentTimeMillis();
+
+        while (System.currentTimeMillis()-x <time && opMode.opModeIsActive()) { //Check this
+            intake.setPower(-1);
+
+            // opMode.telemetry.addData(System.currentTimeMillis());
+//            if (intakeRunTime == 0){
+//                break;
+//            }
+//            intakeRunTime = intakeRunTime + 1000;
+        }
+        intake.setPower(0);
+    }
+
     //needs to move counterclockwise to move up
     public void liftPitch(int position, double velocity){
         liftPitch.setTargetPosition(position);
@@ -347,9 +363,8 @@ public class RobotInitialize {
                 fRight.setVelocity(velocity);
                 bLeft.setVelocity(-velocity);
                 bRight.setVelocity(velocity);
-                opMode.telemetry.addData("get vel", fLeft.getVelocity());
-                opMode.telemetry.addData("get vel", bLeft.getVelocity());
-                opMode.telemetry.addData("getposStrafeR", getPosStrafe());
+
+                opMode.telemetry.addData("must be greated than 10", Math.abs(getPosStrafe() - (distance + getPosStrafe())));
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
                 opMode.telemetry.addData("fright", fRight.getCurrentPosition());

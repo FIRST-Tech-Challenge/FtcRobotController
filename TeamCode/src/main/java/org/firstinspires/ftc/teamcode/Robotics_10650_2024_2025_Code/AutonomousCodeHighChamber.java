@@ -6,9 +6,11 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Import all of the necessary FTC libraries and code
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 // Create an Autonomous program (Auto) that preselects a TeleOp (controller operated)
+@Disabled
 @Autonomous(name = "AutonomousCodeHighChamber", preselectTeleOp = "TeleOpCode_RobotCentric")
 public class AutonomousCodeHighChamber extends LinearOpMode {
 
