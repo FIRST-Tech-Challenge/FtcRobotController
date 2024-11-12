@@ -94,7 +94,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         driveToLoc(3, 14, 20);     // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                               // Drop the block
-        driveToLoc(34, 0, 0);
+        driveToLoc(36, 0, 0);
         setViper(1800);
         setVertical(100, 1000);
         sleep(1500);
@@ -102,27 +102,27 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(12, 10, 45);   // Go to basket
+        driveToLoc(12, 11, 45);  // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                              // Drop second block
-        driveToLoc(34, -3, 0);
-        setViper(700);
-        setVertical(100, 1500);
-        sleep(1300);
-        setClaw(CLAW_MIN);                              // Grab third block
+        driveToLoc(36, -4, 0);
+        setViper(1200);
+        sleep(500);
+        setVertical(40, 1500);
+        sleep(1500);
+        setClaw(CLAW_MIN);                               // Grab third block
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(12, 10, 45);  // Go to basket
+        driveToLoc(12, 11, 45);   // Go to basket
         sleep(600);
-        setClaw(CLAW_MAX);                              // Drop third block
-
-        // Keep the robot safe:
-        driveToLoc(25, 0, 0);
+        setClaw(CLAW_MAX);                               // Drop third block
+        driveToLoc(25, 10, 45, 4);
         setViper(VIPER_MIN);
-        sleep(1500);
+        sleep(500);
         setVertical(VERTICAL_MIN);
-        claw.close();                                   // Release tension on the claw
+        driveToLoc(53, -15, 180); // Change X-value to 48 later
+        claw.close();                                    // Release tension on the claw
         sleep(5000);
 
         // End of autonomous program
@@ -190,6 +190,9 @@ public class OTOSAutoDrive extends LinearOpMode {
         hLoc = pos.h;
     }
     private void driveToLoc(double xTarget, double yTarget, double hTarget) {
+        driveToLoc(xTarget, yTarget, hTarget, 2);
+    }
+    private void driveToLoc(double xTarget, double yTarget, double hTarget, double accuracy) {
         getPosition();
         double xDistance = xTarget - xLoc;
         double yDistance = yTarget - yLoc;
@@ -200,9 +203,9 @@ public class OTOSAutoDrive extends LinearOpMode {
                 xDistance, yDistance, hDistance, leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
         while (opModeIsActive()
-                && (Math.abs(xDistance) > 2      // todo: After adding accuracy, change to 1.
-                || Math.abs(yDistance) > 2
-                || Math.abs(hDistance) > 2)) {
+                && (Math.abs(xDistance) > accuracy
+                || Math.abs(yDistance) > accuracy
+                || Math.abs(hDistance) > accuracy)) {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power.
