@@ -34,7 +34,7 @@ public class MainMovement extends LinearOpMode {
 
     //speeds
     private float clawSpeed = 1.0f;
-    private float linearSlideSpeed = 1.0f;
+    private float linearSlideSpeed = 0.05f;
 
     @Override
     public void runOpMode() {
@@ -44,9 +44,9 @@ public class MainMovement extends LinearOpMode {
         leftFront  = hardwareMap.get(DcMotor.class, "fl");
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
 
-        clawServo = hardwareMap.get(Servo.class, "clawServo");
-        clawRotate = hardwareMap.get(CRServo.class, "clawRotate");
-        linearSlide = hardwareMap.get(DcMotor.class, "linearSlide");
+        clawServo = hardwareMap.get(Servo.class, "cs"); // claw servo
+        clawRotate = hardwareMap.get(CRServo.class, "cr"); // claw rotate
+        linearSlide = hardwareMap.get(DcMotor.class, "ls"); // linear slide
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -74,10 +74,10 @@ public class MainMovement extends LinearOpMode {
     //////////////////////// START OF MOVEMENT CODE ////////////////////////
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
-        leftBack.setPower(BL*speed);
-        rightBack.setPower(BR*speed);
-        leftFront.setPower(FL*speed);
-        rightFront.setPower(FR*speed);
+        leftBack.setPower(BL* speed * -0.5);
+        rightBack.setPower(BR* speed * 0.5);
+        leftFront.setPower(FL* speed * -0.5);
+        rightFront.setPower(FR*speed * 0.5);
     }
 
     private void epicRotationMovement() {
