@@ -74,10 +74,10 @@ public class MainMovement extends LinearOpMode {
     //////////////////////// START OF MOVEMENT CODE ////////////////////////
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
-        leftBack.setPower(BL* speed * -0.5);
+        leftBack.setPower(-BL* speed * 0.5);
         rightBack.setPower(BR* speed * 0.5);
-        leftFront.setPower(FL* speed * -0.5);
-        rightFront.setPower(FR*speed * 0.5);
+        leftFront.setPower(-FL* speed * 0.5);
+        rightFront.setPower(FR* speed * 0.5);
     }
 
     private void epicRotationMovement() {
@@ -120,17 +120,17 @@ public class MainMovement extends LinearOpMode {
             //if not in dead zone
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
                 // right quadrant, move right
-                setMotorPowers(-1, 1, 1, -1, netS);
+                setMotorPowers(1, 1, -1, -1, netS);
                 telemetry.addData("Left Stick in RIGHT quadrant", null);
 
             } else if (LangleInDegrees > 22.5 && LangleInDegrees < 67.5) {
                 // top-right quadrant
-                setMotorPowers(0, 1, 1, 0, netS);
+                setMotorPowers(0, 1, -1, 0, netS);
                 telemetry.addData("Left Stick in TOP-RIGHT quadrant", null);
 
             } else if (LangleInDegrees > -67.5 && LangleInDegrees < -22.5) {
                 // bottom-right quadrant
-                setMotorPowers(-1, 0, 0, -1, netS);
+                setMotorPowers(1, 0, 0, -1, netS);
                 telemetry.addData("Left Stick in BOTTOM-RIGHT quadrant", null);
 
             } else if (LangleInDegrees >= 67.5 && LangleInDegrees <= 112.5) {
@@ -145,7 +145,7 @@ public class MainMovement extends LinearOpMode {
 
             } else if (LangleInDegrees > 112.5 && LangleInDegrees < 157.5) {
                 // top-left quadrant
-                setMotorPowers(1, 0, 0, 1, netS);
+                setMotorPowers(-1, 0, 0, 1, netS);
                 telemetry.addData("Left Stick in TOP-LEFT quadrant", null);
 
             } else if (LangleInDegrees > -157.5 && LangleInDegrees < -112.5) {
@@ -213,6 +213,7 @@ public class MainMovement extends LinearOpMode {
         // moves linear slide
         if(Math.abs(gamepad2.left_stick_y) > joystickDeadzone){
             linearSlide.setPower(linearSlideSpeed * gamepad2.left_stick_y / 2);
+            telemetry.addData("linear slide speed:", linearSlideSpeed * gamepad2.left_stick_y /2);
         }
 
     }
