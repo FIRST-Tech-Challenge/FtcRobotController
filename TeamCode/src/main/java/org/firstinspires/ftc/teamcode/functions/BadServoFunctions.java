@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.functions;
 
-
-import static java.lang.Thread.sleep;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,18 +23,22 @@ public class BadServoFunctions {
             double wristPosition = wristServo.getPosition();
             double wristPosition2 = wristServo2.getPosition();
 
+            //set wrist to correct position at beginning of match !BE WARY OF THIS!
+            if (wristPosition == 0){
+                wristServo.setPosition(0.5);
+            }
+
+            if (wristPosition==0.5){
+                wristServo2.setPosition(0.5);
+            } else if (wristPosition==1) {
+                wristServo2.setPosition(0.5);
+            }
 
             // horrible wrist
             if (gamepad2.y) {
                 wristServo.setPosition(1);
             } else if (gamepad2.x){
-                wristServo.setPosition(0);
-            }
-
-            if (gamepad2.a){
-                wristServo2.setPosition(1);
-            } else if (gamepad2.b) {
-                wristServo2.setPosition(0);
+                wristServo.setPosition(0.5);
             }
 
             //sending telemetry data
@@ -62,14 +63,4 @@ public class BadServoFunctions {
             telemetry.update();
         }
 
-        /*public void wristPositions (Telemetry telemetry)throws InterruptedException {
-
-            double wristPosition = wristServo.getPosition();
-            double wristPosition2 = wristServo2.getPosition();
-
-            wristServo.setPosition(1); // Starting position for wrist 1
-            sleep(1000);
-            wristServo2.setPosition(0.8);
-
-        }*/
     }
