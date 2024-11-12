@@ -58,17 +58,24 @@ public class Arm {
     pose specimenHigh;
     pose specimenLow;
     pose intake;
+    pose intakeStandby;
+    public pose home;
     private double timeSlope;
 
 
     public Arm(OpMode op, double power){
         opm = op;
         Power = power;
-        bucketHigh =  new pose(84.6,90,0.3);//REPLACE THE NUMBERS WITH THE RIGHT ONES
-        bucketLow  =  new pose(84.6,90,0.3);//REPLACE THE NUMBERS WITH THE RIGHT ONES
+
+        bucketHigh =  new pose(84.6,90,0.3);
+        bucketLow  =  new pose(65,90,0.3);
         specimenHigh =  new pose(84.6,90,0.3);//REPLACE THE NUMBERS WITH THE RIGHT ONES
         specimenLow =  new pose(84.6,90,0.3);//REPLACE THE NUMBERS WITH THE RIGHT ONES
-        intake = new pose(84.6,90,0.3);//REPLACE THE NUMBERS WITH THE RIGHT ONES
+        intake = new pose(65,-6,0.9);
+
+        intakeStandby = new pose(65,15,0.5);
+        home = new pose(40.8,-28,0);
+
 
 
         rightExtendoMotor = new Motor("RightExt",op);
@@ -236,28 +243,44 @@ public class Arm {
                     case High:{
                         setPositionPolarSmooth(bucketHigh,T);
                         setWristServo(bucketHigh.wrist);
+                        return;
                     }
                     case Low:{
                         setPositionPolarSmooth(bucketLow,T);
                         setWristServo(bucketLow.wrist);
+                        return;
                     }
                 }
+                return;
             }
             case Specimen:{
                 switch (H){
                     case High:{
                         setPositionPolarSmooth(specimenHigh,T);
                         setWristServo(specimenHigh.wrist);
+                        return;
                     }
                     case Low:{
                         setPositionPolarSmooth(specimenLow,T);
                         setWristServo(specimenLow.wrist);
+                        return;
                     }
                 }
+                return;
             }
             case Intake:{
-                setPositionPolarSmooth(intake,T);
-                setWristServo(intake.wrist);
+                switch (H){
+                    case High:{
+                        setPositionPolarSmooth(intakeStandby,T);
+                        setWristServo(intakeStandby.wrist);
+                        return;
+                    }
+                    case Low:{
+                        setPositionPolarSmooth(intake,T);
+                        setWristServo(intake.wrist);
+                        return;
+                    }
+                }
             }
         }
     }
