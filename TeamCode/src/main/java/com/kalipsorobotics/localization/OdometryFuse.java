@@ -1,7 +1,3 @@
-/*
-package com.kalipsorobotics.localization; import android.annotation.SuppressLint; import com.kalipsorobotics.math.Point; import com.qualcomm.hardware.sparkfun.SparkFunOTOS; import com.qualcomm.robotcore.hardware.DcMotor; import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit; import com.kalipsorobotics.utilities.OpModeUtilities; public class OdometryFuse { OpModeUtilities opModeUtilities; private final SparkFunOTOS myOtos; private final DcMotor rightEncoder; private final DcMotor backEncoder; public OdometryFuse(SparkFunOTOS myOtos, DcMotor rightEncoder, DcMotor leftEncoder, DcMotor backEncoder) { this.myOtos = myOtos; this.rightEncoder = rightEncoder; this.backEncoder = backEncoder; } public Point WheelUpdateData() { double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612); return(new Point(backEncoder.getCurrentPosition(), rightEncoder.getCurrentPosition())); } public Point SparkUpdateData() { SparkFunOTOS.Pose2D SparkFunOTOS; com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition(); return(new Point(pos.x, pos.y)); } public Point AverageUpdateData() { SparkFunOTOS.Pose2D SparkFunOTOS; double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612); com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition(); return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2)); } public Point Filter(Point sparkPoint, Point wheelPoint) { int diffenceDebug = 2; if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(WheelUpdateData()); } else { return(SparkUpdateData()); } } public Void ResetData(Boolean reCalibrate) { myOtos.resetTracking(); if (reCalibrate) { myOtos.calibrateImu(); } return null; } public Point CollectData() { Point point = Filter(SparkUpdateData(), WheelUpdateData()); return(point); } @SuppressLint("DefaultLocale") public String configureOtos(SparkFunOTOS myOtos) { myOtos.setLinearUnit(DistanceUnit.INCH); myOtos.setAngularUnit(AngleUnit.DEGREES); SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0); myOtos.setOffset(offset); myOtos.calibrateImu(); myOtos.resetTracking(); SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0); myOtos.setPosition(currentPosition); SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version(); SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version(); myOtos.getVersionInfo(hwVersion, fwVersion); return("OTOS configured! \n Hardware version: " + hwVersion.major + hwVersion.minor + "\n" + "Firmware Version: " + fwVersion.major + fwVersion.minor); } }
-*/
-
 package com.kalipsorobotics.localization;
 
 import android.annotation.SuppressLint;
@@ -10,10 +6,13 @@ import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.BasicOmniOpMode_Linear;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
+
+import java.util.Collection;
 
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
@@ -25,59 +24,103 @@ public class OdometryFuse {
         this.myOtos = myOtos;
         this.rightEncoder = rightEncoder;
         this.backEncoder = backEncoder;
+        wheelResetData();
+        SparkResetData(true, 0.0);
     }
     public Point WheelUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
-        return(new Point(backEncoder.getCurrentPosition(), rightEncoder.getCurrentPosition()));
+        return(new Point(backEncoder.getCurrentPosition() * TICKSTOINCH, rightEncoder.getCurrentPosition() * TICKSTOINCH));
     }
     public Point SparkUpdateData() {
-        SparkFunOTOS.Pose2D SparkFunOTOS;
-        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return(new Point(pos.x, pos.y));
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        return(new Point(-pos.x, -pos.y));
     }
     public Point AverageUpdateData() {
-        SparkFunOTOS.Pose2D SparkFunOTOS;
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
-        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
     }
 
-    public double HeadingUpdateData() {
-        SparkFunOTOS.Pose2D SparkFunOTOS;
-        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return(pos.h);
+    public double HeadingUpdateData(String direction) {
+        if (direction.equals("right")) {
+            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+            return(-pos.h); }
+        else if (direction.equals("left")) {
+            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+            return(pos.h); }
+        else { return(0.0); }
     }
 
     public Point Filter(Point sparkPoint, Point wheelPoint) {
-        int diffenceDebug = 2;
+        int diffenceDebug = 1;
         if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(WheelUpdateData()); }
         else { return(SparkUpdateData()); }
     }
-    public Void ResetData(Boolean reCalibrate) {
+    public void SparkResetData(Boolean reCalibrate, double heading) {
         myOtos.resetTracking();
         if (reCalibrate) { myOtos.calibrateImu(); }
-        return null;
+        myOtos.setOffset(new SparkFunOTOS.Pose2D(WheelUpdateData().getX(), WheelUpdateData().getY(), heading));
+    }
+    public void wheelResetData() {
+        backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public boolean autoTurn(Double degree, String direction) {
+        final double offset = HeadingUpdateData(direction);
+        while (true) {
+            if (HeadingUpdateData(direction) - offset > degree) {
+                break;
+            }
+        }
+        return(true);
     }
 
-    public Point CollectData() {
-        Point point = Filter(SparkUpdateData(), WheelUpdateData());
-        return(point);
+    public boolean autoForward(double inches, String XorY) {
+        final double offset;
+        if (XorY.equalsIgnoreCase("x")) {
+            offset = PointCollectData().getX();
+            while (true) {
+                if (PointCollectData().getX() - offset > inches) {
+                    return true;
+                }
+            }
+        } else if (XorY.equalsIgnoreCase("y")) {
+            offset = PointCollectData().getY();
+            while (true) {
+                if (PointCollectData().getY() - offset > inches) {
+                    return true;
+                }
+            }
+        } else { return false; }
+    }
+
+    public boolean autoMecanum(double x, double y) {
+        final Point offset = PointCollectData();
+        while (true) {
+            if (PointCollectData().getY() - offset.getY() > y &&
+                    PointCollectData().getX() - offset.getX() > x) return true;
+        }
+    }
+
+
+
+    public Point PointCollectData() {
+        return(Filter(SparkUpdateData(), WheelUpdateData()));
     }
 
     @SuppressLint("DefaultLocale")
     public String configureOtos(SparkFunOTOS myOtos) {
 
         myOtos.setLinearUnit(DistanceUnit.INCH);
-
         myOtos.setAngularUnit(AngleUnit.DEGREES);
 
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         myOtos.setOffset(offset);
-
-
+        myOtos.setLinearScalar(1/1.165);
 
         myOtos.calibrateImu();
-
         myOtos.resetTracking();
 
         SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);

@@ -8,19 +8,21 @@ public class IntakeNoodleAction {
 
     Intake intake;
 
-    DcMotor intakeMotor;
+    DcMotor intakeNoodleMotor;
 
     public IntakeNoodleAction(Intake intake) {
         this.intake = intake;
-        this.intakeMotor = intake.getNoodleMotor();
+        this.intakeNoodleMotor = intake.getNoodleMotor();
     }
 
 
     public void run() {
-        intakeMotor.setPower(1);
+        intakeNoodleMotor.setPower(1);
     }
-
+    public void reverse() {
+        intakeNoodleMotor.setPower(-1);
+    }
     public void stop() {
-        intakeMotor.setPower(0);
+        intakeNoodleMotor.setPower(0);
     }
 }
