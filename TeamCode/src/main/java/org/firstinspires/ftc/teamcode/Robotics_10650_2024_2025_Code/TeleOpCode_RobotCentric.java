@@ -292,8 +292,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
             //Bounds on the liftExtender motor
-            //FixMe: Correct the liftExtender motor so that the lift stays in the same place when
-            // there is no controller input
+            //Lift PIDF might be able to be tuned more to improve but it does reasonably well currently
             double pitchAngle = robot.liftPitch.getCurrentPosition()*(90)/2595;
             if (pitchAngle>=31.25){
                 maxLifEtxtension = 1300/(Math.sin(Math.toRadians(pitchAngle)));
