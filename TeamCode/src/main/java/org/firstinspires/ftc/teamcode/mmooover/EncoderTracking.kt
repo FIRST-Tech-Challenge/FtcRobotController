@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.mmooover
 
+import org.apache.commons.math3.stat.regression.SimpleRegression
 import org.firstinspires.ftc.teamcode.hardware.Encoder
 import kotlin.math.cos
 import kotlin.math.sin
@@ -16,6 +17,7 @@ class EncoderTracking @JvmOverloads constructor(
          * TODO: this is unused rn
          */
         const val WEIGHT_NEXT = .2
+        const val HIST_SIZE = 10
     }
 
     private fun tick2inch(ticks: Int): Double {
@@ -40,8 +42,8 @@ class EncoderTracking @JvmOverloads constructor(
     val centerEncoder: Encoder = encoderSource.getCenterEncoder()
     val rightEncoder: Encoder = encoderSource.getRightEncoder()
 
-    private val poseHistory: ArrayDeque<Pose> = ArrayDeque(4)
-    private val moments: ArrayDeque<Long> = ArrayDeque(4)
+    private val poseHistory: ArrayDeque<Pose> = ArrayDeque(HIST_SIZE)
+    private val moments: ArrayDeque<Double> = ArrayDeque(HIST_SIZE)
     private var lastTick = System.nanoTime()
     private var lastPose = Pose.ORIGIN
     private var deltaPose: Pose = Pose.ORIGIN
@@ -53,7 +55,7 @@ class EncoderTracking @JvmOverloads constructor(
         lastCenter = tick2inch(centerEncoder.getCurrentPosition())
         lastRight = tick2inch(rightEncoder.getCurrentPosition())
         poseHistory.addLast(currentPose)
-        moments.addLast(lastTick)
+        moments.addLast(lastTick / 1e9)
     }
 
     // Updates the pose
@@ -98,12 +100,12 @@ class EncoderTracking @JvmOverloads constructor(
         /*
         Push the new pose onto the queue
          */
-        if (poseHistory.size == 4) {
+        if (poseHistory.size == HIST_SIZE) {
             poseHistory.removeFirst()
             moments.removeFirst()
         }
         poseHistory.addLast(currentPose)
-        moments.addLast(now)
+        moments.addLast(now / 1e9)
         /*
         this relies on the fact that currentPose creates a new Pose instance
         holding x, y, and heading.
@@ -114,10 +116,6 @@ class EncoderTracking @JvmOverloads constructor(
 
     // Gets current pose
     fun getPose() = currentPose
-
-    fun estimateVelocity() {
-
-    }
 
     fun getMotionToTarget(target: Pose, robot: TriOdoProvider): Motion {
         val dh = wrapAngle(target.heading - lastPose.heading)
