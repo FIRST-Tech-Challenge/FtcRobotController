@@ -30,7 +30,7 @@ public class IntakeLinkageAction {
     }
 
     public void retract() {
-        moveIntakeSlide(0.6);
+        moveIntakeSlide(0.7);
         isRetracted = true;
     }
 
