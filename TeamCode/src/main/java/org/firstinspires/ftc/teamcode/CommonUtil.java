@@ -173,7 +173,7 @@ public class CommonUtil extends LinearOpMode {
         s3.setPosition(1); }
     public double PID_Turn (double targetAngle, double currentAngle, String minPower) {
         double sign = 1;
-        double power = (targetAngle - currentAngle) * 0.01; // was 0.05
+        double power = (targetAngle - currentAngle) * 0.0054; // was 0.006
         if (minPower.equalsIgnoreCase("on")&& (power != 0)) {
             sign = Math.signum(power);
             power = Math.max(Math.abs(power), 0.1);
@@ -185,23 +185,14 @@ public class CommonUtil extends LinearOpMode {
     public double PID_FB (double targetEC, double currentEC, double Mpower)
     {
         double power = (targetEC -currentEC)*0.003;
+        if (Mpower > 0.3){
+            Mpower = 0.3;
+        }
         if (power > Mpower) {
             power = Mpower;
-        }else if(power < -1*(Mpower)){
-            power = -1*(Mpower);
+        }else if(power < -1*(Mpower)) {
+            power = -1 * (Mpower);
         }
-        //if (power < 0.1)
-        //{
-        //    power = 0.1;
-        //}
-        //if (power < 0)
-        //{
-        //    power = 0;
-        //}
-        //else if (power < 0.1)
-        //{
-        //    power = 0.1;
-        //}
         return power;
     }
 
@@ -260,7 +251,11 @@ public class CommonUtil extends LinearOpMode {
             correction = 0;
             currEncoderCount = bl.getCurrentPosition();
             double power = PID_FB(encoderAbsCounts,Math.abs(currEncoderCount),Mpower);
-            //power=Mpower;
+            int moveTime = (int) ((10*Mpower)*((double)50 /3));
+            int movePause = (int) ((10*Mpower)*((double)10/3));
+            telemetry.addData("moveTime", moveTime);
+            telemetry.addData("movePause",movePause);
+            telemetry.update();
 
             bl.setPower(power-correction);
             fl.setPower(power-correction);
@@ -269,9 +264,9 @@ public class CommonUtil extends LinearOpMode {
             telemetry.addData("fw:power", power);
             telemetry.addData("fw:correction", correction);
             telemetry.update();
-            sleep(50);
+            sleep(moveTime);
             setMotorToZeroPower();
-            sleep(10);
+            sleep(movePause);
             // quick correct for angle if it is greater than 10 [Aarush]
             double absError_angle = Math.abs(currZAngle);
             if (absError_angle > 10)
