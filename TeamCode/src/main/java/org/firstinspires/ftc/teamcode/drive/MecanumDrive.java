@@ -71,7 +71,7 @@ public class MecanumDrive {
      */
     public void shift(double x, double y) {
         double power = Math.sqrt(x * x + y * y);
-        if (power < 0.001) {
+        if (power == 0) {
             return;
         }
         double yaw = Math.atan2(y, x) - Math.PI / 4;
@@ -84,7 +84,7 @@ public class MecanumDrive {
      * @param speed the speed to rotate clockwise
      */
     public void rotate(double speed) {
-        if (Math.abs(speed) < 0.01) {
+        if (speed == 0) {
             return;
         }
         this.addPowers(speed, speed, -speed, -speed);
