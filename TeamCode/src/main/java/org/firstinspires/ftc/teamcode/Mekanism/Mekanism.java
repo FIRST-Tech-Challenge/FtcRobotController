@@ -27,8 +27,6 @@ public class Mekanism {
   private final double limitSlide;
   private final double limitPivot;
 
-  private double pubLength = 0;
-
   public Mekanism(LinearOpMode opMode) {
     // Init slaw, claw, and pivot
     pivot = (DcMotorEx) opMode.hardwareMap.dcMotor.get("pivot");
@@ -90,14 +88,14 @@ public class Mekanism {
 
     // TODO: Tuning is very vibes based because this value is very wrong, fix it
     double encoderCountsPerInch = 85;
-    pubLength =
-        Math.min(
-            (29.5 * encoderCountsPerInch)
-                / Math.max(
-                    Math.cos(
-                        Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
-                    1e-6), // Prevent divide by 0
-            46 * encoderCountsPerInch); // Limit extension
+    // Prevent divide by 0
+    double pubLength = Math.min(
+        (29.5 * encoderCountsPerInch)
+            / Math.max(
+            Math.cos(
+                Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
+            1e-6), // Prevent divide by 0
+        46 * encoderCountsPerInch); // Limit extension
     if (slide.getCurrentPosition() > pubLength) {
       x = -.5;
     }
@@ -112,11 +110,7 @@ public class Mekanism {
       x = 0;
     }
 
-    // TODO: Ask Philip what the hell this does
-    if (x > 1) x = .5;
-    if (x < -1) x = -.5;
-    // The above makes this if statement impossible to trigger??? - Tada
-    if (slide.getCurrentPosition() > pubLength && x > 1) slide.setPower(-x * 2);
+    x *= .5;
     pivot.setPower(x);
   }
 
