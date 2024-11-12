@@ -177,14 +177,14 @@ public class MecanumTeleOp extends LinearOpMode {
     }
 
     double armTargetPosDeg = 0.0;
-    int liftMinClearanceTicks = 180;
+    int liftMinClearanceTicks = 350;
 
     private static int deg2arm(double degrees) {
-        return (int) (degrees / 360.0 * 537.7);
+        return (int) (degrees / 360.0 * spinTickPerRev);
     }
 
     private double getArmPosDeg() {
-        double rotations = hardware.arm.getCurrentPosition() / 537.7;
+        double rotations = hardware.arm.getCurrentPosition() / spinTickPerRev;
         // 0 = straight down
         return rotations * 360.0;
     }
@@ -200,12 +200,14 @@ public class MecanumTeleOp extends LinearOpMode {
         return true;
     }
 
+    static final double spinTickPerRev = 751.8;
+
     private void arm(Hardware hardware) {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
         // 537.7 ppr
         DcMotor arm = hardware.arm;
         double stick_pos = -gamepad2.right_stick_y;
-        double rotations = arm.getCurrentPosition() / 537.7;
+        double rotations = arm.getCurrentPosition() / spinTickPerRev;
         double degrees = rotations * 360.0; // 0 = straight down
         // Negative: towards front;
         // Positive: towards back.
