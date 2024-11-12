@@ -87,11 +87,10 @@ public class MecanumTeleOp extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            double maxSpeed = 1.0;
-            hardware.frontLeft.setPower(frontLeftPower * maxSpeed);
-            hardware.backLeft.setPower(backLeftPower * maxSpeed);
-            hardware.frontRight.setPower(frontRightPower * maxSpeed);
-            hardware.backRight.setPower(backRightPower * maxSpeed);
+            hardware.frontLeft.setPower(frontLeftPower / 2);
+            hardware.backLeft.setPower(backLeftPower / 2);
+            hardware.frontRight.setPower(frontRightPower / 2);
+            hardware.backRight.setPower(backRightPower / 2);
             /*if(gamepad2.dpad_up){
                 hardware.verticalLift.setPower(0.5);
 
