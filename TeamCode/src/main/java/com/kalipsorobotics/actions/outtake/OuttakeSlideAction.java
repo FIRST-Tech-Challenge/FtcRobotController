@@ -6,22 +6,32 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class OuttakeSlideAction {
 
     Outtake outtake;
-    DcMotor linearSlide1;
-    DcMotor linearSlide2;
+    DcMotor linearSlideMotor1;
+    DcMotor linearSlideMotor2;
 
     public OuttakeSlideAction(Outtake outtake) {
         this.outtake = outtake;
-        this.linearSlide1 = outtake.linearSlide1;
-        this.linearSlide2 = outtake.linearSlide2;
+        this.linearSlideMotor1 = outtake.linearSlideMotor1;
+        this.linearSlideMotor2 = outtake.linearSlideMotor2;
     }
 
 
     public void setPower(double power) {
-        linearSlide1.setPower(power);
-        linearSlide2.setPower(power);
+        linearSlideMotor1.setPower(power);
+        linearSlideMotor2.setPower(power);
     }
 
+    public void run() {
+        setPower(1);
+    }
 
+    public void stop() {
+        setPower(0);
+    }
+
+    public void idle() {
+        setPower(0.1);
+    }
 
     public void moveToPosition() {
 

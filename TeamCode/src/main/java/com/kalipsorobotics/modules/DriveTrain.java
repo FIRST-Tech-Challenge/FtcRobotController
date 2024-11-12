@@ -70,7 +70,6 @@ public class DriveTrain {
         setBLeftPower(power);
         setBRightPower(power);
     }
-
     public DcMotor getBackEncoder() {
         return backEncoder;
     }

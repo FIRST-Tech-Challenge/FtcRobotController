@@ -14,7 +14,7 @@ public class IntakePivotAction {
 
     public IntakePivotAction(Intake intake) {
         this.intake = intake;
-        intakePivotServo = intake.getPivotServo();
+        intakePivotServo = intake.getIntakePivotServo();
     }
 
     public void setPosition(double position) {

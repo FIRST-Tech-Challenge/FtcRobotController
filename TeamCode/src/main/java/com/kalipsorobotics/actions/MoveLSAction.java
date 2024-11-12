@@ -18,8 +18,8 @@ public class MoveLSAction extends Action {
 
     public MoveLSAction(double targetTicks, Outtake outtake) {
         this.outtake = outtake;
-        linearSlide = outtake.linearSlide1;
-        linearSlideTwo = outtake.linearSlide2;
+        linearSlide = outtake.linearSlideMotor1;
+        linearSlideTwo = outtake.linearSlideMotor2;
         this.dependentAction = new DoneStateAction();
         this.targetTicks = targetTicks;
     }
