@@ -29,8 +29,8 @@ public class SlideControl extends OpMode {
 
     @Override
     public void loop() {
-        if (this.gamepad2.x) {
-            if (this.gamepad2.a) {
+        if (this.gamepad2.guide) {
+            if (this.gamepad2.dpad_right) {
                 this.slideRotate.resetPosition();
             }
             if (this.gamepad2.b) {
@@ -39,19 +39,20 @@ public class SlideControl extends OpMode {
             if (this.gamepad2.dpad_up) {
                 this.slideRotate.left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 this.slideRotate.right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                this.slideRotate.left.setPower(-0.5);
-                this.slideRotate.right.setPower(-0.5);
+                this.slideRotate.left.setPower(-0.6);
+                this.slideRotate.right.setPower(-0.6);
             } else if (this.gamepad2.dpad_down) {
                 this.slideRotate.left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 this.slideRotate.right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                this.slideRotate.left.setPower(0.5);
-                this.slideRotate.right.setPower(0.5);
+                this.slideRotate.left.setPower(0.4);
+                this.slideRotate.right.setPower(0.4);
             } else {
-                this.slideRotate.left.setPower(0);
-                this.slideRotate.right.setPower(0);
+                final double power = this.gamepad2.left_stick_x * -0.8;
+                this.slideRotate.left.setPower(power);
+                this.slideRotate.right.setPower(power);
             }
-            if (this.gamepad2.right_stick_y != 0) {
-                double power = -this.gamepad2.right_stick_y * 0.2;
+            if (this.gamepad2.left_stick_y != 0) {
+                double power = -this.gamepad2.left_stick_y * 0.2;
                 this.slideLift.left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 this.slideLift.right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 this.slideLift.left.setPower(power);
@@ -59,13 +60,15 @@ public class SlideControl extends OpMode {
             }
         } else {
             if (this.gamepad2.dpad_up) {
-                this.slideRotate.move(-20);
+                this.slideRotate.move(-15);
             } else if (this.gamepad2.dpad_down) {
-                this.slideRotate.move(20);
+                this.slideRotate.move(15);
             } else if (this.gamepad2.dpad_left) {
                 this.slideRotate.setPosition(0);
+            } else {
+                this.slideRotate.move((int) (this.gamepad2.left_stick_x * 20));
             }
-            this.slideLift.move((int) (-this.gamepad2.right_stick_y * 50));
+            this.slideLift.move((int) (-this.gamepad2.left_stick_y * 50));
             this.slideRotate.update();
             this.slideLift.update();
         }
