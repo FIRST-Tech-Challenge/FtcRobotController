@@ -58,8 +58,10 @@ public class TestTeleOpp extends LinearOpMode {
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
         purePursuitAction.addPoint(0,0);
         //purePursuitAction.addPoint(400,0);
-        purePursuitAction.addPoint(0,-300);
+        purePursuitAction.addPoint(1000,0);
         //purePursuitAction.addPoint(400,-400);
+
+
 
         waitForStart();
 
@@ -72,7 +74,7 @@ public class TestTeleOpp extends LinearOpMode {
 //            action4.update();
 
             odometry.updatePosition();
-            Log.d("position", odometry.getCurrentPosition().toString());
+            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
             purePursuitAction.updateCheckDone();
             //driveTrain.setPower(0.2,-0.2,0.2,-0.2);
 

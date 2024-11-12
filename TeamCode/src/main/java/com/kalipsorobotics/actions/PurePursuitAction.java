@@ -43,9 +43,9 @@ public class PurePursuitAction extends Action {
 //        this.pidY = new PidNav(1. / 900, 0, 0);
 //        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
 
-        this.pidX = new PidNav(0.001, 0, 0);
-        this.pidY = new PidNav(0.001, 0, 0);
-        this.pidAngle = new PidNav(0.15, 0, 0);
+        this.pidX = new PidNav(1. / 300, 0, 0);
+        this.pidY = new PidNav(1. / 300, 0, 0);
+        this.pidAngle = new PidNav(3 / 3.14, 0, 0);
         //0.001, 0.001, 0.2 behavior: turns slow and does slow glitches out
         //0.001, 0.001, 0.3 behavior: turns and then does not move
         //0.001, 0.001, 0.4 behavior: turns and then does not move
@@ -114,7 +114,7 @@ public class PurePursuitAction extends Action {
         double bLeftPower = powerX + powerY + powerAngle;
         double bRightPower = powerX - powerY - powerAngle;
 
-        Log.d("purepursactions", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
+        Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
         double biggestPower = MathFunctions.maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
 //        opModeUtilities.getTelemetry().addData("biggest power", biggestPower);
@@ -126,7 +126,7 @@ public class PurePursuitAction extends Action {
         }
         //92.66611361922297, -235.81741858351225
 
-        Log.d("purespursaction", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
+        Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
 //        opModeUtilities.getTelemetry().addData("current pos", currentPos.toString());
