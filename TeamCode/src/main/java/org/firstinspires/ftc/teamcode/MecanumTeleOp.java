@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
     private Hardware hardware;
-
+    double Wristpos = 0.28;
     @Override
     public void runOpMode() {
         hardware = new Hardware(hardwareMap);
@@ -32,6 +33,7 @@ public class MecanumTeleOp extends LinearOpMode {
         armTargetPosDeg = 0.0;
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.2);
+        hardware.wrist.setPosition(0.28);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -91,16 +93,8 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backLeft.setPower(backLeftPower / 2);
             hardware.frontRight.setPower(frontRightPower / 2);
             hardware.backRight.setPower(backRightPower / 2);
-            /*if(gamepad2.dpad_up){
-                hardware.verticalLift.setPower(0.5);
-
-            }
-            else if(gamepad2.dpad_down){
-                hardware.verticalLift.setPower(-0.5);
-            }
-            else{
-                hardware.verticalLift.setPower(0.0);
-            }*/
+            wrist();
+            servoMoves();
             lift(hardware);
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
@@ -242,4 +236,44 @@ public class MecanumTeleOp extends LinearOpMode {
         arm.setPower(emerg ? 1.0 : 0.3);
         telemetry.addData("arm deg", degrees);
     }
+    public void twist() {
+        Servo servo = hardwareMap.get(Servo.class,"twist");
+        Hardware hardware = new Hardware(hardwareMap);
+        final double MAX_TWIST_POS = 1;     // Maximum rotational position
+        final double MIN_TWIST_POS = 0.0;     // Minimum rotational position
+        if(gamepad2.right_stick_x>=0.5 && gamepad2.right_stick_y>=-0.25 && gamepad2.right_stick_y<=0.25){
+            hardware.twist.setPosition(MAX_TWIST_POS);
+        } else if (gamepad2.right_stick_x<=-0.5 && gamepad2.right_stick_y>=-0.5 && gamepad2.right_stick_y<=0.5){
+            hardware.twist.setPosition(MIN_TWIST_POS);
+        }
+    }
+    public void wrist() {
+        Servo servo = hardwareMap.get(Servo.class,"wrist");
+      //  Hardware hardware = new Hardware(hardwareMap);
+      // final double MAX_WRIST_POS = 1;     // Maximum rotational position
+      //  final double MIN_WRIST_POS = 0.0;
+
+        if(gamepad2.left_stick_y>=0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
+            Wristpos += 0.01;
+            hardware.wrist.setPosition(Wristpos);
+        } else if (gamepad2.left_stick_y<=-0.5 && gamepad2.left_stick_x>=-0.5 && gamepad2.left_stick_x<=0.5){
+            Wristpos-= 0.01;
+            hardware.wrist.setPosition(Wristpos);
+        }
+
+        telemetry.addData("Wrist Position",hardware.wrist.getPosition());
+        telemetry.update();
+    }
+    public void servoMoves(){
+        Servo servo = hardwareMap.get(Servo.class,"claw");
+        final double open = 0.02;
+        final double close = 0.55;
+        if(gamepad2.left_bumper) {
+            servo.setPosition(open);
+        } else if (gamepad2.right_bumper) {
+            servo.setPosition(close);
+
+        }
+    }
+
 }
