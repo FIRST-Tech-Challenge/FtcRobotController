@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import android.view.ViewOutlineProvider;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -45,6 +46,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 
@@ -96,17 +98,9 @@ public class MecanumDriver extends OpMode {
 //        claw.setDirection(Servo.Direction.REVERSE);
 //        wrist = hardwareMap.get(Servo.class, "CLAWRIGHT");
 
-        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
+
+        SparkFunOTOS photoSensor = hardwareMap.get(SparkFunOTOS.class, "PHOTOSENSOR");
 
         viperSlide = new ViperSlide(
                 hardwareMap.get(DcMotorEx.class, "VIPERLEFT"),
@@ -118,7 +112,7 @@ public class MecanumDriver extends OpMode {
                 PIVOT_POSITION_OFFSET_COUNTS
         );
         intake = new Intake(hardwareMap);
-        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
+        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro, photoSensor);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -233,6 +227,11 @@ public class MecanumDriver extends OpMode {
 //            wrist.setPosition(Math.min(WRIST_MAX_POS, wrist.getPosition() + 0.03));
 //        }
 
+        SparkFunOTOS.Pose2D position = robotController.getPosition();
+
+        telemetry.addData("Position", position.x + ", " + position.y);
+        telemetry.addData("Rotation", position.h);
+        telemetry.addData("", "");
         telemetry.addData("Claw Left Position", intake.getLeftPosition());
         telemetry.addData("Claw Right Position", intake.getRightPosition());
 //        telemetry.addData("Claw Position", claw.getPosition());

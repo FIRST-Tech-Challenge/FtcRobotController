@@ -10,6 +10,7 @@
 
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -19,6 +20,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 public class MecanumRobotController {
@@ -40,6 +42,7 @@ public class MecanumRobotController {
     private final DcMotorEx backRight;
     private final DcMotorEx frontLeft;
     private final DcMotorEx frontRight;
+    private final SparkFunOTOS photoSensor;
     private final IMU gyro;
     private final LinearOpMode robot;
     private final ElapsedTime runtime;
@@ -64,11 +67,36 @@ public class MecanumRobotController {
     // servo, or sensor is added, put that in here so the class can access it.
     public MecanumRobotController(DcMotorEx backLeft, DcMotorEx backRight,
                                   DcMotorEx frontLeft, DcMotorEx frontRight,
-                                  IMU gyro, LinearOpMode robot) {
+                                  IMU gyro, SparkFunOTOS photoSensor, LinearOpMode robot) {
+
+        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         this.backLeft = backLeft;
         this.backRight = backRight;
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
+
+        this.photoSensor = photoSensor;
+
+        this.photoSensor.setLinearUnit(DistanceUnit.INCH);
+        this.photoSensor.setAngularUnit(AngleUnit.DEGREES);
+
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.142, 0, 180);
+        this.photoSensor.setOffset(offset);
+
+        this.photoSensor.setLinearScalar(1.0);
+        this.photoSensor.setAngularScalar(1.0);
+
+        this.photoSensor.calibrateImu();
+        this.photoSensor.resetTracking();
 
         this.gyro = gyro;
         IMU.Parameters params = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
@@ -92,8 +120,8 @@ public class MecanumRobotController {
     // You cannot use distanceDrive or turnTo without a LinearOpMode.
     public MecanumRobotController(DcMotorEx backLeft, DcMotorEx backRight,
                                   DcMotorEx frontLeft, DcMotorEx frontRight,
-                                  IMU gyro) {
-        this(backLeft, backRight, frontLeft, frontRight, gyro, null);
+                                  IMU gyro, SparkFunOTOS photoSensor) {
+        this(backLeft, backRight, frontLeft, frontRight, gyro, photoSensor, null);
     }
 
     // TODO: Tune PID values + other constants like TURN_DRIFT_TIME.
@@ -177,6 +205,10 @@ public class MecanumRobotController {
     //      - double headingCorrectionPower: The speed of heading correction.
     private void move(double forward, double strafe, double turn, double headingCorrectionPower) {
         move(forward, strafe, turn, headingCorrectionPower, DEFAULT_SEND_TELEMETRY);
+    }
+    
+    public SparkFunOTOS.Pose2D getPosition() {
+        return photoSensor.getPosition();
     }
 
     // TODO: Find exact values for distance and implement it in COUNTS_PER_INCH to make this method precise.

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -46,18 +47,9 @@ public class AutoBlueBasket extends LinearOpMode {
 //        claw.setDirection(Servo.Direction.REVERSE);
 //        wrist = hardwareMap.get(Servo.class, "CLAWRIGHT");
 
-        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         IMU gyro = hardwareMap.get(IMU.class, "imu2");
-        gyro.resetYaw();
+
+        SparkFunOTOS photoSensor = hardwareMap.get(SparkFunOTOS.class, "PHOTOSENSOR");
 
         viperSlide = new ViperSlide(
                 hardwareMap.get(DcMotorEx.class, "VIPERLEFT"),
@@ -68,7 +60,7 @@ public class AutoBlueBasket extends LinearOpMode {
                 hardwareMap.get(DcMotorEx.class, "PIVOTRIGHT")
         );
         intake = new Intake(hardwareMap);
-        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro, this);
+        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro, photoSensor,this);
 
         telemetry.addData("Status", "Initialized");
     }
