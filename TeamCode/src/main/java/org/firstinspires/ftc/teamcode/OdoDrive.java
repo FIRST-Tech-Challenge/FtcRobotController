@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Encoder;
+
+@Config //Dash
 @TeleOp(name="OdoDrive")
 public class OdoDrive extends OpMode {
     private DcMotor frontLeft;
@@ -37,10 +41,10 @@ public class OdoDrive extends OpMode {
     public void init(){
 
         //Drive Motor Setup - Used the name from FeverDream
-        frontLeft = hardwareMap.dcMotor.get("FrontLeftDrive");
-        backLeft = hardwareMap.dcMotor.get("BackLeftDrive");
-        frontRight = hardwareMap.dcMotor.get("FrontRightDrive");
-        backRight = hardwareMap.dcMotor.get("BackRightDrive");
+        frontLeft = hardwareMap.dcMotor.get("FrontLeft");
+        backLeft = hardwareMap.dcMotor.get("BackLeft");
+        frontRight = hardwareMap.dcMotor.get("FrontRight");
+        backRight = hardwareMap.dcMotor.get("BackRight");
 
         //frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -53,9 +57,9 @@ public class OdoDrive extends OpMode {
         backRight.setPower(0);
 
         //Dead Wheel Setup
-        leftEncoder = hardwareMap.get(DcMotor.class, "IntakePivot"); //Exp: 2
-        rightEncoder = hardwareMap.get(DcMotor.class, "IntakeMotor"); //Exp: 3
-        auxEncoder = hardwareMap.get(DcMotor.class, "LeftSlide"); //Hub: 2
+        leftEncoder = hardwareMap.get(DcMotor.class, "BackLeft"); //Exp: 2
+        rightEncoder = hardwareMap.get(DcMotor.class, "FrontRight"); //Exp: 3
+        auxEncoder = hardwareMap.get(DcMotor.class, "BackRight"); //Hub: 2
 
         //Setup and start Odometry Thread
         /*Odometry = new Odometry(
@@ -128,7 +132,7 @@ public class OdoDrive extends OpMode {
         //Loop heading from 0-360 deg
         robotHeading = Math.abs(robotHeading % 360);
 
-        double y = -gamepad1.left_stick_y;
+        double y = -gamepad1.left_stick_y;//branch
         double x = gamepad1.left_stick_x;
         double h = -gamepad1.right_stick_x;
 
@@ -149,7 +153,7 @@ public class OdoDrive extends OpMode {
 
         telemetry.addData("X Pos:", xCoord);
         telemetry.addData("Y Pos", yCoord);
-        telemetry.addData("Heading", robotHeading);
+        telemetry.addData("Heading", robotHeading); //Long live Bird Nest
         telemetry.addData("Enc Left ", leftEncoder.getCurrentPosition());
         telemetry.addData("Enc Right", rightEncoder.getCurrentPosition());
         telemetry.addData("Enc Aux  ", auxEncoder.getCurrentPosition());

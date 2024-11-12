@@ -55,7 +55,7 @@ public class Odometry implements Runnable{
 
     public double xCoord(){
         return xCoord;
-    }
+    } //null exp
 
     public double yCoord(){
         return yCoord;

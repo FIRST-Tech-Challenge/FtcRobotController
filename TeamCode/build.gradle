@@ -15,6 +15,12 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
@@ -25,5 +31,11 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
-    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.13"
+    implementation "com.acmerobotics.roadrunner:core:1.0.0"
+    implementation "com.acmerobotics.roadrunner:actions:1.0.0"
+    implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
+    implementation 'org.ftclib.ftclib:core:2.1.1'
+    //implementation 'com.fasterxml/jackson.core:jacson-databind:2.12.7'
+    //implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
 }

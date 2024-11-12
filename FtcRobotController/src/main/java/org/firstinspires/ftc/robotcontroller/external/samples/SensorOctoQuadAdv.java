@@ -77,7 +77,7 @@ import java.util.List;
  * Note: If you prefer, you can move the two support classes from this file, and place them in their own files.
  *       But leaving them in place is simpler for this example.
  *
- * See the sensor's product page: https://www.tindie.com/products/digitalchickenlabs/octoquad-8ch-quadrature-pulse-width-decoder/
+ * See the sensor's product page: https://www.tindie.com/products/35114/
  */
 @TeleOp(name="OctoQuad Advanced", group="OctoQuad")
 @Disabled
@@ -93,7 +93,7 @@ public class SensorOctoQuadAdv extends LinearOpMode {
 
         // Display the OctoQuad firmware revision
         telemetry.addLine("OctoQuad Firmware v" + octoquad.getFirmwareVersion());
-        telemetry.addLine("\nPress Play to read encoder values");
+        telemetry.addLine("\nPress START to read encoder values");
         telemetry.update();
 
         waitForStart();

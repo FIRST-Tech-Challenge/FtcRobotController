@@ -430,6 +430,7 @@ public class FtcRobotControllerActivity extends Activity
     super.onStart();
     RobotLog.vv(TAG, "onStart()");
 
+
     entireScreenLayout.setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {

@@ -100,7 +100,7 @@ public class ConceptSoundsASJava extends LinearOpMode {
         telemetry.addData("gold resource",   goldFound ?   "Found" : "NOT found\n Add gold.wav to /src/main/res/raw" );
         telemetry.addData("silver resource", silverFound ? "Found" : "Not found\n Add silver.wav to /src/main/res/raw" );
 
-        // Wait for the game to start (driver presses PLAY)
+        // Wait for the game to start (driver presses START)
         telemetry.addData(">", "Press Start to continue");
         telemetry.update();
         waitForStart();
