@@ -179,7 +179,7 @@ class Player(
         val linDist = currentPose.linearDistanceTo(targetPose)
         val angDist = currentPose.subtractAngle(targetPose)
         val targets = if (isNextBlocking()) options.blocking else options.nonBlocking
-        encoders.lastPose
+
     }
 
     fun checkAwait(awaitCommand: AwaitCommand): Boolean {

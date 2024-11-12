@@ -41,6 +41,7 @@ class EncoderTracking @JvmOverloads constructor(
     val rightEncoder: Encoder = encoderSource.getRightEncoder()
 
     private val poseHistory: ArrayDeque<Pose> = ArrayDeque(4)
+    private val moments: ArrayDeque<Long> = ArrayDeque(4)
     private var lastTick = System.nanoTime()
     private var lastPose = Pose.ORIGIN
     private var deltaPose: Pose = Pose.ORIGIN
@@ -52,6 +53,7 @@ class EncoderTracking @JvmOverloads constructor(
         lastCenter = tick2inch(centerEncoder.getCurrentPosition())
         lastRight = tick2inch(rightEncoder.getCurrentPosition())
         poseHistory.addLast(currentPose)
+        moments.addLast(lastTick)
     }
 
     // Updates the pose
@@ -96,8 +98,12 @@ class EncoderTracking @JvmOverloads constructor(
         /*
         Push the new pose onto the queue
          */
-        if (poseHistory.size == 4) poseHistory.removeFirst()
+        if (poseHistory.size == 4) {
+            poseHistory.removeFirst()
+            moments.removeFirst()
+        }
         poseHistory.addLast(currentPose)
+        moments.addLast(now)
         /*
         this relies on the fact that currentPose creates a new Pose instance
         holding x, y, and heading.
