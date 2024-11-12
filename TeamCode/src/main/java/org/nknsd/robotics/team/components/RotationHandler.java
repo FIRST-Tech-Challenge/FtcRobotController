@@ -16,27 +16,22 @@ import java.util.concurrent.TimeUnit;
 public class RotationHandler implements NKNComponent {
 
     public static final int MAX_INDEX_OF_ROTATION_POSITIONS = 5;
-    final double threshold = 0.05;
-    final double P_CONSTANT = 0.38;
-    final double EXTENDED_P_CONSTANT = 0.5;
-    final double I_CONSTANT = 0.005;
-    final double EXTENDED_I_CONSTANT = 0.009;
-    final double D_CONSTANT = 0;
-    final double EXTENDED_D_CONSTANT = 0;
+    final double threshold = 0.03;
 
     final double errorCap = 10;
     final boolean enableErrorClear = true;
     private final String motorName = "motorArmRotate";
     public RotationPositions targetRotationPosition = RotationPositions.RESTING;
     PotentiometerHandler potHandler;
+    private boolean isErrorPositive;
     double diff;
     long targetTime = 0;
     double current;
     double resError;
     private DcMotor motor;
     private ExtensionHandler extensionHandler;
-    private PIDModel normalPIDModel= new PIDModel(0.38,0.005,0.5) ;
-    private PIDModel extendedPIDModel = new PIDModel(0.5,0.005,1);
+    final private PIDModel normalPIDModel= new PIDModel(0.43,0.005,15) ;
+    final private PIDModel extendedPIDModel = new PIDModel(0.6,0.007,30);
 
     public RotationHandler() {}
 
@@ -85,8 +80,6 @@ public class RotationHandler implements NKNComponent {
             double armPower = controlLoop(current, runtime);
 
             motor.setPower(armPower);
-
-            targetTime = currentTime + 1;
         }
     }
 
@@ -117,7 +110,15 @@ public class RotationHandler implements NKNComponent {
 
     private double controlLoop(double current, ElapsedTime runtime) {
         diff = (targetRotationPosition.target - current);
-        resError += diff;
+        if ((isErrorPositive && diff < 0) || (!isErrorPositive && diff > 0)){
+            normalPIDModel.resetError();
+            extendedPIDModel.resetError();
+        }
+        if (diff > 0){
+            isErrorPositive = true;
+        }else{
+            isErrorPositive = false;
+        }
         //calculates PID values
         if (Math.abs(diff) <= threshold) {
             return 0;
