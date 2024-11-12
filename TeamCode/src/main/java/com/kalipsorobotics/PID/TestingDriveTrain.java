@@ -1,6 +1,7 @@
 package com.kalipsorobotics.PID;
 
 import android.annotation.SuppressLint;
+import android.os.SystemClock;
 
 import com.kalipsorobotics.localization.OdometryFuse;
 import com.kalipsorobotics.math.Point;
@@ -16,9 +17,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class TestingDriveTrain {
     private final DcMotor fLeft, fRight, bLeft, bRight;
     public final SparkFunOTOS otos;
-    private final PIDController xController;
-    private final PIDController yController;
-    private final PIDController headingController;
+    public final PIDController xController;
+    public final PIDController yController;
+    public final PIDController headingController;
     public final OdometryFuse odometryFuse;
 
 
@@ -44,9 +45,9 @@ public class TestingDriveTrain {
         odometryFuse = new OdometryFuse(otos, fRight, bRight);
         odometryFuse.configureOtos(otos);
 
-        xController = new PIDController(0.075, 0.015, 0.01);  // placeholder values
-        yController = new PIDController(0.05, 0.0065, 0.012);
-        headingController = new PIDController(0, 0, 0);
+        xController = new PIDController(0.075, 0.015, 0.01, "xController");  // placeholder values
+        yController = new PIDController(0.05, 0.0065, 0.012, "yController");
+        headingController = new PIDController(0, 0, 0, "hController");
     }
 
     public void setPowers(double fLeftP, double fRightP, double bLeftP, double bRightP) {
@@ -62,20 +63,24 @@ public class TestingDriveTrain {
 
     @SuppressLint("DefaultLocale")
     public void move(double dx, double dy, double dh, Telemetry telemetry) {
+        double startingTime = SystemClock.elapsedRealtimeNanos();
         Point pos = odometryFuse.PointCollectData();  // current
         double curX = pos.getX();
         double curY = pos.getY();
         double curH = otos.getPosition().h;
 
         Pose2D target = new Pose2D(curX + dx, curY + dy, curH + dh);
+        System.out.println(xController);
+        System.out.println(yController);
+        System.out.println(headingController);
 
-        while (Math.abs(target.x - curX) > 0.2 ||
-                Math.abs(target.y - curY) > 0.2 ||
-                Math.abs(target.h - curH) > 5
+        while (
+                (Math.abs(target.x - curX) > 0.2 || Math.abs(target.y - curY) > 0.2 || Math.abs(target.h - curH) > 5)
+                        && ((SystemClock.elapsedRealtimeNanos() - startingTime) / 1e9) < 5
         ) {  // I think this while loop is causing an exit error
             pos = odometryFuse.PointCollectData();
-            curX = pos.getX();
-            curY = pos.getY();
+            curX = -pos.getX();  // odometryfuse returns negative
+            curY = -pos.getY();
             curH = otos.getPosition().h;
 
             double x = Range.clip(xController.calculate(curX, target.x), -1., 1.);
@@ -87,10 +92,11 @@ public class TestingDriveTrain {
             telemetry.addLine(String.format("x | currently at %f, targeting %f, power %f\n", curX, target.x, x));
             telemetry.addLine(String.format("y | currently at %f, targeting %f, power %f\n", curY, target.y, y));
             telemetry.addLine(String.format("h | currently at %f, targeting %f, power %f\n", curH, target.h, h));
+            telemetry.update();
 
             System.out.printf("x | currently at %f, targeting %f, power %f\n", curX, target.x, x);
             System.out.printf("y | currently at %f, targeting %f, power %f\n", curY, target.y, y);
-//            System.out.printf("h | currently at %f, targeting %f, power %f\n", curH, target.h, h);
+            System.out.printf("h | currently at %f, targeting %f, power %f\n", curH, target.h, h);
         }
         setPowers(0, 0, 0, 0);
     }

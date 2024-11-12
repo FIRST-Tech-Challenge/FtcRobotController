@@ -54,6 +54,5 @@ public class Intake {
     public Servo getLinkageServo2() {
         return linkageServo2;
     }
-
 }
 
