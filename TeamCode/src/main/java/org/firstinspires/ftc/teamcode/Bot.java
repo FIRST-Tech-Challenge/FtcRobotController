@@ -629,6 +629,12 @@ public class Bot {
         this.setArmPos(0);
     }
 
+    public void autoIntake(){
+        this.setArmPos(-230);
+        this.setExtendPos(8.39);
+        this.setIntakePosition(1);
+    }
+
     /**
      * Used for bypass on extend if encoder not zeroed correctly
      * @param power power to motor

@@ -30,6 +30,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *      Y Button - Raise Arm
  *      A Button - Lower Arm
  *      X Button - reset encoder for arms
+ *      B Button - Angled Intake
+ *      Down Pad - Extend Override IN
+ *
  *
  *
  *  NOTE: Low lift must be completed before high lift is engaged. This is due to rules and the sequencing of getting to
@@ -95,7 +98,7 @@ public class Teleop extends LinearOpMode {
             }
             // ground intake control
             if(groundIntakeControl){
-                bot.autoIntake(2.0);
+                bot.autoIntake();
             }
 
             // === DRIVE ===
