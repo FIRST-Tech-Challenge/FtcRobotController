@@ -18,16 +18,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
-    @Override
+    private Hardware hardware;
 
+    @Override
     public void runOpMode() {
-        double topspeed = 1.0;
-        Hardware hardware = new Hardware(hardwareMap);
+        hardware = new Hardware(hardwareMap);
         hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.arm.setTargetPosition(0);
+        armTargetPosDeg = 0.0;
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(0.2);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -50,10 +54,14 @@ public class MecanumTeleOp extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
+        double yaw_offset = 0.0;
         while (opModeIsActive()) {
 
             Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-            double botheading = angles.firstAngle;
+            if (gamepad1.back) {
+                yaw_offset = angles.firstAngle;
+            }
+            double botheading = angles.firstAngle - yaw_offset;
             telemetry.addData("Heading", formatAngle(angles.angleUnit, botheading));
 //                    .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
 //                    .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
@@ -79,10 +87,10 @@ public class MecanumTeleOp extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            hardware.frontLeft.setPower(frontLeftPower * topspeed);
-            hardware.backLeft.setPower(backLeftPower * topspeed);
-            hardware.frontRight.setPower(frontRightPower * topspeed);
-            hardware.backRight.setPower(backRightPower * topspeed);
+            hardware.frontLeft.setPower(frontLeftPower / 2);
+            hardware.backLeft.setPower(backLeftPower / 2);
+            hardware.frontRight.setPower(frontRightPower / 2);
+            hardware.backRight.setPower(backRightPower / 2);
             /*if(gamepad2.dpad_up){
                 hardware.verticalLift.setPower(0.5);
 
@@ -94,8 +102,9 @@ public class MecanumTeleOp extends LinearOpMode {
                 hardware.verticalLift.setPower(0.0);
             }*/
             lift(hardware);
+            arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
-            telemetry.addData("Vertical position",verticalPosition);
+            telemetry.addData("Vertical position", verticalPosition);
             telemetry.addData("fl power", frontLeftPower);
             telemetry.addData("fr power", frontRightPower);
             telemetry.addData("bl power", backLeftPower);
@@ -117,11 +126,12 @@ public class MecanumTeleOp extends LinearOpMode {
     /////////////////////////////////////////////
 
     int maxVerticalLiftTicks = 2300;
-    int minVerticalLiftTicks= 0;
+    int minVerticalLiftTicks = 0;
     int highChamberTicks = 790;
     int highBasketTicks = 2180;
+
     // lifts the vertical slides to a target position in ticks
-    private void targetLift(Hardware hardware , int targetPosition){
+    private void targetLift(Hardware hardware, int targetPosition) {
 
         hardware.verticalSlide.setTargetPosition(targetPosition);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -129,19 +139,19 @@ public class MecanumTeleOp extends LinearOpMode {
         ElapsedTime Timer = new ElapsedTime();
         double timeoutSeconds = 3.0;
         int allowedErrorTicks = 5;
-        while (Timer.time() < timeoutSeconds){
+        while (Timer.time() < timeoutSeconds) {
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
-            if (Math.abs (verticalPosition-targetPosition) < allowedErrorTicks){
+            if (Math.abs(verticalPosition - targetPosition) < allowedErrorTicks) {
                 hardware.verticalSlide.setPower(0);
                 break;
             }
+            arm(hardware);
         }
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
-
-    private void lift(Hardware hardware ) {
+    private void lift(Hardware hardware) {
 
         //Hardware hardware = new Hardware(hardwareMap);
         int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
@@ -156,7 +166,6 @@ public class MecanumTeleOp extends LinearOpMode {
 
         if (gamepad2.b) {
             targetLift(hardware, highChamberTicks);
-
         }
 
         if (gamepad2.y) {
@@ -165,5 +174,70 @@ public class MecanumTeleOp extends LinearOpMode {
         if (gamepad2.a) {
             targetLift(hardware, 0);
         }
+    }
+
+    double armTargetPosDeg = 0.0;
+    int liftMinClearanceTicks = 180;
+
+    private static int deg2arm(double degrees) {
+        return (int) (degrees / 360.0 * 537.7);
+    }
+
+    private double getArmPosDeg() {
+        double rotations = hardware.arm.getCurrentPosition() / 537.7;
+        // 0 = straight down
+        return rotations * 360.0;
+    }
+
+    private boolean checkedArmGoto(double degrees) {
+        if (hardware.encoderVerticalSlide.getCurrentPosition() < liftMinClearanceTicks) {
+            double current = getArmPosDeg();
+            if (degrees > 5 && degrees < 35) return false;
+            if (current < 5 && degrees >= 35) return false;
+            if (current > 35 && degrees < 5) return false;
+        }
+        armTargetPosDeg = degrees;
+        return true;
+    }
+
+    private void arm(Hardware hardware) {
+        // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
+        // 537.7 ppr
+        DcMotor arm = hardware.arm;
+        double stick_pos = -gamepad2.right_stick_y;
+        double rotations = arm.getCurrentPosition() / 537.7;
+        double degrees = rotations * 360.0; // 0 = straight down
+        // Negative: towards front;
+        // Positive: towards back.
+        // Exclusion zone 0 to -25deg whe lift < 6in.
+        boolean emerg = false;
+        if (hardware.encoderVerticalSlide.getCurrentPosition() <= liftMinClearanceTicks) {
+            // get outta there
+            if (stick_pos > 0.7 && (armTargetPosDeg <= 5 || (armTargetPosDeg >= 35 && armTargetPosDeg <= 110))) {
+                armTargetPosDeg += 1;
+            }
+            if (stick_pos < -0.7 && (armTargetPosDeg >= 35 || (armTargetPosDeg >= -110 && armTargetPosDeg <= 5))) {
+                armTargetPosDeg -= 1;
+            }
+
+            if (armTargetPosDeg > 5 && armTargetPosDeg < 12.5) {
+                emerg = true;
+                armTargetPosDeg = 5;
+            } else if (armTargetPosDeg >= 12.5 && armTargetPosDeg < 35) {
+                emerg = true;
+                armTargetPosDeg = 35;
+            }
+        } else {
+            // Full* clearance
+            if (stick_pos > 0.7 && armTargetPosDeg <= 110) {
+                armTargetPosDeg += 1;
+            }
+            if (stick_pos < -0.7 && armTargetPosDeg >= -110) {
+                armTargetPosDeg -= 1;
+            }
+        }
+        arm.setTargetPosition(deg2arm(armTargetPosDeg));
+        arm.setPower(emerg ? 1.0 : 0.3);
+        telemetry.addData("arm deg", degrees);
     }
 }

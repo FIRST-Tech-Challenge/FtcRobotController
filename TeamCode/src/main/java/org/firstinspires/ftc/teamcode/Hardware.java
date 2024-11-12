@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareName;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class Hardware extends HardwareMapper {
@@ -41,6 +42,12 @@ public class Hardware extends HardwareMapper {
     @HardwareName("verticalSlides")
     @AutoClearEncoder
     public DcMotor encoderVerticalSlide;
+
+    @HardwareName("arm")
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
+    @AutoClearEncoder
+    public DcMotor arm;
+
     /*
         @HardwareName("frontLeft")
         @AutoClearEncoder
@@ -57,6 +64,14 @@ public class Hardware extends HardwareMapper {
     @HardwareName("gyro")
     public NavxMicroNavigationSensor gyro;
 
+    @HardwareName("claw")
+    public Servo claw;
+
+    @HardwareName("twist")
+    public Servo twist;
+
+    @HardwareName("wrist")
+    public Servo wrist;
 
     public Hardware(HardwareMap hwMap) {
         super(hwMap);
