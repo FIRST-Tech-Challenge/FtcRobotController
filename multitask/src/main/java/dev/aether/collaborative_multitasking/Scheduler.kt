@@ -2,6 +2,7 @@ package dev.aether.collaborative_multitasking
 
 abstract class Scheduler {
     abstract fun task(configure: Task.() -> Unit): Task
+    abstract fun task(t: ITask): ITask
 
     open fun isResourceInUse(resource: SharedResource): Boolean = false
     abstract fun tick()

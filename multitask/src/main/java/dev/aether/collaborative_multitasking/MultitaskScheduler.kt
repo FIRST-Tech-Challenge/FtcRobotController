@@ -256,6 +256,12 @@ class MultitaskScheduler
         return task
     }
 
+    override fun task(t: ITask): ITask {
+        t.name = getCaller()
+        t.register()
+        return t
+    }
+
     override fun register(task: ITask): Int {
         val id = nextId++
         tasks[id] = task

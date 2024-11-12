@@ -1,5 +1,7 @@
 package dev.aether.collaborative_multitasking
 
+import dev.aether.collaborative_multitasking.ITask.State
+
 interface ITask {
     enum class State(val order: Int) {
         NotStarted(0),
@@ -13,13 +15,14 @@ interface ITask {
     val scheduler: Scheduler
     val state: State
     val myId: Int?
-    val name: String
+    var name: String
     val daemon: Boolean
     val isStartRequested: Boolean
     fun onRequest() = isStartRequested
 
     // Lifecycle
     fun transition(newState: State)
+    fun register()
 
     fun invokeCanStart(): Boolean
     fun invokeOnStart()
@@ -34,6 +37,7 @@ interface ITask {
     fun requestStop(cancel: Boolean) {
         scheduler.filteredStop({ it == this }, cancel)
     }
+
     fun requestStop() = requestStop(true)
 
     fun then(configure: Task.() -> Unit): Task {
@@ -45,8 +49,9 @@ interface ITask {
         return task
     }
 
-    fun then(task: Task): Task {
+    fun then(task: ITask): ITask {
         task waitsFor this
+        task.register()
         return task
     }
 
@@ -56,7 +61,7 @@ interface ITask {
     }
 }
 
-abstract class TaskWithWaitFor(): ITask {
+abstract class TaskWithWaitFor() : ITask {
 
     private var waitFor: MutableSet<ITask> = mutableSetOf()
 
@@ -67,8 +72,54 @@ abstract class TaskWithWaitFor(): ITask {
     }
 
     override fun invokeCanStart(): Boolean {
-        if (waitFor.any { it.state == ITask.State.Cancelled }) requestStop(true)
-        if (waitFor.any { it.state != ITask.State.Finished }) return false
+        if (waitFor.any { it.state == State.Cancelled }) requestStop(true)
+        if (waitFor.any { it.state != State.Finished }) return false
         return true
     }
+}
+
+abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithWaitFor(), ITask {
+    final override var state = State.NotStarted
+    final override var myId: Int? = null
+    override var name: String = "unnamed task"
+
+    var startedAt = 0
+        private set
+    override var isStartRequested = false
+
+    override fun transition(newState: State) {
+        println("$this: transition: ${state.name} -> ${newState.name}")
+        if (state.order > newState.order) {
+            throw IllegalStateException("cannot move from ${state.name} to ${newState.name}")
+        }
+        if (state == newState) return
+        when (newState) {
+            State.Starting -> startedAt = scheduler.getTicks()
+            State.Finishing -> println("$this: finishing at ${scheduler.getTicks()} (run for ${scheduler.getTicks() - (startedAt ?: 0)} ticks)")
+            else -> {}
+        }
+        state = newState
+    }
+
+    override fun register() {
+        myId = scheduler.register(this)
+    }
+
+    override fun requestStart() {
+        isStartRequested = true
+    }
+
+    override fun requirements(): Set<SharedResource> = setOf()
+
+    override fun invokeOnStart() {}
+
+    override fun invokeOnTick() {}
+
+    override fun invokeIsCompleted() = false
+
+    override fun invokeOnFinish() {}
+
+    override fun invokeCanStart() = super.invokeCanStart()
+
+    override val daemon: Boolean = false
 }

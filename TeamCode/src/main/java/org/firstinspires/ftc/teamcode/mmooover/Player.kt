@@ -6,6 +6,7 @@ import dev.aether.collaborative_multitasking.ITask
 import dev.aether.collaborative_multitasking.ITask.State
 import dev.aether.collaborative_multitasking.Scheduler
 import dev.aether.collaborative_multitasking.SharedResource
+import dev.aether.collaborative_multitasking.TaskTemplate
 import dev.aether.collaborative_multitasking.TaskWithWaitFor
 import org.firstinspires.ftc.teamcode.Hardware
 import org.firstinspires.ftc.teamcode.mmooover.kinematics.AwaitCommand
@@ -28,11 +29,11 @@ abstract class Configurable<T : Configurable<T>> {
 
 class Player(
     filepath: File,
-    override val scheduler: Scheduler,
+    scheduler: Scheduler,
     val encoders: EncoderTracking,
     val eventHandlers: Map<String, () -> ITask>,
     val options: PlayerConfiguration
-) : TaskWithWaitFor() {
+) : TaskTemplate(scheduler) {
 
     constructor(
         filepath: File,
@@ -86,28 +87,11 @@ class Player(
     val commands: List<BytecodeUnit>
 
     // Task-y things
-    override var state = State.NotStarted
-    override var myId: Int? = null
-    override val name = "[Player of ${filepath.name}]"
+    override var name = "[Player of ${filepath.name}]"
+        set(_) { /* reject */ }
     override val daemon = false
 
-    var startedAt: Int? = null
-        private set
     var done = false
-
-    override fun transition(newState: State) {
-        println("$this: transition: ${state.name} -> ${newState.name}")
-        if (state.order > newState.order) {
-            throw IllegalStateException("cannot move from ${state.name} to ${newState.name}")
-        }
-        if (state == newState) return
-        when (newState) {
-            State.Starting -> startedAt = scheduler.getTicks()
-            State.Finishing -> println("$this: finishing at ${scheduler.getTicks()} (run for ${scheduler.getTicks() - (startedAt ?: 0)} ticks)")
-            else -> {}
-        }
-        state = newState
-    }
 
     override fun invokeOnStart() {
         clockTimer.clear()

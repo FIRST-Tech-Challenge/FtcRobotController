@@ -184,7 +184,7 @@ class Task(
         return requirements.toSet()
     }
 
-    internal fun register() {
+    override fun register() {
         myId = scheduler.register(this)
     }
 
