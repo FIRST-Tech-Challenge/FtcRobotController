@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Slides;
 import org.firstinspires.ftc.teamcode.Hardware.Wrist;
 import org.firstinspires.ftc.teamcode.RoboActions;
 import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
-import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
 import com.qualcomm.hardware.lynx.LynxModule;
 import java.util.List;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
@@ -40,7 +39,7 @@ public class OneDriverLynx extends LinearOpMode {
     GlobalStateMachine globalStateMachine = GlobalStateMachine.DEFAULT;
     public List<LynxModule> modules;
     public LynxModule CONTROL_HUB;
-    RoboActions actions;
+    RoboActions robot;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -48,18 +47,12 @@ public class OneDriverLynx extends LinearOpMode {
         double slideInches = 0;
         ElapsedTime timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Drivetrain drive = new Drivetrain(hardwareMap, startPosition);
-        Slides slides = new Slides(hardwareMap, drive.getSlidesMotor());
-        Arm arm = new Arm(hardwareMap, drive.getArmMotor());
-        Claw claw = new Claw(hardwareMap);
-        Wrist wrist = new Wrist(hardwareMap);
-        Hang hang = new Hang(hardwareMap);
         stickyGamepad gp = new stickyGamepad(gamepad1);
         waitForStart();
         double frequency = 0;
         double loopTime = 0;
         modules = hardwareMap.getAll(LynxModule.class);
-        actions = new RoboActions(arm, slides);
+        robot = new RoboActions(hardwareMap, startPosition);
 
         for (LynxModule m : modules) {
             m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -117,37 +110,31 @@ public class OneDriverLynx extends LinearOpMode {
 
             //state machine
             if (globalStateMachine == GlobalStateMachine.DEFAULT) { // DEFAULT
-                arm.preTake();
-                slides.floorIntake();
-                wrist.intake();
-                claw.open();
+                robot.tDefault();
             } else if (globalStateMachine == GlobalStateMachine.INTAKE_READY) { //INTAKE READY
-                arm.intake();
+                robot.intakeReady();
             } else if (globalStateMachine == GlobalStateMachine.CLOSE_INTAKE) { //CLOSE INTAKE
-                claw.close();
+                robot.closeIntake();
                 timeStamp = timer.milliseconds();
                 globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
             } else if (globalStateMachine == GlobalStateMachine.FINISHED_INTAKE) { // FINISHED INTAKE
                 if (timeStamp + 250 < timer.milliseconds()) {
-                    arm.preTake();
-                    slides.floorIntake();
+                    robot.finishedIntake();
                 }
             } else if (globalStateMachine == GlobalStateMachine.READY_DEPOSIT) { // READY DEPOSIT
-                actions.preScore();
-                wrist.intake();
+                robot.readyDeposit();
             } else if (globalStateMachine == GlobalStateMachine.SLIDES_BEGIN_SCORE) { // SLIDES BEGIN SCORE
-                slides.score();
+                robot.slidesBeginScore();
                 timeStamp = timer.milliseconds();
                 globalStateMachine = GlobalStateMachine.WRIST_SCORE;
             } else if (globalStateMachine == GlobalStateMachine.WRIST_SCORE) { // WRIST SCORE
                 if (timeStamp + 400 < timer.milliseconds()) {
-                    wrist.deposit();
+                    robot.wristScore();
                 }
             } else if (globalStateMachine == GlobalStateMachine.FINISH_SCORE) { // FINISH SCORE
-                claw.open();
+                robot.finishScore();
             } else if (globalStateMachine == GlobalStateMachine.POST_SCORE) { // POST SCORE
-                wrist.intake();
-                slides.preScore();
+                robot.postScore();
                 timeStamp = timer.milliseconds();
                 globalStateMachine = GlobalStateMachine.RETURN_TO_DEFAULT;
             } else if (globalStateMachine == GlobalStateMachine.RETURN_TO_DEFAULT) { // RETURN TO DEFAULT
@@ -155,51 +142,42 @@ public class OneDriverLynx extends LinearOpMode {
                     globalStateMachine = GlobalStateMachine.DEFAULT;
                 }
             } else if (globalStateMachine == GlobalStateMachine.BEGIN_SUBMERSIBLE) { // BEGIN SUBMERSIBLE
-                wrist.intake();
-                arm.preSubmerse();
-                claw.open();
+                robot.beginSubmersible();
                 slideInches = 0;
                 globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER) { // SUBMERSIBLE SLIDER
-                wrist.intake();
-                arm.preSubmerse();
-                claw.open();
                 double increment = inchesPerSecond * loopTime * (gamepad1.left_trigger - gamepad1.right_trigger);
                 slideInches += increment;
                 if (slideInches > 15.0) slideInches = 15.0;
-                slides.setTargetSlidesPosition(slideInches);
-
+                if (slideInches < 0.5) slideInches = 0.5;
+                robot.submersibleSlider(slideInches);
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN) { // SUBMERSIBLE INTAKE OPEN
-                claw.open();
-                arm.intake();
-                wrist.intake();
+                robot.submersibleIntakeOpen();
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) { // SUBMERSIBLE INTAKE CLOSE
-                claw.close();
+                robot.closeIntake();
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_FINISH_1) { // SUBMERSIBLE FINISH 1
-                wrist.deposit();
-                arm.preSubmerse();
+                robot.submersibleFinish1();
                 timeStamp = timer.milliseconds();
                 globalStateMachine = GlobalStateMachine.SUBMERSIBLE_FINISH_2;
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_FINISH_2) { // SUBMERSIBLE FINISH 2
                 if (timeStamp + 350 < timer.milliseconds()) {
-                    arm.preTake();
-                    slides.floorIntake();
+                    robot.finishedIntake();
                     timeStamp = timer.milliseconds();
                     globalStateMachine = GlobalStateMachine.RETURN_TO_MAIN;
                 }
             } else if (globalStateMachine == GlobalStateMachine.RETURN_TO_MAIN) { // RETURN TO MAIN STATE
                 if (timeStamp + 350 < timer.milliseconds()) {
-                    wrist.intake();
+                    robot.returnToMain();
                     globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
                 }
             }
             if (gamepad1.dpad_down){
-                hang.move(-1);
+                robot.hangPower(-1);
             } else if (gamepad1.dpad_up){
-                hang.move(1);
+                robot.hangPower(1);
             }
             else{
-                hang.move(0);
+                robot.hangPower(0);
             }
 
 
@@ -210,9 +188,9 @@ public class OneDriverLynx extends LinearOpMode {
 
 
 //            drive.update();
-            drive.setPowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
-            slides.update();
-            arm.update();
+            robot.drivePowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            robot.slidesUpdate();
+            robot.armUpdate();
             gp.update();
 
 
@@ -221,8 +199,8 @@ public class OneDriverLynx extends LinearOpMode {
 //            telemetry.addData("Heading Velocity: ", drive.getHeadingVelocity());
 //            telemetry.addData("Status", drive.getStatus());
             telemetry.addData("Hub loop Time: ", frequency);
-            telemetry.addData("slides inches: ", slides.getCurrentSlidesPosition());
-            telemetry.addData("arm degrees:", arm.getCurrentArmPosition());
+            telemetry.addData("slides inches: ", robot.slides.getCurrentSlidesPosition());
+            telemetry.addData("arm degrees:", robot.arm.getCurrentArmPosition());
             telemetry.addData("Left Trigger:", gamepad1.left_trigger);
             telemetry.addData("Right Trigger:", gamepad1.right_trigger);
 

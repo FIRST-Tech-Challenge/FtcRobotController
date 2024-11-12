@@ -21,8 +21,6 @@ import java.util.List;
 
 @Autonomous
 @Config
-
-
 public class League1Auto extends LinearOpMode {
     public static double xTarget = 10, yTarget = 0, rTarget = 0;
     State currentState = State.DRIVETODEPOSIT;
@@ -49,7 +47,6 @@ public class League1Auto extends LinearOpMode {
         }
 
         Drivetrain drive = new Drivetrain(hardwareMap, new Pose2d(0, 0, 0));
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Slides slides = new Slides(hardwareMap, drive.getSlidesMotor());
@@ -57,7 +54,7 @@ public class League1Auto extends LinearOpMode {
         Claw claw = new Claw(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
         stickyGamepad gp = new stickyGamepad(gamepad1);
-        actions = new RoboActions(arm, slides);
+        actions = new RoboActions(hardwareMap, new Pose2d(0, 0, 0));
         while (opModeInInit()) {
             claw.close();
             wrist.intake();

@@ -16,7 +16,7 @@ import java.util.Locale;
 @Config
 @TeleOp
 public class SlidesTest extends LinearOpMode {
-    public static double inches = 0;
+    public static double inches = 0.5;
     @Override
     public void runOpMode() throws InterruptedException {
         Drivetrain drive = new Drivetrain(hardwareMap, new Pose2d(0, 0, 0));
@@ -27,11 +27,11 @@ public class SlidesTest extends LinearOpMode {
         while(opModeIsActive()&&!isStopRequested()){
             slides.setTargetSlidesPosition(inches);
 
-
             drive.update();
             slides.update();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", drive.getPose().getX(), drive.getPose().getY(), M.toDegrees(drive.getPose().getHeading()));
-            telemetry.addData("Position", data);
+            telemetry.addData("Position", slides.getCurrentSlidesPosition());
+            telemetry.addData("Target", inches);
             telemetry.update();
         }
     }
