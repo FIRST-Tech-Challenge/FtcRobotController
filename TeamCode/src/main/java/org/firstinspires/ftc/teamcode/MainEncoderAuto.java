@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
-@Disabled
-public class MainEncoderAuto extends LinearOpMode {
+@Autonomous //(name="Robot: Auto Drive By Encoder", group="Robot")
+public class MainEncoderAuto extends OpMode {
     ///////////////////////////////pseudocode///////////////////////////////
     //(robot is 17 inches long)
     //move right 24 inches
