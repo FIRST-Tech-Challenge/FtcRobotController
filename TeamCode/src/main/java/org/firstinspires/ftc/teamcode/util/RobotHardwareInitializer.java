@@ -44,7 +44,7 @@ public class RobotHardwareInitializer {
 
     public enum Other {
         COLOR_SENSOR,
-        WEBCAM,
+        WEBCAM
     }
 
     public static final String FRONT_LEFT_DRIVE = "fl_drv";
