@@ -33,26 +33,26 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class Controller{
     boolean was_a = false;
-    boolean was_y = false;
-    boolean was_x = false;
     boolean was_b = false;
-    boolean was_lsb = false;
-    boolean was_rsb = false;
-    boolean was_rb = false;
-    boolean was_lb = false;
+    boolean was_x = false;
+    boolean was_y = false;
+    boolean was_leftStickButton = false;
+    boolean was_rightStickButton = false;
+    boolean was_rightBumper = false;
+    boolean was_leftBumper = false;
     boolean was_DpadUp = false;
     boolean was_DPadDown = false;
     boolean was_DPadRight = false;
     boolean was_DPadLeft = false;
 
     boolean toggle_a = false;
-    boolean toggle_y = false;
-    boolean toggle_x = false;
     boolean toggle_b = false;
-    boolean toggle_lsb = false;
-    boolean toggle_rsb = false;
-    boolean toggle_rb = false;
-    boolean toggle_lb = false;
+    boolean toggle_x = false;
+    boolean toggle_y = false;
+    boolean toggle_leftStickButton = false;
+    boolean toggle_rightStickButton = false;
+    boolean toggle_rightBumper = false;
+    boolean toggle_leftBumper = false;
     boolean toggle_DpadUp = false;
     boolean toggle_DPadDown = false;
     boolean toggle_DPadRight = false;
@@ -113,28 +113,28 @@ public class Controller{
                 return(this.toggle_y);
             }
             case leftStickButton: {
-                if(this.GamePad.left_stick_button&&!this.was_lsb){
-                    this.toggle_lsb=!this.toggle_lsb;
+                if(this.GamePad.left_stick_button&&!this.was_leftStickButton){
+                    this.toggle_leftStickButton =!this.toggle_leftStickButton;
                 }
-                return(this.toggle_lsb);
+                return(this.toggle_leftStickButton);
             }
             case rightStickButton: {
-                if(this.GamePad.right_stick_button&&!this.was_rsb){
-                    this.toggle_rsb=!this.toggle_rsb;
+                if(this.GamePad.right_stick_button&&!this.was_rightStickButton){
+                    this.toggle_rightStickButton =!this.toggle_rightStickButton;
                 }
-                return(this.toggle_rsb);
+                return(this.toggle_rightStickButton);
             }
             case rightBumper: {
-                if(this.GamePad.right_bumper&&!this.was_rb){
-                    this.toggle_rb=!this.toggle_rb;
+                if(this.GamePad.right_bumper&&!this.was_rightBumper){
+                    this.toggle_rightBumper =!this.toggle_rightBumper;
                 }
-                return(this.toggle_rb);
+                return(this.toggle_rightBumper);
             }
             case leftBumper: {
-                if(this.GamePad.left_bumper&&!this.was_lb){
-                    this.toggle_lb=!this.toggle_lb;
+                if(this.GamePad.left_bumper&&!this.was_leftBumper){
+                    this.toggle_leftBumper =!this.toggle_leftBumper;
                 }
-                return(this.toggle_lb);
+                return(this.toggle_leftBumper);
             }
             case dPadUp: {
                 if(this.GamePad.dpad_up&&!this.was_DpadUp){
@@ -175,13 +175,13 @@ public class Controller{
             case y: 
                 return(this.GamePad.y&&!this.was_y);
             case leftStickButton: 
-                return(this.GamePad.left_stick_button&&!this.was_lsb);
+                return(this.GamePad.left_stick_button&&!this.was_leftStickButton);
             case rightStickButton: 
-                return(this.GamePad.right_stick_button&&!this.was_rsb);
+                return(this.GamePad.right_stick_button&&!this.was_rightStickButton);
             case rightBumper: 
-                return(this.GamePad.right_bumper&&!this.was_rb);
+                return(this.GamePad.right_bumper&&!this.was_rightBumper);
             case leftBumper: 
-                return(this.GamePad.left_bumper&&!this.was_lb);
+                return(this.GamePad.left_bumper&&!this.was_leftBumper);
             case dPadUp: 
                 return(this.GamePad.dpad_up&&!this.was_DpadUp);
             case dPadDown: 
@@ -256,10 +256,10 @@ public class Controller{
         this.was_b = GamePad.b;
         this.was_x = GamePad.x;
         this.was_y = GamePad.y;
-        this.was_lsb = GamePad.left_stick_button;
-        this.was_rsb = GamePad.right_stick_button;
-        this.was_rb = GamePad.right_bumper;
-        this.was_lb = GamePad.left_bumper;
+        this.was_leftStickButton = GamePad.left_stick_button;
+        this.was_rightStickButton = GamePad.right_stick_button;
+        this.was_rightBumper = GamePad.right_bumper;
+        this.was_leftBumper = GamePad.left_bumper;
         this.was_DpadUp = GamePad.dpad_up;
         this.was_DPadDown = GamePad.dpad_down;
         this.was_DPadRight = GamePad.dpad_right;

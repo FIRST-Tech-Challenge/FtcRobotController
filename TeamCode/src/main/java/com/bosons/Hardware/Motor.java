@@ -3,8 +3,7 @@ package com.bosons.Hardware;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class Motor //DCMotor Wrapper Class with added functionality and usb communication spam avoidance and speedometer
-{
+public class Motor { //DCMotor Wrapper Class with added functionality and usb communication spam avoidance and speedometer
 
     private final DcMotor motor;
     private double lastPower;
@@ -15,8 +14,7 @@ public class Motor //DCMotor Wrapper Class with added functionality and usb comm
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void setConstants(DcMotor.RunMode mode, DcMotor.ZeroPowerBehavior zeroPowerBehavior, DcMotor.Direction direction)
-    {
+    public void setConstants(DcMotor.RunMode mode, DcMotor.ZeroPowerBehavior zeroPowerBehavior, DcMotor.Direction direction) {
         motor.setMode(mode);
         motor.setZeroPowerBehavior(zeroPowerBehavior);
         motor.setDirection(direction);
@@ -24,20 +22,16 @@ public class Motor //DCMotor Wrapper Class with added functionality and usb comm
 
 
 
-    public void setRunMode(DcMotor.RunMode mode)
-    {
+    public void setRunMode(DcMotor.RunMode mode) {
         motor.setMode(mode);
     }
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior)
-    {
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         motor.setZeroPowerBehavior(zeroPowerBehavior);
     }
-    public void setDirection(DcMotor.Direction direction)
-    {
+    public void setDirection(DcMotor.Direction direction) {
         motor.setDirection(direction);
     }
-    public void setTargetPosition(int position)
-    {
+    public void setTargetPosition(int position) {
         motor.setTargetPosition(position);
     }
 
@@ -45,8 +39,7 @@ public class Motor //DCMotor Wrapper Class with added functionality and usb comm
         return lastPower;
     }
 
-    public void setPower(double power)
-    {
+    public void setPower(double power) {
         if(power == lastPower)
             return;
         if(power < -1)
@@ -57,13 +50,16 @@ public class Motor //DCMotor Wrapper Class with added functionality and usb comm
         lastPower = power;
     }
 
-    public void resetEncoder()
-    {
+    public void resetEncoder() {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    public int getCurrentPosition(){return motor.getCurrentPosition();}
+    public int getCurrentPosition() {
+        return motor.getCurrentPosition();
+    }
 
-    public int getTargetPosition(){return motor.getTargetPosition();}
+    public int getTargetPosition() {
+        return motor.getTargetPosition();
+    }
     public boolean burnCheck(int acceptableError) {
         int targetDist = Math.abs(getTargetPosition() - getCurrentPosition());//get positional error;
         if (targetDist <= acceptableError) {//check if error is acceptable;
@@ -74,4 +70,4 @@ public class Motor //DCMotor Wrapper Class with added functionality and usb comm
             return false;//if not within range of target;
         }
     }
-    }
+}

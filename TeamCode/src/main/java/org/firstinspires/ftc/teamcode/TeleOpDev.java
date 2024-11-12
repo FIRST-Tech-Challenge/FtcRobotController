@@ -135,7 +135,7 @@ public class TeleOpDev extends OpMode{
             //arm.setPositionPolar(0,90-(armTimer.milliseconds()/2000)*100);//smooth transition over two seconds
             if(!arm.isSmoothing()){
                 //arm.positionArm(Arm.Mode.Intake, Arm.Height.Low,0.5);//MAKE SURE YOU CHECK THIS
-                arm.setPositionPolarSmooth(arm.home,1.5);
+                arm.positionArm(Arm.Mode.Home,Arm.Height.Standby,1.5);
             }
             if(arm.getArmAngle()<-28){
                 arm.resetArmAngle();

@@ -20,7 +20,7 @@ public class Arm {
     public Motor rightExtendoMotor;
     public Motor leftExtendoMotor;
 
-    //Wrist/intake servos
+    //Wrist/intakeActive servos
     private final Servo wristServo;
     private final CRServo intakeServo;
 
@@ -57,7 +57,7 @@ public class Arm {
     pose bucketLow;
     pose specimenHigh;
     pose specimenLow;
-    pose intake;
+    pose intakeActive;
     pose intakeStandby;
     public pose home;
     private double timeSlope;
@@ -71,7 +71,7 @@ public class Arm {
         bucketLow  =  new pose(65,90,0.3);
         specimenHigh =  new pose(84.6,90,0.3);//REPLACE THE NUMBERS WITH THE RIGHT ONES
         specimenLow =  new pose(84.6,90,0.3);//REPLACE THE NUMBERS WITH THE RIGHT ONES
-        intake = new pose(65,-6,0.9);
+        intakeActive = new pose(65,-6,0.9);
 
         intakeStandby = new pose(65,15,0.5);
         home = new pose(40.8,-28,0);
@@ -104,12 +104,15 @@ public class Arm {
     }
     public enum Height{
         High,
-        Low
+        Low,
+        Standby,
+        Active
     }
     public enum Mode{
         Bucket,
         Specimen,
-        Intake
+        Intake,
+        Home
     }
 
 
@@ -270,17 +273,21 @@ public class Arm {
             }
             case Intake:{
                 switch (H){
-                    case High:{
+                    case Standby:{
                         setPositionPolarSmooth(intakeStandby,T);
                         setWristServo(intakeStandby.wrist);
                         return;
                     }
-                    case Low:{
-                        setPositionPolarSmooth(intake,T);
-                        setWristServo(intake.wrist);
+                    case Active:{
+                        setPositionPolarSmooth(intakeActive,T);
+                        setWristServo(intakeActive.wrist);
                         return;
                     }
                 }
+            }
+            case Home:{
+                setPositionPolarSmooth(home,T);
+                setWristServo(home.wrist);
             }
         }
     }
