@@ -116,7 +116,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public class IntakeArmUp implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armController.driveToPosition(50);
+                armController.driveToPosition(0);
                 return false;
             }
         }
@@ -129,7 +129,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armController.driveToPosition(0);
+                armController.driveToPosition(50);
                 return false;
             }
         }
