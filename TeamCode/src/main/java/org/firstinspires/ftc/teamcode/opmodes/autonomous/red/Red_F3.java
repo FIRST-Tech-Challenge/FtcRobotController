@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.AutoOpModeBase;
 
-@Autonomous(name = "_Red > Start F2")
+//@Autonomous(name = "_Red > Start F2")
 public class Red_F3 extends AutoOpModeBase {
 
     @Override
@@ -18,6 +18,7 @@ public class Red_F3 extends AutoOpModeBase {
 
         rollingIntake.SetElbowInIntakePosition();
         DeliverSample();
+
 
         driveTrain.DriveToTarget(400, 200);
         Wait(300);
@@ -65,7 +66,7 @@ public class Red_F3 extends AutoOpModeBase {
         pivot.MoveToDeliveryInAuto();
         slider.ExtendMaxInAuto();
 
-        driveTrain.DriveToTarget(250, 400);
+        driveTrain.DriveToTarget(300, 410);
         driveTrain.TurnAngle(140);
 
         rollingIntake.OuttakeInAuto();

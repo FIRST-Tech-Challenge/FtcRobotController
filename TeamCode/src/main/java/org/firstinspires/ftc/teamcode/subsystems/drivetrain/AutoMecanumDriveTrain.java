@@ -347,4 +347,23 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         drive.stop();
     }
 
+    public GoBildaPinpointDriver getOdo() {
+        return odo;
+    }
+
+    public void setWheelsPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
+        fL.motor.setPower(frontLeftPower);
+        fR.motor.setPower(frontRightPower);
+        bL.motor.setPower(backLeftPower);
+        bR.motor.setPower(backRightPower);
+    }
+
+    public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
+        drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+    }
+
+    public void resetOdo() {
+        odo.resetPosAndIMU();
+    }
+
 }

@@ -18,7 +18,7 @@ public abstract class OpModeTemplate extends CommandOpMode {
 //        schedule(new RunCommand(telemetry::update));
     }
 
-    public void end() {
+    public void end(boolean interrupted) {
         super.stop();
         // Release gamepad resources
         if (driverGamepad != null) {
@@ -30,17 +30,12 @@ public abstract class OpModeTemplate extends CommandOpMode {
     }
 
     public void Wait(long timeout) {
-        long startTime = System.currentTimeMillis();
-        while (opModeIsActive() && (System.currentTimeMillis() - startTime < timeout)) {
-            // Allow other processing
-            Thread.yield();
+        try {
+            synchronized (this) {
+                wait(timeout);
+            }
+        } catch (java.lang.InterruptedException e) {
         }
-//        try {
-//            synchronized (this) {
-//                wait(timeout);
-//            }
-//        } catch (java.lang.InterruptedException e) {
-//        }
     }
 
     public void end() {
