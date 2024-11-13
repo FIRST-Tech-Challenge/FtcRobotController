@@ -5,7 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.acmerobotics.dashboard.*;
+//import com.acmerobotics.dashboard.*;
 
 @TeleOp (name="PID Test", group = "TeleOp")
 //@Disabled
