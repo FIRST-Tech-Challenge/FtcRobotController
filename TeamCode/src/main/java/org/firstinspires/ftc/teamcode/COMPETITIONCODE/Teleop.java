@@ -82,17 +82,32 @@ public class Teleop extends LinearOpMode {
             }
             driver.move(gamepad1.left_stick_y,-gamepad1.left_stick_x,gamepad1.right_stick_x,SPED);
             //driver2
-            if(sc.getCurrentPosition() < 20 && sr.getCurrentPosition() > 600) {
+            telemetry.addLine(String.valueOf(gamepad2.left_stick_y));
+            if(sc.getCurrentPosition() < -20 && sr.getCurrentPosition() > 600) {
                 SM.move(gamepad2.left_stick_y - 0.01 > 1.0 ? gamepad2.left_stick_y : gamepad2.left_stick_y - 0.01);
             }else{
-                SM.move(gamepad2.left_stick_y);
+                if(sc.getCurrentPosition() > -1100) {
+                    SM.move(gamepad2.left_stick_y);
+                }else{
+                    if(gamepad2.left_stick_y > 0.0) {
+                        SM.move(1.0);
+                    }else{
+                        SM.move(0.0);
+                    }
+                }
             }
+            /*if(gamepad2.right_trigger > 0.3){
+                SM.setPos2(-1000);
+            }
+            if(gamepad2.left_trigger > -0.3){
+                SM.setPos2(0);
+            }*/
             telemetry.addLine("Slide Pos:" + String.valueOf(sc.getCurrentPosition()));
             if(-gamepad2.right_stick_y <= -0.3 && !gamepad2.back){
                 clawRotateServo.setServoPosition(0.4);
                 SM.setPos(0);
             }
-            if(gamepad2.left_trigger > 0.3){
+            /*if(gamepad2.left_trigger > 0.3){
                 clawRotateServo.setServoPosition(0.4);
                 safeWaitSeconds(0.5);
                 int RotateTarget = 675;
@@ -118,7 +133,7 @@ public class Teleop extends LinearOpMode {
                     SM.setPos(RotateTarget);
                 }
                 sc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
+            }*/
             if(-gamepad2.right_stick_y >= 0.3 && !gamepad2.back){
                 SM.setPos(675);
             }

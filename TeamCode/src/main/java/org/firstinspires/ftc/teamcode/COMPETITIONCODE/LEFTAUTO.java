@@ -62,10 +62,10 @@ public class LEFTAUTO extends LinearOpMode {
         //TODO: SET UP MULTIAUTOMODE
         //TODO: SET UP ROTATIONS
         //IMPORTANT: DO THE TODOS
-        int dropSample1 = autoDriver.lineTo(-317.5,1105.0,1.0);
+        int dropSample1 = autoDriver.lineTo(-314.0,1109.0,1.0);
         int pickupSample2mid = autoDriver.lineTo(-580.0,1045.0,1.0);
-        int pickupSample2 = autoDriver.lineTo(-735.0,1045.0,1.0);
-        int dropSample2 = autoDriver.lineTo(-317.5,1105.0,1.0);
+        int pickupSample2 = autoDriver.lineTo(-732.5,1045.0,1.0);
+        int dropSample2 = autoDriver.lineTo(-313.0,1110.0,1.0);
         int pickupSample3 = autoDriver.lineTo(-700.0,1500.0,1.0);
         int dropSample3 = autoDriver.lineTo(-900.0,1500.0,1.0);
         int pickupSample4 = autoDriver.lineTo(-700.0,1500.0,1.0);
