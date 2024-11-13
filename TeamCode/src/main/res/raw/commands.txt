@@ -1,1 +1,1 @@
-i'm going to put the ip of the bot for adb connect and anything else useful like that here
+adb connect 192.168.43.1
