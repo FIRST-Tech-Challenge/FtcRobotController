@@ -132,7 +132,7 @@ public class Swerve {
       yInput /= translationalMagnitude;
     }
 
-    drive(
+    fieldRelativeDrive(
         new ChassisSpeeds(
             xInput * Module.maxDriveSpeedMetersPerSec * speedMult,
             yInput * Module.maxDriveSpeedMetersPerSec * speedMult,
