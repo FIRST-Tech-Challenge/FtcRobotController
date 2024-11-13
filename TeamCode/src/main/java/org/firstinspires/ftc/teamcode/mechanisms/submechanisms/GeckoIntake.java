@@ -2,38 +2,38 @@ package org.firstinspires.ftc.teamcode.mechanisms.submechanisms;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
 
-public class GeckoIntake  {
-    private final DcMotor geckoLeft;
-    private final DcMotor geckoRight;
+public class GeckoIntake {
+    private final CRServo geckoLeft;
+    private final CRServo geckoRight;
     private final BaseRobot baseRobot;
+
     public GeckoIntake(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
-        this.geckoLeft = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.GECKO_LEFT);
-        this.geckoRight = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.GECKO_RIGHT);
+        this.geckoLeft = baseRobot.hardwareMap.get(CRServo.class, Settings.Hardware.IDs.GECKO_LEFT);
+        this.geckoRight = baseRobot.hardwareMap.get(CRServo.class, Settings.Hardware.IDs.GECKO_RIGHT);
 
-        // Reset encoders
-        geckoLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        geckoRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        geckoRight.setDirection(DcMotorSimple.Direction.REVERSE); // so they both spin the same way to take in or spit out
+        geckoRight.setDirection(CRServo.Direction.REVERSE); // so they both spin the same way
 
-        retract();
-
-        // Set to RUN_TO_POSITION mode for position control
-        geckoLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        geckoRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        stop();
     }
 
-    public void extend() {
+    public void intake() {
+        geckoLeft.setPower(Settings.Hardware.Intake.SPEED);
+        geckoRight.setPower(Settings.Hardware.Intake.SPEED);
     }
 
-    public void retract() {
+    public void outtake() {
+        geckoLeft.setPower(-Settings.Hardware.Intake.SPEED);
+        geckoRight.setPower(-Settings.Hardware.Intake.SPEED);
     }
 
-    public void stop() {}
+    public void stop() {
+        geckoLeft.setPower(0);
+        geckoRight.setPower(0);
+    }
 }

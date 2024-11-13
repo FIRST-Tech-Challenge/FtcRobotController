@@ -72,6 +72,7 @@ public class Settings {
             public static final String CLAW_LEFT = "clawL";
             public static final String CLAW_RIGHT = "clawR";
             public static final String SHOULDER = "shoulder";
+            public static final String ACTUATOR = "actuator";
         }
 
         public static final double SHOULDER_GEAR_RATIO = 2;
@@ -88,7 +89,21 @@ public class Settings {
             public static int HIGH_RUNG = -1000;
 
             // Motor power settings
-            public static double MOVEMENT_POWER = 0.5; // Adjust based on testing
+            public static double MOVEMENT_POWER = 0.5;
+        }
+
+        @Config
+        public static class LinearActuator {
+            // Positions in encoder ticks
+            public static int MAX = 1000;
+            public static int MIN = 0;
+
+            public static double SPEED = 0.5;
+        }
+
+        @Config
+        public static class Intake {
+            public static double SPEED = 0.5;
         }
     }
 
