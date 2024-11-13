@@ -101,6 +101,7 @@ public class Settings {
             public static double FWD_ONE_TILE = 100; // TODO tune
             public static double STRAFE_ONE_TILE = 50; // TODO tune
             public static double TURN_NINETY_DEGREES = 50; // TODO tune
+            public static int ENCODERS_NEEDED_TO_CORRECT_ODOMETRY = 3;
         }
 
         @Config
