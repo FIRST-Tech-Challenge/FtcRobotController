@@ -1,33 +1,36 @@
-
 package org.firstinspires.ftc.teamcode.Test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import java.util.function.DoubleToLongFunction;
-
 @TeleOp(name = "TeleOpTest", group = "Test")
-
 public class TeleOpTest extends LinearOpMode {
-    // TODO change to dcmotorex
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor frontRight;
-    private DcMotor backRight;
+    public DcMotor frontLeft;
+    public DcMotor backLeft;
+    public DcMotor frontRight;
+    public DcMotor backRight;
 
     private DcMotor leftViper;
     private DcMotor rightViper;
+
+    private double targetPower;
+    private double increment;
+    private double incrementDividend;
+    private boolean isAccelerating;
+    private long lastUpdateTime;
+    private double currentPower;
+    private int updateDelay = 10;
 
     float frontMultiplier = 1;
     float backMultiplier = 1;
 
     boolean debugMode = false;
+    boolean emergencyStop = false;
 
     @Override
     public void runOpMode() {
-
-        // initialize motors
+        // Initialize motors
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -35,10 +38,6 @@ public class TeleOpTest extends LinearOpMode {
 
         leftViper = hardwareMap.get(DcMotor.class, "leftViper");
         rightViper = hardwareMap.get(DcMotor.class, "rightViper");
-
-
-
-
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -56,7 +55,6 @@ public class TeleOpTest extends LinearOpMode {
         leftViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // reverse motors
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -69,28 +67,32 @@ public class TeleOpTest extends LinearOpMode {
 
         waitForStart();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !emergencyStop) {
+            // Emergency stop
+            if (gamepad1.dpad_left && gamepad1.b) {
+                emergencyStop = true;
+                stopAllMotors();
+                telemetry.addData("Emergency Stop", "Activated");
+                telemetry.update();
+                break;
+            }
 
-            // gamepad 1 controls
+            // Gamepad 1 controls
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
-            int accelerationMultiplier = 1;
-
-            if(direction == 1) {
+            if (direction == 1) {
                 rx = gamepad1.right_stick_x;
-            }
-            else {
+            } else {
                 rx = gamepad1.right_stick_x * -1;
             }
 
-            // TODO togglable deadzones
-            if(gamepad1.left_stick_x < 40 && gamepad1.left_stick_x > 60) {
+            // TODO toggleable deadzones
+            if (gamepad1.left_stick_x < 40 && gamepad1.left_stick_x > 60) {
                 x = 50;
             }
-            if(gamepad1.left_stick_y < 45 && gamepad1.left_stick_y > 55) {
+            if (gamepad1.left_stick_y < 45 && gamepad1.left_stick_y > 55) {
                 y = 50;
             }
 
@@ -108,20 +110,19 @@ public class TeleOpTest extends LinearOpMode {
             else
                 s = 1;
 
-            accelerateMotors(frontLeftPower, 2000);
-            accelerateMotors(backLeftPower, 2000);
-            accelerateMotors(frontRightPower, 2000);
-            accelerateMotors(backRightPower, 2000);
+            startAccelerating(frontLeftPower / s, 1000, incrementDividend);
+            startAccelerating(backLeftPower / s, 1000, incrementDividend);
+            startAccelerating(frontRightPower / s, 1000, incrementDividend);
+            startAccelerating(backRightPower / s, 1000, incrementDividend);
 
-            // switching directions
-            if(gamepad1.y) {
+            // Switching directions
+            if (gamepad1.y) {
                 direction = 1;
                 frontLeft.setDirection(DcMotor.Direction.REVERSE);
                 backLeft.setDirection(DcMotor.Direction.REVERSE);
                 frontRight.setDirection(DcMotor.Direction.FORWARD);
                 backRight.setDirection(DcMotor.Direction.FORWARD);
-            }
-            else if(gamepad1.b) {
+            } else if (gamepad1.b) {
                 direction = -1;
                 frontLeft.setDirection(DcMotor.Direction.FORWARD);
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -129,76 +130,103 @@ public class TeleOpTest extends LinearOpMode {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
             }
 
-
-            // slide
-
-            if(gamepad2.left_trigger != 0) {
+            // Slide
+            if (gamepad2.left_trigger != 0) {
                 leftViper.setPower(-gamepad2.left_trigger);
                 rightViper.setPower(gamepad2.left_trigger);
-            }
-            else if(gamepad2.right_trigger != 0) {
+            } else if (gamepad2.right_trigger != 0) {
                 leftViper.setPower(gamepad2.right_trigger);
                 rightViper.setPower(-gamepad2.right_trigger);
-            }
-            else {
+            } else {
                 leftViper.setPower(0);
                 rightViper.setPower(0);
             }
 
-            // debug
-            if(gamepad2.start && gamepad2.back) {
+            // Debug
+            if (gamepad2.start && gamepad2.back) {
                 telemetry.addData("debug mode: ", debugMode);
                 telemetry.update();
                 debugMode = !debugMode;
-
-                if(gamepad2.y) { // front wheels
-                    telemetry.addData("editing: ", "front wheels");
-                    if (gamepad2.dpad_up) {
-                        frontMultiplier += 0.1;
-                        telemetry.addData("frontMultiplier: ", frontMultiplier);
-                        telemetry.update();
-                    } else if (gamepad2.dpad_down) {
-                        frontMultiplier -= 0.1;
-                        telemetry.addData("frontMultiplier: ", frontMultiplier);
-                        telemetry.update();
-                    }
-                }
-                else if(gamepad2.a) { // back wheels
-                    telemetry.addData("editing: ", "back wheels");
-                    if(gamepad2.dpad_up) {
-                        backMultiplier += 0.1;
-                        telemetry.addData("backMultiplier: ", backMultiplier);
-                        telemetry.update();
-                    }
-                    else if(gamepad2.dpad_down) {
-                        backMultiplier -= 0.1;
-                        telemetry.addData("backMultiplier: ", backMultiplier);
-                        telemetry.update();
-                    }
-                }
             }
 
+            // Fixed this
+            // Used to only check this while the debug mode buttons were being pressed
+            if (debugMode) {
+
+                if(gamepad2.y) {
+                    if(gamepad2.dpad_up) {
+
+                    }
+                }
+
+//                if (gamepad2.y) { // Front wheels
+//                    telemetry.addData("editing: ", "front wheels");
+//                    if (gamepad2.dpad_up) {
+//                        frontMultiplier += 0.1;
+//                        telemetry.addData("frontMultiplier: ", frontMultiplier);
+//                        telemetry.update();
+//                    } else if (gamepad2.dpad_down) {
+//                        frontMultiplier -= 0.1;
+//                        telemetry.addData("frontMultiplier: ", frontMultiplier);
+//                        telemetry.update();
+//                    }
+//                } else if (gamepad2.a) { // Back wheels
+//                    telemetry.addData("editing: ", "back wheels");
+//                    if (gamepad2.dpad_up) {
+//                        backMultiplier += 0.1;
+//                        telemetry.addData("backMultiplier: ", backMultiplier);
+//                        telemetry.update();
+//                    } else if (gamepad2.dpad_down) {
+//                        backMultiplier -= 0.1;
+//                        telemetry.addData("backMultiplier: ", backMultiplier);
+//                        telemetry.update();
+//                    }
+//                }
+            }
+
+            // Update motor powers
+            accelerateMotors();
         }
     }
 
+    private void stopAllMotors() {
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        leftViper.setPower(0);
+        rightViper.setPower(0);
+    }
 
-    private void accelerateMotors(double targetPower, double duration) {
-        double currentPower = 0;
-        double increment = targetPower / (duration / 10.0); // Increment power every 10ms
-
-        while (currentPower < targetPower) {
-            currentPower += increment;
-            frontLeft.setPower(currentPower);
-            backLeft.setPower(currentPower);
-            frontRight.setPower(currentPower);
-            backRight.setPower(currentPower);
-
-            sleep(10); // Wait for 10ms before the next increment
+    private void startAccelerating(double newTargetPower, double duration, double incrementDividend) {
+        if (isAccelerating) {
+            // Adjust the increment based on the remaining time and power difference
+            double remainingTime = duration - (System.currentTimeMillis() - lastUpdateTime);
+            double powerDifference = newTargetPower - currentPower;
+            this.increment = powerDifference / (remainingTime / incrementDividend);
+        } else {
+            this.targetPower = newTargetPower;
+            this.increment = newTargetPower / (duration / incrementDividend);
+            this.isAccelerating = true;
+            this.lastUpdateTime = System.currentTimeMillis();
         }
+    }
 
-        frontLeft.setPower(targetPower);
-        backLeft.setPower(targetPower);
-        frontRight.setPower(targetPower);
-        backRight.setPower(targetPower);
+    private void accelerateMotors() {
+        if (isAccelerating && !emergencyStop) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastUpdateTime >= updateDelay) {
+                currentPower += increment;
+                if (currentPower >= targetPower) {
+                    currentPower = targetPower;
+                    isAccelerating = false;
+                }
+                frontLeft.setPower(currentPower);
+                backLeft.setPower(currentPower);
+                frontRight.setPower(currentPower);
+                backRight.setPower(currentPower);
+                lastUpdateTime = currentTime;
+            }
+        }
     }
 }
