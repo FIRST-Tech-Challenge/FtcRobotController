@@ -231,6 +231,8 @@ public class MainMovement extends LinearOpMode {
         if(Math.abs(gamepad2.left_stick_y) > joystickDeadzone){
             linearSlide.setPower(linearSlideSpeed * gamepad2.left_stick_y / 2);
             telemetry.addData("linear slide speed:", linearSlideSpeed * -gamepad2.left_stick_y /2);
+        } else {
+            linearSlide.setPower(0);
         }
 
     }
