@@ -48,6 +48,9 @@ public class PIDModel {
         double error = setPoint - processVar;
         long now = runtime.now(TimeUnit.MILLISECONDS) / 10;
 
+        telemetry.addData("Set Point", setPoint);
+        telemetry.addData("Process Var", processVar);
+
         // P
         double p = error * kP;
         telemetry.addData("P", p);

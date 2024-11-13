@@ -37,9 +37,13 @@ public class AutoSkeleton {
         this.turnMargin = turnMargin;
 
         // Creating PID
-        double kP = 1;
-        double kI = 0.012;
+//        double kP = ( maxSpeed / (TILE_LENGTH * 2) ) * 10;
+//        double kI = maxSpeed / (TILE_LENGTH * 2 * 4000); //I is REALLY FREAKING SMALL
+//        double kD = 5;
+        double kP = 0.5;
+        double kI = maxSpeed / (TILE_LENGTH * TILE_LENGTH * 4000); //I is REALLY FREAKING SMALL
         double kD = 5;
+
         movementPIDx = new PIDModel(kP, kI, kD);
         movementPIDy = new PIDModel(kP, kI, kD);
     }
@@ -90,10 +94,16 @@ public class AutoSkeleton {
 
 
         // Calculating distance
-        double xDist = (targetPositions[0] * TILE_LENGTH - x);
-        double yDist = (targetPositions[1] * TILE_LENGTH - y);
+        double xTarg = targetPositions[0] * TILE_LENGTH;
+        double yTarg = targetPositions[1] * TILE_LENGTH;
+
+        double xDist = (xTarg - x);
+        double yDist = (yTarg - y);
         double dist = Math.sqrt((xDist * xDist) + (yDist * yDist));
         double angleDiff = Math.abs(targetRotation - yaw);
+
+        telemetry.addData("Targ X", xTarg);
+        telemetry.addData("Targ Y", yTarg);
 
 
         // Check if we're at our target
@@ -102,31 +112,43 @@ public class AutoSkeleton {
             return true;
         }
 
-        if (xDist > 0 ^ xDirPos) {
-            movementPIDx.resetError();
-            xDirPos = !xDirPos;
-        }
-//        if (yDist > 0 ^ yDirPos) {
-//            movementPIDy.resetError();
-//            yDirPos = !yDirPos;
-//        }
 
         // Calculate force to use
-        x = movementPIDx.calculateWithTelemetry(x, targetPositions[0], runtime, telemetry);
-        y = movementPIDy.calculateWithTelemetry(y, targetPositions[1], runtime, telemetry);
+        double xSpeed = 0;
+        double ySpeed = 0;
+        if (Math.abs(xDist) > movementMargin) {
+            if (xDist > 0 ^ xDirPos) {
+                movementPIDx.resetError();
+                //xDirPos = !xDirPos;
+            }
+
+            telemetry.addData("PID DATA", "x");
+            xSpeed = movementPIDx.calculateWithTelemetry(x, xTarg, runtime, telemetry);
+        }
+        if (Math.abs(yDist) > movementMargin) {
+            if (yDist > 0 ^ yDirPos) {
+                movementPIDy.resetError();
+                //yDirPos = !yDirPos;
+            }
+
+            telemetry.addData("PID DATA", "y");
+            ySpeed = movementPIDy.calculateWithTelemetry(y, yTarg, runtime, telemetry);
+        }
+
+
         double turning = targetRotation - yaw;
-        turning /= 15;
+        turning /= 90;
 
-        x = Math.max(Math.min(x, maxSpeed), -maxSpeed);
-        y = Math.max(Math.min(y, maxSpeed), -maxSpeed);
+        xSpeed = Math.max(Math.min(xSpeed, maxSpeed), -maxSpeed);
+        ySpeed = Math.max(Math.min(ySpeed, maxSpeed), -maxSpeed);
 
-        telemetry.addData("Speed X", x);
-        telemetry.addData("Speed Y", y);
+        telemetry.addData("Speed X", xSpeed);
+        telemetry.addData("Speed Y", ySpeed);
         telemetry.addData("Speed Turning", turning);
 
 
         // Run motors
-        wheelHandler.absoluteVectorToMotion(x, y, turning, yaw, telemetry);
+        wheelHandler.absoluteVectorToMotion(xSpeed, ySpeed, turning, yaw, telemetry);
 
         return false;
     }
