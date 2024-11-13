@@ -30,8 +30,8 @@ public class RotationHandler implements NKNComponent {
     double resError;
     private DcMotor motor;
     private ExtensionHandler extensionHandler;
-    final private PIDModel normalPIDModel= new PIDModel(0.43,0.005,15) ;
-    final private PIDModel extendedPIDModel = new PIDModel(0.6,0.007,30);
+    final private PIDModel normalPIDModel= new PIDModel(0.86,0.005,15) ;
+    final private PIDModel extendedPIDModel = new PIDModel(1.2,0.007,30);
 
     public RotationHandler() {}
 
@@ -51,7 +51,7 @@ public class RotationHandler implements NKNComponent {
         motor = hardwareMap.dcMotor.get(motorName);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        if (potHandler.getPotVoltage() < 2.5) { // Arm is already rotated out when initializing, so we can move to pickup position
+        if (potHandler.getPotVoltage() < RotationPositions.HIGH.target) { // Arm is already rotated out when initializing, so we can move to pickup position
             targetRotationPosition = RotationPositions.PICKUP;
         }
         return true;
@@ -137,7 +137,7 @@ public class RotationHandler implements NKNComponent {
     }
 
     public enum RotationPositions {
-        PICKUP(1.03), PREPICKUP(1.50), HIGH(2.44), RESTING(3.339), SPECIMEN(2.26);
+        PICKUP(0.63), PREPICKUP(0.92), HIGH(1.47), RESTING(2.2), SPECIMEN(2.26);
 
         public final double target;
 
