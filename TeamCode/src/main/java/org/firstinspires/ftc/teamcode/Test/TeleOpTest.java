@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Debug.Debug;
+
 @TeleOp(name = "TeleOpTest", group = "Test")
 public class TeleOpTest extends LinearOpMode {
     public DcMotor frontLeft;
@@ -25,8 +27,9 @@ public class TeleOpTest extends LinearOpMode {
     float frontMultiplier = 1;
     float backMultiplier = 1;
 
-    boolean debugMode = false;
     boolean emergencyStop = false;
+
+    Debug debug;
 
     @Override
     public void runOpMode() {
@@ -36,24 +39,26 @@ public class TeleOpTest extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        leftViper = hardwareMap.get(DcMotor.class, "leftViper");
-        rightViper = hardwareMap.get(DcMotor.class, "rightViper");
+        debug = new Debug(this);
+
+//        leftViper = hardwareMap.get(DcMotor.class, "leftViper");
+//        rightViper = hardwareMap.get(DcMotor.class, "rightViper");
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -131,60 +136,21 @@ public class TeleOpTest extends LinearOpMode {
             }
 
             // Slide
-            if (gamepad2.left_trigger != 0) {
-                leftViper.setPower(-gamepad2.left_trigger);
-                rightViper.setPower(gamepad2.left_trigger);
-            } else if (gamepad2.right_trigger != 0) {
-                leftViper.setPower(gamepad2.right_trigger);
-                rightViper.setPower(-gamepad2.right_trigger);
-            } else {
-                leftViper.setPower(0);
-                rightViper.setPower(0);
-            }
+//            if (gamepad2.left_trigger != 0) {
+//                leftViper.setPower(-gamepad2.left_trigger);
+//                rightViper.setPower(gamepad2.left_trigger);
+//            } else if (gamepad2.right_trigger != 0) {
+//                leftViper.setPower(gamepad2.right_trigger);
+//                rightViper.setPower(-gamepad2.right_trigger);
+//            } else {
+//                leftViper.setPower(0);
+//                rightViper.setPower(0);
+//            }
 
             // Debug
-            if (gamepad2.start && gamepad2.back) {
-                telemetry.addData("debug mode: ", debugMode);
-                telemetry.update();
-                debugMode = !debugMode;
-            }
+            debug.checkDebugButtons(gamepad2);
 
-            // Fixed this
-            // Used to only check this while the debug mode buttons were being pressed
-            if (debugMode) {
 
-                if(gamepad2.y) {
-                    if(gamepad2.dpad_up) {
-
-                    }
-                }
-
-//                if (gamepad2.y) { // Front wheels
-//                    telemetry.addData("editing: ", "front wheels");
-//                    if (gamepad2.dpad_up) {
-//                        frontMultiplier += 0.1;
-//                        telemetry.addData("frontMultiplier: ", frontMultiplier);
-//                        telemetry.update();
-//                    } else if (gamepad2.dpad_down) {
-//                        frontMultiplier -= 0.1;
-//                        telemetry.addData("frontMultiplier: ", frontMultiplier);
-//                        telemetry.update();
-//                    }
-//                } else if (gamepad2.a) { // Back wheels
-//                    telemetry.addData("editing: ", "back wheels");
-//                    if (gamepad2.dpad_up) {
-//                        backMultiplier += 0.1;
-//                        telemetry.addData("backMultiplier: ", backMultiplier);
-//                        telemetry.update();
-//                    } else if (gamepad2.dpad_down) {
-//                        backMultiplier -= 0.1;
-//                        telemetry.addData("backMultiplier: ", backMultiplier);
-//                        telemetry.update();
-//                    }
-//                }
-            }
-
-            // Update motor powers
             accelerateMotors();
         }
     }
@@ -194,8 +160,6 @@ public class TeleOpTest extends LinearOpMode {
         backLeft.setPower(0);
         frontRight.setPower(0);
         backRight.setPower(0);
-        leftViper.setPower(0);
-        rightViper.setPower(0);
     }
 
     private void startAccelerating(double newTargetPower, double duration, double incrementDividend) {

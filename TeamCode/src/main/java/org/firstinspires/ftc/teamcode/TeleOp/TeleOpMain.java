@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.Debug.Debug;
 
 @TeleOp(name = "TeleOpMain", group = "Main")
 public class TeleOpMain extends LinearOpMode {
@@ -13,6 +16,14 @@ public class TeleOpMain extends LinearOpMode {
 
     private DcMotor leftViper;
     private DcMotor rightViper;
+
+    private DcMotor slideMotor;
+
+    private Servo leftWristServo;
+    private Servo rightWristServo;
+
+    private Servo leftGrabber;
+    private Servo rightGrabber;
 
     private double targetPower;
     private double increment;
@@ -28,6 +39,8 @@ public class TeleOpMain extends LinearOpMode {
     boolean debugMode = false;
     boolean emergencyStop = false;
 
+    Debug debug;
+
     @Override
     public void runOpMode() {
         // Initialize motors
@@ -38,6 +51,16 @@ public class TeleOpMain extends LinearOpMode {
 
         leftViper = hardwareMap.get(DcMotor.class, "leftViper");
         rightViper = hardwareMap.get(DcMotor.class, "rightViper");
+
+        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+
+//        leftGrabber = hardwareMap.get(Servo.class, "leftGrabber");
+//        rightGrabber = hardwareMap.get(Servo.class, "rightGrabber");
+
+
+        leftWristServo = hardwareMap.get(Servo.class, "leftWrist");
+        rightWristServo = hardwareMap.get(Servo.class, "rightWrist");
+
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -60,12 +83,17 @@ public class TeleOpMain extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
+//        leftGrabber.setPosition(0);
+//        rightGrabber.setPosition(1);
+
         double direction = 1;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
+
+        debug = new Debug(this);
 
         while (opModeIsActive() && !emergencyStop) {
             // Emergency stop
@@ -103,6 +131,7 @@ public class TeleOpMain extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
+            // slow speeds
             if (gamepad1.left_bumper)
                 s = 4;
             else if (gamepad1.right_bumper)
@@ -110,10 +139,11 @@ public class TeleOpMain extends LinearOpMode {
             else
                 s = 1;
 
-            startAccelerating(frontLeftPower / s, 1000, incrementDividend);
-            startAccelerating(backLeftPower / s, 1000, incrementDividend);
-            startAccelerating(frontRightPower / s, 1000, incrementDividend);
-            startAccelerating(backRightPower / s, 1000, incrementDividend);
+            frontLeft.setPower(frontLeftPower / s);
+            backLeft.setPower(backLeftPower / s);
+            frontRight.setPower(frontRightPower / s);
+            backRight.setPower(backRightPower / s);
+
 
             // Switching directions
             if (gamepad1.y) {
@@ -130,34 +160,65 @@ public class TeleOpMain extends LinearOpMode {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
             }
 
-            // Slide
-            if (gamepad1.left_trigger != 0) {
+            // Viper Slide
+            if (gamepad2.left_trigger != 0) {
                 leftViper.setPower(-gamepad2.left_trigger);
                 rightViper.setPower(gamepad2.left_trigger);
             } else if (gamepad2.right_trigger != 0) {
-                leftViper.setPower(gamepad2.right_trigger);
-                rightViper.setPower(-gamepad2.right_trigger);
+                leftViper.setPower(-gamepad2.right_trigger);
+                rightViper.setPower(gamepad2.right_trigger);
             } else {
                 leftViper.setPower(0);
                 rightViper.setPower(0);
             }
 
-            // Debug
-            if (gamepad1.start && gamepad1.back) {
-                debugMode = !debugMode;
-                telemetry.addData("debug mode: ", debugMode);
-                telemetry.update();
+            // Regular slide
+            if(gamepad2.left_bumper) {
+                slideMotor.setPower(-1);
             }
+            else if(gamepad2.right_bumper) {
+                slideMotor.setPower(1);
+            }
+            else {
+                slideMotor.setPower(0);
+            }
+
+            // todo fix motor detection
+//            // Grabber
+//
+//            if (gamepad1.a) {
+//                leftGrabber.setPosition(0.5);
+//                rightGrabber.setPosition(0.5);
+//            }
+//            else if (gamepad1.b) {
+//                leftGrabber.setPosition(0);
+//                rightGrabber.setPosition(1);
+//            }
+//            if(gamepad1.back && gamepad1.b) {
+//                leftGrabber.setDirection(0);
+//                rightGrabber.setDirection(1);
+//            }
+
+            // Debug
+
+            debug.checkDebugButtons(gamepad1);
+
+
+//            if (gamepad1.start && gamepad1.back) {
+//                debugMode = !debugMode;
+//                telemetry.addData("debug mode: ", debugMode);
+//                telemetry.update();
+//            }
 
             // Fixed this
             // Used to only check this while the debug mode buttons were being pressed
-            if (debugMode) {
-
-                if(gamepad2.y) {
-                    if(gamepad2.dpad_up) {
-
-                    }
-                }
+//            if (debugMode) {
+//
+//                if(gamepad2.y) {
+//                    if(gamepad2.dpad_up) {
+//
+//                    }
+//                }
 
 //                if (gamepad2.y) { // Front wheels
 //                    telemetry.addData("editing: ", "front wheels");
@@ -185,8 +246,7 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // Update motor powers
-            accelerateMotors();
-        }
+//        }
     }
 
     private void stopAllMotors() {
