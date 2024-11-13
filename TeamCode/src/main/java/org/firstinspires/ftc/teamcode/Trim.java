@@ -7,8 +7,8 @@ To get the Trim to work
 */
 
 class PowerLevels{
-    private float leftPower = 1f;
-    private float rightPower = 1f;
+    private float leftPower;
+    private float rightPower;
 
     public PowerLevels(float leftPower, float rightPower){
         this.leftPower = leftPower;
