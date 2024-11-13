@@ -15,6 +15,8 @@ import com.arcrobotics.ftclib.controller.PIDController;
 @Config
 @TeleOp(name = "FieldCentric")
 public class FieldCentric extends LinearOpMode {
+
+
     public static class Params {
         public double speedMult = 1;
         public double turnMult = 1;
@@ -22,14 +24,20 @@ public class FieldCentric extends LinearOpMode {
         public double backMotorMult = 1;
         public double frontMotorMult = 1;
 
-        public double kP = 4;
+        public double kP = 0;
         public double kI = 0;
         public double kD = 0;
     }
     public static Params PARAMS = new Params();
 
+    double wantedAngle = 0;
+    private boolean isAngleSet;
+
     @Override
     public void runOpMode() throws InterruptedException {
+
+        PIDController pid = new PIDController(PARAMS.kP, PARAMS.kI, PARAMS.kD);
+
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
@@ -37,14 +45,14 @@ public class FieldCentric extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRight");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRight");
 
-        //Resets the motor encoder so that it reads zero ticks
+// Reset the motor encoder so that it reads zero ticks
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        // Turns the motor back on, required if you use STOP_AND_RESET_ENCODER
+        // Turn the motor back on, required if you use STOP_AND_RESET_ENCODER
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -63,28 +71,21 @@ public class FieldCentric extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
-
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-
-        //for some reason the "0 angle" of the robot doesn't change between initializes, so it fixes it
-        imu.resetYaw();
-
-        //creates a PID instance, negates the values in order to keep the constants positive
-        PIDController pid = new PIDController(PARAMS.kP * -1, PARAMS.kI * -1, PARAMS.kD * -1);
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        double FixError = pid.calculate(0,
-                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        imu.resetYaw();
+        // never used - changed in line 100 with PID
+        double FixError; // = pid.calculate(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS), imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = 1.1 * -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
@@ -96,7 +97,6 @@ public class FieldCentric extends LinearOpMode {
             telemetry.addData("Angle", Math.toDegrees(botHeading));
 
             //Calls the function that calculates how much we should resist the error
-            //--------To add wanted angle----------
             FixError = pid.calculate(botHeading);
 
 
@@ -108,11 +108,13 @@ public class FieldCentric extends LinearOpMode {
             rotY *= PARAMS.speedMult;
             rx *= PARAMS.turnMult;
 
-            
+
 
             telemetry.addData("rx:", rx);
+            telemetry.addData("wanted angle",wantedAngle);
 
             //trying to add the fix to the rotation to the current rotation (didn't work, perhaps because of the parameters, perhaps because I didn't understand the library)
+            // should work now
             rx += FixError;
 
             // Counteract imperfect strafing
