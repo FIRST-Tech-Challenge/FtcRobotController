@@ -18,7 +18,7 @@ public class motorTest extends LinearOpMode {
         DcMotor arm = hardwareMap.get(DcMotor.class, "Arm");
         DcMotor wrist = hardwareMap.get(DcMotor.class, "Wrist");
         boolean isDpadLeft =false,isDpadRight=false;
-        
+
         Trim t = new Trim();
         PowerLevels pl;
 
@@ -70,10 +70,14 @@ public class motorTest extends LinearOpMode {
             arm.setPower(gamepad2.left_stick_y*.5);
             wrist.setPower(gamepad2.right_stick_y*.5);
             telemetry.addData("Intake", intake.getPosition());
-            telemetry.addData("New Intake Position", (intake.getPosition() + .01f) % 1.0f);
-            if(gamepad2.right_bumper) {
-                intake.setPosition((intake.getPosition()+.01)% 1.0);
-                sleep(50);
+            if(gamepad2.right_bumper && (intake.getPosition()% 1) < 0.94) {
+                intake.setPosition((intake.getPosition()+.05)% 1.0);
+                sleep(25);
+                idle();
+            }
+            if(gamepad2.left_bumper && (intake.getPosition()% 1) > 0.06) {
+                intake.setPosition((intake.getPosition()-.05)% 1.0);
+                sleep(25);
                 idle();
             }
             telemetry.update();
