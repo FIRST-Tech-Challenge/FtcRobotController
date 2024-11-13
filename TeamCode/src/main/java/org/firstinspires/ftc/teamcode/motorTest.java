@@ -13,8 +13,9 @@ public class motorTest extends LinearOpMode {
         //DcMotor rightMotor = hardwareMap.get(DcMotor.class, "Right");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        waitForStart();
+        boolean isDpadLeft =false,isDpadRight=false;
         Trim t = new Trim();
+        waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
@@ -27,10 +28,16 @@ public class motorTest extends LinearOpMode {
             telemetry.addData("Left Thumbstick Value", leftThumbstickValue);
             telemetry.addData("Right Thumbstick Value", rightThumbstickValue);
 
-            if (gamepad1.dpad_left){
+            if (gamepad1.dpad_left && !isDpadLeft){
                 t.addLeft();
+                isDpadLeft = true;
             }
 
+            if (!gamepad1.dpad_left){
+                isDpadLeft = false;
+            }
+
+            
             if (gamepad1.dpad_right){
                 t.addRight();
             }
