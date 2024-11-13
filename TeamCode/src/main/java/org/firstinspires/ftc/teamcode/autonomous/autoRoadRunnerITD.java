@@ -147,6 +147,9 @@ public class autoRoadRunnerITD extends LinearOpMode {
         Slides slides = new Slides(hardwareMap);
         IntakeArm intakeArm = new IntakeArm(hardwareMap);
 
+
+        TrajectoryActionBuilder firstSpec0 = drive.actionBuilder(beginPose)
+                .strafeTo(new Vector2d(0,-40));
         TrajectoryActionBuilder firstSpec = drive.actionBuilder(beginPose) // go to sub, place spec
                 .strafeTo(new Vector2d(0, -28));
         TrajectoryActionBuilder firstSpec1 = drive.actionBuilder(beginPose) // strafe to right
@@ -159,7 +162,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .strafeTo(new Vector2d(47, -51))
                 .strafeTo(new Vector2d(47, -59))
                 .strafeTo(new Vector2d(47, -45))
-                .waitSeconds(3)
+                .waitSeconds(3) //wait for player person to give spec
                 .strafeTo(new Vector2d(47, -61.5));
         TrajectoryActionBuilder secondSpec = drive.actionBuilder(beginPose)
                 .waitSeconds(0.5)
@@ -170,6 +173,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
                         .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
                 .strafeTo(new Vector2d(47, -61));
+        Action trajectoryAction0 = firstSpec0.build();
         Action trajectoryAction1 = firstSpec.build();
         Action trajectoryAction2 = firstSpec1.build();
         Action trajectoryAction3 = firstSpec2.build();
@@ -180,9 +184,10 @@ public class autoRoadRunnerITD extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         specClaw.closeClaw(),
-                        trajectoryAction1,
+                        trajectoryAction0,
                         intakeArm.intakeArmDown(),
                         slides.slidesUp(),
+                        trajectoryAction1,
                         slides.slidesHold(),
                         specClaw.openClaw(),
                         trajectoryAction2,
