@@ -438,21 +438,21 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 liftPitchPosition = 272;
                 liftExtenderPosition = 2502;
             }
-
+            //up pos = 0.3372
             if (gamepad2.left_bumper){
-                robot.pitch.setPosition(robot.pitch.getPosition()+ (0.0002));
+                robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ (0.0002));
 //            } if (gamepad1.square){
 //                robot.hangL.setPosition(robot.hangL.getPosition()+ (0.002));
             }
             if (gamepad2.right_bumper){
-                robot.pitch.setPosition(robot.pitch.getPosition()- (0.0002));
+                robot.clawRoll.setPosition(robot.clawRoll.getPosition()- (0.0002));
             } //if (gamepad1.triangle)
 //                robot.hangL.setPosition(robot.hangL.getPosition()- (0.002));
 //            }
 
             //i=i+Math.round(gamepad2.right_stick_y);
 
-            telemetry.addData("aactual pitchpos", robot.pitch.getPosition());
+            telemetry.addData("aactual pitchpos", robot.clawRoll.getPosition());
             //telemetry.addData("hang l pos", robot.hangL.getPosition());
 
 

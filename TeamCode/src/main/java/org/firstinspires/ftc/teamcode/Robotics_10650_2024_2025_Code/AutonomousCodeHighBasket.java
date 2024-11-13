@@ -42,16 +42,27 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
         //robot.goStraight(1100, 500); // 500 is good velocity for now
 //        robot.goStraight(200, 500); // 500 is good velocity for now
 //        robot.newTurnFunction(90); // 500 is good velocity for now
+        //telemetry.addData("angle", getAngle() );
         robot.strafeR(120, 500);
-        robot.goStraight(480, 500); // 500 is good velocity for now
-        robot.liftExtender(2502, 800);
-        robot.liftPitch(272, 600);
+        robot.goStraight(470, 500); // 500 is good velocity for now
+        robot.liftExtender(2702, 800);
+        robot.liftPitch(172, 300);
         robot.extake(1000);
+        robot.clawRoll.setPosition(0.3372);
         robot.liftPitch(0, 600);
+        //sleep(100);
+        robot.goStraight(-70, 500);
+        //sleep(100);
+// 500 is good velocity for now
         robot.liftExtender(0, 800);
-        robot.newTurnFunction(-90);// 500 is good velocity for now
+        robot.newTurnFunction(-90);
+        robot.clawRoll.setPosition(0);
 
-        robot.goStraight(300, 500);
+        // 500 is good velocity for now
+
+        robot.goStraight(165, 500);
+        robot.strafeR(170, 500);
+
         //robot.strafeR(200, 500);
 
 
