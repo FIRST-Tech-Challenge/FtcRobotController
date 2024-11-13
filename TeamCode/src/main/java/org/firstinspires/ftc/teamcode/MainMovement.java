@@ -108,7 +108,7 @@ public class MainMovement extends LinearOpMode {
         float maxSpeed = 1.0f;
         double addSpeed = Math.sqrt(LjoystickX*LjoystickX + LjoystickY*LjoystickY);
 
-        float netS = Math.min(maxSpeed, (float)addSpeed); //net speed
+        float netS = Math.min(maxSpeed, (float) (addSpeed - joystickDeadzone) / (1.0f - joystickDeadzone)); //net speed
 
         // calculates the angle of the joystick in radians --> degrees
         double LangleInRadians = Math.atan2(-LjoystickY, LjoystickX);
