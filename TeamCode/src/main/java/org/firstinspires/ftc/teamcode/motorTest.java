@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class motorTest extends LinearOpMode {
@@ -13,10 +14,17 @@ public class motorTest extends LinearOpMode {
         DcMotor rightMotor = hardwareMap.get(DcMotor.class, "Right");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        Servo intake = hardwareMap.get(Servo.class, "Intake");
+        DcMotor arm = hardwareMap.get(DcMotor.class, "Arm");
+        DcMotor wrist = hardwareMap.get(DcMotor.class, "Wrist");
         boolean isDpadLeft =false,isDpadRight=false;
+        
         Trim t = new Trim();
-        waitForStart();
         PowerLevels pl;
+
+        waitForStart();
+        intake.setDirection(Servo.Direction.FORWARD);
+        intake.getController().pwmEnable();
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
             telemetry.addData("left Trim", t.getLeftTrim());
@@ -59,6 +67,15 @@ public class motorTest extends LinearOpMode {
             }*/
             leftMotor.setPower(leftThumbstickValue * pl.getLeftPower());
             rightMotor.setPower(-rightThumbstickValue * pl.getRightPower());
+            arm.setPower(gamepad2.left_stick_y*.5);
+            wrist.setPower(gamepad2.right_stick_y*.5);
+            telemetry.addData("Intake", intake.getPosition());
+            telemetry.addData("New Intake Position", (intake.getPosition() + .01f) % 1.0f);
+            if(gamepad2.right_bumper) {
+                intake.setPosition((intake.getPosition()+.01)% 1.0);
+                sleep(50);
+                idle();
+            }
             telemetry.update();
         }
     }
