@@ -65,6 +65,7 @@ public class WheelHandler implements NKNComponent {
     // Takes in y, x, and turning components of the vector, and converts them to power instructions for omni wheels
     public void relativeVectorToMotion(double y, double x, double turning) {
         // some intern should change all instances of rVTM to use x, y, turning instead of y, x, turning
+        turning *= 0.7;
         motorBR.setPower(y + x - turning);
         motorBL.setPower(y - x + turning);
         motorFR.setPower(y - x - turning);
@@ -77,6 +78,14 @@ public class WheelHandler implements NKNComponent {
         double y2 = (Math.sin(angle) * x) + (Math.cos(angle) * y);
 
         relativeVectorToMotion(y2, x2, turning);
+    }
+
+    public void collyMotion(double x, double y, double turning, double yaw, Telemetry telemetry) {
+        double angle = (yaw * Math.PI) / 180;
+        double x2 = (Math.cos(angle) * x);
+        double y2 = (Math.sin(angle) * x);
+
+        relativeVectorToMotion(y2 + y, x2, turning);
     }
 
     @Override

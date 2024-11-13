@@ -79,10 +79,10 @@ public class BasketAuto extends NKNProgram {
         AutoStepSleep sleep = new AutoStepSleep(700);
 
         AutoStepAbsoluteControl orientToBasket = new AutoStepAbsoluteControl(-0.7, 0.35, -135);
-        AutoStepMoveNRotate pickUpFirstYellow = new AutoStepMoveNRotate(0.92, 0.9, -70);
+        AutoStepMoveNRotate pickUpFirstYellow = new AutoStepMoveNRotate(0.92, 0.96, -70);
         AutoStepMove slightYellowPlaceAdjust = new AutoStepMove(-0.07, 0.05);
-        AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(-0.05, 2, 90);
-        AutoStepMove driveInToPark = new AutoStepMove(0.57, 0);
+        AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(-0.05, 2.15, 90);
+        AutoStepMove driveInToPark = new AutoStepMove(0.5, 0);
 
         AutoStepRotateArm rotateToHigh = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
         AutoStepRotateArm rotateToPickup = new AutoStepRotateArm(RotationHandler.RotationPositions.PICKUP);
