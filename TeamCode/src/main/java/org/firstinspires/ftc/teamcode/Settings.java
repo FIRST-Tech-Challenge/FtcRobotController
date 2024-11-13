@@ -66,6 +66,8 @@ public class Settings {
             // Arm components
             public static final String EXTENSOR_LEFT = "extensorLeft";
             public static final String EXTENSOR_RIGHT = "extensorRight";
+            public static final String GECKO_LEFT = "geckoLeft";
+            public static final String GECKO_RIGHT = "geckoRight";
             public static final String WRIST = "wrist";
             public static final String CLAW_LEFT = "clawL";
             public static final String CLAW_RIGHT = "clawR";
