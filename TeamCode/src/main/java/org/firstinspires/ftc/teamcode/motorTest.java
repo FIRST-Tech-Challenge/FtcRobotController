@@ -3,11 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp
 public class motorTest extends LinearOpMode {
@@ -18,35 +13,52 @@ public class motorTest extends LinearOpMode {
         DcMotor rightMotor = hardwareMap.get(DcMotor.class, "Right");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        boolean isDpadLeft =false,isDpadRight=false;
+        Trim t = new Trim();
         waitForStart();
-
+        PowerLevels pl;
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
+            telemetry.addData("left Trim", t.getLeftTrim());
+            telemetry.addData("right Trim", t.getRightTrim());
+            pl=t.getPowerLevel(1,1);
             float leftThumbstickValue = gamepad1.left_stick_y;
             float rightThumbstickValue = gamepad1.right_stick_y;
-
             telemetry.addData("Left Thumbstick Value", leftThumbstickValue);
             telemetry.addData("Right Thumbstick Value", rightThumbstickValue);
 
-            trim.update();
-            if (gamepad1.a) {
-                leftMotor.setPower(-1 * trim.trimLeft());
-                //0.95 was the value that the trim was set to before I added my code
-                rightMotor.setPower(1 * trim.trimRight());
-            } else {
-                leftMotor.setPower(-0);
-                rightMotor.setPower(0);
-
-                if (gamepad1.b) {
-                    leftMotor.setPower(1 * trim.trimLeft());
-                    rightMotor.setPower(-1 * trim.trimRight());
-                } else {
-                    leftMotor.setPower(-0);
-                    rightMotor.setPower(0);
-                }
+            if (gamepad1.dpad_left && !isDpadLeft){
+                t.addLeft();
+                isDpadLeft = true;
             }
-            //leftMotor.setPower(leftThumbstickValue);
-            //rightMotor.setPower(-rightThumbstickValue);
+
+            if (!gamepad1.dpad_left){
+                isDpadLeft = false;
+            }
+
+            
+            if (gamepad1.dpad_right && !isDpadRight){
+                t.addRight();
+                isDpadRight = true;
+            }
+
+            if (!gamepad1.dpad_right) {
+                isDpadRight = false;
+            }
+
+            /*if (gamepad1.a) {
+                leftMotor.setPower(-pl.getLeftPower());
+                //0.95 was the value that the Trim was set to before I added my code
+                rightMotor.setPower(pl.getRightPower());
+            } else if (gamepad1.b) {
+                leftMotor.setPower(pl.getLeftPower());
+                rightMotor.setPower(-pl.getRightPower());
+            } else {
+                leftMotor.setPower(0);
+                rightMotor.setPower(0);
+            }*/
+            leftMotor.setPower(leftThumbstickValue * pl.getLeftPower());
+            rightMotor.setPower(-rightThumbstickValue * pl.getRightPower());
             telemetry.update();
         }
     }
