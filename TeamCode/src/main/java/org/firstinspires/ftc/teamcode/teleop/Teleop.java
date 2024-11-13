@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.utils.DriveChassis;
 import org.firstinspires.ftc.teamcode.utils.Numbers;
+import org.firstinspires.ftc.teamcode.utils.controller.Controller;
 import org.firstinspires.ftc.teamcode.utils.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.controller.PowerCurve;
 
@@ -59,7 +60,8 @@ public class Teleop extends OpMode {
         float armXInput = controller2.axis(Axis.RightStickX, PowerCurve.Cubic);
         float armYInput = controller2.axis(Axis.LeftStickY, PowerCurve.Cubic);
 
-        if (chassis.collectionArmMotor.getCurrentPosition() >= 0 && armXInput > 0 || chassis.collectionArmMotor.getCurrentPosition() <= -2150 && armXInput < 0) {
+        // This SHOULD be flipped to be correct now
+        if (chassis.collectionArmMotor.getCurrentPosition() <= 0 && armXInput < 0 || chassis.collectionArmMotor.getCurrentPosition() >= 2150 && armXInput > 0) {
             chassis.collectionArmMotor.setVelocity(0);
             telemetry.addLine("LIMIT REACHED FOR COLLECTION ARM");
         }
@@ -67,10 +69,12 @@ public class Teleop extends OpMode {
             chassis.collectionArmMotor.setVelocity(armXInput * 500);
         }
 
+        // I don tknow if this works
         double pivot = (controller2.pressed(Controller.Button.DPadUp) ? 1 : 0) + (controller2.pressed(Controller.Button.DPadDown) ? -1 : 0);
-        endPivotMotor.setVelocity(pivot * 300);
+        chassis.endPivotMotor.setVelocity(pivot * 300);
 
-        chassis.scoringArmMotor.setVelocity(armYInput * 50);
+        // I dont know if this works
+        chassis.scoringArmMotor.setVelocity(armYInput * 500);
         if (controller2.pressed(Controller.Button.A)) {
             chassis.claw.setPosition(clawClosed ? 1 : 0);
             clawClosed = !clawClosed;
