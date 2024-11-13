@@ -21,7 +21,7 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdk 34
+    compileSdkVersion 30
 
     signingConfigs {
         release {
@@ -109,14 +109,9 @@ android {
     packagingOptions {
         pickFirst '**/*.so'
     }
-    sourceSets.main {
-        jni.srcDirs = []
-        jniLibs.srcDir rootProject.file('libs')
-    }
     ndkVersion '21.3.6528147'
 }
 
 repositories {
-    mavenCentral()
 }
 
