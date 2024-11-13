@@ -15,7 +15,8 @@ public class MeepMeep1 {
                 .setConstraints(90, 80, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -61.5, Math.toRadians(270)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(13, -61.5, Math.toRadians(270)))
+                .strafeTo(new Vector2d(13,-50))
                 .strafeTo(new Vector2d(0,-28))
                 .waitSeconds(1)
                 .strafeTo(new Vector2d(0,-34))
@@ -33,7 +34,7 @@ public class MeepMeep1 {
                 .strafeTo(new Vector2d(4, -27))
                 .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
-                .strafeTo(new Vector2d(47,-61))
+                .strafeTo(new Vector2d(47,-58))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

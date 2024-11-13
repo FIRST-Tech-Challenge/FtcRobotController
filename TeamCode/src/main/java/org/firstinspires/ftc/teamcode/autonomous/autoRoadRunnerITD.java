@@ -141,7 +141,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
     }
 
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(0, -61.5, Math.toRadians(270));
+        Pose2d beginPose = new Pose2d(13, -61.5, Math.toRadians(270));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         SpecClaw specClaw = new SpecClaw(hardwareMap);
         Slides slides = new Slides(hardwareMap);
@@ -149,7 +149,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
 
 
         TrajectoryActionBuilder firstSpec0 = drive.actionBuilder(beginPose)
-                .strafeTo(new Vector2d(0,-40));
+                .strafeTo(new Vector2d(13,-50));
         TrajectoryActionBuilder firstSpec = drive.actionBuilder(beginPose) // go to sub, place spec
                 .strafeTo(new Vector2d(0, -28));
         TrajectoryActionBuilder firstSpec1 = drive.actionBuilder(beginPose) // strafe to right
@@ -172,7 +172,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
         TrajectoryActionBuilder secondSpec1 = drive.actionBuilder(beginPose)
                         .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
-                .strafeTo(new Vector2d(47, -61));
+                .strafeTo(new Vector2d(47, -58));
         Action trajectoryAction0 = firstSpec0.build();
         Action trajectoryAction1 = firstSpec.build();
         Action trajectoryAction2 = firstSpec1.build();
