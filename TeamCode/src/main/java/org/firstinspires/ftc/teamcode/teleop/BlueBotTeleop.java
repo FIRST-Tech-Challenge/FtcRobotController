@@ -22,8 +22,8 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // game pad 2
       // sets arm
-      arm.setSlide(-gamepad2.right_stick_y);
-      arm.setPivot(gamepad2.left_stick_y, gamepad2.left_bumper);
+      arm.setSlide(-gamepad2.left_stick_y);
+      arm.setPivot(gamepad2.right_stick_y, gamepad2.left_bumper);
 
       arm.moveClaw(gamepad2.right_trigger > .5, gamepad2.left_trigger > .5);
       arm.moveWrist(gamepad2.b);
