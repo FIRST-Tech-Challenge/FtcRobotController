@@ -148,11 +148,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         //PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
 
-
         Action PushSample = ActionBuilder.BlueBasket(drive::actionBuilder);
-        while (!isStopRequested() && !opModeIsActive()) {
-            telemetry.update();
-        }
         Actions.runBlocking(servos.CloseClaw());
         telemetry.update();
         waitForStart();
@@ -166,8 +162,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Vector2d drop_position = new Vector2d(53, 53);
         double drop_heading = Math.toRadians(45);
 
-        Vector2d outer_sample_pickup_position = new Vector2d(46, 48);
-        Vector2d middle_sample_pickup_position = new Vector2d(56, 48);
+        Vector2d outer_sample_pickup_position = new Vector2d(46, 45);
+        Vector2d middle_sample_pickup_position = new Vector2d(56, 45);
         double sample_pickup_heading = Math.toRadians(-90);
 
         Action trajectory, downWait, downWait1, grabWait, closeWait, grabWait1, closeWait1, testingWait, clawOpenWait, testingWait1, clawOpenWait1, testingWait2, clawOpenWait2, driveToClearance, driveToDrop, driveToBackAway, driveToSample1, driveToClearance1, driveToDrop1, driveToBackAway1, driveToSample2, driveToClearance2, driveToDrop2, driveToBackAway2;
