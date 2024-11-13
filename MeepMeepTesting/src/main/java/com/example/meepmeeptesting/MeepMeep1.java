@@ -12,27 +12,28 @@ public class MeepMeep1 {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(80, 70, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(90, 80, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -61.5, Math.toRadians(270)))
-                .strafeTo(new Vector2d(0,-31))
+                .strafeTo(new Vector2d(0,-28))
                 .waitSeconds(1)
                 .strafeTo(new Vector2d(0,-34))
-                .strafeTo(new Vector2d(35, -35))
-                .strafeTo(new Vector2d(35, -10))
+                .strafeTo(new Vector2d(37, -35))
+                .strafeTo(new Vector2d(37, -10))
                 .splineTo(new Vector2d(47, -10), Math.toRadians(270))
                 .strafeTo(new Vector2d(47, -51))
-                .strafeTo(new Vector2d(47, -58))
+                .strafeTo(new Vector2d(47, -59))
                 .strafeTo(new Vector2d(47, -45))
-                .strafeTo(new Vector2d(47, -60.5))
-                .waitSeconds(2)
+                .waitSeconds(3)
+                .strafeTo(new Vector2d(47, -61.5))
+                .waitSeconds(0.5)
                 .strafeTo(new Vector2d(47, -45))
-                .splineTo(new Vector2d(2, -52), Math.toRadians(270))
-                .strafeTo(new Vector2d(2, -31))
+                .splineTo(new Vector2d(4, -52), Math.toRadians(270))
+                .strafeTo(new Vector2d(4, -27))
                 .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
-                        .strafeTo(new Vector2d(47,-61))
+                .strafeTo(new Vector2d(47,-61))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

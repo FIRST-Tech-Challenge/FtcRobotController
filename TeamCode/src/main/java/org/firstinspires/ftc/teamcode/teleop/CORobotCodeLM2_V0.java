@@ -203,10 +203,10 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
     }
     private void handleSpec(){
         if (gamepad2.b) {
-            specServo.setPosition(0.2); //open spec claw
+            specServo.setPosition(0.2); //close spec claw
         }
         if (gamepad2.x) {
-            specServo.setPosition(0.8); //closed spec claw
+            specServo.setPosition(0.8); //open spec claw
         }
     }
 }
