@@ -554,7 +554,6 @@ public class Bot {
         long startTime = System.currentTimeMillis();
         leftIntake.setPower(direction); // Full power for the intake
         rightIntake.setPower(-direction);
-//goodluck
         // Run until the time is up
         while (opMode.opModeIsActive() && (System.currentTimeMillis() - startTime < runTime * 1000)) {
             opMode.telemetry.addData("Running intake", 1);
