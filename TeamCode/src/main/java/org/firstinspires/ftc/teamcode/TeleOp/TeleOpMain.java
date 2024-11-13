@@ -160,6 +160,7 @@ public class TeleOpMain extends LinearOpMode {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
             }
 
+            // todo fix both buttons go up
             // Viper Slide
             if (gamepad2.left_trigger != 0) {
                 leftViper.setPower(-gamepad2.left_trigger);
