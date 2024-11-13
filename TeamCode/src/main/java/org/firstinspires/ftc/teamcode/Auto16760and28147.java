@@ -13,13 +13,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Locale;
 import java.util.Timer;
 
-@Autonomous(name="Auto16759")
+@Autonomous(name="Auto16760and28147")
 //@Disabled
 
-public class Auto16759 extends LinearOpMode {
+public class Auto16760and28147 extends LinearOpMode {
 
-    GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-    private final DriveToPoint nav = new DriveToPoint(this); //OpMode member for the point-to-point navigation class
     private DcMotor rotateArmMotor = null;
     private DcMotor extendArmMotor = null;
     private final ElapsedTime timer = new ElapsedTime();
@@ -34,22 +32,15 @@ public class Auto16759 extends LinearOpMode {
         END
     }
 
-    // Field poses
-    static final Pose2D SUBMERSIBLE_POS = new Pose2D(DistanceUnit.MM, 500, -400, AngleUnit.DEGREES, 0);
-    static final Pose2D OBSERVATION_ZONE = new Pose2D(DistanceUnit.MM,0,-600, AngleUnit.DEGREES,0);
-
     final double DRIVE_SPEED = 0.3;
-    final double ARM_POWER = -0.2;
-    final double EXTEND_POWER = 0.3;
-    final int ARM_UP_MAX_POSITION = -2000;
+    final double ARM_POWER = -1;
+    final double EXTEND_POWER = 1;
+    final int ARM_UP_MAX_POSITION = -4000;
     final int ARM_DOWN_POSITION = 0;
-    final int EXT_MAX_POSITION = 2000;
-    final int EXT_PLACE_POSITION = 900;
-
-    final double INIT_DRIVE_SPEED = 0.01;
+    final int EXT_MAX_POSITION = 10000;
+    final int EXT_PLACE_POSITION = 5000;
 
     boolean firstTime = true;
-
 
     @Override
     public void runOpMode() {
@@ -61,38 +52,21 @@ public class Auto16759 extends LinearOpMode {
         // Initialize motors and servos
         rotateArmMotor = hardwareMap.get(DcMotor.class, "Elevation");
         rotateArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rotateArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendArmMotor = hardwareMap.get(DcMotor.class, "Extension");
         extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         // Start state machine
         StateMachine stateMachine;
         stateMachine = StateMachine.WAITING_FOR_START;
 
-        // Print current state
-//        telemetry.addData("State: ", stateMachine);
-//        telemetry.addData("Pose X(mm): ", odo.getPosition().getX(DistanceUnit.MM));
-//        telemetry.addData("Pose Y(mm): ", odo.getPosition().getY(DistanceUnit.MM));
-//        telemetry.addData("Pose Heading(deg): ", odo.getPosition().getHeading(AngleUnit.DEGREES));
-//        telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
-//        telemetry.addData("ExtensionPosition", extendArmMotor.getCurrentPosition());
-        telemetry.update();
-
         // Wait for the game to start (driver presses START)
         waitForStart();
         resetRuntime();
 
-        //telemetry.setAutoClear(false);
-
         while (opModeIsActive()) {
-//            telemetry.addData("State: ", stateMachine);
-//            telemetry.addData("Pose X(mm): ", odo.getPosition().getX(DistanceUnit.MM));
-//            telemetry.addData("Pose Y(mm): ", odo.getPosition().getY(DistanceUnit.MM));
-//            telemetry.addData("Pose Heading(deg): ", odo.getPosition().getHeading(AngleUnit.DEGREES));
-//            telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
-//            telemetry.addData("ExtensionPosition", extendArmMotor.getCurrentPosition());
-
-            // Pinpoint update must be called every cycle
-            //odo.update();
 
             //----------------------------------------------------------
             // State: WAITING_FOR_START
@@ -112,29 +86,19 @@ public class Auto16759 extends LinearOpMode {
                 // (b) rotate arm to ARM_UP_MAX_POSITION
                 // (c) extend arm to EXT_MAX_POSITION
                 // When all three conditions met, move to next state (PLACE_SPECIMEN)
-//                if (driveSpeed < DRIVE_SPEED) {
-//                    driveSpeed += 0.01;
-//                }
-
-//                drive.setMotorPower(.3,.3,.3,.3);
-//                sleep(3000);
-//                break;
                 if (firstTime) {
-                    drive.setTargetEncoderValue(24);
+                    drive.setTargetEncoderValue(48);
                     firstTime = false;
                 }
-                boolean cond1 = drive.moveRobot(Drive.Direction.Right, DRIVE_SPEED);
-                if (cond1) {
-                    stateMachine = StateMachine.END;
-                    firstTime = true; // reset for later use
+                boolean cond1 = drive.moveRobot(Drive.Direction.Forward, DRIVE_SPEED);
+                boolean cond2 = armUp(ARM_UP_MAX_POSITION);
+                boolean cond3 = armExtend(EXT_MAX_POSITION);
+
+                //if all 3 conditions met, move to next state
+                if (cond1 && cond2 && cond3) {
+                    stateMachine = StateMachine.PLACE_SPECIMEN;
+                    sleep(2000);
                 }
-//                boolean cond2 = armUp(ARM_UP_MAX_POSITION);
-//                boolean cond3 = armExtend(EXT_MAX_POSITION);
-//
-//                //if all 3 conditions met, move to next state
-//                if (cond1 && cond2 && cond3) {
-//                    stateMachine = StateMachine.PLACE_SPECIMEN;
-//                }
             }
 
             //----------------------------------------------------------
@@ -163,6 +127,8 @@ public class Auto16759 extends LinearOpMode {
             // State: DRIVE_TO_OBSERVATION_ZONE
             // Actions: drive to observation zone and park
             //----------------------------------------------------------
+
+            /*
             if (stateMachine == StateMachine.DRIVE_TO_OBSERVATION_ZONE) {
                 // Drive to observation zone
                 boolean cond = nav.driveTo(odo.getPosition(), OBSERVATION_ZONE, DRIVE_SPEED, 0);
@@ -170,6 +136,8 @@ public class Auto16759 extends LinearOpMode {
                     stateMachine = StateMachine.END;
                 }
             }
+            */
+
 
             //----------------------------------------------------------
             // State: END

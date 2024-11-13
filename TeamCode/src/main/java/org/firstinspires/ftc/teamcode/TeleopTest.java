@@ -76,8 +76,8 @@ public class TeleopTest extends LinearOpMode {
     private DcMotor rotateArmMotor = null;
     private DcMotor armExtensionMotor = null;
 //    private Servo wrist = null;
-//    private Servo leftFinger = null;
-//    private Servo rightFinger = null;
+    private Servo leftFinger = null;
+    private Servo rightFinger = null;
 
     final double ARM_POWER = 0.5;
     final double EXTENSION_POWER = 0.75;
@@ -93,11 +93,11 @@ public class TeleopTest extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
-        rotateArmMotor = hardwareMap.get(DcMotor.class, "rotate");
-        armExtensionMotor = hardwareMap.get(DcMotor.class, "extender");
+        rotateArmMotor = hardwareMap.get(DcMotor.class, "Elevation");
+        armExtensionMotor = hardwareMap.get(DcMotor.class, "Extension");
 //        wrist = hardwareMap.get(Servo.class, "wrist");
-//        leftFinger = hardwareMap.get(Servo.class, "leftFinger");
-//        rightFinger = hardwareMap.get(Servo.class, "rightFinger");
+        leftFinger = hardwareMap.get(Servo.class, "LeftFinger");
+        rightFinger = hardwareMap.get(Servo.class, "RightFinger");
 
 
         // ########################################################################################
@@ -192,19 +192,18 @@ public class TeleopTest extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
+
+//            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
+//            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
+//            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
+//            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+
 
             // Send calculated power to wheels
             rightFrontDrive.setPower(rightFrontPower);
             leftFrontDrive.setPower(leftFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            rightFrontDrive.setPower(rightFrontPower);
 
             if (armUp) {
                 rotateArmMotor.setPower(-ARM_POWER);
@@ -225,38 +224,40 @@ public class TeleopTest extends LinearOpMode {
             else {
                 armExtensionMotor.setPower(0);
             }
-////
-////            if (wristButtonUp > 0.8) {
-////                servoPosition = 0.5;
-////                wrist.setPosition(servoPosition);
-////            }
-////
+//
+//            if (wristButtonUp > 0.8) {
+//                servoPosition = 0.5;
+//                wrist.setPosition(servoPosition);
+//            }
+//
 ////            else if (wristButtonDown > 0.8){
 ////                servoPosition = 0.0;
 ////                wrist.setPosition(servoPosition);
 ////            }
 ////
-////            if(rightFingerToggle && !isRightFingerClosed && !wasRightFingerToggleDown) {
-////                rightFingerPosition = 0.55;
-////                isRightFingerClosed = true;
-////                //rightFinger.setPosition(rightFingerPosition);
-////            } else if(rightFingerToggle && isRightFingerClosed && !wasRightFingerToggleDown) {
-////                rightFingerPosition = 0.4;
-////                isRightFingerClosed = false;
-////                //rightFinger.setPosition(rightFingerPosition);
-////            }
-////            rightFinger.setPosition(rightFingerPosition);
-////
-////            wasRightFingerToggleDown = rightFingerToggle;
-//
-//
-//
+//            if(rightFingerToggle && !isRightFingerClosed && !wasRightFingerToggleDown) {
+//                rightFingerPosition = 0.55;
+//                isRightFingerClosed = true;
+//                //rightFinger.setPosition(rightFingerPosition);
+//            } else if(rightFingerToggle && isRightFingerClosed && !wasRightFingerToggleDown) {
+//                rightFingerPosition = 0.4;
+//                isRightFingerClosed = false;
+//                //rightFinger.setPosition(rightFingerPosition);
+//            }
+            //rightFinger.setPosition(rightFingerPosition);
+
+            //wasRightFingerToggleDown = rightFingerToggle;
+
+
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("ArmPosition", rotateArmMotor.getCurrentPosition());
             telemetry.addData("ExtensionPosition", armExtensionMotor.getCurrentPosition());
+            telemetry.addData("RightFinger Position", rightFingerPosition);
+            //telemetry.addData("LeftFinger Position", leftFingerPosition);
 
 //            //telemetry.addData("WristButtonUp", "%4.2f", wristButtonUp);
             //telemetry.addData("WristButtonDown", "%4.2f", wristButtonDown);
