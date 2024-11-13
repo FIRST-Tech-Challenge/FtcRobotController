@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import android.util.Log;
+
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,6 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDrive
 import java.util.concurrent.TimeUnit;
 
 public class TurnAngleCommand extends SounderBotCommandBase {
+    private static final String LOG_TAG = TurnAngleCommand.class.getSimpleName();
     double minError = Math.toRadians(1.5);
     double minPower = 0.2;
 
@@ -42,6 +45,8 @@ public class TurnAngleCommand extends SounderBotCommandBase {
         if(Math.abs(driveMotorsPower) < minPower) {
             driveMotorsPower = minPower * Math.signum(driveMotorsPower);
         }
+
+        Log.i(LOG_TAG, String.format("power: %f", driveMotorsPower));
 
         driveTrain.setWheelsPower(-driveMotorsPower, driveMotorsPower, -driveMotorsPower, driveMotorsPower);
 

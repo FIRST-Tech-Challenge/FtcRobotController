@@ -52,7 +52,7 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
             power = min * Math.signum(power);
         }
 
-        driveTrain.driveRobotCentric(0, -power, 0);
+        driveTrain.driveRobotCentric(0, power, 0);
 
     }
 

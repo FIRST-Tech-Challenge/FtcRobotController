@@ -61,8 +61,9 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         }
 
         // Battery reading of 13.49 required a Kp of 0.015
-        double x = 0.0015*(targetX - odo.getPosX());
-        double y = -0.0015*(targetY - odo.getPosY());
+        double kp = 0.003;
+        double x = kp * (targetX - odo.getPosX());
+        double y = - kp * (targetY - odo.getPosY());
 
         double botHeading = odo.getHeading();
 
@@ -91,6 +92,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
             backRightPower = minPower * Math.signum(backRightPower);
         }
 
+        Log.i(LOG_TAG, String.format("Wheels power: fL: %f, fR: %f, bL: %f, bR: %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower));
         driveTrain.setWheelsPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 

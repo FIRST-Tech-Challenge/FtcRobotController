@@ -5,9 +5,8 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,6 +22,7 @@ import org.firstinspires.ftc.teamcode.util.Units;
  */
 public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
+    private static final double METER_PER_SEC_TO_POWER = 400;
     private final Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0));
 
     GoBildaPinpointDriver odo;
@@ -32,6 +32,8 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
     long waitTimeNano = 300 * 1000;
 
     LimeLight limeLight;
+
+    private MecanumDriveKinematics driveKinematics;
 
     public AutoMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
         super(hardwareMap, gamepad, telemetry, feedback, true);
@@ -44,6 +46,17 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+
+        Translation2d frontLeftWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
+        Translation2d frontRightWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
+        Translation2d rearLeftWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
+        Translation2d rearRightWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
+
+        driveKinematics = new MecanumDriveKinematics(
+                frontLeftWheelMeters, frontRightWheelMeters,
+                rearLeftWheelMeters, rearRightWheelMeters);
+
+
     }
 
     @Override
@@ -366,4 +379,58 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         odo.resetPosAndIMU();
     }
 
+    public MecanumDriveKinematics getDriveKinematics() {
+        return driveKinematics;
+    }
+
+    private static Pose2d toPose2d(GoBildaPinpointDriver.Pose2D pose2D) {
+        return new Pose2d(pose2D.getX(DistanceUnit.METER), pose2D.getY(DistanceUnit.METER),
+                new Rotation2d(pose2D.getHeading(AngleUnit.RADIANS)));
+    }
+
+    public Pose2d getCurrentPose() {
+        return toPose2d(odo.getPosition());
+    }
+
+    private double meterPerSecondToPower(double meterPerSec) {
+        return meterPerSec * METER_PER_SEC_TO_POWER;
+    }
+
+    public void driveWithWheelSpeeds(MecanumDriveWheelSpeeds wheelSpeeds) {
+        // Convert wheel speeds to motor powers
+        double frontLeftPower = meterPerSecondToPower(wheelSpeeds.frontLeftMetersPerSecond);
+        double frontRightPower = meterPerSecondToPower(wheelSpeeds.frontRightMetersPerSecond);
+        double backLeftPower = meterPerSecondToPower(wheelSpeeds.rearLeftMetersPerSecond);
+        double backRightPower = meterPerSecondToPower(wheelSpeeds.rearRightMetersPerSecond);
+
+        // Normalize wheel speeds if any power is greater than 1.0
+        double maxPower = Math.max(
+                Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
+        );
+
+        if (maxPower > 1.0) {
+            frontLeftPower /= maxPower;
+            frontRightPower /= maxPower;
+            backLeftPower /= maxPower;
+            backRightPower /= maxPower;
+        }
+
+        // Set motor powers
+        fL.set(frontLeftPower);
+        fR.set(frontRightPower);
+        bL.set(backLeftPower);
+        bR.set(backRightPower);
+
+        // Log data
+        telemetry.addData("FL Speed (m/s)", wheelSpeeds.frontLeftMetersPerSecond);
+        telemetry.addData("FR Speed (m/s)", wheelSpeeds.frontRightMetersPerSecond);
+        telemetry.addData("BL Speed (m/s)", wheelSpeeds.rearLeftMetersPerSecond);
+        telemetry.addData("BR Speed (m/s)", wheelSpeeds.rearRightMetersPerSecond);
+        telemetry.addData("FL Power", frontLeftPower);
+        telemetry.addData("FR Power", frontRightPower);
+        telemetry.addData("BL Power", backLeftPower);
+        telemetry.addData("BR Power", backRightPower);
+        telemetry.update();
+    }
 }

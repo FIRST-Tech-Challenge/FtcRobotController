@@ -25,9 +25,9 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private int StartPositionFromCalibration = 1975 - 310;
 
-    private int DeliveryPositionFromStart = 400 + 310;
+    public static int DeliveryPositionFromStart = 400 + 310;
 
-    private int IntakePositionFromStart = -1500 + 310;
+    public static int IntakePositionFromStart = -1500 + 310;
 
     private int SampleIntakePositionFromStart = -1800 + 310;
 
@@ -212,4 +212,12 @@ public class DeliveryPivot extends SonicSubsystemBase {
         return motor.encoder.getPosition() < SliderCheckLimit;
     }
 
+
+    public Motor getMotor() {
+        return motor;
+    }
+
+    public SonicPIDController getPidController() {
+        return pidController;
+    }
 }

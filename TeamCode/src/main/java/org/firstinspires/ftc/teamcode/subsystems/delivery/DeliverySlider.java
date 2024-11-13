@@ -23,8 +23,8 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    private int BasketDeliveryPosition = -3300;
-    private int CollapsedPosition = -90;
+    public static int BasketDeliveryPosition = -3300;
+    public static int CollapsedPosition = -90;
 
     private int ExtendLimit = -1100;
 
@@ -93,8 +93,6 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     @Override
     public void periodic() {
-        super.periodic();
-
         double position = motor.encoder.getPosition();
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
         //telemetry.addData("target", currentTarget);
@@ -170,5 +168,17 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void setPivotLowEnoughSupplier(Supplier<Boolean> pivotLowEnoughSupplier) {
         this.pivotLowEnoughSupplier = pivotLowEnoughSupplier;
+    }
+
+    public boolean isMotorStopped() {
+        return motor.get() == 0;
+    }
+
+    public Motor getMotor() {
+        return motor;
+    }
+
+    public SonicPIDController getPidController() {
+        return pidController;
     }
 }

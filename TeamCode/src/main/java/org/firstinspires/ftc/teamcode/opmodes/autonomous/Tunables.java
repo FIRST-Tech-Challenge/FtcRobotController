@@ -6,11 +6,11 @@ public class Tunables {
     /**
      * distance between left and right
      */
-    public static final double TRACK_WIDTH = Units.inchesToMeters(15);
+    public static final double TRACK_WIDTH = Units.inchesToMeters(15.5);
     /**
      * distance between front and rear
      */
-    public static final double WHEEL_BASE = Units.inchesToMeters(12);
+    public static final double WHEEL_BASE = Units.inchesToMeters(11.5);
     /**
      * offset of center odometry from center
      */
