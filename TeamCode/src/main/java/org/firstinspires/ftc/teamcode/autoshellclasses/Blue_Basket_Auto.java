@@ -158,8 +158,10 @@ public class Blue_Basket_Auto extends LinearOpMode {
 
         Vector2d basket_clear_position = new Vector2d(42, 42);
         double basket_clear_heading = Math.toRadians(45);
-
-        Vector2d drop_position = new Vector2d(53, 53);
+        //Before new grease
+        //Vector2d drop_position = new Vector2d(53, 53);
+        //After new grease
+        Vector2d drop_position = new Vector2d(54, 54);
         double drop_heading = Math.toRadians(45);
 
         Vector2d outer_sample_pickup_position = new Vector2d(46, 45);
