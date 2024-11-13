@@ -96,4 +96,20 @@ public class CommandFactory {
     public InstantCommand stopDriveTrain() {
         return new InstantCommand(() -> driveTrain.stop(), driveTrain);
     }
+
+    public InstantCommand elbowToIntakePosition() {
+        return new InstantCommand(() -> intake.SetElbowInIntakePosition());
+    }
+
+    public InstantCommand elbowToSpecimenPosition() {
+        return new InstantCommand(() -> intake.SetElbowInSpecimenPosition());
+    }
+
+    public IntakeCommand intake() {
+        return new IntakeCommand(intake);
+    }
+
+    public OuttakeCommand outtake() {
+        return new OuttakeCommand(intake);
+    }
 }
