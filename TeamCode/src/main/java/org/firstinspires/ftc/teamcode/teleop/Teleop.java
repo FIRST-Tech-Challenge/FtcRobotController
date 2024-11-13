@@ -37,6 +37,7 @@ public class Teleop extends OpMode {
         chassis = new DriveChassis(this);
     }
 
+    boolean clawClosed, bucketDown = false;
     @Override
     public void loop() {
         // Keeping track of the buttons from the last loop iteration so we do not need a billion booleans
@@ -57,6 +58,29 @@ public class Teleop extends OpMode {
         float moveYInput = controller1.axis(Axis.LeftStickY, PowerCurve.Quadratic);
         float armXInput = controller2.axis(Axis.RightStickX, PowerCurve.Cubic);
         float armYInput = controller2.axis(Axis.LeftStickY, PowerCurve.Cubic);
+
+        if (chassis.collectionArmMotor.getCurrentPosition() >= 0 && armXInput > 0 || chassis.collectionArmMotor.getCurrentPosition() <= -2150 && armXInput < 0) {
+            chassis.collectionArmMotor.setVelocity(0);
+            telemetry.addLine("LIMIT REACHED FOR COLLECTION ARM");
+        }
+        else {
+            chassis.collectionArmMotor.setVelocity(armXInput * 500);
+        }
+
+        double pivot = (controller2.pressed(Controller.Button.DPadUp) ? 1 : 0) + (controller2.pressed(Controller.Button.DPadDown) ? -1 : 0);
+        endPivotMotor.setVelocity(pivot * 300);
+
+        chassis.scoringArmMotor.setVelocity(armYInput * 50);
+        if (controller2.pressed(Controller.Button.A)) {
+            chassis.claw.setPosition(clawClosed ? 1 : 0);
+            clawClosed = !clawClosed;
+        }
+        if (controller2.pressed(Controller.Button.B)) {
+            chassis.bucket.setPosition(bucketDown ? 1 : 0);
+            bucketDown = !bucketDown;
+        }
+
+
         float rotationInput = controller1.axis(Axis.RightStickX, PowerCurve.Cubic);
 
         if (controller1.pressed(Button.RightBumper))
