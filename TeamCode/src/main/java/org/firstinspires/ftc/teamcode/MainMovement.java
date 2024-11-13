@@ -23,6 +23,7 @@ public class MainMovement extends LinearOpMode {
 
     final float joystickDeadzone = 0.1f;
     final float speedSlow = 0.5f;
+    final float speedFast = 1.5f;
     float rotationSpeed = 1f;
 
     boolean usingLStick;
@@ -117,7 +118,11 @@ public class MainMovement extends LinearOpMode {
             netS = speedSlow;
             rotationSpeed = speedSlow;
 
-        } else {
+        } else if(gamepad1.right_bumper){
+            netS = (Math.min(maxSpeed, (float) (addSpeed - joystickDeadzone) / (1.0f - joystickDeadzone))) * speedFast; //net speed
+            rotationSpeed = speedFast;
+
+        }else {
             netS = Math.min(maxSpeed, (float) (addSpeed - joystickDeadzone) / (1.0f - joystickDeadzone)); //net speed
             rotationSpeed = 1f;
         }
