@@ -100,7 +100,7 @@ public class BBRobot extends Thread {
         turnServo = hardwareMap.get(Servo.class, "turnServo");
         trayServo = hardwareMap.get(Servo.class, "trayServo");
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
-
+        slideServo = hardwareMap.get(CRServo.class, "slideServo");
         armServo.setDirection(Servo.Direction.REVERSE);
 
         initDCMotor(Motor_FL);
@@ -213,10 +213,10 @@ public class BBRobot extends Thread {
         int ticks = DistanceToTick(distance);
 
         // Set the target position for all motors (in ticks)
-        Motor_FL.setTargetPosition((-1) * ticks);
-        Motor_FR.setTargetPosition(ticks);
-        Motor_BR.setTargetPosition(ticks);
-        Motor_BL.setTargetPosition((-1) * ticks);
+        Motor_FL.setTargetPosition(ticks);
+        Motor_FR.setTargetPosition((-1) * ticks);
+        Motor_BR.setTargetPosition((-1) * ticks);
+        Motor_BL.setTargetPosition(ticks);
 
         //Set power of all motors
         Motor_FL.setPower(power);
@@ -291,10 +291,10 @@ public class BBRobot extends Thread {
         int ticks = DistanceToTick(distance);
 
         // Set the target position for all motors (in ticks)
-        Motor_FL.setTargetPosition(ticks);
-        Motor_FR.setTargetPosition((-1) * ticks);
-        Motor_BR.setTargetPosition((-1) * ticks);
-        Motor_BL.setTargetPosition(ticks);
+        Motor_FL.setTargetPosition((-1) * ticks);
+        Motor_FR.setTargetPosition(ticks);
+        Motor_BR.setTargetPosition(ticks);
+        Motor_BL.setTargetPosition((-1) * ticks);
 
         //Set power of all motors
         Motor_FL.setPower(power);
@@ -660,10 +660,10 @@ public class BBRobot extends Thread {
         Motor_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Motor_FL.setPower(power );
+        Motor_FL.setPower((-1) * power );
         Motor_FR.setPower((-1) * power);
         Motor_BR.setPower(power);
-        Motor_BL.setPower((-1) *  power);
+        Motor_BL.setPower(  power);
     }
 
     public void moveLeft(double power) {
@@ -672,10 +672,10 @@ public class BBRobot extends Thread {
         Motor_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Motor_FL.setPower((-1) * power);
-        Motor_FR.setPower(power);
+        Motor_FL.setPower( power);
+        Motor_FR.setPower( power);
         Motor_BR.setPower((-1) * power);
-        Motor_BL.setPower(power);
+        Motor_BL.setPower((-1) * power);
     }
 
     private void resetAngle()
@@ -793,7 +793,7 @@ public class BBRobot extends Thread {
     }
 
     public void clawOpen(){
-        clawServo.setPosition(0.6);
+        clawServo.setPosition(0.68);
     }
     public void clawClose(){
         clawServo.setPosition(0.9);
@@ -802,8 +802,12 @@ public class BBRobot extends Thread {
     public void trayOpen(){
         trayServo.setPosition(0.3);
     }
+    public void trayMid() {
+        trayServo.setPosition(0.1);
+
+    }
     public void trayClose(){
-        trayServo.setPosition(0.05);
+        trayServo.setPosition(0.03);
     }
 
 
@@ -875,24 +879,24 @@ public class BBRobot extends Thread {
         pause(200);
 
         //pick pixel in claw
-        expandSlideSlowRealtively(8);
-        pause(100);
+        expandSlideSlowRealtively(12);
+        pause(200);
         clawOpen();
         pause(100);
-        arm_end();
+        arm_pick();
         pause(1500);
         expandSlideSlowRealtively(-4);
-        pause(500);
+        pause(100);
         clawClose();
         pause(300);
-        expandSlideSlowRealtively(5);
+        expandSlideSlowRealtively(12);
         pause(300);
-        arm_straight();
+        arm_drop();
         pause(200);
 
         // reset platform and tray
         turn_drop();
-        trayOpen();
+        trayMid();
     }
 
     public void servoStepUp (Servo tempServo, double end_position){
@@ -925,7 +929,7 @@ public class BBRobot extends Thread {
     }
 
     public void turn_pick () {
-        turnServo.setPosition(0.35);
+        turnServo.setPosition(0.45);
     }
 
     public void turn_drop() {
@@ -933,11 +937,19 @@ public class BBRobot extends Thread {
     }
 
     public void arm_pick () {
-        armServo.setPosition(0.05);
+        armServo.setPosition(0.00);
+    }
+
+    public void arm_park () {
+        armServo.setPosition(0.2);
     }
 
     public void arm_drop() {
         armServo.setPosition(0.8);
+    }
+
+    public void arm_hang() {
+        armServo.setPosition(0.35);
     }
 
     public void arm_straight() {
@@ -953,11 +965,11 @@ public class BBRobot extends Thread {
     }
 
     public void wrist_mid() {
-        wristServo.setPosition(0.9);
+        wristServo.setPosition(0.8);
     }
 
     public void wrist_end() {
-        wristServo.setPosition(0.3);
+        wristServo.setPosition(0.32);
     }
 
     // slow wrist movement
@@ -975,16 +987,26 @@ public class BBRobot extends Thread {
     }
 
     public void hangElementOnHighBar(double robot_power){
+        clawClose();
+        arm_hang();
         expandSlideForLatching();
-        wrist_end();
-        pause(300);
         moveForwardToPosition(robot_power, 2, 1000);
-        wrist_grab();
-        pause(100);
-        moveForwardToPosition(robot_power, 7, 1000);
-        clawOpen();
+        arm_park();
+        pause(1000);
         contractSlideAfterLatching();
-        wrist_grab();
+        pause(100);
+        clawOpen();
+        contractSlide();
+
+//        wrist_end();
+//        pause(300);
+//        moveForwardToPosition(robot_power, 2, 1000);
+//        wrist_grab();
+//        pause(100);
+//        moveForwardToPosition(robot_power, 7, 1000);
+//        clawOpen();
+//        contractSlideAfterLatching();
+//        wrist_grab();
     }
 
     public void pickElementForBar(double robot_power){
@@ -1002,7 +1024,7 @@ public class BBRobot extends Thread {
     }
 
     public void contractSlide () {
-        moveDCMotor(Motor_VSL, robot_power,0,1500, FALSE);
+        moveDCMotor(Motor_VSL, robot_power,-10,1500, FALSE);
         Log.i(TAG, "Slide Contracting");
     }
 
@@ -1014,7 +1036,7 @@ public class BBRobot extends Thread {
 
     public void contractSlideAfterLatching() {
         Log.i(TAG, "Slide contracting");
-        moveDCMotor(Motor_VSL, robot_power,0,1500, FALSE);
+        moveDCMotor(Motor_VSL, robot_power,10,1500, FALSE);
     }
 
     // move slide relatively
@@ -1043,11 +1065,11 @@ public class BBRobot extends Thread {
     // expand and contract slide for drop
     public void expandLA () {
         Log.i(TAG, "Slide Expanding");
-        moveDCMotor(Motor_LA, robot_power,25,3000, FALSE);
+        moveDCMotor(Motor_LA, robot_power,80,5000, FALSE);
     }
 
     public void contractLA () {
-        moveDCMotor(Motor_LA, robot_power,0,3000, FALSE);
+        moveDCMotor(Motor_LA, robot_power,0,5000, FALSE);
         Log.i(TAG, "Slide Contracting");
     }
 

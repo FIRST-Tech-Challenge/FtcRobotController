@@ -93,7 +93,7 @@ public class TeleopTest extends LinearOpMode {
         }
         // dopr the wrong element
         if (this.gamepad1.dpad_left == true) {
-            robot.wrist_mid();
+//            robot.wrist_mid();
             robot.dropIntake();
         }
         //active intake at driving level
@@ -155,13 +155,21 @@ public class TeleopTest extends LinearOpMode {
 
         // transfer pixel from intake to claw
         if (this.gamepad2.a == true) {
+//            robot.arm_pick();
             robot.elementGrab();
         }
 
+        if (this.gamepad2.b == true) {
+            robot.arm_pick();
+//            robot.elementGrab();
+        }
+
         if (this.gamepad2.x == true) {
+//            robot.arm_drop();
             robot.clawOpen();
         }
         if (this.gamepad2.y == true) {
+//            robot.arm_end();
             robot.clawClose();
         }
         // hang on bar
