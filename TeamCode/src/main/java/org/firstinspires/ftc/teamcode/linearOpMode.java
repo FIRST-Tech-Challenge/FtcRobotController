@@ -15,7 +15,6 @@ public class linearOpMode extends LinearOpMode {
   private DcMotor slideExtension = null;
 
   private DcMotor slideAbduction = null;
-  private DcMotor slideAbduction2 = null;
 
   private CRServo leftIntake = null;
   private CRServo rightIntake = null;
@@ -63,7 +62,6 @@ public class linearOpMode extends LinearOpMode {
     //linear slide
     slideExtension.setDirection(DcMotor.Direction.FORWARD);
     slideAbduction.setDirection(DcMotor.Direction.FORWARD);
-    slideAbduction2.setDirection(DcMotor.Direction.FORWARD);
 
     waitForStart();
 
@@ -137,7 +135,6 @@ public class linearOpMode extends LinearOpMode {
 
       // Power to the arm
       slideAbduction.setPower(slideAbdPower);
-      slideAbduction2.setPower(slideAbdPower);
       slideExtension.setPower(slideExtendPower);
 
       // Power to the intake
@@ -147,7 +144,8 @@ public class linearOpMode extends LinearOpMode {
       //Telemetry
       telemetry.addData("X", x);
       telemetry.addData("Y", y);
-      telemetry.addData("Button Pressed: ", button.isPressed());
+      telemetry.addData("Button Pressed: ", button.getValue());
+      telemetry.addData("Intake power: ", intakePower);
       telemetry.update();
 
     }
