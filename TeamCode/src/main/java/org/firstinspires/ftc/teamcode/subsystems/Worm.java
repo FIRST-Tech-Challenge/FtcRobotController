@@ -22,7 +22,6 @@ public class Worm extends SubsystemBase {
     private static final double DEGREE_TO_TICK_MULTIPLIER = 537.6 / 360;
 
     public Worm(HardwareMap hm, Telemetry tm){
-
         motor = hm.get(DcMotorEx.class, "Tilt");
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

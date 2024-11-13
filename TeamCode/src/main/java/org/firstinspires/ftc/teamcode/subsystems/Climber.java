@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class Climber extends SubsystemBase {
 
-    private ServoEx servo;
+    public static volatile double LIFT_ANGLE = 360;
+    public static volatile double LOWER_ANGLE = 360;
+    public static volatile double CENTER_ANGLE = 360;
+
+    private final ServoEx servo;
 
     public Climber(HardwareMap hardwareMap){
         //TODO: fix this name from config
@@ -19,21 +25,13 @@ public class Climber extends SubsystemBase {
         servo.turnToAngle(angle);
     }
     public void lift(){
-        //this is a guess
-        setAngle(360);
+        setAngle(LIFT_ANGLE);
     }
     public void lower(){
-        //this is a guess
-        setAngle(0);
+        setAngle(LOWER_ANGLE);
     }
 
     public void center(){
-        //this is a guess
-        setAngle(180);
+        setAngle(CENTER_ANGLE);
     }
-
-    @Override
-    public void periodic(){
-    }
-
 }
