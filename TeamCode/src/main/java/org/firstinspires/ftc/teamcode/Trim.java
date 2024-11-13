@@ -24,7 +24,6 @@ class PowerLevels{
     }
 }
 public class Trim {
-    private float totalTrim = 1f;
     private float leftTrim = 1f;
     private float rightTrim = 1f;
     private final float TRIMAMOUNT = 0.01f;

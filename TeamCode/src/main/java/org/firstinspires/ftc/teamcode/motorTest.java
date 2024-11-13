@@ -9,8 +9,8 @@ public class motorTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        DcMotor leftMotor = hardwareMap.get(DcMotor.class, "Left");
-        DcMotor rightMotor = hardwareMap.get(DcMotor.class, "Right");
+        //DcMotor leftMotor = hardwareMap.get(DcMotor.class, "Left");
+        //DcMotor rightMotor = hardwareMap.get(DcMotor.class, "Right");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
@@ -27,8 +27,15 @@ public class motorTest extends LinearOpMode {
             telemetry.addData("Left Thumbstick Value", leftThumbstickValue);
             telemetry.addData("Right Thumbstick Value", rightThumbstickValue);
 
+            if (gamepad1.dpad_left){
+                t.addLeft();
+            }
 
-            if (gamepad1.a) {
+            if (gamepad1.dpad_right){
+                t.addRight();
+            }
+
+            /*if (gamepad1.a) {
                 leftMotor.setPower(-pl.getLeftPower());
                 //0.95 was the value that the Trim was set to before I added my code
                 rightMotor.setPower(pl.getRightPower());
@@ -43,7 +50,7 @@ public class motorTest extends LinearOpMode {
                     leftMotor.setPower(-0);
                     rightMotor.setPower(0);
                 }
-            }
+            }*/
             //leftMotor.setPower(leftThumbstickValue);
             //rightMotor.setPower(-rightThumbstickValue);
             telemetry.update();
