@@ -2,21 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.util.Range;
 import com.acmerobotics.dashboard.config.Config;
+
+import org.firstinspires.ftc.teamcode.util.AbsoluteAnalogEncoder;
 
 @Config // config lets us access and edit through FTC Dashboard in real time without rebuilding every time
 public class SwerveModule {
@@ -41,7 +35,7 @@ public class SwerveModule {
 
     public double lastMotorPower = 0; // IGNORE BUT DO NOT REMOVE
 
-    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e, double r, double sp, double si, double sd) {
+    public SwerveModule(DcMotorEx m, CRServo s, AbsoluteAnalogEncoder e) { //, double r) { //, double sp, double si, double sd) {
         motor = m;
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,6 +87,10 @@ public class SwerveModule {
         motor.setPower(power);
     }
 
+    public void setTargetRotation(double target) {
+        this.target = normalizeRadians(target);
+    }
+
     public double getWheelPosition() {
         return encoderTicksToInches(motor.getCurrentPosition());
     }
@@ -103,6 +101,10 @@ public class SwerveModule {
 
     private double encoderTicksToInches(double ticks) {
         return WHEEL_RAD * 2 * Math.PI * DRIVE_RATIO * ticks / TPR;
+    }
+
+    public String getTelemetry(String name) {
+        return String.format("%s: Motor Flipped: %b \ncurrent position %.2f target position %.2f motor power = %.2f", name, wheelFlipped, getModuleRotation(), getTargetRotation(), lastMotorPower);
     }
 //
 //    public void azimtuh(double pos) { //in RADianz

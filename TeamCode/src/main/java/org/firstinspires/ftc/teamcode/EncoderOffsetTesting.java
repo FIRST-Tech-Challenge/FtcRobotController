@@ -4,9 +4,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 
-import org.apache.commons.math3.analysis.function.Abs;
+import org.firstinspires.ftc.teamcode.util.AbsoluteAnalogEncoder;
 
 @TeleOp(name="Encoder Offset Tester")
 
