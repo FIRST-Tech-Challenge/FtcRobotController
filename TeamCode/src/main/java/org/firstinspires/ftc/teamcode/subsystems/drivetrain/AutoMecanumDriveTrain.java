@@ -23,11 +23,9 @@ import org.firstinspires.ftc.teamcode.util.Units;
 public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
     private static final double METER_PER_SEC_TO_POWER = 400;
-    private final Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0));
 
     GoBildaPinpointDriver odo;
 
-    ElapsedTime stopWatch = new ElapsedTime();
 
     long waitTimeNano = 300 * 1000;
 

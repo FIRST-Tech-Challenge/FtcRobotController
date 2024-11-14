@@ -39,12 +39,6 @@ public abstract class BasicDriveTrain extends SubsystemBase {
         createAndInitHardwares(hardwareMap);
 
         createDrive();
-//        IMU.Parameters imuParams = new IMU.Parameters(
-//                new RevHubOrientationOnRobot(
-//                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-//                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-//                )
-//        );
 
         this.gamepad = gamepad;
         this.telemetry = telemetry;
