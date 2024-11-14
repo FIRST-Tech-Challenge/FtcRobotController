@@ -111,8 +111,8 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         clawIntake = hardwareMap.get(Servo.class, "clawIntake");
 
         // Initialize PIDF controllers for the arm and slide
-        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, ARM_TICKS_IN_DEGREES);
-        slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, SLIDE_TICKS_IN_DEGREES);
+        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, ARM_TICKS_IN_DEGREES, 0.2, 5);
+        slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, SLIDE_TICKS_IN_DEGREES, 0.5, 3);
 
         // Set directions for drivetrain motors
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -177,6 +177,10 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
             slideController.driveToPosition(2250);
         } else if (gamepad2.dpad_down) {
             slideController.driveToPosition(1750);
+        } else if (gamepad2.right_bumper) {
+            slideController.driveToPosition(4250);
+        } else if (gamepad2.left_bumper) {
+            slideController.driveToPosition(0);
         }
     }
 

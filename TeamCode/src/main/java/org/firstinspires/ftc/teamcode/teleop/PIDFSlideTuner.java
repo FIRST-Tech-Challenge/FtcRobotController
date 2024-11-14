@@ -10,13 +10,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Config
 @TeleOp
-
 public class PIDFSlideTuner extends OpMode {
 
     private PIDController controller;
 
-    public static double p = 0, i = 0, d = 0;
+    public static double p = 0.01, i = 0.25, d = 0.001;
     public static double f = 0;
+    public static double maxSpeed = 0.5;
 
     public static int target = 0;
 
@@ -41,11 +41,21 @@ public class PIDFSlideTuner extends OpMode {
 
         double power = pid + ff;
 
-        rightSlideMotor.setPower(power);
+        rightSlideMotor.setPower(limitPower(power));
 
         telemetry.addData("pos", intakeArmPos);
         telemetry.addData("target", target);
         telemetry.update();
+    }
+
+    private double limitPower(double power){
+        if (power > maxSpeed){
+            return maxSpeed;
+        }
+        if (power < -maxSpeed){
+            return -maxSpeed;
+        }
+        return power;
     }
 
 }

@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -61,14 +62,15 @@ public class autoRoadRunnerITD extends LinearOpMode {
 
         public Slides(HardwareMap hardwareMap) {
             rightSlideMotor = hardwareMap.get(DcMotorEx.class, "rightSlideMotor");
+            rightSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             double SLIDE_TICKS_IN_DEGREES = 537.7 / 360.0;
-            slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, SLIDE_TICKS_IN_DEGREES);
+            slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, SLIDE_TICKS_IN_DEGREES, 0.5, 2);
         }
 
         public class SlidesUp implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                slideController.driveToPosition(2250);
+                slideController.driveToPosition(1900);
                 return false;
             }
         }
@@ -93,7 +95,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public class SlidesHold implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                slideController.driveToPosition(1750);
+                slideController.driveToPosition(1270);
                 return false;
             }
         }
@@ -109,14 +111,15 @@ public class autoRoadRunnerITD extends LinearOpMode {
 
         public IntakeArm(HardwareMap hardwareMap) {
             intakeArmMotor = hardwareMap.get(DcMotorEx.class, "intakeArmMotor");
+            intakeArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             double ARM_TICKS_IN_DEGREES = 1425.1 / 360.0;
-            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, ARM_TICKS_IN_DEGREES);
+            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, ARM_TICKS_IN_DEGREES, 0.2, 5);
         }
 
         public class IntakeArmUp implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armController.driveToPosition(0);
+                armController.driveToPosition(10);
                 return false;
             }
         }
@@ -129,7 +132,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armController.driveToPosition(50);
+                armController.driveToPosition(250);
                 return false;
             }
         }
@@ -138,6 +141,24 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public Action intakeArmDown() {
             return new IntakeArmDown();
         }
+    }
+
+    @Config
+    public class WaitForUser implements Action {
+        private boolean flag = false;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            while(!flag){
+                sleep(100);
+            }
+            return false;
+        }
+    }
+
+
+    public Action waitForUser() {
+        return new WaitForUser();
     }
 
     public void runOpMode() throws InterruptedException {
@@ -149,13 +170,18 @@ public class autoRoadRunnerITD extends LinearOpMode {
 
 
         TrajectoryActionBuilder firstSpec0 = drive.actionBuilder(beginPose)
-                .strafeTo(new Vector2d(13,-50));
-        TrajectoryActionBuilder firstSpec = drive.actionBuilder(beginPose) // go to sub, place spec
-                .strafeTo(new Vector2d(0, -28));
+                .strafeTo(new Vector2d(13,-50))
+                .waitSeconds(3);
+        TrajectoryActionBuilder firstSpec = drive.actionBuilder(beginPose)
+                .waitSeconds(2)// go to sub, place spec
+                .strafeTo(new Vector2d(0, -30))
+                .waitSeconds(2);
         TrajectoryActionBuilder firstSpec1 = drive.actionBuilder(beginPose) // strafe to right
-                .waitSeconds(1)
-                .strafeTo(new Vector2d(0, -34));
-        TrajectoryActionBuilder firstSpec2 = drive.actionBuilder(beginPose) //push bot sample into human-player zone
+                .waitSeconds(5)
+                .strafeTo(new Vector2d(0, -34))
+                .waitSeconds(5);
+        TrajectoryActionBuilder firstSpec2 = drive.actionBuilder(beginPose)
+                .waitSeconds(5)//push bot sample into human-player zone
                 .strafeTo(new Vector2d(37, -35))
                 .strafeTo(new Vector2d(37, -10))
                 .splineTo(new Vector2d(47, -10), Math.toRadians(270))
@@ -163,16 +189,21 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .strafeTo(new Vector2d(47, -59))
                 .strafeTo(new Vector2d(47, -45))
                 .waitSeconds(3) //wait for player person to give spec
-                .strafeTo(new Vector2d(47, -61.5));
+                .strafeTo(new Vector2d(47, -61.5))
+                .waitSeconds(5);
         TrajectoryActionBuilder secondSpec = drive.actionBuilder(beginPose)
+                .waitSeconds(5)
                 .waitSeconds(0.5)
                 .strafeTo(new Vector2d(47, -45))
                 .splineTo(new Vector2d(4, -52), Math.toRadians(270))
-                .strafeTo(new Vector2d(4, -27));
+                .strafeTo(new Vector2d(4, -27))
+                .waitSeconds(5);
         TrajectoryActionBuilder secondSpec1 = drive.actionBuilder(beginPose)
-                        .waitSeconds(1)
+                .waitSeconds(5)
+                .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
-                .strafeTo(new Vector2d(47, -58));
+                .strafeTo(new Vector2d(47, -58))
+                .waitSeconds(5);
         Action trajectoryAction0 = firstSpec0.build();
         Action trajectoryAction1 = firstSpec.build();
         Action trajectoryAction2 = firstSpec1.build();

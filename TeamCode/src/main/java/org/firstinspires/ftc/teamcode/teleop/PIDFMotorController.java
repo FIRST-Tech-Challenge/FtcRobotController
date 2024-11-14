@@ -10,14 +10,18 @@ public class PIDFMotorController {
 
     private double p, i, d, f;
     private final double ticksInDegrees;
+    private double maxSpeed;
+    private double positionTolerance;
 
-    public PIDFMotorController(DcMotorEx motor, double p, double i, double d, double f, double ticksInDegrees) {
+    public PIDFMotorController(DcMotorEx motor, double p, double i, double d, double f, double ticksInDegrees, double maxSpeed, double positionTolerance) {
         this.motor = motor;
         this.p = p;
         this.i = i;
         this.d = d;
         this.f = f;
         this.ticksInDegrees = ticksInDegrees;
+        this.maxSpeed = maxSpeed;
+        this.positionTolerance = positionTolerance;
 
         // Initialize the PIDController with the provided PID values
         this.pidController = new PIDController(p, i, d);
@@ -40,17 +44,30 @@ public class PIDFMotorController {
      */
     public void driveToPosition(int targetPosition) {
         int currentPosition = motor.getCurrentPosition();
+        while (Math.abs(targetPosition - currentPosition) > positionTolerance ){
+            currentPosition = motor.getCurrentPosition();
 
-        // Calculate the PID output
-        double pidOutput = pidController.calculate(currentPosition, targetPosition);
+            // Calculate the PID output
+            double pidOutput = pidController.calculate(currentPosition, targetPosition);
 
-        // Calculate feed-forward component
-        double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees)) * f;
+            // Calculate feed-forward component
+            double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees)) * f;
 
-        // Sum PID and feed-forward for final motor power
-        double power = pidOutput + ff;
+            // Sum PID and feed-forward for final motor power
+            double power = pidOutput + ff;
 
-        // Set motor power
-        motor.setPower(power);
+            // Set motor power
+            motor.setPower(limitPower(power));
+        }
+    }
+
+    private double limitPower(double power){
+        if (power > maxSpeed){
+            return maxSpeed;
+        }
+        if (power < -maxSpeed){
+            return -maxSpeed;
+        }
+        return power;
     }
 }

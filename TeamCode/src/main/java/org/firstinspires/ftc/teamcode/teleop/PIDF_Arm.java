@@ -17,8 +17,9 @@ public class PIDF_Arm extends OpMode {
 
     private PIDController controller;
 
-    public static double p = 0, i = 0, d = 0;
-    public static double f = 0;
+    public static double p = 0.01, i = 0.23, d = 0.001;
+    public static double f = 0.4;
+    public static double maxSpeed = 0.2;
 
     public static int target = 0;
 
@@ -43,12 +44,21 @@ public class PIDF_Arm extends OpMode {
 
         double power = pid + ff;
 
-        intakeArmMotor.setPower(power);
+        intakeArmMotor.setPower(limitPower(power));
 
         telemetry.addData("pos", intakeArmPos);
         telemetry.addData("target", target);
         telemetry.update();
     }
 
+    private double limitPower(double power){
+        if (power > maxSpeed){
+            return maxSpeed;
+        }
+        if (power < -maxSpeed){
+            return -maxSpeed;
+        }
+        return power;
+    }
 }
 
