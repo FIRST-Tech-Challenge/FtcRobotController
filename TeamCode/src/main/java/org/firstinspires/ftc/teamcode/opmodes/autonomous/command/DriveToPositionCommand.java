@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
+import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,9 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.util.AngleTracker;
-
-import android.annotation.SuppressLint;
-import android.util.Log;
 
 public class DriveToPositionCommand extends CommandBase {
     private static final String TAG = "DriveToPositionCmd";
@@ -79,7 +80,7 @@ public class DriveToPositionCommand extends CommandBase {
     private final AutoMecanumDriveTrain drive;
     private final Telemetry telemetry;
     private final GoBildaPinpointDriver odo;
-    private PIDController xController, yController, rotController;
+    private ProfiledPIDController xController, yController, rotController;
     private AngleTracker angleTracker;
 
     // PID constants
@@ -90,12 +91,6 @@ public class DriveToPositionCommand extends CommandBase {
     private static final double kP_rot = 0.1;
     private static final double kI_rot = 0.02;
     private static final double kD_rot = 0.05;
-
-    // Motion profile constants
-    private static final double MAX_VELOCITY = 1000; // mm/s
-    private static final double MAX_ACCELERATION = 500; // mm/s²
-    private static final double MAX_ROT_VELOCITY = Math.PI; // rad/s
-    private static final double MAX_ROT_ACCELERATION = Math.PI/2; // rad/s²
 
     // Minimum power needed to overcome friction
     private static final double MIN_MOVE_POWER = 0.1;
@@ -112,7 +107,6 @@ public class DriveToPositionCommand extends CommandBase {
 
     private double targetX, targetY, targetRotation;
     private boolean isHoldingPosition = false;
-    private double motionProfileScale = 0.0;
 
     private DriftStats driftStats = new DriftStats();
 
@@ -121,15 +115,21 @@ public class DriveToPositionCommand extends CommandBase {
         this.telemetry = telemetry;
         this.odo = drive.getOdo();
 
-        // Initialize controllers
-        xController = new PIDController(kP_trans, kI_trans, kD_trans);
-        yController = new PIDController(kP_trans, kI_trans, kD_trans);
-        rotController = new PIDController(kP_rot, kI_rot, kD_rot);
+        // Create constraints for the profiles
+        TrapezoidProfile.Constraints transConstraints =
+                new TrapezoidProfile.Constraints(1000, 500); // max vel: 1000mm/s, max accel: 500mm/s²
+        TrapezoidProfile.Constraints rotConstraints =
+                new TrapezoidProfile.Constraints(Math.PI, Math.PI/2); // max vel: π rad/s, max accel: π/2 rad/s²
 
-        // Set integral limits to prevent windup
-        xController.setIntegrationBounds(-0.3, 0.3);
-        yController.setIntegrationBounds(-0.3, 0.3);
-        rotController.setIntegrationBounds(-0.3, 0.3);
+        // Initialize ProfiledPIDControllers
+        xController = new ProfiledPIDController(kP_trans, kI_trans, kD_trans, transConstraints);
+        yController = new ProfiledPIDController(kP_trans, kI_trans, kD_trans, transConstraints);
+        rotController = new ProfiledPIDController(kP_rot, kI_rot, kD_rot, rotConstraints);
+
+        // Set tolerance
+        xController.setTolerance(POSITION_TOLERANCE);
+        yController.setTolerance(POSITION_TOLERANCE);
+        rotController.setTolerance(ROTATION_TOLERANCE);
 
         angleTracker = new AngleTracker();
 
@@ -142,26 +142,27 @@ public class DriveToPositionCommand extends CommandBase {
         targetY = y;
         targetRotation = rotation;
 
-        xController.setSetPoint(targetX);
-        yController.setSetPoint(targetY);
-        rotController.setSetPoint(targetRotation);
+        // Update controller goals with new targets
+        xController.setGoal(targetX);
+        yController.setGoal(targetY);
+        rotController.setGoal(targetRotation);
 
-        xController.reset();
-        yController.reset();
-        rotController.reset();
+        // Reset controllers
+        xController.reset(odo.getPosX());
+        yController.reset(odo.getPosY());
+        rotController.reset(odo.getHeading());
 
         angleTracker = new AngleTracker();
         angleTracker.update(odo.getHeading());
 
-        motionProfileScale = 0.0;
         driftStats.reset();
+
         return this;
     }
 
     @Override
     public void initialize() {
         isHoldingPosition = false;
-        motionProfileScale = 0.0;
         driftStats.reset();
         Log.i(TAG, String.format("Starting movement to X=%.1f, Y=%.1f, Rot=%.1f°",
                 targetX, targetY, Math.toDegrees(targetRotation)));
@@ -171,16 +172,18 @@ public class DriveToPositionCommand extends CommandBase {
     public void execute() {
         odo.update();
 
-        // Get current position and heading
         double currentX = odo.getPosX();
         double currentY = odo.getPosY();
         double currentHeading = angleTracker.update(odo.getHeading());
 
-        // Calculate errors
         double xError = targetX - currentX;
         double yError = targetY - currentY;
         double rotError = AngleUnit.normalizeRadians(targetRotation - currentHeading);
         double totalError = Math.hypot(xError, yError);
+
+        if (isHoldingPosition) {
+            driftStats.update(currentX, currentY, currentHeading);
+        }
 
         // Check if we should enter or exit hold position mode
         if (totalError < POSITION_TOLERANCE && Math.abs(rotError) < ROTATION_TOLERANCE) {
@@ -191,25 +194,17 @@ public class DriveToPositionCommand extends CommandBase {
             isHoldingPosition = false;
         }
 
-        // Calculate base PID outputs
+        // Calculate outputs using ProfiledPIDController
         double xOutput, yOutput, rotOutput;
 
         if (isHoldingPosition) {
-            // Use stronger P term when holding position
             xOutput = HOLD_POSITION_kP * xError;
             yOutput = HOLD_POSITION_kP * yError;
             rotOutput = HOLD_POSITION_kP * rotError;
-            driftStats.update(currentX, currentY, currentHeading);
         } else {
-            xOutput = xController.calculate(currentX);
-            yOutput = yController.calculate(currentY);
-            rotOutput = rotController.calculate(currentHeading);
-
-            // Apply motion profile scaling during movement
-            updateMotionProfileScale(totalError, Math.abs(rotError));
-            xOutput *= motionProfileScale;
-            yOutput *= motionProfileScale;
-            rotOutput *= motionProfileScale;
+            xOutput = xController.calculate(currentX, targetX);
+            yOutput = yController.calculate(currentY, targetY);
+            rotOutput = rotController.calculate(currentHeading, targetRotation);
         }
 
         // Apply minimum power to overcome friction when needed
@@ -225,15 +220,13 @@ public class DriveToPositionCommand extends CommandBase {
             }
         }
 
-        // Apply deadband and clamp outputs
+        // Apply deadband and clamp
         xOutput = clamp(applyDeadband(xOutput, 0.05), -1.0, 1.0);
         yOutput = clamp(applyDeadband(yOutput, 0.05), -1.0, 1.0);
         rotOutput = clamp(applyDeadband(rotOutput, 0.05), -1.0, 1.0);
 
-        // Drive the robot
         drive.driveRobotCentric(yOutput, xOutput, rotOutput);
 
-        // Update telemetry
         updateTelemetry(currentX, currentY, currentHeading, xError, yError, rotError, xOutput, yOutput, rotOutput);
     }
 
@@ -283,43 +276,6 @@ public class DriveToPositionCommand extends CommandBase {
         xController.reset();
         yController.reset();
         rotController.reset();
-    }
-
-    private void updateMotionProfileScale(double distance, double rotDistance) {
-        double rampUpDistance = Math.pow(MAX_VELOCITY, 2) / (2 * MAX_ACCELERATION);
-        double rampDownDistance = rampUpDistance;
-
-        if (distance < (rampUpDistance + rampDownDistance) && distance > 0) {
-            double scaleFactor = distance / (rampUpDistance + rampDownDistance);
-            rampUpDistance *= scaleFactor;
-            rampDownDistance *= scaleFactor;
-        }
-
-        double currentX = odo.getPosX();
-        double currentY = odo.getPosY();
-        double distanceTraveled = Math.hypot(currentX, currentY);
-
-        double translateScale;
-        if (distanceTraveled < rampUpDistance) {
-            translateScale = Math.min(1.0, distanceTraveled / rampUpDistance);
-        } else if (distance < rampDownDistance) {
-            translateScale = Math.min(1.0, distance / rampDownDistance);
-        } else {
-            translateScale = 1.0;
-        }
-
-        double rotScale;
-        if (rotDistance > 0.1) {
-            if (rotDistance > Math.PI/2) {
-                rotScale = 1.0;
-            } else {
-                rotScale = rotDistance / (Math.PI/2);
-            }
-        } else {
-            rotScale = 0.0;
-        }
-
-        motionProfileScale = Math.min(translateScale, rotScale);
     }
 
     @SuppressLint("DefaultLocale")
