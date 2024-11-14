@@ -1,55 +1,60 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
-import android.util.Log;
-
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.util.SonicPIDController;
 
 import java.util.concurrent.TimeUnit;
 
-public class TurnAngleCommand extends SounderBotCommandBase {
-    private static final String LOG_TAG = TurnAngleCommand.class.getSimpleName();
-    double minError = Math.toRadians(1.5);
-    double minPower = 0.2;
+public class TurnAngleAbsoluteCommand extends SounderBotCommandBase {
+    private static final String LOG_TAG = TurnAngleAbsoluteCommand.class.getSimpleName();
+    double minError = Math.toRadians(2);
+    double minPower = 0.15;
 
     AutoMecanumDriveTrain driveTrain;
     GoBildaPinpointDriver odo;
     Telemetry telemetry;
-    double targetAngleInRadians;
+    double targetTurnInRadians;
     double error = Double.MAX_VALUE;
-    double driveMotorsPower;
 
-    public TurnAngleCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetAngleInDegrees) {
+    SonicPIDController pidController = new SonicPIDController(0.5, 0, 0.02);
+
+    public TurnAngleAbsoluteCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double turnInDegrees) {
         this.driveTrain = driveTrain;
-        this.odo = driveTrain.getOdo();
         this.telemetry = telemetry;
-        this.targetAngleInRadians = Math.toRadians(targetAngleInDegrees);
+
+        odo = driveTrain.getOdo();
+        odo.update();
+        this.targetTurnInRadians = Math.toRadians(turnInDegrees * -1);
     }
 
     @Override
     public void execute() {
         odo.update();
-        error = targetAngleInRadians - odo.getHeading();
+        error = targetTurnInRadians - odo.getHeading();
+
         if (isTargetReached()) {
+            driveTrain.stop();
             Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+
+            odo.update();
+            error = targetTurnInRadians - odo.getHeading();
             if (isTargetReached()) {
                 finished.set(true);
                 return;
             }
         }
-        driveMotorsPower = -.4 * error;
 
-        if(Math.abs(driveMotorsPower) < minPower) {
-            driveMotorsPower = minPower * Math.signum(driveMotorsPower);
+        double power = pidController.calculatePIDAlgorithm(error);
+
+        if(Math.abs(power) < minPower) {
+            power = minPower * Math.signum(power);
         }
 
-        Log.i(LOG_TAG, String.format("power: %f", driveMotorsPower));
-
-        driveTrain.setWheelsPower(-driveMotorsPower, driveMotorsPower, -driveMotorsPower, driveMotorsPower);
-
+        driveTrain.driveRobotCentric(0, power, 0);
     }
 
     @Override

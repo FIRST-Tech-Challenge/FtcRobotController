@@ -21,13 +21,15 @@ public abstract class CommandAutoOpMode extends CommandOpMode {
     public void initialize() {
         GamepadEx driverGamePad = new GamepadEx(gamepad1);
         GamepadEx operatorGamePad = new GamepadEx(gamepad2);
-        DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamePad, operatorGamePad, telemetry);
-        LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
-        AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamePad, telemetry, feedback, limeLight);
-        RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamePad, telemetry, feedback);
-        DeliveryPivot pivot = new DeliveryPivot(hardwareMap, operatorGamePad, telemetry, feedback);
-        DeliverySlider slider = new DeliverySlider(hardwareMap, operatorGamePad, telemetry, feedback);
-        commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, limeLight, pivot, slider);
+
+        //DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamePad, operatorGamePad, telemetry);
+        //LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
+        AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamePad, telemetry, null, null);
+        //RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamePad, telemetry, feedback);
+        //DeliveryPivot pivot = new DeliveryPivot(hardwareMap, operatorGamePad, telemetry, feedback);
+        //DeliverySlider slider = new DeliverySlider(hardwareMap, operatorGamePad, telemetry, feedback);
+
+        commandFactory = new CommandFactory(telemetry, driveTrain, null, null, null,null);
         schedule(createCommand());
     }
 

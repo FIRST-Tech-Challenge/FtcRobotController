@@ -31,7 +31,6 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         this.targetX = targetX;
         this.targetY = targetY;
         addRequirements(driveTrain);
-        driveTrain.resetOdo();
     }
 
     @Override
@@ -105,6 +104,5 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     public void end(boolean interrupted) {
         super.end(interrupted);
         driveTrain.stop();
-        driveTrain.resetOdo();
     }
 }

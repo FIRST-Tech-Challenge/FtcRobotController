@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
@@ -51,8 +52,8 @@ public class CommandFactory {
         return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY);
     }
 
-    public TurnAngleCommand turnAngle(double angleInDegrees) {
-        return new TurnAngleCommand(driveTrain, telemetry, angleInDegrees);
+    public TurnAngleAbsoluteCommand turnAngleAbsolute(double angleInDegrees) {
+        return new TurnAngleAbsoluteCommand(driveTrain, telemetry, angleInDegrees);
     }
 
     public MoveSliderCommand extandSlider() {

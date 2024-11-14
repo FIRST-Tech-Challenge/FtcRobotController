@@ -5,30 +5,35 @@ import com.google.common.util.concurrent.Uninterruptibles;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.util.SonicPIDController;
 
 import java.util.concurrent.TimeUnit;
 
 public class TurnAngleRelativeCommand extends SounderBotCommandBase {
     private static final String LOG_TAG = TurnAngleRelativeCommand.class.getSimpleName();
-    double min = 0.2;
+    double minPower = 0.2;
 
     AutoMecanumDriveTrain driveTrain;
     GoBildaPinpointDriver odo;
     Telemetry telemetry;
 
-    double turnInRadians;
+    double targetTurnInRadians;
+
+    double targetAngleInDegrees;
+
     double error = Double.MAX_VALUE;
-    double start = 0;
+
+    SonicPIDController pidController = new SonicPIDController(0.5, 0, 0.02);
+
+    boolean isFirst = true;
 
 
     public TurnAngleRelativeCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double turnInDegrees) {
         this.driveTrain = driveTrain;
-        odo = driveTrain.getOdo();
         this.telemetry = telemetry;
-        this.turnInRadians = Math.toRadians(turnInDegrees);
-        odo.update();
-        start = odo.getHeading();
-        driveTrain.resetOdo();
+        this.odo = driveTrain.getOdo();
+
+        this.targetAngleInDegrees = -1 * turnInDegrees;
     }
 
     @Override
@@ -39,27 +44,39 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
     @Override
     public void execute() {
         odo.update();
-        double current = odo.getHeading();
-        error = turnInRadians - current;
-        if (isTargetReached()) {
-            finished.set(true);
-            return;
+
+        if(isFirst) {
+            isFirst = false;
+            targetTurnInRadians = odo.getHeading() + Math.toRadians(targetAngleInDegrees);
         }
 
-        double power = error * -0.02;
+        odo.update();
+        error = targetTurnInRadians - odo.getHeading();
 
-        if(Math.abs(power) < min) {
-            power = min * Math.signum(power);
+        if (isTargetReached()) {
+            driveTrain.stop();
+            Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+
+            odo.update();
+            error = targetTurnInRadians - odo.getHeading();
+            if (isTargetReached()) {
+                finished.set(true);
+                return;
+            }
+        }
+
+        double power = pidController.calculatePIDAlgorithm(error);
+
+        if(Math.abs(power) < minPower) {
+            power = minPower * Math.signum(power);
         }
 
         driveTrain.driveRobotCentric(0, power, 0);
-
     }
 
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
         driveTrain.stop();
-        driveTrain.resetOdo();
     }
 }

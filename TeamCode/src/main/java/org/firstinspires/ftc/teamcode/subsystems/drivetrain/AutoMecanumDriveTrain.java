@@ -72,6 +72,12 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
         odo.update();
 
+        if(true) {
+            telemetry.addData("x", odo.getPosX());
+            telemetry.addData("y", odo.getPosY());
+            telemetry.addData("theta", Math.toDegrees(odo.getHeading()));
+            telemetry.update();
+        }
     }
 
     public void DriveToTargetOp() {
