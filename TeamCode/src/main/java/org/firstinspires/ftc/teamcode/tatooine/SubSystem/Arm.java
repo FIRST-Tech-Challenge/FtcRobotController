@@ -267,6 +267,7 @@ public class Arm {
             this.goal = goal;
         }
 
+
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             positionLeft = MathUtil.voltageToDegrees(analogLeft.getVoltage());
