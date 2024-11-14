@@ -18,15 +18,18 @@ public class ArmStowLow extends SequentialCommandGroup {
     public ArmStowLow() {
 
         addCommands (
+        // What position should do is provide a starting pos safley no mater where we start the arm at the begining of a match
 
-                // lifts the shoulder up 55 degrees
+                // lifts the shoulder up 60 degrees
                 new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(60)),
 
+                // folds elbow in 135 degrees
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(135)),
+
                 // folds the wrist in 0
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
 
-                //wait for 5 seconds
+                //wait for 2 seconds
                  new Pause(2),
 
                 // folds the elbow in 0
