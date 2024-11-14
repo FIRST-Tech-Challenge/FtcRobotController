@@ -22,7 +22,7 @@ public class Arm {
 
     //TODO change values to real ones (touch grass)
     private final double ANGLE_TOLERANCE = 1;//deg
-    private final double EXTEND_TOLERANCE = 0;//mm
+    private final double EXTEND_TOLERANCE = 0.1;
     private final double EXTEND_CPR = 0;
     private final double ANGLE_CPR = 1425.1 * 5 ;
     private final double SPOOL_DIM = 0;//mm
@@ -42,7 +42,8 @@ public class Arm {
     private AnalogInput analogLeft = null;
 
     private AnalogInput analogRight = null;
-    private boolean isDebug;
+
+    private final boolean IS_DEBUG;
 
     private double positionLeft;
 
@@ -51,16 +52,16 @@ public class Arm {
     private final double POS_RIGHT_OFFSET = 98.4;
     private final double OPEN_POSE_LEFT = 154.5;
     private final double OPEN_POSE_RIGHT = 166.5;
-    private final double extendTolerance = 0.1;
+
 
 
 
     //arm constructor
-    public Arm(OpMode opMode, boolean isDebug) {
+    public Arm(OpMode opMode, boolean IS_DEBUG) {
 
         telemetry = opMode.telemetry;
 
-        this.isDebug = isDebug;
+        this.IS_DEBUG = IS_DEBUG;
         opMode.telemetry.addData("second constructor",true);
 
         analogLeft = opMode.hardwareMap.get(AnalogInput.class ,"analogLeft");
@@ -77,10 +78,10 @@ public class Arm {
 
     }
 
-    public Arm(OpMode opMode) {
-        opMode.telemetry.addData("first constructor",true);
-        new Arm(opMode,false);
-    }
+//    public Arm(OpMode opMode, boolean isDebug) {
+//        opMode.telemetry.addData("first constructor",true);
+//        new Arm(opMode,false);
+//    }
 
     //init function
     public void init() {
@@ -119,12 +120,8 @@ public class Arm {
         this.telemetry = telemetry;
     }
 
-    public boolean isDebug() {
-        return isDebug;
-    }
-
-    public void setDebug(boolean debug) {
-        isDebug = debug;
+    public boolean isIS_DEBUG() {
+        return IS_DEBUG;
     }
 
     public PIDFController getAnglePID() {
@@ -209,7 +206,7 @@ public class Arm {
     }
 
     public double getPositionRight() {
-        return MathUtil.voltageToDegrees(analogRight.getVoltage())-POS_RIGHT_OFFSET;
+        return (MathUtil.voltageToDegrees(analogRight.getVoltage())-POS_RIGHT_OFFSET)/ (OPEN_POSE_RIGHT);
     }
 
     public void setPositionRight(double positionRight) {
@@ -217,7 +214,7 @@ public class Arm {
     }
 
     public double getPositionLeft() {
-        return MathUtil.voltageToDegrees(analogLeft.getVoltage())-POS_LEFT_OFFSET;
+        return (MathUtil.voltageToDegrees(analogLeft.getVoltage())-POS_LEFT_OFFSET)/ (OPEN_POSE_LEFT);
     }
 
     public void setPositionLeft(double positionLeft) {
@@ -239,7 +236,7 @@ public class Arm {
 //        if (touchSensor.isPressed()) {
 //            resetAngleEncoder();
 //        }
-        if (isDebug) {
+        if (IS_DEBUG) {
             telemetry.addData("the new ang ", angle);
         }
         return new moveAngle(angle);
@@ -248,19 +245,18 @@ public class Arm {
     //an actions that sets the extension of the arm to the desired position
     public Action setExtension(double extension) {
         moveExtension move = new moveExtension(extension);
-        //telemetry.addData("the new extension ", extension);
+        if (IS_DEBUG) {
+            telemetry.addData("the new extension ", extension);
+        }
         return move;
     }
 
     //Sets the Extension Servo position
     public class moveExtension implements Action {
         private double goal = 0;
-        private double leftPosAfter;
-        private double rightPosRight;
         public moveExtension(double goal){
             this.goal = goal;
         }
-
 
         public double getGoal() {
             return goal;
@@ -270,38 +266,20 @@ public class Arm {
             this.goal = goal;
         }
 
-        public double getRightPosAfter() {
-            if (goal == 0) {
-                return 0;
-            } else {
-                return getPositionRight() / (OPEN_POSE_RIGHT / goal);
-            }
-        }
-        public double getLeftPosAfter() {
-            if (goal == 0) {
-                return 0;
-            } else {
-                return getPositionLeft() / (OPEN_POSE_LEFT / goal);
-            }
-        }
-
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             positionLeft = MathUtil.voltageToDegrees(analogLeft.getVoltage());
             positionRight = MathUtil.voltageToDegrees(analogRight.getVoltage());
             extendServoLeft.setPosition(goal);
             extendServoRight.setPosition(goal);
-            if (isDebug) {
-                telemetryPacket.put("servo (E) Position", extendServoLeft.getPosition());
-                telemetry.addData("servo (E) Position", extendServoLeft.getPosition());
+            if (IS_DEBUG) {
+                telemetry.addData("servo Left(E) Position", extendServoLeft.getPosition());
+                telemetry.addData("servo Right(E) Position", extendServoRight.getPosition());
                 telemetry.addData("posLeft",getPositionLeft());
                 telemetry.addData("posRight ",getPositionRight());
-                telemetry.addData("return", !MathUtil.inTolerance(goal, getRightPosAfter(),extendTolerance));
-                telemetry.addData("getRightPosAfter",getPositionRight() / (OPEN_POSE_RIGHT / goal));
                 telemetry.addData("goal",goal);
             }
-            return !MathUtil.inTolerance(goal,getRightPosAfter(),extendTolerance);
+            return !MathUtil.inTolerance(goal,getPositionRight(), EXTEND_TOLERANCE) && !MathUtil.inTolerance(goal,getPositionLeft(), EXTEND_TOLERANCE);
         }
     }
 
@@ -327,7 +305,7 @@ public class Arm {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             angleMotor.setPower(anglePID.calculate(getAngle(), goal));
-            if (isDebug) {
+            if (IS_DEBUG) {
                 telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) power", angleMotor.getPower());
