@@ -47,6 +47,11 @@ public class Arm {
     private double positionLeft;
 
     private double positionRight;
+    private final double POS_LEFT_OFFSET = 269.7;
+    private final double POS_RIGHT_OFFSET = 98.4;
+    private final double OPEN_POSE_LEFT = 154.5;
+    private final double OPEN_POSE_RIGHT = 166.5;
+
 
 
     //arm constructor
@@ -68,6 +73,7 @@ public class Arm {
         anglePID.setTolerance(ANGLE_TOLERANCE);
         opMode.telemetry.update();
         init();
+
     }
 
     public Arm(OpMode opMode) {
@@ -201,6 +207,26 @@ public class Arm {
         return analogRight;
     }
 
+    public double getPositionRight() {
+        return MathUtil.voltageToDegrees(analogRight.getVoltage())-POS_RIGHT_OFFSET;
+    }
+
+    public void setPositionRight(double positionRight) {
+        this.positionRight = positionRight;
+    }
+
+    public double getPositionLeft() {
+        return MathUtil.voltageToDegrees(analogLeft.getVoltage())-POS_LEFT_OFFSET;
+    }
+
+    public void setPositionLeft(double positionLeft) {
+        this.positionLeft = positionLeft;
+    }
+
+    public double getAngleOffSet() {
+        return angleOffSet;
+    }
+
     public void setAnalogRight(AnalogInput analogRight) {
         this.analogRight = analogRight;
     }
@@ -248,8 +274,10 @@ public class Arm {
             extendServoLeft.setPosition(goal);
             extendServoRight.setPosition(goal);
             if (isDebug) {
-                telemetryPacket.put("servo (E) Power", extendServoLeft.getPosition());
-                telemetry.addData("servo (E) Power", extendServoLeft.getPosition());
+                telemetryPacket.put("servo (E) Position", extendServoLeft.getPosition());
+                telemetry.addData("servo (E) Position", extendServoLeft.getPosition());
+                telemetry.addData("posLeft",positionLeft);
+                telemetry.addData("posRight ",positionRight);
 
             }
             return extendServoLeft.getPosition() != goal && extendServoRight.getPosition() != goal;
@@ -282,7 +310,6 @@ public class Arm {
                 telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) power", angleMotor.getPower());
-                telemetry.addData("motor (A) target pos",goal);
             }
             if (anglePID.atSetPoint()){
                 angleMotor.setPower(0);

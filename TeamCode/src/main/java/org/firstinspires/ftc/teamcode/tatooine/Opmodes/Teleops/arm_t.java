@@ -31,6 +31,15 @@ public class arm_t extends LinearOpMode {
             {
                 runningActions.add(arm.setAngle(0));
             }
+            if (gamepad1.triangle)
+            {
+                runningActions.add(arm.setExtension(0));
+            }
+            if (gamepad1.square)
+            {
+                runningActions.add(arm.setExtension(1));
+            }
+
 
             // update running actions
             List<Action> newActions = new ArrayList<>();
@@ -43,6 +52,8 @@ public class arm_t extends LinearOpMode {
             runningActions = newActions;
 
             dash.sendTelemetryPacket(packet);
+            telemetry.addData("posLeft", Math.abs(arm.getPositionLeft()));
+            telemetry.addData("posRight",Math.abs(arm.getPositionRight()));
             telemetry.update();
 
         }
