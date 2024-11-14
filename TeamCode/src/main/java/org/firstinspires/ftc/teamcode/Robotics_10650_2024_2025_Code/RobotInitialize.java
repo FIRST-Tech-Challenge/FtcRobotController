@@ -234,12 +234,13 @@ public class RobotInitialize {
         // It only moves if the distance to the final location is greater than or equal to 10 encoder
         // ticks
         while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
+
             //if the current position is before final position
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 setDrivetrainMotorVelocity(Math.abs(velocity));
-                opMode.telemetry.addData("Encoder straight", getPosStrafe());
+
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
                 opMode.telemetry.addData("fright", fRight.getCurrentPosition());
@@ -272,6 +273,7 @@ public class RobotInitialize {
         // 10 is the accuracy tolerance in 10 encoder ticks
         while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 14) {
             //if
+
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
@@ -284,11 +286,12 @@ public class RobotInitialize {
                 opMode.telemetry.addData("position", getPosStrafe());
                 opMode.telemetry.addData("relative distance", relativeDistance);
                 opMode.telemetry.addData("old pos", getAverageEncoderValue());
-                opMode.telemetry.addData("must be greater than 10", Math.abs(getPosStrafe() - relativeDistance));
+                opMode.telemetry.addData("must be greater than 14", Math.abs(getPosStrafe() - relativeDistance));
                 opMode.telemetry.update();
             } else{
                 setDrivetrainMotorVelocity(0);
             }
+            setDrivetrainMotorVelocity(0);
         }
         //stopMechanisms();
     }
@@ -299,6 +302,21 @@ public class RobotInitialize {
 
         while (System.currentTimeMillis()-x <time && opMode.opModeIsActive()) { //Check this
             intake.setPower(-1);
+
+            // opMode.telemetry.addData(System.currentTimeMillis());
+//            if (intakeRunTime == 0){
+//                break;
+//            }
+//            intakeRunTime = intakeRunTime + 1000;
+        }
+        intake.setPower(0);
+    }
+    public void intake(double time){
+        double intakeRunTime = time;
+        long x = System.currentTimeMillis();
+
+        while (System.currentTimeMillis()-x <time && opMode.opModeIsActive()) { //Check this
+            intake.setPower(1);
 
             // opMode.telemetry.addData(System.currentTimeMillis());
 //            if (intakeRunTime == 0){
@@ -388,17 +406,17 @@ public class RobotInitialize {
 
             if (degrees > getAngle()) {
                 // Turning left (positive gyro value)
-                fLeft.setVelocity(-500);
-                bLeft.setVelocity(500);
-                fRight.setVelocity(500);
-                bRight.setVelocity(-500);
+                fLeft.setVelocity(-300);
+                bLeft.setVelocity(300);
+                fRight.setVelocity(300);
+                bRight.setVelocity(-300);
             }
             else if (degrees < getAngle()) {
                 // Turning right (negative gyro value)
-                fLeft.setVelocity(500);
-                bLeft.setVelocity(-500);
-                fRight.setVelocity(-500);
-                bRight.setVelocity(500);
+                fLeft.setVelocity(300);
+                bLeft.setVelocity(-300);
+                fRight.setVelocity(-300);
+                bRight.setVelocity(300);
             }
         }
         stopMechanisms();

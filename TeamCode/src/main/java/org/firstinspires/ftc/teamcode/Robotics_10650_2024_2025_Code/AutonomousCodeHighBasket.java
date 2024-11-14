@@ -25,6 +25,15 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
         // Waits for a person to press start on the control hub
         // then it runs the rest of the program
         waitForStart();
+//        robot.newTurnFunction(90);
+//        robot.newTurnFunction(-90);
+//        sleep(10000);
+        robot.strafeR(104, 500);
+        robot.liftPitch(100, 400);
+        sleep(10000);
+
+
+
 
         // Phase 1 auto program (go forward, raise arm device, place pre-loaded sample, then strafe
         // into the ascent zone and use the arm device to touch the first bar
@@ -51,17 +60,39 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
         robot.clawRoll.setPosition(0.3372);
         robot.liftPitch(0, 600);
         //sleep(100);
-        robot.goStraight(-70, 500);
+        //robot.goStraight(-70, 300);
         //sleep(100);
 // 500 is good velocity for now
         robot.liftExtender(0, 800);
+
+
+
+        //to score another sample
         robot.newTurnFunction(-90);
         robot.clawRoll.setPosition(0);
+        robot.goStraight(187, 500);
+        //prev 164
+        robot.strafeR(64, 500);
+        sleep(1000);
+        robot.liftPitch(400, 400);
+        robot.intake(4000);
 
-        // 500 is good velocity for now
 
-        robot.goStraight(165, 500);
-        robot.strafeR(170, 500);
+
+
+        //to park
+//         robot.newTurnFunction(-180);
+//        robot.goStraight(3000, 500);
+
+
+
+
+
+
+        //robot.liftPitch(1042, 500);
+
+
+
 
         //robot.strafeR(200, 500);
 

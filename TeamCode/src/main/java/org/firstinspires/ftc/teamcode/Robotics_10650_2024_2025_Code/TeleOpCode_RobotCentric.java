@@ -15,6 +15,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
     int liftPitchPosition = 0;
     int liftExtenderPosition = 0;
     double maxLifEtxtension =0;
+    int x = 0;
 
     final double liftDist = 8.25;
 
@@ -243,7 +244,9 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                     (liftPitchPosition>=2900&&gamepad2.left_stick_y > 0)|| // 3200 goes to the
                     // maximum horizontal position and further (try something less than this)
                     (liftPitchPosition<=0&&gamepad2.left_stick_y < 0)) {
-
+                if(liftExtenderPosition > maxLifEtxtension) {
+                    liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
+                }
                 //determines where the lift pitch goes
                 if (gamepad2.left_stick_y > 0.2) {//going down
 
@@ -329,6 +332,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 } else if(liftExtenderPosition > maxLifEtxtension) {
                     liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
                 }
+                x = liftExtenderPosition;
+
             }
 
 
@@ -425,30 +430,34 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 robot.clawRoll.setPosition(0.1606);
             }
 
-            if (gamepad2.square) {//slaps it in
-//
+            if (gamepad2.square&&!gamepad2.left_bumper) {//slaps it in
+                x=liftExtenderPosition;
                 liftExtenderPosition = 0;
                 liftPitchPosition = 272;
 
+            }  else if (gamepad2.left_bumper){
+                liftExtenderPosition = x;
             }
 
-            if (gamepad2.triangle) {//to score hifh basket
+            if (gamepad2.triangle&&!gamepad2.right_bumper) {//to score hifh basket
 //                robot.liftPitch(0, 0.2);
 //                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
                 liftPitchPosition = 272;
                 liftExtenderPosition = 2502;
+            } else if (gamepad2.right_bumper){
+                liftExtenderPosition = 0;
             }
             //up pos = 0.3372
-            if (gamepad2.left_bumper){
-                robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ (0.0002));
-//            } if (gamepad1.square){
-//                robot.hangL.setPosition(robot.hangL.getPosition()+ (0.002));
-            }
-            if (gamepad2.right_bumper){
-                robot.clawRoll.setPosition(robot.clawRoll.getPosition()- (0.0002));
-            } //if (gamepad1.triangle)
-//                robot.hangL.setPosition(robot.hangL.getPosition()- (0.002));
+//            if (gamepad2.left_bumper){
+//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ (0.0002));
+////            } if (gamepad1.square){
+////                robot.hangL.setPosition(robot.hangL.getPosition()+ (0.002));
 //            }
+//            if (gamepad2.right_bumper){
+//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()- (0.0002));
+//            } //if (gamepad1.triangle)
+////                robot.hangL.setPosition(robot.hangL.getPosition()- (0.002));
+////            }
 
             //i=i+Math.round(gamepad2.right_stick_y);
 
