@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @TeleOp(name="Remote Control", group="Linear OpMode")
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+public class RemoteControl extends LinearOpMode {
     // Initialize all variables for the program below:
     // This chunk controls our wheels
     private DcMotor leftFrontDrive = null;
@@ -37,6 +37,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     final int VERTICAL_MAX = 1700;
     final int VERTICAL_MAX_VIPER = 1200;
     final int VERTICAL_CLIMB_POSITION = 2300;
+    final int VERTICAL_DEFAULT_SPEED = 2000;
     int verticalAdjustedMin = 0;
     int verticalPosition = VERTICAL_MIN;
 
@@ -58,19 +59,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     @Override
     //Op mode runs when the robot runs. It runs the whole time.
     public void runOpMode() {
+
         // Initialize the hardware variables.
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        initializeHardwareVariables();
 
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -86,7 +77,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         claw.setPosition(CLAW_MIN);
 
         // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("Ready", "press PLAY");
+        telemetry.addData("Remote Control Ready", "press PLAY");
         telemetry.update();
         waitForStart();
         runtime.reset();
@@ -102,10 +93,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power.
-            leftFrontPower = (axial + lateral + yaw) / 2;
-            rightFrontPower = (axial - lateral - yaw) / 2;
-            leftBackPower = (axial - lateral + yaw) / 2;
-            rightBackPower = (axial + lateral - yaw) / 2;
+            setWheelPower();
 
             // Normalize the values so no wheel power exceeds 100%
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -128,14 +116,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
-            verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hitting the ground, make this bigger. If it's not going down far enough, make this smaller.
+            verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hits the ground, make this bigger. If it doesn't down far enough, make this smaller.
 
-            // Setting vertical into initial climb position
+            // Set vertical into initial climb position
             if (gamepad1.dpad_up) {
                 // Hook onto the bar
-                vertical.setTargetPosition(VERTICAL_CLIMB_POSITION);
-                ((DcMotorEx) vertical).setVelocity(2500);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setVertical(VERTICAL_CLIMB_POSITION, 2500);
             }
             else if (gamepad1.dpad_down) {
                 if (vertical.getCurrentPosition() > 100) {
@@ -147,34 +133,24 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 }
                 else {
                     wheelClimb = false;
-                    vertical.setTargetPosition(VERTICAL_MIN);
-                    ((DcMotorEx) vertical).setVelocity(1000);
-                    vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    setVertical(VERTICAL_MIN, 1000);
                 }
             }
 
             // If the right button is pressed AND it can safely raise further
             else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {
-                vertical.setTargetPosition(Math.min(VERTICAL_MAX, verticalPosition + 50));
-                ((DcMotorEx) vertical).setVelocity(2000);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setVertical(Math.min(VERTICAL_MAX, verticalPosition + 50), 2000);
             }
             // If the left button is pressed AND it can safely lower without changing the viper
             else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MAX_VIPER) {
-                vertical.setTargetPosition(Math.max(VERTICAL_MAX_VIPER, verticalPosition - 50));
-                ((DcMotorEx) vertical).setVelocity(1500);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setVertical(Math.max(VERTICAL_MAX_VIPER, verticalPosition - 50), 1500);
             }
             // If the left button is pressed AND it can safely lower further
             else if (gamepad1.dpad_left && verticalPosition > verticalAdjustedMin) {
                 if (viperSlidePosition > VIPER_MAX_WIDE) {
-                    viperSlide.setTargetPosition(VIPER_MAX_WIDE);
-                    ((DcMotorEx) viperSlide).setVelocity(1000);
-                    viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    setViper(VIPER_MAX_WIDE, 1000);
                 }
-                vertical.setTargetPosition(Math.max(verticalAdjustedMin, verticalPosition - 50));
-                ((DcMotorEx) vertical).setVelocity(1000);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setVertical(Math.max(verticalAdjustedMin, verticalPosition - 50),1000);
             }
 
             // Control the viper slide - how much it extends
@@ -209,51 +185,71 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Y/Triangle: High basket scoring position.
             if (gamepad1.y) {
-                vertical.setTargetPosition(VERTICAL_MAX);
-                ((DcMotorEx) vertical).setVelocity(3000);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viperSlide.setTargetPosition(VIPER_MAX_TALL);
-                ((DcMotorEx) viperSlide).setVelocity(2000);
-                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setVertical(VERTICAL_MAX, 3000);
+                setViper(VIPER_MAX_TALL, 2000);
             }
 
             // A/X button: Complete Retraction- Viper and vertical completely retracted and down
             if (gamepad1.a) {
-                viperSlide.setTargetPosition(VIPER_MIN);
-                ((DcMotorEx) viperSlide).setVelocity(4000);
-                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                vertical.setTargetPosition(VERTICAL_MIN);
-                ((DcMotorEx) vertical).setVelocity(700);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setViper(VIPER_MIN, 4000);
+                setVertical(VERTICAL_MIN, 700);
             }
 
             // X/Square: The viper slide is completely retracted but the vertical is in submersible position.
             if (gamepad1.x) {
-                vertical.setTargetPosition(325);
-                ((DcMotorEx) vertical).setVelocity(3000);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viperSlide.setTargetPosition(0);
-                ((DcMotorEx) viperSlide).setVelocity(1500);
-                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setVertical(355, 3000);
+                setViper(0, 1500);
             }
 
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
             if (gamepad1.b) {
-                vertical.setTargetPosition(325);
-                ((DcMotorEx) vertical).setVelocity(1800);
-                vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viperSlide.setTargetPosition(1900);
-                ((DcMotorEx) viperSlide).setVelocity(2000);
-                viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setVertical(355, 1800);
+                setViper(1900, 2000);
             }
 
             // Show the elapsed game time and wheel power.
             printDataOnScreen();
         }
         claw.close();
-        vertical.setTargetPosition(100);
-        ((DcMotorEx) vertical).setVelocity(100);
+        setVertical (100, 80);
+    }
+
+    private void initializeHardwareVariables() {
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    private void setWheelPower(){
+        leftFrontPower = (axial + lateral + yaw) / 2;
+        rightFrontPower = (axial - lateral - yaw) / 2;
+        leftBackPower = (axial - lateral + yaw) / 2;
+        rightBackPower = (axial + lateral - yaw) / 2;
+    }
+
+    public void setVertical(int height){
+        setVertical(height, VERTICAL_DEFAULT_SPEED);
+    }
+
+    public void setVertical(int height, int speed){
+        vertical.setTargetPosition(height);
+        ((DcMotorEx) vertical).setVelocity(speed);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void setViper(int length, int speed){
+        viperSlide.setTargetPosition(length);
+        ((DcMotorEx) viperSlide).setVelocity(speed);
+        viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RobotLog.vv("Rockin' Robots", "Viper set to %d", viperSlide.getCurrentPosition());
     }
     // Log all (relevant) info about the robot on the hub.
     private void printDataOnScreen() {
