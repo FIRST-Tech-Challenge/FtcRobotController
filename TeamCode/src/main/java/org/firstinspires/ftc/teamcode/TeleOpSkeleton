@@ -53,15 +53,16 @@
             // Make sure your ID's match your configuration
 
             //*********************************** MOTORS ************************************************
-            DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right"); // Front right wheel - Chub Port 0
-            DcMotor BackRight = hardwareMap.dcMotor.get("Back Right");  // Back right wheel - Chub Port 1
-            DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");    // Back left wheel - Chub Port 2
-            DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");  // Front left wheel - Chub Port 3
+            DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right");   // Chub Port 0
+            DcMotor BackRight = hardwareMap.dcMotor.get("Back Right");     // Chub Port 1
+            DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");     // Chub Port 2
+            DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");       // Chub Port 3
+
 
             DcMotor IntakeRight = hardwareMap.dcMotor.get("Intake Right"); // Ehub Port 0
             DcMotor IntakeLeft = hardwareMap.dcMotor.get("Intake Left");   // Ehub Port 1
-            DcMotor LeftLift = hardwareMap.dcMotor.get("Left Lift");       // Ehub Port 2
-            DcMotor RightLift = hardwareMap.dcMotor.get("Right Lift");     // Ehub Port 3
+            DcMotor RightLift = hardwareMap.dcMotor.get("Right Lift");     // Ehub Port 2
+            DcMotor LeftLift = hardwareMap.dcMotor.get("Left Lift");       // Ehub Port 3
 
             //*********************************** SERVOS ************************************************
             Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0
