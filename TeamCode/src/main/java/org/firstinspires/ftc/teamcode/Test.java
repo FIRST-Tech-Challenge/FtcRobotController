@@ -33,13 +33,17 @@ public class Test extends OpMode {
         if (gamepad1.y) {intakeState = intakeState.OUT;}
         if (gamepad1.dpad_down) {elevatorState = ElevatorState.INTAKE;}
         if (gamepad1.dpad_left) {elevatorState = ElevatorState.SPECIMEN;}
+        if (gamepad1.right_stick_y != 0) {elevatorState = ElevatorState.MANUAL;}
 
-        Elevator.operatee(elevatorState , -gamepad1.right_stick_y);
+        Elevator.operatee( elevatorState,-gamepad1.right_stick_y);
         Intake.operate(intakeState);
         Drivetrain.operate(new Vector(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger);
         telemetry.addData("Gyro", Gyro.getAngle());
-        telemetry.addData("elevPos", Elevator.getElevatorPosL());
+        telemetry.addData("elevPosL", Elevator.leftMotor.getCurrentPosition());
+        telemetry.addData("elevPosR", Elevator.rightMotor.getCurrentPosition());
         telemetry.addData("state",elevatorState);
         telemetry.addData("gamepadval", -gamepad1.right_stick_y);
+        telemetry.addData("Ltarget", Elevator.leftMotor.getTargetPosition());
+        telemetry.addData("Rtarget", Elevator.rightMotor.getTargetPosition());
     }
 }
