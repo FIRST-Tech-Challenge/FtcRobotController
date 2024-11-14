@@ -45,6 +45,7 @@ public class arm_t extends LinearOpMode {
             List<Action> newActions = new ArrayList<>();
             for (Action action : runningActions) {
                 action.preview(packet.fieldOverlay());
+
                 if (action.run(packet)) {
                     newActions.add(action);
                 }
