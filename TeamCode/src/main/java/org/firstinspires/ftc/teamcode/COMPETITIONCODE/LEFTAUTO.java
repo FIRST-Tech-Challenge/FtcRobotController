@@ -88,11 +88,11 @@ public class LEFTAUTO extends LinearOpMode {
         safeWaitSeconds(0.5);
         int RotateTarget = 675;
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
-            SM.setPos(RotateTarget);
+            SM.setPos(RotateTarget, 0.5);
         }
         int target = -2830;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
-            SM.setPos2(target);
+            SM.setPos(target, 1);
         }
         clawRotateServo.setServoPosition(0.6);
         safeWaitSeconds(0.5);
@@ -106,11 +106,11 @@ public class LEFTAUTO extends LinearOpMode {
         safeWaitSeconds(0.5);
         target = 0;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
-            SM.setPos2(target);
+            SM.setPos(target, 1);
         }
         RotateTarget = 0;
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
-            SM.setPos(RotateTarget);
+            SM.setPos(RotateTarget, 0.5);
         }
         turnAngle(0);
         sr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -143,11 +143,11 @@ public class LEFTAUTO extends LinearOpMode {
         safeWaitSeconds(0.5);
         RotateTarget = 675;
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
-            SM.setPos(RotateTarget);
+            SM.setPos(RotateTarget, 0.5);
         }
         target = -2830;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
-            SM.setPos2(target);
+            SM.setPos(target, 1);
         }
         clawRotateServo.setServoPosition(0.6);
         safeWaitSeconds(0.5);
@@ -161,11 +161,11 @@ public class LEFTAUTO extends LinearOpMode {
         safeWaitSeconds(0.5);
         target = 0;
         while(!isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
-            SM.setPos2(target);
+            SM.setPos(target, 1);
         }
         RotateTarget = 0;
         while(!isStopRequested() && !(Math.abs(RotateTarget-sr.getCurrentPosition()) <= 10)){
-            SM.setPos(RotateTarget);
+            SM.setPos(RotateTarget, 0.5);
         }
         clawServo.setServoPosition(0.7);
         safeWaitSeconds(0.5);

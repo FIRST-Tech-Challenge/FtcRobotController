@@ -105,7 +105,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addLine("Slide Pos:" + String.valueOf(sc.getCurrentPosition()));
             if(-gamepad2.right_stick_y <= -0.3 && !gamepad2.back){
                 clawRotateServo.setServoPosition(0.4);
-                SM.setPos(0);
+                SM.setPos(0, 0.5);
             }
             /*if(gamepad2.left_trigger > 0.3){
                 clawRotateServo.setServoPosition(0.4);
@@ -135,7 +135,7 @@ public class Teleop extends LinearOpMode {
                 sc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }*/
             if(-gamepad2.right_stick_y >= 0.3 && !gamepad2.back){
-                SM.setPos(675);
+                SM.setPos(675, 0.5);
             }
             if(touchSensor.isPressed()){
                 SM.reset();
