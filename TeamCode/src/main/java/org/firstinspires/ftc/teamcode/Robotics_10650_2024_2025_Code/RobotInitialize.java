@@ -8,6 +8,7 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -33,6 +34,8 @@ public class RobotInitialize {
     // Create servo variables
     CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
+    Servo hangR;
+    Servo hangL;
 
     Servo pitch;
     Servo clawRoll;
@@ -83,6 +86,8 @@ public class RobotInitialize {
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
+
         // Resetting the encoders (distance measurement sensors)
         // and then start them again on program start
         // Repeat for all motors
@@ -130,6 +135,15 @@ public class RobotInitialize {
             liftPitch.setZeroPowerBehavior(BRAKE);
 
         //Manipulator Servos
+
+            // Hang on submersible servos
+        hangL = opMode.hardwareMap.get(Servo.class, "hang l");
+        hangL.setPosition(0);
+
+
+        hangR = opMode.hardwareMap.get(Servo.class, "hang r");
+        //hangR.setDirection(Servo.Direction.REVERSE);
+        hangR.setPosition(1);
 
         //Continuous rotation Servo
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
@@ -200,6 +214,8 @@ public class RobotInitialize {
         return globalAngle;
     }
 
+    double inchesToEncoderTicks;
+
     // This function makes the robot travel a relativeDistance specified by the parameter relativeDistance
     // This parameter is measured in encoder ticks; the other parameter, velocity, is
     // a decimal value that determines how fast the robot will go
@@ -208,17 +224,23 @@ public class RobotInitialize {
         // of the average robot encoder reading
         // The relativeDistance is current position plus or minus the value that is being moved
         // RELATIVE DISTANCE MEASUREMENT IN USE
+
+        //Is supposed to be in inches
+        //inchesToEncoderTicks = (distance*5267.65)/(12.56637061*13.7);
+        //opMode.telemetry.addData("Receives a value in IN and converts to encoder ticks", inchesToEncoderTicks);
+
         int relativeDistance = distance + getPosStrafe();
         // Go forwards or backwards
         // It only moves if the distance to the final location is greater than or equal to 10 encoder
         // ticks
         while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
+
             //if the current position is before final position
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 setDrivetrainMotorVelocity(Math.abs(velocity));
-                opMode.telemetry.addData("Encoder straight", getPosStrafe());
+
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
                 opMode.telemetry.addData("fright", fRight.getCurrentPosition());
@@ -239,6 +261,7 @@ public class RobotInitialize {
         stopMechanisms();
     }
 
+
     // Makes the robot strafe right by determining where the robot is currently
     // located and where it is trying to go it does not return anything and
     // has parameters of the distance it needs to travel (measured in encoder ticks)
@@ -248,8 +271,9 @@ public class RobotInitialize {
         // Go forwards or backwards
         //if difference <10 then stop
         // 10 is the accuracy tolerance in 10 encoder ticks
-        while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 10) {
+        while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 14) {
             //if
+
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
@@ -259,20 +283,50 @@ public class RobotInitialize {
                 bLeft.setVelocity(velocity);
                 bRight.setVelocity(-velocity);
 
-//                while (){
-//
-//                }
                 opMode.telemetry.addData("position", getPosStrafe());
                 opMode.telemetry.addData("relative distance", relativeDistance);
                 opMode.telemetry.addData("old pos", getAverageEncoderValue());
-                opMode.telemetry.addData("must be greater than 10", Math.abs(getPosStrafe() - relativeDistance));
+                opMode.telemetry.addData("must be greater than 14", Math.abs(getPosStrafe() - relativeDistance));
                 opMode.telemetry.update();
             } else{
                 setDrivetrainMotorVelocity(0);
             }
+            setDrivetrainMotorVelocity(0);
         }
-        stopMechanisms();
+        //stopMechanisms();
     }
+    // Parameter of time that it is run in milliseconds
+    public void extake(double time){
+        double intakeRunTime = time;
+        long x = System.currentTimeMillis();
+
+        while (System.currentTimeMillis()-x <time && opMode.opModeIsActive()) { //Check this
+            intake.setPower(-1);
+
+            // opMode.telemetry.addData(System.currentTimeMillis());
+//            if (intakeRunTime == 0){
+//                break;
+//            }
+//            intakeRunTime = intakeRunTime + 1000;
+        }
+        intake.setPower(0);
+    }
+    public void intake(double time){
+        double intakeRunTime = time;
+        long x = System.currentTimeMillis();
+
+        while (System.currentTimeMillis()-x <time && opMode.opModeIsActive()) { //Check this
+            intake.setPower(1);
+
+            // opMode.telemetry.addData(System.currentTimeMillis());
+//            if (intakeRunTime == 0){
+//                break;
+//            }
+//            intakeRunTime = intakeRunTime + 1000;
+        }
+        intake.setPower(0);
+    }
+
     //needs to move counterclockwise to move up
     public void liftPitch(int position, double velocity){
         liftPitch.setTargetPosition(position);
@@ -327,9 +381,8 @@ public class RobotInitialize {
                 fRight.setVelocity(velocity);
                 bLeft.setVelocity(-velocity);
                 bRight.setVelocity(velocity);
-                opMode.telemetry.addData("get vel", fLeft.getVelocity());
-                opMode.telemetry.addData("get vel", bLeft.getVelocity());
-                opMode.telemetry.addData("getposStrafeR", getPosStrafe());
+
+                opMode.telemetry.addData("must be greated than 10", Math.abs(getPosStrafe() - (distance + getPosStrafe())));
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
                 opMode.telemetry.addData("fright", fRight.getCurrentPosition());
@@ -353,17 +406,17 @@ public class RobotInitialize {
 
             if (degrees > getAngle()) {
                 // Turning left (positive gyro value)
-                fLeft.setVelocity(-500);
-                bLeft.setVelocity(500);
-                fRight.setVelocity(500);
-                bRight.setVelocity(-500);
+                fLeft.setVelocity(-300);
+                bLeft.setVelocity(300);
+                fRight.setVelocity(300);
+                bRight.setVelocity(-300);
             }
             else if (degrees < getAngle()) {
                 // Turning right (negative gyro value)
-                fLeft.setVelocity(500);
-                bLeft.setVelocity(-500);
-                fRight.setVelocity(-500);
-                bRight.setVelocity(500);
+                fLeft.setVelocity(300);
+                bLeft.setVelocity(-300);
+                fRight.setVelocity(-300);
+                bRight.setVelocity(300);
             }
         }
         stopMechanisms();
