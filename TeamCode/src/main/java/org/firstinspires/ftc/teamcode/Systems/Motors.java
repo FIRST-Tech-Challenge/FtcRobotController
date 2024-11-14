@@ -22,20 +22,55 @@ public class Motors {
 
         driveTrainMotors = new DcMotor[4];
 
-        driveTrainMotors[0]  = hardwareMap.get(DcMotor.class, "LB"); //left back
-        driveTrainMotors[1]  = hardwareMap.get(DcMotor.class, "LF"); //left front
-        driveTrainMotors[2] = hardwareMap.get(DcMotor.class, "RF"); //right front
-        driveTrainMotors[3] = hardwareMap.get(DcMotor.class, "RB"); //right back
+        for (int i = 0; i <driveTrainMotors.length; i++) {
+            driveTrainMotors[i] = hardwareMap.get(DcMotor.class, Integer.toString(i));
 
-        driveTrainMotors[0].setDirection(DcMotor.Direction.REVERSE);
-        driveTrainMotors[1].setDirection(DcMotor.Direction.REVERSE);
-        driveTrainMotors[2].setDirection(DcMotor.Direction.FORWARD);
-        driveTrainMotors[3].setDirection(DcMotor.Direction.FORWARD);
+            if(i == 0 || i == 1) {
+                driveTrainMotors[i].setDirection(DcMotor.Direction.REVERSE);
+            }
+            else {
+                driveTrainMotors[i].setDirection(DcMotor.Direction.FORWARD);
+            }
 
-//        driveTrainMotors[0].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveTrainMotors[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveTrainMotors[2].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveTrainMotors[3].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+/*
+            This might be a bit difficult to understand at first but the block of code above basically does what the commented out one does below.
+
+
+            So: the robot looks something like this with "@" representing each on of the 4 wheels and "^" representing which way the robot is looking
+            In this above, I have named each wheel with a number
+
+                                    __________
+                                1 @ |   ^^   | @ 2
+                                    |        |
+                                    |        |
+                                0 @ |________| @ 3
+
+
+        It starts at the back left wheel and goes around in a counter clockwise loop until it reaches the back right wheel
+        And the arm being the 4th motor
+
+        I made the motor code this way because although it is a bit less readable with the amount of motors we have
+        when you use motor.MoveMotor(), you put in a number which can by a number from 0 to 4
+        so you wouldn't be able to see in the code what motor you're using
+
+*/
+
+
+
+
+
+//        driveTrainMotors[0]  = hardwareMap.get(DcMotor.class, "LB"); //left back
+//        driveTrainMotors[1]  = hardwareMap.get(DcMotor.class, "LF"); //left front
+//        driveTrainMotors[2] = hardwareMap.get(DcMotor.class, "RF"); //right front
+//        driveTrainMotors[3] = hardwareMap.get(DcMotor.class, "RB"); //right back
+//        driveTrainMotors[4] = hardwareMap.get(DcMotor.class, "ARM"); //right back
+//
+//        driveTrainMotors[0].setDirection(DcMotor.Direction.REVERSE);
+//        driveTrainMotors[1].setDirection(DcMotor.Direction.REVERSE);
+//        driveTrainMotors[2].setDirection(DcMotor.Direction.FORWARD);
+//        driveTrainMotors[3].setDirection(DcMotor.Direction.FORWARD);
+//        driveTrainMotors[4].setDirection(DcMotor.Direction.FORWARD);
 
     }
 

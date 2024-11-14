@@ -10,7 +10,6 @@ public class Input {
     public Input(HardwareMap hardwareMap)
     {
         motors = new Motors(hardwareMap);
-       // constructorrrrr
     }
 
     public void Move(double power)
