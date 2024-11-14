@@ -24,14 +24,13 @@ public class FieldCentric extends LinearOpMode {
         public double backMotorMult = 1;
         public double frontMotorMult = 1;
 
-        public double kP = 0;
-        public double kI = 0;
-        public double kD = 0;
+        public double kP = 2;
+        public double kI = 0.1;
+        public double kD = 0.2;
     }
     public static Params PARAMS = new Params();
 
     double wantedAngle = 0;
-    private boolean isAngleSet;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -53,10 +52,10 @@ public class FieldCentric extends LinearOpMode {
 
 
         // Turn the motor back on, required if you use STOP_AND_RESET_ENCODER
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -79,9 +78,9 @@ public class FieldCentric extends LinearOpMode {
         if (isStopRequested()) return;
 
         imu.resetYaw();
-        // never used - changed in line 100 with PID
-        double FixError; // = pid.calculate(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS), imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-
+        wantedAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) % (Math.PI*2);
+        pid.setSetPoint(wantedAngle);
+        boolean isTurning = false;
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = 1.1 * -gamepad1.left_stick_x;
@@ -97,7 +96,7 @@ public class FieldCentric extends LinearOpMode {
             telemetry.addData("Angle", Math.toDegrees(botHeading));
 
             //Calls the function that calculates how much we should resist the error
-            FixError = pid.calculate(botHeading);
+            double FixError = pid.calculate(botHeading);
 
 
             // Rotate the movement direction counter to the bot's rotation
@@ -107,16 +106,28 @@ public class FieldCentric extends LinearOpMode {
             rotX *= PARAMS.speedMult;
             rotY *= PARAMS.speedMult;
             rx *= PARAMS.turnMult;
+            //trying to add the fix to the rotation to the current rotation (didn't work, perhaps because of the parameters, perhaps because I didn't understand the library)
+            // should work now
+
+            if (rx == 0 && isTurning) {
+                wantedAngle = botHeading % (Math.PI*2);
+                pid.setSetPoint(wantedAngle);
+                isTurning = false;
+            }
+
+            if (rx != 0 && !isTurning) {
+                isTurning = true;
+            }
+
+
+            if (Math.abs(Math.toDegrees(botHeading-wantedAngle)) > 6 && !isTurning){
+                rx -= FixError;
+            }
 
 
 
             telemetry.addData("rx:", rx);
             telemetry.addData("wanted angle",wantedAngle);
-
-            //trying to add the fix to the rotation to the current rotation (didn't work, perhaps because of the parameters, perhaps because I didn't understand the library)
-            // should work now
-            rx += FixError;
-
             // Counteract imperfect strafing
 
             // Denominator is the largest motor power (absolute value) or 1
