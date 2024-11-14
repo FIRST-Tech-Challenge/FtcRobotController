@@ -44,79 +44,79 @@ public class WristClawActions {
 
 
     //Generates Action for MoveUp
-    public class MoveUpAction implements Action {
+    public class WristUpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.MoveUp();
+            _WristClaw.WristUp();
             return false;
         }
     }
-    public Action MoveUp() {
-        return new MoveUpAction();
+    public Action WristUp() {
+        return new WristUpAction();
     }
 
 
     //Generates Action for MoveFlip
-    public class MoveFlipAction implements Action {
+    public class WristFlipAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.MoveFlip();
+            _WristClaw.WristFlip();
             return false;
         }
     }
-    public Action MoveFlip() {
-        return new MoveFlipAction();
+    public Action WristFlip() {
+        return new WristFlipAction();
     }
 
 
     //Generates Action for MoveDown
-    public class MoveDownAction implements Action {
+    public class WristDownAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.MoveDown();
+            _WristClaw.WristDown();
             return false;
         }
     }
-    public Action MoveDown() {
-        return new MoveDownAction();
+    public Action WristDown() {
+        return new WristDownAction();
     }
 
 
     //Generates Action for MoveDump
-    public class MoveDumpAction implements Action {
+    public class WristDumpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.MoveDump();
+            _WristClaw.WristDump();
             return false;
         }
     }
-    public Action MoveDump() {
-        return new MoveDumpAction();
+    public Action WristDump() {
+        return new WristDumpAction();
     }
 
 
     //Generates Action for MoveCenter
-    public class MoveCenterAction implements Action {
+    public class WristCenterAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.MoveCenter();
+            _WristClaw.WristCenter();
             return false;
         }
     }
-    public Action MoveCenter() {
-        return new MoveCenterAction();
+    public Action WristCenter() {
+        return new WristCenterAction();
     }
 
 
     //Generates Action for MoveWristInit
-    public class MoveWristInitAction implements Action {
+    public class WristInitAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.MoveWristInit();
+            _WristClaw.WristInit();
             return false;
         }
     }
-    public Action MoveWristInit() {
-        return new MoveWristInitAction();
+    public Action WristInit() {
+        return new WristInitAction();
     }
 }

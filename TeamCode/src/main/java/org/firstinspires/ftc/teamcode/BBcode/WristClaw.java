@@ -27,12 +27,12 @@ public class WristClaw {
 
     public void OpenClaw() {ClawCustom(openPosition);}
     public void CloseClaw() {ClawCustom(closePosition);}
-    public void MoveUp() {WristCustom(upPosition);}
-    public void MoveFlip() {WristCustom(flipPosition);}
-    public void MoveDown() {WristCustom(downPosition);}
-    public void MoveDump() {WristCustom(dumpPosition);}
-    public void MoveCenter() {WristCustom(centerPosition);}
-    public void MoveWristInit() {WristCustom(wristInit);}
+    public void WristUp() {WristCustom(upPosition);}
+    public void WristFlip() {WristCustom(flipPosition);}
+    public void WristDown() {WristCustom(downPosition);}
+    public void WristDump() {WristCustom(dumpPosition);}
+    public void WristCenter() {WristCustom(centerPosition);}
+    public void WristInit() {WristCustom(wristInit);}
     public void WristCustom(double position)
     {
         if (_wrist == null)

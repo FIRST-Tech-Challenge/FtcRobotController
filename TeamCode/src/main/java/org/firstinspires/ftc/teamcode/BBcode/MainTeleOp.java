@@ -70,12 +70,12 @@ public class MainTeleOp extends LinearOpMode{
             arm.MoveToHighBasket();
             desiredViperState = ViperState.Dump;
             viper.ExtendFull(0.75);
-            wristClaw.MoveDump();
+            wristClaw.WristDump();
         }
 
         //Extend to 3 inches and raise to clear bar. For driving
         if (gamepad.left_trigger > 0 && gamepad.dpad_down) {
-            wristClaw.MoveUp();
+            wristClaw.WristUp();
             desiredViperState = ViperState.Closed;
             viper.ExtendShort(1);
             arm.MoveToClearance();
@@ -83,7 +83,7 @@ public class MainTeleOp extends LinearOpMode{
 
         //brings arm down to pick up samples
         if (gamepad.left_trigger > 0 && gamepad.dpad_right) {
-            wristClaw.MoveUp();
+            wristClaw.WristUp();
             desiredViperState = ViperState.Closed;
             viper.ExtendShort(1);
             arm.MoveToHome();
@@ -111,12 +111,12 @@ public class MainTeleOp extends LinearOpMode{
 
         //Move Claw Up
         if(gamepad.y) {
-            wristClaw.MoveUp();
+            wristClaw.WristUp();
         }
 
         //Move Claw Down
         if(gamepad.a) {
-            wristClaw.MoveDown();
+            wristClaw.WristDown();
         }
 
         //bring the harm up to hang specimen
@@ -143,7 +143,7 @@ public class MainTeleOp extends LinearOpMode{
         Viper viper = new Viper(this);
         WristClaw wristClaw = new WristClaw(this);
         arm.Reset();
-        wristClaw.MoveWristInit();
+        wristClaw.WristInit();
         wristClaw.CloseClaw();
 
         //Call the function to initialize telemetry functions
