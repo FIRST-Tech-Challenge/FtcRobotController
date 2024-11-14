@@ -66,6 +66,7 @@ public class Settings {
             // Arm components
             public static final String EXTENSOR_LEFT = "extensorLeft";
             public static final String EXTENSOR_RIGHT = "extensorRight";
+            public static final String LINEAR_ACTUATOR = "linearActuator";
             public static final String GECKO_LEFT = "geckoLeft";
             public static final String GECKO_RIGHT = "geckoRight";
             public static final String WRIST = "wrist";
@@ -87,6 +88,30 @@ public class Settings {
             public static int HOVER = -20;
             public static int LOW_RUNG = -500;
             public static int HIGH_RUNG = -1000;
+
+            // Motor power settings
+            public static double MOVEMENT_POWER = 0.5;
+        }
+
+        @Config
+        public static class VerticalExtensor {
+            // Positions in encoder ticks
+            public static int PICKUP = 0;
+            public static int HOVER = -20;
+            public static int LOW_RUNG = -500;
+            public static int HIGH_RUNG = -1000;
+
+            // Motor power settings
+            public static double MOVEMENT_POWER = 0.5;
+        }
+
+        @Config
+        public static class HorizontalExtensor {
+            // Positions in encoder ticks
+            public static int COLLAPSED = 0;
+            public static int LEVEL_1 = 20;
+            public static int LEVEL_2 = 500;
+            public static int EXPANDED = 1000;
 
             // Motor power settings
             public static double MOVEMENT_POWER = 0.5;
