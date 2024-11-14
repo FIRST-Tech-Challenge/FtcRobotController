@@ -85,11 +85,16 @@ public class PrimaryOpMode extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        double wantedAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) % (Math.PI*2);
+        double wantedAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         pid.setSetPoint(wantedAngle);
         boolean isTurning = false;
 
         while (opModeIsActive()) {
+
+            /* ##################################################
+                            Inputs and Initializing
+               ################################################## */
+
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = 1.1 * -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
@@ -98,21 +103,28 @@ public class PrimaryOpMode extends LinearOpMode {
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
-            if (gamepad1.y)
-                imu.resetYaw();
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            //Calls the function that calculates how much we should resist the error
-            double FixError = pid.calculate(botHeading);
+            if (gamepad1.y)
+                imu.resetYaw();
 
-            // Rotate the movement direction counter to the bot's rotation
+            /* ##################################################
+                        Movement Controls Calculations
+               ################################################## */
+
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
             double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
             rotX *= PARAMS.speedMult;
             rotY *= PARAMS.speedMult;
             rx *= PARAMS.turnMult;
+
+            /* ##################################################
+                                   Rotation
+               ################################################## */
+
+            double FixError = pid.calculate(botHeading);
 
             if (rx == 0 && isTurning) {
                 wantedAngle = botHeading % (Math.PI*2);
@@ -126,15 +138,25 @@ public class PrimaryOpMode extends LinearOpMode {
                 rx -= FixError;
             }
 
+            pid.setSetPoint(wantedAngle);
+
+
+            /* ##################################################
+                                    Elevator
+               ################################################## */
+
             //controls the elevator
             if (gamepad1.left_bumper)
-                elevator.ChangePower(0.5);
+                elevator.ChangePower(1);
             else if (gamepad1.right_bumper)
-                elevator.ChangePower(-0.5);
+                elevator.ChangePower(-1);
             else
                 elevator.ChangePower(0);
 
-            pid.setSetPoint(wantedAngle);
+
+            /* ##################################################
+                     Applying the Calculations to the Motors
+               ################################################## */
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
