@@ -3,23 +3,24 @@ package org.firstinspires.ftc.teamcode.Commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
 
 
 // command template
-public class OpenClaw extends CommandBase {
+public class ClawSense extends CommandBase {
 
     // constructor
-    public OpenClaw() {
+    public ClawSense() {
 
         // add subsystem requirements (if any) - for example:
-        addRequirements(RobotContainer.claw);
+        //addRequirements(RobotContainer.drivesystem);
+
+        addRequirements(RobotContainer.clawTouch);
     }
 
     // This method is called once when command is started
     @Override
     public void initialize() {
-        RobotContainer.claw.ControlClaw(ClawState.OPEN);
+
     }
 
     // This method is called periodically while command is active
@@ -31,8 +32,9 @@ public class OpenClaw extends CommandBase {
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
+        return RobotContainer.clawTouch.ControleTouchSenser();
 
-        return true;
+
 
     }
 
