@@ -53,6 +53,10 @@ public class CommandFactory {
         return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY);
     }
 
+    public DriveToTargetCommandAlterate driveToTargetAlternate(double targetX, double targetY, double targetHeading) {
+        return new DriveToTargetCommandAlterate(driveTrain, telemetry, targetX, targetY, targetHeading);
+    }
+
     public TurnAngleAbsoluteCommand turnAngleAbsolute(double angleInDegrees) {
         return new TurnAngleAbsoluteCommand(driveTrain, telemetry, angleInDegrees);
     }
